@@ -5,7 +5,7 @@ use G;
 use UsersPeer;
 use CasesPeer;
 use AppDelegation;
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use Exception;
 use WsBase;

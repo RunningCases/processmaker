@@ -1,7 +1,7 @@
 <?php
 namespace ProcessMaker\Exporter;
 
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 use ProcessMaker\Project;
 use ProcessMaker\Util;
 

@@ -5641,7 +5641,6 @@
   </table>
   <table name="PLUGINS_REGISTRY" idMethod="native">
     <!--PluginDetails-->
-    <column name="ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
     <column name="PR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
     <column name="PLUGIN_NAMESPACE" type="VARCHAR" size="100" required="true"/>
     <column name="PLUGIN_DESCRIPTION" type="VARCHAR" size="200" default=""/>
@@ -5666,8 +5665,5 @@
     <column name="PLUGIN_JS" type="LONGVARCHAR"/>
     <column name="PLUGIN_REST_SERVICE" type="LONGVARCHAR"/>
     <column name="PLUGIN_ATTRIBUTES" type="LONGVARCHAR"/>
-    <unique name="INDEX_PLUGINS_REGISTRY_ID">
-      <unique-column name="ID" />
-    </unique>
   </table>
 </database>

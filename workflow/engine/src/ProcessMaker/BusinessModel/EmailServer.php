@@ -4,7 +4,7 @@ use G;
 use Exception;
 use Bootstrap;
 use SpoolRun;
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 
 class EmailServer
 {

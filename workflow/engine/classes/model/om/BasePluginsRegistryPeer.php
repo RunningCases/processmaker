@@ -25,14 +25,11 @@ abstract class BasePluginsRegistryPeer
     const CLASS_DEFAULT = 'classes.model.PluginsRegistry';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 24;
+    const NUM_COLUMNS = 23;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
-
-    /** the column name for the ID field */
-    const ID = 'PLUGINS_REGISTRY.ID';
 
     /** the column name for the PR_UID field */
     const PR_UID = 'PLUGINS_REGISTRY.PR_UID';
@@ -114,10 +111,10 @@ abstract class BasePluginsRegistryPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'PrUid', 'PluginNamespace', 'PluginDescription', 'PluginClassName', 'PluginFriendlyName', 'PluginFile', 'PluginFolder', 'PluginSetupPage', 'PluginCompanyLogo', 'PluginWorkspaces', 'PluginVersion', 'PluginEnable', 'PluginPrivate', 'PluginMenus', 'PluginFolders', 'PluginTriggers', 'PluginPmFunctions', 'PluginRedirectLogin', 'PluginSteps', 'PluginCss', 'PluginJs', 'PluginRestService', 'PluginAttributes', ),
-        BasePeer::TYPE_COLNAME => array (PluginsRegistryPeer::ID, PluginsRegistryPeer::PR_UID, PluginsRegistryPeer::PLUGIN_NAMESPACE, PluginsRegistryPeer::PLUGIN_DESCRIPTION, PluginsRegistryPeer::PLUGIN_CLASS_NAME, PluginsRegistryPeer::PLUGIN_FRIENDLY_NAME, PluginsRegistryPeer::PLUGIN_FILE, PluginsRegistryPeer::PLUGIN_FOLDER, PluginsRegistryPeer::PLUGIN_SETUP_PAGE, PluginsRegistryPeer::PLUGIN_COMPANY_LOGO, PluginsRegistryPeer::PLUGIN_WORKSPACES, PluginsRegistryPeer::PLUGIN_VERSION, PluginsRegistryPeer::PLUGIN_ENABLE, PluginsRegistryPeer::PLUGIN_PRIVATE, PluginsRegistryPeer::PLUGIN_MENUS, PluginsRegistryPeer::PLUGIN_FOLDERS, PluginsRegistryPeer::PLUGIN_TRIGGERS, PluginsRegistryPeer::PLUGIN_PM_FUNCTIONS, PluginsRegistryPeer::PLUGIN_REDIRECT_LOGIN, PluginsRegistryPeer::PLUGIN_STEPS, PluginsRegistryPeer::PLUGIN_CSS, PluginsRegistryPeer::PLUGIN_JS, PluginsRegistryPeer::PLUGIN_REST_SERVICE, PluginsRegistryPeer::PLUGIN_ATTRIBUTES, ),
-        BasePeer::TYPE_FIELDNAME => array ('ID', 'PR_UID', 'PLUGIN_NAMESPACE', 'PLUGIN_DESCRIPTION', 'PLUGIN_CLASS_NAME', 'PLUGIN_FRIENDLY_NAME', 'PLUGIN_FILE', 'PLUGIN_FOLDER', 'PLUGIN_SETUP_PAGE', 'PLUGIN_COMPANY_LOGO', 'PLUGIN_WORKSPACES', 'PLUGIN_VERSION', 'PLUGIN_ENABLE', 'PLUGIN_PRIVATE', 'PLUGIN_MENUS', 'PLUGIN_FOLDERS', 'PLUGIN_TRIGGERS', 'PLUGIN_PM_FUNCTIONS', 'PLUGIN_REDIRECT_LOGIN', 'PLUGIN_STEPS', 'PLUGIN_CSS', 'PLUGIN_JS', 'PLUGIN_REST_SERVICE', 'PLUGIN_ATTRIBUTES', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
+        BasePeer::TYPE_PHPNAME => array ('PrUid', 'PluginNamespace', 'PluginDescription', 'PluginClassName', 'PluginFriendlyName', 'PluginFile', 'PluginFolder', 'PluginSetupPage', 'PluginCompanyLogo', 'PluginWorkspaces', 'PluginVersion', 'PluginEnable', 'PluginPrivate', 'PluginMenus', 'PluginFolders', 'PluginTriggers', 'PluginPmFunctions', 'PluginRedirectLogin', 'PluginSteps', 'PluginCss', 'PluginJs', 'PluginRestService', 'PluginAttributes', ),
+        BasePeer::TYPE_COLNAME => array (PluginsRegistryPeer::PR_UID, PluginsRegistryPeer::PLUGIN_NAMESPACE, PluginsRegistryPeer::PLUGIN_DESCRIPTION, PluginsRegistryPeer::PLUGIN_CLASS_NAME, PluginsRegistryPeer::PLUGIN_FRIENDLY_NAME, PluginsRegistryPeer::PLUGIN_FILE, PluginsRegistryPeer::PLUGIN_FOLDER, PluginsRegistryPeer::PLUGIN_SETUP_PAGE, PluginsRegistryPeer::PLUGIN_COMPANY_LOGO, PluginsRegistryPeer::PLUGIN_WORKSPACES, PluginsRegistryPeer::PLUGIN_VERSION, PluginsRegistryPeer::PLUGIN_ENABLE, PluginsRegistryPeer::PLUGIN_PRIVATE, PluginsRegistryPeer::PLUGIN_MENUS, PluginsRegistryPeer::PLUGIN_FOLDERS, PluginsRegistryPeer::PLUGIN_TRIGGERS, PluginsRegistryPeer::PLUGIN_PM_FUNCTIONS, PluginsRegistryPeer::PLUGIN_REDIRECT_LOGIN, PluginsRegistryPeer::PLUGIN_STEPS, PluginsRegistryPeer::PLUGIN_CSS, PluginsRegistryPeer::PLUGIN_JS, PluginsRegistryPeer::PLUGIN_REST_SERVICE, PluginsRegistryPeer::PLUGIN_ATTRIBUTES, ),
+        BasePeer::TYPE_FIELDNAME => array ('PR_UID', 'PLUGIN_NAMESPACE', 'PLUGIN_DESCRIPTION', 'PLUGIN_CLASS_NAME', 'PLUGIN_FRIENDLY_NAME', 'PLUGIN_FILE', 'PLUGIN_FOLDER', 'PLUGIN_SETUP_PAGE', 'PLUGIN_COMPANY_LOGO', 'PLUGIN_WORKSPACES', 'PLUGIN_VERSION', 'PLUGIN_ENABLE', 'PLUGIN_PRIVATE', 'PLUGIN_MENUS', 'PLUGIN_FOLDERS', 'PLUGIN_TRIGGERS', 'PLUGIN_PM_FUNCTIONS', 'PLUGIN_REDIRECT_LOGIN', 'PLUGIN_STEPS', 'PLUGIN_CSS', 'PLUGIN_JS', 'PLUGIN_REST_SERVICE', 'PLUGIN_ATTRIBUTES', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
     );
 
     /**
@@ -127,10 +124,10 @@ abstract class BasePluginsRegistryPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PrUid' => 1, 'PluginNamespace' => 2, 'PluginDescription' => 3, 'PluginClassName' => 4, 'PluginFriendlyName' => 5, 'PluginFile' => 6, 'PluginFolder' => 7, 'PluginSetupPage' => 8, 'PluginCompanyLogo' => 9, 'PluginWorkspaces' => 10, 'PluginVersion' => 11, 'PluginEnable' => 12, 'PluginPrivate' => 13, 'PluginMenus' => 14, 'PluginFolders' => 15, 'PluginTriggers' => 16, 'PluginPmFunctions' => 17, 'PluginRedirectLogin' => 18, 'PluginSteps' => 19, 'PluginCss' => 20, 'PluginJs' => 21, 'PluginRestService' => 22, 'PluginAttributes' => 23, ),
-        BasePeer::TYPE_COLNAME => array (PluginsRegistryPeer::ID => 0, PluginsRegistryPeer::PR_UID => 1, PluginsRegistryPeer::PLUGIN_NAMESPACE => 2, PluginsRegistryPeer::PLUGIN_DESCRIPTION => 3, PluginsRegistryPeer::PLUGIN_CLASS_NAME => 4, PluginsRegistryPeer::PLUGIN_FRIENDLY_NAME => 5, PluginsRegistryPeer::PLUGIN_FILE => 6, PluginsRegistryPeer::PLUGIN_FOLDER => 7, PluginsRegistryPeer::PLUGIN_SETUP_PAGE => 8, PluginsRegistryPeer::PLUGIN_COMPANY_LOGO => 9, PluginsRegistryPeer::PLUGIN_WORKSPACES => 10, PluginsRegistryPeer::PLUGIN_VERSION => 11, PluginsRegistryPeer::PLUGIN_ENABLE => 12, PluginsRegistryPeer::PLUGIN_PRIVATE => 13, PluginsRegistryPeer::PLUGIN_MENUS => 14, PluginsRegistryPeer::PLUGIN_FOLDERS => 15, PluginsRegistryPeer::PLUGIN_TRIGGERS => 16, PluginsRegistryPeer::PLUGIN_PM_FUNCTIONS => 17, PluginsRegistryPeer::PLUGIN_REDIRECT_LOGIN => 18, PluginsRegistryPeer::PLUGIN_STEPS => 19, PluginsRegistryPeer::PLUGIN_CSS => 20, PluginsRegistryPeer::PLUGIN_JS => 21, PluginsRegistryPeer::PLUGIN_REST_SERVICE => 22, PluginsRegistryPeer::PLUGIN_ATTRIBUTES => 23, ),
-        BasePeer::TYPE_FIELDNAME => array ('ID' => 0, 'PR_UID' => 1, 'PLUGIN_NAMESPACE' => 2, 'PLUGIN_DESCRIPTION' => 3, 'PLUGIN_CLASS_NAME' => 4, 'PLUGIN_FRIENDLY_NAME' => 5, 'PLUGIN_FILE' => 6, 'PLUGIN_FOLDER' => 7, 'PLUGIN_SETUP_PAGE' => 8, 'PLUGIN_COMPANY_LOGO' => 9, 'PLUGIN_WORKSPACES' => 10, 'PLUGIN_VERSION' => 11, 'PLUGIN_ENABLE' => 12, 'PLUGIN_PRIVATE' => 13, 'PLUGIN_MENUS' => 14, 'PLUGIN_FOLDERS' => 15, 'PLUGIN_TRIGGERS' => 16, 'PLUGIN_PM_FUNCTIONS' => 17, 'PLUGIN_REDIRECT_LOGIN' => 18, 'PLUGIN_STEPS' => 19, 'PLUGIN_CSS' => 20, 'PLUGIN_JS' => 21, 'PLUGIN_REST_SERVICE' => 22, 'PLUGIN_ATTRIBUTES' => 23, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
+        BasePeer::TYPE_PHPNAME => array ('PrUid' => 0, 'PluginNamespace' => 1, 'PluginDescription' => 2, 'PluginClassName' => 3, 'PluginFriendlyName' => 4, 'PluginFile' => 5, 'PluginFolder' => 6, 'PluginSetupPage' => 7, 'PluginCompanyLogo' => 8, 'PluginWorkspaces' => 9, 'PluginVersion' => 10, 'PluginEnable' => 11, 'PluginPrivate' => 12, 'PluginMenus' => 13, 'PluginFolders' => 14, 'PluginTriggers' => 15, 'PluginPmFunctions' => 16, 'PluginRedirectLogin' => 17, 'PluginSteps' => 18, 'PluginCss' => 19, 'PluginJs' => 20, 'PluginRestService' => 21, 'PluginAttributes' => 22, ),
+        BasePeer::TYPE_COLNAME => array (PluginsRegistryPeer::PR_UID => 0, PluginsRegistryPeer::PLUGIN_NAMESPACE => 1, PluginsRegistryPeer::PLUGIN_DESCRIPTION => 2, PluginsRegistryPeer::PLUGIN_CLASS_NAME => 3, PluginsRegistryPeer::PLUGIN_FRIENDLY_NAME => 4, PluginsRegistryPeer::PLUGIN_FILE => 5, PluginsRegistryPeer::PLUGIN_FOLDER => 6, PluginsRegistryPeer::PLUGIN_SETUP_PAGE => 7, PluginsRegistryPeer::PLUGIN_COMPANY_LOGO => 8, PluginsRegistryPeer::PLUGIN_WORKSPACES => 9, PluginsRegistryPeer::PLUGIN_VERSION => 10, PluginsRegistryPeer::PLUGIN_ENABLE => 11, PluginsRegistryPeer::PLUGIN_PRIVATE => 12, PluginsRegistryPeer::PLUGIN_MENUS => 13, PluginsRegistryPeer::PLUGIN_FOLDERS => 14, PluginsRegistryPeer::PLUGIN_TRIGGERS => 15, PluginsRegistryPeer::PLUGIN_PM_FUNCTIONS => 16, PluginsRegistryPeer::PLUGIN_REDIRECT_LOGIN => 17, PluginsRegistryPeer::PLUGIN_STEPS => 18, PluginsRegistryPeer::PLUGIN_CSS => 19, PluginsRegistryPeer::PLUGIN_JS => 20, PluginsRegistryPeer::PLUGIN_REST_SERVICE => 21, PluginsRegistryPeer::PLUGIN_ATTRIBUTES => 22, ),
+        BasePeer::TYPE_FIELDNAME => array ('PR_UID' => 0, 'PLUGIN_NAMESPACE' => 1, 'PLUGIN_DESCRIPTION' => 2, 'PLUGIN_CLASS_NAME' => 3, 'PLUGIN_FRIENDLY_NAME' => 4, 'PLUGIN_FILE' => 5, 'PLUGIN_FOLDER' => 6, 'PLUGIN_SETUP_PAGE' => 7, 'PLUGIN_COMPANY_LOGO' => 8, 'PLUGIN_WORKSPACES' => 9, 'PLUGIN_VERSION' => 10, 'PLUGIN_ENABLE' => 11, 'PLUGIN_PRIVATE' => 12, 'PLUGIN_MENUS' => 13, 'PLUGIN_FOLDERS' => 14, 'PLUGIN_TRIGGERS' => 15, 'PLUGIN_PM_FUNCTIONS' => 16, 'PLUGIN_REDIRECT_LOGIN' => 17, 'PLUGIN_STEPS' => 18, 'PLUGIN_CSS' => 19, 'PLUGIN_JS' => 20, 'PLUGIN_REST_SERVICE' => 21, 'PLUGIN_ATTRIBUTES' => 22, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
     );
 
     /**
@@ -230,8 +227,6 @@ abstract class BasePluginsRegistryPeer
      */
     public static function addSelectColumns(Criteria $criteria)
     {
-
-        $criteria->addSelectColumn(PluginsRegistryPeer::ID);
 
         $criteria->addSelectColumn(PluginsRegistryPeer::PR_UID);
 

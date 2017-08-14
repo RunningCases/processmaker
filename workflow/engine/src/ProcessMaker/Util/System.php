@@ -48,10 +48,10 @@ class System
     {
         $workspaces = array();
         foreach ($args as $arg) {
-            $workspaces[] = new \workspaceTools($arg);
+            $workspaces[] = new \WorkspaceTools($arg);
         }
         if (empty($workspaces) && $includeAll) {
-            $workspaces = \System::listWorkspaces();
+            $workspaces = PmSystem::listWorkspaces();
         }
         return $workspaces;
     }
