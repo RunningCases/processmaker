@@ -184,7 +184,7 @@ class Cases
     {
         try {
             $solrEnabled = false;
-            $solrConf = \PmSystem::solrEnv();
+            $solrConf = \ProcessMaker\Core\System::solrEnv();
 
             if ($solrConf !== false) {
                 $ApplicationSolrIndex = new \AppSolr(
@@ -376,7 +376,7 @@ class Cases
     {
         try {
             $solrEnabled = 0;
-            if (($solrEnv = \PmSystem::solrEnv()) !== false) {
+            if (($solrEnv = \ProcessMaker\Core\System::solrEnv()) !== false) {
                 $appSolr = new \AppSolr(
                     $solrEnv["solr_enabled"],
                     $solrEnv["solr_host"],

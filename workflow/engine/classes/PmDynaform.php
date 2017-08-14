@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * Implementing pmDynaform library in the running case.
  *
@@ -1056,7 +1058,7 @@
         $javascript = "
             <script type=\"text/javascript\">
                 var jsondata = " . G::json_encode($json) . ";
-                var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";
+                var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";
                 var pm_run_outside_main_app = \"\";
                 var dyn_uid = \"" . $this->fields["CURRENT_DYNAFORM"] . "\";
                 var __DynaformName__ = \"" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "\";
@@ -1117,7 +1119,7 @@
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
-                "var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
+                "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var pm_run_outside_main_app = null;\n" .
                 "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = '" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "';\n" .
@@ -1196,7 +1198,7 @@
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . $this->json_encode($json) . ";\n" .
-                "var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
+                "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var pm_run_outside_main_app = '" . $this->fields["PM_RUN_OUTSIDE_MAIN_APP"] . "';\n" .
                 "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = '" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "';\n" .
@@ -1253,7 +1255,7 @@
         $javascrip = "
         <script type=\"text/javascript\">
             var jsondata = " . G::json_encode($json) . ";
-            var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";
+            var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";
             var pm_run_outside_main_app = null;
             var dyn_uid = \"" . $this->fields["CURRENT_DYNAFORM"] . "\";
             var __DynaformName__ = \"" . $this->fields["PRO_UID"] . "_" . $this->fields["CURRENT_DYNAFORM"] . "\";
@@ -1297,7 +1299,7 @@
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
-                "var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
+                "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var pm_run_outside_main_app = null;\n" .
                 "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = null;\n" .
@@ -1339,7 +1341,7 @@
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
-                "var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
+                "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var pm_run_outside_main_app = null;\n" .
                 "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = null;\n" .
@@ -1381,7 +1383,7 @@
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
                 "var jsonData = " . $this->json_encode($json) . ";\n" .
-                "var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
+                "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
                 $js .
                 "</script>";
@@ -1403,7 +1405,7 @@
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
-                "var httpServerHostname = \"" . PmSystem::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
+                "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var pm_run_outside_main_app = null;\n" .
                 "var dyn_uid = '" . $currentDynaform . "';\n" .
                 "var __DynaformName__ = null;\n" .

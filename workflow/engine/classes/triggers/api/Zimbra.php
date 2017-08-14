@@ -11,6 +11,8 @@
  * @GPL 2007, Plymouth State University, ITS
  */
 
+use ProcessMaker\Core\System;
+
 /**
  * zimbra.class.php
  *
@@ -206,7 +208,7 @@ class Zimbra
         curl_setopt($this->_curl, CURLOPT_SSL_VERIFYHOST, false);
 
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($this->_curl, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {

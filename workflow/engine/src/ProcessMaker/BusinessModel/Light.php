@@ -1260,7 +1260,7 @@ class Light
         $offset = timezone_offset_get( new \DateTimeZone( $tz ), new \DateTime() );
         $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
         $response['multiTimeZone'] = $multiTimeZone;
-        $fields = \PmSystem::getSysInfo();
+        $fields = \ProcessMaker\Core\System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
 
         $buildType = 'Community';

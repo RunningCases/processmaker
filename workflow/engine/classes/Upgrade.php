@@ -1,6 +1,8 @@
 <?php
 
 
+use ProcessMaker\Core\System;
+
 class Upgrade
 {
     private $addon = null;
@@ -90,7 +92,7 @@ class Upgrade
             G::rm_dir(PATH_C);
             mkdir(PATH_C, 0777, true);
         }
-        $workspaces = PmSystem::listWorkspaces();
+        $workspaces = System::listWorkspaces();
         $count = count($workspaces);
         $first = true;
         $num = 0;

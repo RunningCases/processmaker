@@ -2,6 +2,8 @@
 
 global $RBAC;
 
+use ProcessMaker\Core\System;
+
 if ($RBAC->userCanAccess("PM_SETUP") != 1) {
     G::SendTemporalMessage("ID_USER_HAVENT_RIGHTS_PAGE", "error", "labels");
     exit(0);
@@ -62,7 +64,7 @@ $cronInfo["fileLogSize"] = $fileLogSize;
 $cronInfo["fileLogPath"] = $fileLog;
 
 //Workspaces
-$workspaces = PmSystem::listWorkspaces();
+$workspaces = System::listWorkspaces();
 $arrayAux = array ();
 
 foreach ($workspaces as $index => $workspace) {

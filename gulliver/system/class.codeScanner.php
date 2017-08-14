@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 if (!defined("T_ML_COMMENT")) {
     define("T_ML_COMMENT", T_COMMENT);
 } else {
@@ -29,7 +32,7 @@ class CodeScanner
                         $workspace = new WorkspaceTools($option);
 
                         if ($workspace->workspaceExists()) {
-                            $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspace->name);
+                            $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace->name);
                             $flag = (int)($arraySystemConfiguration['enable_blacklist']) == 1;
                         }
                         break;

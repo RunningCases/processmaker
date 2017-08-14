@@ -21,7 +21,11 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
-global $RBAC;
+global
+
+use ProcessMaker\Core\System;
+
+$RBAC;
 $access = $RBAC->userCanAccess( 'PM_SETUP_ADVANCE' );
 if ($access != 1) {
     switch ($access) {
@@ -61,7 +65,7 @@ $G_SUB_MENU = 'setup';
 $G_ID_MENU_SELECTED = 'SETUP';
 $G_ID_SUB_MENU_SELECTED = 'UPGRADE';
 
-$Fields['PM_VERSION'] = PmSystem::getVersion();
+$Fields['PM_VERSION'] = System::getVersion();
 $Fields['MAX_FILE_SIZE'] = $uploadMaxSize . " (" . $UPLOAD_MAX_SIZE . ") ";
 
 $G_PUBLISH = new Publisher();

@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 unset($_SESSION['APPLICATION']);
@@ -121,7 +122,7 @@ $oAppCache->confCasesList = $confCasesList;
 $solrEnabled = 0;
 if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "selfservice" ||
     $action == "unassigned" || $action == "search") {
-    $solrConfigured = ($solrConf = PmSystem::solrEnv()) !== false ? 1 : 0;
+    $solrConfigured = ($solrConf = System::solrEnv()) !== false ? 1 : 0;
     if ($solrConfigured == 1) {
         $applicationSolrIndex = new AppSolr(
             $solrConf['solr_enabled'],

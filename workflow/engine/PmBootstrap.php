@@ -1,5 +1,7 @@
 <?php
 //test
+use ProcessMaker\Core\System;
+
 class PmBootstrap extends Bootstrap
 {
     public $pmConfig = array();
@@ -25,7 +27,7 @@ class PmBootstrap extends Bootstrap
     {
         parent::configure();
 
-        $this->pmConfig = PmSystem::getSystemConfiguration();
+        $this->pmConfig = System::getSystemConfiguration();
 
         $e_all  = defined('E_DEPRECATED') ? E_ALL  & ~E_DEPRECATED : E_ALL;
         $e_all  = defined('E_STRICT')     ? $e_all & ~E_STRICT     : $e_all;

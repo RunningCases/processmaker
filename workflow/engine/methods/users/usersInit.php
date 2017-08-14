@@ -1,6 +1,8 @@
 <?php
 global $RBAC;
 
+use ProcessMaker\Core\System;
+
 require_once 'classes/model/Users.php';
 unset( $_SESSION['CURRENT_USER'] );
 $oUser = new Users();
@@ -32,7 +34,7 @@ if ($postMaxSize < $uploadMaxSize) {
 $expirationDate = 1;
 $envFile = PATH_CONFIG . 'env.ini';
 if (file_exists($envFile) ) {
-    $sysConf = PmSystem::getSystemConfiguration($envFile);
+    $sysConf = System::getSystemConfiguration($envFile);
     if(isset($sysConf['expiration_year']) && $sysConf['expiration_year']>0){
        $expirationDate = abs($sysConf['expiration_year']);
     }
@@ -46,7 +48,7 @@ if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkd
 }
 /*----------------------------------********---------------------------------*/
 
-$arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
+$arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'users/users', true ); //adding a javascript file .js

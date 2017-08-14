@@ -182,7 +182,7 @@ class EmailServer
             $sBodyPre->prepare();
             $sBodyPre->assign("server", $_SERVER["SERVER_NAME"]);
             $sBodyPre->assign("date", date("H:i:s"));
-            $sBodyPre->assign("ver", \PmSystem::getVersion());
+            $sBodyPre->assign("ver", \ProcessMaker\Core\System::getVersion());
             $sBodyPre->assign("engine", $engine);
             $sBodyPre->assign("msg", $msg);
             $sBody = $sBodyPre->getOutputContent();

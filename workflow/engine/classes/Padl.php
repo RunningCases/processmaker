@@ -27,6 +27,8 @@
  * see CHANGELOG
  */
 
+use ProcessMaker\Core\System;
+
 /**
  * Project:		Distrubution License Class
  * File:			class.license.lib.php
@@ -264,7 +266,7 @@ class Padl
         }
 
         // Proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             if (!is_array($params['http'])) {
                 $params['http'] = array();

@@ -5,7 +5,11 @@
  *
  * @author Erik A. O. <erik@colosa.com>
  */
-global $translation;
+global
+
+use ProcessMaker\Core\System;
+
+$translation;
 include PATH_LANGUAGECONT."translation.".SYS_LANG;
 
 class Installer extends Controller
@@ -966,7 +970,7 @@ class Installer extends Controller
             $envFile = PATH_CONFIG . 'env.ini';
 
             // getting configuration from env.ini
-            $sysConf = PmSystem::getSystemConfiguration( $envFile );
+            $sysConf = System::getSystemConfiguration( $envFile );
 
             $langUri = 'en';
             if (isset($sysConf['default_lang'])) {
@@ -1022,7 +1026,7 @@ class Installer extends Controller
 
                 try {
                     // update the main index file
-                    $indexFileUpdated = PmSystem::updateIndexFile(array('lang' => 'en','skin' => $updatedConf['default_skin']));
+                    $indexFileUpdated = System::updateIndexFile(array('lang' => 'en','skin' => $updatedConf['default_skin']));
                 } catch (Exception $e) {
                     $info->result = false;
                     $info->message = G::LoadTranslation('ID_PROCESSMAKER_WRITE_CONFIG_INDEX', SYS_LANG, Array(PATH_HTML . "index.html."));

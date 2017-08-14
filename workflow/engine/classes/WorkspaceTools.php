@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Util\FixReferencePath;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
 
@@ -498,7 +499,7 @@ class WorkspaceTools
 
         $language = new Language();
 
-        foreach (PmSystem::listPoFiles() as $poFile) {
+        foreach (System::listPoFiles() as $poFile) {
             $poName = basename($poFile);
             $names = explode(".", basename($poFile));
             $extension = array_pop($names);
@@ -849,8 +850,8 @@ class WorkspaceTools
      */
     public function upgradePluginsDatabase()
     {
-        foreach (PmSystem::getPlugins() as $pluginName) {
-            $pluginSchema = PmSystem::getPluginSchema($pluginName);
+        foreach (System::getPlugins() as $pluginName) {
+            $pluginSchema = System::getPluginSchema($pluginName);
             if ($pluginSchema !== false) {
                 CLI::logging("Updating plugin " . CLI::info($pluginName) . "\n");
                 $this->upgradeSchema($pluginSchema);
@@ -869,8 +870,8 @@ class WorkspaceTools
         $this->initPropel(true);
         P11835::$dbAdapter = $this->dbAdapter;
         P11835::isApplicable();
-        $systemSchema = PmSystem::getSystemSchema($this->dbAdapter);
-        $systemSchemaRbac = PmSystem::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
+        $systemSchema = System::getSystemSchema($this->dbAdapter);
+        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
         $this->registerSystemTables(array_merge($systemSchema, $systemSchemaRbac));
         $this->upgradeSchema($systemSchema);
         $this->upgradeSchema($systemSchemaRbac, false, true, $onedb); // perform Upgrade to Rbac
@@ -898,7 +899,7 @@ class WorkspaceTools
 
             $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
 
-            $emailConfiguration = PmSystem::getEmailConfiguration();
+            $emailConfiguration = System::getEmailConfiguration();
 
             if (!empty($emailConfiguration)) {
                 $arrayData["MESS_ENGINE"] = $emailConfiguration["MESS_ENGINE"];
@@ -993,7 +994,7 @@ class WorkspaceTools
 
         if (!$onedb) {
             if ($rbac) {
-                $rename = PmSystem::verifyRbacSchema($workspaceSchema);
+                $rename = System::verifyRbacSchema($workspaceSchema);
                 if (count($rename) > 0) {
                     foreach ($rename as $tableName) {
                         $oDataBase->executeQuery($oDataBase->generateRenameTableSQL($tableName));
@@ -1002,7 +1003,7 @@ class WorkspaceTools
             }
         }
         $workspaceSchema = $this->getSchema($rbac);
-        $changes = PmSystem::compareSchema($workspaceSchema, $schema);
+        $changes = System::compareSchema($workspaceSchema, $schema);
 
         $changed = (count($changes['tablesToAdd']) > 0 || count($changes['tablesToAlter']) > 0 || count($changes['tablesWithNewIndex']) > 0 || count($changes['tablesToAlterIndex']) > 0);
 
@@ -1141,7 +1142,7 @@ class WorkspaceTools
      */
     public function getMetadata()
     {
-        $Fields = array_merge(PmSystem::getSysInfo(), $this->getDBInfo());
+        $Fields = array_merge(System::getSysInfo(), $this->getDBInfo());
         $Fields['WORKSPACE_NAME'] = $this->name;
 
         if (isset($this->dbHost)) {
@@ -1176,7 +1177,7 @@ class WorkspaceTools
      */
     public static function printSysInfo()
     {
-        $fields = PmSystem::getSysInfo();
+        $fields = System::getSysInfo();
 
         $info = array(
             'ProcessMaker Version' => $fields['PM_VERSION'],
@@ -1655,7 +1656,7 @@ class WorkspaceTools
             throw new Exception("Workspace $srcWorkspace not found in backup");
         }
 
-        $version = PmSystem::getVersion();
+        $version = System::getVersion();
         $pmVersion = (preg_match("/^([\d\.]+).*$/", $version, $arrayMatch)) ? $arrayMatch[1] : ""; //Otherwise: Branch master
 
         CLI::logging(CLI::warning("
@@ -1919,7 +1920,7 @@ class WorkspaceTools
 
     public function backupLogFiles()
     {
-        $config = PmSystem::getSystemConfiguration();
+        $config = System::getSystemConfiguration();
 
         clearstatcache();
         $path = PATH_DATA . "log" . PATH_SEP;
@@ -1952,7 +1953,7 @@ class WorkspaceTools
                 $envFile = PATH_CONFIG . 'env.ini';
                 $skin ='neoclassic';
                 if (file_exists($envFile)) {
-                    $sysConf = PmSystem::getSystemConfiguration($envFile);
+                    $sysConf = System::getSystemConfiguration($envFile);
                     $lang = $sysConf['default_lang'];
                     $skin = $sysConf['default_skin'];
                 }
@@ -3525,7 +3526,7 @@ class WorkspaceTools
     public function migrateIteeToDummytask($workspaceName)
     {
         $this->initPropel(true);
-        $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspaceName);
+        $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspaceName);
         $conf = new Configurations();
         \G::$sysSys = $workspaceName;
         \G::$pathDataSite = PATH_DATA . "sites" . PATH_SEP . \G::$sysSys . PATH_SEP;

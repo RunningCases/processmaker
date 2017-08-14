@@ -1,5 +1,7 @@
 <?php
 //calculating the max upload file size;
+use ProcessMaker\Core\System;
+
 $POST_MAX_SIZE = ini_get( 'post_max_size' );
 $mul = substr( $POST_MAX_SIZE, - 1 );
 $mul = ($mul == 'M' ? 1048576 : ($mul == 'K' ? 1024 : ($mul == 'G' ? 1073741824 : 1)));
@@ -17,7 +19,7 @@ if ($postMaxSize < $uploadMaxSize) {
 $expirationDate = 1;
 $envFile = PATH_CONFIG . 'env.ini';
 if (file_exists($envFile) ) {
-    $sysConf = PmSystem::getSystemConfiguration($envFile);
+    $sysConf = System::getSystemConfiguration($envFile);
     if(isset($sysConf['expiration_year']) && $sysConf['expiration_year']>0){
        $expirationDate = abs($sysConf['expiration_year']);
     }
@@ -31,7 +33,7 @@ if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkd
 }
 /*----------------------------------********---------------------------------*/
 
-$arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
+$arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'users/users', true ); //adding a javascript file .js

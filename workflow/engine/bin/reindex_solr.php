@@ -26,6 +26,8 @@
 // php reindex_solr.php workspacename [reindexall|reindexmissing|optimizeindex] [-skip 1005] [-reindextrunksize 1000]
 // var_dump($argv);
 //(count ($argv) == 4) || ((count ($argv) == 5) && ($argv [3] != '-skip'))
+use ProcessMaker\Core\System;
+
 $commandLineSyntaxMsg = "Invalid command line arguments: \n " .
   "syntax: ".
   "php reindex_solr.php [workspace_name] [reindexall|reindexmissing|optimizeindex|reindexone|deleteindexone] [-skip {record_number}] [-reindextrunksize {trunk_size}] [-appuid {APP_UID}]\n" .
@@ -143,7 +145,7 @@ if (! defined ('SYS_SYS')) {
       // ****************************************
       // read initialize file
       require_once PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.system.php';
-      $config = PmSystem::getSystemConfiguration ('', '', SYS_SYS);
+      $config = System::getSystemConfiguration ('', '', SYS_SYS);
       define ('MEMCACHED_ENABLED', $config ['memcached']);
       define ('MEMCACHED_SERVER', $config ['memcached_server']);
       define ('TIME_ZONE', $config ['time_zone']);
@@ -259,7 +261,7 @@ function processWorkspace()
 
   try {
 
-    if (($solrConf = PmSystem::solrEnv (SYS_SYS)) !== false) {
+    if (($solrConf = System::solrEnv (SYS_SYS)) !== false) {
       print "Solr Configuration file: " . PATH_DATA_SITE . "env.ini\n";
       print "solr_enabled: " . $solrConf ['solr_enabled'] . "\n";
       print "solr_host: " . $solrConf ['solr_host'] . "\n";

@@ -1,6 +1,7 @@
 <?php
 
 //It works with the table CONFIGURATION in a WF dataBase
+use ProcessMaker\Core\System;
 
 /**
  * Copyright (C) 2009 COLOSA
@@ -269,7 +270,7 @@ class WsBase
         try {
             $solrEnabled = 0;
 
-            if (($solrEnv = PmSystem::solrEnv()) !== false) {
+            if (($solrEnv = System::solrEnv()) !== false) {
 
                 $appSolr = new AppSolr(
                     $solrEnv["solr_enabled"],
@@ -872,7 +873,7 @@ class WsBase
                     }
                 }
 
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : PmSystem::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
 
                 if (!isset($aSetup['MESS_ENABLED'])) {
                     $aSetup['MESS_ENABLED'] = 1;
@@ -881,7 +882,7 @@ class WsBase
                 }
             } else {
             /*----------------------------------********---------------------------------*/
-                $aSetup = PmSystem::getEmailConfiguration();
+                $aSetup = System::getEmailConfiguration();
             /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
@@ -2825,7 +2826,7 @@ class WsBase
             $result->status_code = 0;
             $result->message = G::loadTranslation( 'ID_SUCESSFUL' );
             $result->timestamp = date( 'Y-m-d H:i:s' );
-            $result->version = PmSystem::getVersion();
+            $result->version = System::getVersion();
             $result->operatingSystem = $redhat;
             $result->webServer = getenv( 'SERVER_SOFTWARE' );
             $result->serverName = getenv( 'SERVER_NAME' );

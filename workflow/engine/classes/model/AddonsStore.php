@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 require_once 'classes/model/om/BaseAddonsStore.php';
@@ -489,7 +490,7 @@ class AddonsStore extends BaseAddonsStore
                     "header" => "Content-type: application/x-www-form-urlencoded\r\n",
                     "content" => http_build_query(
                         array(
-                            "pmVersion" => PmSystem::getVersion(),
+                            "pmVersion" => System::getVersion(),
                             "version" => STORE_VERSION
                         )
                     )
@@ -497,7 +498,7 @@ class AddonsStore extends BaseAddonsStore
             );
 
             // Proxy settings
-            $sysConf = PmSystem::getSystemConfiguration();
+            $sysConf = System::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {

@@ -1,5 +1,8 @@
 <?php
 global $G_FORM;
+
+use ProcessMaker\Core\System;
+
 $sPRO_UID = $oData->PRO_UID;
 $sTASKS = $oData->TASKS;
 $sDYNAFORM = $oData->DYNAFORM;
@@ -86,7 +89,7 @@ try {
         $template->assign( 'dynaform', $dynTitle );
         $template->assign( 'timestamp', date( 'l jS \of F Y h:i:s A' ) );
         $template->assign( 'ws', SYS_SYS );
-        $template->assign( 'version', PmSystem::getVersion() );
+        $template->assign( 'version', System::getVersion() );
 
         $fileName = $pathProcess . $dynTitle . 'Post.php';
         file_put_contents( $fileName, $template->getOutputContent() );

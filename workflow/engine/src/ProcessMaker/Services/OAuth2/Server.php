@@ -371,7 +371,7 @@ class Server implements iAuthenticate
                 $userTimeZone = $user->getUsrTimeZone();
 
                 if (trim($userTimeZone) == '') {
-                    $arraySystemConfiguration = \PmSystem::getSystemConfiguration('', '', SYS_SYS);
+                    $arraySystemConfiguration = \ProcessMaker\Core\System::getSystemConfiguration('', '', SYS_SYS);
 
                     $userTimeZone = $arraySystemConfiguration['time_zone'];
                 }

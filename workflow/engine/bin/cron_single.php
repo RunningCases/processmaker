@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../../bootstrap/autoload.php');
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 register_shutdown_function(
@@ -68,7 +69,7 @@ try {
 
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
 
-    $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspace);
+    $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace);
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;

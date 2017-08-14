@@ -8,6 +8,8 @@
  * @link http://www.openmail.cc
  */
 
+use ProcessMaker\Core\System;
+
 /**
  * @package workflow.engine.ProcessMaker
  */
@@ -548,7 +550,7 @@ class SpoolRun
      */
     public function resendEmails($dateResend = null, $cron = 0)
     {
-        $aConfiguration = PmSystem::getEmailConfiguration();
+        $aConfiguration = System::getEmailConfiguration();
 
         if (!isset($aConfiguration["MESS_ENABLED"])) {
             $aConfiguration["MESS_ENABLED"] = '0';

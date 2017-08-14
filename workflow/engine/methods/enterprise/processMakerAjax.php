@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 ini_set("max_execution_time", 0);
 
 if (!defined("PM_VERSION")) {
@@ -40,7 +43,7 @@ function install($file)
         );
 
         // Proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if (isset($sysConf['proxy_host'])) {
             if ($sysConf['proxy_host'] != '') {
                 if (!is_array($option['http'])) {
@@ -147,7 +150,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = PmSystem::getSystemConfiguration();
+            $sysConf = System::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {
@@ -316,7 +319,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = PmSystem::getSystemConfiguration();
+            $sysConf = System::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {

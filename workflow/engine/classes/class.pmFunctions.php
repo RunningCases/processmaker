@@ -28,6 +28,7 @@
 //
 // License: LGPL, see LICENSE
 ////////////////////////////////////////////////////
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\ElementTranslation;
 
@@ -242,7 +243,7 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
     $aContext = \Bootstrap::getDefaultContextLog();
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
-    $blackList = PmSystem::getQueryBlackList();
+    $blackList = System::getQueryBlackList();
     $aListQueries = explode('|', $blackList['queries']);
     $aListAllTables = explode(
         '|',
@@ -903,7 +904,7 @@ function WSProcessList ()
 //private function to get current email configuration
 function getEmailConfiguration ()
 {
-    return PmSystem::getEmailConfiguration();
+    return System::getEmailConfiguration();
 }
 
 /**

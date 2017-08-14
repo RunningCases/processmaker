@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 $action = (isset($_REQUEST["action"])) ? $_REQUEST["action"] : "consolidated";
 $arrayTabItem = array();
 
@@ -69,7 +71,7 @@ while ($rsSql->next()) {
 }
 
 if (count($arrayTabItem) > 0) {
-    $urlProxy = PmSystem::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/consolidated/';
+    $urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/consolidated/';
     $clientId = 'x-pm-local-client';
     $client = getClientCredentials($clientId);
     $authCode = getAuthorizationCode($client);

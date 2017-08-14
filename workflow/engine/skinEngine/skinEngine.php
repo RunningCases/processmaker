@@ -7,6 +7,7 @@
  * @author Hugo Loza
  */
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 define('SE_LAYOUT_NOT_FOUND', 6);
@@ -44,7 +45,7 @@ class SkinEngine
     $this->content = $content;
     $this->skinVariants = array('blank','extjs','raw','tracker','submenu');
     $this->skinsBasePath = G::ExpandPath("skinEngine");
-    $sysConf = PmSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+    $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
     $this->skinDefault = (isset($sysConf['default_skin']) && $sysConf['default_skin'] != '') ? $sysConf['default_skin'] : 'classic';
     $this->_init();
   }

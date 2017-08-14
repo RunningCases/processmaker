@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * class.pmSugar.pmFunctions.php
  *
@@ -22,7 +24,7 @@ function getSoapClientOptions ()
     $options = array ('trace' => 1);
 
     //Apply proxy settings
-    $sysConf = PmSystem::getSystemConfiguration();
+    $sysConf = System::getSystemConfiguration();
     if ($sysConf['proxy_host'] != '') {
         $options['proxy_host'] = $sysConf['proxy_host'];
         if ($sysConf['proxy_port'] != '') {

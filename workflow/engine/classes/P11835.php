@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 class P11835 extends Patch
 {
     /*
@@ -16,7 +18,7 @@ class P11835 extends Patch
         $rs->next();
         while($row = $rs->getRow()) {
             if ($row ['Field'] == "TAS_GROUP_VARIABLE") {
-                $version = PmSystem::getVersion ();
+                $version = System::getVersion ();
                 $version = explode('-',$version);
                 if ($version[0] == '2.5.1') {
                     echo "Version " . $version[0] . " Patch\n";
@@ -84,7 +86,7 @@ class P11835 extends Patch
         $arrayHotfix = $conf->getConfiguration("HOTFIX", "");
         $arrayHotfix = (is_array($arrayHotfix))? $arrayHotfix : array($arrayHotfix);
         
-        $pmVersion = self::pmVersion(PmSystem::getVersion()) . "";
+        $pmVersion = self::pmVersion(System::getVersion()) . "";
         
         if (($pmVersion == "2.5.2.4" || $pmVersion == "2.8") && !in_array("15394", $arrayHotfix)) {
             $cnn = Propel::getConnection("workflow");

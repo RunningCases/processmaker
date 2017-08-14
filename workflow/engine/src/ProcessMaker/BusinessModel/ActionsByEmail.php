@@ -408,7 +408,7 @@ class ActionsByEmail
                     $arrayConfigAux = $row;
                     $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
                 }
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \PmSystem::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \ProcessMaker\Core\System::getEmailConfiguration();
 
                 $spool = new SpoolRun();
                 $spool->setConfig($aSetup);

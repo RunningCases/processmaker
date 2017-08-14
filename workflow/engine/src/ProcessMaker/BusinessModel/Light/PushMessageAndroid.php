@@ -54,7 +54,7 @@ class PushMessageAndroid
      */
     public function setSettingNotification()
     {
-        $conf = \PmSystem::getSystemConfiguration(PATH_CONFIG . 'mobile.ini');
+        $conf = \ProcessMaker\Core\System::getSystemConfiguration(PATH_CONFIG . 'mobile.ini');
         $this->setUrl($conf['android']['url']);
         $this->setKey($conf['android']['serverApiKey']);
     }
