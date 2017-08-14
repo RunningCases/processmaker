@@ -27,14 +27,12 @@
 require_once 'classes/model/Session.php';
 
 /**
- * Sessions - Sessions 
-/**
+ * Sessions - Sessions
+ * /**
  * Sessions - Sessions class
- *
  * @package workflow.engine.ProcessMaker
- * @author Everth S. Berrios Morales
- * @copyright 2008 COLOSA
- */class Sessions
+ */
+class Sessions
 {
 
     protected $tmpfile;
@@ -47,7 +45,7 @@ require_once 'classes/model/Session.php';
      * @param string $sSessionId
      * @return void
      */
-    public function __construct ($sSessionId = NULL)
+    public function __construct($sSessionId = NULL)
     {
         $this->sessionId = $sSessionId;
     }
@@ -61,27 +59,27 @@ require_once 'classes/model/Session.php';
      * @param string sSessionId
      * @return array
      */
-    public function getSessionUser ($sSessionId = NULL)
+    public function getSessionUser($sSessionId = NULL)
     {
         try {
             if ($sSessionId != NULL) {
                 $this->sessionId = $sSessionId;
             } else if ($this->sessionId == NULL) {
-                throw new Exception( 'session id was not set.' );
+                throw new Exception('session id was not set.');
             }
 
-            $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->addSelectColumn( SessionPeer::USR_UID );
-            $oCriteria->addSelectColumn( SessionPeer::SES_STATUS );
-            $oCriteria->addSelectColumn( SessionPeer::SES_DUE_DATE );
-            $oCriteria->add( SessionPeer::SES_UID, $this->sessionId );
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->addSelectColumn(SessionPeer::USR_UID);
+            $oCriteria->addSelectColumn(SessionPeer::SES_STATUS);
+            $oCriteria->addSelectColumn(SessionPeer::SES_DUE_DATE);
+            $oCriteria->add(SessionPeer::SES_UID, $this->sessionId);
 
-            $oDataset = SessionPeer::doSelectRS( $oCriteria );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $oDataset = SessionPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aRow = $oDataset->getRow();
 
-            if (! is_array( $aRow )) {
+            if (!is_array($aRow)) {
                 $this->deleteTmpfile();
             }
             return $aRow;
@@ -99,30 +97,30 @@ require_once 'classes/model/Session.php';
      * @param string sSessionId
      * @return array
      */
-    public function verifySession ($sSessionId = NULL)
+    public function verifySession($sSessionId = NULL)
     {
         try {
             if ($sSessionId != NULL) {
                 $this->sessionId = $sSessionId;
             } else if ($this->sessionId == NULL) {
-                throw new Exception( 'session id was not set.' );
+                throw new Exception('session id was not set.');
             }
 
-            $date = date( 'Y-m-d H:i:s' );
-            $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->addSelectColumn( SessionPeer::USR_UID );
-            $oCriteria->addSelectColumn( SessionPeer::SES_STATUS );
-            $oCriteria->addSelectColumn( SessionPeer::SES_DUE_DATE );
-            $oCriteria->add( SessionPeer::SES_UID, $this->sessionId );
-            $oCriteria->add( SessionPeer::SES_STATUS, 'ACTIVE' );
-            $oCriteria->add( SessionPeer::SES_DUE_DATE, $date, Criteria::GREATER_EQUAL );
+            $date = date('Y-m-d H:i:s');
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->addSelectColumn(SessionPeer::USR_UID);
+            $oCriteria->addSelectColumn(SessionPeer::SES_STATUS);
+            $oCriteria->addSelectColumn(SessionPeer::SES_DUE_DATE);
+            $oCriteria->add(SessionPeer::SES_UID, $this->sessionId);
+            $oCriteria->add(SessionPeer::SES_STATUS, 'ACTIVE');
+            $oCriteria->add(SessionPeer::SES_DUE_DATE, $date, Criteria::GREATER_EQUAL);
 
-            $oDataset = SessionPeer::doSelectRS( $oCriteria, Propel::getDbConnection('workflow_ro') );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $oDataset = SessionPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aRow = $oDataset->getRow();
 
-            if (! is_array( $aRow )) {
+            if (!is_array($aRow)) {
                 $this->deleteTmpfile();
             }
 
@@ -142,32 +140,32 @@ require_once 'classes/model/Session.php';
      * @param string $value
      * @return void
      */
-    public function registerGlobal ($name, $value)
+    public function registerGlobal($name, $value)
     {
         $this->tmpfile = G::sys_get_temp_dir() . PATH_SEP . "pm-rg-{$this->sessionId}";
 
         if ($this->sessionId == NULL) {
-            throw new Exception( 'session id was not set.' );
+            throw new Exception('session id was not set.');
         }
 
         $tmpfile_content = '';
-        if (is_file( $this->tmpfile ) && trim( file_get_contents( $this->tmpfile ) ) != '') {
-            $tmpfile_content = file_get_contents( $this->tmpfile );
+        if (is_file($this->tmpfile) && trim(file_get_contents($this->tmpfile)) != '') {
+            $tmpfile_content = file_get_contents($this->tmpfile);
         }
 
         //getting the global array
         if ($tmpfile_content != '') {
-            $this->globals = unserialize( $tmpfile_content );
+            $this->globals = unserialize($tmpfile_content);
         } else {
-            $this->globals = Array ();
+            $this->globals = Array();
         }
 
         //registering the new global variable
         $this->globals[$name] = $value;
 
         //saving the global array
-        $tmpfile_content = serialize( $this->globals );
-        file_put_contents( $this->tmpfile, $tmpfile_content );
+        $tmpfile_content = serialize($this->globals);
+        file_put_contents($this->tmpfile, $tmpfile_content);
 
     }
 
@@ -180,28 +178,28 @@ require_once 'classes/model/Session.php';
      * @param string $name
      * @return string
      */
-    public function getGlobal ($name)
+    public function getGlobal($name)
     {
         $this->tmpfile = G::sys_get_temp_dir() . PATH_SEP . "pm-rg-{$this->sessionId}";
 
         if ($this->sessionId == NULL) {
-            throw new Exception( 'session id was not set.' );
+            throw new Exception('session id was not set.');
         }
 
         $tmpfile_content = '';
-        if (is_file( $this->tmpfile ) && trim( file_get_contents( $this->tmpfile ) ) != '') {
-            $tmpfile_content = file_get_contents( $this->tmpfile );
+        if (is_file($this->tmpfile) && trim(file_get_contents($this->tmpfile)) != '') {
+            $tmpfile_content = file_get_contents($this->tmpfile);
         }
 
         //getting the global array
         if ($tmpfile_content != '') {
-            $this->globals = unserialize( $tmpfile_content );
+            $this->globals = unserialize($tmpfile_content);
         } else {
-            $this->globals = Array ();
+            $this->globals = Array();
         }
 
         //getting the new global variable
-        if (isset( $this->globals[$name] )) {
+        if (isset($this->globals[$name])) {
             return $this->globals[$name];
         } else {
             return '';
@@ -217,24 +215,24 @@ require_once 'classes/model/Session.php';
      * @param string $name
      * @return array
      */
-    public function getGlobals ()
+    public function getGlobals()
     {
         $this->tmpfile = G::sys_get_temp_dir() . PATH_SEP . "pm-rg-{$this->sessionId}";
 
         if ($this->sessionId == NULL) {
-            throw new Exception( 'session id was not set.' );
+            throw new Exception('session id was not set.');
         }
 
         $tmpfile_content = '';
-        if (is_file( $this->tmpfile ) && trim( file_get_contents( $this->tmpfile ) ) != '') {
-            $tmpfile_content = file_get_contents( $this->tmpfile );
+        if (is_file($this->tmpfile) && trim(file_get_contents($this->tmpfile)) != '') {
+            $tmpfile_content = file_get_contents($this->tmpfile);
         }
 
         //getting the global array
         if ($tmpfile_content != '') {
-            $this->globals = unserialize( $tmpfile_content );
+            $this->globals = unserialize($tmpfile_content);
         } else {
-            $this->globals = Array ();
+            $this->globals = Array();
         }
         return $this->globals;
     }
@@ -248,13 +246,13 @@ require_once 'classes/model/Session.php';
      * param
      * @return void
      */
-    private function deleteTmpfile ()
+    private function deleteTmpfile()
     {
         if ($this->sessionId == NULL) {
-            throw new Exception( 'session id was not set.' );
+            throw new Exception('session id was not set.');
         }
         $this->tmpfile = G::sys_get_temp_dir() . PATH_SEP . "pm-rg-{$this->sessionId}";
-        @unlink( $this->tmpfile );
+        @unlink($this->tmpfile);
     }
 
 }

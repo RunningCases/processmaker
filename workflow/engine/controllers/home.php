@@ -133,7 +133,7 @@ class Home extends Controller
             }
         }
 
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
 
         if ($oServerConf->isRtl( SYS_LANG )) {
             $swRtl = 1;

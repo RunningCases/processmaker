@@ -333,7 +333,7 @@ function resendEmails()
             $dateResend = date("Y-m-d H:i:s", $mktDateSystem - (7 * 24 * 60 * 60));
         }
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
         $oSpool->resendEmails($dateResend, 1);
 
         saveLog("resendEmails", "action", "Resending Emails", "c");

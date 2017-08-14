@@ -181,7 +181,7 @@ class AppNotes extends BaseAppNotes
                 $aUser = $oUser->load( $recipientUid );
 
                 $sTo = ((($aUser['USR_FIRSTNAME'] != '') || ($aUser['USR_LASTNAME'] != '')) ? $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'] . ' ' : '') . '<' . $aUser['USR_EMAIL'] . '>';
-                $oSpool = new spoolRun();
+                $oSpool = new SpoolRun();
 
                 $oSpool->setConfig($aConfiguration);
                 $oSpool->create(

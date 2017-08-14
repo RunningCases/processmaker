@@ -12,18 +12,13 @@
  * only if this copyright statement is not removed
  *--------------------------------------------------*/
 
-/**
- *
- * @package workflow.engine.classes
- */
 
 /**
  * This class is derived of the class archive, is employed to use archives .
  * gzip
- *
  * @package workflow.engine.classes
- *
- */class gzip_file extends TarFile
+ */
+class GzipFile extends TarFile
 {
 
     /**
@@ -32,9 +27,9 @@
      * @param string $name
      * @return void
      */
-    public function gzip_file ($name)
+    public function gzip_file($name)
     {
-        $this->tar_file( $name );
+        $this->tar_file($name);
         $this->options['type'] = "gzip";
     }
 
@@ -44,25 +39,25 @@
      *
      * @return boolean
      */
-    public function create_gzip ()
+    public function create_gzip()
     {
         if ($this->options['inmemory'] == 0) {
             $pwd = getcwd();
-            chdir( $this->options['basedir'] );
-            if ($fp = gzopen( $this->options['name'], "wb{$this->options['level']}" )) {
-                fseek( $this->archive, 0 );
-                while ($temp = fread( $this->archive, 1048576 )) {
-                    gzwrite( $fp, $temp );
+            chdir($this->options['basedir']);
+            if ($fp = gzopen($this->options['name'], "wb{$this->options['level']}")) {
+                fseek($this->archive, 0);
+                while ($temp = fread($this->archive, 1048576)) {
+                    gzwrite($fp, $temp);
                 }
-                gzclose( $fp );
-                chdir( $pwd );
+                gzclose($fp);
+                chdir($pwd);
             } else {
                 $this->error[] = "Could not open {$this->options['name']} for writing.";
-                chdir( $pwd );
+                chdir($pwd);
                 return 0;
             }
         } else {
-            $this->archive = gzencode( $this->archive, $this->options['level'] );
+            $this->archive = gzencode($this->archive, $this->options['level']);
         }
         return 1;
     }
@@ -72,8 +67,8 @@
      *
      * @return void
      */
-    public function open_archive ()
+    public function open_archive()
     {
-        return @gzopen( $this->options['name'], "rb" );
+        return @gzopen($this->options['name'], "rb");
     }
 }

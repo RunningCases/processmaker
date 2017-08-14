@@ -267,7 +267,7 @@ switch ($action) {
     case 'delete':
 
         $rows = G::json_decode( $_REQUEST['rows'] );
-        $rp = new reportTables();
+        $rp = new ReportTables();
         $at = new AdditionalTables();
 
         try {

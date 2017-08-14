@@ -1,40 +1,9 @@
 <?php
 
 /**
- * class.serverConfiguration.php
- *
- * @package workflow.engine.ProcessMaker
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
+ * ServerConfiguration - serverConf
  */
-
-/**
- * ServerConfiguration - serverConf 
-/**
- * ServerConfiguration - serverConf class
- *
- * @author Hugo Loza
- * @copyright 2010 COLOSA
- * @license GNU Affero General Public License
- * @package workflow.engine.ProcessMaker
- */class serverConf
+class ServerConf
 {
 
     private $_aProperties = array();
@@ -80,7 +49,7 @@
     public static function &getSingleton()
     {
         if (self::$instance == null) {
-            self::$instance = new serverConf();
+            self::$instance = new ServerConf();
             if ((file_exists(self::$instance->filePath)) && (filesize(self::$instance->filePath) > 0)) {
                 self::$instance->unSerializeInstance(file_get_contents(self::$instance->filePath));
             }
@@ -108,7 +77,7 @@
     public function unSerializeInstance($serialized)
     {
         if (self::$instance == null) {
-            self::$instance = new serverConf();
+            self::$instance = new ServerConf();
         }
 
         if ($instance = unserialize($serialized)) {
@@ -272,11 +241,10 @@
                                 $wsInfo = $this->aWSinfo[$file];
                             } else {
                                 $wsInfo['num_processes'] = "not gathered yet";
-                                $wsInfo['num_cases'] = "not gathered yet";
-                                ;
+                                $wsInfo['num_cases'] = "not gathered yet";;
                                 $wsInfo['num_users'] = "not gathered yet";
                             }
-                            $wsArray[$file] = array ('WSP_ID' => $file,'WSP_NAME' => $file,'WSP_STATUS' => $statusl,'WSP_PROCESS_COUNT' => $wsInfo['num_processes'],'WSP_CASES_COUNT' => $wsInfo['num_cases'],'WSP_USERS_COUNT' => isset( $wsInfo['num_users'] ) ? $wsInfo['num_users'] : "");
+                            $wsArray[$file] = array('WSP_ID' => $file, 'WSP_NAME' => $file, 'WSP_STATUS' => $statusl, 'WSP_PROCESS_COUNT' => $wsInfo['num_processes'], 'WSP_CASES_COUNT' => $wsInfo['num_cases'], 'WSP_USERS_COUNT' => isset($wsInfo['num_users']) ? $wsInfo['num_users'] : "");
                             if (isset($this->workspaces[$file]['WSP_LOGINS'])) {
                                 $wsArray[$file]['WSP_LOGINS'] = $this->workspaces[$file]['WSP_LOGINS'];
                             }
@@ -318,7 +286,7 @@
 
         $Criteria = new Criteria('workflow');
         $Criteria->add(UsersPeer::USR_STATUS, array('DELETED', 'DISABLED'
-                ), CRITERIA::NOT_IN);
+        ), CRITERIA::NOT_IN);
         $aResult['num_users'] = UsersPeer::doCount($Criteria);
         return $aResult;
     }

@@ -805,7 +805,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             $aSetup['MESS_RAUTH'] = 1;
         }
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
         $oSpool->setConfig(
             array (
                 'MESS_ENGINE' => $aSetup['MESS_ENGINE'],

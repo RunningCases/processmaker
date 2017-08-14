@@ -267,7 +267,7 @@ class pmTablesProxy extends HttpProxyController
                 }
 
                 if ($row->type == 'CLASSIC') {
-                    $rp = new reportTables();
+                    $rp = new ReportTables();
                     $rp->deleteReportTable( $row->id );
                     $count ++;
                 } else {

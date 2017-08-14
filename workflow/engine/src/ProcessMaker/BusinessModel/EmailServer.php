@@ -1,8 +1,9 @@
 <?php
 namespace ProcessMaker\BusinessModel;
-use \G;
-use \Exception;
-use \Bootstrap;
+use G;
+use Exception;
+use Bootstrap;
+use SpoolRun;
 
 class EmailServer
 {
@@ -186,7 +187,7 @@ class EmailServer
             $sBodyPre->assign("msg", $msg);
             $sBody = $sBodyPre->getOutputContent();
 
-            $oSpool = new \spoolRun();
+            $oSpool = new SpoolRun();
 
             $oSpool->setConfig($aConfiguration);
 

@@ -312,7 +312,7 @@ if ($version >= 3) {
 }
 
 //get the serverconf singleton, and check if we can send the heartbeat
-$oServerConf = & serverConf::getSingleton();
+$oServerConf = & ServerConf::getSingleton();
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 if (!$partnerFlag) {
     $sflag = $oServerConf->getHeartbeatProperty('HB_OPTION', 'HEART_BEAT_CONF');

@@ -506,7 +506,7 @@ define( 'SYS_URI', '/sys' . SYS_TEMP . '/' . SYS_LANG . '/' . SYS_SKIN . '/' );
 // defining the serverConf singleton
 if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     //Instance Server Configuration Singleton
-    $oServerConf = & serverConf::getSingleton();
+    $oServerConf = & ServerConf::getSingleton();
 }
 
 
