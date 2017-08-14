@@ -6,6 +6,7 @@ use Archive_Tar;
 use enterprisePlugin;
 use Exception;
 use G;
+use Illuminate\Support\Facades\Cache;
 use InputFilter;
 use Language;
 use PEAR;
@@ -44,6 +45,7 @@ class PluginRegistry
     use PluginStructure;
     use Attributes;
 
+    const NAME_CACHE = SYS_SYS . __CLASS__;
     /**
      * Instance of de object PluginRegistry
      * @var PluginRegistry $instance
@@ -72,7 +74,11 @@ class PluginRegistry
     public static function loadSingleton()
     {
         if (self::$instance === null) {
-            self::$instance = new PluginRegistry();
+            if (is_null($object = Cache::get(self::NAME_CACHE))) {
+                $object = new PluginRegistry();
+                Cache::put(self::NAME_CACHE, $object, config('app.cache_lifetime'));
+            }
+            self::$instance = $object;
         }
         return self::$instance;
     }
@@ -180,6 +186,7 @@ class PluginRegistry
             $fieldPlugin = PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
             PluginsRegistry::update($fieldPlugin);
         }
+        Cache::pull(self::NAME_CACHE);
     }
     /**
      * Get the plugin details, by filename

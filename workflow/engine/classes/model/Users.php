@@ -83,8 +83,11 @@ class Users extends BaseUsers
         try {
             $oRow = UsersPeer::retrieveByPK( $UsrUid );
             if (! is_null( $oRow )) {
+                $this->fromArray(
+                    $oRow->toArray( BasePeer::TYPE_FIELDNAME, true ),
+                    BasePeer::TYPE_FIELDNAME
+                );
                 $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
-                $this->fromArray( $aFields, BasePeer::TYPE_FIELDNAME );
                 $this->setNew( false );
                 return $aFields;
             } else {
@@ -496,10 +499,14 @@ class Users extends BaseUsers
      *
      * @param string $keyType One of the class type constants TYPE_PHPNAME,
      *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+     * @param boolean $original If true return de original verion of fields.
      * @return an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $original = false)
     {
+        if ($original) {
+            return parent::toArray($keyType);
+        }
         $key = UsersPeer::translateFieldName(
             UsersPeer::USR_PASSWORD,
             BasePeer::TYPE_COLNAME,
