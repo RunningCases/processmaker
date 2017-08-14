@@ -5653,8 +5653,8 @@
     <column name="PLUGIN_COMPANY_LOGO" type="VARCHAR" size="100" default=""/>
     <column name="PLUGIN_WORKSPACES" type="VARCHAR" size="100" default=""/>
     <column name="PLUGIN_VERSION" type="VARCHAR" size="50" default=""/>
-    <column name="PLUGIN_ENABLE" type="BOOLEAN" default="0"/>
-    <column name="PLUGIN_PRIVATE" type="BOOLEAN" default="0"/>
+    <column name="PLUGIN_ENABLE" type="TINYINT" default="0"/>
+    <column name="PLUGIN_PRIVATE" type="TINYINT" default="0"/>
     <!--PluginProperties-->
     <column name="PLUGIN_MENUS" type="LONGVARCHAR"/>
     <column name="PLUGIN_FOLDERS" type="LONGVARCHAR"/>
