@@ -2592,7 +2592,7 @@ class Bootstrap
         $hashTypePrevious = $passwordHashConfig['previous'];
         $acceptance = false;
 
-        if ($RBAC->loginWithHash()) {
+        if ($RBAC != null && $RBAC->loginWithHash()) {
             //To enable compatibility with soap login
             if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
                 $acceptance = true;
