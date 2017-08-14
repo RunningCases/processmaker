@@ -22,6 +22,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Core\System;
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
@@ -192,7 +194,7 @@ if ($actionAjax == 'sendMailMessage_JXP') {
         $oCase = new Cases();
         $data = $oCase->getHistoryMessagesTrackerView( $_POST['APP_UID'], $_POST['APP_MSG_UID'] );
 
-        $aSetup = PmSystem::getEmailConfiguration();
+        $aSetup = System::getEmailConfiguration();
 
         $oSpool = new SpoolRun();
 

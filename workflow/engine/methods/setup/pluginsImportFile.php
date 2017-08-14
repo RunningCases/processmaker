@@ -23,6 +23,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 global $RBAC;
@@ -279,8 +281,8 @@ try {
             $oClass->iPMVersion = 0;
         }
         if ($oClass->iPMVersion > 0) {
-            if (PmSystem::getVersion() > 0) {
-                if ($oClass->iPMVersion > PmSystem::getVersion()) {
+            if (System::getVersion() > 0) {
+                if ($oClass->iPMVersion > System::getVersion()) {
                     //throw new Exception('This plugin needs version ' . $oClass->iPMVersion . ' or higher of ProcessMaker');
                 }
             }

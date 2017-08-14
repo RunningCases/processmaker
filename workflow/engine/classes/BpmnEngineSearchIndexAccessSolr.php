@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * Interface to the Solr Search server
  */
@@ -61,7 +63,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handlerTotal, CURLOPT_RETURNTRANSFER, true);
 
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handlerTotal, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -142,7 +144,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
 
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -190,7 +192,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, $solrUpdateDocument->document); // data
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -235,7 +237,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<commit/>"); // data
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -280,7 +282,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<rollback/>"); // data
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -325,7 +327,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<optimize/>"); // data
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -366,7 +368,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
 
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -446,7 +448,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<delete><query>*:*</query></delete>"); // data
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -492,7 +494,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<delete><query>" . $idQuery . "</query></delete>"); // data
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -573,7 +575,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
 
         //Apply proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($handler, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {

@@ -24,6 +24,7 @@
  *
  */
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -865,7 +866,7 @@ class G
         /* Fix to prevent use uxs skin outside siplified interface,
         because that skin is not compatible with others interfaces*/
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = PmSystem::getSystemConfiguration();
+            $config = System::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 
@@ -4649,7 +4650,7 @@ class G
      */
     public function getCheckSum ($files)
     {
-        $key = PmSystem::getVersion();
+        $key = System::getVersion();
 
         if (! is_array( $files )) {
             $tmp = $files;
@@ -5280,7 +5281,7 @@ class G
 
     public static function browserCacheFilesGetUid()
     {
-        $sysConf = PmSystem::getSystemConfiguration(PATH_CONFIG . "env.ini");
+        $sysConf = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
         return (isset($sysConf["browser_cache_files_uid"]))? $sysConf["browser_cache_files_uid"] : null;
     }
@@ -5405,7 +5406,7 @@ class G
      */
     public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
-        $config = PmSystem::getSystemConfiguration();
+        $config = System::getSystemConfiguration();
 
 
         $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);

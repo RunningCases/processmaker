@@ -1,4 +1,6 @@
 <?php
+
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 function runBgProcessmaker($task, $log)
@@ -249,7 +251,7 @@ try {
                 );
 
                 // Proxy settings
-                $sysConf = PmSystem::getSystemConfiguration();
+                $sysConf = System::getSystemConfiguration();
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {
                         $option['http'] = array();

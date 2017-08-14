@@ -1,6 +1,8 @@
 <?php
 global $G_PUBLISH;
 
+use ProcessMaker\Core\System;
+
 try {
     if ($RBAC->singleSignOn) {
         $_SESSION['__USER_LOGGED_SSO__']  = $RBAC->userObj->fields['USR_UID'];
@@ -38,7 +40,7 @@ try {
     }
     /*----------------------------------********---------------------------------*/
 
-    $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
+    $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
 
     //Set User Time Zone
     $user = UsersPeer::retrieveByPK($userUid);

@@ -21,6 +21,8 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 //$oHeadPublisher = & headPublisher::getSingleton();
@@ -29,7 +31,7 @@ $RBAC->requirePermissions( 'PM_FACTORY' );
 
 $conf = new Configurations();
 
-$pmVersion = (preg_match("/^([\d\.]+).*$/", PmSystem::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
+$pmVersion = (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
 
 /*----------------------------------********---------------------------------*/
 if (true) {
@@ -93,7 +95,7 @@ $designer = new Designer();
 $oHeadPublisher->assign('SYS_SYS', SYS_SYS);
 $oHeadPublisher->assign('SYS_LANG', SYS_LANG);
 $oHeadPublisher->assign('SYS_SKIN', SYS_SKIN);
-$oHeadPublisher->assign('HTTP_SERVER_HOSTNAME', PmSystem::getHttpServerHostnameRequestsFrontEnd());
+$oHeadPublisher->assign('HTTP_SERVER_HOSTNAME', System::getHttpServerHostnameRequestsFrontEnd());
 $oHeadPublisher->assign('credentials', base64_encode(G::json_encode($designer->getCredentials())));
 
 $deleteCasesFlag = false;

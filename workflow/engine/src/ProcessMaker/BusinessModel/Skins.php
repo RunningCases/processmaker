@@ -1,7 +1,7 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use PmSystem;
+use ProcessMaker\Core\System;
 use Exception;
 use G;
 
@@ -18,7 +18,7 @@ class Skins
      */
     public function getSkins()
     {
-        $list = PmSystem::getSkingList();
+        $list = System::getSkingList();
         return $list['skins'];
     }
 

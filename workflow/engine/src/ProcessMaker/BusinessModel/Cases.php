@@ -5,6 +5,7 @@ use G;
 use UsersPeer;
 use CasesPeer;
 use AppDelegation;
+use Processmaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use Exception;
 use WsBase;
@@ -184,7 +185,7 @@ class Cases
     {
         try {
             $solrEnabled = false;
-            $solrConf = \PmSystem::solrEnv();
+            $solrConf = System::solrEnv();
 
             if ($solrConf !== false) {
                 $ApplicationSolrIndex = new \AppSolr(
@@ -376,7 +377,7 @@ class Cases
     {
         try {
             $solrEnabled = 0;
-            if (($solrEnv = \PmSystem::solrEnv()) !== false) {
+            if (($solrEnv = System::solrEnv()) !== false) {
                 $appSolr = new \AppSolr(
                     $solrEnv["solr_enabled"],
                     $solrEnv["solr_host"],

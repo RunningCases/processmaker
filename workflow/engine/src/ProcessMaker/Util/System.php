@@ -6,6 +6,7 @@ use Bootstrap;
 use Exception;
 use Maveriks\Util\ClassLoader;
 use PMPlugin;
+use Processmaker\Core\System AS PmSystem;
 use ProcessMaker\Plugins\Interfaces\PluginDetail;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\PmPdo;
@@ -26,7 +27,7 @@ class System
     public static function getTimeZone()
     {
         try {
-            $arraySystemConfiguration = \PmSystem::getSystemConfiguration('', '', SYS_SYS);
+            $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
 
             //Return
             return $arraySystemConfiguration['time_zone'];

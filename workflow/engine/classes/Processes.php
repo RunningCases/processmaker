@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 class Processes
 {
 
@@ -5771,7 +5773,7 @@ class Processes
         $endpoint = PML_WSDL_URL;
         $sessionId = '';
         $proxy = array();
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
             if ($sysConf['proxy_port'] != '') {
@@ -5813,7 +5815,7 @@ class Processes
         ini_set("soap.wsdl_cache_enabled", "0"); // enabling WSDL cache
         try {
             $proxy = array();
-            $sysConf = PmSystem::getSystemConfiguration();
+            $sysConf = System::getSystemConfiguration();
             if ($sysConf['proxy_host'] != '') {
                 $proxy['proxy_host'] = $sysConf['proxy_host'];
                 if ($sysConf['proxy_port'] != '') {
@@ -5845,7 +5847,7 @@ class Processes
 
         $endpoint = PML_WSDL_URL;
         $proxy = array();
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
 
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
@@ -5922,7 +5924,7 @@ class Processes
 
         $endpoint = PML_WSDL_URL;
         $proxy = array();
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
             if ($sysConf['proxy_port'] != '') {

@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 require_once 'classes/model/om/BaseAddonsManager.php';
@@ -157,7 +158,7 @@ class AddonsManager extends BaseAddonsManager
     public function getInstalledVersion()
     {
         if ($this->isCore()) {
-            return (EnterpriseUtils::pmVersion(PmSystem::getVersion()));
+            return (EnterpriseUtils::pmVersion(System::getVersion()));
         } else {
             if ($this->isPlugin()) {
                 if (!$this->isInstalled()) {
@@ -243,7 +244,7 @@ class AddonsManager extends BaseAddonsManager
         );
 
         // Proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             if (!is_array($option['http'])) {
                 $option['http'] = array();

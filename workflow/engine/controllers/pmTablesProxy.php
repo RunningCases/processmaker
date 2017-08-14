@@ -6,6 +6,9 @@
  * @inherits HttpProxyController
  * @access public
  */
+
+use ProcessMaker\Core\System;
+
 header("Content-type: text/html;charset=utf-8");
 require_once 'classes/model/AdditionalTables.php';
 
@@ -920,7 +923,7 @@ class pmTablesProxy extends HttpProxyController
             $result = new stdClass();
             $net = new Net( G::getIpAddress() );
 
-            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . PmSystem::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
+            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
 
             $EXPORT_TRACEBACK = Array ();
             $c = 0;

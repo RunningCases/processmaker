@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 /**
  * class.bootstrap.php
  *
@@ -41,7 +44,7 @@ class Bootstrap
 
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
-        return PmSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+        return System::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
     }
     /**
      * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
@@ -1030,7 +1033,7 @@ class Bootstrap
      */
     public function getCheckSum($files)
     {
-        $key = PmSystem::getVersion();
+        $key = System::getVersion();
 
         if (!is_array($files)) {
             $tmp = $files;
@@ -1923,7 +1926,7 @@ class Bootstrap
         /* Fix to prevent use uxs skin outside siplified interface,
           because that skin is not compatible with others interfaces */
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = PmSystem::getSystemConfiguration();
+            $config = System::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 

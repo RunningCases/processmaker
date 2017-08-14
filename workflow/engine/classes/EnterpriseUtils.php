@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 class EnterpriseUtils
 {
     public static function getInternetConnection()
@@ -39,7 +41,7 @@ class EnterpriseUtils
                 curl_setopt($ch, CURLOPT_VERBOSE, true);
 
                 //Apply proxy settings
-                $sysConf = PmSystem::getSystemConfiguration();
+                $sysConf = System::getSystemConfiguration();
                 if (isset($sysConf['proxy_host'])) {
                     if ($sysConf['proxy_host'] != '') {
                         curl_setopt($ch, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
