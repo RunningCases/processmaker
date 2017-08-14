@@ -1,0 +1,5 @@
+[2017-08-14 19:51:02] production.ERROR: exception 'pakeException' with message 'Task "create-plugin" is not defined.' in /home/ronald/Projets/html/3.2.2/thirdparty/pake/pakeApp.class.php:167
+Stack trace:
+#0 /home/ronald/Projets/html/3.2.2/gulliver/bin/gulliver.php(39): pakeApp->run(NULL, NULL, false)
+#1 /home/ronald/Projets/html/3.2-current/gulliver/bin/gulliver(64): include('/home/ronald/Pr...')
+#2 {main}  

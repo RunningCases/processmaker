@@ -10,17 +10,17 @@ use Propel;
  */
 class Cnn
 {
-    private $DBFile;
-    private $Workspace;
+    private $dbFile;
+    private $workspace;
 
     /**
      * Establishes connection for the workspace
-     * @param string $Workspace Name workspace
+     * @param string $workspace Name workspace
      */
-    public static function connect($Workspace)
+    public static function connect($workspace)
     {
         $cnn = new static();
-        $cnn->Workspace = $Workspace;
+        $cnn->workspace = $workspace;
         Propel::initConfiguration($cnn->buildParams());
     }
 
@@ -42,8 +42,8 @@ class Cnn
      */
     private function readFileDBWorkspace()
     {
-        if (file_exists(PATH_DB . $this->Workspace . PATH_SEP . 'db.php')) {
-            $this->DBFile = file_get_contents(PATH_DB . $this->Workspace . PATH_SEP . 'db.php');
+        if (file_exists(PATH_DB . $this->workspace . PATH_SEP . 'db.php')) {
+            $this->dbFile = file_get_contents(PATH_DB . $this->workspace . PATH_SEP . 'db.php');
             return true;
         }
         return false;
@@ -58,7 +58,7 @@ class Cnn
         $phpCode = preg_replace(
             '/define\s*\(\s*[\x22\x27](.*)[\x22\x27]\s*,\s*(\x22.*\x22|\x27.*\x27)\s*\)\s*;/i',
             '$$1 = $2;',
-            $this->DBFile
+            $this->dbFile
         );
         $phpCode = str_replace(['<?php', '<?', '?>'], '', $phpCode);
 
@@ -102,21 +102,21 @@ class Cnn
 
     /**
      * Builds the DSN string to be used by PROPEL
-     * @param string $Adapter
-     * @param string $Host
-     * @param string $Name
-     * @param string $User
-     * @param string $Pass
+     * @param string $adapter
+     * @param string $host
+     * @param string $name
+     * @param string $user
+     * @param string $pass
      * @return string
      */
-    private function buildDsnString($Adapter, $Host, $Name, $User, $Pass)
+    private function buildDsnString($adapter, $host, $name, $user, $pass)
     {
-        $Dsn = $Adapter . "://" . $User . ":" . $Pass . "@" . $Host . "/" . $Name;
-        switch ($Adapter) {
+        $dns = $adapter . "://" . $user . ":" . $pass . "@" . $host . "/" . $name;
+        switch ($adapter) {
             case 'mysql':
-                $Dsn .= '?encoding=utf8';
+                $dns .= '?encoding=utf8';
                 break;
         }
-        return $Dsn;
+        return $dns;
     }
 }
