@@ -1,6 +1,6 @@
 <?php
 
-class ToolBar extends form
+class ToolBar extends Form
 {
     public $type = 'toolbar';
     public $align = 'left';

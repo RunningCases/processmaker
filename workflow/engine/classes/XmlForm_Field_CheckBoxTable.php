@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Class XmlForm_Field_CheckBoxTable
+ * Class XmlFormFieldCheckBoxTable
  *
  */
-class XmlForm_Field_CheckBoxTable extends XmlForm_Field_Checkbox
+class XmlFormFieldCheckBoxTable extends XmlFormFieldCheckbox
 {
 
     /**

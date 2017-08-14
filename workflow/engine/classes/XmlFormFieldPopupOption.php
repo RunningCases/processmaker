@@ -1,11 +1,11 @@
 <?php
 
 /**
- * XmlForm_Field_popupOption - XmlForm_Field_popupOption class
+ * XmlFormFieldpopupOption - XmlFormFieldPopupOption class
  *
  * @package workflow.engine.ProcessMaker
  */
-class XmlForm_Field_PopupOption extends XmlForm_Field
+class XmlFormFieldPopupOption extends XmlFormField
 {
     public $launch = '';
 

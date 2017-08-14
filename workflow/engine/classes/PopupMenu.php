@@ -8,7 +8,7 @@
  * @package workflow.engine.ProcessMaker
  * @copyright COLOSA
  */
-class PopupMenu extends form
+class PopupMenu extends Form
 {
     var $type = 'PopupMenu';
     var $theme = 'processmaker';
@@ -37,7 +37,7 @@ class PopupMenu extends form
                     $label = str_replace( "\n", ' ', $label );
                     $pmXmlNode = new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $tableId . '.showHideField("' . $f . '")'
                     ) );
-                    $this->fields[$f] = new XmlForm_Field_PopupOption( $pmXmlNode );
+                    $this->fields[$f] = new XmlFormFieldPopupOption( $pmXmlNode );
                     $this->values[$f] = '';
             }
         }
