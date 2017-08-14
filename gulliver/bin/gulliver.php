@@ -1,6 +1,12 @@
 <?php
+use Illuminate\Foundation\Console\Kernel;
 
-require_once(__DIR__ . '/../../bootstrap/autoload.php');
+// Because laravel has a __ helper function, it's important we include the class.g file to ensure our __ is used.
+require_once __DIR__ . '/../../bootstrap/autoload.php';
+require_once __DIR__ . '/../../bootstrap/app.php';
+$app->make(Kernel::class)->bootstrap();
+
+error_reporting(error_reporting() & ~E_DEPRECATED & ~E_STRICT);
 
 if (!PATH_THIRDPARTY) {
     die("You must launch gulliver command line with the gulliver script\n");
