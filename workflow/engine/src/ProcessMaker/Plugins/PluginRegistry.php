@@ -124,15 +124,15 @@ class PluginRegistry
 
     /**
      * Unregister the plugin in the class
-     * @param string $Namespace Name Plugin
+     * @param string $namespace Name Plugin
      * @return PluginDetail
      */
-    public function unregisterPlugin($Namespace)
+    public function unregisterPlugin($namespace)
     {
         $detail = null;
-        if (isset($this->_aPluginDetails[$Namespace])) {
-            $detail = $this->_aPluginDetails[$Namespace];
-            unset($this->_aPluginDetails[$Namespace]);
+        if (isset($this->_aPluginDetails[$namespace])) {
+            $detail = $this->_aPluginDetails[$namespace];
+            unset($this->_aPluginDetails[$namespace]);
         }
         return $detail;
     }
@@ -1378,15 +1378,15 @@ class PluginRegistry
 
     /**
      * Update the plugin attributes in all workspaces
-     * @param string $Workspace Name workspace
-     * @param string $Namespace Name of Plugin
+     * @param string $workspace Name workspace
+     * @param string $namespace Name of Plugin
      * @throws Exception
      */
-    public function updatePluginAttributesInAllWorkspaces($Workspace, $Namespace)
+    public function updatePluginAttributesInAllWorkspaces($workspace, $namespace)
     {
         try {
             //Set variables
-            $pluginFileName = $Namespace . ".php";
+            $pluginFileName = $namespace . ".php";
 
             //Verify data
             if (!file_exists(PATH_PLUGINS . $pluginFileName)) {
@@ -1395,15 +1395,15 @@ class PluginRegistry
 
             //remove old data plugin
             $pmPluginRegistry = PluginRegistry::loadSingleton();
-            $pluginDetails = $pmPluginRegistry->unregisterPlugin($Namespace);
+            $pluginDetails = $pmPluginRegistry->unregisterPlugin($namespace);
 
             //Load plugin attributes
             require_once(PATH_PLUGINS . $pluginFileName);
 
-            if (is_array($pluginDetails->getWorkspaces()) && !in_array($Workspace, $pluginDetails->getWorkspaces())) {
-                $pmPluginRegistry->disablePlugin($Namespace);
+            if (is_array($pluginDetails->getWorkspaces()) && !in_array($workspace, $pluginDetails->getWorkspaces())) {
+                $pmPluginRegistry->disablePlugin($namespace);
             }
-            $pmPluginRegistry->savePlugin($Namespace);
+            $pmPluginRegistry->savePlugin($namespace);
         } catch (Exception $e) {
             throw $e;
         }
