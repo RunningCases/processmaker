@@ -293,7 +293,7 @@ try {
     unset($_SESSION['FAILED_LOGINS']);
 
     // increment logins in heartbeat
-    $oServerConf =& serverConf::getSingleton();
+    $oServerConf =& ServerConf::getSingleton();
     $oServerConf->sucessfulLogin();
 
     // Assign the uid of user to userloggedobj

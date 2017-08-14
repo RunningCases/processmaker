@@ -76,7 +76,7 @@ class XmlForm_Field_WYSIWYG_EDITOR extends XmlForm_Field
     {
         $editorDefinition  = 'tinyMCE.baseURL = "/js/tinymce/jscripts/tiny_mce"; ';
         $editorDefinition .= 'var domainURL   = "/sys'.SYS_SYS.'/'.SYS_LANG.'/'.SYS_SKIN.'/"';
-        $serverConf =& serverConf::getSingleton();
+        $serverConf =& ServerConf::getSingleton();
 
         switch ($this->editorType){
             case 'EMAIL_TEMPLATE':

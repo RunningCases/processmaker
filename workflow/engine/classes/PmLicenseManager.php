@@ -18,7 +18,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 
     public function __construct($flagActivatePlugins = true)
     {
-        $oServerConf = &serverConf::getSingleton();
+        $oServerConf = &ServerConf::getSingleton();
         $oServerConf->setProperty('LOGIN_NO_WS', true);
 
         //to do: this files probably needs to be in core, since they are GPL2
@@ -380,7 +380,7 @@ use ProcessMaker\Plugins\PluginRegistry;
             return false;
         } else {
 
-            $oServerConf = & serverConf::getSingleton ();
+            $oServerConf = & ServerConf::getSingleton ();
             $oServerConf->setProperty ( 'ACTIVE_LICENSE',array(SYS_SYS => $path));
             $this->saveDataLicense( $results, $path, $redirect );
             if ($redirect) {

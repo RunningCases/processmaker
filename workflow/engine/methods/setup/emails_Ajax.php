@@ -256,7 +256,7 @@ function sendTestMail ()
   <a href='http://www.processmaker.com' style='color:#c40000;'>www.processmaker.com</a><br /></td>
   </tr></tbody></table>";
 
-    $oSpool = new spoolRun();
+    $oSpool = new SpoolRun();
 
     $passwd = $_POST['MESS_PASSWORD'];
     $passwdDec = G::decrypt( $passwd, 'EMAILENCRYPT' );

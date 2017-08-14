@@ -619,7 +619,7 @@ class adminProxy extends HttpProxyController
         $sBodyPre->assign('msg', $msg);
         $sBody = $sBodyPre->getOutputContent();
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
 
         $oSpool->setConfig($aConfiguration);
 
@@ -1384,7 +1384,7 @@ class adminProxy extends HttpProxyController
         require_once (PATH_CONTROLLERS . "installer.php");
         $params = array ();
 
-        $oServerConf = &serverConf::getSingleton();
+        $oServerConf = &ServerConf::getSingleton();
         $pluginRegistry = PluginRegistry::loadSingleton();
         $licenseManager = &PmLicenseManager::getSingleton();
 

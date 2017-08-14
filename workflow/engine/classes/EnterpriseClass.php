@@ -99,7 +99,7 @@ class EnterpriseClass extends PMPlugin
 
     public function enterpriseLimitCreateUser()
     {
-        $oServerConf = &serverConf::getSingleton();
+        $oServerConf = &ServerConf::getSingleton();
         $infoLicense =$oServerConf->getProperty('LICENSE_INFO');
         if (isset($infoLicense[SYS_SYS]['LIMIT_USERS'])) {
             $criteria = new Criteria('workflow');

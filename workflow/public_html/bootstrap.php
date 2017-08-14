@@ -247,7 +247,7 @@ use ProcessMaker\Plugins\PluginRegistry;
   // defining the serverConf singleton
   if (defined('PATH_DATA') && file_exists(PATH_DATA)) {
     //Instance Server Configuration Singleton
-    $oServerConf =& serverConf::getSingleton();
+    $oServerConf =& ServerConf::getSingleton();
   }
 
   // Call Gulliver Classes

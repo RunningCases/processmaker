@@ -4,7 +4,7 @@ global $G_TMP_MENU;
 switch ($_GET['action']) {
     case 'saveOption':
         try {
-            $oServerConf = & serverConf::getSingleton();
+            $oServerConf = & ServerConf::getSingleton();
             $response = new $oServerConf;
             $conf = new Configurations();
             /*you can use SYS_TEMP or SYS_SYS ON AUDIT_LOG_CONF to save for each workspace*/

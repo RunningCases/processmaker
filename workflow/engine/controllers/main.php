@@ -199,7 +199,7 @@ class Main extends Controller
 
         if (($nextBeatDate = $this->memcache->get( 'nextBeatDate' )) === false) {
             //get the serverconf singleton, and check if we can send the heartbeat
-            $oServerConf = & serverConf::getSingleton();
+            $oServerConf = & ServerConf::getSingleton();
             $sflag = $oServerConf->getHeartbeatProperty( 'HB_OPTION', 'HEART_BEAT_CONF' );
             $sflag = (trim( $sflag ) != '') ? $sflag : '1';
             //get date of next beat
@@ -305,7 +305,7 @@ class Main extends Controller
         $aField['LOGIN_VERIFY_MSG'] = G::loadTranslation( 'LOGIN_VERIFY_MSG' );
 
         //Get Server Configuration
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
 
         $availableLangArray = $this->getLanguagesList();
 
@@ -515,7 +515,7 @@ class Main extends Controller
 
     private function getWorkspacesAvailable ()
     {
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
         $dir = PATH_DB;
         $filesArray = array ();
         if (file_exists( $dir )) {

@@ -33,7 +33,7 @@
         $this->context = \Bootstrap::getDefaultContextLog();
         $this->dataSources = array("database", "dataVariable");
         $this->pathRTLCss = '/lib/pmdynaform/build/css/PMDynaform-rtl.css';
-        $this->serverConf = &serverConf::getSingleton();
+        $this->serverConf = &ServerConf::getSingleton();
         $this->isRTL = ($this->serverConf->isRtl(SYS_LANG)) ? 'true' : 'false';
         $this->fields = $fields;
         $this->propertiesToExclude = array('dataVariable');

@@ -229,7 +229,7 @@ class SkinEngine
   private function _extjs()
   {
 
-    $oServerConf    =& serverConf::getSingleton();
+    $oServerConf    =& ServerConf::getSingleton();
     $oHeadPublisher =& headPublisher::getSingleton();
 
     if( $oHeadPublisher->extJsInit === true){
@@ -303,7 +303,7 @@ class SkinEngine
         }
     }
 
-    $serverConf = &serverConf::getSingleton();
+    $serverConf = &ServerConf::getSingleton();
 
     if ($serverConf->isRtl(SYS_LANG)) {
         $dirBody = "dir=\"RTL\"";
@@ -551,7 +551,7 @@ class SkinEngine
   private function _mvc()
   {
 
-    $oServerConf =& serverConf::getSingleton();
+    $oServerConf =& ServerConf::getSingleton();
     $oHeadPublisher =& headPublisher::getSingleton();
 
     $smarty = new Smarty();
@@ -644,7 +644,7 @@ class SkinEngine
 
     //To setup en extJS Theme for this Skin
 
-    $oServerConf =& serverConf::getSingleton();
+    $oServerConf =& ServerConf::getSingleton();
     $extSkin = $oServerConf->getProperty("extSkin");
 
     if(!$extSkin) {

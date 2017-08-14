@@ -3588,7 +3588,7 @@ class WorkspaceTools
         $conf = new Configurations();
         if (!$conf->exists('AUDIT_LOG', 'log')) {
             CLI::logging("> Updating Auditlog Config \n");
-            $oServerConf = &serverConf::getSingleton();
+            $oServerConf = &ServerConf::getSingleton();
             $sAudit = $oServerConf->getAuditLogProperty('AL_OPTION', $workspace);
             $conf->aConfig = ($sAudit == 1) ? 'true' : 'false';
             $conf->saveConfig('AUDIT_LOG', 'log');

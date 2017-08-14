@@ -891,7 +891,7 @@ class WsBase
                $msgError = "The default configuration wasn't defined";
             }
 
-            $oSpool = new spoolRun();
+            $oSpool = new SpoolRun();
 
             $oSpool->setConfig($aSetup);
 

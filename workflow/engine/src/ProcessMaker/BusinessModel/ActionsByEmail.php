@@ -4,6 +4,7 @@ namespace ProcessMaker\BusinessModel;
 
 use ProcessMaker\Plugins\PluginRegistry;
 use PmDynaform;
+use SpoolRun;
 
 /**
  * Description of ActionsByEmailService
@@ -409,7 +410,7 @@ class ActionsByEmail
                 }
                 $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \PmSystem::getEmailConfiguration();
 
-                $spool = new \spoolRun();
+                $spool = new SpoolRun();
                 $spool->setConfig($aSetup);
 
                 $spool->create(array(

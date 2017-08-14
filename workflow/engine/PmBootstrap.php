@@ -97,7 +97,7 @@ class PmBootstrap extends Bootstrap
         $this->autoloader->registerClass('Xml_Node', PATH_GULLIVER . 'class.xmlDocument');
         $this->autoloader->registerClass('Xml_document', PATH_GULLIVER . 'class.xmlDocument');
         $this->autoloader->registerClass('XmlForm_Field_*', PATH_GULLIVER . 'class.xmlform');
-        $this->autoloader->registerClass('serverConf', PATH_CORE . 'classes/class.serverConfiguration');
+        $this->autoloader->registerClass('ServerConf', PATH_CORE . 'classes/class.serverConfiguration');
     }
 
     /**

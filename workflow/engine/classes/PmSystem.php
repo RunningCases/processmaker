@@ -292,7 +292,7 @@ class PmSystem
      */
     public function getUpgradedFilesList ()
     {
-        $this->sFilesList = new gzip_file( $this->sFilename );
+        $this->sFilesList = new GzipFile( $this->sFilename );
         $this->sFilesList->set_options( array ('basedir' => dirname( $this->sFilename ),'overwrite' => 1
         ) );
         $this->sFilesList->extract_files();

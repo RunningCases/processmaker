@@ -5503,7 +5503,7 @@ class Cases
             }
 
             if ($sTo != null) {
-                $oSpool = new spoolRun();
+                $oSpool = new SpoolRun();
 
                 $oSpool->setConfig($dataLastEmail['configuration']);
                 $oSpool->create(array(

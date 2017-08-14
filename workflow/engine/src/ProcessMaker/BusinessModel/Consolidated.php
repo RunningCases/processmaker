@@ -9,11 +9,8 @@ use ResultSet;
 use CaseConsolidatedCorePeer;
 use ContentPeer;
 use PmDynaform;
+use ReportTables;
 
-/**
- * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
- * @copyright Colosa - Bolivia
- */
 class Consolidated
 {
     /**
@@ -362,7 +359,7 @@ class Consolidated
             $filter = new \InputFilter();
 
             if ($sort != "") {
-                $reportTable = new \ReportTables();
+                $reportTable = new ReportTables();
                 $arrayReportTableVar = $reportTable->getTableVars($tableUid);
                 $tableName = $filter->validateInput($tableName);
                 $sort = $filter->validateInput($sort);
