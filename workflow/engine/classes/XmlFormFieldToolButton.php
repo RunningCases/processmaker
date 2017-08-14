@@ -1,40 +1,13 @@
 <?php
 
 /**
- * class.toolBar.php
+ * ToolBar - ToolBar
+ * XmlFormFieldToolButton - XmlFormFieldToolButton class
  *
  * @package workflow.engine.ProcessMaker
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
  */
-
-/**
- * ToolBar - ToolBar 
-/**
- * XmlForm_Field_toolButton - XmlForm_Field_toolButton class
- *
- * @package workflow.engine.ProcessMaker
- */class XmlForm_Field_toolButton extends XmlForm_Field
+class XmlFormFieldToolButton extends XmlForm_Field
 {
-
     public $file = '';
     public $fileAlt = '';
     public $url = '';
@@ -95,8 +68,6 @@
                 break;
             case 'html':
                 $html = '<div ' . ' onmouseover=\'backImage(this,"url(' . htmlentities($urlAlt, ENT_QUOTES, 'utf-8') . ') no-repeat")\' onmouseout=\'backImage(this,"")\'  style="width:25px;height:25px;margin-bottom:3px">' . $this->label . '</div>';
-
-                //$html=$this->label;
                 break;
             case 'image/text':
                 $html = '<img src="' . htmlentities($url, ENT_QUOTES, 'utf-8') . '"' . (($this->style) ? ' style="' . $this->style . '"' : '') . '/><br/>' . $this->htmlentities($this->label, ENT_QUOTES, 'utf-8');
@@ -107,7 +78,6 @@
             case 'dropdown':
                 $html = '';
                 if (isset($this->owner->values['PRO_UID'])) {
-
                     $criteria = ProcessMap::getDynaformsCriteria($this->owner->values['PRO_UID']);
                     $dataset = DynaformPeer::doSelectRS($criteria);
                     if ($dataset->getRecordCount() > 0) {

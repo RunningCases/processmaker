@@ -1,16 +1,17 @@
 <?php
-/*--------------------------------------------------
+
+/* --------------------------------------------------
  * TAR/GZIP/BZIP2/ZIP ARCHIVE CLASSES 2.1
  * By Devin Doucette
  * Copyright (c) 2005 Devin Doucette
  * Email: darksnoopy@shaw.ca
- *--------------------------------------------------
+ * --------------------------------------------------
  * Email bugs/suggestions to darksnoopy@shaw.ca
- *--------------------------------------------------
+ * --------------------------------------------------
  * This script has been created and released under
  * the GNU GPL and is free to use and redistribute
  * only if this copyright statement is not removed
- *--------------------------------------------------*/
+ * -------------------------------------------------- */
 
 /**
  * This class is derived from the class archive, is imployed to use files .
@@ -18,10 +19,9 @@
  *
  * @package workflow.engine.classes
  */
-class zip_file extends Archive
+class ZipFile extends Archive
 {
-
-    public function zip_file($name)
+    public function ZipFile($name)
     {
         $this->archive($name);
         $this->options['type'] = "zip";
