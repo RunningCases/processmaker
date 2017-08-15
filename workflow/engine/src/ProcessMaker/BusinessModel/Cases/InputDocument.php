@@ -701,7 +701,7 @@ class InputDocument
                 throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
             }
 
-            $ws = new \wsBase();
+            $ws = new \WsBase();
             $ws->removeDocument($inputDocumentUid);
         } catch (\Exception $e) {
             throw $e;

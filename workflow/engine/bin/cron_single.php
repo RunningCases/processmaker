@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../../bootstrap/autoload.php');
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 register_shutdown_function(
@@ -68,7 +69,7 @@ try {
 
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
 
-    $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspace);
+    $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace);
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;
@@ -333,7 +334,7 @@ function resendEmails()
             $dateResend = date("Y-m-d H:i:s", $mktDateSystem - (7 * 24 * 60 * 60));
         }
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
         $oSpool->resendEmails($dateResend, 1);
 
         saveLog("resendEmails", "action", "Resending Emails", "c");
@@ -980,7 +981,7 @@ function synchronizeGmailLabels()
         }
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            $pmGoogle = new PMGoogleApi();
+            $pmGoogle = new PmGoogleApi();
             if ($pmGoogle->getServiceGmailStatus()) {
                 setExecutionMessage("Synchronize labels in Gmail");
                 $labGmail = new labelsGmail();

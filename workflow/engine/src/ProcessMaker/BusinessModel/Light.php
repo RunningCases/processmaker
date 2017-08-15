@@ -7,7 +7,9 @@ use Criteria;
 use UsersPeer;
 use AppDelegationPeer;
 use AppDelayPeer;
+use ProcessMaker\Core\System;
 use ProcessMaker\Util\DateTime;
+use PmLicenseManager;
 
 class Light
 {
@@ -524,7 +526,7 @@ class Light
                 $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
             }
 
-            $ws = new \wsBase();
+            $ws = new \WsBase();
             $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks);
             $array = json_decode(json_encode($fields), true);
             $array['message'] = trim(strip_tags($array['message']));
@@ -779,7 +781,7 @@ class Light
 
         /*----------------------------------********---------------------------------*/
 
-        $licenseManager =& \pmLicenseManager::getSingleton();
+        $licenseManager =& PmLicenseManager::getSingleton();
         if (in_array(md5($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
             $G_PUBLISH = new \Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
@@ -1259,7 +1261,7 @@ class Light
         $offset = timezone_offset_get( new \DateTimeZone( $tz ), new \DateTime() );
         $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
         $response['multiTimeZone'] = $multiTimeZone;
-        $fields = \PmSystem::getSysInfo();
+        $fields = System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
 
         $buildType = 'Community';

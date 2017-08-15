@@ -1,9 +1,6 @@
 <?php
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
-require_once PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP . 'AddonsManagerPeer.php';
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 function runBgProcessmaker($task, $log)
@@ -56,12 +53,12 @@ try {
                     $dir = PATH_DATA_SITE;
                     G::uploadFile($aInfoLoadFile["tmp_name"], $dir, $aInfoLoadFile["name"]);
                     //reading the file that was uploaded
-                    $oPmLicenseManager = &pmLicenseManager::getSingleton();
+                    $oPmLicenseManager = &PmLicenseManager::getSingleton();
                     $response = $oPmLicenseManager->installLicense($dir . $aInfoLoadFile["name"]);
 
                     ///////
                     //This command also find the following file "AddonsStore.php"
-                    $licenseManager = &pmLicenseManager::getSingleton();
+                    $licenseManager = &PmLicenseManager::getSingleton();
 
                     preg_match("/^license_(.*).dat$/", $licenseManager->file, $matches);
                     $realId = urlencode($matches[1]);
@@ -215,7 +212,7 @@ try {
                 }
 
                 ///////
-                $licenseManager = &pmLicenseManager::getSingleton();
+                $licenseManager = &PmLicenseManager::getSingleton();
                 $server = $licenseManager->server;
                 $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
                 $url = "http://$server/sys".$workspace."/en/green/services/rest";
@@ -254,7 +251,7 @@ try {
                 );
 
                 // Proxy settings
-                $sysConf = PmSystem::getSystemConfiguration();
+                $sysConf = System::getSystemConfiguration();
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {
                         $option['http'] = array();

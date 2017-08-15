@@ -2,7 +2,10 @@
 
 namespace ProcessMaker\BusinessModel;
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
+use PmDynaform;
+use SpoolRun;
 
 /**
  * Description of ActionsByEmailService
@@ -406,9 +409,9 @@ class ActionsByEmail
                     $arrayConfigAux = $row;
                     $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
                 }
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \PmSystem::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
 
-                $spool = new \spoolRun();
+                $spool = new SpoolRun();
                 $spool->setConfig($aSetup);
 
                 $spool->create(array(
@@ -579,7 +582,7 @@ class ActionsByEmail
         $configuration = $resultD->getRow();
 
         $field = new \stdClass();
-        $obj = new \pmDynaform($configuration);
+        $obj = new PmDynaform($configuration);
 
         if ($dataRes['ABE_RES_DATA'] !== '') {
             $value       = unserialize($dataRes['ABE_RES_DATA']);
@@ -670,7 +673,7 @@ class ActionsByEmail
                         //SSO
                         if (\PMLicensedFeatures::getSingleton()->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
 
-                            $sso = new \pmSsoClass();
+                            $sso = new \PmSsoClass();
 
                             if ($sso->ssocVerifyUser()) {
                                 global $RBAC;

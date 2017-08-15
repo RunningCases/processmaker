@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 require_once(__DIR__ . '/../../../bootstrap/autoload.php');
 try {
     //Set variables
@@ -77,7 +80,7 @@ try {
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
     //Load classes
 
-    $arraySystemConfiguration = PmSystem::getSystemConfiguration();
+    $arraySystemConfiguration = System::getSystemConfiguration();
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;

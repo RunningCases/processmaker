@@ -20,7 +20,7 @@ function cliListIds($command, $args)
             $workspace->dbInfo['DB_USER'],
             $workspace->dbInfo['DB_PASS']
         );
-        foreach (workspaceTools::$populateIdsQueries as $query) {
+        foreach (WorkspaceTools::$populateIdsQueries as $query) {
             echo ".";
             $dbh->query($query);
         }

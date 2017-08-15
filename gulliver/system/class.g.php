@@ -24,6 +24,7 @@
  *
  */
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -865,7 +866,7 @@ class G
         /* Fix to prevent use uxs skin outside siplified interface,
         because that skin is not compatible with others interfaces*/
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = PmSystem::getSystemConfiguration();
+            $config = System::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 
@@ -1011,7 +1012,7 @@ class G
 
             if (((in_array($browserName, $enabledBrowsers)) || (in_array('ALL', $enabledBrowsers)))&&(!(in_array($browserName, $disabledBrowsers)))) {
                 if ($cssFileInfo['__ATTRIBUTES__']['file'] == 'rtl.css') {
-                    $oServerConf =& serverConf::getSingleton();
+                    $oServerConf =& ServerConf::getSingleton();
                     if (!(defined('SYS_LANG'))) {
                         if (isset($_SERVER['HTTP_REFERER'])) {
                             $syss = explode('://', $_SERVER['HTTP_REFERER']);
@@ -4649,7 +4650,7 @@ class G
      */
     public function getCheckSum ($files)
     {
-        $key = PmSystem::getVersion();
+        $key = System::getVersion();
 
         if (! is_array( $files )) {
             $tmp = $files;
@@ -5280,7 +5281,7 @@ class G
 
     public static function browserCacheFilesGetUid()
     {
-        $sysConf = PmSystem::getSystemConfiguration(PATH_CONFIG . "env.ini");
+        $sysConf = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
         return (isset($sysConf["browser_cache_files_uid"]))? $sysConf["browser_cache_files_uid"] : null;
     }
@@ -5405,7 +5406,7 @@ class G
      */
     public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
-        $config = PmSystem::getSystemConfiguration();
+        $config = System::getSystemConfiguration();
 
 
         $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);
@@ -5823,6 +5824,19 @@ class G
             $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = true;
         }
     }
+
+    /**
+     * Define the Processmaker constants.
+     *
+     */
+    public static function defineConstants()
+    {
+        //Moved from Enterprise class.
+        if (file_exists(PATH_METHODS . "login/version-pmos.php")) {
+            include (PATH_METHODS . "login/version-pmos.php");
+        }
+        //Removed default version from code.
+    }
 }
 
 /**
@@ -5912,9 +5926,4 @@ function eprintln ($s = "", $c = null)
         }
         print "$s\n";
     }
-}
-
-function __ ($msgID, $lang = SYS_LANG, $data = null)
-{
-    return G::LoadTranslation( $msgID, $lang, $data );
 }

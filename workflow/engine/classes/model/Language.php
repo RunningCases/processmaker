@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 class Language extends BaseLanguage
 {
     private static $arrayRecord = array();
@@ -355,7 +358,7 @@ class Language extends BaseLanguage
         $sLanguage = $langRecord['LAN_NAME'];
 
         //setting headers
-        $poFile->addHeader( 'Project-Id-Version', 'ProcessMaker ' . PmSystem::getVersion() );
+        $poFile->addHeader( 'Project-Id-Version', 'ProcessMaker ' . System::getVersion() );
         $poFile->addHeader( 'POT-Creation-Date', '' );
         $poFile->addHeader( 'PO-Revision-Date', date( 'Y-m-d H:i:s' ) );
         $poFile->addHeader( 'Last-Translator', '' );

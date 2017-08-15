@@ -10,7 +10,7 @@ $wsdl = PATH_METHODS . "services" . PATH_SEP . "pmos2.wsdl";
 
 function login ($params)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->login( $params->userid, $params->password );
 
     return array ('status_code' => $res->status_code,'message' => $res->message,'version' => WEB_SERVICE_VERSION,'timestamp' => $res->timestamp
@@ -30,7 +30,7 @@ function ProcessList ($params)
     }
 
     if (ifPermission( $params->sessionId, 'PM_CASES' ) != 0) {
-        $ws = new wsBase();
+        $ws = new WsBase();
         $res = $ws->processList();
 
         return array ("processes" => $res
@@ -54,14 +54,14 @@ function ProcessList ($params)
         $session = $oSessions->getSessionUser( $params->sessionId );
         $userId = $session['USR_UID'];
 
-        $ws = new wsBase();
+        $ws = new WsBase();
         $res = $ws->processListVerified( $userId );
 
         return array ("processes" => $res
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->processList();
 
     return array ("processes" => $res
@@ -88,7 +88,7 @@ function RoleList ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->roleList();
 
     return array ("roles" => $res
@@ -115,7 +115,7 @@ function GroupList ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->groupList();
 
     return array ("groups" => $res
@@ -142,7 +142,7 @@ function DepartmentList ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->departmentList();
 
     return array ("departments" => $res
@@ -179,7 +179,7 @@ function CaseList ($params)
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->caseList( $userId );
 
     return array ("cases" => $res
@@ -211,7 +211,7 @@ function UnassignedCaseList ($params)
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->unassignedCaseList( $userId );
 
     return array ("cases" => $res
@@ -238,7 +238,7 @@ function UserList ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->userList();
 
     return array ("users" => $res
@@ -267,7 +267,7 @@ function triggerList ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->triggerList();
 
     return array ("triggers" => $res
@@ -312,7 +312,7 @@ function outputDocumentList ($params)
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->outputDocumentList( $params->caseId, $userId );
 
     return array ("documents" => $res
@@ -357,7 +357,7 @@ function inputDocumentList ($params)
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->inputDocumentList( $params->caseId, $userId );
 
     return array ("documents" => $res
@@ -386,7 +386,7 @@ function inputDocumentProcessList ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->inputDocumentProcessList( $params->processId );
 
     return array ("documents" => $res
@@ -407,7 +407,7 @@ function removeDocument ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->removeDocument( $params->appDocUid );
 
     return $res;
@@ -427,7 +427,7 @@ function SendMessage ($params)
         return $result->getPayloadArray();
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->sendMessage( $params->caseId, $params->from, $params->to, $params->cc, $params->bcc, $params->subject, $params->template );
 
     return $res->getPayloadArray();
@@ -447,7 +447,7 @@ function getCaseInfo ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->getCaseInfo( $params->caseId, $params->delIndex );
 
     return $res;
@@ -467,7 +467,7 @@ function SendVariables ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $variables = $params->variables;
     $Fields = array ();
 
@@ -506,7 +506,7 @@ function GetVariables ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     $res = $ws->getVariables( $params->caseId, $params->variables );
 
@@ -528,7 +528,7 @@ function GetVariablesNames ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     $res = $ws->getVariablesNames( $params->caseId );
 
@@ -556,7 +556,7 @@ function DerivateCase ($params)
     $oStd->stored_system_variables = true;
     $oStd->wsSessionId = $params->sessionId;
 
-    $ws = new wsBase( $oStd );
+    $ws = new WsBase( $oStd );
     $res = $ws->derivateCase($user["USR_UID"], $params->caseId, $params->delIndex, true);
 
     return $res;
@@ -584,7 +584,7 @@ function RouteCase ($params)
     $oStd->stored_system_variables = true;
     $oStd->wsSessionId = $params->sessionId;
 
-    $ws = new wsBase( $oStd );
+    $ws = new WsBase( $oStd );
     $res = $ws->derivateCase($user["USR_UID"], $params->caseId, $params->delIndex, true);
 
     return $res;
@@ -608,7 +608,7 @@ function executeTrigger ($params)
     $oSession = new Sessions();
     $user = $oSession->getSessionUser( $params->sessionId );
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $delIndex = (isset( $params->delIndex )) ? $params->delIndex : 1;
     $res = $ws->executeTrigger( $user['USR_UID'], $params->caseId, $params->triggerIndex, $delIndex );
 
@@ -649,7 +649,7 @@ function NewCaseImpersonate ($params)
     $params->variables = $field;
 
     ///////
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->newCaseImpersonate($params->processId, $params->userId, $params->variables, $params->taskId);
 
     return $res;
@@ -712,7 +712,7 @@ function NewCase($params)
 
     $params->variables = $field;
 
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     $res = $ws->newCase($params->processId, $userId, $params->taskId, $params->variables, (isset($params->executeTriggers)) ? (int) ($params->executeTriggers) : 0);
 
@@ -743,7 +743,7 @@ function AssignUserToGroup ($params)
         return new wsResponse( 3, 'User not registered in the system' );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->assignUserToGroup( $params->userId, $params->groupId );
 
     return $res->getPayloadArray();
@@ -770,7 +770,7 @@ function AssignUserToDepartment ($params)
         return new wsResponse( 3, G::LoadTranslation('ID_USER_NOT_REGISTERED_SYSTEM') );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->AssignUserToDepartment( $params->userId, $params->departmentId, $params->manager );
 
     return $res->getPayloadArray();
@@ -790,7 +790,7 @@ function CreateUser ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     try {
         $res = $ws->createUser( $params->userId, $params->firstname, $params->lastname, $params->email, $params->role, $params->password, ((isset( $params->dueDate )) ? $params->dueDate : null), ((isset( $params->status )) ? $params->status : null) );
@@ -815,7 +815,7 @@ function updateUser ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     $result = $ws->updateUser( $params->userUid, $params->userName, ((isset( $params->firstName )) ? $params->firstName : null), ((isset( $params->lastName )) ? $params->lastName : null), ((isset( $params->email )) ? $params->email : null), ((isset( $params->dueDate )) ? $params->dueDate : null), ((isset( $params->status )) ? $params->status : null), ((isset( $params->role )) ? $params->role : null), ((isset( $params->password )) ? $params->password : null) );
 
@@ -836,7 +836,7 @@ function informationUser($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->informationUser($params->userUid);
 
     return $result;
@@ -847,18 +847,18 @@ function CreateGroup ($params)
     $vsResult = isValidSession( $params->sessionId );
 
     if ($vsResult->status_code !== 0) {
-        $result = new wsCreateGroupResponse( $vsResult->status_code, $vsResult->message, '' );
+        $result = new WsCreateGroupResponse( $vsResult->status_code, $vsResult->message, '' );
 
         return $result;
     }
 
     if (ifPermission( $params->sessionId, 'PM_USERS' ) == 0) {
-        $result = new wsCreateGroupResponse( 2, G::LoadTranslation('ID_NOT_PRIVILEGES'), '' );
+        $result = new WsCreateGroupResponse( 2, G::LoadTranslation('ID_NOT_PRIVILEGES'), '' );
 
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->createGroup( $params->name );
 
     return $res;
@@ -878,7 +878,7 @@ function CreateDepartment ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->CreateDepartment( $params->name, $params->parentUID );
 
     return $res;
@@ -904,7 +904,7 @@ function TaskList ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
@@ -934,7 +934,7 @@ function TaskCase ($params)
         );
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->taskCase( $params->caseId );
 
     return array ("taskCases" => $res
@@ -948,7 +948,7 @@ function ReassignCase ($params)
         return $vsResult;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->reassignCase( $params->sessionId, $params->caseId, $params->delIndex, $params->userIdSource, $params->userIdTarget );
 
     return $res;
@@ -962,7 +962,7 @@ function systemInformation ($params)
         return $vsResult;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->systemInformation();
 
     return $res;
@@ -976,7 +976,7 @@ function getCaseNotes ($params)
         return $vsResult;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->getCaseNotes( $params->applicationID, $params->userUid );
 
     return $res;
@@ -1008,7 +1008,7 @@ function removeUserFromGroup ($params)
         return $vsResult;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->removeUserFromGroup( $params->userId, $params->groupId );
 
     return $res;
@@ -1052,7 +1052,7 @@ function deleteCase ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->deleteCase( $params->caseUid );
 
     return $result;
@@ -1072,7 +1072,7 @@ function cancelCase ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->cancelCase( $params->caseUid, $params->delIndex, $params->userUid );
 
     return $result;
@@ -1092,7 +1092,7 @@ function pauseCase ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     $result = $ws->pauseCase( $params->caseUid, $params->delIndex, $params->userUid, ((isset( $params->unpauseDate )) ? $params->unpauseDate : null) );
 
@@ -1113,7 +1113,7 @@ function unpauseCase ($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->unpauseCase( $params->caseUid, $params->delIndex, $params->userUid );
 
     return $result;
@@ -1133,7 +1133,7 @@ function addCaseNote($params)
         return $result;
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->addCaseNote(
         $params->caseUid,
         $params->processUid,
@@ -1162,7 +1162,7 @@ function claimCase($params)
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser($params->sessionId);
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $res = $ws->claimCase($session['USR_UID'], $params->guid, $params->delIndex);
 
     return $res;

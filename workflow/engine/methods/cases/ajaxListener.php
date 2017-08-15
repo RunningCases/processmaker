@@ -978,7 +978,7 @@ class Ajax
         $FieldsPmDynaform = $Fields;
         $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
         $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
-        $a = new pmDynaform($FieldsPmDynaform);
+        $a = new PmDynaform($FieldsPmDynaform);
         if ($a->isResponsive()) {
             $a->printView();
         } else {

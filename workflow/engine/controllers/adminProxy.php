@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -41,7 +42,7 @@ class adminProxy extends HttpProxyController
         $updateRedirector = false;
         $restart = false;
         self::validateDataSystemConf($httpData, $envFile);
-        $sysConf = PmSystem::getSystemConfiguration($envFile);
+        $sysConf = System::getSystemConfiguration($envFile);
         $updatedConf = array();
 
         if ($sysConf['default_lang'] != $httpData->default_lang) {
@@ -99,7 +100,7 @@ class adminProxy extends HttpProxyController
                 }
             }
 
-            PmSystem::updateIndexFile(array(
+            System::updateIndexFile(array(
               'lang' => $sysConf['default_lang'],
               'skin' => $sysConf['default_skin']
             ));
@@ -433,7 +434,7 @@ class adminProxy extends HttpProxyController
         $Mailto = $_POST['eMailto'];
         $SMTPSecure  = $_POST['UseSecureCon'];
 
-        $Server = new NET($server);
+        $Server = new Net($server);
         $smtp = new SMTP;
 
         $timeout = 10;
@@ -614,12 +615,12 @@ class adminProxy extends HttpProxyController
         $sBodyPre->prepare();
         $sBodyPre->assign('server', $_SERVER['SERVER_NAME']);
         $sBodyPre->assign('date', date('H:i:s'));
-        $sBodyPre->assign('ver', PmSystem::getVersion());
+        $sBodyPre->assign('ver', System::getVersion());
         $sBodyPre->assign('engine', $engine);
         $sBodyPre->assign('msg', $msg);
         $sBody = $sBodyPre->getOutputContent();
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
 
         $oSpool->setConfig($aConfiguration);
 
@@ -790,7 +791,7 @@ class adminProxy extends HttpProxyController
     {
         $uplogo       = PATH_TPL . 'setup' . PATH_SEP . 'uplogo.html';
         $width        = "100%";
-        $upload       = new replacementLogo();
+        $upload       = new ReplacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
         $check        = '';
@@ -1093,7 +1094,7 @@ class adminProxy extends HttpProxyController
      */
     public function getNameCurrentLogo()
     {
-        $upload       = new replacementLogo();
+        $upload       = new ReplacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
         return $sPhotoSelect;
@@ -1384,9 +1385,9 @@ class adminProxy extends HttpProxyController
         require_once (PATH_CONTROLLERS . "installer.php");
         $params = array ();
 
-        $oServerConf = &serverConf::getSingleton();
+        $oServerConf = &ServerConf::getSingleton();
         $pluginRegistry = PluginRegistry::loadSingleton();
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
 
         //License Information:
         $activeLicense = $licenseManager->getActiveLicense();
@@ -1418,7 +1419,7 @@ class adminProxy extends HttpProxyController
         $params['lt'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
 
         //ProcessMaker Version
-        $params['v'] = PmSystem::getVersion();
+        $params['v'] = System::getVersion();
         if (file_exists(PATH_DATA. 'log/upgrades.log')) {
             $params['pmu'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
         } else {
@@ -1508,7 +1509,7 @@ class adminProxy extends HttpProxyController
 
         //Country/city (Timezone)
         $params['t'] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
-        $params['w'] = count(PmSystem::listWorkspaces());
+        $params['w'] = count(System::listWorkspaces());
 
         $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . SYS_SYS . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));

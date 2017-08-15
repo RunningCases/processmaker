@@ -1,8 +1,10 @@
 <?php
 namespace ProcessMaker\BusinessModel;
-use \G;
-use \Exception;
-use \Bootstrap;
+use G;
+use Exception;
+use Bootstrap;
+use SpoolRun;
+use ProcessMaker\Core\System;
 
 class EmailServer
 {
@@ -181,12 +183,12 @@ class EmailServer
             $sBodyPre->prepare();
             $sBodyPre->assign("server", $_SERVER["SERVER_NAME"]);
             $sBodyPre->assign("date", date("H:i:s"));
-            $sBodyPre->assign("ver", \PmSystem::getVersion());
+            $sBodyPre->assign("ver", System::getVersion());
             $sBodyPre->assign("engine", $engine);
             $sBodyPre->assign("msg", $msg);
             $sBody = $sBodyPre->getOutputContent();
 
-            $oSpool = new \spoolRun();
+            $oSpool = new SpoolRun();
 
             $oSpool->setConfig($aConfiguration);
 
@@ -316,7 +318,7 @@ class EmailServer
             $mailTo = $arrayData["MAIL_TO"];
             $smtpSecure = $arrayData["SMTPSECURE"];
 
-            $serverNet = new \NET($server);
+            $serverNet = new \Net($server);
             $smtp = new \SMTP();
 
             $timeout = 10;

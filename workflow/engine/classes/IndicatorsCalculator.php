@@ -651,7 +651,7 @@ class IndicatorsCalculator
 
 	private function pdoConnection() {
 	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
-		$workSpace = new workspaceTools($currentWS);
+		$workSpace = new WorkspaceTools($currentWS);
   	        $arrayHost = explode(':', $workSpace->dbHost);
 		$host = "host=".$arrayHost[0];
 		$port = count($arrayHost) > 1 ? ";port=".$arrayHost[1] : "";

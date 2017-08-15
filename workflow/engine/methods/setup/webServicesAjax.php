@@ -21,6 +21,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Core\System;
+
 ini_set( "soap.wsdl_cache_enabled", "0" ); // enabling WSDL cache
 
 $filter = new InputFilter();
@@ -149,7 +152,7 @@ try {
 
         //Apply proxy settings
         $proxy = array ();
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
             if ($sysConf['proxy_port'] != '') {

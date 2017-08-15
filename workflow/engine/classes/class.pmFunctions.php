@@ -28,6 +28,7 @@
 //
 // License: LGPL, see LICENSE
 ////////////////////////////////////////////////////
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\ElementTranslation;
 
@@ -242,7 +243,7 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
     $aContext = \Bootstrap::getDefaultContextLog();
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
-    $blackList = PmSystem::getQueryBlackList();
+    $blackList = System::getQueryBlackList();
     $aListQueries = explode('|', $blackList['queries']);
     $aListAllTables = explode(
         '|',
@@ -903,7 +904,7 @@ function WSProcessList ()
 //private function to get current email configuration
 function getEmailConfiguration ()
 {
-    return PmSystem::getEmailConfiguration();
+    return System::getEmailConfiguration();
 }
 
 /**
@@ -960,7 +961,7 @@ function PMFSendMessage(
         }
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->sendMessage(
         $caseId,
         $sFrom,
@@ -1558,7 +1559,7 @@ function WSAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMa
  */
 function PMFTaskCase ($caseId) //its test was successfull
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->taskCase( $caseId );
     $rows = Array ();
     $i = 1;
@@ -1586,7 +1587,7 @@ function PMFTaskCase ($caseId) //its test was successfull
  */
 function PMFTaskList ($userId) //its test was successfull
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->taskList( $userId );
     $rows = Array ();
     $i = 1;
@@ -1613,7 +1614,7 @@ function PMFTaskList ($userId) //its test was successfull
  */
 function PMFUserList () //its test was successfull
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->userList();
     $rows = Array ();
     $i = 1;
@@ -1920,7 +1921,7 @@ function PMFGenerateOutputDocument ($outputID, $sApplication = null, $index = nu
  */
 function PMFGroupList ($regex = null, $start = null, $limit = null) //its test was successfull
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->groupList($regex, $start, $limit);
     $rows = array();
     if ($result) {
@@ -1944,7 +1945,7 @@ function PMFGroupList ($regex = null, $start = null, $limit = null) //its test w
  */
 function PMFRoleList () //its test was successfull
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->roleList();
     $rows = Array ();
     $i = 1;
@@ -1972,7 +1973,7 @@ function PMFRoleList () //its test was successfull
  */
 function PMFCaseList ($userId) //its test was successfull
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->caseList( $userId );
     $rows = Array ();
     $i = 1;
@@ -1999,7 +2000,7 @@ function PMFCaseList ($userId) //its test was successfull
  */
 function PMFProcessList () //its test was successfull
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->processList();
     $rows = Array ();
     $i = 1;
@@ -2028,7 +2029,7 @@ function PMFProcessList () //its test was successfull
  */
 function PMFSendVariables ($caseId, $variables)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     $result = $ws->sendVariables( $caseId, $variables );
     if ($result->status_code == 0) {
@@ -2071,7 +2072,7 @@ function PMFDerivateCase ($caseId, $delIndex, $bExecuteTriggersBeforeAssignment 
         $sUserLogged = $_SESSION['USER_LOGGED'];
     }
 
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->derivateCase( $sUserLogged, $caseId, $delIndex, $bExecuteTriggersBeforeAssignment );
     if (is_array($result)) {
         $result = (object)$result;
@@ -2103,7 +2104,7 @@ function PMFDerivateCase ($caseId, $delIndex, $bExecuteTriggersBeforeAssignment 
  */
 function PMFNewCaseImpersonate ($processId, $userId, $variables, $taskId = '')
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->newCaseImpersonate( $processId, $userId, $variables, $taskId);
 
     if ($result->status_code == 0) {
@@ -2133,7 +2134,7 @@ function PMFNewCaseImpersonate ($processId, $userId, $variables, $taskId = '')
  */
 function PMFNewCase ($processId, $userId, $taskId, $variables, $status = null)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
 
     $result = $ws->newCase($processId, $userId, $taskId, $variables, 0, $status);
 
@@ -2163,7 +2164,7 @@ function PMFNewCase ($processId, $userId, $taskId, $variables, $status = null)
  */
 function PMFAssignUserToGroup ($userId, $groupId)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->assignUserToGroup( $userId, $groupId );
 
     if ($result->status_code == 0) {
@@ -2196,7 +2197,7 @@ function PMFAssignUserToGroup ($userId, $groupId)
  */
 function PMFCreateUser ($userId, $password, $firstname, $lastname, $email, $role, $dueDate = null, $status = null)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->createUser( $userId, $firstname, $lastname, $email, $role, $password, $dueDate, $status );
 
     //When the user is created the $result parameter is an array, in other case is a object exception
@@ -2235,7 +2236,7 @@ function PMFCreateUser ($userId, $password, $firstname, $lastname, $email, $role
  */
 function PMFUpdateUser ($userUid, $userName, $firstName = null, $lastName = null, $email = null, $dueDate = null, $status = null, $role = null, $password = null)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->updateUser( $userUid, $userName, $firstName, $lastName, $email, $dueDate, $status, $role, $password );
 
     if ($result->status_code == 0) {
@@ -2261,7 +2262,7 @@ function PMFUpdateUser ($userUid, $userName, $firstName = null, $lastName = null
  */
 function PMFInformationUser($userUid)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->informationUser($userUid);
 
     $info = array();
@@ -2387,7 +2388,7 @@ function PMFgetLabelOption ($PROCESS, $DYNAFORM_UID, $FIELD_NAME, $FIELD_SELECTE
 {
     $data = array();
     $data["CURRENT_DYNAFORM"] = $DYNAFORM_UID;
-    $dynaform = new pmDynaform($data);
+    $dynaform = new PmDynaform($data);
     if ($dynaform->isResponsive()) {
         $json = $dynaform->searchFieldByName($DYNAFORM_UID, $FIELD_NAME);
         $options = $json->options + $json->optionsSql;
@@ -2735,7 +2736,7 @@ function PMFGetCaseNotes ($applicationID, $type = 'array', $userUid = '')
  */
 function PMFDeleteCase ($caseUid)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->deleteCase( $caseUid );
 
     if ($result->status_code == 0) {
@@ -2763,7 +2764,7 @@ function PMFDeleteCase ($caseUid)
  */
 function PMFCancelCase ($caseUid, $delIndex, $userUid)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->cancelCase( $caseUid, $delIndex, $userUid );
 
     if ($result->status_code == 0) {
@@ -2773,7 +2774,7 @@ function PMFCancelCase ($caseUid, $delIndex, $userUid)
                     G::header('Location: ../cases/casesListExtJsRedirector');
                     die();
                 } else {
-                    die(__('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFCancelCase', G::LoadTranslation('ID_CANCELLED'))));
+                    die(G::LoadTranslation('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFCancelCase', G::LoadTranslation('ID_CANCELLED'))));
                 }
             }
         }
@@ -2802,7 +2803,7 @@ function PMFCancelCase ($caseUid, $delIndex, $userUid)
  */
 function PMFPauseCase ($caseUid, $delIndex, $userUid, $unpauseDate = null)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->pauseCase($caseUid, $delIndex, $userUid, $unpauseDate);
 
     if ($result->status_code == 0) {
@@ -2812,7 +2813,7 @@ function PMFPauseCase ($caseUid, $delIndex, $userUid, $unpauseDate = null)
                     G::header('Location: ../cases/casesListExtJsRedirector');
                     die();
                 } else {
-                    die(__('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFPauseCase', G::LoadTranslation('ID_PAUSED'))));
+                    die(G::LoadTranslation('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFPauseCase', G::LoadTranslation('ID_PAUSED'))));
                 }
             }
         }
@@ -2840,7 +2841,7 @@ function PMFPauseCase ($caseUid, $delIndex, $userUid, $unpauseDate = null)
  */
 function PMFUnpauseCase ($caseUid, $delIndex, $userUid)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->unpauseCase( $caseUid, $delIndex, $userUid );
 
     if ($result->status_code == 0) {
@@ -2871,7 +2872,7 @@ function PMFUnpauseCase ($caseUid, $delIndex, $userUid)
  */
 function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail = 1)
 {
-    $ws = new wsBase();
+    $ws = new WsBase();
     $result = $ws->addCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail);
 
     if ($result->status_code == 0) {
@@ -2970,7 +2971,7 @@ function PMFSaveCurrentData ()
     $response = 0;
 
     if (isset($_SESSION['APPLICATION']) && isset($oPMScript->aFields)) {
-        $ws = new wsBase();
+        $ws = new WsBase();
         $result = $ws->sendVariables($_SESSION['APPLICATION'], $oPMScript->aFields);
         $response = $result->status_code == 0 ? 1 : 0;
     }
@@ -3127,7 +3128,7 @@ function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
     }
     $data["CURRENT_DYNAFORM"] = $dynUid;
 
-    $dynaform = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($data));
+    $dynaform = new PmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($data));
     $dynaform->onPropertyRead = function(&$json, $key, $value) {
         if (isset($json->data) && !isset($json->value)) {
             $json->value = $json->data->value;

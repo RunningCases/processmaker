@@ -23,6 +23,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 global $RBAC;
@@ -105,12 +107,12 @@ try {
 
             require_once ('classes/model/AddonsStore.php');
             AddonsStore::checkLicenseStore();
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             AddonsStore::updateAll(false);
 
             $message = G::loadTranslation( 'ID_ENTERPRISE_INSTALLED') . ' ' . G::loadTranslation( 'ID_LOG_AGAIN');
             G::SendMessageText($message, "INFO");
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             die('<script type="text/javascript">parent.parent.location = "../login/login";</script>');
         }
     }
@@ -179,12 +181,12 @@ try {
 
             require_once ('classes/model/AddonsStore.php');
             AddonsStore::checkLicenseStore();
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             AddonsStore::updateAll(false);
 
             $message = G::loadTranslation( 'ID_ENTERPRISE_INSTALLED') . ' ' . G::loadTranslation( 'ID_LOG_AGAIN');
             G::SendMessageText($message, "INFO");
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             die('<script type="text/javascript">parent.parent.location = "../login/login";</script>');
         }
     }
@@ -279,8 +281,8 @@ try {
             $oClass->iPMVersion = 0;
         }
         if ($oClass->iPMVersion > 0) {
-            if (PmSystem::getVersion() > 0) {
-                if ($oClass->iPMVersion > PmSystem::getVersion()) {
+            if (System::getVersion() > 0) {
+                if ($oClass->iPMVersion > System::getVersion()) {
                     //throw new Exception('This plugin needs version ' . $oClass->iPMVersion . ' or higher of ProcessMaker');
                 }
             }

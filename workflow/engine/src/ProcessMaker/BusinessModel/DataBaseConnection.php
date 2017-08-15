@@ -271,7 +271,7 @@ class DataBaseConnection
         $flagTns = ($dataCon["DBS_TYPE"] == "oracle" && $dataCon["DBS_CONNECTION_TYPE"] == "TNS")? 1 : 0;
 
         if ($flagTns == 0) {
-            $Server = new \NET($dataCon['DBS_SERVER']);
+            $Server = new \Net($dataCon['DBS_SERVER']);
 
             // STEP 1 : Resolving Host Name
             $respTest['0'] = array();
@@ -356,7 +356,7 @@ class DataBaseConnection
                 }
             }
         } else {
-            $net = new \NET();
+            $net = new \Net();
 
             //STEP 0: Trying to open database type TNS
             $respTest["0"] = array();

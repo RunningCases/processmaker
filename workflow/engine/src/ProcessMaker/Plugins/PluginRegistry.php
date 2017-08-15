@@ -11,7 +11,7 @@ use InputFilter;
 use Language;
 use PEAR;
 use PluginsRegistry;
-use PmSystem;
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
 use ProcessMaker\Plugins\Interfaces\CaseSchedulerPlugin;
 use ProcessMaker\Plugins\Interfaces\CronFile;
@@ -34,7 +34,6 @@ use ProcessMaker\Plugins\Traits\Attributes;
 use ProcessMaker\Plugins\Traits\PluginStructure;
 use Publisher;
 use stdClass;
-use System;
 
 /**
  * Class PluginRegistry
@@ -450,7 +449,7 @@ class PluginRegistry
      */
     public function uninstallPluginWorkspaces($arrayPlugin)
     {
-        $workspace = PmSystem::listWorkspaces();
+        $workspace = System::listWorkspaces();
 
         foreach ($workspace as $indexWS => $ws) {
             $pluginRegistry = PluginRegistry::loadSingleton();

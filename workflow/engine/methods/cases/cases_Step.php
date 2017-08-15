@@ -341,7 +341,7 @@ try {
             $FieldsPmDynaform["STEP_MODE"] = $oStep->getStepMode();
             $FieldsPmDynaform["PRO_SHOW_MESSAGE"] = $noShowTitle;
             $FieldsPmDynaform["TRIGGER_DEBUG"] = $_SESSION['TRIGGER_DEBUG']['ISSET'];
-            $a = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
+            $a = new PmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
             if ($a->isResponsive()) {
                 $a->printEdit();
             } else {

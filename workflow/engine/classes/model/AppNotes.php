@@ -1,6 +1,7 @@
 <?php
 
 //require_once 'classes/model/om/BaseAppNotes.php';
+use ProcessMaker\Core\System;
 
 /**
  * Skeleton subclass for representing a row from the 'APP_NOTES' table.
@@ -148,7 +149,7 @@ class AppNotes extends BaseAppNotes
     {
         try {
 
-            $aConfiguration = PmSystem::getEmailConfiguration();
+            $aConfiguration = System::getEmailConfiguration();
 
             $msgError = "";
             if (! isset( $aConfiguration['MESS_ENABLED'] ) || $aConfiguration['MESS_ENABLED'] != '1') {
@@ -181,7 +182,7 @@ class AppNotes extends BaseAppNotes
                 $aUser = $oUser->load( $recipientUid );
 
                 $sTo = ((($aUser['USR_FIRSTNAME'] != '') || ($aUser['USR_LASTNAME'] != '')) ? $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'] . ' ' : '') . '<' . $aUser['USR_EMAIL'] . '>';
-                $oSpool = new spoolRun();
+                $oSpool = new SpoolRun();
 
                 $oSpool->setConfig($aConfiguration);
                 $oSpool->create(

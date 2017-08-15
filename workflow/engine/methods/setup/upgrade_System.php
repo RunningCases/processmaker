@@ -22,6 +22,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Core\System;
+
 /**
  * New System Upgrade controller
  *
@@ -49,7 +51,7 @@ $G_ID_MENU_SELECTED = 'SETUP';
 $G_ID_SUB_MENU_SELECTED = 'UPGRADE';
 
 require_once "classes/class.system.php";
-$oSystem = new PmSystem();
+$oSystem = new System();
 
 try {
     if (! $oSystem->verifyFileForUpgrade()) {

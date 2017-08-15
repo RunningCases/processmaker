@@ -10,7 +10,7 @@ class pmGmail extends Controller
 {
     public function saveConfigPmGmail($httpData)
     {
-        $pmGoogle = new PMGoogleApi();
+        $pmGoogle = new PmGoogleApi();
         $result = new StdClass();
         $result->success = true;
 
@@ -62,7 +62,7 @@ class pmGmail extends Controller
                 $this->setJSVar('__PMGMAIL_ERROR__', $_SESSION['__PMGMAIL_ERROR__']);
                 unset($_SESSION['__PMGMAIL_ERROR__']);
             }
-            $pmGoogle = new PMGoogleApi();
+            $pmGoogle = new PmGoogleApi();
             $accountEmail = $pmGoogle->getServiceAccountEmail();
             $googleCertificate = $pmGoogle->getServiceAccountCertificate();
             $statusGmail = $pmGoogle->getServiceGmailStatus();
@@ -98,7 +98,7 @@ class pmGmail extends Controller
      */
     public function testConfigPmGmail($httpData)
     {
-        $pmGoogle = new PMGoogleApi();
+        $pmGoogle = new PmGoogleApi();
 
         $result = new stdClass();
 

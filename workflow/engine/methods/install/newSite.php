@@ -1,12 +1,15 @@
 <?php
 
+use ProcessMaker\Core\Installer;
+
 global $RBAC;
+
 $RBAC->allows(basename(__FILE__), basename(__FILE__));
 
 if (isset( $_POST['form']['NW_TITLE'] )) {
     $action = (isset( $_POST['form']['ACTION'] )) ? trim( $_POST['form']['ACTION'] ) : 'test';
     $name = trim( $_POST['form']['NW_TITLE'] );
-    $inst = new PmInstaller();
+    $inst = new Installer();
 
     $isset = $inst->isset_site( $name );
 

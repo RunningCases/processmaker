@@ -1,9 +1,9 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 require_once 'classes/model/om/BaseAddonsManager.php';
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
 
 
 if (!defined("BUFSIZE")) {
@@ -158,7 +158,7 @@ class AddonsManager extends BaseAddonsManager
     public function getInstalledVersion()
     {
         if ($this->isCore()) {
-            return (EnterpriseUtils::pmVersion(PmSystem::getVersion()));
+            return (EnterpriseUtils::pmVersion(System::getVersion()));
         } else {
             if ($this->isPlugin()) {
                 if (!$this->isInstalled()) {
@@ -199,8 +199,6 @@ class AddonsManager extends BaseAddonsManager
      */
     public function download()
     {
-        require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-
         $this->setState("download");
 
         ///////
@@ -225,7 +223,7 @@ class AddonsManager extends BaseAddonsManager
         }
 
         ///////
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
         $activeLicense = $licenseManager->getActiveLicense();
 
         $data = $data . "Content-Disposition: form-data; name=\"licenseFile\"; filename=\"" . $licenseManager->file . "\"\n";
@@ -246,7 +244,7 @@ class AddonsManager extends BaseAddonsManager
         );
 
         // Proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             if (!is_array($option['http'])) {
                 $option['http'] = array();
@@ -388,7 +386,6 @@ class AddonsManager extends BaseAddonsManager
             $this->setState();
         } else {
             if ($this->getAddonType() == "core") {
-                require_once PATH_CORE . 'classes' . PATH_SEP . 'class.Upgrade.php';
                 $upgrade = new Upgrade($this);
 
                 $upgrade->install();

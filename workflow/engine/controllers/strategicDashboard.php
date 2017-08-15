@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * StrategicDashboard controller
  * @inherits Controller
@@ -31,7 +33,7 @@ class StrategicDashboard extends Controller
         $user = new Users();
         $user = $user->load($RBAC->aUserInfo['USER_INFO']['USR_UID']);
         $this->usrUnitCost = $this->currencySymbolToShow($user);
-        $this->urlProxy = PmSystem::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/';
+        $this->urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/';
         //change
         $clientId = 'x-pm-local-client';
         $client = $this->getClientCredentials($clientId);
