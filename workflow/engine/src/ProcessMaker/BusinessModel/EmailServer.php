@@ -44,20 +44,29 @@ class EmailServer
             foreach ($this->arrayFieldDefinition as $key => $value) {
                 $this->arrayFieldNameForException[$value["fieldNameAux"]] = $key;
             }
-
-            //Define the variables for the logging
-            global $RBAC;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Get the default information from the context.
+     * 
+     * @global type $RBAC
+     * @return void
+     */
+    public function getDefaultContextLog()
+    {
+        //Define the variables for the logging
+        global $RBAC;
+        if ($RBAC !== null) {
             $currentUser = $RBAC->aUserInfo['USER_INFO'];
             $info = array(
                 'ip' => G::getIpAddress(),
-                'workspace' => (defined("SYS_SYS"))? SYS_SYS : "Workspace undefined",
+                'workspace' => (defined("SYS_SYS")) ? SYS_SYS : "Workspace undefined",
                 'usrUid' => $currentUser['USR_UID']
             );
             $this->setContextLog($info);
-
-
-        } catch (Exception $e) {
-            throw $e;
         }
     }
 
@@ -818,6 +827,7 @@ class EmailServer
                     }
 
                     //Logging the create action
+                    $this->getDefaultContextLog();
                     $info = array(
                         'action' => 'Create email server',
                         'messUid'=> $emailServerUid,
@@ -988,6 +998,7 @@ class EmailServer
                     }
 
                     //Logging the update action
+                    $this->getDefaultContextLog();
                     $info = array(
                         'action' => 'Update email server',
                         'messUid' => $emailServerUid,
@@ -1049,6 +1060,7 @@ class EmailServer
             \EmailServerPeer::doDelete($criteria);
 
             //Logging the delete action
+            $this->getDefaultContextLog();
             $info = array(
                 'action' => 'Delete email server',
                 'messUid' => $emailServerUid
