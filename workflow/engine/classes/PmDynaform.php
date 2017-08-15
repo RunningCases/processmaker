@@ -6,7 +6,8 @@ use ProcessMaker\Core\System;
  * Implementing pmDynaform library in the running case.
  *
  * @package engine.classes
- */class PmDynaform
+ */
+class PmDynaform
 {
 
     public static $instance = null;
