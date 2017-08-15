@@ -26,6 +26,7 @@
 
 use ProcessMaker\Plugins\PluginRegistry;
 
+G::LoadAllModelClasses();
 G::LoadAllPluginModelClasses();
 $id = get_ajax_value('ptID');
 $ntable = unserialize(base64_decode($_SESSION['pagedTable[' . $id . ']']));
