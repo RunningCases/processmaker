@@ -5409,7 +5409,7 @@ class XmlForm
         'suggest'           => XmlFormFieldSuggest::class,
         'text'              => XmlFormFieldText::class,
         'textarea'          => XmlFormFieldTextarea::class,
-        'textareapm'        => XmlFormFieldTextareaPM::class,
+        'textareapm'        => XmlFormFieldTextareaPm::class,
         'textpm'            => XmlFormFieldTextPm::class,
         'title'             => XmlFormFieldTitle::class,
         'toolbar'           => XmlFormFieldToolBar::class,
