@@ -5410,7 +5410,7 @@ class XmlForm
         'text'              => XmlFormFieldText::class,
         'textarea'          => XmlFormFieldTextarea::class,
         'textareapm'        => XmlFormFieldTextareaPM::class,
-        'textpm'            => XmlFormFieldTextPM::class,
+        'textpm'            => XmlFormFieldTextPm::class,
         'title'             => XmlFormFieldTitle::class,
         'toolbar'           => XmlFormFieldToolBar::class,
         'toolbutton'        => XmlFormFieldToolButton::class,
