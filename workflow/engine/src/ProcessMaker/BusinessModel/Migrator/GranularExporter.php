@@ -2,7 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 use ProcessMaker\Project;
 use ProcessMaker\Util\Common;
 

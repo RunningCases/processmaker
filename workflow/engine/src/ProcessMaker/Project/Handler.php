@@ -1,7 +1,7 @@
 <?php
 namespace ProcessMaker\Project;
 
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 use ProcessMaker\Util\Logger;
 
 /**

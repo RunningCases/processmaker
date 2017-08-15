@@ -63,9 +63,7 @@ class PluginsRegistryMapBuilder
         $tMap = $this->dbMap->addTable('PLUGINS_REGISTRY');
         $tMap->setPhpName('PluginsRegistry');
 
-        $tMap->setUseIdGenerator(true);
-
-        $tMap->addColumn('ID', 'Id', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->setUseIdGenerator(false);
 
         $tMap->addPrimaryKey('PR_UID', 'PrUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
@@ -89,9 +87,9 @@ class PluginsRegistryMapBuilder
 
         $tMap->addColumn('PLUGIN_VERSION', 'PluginVersion', 'string', CreoleTypes::VARCHAR, false, 50);
 
-        $tMap->addColumn('PLUGIN_ENABLE', 'PluginEnable', 'boolean', CreoleTypes::BOOLEAN, false, null);
+        $tMap->addColumn('PLUGIN_ENABLE', 'PluginEnable', 'int', CreoleTypes::TINYINT, false, null);
 
-        $tMap->addColumn('PLUGIN_PRIVATE', 'PluginPrivate', 'boolean', CreoleTypes::BOOLEAN, false, null);
+        $tMap->addColumn('PLUGIN_PRIVATE', 'PluginPrivate', 'int', CreoleTypes::TINYINT, false, null);
 
         $tMap->addColumn('PLUGIN_MENUS', 'PluginMenus', 'string', CreoleTypes::LONGVARCHAR, false, null);
 

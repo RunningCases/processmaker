@@ -28,12 +28,6 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     protected static $peer;
 
     /**
-     * The value for the id field.
-     * @var        int
-     */
-    protected $id;
-
-    /**
      * The value for the pr_uid field.
      * @var        string
      */
@@ -101,15 +95,15 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
 
     /**
      * The value for the plugin_enable field.
-     * @var        boolean
+     * @var        int
      */
-    protected $plugin_enable = false;
+    protected $plugin_enable = 0;
 
     /**
      * The value for the plugin_private field.
-     * @var        boolean
+     * @var        int
      */
-    protected $plugin_private = false;
+    protected $plugin_private = 0;
 
     /**
      * The value for the plugin_menus field.
@@ -184,17 +178,6 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInValidation = false;
-
-    /**
-     * Get the [id] column value.
-     * 
-     * @return     int
-     */
-    public function getId()
-    {
-
-        return $this->id;
-    }
 
     /**
      * Get the [pr_uid] column value.
@@ -320,7 +303,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     /**
      * Get the [plugin_enable] column value.
      * 
-     * @return     boolean
+     * @return     int
      */
     public function getPluginEnable()
     {
@@ -331,7 +314,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     /**
      * Get the [plugin_private] column value.
      * 
-     * @return     boolean
+     * @return     int
      */
     public function getPluginPrivate()
     {
@@ -448,28 +431,6 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
 
         return $this->plugin_attributes;
     }
-
-    /**
-     * Set the value of [id] column.
-     * 
-     * @param      int $v new value
-     * @return     void
-     */
-    public function setId($v)
-    {
-
-        // Since the native PHP type for this column is integer,
-        // we will cast the input value to an int (if it is not).
-        if ($v !== null && !is_int($v) && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->id !== $v) {
-            $this->id = $v;
-            $this->modifiedColumns[] = PluginsRegistryPeer::ID;
-        }
-
-    } // setId()
 
     /**
      * Set the value of [pr_uid] column.
@@ -716,13 +677,19 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     /**
      * Set the value of [plugin_enable] column.
      * 
-     * @param      boolean $v new value
+     * @param      int $v new value
      * @return     void
      */
     public function setPluginEnable($v)
     {
 
-        if ($this->plugin_enable !== $v || $v === false) {
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->plugin_enable !== $v || $v === 0) {
             $this->plugin_enable = $v;
             $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_ENABLE;
         }
@@ -732,13 +699,19 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     /**
      * Set the value of [plugin_private] column.
      * 
-     * @param      boolean $v new value
+     * @param      int $v new value
      * @return     void
      */
     public function setPluginPrivate($v)
     {
 
-        if ($this->plugin_private !== $v || $v === false) {
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->plugin_private !== $v || $v === 0) {
             $this->plugin_private = $v;
             $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_PRIVATE;
         }
@@ -982,60 +955,58 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     {
         try {
 
-            $this->id = $rs->getInt($startcol + 0);
+            $this->pr_uid = $rs->getString($startcol + 0);
 
-            $this->pr_uid = $rs->getString($startcol + 1);
+            $this->plugin_namespace = $rs->getString($startcol + 1);
 
-            $this->plugin_namespace = $rs->getString($startcol + 2);
+            $this->plugin_description = $rs->getString($startcol + 2);
 
-            $this->plugin_description = $rs->getString($startcol + 3);
+            $this->plugin_class_name = $rs->getString($startcol + 3);
 
-            $this->plugin_class_name = $rs->getString($startcol + 4);
+            $this->plugin_friendly_name = $rs->getString($startcol + 4);
 
-            $this->plugin_friendly_name = $rs->getString($startcol + 5);
+            $this->plugin_file = $rs->getString($startcol + 5);
 
-            $this->plugin_file = $rs->getString($startcol + 6);
+            $this->plugin_folder = $rs->getString($startcol + 6);
 
-            $this->plugin_folder = $rs->getString($startcol + 7);
+            $this->plugin_setup_page = $rs->getString($startcol + 7);
 
-            $this->plugin_setup_page = $rs->getString($startcol + 8);
+            $this->plugin_company_logo = $rs->getString($startcol + 8);
 
-            $this->plugin_company_logo = $rs->getString($startcol + 9);
+            $this->plugin_workspaces = $rs->getString($startcol + 9);
 
-            $this->plugin_workspaces = $rs->getString($startcol + 10);
+            $this->plugin_version = $rs->getString($startcol + 10);
 
-            $this->plugin_version = $rs->getString($startcol + 11);
+            $this->plugin_enable = $rs->getInt($startcol + 11);
 
-            $this->plugin_enable = $rs->getBoolean($startcol + 12);
+            $this->plugin_private = $rs->getInt($startcol + 12);
 
-            $this->plugin_private = $rs->getBoolean($startcol + 13);
+            $this->plugin_menus = $rs->getString($startcol + 13);
 
-            $this->plugin_menus = $rs->getString($startcol + 14);
+            $this->plugin_folders = $rs->getString($startcol + 14);
 
-            $this->plugin_folders = $rs->getString($startcol + 15);
+            $this->plugin_triggers = $rs->getString($startcol + 15);
 
-            $this->plugin_triggers = $rs->getString($startcol + 16);
+            $this->plugin_pm_functions = $rs->getString($startcol + 16);
 
-            $this->plugin_pm_functions = $rs->getString($startcol + 17);
+            $this->plugin_redirect_login = $rs->getString($startcol + 17);
 
-            $this->plugin_redirect_login = $rs->getString($startcol + 18);
+            $this->plugin_steps = $rs->getString($startcol + 18);
 
-            $this->plugin_steps = $rs->getString($startcol + 19);
+            $this->plugin_css = $rs->getString($startcol + 19);
 
-            $this->plugin_css = $rs->getString($startcol + 20);
+            $this->plugin_js = $rs->getString($startcol + 20);
 
-            $this->plugin_js = $rs->getString($startcol + 21);
+            $this->plugin_rest_service = $rs->getString($startcol + 21);
 
-            $this->plugin_rest_service = $rs->getString($startcol + 22);
-
-            $this->plugin_attributes = $rs->getString($startcol + 23);
+            $this->plugin_attributes = $rs->getString($startcol + 22);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 24; // 24 = PluginsRegistryPeer::NUM_COLUMNS - PluginsRegistryPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 23; // 23 = PluginsRegistryPeer::NUM_COLUMNS - PluginsRegistryPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating PluginsRegistry object", $e);
@@ -1240,75 +1211,72 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getId();
-                break;
-            case 1:
                 return $this->getPrUid();
                 break;
-            case 2:
+            case 1:
                 return $this->getPluginNamespace();
                 break;
-            case 3:
+            case 2:
                 return $this->getPluginDescription();
                 break;
-            case 4:
+            case 3:
                 return $this->getPluginClassName();
                 break;
-            case 5:
+            case 4:
                 return $this->getPluginFriendlyName();
                 break;
-            case 6:
+            case 5:
                 return $this->getPluginFile();
                 break;
-            case 7:
+            case 6:
                 return $this->getPluginFolder();
                 break;
-            case 8:
+            case 7:
                 return $this->getPluginSetupPage();
                 break;
-            case 9:
+            case 8:
                 return $this->getPluginCompanyLogo();
                 break;
-            case 10:
+            case 9:
                 return $this->getPluginWorkspaces();
                 break;
-            case 11:
+            case 10:
                 return $this->getPluginVersion();
                 break;
-            case 12:
+            case 11:
                 return $this->getPluginEnable();
                 break;
-            case 13:
+            case 12:
                 return $this->getPluginPrivate();
                 break;
-            case 14:
+            case 13:
                 return $this->getPluginMenus();
                 break;
-            case 15:
+            case 14:
                 return $this->getPluginFolders();
                 break;
-            case 16:
+            case 15:
                 return $this->getPluginTriggers();
                 break;
-            case 17:
+            case 16:
                 return $this->getPluginPmFunctions();
                 break;
-            case 18:
+            case 17:
                 return $this->getPluginRedirectLogin();
                 break;
-            case 19:
+            case 18:
                 return $this->getPluginSteps();
                 break;
-            case 20:
+            case 19:
                 return $this->getPluginCss();
                 break;
-            case 21:
+            case 20:
                 return $this->getPluginJs();
                 break;
-            case 22:
+            case 21:
                 return $this->getPluginRestService();
                 break;
-            case 23:
+            case 22:
                 return $this->getPluginAttributes();
                 break;
             default:
@@ -1331,30 +1299,29 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     {
         $keys = PluginsRegistryPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getId(),
-            $keys[1] => $this->getPrUid(),
-            $keys[2] => $this->getPluginNamespace(),
-            $keys[3] => $this->getPluginDescription(),
-            $keys[4] => $this->getPluginClassName(),
-            $keys[5] => $this->getPluginFriendlyName(),
-            $keys[6] => $this->getPluginFile(),
-            $keys[7] => $this->getPluginFolder(),
-            $keys[8] => $this->getPluginSetupPage(),
-            $keys[9] => $this->getPluginCompanyLogo(),
-            $keys[10] => $this->getPluginWorkspaces(),
-            $keys[11] => $this->getPluginVersion(),
-            $keys[12] => $this->getPluginEnable(),
-            $keys[13] => $this->getPluginPrivate(),
-            $keys[14] => $this->getPluginMenus(),
-            $keys[15] => $this->getPluginFolders(),
-            $keys[16] => $this->getPluginTriggers(),
-            $keys[17] => $this->getPluginPmFunctions(),
-            $keys[18] => $this->getPluginRedirectLogin(),
-            $keys[19] => $this->getPluginSteps(),
-            $keys[20] => $this->getPluginCss(),
-            $keys[21] => $this->getPluginJs(),
-            $keys[22] => $this->getPluginRestService(),
-            $keys[23] => $this->getPluginAttributes(),
+            $keys[0] => $this->getPrUid(),
+            $keys[1] => $this->getPluginNamespace(),
+            $keys[2] => $this->getPluginDescription(),
+            $keys[3] => $this->getPluginClassName(),
+            $keys[4] => $this->getPluginFriendlyName(),
+            $keys[5] => $this->getPluginFile(),
+            $keys[6] => $this->getPluginFolder(),
+            $keys[7] => $this->getPluginSetupPage(),
+            $keys[8] => $this->getPluginCompanyLogo(),
+            $keys[9] => $this->getPluginWorkspaces(),
+            $keys[10] => $this->getPluginVersion(),
+            $keys[11] => $this->getPluginEnable(),
+            $keys[12] => $this->getPluginPrivate(),
+            $keys[13] => $this->getPluginMenus(),
+            $keys[14] => $this->getPluginFolders(),
+            $keys[15] => $this->getPluginTriggers(),
+            $keys[16] => $this->getPluginPmFunctions(),
+            $keys[17] => $this->getPluginRedirectLogin(),
+            $keys[18] => $this->getPluginSteps(),
+            $keys[19] => $this->getPluginCss(),
+            $keys[20] => $this->getPluginJs(),
+            $keys[21] => $this->getPluginRestService(),
+            $keys[22] => $this->getPluginAttributes(),
         );
         return $result;
     }
@@ -1387,75 +1354,72 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setId($value);
-                break;
-            case 1:
                 $this->setPrUid($value);
                 break;
-            case 2:
+            case 1:
                 $this->setPluginNamespace($value);
                 break;
-            case 3:
+            case 2:
                 $this->setPluginDescription($value);
                 break;
-            case 4:
+            case 3:
                 $this->setPluginClassName($value);
                 break;
-            case 5:
+            case 4:
                 $this->setPluginFriendlyName($value);
                 break;
-            case 6:
+            case 5:
                 $this->setPluginFile($value);
                 break;
-            case 7:
+            case 6:
                 $this->setPluginFolder($value);
                 break;
-            case 8:
+            case 7:
                 $this->setPluginSetupPage($value);
                 break;
-            case 9:
+            case 8:
                 $this->setPluginCompanyLogo($value);
                 break;
-            case 10:
+            case 9:
                 $this->setPluginWorkspaces($value);
                 break;
-            case 11:
+            case 10:
                 $this->setPluginVersion($value);
                 break;
-            case 12:
+            case 11:
                 $this->setPluginEnable($value);
                 break;
-            case 13:
+            case 12:
                 $this->setPluginPrivate($value);
                 break;
-            case 14:
+            case 13:
                 $this->setPluginMenus($value);
                 break;
-            case 15:
+            case 14:
                 $this->setPluginFolders($value);
                 break;
-            case 16:
+            case 15:
                 $this->setPluginTriggers($value);
                 break;
-            case 17:
+            case 16:
                 $this->setPluginPmFunctions($value);
                 break;
-            case 18:
+            case 17:
                 $this->setPluginRedirectLogin($value);
                 break;
-            case 19:
+            case 18:
                 $this->setPluginSteps($value);
                 break;
-            case 20:
+            case 19:
                 $this->setPluginCss($value);
                 break;
-            case 21:
+            case 20:
                 $this->setPluginJs($value);
                 break;
-            case 22:
+            case 21:
                 $this->setPluginRestService($value);
                 break;
-            case 23:
+            case 22:
                 $this->setPluginAttributes($value);
                 break;
         } // switch()
@@ -1482,99 +1446,95 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
         $keys = PluginsRegistryPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setId($arr[$keys[0]]);
+            $this->setPrUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setPrUid($arr[$keys[1]]);
+            $this->setPluginNamespace($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setPluginNamespace($arr[$keys[2]]);
+            $this->setPluginDescription($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPluginDescription($arr[$keys[3]]);
+            $this->setPluginClassName($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPluginClassName($arr[$keys[4]]);
+            $this->setPluginFriendlyName($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setPluginFriendlyName($arr[$keys[5]]);
+            $this->setPluginFile($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setPluginFile($arr[$keys[6]]);
+            $this->setPluginFolder($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPluginFolder($arr[$keys[7]]);
+            $this->setPluginSetupPage($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setPluginSetupPage($arr[$keys[8]]);
+            $this->setPluginCompanyLogo($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setPluginCompanyLogo($arr[$keys[9]]);
+            $this->setPluginWorkspaces($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setPluginWorkspaces($arr[$keys[10]]);
+            $this->setPluginVersion($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setPluginVersion($arr[$keys[11]]);
+            $this->setPluginEnable($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setPluginEnable($arr[$keys[12]]);
+            $this->setPluginPrivate($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setPluginPrivate($arr[$keys[13]]);
+            $this->setPluginMenus($arr[$keys[13]]);
         }
 
         if (array_key_exists($keys[14], $arr)) {
-            $this->setPluginMenus($arr[$keys[14]]);
+            $this->setPluginFolders($arr[$keys[14]]);
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setPluginFolders($arr[$keys[15]]);
+            $this->setPluginTriggers($arr[$keys[15]]);
         }
 
         if (array_key_exists($keys[16], $arr)) {
-            $this->setPluginTriggers($arr[$keys[16]]);
+            $this->setPluginPmFunctions($arr[$keys[16]]);
         }
 
         if (array_key_exists($keys[17], $arr)) {
-            $this->setPluginPmFunctions($arr[$keys[17]]);
+            $this->setPluginRedirectLogin($arr[$keys[17]]);
         }
 
         if (array_key_exists($keys[18], $arr)) {
-            $this->setPluginRedirectLogin($arr[$keys[18]]);
+            $this->setPluginSteps($arr[$keys[18]]);
         }
 
         if (array_key_exists($keys[19], $arr)) {
-            $this->setPluginSteps($arr[$keys[19]]);
+            $this->setPluginCss($arr[$keys[19]]);
         }
 
         if (array_key_exists($keys[20], $arr)) {
-            $this->setPluginCss($arr[$keys[20]]);
+            $this->setPluginJs($arr[$keys[20]]);
         }
 
         if (array_key_exists($keys[21], $arr)) {
-            $this->setPluginJs($arr[$keys[21]]);
+            $this->setPluginRestService($arr[$keys[21]]);
         }
 
         if (array_key_exists($keys[22], $arr)) {
-            $this->setPluginRestService($arr[$keys[22]]);
-        }
-
-        if (array_key_exists($keys[23], $arr)) {
-            $this->setPluginAttributes($arr[$keys[23]]);
+            $this->setPluginAttributes($arr[$keys[22]]);
         }
 
     }
@@ -1587,10 +1547,6 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     public function buildCriteria()
     {
         $criteria = new Criteria(PluginsRegistryPeer::DATABASE_NAME);
-
-        if ($this->isColumnModified(PluginsRegistryPeer::ID)) {
-            $criteria->add(PluginsRegistryPeer::ID, $this->id);
-        }
 
         if ($this->isColumnModified(PluginsRegistryPeer::PR_UID)) {
             $criteria->add(PluginsRegistryPeer::PR_UID, $this->pr_uid);
@@ -1737,8 +1693,6 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
-
-        $copyObj->setId($this->id);
 
         $copyObj->setPluginNamespace($this->plugin_namespace);
 

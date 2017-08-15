@@ -2,7 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Light;
 
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 use \ProcessMaker\Services\Api;
 use G;
 

@@ -12,7 +12,7 @@
 
 namespace ProcessMaker\BusinessModel\Light;
 
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 
 class PushMessageIOS
 {

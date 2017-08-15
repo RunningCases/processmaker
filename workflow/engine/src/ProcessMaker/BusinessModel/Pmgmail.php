@@ -6,7 +6,7 @@ use \Criteria;
 use \UsersPeer;
 use \GroupUserPeer;
 use \ResultSet;
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 
 /**
  * @copyright Colosa - Bolivia

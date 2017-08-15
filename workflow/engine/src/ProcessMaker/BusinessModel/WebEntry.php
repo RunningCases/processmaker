@@ -1,7 +1,7 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 
 class WebEntry
 {

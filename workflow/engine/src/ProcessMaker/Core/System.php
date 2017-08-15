@@ -84,7 +84,6 @@ class System
      * for each.
      * This is a class method, it does not require an instance.
      *
-     * @author Alexandre Rosenfeld <alexandre@colosa.com>
      * @access public
      * @return array of workspace tools objects
      */
@@ -105,7 +104,6 @@ class System
      * If version-pmos.php is not found, try to
      * retrieve the version from git.
      *
-     * @author Alexandre Rosenfeld <alexandre@colosa.com>
      * @return string system
      */
     public static function getVersion()
@@ -127,7 +125,6 @@ class System
     /**
      * Get the branch and tag information from a git repository.
      *
-     * @author Alexandre Rosenfeld <alexandre@colosa.com>
      * @return string branch and tag information
      */
     public static function getVersionFromGit($dir = null)
@@ -148,7 +145,6 @@ class System
     /**
      * Get system information
      *
-     * param
      *
      * @return array with system information
      */
@@ -211,6 +207,11 @@ class System
         return $Fields;
     }
 
+    /**
+     * Load the po files
+     *
+     * @return array $items
+     */
     public static function listPoFiles()
     {
         $folders = glob(PATH_CORE . '/content/translations/*');
@@ -226,6 +227,11 @@ class System
         return $items;
     }
 
+    /**
+     * Review the checksum.txt
+     *
+     * @return array $result
+     */
     public static function verifyChecksum()
     {
         if (!file_exists(PATH_TRUNK . "checksum.txt")) {
@@ -257,10 +263,8 @@ class System
     /**
      * This function checks files to do updated to pm
      *
-     *
      * @name verifyFileForUpgrade
      *
-     * param
      * @return boolean
      */
     public function verifyFileForUpgrade()
@@ -285,11 +289,9 @@ class System
     /**
      * This function gets files to do updated to pm
      *
-     *
      * @name getUpgradedFilesList
-     *
-     * param
      * @return void
+     * @throws Exception
      */
     public function getUpgradedFilesList()
     {
@@ -312,10 +314,7 @@ class System
     /**
      * This function checks to do updated for boot
      *
-     *
      * @name verifyForBootstrapUpgrade
-     *
-     * param
      * @return boolean
      */
     public function verifyForBootstrapUpgrade()
@@ -332,11 +331,10 @@ class System
     /**
      * This function updates to the files
      *
-     *
      * @name upgrade
      *
-     * param
-     * @return array
+     * @return object
+     * @throws Exception
      */
     public function upgrade()
     {
@@ -636,10 +634,8 @@ class System
     /**
      * This function does to clean up to the upgrate directory
      *
-     *
      * @name cleanupUpgradeDirectory
      *
-     * param
      * @return array
      */
     public function cleanupUpgradeDirectory()
@@ -671,11 +667,10 @@ class System
     /**
      * This function gets info about db
      *
-     *
      * @name getDatabaseCredentials
      *
      * @param string $dbFile
-     * @return $sContent
+     * @return string $sContent
      */
     public function getDatabaseCredentials($dbFile)
     {
@@ -732,7 +727,7 @@ class System
      * Retrieves a schema array from a file.
      *
      * @param string $sSchemaFile schema filename
-     * @return $sContent
+     * @return string $sContent
      */
     public static function getSchema($sSchemaFile)
     {
@@ -845,18 +840,11 @@ class System
      */
     public static function compareSchema($aOldSchema, $aNewSchema)
     {
-        //$aChanges = array('tablesToDelete' => array(), 'tablesToAdd' => array(), 'tablesToAlter' => array());
-        //Tables to delete, but this is disabled
-        //foreach ($aOldSchema as $sTableName => $aColumns) {
-        //  if ( !isset($aNewSchema[$sTableName])) {
-        //    if (!in_array($sTableName, array('KT_APPLICATION', 'KT_DOCUMENT', 'KT_PROCESS'))) {
-        //      $aChanges['tablesToDelete'][] = $sTableName;
-        //    }
-        //  }
-        //}
-
-
-        $aChanges = array('tablesToAdd' => array(), 'tablesToAlter' => array(), 'tablesWithNewIndex' => array(), 'tablesToAlterIndex' => array()
+        $aChanges = array(
+            'tablesToAdd' => array(),
+            'tablesToAlter' => array(),
+            'tablesWithNewIndex' => array(),
+            'tablesToAlterIndex' => array()
         );
 
         //new tables  to create and alter
@@ -943,7 +931,6 @@ class System
                     //only columns, no the indexes column
                 }
                 //foreach $aColumns
-
                 //now check the indexes of table
                 if (isset($aNewSchema[$sTableName]['INDEXES'])) {
                     foreach ($aNewSchema[$sTableName]['INDEXES'] as $indexName => $indexFields) {
@@ -1007,6 +994,11 @@ class System
         }
     }
 
+    /**
+     * Get the list of skins
+     *
+     * @return array $skinListArray
+     */
     public function getSkingList()
     {
         //Create Skins custom folder if it doesn't exists
@@ -1085,11 +1077,23 @@ class System
         return $skinListArray;
     }
 
+    /**
+     * Get all time zones
+     *
+     * @return array $skinListArray
+     * @throws Exception
+     * @deprecated this method is deprecated
+     */
     public function getAllTimeZones()
     {
         throw new Exception(__METHOD__ . ': The method is deprecated');
     }
 
+    /**
+     * Get the system configuration
+     *
+     * @return array $config
+     */
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
         if (!is_null(self::$config)) {
@@ -1150,12 +1154,12 @@ class System
         return $config;
     }
 
-    /*
-    * Get information about the queries permitted and tables we can modified
-    * @access public
-    * @param string $globalIniFile
-    * @return array of execute query Black list
-    */
+    /**
+     * Get information about the queries permitted and tables we can modified
+     * @access public
+     * @param string $globalIniFile
+     * @return array of execute query Black list
+     */
     public static function getQueryBlackList($globalIniFile = '')
     {
         $config = array();
@@ -1174,6 +1178,13 @@ class System
         return $config;
     }
 
+    /**
+     * Update index file
+     *
+     * @param string $conf
+     * @return string $result
+     * @throws Exception
+     */
     public function updateIndexFile($conf)
     {
         if (!file_exists(PATH_HTML . 'index.html')) {
@@ -1203,6 +1214,12 @@ class System
         return $result;
     }
 
+    /**
+     * Get the system configuration
+     *
+     * @param string $sysName
+     * @return array $config
+     */
     public static function solrEnv($sysName = '')
     {
         if (empty($sysName)) {
@@ -1223,6 +1240,11 @@ class System
         return false;
     }
 
+    /**
+     * Get the instance of the class
+     *
+     * @return array $instance
+     */
     public static function getInstance()
     {
         if (is_null(self::$instance)) {
@@ -1232,6 +1254,11 @@ class System
         return self::$instance;
     }
 
+    /**
+     * Get if is debug mode
+     *
+     * @return array $debug
+     */
     public static function isDebugMode()
     {
         if (is_null(self::$debug)) {
@@ -1245,6 +1272,7 @@ class System
      * Get the complete name of the server host configured for requests Front-End (e.g. https://127.0.0.1:81)
      *
      * @return string Returns an string with the complete name of the server host configured for requests Front-End
+     * @throws Exception
      */
     public static function getHttpServerHostnameRequestsFrontEnd()
     {

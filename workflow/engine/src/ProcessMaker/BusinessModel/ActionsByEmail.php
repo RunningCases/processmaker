@@ -2,7 +2,7 @@
 
 namespace ProcessMaker\BusinessModel;
 
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use PmDynaform;
 use SpoolRun;

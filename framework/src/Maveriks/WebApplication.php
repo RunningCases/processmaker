@@ -2,7 +2,7 @@
 namespace Maveriks;
 
 use Maveriks\Util;
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services;
 use ProcessMaker\Services\Api;

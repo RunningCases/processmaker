@@ -3,7 +3,7 @@ namespace ProcessMaker\Services\OAuth2;
 
 use Luracast\Restler\iAuthenticate;
 use Luracast\Restler\RestException;
-use Processmaker\Core\System;
+use ProcessMaker\Core\System;
 
 class Server implements iAuthenticate
 {
