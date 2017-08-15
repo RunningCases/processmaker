@@ -1,46 +1,14 @@
 <?php
 
-/**
- * class.Installer.php
- *
- * @package workflow.engine.ProcessMaker
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
-//
-// It works with the table CONFIGURATION in a WF dataBase
-//
-// Copyright (C) 2007 COLOSA
-//
-// License: LGPL, see LICENSE
-////////////////////////////////////////////////////
+namespace Processmaker\Core;
 
-/**
- * Processmaker Installer
- *
- * @package workflow.engine.ProcessMaker
- * @author maborak
- * @copyright 2008 COLOSA
- */
-class PmInstaller
+use AppCacheView;
+use Archive_Tar;
+use Configuration;
+use Exception;
+use G;
+
+class Installer
 {
 
     public $options = Array();
@@ -69,12 +37,12 @@ class PmInstaller
     public function create_site($config = Array(), $confirmed = false)
     {
         $this->options = G::array_concat(Array('isset' => false, 'password' => G::generate_password(15), 'path_data' => @PATH_DATA, 'path_compiled' => @PATH_C, 'name' => $config['name'], 'database' => Array(), 'admin' => Array('username' => 'admin', 'password' => 'admin'
-                    ), 'advanced' => Array('ao_db_wf' => 'wf_' . $config['name'], 'ao_db_rb' => 'rb_' . $config['name'], 'ao_db_rp' => 'rp_' . $config['name'], 'ao_db_drop' => false
-                    )
-                        ), $config);
+        ), 'advanced' => Array('ao_db_wf' => 'wf_' . $config['name'], 'ao_db_rb' => 'rb_' . $config['name'], 'ao_db_rp' => 'rp_' . $config['name'], 'ao_db_drop' => false
+        )
+        ), $config);
         $a = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
         $this->options['database'] = G::array_concat(Array('username' => @$a[1], 'password' => @$a[2], 'hostname' => @$a[0]
-                        ), $this->options['database']);
+        ), $this->options['database']);
         return ($confirmed === true) ? $this->make_site() : $this->create_site_test();
     }
 
@@ -86,11 +54,11 @@ class PmInstaller
      */
     public static function isset_site($name = "workflow")
     {
-        $pathSites = PATH_DATA . 'sites/'. '*';
+        $pathSites = PATH_DATA . 'sites/' . '*';
         $directories = glob($pathSites, GLOB_ONLYDIR);
-        foreach ($directories as $directory){
+        foreach ($directories as $directory) {
             $site = basename($directory);
-            if(strtolower($site) === strtolower($name)){
+            if (strtolower($site) === strtolower($name)) {
                 return true;
             }
         }
@@ -106,22 +74,22 @@ class PmInstaller
     {
         $name = (preg_match('/^[\w]+$/i', trim($this->options['name']))) ? true : false;
         $result = Array('path_data' => $this->is_dir_writable($this->options['path_data']), 'path_compiled' => $this->is_dir_writable($this->options['path_compiled']), 'database' => $this->check_connection(), 'access_level' => $this->cc_status, 'isset' => ($this->options['isset'] == true) ? $this->isset_site($this->options['name']) : false, 'microtime' => microtime(), 'workspace' => $this->options['name'], 'name' => array('status' => $name, 'message' => ($name) ? 'PASSED' : 'Workspace name invalid'
-            ), 'admin' => array('username' => (preg_match('/^[\w@\.-]+$/i', trim($this->options['admin']['username']))) ? true : false, 'password' => ((trim($this->options['admin']['password']) == '') ? false : true)
-            )
+        ), 'admin' => array('username' => (preg_match('/^[\w@\.-]+$/i', trim($this->options['admin']['username']))) ? true : false, 'password' => ((trim($this->options['admin']['password']) == '') ? false : true)
+        )
         );
         $result['name']['message'] = ($result['isset']) ? 'Workspace already exist' : $result['name']['message'];
         $result['name']['status'] = ($result['isset']) ? false : $result['name']['status'];
         //print_r($result);
         return Array('created' => G::var_compare(true,
-                                                 $result['path_data'],
-                                                 $result['database']['connection'],
-                                                 $result['name']['status'],
-                                                 $result['database']['version'],
-                                                 $result['database']['ao']['ao_db_wf']['status'],
-                                                 $result['admin']['username'],
-                                                 (($result['isset']) ? false : true),
-                                                 $result['admin']['password']),
-                     'result' => $result
+            $result['path_data'],
+            $result['database']['connection'],
+            $result['name']['status'],
+            $result['database']['version'],
+            $result['database']['ao']['ao_db_wf']['status'],
+            $result['admin']['username'],
+            (($result['isset']) ? false : true),
+            $result['admin']['password']),
+            'result' => $result
         );
     }
 
@@ -139,7 +107,7 @@ class PmInstaller
             $islocal = (strcmp(substr($this->options['database']['hostname'], 0, strlen('localhost')), 'localhost') === 0) || (strcmp(substr($this->options['database']['hostname'], 0, strlen('127.0.0.1')), '127.0.0.1') === 0);
 
             $this->wf_site_name = $wf = $this->options['advanced']['ao_db_wf'];
-            $this->wf_user_db = isset($this->options['advanced']['ao_user_wf'])?$this->options['advanced']['ao_user_wf']:uniqid('wf_');
+            $this->wf_user_db = isset($this->options['advanced']['ao_user_wf']) ? $this->options['advanced']['ao_user_wf'] : uniqid('wf_');
 
             $this->rbac_site_name = $rb = $this->options['advanced']['ao_db_rb'];
             $this->report_site_name = $rp = $this->options['advanced']['ao_db_rp'];
@@ -178,23 +146,23 @@ class PmInstaller
             $this->log($qwv, isset($qwv['errors']));
 
             $http = (G::is_https() == true) ? 'https' : 'http';
-            $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
+            $lang = defined('SYS_LANG') ? SYS_LANG : 'en';
             $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
             $workspace = $this->options['name'];
 
             $endpoint = sprintf(
-                    '%s://%s/sys%s/%s/%s/oauth2/grant',
-                    $http,
-                    $host,
-                    $workspace,
-                    $lang,
-                    SYS_SKIN
+                '%s://%s/sys%s/%s/%s/oauth2/grant',
+                $http,
+                $host,
+                $workspace,
+                $lang,
+                SYS_SKIN
             );
 
             // inserting the outh_client
-            $query = ( "INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES
+            $query = ("INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES
             		   ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");
-            $this->run_query( $query );
+            $this->run_query($query);
 
             /* Dump schema rbac && data  */
             $pws = PATH_RBAC_MYSQL_DATA . $schema;
@@ -206,8 +174,8 @@ class PmInstaller
 
             mysql_select_db($wf, $this->connection_database);
 
-            require_once ("propel/Propel.php");
-            require_once ('classes/model/AppCacheView.php');
+            require_once("propel/Propel.php");
+            require_once('classes/model/AppCacheView.php');
 
             $appCache = new AppCacheView();
             $appCache->setPathToAppCacheFiles(PATH_METHODS . 'setup/setupSchemas/');
@@ -235,7 +203,7 @@ class PmInstaller
                     $db_text .= "  define ('SYSTEM_NAME', '" . SYSTEM_NAME . "');\n";
                 }
             }
-            $db_text .="?>";
+            $db_text .= "?>";
 
             $fp = @fopen($db_file, "w");
             $this->log("Create: " . $db_file . "  => " . ((!$fp) ? $fp : "OK") . "\n", $fp === false);
@@ -249,9 +217,9 @@ class PmInstaller
             $content = 'system_utc_time_zone = 1' . "\n";
 
             $fp = @fopen($envIniFile, 'w');
-            $this->log('Create: ' . $envIniFile . '  => ' . ((!$fp)? $fp : 'OK') . "\n", $fp === false);
+            $this->log('Create: ' . $envIniFile . '  => ' . ((!$fp) ? $fp : 'OK') . "\n", $fp === false);
             $ff = @fputs($fp, $content, strlen($content));
-            $this->log('Write: ' . $envIniFile . '  => ' . ((!$ff)? $ff : 'OK') . "\n", $ff === false);
+            $this->log('Write: ' . $envIniFile . '  => ' . ((!$ff) ? $ff : 'OK') . "\n", $ff === false);
             fclose($fp);
             /*----------------------------------********---------------------------------*/
 
@@ -294,16 +262,16 @@ class PmInstaller
                     $dataFile = pathinfo($value);
                     $nameSkinTmp = $dataFile['filename'];
 
-                    $tar = new Archive_Tar( $value );
+                    $tar = new Archive_Tar($value);
 
                     $pathSkinTmp = $pathSkinPartner . 'tmp' . PATH_SEP;
                     G::rm_dir($pathSkinTmp);
                     G::verifyPath($pathSkinTmp, true);
-                    chmod( $pathSkinTmp, 0777);
+                    chmod($pathSkinTmp, 0777);
                     $tar->extract($pathSkinTmp);
 
                     $pathSkinName = $pathSkinTmp . $nameSkinTmp . PATH_SEP;
-                    chmod( $pathSkinName, 0777);
+                    chmod($pathSkinName, 0777);
                     G::verifyPath(PATH_CORE . 'skinEngine' . PATH_SEP . 'tmp', true);
                     $skinClassic = PATH_CORE . 'skinEngine' . PATH_SEP . 'tmp' . PATH_SEP;
 
@@ -334,7 +302,7 @@ class PmInstaller
             }
 
             // create session
-            $cookiefile =  sys_get_temp_dir() . PATH_SEP . 'curl-session';
+            $cookiefile = sys_get_temp_dir() . PATH_SEP . 'curl-session';
 
             $fp = fopen($cookiefile, "w");
             fclose($fp);
@@ -365,7 +333,7 @@ class PmInstaller
             $ch = curl_init();
             $postData = array();
             // resolv the plugin name
-            $plugins = glob(PATH_CORE."plugins/*.tar");
+            $plugins = glob(PATH_CORE . "plugins/*.tar");
             if (count($plugins) > 0) {
                 $pluginName = $plugins[0];
 
@@ -388,42 +356,42 @@ class PmInstaller
         }
     }
 
-    function copyFile($fromDir, $toDir, $chmod=0777)
+    function copyFile($fromDir, $toDir, $chmod = 0777)
     {
         $errors = array();
         $messages = array();
 
-        if (!is_writable($toDir))  {
-            $errors[]='target '.$toDir.' is not writable';
+        if (!is_writable($toDir)) {
+            $errors[] = 'target ' . $toDir . ' is not writable';
         }
         if (!is_dir($toDir)) {
-            $errors[]='target '.$toDir.' is not a directory';
+            $errors[] = 'target ' . $toDir . ' is not a directory';
         }
         if (!is_dir($fromDir)) {
-            $errors[]='source '.$fromDir.' is not a directory';
+            $errors[] = 'source ' . $fromDir . ' is not a directory';
         }
         if (!empty($errors)) {
             return false;
         }
 
-        $exceptions = array ('.','..');
+        $exceptions = array('.', '..');
         $handle = opendir($fromDir);
-        while (false !== ($item=readdir($handle))) {
-            if (!in_array($item,$exceptions)) {
-                $from = str_replace('//','/',$fromDir.'/'.$item);
-                $to = str_replace('//','/',$toDir.'/'.$item);
+        while (false !== ($item = readdir($handle))) {
+            if (!in_array($item, $exceptions)) {
+                $from = str_replace('//', '/', $fromDir . '/' . $item);
+                $to = str_replace('//', '/', $toDir . '/' . $item);
                 if (is_file($from)) {
-                    if (@copy($from,$to)) {
-                        chmod($to,$chmod);
-                        touch($to,filemtime($from));
+                    if (@copy($from, $to)) {
+                        chmod($to, $chmod);
+                        touch($to, filemtime($from));
                     }
                 }
 
                 if (is_dir($from)) {
                     if (@mkdir($to)) {
-                        chmod($to,$chmod);
+                        chmod($to, $chmod);
                     }
-                    $this->copyFile($from,$to,$chmod);
+                    $this->copyFile($from, $to, $chmod);
                 }
             }
         }
@@ -445,12 +413,12 @@ class PmInstaller
                 if ($value['CFG_UID'] == 'ENVIRONMENT_SETTINGS') {
                     $query = 'INSERT INTO CONFIGURATION (CFG_UID, OBJ_UID, CFG_VALUE, PRO_UID, USR_UID, APP_UID) VALUES';
                     $query .= "('" .
-                        $value['CFG_UID']   . "', '".
-                        $value['OBJ_UID']   . "', '".
-                        $value['CFG_VALUE'] . "', '".
-                        $value['PRO_UID']   . "', '".
-                        $value['USR_UID']   . "', '".
-                        $value['APP_UID']   . "')";
+                        $value['CFG_UID'] . "', '" .
+                        $value['OBJ_UID'] . "', '" .
+                        $value['CFG_VALUE'] . "', '" .
+                        $value['PRO_UID'] . "', '" .
+                        $value['USR_UID'] . "', '" .
+                        $value['APP_UID'] . "')";
                     mysql_select_db($this->wf_site_name, $this->connection_database);
                     $this->run_query($query, "Copy configuracion environment");
                     break;
@@ -580,7 +548,7 @@ class PmInstaller
         if (PHP_OS == 'WINNT') {
             return $def;
         } else {
-            return (int) substr(sprintf('%o', @fileperms($file)), - 4);
+            return (int)substr(sprintf('%o', @fileperms($file)), -4);
         }
     }
 
@@ -688,12 +656,12 @@ class PmInstaller
         if (!function_exists("mysql_connect")) {
             $this->cc_status = 0;
             $rt = Array('connection' => false, 'grant' => 0, 'version' => false, 'message' => "ERROR: Mysql Module for PHP is not enabled, try install <b>php-mysql</b> package.", 'ao' => Array('ao_db_wf' => false, 'ao_db_rb' => false, 'ao_db_rp' => false
-                )
+            )
             );
         } else {
             $this->connection_database = @mysql_connect($this->options['database']['hostname'], $this->options['database']['username'], $this->options['database']['password']);
             $rt = Array('version' => false, 'ao' => Array('ao_db_wf' => false, 'ao_db_rb' => false, 'ao_db_rp' => false
-                )
+            )
             );
             if (!$this->connection_database) {
                 $this->cc_status = 0;
@@ -750,7 +718,7 @@ class PmInstaller
     {
         array_push($this->report, $text);
         if ($failed) {
-            throw new Exception(is_string($text) ? $text : var_export($text, true) );
+            throw new Exception(is_string($text) ? $text : var_export($text, true));
         }
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Processmaker\Core\Installer;
 use ProcessMaker\Core\System;
 use ProcessMaker\Util\FixReferencePath;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
@@ -1696,7 +1697,7 @@ class WorkspaceTools
             }
             $workspace = new WorkspaceTools($workspaceName);
 
-            if (PmInstaller::isset_site($workspaceName)) {
+            if (Installer::isset_site($workspaceName)) {
                 if ($overwrite) {
                     if (!$workspace->workspaceExists()) {
                         throw new Exception('We can not overwrite this workspace because the workspace ' . $workspaceName . ' does not exist please check the lower case and upper case.');
