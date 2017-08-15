@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 $filter = new InputFilter();
 $_GET = $filter->xssFilterHard($_GET);
 $_POST = $filter->xssFilterHard($_POST);
@@ -785,7 +787,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $data = $oCase->getHistoryMessagesTrackerView( $_POST['APP_UID'], $_POST['APP_MSG_UID'] );
         //print_r($data);
 
-        $aSetup = PmSystem::getEmailConfiguration();
+        $aSetup = System::getEmailConfiguration();
 
         $passwd = $aSetup['MESS_PASSWORD'];
         $passwdDec = G::decrypt( $passwd, 'EMAILENCRYPT' );
@@ -805,7 +807,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             $aSetup['MESS_RAUTH'] = 1;
         }
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
         $oSpool->setConfig(
             array (
                 'MESS_ENGINE' => $aSetup['MESS_ENGINE'],

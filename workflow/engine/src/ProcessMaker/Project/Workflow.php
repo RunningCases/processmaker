@@ -14,7 +14,7 @@ use \RoutePeer;
 use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
 use ProcessMaker\Util;
-
+use ReportTables;
 /**
  * Class Workflow
  *
@@ -594,7 +594,7 @@ class Workflow extends Handler
             $oSwimlaneElement = new \SwimlanesElements();
             $oConfiguration = new \Configuration();
             $oDbSource = new \DbSource();
-            $oReportTable = new \ReportTables();
+            $oReportTable = new ReportTables();
             $oCaseTracker = new \CaseTracker();
             $oCaseTrackerObject = new \CaseTrackerObject();
 

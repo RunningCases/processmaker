@@ -90,7 +90,7 @@ class pagedTable
     public $name = 'pagedTable';
     public $id = 'A1';
     public $disableFooter = false;
-    //This attribute is used to set STYLES to groups of TD, using the field type "cellMark" (see XmlForm_Field_cellMark)
+    //This attribute is used to set STYLES to groups of TD, using the field type "cellMark" (see XmlFormFieldCellMark)
     public $tdStyle = '';
     public $tdClass = '';
     //Config Save definition

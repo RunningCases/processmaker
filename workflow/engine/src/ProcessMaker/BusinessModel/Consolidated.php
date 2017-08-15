@@ -1,18 +1,16 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
-use \Smarty;
-use \Criteria;
-use \ReportTablePeer;
-use \ResultSet;
-use \CaseConsolidatedCorePeer;
-use \ContentPeer;
+use G;
+use Smarty;
+use Criteria;
+use ReportTablePeer;
+use ResultSet;
+use CaseConsolidatedCorePeer;
+use ContentPeer;
+use PmDynaform;
+use ReportTables;
 
-/**
- * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
- * @copyright Colosa - Bolivia
- */
 class Consolidated
 {
     /**
@@ -69,7 +67,7 @@ class Consolidated
      */
     public function postDerivate($app_uid, $app_number, $del_index, $usr_uid, $fieldName = '', $fieldValue = '')
     {
-        $ws = new \wsBase();
+        $ws = new \WsBase();
         $oCase = new \Cases();
 
         if (!isset($Fields["DEL_INIT_DATE"])) {
@@ -361,7 +359,7 @@ class Consolidated
             $filter = new \InputFilter();
 
             if ($sort != "") {
-                $reportTable = new \ReportTables();
+                $reportTable = new ReportTables();
                 $arrayReportTableVar = $reportTable->getTableVars($tableUid);
                 $tableName = $filter->validateInput($tableName);
                 $sort = $filter->validateInput($sort);
@@ -468,7 +466,7 @@ class Consolidated
         $dataTask = $oDyna->load($dyn_uid);
         if ($dataTask['DYN_VERSION'] > 0) {
             $_SESSION['PROCESS'] = $pro_uid;
-            $pmDyna = new \pmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
+            $pmDyna = new PmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
             $json = G::json_decode($dataTask["DYN_CONTENT"]);
             $pmDyna->jsonr($json);
             $fieldsDyna = $json->items[0]->items;

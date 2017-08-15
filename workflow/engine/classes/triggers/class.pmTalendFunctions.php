@@ -15,6 +15,7 @@
 //
 // License: LGPL, see LICENSE
 ////////////////////////////////////////////////////
+use ProcessMaker\Core\System;
 
 
 /**
@@ -47,7 +48,7 @@ function executeTalendWebservice ($wsdl, $message, $params = array())
     ) );
 
     //Apply proxy settings
-    $sysConf = PmSystem::getSystemConfiguration();
+    $sysConf = System::getSystemConfiguration();
     if ($sysConf['proxy_host'] != '') {
         curl_setopt( $client, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : '') );
         if ($sysConf['proxy_port'] != '') {

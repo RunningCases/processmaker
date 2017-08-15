@@ -122,7 +122,7 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
     }
 }
 
-$oServerConf = & serverConf::getSingleton();
+$oServerConf = & ServerConf::getSingleton();
 if ($oServerConf->isRtl( SYS_LANG )) {
     $regionTreePanel = 'east';
     $regionDebug = 'west';

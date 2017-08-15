@@ -33,7 +33,7 @@ try {
   $template->assign ('WIDTH_PANEL'              ,$width);
   $template->assign ('WIDTH_PANEL_20'              ,$width-20);
   
-  $upload = new replacementLogo();
+  $upload = new ReplacementLogo();
   $aFotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
   $sFotoSelect = trim($aFotoSelect['DEFAULT_LOGO_NAME']);
   $check ='';

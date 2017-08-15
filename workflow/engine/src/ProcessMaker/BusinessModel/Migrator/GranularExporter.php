@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Project;
 use ProcessMaker\Util\Common;
 
@@ -134,7 +135,7 @@ class GranularExporter
         $data["version"] = "3.1";
         $data["container"] = "ProcessMaker-Project";
         $data["metadata"] = array(
-            "vendor_version" => \PmSystem::getVersion(),
+            "vendor_version" => System::getVersion(),
             "vendor_version_code" => "Michelangelo",
             "export_timestamp" => date("U"),
             "export_datetime" => date("Y-m-d\TH:i:sP"),

@@ -532,7 +532,7 @@ class RBAC
     {
         /*----------------------------------********---------------------------------*/
 
-        $licenseManager =& pmLicenseManager::getSingleton();
+        $licenseManager =& PmLicenseManager::getSingleton();
         if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
             return -7;
         }

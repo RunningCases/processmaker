@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 if (! isset( $_REQUEST['action'] )) {
     $res['success'] = false;
     $res['error'] = $res['message'] = G::LoadTranslation('ID_REQUEST_ACTION');
@@ -46,7 +49,7 @@ function skinList ()
         $textFilter = '';
     }
 
-    $skinList = PmSystem::getSkingList();
+    $skinList = System::getSkingList();
     $wildcard = '';
     if (isset( $_REQUEST['activeskin'] )) {
         $wildcard = '@';

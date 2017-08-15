@@ -170,7 +170,7 @@ class WorkflowTestCase extends TestCase
             throw new \Exception('To continue please put a valid license at features/resources');
         }
         G::LoadClass('pmLicenseManager');
-        $licenseManager = new pmLicenseManager();
+        $licenseManager = new PmLicenseManager();
         $licenseManager->installLicense($licenseFile[0]);
     }
 

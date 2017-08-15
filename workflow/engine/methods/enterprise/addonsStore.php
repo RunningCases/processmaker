@@ -1,12 +1,10 @@
 <?php
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-require_once PATH_CORE . "classes" . PATH_SEP . "model" . PATH_SEP . "AddonsStore.php";
-require_once PATH_CORE . "classes" . PATH_SEP . "class.enterpriseUtils.php";
 
+use ProcessMaker\Core\System;
 
 AddonsStore::checkLicenseStore();
 
-$licenseManager = &pmLicenseManager::getSingleton();
+$licenseManager = &PmLicenseManager::getSingleton();
 $oHeadPublisher = &headPublisher::getSingleton();
 
 if (isset($licenseManager->date) && is_array($licenseManager->date)) {
@@ -64,7 +62,7 @@ $oHeadPublisher->assign("SUPPORT_FLAG", ((isset($licenseManager->supportStartDat
 $oHeadPublisher->assign("supportStartDate", (isset($licenseManager->supportStartDate))? $licenseManager->supportStartDate : '');
 $oHeadPublisher->assign("supportEndDate", (isset($licenseManager->supportEndDate))? $licenseManager->supportEndDate : '');
 
-$oHeadPublisher->assign("PROCESSMAKER_VERSION", PmSystem::getVersion());
+$oHeadPublisher->assign("PROCESSMAKER_VERSION", System::getVersion());
 $oHeadPublisher->assign("PROCESSMAKER_URL", "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN );
 $oHeadPublisher->assign("SYS_SKIN", SYS_SKIN);
 $oHeadPublisher->assign("URL_PART_LOGIN", ((substr(SYS_SKIN, 0, 2) == "ux" && SYS_SKIN != "uxs")? "main/login" : "login/login"));

@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 if (!defined("PATH_PM_ENTERPRISE")) {
@@ -18,7 +19,7 @@ class enterprisePlugin extends PMPlugin
     {
         $pathPluginTrunk = PATH_CORE . "enterprise";
 
-        $VERSION = PmSystem::getVersion();
+        $VERSION = System::getVersion();
 
         $res = parent::PMPlugin($sNamespace, $sFilename);
         $this->sFriendlyName = "ProcessMaker Enterprise Core Edition";
@@ -133,7 +134,7 @@ class enterprisePlugin extends PMPlugin
 
         require_once (PATH_CORE . 'classes/model/AddonsStore.php');
         AddonsStore::checkLicenseStore();
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
         AddonsStore::updateAll(false);
     }
 

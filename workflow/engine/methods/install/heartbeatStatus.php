@@ -2,7 +2,7 @@
 
 try {
     if (isset( $_REQUEST['status'] )) {
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
         /*you can use SYS_TEMP or SYS_SYS ON HEAR_BEAT_CONF to save for each workspace*/
         if ($_REQUEST['status']) {
             echo "ACTIVE (Thanks!)";

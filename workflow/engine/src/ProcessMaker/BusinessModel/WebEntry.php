@@ -1,6 +1,8 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
+use ProcessMaker\Core\System;
+
 class WebEntry
 {
     private $arrayFieldDefinition = array(
@@ -453,7 +455,7 @@ class WebEntry
                     $template->assign("dynaform", empty($arrayDynaFormData) ? '' : $arrayDynaFormData["DYN_TITLE"]);
                     $template->assign("timestamp", date("l jS \of F Y h:i:s A"));
                     $template->assign("ws", $this->sysSys);
-                    $template->assign("version", \PmSystem::getVersion());
+                    $template->assign("version", System::getVersion());
 
                     $fileName = $pathDataPublicProcess . PATH_SEP . $weTitle . "Post.php";
 

@@ -147,15 +147,15 @@ class ProcessProxy extends HttpProxyController
         $this->success = true;
         if (! in_array( '-1', $res )) {
             if (count( $UIDS ) == 1) {
-                $this->msg = __( 'ID_ACTOR_ASSIGNED_SUCESSFULLY', SYS_LANG, Array ('tas_title' => $task->getTasTitle()) );
+                $this->msg = G::LoadTranslation( 'ID_ACTOR_ASSIGNED_SUCESSFULLY', SYS_LANG, Array ('tas_title' => $task->getTasTitle()) );
             } else {
-                $this->msg = __( 'ID_ACTORS_ASSIGNED_SUCESSFULLY', SYS_LANG, Array (count( $UIDS ),$task->getTasTitle()) );
+                $this->msg = G::LoadTranslation( 'ID_ACTORS_ASSIGNED_SUCESSFULLY', SYS_LANG, Array (count( $UIDS ),$task->getTasTitle()) );
             }
         } else {
             if (count( $UIDS ) == 1) {
-                $this->msg = __( 'ID_ACTOR_ALREADY_ASSIGNED', SYS_LANG, Array ($task->getTasTitle()) );
+                $this->msg = G::LoadTranslation( 'ID_ACTOR_ALREADY_ASSIGNED', SYS_LANG, Array ($task->getTasTitle()) );
             } else {
-                $this->msg = __( 'ID_SOME_ACTORS_ALREADY_ASSIGNED', SYS_LANG, Array ($task->getTasTitle()) );
+                $this->msg = G::LoadTranslation( 'ID_SOME_ACTORS_ALREADY_ASSIGNED', SYS_LANG, Array ($task->getTasTitle()) );
             }
         }
     }

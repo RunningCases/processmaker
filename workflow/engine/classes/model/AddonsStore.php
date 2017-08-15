@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 require_once 'classes/model/om/BaseAddonsStore.php';
@@ -33,10 +34,8 @@ class AddonsStore extends BaseAddonsStore
      */
     public static function checkLicenseStore()
     {
-        require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-
         //getting the licenseManager....
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
 
         if (isset($licenseManager->id)) {
             //Remove any license store that is not the active license
@@ -73,7 +72,7 @@ class AddonsStore extends BaseAddonsStore
 
         AddonsStore::checkLicenseStore();
 
-        $licenseManager = &pmLicenseManager::getSingleton(); //Getting the licenseManager
+        $licenseManager = &PmLicenseManager::getSingleton(); //Getting the licenseManager
 
         $result["store_errors"] = array();
         list($stores, $errors)  = AddonsStore::updateAll(false, $type);
@@ -185,7 +184,7 @@ class AddonsStore extends BaseAddonsStore
 
         AddonsStore::checkLicenseStore();
 
-        $licenseManager = &pmLicenseManager::getSingleton(); //Getting the licenseManager
+        $licenseManager = &PmLicenseManager::getSingleton(); //Getting the licenseManager
 
         $result["store_errors"] = array();
         list($stores, $errors)  = AddonsStore::updateAll(false);
@@ -331,12 +330,6 @@ class AddonsStore extends BaseAddonsStore
      */
     public function update($force = false, $type = 'plugin')
     {
-        require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-
-        if (!class_exists('AddonsManagerPeer')) {
-            require_once ('classes/model/AddonsManager.php');
-        }
-
         //If we have any addon that is installing or updating, don't update store
         $criteria = new Criteria(AddonsManagerPeer::DATABASE_NAME);
         $criteria->add(AddonsManagerPeer::ADDON_STATE, '', Criteria::NOT_EQUAL);
@@ -358,7 +351,7 @@ class AddonsStore extends BaseAddonsStore
             $aPluginsPP = unserialize(trim(file_get_contents(PATH_DATA_SITE . 'ee')));
         }
 
-        $pmLicenseManagerO = &pmLicenseManager::getSingleton();
+        $pmLicenseManagerO = &PmLicenseManager::getSingleton();
         $localPlugins = array();
 
         if ($type == 'plugin') {
@@ -497,7 +490,7 @@ class AddonsStore extends BaseAddonsStore
                     "header" => "Content-type: application/x-www-form-urlencoded\r\n",
                     "content" => http_build_query(
                         array(
-                            "pmVersion" => PmSystem::getVersion(),
+                            "pmVersion" => System::getVersion(),
                             "version" => STORE_VERSION
                         )
                     )
@@ -505,7 +498,7 @@ class AddonsStore extends BaseAddonsStore
             );
 
             // Proxy settings
-            $sysConf = PmSystem::getSystemConfiguration();
+            $sysConf = System::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {

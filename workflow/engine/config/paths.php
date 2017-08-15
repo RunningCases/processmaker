@@ -142,3 +142,4 @@
   define('PML_UPLOAD_URL',   PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess');
   define('PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download');
 
+  G::defineConstants();

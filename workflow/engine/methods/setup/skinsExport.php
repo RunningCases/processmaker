@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * skinsExport.php
  *
@@ -150,7 +152,7 @@ G::mk_dir( $pathPublic . 'images' );
 $fields['className'] = $id;
 $fields['version'] = $oConf->version;
 $fields['description'] = $oConf->description;
-$fields['PMversion'] = PmSystem::getVersion();
+$fields['PMversion'] = System::getVersion();
 savePluginFile( 'skinPluginMainClass', $pathHome . $id . '.php', $fields );
 
 savePluginFile( 'skinPluginClass', $pathBase . 'class.' . $id . '.php', $fields );

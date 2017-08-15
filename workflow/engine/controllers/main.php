@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -46,7 +47,7 @@ class Main extends Controller
         $expireInLabel = '';
 
         require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
-        $pmLicenseManager = &pmLicenseManager::getSingleton();
+        $pmLicenseManager = &PmLicenseManager::getSingleton();
         $expireIn = $pmLicenseManager->getExpireIn();
         $expireInLabel = $pmLicenseManager->getExpireInLabel();
 
@@ -199,7 +200,7 @@ class Main extends Controller
 
         if (($nextBeatDate = $this->memcache->get( 'nextBeatDate' )) === false) {
             //get the serverconf singleton, and check if we can send the heartbeat
-            $oServerConf = & serverConf::getSingleton();
+            $oServerConf = & ServerConf::getSingleton();
             $sflag = $oServerConf->getHeartbeatProperty( 'HB_OPTION', 'HEART_BEAT_CONF' );
             $sflag = (trim( $sflag ) != '') ? $sflag : '1';
             //get date of next beat
@@ -264,7 +265,7 @@ class Main extends Controller
         }
 
         $this->setVar( 'logo_company', $this->getCompanyLogo() );
-        $this->setVar( 'pmos_version', PmSystem::getVersion() );
+        $this->setVar( 'pmos_version', System::getVersion() );
 
         $footerText = 'Copyright &copy; 2003-' . date( 'Y' ) . ' Colosa, Inc. All rights reserved.';
         $adviseText = 'Supplied free of charge with no support, certification, warranty,
@@ -305,7 +306,7 @@ class Main extends Controller
         $aField['LOGIN_VERIFY_MSG'] = G::loadTranslation( 'LOGIN_VERIFY_MSG' );
 
         //Get Server Configuration
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
 
         $availableLangArray = $this->getLanguagesList();
 
@@ -314,7 +315,7 @@ class Main extends Controller
         $this->includeExtJS( 'main/sysLogin' );
 
         $this->setVar( 'logo_company', $this->getCompanyLogo() );
-        $this->setVar( 'pmos_version', PmSystem::getVersion() );
+        $this->setVar( 'pmos_version', System::getVersion() );
 
         $footerText = G::LoadTranslation('ID_COPYRIGHT_FROM') . date( 'Y' ) . G::LoadTranslation('ID_COPYRIGHT_COL');
         $adviseText = G::LoadTranslation('ID_COLOSA_AND_CERTIFIED_PARTNERS');
@@ -384,7 +385,7 @@ class Main extends Controller
             $template->assign( 'passwd', $newPass );
             $template->assign( 'poweredBy', G::loadTranslation( 'ID_PROCESSMAKER_SLOGAN1' ) );
             $template->assign( 'versionLabel', G::loadTranslation( 'ID_VERSION' ) );
-            $template->assign( 'version', PmSystem::getVersion() );
+            $template->assign( 'version', System::getVersion() );
             $template->assign( 'visit', G::loadTranslation( 'ID_VISIT' ) );
 
             $template->assign( 'footer', '' );
@@ -465,7 +466,7 @@ class Main extends Controller
 
         if (defined( "SYS_SYS" )) {
             if (($aFotoSelect = $this->memcache->get( 'aFotoSelect' )) === false) {
-                $oLogoR = new replacementLogo();
+                $oLogoR = new ReplacementLogo();
                 $aFotoSelect = $oLogoR->getNameLogo( (isset( $_SESSION['USER_LOGGED'] )) ? $_SESSION['USER_LOGGED'] : '' );
                 $this->memcache->set( 'aFotoSelect', $aFotoSelect, 1 * 3600 );
             }
@@ -515,7 +516,7 @@ class Main extends Controller
 
     private function getWorkspacesAvailable ()
     {
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
         $dir = PATH_DB;
         $filesArray = array ();
         if (file_exists( $dir )) {
@@ -695,7 +696,7 @@ class Main extends Controller
 
         $redhat .= " (" . PHP_OS . ")";
         if (defined( "DB_HOST" )) {
-            $dbNetView = new NET( DB_HOST );
+            $dbNetView = new Net( DB_HOST );
             $dbNetView->loginDbServer( DB_USER, DB_PASS );
 
             $dbConns = new DbConnections( '' );
@@ -733,7 +734,7 @@ class Main extends Controller
         if (defined('SYSTEM_NAME')) {
             $systemName = SYSTEM_NAME;
         }
-        $properties[] = array ($systemName. ' Ver.', PmSystem::getVersion() . $ee, $pmSection);
+        $properties[] = array ($systemName. ' Ver.', System::getVersion() . $ee, $pmSection);
         $properties[] = array("PMUI JS Lib. Ver.", $pmuiVer, $pmSection);
         $properties[] = array("MAFE JS Lib. Ver.", $mafeVer, $pmSection);
         $properties[] = array("PM Dynaform JS Lib. Ver.", $pmdynaformVer, $pmSection);

@@ -68,7 +68,6 @@
             "workflow/engine/includes/",
             "thirdparty/smarty/libs/Smarty.class.php",
             "thirdparty/jsmin/jsmin.php",
-            "thirdparty/libchart/classes/",
             "thirdparty/pear",
             "thirdparty/html2ps_pdf",
             "thirdparty/phing",
@@ -80,7 +79,8 @@
             "gulliver/includes/smarty_plugins/function.pmos.php",
             "thirdparty/pear/PEAR.php",
             "thirdparty/HTMLPurifier/HTMLPurifier.auto.php",
-            "workflow/engine/classes/class.pmFunctions.php"
+            "workflow/engine/classes/class.pmFunctions.php",
+            "workflow/engine/src/ProcessMaker/Util/helpers.php"
         ]
     },
     "autoload-dev": {

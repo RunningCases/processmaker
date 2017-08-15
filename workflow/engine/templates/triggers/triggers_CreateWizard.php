@@ -25,7 +25,7 @@
 
 try {
 
-    $triggerLibrary = triggerLibrary::getSingleton ();
+    $triggerLibrary = TriggerLibrary::getSingleton ();
     $libraryClassName = $_GET ['LIBRARY'];
     $libraryMethod = $_GET ['NAME_FUN'];
     $sProUid = $_GET ['PRO_UID'];

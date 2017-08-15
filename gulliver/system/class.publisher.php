@@ -192,7 +192,7 @@ class Publisher
 
                 if (($this->publishType == 'dynaform') && (($Part['Template'] == 'xmlform') || ($Part['Template'] == 'xmlform_preview'))) {
                     $dynaformShow = (isset( $G_FORM->printdynaform ) && ($G_FORM->printdynaform)) ? 'gulliver/dynaforms_OptionsPrint' : 'gulliver/dynaforms_Options';
-                    $G_FORM->fields = G::array_merges( array ('__DYNAFORM_OPTIONS' => new XmlForm_Field_XmlMenu( new Xml_Node( '__DYNAFORM_OPTIONS', 'complete', '', array ('type' => 'xmlmenu','xmlfile' => $dynaformShow, 'parentFormId' => $G_FORM->id
+                    $G_FORM->fields = G::array_merges( array ('__DYNAFORM_OPTIONS' => new XmlFormFieldXmlMenu( new Xml_Node( '__DYNAFORM_OPTIONS', 'complete', '', array ('type' => 'xmlmenu','xmlfile' => $dynaformShow, 'parentFormId' => $G_FORM->id
                     ) ), SYS_LANG, PATH_XMLFORM, $G_FORM )
                     ), $G_FORM->fields );
                 }
@@ -355,7 +355,7 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
+                $pm = new PopupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $pm->name = $oTable->id;
                 $fields = array_keys( $oTable->fields );
                 foreach ($fields as $f) {
@@ -369,7 +369,7 @@ class Publisher
                         default:
                             $label = ($oTable->fields[$f]['Label'] != '') ? $oTable->fields[$f]['Label'] : $f;
                             $label = str_replace( "\n", ' ', $label );
-                            $pm->fields[$f] = new XmlForm_Field_popupOption( new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $oTable->id . '.showHideField("' . $f . '")' ) ) );
+                            $pm->fields[$f] = new XmlFormFieldPopupOption( new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $oTable->id . '.showHideField("' . $f . '")' ) ) );
                             $pm->values[$f] = '';
                     }
                 }
@@ -430,7 +430,7 @@ class Publisher
                     $_SESSION[$G_FORM->id] = $G_FORM->values;
                 }
 
-                $oTable = new propelTable();
+                $oTable = new PropelTable();
                 $oTable->template = $Part['Template'];
                 $oTable->criteria = $Part['Content'];
                 if (isset( $Part['ajaxServer'] ) && ($Part['ajaxServer'] !== '')) {
@@ -461,7 +461,7 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
+                $pm = new PopupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $sc = $pm->renderPopup( $oTable->id, $oTable->fields );
                 /* End Block */
                 //krumo ( $Part );

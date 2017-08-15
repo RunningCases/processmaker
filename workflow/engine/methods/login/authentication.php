@@ -23,6 +23,7 @@
  *
  */
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
 try {
@@ -180,7 +181,7 @@ try {
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
-        enterpriseClass::enterpriseSystemUpdate($loginInfo);
+        EnterpriseClass::enterpriseSystemUpdate($loginInfo);
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
     } else {
@@ -247,7 +248,7 @@ try {
         $userTimeZone = $user->getUsrTimeZone();
 
         if (trim($userTimeZone) == '') {
-            $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
+            $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
 
             $userTimeZone = $arraySystemConfiguration['time_zone'];
         }
@@ -293,7 +294,7 @@ try {
     unset($_SESSION['FAILED_LOGINS']);
 
     // increment logins in heartbeat
-    $oServerConf =& serverConf::getSingleton();
+    $oServerConf =& ServerConf::getSingleton();
     $oServerConf->sucessfulLogin();
 
     // Assign the uid of user to userloggedobj
@@ -421,7 +422,7 @@ try {
         die;
     }
 
-    $configS = PmSystem::getSystemConfiguration('', '', SYS_SYS);
+    $configS = System::getSystemConfiguration('', '', SYS_SYS);
     $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block']:true;
     if ($activeSession){
         setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');

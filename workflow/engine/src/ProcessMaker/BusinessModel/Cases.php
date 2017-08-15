@@ -5,16 +5,14 @@ use G;
 use UsersPeer;
 use CasesPeer;
 use AppDelegation;
+use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use Exception;
-use wsBase;
+use WsBase;
 use RBAC;
-use pmDynaform;
+use Applications;
+use PmDynaform;
 
-/**
- * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
- * @copyright Colosa - Bolivia
- */
 class Cases
 {
     private $formatFieldNameInUppercase = true;
@@ -187,7 +185,7 @@ class Cases
     {
         try {
             $solrEnabled = false;
-            $solrConf = \PmSystem::solrEnv();
+            $solrConf = System::solrEnv();
 
             if ($solrConf !== false) {
                 $ApplicationSolrIndex = new \AppSolr(
@@ -262,7 +260,7 @@ class Cases
         $newerThan = (!empty($dataList['newerThan']))? $dataList['newerThan'] : '';
         $oldestThan = (!empty($dataList['oldestthan']))? $dataList['oldestthan'] : '';
 
-        $apps = new \Applications();
+        $apps = new Applications();
         $response = $apps->getAll(
                 $userUid,
                 $start,
@@ -336,7 +334,7 @@ class Cases
         $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $filterStatus = isset( $dataList["filterStatus"] ) ? strtoupper( $dataList["filterStatus"] ) : "";
 
-        $apps = new \Applications();
+        $apps = new Applications();
         $response = $apps->searchAll(
             $userId,
             $start,
@@ -379,7 +377,7 @@ class Cases
     {
         try {
             $solrEnabled = 0;
-            if (($solrEnv = \PmSystem::solrEnv()) !== false) {
+            if (($solrEnv = System::solrEnv()) !== false) {
                 $appSolr = new \AppSolr(
                     $solrEnv["solr_enabled"],
                     $solrEnv["solr_host"],
@@ -406,7 +404,7 @@ class Cases
                     $solrSearchText = "($solrSearchText)";
                     //Add del_index dynamic fields to list of resulting columns
                     $columsToIncludeFinal = array_merge($columsToInclude, $delegationIndexes);
-                    $solrRequestData = \Entity_SolrRequestData::createForRequestPagination(
+                    $solrRequestData = \EntitySolrRequestData::createForRequestPagination(
                         array(
                             "workspace"  => $solrEnv["solr_instance"],
                             "startAfter" => 0,
@@ -420,7 +418,7 @@ class Cases
                         )
                     );
                     //Use search index to return list of cases
-                    $searchIndex = new \BpmnEngine_Services_SearchIndex($appSolr->isSolrEnabled(), $solrEnv["solr_host"]);
+                    $searchIndex = new \BpmnEngineServicesSearchIndex($appSolr->isSolrEnabled(), $solrEnv["solr_host"]);
                     //Execute query
                     $solrQueryResult = $searchIndex->getDataTablePaginatedList($solrRequestData);
                     //Get the missing data from database
@@ -467,7 +465,7 @@ class Cases
                             if (!isset($row)) {
                                 continue;
                             }
-                            $ws = new wsBase();
+                            $ws = new WsBase();
                             $fields = $ws->getCaseInfo($applicationUid, $row["DEL_INDEX"]);
                             $array = json_decode(json_encode($fields), true);
                             if ($array ["status_code"] != 0) {
@@ -534,7 +532,7 @@ class Cases
                     throw (new Exception($arrayData));
                 }
             } else {
-                $ws = new wsBase();
+                $ws = new WsBase();
                 $fields = $ws->getCaseInfo($applicationUid, 0);
                 $array = json_decode(json_encode($fields), true);
 
@@ -680,7 +678,7 @@ class Cases
     {
         try {
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             if ($variables) {
                 $variables = array_shift($variables);
             }
@@ -724,7 +722,7 @@ class Cases
     {
         try {
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             if ($variables) {
                 $variables = array_shift($variables);
             } elseif ($variables == null) {
@@ -779,7 +777,7 @@ class Cases
                 $delIndex = AppDelegation::getCurrentIndex($applicationUid);
             }
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidSource, $userUidTarget);
             $array = json_decode(json_encode($fields), true);
             if (array_key_exists("status_code", $array)) {
@@ -1010,7 +1008,7 @@ class Cases
             $RBAC->sSystem = 'PROCESSMAKER';
         }
 
-        $case = new wsBase();
+        $case = new WsBase();
         $result = $case->executeTrigger($userUid, $appUid, $triUid, $delIndex);
 
         if ($result->status_code != 0) {
@@ -1077,7 +1075,7 @@ class Cases
                 }
             }
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
@@ -1651,7 +1649,7 @@ class Cases
                 }
             }
             return $caseVariable;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1683,7 +1681,7 @@ class Cases
         if (!is_null($dynaFormUid)) {
 
             $data["CURRENT_DYNAFORM"] = $dynaFormUid;
-            $pmDynaForm = new \pmDynaform($data);
+            $pmDynaForm = new PmDynaform($data);
             $arrayDynaFormData = $pmDynaForm->getDynaform();
             $arrayDynContent = \G::json_decode($arrayDynaFormData['DYN_CONTENT']);
             $pmDynaForm->jsonr($arrayDynContent);
@@ -2302,7 +2300,7 @@ class Cases
         $tas_uid  = $aCaseField["TAS_UID"];
         $pro_uid  = $aCaseField["PRO_UID"];
 
-        $oApplication = new \Applications();
+        $oApplication = new Applications();
         $aField = $oApplication->getSteps($app_uid, $del_index, $tas_uid, $pro_uid);
 
         return $aField;

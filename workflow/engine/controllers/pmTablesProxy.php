@@ -6,6 +6,9 @@
  * @inherits HttpProxyController
  * @access public
  */
+
+use ProcessMaker\Core\System;
+
 header("Content-type: text/html;charset=utf-8");
 require_once 'classes/model/AdditionalTables.php';
 
@@ -114,7 +117,7 @@ class pmTablesProxy extends HttpProxyController
         $dbConn = new DbConnections();
         $dbConnections = $dbConn->getConnectionsProUid( $proUid, array('mysql') );
 
-        $workSpace = new workspaceTools(SYS_SYS);
+        $workSpace = new WorkspaceTools(SYS_SYS);
         $workspaceDB = $workSpace->getDBInfo();
 
         if ($workspaceDB['DB_NAME'] == $workspaceDB['DB_RBAC_NAME']) {
@@ -267,7 +270,7 @@ class pmTablesProxy extends HttpProxyController
                 }
 
                 if ($row->type == 'CLASSIC') {
-                    $rp = new reportTables();
+                    $rp = new ReportTables();
                     $rp->deleteReportTable( $row->id );
                     $count ++;
                 } else {
@@ -918,9 +921,9 @@ class pmTablesProxy extends HttpProxyController
 
         try {
             $result = new stdClass();
-            $net = new NET( G::getIpAddress() );
+            $net = new Net( G::getIpAddress() );
 
-            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . PmSystem::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
+            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
 
             $EXPORT_TRACEBACK = Array ();
             $c = 0;
@@ -1365,7 +1368,7 @@ class pmTablesProxy extends HttpProxyController
                         $arrayDynaFormData = $dynaForm->getDynaFormRecordByPk($dynaFormUid, [], false);
 
                         if ($arrayDynaFormData !== false) {
-                            $arrayGrid = pmDynaform::getGridsAndFields($arrayDynaFormData['DYN_CONTENT']);
+                            $arrayGrid = PmDynaform::getGridsAndFields($arrayDynaFormData['DYN_CONTENT']);
 
                             if ($arrayGrid !== false && isset($arrayGrid[$gridId])) {
                                 $grid = $arrayGrid[$gridId];
@@ -1545,7 +1548,7 @@ class pmTablesProxy extends HttpProxyController
                 $record = $rsCriteria->getRow();
 
                 if ($flagIsBpmn) {
-                    $arrayGrid = pmDynaform::getGridsAndFields($record['DYN_CONTENT']);
+                    $arrayGrid = PmDynaform::getGridsAndFields($record['DYN_CONTENT']);
 
                     if ($arrayGrid !== false) {
                         foreach ($arrayGrid as $value) {

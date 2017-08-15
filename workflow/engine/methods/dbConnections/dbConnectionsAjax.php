@@ -240,7 +240,7 @@ switch ($action) {
                 }
             }
 
-            $Server = new NET($server);
+            $Server = new Net($server);
 
             switch ($step) {
                 case 1:
@@ -305,7 +305,7 @@ switch ($action) {
             $connectionType = $_POST["connectionType"];
             $tns = $_POST["tns"];
 
-            $net = new NET();
+            $net = new Net();
 
             switch ($step) {
                 case 1:
