@@ -3,7 +3,7 @@
 /**
  * Class XmlFormFieldTextareaPm
  */
-class XmlFormFieldTextAreaPm extends XmlFormField
+class XmlFormFieldTextareaPm extends XmlFormField
 {
     public $rows = 12;
     public $cols = 40;
