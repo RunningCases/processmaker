@@ -1649,7 +1649,7 @@ class Cases
                 }
             }
             return $caseVariable;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
