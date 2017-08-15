@@ -1,6 +1,6 @@
 <?php
 
-use Processmaker\Core\Installer;
+use ProcessMaker\Core\Installer;
 use ProcessMaker\Plugins\PluginRegistry;
 
 $inst = new Installer();

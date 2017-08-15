@@ -1,6 +1,6 @@
 <?php
 
-use Processmaker\Core\Installer;
+use ProcessMaker\Core\Installer;
 
 class newSiteProxy extends HttpProxyController
 {

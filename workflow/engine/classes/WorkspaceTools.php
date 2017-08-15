@@ -1,6 +1,6 @@
 <?php
 
-use Processmaker\Core\Installer;
+use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\System;
 use ProcessMaker\Util\FixReferencePath;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;

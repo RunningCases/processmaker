@@ -1,6 +1,6 @@
 <?php
 
-namespace Processmaker\Core;
+namespace ProcessMaker\Core;
 
 use AppCacheView;
 use Archive_Tar;
