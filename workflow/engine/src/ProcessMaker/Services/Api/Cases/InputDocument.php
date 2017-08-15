@@ -54,6 +54,8 @@ class InputDocument extends Api
     }
 
     /**
+     * @access protected
+     * @class AccessControl {@className \ProcessMaker\Services\Api\Cases}
      * @url GET /:app_uid/input-document/:app_doc_uid/file
      *
      * @param string $app_uid {@min 32}{@max 32}
