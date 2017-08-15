@@ -1,11 +1,7 @@
 <?php
 
-/**
- * new Site create v1.1
- * Jan 15th, 2011
- *
- * @author krlos P.C <carlos@colosa.com>
- */
+use ProcessMaker\Core\Installer;
+
 class newSiteProxy extends HttpProxyController
 {
 
@@ -15,7 +11,7 @@ class newSiteProxy extends HttpProxyController
             $ao_db_drop = (isset( $_POST['AO_DB_DROP'] )) ? true : false;
 
             $name = trim( $_POST['NW_TITLE'] );
-            $inst = new PmInstaller();
+            $inst = new Installer();
             if ($inst->isset_site($name)) {
                 if($ao_db_drop === true){
                    if(!file_exists(PATH_DATA . "sites/" . $name)){
