@@ -1,4 +1,9 @@
 <?php
+require_once(__DIR__ . '/../../../bootstrap/autoload.php');
+
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+
 register_shutdown_function(
     create_function(
         '',
@@ -64,7 +69,7 @@ try {
 
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
 
-    $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspace);
+    $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace);
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;
@@ -89,38 +94,6 @@ try {
     //define('PATH_GULLIVER_HOME', PATH_TRUNK . 'gulliver' . PATH_SEP);
 
     spl_autoload_register(['Bootstrap', 'autoloadClass']);
-
-    //DATABASE propel classes used in 'Cases' Options
-    Bootstrap::registerClass('AuthenticationSourcePeer', PATH_RBAC . 'model' . PATH_SEP . 'AuthenticationSourcePeer.php');
-    Bootstrap::registerClass('BaseAuthenticationSource', PATH_RBAC . 'model' . PATH_SEP . 'om' . PATH_SEP . 'BaseAuthenticationSource.php');
-    Bootstrap::registerClass('AuthenticationSource',     PATH_RBAC . 'model' . PATH_SEP . 'AuthenticationSource.php');
-    Bootstrap::registerClass('RolesPeer',                PATH_RBAC . 'model' . PATH_SEP . 'RolesPeer.php');
-    Bootstrap::registerClass('BaseRoles',                PATH_RBAC . 'model' . PATH_SEP . 'om' . PATH_SEP . 'BaseRoles.php');
-    Bootstrap::registerClass('Roles',                    PATH_RBAC . 'model' . PATH_SEP . 'Roles.php');
-
-    require_once(PATH_RBAC . 'model' . PATH_SEP . 'UsersRolesPeer.php');
-    require_once(PATH_RBAC . 'model' . PATH_SEP . 'om' . PATH_SEP . 'BaseUsersRoles.php');
-    require_once(PATH_RBAC . 'model' . PATH_SEP . 'UsersRoles.php');
-
-    Bootstrap::registerClass('PMLicensedFeatures', PATH_CLASSES . 'class.licensedFeatures.php');
-    Bootstrap::registerClass('serverConf',         PATH_CLASSES . 'class.serverConfiguration.php');
-    Bootstrap::registerClass('calendar',           PATH_CLASSES . 'class.calendar.php');
-    Bootstrap::registerClass('groups',             PATH_CLASSES . 'class.groups.php');
-
-    Bootstrap::registerClass('Entity_Base',         PATH_HOME . 'engine/classes/entities/Base.php');
-    Bootstrap::registerClass('Entity_AppSolrQueue', PATH_HOME . 'engine/classes/entities/AppSolrQueue.php');
-    Bootstrap::registerClass('XMLDB',               PATH_HOME . 'engine/classes/class.xmlDb.php');
-    Bootstrap::registerClass('dynaFormHandler',     PATH_GULLIVER . 'class.dynaformhandler.php');
-    Bootstrap::registerClass('DynaFormField',       PATH_HOME . 'engine/classes/class.dynaFormField.php');
-    Bootstrap::registerClass('SolrRequestData',     PATH_HOME . 'engine/classes/entities/SolrRequestData.php');
-    Bootstrap::registerClass('SolrUpdateDocument',  PATH_HOME . 'engine/classes/entities/SolrUpdateDocument.php');
-    Bootstrap::registerClass('Xml_Node',            PATH_GULLIVER . 'class.xmlDocument.php');
-    Bootstrap::registerClass('wsResponse',          PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.wsResponse.php');
-    Bootstrap::initVendors();
-
-    /*----------------------------------********---------------------------------*/
-    Bootstrap::registerClass('dashboards', PATH_HOME . 'engine/classes/class.dashboards.php');
-    /*----------------------------------********---------------------------------*/
 
     //Set variables
     /*----------------------------------********---------------------------------*/
@@ -174,12 +147,6 @@ try {
             define('REQUEST_SCHEME', $SERVER_INFO['REQUEST_SCHEME']);
         } else {
             eprintln('WARNING! No server info found!', 'red');
-        }
-
-        $sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-
-        if (file_exists($sSerializedFile)) {
-            $pluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
         }
 
         //DB
@@ -256,9 +223,6 @@ try {
 
         define('TIME_ZONE', ini_get('date.timezone'));
 
-        //Enable Monolog
-
-
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
 
@@ -268,7 +232,6 @@ try {
                     processWorkspace();
                     break;
                 case 'ldapcron':
-                    require_once(PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.ldapAdvanced.php');
                     require_once(PATH_HOME . 'engine' . PATH_SEP . 'methods' . PATH_SEP . 'services' . PATH_SEP . 'ldapadvanced.php');
 
                     $ldapadvancedClassCron = new ldapadvancedClassCron();
@@ -313,11 +276,7 @@ try {
 function processWorkspace()
 {
     try {
-
-        $oPluginRegistry =& PMPluginRegistry::getSingleton();
-        if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
-            $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
-        }
+        $oPluginRegistry = PluginRegistry::loadSingleton();
 
         global $sObject;
         global $sLastExecution;
@@ -357,7 +316,6 @@ function resendEmails()
     setExecutionMessage("Resending emails");
 
     try {
-
         $dateResend = $sNow;
 
         if ($sNow == $dateSystem) {
@@ -375,7 +333,7 @@ function resendEmails()
             $dateResend = date("Y-m-d H:i:s", $mktDateSystem - (7 * 24 * 60 * 60));
         }
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
         $oSpool->resendEmails($dateResend, 1);
 
         saveLog("resendEmails", "action", "Resending Emails", "c");
@@ -422,8 +380,6 @@ function unpauseApplications()
     setExecutionMessage("Unpausing applications");
 
     try {
-
-
         $oCases = new Cases();
         $oCases->ThrowUnpauseDaemon($sNow, 1);
 
@@ -467,7 +423,7 @@ function executePlugins()
     // Executing registered cron files
 
     // -> Get registered cron files
-    $oPluginRegistry =& PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $cronFiles = $oPluginRegistry->getCronFiles();
 
     // -> Execute functions
@@ -1024,7 +980,7 @@ function synchronizeGmailLabels()
         }
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            $pmGoogle = new PMGoogleApi();
+            $pmGoogle = new PmGoogleApi();
             if ($pmGoogle->getServiceGmailStatus()) {
                 setExecutionMessage("Synchronize labels in Gmail");
                 $labGmail = new labelsGmail();

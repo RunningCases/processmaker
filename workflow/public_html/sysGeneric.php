@@ -22,6 +22,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use Illuminate\Foundation\Http\Kernel;
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * bootstrap - ProcessMaker Bootstrap
  * this file is used initialize main variables, redirect and dispatch all requests
@@ -218,7 +221,6 @@ define( 'PATH_RBAC_MSSQL_DATA', PATH_RBAC_CORE . 'data' . PATH_SEP . 'mssql' . P
 define( 'PATH_CONTROLLERS', PATH_CORE . 'controllers' . PATH_SEP );
 
 // include Gulliver Class
-require_once (PATH_GULLIVER . "class.bootstrap.php");
 
 if (file_exists( FILE_PATHS_INSTALLED )) {
 
@@ -280,6 +282,8 @@ define( 'PML_SERVER', 'http://library.processmaker.com' );
 define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
 define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
 define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
+
+G::defineConstants();
 
 $config = Bootstrap::getSystemConfiguration();
 
@@ -502,7 +506,7 @@ define( 'SYS_URI', '/sys' . SYS_TEMP . '/' . SYS_LANG . '/' . SYS_SKIN . '/' );
 // defining the serverConf singleton
 if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     //Instance Server Configuration Singleton
-    $oServerConf = & serverConf::getSingleton();
+    $oServerConf = & ServerConf::getSingleton();
 }
 
 
@@ -546,6 +550,18 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     }
     die();
 }
+
+app()->useStoragePath(realpath(PATH_DATA));
+app()->make(Kernel::class)->bootstrap();
+//Overwrite with the Processmaker env.ini configuration used in production environments
+//@todo: move env.ini configuration to .env
+ini_set( 'display_errors', $config['display_errors']);
+ini_set( 'error_reporting', $config['error_reporting']);
+ini_set( 'short_open_tag', 'On' );
+ini_set( 'default_charset', "UTF-8" );
+ini_set( 'memory_limit', $config['memory_limit'] );
+ini_set( 'soap.wsdl_cache_enabled', $config['wsdl_cache'] );
+ini_set('date.timezone', $config['time_zone']); //Set Time Zone
 
 // Load Language Translation
 Bootstrap::LoadTranslationObject( defined( 'SYS_LANG' ) ? SYS_LANG : "en" );
@@ -638,21 +654,8 @@ $memcache = & PMmemcached::getSingleton( SYS_SYS );
 
 // load Plugins base class
 
-//here we are loading all plugins registered
-//the singleton has a list of enabled plugins
-$sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-
-if (file_exists( $sSerializedFile )) {
-    $oPluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
-    $attributes = $oPluginRegistry->getAttributes();
-    Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
-} else{
-    $oPluginRegistry = PMPluginRegistry::getSingleton();
-}
 // setup propel definitions and logging
 //changed to autoloader
-//require_once ("propel/Propel.php");
-//require_once ("creole/Creole.php");
 
 if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
     define( 'PM_PID', mt_rand( 1, 999999 ) );
@@ -688,6 +691,12 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 } else {
     Propel::init( PATH_CORE . "config/databases.php" );
 }
+
+//here we are loading all plugins registered
+//the singleton has a list of enabled plugins
+$oPluginRegistry = PluginRegistry::loadSingleton();
+$attributes = $oPluginRegistry->getAttributes();
+Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
 
 //Set Time Zone
 /*----------------------------------********---------------------------------*/
@@ -797,8 +806,6 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
             Bootstrap::streamFile($phpFile);
             die();
         }
-
-        Bootstrap::initVendors();
 
         $isWebEntry = \ProcessMaker\BusinessModel\WebEntry::isWebEntry(SYS_COLLECTION, $phpFile);
         if (\Bootstrap::getDisablePhpUploadExecution() === 1 && !$isWebEntry) {

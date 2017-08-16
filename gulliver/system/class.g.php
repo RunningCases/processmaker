@@ -24,6 +24,9 @@
  *
  */
 
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * @package gulliver.system
  */
@@ -44,11 +47,7 @@ class G
     public static $httpHost;
 
     /**
-     * Load Gulliver Classes
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadSystem($strClass)
     {
@@ -56,11 +55,7 @@ class G
     }
 
     /**
-     * Load System Classes
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public function LoadSystemExist($strClass)
     {
@@ -68,11 +63,7 @@ class G
     }
 
     /**
-     * Include javascript files
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public function LoadInclude($strClass)
     {
@@ -80,11 +71,7 @@ class G
     }
 
     /**
-     * public function LoadClassRBAC
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public function LoadClassRBAC($strClass)
     {
@@ -92,12 +79,7 @@ class G
     }
 
     /**
-     * If the class is not defined by the aplication, it
-     * attempt to load the class from gulliver.system
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadClass($strClass)
     {
@@ -105,12 +87,7 @@ class G
     }
 
     /**
-     * public function LoadThirdParty
-     * @access public
-     * @param string $sPath
-     * @param string $sFile
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadThirdParty($sPath, $sFile)
     {
@@ -187,7 +164,7 @@ class G
      * @param string $symbol
      * @return string
      */
-    public function generate_password($length = 15, $availableSets = "luns", $symbol = "_-+=!@#$%*&,.")
+    public function generate_password($length = 15, $availableSets = "luns", $symbol = "_-$!")
     {
         $chars = "";
         if (strpos($availableSets, "l") !== false) {
@@ -502,7 +479,7 @@ class G
      *
      * @return void
      */
-    public function rm_dir ($dirName)
+    public static function rm_dir ($dirName)
     {
         if (! is_writable( $dirName )) {
             return false;
@@ -638,7 +615,7 @@ class G
      * @param string $strSkin
      * @return void
      */
-    public function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
+    public static function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
     {
         global $G_CONTENT;
         global $G_TEMPLATE;
@@ -889,7 +866,7 @@ class G
         /* Fix to prevent use uxs skin outside siplified interface,
         because that skin is not compatible with others interfaces*/
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = PmSystem::getSystemConfiguration();
+            $config = System::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 
@@ -1035,7 +1012,7 @@ class G
 
             if (((in_array($browserName, $enabledBrowsers)) || (in_array('ALL', $enabledBrowsers)))&&(!(in_array($browserName, $disabledBrowsers)))) {
                 if ($cssFileInfo['__ATTRIBUTES__']['file'] == 'rtl.css') {
-                    $oServerConf =& serverConf::getSingleton();
+                    $oServerConf =& ServerConf::getSingleton();
                     if (!(defined('SYS_LANG'))) {
                         if (isset($_SERVER['HTTP_REFERER'])) {
                             $syss = explode('://', $_SERVER['HTTP_REFERER']);
@@ -1825,6 +1802,14 @@ class G
 
             $arrayGrid = array_unique($arrayGrid);
 
+            //Given the set: 'valueOne', 'valueOneTwo', where the second string 
+            //contains the first string, this causes the larger string to take 
+            //the second, resulting in a delimitation error, to avoid this problem 
+            //we first search the string larger size.
+            usort($arrayGrid, function($a, $b) {
+                return strlen($b) - strlen($a);
+            });
+
             foreach ($arrayGrid as $index => $value) {
                 if($value !== "") {
                     $grdName = $value;
@@ -1981,7 +1966,7 @@ class G
      *
      * @return void
      */
-    public function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
+    public static function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
     {
         if (isset( $width )) {
             $_SESSION['G_MESSAGE_WIDTH'] = $width;
@@ -2913,6 +2898,16 @@ class G
     }
 
     /**
+     * Verify if the input string is a valid UID of size 32
+     * @param string $uid
+     * @return boolean
+     */
+    public static function verifyUniqueID32($uid)
+    {
+        return (bool) preg_match('/^[0-9A-Za-z]{32,32}$/', $uid);
+    }
+
+    /**
      * is_utf8
      *
      * @param string $string
@@ -2921,11 +2916,10 @@ class G
      */
     public function is_utf8 ($string)
     {
-        if (is_array( $string )) {
-            $enc = implode( '', $string );
-            return @! ((ord( $enc[0] ) != 239) && (ord( $enc[1] ) != 187) && (ord( $enc[2] ) != 191));
+        if (preg_match('//u', $string)) {
+            return true;
         } else {
-            return (utf8_encode( utf8_decode( $string ) ) == $string);
+            return false;
         }
     }
 
@@ -3221,20 +3215,34 @@ class G
      * @param (array) additional characteres map
      *
      */
-    public function inflect ($string, $replacement = '_', $map = array())
+    public function inflect($string, $replacement = '_', $map = array())
     {
-        if (is_array( $replacement )) {
+        if (is_array($replacement)) {
             $map = $replacement;
             $replacement = '_';
         }
 
-        $quotedReplacement = preg_quote( $replacement, '/' );
+        $quotedReplacement = preg_quote($replacement, '/');
 
-        $default = array ('/à|á|å|â/' => 'a','/è|é|ê|ẽ|ë/' => 'e','/ì|í|î/' => 'i','/ò|ó|ô|ø/' => 'o','/ù|ú|ů|û/' => 'u','/ç/' => 'c','/ñ/' => 'n','/ä|æ/' => 'ae','/ö/' => 'oe','/ü/' => 'ue','/Ä/' => 'Ae','/Ü/' => 'Ue','/Ö/' => 'Oe','/ß/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
-        );
+        $default = array('/à|á|å|â/' => 'a',
+            '/è|é|ê|ẽ|ë/' => 'e',
+            '/ì|í|î/' => 'i',
+            '/ò|ó|ô|ø/' => 'o',
+            '/ù|ú|ů|û/' => 'u',
+            '/ç/' => 'c',
+            '/ñ/' => 'n',
+            '/ä|æ/' => 'ae',
+            '/ö/' => 'oe',
+            '/ü/' => 'ue',
+            '/Ä/' => 'Ae',
+            '/Ü/' => 'Ue',
+            '/Ö/' => 'Oe',
+            '/ß/' => 'ss',
+            '/[\.|\,|\+|\"|\:|\;|\-|\\|\/]/' => " ",
+            '/\\s+/' => $replacement);
 
-        $map = array_merge( $default, $map );
-        return preg_replace( array_keys( $map ), array_values( $map ), $string );
+        $map = array_merge($default, $map);
+        return preg_replace(array_keys($map), array_values($map), $string);
     }
 
     /**
@@ -4642,7 +4650,7 @@ class G
      */
     public function getCheckSum ($files)
     {
-        $key = PmSystem::getVersion();
+        $key = System::getVersion();
 
         if (! is_array( $files )) {
             $tmp = $files;
@@ -5011,9 +5019,9 @@ class G
             $restClasses = array_merge( $restClasses, $pluginRestClasses );
         }
         // hook to get rest api classes from plugins
-        if (class_exists( 'PMPluginRegistry' )) {
-            $pluginRegistry = & PMPluginRegistry::getSingleton();
-            $pluginClasses = $pluginRegistry->getRegisteredRestClassFiles();
+        if (class_exists( 'ProcessMaker\Plugins\PluginRegistry' )) {
+            $pluginRegistry = PluginRegistry::loadSingleton();
+            $pluginClasses = $pluginRegistry->getRegisteredRestServices();
             $restClasses = array_merge( $restClasses, $pluginClasses );
         }
         foreach ($restClasses as $key => $classFile) {
@@ -5273,7 +5281,7 @@ class G
 
     public static function browserCacheFilesGetUid()
     {
-        $sysConf = PmSystem::getSystemConfiguration(PATH_CONFIG . "env.ini");
+        $sysConf = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
         return (isset($sysConf["browser_cache_files_uid"]))? $sysConf["browser_cache_files_uid"] : null;
     }
@@ -5398,7 +5406,7 @@ class G
      */
     public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
-        $config = PmSystem::getSystemConfiguration();
+        $config = System::getSystemConfiguration();
 
 
         $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);
@@ -5408,6 +5416,12 @@ class G
     }
 
     /**
+     * This function save history about some actions in the file audit.log
+     * The data is used in the Audit Log functionality
+     *
+     * @param string $actionToLog
+     * @param string $valueToLog
+     * @return void
     */
     public static function auditLog($actionToLog, $valueToLog = "")
     {
@@ -5416,13 +5430,25 @@ class G
         $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
         $sflagAudit = $sflag == 'true' ? true : false;
         $ipClient = G::getIpAddress();
+        $userUid = 'Unknow User';
+        $fullName = '-';
 
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
-            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
-            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
-            G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+            if (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') {
+                $userUid = $_SESSION['USER_LOGGED'];
+            } else {
+                //Get the usrUid related to the accessToken
+                $userUid = \ProcessMaker\Services\OAuth2\Server::getUserId();
+                if (!empty($userUid)) {
+                    $oUserLogged = new \Users();
+                    $user = $oUserLogged->loadDetails($userUid);
+                    $fullName = $user['USR_FULLNAME'];
+                }
+            }
+            $fullName = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : $fullName;
+            G::log("|". $workspace ."|". $ipClient ."|". $userUid . "|" . $fullName ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
         }
         /*----------------------------------********---------------------------------*/
     }
@@ -5701,7 +5727,7 @@ class G
     *
     * @return showRes($string)
     */
-    public function outRes ($sInfVar)
+    public static function outRes ($sInfVar)
     {
         echo $sInfVar;
     }
@@ -5798,6 +5824,19 @@ class G
             $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = true;
         }
     }
+
+    /**
+     * Define the Processmaker constants.
+     *
+     */
+    public static function defineConstants()
+    {
+        //Moved from Enterprise class.
+        if (file_exists(PATH_METHODS . "login/version-pmos.php")) {
+            include (PATH_METHODS . "login/version-pmos.php");
+        }
+        //Removed default version from code.
+    }
 }
 
 /**
@@ -5887,9 +5926,4 @@ function eprintln ($s = "", $c = null)
         }
         print "$s\n";
     }
-}
-
-function __ ($msgID, $lang = SYS_LANG, $data = null)
-{
-    return G::LoadTranslation( $msgID, $lang, $data );
 }

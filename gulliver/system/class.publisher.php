@@ -25,7 +25,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
-
+use ProcessMaker\Plugins\PluginRegistry;
 /**
  * Publisher class definition
  * It is to publish all content in a page
@@ -174,7 +174,7 @@ class Publisher
                         $aux[1] = $filename;
                     }
                     if (count( $aux ) == 2 && defined( 'G_PLUGIN_CLASS' )) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($response = $oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             if ($response !== true) {
                                 $sPath = PATH_PLUGINS . $response . PATH_SEP;
@@ -192,7 +192,7 @@ class Publisher
 
                 if (($this->publishType == 'dynaform') && (($Part['Template'] == 'xmlform') || ($Part['Template'] == 'xmlform_preview'))) {
                     $dynaformShow = (isset( $G_FORM->printdynaform ) && ($G_FORM->printdynaform)) ? 'gulliver/dynaforms_OptionsPrint' : 'gulliver/dynaforms_Options';
-                    $G_FORM->fields = G::array_merges( array ('__DYNAFORM_OPTIONS' => new XmlForm_Field_XmlMenu( new Xml_Node( '__DYNAFORM_OPTIONS', 'complete', '', array ('type' => 'xmlmenu','xmlfile' => $dynaformShow, 'parentFormId' => $G_FORM->id
+                    $G_FORM->fields = G::array_merges( array ('__DYNAFORM_OPTIONS' => new XmlFormFieldXmlMenu( new Xml_Node( '__DYNAFORM_OPTIONS', 'complete', '', array ('type' => 'xmlmenu','xmlfile' => $dynaformShow, 'parentFormId' => $G_FORM->id
                     ) ), SYS_LANG, PATH_XMLFORM, $G_FORM )
                     ), $G_FORM->fields );
                 }
@@ -314,7 +314,7 @@ class Publisher
                 if (! is_file( $sPath . $Part['File'] )) {
                     $aux = explode( PATH_SEP, $Part['File'] );
                     if (count( $aux ) == 2) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             $sPath = PATH_PLUGINS; // . $aux[0] . PATH_SEP ;
                         }
@@ -355,7 +355,7 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
+                $pm = new PopupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $pm->name = $oTable->id;
                 $fields = array_keys( $oTable->fields );
                 foreach ($fields as $f) {
@@ -369,7 +369,7 @@ class Publisher
                         default:
                             $label = ($oTable->fields[$f]['Label'] != '') ? $oTable->fields[$f]['Label'] : $f;
                             $label = str_replace( "\n", ' ', $label );
-                            $pm->fields[$f] = new XmlForm_Field_popupOption( new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $oTable->id . '.showHideField("' . $f . '")' ) ) );
+                            $pm->fields[$f] = new XmlFormFieldPopupOption( new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $oTable->id . '.showHideField("' . $f . '")' ) ) );
                             $pm->values[$f] = '';
                     }
                 }
@@ -400,7 +400,7 @@ class Publisher
 
                     //search in PLUGINS folder, probably the file is in plugin
                     if (count( $aux ) == 2) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             $sPath = PATH_PLUGINS; // . $aux[0] . PATH_SEP ;
                         }
@@ -430,7 +430,7 @@ class Publisher
                     $_SESSION[$G_FORM->id] = $G_FORM->values;
                 }
 
-                $oTable = new propelTable();
+                $oTable = new PropelTable();
                 $oTable->template = $Part['Template'];
                 $oTable->criteria = $Part['Content'];
                 if (isset( $Part['ajaxServer'] ) && ($Part['ajaxServer'] !== '')) {
@@ -461,7 +461,7 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
+                $pm = new PopupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $sc = $pm->renderPopup( $oTable->id, $oTable->fields );
                 /* End Block */
                 //krumo ( $Part );
@@ -573,7 +573,7 @@ class Publisher
 
                 // verify if there are templates folders registered, template and method folders are the same
                 $folderTemplate = explode( '/', $Part['Template'] );
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 if ($oPluginRegistry->isRegisteredFolder( $folderTemplate[0] )) {
                     $template->templateFile = PATH_PLUGINS . $Part['Template'] . '.html';
                 } else {
@@ -621,7 +621,7 @@ class Publisher
                     $userTemplate = G::ExpandPath( 'templates' ) . $Part['Template'];
                     $globalTemplate = PATH_TEMPLATE . $Part['Template'];
                     if (! is_file( $userTemplate ) && ! is_file( $globalTemplate )) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             $pluginTemplate = PATH_PLUGINS . $Part['Template'] . '.php';
                             include ($pluginTemplate);

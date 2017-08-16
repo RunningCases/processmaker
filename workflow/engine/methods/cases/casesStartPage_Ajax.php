@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
@@ -306,7 +308,7 @@ function getSimpleDashboardData ()
 
 function getRegisteredDashboards ()
 {
-    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $dashBoardPages = $oPluginRegistry->getDashboardPages();
     print_r( G::json_encode( $dashBoardPages ) );
 }

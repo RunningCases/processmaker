@@ -1,9 +1,10 @@
 <?php
 namespace ProcessMaker\Services\Api\Project;
 
-use \ProcessMaker\Services\Api;
-use \Luracast\Restler\RestException;
-use \ProcessMaker\Util\DateTime;
+use ProcessMaker\Services\Api;
+use Luracast\Restler\RestException;
+use ProcessMaker\Util\DateTime;
+use PmDynaform;
 
 /**
  * Project\DynaForm Api Controller
@@ -128,7 +129,7 @@ class DynaForm extends Api
     {
         try {
 
-            $pmDynaform = new \pmDynaform();
+            $pmDynaform = new PmDynaform();
             return $pmDynaform->downloadLanguage($dyn_uid, $lang);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -145,7 +146,7 @@ class DynaForm extends Api
     {
         try {
 
-            $pmDynaform = new \pmDynaform();
+            $pmDynaform = new PmDynaform();
             $pmDynaform->uploadLanguage($dyn_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -162,7 +163,7 @@ class DynaForm extends Api
     {
         try {
 
-            $pmDynaform = new \pmDynaform();
+            $pmDynaform = new PmDynaform();
             $pmDynaform->deleteLanguage($dyn_uid, $lang);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -179,7 +180,7 @@ class DynaForm extends Api
     {
         try {
 
-            $pmDynaform = new \pmDynaform();
+            $pmDynaform = new PmDynaform();
             return $pmDynaform->listLanguage($dyn_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));

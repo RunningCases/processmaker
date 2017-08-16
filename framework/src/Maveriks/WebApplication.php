@@ -2,9 +2,13 @@
 namespace Maveriks;
 
 use Maveriks\Util;
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services;
 use ProcessMaker\Services\Api;
 use Luracast\Restler\RestException;
+use Illuminate\Foundation\Http\Kernel;
+use G;
 
 /**
  * Web application bootstrap
@@ -285,7 +289,7 @@ class WebApplication
         Services\Api::setWorkspace(SYS_SYS);
         $cacheDir = defined("PATH_WORKSPACE") ? PATH_WORKSPACE : (defined("PATH_C")? PATH_C: sys_get_temp_dir());
 
-        $sysConfig = \PmSystem::getSystemConfiguration();
+        $sysConfig = System::getSystemConfiguration();
 
         \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
         $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
@@ -358,8 +362,8 @@ class WebApplication
         }
 
         // hook to get rest api classes from plugins
-        if (class_exists('PMPluginRegistry') && file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
-            $pluginRegistry = \PMPluginRegistry::loadSingleton(PATH_DATA_SITE . 'plugin.singleton');
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
+            $pluginRegistry = PluginRegistry::loadSingleton();
             $plugins = $pluginRegistry->getRegisteredRestServices();
 
             if (! empty($plugins)) {
@@ -370,8 +374,9 @@ class WebApplication
                     $loader->add($pluginSourceDir);
 
                     foreach ($plugin as $class) {
-                        if (class_exists($class['namespace'])) {
-                            $this->rest->addAPIClass($class['namespace'], strtolower($pluginName));
+                        $className = is_object($class) ? $class->namespace: $class['namespace'];
+                        if (class_exists($className)) {
+                            $this->rest->addAPIClass($className, strtolower($pluginName));
                         }
                     }
                 }
@@ -445,7 +450,8 @@ class WebApplication
         define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
 
-        $arraySystemConfiguration = \PmSystem::getSystemConfiguration();
+        G::defineConstants();
+        $arraySystemConfiguration = System::getSystemConfiguration();
 
         ini_set('date.timezone', $arraySystemConfiguration['time_zone']); //Set Time Zone
 
@@ -476,6 +482,10 @@ class WebApplication
         define("PATH_TEMPORAL", PATH_C . "dynEditor/");
         define("PATH_DB", PATH_DATA . "sites" . PATH_SEP);
 
+        // Change storage path
+        app()->useStoragePath(realpath(PATH_DATA));
+        app()->make(Kernel::class)->bootstrap();
+
         \Bootstrap::setLanguage();
 
         \Bootstrap::LoadTranslationObject((defined("SYS_LANG"))? SYS_LANG : "en");
@@ -493,7 +503,7 @@ class WebApplication
             exit(0);
         }
 
-        $arraySystemConfiguration = \PmSystem::getSystemConfiguration('', '', SYS_SYS);
+        $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
 
         //Do not change any of these settings directly, use env.ini instead
         ini_set('display_errors', $arraySystemConfiguration['display_errors']);

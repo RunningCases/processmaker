@@ -152,7 +152,7 @@ switch ($function) {
         $aFields['AUTH_SOURCE_DATA'] = $aData;
 
         //LDAP_PAGE_SIZE_LIMIT
-        $ldapAdvanced = new ldapAdvanced();
+        $ldapAdvanced = new LdapAdvanced();
 
         try {
             $arrayAuthenticationSourceData = $aFields;
@@ -205,7 +205,7 @@ switch ($function) {
             //Get data
             $arrayData = array();
 
-            $ldapAdvanced = new ldapAdvanced();
+            $ldapAdvanced = new LdapAdvanced();
             $ldapAdvanced->sAuthSource = $authenticationSourceUid;
 
             $result = $ldapAdvanced->searchUsers($keyword, $start, $limit);
@@ -345,7 +345,7 @@ switch ($function) {
             $arrayAuthenticationSourceData['AUTH_SOURCE_VERSION'] = 3;
 
             //Test connection
-            $ldapAdvanced = new ldapAdvanced();
+            $ldapAdvanced = new LdapAdvanced();
 
             $ldapcnn = $ldapAdvanced->ldapConnection($arrayAuthenticationSourceData);
 

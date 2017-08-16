@@ -27,7 +27,7 @@ $RBAC->requirePermissions( 'PM_SETUP' );
 $oConf = new Configurations();
 
 $oHeadPublisher = & headPublisher::getSingleton();
-$oServerConf = & serverConf::getSingleton();
+$oServerConf = & ServerConf::getSingleton();
 
 $oHeadPublisher->addExtJsScript( 'setup/loginSettings', true ); //adding a javascript file .js
 $oHeadPublisher->addContent( 'setup/loginSettings' ); //adding a html file  .html.

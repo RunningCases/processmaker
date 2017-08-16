@@ -2,6 +2,8 @@
 namespace ProcessMaker\BusinessModel;
 
 use \G;
+use ProcessMaker\Plugins\Interfaces\StepDetail;
+use ProcessMaker\Plugins\PluginRegistry;
 use \ProcessMaker\Util;
 
 class Task
@@ -627,14 +629,15 @@ class Task
             }
 
             //Call plugin
-            $pluginRegistry = &\PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
             $externalSteps = $pluginRegistry->getSteps();
 
             if (is_array($externalSteps) && count($externalSteps) > 0) {
-                foreach ($externalSteps as $key => $value) {
+                /** @var StepDetail $value */
+                foreach ($externalSteps as $value) {
                     $arraydbStep[] = array(
-                        $this->getFieldNameByFormatFieldName("OBJ_UID")         => $value->sStepId,
-                        $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => $value->sStepTitle,
+                        $this->getFieldNameByFormatFieldName("OBJ_UID")         => $value->getStepId(),
+                        $this->getFieldNameByFormatFieldName("OBJ_TITLE")       => $value->getStepTitle(),
                         $this->getFieldNameByFormatFieldName("OBJ_DESCRIPTION") => "",
                         $this->getFieldNameByFormatFieldName("OBJ_TYPE")        => "EXTERNAL"
                     );
@@ -1894,7 +1897,12 @@ class Task
         }
     }
 
-    public function getValidateSelfService($data)
+    /**
+     * This method verify if an activity has cases
+     * @param $data
+     * @return \stdclass
+     */
+    public function hasPendingCases($data)
     {
         $paused = false;
         $data = array_change_key_case($data, CASE_LOWER);

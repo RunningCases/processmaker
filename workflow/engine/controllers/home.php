@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * Home controller
  *
@@ -102,7 +104,7 @@ class Home extends Controller
         $userProperty = new UsersProperties();
         $process = new Process();
         $case = new Cases();
-        $sysConf = PmSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         //Get ProcessStatistics Info
         $start = 0;
@@ -133,7 +135,7 @@ class Home extends Controller
             }
         }
 
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
 
         if ($oServerConf->isRtl( SYS_LANG )) {
             $swRtl = 1;
@@ -180,13 +182,11 @@ class Home extends Controller
 
     public function indexSingle ($httpData)
     {
-        require_once 'classes/model/Step.php';
-
         $step = new Step();
 
         $solrEnabled = false;
 
-        if (($solrConf = PmSystem::solrEnv()) !== false) {
+        if (($solrConf = System::solrEnv()) !== false) {
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -377,7 +377,6 @@ class Home extends Controller
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null)
     {
-        require_once ("classes/model/AppNotes.php");
 
         $appNotes = new AppNotes();
 
@@ -411,7 +410,7 @@ class Home extends Controller
             $type == "todo" || $type == "draft" || $type == "paused" || $type == "sent" ||
             $type == "selfservice" || $type == "unassigned" || $type == "search"
         ) &&
-        (($solrConf = PmSystem::solrEnv()) !== false)
+        (($solrConf = System::solrEnv()) !== false)
         ) {
 
             $ApplicationSolrIndex = new AppSolr(
@@ -638,7 +637,6 @@ class Home extends Controller
 
     function getCategoryArray ()
     {
-        require_once 'classes/model/ProcessCategory.php';
         $category = array();
         $category[] = array ("",G::LoadTranslation( "ID_ALL_CATEGORIES" ));
 

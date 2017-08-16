@@ -1,4 +1,8 @@
 <?php
+
+use ProcessMaker\Core\System;
+
+require_once(__DIR__ . '/../../../bootstrap/autoload.php');
 try {
     //Set variables
     $cronName = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_FILENAME);
@@ -72,12 +76,11 @@ try {
     $classLoader->add(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'src' . PATH_SEP, 'ProcessMaker');
     $classLoader->add(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'src' . PATH_SEP);
     $classLoader->addClass('Bootstrap', PATH_TRUNK . 'gulliver' . PATH_SEP . 'system' . PATH_SEP . 'class.bootstrap.php');
-    Bootstrap::initVendors();
 
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
     //Load classes
 
-    $arraySystemConfiguration = PmSystem::getSystemConfiguration();
+    $arraySystemConfiguration = System::getSystemConfiguration();
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;

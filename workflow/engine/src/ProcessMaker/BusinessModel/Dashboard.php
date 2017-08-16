@@ -390,8 +390,7 @@ class Dashboard {
     	$data['USR_UID'] = $usrUid;
     	$data['PRO_UID'] = "";
     	$data['APP_UID'] = "";
-    
-    	//require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Configuration.php");
+
     	$oConfig = new \Configuration();
     
     	$response = $oConfig->create($data);
@@ -409,7 +408,6 @@ class Dashboard {
      */
     public function getConfig($usr_uid)
     {
-    	//require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Configuration.php");
     	$oConfig = new \Configuration();
     
     	$response = array();

@@ -2,7 +2,9 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use ProcessMaker\Core\System;
 use ProcessMaker\Project;
+use ProcessMaker\Util\Common;
 
 class GranularExporter
 {
@@ -64,7 +66,7 @@ class GranularExporter
         $this->prjName = $projectData['PRJ_NAME'];
         $getProjectName = $this->publisher->truncateName($projectData['PRJ_NAME'], false);
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
-        $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx2") + 1;
+        $version = Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx2") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx2");
 
         $bpnmDefinition = array(
@@ -133,7 +135,7 @@ class GranularExporter
         $data["version"] = "3.1";
         $data["container"] = "ProcessMaker-Project";
         $data["metadata"] = array(
-            "vendor_version" => \PmSystem::getVersion(),
+            "vendor_version" => System::getVersion(),
             "vendor_version_code" => "Michelangelo",
             "export_timestamp" => date("U"),
             "export_datetime" => date("Y-m-d\TH:i:sP"),

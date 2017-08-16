@@ -1,4 +1,8 @@
 <?php
+
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+
 unset($_SESSION['APPLICATION']);
 
 //get the action from GET or POST, default is todo
@@ -118,7 +122,7 @@ $oAppCache->confCasesList = $confCasesList;
 $solrEnabled = 0;
 if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "selfservice" ||
     $action == "unassigned" || $action == "search") {
-    $solrConfigured = ($solrConf = PmSystem::solrEnv()) !== false ? 1 : 0;
+    $solrConfigured = ($solrConf = System::solrEnv()) !== false ? 1 : 0;
     if ($solrConfigured == 1) {
         $applicationSolrIndex = new AppSolr(
             $solrConf['solr_enabled'],
@@ -194,12 +198,13 @@ $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 $oHeadPublisher->assign('isIE', Bootstrap::isIE());
 $oHeadPublisher->assign('__OPEN_APPLICATION_UID__', $openApplicationUid);
 
-$oPluginRegistry =& PMPluginRegistry::getSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 $fromPlugin = $oPluginRegistry->getOpenReassignCallback();
 $jsFunction = false;
 if(sizeof($fromPlugin)) {
-    foreach($fromPlugin as $key => $jsFile) {
-        $jsFile = $jsFile->callBackFile;
+    /** @var \ProcessMaker\Plugins\Interfaces\OpenReassignCallback $jsFile */
+    foreach($fromPlugin as $jsFile) {
+        $jsFile = $jsFile->getCallBackFile();
         if(is_file($jsFile)) {
             $jsFile = file_get_contents($jsFile);
             if(!empty($jsFile)) {

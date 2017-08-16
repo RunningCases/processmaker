@@ -114,6 +114,17 @@ class PmTable
     }
 
     /**
+     * 
+     * 
+     * @param string $adapter
+     * @return void
+     */
+    public function setDbConfigAdapter($adapter)
+    {
+        $this->dbConfig->adapter = $adapter;
+    }
+
+    /**
      * Backward compatibility function
      * Resolve a propel data source
      *
@@ -903,7 +914,7 @@ class PmTable
         Phing::startup();
         Phing::setProperty('phing.home', getenv('PHING_HOME'));
 
-        $m = new pmPhing();
+        $m = new PmPhing();
         $m->execute($args);
         $m->runBuild();
     }

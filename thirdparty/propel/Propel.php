@@ -488,15 +488,13 @@ class Propel {
 					* @date: 27-05-08 11:48                                                *
 					* @Description: this was added for the additional database connections *
 					***********************************************************************/
-					$oDbConnections = new dbConnections($_SESSION['PROCESS']);
+					$oDbConnections = new DbConnections($_SESSION['PROCESS']);
     				$oDbConnections->loadAdditionalConnections();
     				$dsn = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null;
 				} else {
     				throw new PropelException("No connection params set for " . $name);
     			}
 			}
-
-			include_once 'creole/Creole.php';
 			// if specified, use custom driver
 			if (isset(self::$configuration['datasources'][$name]['driver'])) {
 				Creole::registerDriver($dsn['phptype'], self::$configuration['datasources'][$name]['driver']);

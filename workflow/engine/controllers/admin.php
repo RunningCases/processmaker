@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * Admin controller
  *
@@ -19,7 +21,7 @@ class Admin extends Controller
         $RBAC->requirePermissions( 'PM_SETUP' );
         require_once PATH_CONTROLLERS . 'main.php';
 
-        $skinsList = PmSystem::getSkingList();
+        $skinsList = System::getSkingList();
         foreach ($skinsList['skins'] as $key => $value) {
             if ($value['SKIN_WORKSPACE'] != 'Global') {
                 unset( $skinsList['skins'][$key] );
@@ -29,7 +31,7 @@ class Admin extends Controller
         $mainController = new Main();
         $languagesList = $mainController->getLanguagesList();
         $languagesList[] = array ("", G::LoadTranslation("ID_USE_LANGUAGE_URL"));
-        $sysConf = PmSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         foreach ($skinsList['skins'] as $skin) {
             $skins[] = array ($skin['SKIN_FOLDER_ID'],$skin['SKIN_NAME']);
@@ -230,10 +232,10 @@ class Admin extends Controller
 
         $redhat .= " (" . PHP_OS . ")";
         if (defined( "DB_HOST" )) {
-            $dbNetView = new NET( DB_HOST );
+            $dbNetView = new Net( DB_HOST );
             $dbNetView->loginDbServer( DB_USER, DB_PASS );
 
-            $dbConns = new dbConnections( '' );
+            $dbConns = new DbConnections( '' );
             $availdb = '';
             foreach ($dbConns->getDbServicesAvailables() as $key => $val) {
                 if ($availdb != '') {
@@ -268,7 +270,7 @@ class Admin extends Controller
         if (defined('SYSTEM_NAME')) {
             $systemName = SYSTEM_NAME;
         }
-        $properties[] = array ($systemName. ' Ver.', PmSystem::getVersion() . $ee, $pmSection);
+        $properties[] = array ($systemName. ' Ver.', System::getVersion() . $ee, $pmSection);
         $properties[] = array("PMUI JS Lib. Ver.", $pmuiVer, $pmSection);
         $properties[] = array("MAFE JS Lib. Ver.", $mafeVer, $pmSection);
         $properties[] = array("PM Dynaform JS Lib. Ver.", $pmdynaformVer, $pmSection);

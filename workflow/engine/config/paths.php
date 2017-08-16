@@ -69,7 +69,6 @@
   // include Gulliver Class
   require_once( PATH_GULLIVER . PATH_SEP . 'class.g.php');
   // include Bootstrap Class
-  require_once (PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php');
 
   if(file_exists(FILE_PATHS_INSTALLED)) {
     // backward compatibility; parsing old definitions in the compiled path constant
@@ -143,3 +142,4 @@
   define('PML_UPLOAD_URL',   PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess');
   define('PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download');
 
+  G::defineConstants();

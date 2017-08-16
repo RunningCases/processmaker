@@ -47,9 +47,7 @@ if (isset( $_SESSION['CURRENT_PAGE_INITILIZATION'] )) {
     eval( $_SESSION['CURRENT_PAGE_INITILIZATION'] );
 }
 
-//require_once (PATH_THIRDPARTY . 'pear/json/class.json.php');
-//$json = new Services_JSON();
-$G_FORM = new form( G::getUIDName( urlDecode( $_POST['form'] ) ) );
+$G_FORM = new Form( G::getUIDName( urlDecode( $_POST['form'] ) ) );
 $G_FORM->id = urlDecode( $_POST['form'] );
 $G_FORM->values = $_SESSION[$G_FORM->id];
 

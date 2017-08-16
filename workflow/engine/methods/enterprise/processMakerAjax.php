@@ -1,6 +1,6 @@
 <?php
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
+
+use ProcessMaker\Core\System;
 
 ini_set("max_execution_time", 0);
 
@@ -43,7 +43,7 @@ function install($file)
         );
 
         // Proxy settings
-        $sysConf = PmSystem::getSystemConfiguration();
+        $sysConf = System::getSystemConfiguration();
         if (isset($sysConf['proxy_host'])) {
             if ($sysConf['proxy_host'] != '') {
                 if (!is_array($option['http'])) {
@@ -119,7 +119,7 @@ switch ($option) {
             }
 
             ///////
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             $server = isset($licenseManager->server) ? $licenseManager->server : '';
             $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
 
@@ -150,7 +150,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = PmSystem::getSystemConfiguration();
+            $sysConf = System::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {
@@ -295,7 +295,7 @@ switch ($option) {
             }
 
             ///////
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             $server = (isset($licenseManager->server)) ? $licenseManager->server : '';
             $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
 
@@ -319,7 +319,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = PmSystem::getSystemConfiguration();
+            $sysConf = System::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {

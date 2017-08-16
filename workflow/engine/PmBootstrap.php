@@ -1,5 +1,7 @@
 <?php
 //test
+use ProcessMaker\Core\System;
+
 class PmBootstrap extends Bootstrap
 {
     public $pmConfig = array();
@@ -25,7 +27,7 @@ class PmBootstrap extends Bootstrap
     {
         parent::configure();
 
-        $this->pmConfig = PmSystem::getSystemConfiguration();
+        $this->pmConfig = System::getSystemConfiguration();
 
         $e_all  = defined('E_DEPRECATED') ? E_ALL  & ~E_DEPRECATED : E_ALL;
         $e_all  = defined('E_STRICT')     ? $e_all & ~E_STRICT     : $e_all;
@@ -66,7 +68,6 @@ class PmBootstrap extends Bootstrap
         // pm workflow classes (static load)
         $this->autoloader->registerClass('System', PATH_CORE . 'classes/class.system');
 
-        //$this->autoloader->registerClass('Services_JSON', PATH_THIRDPARTY .'pear/json/class.json');
         $this->autoloader->registerClass('Smarty', PATH_THIRDPARTY . 'smarty/libs/Smarty.class');
 
         $this->autoloader->registerClass('Propel', PATH_THIRDPARTY . 'propel/Propel');
@@ -83,7 +84,7 @@ class PmBootstrap extends Bootstrap
         $this->autoloader->registerClass('publisher', PATH_GULLIVER . 'class.publisher');
         $this->autoloader->registerClass('templatePower', PATH_GULLIVER . 'class.templatePower');
         $this->autoloader->registerClass('xmlDocument', PATH_GULLIVER . 'class.xmlDocument');
-        $this->autoloader->registerClass('XmlForm_Field_XmlMenu', PATH_GULLIVER . 'class.xmlMenu');
+        $this->autoloader->registerClass('XmlFormFieldXmlMenu', PATH_GULLIVER . 'class.xmlMenu');
         $this->autoloader->registerClass('xmlform', PATH_GULLIVER . 'class.xmlform');
 
         $this->autoloader->registerClass('xmlformExtension', PATH_GULLIVER . 'class.xmlformExtension');
@@ -97,8 +98,8 @@ class PmBootstrap extends Bootstrap
         $this->autoloader->registerClass('headPublisher', PATH_GULLIVER . 'class.headPublisher');
         $this->autoloader->registerClass('Xml_Node', PATH_GULLIVER . 'class.xmlDocument');
         $this->autoloader->registerClass('Xml_document', PATH_GULLIVER . 'class.xmlDocument');
-        $this->autoloader->registerClass('XmlForm_Field_*', PATH_GULLIVER . 'class.xmlform');
-        $this->autoloader->registerClass('serverConf', PATH_CORE . 'classes/class.serverConfiguration');
+        $this->autoloader->registerClass('XmlFormField*', PATH_GULLIVER . 'class.xmlform');
+        $this->autoloader->registerClass('ServerConf', PATH_CORE . 'classes/class.serverConfiguration');
     }
 
     /**

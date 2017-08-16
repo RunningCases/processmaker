@@ -25,6 +25,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Skeleton subclass for representing a row from the 'APP_DELEGATION' table.
  *
@@ -267,7 +269,7 @@ class AppDelegation extends BaseAppDelegation
                         $dataAbe = $resultAbe->getRow();
                         $flagActionsByEmail = false;
                         if($dataAbe['ABE_TYPE']!='' && $data->USR_UID!=''){
-                            $actionsByEmail = new actionsByEmailCoreClass();
+                            $actionsByEmail = new ActionsByEmailCoreClass();
                             $actionsByEmail->sendActionsByEmail($data, $dataAbe);
                         }
                     }
@@ -279,7 +281,7 @@ class AppDelegation extends BaseAppDelegation
                 $licensedFeatures = &PMLicensedFeatures::getSingleton ();
                 if ($licensedFeatures->verifyfeature ( '7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09' )) {
                     try{
-                        $pmGoogle = new PMGoogleApi ();
+                        $pmGoogle = new PmGoogleApi ();
                         if ($pmGoogle->getServiceGmailStatus()) {
                             $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
                             $Pmgmail->gmailsForRouting($sUsrUid, $sTasUid, $sAppUid, $delIndex, $isSubprocess);
@@ -292,7 +294,7 @@ class AppDelegation extends BaseAppDelegation
             }
 
             if ($flagActionsByEmail) {
-                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
             }
         }

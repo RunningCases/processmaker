@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 class Language extends BaseLanguage
 {
     private static $arrayRecord = array();
@@ -247,7 +250,7 @@ class Language extends BaseLanguage
                     }
 
 
-                    $dynaform = new dynaFormHandler( PATH_XMLFORM . $xmlForm );
+                    $dynaform = new DynaformHandler( PATH_XMLFORM . $xmlForm );
                     $fieldName = $match[2];
 
                     $codes = explode( '-', $reference );
@@ -355,7 +358,7 @@ class Language extends BaseLanguage
         $sLanguage = $langRecord['LAN_NAME'];
 
         //setting headers
-        $poFile->addHeader( 'Project-Id-Version', 'ProcessMaker ' . PmSystem::getVersion() );
+        $poFile->addHeader( 'Project-Id-Version', 'ProcessMaker ' . System::getVersion() );
         $poFile->addHeader( 'POT-Creation-Date', '' );
         $poFile->addHeader( 'PO-Revision-Date', date( 'Y-m-d H:i:s' ) );
         $poFile->addHeader( 'Last-Translator', '' );
@@ -460,7 +463,7 @@ class Language extends BaseLanguage
             $xmlFormFile = str_replace( chr( 92 ), '/', $xmlFormPath );
             $xmlFormFile = str_replace( PATH_XMLFORM, '', $xmlFormPath );
 
-            $dynaForm = new dynaFormHandler( $xmlFormPath );
+            $dynaForm = new DynaformHandler( $xmlFormPath );
 
             $dynaNodes = $dynaForm->getFields();
 
@@ -635,7 +638,7 @@ class Language extends BaseLanguage
                     }
 
 
-                    $dynaform = new dynaFormHandler( PATH_PLUGINS . $plugin . PATH_SEP . $xmlForm );
+                    $dynaform = new DynaformHandler( PATH_PLUGINS . $plugin . PATH_SEP . $xmlForm );
                     $fieldName = $match[2];
 
                     $codes = explode( '-', $reference );
@@ -753,7 +756,7 @@ class Language extends BaseLanguage
         foreach ($aXMLForms as $xmlFormPath) {
             $xmlFormFile = str_replace( chr( 92 ), '/', $xmlFormPath );
             $xmlFormFile = str_replace( PATH_PLUGINS . $plugin . PATH_SEP , '', $xmlFormPath );
-            $dynaForm = new dynaFormHandler( $xmlFormPath );
+            $dynaForm = new DynaformHandler( $xmlFormPath );
             $dynaNodes = $dynaForm->getFields();
             //get all fields of each xmlform
             foreach ($dynaNodes as $oNode) {

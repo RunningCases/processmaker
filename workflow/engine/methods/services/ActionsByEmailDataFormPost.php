@@ -101,7 +101,7 @@ if (PMLicensedFeatures
         //Update case info
         $case->updateCase($appUid, $casesFields);
 
-        $wsBaseInstance = new wsBase();
+        $wsBaseInstance = new WsBase();
         $result = $wsBaseInstance->derivateCase($casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true);
         $code = (is_array($result) ? $result['status_code'] : $result->status_code);
 

@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 class webEntryProxy extends HttpProxyController
 {
     //Delete Web Entry
@@ -183,7 +185,7 @@ class webEntryProxy extends HttpProxyController
         $template->assign( 'dynaform', $dynTitle );
         $template->assign( 'timestamp', date( 'l jS \of F Y h:i:s A' ) );
         $template->assign( 'ws', SYS_SYS );
-        $template->assign( 'version', PmSystem::getVersion() );
+        $template->assign( 'version', System::getVersion() );
 
         $fileName = $pathProcess . $dynTitle . 'Post.php';
         file_put_contents( $fileName, $template->getOutputContent() );

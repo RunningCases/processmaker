@@ -1,6 +1,7 @@
 <?php
 namespace ProcessMaker\Project\Adapter;
 
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Project;
 use ProcessMaker\Util;
 
@@ -226,7 +227,7 @@ class BpmnWorkflow extends Project\Bpmn
                     $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
                     break;
                 case 'SERVICETASK':
-                    $registry = \PMPluginRegistry::getSingleton();
+                    $registry = PluginRegistry::loadSingleton();
                     $taskData["TAS_TYPE"] = "NORMAL";
                     //The plugin pmConnectors will be moved to the core in pm.3.3
                     if ($registry->getStatusPlugin('pmConnectors') === 'enabled') {
@@ -306,7 +307,7 @@ class BpmnWorkflow extends Project\Bpmn
      */
     public function sincronizeActivityData($actUid, $data)
     {
-        $registry = \PMPluginRegistry::getSingleton();
+        $registry = PluginRegistry::loadSingleton();
         $taskData = \TaskPeer::retrieveByPK($actUid);
         //The plugin pmConnectors will be moved to the core in pm.3.3
         if ($taskData->getTasType() == 'SERVICE-TASK' && $registry->getStatusPlugin('pmConnectors') !== 'enabled') {
@@ -325,7 +326,7 @@ class BpmnWorkflow extends Project\Bpmn
      */
     static function __updateServiceTask($activityBefore, $activityCurrent, $taskData)
     {
-        $registry = \PMPluginRegistry::getSingleton();
+        $registry = PluginRegistry::loadSingleton();
         if ($activityBefore->getActTaskType() != "SERVICETASK" && $activityCurrent->getActTaskType() == "SERVICETASK") {
             //The plugin pmConnectors will be moved to the core in pm.3.3
             if ($registry->getStatusPlugin('pmConnectors') === 'enabled') {

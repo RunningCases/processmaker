@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Core\System;
+
 /**
  * class.bootstrap.php
  *
@@ -14,13 +17,40 @@ class Bootstrap
 
     //below here only approved methods
 
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function autoloadClass($class)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerClass($className, $includePath)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerDir($name, $dir)
+    {
+    }
+
     /*
      * these functions still under revision
      */
 
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
-        return PmSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+        return System::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+    }
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerSystemClasses()
+    {
     }
 
     //below this line, still not approved methods
@@ -120,6 +150,13 @@ class Bootstrap
         }
 
         $smarty->display($template);
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadSystem($strClass)
+    {
     }
 
     /**
@@ -410,6 +447,19 @@ class Bootstrap
         ob_get_clean();
 
         return $content;
+    }
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadClass($strClass)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadThirdParty($sPath, $sFile)
+    {
     }
 
     /**
@@ -872,7 +922,7 @@ class Bootstrap
             if (((in_array($browserName, $enabledBrowsers)) || (in_array('ALL', $enabledBrowsers))) && (!(in_array($browserName, $disabledBrowsers)))) {
                 if ($cssFileInfo['__ATTRIBUTES__']['file'] == 'rtl.css') {
 
-                    $oServerConf = & serverConf::getSingleton();
+                    $oServerConf = & ServerConf::getSingleton();
                     if (!(defined('SYS_LANG'))) {
                         if (isset($_SERVER['HTTP_REFERER'])) {
                             $syss = explode('://', $_SERVER['HTTP_REFERER']);
@@ -983,7 +1033,7 @@ class Bootstrap
      */
     public function getCheckSum($files)
     {
-        $key = PmSystem::getVersion();
+        $key = System::getVersion();
 
         if (!is_array($files)) {
             $tmp = $files;
@@ -1876,7 +1926,7 @@ class Bootstrap
         /* Fix to prevent use uxs skin outside siplified interface,
           because that skin is not compatible with others interfaces */
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = PmSystem::getSystemConfiguration();
+            $config = System::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 
@@ -1946,6 +1996,13 @@ class Bootstrap
             $result .= '?' . $string_jhl[1];
         }
         return $result;
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public function getModel($model)
+    {
     }
 
     /**
@@ -2427,6 +2484,13 @@ class Bootstrap
         return strtoupper(PHP_OS) == "LINUX";
     }
 
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+    */
+    public static function initVendors()
+    {
+    }
+
     public static function parseIniFile($filename)
     {
         $data = @parse_ini_file($filename, true);
@@ -2516,18 +2580,37 @@ class Bootstrap
         return $var;
     }
 
-    public function verifyHashPassword ($pass, $userPass)
+    /**
+     * Verify Hash password with password entered
+     *
+     * @param string $pass password
+     * @param string $userPass hash of password
+     * @return bool true or false
+     */
+    public function verifyHashPassword($pass, $userPass)
     {
+        global $RBAC;
         $passwordHashConfig = Bootstrap::getPasswordHashConfig();
         $hashTypeCurrent = $passwordHashConfig['current'];
         $hashTypePrevious = $passwordHashConfig['previous'];
-        if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
-            return true;
+        $acceptance = false;
+
+        if ($RBAC != null && $RBAC->loginWithHash()) {
+            //To enable compatibility with soap login
+            if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
+                $acceptance = true;
+            } else if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
+                $acceptance = true;
+            }
+        } else {
+            if (Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) {
+                $acceptance = true;
+            } else if (Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) {
+                $acceptance = true;
+            }
         }
-        if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
-            return true;
-        }
-        return false;
+
+        return $acceptance;
     }
 
     /**

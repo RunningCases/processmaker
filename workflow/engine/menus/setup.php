@@ -22,6 +22,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 global $G_TMP_MENU;
 global $RBAC;
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
@@ -246,14 +249,13 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     /*----------------------------------********---------------------------------*/
 }
 /*----------------------------------********---------------------------------*/
-require_once 'classes/class.pmLicenseManager.php';
 if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
     require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
     $enterprise = new enterprisePlugin('enterprise');
     $enterprise->enable();
     $enterprise->setup();
 }
-$pmLicenseManagerO = &pmLicenseManager::getSingleton();
+$pmLicenseManagerO = &PmLicenseManager::getSingleton();
 $licenseStatusInfo = $pmLicenseManagerO->getCurrentLicenseStatus();
 $licStatusMsg = null;
 
@@ -288,7 +290,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
 }
 
 /*----------------------------------********---------------------------------*/
-$pluginRegistry = &PMPluginRegistry::getSingleton(); //lsl
+$pluginRegistry = PluginRegistry::loadSingleton();
 $status = $pluginRegistry->getStatusPlugin('actionsByEmail');
 
 if ((string)($status) !== 'enabled' &&

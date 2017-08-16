@@ -22,6 +22,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  *
  * @author Erik Amaru Ortiz <erik@colosa.com>
@@ -112,7 +115,7 @@ class Ajax
                 $oData['PRO_TEMPLATE'] = (isset($_POST['PRO_TEMPLATE']) && $_POST['PRO_TEMPLATE'] != '') ? $_POST['form']['PRO_TEMPLATE'] : '';
                 $oData['PROCESSMAP'] = $oProcessMap;
 
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $oPluginRegistry->executeTriggers(PM_NEW_PROCESS_SAVE, $oData);
             } else {
                 //$oProcessMap->updateProcess($_POST['form']);
@@ -202,9 +205,9 @@ class Ajax
 
             $result->success = true;
             if (count($UIDS) > 1) {
-                $result->msg = __('ID_ACTORS_ASSIGNED_SUCESSFULLY', SYS_LANG, Array(count($UIDS), $task->getTasTitle()));
+                $result->msg = G::LoadTranslation('ID_ACTORS_ASSIGNED_SUCESSFULLY', SYS_LANG, Array(count($UIDS), $task->getTasTitle()));
             } else {
-                $result->msg = __('ID_ACTOR_ASSIGNED_SUCESSFULLY', SYS_LANG, Array('tas_title' => $task->getTasTitle()));
+                $result->msg = G::LoadTranslation('ID_ACTOR_ASSIGNED_SUCESSFULLY', SYS_LANG, Array('tas_title' => $task->getTasTitle()));
             }
         } catch (Exception $e) {
             $result->success = false;

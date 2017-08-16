@@ -1,5 +1,8 @@
 <?php
 
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Designer Controller
  *
@@ -62,7 +65,7 @@ class Designer extends Controller
         $this->setVar("SYS_SYS", SYS_SYS);
         $this->setVar("SYS_LANG", SYS_LANG);
         $this->setVar("SYS_SKIN", SYS_SKIN);
-        $this->setVar('HTTP_SERVER_HOSTNAME', PmSystem::getHttpServerHostnameRequestsFrontEnd());
+        $this->setVar('HTTP_SERVER_HOSTNAME', System::getHttpServerHostnameRequestsFrontEnd());
 
         if ($debug) {
             if (!file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
@@ -134,10 +137,10 @@ class Designer extends Controller
         $sourceCss = array();
         $sourceJs = array();
 
-        $pluginRegistry = &PMPluginRegistry::getSingleton();
+        $pluginRegistry = PluginRegistry::loadSingleton();
         $srcPath = $pluginRegistry->getDesignerSourcePath();
 
-        foreach ($srcPath as $key => $value) {
+        foreach ($srcPath as $value) {
             $ext = pathinfo($value->pathFile, PATHINFO_EXTENSION);
             if ($ext === "css") {
                 $sourceCss[] = $value->pathFile;

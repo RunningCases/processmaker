@@ -139,7 +139,7 @@ if (! isset( $_GET['ex'] )) {
     $_GET['ex'] = $_GET['position'];
 }
 
-$oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
+$oDbConnections = new DbConnections( $_SESSION['PROCESS'] );
 $oDbConnections->loadAdditionalConnections();
 
 $G_PUBLISH = new Publisher();
@@ -149,7 +149,7 @@ if ($_GET['DYN_UID'] != '') {
     $FieldsPmDynaform = $Fields;
     $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
     $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_GET['DYN_UID'];
-    $a = new pmDynaform($FieldsPmDynaform);
+    $a = new PmDynaform($FieldsPmDynaform);
     if ($a->isResponsive()) {
         $a->printEditSupervisor();
     }else{

@@ -93,7 +93,7 @@ switch ($action) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'newDdConnection':
-        $dbs = new dbConnections( $_SESSION['PROCESS'] );
+        $dbs = new DbConnections( $_SESSION['PROCESS'] );
         $dbServices = $dbs->getDbServicesAvailables();
         $dbService = $dbs->getEncondeList();
 
@@ -115,7 +115,7 @@ switch ($action) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'editDdConnection':
-        $dbs = new dbConnections( $_SESSION['PROCESS'] );
+        $dbs = new DbConnections( $_SESSION['PROCESS'] );
         $dbServices = $dbs->getDbServicesAvailables();
 
         $rows[] = array ('uid' => 'char','name' => 'char'
@@ -240,7 +240,7 @@ switch ($action) {
                 }
             }
 
-            $Server = new NET($server);
+            $Server = new Net($server);
 
             switch ($step) {
                 case 1:
@@ -305,7 +305,7 @@ switch ($action) {
             $connectionType = $_POST["connectionType"];
             $tns = $_POST["tns"];
 
-            $net = new NET();
+            $net = new Net();
 
             switch ($step) {
                 case 1:
@@ -343,7 +343,7 @@ switch ($action) {
         $engine = $_POST['engine'];
 
         if ($engine != "0") {
-            $dbs = new dbConnections();
+            $dbs = new DbConnections();
             $var = Bootstrap::json_encode($dbs->getEncondeList($filter->xssFilterHard($engine)));
             G::outRes($var);
 

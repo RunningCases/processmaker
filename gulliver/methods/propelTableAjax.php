@@ -24,6 +24,9 @@
  */
   /* Includes */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
+G::LoadAllModelClasses();
 G::LoadAllPluginModelClasses();
 $id = get_ajax_value('ptID');
 $ntable = unserialize(base64_decode($_SESSION['pagedTable[' . $id . ']']));
@@ -39,7 +42,7 @@ if (isset($ntable->filterForm_Id) && ($ntable->filterForm_Id!=='')) {
         $aux = explode ( PATH_SEP, G::getUIDName( $ntable->filterForm_Id ) );
         //check if G_PLUGIN_CLASS is defined, because publisher can be called without an environment
         if ( count($aux) == 2 && defined ( 'G_PLUGIN_CLASS' ) ) {
-            $oPluginRegistry =& PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             if ( $oPluginRegistry->isRegisteredFolder($aux[0]) ) {
                 $sPath = PATH_PLUGINS;
             }

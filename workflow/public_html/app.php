@@ -1,5 +1,12 @@
 <?php
-require_once(__DIR__ . '/../../bootstrap/autoload.php');
+use Illuminate\Foundation\Http\Kernel;
+
+// Because laravel has a __ helper function, it's important we include the class.g file to ensure our __ is used.
+require_once __DIR__ . '/../../gulliver/system/class.g.php';
+require_once __DIR__ . '/../../bootstrap/autoload.php';
+require_once __DIR__ . '/../../bootstrap/app.php';
+
+
 register_shutdown_function(
     create_function(
         "",
@@ -53,6 +60,8 @@ try {
             break;
     }
 
+} catch (ProcessMaker\Exception\RBACException $e) {
+    G::header('location: ' . $e->getPath());
 } catch (Exception $e) {
     $view = new Maveriks\Pattern\Mvc\PhtmlView($rootDir . "framework/src/templates/Exception.phtml");
     $view->set("message", $e->getMessage());

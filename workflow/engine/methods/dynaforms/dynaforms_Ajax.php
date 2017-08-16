@@ -36,4 +36,4 @@ if (! isset( $_DBArray )) {
     $_DBArray = array ();
 }
 
-$oDynaformEditorAjax = new dynaformEditorAjax( $_POST );
+$oDynaformEditorAjax = new DynaformEditorAjax( $_POST );

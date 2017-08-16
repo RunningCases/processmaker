@@ -22,6 +22,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Report - Report view
  *
@@ -210,7 +212,7 @@ try {
             break;
         default:
             $foundReport = false;
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $aAvailableReports = $oPluginRegistry->getReports();
             foreach ($aAvailableReports as $sReportClass) {
 

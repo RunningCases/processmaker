@@ -198,7 +198,7 @@ $docuroot = explode ( PATH_SEP , $_SERVER['DOCUMENT_ROOT'] );
 
 
 //***************** Plugins **************************
-;
+
 //  //here we are loading all plugins registered
 //  //the singleton has a list of enabled plugins
 

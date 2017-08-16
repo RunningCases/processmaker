@@ -368,7 +368,7 @@ class MessageApplication
         try {
 
             //Set variables
-            $ws = new \wsBase();
+            $ws = new \WsBase();
             $case = new \Cases();
             $common = new \ProcessMaker\Util\Common();
             $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";

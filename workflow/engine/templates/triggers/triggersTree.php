@@ -25,7 +25,7 @@
 
 try {
 
-    $triggerLibrary = triggerLibrary::getSingleton();
+    $triggerLibrary = TriggerLibrary::getSingleton();
     $triggerLibraryO = $triggerLibrary->getRegisteredClasses();
 
     $oTree = new Tree();

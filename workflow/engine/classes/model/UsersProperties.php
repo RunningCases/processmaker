@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 require_once 'classes/model/om/BaseUsersProperties.php';
 
 /**
@@ -320,15 +322,17 @@ class UsersProperties extends BaseUsersProperties
                 $userRole = $RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'];
             }
 
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $aRedirectLogin = $oPluginRegistry->getRedirectLogins();
-            if (isset( $aRedirectLogin ) && is_array( $aRedirectLogin )) {
-                foreach ($aRedirectLogin as $key => $detail) {
-                    if (isset( $detail->sPathMethod ) && $detail->sRoleCode == $userRole) {
+            if (isset($aRedirectLogin) && is_array($aRedirectLogin)) {
+                /** @var \ProcessMaker\Plugins\Interfaces\RedirectDetail $detail */
+                foreach ($aRedirectLogin as $detail) {
+                    $pathMethod = $detail->getPathMethod();
+                    if (isset($pathMethod) && $detail->equalRoleCodeTo($userRole)) {
                         if (isset($_COOKIE['workspaceSkin'])) {
-                            $url = '/sys' . SYS_SYS . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/' . $detail->sPathMethod;
+                            $url = '/sys' . SYS_SYS . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/' . $pathMethod;
                         } else {
-                            $url = '/sys' . SYS_SYS . '/' . $this->lang . '/' . SYS_SKIN . '/' . $detail->sPathMethod;
+                            $url = '/sys' . SYS_SYS . '/' . $this->lang . '/' . SYS_SKIN . '/' . $pathMethod;
                         }
                     }
                 }

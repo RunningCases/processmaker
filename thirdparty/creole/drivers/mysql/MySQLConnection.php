@@ -126,7 +126,6 @@ class MySQLConnection extends ConnectionCommon implements Connection {
      */
     public function getDatabaseInfo()
     {
-        require_once 'creole/drivers/mysql/metadata/MySQLDatabaseInfo.php';
         return new MySQLDatabaseInfo($this);
     }
 
@@ -135,7 +134,6 @@ class MySQLConnection extends ConnectionCommon implements Connection {
      */
     public function getIdGenerator()
     {
-        require_once 'creole/drivers/mysql/MySQLIdGenerator.php';
         return new MySQLIdGenerator($this);
     }
 
@@ -144,7 +142,6 @@ class MySQLConnection extends ConnectionCommon implements Connection {
      */
     public function prepareStatement($sql)
     {
-        require_once 'creole/drivers/mysql/MySQLPreparedStatement.php';
         return new MySQLPreparedStatement($this, $sql);
     }
 
@@ -160,7 +157,6 @@ class MySQLConnection extends ConnectionCommon implements Connection {
      */
     public function createStatement()
     {
-        require_once 'creole/drivers/mysql/MySQLStatement.php';
         return new MySQLStatement($this);
     }
 

@@ -7,6 +7,9 @@
  * @author Hugo Loza
  */
 
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+
 define('SE_LAYOUT_NOT_FOUND', 6);
 
 class SkinEngine
@@ -42,7 +45,7 @@ class SkinEngine
     $this->content = $content;
     $this->skinVariants = array('blank','extjs','raw','tracker','submenu');
     $this->skinsBasePath = G::ExpandPath("skinEngine");
-    $sysConf = PmSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+    $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
     $this->skinDefault = (isset($sysConf['default_skin']) && $sysConf['default_skin'] != '') ? $sysConf['default_skin'] : 'classic';
     $this->_init();
   }
@@ -227,7 +230,7 @@ class SkinEngine
   private function _extjs()
   {
 
-    $oServerConf    =& serverConf::getSingleton();
+    $oServerConf    =& ServerConf::getSingleton();
     $oHeadPublisher =& headPublisher::getSingleton();
 
     if( $oHeadPublisher->extJsInit === true){
@@ -301,7 +304,7 @@ class SkinEngine
         }
     }
 
-    $serverConf = &serverConf::getSingleton();
+    $serverConf = &ServerConf::getSingleton();
 
     if ($serverConf->isRtl(SYS_LANG)) {
         $dirBody = "dir=\"RTL\"";
@@ -449,8 +452,8 @@ class SkinEngine
       $smarty->assign('tpl_menu', PATH_TEMPLATE . 'menu.html');
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html');
 
-      if (class_exists('PMPluginRegistry')) {
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+      if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $sCompanyLogo = $oPluginRegistry->getCompanyLogo('/images/processmaker.logo.jpg');
       }
       else {
@@ -533,8 +536,8 @@ class SkinEngine
       $smarty->assign('tpl_menu', PATH_TEMPLATE . 'menu.html' );
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html' );
 
-      if (class_exists('PMPluginRegistry')) {
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+      if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $sCompanyLogo = $oPluginRegistry->getCompanyLogo ( '/images/processmaker.logo.jpg' );
       }
       else
@@ -549,7 +552,7 @@ class SkinEngine
   private function _mvc()
   {
 
-    $oServerConf =& serverConf::getSingleton();
+    $oServerConf =& ServerConf::getSingleton();
     $oHeadPublisher =& headPublisher::getSingleton();
 
     $smarty = new Smarty();
@@ -642,7 +645,7 @@ class SkinEngine
 
     //To setup en extJS Theme for this Skin
 
-    $oServerConf =& serverConf::getSingleton();
+    $oServerConf =& ServerConf::getSingleton();
     $extSkin = $oServerConf->getProperty("extSkin");
 
     if(!$extSkin) {
@@ -699,7 +702,7 @@ class SkinEngine
         $freeOfChargeText = "";
         if (! defined('SKIP_FREE_OF_CHARGE_TEXT'))
         $freeOfChargeText = "Supplied free of charge with no support, certification, warranty, maintenance nor indemnity by ProcessMaker and its Certified Partners.";
-        if(file_exists(PATH_CLASSES."class.pmLicenseManager.php")) $freeOfChargeText="";
+        if(file_exists(PATH_CLASSES."PmLicenseManager.php")) $freeOfChargeText="";
 
         $fileFooter = PATH_SKINS . SYS_SKIN . PATH_SEP . 'footer.html';
         if (file_exists($fileFooter)) {
@@ -755,7 +758,7 @@ class SkinEngine
       }
 
         if (defined('SYS_SYS')) {
-            $pmLicenseManagerO = &pmLicenseManager::getSingleton();
+            $pmLicenseManagerO = &PmLicenseManager::getSingleton();
             $expireIn          = $pmLicenseManagerO->getExpireIn();
             $expireInLabel     = $pmLicenseManagerO->getExpireInLabel();
 
@@ -780,7 +783,7 @@ class SkinEngine
       $smarty->assign('tpl_menu', PATH_TEMPLATE . 'menu.html');
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html');
 
-      $oLogoR = new replacementLogo();
+      $oLogoR = new ReplacementLogo();
 
       if(defined("SYS_SYS")){
         $aFotoSelect = $oLogoR->getNameLogo((isset($_SESSION['USER_LOGGED']))?$_SESSION['USER_LOGGED']:'');
@@ -790,8 +793,8 @@ class SkinEngine
           $sWspaceSelect = trim($aFotoSelect['WORKSPACE_LOGO_NAME']);
         }
       }
-      if (class_exists('PMPluginRegistry')) {
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+      if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined("SYS_SYS")) {
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         if ( isset($sFotoSelect) && $sFotoSelect!='' && !(strcmp($sWspaceSelect, SYS_SYS)) ){
           $sCompanyLogo = $oPluginRegistry->getCompanyLogo($sFotoSelect);
           $sCompanyLogo = "/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/setup/showLogoFile.php?id=".base64_encode($sCompanyLogo);

@@ -5,6 +5,9 @@
  *
  * @package workflow.engine.classes
  */
+
+use ProcessMaker\Core\System;
+
 require_once "HTTP/WebDAV/Server.php";
 require_once "System.php";
 
@@ -742,7 +745,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
         if (is_dir($path)) {
             $query = "DELETE FROM properties WHERE path LIKE '" . $this->_slashify($options["path"]) . "%'";
             mysql_query($query);
-            PmSystem::rm("-rf $path");
+            System::rm("-rf $path");
         } else {
             unlink($path);
         }
@@ -845,7 +848,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
             mysql_query($query);
         } else {
             if (is_dir($source)) {
-                $files = PmSystem::find($source);
+                $files = System::find($source);
                 $files = array_reverse($files);
             } else {
                 $files = array($source

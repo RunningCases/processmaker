@@ -22,6 +22,10 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+
 /*----------------------------------********---------------------------------*/
 //Browser Compatibility
 $browserSupported = G::checkBrowserCompatibility();
@@ -33,10 +37,23 @@ if ($browserSupported==false){
 /*----------------------------------********---------------------------------*/
 $aFields = array();
 
-if (!isset($_GET['u'])) {
-    $aFields['URL'] = '';
-} else {
-    $aFields['URL'] = htmlspecialchars(addslashes(stripslashes(strip_tags(trim(urldecode($_GET['u']))))));
+//Validated redirect url
+$aFields['URL'] = '';
+if (!empty($_GET['u'])) {
+    //clean url with protocols
+    $flagUrl = true;
+    //Most used protocols
+    $protocols = ['https://', 'http://', 'ftp://', 'sftp://','smb://', 'file:', 'mailto:'];
+    foreach ($protocols as $protocol) {
+        if (strpos($_GET['u'], $protocol) !== false) {
+            $_GET['u'] = '';
+            $flagUrl = false;
+            break;
+        }
+    }
+    if ($flagUrl) {
+        $aFields['URL'] = htmlspecialchars(addslashes(stripslashes(strip_tags(trim(urldecode($_GET['u']))))));
+    }
 }
 
 if (!isset($_SESSION['G_MESSAGE'])) {
@@ -109,13 +126,13 @@ if (isset ($_SESSION['USER_LOGGED'])) {
     }
 } else {
     // Execute SSO trigger
-    $pluginRegistry =& PMPluginRegistry::getSingleton();
+    $pluginRegistry = PluginRegistry::loadSingleton();
     if (defined('PM_SINGLE_SIGN_ON')) {
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
             //Check in SSO class
-            $oSso = new pmSsoClass();
+            $oSso = new PmSsoClass();
             $res = $oSso->ssocVerifyUser();
             if($res){
                 // Start new session
@@ -192,7 +209,7 @@ $_SESSION['NW_PASSWORD2'] = $pass1;
 
 /*----------------------------------********---------------------------------*/
 
-$licenseManager =& pmLicenseManager::getSingleton();
+$licenseManager =& PmLicenseManager::getSingleton();
 if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
     $G_PUBLISH = new Publisher();
     $version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
@@ -296,7 +313,7 @@ if ($version >= 3) {
 }
 
 //get the serverconf singleton, and check if we can send the heartbeat
-$oServerConf = & serverConf::getSingleton();
+$oServerConf = & ServerConf::getSingleton();
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 if (!$partnerFlag) {
     $sflag = $oServerConf->getHeartbeatProperty('HB_OPTION', 'HEART_BEAT_CONF');
@@ -344,7 +361,7 @@ $flagForgotPassword = isset($oConf->aConfig['login_enableForgotPassword'])
 
 setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_URI);
 
-$configS = PmSystem::getSystemConfiguration('', '', SYS_SYS);
+$configS = System::getSystemConfiguration('', '', SYS_SYS);
 $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block'] : true;
 if ($activeSession) {
     setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');

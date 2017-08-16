@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_GET = $filter->xssFilterHard($_GET);
@@ -160,8 +162,6 @@ function sendJsonResultGeneric($response, $callback)
 
 function expandNode()
 {
-    //require_once ("classes/model/AppFolder.php");
-
     extract(getExtJSParams());
 
     $oPMFolder = new AppFolder();
@@ -1623,7 +1623,7 @@ function uploadExternalDocument()
                 G::uploadFile($fileObj['tempName'], $sPathName, $sFileName); //upload
 
                 //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-                $oPluginRegistry =& PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 if ($oPluginRegistry->existsTrigger (PM_UPLOAD_DOCUMENT) && class_exists ('uploadDocumentData')) {
                     $oData['APP_UID']   = $appId;
                     $documentData = new uploadDocumentData (

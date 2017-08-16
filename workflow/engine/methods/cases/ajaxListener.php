@@ -22,6 +22,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  *
  * @author Erik Amaru Ortiz <erik@colosa.com>
@@ -976,7 +978,7 @@ class Ajax
         $FieldsPmDynaform = $Fields;
         $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
         $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
-        $a = new pmDynaform($FieldsPmDynaform);
+        $a = new PmDynaform($FieldsPmDynaform);
         if ($a->isResponsive()) {
             $a->printView();
         } else {
@@ -1022,7 +1024,7 @@ class Ajax
     }
 }
 
-$pluginRegistry = & PMPluginRegistry::getSingleton();
+$pluginRegistry = PluginRegistry::loadSingleton();
 if ($pluginRegistry->existsTrigger(PM_GET_CASES_AJAX_LISTENER)) {
     $ajax = $pluginRegistry->executeTriggers(PM_GET_CASES_AJAX_LISTENER, null);
 } else {

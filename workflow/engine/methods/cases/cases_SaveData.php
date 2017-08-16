@@ -141,7 +141,7 @@ try {
         $dataFields = $Fields["APP_DATA"];
         $dataFields["CURRENT_DYNAFORM"] = $_GET['UID'];
 
-        $oPmDynaform = new pmDynaform($dataFields);
+        $oPmDynaform = new PmDynaform($dataFields);
         $pmdynaform = $oPmDynaform->validatePost($pmdynaform);
 
         $Fields["APP_DATA"] = array_merge( $Fields["APP_DATA"], $pmdynaform );
@@ -303,7 +303,6 @@ try {
     }
 
     //Save files
-    //require_once ("classes/model/AppDocument.php");
 
     if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
         $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();

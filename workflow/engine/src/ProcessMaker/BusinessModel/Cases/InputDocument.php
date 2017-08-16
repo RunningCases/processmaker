@@ -1,6 +1,8 @@
 <?php
 namespace ProcessMaker\BusinessModel\Cases;
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 class InputDocument
 {
     /**
@@ -699,7 +701,7 @@ class InputDocument
                 throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
             }
 
-            $ws = new \wsBase();
+            $ws = new \WsBase();
             $ws->removeDocument($inputDocumentUid);
         } catch (\Exception $e) {
             throw $e;
@@ -1006,7 +1008,7 @@ class InputDocument
                     $caseInstance->updateCase($appUid, $aData);
 
                     //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-                    $oPluginRegistry = &\PMPluginRegistry::getSingleton();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
 
                     if ($oPluginRegistry->existsTrigger(PM_UPLOAD_DOCUMENT) && class_exists("uploadDocumentData")) {
                         $triggerDetail = $oPluginRegistry->getTriggerInfo(PM_UPLOAD_DOCUMENT);
@@ -1014,7 +1016,7 @@ class InputDocument
                         $uploadReturn = $oPluginRegistry->executeTriggers(PM_UPLOAD_DOCUMENT, $documentData);
 
                         if ($uploadReturn) {
-                            $aFields["APP_DOC_PLUGIN"] = $triggerDetail->sNamespace;
+                            $aFields["APP_DOC_PLUGIN"] = $triggerDetail->getNamespace();
                             if (!isset($aFields["APP_DOC_UID"])) {
                                 $aFields["APP_DOC_UID"] = $sAppDocUid;
                             }
