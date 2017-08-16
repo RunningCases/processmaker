@@ -63,7 +63,6 @@ if ($aDelegation['USR_UID'] == "") {
     /*----------------------------------********---------------------------------*/
     $licensedFeatures = &PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
         $pmGoogle = new PmGoogleApi();
         if($pmGoogle->getServiceGmailStatus()) {
             $labGmail = new labelsGmail();

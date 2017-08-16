@@ -240,8 +240,7 @@ class Pmgmail {
      */
     public function deleteLabels($mail)
     {
-        require_once(PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
-        $oLabels = new \labelsGmail();
+        $oLabels = new \LabelsGmail();
 
         $response = $oLabels->deletePMGmailLabels($mail);
 
@@ -250,15 +249,13 @@ class Pmgmail {
 
     public function modifyMailToPauseCase($appUid, $appDelIndex)
     {
-        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
-        $oLabels = new \labelsGmail();
+        $oLabels = new \LabelsGmail();
         $oResponse = $oLabels->setLabelsToPauseCase($appUid, $appDelIndex);
     }
 
     public function modifyMailToUnpauseCase($appUid, $appDelIndex)
     {
-        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
-        $oLabels = new \labelsGmail();
+        $oLabels = new \LabelsGmail();
         $oResponse = $oLabels->setLabelsToUnpauseCase($appUid, $appDelIndex);
     }
 
