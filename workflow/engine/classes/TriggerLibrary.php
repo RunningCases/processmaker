@@ -1,4 +1,5 @@
 <?php
+use ProcessMaker\Plugins\PluginRegistry;
 
 class TriggerLibrary
 {
