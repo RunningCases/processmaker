@@ -2119,7 +2119,22 @@ class Cases
                             $iAppDelPrio = 3; // Priority
                             $user = UsersPeer::retrieveByPK($rowUser["USR_UID"]);
                             $iDelIndex1 = $AppDelegation->createAppDelegation(
-                                    $sProUid, $sAppUid, $sTasUid, $rowUser["USR_UID"], $iAppThreadIndex, $iAppDelPrio, $isSubprocess, -1, null, false, false, 0, $Application->getAppNumber(), $task->getTasId(), (empty($user)) ? 0 : $user->getUsrId(), $this->Process->getProId()
+                                $sProUid,
+                                $sAppUid,
+                                $sTasUid,
+                                $rowUser["USR_UID"],
+                                $iAppThreadIndex,
+                                $iAppDelPrio,
+                                $isSubprocess,
+                                -1,
+                                null,
+                                false,
+                                false,
+                                0,
+                                $Application->getAppNumber(),
+                                $task->getTasId(),
+                                (empty($user)) ? 0 : $user->getUsrId(),
+                                $this->Process->getProId()
                             );
                             //appThread
                             $AppThread = new AppThread;
