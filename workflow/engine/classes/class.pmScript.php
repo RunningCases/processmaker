@@ -123,7 +123,7 @@ class PMScript
     /**
      * Affected fields
      */
-    public $affected_fields;
+    public $affected_fields = [];
 
     public $scriptExecutionTime = 0;
 

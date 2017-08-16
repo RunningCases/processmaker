@@ -24,12 +24,11 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Ask if an user can start a case
      * @param string $sUIDUser
      * @return boolean
      */
-
     public function canStartCase($sUIDUser = '', $processUid = '')
     {
         $c = new Criteria();
@@ -79,12 +78,11 @@ class Cases
         return ($count > 0);
     }
 
-    /*
+    /**
      * get user starting tasks
      * @param string $sUIDUser
      * @return $rows
      */
-
     public function getStartCases($sUIDUser = '')
     {
         $rows[] = array('uid' => 'char', 'value' => 'char');
@@ -160,7 +158,7 @@ class Cases
         return $rows;
     }
 
-    /*
+    /**
      * Get user starting tasks, but per type (dropdown, radio and category type)
      *
      * @param string $sUIDUser
@@ -265,14 +263,14 @@ class Cases
             if ($row['TAS_TITLE'] != '') {
                 $taskTitleLabel = $row['TAS_TITLE'];
             } else {
-                $taskTitleLabel = G::LoadTranslation('ID_UNTITLED_TASK').' '.$countTaskLabel;
+                $taskTitleLabel = G::LoadTranslation('ID_UNTITLED_TASK') . ' ' . $countTaskLabel;
                 $countTaskLabel++;
             }
             if ($typeView == 'category') {
                 $taskTitle = TaskPeer::retrieveByPK($row['TAS_UID']);
                 $row['TAS_TITLE'] = $taskTitle->getTasTitle();
                 $row['CATEGORY_NAME'] = ($row['CATEGORY_NAME'] == '') ?
-                    G::LoadTranslation('ID_PROCESS_NOCATEGORY') : $row['CATEGORY_NAME'];
+                        G::LoadTranslation('ID_PROCESS_NOCATEGORY') : $row['CATEGORY_NAME'];
                 $rows[] = array(
                     'uid' => $row['TAS_UID'],
                     'value' => $row['PRO_TITLE'] . ' (' . $taskTitleLabel . ')',
@@ -297,12 +295,11 @@ class Cases
         return $rowsToReturn;
     }
 
-    /*
+    /**
      * get user's SelfService tasks
      * @param string $sUIDUser
      * @return $rows
      */
-
     public function getSelfServiceTasks($sUIDUser = '')
     {
         $rows[] = array('uid' => '', 'value' => '');
@@ -425,13 +422,12 @@ class Cases
         return false;
     }
 
-    /*
+    /**
      * Load an user existing case, this info is used in CaseResume
      * @param string  $sAppUid
      * @param integer $iDelIndex > 0 //get the Delegation fields
      * @return Fields
      */
-
     public function loadCase($sAppUid, $iDelIndex = 0, $jump = '')
     {
         try {
@@ -506,8 +502,8 @@ class Cases
                         $aFields['CURRENT_USER'] = array();
                         foreach ($aCases as $key => $value) {
                             $oCurUser->load($value['USR_UID']);
-                            $aFields['CURRENT_USER'][]= $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
-                            $aFields['TAS_UID'] .= (($aFields['TAS_UID'] != '')? '|' : '') . $value['TAS_UID'];
+                            $aFields['CURRENT_USER'][] = $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
+                            $aFields['TAS_UID'] .= (($aFields['TAS_UID'] != '') ? '|' : '') . $value['TAS_UID'];
                         }
                         $aFields['CURRENT_USER'] = implode(" - ", array_values($aFields['CURRENT_USER']));
                         $tasksArray = array_filter(explode('|', $aFields['TAS_UID']));
@@ -529,12 +525,11 @@ class Cases
         }
     }
 
-    /*
+    /**
      * LoadCaseByNumber
      * @param string $caseNumber
      * @return $aCases
      */
-
     public function loadCaseByNumber($sCaseNumber)
     {
         //('SELECT * FROM APP_DELEGATION WHERE APP_PROC_CODE="'.$sCaseNumber.'" ');
@@ -563,7 +558,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function loads the label case
      * PROCESO:
      *    If there is a label then it is loaded
@@ -575,7 +570,6 @@ class Cases
      * @param string $sLabel
      * @return $appLabel
      */
-
     public function refreshCaseLabel($sAppUid, $aAppData, $sLabel)
     {
         $getAppLabel = "getApp$sLabel";
@@ -602,7 +596,7 @@ class Cases
         return $appLabel;
     }
 
-    /*
+    /**
      * This function loads the title and description label in a case
      * PROCESO:
      *    If there is a label then it is loaded
@@ -613,7 +607,6 @@ class Cases
      * @param array $aAppData
      * @return $res
      */
-
     public function refreshCaseTitleAndDescription($sAppUid, $aAppData)
     {
         $res['APP_TITLE'] = null;
@@ -663,7 +656,7 @@ class Cases
         return $res;
     }
 
-    /*
+    /**
      * optimized for speed. This function loads the title and description label in a case
      *    If there is a label then it is loaded
      *    Get Open APP_DELEGATIONS in the case
@@ -673,7 +666,6 @@ class Cases
      * @param array $aAppData
      * @return $res
      */
-
     public function newRefreshCaseTitleAndDescription($sAppUid, $fields, $aAppData)
     {
         $res = array();
@@ -835,7 +827,7 @@ class Cases
         return $array;
     }
 
-    /*
+    /**
      * Update an existing case, this info is used in CaseResume
      *
      * @name updateCase
@@ -843,7 +835,6 @@ class Cases
      * @param integer $iDelIndex > 0 //get the Delegation fields
      * @return Fields
      */
-
     public function updateCase($sAppUid, $Fields = array())
     {
         try {
@@ -971,7 +962,7 @@ class Cases
                         $array['DEL_INDEX'] = $DEL_INDEX;
                         $array['TAS_UID'] = $TAS_UID;
                         $array['DEL_PRIORITY'] = (isset($x[$VAR_PRI]) ?
-                                        ($x[$VAR_PRI] >= 1 && $x[$VAR_PRI] <= 5 ? $x[$VAR_PRI] : '3') : '3');
+                                ($x[$VAR_PRI] >= 1 && $x[$VAR_PRI] <= 5 ? $x[$VAR_PRI] : '3') : '3');
                         $oDel->update($array);
                     }
                 }
@@ -1005,14 +996,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Remove an existing case,
      *
      * @name removeCase
      * @param string  $sAppUid
      * @return Fields
      */
-
     public function removeCase($sAppUid, $deleteDelegation = true)
     {
         try {
@@ -1146,7 +1136,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Set the DEL_INIT_DATE
      *
      * @name setDelInitDate
@@ -1154,7 +1144,6 @@ class Cases
      * @param string $iDelIndex
      * @return Fields
      */
-
     public function setDelInitDate($sAppUid, $iDelIndex)
     {
         try {
@@ -1163,7 +1152,7 @@ class Cases
             $oAppDel->save();
             /*----------------------------------********---------------------------------*/
             $inbox = new ListInbox();
-            $inbox->update(array('APP_UID'=>$sAppUid, 'DEL_INDEX'=>$iDelIndex, 'DEL_INIT_DATE'=>Date("Y-m-d H:i:s")));
+            $inbox->update(array('APP_UID' => $sAppUid, 'DEL_INDEX' => $iDelIndex, 'DEL_INIT_DATE' => Date("Y-m-d H:i:s")));
             /*----------------------------------********---------------------------------*/
             //update searchindex
             if ($this->appSolr != null) {
@@ -1174,7 +1163,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Set user who is claim (ex-catch) a self service routing
      *
      * @name setCatchUser
@@ -1183,7 +1172,6 @@ class Cases
      * @param string $usrId
      * @return Fields
      */
-
     public function setCatchUser($sAppUid, $iDelIndex, $usrId)
     {
         try {
@@ -1219,15 +1207,13 @@ class Cases
         }
     }
 
-
-    /*
-    * Determines if the all threads of a multiinstance task are closed
-    *
-    * @$appUid string appUid of the instance to be tested
-    * @$tasUid string task uid of the multiinstance task
-    * @$previousDelIndex int previous del index of the instance corresponding to the multiinstance task
-    */
-
+    /**
+     * Determines if the all threads of a multiinstance task are closed
+     *
+     * @$appUid string appUid of the instance to be tested
+     * @$tasUid string task uid of the multiinstance task
+     * @$previousDelIndex int previous del index of the instance corresponding to the multiinstance task
+     */
     public function multiInstanceIsCompleted($appUid, $tasUid, $previousDelIndex)
     {
         $result = false;
@@ -1252,14 +1238,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * GetOpenThreads
      *
      * @name GetOpenThreads
      * @param string $sAppUid
      * @return $row (number of APP_DELEGATION rows)
      */
-
     public function GetOpenThreads($sAppUid)
     {
         try {
@@ -1277,7 +1262,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * this function returns SiblingThreads in a task
      *
      * @name getSiblingThreads
@@ -1285,7 +1270,6 @@ class Cases
      * @param string $iDelIndex
      * @return $aThreads
      */
-
     public function getSiblingThreads($sAppUid, $iDelIndex)
     {
         try {
@@ -1406,7 +1390,7 @@ class Cases
      * @param string $appUid
      * @param array $previousTasks
      * @return array $taskReviewed
-    */
+     */
     public function getReviewedTasksRecursive($taskUid, $appUid, $previousTasks)
     {
         $taskReviewed = array();
@@ -1468,7 +1452,7 @@ class Cases
                 //If exist paused cases
                 $closedTasks[] = $row;
                 $aIndex[] = $row['DEL_INDEX'];
-                $res = $this->GetAllOpenDelegation(array('APP_UID'=>$sAppUid, 'APP_THREAD_PARENT'=>$row['DEL_PREVIOUS']), 'NONE');
+                $res = $this->GetAllOpenDelegation(array('APP_UID' => $sAppUid, 'APP_THREAD_PARENT' => $row['DEL_PREVIOUS']), 'NONE');
                 foreach ($res as $in) {
                     $aIndex[] = $in['DEL_INDEX'];
                 }
@@ -1497,8 +1481,8 @@ class Cases
         $oCriteria->add(AppDelayPeer::APP_DEL_INDEX, $aDelIndex, Criteria::IN);
         $oCriteria->add(AppDelayPeer::APP_TYPE, 'PAUSE');
         $oCriteria->add(
-            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
-            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
+                $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
+                        $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
         );
 
         $oDataset = AppDelayPeer::doSelectRS($oCriteria);
@@ -1518,14 +1502,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function returns the total number of previous task
      *
      * @name CountTotalPreviousTasks
      * @param string $sTasUid $nextDel['TAS_UID']
      * @return $row[0]
      */
-
     public function CountTotalPreviousTasks($sTasUid)
     {
         try {
@@ -1542,7 +1525,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function gets open and null  rows in delegation
      *
      * @name getOpenNullDelegations
@@ -1550,7 +1533,6 @@ class Cases
      * @param string $sTasUid
      * @return $pendingDel
      */
-
     public function getOpenNullDelegations($sAppUid, $sTasUid)
     {
         $pendingDel = array();
@@ -1602,7 +1584,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function looks for some open rows in delegation
      *
      * @name isRouteOpen
@@ -1610,7 +1592,6 @@ class Cases
      * @param string $sTasUid $nextDel['TAS_UID']
      * @return true or false
      */
-
     public function isRouteOpen($sAppUid, $sTasUid)
     {
         try {
@@ -1677,7 +1658,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function creates a new row into APP_DELEGATION
      *
      * @name newAppDelegation
@@ -1698,7 +1679,6 @@ class Cases
      * @param int $tasId
      * @return void
      */
-
     public function newAppDelegation($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sPrevious, $iPriority, $sDelType, $iAppThreadIndex = 1, $nextDel = null, $flagControl = false, $flagControlMulInstance = false, $delPrevious = 0, $appNumber = 0, $proId = 0, $tasId = 0)
     {
         try {
@@ -1732,7 +1712,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * this function is used to update a row in APP_DELEGATION
      *
      *
@@ -1742,7 +1722,6 @@ class Cases
      * @param string $iAppThreadIndex,
      * @return true
      */
-
     public function updateAppDelegation($sAppUid, $iDelIndex, $iAppThreadIndex)
     {
         try {
@@ -1762,14 +1741,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function gets all rows in APP_DELEGATION
      *
      * @name GetAllDelegations
      * @param string $sAppUid
      * @return $aDelegations
      */
-
     public function GetAllDelegations($sAppUid)
     {
         //('SELECT * FROM APP_DELEGATION WHERE APP_UID="'.$currentDelegation['APP_UID'].'" ');
@@ -1792,14 +1770,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * We're getting all threads in a task
      *
      * @name GetAllDelegations
      * @param string $sAppUid
      * @return $aThreads
      */
-
     public function GetAllThreads($sAppUid)
     {
         //('SELECT * FROM APP_DELEGATION WHERE APP_UID="'.$currentDelegation['APP_UID'].'" ');
@@ -1822,7 +1799,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * With this function we can do update in AppThread
      *
      * @name updateAppThread
@@ -1831,7 +1808,6 @@ class Cases
      * @param string $iNewDelIndex
      * @return $iNewDelIndex;
      */
-
     public function updateAppThread($sAppUid, $iAppThreadIndex, $iNewDelIndex)
     {
         try {
@@ -1855,7 +1831,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function changes the status to CLOSED in appThread
      *
      * @name closeAppThread
@@ -1863,7 +1839,6 @@ class Cases
      * @param string $iAppThreadIndex,
      * @return true
      */
-
     public function closeAppThread($sAppUid, $iAppThreadIndex)
     {
         try {
@@ -1880,14 +1855,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function updates a row in APP_DELEGATION
      *
      * @name closeAllDelegations
      * @param string $sAppUid
      * @return void
      */
-
     public function closeAllThreads($sAppUid)
     {
         try {
@@ -1916,7 +1890,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function creates a new row in appThread
      *
      * @name newAppThread
@@ -1926,7 +1900,6 @@ class Cases
      * @param string $appNumber
      * @return $iAppThreadIndex $iNewDelIndex, $iAppThreadIndex );
      */
-
     public function newAppThread($sAppUid, $iNewDelIndex, $iAppParent)
     {
         try {
@@ -1942,14 +1915,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * With this function we can change status to CLOSED in APP_DELEGATION
      *
      * @name closeAllDelegations
      * @param string $sAppUid
      * @return
      */
-
     public function closeAllDelegations($sAppUid)
     {
         try {
@@ -1978,7 +1950,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * With this we can change the status to CLOSED in APP_DELEGATION
      *
      * @name CloseCurrentDelegation
@@ -1986,7 +1958,6 @@ class Cases
      * @param string $iDelIndex
      * @return Fields
      */
-
     public function CloseCurrentDelegation($sAppUid, $iDelIndex)
     {
         try {
@@ -2013,9 +1984,9 @@ class Cases
             $inbox = new ListInbox();
             $inbox->remove($sAppUid, $iDelIndex);
             $data['DEL_THREAD_STATUS'] = 'CLOSED';
-            $data['APP_UID']   = $sAppUid;
+            $data['APP_UID'] = $sAppUid;
             $data['DEL_INDEX'] = $iDelIndex;
-            $data['USR_UID']   = $user;
+            $data['USR_UID'] = $user;
             $listParticipatedLast = new ListParticipatedLast();
             $listParticipatedLast->refresh($data);
             /*----------------------------------********---------------------------------*/
@@ -2024,7 +1995,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function creates a new row in APP_DELEGATION whether it has status closed
      *
      * @name ReactivateCurrentDelegation
@@ -2033,7 +2004,6 @@ class Cases
      * @param string $iDelIndex
      * @return Fields
      */
-
     public function ReactivateCurrentDelegation($sAppUid, $iDelegation)
     {
         try {
@@ -2060,7 +2030,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function start a case using the task for the user $sUsrUid
      * With this function we can Start a case
      *
@@ -2069,7 +2039,6 @@ class Cases
      * @param string $sUsrUid
      * @return Fields
      */
-
     public function startCase($sTasUid, $sUsrUid, $isSubprocess = false, $dataPreviusApplication = array(), $isSelfService = false)
     {
         if ($sTasUid != '') {
@@ -2133,10 +2102,10 @@ class Cases
                 $nextTaskAssignVariable = $task->getTasAssignVariable();
                 if ($taskAssignType == "MULTIPLE_INSTANCE" || $taskAssignType == "MULTIPLE_INSTANCE_VALUE_BASED") {
                     switch ($taskAssignType) {
-                       case 'MULTIPLE_INSTANCE':
+                        case 'MULTIPLE_INSTANCE':
                             $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($sTasUid));
                             break;
-                       default:
+                        default:
                             throw (new Exception('Invalid Task Assignment method'));
                             break;
                     }
@@ -2166,7 +2135,7 @@ class Cases
                                 $task->getTasId(),
                                 (empty($user)) ? 0 : $user->getUsrId(),
                                 $this->Process->getProId()
-                           );
+                            );
                             //appThread
                             $AppThread = new AppThread;
                             $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0);
@@ -2246,13 +2215,7 @@ class Cases
 
         //call plugin
         if (class_exists('folderData')) {
-            $folderData = new folderData(
-                            $sProUid,
-                            $proFields['PRO_TITLE'],
-                            $sAppUid,
-                            $newValues['APP_TITLE'],
-                            $sUsrUid
-            );
+            $folderData = new folderData($sProUid, $proFields['PRO_TITLE'], $sAppUid, $newValues['APP_TITLE'], $sUsrUid);
             $oPluginRegistry = PluginRegistry::loadSingleton();
             $oPluginRegistry->executeTriggers(PM_CREATE_CASE, $folderData);
         }
@@ -2266,7 +2229,7 @@ class Cases
         );
     }
 
-    /*
+    /**
      * Get the next step
      *
      * @name getNextStep
@@ -2276,12 +2239,11 @@ class Cases
      * @param integer $iPosition
      * @return array
      */
-
     public function getNextStep($sProUid = '', $sAppUid = '', $iDelIndex = 0, $iPosition = 0)
     {
         $oPMScript = new PMScript();
         $oApplication = new Application();
-        $aFields    = $oApplication->Load($sAppUid);
+        $aFields = $oApplication->Load($sAppUid);
         if (!is_array($aFields['APP_DATA'])) {
             $aFields['APP_DATA'] = G::array_merges(G::getSystemConstants(), unserialize($aFields['APP_DATA']));
         }
@@ -2349,13 +2311,13 @@ class Cases
                             }
                             if (array_key_exists('gmail', $_SESSION) || (array_key_exists('gmail', $_GET) && $_GET['gmail'] == 1)) {
                                 $aNextStep = array(
-                                        'TYPE' => $oStep->getStepTypeObj(),
-                                        'UID' => $oStep->getStepUidObj(),
-                                        'POSITION' => $oStep->getStepPosition(),
-                                        'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
-                                        $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
-                                        '&ACTION=' . $sAction .
-                                        '&gmail=1'
+                                    'TYPE' => $oStep->getStepTypeObj(),
+                                    'UID' => $oStep->getStepUidObj(),
+                                    'POSITION' => $oStep->getStepPosition(),
+                                    'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
+                                    $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
+                                    '&ACTION=' . $sAction .
+                                    '&gmail=1'
                                 );
                             } else {
                                 $aNextStep = array(
@@ -2383,10 +2345,10 @@ class Cases
                     );
                 } else {
                     $aNextStep = array(
-                            'TYPE' => 'DERIVATION',
-                            'UID' => -1,
-                            'POSITION' => ($iLastStep + 1),
-                            'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN'
+                        'TYPE' => 'DERIVATION',
+                        'UID' => -1,
+                        'POSITION' => ($iLastStep + 1),
+                        'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN'
                     );
                 }
             }
@@ -2396,7 +2358,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Get the previous step
      *
      * @name getPreviousStep
@@ -2406,7 +2368,6 @@ class Cases
      * @param integer $iPosition
      * @return array
      */
-
     public function getPreviousStep($sProUid = '', $sAppUid = '', $iDelIndex = 0, $iPosition = 0)
     {
         //Note: Depreciated, delete in the future
@@ -2500,7 +2461,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Get the next supervisor step
      *
      * @name getNextSupervisorStep
@@ -2509,7 +2470,6 @@ class Cases
      * @param integer $sType
      * @return $aNextStep
      */
-
     public function getNextSupervisorStep($sProcessUID, $iPosition, $sType = 'DYNAFORM')
     {
         $oCriteria = new Criteria();
@@ -2524,7 +2484,7 @@ class Cases
             $oCriteria = new Criteria();
             $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, $sType);
-            $oCriteria->add(StepSupervisorPeer::STEP_POSITION, ($iPosition+1));
+            $oCriteria->add(StepSupervisorPeer::STEP_POSITION, ($iPosition + 1));
             $oDataset = StepSupervisorPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -2534,7 +2494,7 @@ class Cases
         return $aNextStep;
     }
 
-    /*
+    /**
      * Get the previous supervisor step
      *
      * @name getPreviousSupervisorStep
@@ -2543,7 +2503,6 @@ class Cases
      * @param integer $sType
      * @return $aNextStep
      */
-
     public function getPreviousSupervisorStep($sProcessUID, $iPosition, $sType = 'DYNAFORM')
     {
         $iPosition -= 1;
@@ -2573,14 +2532,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Get the transfer History
      *
      * @name getTransferHistoryCriteria
      * @param string $sAppUid
      * @return array
      */
-
     public function getTransferHistoryCriteria($sAppUid)
     {
         $c = new Criteria('workflow');
@@ -2632,13 +2590,12 @@ class Cases
         return $c;
     }
 
-    /*
+    /**
      * Get the Criteria for To Do Cases List
      * @param string $sUIDUserLogged
      * @return array ( 'where' => Criteria, 'group' => Criteria )
      * @return array
      */
-
     public function prepareCriteriaForToDo($sUIDUserLogged)
     {
         // NEW QUERY
@@ -3063,7 +3020,7 @@ class Cases
         return array($c, $xmlfile);
     }
 
-    /*
+    /**
      * Get a case in its current index
      *
      * @name loadCaseInCurrentDelegation
@@ -3072,7 +3029,6 @@ class Cases
      * @Author Erik Amaru Ortiz <erik@colosa.com>
      * @return array
      */
-
     public function loadCaseInCurrentDelegation($APP_UID, $titles = false)
     {
         $c = new Criteria('workflow');
@@ -3229,12 +3185,12 @@ class Cases
         $c = new Criteria('workflow');
         $c->clearSelectColumns();
         $c->add(
-            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
-            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
+                $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
+                        $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
         );
         $c->add(
-            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_DATE, (count(explode(" ", $today)) > 1)? $today : $today . " 23:59:59", Criteria::LESS_EQUAL)->addAnd(
-            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_DATE, null, Criteria::ISNOTNULL))
+                $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_DATE, (count(explode(" ", $today)) > 1) ? $today : $today . " 23:59:59", Criteria::LESS_EQUAL)->addAnd(
+                        $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_DATE, null, Criteria::ISNOTNULL))
         );
         $d = AppDelayPeer::doSelectRS($c);
         $d->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -3252,14 +3208,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * it Changes the date and APP_DISABLE_ACTION_USER to unpause cases
      *
      * @name UnpauseRoutedCasesWithPauseFlagEnabled
      * @param string $usrLogged
      * @return void
      */
-
     public function UnpauseRoutedCasesWithPauseFlagEnabled($usrLogged)
     {
         $c = new Criteria();
@@ -3294,14 +3249,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Get the application UID by case number
      *
      * @name getApplicationUIDByNumber
      * @param integer $iApplicationNumber
      * @return string
      */
-
     public function getApplicationUIDByNumber($iApplicationNumber)
     {
         $oCriteria = new Criteria();
@@ -3314,14 +3268,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Get the current delegation of a user or a case
      * @name getCurrentDelegation
      * @param string $sApplicationUID
      * @param string $sUserUID
      * @return integer
      */
-
     public function getCurrentDelegation($sApplicationUID = '', $sUserUID = '', $onlyOpenThreads = false)
     {
         $oCriteria = new Criteria();
@@ -3348,7 +3301,7 @@ class Cases
         throw (new Exception('This case has 0 current delegations'));
     }
 
-    /*
+    /**
      * Get the current delegation of a user or a case
      * @name loadTriggers
      * @param string $sTasUid
@@ -3357,7 +3310,6 @@ class Cases
      * @param string $sTriggerType
      * @return integer
      */
-
     public function loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType)
     {
         $aTriggers = array();
@@ -3402,7 +3354,7 @@ class Cases
         return $aTriggers;
     }
 
-    /*
+    /**
      * Execute trigger in task
      * @name executeTriggers
      * @param string $sTasUid
@@ -3412,7 +3364,6 @@ class Cases
      * @param array $aFields
      * @return integer
      */
-
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
@@ -3439,7 +3390,7 @@ class Cases
                         $strCodeAndLine = "";
 
                         foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
-                            $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                            $strCodeAndLine .= (($strCodeAndLine != "") ? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
                         }
 
                         $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
@@ -3477,13 +3428,12 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Get the trigger's names
      * @name getTriggerNames
      * @param string $triggers
      * @return integer
      */
-
     public function getTriggerNames($triggers)
     {
         $triggers_info = array();
@@ -3505,7 +3455,7 @@ class Cases
         return $triggers_info;
     }
 
-    /*
+    /**
      * Return the input documents list criteria object
      *
      * @name getInputDocumentsCriteria
@@ -3515,7 +3465,6 @@ class Cases
      * @param string $sAppDocuUID
      * @return object
      */
-
     public function getInputDocumentsCriteria($sApplicationUID, $iDelegation, $sDocumentUID, $sAppDocuUID = '')
     {
         try {
@@ -3634,14 +3583,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Return the input documents list to Review
      *
      * @name getInputDocumentsCriteriaToRevise
      * @param string $sApplicationUID
      * @return object
      */
-
     public function getInputDocumentsCriteriaToRevise($sApplicationUID)
     {
         try {
@@ -3899,14 +3847,13 @@ class Cases
         return $appDocUid;
     }
 
-    /*
+    /**
      * Return the input documents list to Review
      *
      * @name getInputDocumentsCriteriaToRevise
      * @param string $sApplicationUID
      * @return object
      */
-
     public function getOutputDocumentsCriteriaToRevise($sApplicationUID)
     {
         try {
@@ -3958,7 +3905,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * Return the (Application) Criteria object
      *
      * @name getCriteriaProcessCases
@@ -3966,7 +3913,6 @@ class Cases
      * @param string $PRO_UID
      * @return object
      */
-
     public function getCriteriaProcessCases($status, $PRO_UID)
     {
         $c = new Criteria('workflow');
@@ -3975,7 +3921,7 @@ class Cases
         return $c;
     }
 
-    /*
+    /**
      * Review is an unassigned Case
      *
      * @name isUnassignedPauseCase
@@ -3995,7 +3941,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * pause a Case
      *
      * @name pauseCase
@@ -4005,7 +3951,6 @@ class Cases
      * @param string $sUnpauseDate
      * @return object
      */
-
     public function pauseCase($sApplicationUID, $iDelegation, $sUserUID, $sUnpauseDate = null, $appTitle = null)
     {
         // Check if the case is unassigned
@@ -4069,7 +4014,7 @@ class Cases
         /*----------------------------------********---------------------------------*/
     }
 
-    /*
+    /**
      * unpause a case
      *
      * @name unpauseCase
@@ -4078,7 +4023,6 @@ class Cases
      * @param string $sUserUID
      * @return object
      */
-
     public function unpauseCase($sApplicationUID, $iDelegation, $sUserUID)
     {
         //Verify status of the case
@@ -4140,8 +4084,8 @@ class Cases
         $oCriteria->add(AppDelayPeer::APP_DEL_INDEX, $iDelegation);
         $oCriteria->add(AppDelayPeer::APP_TYPE, 'PAUSE');
         $oCriteria->add(
-            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
-            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
+                $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
+                        $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
         );
 
         $oDataset = AppDelayPeer::doSelectRS($oCriteria);
@@ -4183,7 +4127,7 @@ class Cases
         /*----------------------------------********---------------------------------*/
     }
 
-    /*
+    /**
      * cancel a case
      *
      * @name cancelCase
@@ -4192,13 +4136,16 @@ class Cases
      * @param string $user_logged
      * @return void
      */
-
     public function cancelCase($sApplicationUID, $iIndex, $user_logged)
     {
         $this->getExecuteTriggerProcess($sApplicationUID, 'CANCELED');
 
         $oApplication = new Application();
         $aFields = $oApplication->load($sApplicationUID);
+
+        $appData = self::unserializeData($aFields['APP_DATA']);
+        $appData = G::array_merges(G::getSystemConstants(), $appData);
+
         $appStatusCurrent = $aFields['APP_STATUS'];
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
@@ -4213,8 +4160,8 @@ class Cases
             require_once 'classes/model/AdditionalTables.php';
             $oReportTables = new ReportTables();
             $addtionalTables = new additionalTables();
-            $oReportTables->updateTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $aFields['APP_DATA']);
-            $addtionalTables->updateReportTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $aFields['APP_DATA'], $aFields['APP_STATUS']);
+            $oReportTables->updateTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $appData);
+            $addtionalTables->updateReportTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $appData, $aFields['APP_STATUS']);
         }
         $oAppDel = new AppDelegation();
         $oAppDel->Load($sApplicationUID, $iIndex);
@@ -4269,9 +4216,9 @@ class Cases
         }
         /*----------------------------------********---------------------------------*/
         $data = array(
-            'APP_UID'            => $sApplicationUID,
-            'DEL_INDEX'          => $iIndex,
-            'USR_UID'            => $user_logged,
+            'APP_UID' => $sApplicationUID,
+            'DEL_INDEX' => $iIndex,
+            'USR_UID' => $user_logged,
             'APP_STATUS_CURRENT' => $appStatusCurrent
         );
         $data = array_merge($aFields, $data);
@@ -4394,7 +4341,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * reactive a case
      *
      * @name reactivateCase
@@ -4403,7 +4350,6 @@ class Cases
      * @param string $user_logged
      * @return void
      */
-
     public function reactivateCase($sApplicationUID, $iIndex, $user_logged)
     {
         $oApplication = new Application();
@@ -4449,7 +4395,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * reassign a case
      *
      * @name reassignCase
@@ -4460,7 +4406,6 @@ class Cases
      * @param string $sType
      * @return true
      */
-
     public function reassignCase($sApplicationUID, $iDelegation, $sUserUID, $newUserUID, $sType = 'REASSIGN')
     {
         $this->CloseCurrentDelegation($sApplicationUID, $iDelegation);
@@ -4557,14 +4502,13 @@ class Cases
         return true;
     }
 
-    /*
+    /**
      * get all dynaforms that they have send it
      *
      * @name getAllDynaformsStepsToRevise
      * @param string $APP_UID
      * @return object
      */
-
     public function getAllDynaformsStepsToRevise($APP_UID)
     {
         $aCase = $this->loadCase($APP_UID);
@@ -4582,14 +4526,13 @@ class Cases
         return $oDataset;
     }
 
-    /*
+    /**
      * get all inputs that they have send it
      *
      * @name getAllInputsStepsToRevise
      * @param string $APP_UID
      * @return object
      */
-
     public function getAllInputsStepsToRevise($APP_UID)
     {
         $aCase = $this->loadCase($APP_UID);
@@ -4607,14 +4550,13 @@ class Cases
         return $oDataset;
     }
 
-    /*
+    /**
      * get all upload document that they have send it
      *
      * @name getAllUploadedDocumentsCriteria
      * @param string $APP_UID
      * @return object
      */
-
     public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
         $conf = new Configurations();
@@ -4911,7 +4853,7 @@ class Cases
         return $oCriteria;
     }
 
-    /*
+    /**
      * get all generate document
      *
      * @name getAllGeneratedDocumentsCriteria
@@ -4921,8 +4863,7 @@ class Cases
      * @param string $sUserUID
      * @return object
      */
-
-    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex =0)
+    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
         $conf = new Configurations();
 
@@ -5147,7 +5088,7 @@ class Cases
         return $oCriteria;
     }
 
-    /*
+    /**
      * get all dynaforms in a task
      *
      * @name getallDynaformsCriteria
@@ -5157,7 +5098,6 @@ class Cases
      * @param string $sUserUID
      * @return object
      */
-
     public function getallDynaformsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
         $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
@@ -5284,9 +5224,9 @@ class Cases
                 $sBody = null;
 
                 if (isset($conf["TAS_DEF_MESSAGE_TYPE"]) &&
-                    isset($conf["TAS_DEF_MESSAGE_TEMPLATE"]) &&
-                    $conf["TAS_DEF_MESSAGE_TYPE"] == "template" &&
-                    $conf["TAS_DEF_MESSAGE_TEMPLATE"] != ""
+                        isset($conf["TAS_DEF_MESSAGE_TEMPLATE"]) &&
+                        $conf["TAS_DEF_MESSAGE_TYPE"] == "template" &&
+                        $conf["TAS_DEF_MESSAGE_TEMPLATE"] != ""
                 ) {
                     if ($conf["TAS_DEF_MESSAGE_TEMPLATE"] == "alert_message.html") {
                         $swtplDefault = 1;
@@ -5317,8 +5257,8 @@ class Cases
                     $sBody = nl2br($aTaskInfo['TAS_DEF_MESSAGE']);
                 }
                 $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_EMAIL_SERVER_UID']))) ?
-                    $eServer->getEmailServer($aTaskInfo['TAS_EMAIL_SERVER_UID'], true) :
-                    $eServer->getEmailServerDefault();
+                        $eServer->getEmailServer($aTaskInfo['TAS_EMAIL_SERVER_UID'], true) :
+                        $eServer->getEmailServerDefault();
                 $msgError = '';
                 if (empty($aConfiguration)) {
                     $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
@@ -5365,9 +5305,9 @@ class Cases
                 $sBody = null;
 
                 if (isset($aTaskInfo["TAS_RECEIVE_MESSAGE_TYPE"]) &&
-                    isset($aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"]) &&
-                    $aTaskInfo["TAS_RECEIVE_MESSAGE_TYPE"] == "template" &&
-                    $aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"] != ""
+                        isset($aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"]) &&
+                        $aTaskInfo["TAS_RECEIVE_MESSAGE_TYPE"] == "template" &&
+                        $aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"] != ""
                 ) {
                     if ($aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"] == "alert_message.html") {
                         $swtplDefault = 1;
@@ -5398,8 +5338,8 @@ class Cases
                     $sBody = nl2br($aTaskInfo['TAS_RECEIVE_MESSAGE']);
                 }
                 $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_RECEIVE_SERVER_UID']))) ?
-                    $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) :
-                    $eServer->getEmailServerDefault();
+                        $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) :
+                        $eServer->getEmailServerDefault();
                 $msgError = '';
                 if (empty($aConfiguration)) {
                     $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
@@ -5475,7 +5415,7 @@ class Cases
                 $arrayUserData = $user->getUser($aTask['USR_UID'], true);
                 $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2,
                     (trim($arrayUserData['USR_TIME_ZONE']) != '') ? trim($arrayUserData['USR_TIME_ZONE']) :
-                        \ProcessMaker\Util\System::getTimeZone());
+                                \ProcessMaker\Util\System::getTimeZone());
             } else {
                 $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2);
             }
@@ -5494,10 +5434,9 @@ class Cases
                     $fileTemplate = $dataLastEmail['pathEmail'] . G::LoadTranslation('ID_UNASSIGNED_MESSAGE');
 
                     if ((!file_exists($fileTemplate)) && file_exists(PATH_TPL . "mails" . PATH_SEP .
-                            G::LoadTranslation('ID_UNASSIGNED_MESSAGE'))
+                                    G::LoadTranslation('ID_UNASSIGNED_MESSAGE'))
                     ) {
-                        @copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'),
-                            $fileTemplate);
+                        @copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'), $fileTemplate);
                     }
                     $sBody2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
                 }
@@ -5526,7 +5465,7 @@ class Cases
 
                 if ($dataLastEmail['msgError'] == '') {
                     if (($dataLastEmail['configuration']["MESS_BACKGROUND"] == "") ||
-                        ($dataLastEmail['configuration']["MESS_TRY_SEND_INMEDIATLY"] == "1")
+                            ($dataLastEmail['configuration']["MESS_TRY_SEND_INMEDIATLY"] == "1")
                     ) {
                         $oSpool->sendMail();
                     }
@@ -5545,7 +5484,6 @@ class Cases
      * @return bool
      * @throws Exception
      */
-
     public function sendNotifications($taskUid, $arrayTask, $arrayData, $applicationUid, $delIndex, $from = '')
     {
         try {
@@ -5653,12 +5591,12 @@ class Cases
                     while ($rsCriteria->next()) {
                         $record = $rsCriteria->getRow();
 
-                        $toAux = (($record['USR_FIRSTNAME'] != '' || $record['USR_LASTNAME'] != '')? $record['USR_FIRSTNAME'] . ' ' . $record['USR_LASTNAME'] . ' ' : '') . '<' . $record['USR_EMAIL'] . '>';
+                        $toAux = (($record['USR_FIRSTNAME'] != '' || $record['USR_LASTNAME'] != '') ? $record['USR_FIRSTNAME'] . ' ' . $record['USR_LASTNAME'] . ' ' : '') . '<' . $record['USR_EMAIL'] . '>';
 
                         if ($to == '') {
                             $to = $toAux;
                         } else {
-                            $cc .= (($cc != '')? ',' : '') . $toAux;
+                            $cc .= (($cc != '') ? ',' : '') . $toAux;
                         }
                     }
                 }
@@ -5689,7 +5627,7 @@ class Cases
             case "MULTIPLE_INSTANCE_VALUE_BASED":
                 $oTask = new Task();
                 $aTaskNext = $oTask->load($taskUid);
-                if (isset($aTaskNext ["TAS_ASSIGN_VARIABLE"]) && ! empty($aTaskNext ["TAS_ASSIGN_VARIABLE"])) {
+                if (isset($aTaskNext ["TAS_ASSIGN_VARIABLE"]) && !empty($aTaskNext ["TAS_ASSIGN_VARIABLE"])) {
                     $to = null;
                     $cc = null;
                     $sw = 1;
@@ -5745,16 +5683,16 @@ class Cases
         /* ADDITIONAL OPERATIONS */
         /*         * * BETWEN VIEW AND BLOCK** */
         $RESULT_OBJECTS['DYNAFORMS'] = G::arrayDiff(
-            $MAIN_OBJECTS['VIEW']['DYNAFORMS'], $MAIN_OBJECTS['BLOCK']['DYNAFORMS']
+                        $MAIN_OBJECTS['VIEW']['DYNAFORMS'], $MAIN_OBJECTS['BLOCK']['DYNAFORMS']
         );
         $RESULT_OBJECTS['INPUT_DOCUMENTS'] = G::arrayDiff(
-            $MAIN_OBJECTS['VIEW']['INPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['INPUT_DOCUMENTS']
+                        $MAIN_OBJECTS['VIEW']['INPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['INPUT_DOCUMENTS']
         );
         $RESULT_OBJECTS['OUTPUT_DOCUMENTS'] = array_merge_recursive(
-            G::arrayDiff($MAIN_OBJECTS['VIEW']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($MAIN_OBJECTS['DELETE']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS'])
+                G::arrayDiff($MAIN_OBJECTS['VIEW']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($MAIN_OBJECTS['DELETE']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS'])
         );
         $RESULT_OBJECTS['CASES_NOTES'] = G::arrayDiff(
-            $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
+                        $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
         );
         array_push($RESULT_OBJECTS["DYNAFORMS"], -1, -2);
         array_push($RESULT_OBJECTS['INPUT_DOCUMENTS'], -1);
@@ -5799,8 +5737,8 @@ class Cases
             "CASES_NOTES" => 0,
             "MSGS_HISTORY" => array()
             /*----------------------------------********---------------------------------*/
-            ,"SUMMARY_FORM" => 0
-            /*----------------------------------********---------------------------------*/
+            , "SUMMARY_FORM" => 0
+                /*----------------------------------********---------------------------------*/
         );
 
         $oObjectPermission = new ObjectPermission();
@@ -5812,7 +5750,7 @@ class Cases
             $userUid = $row['USR_UID'];
             $opUserRelation = $row['OP_USER_RELATION'];
             $opTaskSource = $row['OP_TASK_SOURCE'];
-            $opParticipated = (int)$row['OP_PARTICIPATE'];
+            $opParticipated = (int) $row['OP_PARTICIPATE'];
             $opType = $row['OP_OBJ_TYPE'];
             $opObjUid = $row['OP_OBJ_UID'];
             $obCaseStatus = $row['OP_CASE_STATUS'];
@@ -5962,12 +5900,12 @@ class Cases
             "CASES_NOTES" => $result['CASES_NOTES'],
             "MSGS_HISTORY" => $result['MSGS_HISTORY']
             /*----------------------------------********---------------------------------*/
-            ,"SUMMARY_FORM" => $result['SUMMARY_FORM']
-            /*----------------------------------********---------------------------------*/
+            , "SUMMARY_FORM" => $result['SUMMARY_FORM']
+                /*----------------------------------********---------------------------------*/
         );
     }
 
-    /*
+    /**
      * to check the user External
      * @author Everth The Answer
      *
@@ -5976,7 +5914,6 @@ class Cases
      * @param  $case, $pin
      * @return Array
      */
-
     public function verifyCaseTracker($case, $pin)
     {
         //CASE INSENSITIVE pin
@@ -6047,14 +5984,13 @@ class Cases
         }
     }
 
-    /*
+    /**
      * funcion caseTrackerPermissions, by Everth
      *
      * @name caseTrackerPermissions
      * @param string $PRO_UID
      * @return string
      */
-
     public function caseTrackerPermissions($PRO_UID)
     {
         $newCaseTracker = new CaseTracker();
@@ -6071,7 +6007,7 @@ class Cases
         return $caseTracker;
     }
 
-    /*
+    /**
      * funcion input documents for case tracker
      * by Everth The Answer
      *
@@ -6081,7 +6017,6 @@ class Cases
      * @param string $sDocUID
      * @return object
      */
-
     public function getAllUploadedDocumentsCriteriaTracker($sProcessUID, $sApplicationUID, $sDocUID)
     {
         $oAppDocument = new AppDocument();
@@ -6192,7 +6127,7 @@ class Cases
         return $oCriteria;
     }
 
-    /*
+    /**
      * funcion output documents for case tracker
      * by Everth The Answer
      *
@@ -6202,7 +6137,6 @@ class Cases
      * @param string $sDocUID
      * @return object
      */
-
     public function getAllGeneratedDocumentsCriteriaTracker($sProcessUID, $sApplicationUID, $sDocUID)
     {
         $oAppDocument = new AppDocument();
@@ -6271,7 +6205,7 @@ class Cases
         return $oCriteria;
     }
 
-    /*
+    /**
      * funcion History messages for case tracker
      * by Everth The Answer
      *
@@ -6279,7 +6213,6 @@ class Cases
      * @param string sApplicationUID
      * @return object
      */
-
     public function getHistoryMessagesTracker($sApplicationUID)
     {
         $oAppDocument = new AppDocument();
@@ -6336,14 +6269,13 @@ class Cases
         return $oCriteria;
     }
 
-    /*
+    /**
      * funcion History messages for case tracker ExtJS
      * @name getHistoryMessagesTrackerExt
      * @param string sApplicationUID
      * @param string Msg_UID
      * @return array
      */
-
     public function getHistoryMessagesTrackerExt($sApplicationUID, $onlyVisibles = false, $start = null, $limit = null)
     {
         global $_DBArray;
@@ -6363,7 +6295,7 @@ class Cases
 
         while ($aRow = $oDataset->getRow()) {
             //Head for IE quirks mode
-            $sBody = '<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />'.$aRow['APP_MSG_BODY'];
+            $sBody = '<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />' . $aRow['APP_MSG_BODY'];
             $aMessages[] = array('APP_MSG_UID' => $aRow['APP_MSG_UID'],
                 'APP_UID' => $aRow['APP_UID'],
                 'DEL_INDEX' => $aRow['DEL_INDEX'],
@@ -6393,7 +6325,7 @@ class Cases
         return $aMessages;
     }
 
-    /*
+    /**
      * funcion History messages for case tracker
      * by Everth The Answer
      *
@@ -6402,7 +6334,6 @@ class Cases
      * @param string Msg_UID
      * @return array
      */
-
     public function getHistoryMessagesTrackerView($sApplicationUID, $Msg_UID)
     {
         $oAppDocument = new AppDocument();
@@ -6417,7 +6348,7 @@ class Cases
         return $aRow;
     }
 
-    /*
+    /**
      * This function gets all data about APP_DOCUMENT
      *
      * @name getAllObjectsFromProcess
@@ -6425,7 +6356,6 @@ class Cases
      * @param object OBJ_TYPE
      * @return array
      */
-
     public function getAllObjectsFromProcess($PRO_UID, $OBJ_TYPE = '%')
     {
         $RESULT = array();
@@ -6459,7 +6389,7 @@ class Cases
         return $RESULT;
     }
 
-    /*
+    /**
      * execute triggers after derivation
      *
      * @name executeTriggersAfterExternal
@@ -6471,7 +6401,6 @@ class Cases
      * @param array  $aNewData
      * @return void
      */
-
     public function executeTriggersAfterExternal($sProcess, $sTask, $sApplication, $iIndex, $iStepPosition, $aNewData = array())
     {
         //load the variables
@@ -6494,7 +6423,7 @@ class Cases
         $this->updateCase($sApplication, $aData);
     }
 
-    /*
+    /**
      * this function gets the current user in a task
      *
      * @name thisIsTheCurrentUser
@@ -6505,7 +6434,6 @@ class Cases
      * @param string $sURL
      * @return void
      */
-
     public function thisIsTheCurrentUser($sApplicationUID, $iIndex, $sUserUID, $sAction = '', $sURL = '')
     {
         $c = new Criteria('workflow');
@@ -6573,7 +6501,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * this function gets the user in Case
      *
      * @name getCriteriaUsersCases
@@ -6581,7 +6509,6 @@ class Cases
      * @param string $USR_UID
      * @return object
      */
-
     public function getCriteriaUsersCases($status, $USR_UID)
     {
         $c = new Criteria('workflow');
@@ -6592,7 +6519,7 @@ class Cases
         return $c;
     }
 
-    /*
+    /**
      * this function gets information in a search
      *
      * @name getCriteriaUsersCases
@@ -6608,7 +6535,6 @@ class Cases
      * @param array  $aSupervisor
      * @return object
      */
-
     public function getAdvancedSearch($sCase, $sProcess, $sTask, $sCurrentUser, $sSentby, $sLastModFrom, $sLastModTo, $sStatus, $permisse, $userlogged, $aSupervisor)
     {
         $sTypeList = '';
@@ -6707,7 +6633,7 @@ class Cases
     }
 
     //**DEPRECATED
-    /*
+    /**
      * this function gets a condition rule
      *
      * @name getConditionCasesCount
@@ -6747,7 +6673,7 @@ class Cases
     }
 
     //**DEPRECATED
-    /*
+    /**
      * this function gets all conditions rules
      *
      * @name getAllConditionCasesCount
@@ -6763,7 +6689,7 @@ class Cases
         return $aResult;
     }
 
-    /*
+    /**
      * this function gets a user that it is in a case
      *
      * @name userParticipatedInCase
@@ -6771,7 +6697,6 @@ class Cases
      * @param string $sUIDUserLogged
      * @return int
      */
-
     public function userParticipatedInCase($sAppUid, $sUIDUserLogged)
     {
         $c = new Criteria('workflow');
@@ -6787,7 +6712,7 @@ class Cases
         return $count;
     }
 
-    /*
+    /**
      * Get the current delegation of a case (This is a clone of getCurrentDelegation but this will return
      * the index with out filtering by user or status.
      * todo: deprecated ?
@@ -6795,7 +6720,6 @@ class Cases
      * @param string $sApplicationUID
      * @return integer
      */
-
     public function getCurrentDelegationCase($sApplicationUID = '')
     {
         $criteria = new \Criteria('workflow');
@@ -6847,7 +6771,7 @@ class Cases
         }
     }
 
-    /*
+    /**
      * We're getting all threads in a task
      *
      * @name GetAllThreads of Particular Parent Thread
@@ -6855,7 +6779,6 @@ class Cases
      * @param string $sAppParent
      * @return $aThreads
      */
-
     public function GetAllOpenDelegation($aData, $status = 'OPEN')
     {
         try {
@@ -6881,7 +6804,7 @@ class Cases
         }
     }
 
-    public function getUsersToReassign($TAS_UID, $USR_UID, $PRO_UID=null)
+    public function getUsersToReassign($TAS_UID, $USR_UID, $PRO_UID = null)
     {
         $oTasks = new Tasks();
         $aAux = $oTasks->getGroupsOfTask($TAS_UID, 1);
@@ -7008,14 +6931,13 @@ class Cases
         return $rows;
     }
 
-    /*
+    /**
      * this function gets all users that already participated in a case
      *
      * @name getUsersParticipatedInCase
      * @param string $sAppUid
      * @return array (criteria+array)
      */
-
     public function getUsersParticipatedInCase($sAppUid, $usrStatus = '')
     {
         $c = new Criteria('workflow');
@@ -7137,7 +7059,6 @@ class Cases
         $criteria1->addSelectColumn(ApplicationPeer::PRO_UID);
 
         //FROM
-
         //WHERE
         $criteria1->add(ApplicationPeer::APP_UID, $applicationUid);
 
@@ -7156,7 +7077,6 @@ class Cases
         $criteria2->addSelectColumn(AdditionalTablesPeer::ADD_TAB_NAME);
 
         //FROM
-
         //WHERE
 
         $criteria2->add(AdditionalTablesPeer::PRO_UID, $processUid);
@@ -7191,7 +7111,7 @@ class Cases
         if ($this->sort == '') {
             $this->sort = 'APP_MSG_DATE';
         }
-        if ($this->dir=='ASC') {
+        if ($this->dir == 'ASC') {
             if ($a[$this->sort] > $b[$this->sort]) {
                 return 1;
             } elseif ($a[$this->sort] < $b[$this->sort]) {
@@ -7290,17 +7210,17 @@ class Cases
             function ($a, $b) {
                 $retval = 0;
                 if (array_key_exists('catname', $a) && array_key_exists('catname', $b)) {
-                    $retval =  strcmp($a['catname'], $b['catname']);
+                    $retval = strcmp($a['catname'], $b['catname']);
                 }
                 return $retval;
             }
-        , function ($a, $b) {
-            $retval = 0;
-            if (array_key_exists('value', $a) && array_key_exists('value', $b)) {
-                $retval =  strcmp($a['value'], $b['value']);
+            , function ($a, $b) {
+                $retval = 0;
+                if (array_key_exists('value', $a) && array_key_exists('value', $b)) {
+                    $retval = strcmp($a['value'], $b['value']);
+                }
+                return $retval;
             }
-            return $retval;
-        }
         );
 
         usort($rows, function ($a, $b) use ($comparatorSequence) {
@@ -7339,3 +7259,4 @@ class Cases
         return false;
     }
 }
+
