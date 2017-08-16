@@ -519,6 +519,7 @@ class WebApplication
         define('MEMCACHED_ENABLED',  $arraySystemConfiguration['memcached']);
         define('MEMCACHED_SERVER',   $arraySystemConfiguration['memcached_server']);
         define('SYS_SKIN', $arraySystemConfiguration['default_skin']);
+        define('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION', $arraySystemConfiguration['disable_download_documents_session_validation']);
 
         require_once (PATH_DB . SYS_SYS . "/db.php");
 
