@@ -1,5 +1,10 @@
 <?php
+
 use Illuminate\Foundation\Http\Kernel;
+use Maveriks\WebApplication;
+use Maveriks\Http\Response;
+use Maveriks\Pattern\Mvc\PhtmlView;
+use ProcessMaker\Exception\RBACException;
 
 // Because laravel has a __ helper function, it's important we include the class.g file to ensure our __ is used.
 require_once __DIR__ . '/../../gulliver/system/class.g.php';
@@ -27,47 +32,48 @@ if (isset($_SERVER['UNENCODED_URL'])) {
 try {
     $rootDir = realpath(__DIR__ . "/../../") . DIRECTORY_SEPARATOR;
 
-    $app = new Maveriks\WebApplication();
+    $app = new WebApplication();
 
     $app->setRootDir($rootDir);
     $app->setRequestUri($_SERVER['REQUEST_URI']);
     $stat = $app->route();
 
-    switch ($stat)
-    {
-        case Maveriks\WebApplication::RUNNING_WORKFLOW:
+    switch ($stat) {
+        case WebApplication::RUNNING_WORKFLOW:
+            //TODO: This should be replaced by the 'WebApplication::loadEnvironment()' function, 
+            //the sysGeneric file should no longer define constants.
+            $app->defineConstantsForPlugin();
             include "sysGeneric.php";
             break;
 
-        case Maveriks\WebApplication::RUNNING_API:
-            $app->run(Maveriks\WebApplication::SERVICE_API);
+        case WebApplication::RUNNING_API:
+            $app->run(WebApplication::SERVICE_API);
             break;
 
-        case Maveriks\WebApplication::RUNNING_OAUTH2:
-            $app->run(Maveriks\WebApplication::SERVICE_OAUTH2);
+        case WebApplication::RUNNING_OAUTH2:
+            $app->run(WebApplication::SERVICE_OAUTH2);
             break;
 
-        case Maveriks\WebApplication::RUNNING_INDEX:
-            $response = new Maveriks\Http\Response(file_get_contents("index.html"), 302);
+        case WebApplication::RUNNING_INDEX:
+            $response = new Response(file_get_contents("index.html"), 302);
             $response->send();
             break;
 
-        case Maveriks\WebApplication::RUNNING_DEFAULT:
-            $response = new Maveriks\Http\Response("", 302);
+        case WebApplication::RUNNING_DEFAULT:
+            $response = new Response("", 302);
             //TODO compose this def url with configuration data from env.ini
             $response->setHeader("location", "/sys/en/neoclassic/login/login");
             $response->send();
             break;
     }
-
-} catch (ProcessMaker\Exception\RBACException $e) {
+} catch (RBACException $e) {
     G::header('location: ' . $e->getPath());
 } catch (Exception $e) {
-    $view = new Maveriks\Pattern\Mvc\PhtmlView($rootDir . "framework/src/templates/Exception.phtml");
+    $view = new PhtmlView($rootDir . "framework/src/templates/Exception.phtml");
     $view->set("message", $e->getMessage());
     $view->set("exception", $e);
 
-    $response = new Maveriks\Http\Response($view->getOutput(), 503);
+    $response = new Response($view->getOutput(), 503);
     $response->send();
 }
 

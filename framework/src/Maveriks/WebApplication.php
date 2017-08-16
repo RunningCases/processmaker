@@ -414,6 +414,8 @@ class WebApplication
 
     public function loadEnvironment($workspace = "")
     {
+        $this->defineConstantsForPlugin();
+
         define("PATH_SEP", DIRECTORY_SEPARATOR);
 
         define("PATH_TRUNK", $this->rootDir . PATH_SEP);
@@ -452,8 +454,6 @@ class WebApplication
         define("PATH_RBAC_MSSQL_DATA", PATH_RBAC_CORE . "data" . PATH_SEP . "mssql" . PATH_SEP);
         define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
-
-        self::defineConstantsForPlugin();
 
         G::defineConstants();
         $arraySystemConfiguration = System::getSystemConfiguration();
@@ -621,7 +621,7 @@ class WebApplication
      * file is not done by 'require' in this version of ProcessMaker. Therefore,
      * these definitions have been moved to this class.
      */
-    public static function defineConstantsForPlugin()
+    public function defineConstantsForPlugin()
     {
         define('G_PLUGIN_CLASS', 1);
         define('PM_CREATE_CASE', 1001);
@@ -646,4 +646,3 @@ class WebApplication
         define('PM_SCHEDULER_CREATE_CASE_AFTER', 1020);
     }
 }
-
