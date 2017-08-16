@@ -40,9 +40,6 @@ try {
 
     switch ($stat) {
         case WebApplication::RUNNING_WORKFLOW:
-            //TODO: This should be replaced by the 'WebApplication::loadEnvironment()' function, 
-            //the sysGeneric file should no longer define constants.
-            $app->defineConstantsForPlugin();
             include "sysGeneric.php";
             break;
 
