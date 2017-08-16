@@ -1,4 +1,5 @@
 <?php
+
 namespace Maveriks;
 
 use Maveriks\Util;
@@ -12,8 +13,6 @@ use G;
 
 /**
  * Web application bootstrap
- *
- * @author Erik Amaru Ortiz <aortiz.erik@gmail.com>
  */
 class WebApplication
 {
@@ -30,26 +29,32 @@ class WebApplication
      * @var string application root directory
      */
     protected $rootDir = "";
+
     /**
      * @var string workflow directory
      */
     protected $workflowDir = "";
+
     /**
      * @var string workspace directory located into shared directory
      */
     protected $workspaceDir = "";
+
     /**
      * @var string workspace cache directory
      */
     protected $workspaceCacheDir = "";
+
     /**
      * @var string request location uri
      */
     protected $requestUri = "";
+
     /**
      * @var array holds multiple request response
      */
     protected $responseMultipart = array();
+
     /**
      * @var \Maveriks\Extension\Restler main REST dispatcher object
      */
@@ -108,12 +113,11 @@ class WebApplication
             } else {
                 return self::RUNNING_DEFAULT;
             }
-        } elseif (substr($this->requestUri, 1, 3) === "api"
-            && count(explode("/", $this->requestUri)) >= 4 // url api pattern: /api/1.0/<workspace>/<resource>
+        } elseif (substr($this->requestUri, 1, 3) === "api" && count(explode("/", $this->requestUri)) >= 4 // url api pattern: /api/1.0/<workspace>/<resource>
         ) {
             return self::RUNNING_API;
         } else {
-            list($this->requestUri,) = explode('?', $this->requestUri);
+            list($this->requestUri, ) = explode('?', $this->requestUri);
             $uriParts = explode('/', $this->requestUri);
 
             if (isset($uriParts[2]) && $uriParts[2] == "oauth2") {
@@ -172,7 +176,6 @@ class WebApplication
      */
     public function dispatchMultipleApiRequest($uri, $version = "1.0")
     {
-
         $stringInput = file_get_contents('php://input');
 
         if (empty($stringInput)) {
@@ -272,13 +275,13 @@ class WebApplication
             $cachedConfig = $this->workspaceCacheDir . "api-config.php";
 
             // verify if config cache file exists, is array and the last modification date is the same when cache was created.
-            if (! file_exists($cachedConfig) || ! is_array($config = include($cachedConfig)) || $config["_chk"] != filemtime($apiIniFile)) {
+            if (!file_exists($cachedConfig) || !is_array($config = include($cachedConfig)) || $config["_chk"] != filemtime($apiIniFile)) {
                 $config = Util\Common::parseIniFile($apiIniFile);
                 $config["_chk"] = filemtime($apiIniFile);
-                if (! is_dir(dirname($cachedConfig))) {
+                if (!is_dir(dirname($cachedConfig))) {
                     Util\Common::mk_dir(dirname($cachedConfig));
                 }
-                file_put_contents($cachedConfig, "<?php return " . var_export($config, true).";");
+                file_put_contents($cachedConfig, "<?php return " . var_export($config, true) . ";");
                 Util\Logger::log("Configuration cache was loaded and cached to: $cachedConfig");
             } else {
                 Util\Logger::log("Loading Api Configuration from: $cachedConfig");
@@ -287,14 +290,14 @@ class WebApplication
 
         // Setting current workspace to Api class
         Services\Api::setWorkspace(SYS_SYS);
-        $cacheDir = defined("PATH_WORKSPACE") ? PATH_WORKSPACE : (defined("PATH_C")? PATH_C: sys_get_temp_dir());
+        $cacheDir = defined("PATH_WORKSPACE") ? PATH_WORKSPACE : (defined("PATH_C") ? PATH_C : sys_get_temp_dir());
 
         $sysConfig = System::getSystemConfiguration();
 
         \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
         $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
 
-        Util\Logger::log("Serving API mode: " . ($productionMode? "production": "development"));
+        Util\Logger::log("Serving API mode: " . ($productionMode ? "production" : "development"));
 
         // create a new Restler instance
         //$rest = new \Luracast\Restler\Restler();
@@ -313,11 +316,11 @@ class WebApplication
         // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
-        Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER.":host=$host;dbname=".DB_NAME.$port);
+        Services\OAuth2\Server::setDatabaseSource(DB_USER, DB_PASS, DB_ADAPTER . ":host=$host;dbname=" . DB_NAME . $port);
         if (DB_NAME != DB_RBAC_NAME) { //it's PM < 3
             list($host, $port) = strpos(DB_RBAC_HOST, ':') !== false ? explode(':', DB_RBAC_HOST) : array(DB_RBAC_HOST, '');
             $port = empty($port) ? '' : ";port=$port";
-            Services\OAuth2\Server::setDatabaseSourceRBAC(DB_RBAC_USER, DB_RBAC_PASS, DB_ADAPTER.":host=$host;dbname=".DB_RBAC_NAME.$port);
+            Services\OAuth2\Server::setDatabaseSourceRBAC(DB_RBAC_USER, DB_RBAC_PASS, DB_ADAPTER . ":host=$host;dbname=" . DB_RBAC_NAME . $port);
         }
 
         // Setting default OAuth Client id, for local PM Web Designer
@@ -332,7 +335,7 @@ class WebApplication
             if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
                 $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
                 $namespace = '\\ProcessMaker\\Services\\' . str_replace(DS, '\\', $relClassPath);
-                $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
+                $namespace = strpos($namespace, "//") === false ? $namespace : str_replace("//", '', $namespace);
                 $this->rest->addAPIClass($namespace);
             }
         }
@@ -358,7 +361,7 @@ class WebApplication
             $tmp = array_shift($tmp);
             $tmp = explode('-', $tmp);
             $pluginName = $tmp[1];
-            $uri = str_replace('plugin-'.$pluginName, strtolower($pluginName), $uri);
+            $uri = str_replace('plugin-' . $pluginName, strtolower($pluginName), $uri);
         }
 
         // hook to get rest api classes from plugins
@@ -366,7 +369,7 @@ class WebApplication
             $pluginRegistry = PluginRegistry::loadSingleton();
             $plugins = $pluginRegistry->getRegisteredRestServices();
 
-            if (! empty($plugins)) {
+            if (!empty($plugins)) {
                 foreach ($plugins as $pluginName => $plugin) {
                     $pluginSourceDir = PATH_PLUGINS . $pluginName . DIRECTORY_SEPARATOR . 'src';
 
@@ -374,7 +377,7 @@ class WebApplication
                     $loader->add($pluginSourceDir);
 
                     foreach ($plugin as $class) {
-                        $className = is_object($class) ? $class->namespace: $class['namespace'];
+                        $className = is_object($class) ? $class->namespace : $class['namespace'];
                         if (class_exists($className)) {
                             $this->rest->addAPIClass($className, strtolower($pluginName));
                         }
@@ -413,9 +416,9 @@ class WebApplication
     {
         define("PATH_SEP", DIRECTORY_SEPARATOR);
 
-        define("PATH_TRUNK",    $this->rootDir . PATH_SEP);
+        define("PATH_TRUNK", $this->rootDir . PATH_SEP);
         define("PATH_OUTTRUNK", realpath($this->rootDir . "/../") . PATH_SEP);
-        define("PATH_HOME",     $this->rootDir . PATH_SEP . "workflow" . PATH_SEP);
+        define("PATH_HOME", $this->rootDir . PATH_SEP . "workflow" . PATH_SEP);
 
         define("PATH_HTML", PATH_HOME . "public_html" . PATH_SEP);
         define("PATH_RBAC_HOME", PATH_TRUNK . "rbac" . PATH_SEP);
@@ -440,7 +443,7 @@ class WebApplication
         define("PATH_FIXTURES", PATH_TEST . "fixtures" . PATH_SEP);
         define("PATH_RTFDOCS", PATH_CORE . "rtf_templates" . PATH_SEP);
         define("PATH_DYNACONT", PATH_CORE . "content" . PATH_SEP . "dynaform" . PATH_SEP);
-        define("SYS_UPLOAD_PATH", PATH_HOME . "public_html/files/" );
+        define("SYS_UPLOAD_PATH", PATH_HOME . "public_html/files/");
         define("PATH_UPLOAD", PATH_HTML . "files" . PATH_SEP);
         define("PATH_WORKFLOW_MYSQL_DATA", PATH_CORE . "data" . PATH_SEP . "mysql" . PATH_SEP);
         define("PATH_RBAC_MYSQL_DATA", PATH_RBAC_CORE . "data" . PATH_SEP . "mysql" . PATH_SEP);
@@ -450,26 +453,25 @@ class WebApplication
         define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
 
+        self::defineConstantsForPlugin();
+
         G::defineConstants();
         $arraySystemConfiguration = System::getSystemConfiguration();
 
         ini_set('date.timezone', $arraySystemConfiguration['time_zone']); //Set Time Zone
-
         // set include path
         set_include_path(
-            PATH_CORE . PATH_SEPARATOR .
-            PATH_THIRDPARTY . PATH_SEPARATOR .
-            PATH_THIRDPARTY . "pear" . PATH_SEPARATOR .
-            PATH_RBAC_CORE . PATH_SEPARATOR .
-            get_include_path()
+                PATH_CORE . PATH_SEPARATOR .
+                PATH_THIRDPARTY . PATH_SEPARATOR .
+                PATH_THIRDPARTY . "pear" . PATH_SEPARATOR .
+                PATH_RBAC_CORE . PATH_SEPARATOR .
+                get_include_path()
         );
-        ///print_r(get_include_path()); die;
 
         /*
          * Setting Up Workspace
          */
-
-        if (! file_exists( FILE_PATHS_INSTALLED )) {
+        if (!file_exists(FILE_PATHS_INSTALLED)) {
             throw new \Exception("Can't locate system file: " . FILE_PATHS_INSTALLED);
         }
 
@@ -477,8 +479,8 @@ class WebApplication
         require_once PATH_CORE . "config" . PATH_SEP . "paths_installed.php";
 
         // defining system constant when a valid server environment exists
-        define("PATH_LANGUAGECONT", PATH_DATA . "META-INF" . PATH_SEP );
-        define("PATH_CUSTOM_SKINS", PATH_DATA . "skins" . PATH_SEP );
+        define("PATH_LANGUAGECONT", PATH_DATA . "META-INF" . PATH_SEP);
+        define("PATH_CUSTOM_SKINS", PATH_DATA . "skins" . PATH_SEP);
         define("PATH_TEMPORAL", PATH_C . "dynEditor/");
         define("PATH_DB", PATH_DATA . "sites" . PATH_SEP);
 
@@ -488,7 +490,7 @@ class WebApplication
 
         \Bootstrap::setLanguage();
 
-        \Bootstrap::LoadTranslationObject((defined("SYS_LANG"))? SYS_LANG : "en");
+        \Bootstrap::LoadTranslationObject((defined("SYS_LANG")) ? SYS_LANG : "en");
 
         if (empty($workspace)) {
             return true;
@@ -516,11 +518,11 @@ class WebApplication
         define('DEBUG_SQL_LOG', $arraySystemConfiguration['debug_sql']);
         define('DEBUG_TIME_LOG', $arraySystemConfiguration['debug_time']);
         define('DEBUG_CALENDAR_LOG', $arraySystemConfiguration['debug_calendar']);
-        define('MEMCACHED_ENABLED',  $arraySystemConfiguration['memcached']);
-        define('MEMCACHED_SERVER',   $arraySystemConfiguration['memcached_server']);
+        define('MEMCACHED_ENABLED', $arraySystemConfiguration['memcached']);
+        define('MEMCACHED_SERVER', $arraySystemConfiguration['memcached_server']);
         define('SYS_SKIN', $arraySystemConfiguration['default_skin']);
 
-        require_once (PATH_DB . SYS_SYS . "/db.php");
+        require_once(PATH_DB . SYS_SYS . "/db.php");
 
         // defining constant for workspace shared directory
         $this->workspaceDir = PATH_DB . SYS_SYS . PATH_SEP;
@@ -532,15 +534,15 @@ class WebApplication
         set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
 
         // smarty constants
-        define( "PATH_SMARTY_C", PATH_C . "smarty" . PATH_SEP . "c" );
-        define( "PATH_SMARTY_CACHE", PATH_C . "smarty" . PATH_SEP . "cache" );
+        define("PATH_SMARTY_C", PATH_C . "smarty" . PATH_SEP . "c");
+        define("PATH_SMARTY_CACHE", PATH_C . "smarty" . PATH_SEP . "cache");
 
-        define("PATH_DATA_SITE",                PATH_DATA      . "sites/" . SYS_SYS . "/");
-        define("PATH_DOCUMENT",                 PATH_DATA_SITE . "files/");
-        define("PATH_DATA_MAILTEMPLATES",       PATH_DATA_SITE . "mailTemplates/");
-        define("PATH_DATA_PUBLIC",              PATH_DATA_SITE . "public/");
-        define("PATH_DATA_REPORTS",             PATH_DATA_SITE . "reports/");
-        define("PATH_DYNAFORM",                 PATH_DATA_SITE . "xmlForms/");
+        define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+        define("PATH_DOCUMENT", PATH_DATA_SITE . "files/");
+        define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
+        define("PATH_DATA_PUBLIC", PATH_DATA_SITE . "public/");
+        define("PATH_DATA_REPORTS", PATH_DATA_SITE . "reports/");
+        define("PATH_DYNAFORM", PATH_DATA_SITE . "xmlForms/");
         define("PATH_IMAGES_ENVIRONMENT_FILES", PATH_DATA_SITE . "usersFiles" . PATH_SEP);
         define("PATH_IMAGES_ENVIRONMENT_USERS", PATH_DATA_SITE . "usersPhotographies" . PATH_SEP);
         define('DISABLE_PHP_UPLOAD_EXECUTION', $arraySystemConfiguration['disable_php_upload_execution']);
@@ -548,40 +550,39 @@ class WebApplication
         /**
          * Global definitions, before it was the defines.php file
          */
-
         // URL Key
-        define( "URL_KEY", 'c0l0s40pt1mu59r1m3' );
+        define("URL_KEY", 'c0l0s40pt1mu59r1m3');
 
         // Other definitions
-        define( 'TIMEOUT_RESPONSE', 100 ); //web service timeout
-        define( 'APPLICATION_CODE', 'ProcessMaker' ); //to login like workflow system
-        define( 'MAIN_POFILE', 'processmaker' );
-        define( 'PO_SYSTEM_VERSION', 'PM 4.0.1' );
+        define('TIMEOUT_RESPONSE', 100); //web service timeout
+        define('APPLICATION_CODE', 'ProcessMaker'); //to login like workflow system
+        define('MAIN_POFILE', 'processmaker');
+        define('PO_SYSTEM_VERSION', 'PM 4.0.1');
 
         // Environment definitions
-        define( 'G_PRO_ENV', 'PRODUCTION' );
-        define( 'G_DEV_ENV', 'DEVELOPMENT' );
-        define( 'G_TEST_ENV', 'TEST' );
+        define('G_PRO_ENV', 'PRODUCTION');
+        define('G_DEV_ENV', 'DEVELOPMENT');
+        define('G_TEST_ENV', 'TEST');
 
         // Number of files per folder at PATH_UPLOAD (cases documents)
-        define( 'APPLICATION_DOCUMENTS_PER_FOLDER', 1000 );
+        define('APPLICATION_DOCUMENTS_PER_FOLDER', 1000);
 
         // Server of ProcessMaker Library
-        define( 'PML_SERVER', 'http://library.processmaker.com' );
-        define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
-        define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
-        define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
+        define('PML_SERVER', 'http://library.processmaker.com');
+        define('PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl');
+        define('PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess');
+        define('PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download');
 
         \Propel::init(PATH_CONFIG . "databases.php");
 
         //Set Time Zone
         /*----------------------------------********---------------------------------*/
         if (\PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
-            $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
+            $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) ($arraySystemConfiguration['system_utc_time_zone']) == 1;
         }
         /*----------------------------------********---------------------------------*/
 
-        ini_set('date.timezone', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
+        ini_set('date.timezone', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__']) ? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
 
         define('TIME_ZONE', ini_get('date.timezone'));
 
@@ -612,6 +613,37 @@ class WebApplication
         @unlink(PATH_DATA . 'compiled' . DS . 'routes.php');
         @unlink(PATH_DATA_SITE . 'routes.php');
         @unlink(PATH_DATA . 'sites' . DS . $workspace . DS . 'api-config.php');
+    }
+
+    /**
+     * The content of this function comes from the file:
+     * processmaker/workflow/engine/classes/class.plugin.php, the loading of this
+     * file is not done by 'require' in this version of ProcessMaker. Therefore,
+     * these definitions have been moved to this class.
+     */
+    public static function defineConstantsForPlugin()
+    {
+        define('G_PLUGIN_CLASS', 1);
+        define('PM_CREATE_CASE', 1001);
+        define('PM_UPLOAD_DOCUMENT', 1002);
+        define('PM_CASE_DOCUMENT_LIST', 1003);
+        define('PM_BROWSE_CASE', 1004);
+        define('PM_NEW_PROCESS_LIST', 1005);
+        define('PM_NEW_PROCESS_SAVE', 1006);
+        define('PM_NEW_DYNAFORM_LIST', 1007);
+        define('PM_NEW_DYNAFORM_SAVE', 1008);
+        define('PM_EXTERNAL_STEP', 1009);
+        define('PM_CASE_DOCUMENT_LIST_ARR', 1010);
+        define('PM_LOGIN', 1011);
+        define('PM_UPLOAD_DOCUMENT_BEFORE', 1012);
+        define('PM_CREATE_NEW_DELEGATION', 1013);
+        define('PM_SINGLE_SIGN_ON', 1014);
+        define('PM_GET_CASES_AJAX_LISTENER', 1015);
+        define('PM_BEFORE_CREATE_USER', 1016);
+        define('PM_AFTER_LOGIN', 1017);
+        define('PM_HASH_PASSWORD', 1018);
+        define('PM_SCHEDULER_CREATE_CASE_BEFORE', 1019);
+        define('PM_SCHEDULER_CREATE_CASE_AFTER', 1020);
     }
 }
 
