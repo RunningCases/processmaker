@@ -3595,7 +3595,7 @@ class Archive_Zip
         }
         return G::encryptCrc32($string);
     }
-/3.2.2
+
 }
 // End of class
 
