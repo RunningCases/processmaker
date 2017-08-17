@@ -1,5 +1,6 @@
 <?php
 namespace ProcessMaker\BusinessModel;
+use G;
 
 class ScriptTask
 {
@@ -596,7 +597,7 @@ class ScriptTask
      * @param string $activityUid          Unique id of Event
      * @param array  $arrayApplicationData Case data
      *
-     * return array
+     * @return array
      */
     public function execScriptByActivityUid($activityUid, array $arrayApplicationData)
     {
@@ -630,7 +631,7 @@ class ScriptTask
                         $oPMScript->execute();
 
                         if (isset($oPMScript->aFields["__ERROR__"]))  {
-                            \G::log("Case Uid: " . $arrayApplicationData["APP_UID"] . ", Error: " . $oPMScript->aFields["__ERROR__"], PATH_DATA . "log/ScriptTask.log");
+                            G::log("Case Uid: " . $arrayApplicationData["APP_UID"] . ", Error: " . $oPMScript->aFields["__ERROR__"], PATH_DATA, "ScriptTask.log");
                         }
 
                         $arrayApplicationData["APP_DATA"] = $oPMScript->aFields;
