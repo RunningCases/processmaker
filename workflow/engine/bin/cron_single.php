@@ -1,5 +1,10 @@
 <?php
-require_once(__DIR__ . '/../../../bootstrap/autoload.php');
+
+use Illuminate\Foundation\Http\Kernel;
+
+require_once __DIR__ . '/../../../gulliver/system/class.g.php';
+require_once __DIR__ . '/../../../bootstrap/autoload.php';
+require_once __DIR__ . '/../../../bootstrap/app.php';
 
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -75,6 +80,8 @@ try {
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;
     $e_all = ($arraySystemConfiguration['debug'])? $e_all                 : $e_all & ~E_NOTICE;
 
+    app()->useStoragePath(realpath(PATH_DATA));
+    app()->make(Kernel::class)->bootstrap();
     //Do not change any of these settings directly, use env.ini instead
     ini_set('display_errors',  $arraySystemConfiguration['debug']);
     ini_set('error_reporting', $e_all);
