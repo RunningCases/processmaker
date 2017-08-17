@@ -7,7 +7,7 @@
  * @access public
  */
 
-class Dashboard extends Controller
+class DashboardModule extends Controller
 {
 
     // Class properties

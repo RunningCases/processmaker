@@ -120,7 +120,7 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     }
     if ($RBAC->userCanAccess('PM_SETUP_DASHBOARDS') === 1) {
         $G_TMP_MENU->AddIdRawOption(
-            'DASHBOARD', '../dashboard/dashletsList',
+            'DASHBOARD', '../DashboardModule/dashletsList',
             ucfirst(G::LoadTranslation('ID_DASHBOARD')),
             '', '', 'settings'
         );
