@@ -4,9 +4,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 
 $filter = new InputFilter();
 
-list($_GET['UID'], $_GET['TYPE'], $_GET['POSITION'], $_GET['ACTION']) = $filter->xssRegexFilter(
-    [$_GET['UID'], $_GET['TYPE'], $_GET['POSITION'], $_GET['ACTION']], '/[\-\w]/'
-);
+$_GET = $filter->xssRegexFilter($_GET, '/[\-\w]/');
 
 if (!isset($_SESSION['USER_LOGGED'])) {
     if(!strpos($_SERVER['REQUEST_URI'], 'gmail')) {
