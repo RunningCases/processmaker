@@ -160,7 +160,7 @@ class ObjectPermission extends BaseObjectPermission
      *
      * @return array
      */
-    public function verifyObjectPermissionPerUser ($usrUid, $proUid, $tasUid = '', $action = '')
+    public function verifyObjectPermissionPerUser ($usrUid, $proUid, $tasUid = '', $action = '', $caseInfo = array())
     {
         $userPermissions = array();
         $oCriteria = new Criteria('workflow');
@@ -188,7 +188,7 @@ class ObjectPermission extends BaseObjectPermission
             $row = $rs->getRow();
 
             if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
-                $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+                $row["OP_CASE_STATUS"] == $caseInfo["APP_STATUS"]
             ) {
                 array_push($userPermissions, $row);
             }

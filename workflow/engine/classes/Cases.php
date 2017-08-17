@@ -5742,8 +5742,8 @@ class Cases
         );
 
         $oObjectPermission = new ObjectPermission();
-        $userPermissions = $oObjectPermission->verifyObjectPermissionPerUser($usrUid, $proUid, $tasUid, $action);
-        $groupPermissions = $oObjectPermission->verifyObjectPermissionPerGroup($usrUid, $proUid, $tasUid, $action);
+        $userPermissions = $oObjectPermission->verifyObjectPermissionPerUser($usrUid, $proUid, $tasUid, $action, $aCase);
+        $groupPermissions = $oObjectPermission->verifyObjectPermissionPerGroup($usrUid, $proUid, $tasUid, $action, $aCase);
         $permissions = array_merge($userPermissions, $groupPermissions);
 
         foreach ($permissions as $row) {
