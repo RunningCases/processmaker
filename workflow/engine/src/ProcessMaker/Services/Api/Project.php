@@ -140,6 +140,27 @@ class Project extends Api
     }
 
     /**
+     * Bulk actions
+     * @url POST /bulk
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
+     * @param array $request_data
+     * @return array $response
+     * @throws Exception
+     */
+    public function bulk($request_data)
+    {
+        try {
+            $response = Bpmn::doBulk($request_data);
+            return $response;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
      * @url GET /:prj_uid/export/listObjects
      *
      * @param string $prj_uid {@min 32}{@max 32}
