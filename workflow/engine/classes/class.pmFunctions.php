@@ -1105,7 +1105,7 @@ function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $va
     $variables = array ($v1,$v2
     );
 
-    $params = array ("sessionId" => $sessionId,"processId" => $processId,"userId" => $userId,"variables" => $variables, "taskId"=>""
+    $params = array ("sessionId" => $sessionId,"processId" => $processId,"userId" => $userId,"variables" => $variables
     );
 
     $result = $client->__soapCall( "NewCaseImpersonate", array ($params
