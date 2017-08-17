@@ -272,3 +272,92 @@ function getVarsGrid($proUid, $dynUid)
     }
     return $dynaformFieldTypes;
 }
+
+/**
+ * eprint
+ *
+ * @param string $s default value ''
+ * @param string $c default value null
+ *
+ * @return void
+ */
+function eprint ($s = "", $c = null)
+{
+    if (G::isHttpRequest()) {
+        if (isset( $c )) {
+            echo "<pre style='color:$c'>$s</pre>";
+        } else {
+            echo "<pre>$s</pre>";
+        }
+    } else {
+        if (isset( $c )) {
+            switch ($c) {
+                case 'green':
+                    printf( "\033[0;35;32m$s\033[0m" );
+                    return;
+                    break;
+                case 'red':
+                    printf( "\033[0;35;31m$s\033[0m" );
+                    return;
+                    break;
+                case 'blue':
+                    printf( "\033[0;35;34m$s\033[0m" );
+                    return;
+                    break;
+                default:
+                    print "$s";
+            }
+        } else {
+            print "$s";
+        }
+    }
+}
+
+/**
+ * println
+ *
+ * @param string $s
+ *
+ * @return eprintln($s)
+ */
+function println ($s)
+{
+    return eprintln( $s );
+}
+
+/**
+ * eprintln
+ *
+ * @param string $s
+ * @param string $c
+ *
+ * @return void
+ */
+function eprintln ($s = "", $c = null)
+{
+    if (G::isHttpRequest()) {
+        if (isset( $c )) {
+            echo "<pre style='color:$c'>$s</pre>";
+        } else {
+            echo "<pre>$s</pre>";
+        }
+    } else {
+        if (isset( $c ) && (PHP_OS != 'WINNT')) {
+            switch ($c) {
+                case 'green':
+                    printf( "\033[0;35;32m$s\033[0m\n" );
+                    return;
+                    break;
+                case 'red':
+                    printf( "\033[0;35;31m$s\033[0m\n" );
+                    return;
+                    break;
+                case 'blue':
+                    printf( "\033[0;35;34m$s\033[0m\n" );
+                    return;
+                    break;
+            }
+        }
+        print "$s\n";
+    }
+}
