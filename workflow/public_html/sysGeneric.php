@@ -814,6 +814,8 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
             echo $message;
             die();
         } else {
+            //Backward compatibility: Preload PmDynaform for old generated webentry files.
+            class_exists('PmDynaform');
             \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 200, 'Php Execution', $phpFile);
         }
 

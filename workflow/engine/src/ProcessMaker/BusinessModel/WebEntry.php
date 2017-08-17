@@ -414,8 +414,7 @@ class WebEntry
                     $fileContent .= "\$_SESSION[\"CURRENT_DYN_UID\"] = \"" . $dynaFormUid . "\";\n";
                     $fileContent .= "\$G_PUBLISH = new Publisher();\n";
 
-                    $fileContent .= "G::LoadClass(\"pmDynaform\");\n";
-                    $fileContent .= "\$a = new pmDynaform(array(\"CURRENT_DYNAFORM\" => \"" . $dynaFormUid . "\"));\n";
+                    $fileContent .= "\$a = new PmDynaform(array(\"CURRENT_DYNAFORM\" => \"" . $dynaFormUid . "\"));\n";
                     $fileContent .= "if (\$a->isResponsive()) {\n";
                     $fileContent .= "    \$a->printWebEntry(\"" . $fileName . "Post.php\");\n";
                     $fileContent .= "} else {\n";

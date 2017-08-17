@@ -456,11 +456,11 @@ class WebEntryEvent
                     $this->arrayFieldNameForException["userUid"]);
             }
 
-            if ($arrayData["WE_TYPE"] === "SINGLE" && empty($arrayData["DYN_UID"])) {
+            if ((empty($arrayData["WE_TYPE"]) || $arrayData["WE_TYPE"] === "SINGLE") && empty($arrayData["DYN_UID"])) {
                 throw new Exception(G::LoadTranslation("ID_SELECT_DYNAFORM_USE_IN_CASE"));
             }
 
-            if ($arrayData["WE_CALLBACK"] === "CUSTOM" && empty($arrayData["WE_CALLBACK_URL"])) {
+            if (isset($arrayData["WE_CALLBACK"]) && $arrayData["WE_CALLBACK"] === "CUSTOM" && empty($arrayData["WE_CALLBACK_URL"])) {
                 throw new Exception(G::LoadTranslation("ID_ENTER_VALID_URL"));
             }
         } catch (Exception $e) {
