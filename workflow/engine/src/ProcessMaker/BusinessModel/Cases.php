@@ -1629,7 +1629,7 @@ class Cases
                     if (isset($field['type'])) {
                         if ($field['type'] != 'form') {
                             foreach ($field as $key => $val) {
-                                if (is_string($val) && in_array(substr($val, 0, 2), pmDynaform::$prefixs)) {
+                                if (is_string($val) && in_array(substr($val, 0, 2), PmDynaform::$prefixs)) {
                                     $field[$key] = substr($val, 2);
                                 }
                             }
