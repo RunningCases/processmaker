@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class wsCreateGroupResponse
+ * Class WsCreateGroupResponse
  *
  * @package workflow.engine.classes
  */
