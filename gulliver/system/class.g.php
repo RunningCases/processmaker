@@ -56,7 +56,7 @@ class G
         'ldapadvanced'                  => LdapAdvanced::class,
         'dashletopenvscompleted'        => DashletOpenVsCompleted::class,
         'dashletrssreader'              => DashletRssReader::class,
-        'dashletprocesspakerenterprise' => DashletProcessMakerEnterprise::class,
+        'dashletprocessmakerenterprise' => DashletProcessMakerEnterprise::class,
         'dashletprocessmakercommunity'  => DashletProcessMakerCommunity::class,
     ];
 
@@ -5883,7 +5883,8 @@ class G
     /**
      * Instanciate an adapter by name.
      *
-     * @param string $name Adapter name or class name
+     * @param string $name Adapter name or class name                                                                                                     :P
+     * 
      * @param string[] $parameters Constructor parameters
      */
     public static function factory($name, ...$parameters)
@@ -5892,5 +5893,30 @@ class G
         $class = isset(self::$adapters[$key]) ? self::$adapters[$key] : $name;
         $rc = new ReflectionClass($class);
         return $rc->newInstanceArgs($parameters);
+    }
+
+    /**
+     * Return current class
+     *
+     * @param $name string name class
+     * @return string name of class
+     */
+    public static function nameClass($name)
+    {
+        $key = strtolower($name);
+        return isset(self::$adapters[$key]) ? self::$adapters[$key] : $name;
+    }
+
+    /**
+     * Verify class exists
+     *
+     * @param $name
+     * @return bool true or false
+     */
+    public static function classExists($name)
+    {
+        $key = strtolower($name);
+        $class = isset(self::$adapters[$key]) ? self::$adapters[$key] : $name;
+        return class_exists($class);
     }
 }
