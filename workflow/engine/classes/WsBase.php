@@ -1064,19 +1064,19 @@ class WsBase
             $RBAC->initRBAC();
 
             if (empty($userName)) {
-                $result = new wsCreateUserResponse(25, G::loadTranslation("ID_USERNAME_REQUIRED"), null);
+                $result = new WsCreateUserResponse(25, G::loadTranslation("ID_USERNAME_REQUIRED"), null);
 
                 return $result;
             }
 
             if (empty($firstName)) {
-                $result = new wsCreateUserResponse(27, G::loadTranslation("ID_MSG_ERROR_USR_FIRSTNAME"), null);
+                $result = new WsCreateUserResponse(27, G::loadTranslation("ID_MSG_ERROR_USR_FIRSTNAME"), null);
 
                 return $result;
             }
 
             if (empty($password)) {
-                $result = new wsCreateUserResponse(26, G::loadTranslation("ID_PASSWD_REQUIRED"), null);
+                $result = new WsCreateUserResponse(26, G::loadTranslation("ID_PASSWD_REQUIRED"), null);
 
                 return $result;
             }
@@ -1085,7 +1085,7 @@ class WsBase
 
             if (!empty($dueDate) && $dueDate != 'null' && $dueDate) {
                 if (!preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $dueDate, $arrayMatch)) {
-                    $result = new wsCreateUserResponse(- 1, G::loadTranslation("ID_INVALID_DATA") . " $dueDate", null);
+                    $result = new WsCreateUserResponse(- 1, G::loadTranslation("ID_INVALID_DATA") . " $dueDate", null);
 
                     return $result;
                 } else {
@@ -1097,7 +1097,7 @@ class WsBase
 
             if (!empty($status) && $status != 'null' && $status) {
                 if ($status != "ACTIVE" && $status != "INACTIVE" && $status != "VACATION") {
-                    $result = new wsCreateUserResponse(- 1, G::loadTranslation("ID_INVALID_DATA") . " $status", null);
+                    $result = new WsCreateUserResponse(- 1, G::loadTranslation("ID_INVALID_DATA") . " $status", null);
 
                     return $result;
                 }
@@ -1117,14 +1117,14 @@ class WsBase
                     $data = array();
                     $data["ROLE"] = $role;
 
-                    $result = new wsCreateUserResponse(6, G::loadTranslation("ID_INVALID_ROLE", SYS_LANG, $data), null);
+                    $result = new WsCreateUserResponse(6, G::loadTranslation("ID_INVALID_ROLE", SYS_LANG, $data), null);
 
                     return $result;
                 }
             }
 
             if (strlen($password) > 20) {
-                $result = new wsCreateUserResponse(- 1, G::loadTranslation("ID_PASSWORD_SURPRASES"), null);
+                $result = new WsCreateUserResponse(- 1, G::loadTranslation("ID_PASSWORD_SURPRASES"), null);
 
                 return $result;
             }
@@ -1133,7 +1133,7 @@ class WsBase
                 $data = array();
                 $data["USER_ID"] = $userName;
 
-                $result = new wsCreateUserResponse(7, G::loadTranslation("ID_USERNAME_ALREADY_EXISTS", SYS_LANG, $data), null);
+                $result = new WsCreateUserResponse(7, G::loadTranslation("ID_USERNAME_ALREADY_EXISTS", SYS_LANG, $data), null);
 
                 return $result;
             }
@@ -1156,7 +1156,7 @@ class WsBase
             try {
                 $userUid = $RBAC->createUser($arrayData, $strRole);
             } catch (Exception $oError) {
-                $result = new wsCreateUserResponse(100, $oError->getMessage(), null);
+                $result = new WsCreateUserResponse(100, $oError->getMessage(), null);
                 return $result;
             }
 
@@ -1187,7 +1187,7 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result = new wsCreateUserResponse(100, $e->getMessage(), null);
+            $result = new WsCreateUserResponse(100, $e->getMessage(), null);
 
             return $result;
         }
@@ -1414,7 +1414,7 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result = wsCreateGroupResponse(100, $e->getMessage(), '');
+            $result = WsCreateGroupResponse(100, $e->getMessage(), '');
 
             return $result;
         }
@@ -1463,7 +1463,7 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result = wsCreateDepartmentResponse(100, $e->getMessage(), '');
+            $result = WsCreateDepartmentResponse(100, $e->getMessage(), '');
 
             return $result;
         }
@@ -1729,20 +1729,20 @@ class WsBase
                         }
                     }
 
-                    $result = new wsGetVariableResponse(0, count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'), $resFields);
+                    $result = new WsGetVariableResponse(0, count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'), $resFields);
 
                     return $result;
                 } else {
-                    $result = new wsGetVariableResponse(23, G::loadTranslation('ID_VARIABLES_PARAM_ZERO'), null);
+                    $result = new WsGetVariableResponse(23, G::loadTranslation('ID_VARIABLES_PARAM_ZERO'), null);
 
                     return $result;
                 }
             } else {
-                $result = new wsGetVariableResponse(24, G::loadTranslation('ID_VARIABLES_PARAM_NOT_ARRAY'), null);
+                $result = new WsGetVariableResponse(24, G::loadTranslation('ID_VARIABLES_PARAM_NOT_ARRAY'), null);
                 return $result;
             }
         } catch (Exception $e) {
-            $result = new wsGetVariableResponse(100, $e->getMessage(), null);
+            $result = new WsGetVariableResponse(100, $e->getMessage(), null);
 
             return $result;
         }
@@ -1771,11 +1771,11 @@ class WsBase
                 $resFields[] = $node;
             }
 
-            $result = new wsGetVariableResponse(0, count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'), $resFields);
+            $result = new WsGetVariableResponse(0, count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'), $resFields);
 
             return $result;
         } catch (Exception $e) {
-            $result = new wsGetVariableResponse(100, $e->getMessage(), null);
+            $result = new WsGetVariableResponse(100, $e->getMessage(), null);
 
             return $result;
         }

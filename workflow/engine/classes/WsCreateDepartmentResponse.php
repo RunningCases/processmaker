@@ -2,7 +2,7 @@
 
 
 /**
- * Class wsCreateDepartmentResponse
+ * Class WsCreateDepartmentResponse
  *
  * @package workflow.engine.classes
  */
