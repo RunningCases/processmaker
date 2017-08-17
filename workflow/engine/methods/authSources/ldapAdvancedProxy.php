@@ -318,7 +318,7 @@ switch ($function) {
 
         $sClassName = strtolower($aFields['AUTH_SOURCE_PROVIDER']);
 
-        $plugin = new $sClassName();
+        $plugin = G::factory($sClassName);
 
         $aAuthSource = $RBAC->authSourcesObj->load($authSourceUid);
 

@@ -47,6 +47,20 @@ class G
     public static $httpHost;
 
     /**
+     * Adapters used for different services inside Processmaker.
+     *
+     * @var string[] $adapters
+     */
+    private static $adapters = [
+        'ldap'                          => LDAP::class,
+        'ldapadvanced'                  => LdapAdvanced::class,
+        'dashletopenvscompleted'        => DashletOpenVsCompleted::class,
+        'dashletrssreader'              => DashletRssReader::class,
+        'dashletprocesspakerenterprise' => DashletProcessMakerEnterprise::class,
+        'dashletprocessmakercommunity'  => DashletProcessMakerCommunity::class,
+    ];
+
+    /**
      * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadSystem($strClass)
@@ -5865,93 +5879,18 @@ class G
         define('PM_SCHEDULER_CREATE_CASE_BEFORE', 1019);
         define('PM_SCHEDULER_CREATE_CASE_AFTER', 1020);
     }
-}
 
-/**
- * eprint
- *
- * @param string $s default value ''
- * @param string $c default value null
- *
- * @return void
- */
-function eprint ($s = "", $c = null)
-{
-    if (G::isHttpRequest()) {
-        if (isset( $c )) {
-            echo "<pre style='color:$c'>$s</pre>";
-        } else {
-            echo "<pre>$s</pre>";
-        }
-    } else {
-        if (isset( $c )) {
-            switch ($c) {
-                case 'green':
-                    printf( "\033[0;35;32m$s\033[0m" );
-                    return;
-                    break;
-                case 'red':
-                    printf( "\033[0;35;31m$s\033[0m" );
-                    return;
-                    break;
-                case 'blue':
-                    printf( "\033[0;35;34m$s\033[0m" );
-                    return;
-                    break;
-                default:
-                    print "$s";
-            }
-        } else {
-            print "$s";
-        }
-    }
-}
-
-/**
- * println
- *
- * @param string $s
- *
- * @return eprintln($s)
- */
-function println ($s)
-{
-    return eprintln( $s );
-}
-
-/**
- * eprintln
- *
- * @param string $s
- * @param string $c
- *
- * @return void
- */
-function eprintln ($s = "", $c = null)
-{
-    if (G::isHttpRequest()) {
-        if (isset( $c )) {
-            echo "<pre style='color:$c'>$s</pre>";
-        } else {
-            echo "<pre>$s</pre>";
-        }
-    } else {
-        if (isset( $c ) && (PHP_OS != 'WINNT')) {
-            switch ($c) {
-                case 'green':
-                    printf( "\033[0;35;32m$s\033[0m\n" );
-                    return;
-                    break;
-                case 'red':
-                    printf( "\033[0;35;31m$s\033[0m\n" );
-                    return;
-                    break;
-                case 'blue':
-                    printf( "\033[0;35;34m$s\033[0m\n" );
-                    return;
-                    break;
-            }
-        }
-        print "$s\n";
+    /**
+     * Instanciate an adapter by name.
+     *
+     * @param string $name Adapter name or class name
+     * @param string[] $parameters Constructor parameters
+     */
+    public static function factory($name, ...$parameters)
+    {
+        $key = strtolower($name);
+        $class = isset(self::$adapters[$key]) ? self::$adapters[$key] : $name;
+        $rc = new ReflectionClass($class);
+        return $rc->newInstanceArgs($parameters);
     }
 }
