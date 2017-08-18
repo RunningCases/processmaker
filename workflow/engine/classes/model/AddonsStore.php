@@ -124,7 +124,7 @@ class AddonsStore extends BaseAddonsStore
                         $status = "upgrade";
                     }
 
-                    $enabled = $addon->isEnabled();
+                    $enabled = (bool)$addon->isEnabled();
                     $sw = 0;
                 }
             } else {
