@@ -413,9 +413,12 @@ abstract class AbstractPropelDataModelTask extends TaskPhing {
 						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", PROJECT_MSG_ERR);
 					} else {
 						// normalize the document using normalizer stylesheet
+                                            
+                                                $xslStyleSheet = new DOMDocument(); 
+                                                $xslStyleSheet->load($this->xslFile->getAbsolutePath()); 
 
 						$xsl = new XsltProcessor();
-						$xsl->importStyleSheet(DomDocument::load($this->xslFile->getAbsolutePath()));
+						$xsl->importStyleSheet($xslStyleSheet);
 						$transformed = $xsl->transformToDoc($dom);
 						$newXmlFilename = substr($xmlFile->getName(), 0, strrpos($xmlFile->getName(), '.')) . '-transformed.xml';
 

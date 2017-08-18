@@ -1855,11 +1855,8 @@ class WorkspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
-            $start = microtime(true);
-            CLI::logging("> Updating generated class files for PM Tables...\n");
-            self::fixReferencePathFiles(PATH_DATA_SITE . "classes", PATH_DATA);
-            $stop = microtime(true);
-            CLI::logging("<*>   Updating generated class files for PM Tables took " . ($stop - $start) . " seconds.\n");
+            //Updating generated class files for PM Tables
+            passthru('./processmaker regenerate-pmtable-classes ' . $workspace->name);
 
             mysql_close($link);
         }
