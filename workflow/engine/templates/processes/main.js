@@ -934,15 +934,90 @@ editNewProcess = function(){
   }
 }
 
-deleteProcess = function(){
+/**
+ * Removes bpmn processes in block (bulk)
+ * @param successCallback
+ * @param failureCallback
+ * @param dataBulk
+ */
+deleteProcessBpmn = function (successCallback, failureCallback, dataBulk) {
+    var refreshTokenCalled = false,
+        data = {
+            data: [{
+                action: 'delete',
+                data: dataBulk
+            }]
+        };
+    Ext.Ajax.request({
+        url: HTTP_SERVER_HOSTNAME + '/api/1.0/' + SYS_SYS + '/project/bulk',
+        method: 'POST',
+        jsonData: data,
+        success: function (response) {
+            successCallback(response);
+        },
+        failure: function (xhr) {
+            if (xhr.status === 401 && !refreshTokenCalled) {
+                refreshTokenCalled = true;
+                return refreshAccessToken(deleteProcessBpmn);
+            }
+            failureCallback(xhr);
+        },
+        headers: {
+            "Authorization": "Bearer " + credentials.access_token
+        }
+    });
+};
+/**
+ * Removes classic processes
+ * @param messageError
+ */
+deleteProcessClassic = function (messageError) {
+    var message = messageError || '';
+    Ext.Ajax.request({
+        url: 'processes_Delete',
+        success: function (response) {
+            Ext.MessageBox.hide();
+            processesGrid.store.reload();
+            result = Ext.util.JSON.decode(response.responseText);
+
+            if (result) {
+                if (result.status != 0) {
+                    message = message + result.msg;
+                }
+            } else {
+                message = message + response.responseText;
+            }
+            if (message) {
+                showMessageError(message);
+            }
+        },
+        params: {PRO_UIDS: PRO_UIDS}
+    });
+};
+/**
+ * Displays an error message
+ * @param messageError
+ */
+showMessageError = function (messageError) {
+    Ext.MessageBox.hide();
+    Ext.MessageBox.show({
+        title: _('ID_ERROR'),
+        msg: messageError,
+        buttons: Ext.MessageBox.OK,
+        icon: Ext.MessageBox.ERROR
+    });
+};
+/**
+ * Eliminate processes
+ */
+deleteProcess = function () {
     var rows = processesGrid.getSelectionModel().getSelections(),
         i,
         e,
         ids,
         errLog,
-        refreshTokenCalled = false,
-        deleteProcessF,
-        isValid;
+        isValid,
+        dataBulk = [];
 
     if (rows.length > 0) {
         isValid = true;
@@ -957,47 +1032,17 @@ deleteProcess = function(){
             }
         }
 
-        deleteProcessF = function () {
-            Ext.Ajax.request({
-                url: HTTP_SERVER_HOSTNAME + '/api/1.0/' + SYS_SYS + '/project/' + PRO_UIDS,
-                method: 'DELETE',
-                success: function(response) {
-                    Ext.MessageBox.hide();
-                    processesGrid.store.reload();
-                    result = Ext.util.JSON.decode(response.responseText);
-
-                    if (result && result.status !== 0) {
-                        Ext.MessageBox.show({
-                            title: _('ID_ERROR'),
-                            msg: result.msg,
-                            buttons: Ext.MessageBox.OK,
-                            icon: Ext.MessageBox.ERROR
-                        });
-                    }
-                },
-                failure: function (xhr) {
-                    if (xhr.status === 401 && !refreshTokenCalled) {
-                        refreshTokenCalled = true;
-                        return refreshAccessToken(deleteProcessF);
-                    }
-                    Ext.MessageBox.hide();
-                    Ext.MessageBox.show({
-                        title: _('ID_ERROR'),
-                        msg: xhr.statusText,
-                        buttons: Ext.MessageBox.OK,
-                        icon: Ext.MessageBox.ERROR
-                    });
-                },
-                headers: {
-                    "Authorization": "Bearer " + credentials.access_token
-                }
-            });
-        };
-
         if (isValid) {
             ids = [];
             for (i = 0; i < rows.length; i += 1) {
-                ids[i] = rows[i].get('PRO_UID');
+                if (rows[i].get('PROJECT_TYPE') === 'bpmn') {
+                    dataBulk.push({
+                        type: 'bpmn',
+                        prj_uid: rows[i].get('PRO_UID')
+                    });
+                } else {
+                    ids.push(rows[i].get('PRO_UID'));
+                }
             }
 
             PRO_UIDS = ids.join(',');
@@ -1007,8 +1052,25 @@ deleteProcess = function(){
                 (rows.length == 1) ? _('ID_PROCESS_DELETE_LABEL') : _('ID_PROCESS_DELETE_ALL_LABEL'),
                 function (btn, text) {
                     if (btn === 'yes') {
-                        Ext.MessageBox.show({ msg: _('ID_DELETING_ELEMENTS'), wait:true,waitConfig: {interval:200} });
-                        deleteProcessF();
+                        Ext.MessageBox.show({msg: _('ID_DELETING_ELEMENTS'), wait: true, waitConfig: {interval: 200}});
+                        deleteProcessBpmn(
+                            function (response) {
+                                Ext.MessageBox.hide();
+                                result = Ext.util.JSON.decode(response.responseText);
+                                if (PRO_UIDS.length) {
+                                    deleteProcessClassic();
+                                    PRO_UIDS.length = 0;
+                                }
+                                processesGrid.store.reload();
+                            },
+                            function (xhr) {
+                                if (PRO_UIDS.length) {
+                                    deleteProcessClassic(Ext.util.JSON.decode(xhr.responseText).error.message);
+                                }
+                                showMessageError(Ext.util.JSON.decode(xhr.responseText).error.message);
+                            },
+                            dataBulk
+                        );
                     }
                 }
             );
