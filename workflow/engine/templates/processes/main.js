@@ -972,7 +972,8 @@ deleteProcessBpmn = function (successCallback, failureCallback, dataBulk) {
  * @param messageError
  */
 deleteProcessClassic = function (messageError) {
-    var message = messageError || '';
+    var message = messageError || '',
+        result;
     Ext.Ajax.request({
         url: 'processes_Delete',
         success: function (response) {
@@ -1056,7 +1057,6 @@ deleteProcess = function () {
                         deleteProcessBpmn(
                             function (response) {
                                 Ext.MessageBox.hide();
-                                result = Ext.util.JSON.decode(response.responseText);
                                 if (PRO_UIDS.length) {
                                     deleteProcessClassic();
                                     PRO_UIDS.length = 0;
