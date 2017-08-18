@@ -1035,13 +1035,13 @@ deleteProcess = function () {
         if (isValid) {
             ids = [];
             for (i = 0; i < rows.length; i += 1) {
-                if (rows[i].get('PROJECT_TYPE') === 'bpmn') {
+                if (rows[i].get('PROJECT_TYPE') === 'classic') {
+                    ids.push(rows[i].get('PRO_UID'));
+                } else {
                     dataBulk.push({
                         type: 'bpmn',
                         prj_uid: rows[i].get('PRO_UID')
                     });
-                } else {
-                    ids.push(rows[i].get('PRO_UID'));
                 }
             }
 
