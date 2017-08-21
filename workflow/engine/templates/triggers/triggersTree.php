@@ -28,7 +28,7 @@ try {
     $triggerLibrary = TriggerLibrary::getSingleton();
     $triggerLibraryO = $triggerLibrary->getRegisteredClasses();
 
-    $oTree = new Tree();
+    $oTree = new PmTree();
     $oTree->nodeType = "blank";
     $oTree->name = "Triggers";
     $oTree->showSign = false;

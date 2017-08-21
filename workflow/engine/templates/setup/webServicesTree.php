@@ -51,7 +51,7 @@ $defaultEndpoint = 'http://' . $_SERVER ['SERVER_NAME'] . ':' . $_SERVER ['SERVE
 
 $wsdl = isset ( $_SESSION ['END_POINT'] ) ? $_SESSION ['END_POINT'] : $defaultEndpoint;
 
-$tree = new Tree ( );
+$tree = new PmTree ( );
 $tree->name = 'WebServices';
 $tree->nodeType = "base";
 $tree->contentWidth = "310";

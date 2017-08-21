@@ -43,7 +43,7 @@
 	
 	$groups = new Groups();
 	
-	$tree = new Tree();
+	$tree = new PmTree();
 	$tree->name = 'Users';
 	$tree->nodeType = "base";
 	$tree->width = "350px";

@@ -23,7 +23,7 @@
  * 
  */
 
-$oTree           = new Tree();
+$oTree           = new PmTree();
 $oTree->name     = 'KT';
 $oTree->showSign = false;
 

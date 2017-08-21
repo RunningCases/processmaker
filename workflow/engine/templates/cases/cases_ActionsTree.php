@@ -32,7 +32,7 @@ $c->add(AppThreadPeer::APP_UID, $APP_UID );
 $c->add(AppThreadPeer::APP_THREAD_STATUS , 'OPEN' );
 $cant = AppThreadPeer::doCount($c);
 
-$oTree = new Tree();
+$oTree = new PmTree();
 $oTree->nodeType = "blank";
 $oTree->name = 'Actions';
 $oTree->showSign = false;

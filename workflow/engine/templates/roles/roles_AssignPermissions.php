@@ -35,7 +35,7 @@
 	$oDataset = $RBAC->getAllPermissions($ROL_UID,$RBAC->sSystem);
 	$roleCode = $RBAC->getRoleCode($ROL_UID);
 	
-	$tree = new Tree();
+	$tree = new PmTree();
 	$tree->name = 'Users';
 	$tree->nodeType = "base";
 	$tree->width = "350px";

@@ -23,7 +23,7 @@
  *
  */
 
-$oTree           = new Tree();
+$oTree           = new PmTree();
 $oTree->nodeType ="blank";
 $oTree->name     = 'Information';
 $oTree->showSign = false;
