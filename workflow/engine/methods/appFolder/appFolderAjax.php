@@ -745,7 +745,7 @@ function openPMFolder()
         exit ();
     }
 
-    $tree = new Tree ();
+    $tree = new PmTree ();
     $tree->name = 'DMS';
     $tree->nodeType = "blank";
 

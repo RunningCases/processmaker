@@ -32,7 +32,7 @@ try {
   $externalSteps   = $oPluginRegistry->getSteps();
 
 	$oProcessMap = new ProcessMap();
-  $oTree           = new Tree();
+  $oTree           = new PmTree();
   $oTree->nodeType = 'blank';
   $oTree->name     = 'Triggers';
   $oTree->showSign = false;

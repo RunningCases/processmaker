@@ -26,7 +26,7 @@
 /*
  * Esto no deberias borrarlo
  */
-$tree = new Tree();
+$tree = new PmTree();
 
 reView(PATH_TRUNK, $tree);
 print( $tree->render());

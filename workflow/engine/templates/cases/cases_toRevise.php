@@ -23,7 +23,7 @@
  *
  */
 
-$tree = new Tree();
+$tree = new PmTree();
 $tree->name = 'Groups';
 $tree->nodeType = "base";
 $tree->width = "200px";

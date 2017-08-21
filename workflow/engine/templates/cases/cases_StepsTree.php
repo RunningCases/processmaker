@@ -33,7 +33,7 @@ use ProcessMaker\Plugins\PluginRegistry;
   $oPluginRegistry = PluginRegistry::loadSingleton();
   $externalSteps   = $oPluginRegistry->getSteps();
 
-  $oTree           = new Tree();
+  $oTree           = new PmTree();
   $oTree->nodeType = "blank";
   $oTree->name     = 'Steps';
   $oTree->showSign = false;
