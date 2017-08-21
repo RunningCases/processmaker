@@ -7,7 +7,8 @@
  * DynaformEditorAjax - DynaformEditorAjax class
  *
  * @package workflow.engine.classes
- */class DynaformEditorAjax extends DynaformEditor implements IDynaformEditorAjax
+ */
+class DynaformEditorAjax extends DynaformEditor implements IDynaformEditorAjax
 {
 
     /**
