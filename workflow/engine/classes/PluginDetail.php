@@ -1,17 +1,13 @@
 <?php
 
-/**
- *
- * @package workflow.engine.classes
- */
-
 //@todo: Pending until class.plugin.php is solved.
 require_once 'class.plugin.php';
 
 /**
  *
  * @package workflow.engine.classes
- */class PluginDetail
+ */
+class PluginDetail
 {
     public $sNamespace;
     public $sClassName;

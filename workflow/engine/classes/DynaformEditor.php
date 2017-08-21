@@ -6,7 +6,8 @@
 /**
  *
  * @package workflow.engine.classes
- */class DynaformEditor extends WebResource
+ */
+class DynaformEditor extends WebResource
 {
 
     private $isOldCopy = false;

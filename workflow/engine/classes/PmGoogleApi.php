@@ -7,11 +7,7 @@
 
 require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
 
-
-/**
- * class.pmGoogleApi.php
- *
- */class PmGoogleApi
+class PmGoogleApi
 {
     const DRIVE = 'https://www.googleapis.com/auth/drive';
     const DRIVE_FILE = 'https://www.googleapis.com/auth/drive.file';

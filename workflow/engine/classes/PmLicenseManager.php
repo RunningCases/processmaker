@@ -8,10 +8,7 @@ use ProcessMaker\Plugins\PluginRegistry;
  *
  */
 
-/**
- * class.pmLicenseManager.php
- *
- */class PmLicenseManager
+class PmLicenseManager
 {
 
     private static $instance = null;
