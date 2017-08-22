@@ -27,17 +27,16 @@ class App
 {
   function ForceLogin()
   {
-    global $HTTP_SESSION_VARS;
     global $G_MAIN_MENU;
     global $G_SUB_MENU;
-    if( $HTTP_SESSION_VARS['LOGGED_IN'] == false)
+    if( $_SESSION['LOGGED_IN'] == false)
     {
       header( "location: /sys/" . SYS_LANG . "/" . SYS_SKIN . "/login/login.html" ); 
       die();
     }
     else
     {
-      $cmptype = $HTTP_SESSION_VARS['USER_TYPE'];
+      $cmptype = $_SESSION['USER_TYPE'];
       switch( $cmptype )
       {
       case 'BUYER':
@@ -70,9 +69,8 @@ class App
   
   function GetPartnerStatus()
   {
-    global $HTTP_SESSION_VARS;
-    $slipid = $HTTP_SESSION_VARS['CURRENT_SLIP'];
-    $partnerid = $HTTP_SESSION_VARS['CURRENT_PARTNER'];
+    $slipid = $_SESSION['CURRENT_SLIP'];
+    $partnerid = $_SESSION['CURRENT_PARTNER'];
     
     $mdbc = new DBConnection();
 
@@ -90,9 +88,8 @@ class App
   
   function SetPartnerStatus( $intStatus = 0 )
   {
-    global $HTTP_SESSION_VARS;
-    $slipid = $HTTP_SESSION_VARS['CURRENT_SLIP'];
-    $partnerid = $HTTP_SESSION_VARS['CURRENT_PARTNER'];
+    $slipid = $_SESSION['CURRENT_SLIP'];
+    $partnerid = $_SESSION['CURRENT_PARTNER'];
     
     $mdbc = new DBConnection();
 

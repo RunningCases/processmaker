@@ -125,7 +125,6 @@ class Publisher
         global $G_OP_MENU;
         global $G_IMAGE_FILENAME;
         global $G_IMAGE_PARTS;
-        global $_SESSION; //Changed from $HTTP_SESSION_VARS
         global $G_OBJGRAPH; //For graphLayout component
         $this->intPos = $intPos;
         $Part = $this->Parts[$intPos];

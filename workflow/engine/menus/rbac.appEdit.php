@@ -24,8 +24,7 @@
  */
 
 global $G_TMP_MENU;
-global $HTTP_SESSION_VARS;
-$appid = $HTTP_SESSION_VARS['CURRENT_APPLICATION'];
+$appid = $_SESSION['CURRENT_APPLICATION'];
 
 $G_TMP_MENU->AddIdRawOption( "OP1", "rbac/appList.html" );
 $G_TMP_MENU->AddIdRawOption( "OP2", "rbac/appDel.html" );
