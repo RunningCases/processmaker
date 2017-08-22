@@ -27,42 +27,6 @@ class Net
     }
 
     /**
-     * This function is the constructor of the class net
-     *
-     * return void
-     */
-    public function __construct0()
-    {
-        $this->errno = 0;
-        $this->error = "";
-    }
-
-    /**
-     * This function is the constructor of the class net
-     *
-     * @param string $pHost
-     * @return void
-     */
-    public function __construct1($pHost)
-    {
-        $this->errno = 0;
-        $this->errstr = "";
-        $this->db_instance = "";
-
-        unset($this->db_user);
-        unset($this->db_passwd);
-        unset($this->db_sourcename);
-
-        #verifing valid param
-        if ($pHost == "") {
-            $this->errno = 1000;
-            $this->errstr = "NET::You must specify a host";
-            //$this->showMsg();
-        }
-        $this->resolv($pHost);
-    }
-
-    /**
      * This function puts a host
      *
      * @param string $pHost
