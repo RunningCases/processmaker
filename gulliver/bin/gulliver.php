@@ -12,9 +12,6 @@ if (!PATH_THIRDPARTY) {
     die("You must launch gulliver command line with the gulliver script\n");
 }
 
-// set magic_quotes_runtime to off
-ini_set('magic_quotes_runtime', 'Off');
-
 require_once(PATH_CORE . 'config' . PATH_SEP . 'environments.php');
 
 // trap -V before pake
