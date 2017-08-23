@@ -98,7 +98,7 @@
     "extra": {
         "typo3/class-alias-loader": {
             "class-alias-maps": [
-                "workflow/engine/compatibility/ClassAliasMap.php"
+                "bootstrap/classaliasmap.php"
             ]
         }
     }
