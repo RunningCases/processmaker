@@ -21,7 +21,6 @@
 
 require_once 'PEAR.php';
 require_once 'Archive/Tar.php';
-require_once 'System.php';
 require_once 'PEAR/Config.php';
 
 // {{{ constants and globals
@@ -156,7 +155,7 @@ class PEAR_Common extends PEAR
         $tempfiles =& $GLOBALS['_PEAR_Common_tempfiles'];
         while ($file = array_shift($tempfiles)) {
             if (@is_dir($file)) {
-                System::rm("-rf $file");
+                PearSystem::rm("-rf $file");
             } elseif (file_exists($file)) {
                 unlink($file);
             }
@@ -186,7 +185,7 @@ class PEAR_Common extends PEAR
     // {{{ mkDirHier()
 
     /**
-     * Wrapper to System::mkDir(), creates a directory as well as
+     * Wrapper to PearSystem::mkDir(), creates a directory as well as
      * any necessary parent directories.
      *
      * @param string  $dir  directory name
@@ -198,7 +197,7 @@ class PEAR_Common extends PEAR
     function mkDirHier($dir)
     {
         $this->log(2, "+ create dir $dir");
-        return System::mkDir("-p $dir");
+        return PearSystem::mkDir("-p $dir");
     }
 
     // }}}
@@ -246,7 +245,7 @@ class PEAR_Common extends PEAR
         } else {
             $topt = '';
         }
-        if (!$tmpdir = System::mktemp($topt . '-d pear')) {
+        if (!$tmpdir = PearSystem::mktemp($topt . '-d pear')) {
             return false;
         }
         $this->addTempFile($tmpdir);
@@ -686,7 +685,7 @@ class PEAR_Common extends PEAR
                 break;
             }
         }
-        $tmpdir = System::mkTemp('-d pear');
+        $tmpdir = PearSystem::mkTemp('-d pear');
         $this->addTempFile($tmpdir);
         if (!$xml || !$tar->extractList($xml, $tmpdir)) {
             return $this->raiseError('could not extract the package.xml file');
