@@ -2,6 +2,8 @@
 
 namespace ProcessMaker\BusinessModel;
 
+use ProcessMaker\BusinessModel\Lists;
+use ProcessMaker\BusinessModel\Cases;
 use G;
 use Criteria;
 use UsersPeer;
@@ -1348,4 +1350,59 @@ class Light
         return $children;
     }
 
+    /**
+     * This function check if the $data are in the corresponding cases list
+     * @param string $userUid
+     * @param array $data
+     * @param string $listName
+     * @param string $action
+     * @return array $response
+     */
+    public function getListCheck($userUid, $data, $listName = 'inbox', $action = 'todo')
+    {
+        $casesToCheck = [];
+        foreach ($data as $key => $val) {
+            array_push($casesToCheck, $val['caseId']);
+        }
+        $dataList = [];
+        $dataList['appUidCheck'] = $casesToCheck;
+        $dataList['userId'] = $userUid;
+        $dataList['action'] = $action;
+        /*----------------------------------********---------------------------------*/
+        if (true) {
+            //In enterprise version this block of code should always be executed
+            //In community version this block of code is deleted and is executed the other
+            $list = new Lists();
+            $response = $list->getList($listName, $dataList);
+        } else {
+            /*----------------------------------********---------------------------------*/
+            $case = new Cases();
+            $response = $case->getList($dataList);
+
+            /*----------------------------------********---------------------------------*/
+        }
+        /*----------------------------------********---------------------------------*/
+        $result = [];
+        foreach ($data as $key => $val) {
+            $flagRemoved = true;
+            foreach ($response['data'] as $row) {
+                $row = array_change_key_case($row,CASE_UPPER);
+                if (isset($row['APP_UID']) && isset($row['DEL_INDEX'])) {
+                    if ($val['caseId'] === $row['APP_UID'] && $val['delIndex'] === $row['DEL_INDEX'] ) {
+                        $flagRemoved = false;
+                        continue;
+                    }
+                }
+
+            }
+            if ($flagRemoved) {
+                $result[] = [
+                    'caseId' => $val['caseId'],
+                    'delIndex' => $val['delIndex']
+                ];
+            }
+        }
+
+        return $result;
+    }
 }
