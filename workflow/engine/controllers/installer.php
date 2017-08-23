@@ -1,11 +1,12 @@
 <?php
 
 use ProcessMaker\Core\System;
+
 global $translation;
 
 include PATH_LANGUAGECONT . "translation." . SYS_LANG;
 
-class Installer extends Controller
+class InstallerModule extends Controller
 {
     public $path_config;
     public $path_languages;

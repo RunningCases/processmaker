@@ -523,7 +523,7 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     transactionLog(PATH_CONTROLLERS.'installer.php');
     $pathFile = PATH_CONTROLLERS . 'installer.php';
     require_once ($pathFile);
-    $controller = 'Installer';
+    $controller = InstallerModule::class;
 
     // if the method name is empty set default to index method
     if (strpos( SYS_TARGET, '/' ) !== false) {
@@ -535,7 +535,7 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     $controllerAction = ($controllerAction != '' && $controllerAction != 'login') ? $controllerAction : 'index';
 
     // create the installer controller and call its method
-    if (is_callable( Array ('Installer',$controllerAction
+    if (is_callable( Array (InstallerModule::class,$controllerAction
     ) )) {
         $installer = new $controller();
         $installer->setHttpRequestData( $_REQUEST );
