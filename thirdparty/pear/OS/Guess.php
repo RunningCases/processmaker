@@ -159,8 +159,8 @@ class OS_Guess
     {
         // Use glibc's <features.h> header file to
         // get major and minor version number:
-        include_once "System.php";
-        $tmpfile = System::mktemp("glibctest");
+        include_once "PearSystem.php";
+        $tmpfile = PearSystem::mktemp("glibctest");
         $fp = fopen($tmpfile, "w");
         fwrite($fp, "#include <features.h>\n__GLIBC__ __GLIBC_MINOR__\n");
         fclose($fp);

@@ -22,7 +22,6 @@
 require_once 'PEAR/Common.php';
 require_once 'PEAR/Registry.php';
 require_once 'PEAR/Dependency.php';
-require_once 'System.php';
 
 define('PEAR_INSTALLER_OK',       1);
 define('PEAR_INSTALLER_FAILED',   0);
@@ -534,7 +533,7 @@ class PEAR_Installer extends PEAR_Common
         if ($need_download) {
             $downloaddir = $this->config->get('download_dir');
             if (empty($downloaddir)) {
-                if (PEAR::isError($downloaddir = System::mktemp('-d'))) {
+                if (PEAR::isError($downloaddir = PearSystem::mktemp('-d'))) {
                     return $downloaddir;
                 }
                 $this->log(2, '+ tmp dir created at ' . $downloaddir);
@@ -559,7 +558,7 @@ class PEAR_Installer extends PEAR_Common
                 chdir($oldcwd);
             }
 
-            if (PEAR::isError($tmpdir = System::mktemp('-d'))) {
+            if (PEAR::isError($tmpdir = PearSystem::mktemp('-d'))) {
                 return $tmpdir;
             }
             $this->log(2, '+ tmp dir created at ' . $tmpdir);

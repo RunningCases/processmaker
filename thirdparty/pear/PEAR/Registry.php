@@ -26,7 +26,6 @@ TODO:
     - Add application level lock (avoid change the registry from the cmdline
       while using the GTK interface, for ex.)
 */
-require_once "System.php";
 require_once "PEAR.php";
 
 define('PEAR_REGISTRY_ERROR_LOCK',   -2);

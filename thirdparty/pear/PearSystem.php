@@ -37,14 +37,14 @@ $GLOBALS['_System_temp_files'] = array();
 * http://pear.php.net/manual/
 *
 * Example usage:
-* if (!@System::rm('-r file1 dir1')) {
+* if (!@PearSystem::rm('-r file1 dir1')) {
 *    print "could not delete file1 or dir1";
 * }
 *
 * In case you need to to pass file names with spaces,
 * pass the params as an array:
 *
-* System::rm(array('-r', $file1, $dir1));
+* PearSystem::rm(array('-r', $file1, $dir1));
 *
 * @package  System
 * @author   Tomas V.V.Cox <cox@idecnet.com>
@@ -52,7 +52,7 @@ $GLOBALS['_System_temp_files'] = array();
 * @access   public
 * @see      http://pear.php.net/manual/
 */
-class System
+class PearSystem
 {
     /**
     * returns the commandline arguments of a function
@@ -73,7 +73,7 @@ class System
 
     /**
     * Output errors with PHP trigger_error(). You can silence the errors
-    * with prefixing a "@" sign to the function call: @System::mkdir(..);
+    * with prefixing a "@" sign to the function call: @PearSystem::mkdir(..);
     *
     * @param mixed $error a PEAR error or a string with the error message
     * @return bool false
@@ -91,7 +91,7 @@ class System
     /**
     * Creates a nested array representing the structure of a directory
     *
-    * System::_dirToStruct('dir1', 0) =>
+    * PearSystem::_dirToStruct('dir1', 0) =>
     *   Array
     *    (
     *    [dirs] => Array
@@ -116,7 +116,7 @@ class System
     {
         $struct = array('dirs' => array(), 'files' => array());
         if (($dir = @opendir($sPath)) === false) {
-            System::raiseError("Could not open dir $sPath");
+            PearSystem::raiseError("Could not open dir $sPath");
             return $struct; // XXX could not open error
         }
         $struct['dirs'][] = $sPath; // XXX don't add if '.' or '..' ?
@@ -132,7 +132,7 @@ class System
             foreach($list as $val) {
                 $path = $sPath . DIRECTORY_SEPARATOR . $val;
                 if (is_dir($path)) {
-                    $tmp = System::_dirToStruct($path, $maxinst, $aktinst+1);
+                    $tmp = PearSystem::_dirToStruct($path, $maxinst, $aktinst+1);
                     $struct = array_merge_recursive($tmp, $struct);
                 } else {
                     $struct['files'][] = $path;
@@ -147,7 +147,7 @@ class System
     *
     * @param    array $files Array listing files and dirs
     * @return   array
-    * @see System::_dirToStruct()
+    * @see PearSystem::_dirToStruct()
     */
     function _multipleToStruct($files)
     {
@@ -155,7 +155,7 @@ class System
         settype($files, 'array');
         foreach ($files as $file) {
             if (is_dir($file)) {
-                $tmp = System::_dirToStruct($file, 0);
+                $tmp = PearSystem::_dirToStruct($file, 0);
                 $struct = array_merge_recursive($tmp, $struct);
             } else {
                 $struct['files'][] = $file;
@@ -174,9 +174,9 @@ class System
     */
     function rm($args)
     {
-        $opts = System::_parseArgs($args, 'rf'); // "f" do nothing but like it :-)
+        $opts = PearSystem::_parseArgs($args, 'rf'); // "f" do nothing but like it :-)
         if (PEAR::isError($opts)) {
-            return System::raiseError($opts);
+            return PearSystem::raiseError($opts);
         }
         foreach($opts[0] as $opt) {
             if ($opt[0] == 'r') {
@@ -185,7 +185,7 @@ class System
         }
         $ret = true;
         if (isset($do_recursive)) {
-            $struct = System::_multipleToStruct($opts[1]);
+            $struct = PearSystem::_multipleToStruct($opts[1]);
             foreach($struct['files'] as $file) {
                 if (!@unlink($file)) {
                     $ret = false;
@@ -209,7 +209,7 @@ class System
 
     /**
     * Make directories. Note that we use call_user_func('mkdir') to avoid
-    * a problem with ZE2 calling System::mkDir instead of the native PHP func.
+    * a problem with ZE2 calling PearSystem::mkDir instead of the native PHP func.
     *
     * @param    string  $args    the name of the director(y|ies) to create
     * @return   bool    True for success
@@ -217,9 +217,9 @@ class System
     */
     function mkDir($args)
     {
-        $opts = System::_parseArgs($args, 'pm:');
+        $opts = PearSystem::_parseArgs($args, 'pm:');
         if (PEAR::isError($opts)) {
-            return System::raiseError($opts);
+            return PearSystem::raiseError($opts);
         }
         $mode = 0777; // default mode
         foreach($opts[0] as $opt) {
@@ -265,9 +265,9 @@ class System
     * Concatenate files
     *
     * Usage:
-    * 1) $var = System::cat('sample.txt test.txt');
-    * 2) System::cat('sample.txt test.txt > final.txt');
-    * 3) System::cat('sample.txt test.txt >> final.txt');
+    * 1) $var = PearSystem::cat('sample.txt test.txt');
+    * 2) PearSystem::cat('sample.txt test.txt > final.txt');
+    * 3) PearSystem::cat('sample.txt test.txt >> final.txt');
     *
     * Note: as the class use fopen, urls should work also (test that)
     *
@@ -297,14 +297,14 @@ class System
         }
         if (isset($mode)) {
             if (!$outputfd = fopen($outputfile, $mode)) {
-                $err = System::raiseError("Could not open $outputfile");
+                $err = PearSystem::raiseError("Could not open $outputfile");
                 return $err;
             }
             $ret = true;
         }
         foreach ($files as $file) {
             if (!$fd = fopen($file, 'r')) {
-                System::raiseError("Could not open $file");
+                PearSystem::raiseError("Could not open $file");
                 continue;
             }
             while ($cont = fread($fd, 2048)) {
@@ -327,10 +327,10 @@ class System
     * the created files when the scripts finish its execution.
     *
     * Usage:
-    *   1) $tempfile = System::mktemp("prefix");
-    *   2) $tempdir  = System::mktemp("-d prefix");
-    *   3) $tempfile = System::mktemp();
-    *   4) $tempfile = System::mktemp("-t /var/tmp prefix");
+    *   1) $tempfile = PearSystem::mktemp("prefix");
+    *   2) $tempdir  = PearSystem::mktemp("-d prefix");
+    *   3) $tempfile = PearSystem::mktemp();
+    *   4) $tempfile = PearSystem::mktemp("-t /var/tmp prefix");
     *
     * prefix -> The string that will be prepended to the temp name
     *           (defaults to "tmp").
@@ -342,15 +342,15 @@ class System
     *
     * @param   string  $args  The arguments
     * @return  mixed   the full path of the created (file|dir) or false
-    * @see System::tmpdir()
+    * @see PearSystem::tmpdir()
     * @access  public
     */
     function mktemp($args = null)
     {
         static $first_time = true;
-        $opts = System::_parseArgs($args, 't:d');
+        $opts = PearSystem::_parseArgs($args, 't:d');
         if (PEAR::isError($opts)) {
-            return System::raiseError($opts);
+            return PearSystem::raiseError($opts);
         }
         foreach($opts[0] as $opt) {
             if($opt[0] == 'd') {
@@ -361,16 +361,16 @@ class System
         }
         $prefix = (isset($opts[1][0])) ? $opts[1][0] : 'tmp';
         if (!isset($tmpdir)) {
-            $tmpdir = System::tmpdir();
+            $tmpdir = PearSystem::tmpdir();
         }
-        if (!System::mkDir("-p $tmpdir")) {
+        if (!PearSystem::mkDir("-p $tmpdir")) {
             return false;
         }
         $tmp = tempnam($tmpdir, $prefix);
         if (isset($tmp_is_dir)) {
             unlink($tmp); // be careful possible race condition here
             if (!call_user_func('mkdir', $tmp, 0700)) {
-                return System::raiseError("Unable to create temporary directory $tmpdir");
+                return PearSystem::raiseError("Unable to create temporary directory $tmpdir");
             }
         }
         $GLOBALS['_System_temp_files'][] = $tmp;
@@ -392,7 +392,7 @@ class System
         if (count($GLOBALS['_System_temp_files'])) {
             $delete = $GLOBALS['_System_temp_files'];
             array_unshift($delete, '-r');
-            System::rm($delete);
+            PearSystem::rm($delete);
         }
     }
 
@@ -465,12 +465,12 @@ class System
     *
     * Usage:
     *
-    * System::find($dir);
-    * System::find("$dir -type d");
-    * System::find("$dir -type f");
-    * System::find("$dir -name *.php");
-    * System::find("$dir -name *.php -name *.htm*");
-    * System::find("$dir -maxdepth 1");
+    * PearSystem::find($dir);
+    * PearSystem::find("$dir -type d");
+    * PearSystem::find("$dir -type f");
+    * PearSystem::find("$dir -name *.php");
+    * PearSystem::find("$dir -name *.php -name *.htm*");
+    * PearSystem::find("$dir -maxdepth 1");
     *
     * Params implmented:
     * $dir            -> Start the search at this directory
@@ -516,7 +516,7 @@ class System
                     break;
             }
         }
-        $path = System::_dirToStruct($dir, $depth);
+        $path = PearSystem::_dirToStruct($dir, $depth);
         if ($do_files && $do_dirs) {
             $files = array_merge($path['files'], $path['dirs']);
         } elseif ($do_dirs) {

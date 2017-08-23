@@ -245,9 +245,9 @@ class PEAR_Builder extends PEAR_Common
         $build_dir = "$build_basedir/$info[package]-$info[version]";
         $this->log(1, "building in $build_dir");
         if (is_dir($build_dir)) {
-            System::rm("-rf $build_dir");
+            PearSystem::rm("-rf $build_dir");
         }
-        if (!System::mkDir("-p $build_dir")) {
+        if (!PearSystem::mkDir("-p $build_dir")) {
             return $this->raiseError("could not create build dir: $build_dir");
         }
         $this->addTempFile($build_dir);
