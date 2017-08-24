@@ -1023,6 +1023,8 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
     }
     $_SESSION['phpLastFileFound'] = $_SERVER['REQUEST_URI'];
 
+    // Initialization functions plugins
+    $oPluginRegistry->init();
     /**
      * New feature for Gulliver framework to support Controllers & HttpProxyController classes handling
      *

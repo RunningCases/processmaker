@@ -57,19 +57,6 @@ if (defined('SYS_SYS') && (!defined('PATH_DATA_SITE') || !defined('PATH_WORKSPAC
     Bootstrap::setConstantsRelatedWs(SYS_SYS);
 }
 
-//call plugin
-if (class_exists( 'folderData' )) {
-    //$folderData = new folderData($sProUid, $proFields['PRO_TITLE'], $sAppUid, $Fields['APP_TITLE'], $sUsrUid);
-    $oPluginRegistry = PluginRegistry::loadSingleton();
-    $aAvailablePmFunctions = $oPluginRegistry->getPmFunctions();
-    foreach ($aAvailablePmFunctions as $key => $class) {
-        $filePlugin = PATH_PLUGINS . $class . PATH_SEP . 'classes' . PATH_SEP . 'class.pmFunctions.php';
-        if (file_exists( $filePlugin )) {
-            include_once ($filePlugin);
-        }
-    }
-}
-//end plugin
 //Add External Triggers
 $dir = G::ExpandPath( "classes" ) . 'triggers';
 $filesArray = array ();
