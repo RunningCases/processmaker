@@ -43,7 +43,8 @@
         "phpmailer/phpmailer": "5.2.*",
         "tecnickcom/tcpdf": "6.2.*",
         "pear/archive_tar": "1.4.*",
-        "pear/console_getopt": "1.4.*"
+        "pear/console_getopt": "1.4.*",
+        "TYPO3/class-alias-loader": "^1.0"
     },
     "require-dev": {
         "guzzle/guzzle": "~3.1.1",
@@ -93,5 +94,12 @@
     "scripts": {
         "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wimg/php-compatibility",
         "post-update-cmd" : "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wimg/php-compatibility"
+    },
+    "extra": {
+        "typo3/class-alias-loader": {
+            "class-alias-maps": [
+                "bootstrap/classaliasmap.php"
+            ]
+        }
     }
 }
