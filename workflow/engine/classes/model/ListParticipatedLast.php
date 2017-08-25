@@ -503,4 +503,26 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
         return (int) $aRow['TOTAL'];
     }
+
+    /**
+     * @deprecated This function is deprecated, it hasn’t been removed because of its compatibility with the External Registration plugin
+     * @param $where
+     * @param $set
+     * @return void
+     */
+    public function updateCurrentUser($where, $set)
+    {
+        $con = Propel::getConnection('workflow');
+        //Update - WHERE
+        $criteriaWhere = new Criteria('workflow');
+        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $where['APP_UID'], Criteria::EQUAL);
+        $criteriaWhere->add(ListParticipatedLastPeer::USR_UID, $where['USR_UID'], Criteria::EQUAL);
+        $criteriaWhere->add(ListParticipatedLastPeer::DEL_INDEX, $where['DEL_INDEX'], Criteria::EQUAL);
+        //Update - SET
+        $criteriaSet = new Criteria('workflow');
+        foreach ($set as $k => $v) {
+            eval('$criteriaSet->add( ListParticipatedLastPeer::' . $k . ',$v, Criteria::EQUAL);');
+        }
+        BasePeer::doUpdate($criteriaWhere, $criteriaSet, $con);
+    }
 }
