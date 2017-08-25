@@ -41,7 +41,6 @@
         "libchart/libchart": "1.4.0",
         "indeyets/pake": "1.99.*",
         "phpmailer/phpmailer": "5.2.*",
-        "tecnickcom/tcpdf": "6.2.*",
         "pear/archive_tar": "1.4.*",
         "pear/console_getopt": "1.4.*",
         "TYPO3/class-alias-loader": "^1.0"
