@@ -125,6 +125,14 @@ if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
         echo $sFileName = $sAppDocUid . "_" . $iDocVersion . "." . $ext;
         print G::uploadFile( $_FILES["ATTACH_FILE"]["tmp_name"], $sPathName, $sFileName );
         print ("* The file " . $_FILES["ATTACH_FILE"]["name"] . " was uploaded successfully in case " . $sAppUid . " as input document..\n") ;
+        
+        //set variable for APP_DOC_UID
+        $appUid = $_POST['APPLICATION'];
+        $oCase = new Cases();
+        $fields = $oCase->loadCase($appUid);
+        $fields['APP_DATA'][$oAppDocument->getAppDocFieldname()] = G::json_encode([$oAppDocument->getAppDocUid()]);
+        $fields['APP_DATA'][$oAppDocument->getAppDocFieldname() . '_label'] = G::json_encode([$oAppDocument->getAppDocFilename()]);
+        $oCase->updateCase($appUid, $fields);
 
         //Get current Application Fields
         $appFields = $application->Load( $_POST["APPLICATION"] );
