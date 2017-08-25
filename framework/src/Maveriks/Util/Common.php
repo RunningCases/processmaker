@@ -113,6 +113,32 @@ class Common
         return $result;
     }
 
+    /**
+     * Maintained for compatibility reasons with the plugin DataReportingTool
+     * @deprecated 3.2.2, by backward compatibility because it is used in plugins enterprise
+     *
+    */
+    public static function getLastVersion($pattern, $flag = 0)
+    {
+        $files = glob($pattern, $flag);
+        $maxVersion = 0;
+
+        $pattern = str_replace("*", '([0-9\.]+)', basename($pattern));
+
+        foreach ($files as $file) {
+            $filename = basename($file);
+
+            if (preg_match('/'.$pattern.'/', $filename, $match)) {
+
+                if ($maxVersion < $match[1]) {
+                    $maxVersion = $match[1];
+                }
+            }
+        }
+
+        return $maxVersion;
+    }
+
     public static function mk_dir($strPath, $rights = 0777)
     {
         $folder_path = array($strPath);
