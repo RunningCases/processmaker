@@ -3898,8 +3898,8 @@ class WorkspaceTools
         }
         $this->initPropel(true);
         $conf  = new Configuration();
-        if (!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')) {
-            $pathSingleton = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . 'plugin.singleton';
+        $pathSingleton = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . 'plugin.singleton';
+        if ((!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')) && file_exists($pathSingleton)) {
             $oPluginRegistry = unserialize(file_get_contents($pathSingleton));
             $pluginAdapter = new PluginAdapter();
             $pluginAdapter->migrate($oPluginRegistry);
