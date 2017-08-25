@@ -19,11 +19,47 @@ class Net
     public function __construct()
     {
         $a = func_get_args();
-        $f = "__construct" . func_num_args();
+        $f = "init" . func_num_args();
 
         if (method_exists($this, $f)) {
             call_user_func_array(array($this, $f), $a);
         }
+    }
+
+    /**
+     * This function is the constructor of the class net
+     *
+     * return void
+     */
+    protected function init0()
+    {
+        $this->errno = 0;
+        $this->error = "";
+    }
+
+    /**
+     * This function is the constructor of the class net
+     *
+     * @param string $pHost
+     * @return void
+     */
+    protected function init1($pHost)
+    {
+        $this->errno = 0;
+        $this->errstr = "";
+        $this->db_instance = "";
+
+        unset($this->db_user);
+        unset($this->db_passwd);
+        unset($this->db_sourcename);
+
+        #verifing valid param
+        if ($pHost == "") {
+            $this->errno = 1000;
+            $this->errstr = "NET::You must specify a host";
+            //$this->showMsg();
+        }
+        $this->resolv($pHost);
     }
 
     /**
