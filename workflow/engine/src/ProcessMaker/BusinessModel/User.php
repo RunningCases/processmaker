@@ -8,7 +8,7 @@ use BasePeer;
 use Bootstrap;
 use Calendar;
 use CalendarDefinitionPeer;
-use Cases;
+use Cases as ClassesCases;
 use Configurations;
 use Criteria;
 use DashletInstancePeer;
@@ -1066,7 +1066,7 @@ class User
             //Verify data
             $this->throwExceptionIfNotExistsUser($usrUid, $this->arrayFieldNameForException["usrUid"]);
 
-            $oProcessMap = new Cases();
+            $oProcessMap = new ClassesCases();
             $USR_UID = $usrUid;
             $total = 0;
             $history = 0;

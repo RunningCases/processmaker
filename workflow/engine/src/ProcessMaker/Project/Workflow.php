@@ -1,15 +1,15 @@
 <?php
 namespace ProcessMaker\Project;
 
-use \Criteria;
+use Criteria;
 use ProcessMaker\Plugins\PluginRegistry;
-use \ResultSet;
+use ResultSet;
 
-use \Process;
-use \Tasks;
-use \Task;
-use \Route;
-use \RoutePeer;
+use Process as ClassesProcess;
+use Tasks;
+use Task as ClassesTask;
+use Route;
+use RoutePeer;
 
 use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
@@ -38,7 +38,7 @@ class Workflow extends Handler
         $me = new self();
 
         try {
-            $process = new Process();
+            $process = new ClassesProcess();
             $processData = $process->load($proUid);
         } catch (\Exception $e) {
             if (is_null(\ProcessPeer::retrieveByPK($proUid))) {
@@ -80,7 +80,7 @@ class Workflow extends Handler
             }
 
             // Create project
-            $process = new Process();
+            $process = new ClassesProcess();
             $this->proUid = $process->create($data, false);
 
             // Call Plugins
@@ -106,7 +106,7 @@ class Workflow extends Handler
 
     public function update($data)
     {
-        $process = new Process();
+        $process = new ClassesProcess();
         $data["PRO_UID"] = $this->getUid();
         $process->update($data);
     }
@@ -137,7 +137,7 @@ class Workflow extends Handler
     public static function getList($start = null, $limit = null, $filter = "", $changeCaseTo = CASE_UPPER)
     {
         //return Project::getAll($start, $limit, $filter, $changeCaseTo);
-        $process = new Process();
+        $process = new ClassesProcess();
         $processes = $process->getAllProcesses($start, $limit);
         //$processes = $process->getAll();
 
@@ -182,7 +182,7 @@ class Workflow extends Handler
 
         try {
             self::log("Add Task with data: ", $taskData);
-            $task = new Task();
+            $task = new ClassesTask();
             $tasUid = $task->create($taskData, false);
             self::log("Add Task Success!");
 
@@ -203,7 +203,7 @@ class Workflow extends Handler
     {
         try {
             self::log("Update Task: $tasUid", "With data: ", $taskData);
-            $task = new Task();
+            $task = new ClassesTask();
             $taskData['TAS_UID'] = $tasUid;
             $result = $task->update($taskData);
             self::log("Update Task Success!");
@@ -252,7 +252,7 @@ class Workflow extends Handler
     public function getTask($tasUid)
     {
         try {
-            $task = new Task();
+            $task = new ClassesTask();
             $taskData = $task->load($tasUid);
         } catch (\Exception $e){
             $taskData = null;
@@ -583,7 +583,7 @@ class Workflow extends Handler
         try {
 
             //Instance all classes necesaries
-            $oProcess = new \Process();
+            $oProcess = new ClassesProcess();
             $oDynaform = new \Dynaform();
             $oInputDocument = new \InputDocument();
             $oOutputDocument = new \OutputDocument();
