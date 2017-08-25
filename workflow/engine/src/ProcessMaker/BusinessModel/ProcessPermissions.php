@@ -3,7 +3,6 @@ namespace ProcessMaker\BusinessModel;
 
 use Behat\Behat\Exception\Exception;
 use \G;
-use \Cases;
 use \Criteria;
 use \ObjectPermissionPeer;
 

@@ -5,11 +5,11 @@ namespace ProcessMaker\BusinessModel\Cases;
 use Propel;
 use StdClass;
 use G;
-use Cases;
+use Cases as ClassesCase;
 use AppDocument;
 use Dynaform;
 use Exception;
-use Task;
+use Task as ClassesTask;
 
 /**
  * Return the ChangeLog of a Dynaform
@@ -166,7 +166,7 @@ class ChangeLog
                 $title = $obj->getDynTitle();
                 break;
             case 'TASK':
-                $obj = new Task();
+                $obj = new ClassesTask();
                 $obj->load($uid);
                 $title = $obj->getTasTitle();
                 break;
@@ -178,7 +178,7 @@ class ChangeLog
 
     private function loadPermissions($APP_UID, $PRO_UID, $TAS_UID)
     {
-        $oCase = new Cases();
+        $oCase = new ClassesCases();
         $this->permissions = $oCase->getAllObjects(
             $PRO_UID, $APP_UID, $TAS_UID, $_SESSION['USER_LOGGED']
         );
