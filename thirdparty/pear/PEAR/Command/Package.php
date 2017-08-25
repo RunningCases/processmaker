@@ -531,9 +531,9 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
             return $this->raiseError($info);
         }
         include_once "Archive/Tar.php";
-        include_once "System.php";
+        include_once "PearSystem.php";
         $tar = new Archive_Tar($params[0]);
-        $tmpdir = System::mktemp('-d pearsign');
+        $tmpdir = PearSystem::mktemp('-d pearsign');
         if (!$tar->extractList('package.xml package.sig', $tmpdir)) {
             return $this->raiseError("failed to extract tar file");
         }
@@ -569,10 +569,10 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
         }
         include_once "Archive/Tar.php";
         include_once "PEAR/Installer.php";
-        include_once "System.php";
+        include_once "PearSystem.php";
         $tar = new Archive_Tar($params[0]);
-        $tmpdir = System::mktemp('-d pear2rpm');
-        $instroot = System::mktemp('-d pear2rpm');
+        $tmpdir = PearSystem::mktemp('-d pear2rpm');
+        $instroot = PearSystem::mktemp('-d pear2rpm');
         $tmp = $this->config->get('verbose');
         $this->config->set('verbose', 0);
         $installer = new PEAR_Installer($this->ui);
@@ -592,10 +592,7 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
         if (!file_exists("$tmpdir/package.xml")) {
             return $this->raiseError("no package.xml found in $params[0]");
         }
-//        System::mkdir("-p $instroot$info[rpm_xml_dir]");
-//        if (!@copy("$tmpdir/package.xml", "$instroot$info[rpm_xml_dir]/$info[package].xml")) {
-//            return $this->raiseError("could not copy package.xml file: $php_errormsg");
-//        }
+
         if (isset($options['spec-template'])) {
             $spec_template = $options['spec-template'];
         } else {

@@ -31,6 +31,7 @@ use ProcessMaker\Plugins\Interfaces\TaskExtendedProperty;
 use ProcessMaker\Plugins\Interfaces\ToolbarDetail;
 use ProcessMaker\Plugins\Interfaces\TriggerDetail;
 use ProcessMaker\Plugins\Traits\Attributes;
+use ProcessMaker\Plugins\Traits\Init;
 use ProcessMaker\Plugins\Traits\PluginStructure;
 use Publisher;
 use stdClass;
@@ -43,6 +44,7 @@ class PluginRegistry
 {
     use PluginStructure;
     use Attributes;
+    use Init;
 
     const NAME_CACHE = SYS_SYS . __CLASS__;
     /**

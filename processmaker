@@ -6,7 +6,6 @@ use Illuminate\Foundation\Console\Kernel;
 require_once __DIR__ . '/gulliver/system/class.g.php';
 require_once __DIR__ . '/bootstrap/autoload.php';
 require_once __DIR__ . '/bootstrap/app.php';
-$app->make(Kernel::class)->bootstrap();
 
 $scriptDir = dirname(__FILE__).'/';
 

@@ -694,7 +694,7 @@ class Bootstrap
                     // Include also the extendGulliverClass that could have some
                     // new definitions for fields
                     if (file_exists($possiblePath . 'classes' . PATH_SEP . 'class.extendGulliver.php')) {
-
+                        include_once $possiblePath . 'classes' . PATH_SEP . 'class.extendGulliver.php';
                     }
                 }
             }

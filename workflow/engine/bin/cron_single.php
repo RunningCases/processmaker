@@ -284,6 +284,7 @@ function processWorkspace()
 {
     try {
         $oPluginRegistry = PluginRegistry::loadSingleton();
+        $oPluginRegistry->init();
 
         global $sObject;
         global $sLastExecution;
