@@ -48,7 +48,7 @@ return array(
     'License_Application' => license_application::class,
     'multipleFilesBackup' => MultipleFilesBackup::class,
     'NET' => Net::class,
-    'p11835' => p11835::class,
+    'p11835' => P11835::class,
     'padl' => Padl::class,
     'pluginDetail' => PluginDetail::class,
     'PMDashlet' => PmDashlet::class,
