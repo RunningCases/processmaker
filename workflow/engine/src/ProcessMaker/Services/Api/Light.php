@@ -1689,7 +1689,7 @@ class Light extends Api
      * Get Case Variables
      *
      * @access protected
-     * @class  AccessControl {@className \ProcessMaker\Services\ApiCases}
+     * @class  AccessControl {@className \ProcessMaker\Services\Api\Cases}
      * @url GET /:app_uid/variables
      *
      * @param string $app_uid {@min 1}{@max 32}
@@ -1852,7 +1852,7 @@ class Light extends Api
         $response = array();
 
         //conditionalSteps
-        $oCase = new Cases();
+        $oCase = new ClassesCases();
         $oAppDelegate = new AppDelegation();
         $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $app_index);
         if ($alreadyRouted) {
