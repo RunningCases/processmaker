@@ -75,7 +75,7 @@ class Workflow extends Handler
             self::log("Create Process with data:", $data);
 
             //validate if process with specified name already exists
-            if (Process::existsByProTitle($data["PRO_TITLE"])) {
+            if (ClassesProcess::existsByProTitle($data["PRO_TITLE"])) {
                 throw new Exception\ProjectAlreadyExists($this, $data["PRO_TITLE"]);
             }
 
