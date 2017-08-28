@@ -215,7 +215,6 @@ class Roles extends BaseRoles {
     function createRole($aData) {
         $con = Propel::getConnection(RolesPeer::DATABASE_NAME);
         try {
-            $con->begin();
             $sRolCode = $aData['ROL_CODE'];
             $sRolSystem = $aData['ROL_SYSTEM'];
             $status = $fields['ROL_STATUS'] = 1 ? 'ACTIVE' : 'INACTIVE';
@@ -239,6 +238,7 @@ class Roles extends BaseRoles {
             $obj = new Roles();
             $obj->fromArray($aData, BasePeer::TYPE_FIELDNAME);
             if ($obj->validate()) {
+                $con->begin();
                 $result = $obj->save();
                 $con->commit();
                 $obj->setRolName($rol_name);
