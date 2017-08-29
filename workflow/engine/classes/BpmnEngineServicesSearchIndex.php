@@ -24,8 +24,7 @@ class BpmnEngineServicesSearchIndex
      */
     public function isEnabled($workspace)
     {
-        require_once('class.solr.php');
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
         return $solr->isEnabled($workspace);
     }
 
@@ -40,12 +39,6 @@ class BpmnEngineServicesSearchIndex
      */
     public function getFacetsList($facetRequestEntity)
     {
-        require_once('class.solr.php');
-        require_once('entities/FacetGroup.php');
-        require_once('entities/FacetItem.php');
-        require_once('entities/SelectedFacetGroupItem.php');
-        require_once('entities/FacetResult.php');
-
         // get array of selected facet groups
         $facetRequestEntity->selectedFacetsString = str_replace(',,', ',', $facetRequestEntity->selectedFacetsString);
         // remove descriptions of selected facet groups
@@ -98,7 +91,7 @@ class BpmnEngineServicesSearchIndex
         }
         $facetRequestEntity->filters = $filters;
 
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
 
         // create list of facets
         $facetsList = $solr->getFacetsList($facetRequestEntity);
@@ -206,7 +199,7 @@ class BpmnEngineServicesSearchIndex
     public function getNumberDocuments($workspace)
     {
         require_once('class.solr.php');
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
 
         // create list of facets
         $numberDocuments = $solr->getNumberDocuments($workspace);
@@ -220,7 +213,7 @@ class BpmnEngineServicesSearchIndex
      */
     public function updateIndexDocument($solrUpdateDocumentEntity)
     {
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
 
         // create list of facets
         $solr->updateDocument($solrUpdateDocumentEntity);
@@ -233,7 +226,7 @@ class BpmnEngineServicesSearchIndex
      */
     public function deleteDocumentFromIndex($workspace, $idQuery)
     {
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
 
         // create list of facets
         $solr->deleteDocument($workspace, $idQuery);
@@ -245,7 +238,7 @@ class BpmnEngineServicesSearchIndex
      */
     public function commitIndexChanges($workspace)
     {
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
 
         // commit
         $solr->commitChanges($workspace);
@@ -257,7 +250,7 @@ class BpmnEngineServicesSearchIndex
      */
     public function optimizeIndexChanges($workspace)
     {
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
 
         // commit
         $solr->optimizeChanges($workspace);
@@ -270,12 +263,8 @@ class BpmnEngineServicesSearchIndex
      */
     public function getDataTablePaginatedList($solrRequestData)
     {
-        require_once('class.solr.php');
-        require_once('entities/SolrRequestData.php');
-        require_once('entities/SolrQueryResult.php');
-
         // execute query
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
         $solrPaginatedResult = $solr->executeQuery($solrRequestData);
 
         // get total number of documents in index
@@ -322,9 +311,7 @@ class BpmnEngineServicesSearchIndex
      */
     public function getIndexFields($workspace)
     {
-        require_once('class.solr.php');
-
-        $solr = new BpmnEngine_SearchIndexAccess_Solr($this->_solrIsEnabled, $this->_solrHost);
+        $solr = new BpmnEngineSearchIndexAccessSolr($this->_solrIsEnabled, $this->_solrHost);
 
         $solrFieldsData = $solr->getListIndexedStoredFields($workspace);
         // copy list of arrays
