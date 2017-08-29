@@ -138,7 +138,7 @@ PEAR INSTALLER:
  * PEAR_Config class uses getenv() rather than $_ENV
    to read environment variables.
  
- * System::which() Windows fix, now looks for
+ * PearSystem::which() Windows fix, now looks for
    exe/bat/cmd/com suffixes rather than just exe
  
  * Added "pear cvsdiff" command
@@ -237,7 +237,7 @@ Bugfixes, Installer:
 New Features, PEAR Library:
 * added PEAR::loadExtension($ext)
 * added PEAR::delExpect()
-* System::mkTemp() now cleans up at shutdown
+* PearSystem::mkTemp() now cleans up at shutdown
 * defined PEAR_ZE2 constant (boolean)
 * added PEAR::throwError() with a simpler API
   than raiseError()

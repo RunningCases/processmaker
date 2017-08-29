@@ -26,7 +26,7 @@ switch ($option) {
     default:
         require_once (PATH_CONTROLLERS . "installer.php");
 
-        $installer = new Installer();
+        $installer = new InstallerModule();
 
         $systemInfo = $installer->getSystemInfo();
 

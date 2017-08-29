@@ -417,7 +417,7 @@ class PropelSQLExec extends TaskPhing {
 					$this->conn->rollback();
 				} catch (SQLException $ex) {
 					// do nothing.
-					System::println("Rollback failed.");
+					PearSystem::println("Rollback failed.");
 				}
 			}
 			if ($this->statement) $this->statement->close();
@@ -428,7 +428,7 @@ class PropelSQLExec extends TaskPhing {
 					$this->conn->rollback();
 				} catch (SQLException $ex) {
 					// do nothing.
-					System::println("Rollback failed");
+					PearSystem::println("Rollback failed");
 				}
 			}
 			if ($this->statement) $this->statement->close();
@@ -620,12 +620,12 @@ class PropelSQLExec extends TaskPhing {
 						$out->newLine();
 					}
 
-					System::println($line);
+					PearSystem::println($line);
 					$line = "";
 				} // while rs->next()
 			}
 		} while ($this->statement->getMoreResults());
-		System::println();
+		PearSystem::println();
 		if ($out !== null) $out->newLine();
 	}
 

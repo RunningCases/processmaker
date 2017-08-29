@@ -56,7 +56,7 @@ class PEAR_Remote extends PEAR
         $id       = $this->encryptOld(serialize($args));
         $cachedir = $this->config->get('cache_dir');
         if (!file_exists($cachedir)) {
-            System::mkdir('-p '.$cachedir);
+            PearSystem::mkdir('-p '.$cachedir);
         }
         $filename = $cachedir . DIRECTORY_SEPARATOR . 'xmlrpc_cache_' . $id;
         if (!file_exists($filename)) {
@@ -86,7 +86,7 @@ class PEAR_Remote extends PEAR
         $id       = $this->encryptOld(serialize($args));
         $cachedir = $this->config->get('cache_dir');
         if (!file_exists($cachedir)) {
-            System::mkdir('-p '.$cachedir);
+            PearSystem::mkdir('-p '.$cachedir);
         }
         $filename = $cachedir.'/xmlrpc_cache_'.$id;
         

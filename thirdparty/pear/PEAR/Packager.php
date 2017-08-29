@@ -20,7 +20,6 @@
 // $Id: Packager.php,v 1.46 2003/03/18 12:06:06 ssb Exp $
 
 require_once 'PEAR/Common.php';
-require_once 'System.php';
 
 /**
  * Administration class used to make a PEAR release tarball.
@@ -116,7 +115,7 @@ class PEAR_Packager extends PEAR_Common
             chdir($oldcwd);
             return $this->raiseError($new_xml);
         }
-        if (!($tmpdir = System::mktemp('-t '.getcwd().' -d'))) {
+        if (!($tmpdir = PearSystem::mktemp('-t '.getcwd().' -d'))) {
             chdir($oldcwd);
             return $this->raiseError("PEAR_Packager: mktemp failed");
         }

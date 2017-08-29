@@ -1,7 +1,6 @@
 <?php
 
     require_once "HTTP/WebDAV/Server.php";
-    require_once "System.php";
     
     /**
      * Filesystem access using WebDAV
@@ -479,7 +478,7 @@
             if (is_dir($path)) {
                 $query = "DELETE FROM properties WHERE path LIKE '".$this->_slashify($options["path"])."%'";
                 mysql_query($query);
-                System::rm("-rf $path");
+                PearSystem::rm("-rf $path");
             } else {
                 unlink ($path);
             }
@@ -577,7 +576,7 @@
                 mysql_query($query);
             } else {
                 if (is_dir($source)) {
-                    $files = System::find($source);
+                    $files = PearSystem::find($source);
                     $files = array_reverse($files);
                 } else {
                     $files = array($source);

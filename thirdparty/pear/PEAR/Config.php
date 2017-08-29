@@ -19,7 +19,6 @@
 // $Id: Config.php,v 1.43 2003/03/18 12:06:06 ssb Exp $
 
 require_once 'PEAR.php';
-require_once 'System.php';
 
 /**
  * Last created PEAR_Config instance.
@@ -112,7 +111,7 @@ if (getenv('PHP_PEAR_CACHE_DIR')) {
     define('PEAR_CONFIG_DEFAULT_CACHE_DIR', getenv('PHP_PEAR_CACHE_DIR'));
 } else {
     define('PEAR_CONFIG_DEFAULT_CACHE_DIR',
-           System::tmpdir() . DIRECTORY_SEPARATOR . 'pear' .
+           PearSystem::tmpdir() . DIRECTORY_SEPARATOR . 'pear' .
            DIRECTORY_SEPARATOR . 'cache');
 }
 
@@ -164,7 +163,7 @@ if (getenv('PHP_PEAR_SIG_BIN')) {
     define('PEAR_CONFIG_DEFAULT_SIG_BIN', getenv('PHP_PEAR_SIG_BIN'));
 } else {
     define('PEAR_CONFIG_DEFAULT_SIG_BIN',
-           System::which(
+           PearSystem::which(
                'gpg', OS_WINDOWS ? 'c:\gnupg\gpg.exe' : '/usr/local/bin/gpg'));
 }
 
@@ -564,7 +563,7 @@ class PEAR_Config extends PEAR
         }
         $data = $this->configuration[$layer];
         $this->_encodeOutput($data);
-        if (!@System::mkDir("-p " . dirname($file))) {
+        if (!@PearSystem::mkDir("-p " . dirname($file))) {
             return $this->raiseError("could not create directory: " . dirname($file));
         }
         if (@is_file($file) && !@is_writeable($file)) {

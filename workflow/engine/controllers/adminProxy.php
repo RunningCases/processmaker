@@ -1427,7 +1427,7 @@ class adminProxy extends HttpProxyController
         }
 
         //Database server Version (MySQL version)
-        $installer = new Installer();
+        $installer = new InstallerModule();
         $systemInfo = $installer->getSystemInfo();
         try {
             $params['mysql'] = mysql_get_server_info();

@@ -2,6 +2,7 @@
 
 namespace Maveriks;
 
+use Bootstrap;
 use Maveriks\Util;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -485,10 +486,11 @@ class WebApplication
         // Change storage path
         app()->useStoragePath(realpath(PATH_DATA));
         app()->make(Kernel::class)->bootstrap();
+        error_reporting(error_reporting() & ~E_STRICT & ~E_DEPRECATED);
 
-        \Bootstrap::setLanguage();
+        Bootstrap::setLanguage();
 
-        \Bootstrap::LoadTranslationObject((defined("SYS_LANG")) ? SYS_LANG : "en");
+        Bootstrap::LoadTranslationObject((defined("SYS_LANG")) ? SYS_LANG : "en");
 
         if (empty($workspace)) {
             return true;
@@ -585,6 +587,11 @@ class WebApplication
 
         define('TIME_ZONE', ini_get('date.timezone'));
 
+        $oPluginRegistry = PluginRegistry::loadSingleton();
+        $attributes = $oPluginRegistry->getAttributes();
+        Bootstrap::LoadTranslationPlugins(defined('SYS_LANG') ? SYS_LANG : "en", $attributes);
+        // Initialization functions plugins
+        $oPluginRegistry->init();
         //Return
         return true;
     }

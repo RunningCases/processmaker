@@ -39,3 +39,5 @@ build-prod.zip
 node_modules
 /workflow/engine/config/system-tables.ini
 test_shared/
+**/cache/
+storage/

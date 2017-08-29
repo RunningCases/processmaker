@@ -13,7 +13,7 @@ use Exception;
 use ProcessMaker\BusinessModel\Light as BusinessModelLight;
 use RBAC;
 use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
-use Cases;
+use Cases as ClassesCases;
 use AppDelegation;
 use ProcessMaker\BusinessModel\Lists;
 use ProcessMaker\BusinessModel\Task;
@@ -805,7 +805,7 @@ class Light extends Api
     public function doDeleteCases($app_uid)
     {
         try {
-            $oCase = new Cases();
+            $oCase = new ClassesCases();
             $oCase->removeCase($app_uid);
             $result = array(
                 "message" => G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY")
@@ -1003,7 +1003,7 @@ class Light extends Api
     public function doGetNextStep($pro_uid, $app_uid, $cas_index, $step_pos)
     {
         try {
-            $oCase = new Cases();
+            $oCase = new ClassesCases();
 
             $oAppDelegate = new AppDelegation();
             $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $cas_index);
@@ -1046,7 +1046,7 @@ class Light extends Api
 
             $caseVariables = array();
             if (!is_null($app_uid)) {
-                $case = new Cases();
+                $case = new ClassesCases();
                 $fields = $case->loadCase($app_uid, $del_index);
                 $caseVariables = array_merge($fields['APP_DATA'],
                     BusinessModelCases::getGlobalVariables($fields['APP_DATA']));
@@ -1689,7 +1689,7 @@ class Light extends Api
      * Get Case Variables
      *
      * @access protected
-     * @class  AccessControl {@className \ProcessMaker\Services\ApiCases}
+     * @class  AccessControl {@className \ProcessMaker\Services\Api\Cases}
      * @url GET /:app_uid/variables
      *
      * @param string $app_uid {@min 1}{@max 32}
@@ -1852,7 +1852,7 @@ class Light extends Api
         $response = array();
 
         //conditionalSteps
-        $oCase = new Cases();
+        $oCase = new ClassesCases();
         $oAppDelegate = new AppDelegation();
         $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $app_index);
         if ($alreadyRouted) {
