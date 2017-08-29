@@ -22,6 +22,10 @@
  *
  */
 
+require_once __DIR__ . '/../../../gulliver/system/class.g.php';
+require_once __DIR__ . '/../../../bootstrap/autoload.php';
+require_once __DIR__ . '/../../../bootstrap/app.php';
+
 // check script parameters
 // php reindex_solr.php workspacename [reindexall|reindexmissing|optimizeindex] [-skip 1005] [-reindextrunksize 1000]
 // var_dump($argv);
@@ -117,7 +121,6 @@ if (! defined ('PATH_HOME')) {
   define( 'PATH_CLASSES', PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP );
 
   require_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
-  spl_autoload_register(array('Bootstrap', 'autoloadClass'));
 }
 
 print "PATH_HOME: " . PATH_HOME . "\n";
