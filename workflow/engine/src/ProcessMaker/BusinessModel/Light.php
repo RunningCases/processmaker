@@ -3,7 +3,6 @@
 namespace ProcessMaker\BusinessModel;
 
 use ProcessMaker\BusinessModel\Lists;
-use ProcessMaker\BusinessModel\Cases;
 use G;
 use Criteria;
 use UsersPeer;
