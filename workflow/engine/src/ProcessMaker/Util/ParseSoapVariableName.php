@@ -1,6 +1,7 @@
 <?php
 
 namespace ProcessMaker\Util;
+use G;
 
 /**
  * Constructs the name of the variable starting from a string representing the

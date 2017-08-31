@@ -3979,12 +3979,9 @@ function pmSqlEscape($vValue)
 //End - Private functions
 
 
-/* * *************************************************************************
- * Error handler
- * author: Julio Cesar Laura Avenda�o <juliocesar@colosa.com>
- * date: 2009-10-01
- * ************************************************************************* */
 /**
+ * Error handler
+ *
  * @param $errno
  * @param $errstr
  * @param $errfile

@@ -92,6 +92,7 @@ try {
 
     app()->useStoragePath(realpath(PATH_DATA));
     app()->make(Kernel::class)->bootstrap();
+    restore_error_handler();
     //Do not change any of these settings directly, use env.ini instead
     ini_set('display_errors',  $arraySystemConfiguration['debug']);
     ini_set('error_reporting', $e_all);
