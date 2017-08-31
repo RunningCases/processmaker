@@ -36,8 +36,8 @@ $dateTo = isset($_REQUEST["dateTo"]) ? substr($_REQUEST["dateTo"], 0, 10) : "";
 $first = isset($_REQUEST["first"]) ? true : false;
 $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '') ?
     $_REQUEST['openApplicationUid'] : null;
-
 $search = (!is_null($openApplicationUid)) ? $openApplicationUid : $search;
+$columnSearch = isset($_REQUEST["columnSearch"]) ? strtoupper($_REQUEST["columnSearch"]) : "";
 
 if ($sort == 'CASE_SUMMARY' || $sort == 'CASE_NOTES_COUNT') {
     $sort = 'APP_NUMBER';//DEFAULT VALUE
@@ -81,7 +81,8 @@ try {
             $sort,
             $category,
             $dateFrom,
-            $dateTo
+            $dateTo,
+            $columnSearch
         );
     } else {
         $data = $apps->getAll(

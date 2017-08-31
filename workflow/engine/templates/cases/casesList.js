@@ -1230,6 +1230,29 @@ Ext.onReady ( function() {
         iconCls: 'no-icon'  //use iconCls if placing within menu to shift to right side of menu
     });
 
+    // ComboBox creation for the columnSearch: caseTitle, appNumber, tasTitle
+    var comboColumnSearch = new Ext.form.ComboBox({
+        width         : 80,
+        boxMaxWidth   : 90,
+        editable      : false,
+        mode          : 'local',
+        store         : new Ext.data.ArrayStore({
+            fields: ['id', 'value'],
+            data  : columnSearchValues
+        }),
+        valueField    : 'id',
+        displayField  : 'value',
+        triggerAction : 'all',
+        listeners:{
+            scope: this,
+            'select': function() {
+                var filter = comboColumnSearch.value;
+                storeCases.setBaseParam('columnSearch', filter);
+            }
+        },
+        iconCls: 'no-icon'  //use iconCls if placing within menu to shift to right side of menu
+    });
+
     // ComboBox creation processValues
     var userStore =  new Ext.data.Store( {
         proxy : new Ext.data.HttpProxy( {
@@ -2081,6 +2104,9 @@ Ext.onReady ( function() {
         clearDateTo,
         "->",
         '-',
+        _('ID_FILTER_BY'),
+        comboColumnSearch,
+        '-',
         textSearch,
         resetSearchButton,
         btnSearch ,
@@ -2357,7 +2383,7 @@ Ext.onReady ( function() {
             storeCases.setBaseParam("category", "");
             storeCases.setBaseParam("process", "");
             storeCases.setBaseParam("status", comboStatus.store.getAt(0).get(comboStatus.valueField));
-            //storeCases.setBaseParam("user", comboUser.store.getAt(0).get(comboUser.valueField));
+            storeCases.setBaseParam("columnSearch", comboColumnSearch.store.getAt(0).get(comboColumnSearch.valueField));
             storeCases.setBaseParam("search", textSearch.getValue());
             storeCases.setBaseParam("dateFrom", dateFrom.getValue());
             storeCases.setBaseParam("dateTo", dateTo.getValue());
@@ -2504,6 +2530,7 @@ Ext.onReady ( function() {
     comboCategory.setValue("");
     suggestProcess.setValue("");
     comboStatus.setValue("");
+    comboColumnSearch.setValue("APP_TITLE");
     /*----------------------------------********---------------------------------*/
     if (typeof valueFilterStatus != 'undefined') {
         comboFilterStatus.setValue(valueFilterStatus);
