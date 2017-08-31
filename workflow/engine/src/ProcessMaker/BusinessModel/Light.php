@@ -19,7 +19,7 @@ use ResultSet;
 use Process;
 use Cases;
 use ProcessMaker\BusinessModel\Task as BusinessModelTask;
-use ProcessMaker\Services\Api\Project\Activity\Step;
+use ProcessMaker\Services\Api\Project\Activity\Step as ActivityStep;
 use Exception;
 use AppCacheView;
 use database;
@@ -96,7 +96,7 @@ class Light
             $task->setFormatFieldNameInUppercase(false);
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
-            $step = new Step();
+            $step = new ActivityStep();
             $response = array();
             foreach ($processList as $key => $processInfo) {
                 $tempTreeChildren = array();
