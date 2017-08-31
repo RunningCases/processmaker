@@ -553,6 +553,7 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
 
 app()->useStoragePath(realpath(PATH_DATA));
 app()->make(Kernel::class)->bootstrap();
+restore_error_handler();
 //Overwrite with the Processmaker env.ini configuration used in production environments
 //@todo: move env.ini configuration to .env
 ini_set( 'display_errors', $config['display_errors']);

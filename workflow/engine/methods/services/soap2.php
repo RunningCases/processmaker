@@ -650,7 +650,7 @@ function NewCase($params)
     $oSession = new Sessions();
     $session = $oSession->getSessionUser($params->sessionId);
     $userId = $session['USR_UID'];
-    $variables = $params->variables;
+    $variables = isset($params->variables) ? $params->variables : null;
 
     $field = array();
 
