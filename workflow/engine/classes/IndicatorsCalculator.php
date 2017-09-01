@@ -81,10 +81,10 @@ class IndicatorsCalculator
 	private $userGroupReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
 	private $processCategoryReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
 
-	private $peiCostFormula = " SUM(case when (TOTAL_TIME_BY_TASK + TOTAL_QUEUE_TIME_BY_TASK) > 0 then (TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - (TOTAL_TIME_BY_TASK * USER_HOUR_COST + TOTAL_QUEUE_TIME_BY_TASK * PRO_COST))  else 0 end)";
+	private $peiCostFormula = " SUM(case when (TOTAL_TIME_BY_TASK + TOTAL_QUEUE_TIME_BY_TASK) > 0 then (TOTAL_CASES_OUT * CONFIGURED_TASK_TIME * PRO_COST - (TOTAL_TIME_BY_TASK * USER_HOUR_COST + TOTAL_QUEUE_TIME_BY_TASK * PRO_COST))  else 0 end)";
 	private $peiFormula = "SUM(TOTAL_CASES_OUT*CONFIGURED_TASK_TIME) / SUM(SDV_TIME * TOTAL_CASES_OUT + (TOTAL_TIME_BY_TASK + TOTAL_QUEUE_TIME_BY_TASK))";
 
-	private $ueiCostFormula = " SUM(case when (TOTAL_TIME_BY_TASK + TOTAL_QUEUE_TIME_BY_TASK) > 0 then (TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - (TOTAL_TIME_BY_TASK * USER_HOUR_COST + TOTAL_QUEUE_TIME_BY_TASK * PRO_COST)) else 0 end)";
+	private $ueiCostFormula = " SUM(case when (TOTAL_TIME_BY_TASK + TOTAL_QUEUE_TIME_BY_TASK) > 0 then (TOTAL_CASES_OUT * CONFIGURED_TASK_TIME * PRO_COST - (TOTAL_TIME_BY_TASK * USER_HOUR_COST + TOTAL_QUEUE_TIME_BY_TASK * PRO_COST)) else 0 end)";
 	private $ueiFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME) / SUM((TOTAL_TIME_BY_TASK + TOTAL_QUEUE_TIME_BY_TASK))";
 
 	public function getSkewOfDataDistribution($table, $field) {
