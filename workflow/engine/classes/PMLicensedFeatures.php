@@ -1,7 +1,10 @@
 <?php
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class PMLicensedFeatures
 {
+
     private $featuresDetails = array ();
     private $features = array ();
     private $newFeatures = array(
@@ -334,6 +337,11 @@ class PMLicensedFeatures
     /*----------------------------------********---------------------------------*/
     public function verifyfeature ($featureName)
     {
+        $cached = Cache::get(PmLicenseManager::CACHE_KEY . '.' . SYS_SYS, []);
+        if (isset($cached[$featureName])) {
+            return $cached[$featureName];
+        }
+
         $licenseManager = PmLicenseManager::getSingleton(false);
 
         $_SESSION['__sw__'] = true;
@@ -350,6 +358,10 @@ class PMLicensedFeatures
             $this->featuresDetails[$value[0]] = new stdclass();
         }
         $this->featuresDetails[$value[0]]->enabled = $enable;
+
+        $cached[$featureName] = $enable;
+        Cache::put(PmLicenseManager::CACHE_KEY . '.' . SYS_SYS, $cached, Carbon::now()->addDay(1));
+
         return $enable;
     }
 

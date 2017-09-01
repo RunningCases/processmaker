@@ -1,7 +1,7 @@
 <?php
 
 use ProcessMaker\Plugins\PluginRegistry;
-
+use Illuminate\Support\Facades\Cache;
 
 /**
  * class.pmLicenseManager.php
@@ -10,6 +10,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 
 class PmLicenseManager
 {
+    const CACHE_KEY = 'license';
 
     private static $instance = null;
 
@@ -474,6 +475,7 @@ class PmLicenseManager
             $tr->setLicenseType   ( $LicenseType );
 
             $res = $tr->save ();
+            Cache::forget(PmLicenseManager::CACHE_KEY . '.' . SYS_SYS);
         } catch ( Exception $e ) {
             G::pr($e);
         }
