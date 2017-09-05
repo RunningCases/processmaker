@@ -71,16 +71,16 @@ abstract class DBAdapter {
 	 * @return     DBAdapter An instance of a Propel database adapter.
 	 * @throws     PropelException if the adapter could not be instantiated.
 	 */
-	public static function factory($driver) {
-  	$adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
-			if ($adapterClass !== null) {
-			require_once 'propel/adapter/'.$adapterClass.'.php';
-			$a = new $adapterClass();
-			return $a;
-		} else {
-			throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
-		}
-	}
+    public static function factory($driver)
+    {
+        $adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
+        if ($adapterClass !== null) {
+            $a = new $adapterClass();
+            return $a;
+        } else {
+            throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
+        }
+    }
 
 	/**
 	 * This method is used to ignore case.
