@@ -39,7 +39,6 @@
         "monolog/monolog": "1.19.0",
         "geshi/geshi": "dev-master",
         "libchart/libchart": "1.4.0",
-        "indeyets/pake": "1.99.*",
         "phpmailer/phpmailer": "5.2.*",
         "pear/archive_tar": "1.4.*",
         "pear/console_getopt": "1.4.*",
@@ -80,6 +79,7 @@
             "gulliver/includes/inc.ajax.php",
             "gulliver/includes/smarty_plugins/function.pmos.php",
             "thirdparty/pear/PEAR.php",
+            "thirdparty/pake/pakeFunction.php",
             "thirdparty/HTMLPurifier/HTMLPurifier.auto.php",
             "workflow/engine/classes/class.pmFunctions.php",
             "workflow/engine/src/ProcessMaker/Util/helpers.php"
