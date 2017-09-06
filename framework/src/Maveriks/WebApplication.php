@@ -486,6 +486,7 @@ class WebApplication
         // Change storage path
         app()->useStoragePath(realpath(PATH_DATA));
         app()->make(Kernel::class)->bootstrap();
+        restore_error_handler();
         error_reporting(error_reporting() & ~E_STRICT & ~E_DEPRECATED);
 
         Bootstrap::setLanguage();

@@ -70,6 +70,7 @@ return array(
     'replacementLogo' => ReplacementLogo::class,
     'Report' => Report::class,
     'ReportTables' => ReportTables::class,
+    'request' => Illuminate\Http\Request::class,
     'serverConf' => ServerConf::class,
     'Sessions' => Sessions::class,
     'spoolRun' => SpoolRun::class,

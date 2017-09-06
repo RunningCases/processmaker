@@ -22,6 +22,7 @@ class Applications
      * @param string $category uid for the process
      * @param date $dateFrom
      * @param date $dateTo
+     * @param string $columnSearch name of column for a specific search
      * @return array $result result of the query
      */
     public function searchAll(
@@ -35,7 +36,8 @@ class Applications
         $sort = null,
         $category = null,
         $dateFrom = null,
-        $dateTo = null
+        $dateTo = null,
+        $columnSearch = 'APP_TITLE'
     ) {
         //Exclude the Task Dummies in the delegations
         $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
@@ -127,8 +129,42 @@ class Applications
         }
 
         if (!empty($search)) {
-            //In the filter search we check in the following columns: APP_NUMBER APP_TAS_TITLE APP_TITLE
-            $sqlData .= " AND (APPLICATION.APP_TITLE LIKE '%{$search}%' OR APP_DELEGATION.APP_NUMBER LIKE '%{$search}%' OR TASK.TAS_TITLE LIKE '%{$search}%')";
+            //If the filter is related to the APPLICATION table: APP_NUMBER or APP_TITLE
+            if ($columnSearch === 'APP_NUMBER' || $columnSearch === 'APP_TITLE') {
+                $sqlSearch = "SELECT APPLICATION.APP_NUMBER FROM APPLICATION";
+                $sqlSearch .= " WHERE APPLICATION.{$columnSearch} LIKE '%{$search}%'";
+                switch ($columnSearch) {
+                    case 'APP_TITLE':
+                        break;
+                    case 'APP_NUMBER':
+                        //Cast the search criteria to string
+                        if (!is_string($search)) {
+                            $search = (string)$search;
+                        }
+                        //Only if is integer we will to add to greater equal in the query
+                        if (substr($search, 0, 1) != '0' && ctype_digit($search)) {
+                            $sqlSearch .= " AND APPLICATION.{$columnSearch} >= {$search}";
+                        }
+                        break;
+                }
+                if (!empty($start)) {
+                    $sqlSearch .= " LIMIT $start, " . $limit;
+                } else {
+                    $sqlSearch .= " LIMIT " . $limit;
+                }
+                $dataset = $stmt->executeQuery($sqlSearch);
+                $appNumbers = array(-1);
+                while ($dataset->next()) {
+                    $newRow = $dataset->getRow();
+                    array_push($appNumbers, $newRow['APP_NUMBER']);
+                }
+                $sqlData .= " AND APP_DELEGATION.APP_NUMBER IN (" . implode(",", $appNumbers) . ")";
+            }
+            //If the filter is related to the TASK table: TAS_TITLE
+            if ($columnSearch === 'TAS_TITLE') {
+                $sqlData .= " AND TASK.TAS_TITLE LIKE '%{$search}%' ";
+            }
+
         }
 
         if (!empty($dateFrom)) {
@@ -141,7 +177,7 @@ class Applications
         }
 
         //Add the additional filters
-        if (!empty($sort)) {
+        if (!empty($sort) && empty($search)) {
             switch ($sort) {
                 case 'APP_NUMBER':
                     //The order by APP_DELEGATION.APP_NUMBER is must be fast than APPLICATION.APP_NUMBER
@@ -156,7 +192,7 @@ class Applications
         }
 
         //Sorts the records in descending order by default
-        if (!empty($dir)) {
+        if (!empty($dir) && empty($search)) {
             $sqlData .= "  " . $dir;
         }
 
@@ -164,7 +200,7 @@ class Applications
         if(empty($limit)) {
             $limit = 25;
         }
-        if (!empty($start)) {
+        if (!empty($start) && empty($search)) {
             $sqlData .= " LIMIT $start, " . $limit;
         } else {
             $sqlData .= " LIMIT " . $limit;
@@ -633,23 +669,6 @@ class Applications
 
         // this is the optimal way or query to render the cases search list
         // fixing the bug related to the wrong data displayed in the list
-        /*
-        if ($action == 'search') {
-            $oDatasetIndex = AppCacheViewPeer::doSelectRS( $Criteria );
-            $oDatasetIndex->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDatasetIndex->next();
-            $maxDelIndexList = array ();
-            // a list of MAX_DEL_INDEXES is required in order to validate the right row
-            while ($aRow = $oDatasetIndex->getRow()) {
-                $maxDelIndexList[] = $aRow['MAX_DEL_INDEX'];
-                $oDatasetIndex->next();
-            }
-            // adding the validation condition in order to get the right row using the group by sentence
-            $Criteria->add( AppCacheViewPeer::DEL_INDEX, $maxDelIndexList, Criteria::IN );
-            //
-            //$params = array($maxDelIndexList);
-        }
-        */
 
         //here we count how many records exists for this criteria.
         //BUT there are some special cases, and if we dont optimize them the server will crash.
@@ -657,16 +676,6 @@ class Applications
         //case 1. when the SEARCH action is selected and none filter, search criteria is defined,
         //we need to count using the table APPLICATION, because APP_CACHE_VIEW takes 3 seconds
 
-        /*
-        if ($action == 'search' && $filter == '' && $search == '' && $process == '' && $status == '' && $dateFrom == '' && $dateTo == '' && $category == '') {
-            $totalCount = $oAppCache->getSearchAllCount();
-            $doCountAlreadyExecuted = true;
-        }
-        if ($category != '') {
-            $totalCount = $oAppCache->getSearchCountCriteria();
-            $doCountAlreadyExecuted = true;
-        }
-        */
         $tableNameAux = '';
         $totalCount = 0;
         if ($doCountAlreadyExecuted == true) {
@@ -785,31 +794,6 @@ class Applications
 
         while ($oDataset->next()) {
             $aRow = $oDataset->getRow();
-
-            //$aRow = $oAppCache->replaceRowUserData($aRow);
-
-            /*
-             * For participated cases, we want the last step in the case, not only the last step this user participated. To do that we get every case information again for the last step. (This could be solved by a subquery, but Propel might not support it and subqueries can be slower for larger
-             * datasets).
-             */
-             /*if ($action == 'sent' || $action == 'search') {
-             $maxCriteria = new Criteria('workflow');
-             $maxCriteria->add(AppCacheViewPeer::APP_UID, $aRow['APP_UID'], Criteria::EQUAL);
-             $maxCriteria->addDescendingOrderByColumn(AppCacheViewPeer::DEL_INDEX);
-             $maxCriteria->setLimit(1);
-
-             $maxDataset = AppCacheViewPeer::doSelectRS( $maxCriteria );
-             $maxDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-             $maxDataset->next();
-
-             $newData = $maxDataset->getRow();
-             foreach ($aRow as $col => $value) {
-             if (array_key_exists($col, $newData))
-             $aRow[$col] = $newData[$col];
-             }
-
-             $maxDataset->close();
-              }*/
 
             //Current delegation (*)
             if ($action == 'sent' || $action == 'simple_search' || $action == 'to_reassign') {

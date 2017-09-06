@@ -123,8 +123,6 @@ if (PMLicensedFeatures
 
         if ($code == 0) {
             //Save Cases Notes
-            include_once 'utils.php';
-
             $dataAbeRequests = loadAbeRequest($aber);
             $dataAbeConfiguration = loadAbeConfiguration($dataAbeRequests['ABE_UID']);
 
