@@ -8,7 +8,7 @@ class RoutingScreen extends \Derivation
     protected $convergent;
     protected $divergent;
     public $gateway = array('PARALLEL', 'PARALLEL-BY-EVALUATION');
-    public $routeType = array('SEC-JOIN', 'EVALUATE');
+    public $routeType = array('SEC-JOIN');
     public $isFirst;
     public $isUniqueSecJoin = false;
     protected $taskSecJoin;
