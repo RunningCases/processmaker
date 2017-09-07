@@ -157,10 +157,11 @@ class ObjectPermission extends BaseObjectPermission
      * @param string $proUid the uid of the process
      * @param string $tasUid the uid of the task
      * @param string $action for the object permissions VIEW, BLOCK, RESEND
+     * @param array $caseData for review the case status DRAFT, TODO, COMPLETED, PAUSED
      *
      * @return array
      */
-    public function verifyObjectPermissionPerUser ($usrUid, $proUid, $tasUid = '', $action = '', $caseInfo = array())
+    public function verifyObjectPermissionPerUser ($usrUid, $proUid, $tasUid = '', $action = '', $caseData = array())
     {
         $userPermissions = array();
         $oCriteria = new Criteria('workflow');
@@ -188,7 +189,7 @@ class ObjectPermission extends BaseObjectPermission
             $row = $rs->getRow();
 
             if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
-                $row["OP_CASE_STATUS"] == $caseInfo["APP_STATUS"]
+                $row["OP_CASE_STATUS"] == $caseData["APP_STATUS"]
             ) {
                 array_push($userPermissions, $row);
             }
@@ -203,10 +204,11 @@ class ObjectPermission extends BaseObjectPermission
      * @param string $proUid the uid of the process
      * @param string $tasUid the uid of the task
      * @param string $action for the object permissions VIEW, BLOCK, RESEND
+     * @param array $caseData for review the case status DRAFT, TODO, COMPLETED, PAUSED
      *
      * @return array
      */
-    public function verifyObjectPermissionPerGroup ($usrUid, $proUid, $tasUid = '', $action = '')
+    public function verifyObjectPermissionPerGroup ($usrUid, $proUid, $tasUid = '', $action = '', $caseData = array())
     {
         $gr = new Groups();
         $records = $gr->getActiveGroupsForAnUser($usrUid);
@@ -231,7 +233,7 @@ class ObjectPermission extends BaseObjectPermission
                 $row = $rs->getRow();
 
                 if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
-                    $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+                    $row["OP_CASE_STATUS"] == $caseData["APP_STATUS"]
                 ) {
                     array_push($groupPermissions, $row);
                 }

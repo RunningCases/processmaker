@@ -5717,13 +5717,13 @@ class Cases
      */
     public function getAllObjectsFrom($proUid, $appUid, $tasUid = '', $usrUid = '', $action = '', $delIndex = 0)
     {
-        $aCase = $this->loadCase($appUid);
+        $caseData = $this->loadCase($appUid);
 
         if ($delIndex != 0) {
             $appDelay = new AppDelay();
 
             if ($appDelay->isPaused($appUid, $delIndex)) {
-                $aCase["APP_STATUS"] = "PAUSED";
+                $caseData["APP_STATUS"] = "PAUSED";
             }
         }
 
@@ -5742,8 +5742,8 @@ class Cases
         );
 
         $oObjectPermission = new ObjectPermission();
-        $userPermissions = $oObjectPermission->verifyObjectPermissionPerUser($usrUid, $proUid, $tasUid, $action, $aCase);
-        $groupPermissions = $oObjectPermission->verifyObjectPermissionPerGroup($usrUid, $proUid, $tasUid, $action, $aCase);
+        $userPermissions = $oObjectPermission->verifyObjectPermissionPerUser($usrUid, $proUid, $tasUid, $action, $caseData);
+        $groupPermissions = $oObjectPermission->verifyObjectPermissionPerGroup($usrUid, $proUid, $tasUid, $action, $caseData);
         $permissions = array_merge($userPermissions, $groupPermissions);
 
         foreach ($permissions as $row) {
@@ -5783,7 +5783,7 @@ class Cases
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
                         //For Ouputs
                         $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
@@ -5792,7 +5792,7 @@ class Cases
                             $opTaskSource,
                             'OUTPUT',
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
                         //For Inputs
                         $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
@@ -5801,7 +5801,7 @@ class Cases
                             $opTaskSource,
                             'INPUT',
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
                         //For Attachment
                         $result['ATTACHMENT'] = $oObjectPermission->objectPermissionByOutputInput(
@@ -5810,7 +5810,7 @@ class Cases
                             $opTaskSource,
                             'ATTACHED',
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
 
                         $result['CASES_NOTES'] = 1;
@@ -5826,7 +5826,7 @@ class Cases
                             $action,
                             $opTaskSource,
                             $opUserRelation,
-                            $aCase['APP_STATUS'],
+                            $caseData['APP_STATUS'],
                             $opParticipated
                         );
                         break;
@@ -5835,7 +5835,7 @@ class Cases
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
                         break;
                     case 'INPUT':
@@ -5845,7 +5845,7 @@ class Cases
                             $opTaskSource,
                             'INPUT',
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
                         break;
                     case 'ATTACHMENT':
@@ -5855,7 +5855,7 @@ class Cases
                             $opTaskSource,
                             'ATTACHED',
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
                         break;
                     case 'OUTPUT':
@@ -5865,7 +5865,7 @@ class Cases
                             $opTaskSource,
                             'OUTPUT',
                             $opObjUid,
-                            $aCase['APP_STATUS']
+                            $caseData['APP_STATUS']
                         );
                         break;
                     case 'CASES_NOTES':
@@ -5884,7 +5884,7 @@ class Cases
                             $action,
                             $opTaskSource,
                             $opUserRelation,
-                            $aCase['APP_STATUS'],
+                            $caseData['APP_STATUS'],
                             $opParticipated
                         );
                         break;
