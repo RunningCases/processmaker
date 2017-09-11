@@ -40,12 +40,9 @@ var supportedProcessTypes = {
         fn = fn.replace(/\s/g, "_");
         fn = fn.replace(/\-/g, "_");
         fn = fn + "DesignerGridRowDblClick";
-
-        // Todo We should remove eval functions as they are NSFW
-        eval("var flag = typeof(" + fn + ") == \"function\";");
-
-        if (flag) {
-            eval(fn + "(rowSelected.data);");
+        fn = window[fn];
+        if (typeof fn === "function") {
+            fn(rowSelected.data);
         } else {
             disabledProcessTypeMessage();
         }
