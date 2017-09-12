@@ -41,21 +41,17 @@ class LdapAdvanced
      * @var Object
      */
     private static $instance = null;
-
     private $arrayObjectClassFilter = array(
-        "user"       => "|(objectclass=inetorgperson)(objectclass=organizationalperson)(objectclass=person)(objectclass=user)",
-        "group"      => "|(objectclass=posixgroup)(objectclass=group)(objectclass=groupofuniquenames)",
+        "user" => "|(objectclass=inetorgperson)(objectclass=organizationalperson)(objectclass=person)(objectclass=user)",
+        "group" => "|(objectclass=posixgroup)(objectclass=group)(objectclass=groupofuniquenames)",
         "department" => "|(objectclass=organizationalunit)"
     );
-
     private $arrayAttributes = array(
-        "ldap" => array("uid" => "uid",            "member" => "memberuid"),   //OpenLDAP
-        "ad"   => array("uid" => "samaccountname", "member" => "member"),      //Active Directory
-        "ds"   => array("uid" => "uid",            "member" => "uniquemember") //389 DS
+        "ldap" => array("uid" => "uid", "member" => "memberuid"), //OpenLDAP
+        "ad" => array("uid" => "samaccountname", "member" => "member"), //Active Directory
+        "ds" => array("uid" => "uid", "member" => "uniquemember") //389 DS
     );
-
     private $arrayAttributesForUser = array("dn", "uid", "samaccountname", "givenname", "sn", "cn", "mail", "userprincipalname", "useraccountcontrol", "accountexpires", "manager");
-
     private $frontEnd = false;
     private $debug = false;
     public $arrayAuthenticationSourceUsersByUid = array();
@@ -64,7 +60,6 @@ class LdapAdvanced
     public $arrayDepartmentUsersByUsername = array();
     public $arrayGroupUsersByUid = array();
     public $arrayGroupUsersByUsername = array();
-
     private $arrayDepartmentUserSynchronizedChecked = array();
     private $arrayUserUpdateChecked = array();
 
@@ -73,6 +68,7 @@ class LdapAdvanced
      */
     public function __construct()
     {
+        
     }
 
     /**
@@ -156,8 +152,8 @@ class LdapAdvanced
     {
         try {
             $arrayUserData = array(
-                "USR_UID"          => $userUid,
-                "USR_USERNAME"     => $arrayUserLdap["sUsername"],
+                "USR_UID" => $userUid,
+                "USR_USERNAME" => $arrayUserLdap["sUsername"],
                 "USR_AUTH_USER_DN" => $arrayUserLdap["sDN"]
             );
 
@@ -299,8 +295,8 @@ class LdapAdvanced
     public function progressBar($total, $count)
     {
         try {
-            $p = (int)(($count * 100) / $total);
-            $n = (int)($p / 2);
+            $p = (int) (($count * 100) / $total);
+            $n = (int) ($p / 2);
 
             return "[" . str_repeat("|", $n) . str_repeat(" ", 50 - $n) . "] $p%";
         } catch (Exception $e) {
@@ -371,7 +367,6 @@ class LdapAdvanced
             unset($arrayCharacter[124]); //|
             unset($arrayCharacter[126]); //~
             unset($arrayCharacter[127]); //DEL
-
             //Return
             return array_unique($arrayCharacter);
         } catch (Exception $e) {
@@ -459,7 +454,7 @@ class LdapAdvanced
         $logFile = PATH_DATA . "log/ldapAdvanced.log";
 
         if (!file_exists($logFile) || is_writable($logFile)) {
-            $fpt= fopen($logFile, "a");
+            $fpt = fopen($logFile, "a");
             $ldapErrorMsg = "";
             $ldapErrorNr = 0;
 
@@ -517,7 +512,7 @@ class LdapAdvanced
 
         $ldapcnn = ldap_connect($aAuthSource['AUTH_SOURCE_SERVER_NAME'], $aAuthSource['AUTH_SOURCE_PORT']);
 
-        $ldapServer = $aAuthSource["AUTH_SOURCE_SERVER_NAME"] . ":" . $aAuthSource["AUTH_SOURCE_PORT"] ;
+        $ldapServer = $aAuthSource["AUTH_SOURCE_SERVER_NAME"] . ":" . $aAuthSource["AUTH_SOURCE_PORT"];
 
         ldap_set_option($ldapcnn, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldapcnn, LDAP_OPT_REFERRALS, 0);
@@ -623,7 +618,7 @@ class LdapAdvanced
                     do {
                         $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
-                        $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : "";
+                        $username = (isset($arrayUserLdap[$uidUserIdentifier])) ? $arrayUserLdap[$uidUserIdentifier] : "";
 
                         $countUser++;
 
@@ -704,11 +699,11 @@ class LdapAdvanced
                 $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"] = "";
             }
 
-            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]))? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
+            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"])) ? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
 
             $filterUsers = trim($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"]);
 
-            $filter = ($filterUsers != "")? $filterUsers : "(" . $this->arrayObjectClassFilter["user"] . ")";
+            $filter = ($filterUsers != "") ? $filterUsers : "(" . $this->arrayObjectClassFilter["user"] . ")";
 
             $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromDepartment() > \$filter ----> $filter");
 
@@ -748,7 +743,7 @@ class LdapAdvanced
 
                     $ldapcnn = $this->ldapConnection($arrayAuthenticationSourceData);
 
-                    $filter = ($filterUsers != "")? $filterUsers : "(" . $this->arrayObjectClassFilter["user"] . ")";
+                    $filter = ($filterUsers != "") ? $filterUsers : "(" . $this->arrayObjectClassFilter["user"] . ")";
                     $filter = "(&$filter($uidUserIdentifier=$char*))";
 
                     $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromDepartment() > \$filter ----> $filter");
@@ -805,13 +800,9 @@ class LdapAdvanced
      * @return array Return array data
      */
     private function __ldapGroupSynchronizeMembers(
-        $ldapcnn,
-        array $arrayAuthSourceData,
-        $groupUid,
-        array $arrayGroupLdap,
-        $memberAttribute,
-        array $arrayData = []
-    ) {
+    $ldapcnn, array $arrayAuthSourceData, $groupUid, array $arrayGroupLdap, $memberAttribute, array $arrayData = []
+    )
+    {
         try {
             unset($arrayData['countMembers']);
 
@@ -820,12 +811,12 @@ class LdapAdvanced
                 $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_USERS_FILTER'] = '';
             }
 
-            $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']))?
-                $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
+            $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'])) ?
+                    $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
 
             $filterUsers = trim($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_USERS_FILTER']);
 
-            $filter = ($filterUsers != '')? $filterUsers : '(' . $this->arrayObjectClassFilter['user'] . ')';
+            $filter = ($filterUsers != '') ? $filterUsers : '(' . $this->arrayObjectClassFilter['user'] . ')';
 
             if (isset($arrayGroupLdap[$memberAttribute])) {
                 if (!is_array($arrayGroupLdap[$memberAttribute])) {
@@ -850,21 +841,20 @@ class LdapAdvanced
 
                                 $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
-                                $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : '';
+                                $username = (isset($arrayUserLdap[$uidUserIdentifier])) ? $arrayUserLdap[$uidUserIdentifier] : '';
 
-                                $arrayData['countUser']++;
+                                $arrayData['countUser'] ++;
 
                                 if ((is_array($username) && !empty($username)) || trim($username) != '') {
                                     $arrayData = $this->groupSynchronizeUser(
-                                        $groupUid, $this->getUserDataFromAttribute($username, $arrayUserLdap), $arrayData
+                                            $groupUid, $this->getUserDataFromAttribute($username, $arrayUserLdap), $arrayData
                                     );
                                 }
 
                                 //Progress bar
                                 $this->frontEndShow(
-                                    'BAR',
-                                    'Groups: ' . $arrayData['i'] . '/' . $arrayData['n'] . ' ' .
-                                    $this->progressBar($arrayData['totalUser'], $arrayData['countUser'])
+                                        'BAR', 'Groups: ' . $arrayData['i'] . '/' . $arrayData['n'] . ' ' .
+                                        $this->progressBar($arrayData['totalUser'], $arrayData['countUser'])
                                 );
                             }
                         }
@@ -954,18 +944,13 @@ class LdapAdvanced
                         }
 
                         $arrayData = $this->__ldapGroupSynchronizeMembers(
-                            $ldapcnn,
-                            $arrayAuthenticationSourceData,
-                            $arrayGroupData['GRP_UID'],
-                            $arrayGroupLdap,
-                            $memberAttribute2,
-                            array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
+                                $ldapcnn, $arrayAuthenticationSourceData, $arrayGroupData['GRP_UID'], $arrayGroupLdap, $memberAttribute2, array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
                         );
 
                         $totalUser = $arrayData['totalUser'];
                         $countUser = $arrayData['countUser'];
 
-                        $limitMemberRange = (isset($arrayData['countMembers']))? $arrayData['countMembers'] : 0;
+                        $limitMemberRange = (isset($arrayData['countMembers'])) ? $arrayData['countMembers'] : 0;
 
                         if ($flagMemberRange) {
                             for ($start = $limitMemberRange; true; $start += $limitMemberRange) {
@@ -992,12 +977,7 @@ class LdapAdvanced
                                             }
 
                                             $arrayData = $this->__ldapGroupSynchronizeMembers(
-                                                $ldapcnn,
-                                                $arrayAuthenticationSourceData,
-                                                $arrayGroupData['GRP_UID'],
-                                                $arrayGroupLdap,
-                                                $memberAttribute2,
-                                                array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
+                                                    $ldapcnn, $arrayAuthenticationSourceData, $arrayGroupData['GRP_UID'], $arrayGroupLdap, $memberAttribute2, array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
                                             );
 
                                             $totalUser = $arrayData['totalUser'];
@@ -1042,9 +1022,9 @@ class LdapAdvanced
     public function VerifyLogin($strUser, $strPass)
     {
         if (is_array($strUser)) {
-            $strUser     = $strUser[0];
+            $strUser = $strUser[0];
         } else {
-            $strUser     = trim($strUser);
+            $strUser = trim($strUser);
         }
 
         if ($strUser == "") {
@@ -1075,7 +1055,7 @@ class LdapAdvanced
             $setAttributes = 0;
 
             if (isset($arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID']) &&
-                $arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID'] == 'on'
+                    $arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID'] == 'on'
             ) {
                 $setAttributes = 1;
             }
@@ -1098,47 +1078,50 @@ class LdapAdvanced
             $usrName = $row["USR_USERNAME"];
             $usrUid = $row["USR_UID"];
 
-            //Get the AuthSource properties
-            //Check if the dn in the database record matches with the dn for the ldap account
-            $verifiedUser = $this->searchUserByUid(
-                $usrName,
-                $arrayAuthSource["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]
-            );
-
-            if (empty($verifiedUser) || trim($verifiedUser["sDN"]) == null) {
-                return -1;
-            }
-
             $userDn = $strUser;
 
-            if ($verifiedUser["sDN"] != $strUser || $setAttributes==1) {
-                $userDn = $verifiedUser['sDN'];
+            //Get the AuthSource properties
+            //Check if the dn in the database record matches with the dn for the ldap account
+            try {
+                $verifiedUser = $this->searchUserByUid($usrName, $arrayAuthSource["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]);
 
-                //Update data
-                $user = new \ProcessMaker\BusinessModel\User();
-                $arrayUserData = $user->getUserRecordByPk($usrUid, [], false);
+                if (empty($verifiedUser) || trim($verifiedUser["sDN"]) == null) {
+                    return -1;
+                }
+                if ($verifiedUser["sDN"] != $strUser || $setAttributes == 1) {
+                    $userDn = $verifiedUser['sDN'];
 
-                $result = $this->__ldapUserUpdateByDnAndData(
-                    $this->ldapcnn, $arrayAuthSource, $userDn, [$arrayUserData['USR_USERNAME'] => $arrayUserData]
-                );
+                    //Update data
+                    $user = new \ProcessMaker\BusinessModel\User();
+                    $arrayUserData = $user->getUserRecordByPk($usrUid, [], false);
 
-                //Update DN
-                $con = Propel::getConnection(RbacUsersPeer::DATABASE_NAME);
-                // select set
-                $c1 = new Criteria("rbac");
-                $c1->add(RbacUsersPeer::UID_AUTH_SOURCE, $arrayAuthSource["AUTH_SOURCE_UID"]);
-                $c1->add(RbacUsersPeer::USR_AUTH_USER_DN, $strUser);
-                // update set
-                $c2 = new Criteria("rbac");
-                $c2->add(RbacUsersPeer::USR_AUTH_USER_DN, $userDn);
+                    $result = $this->__ldapUserUpdateByDnAndData(
+                            $this->ldapcnn, $arrayAuthSource, $userDn, [$arrayUserData['USR_USERNAME'] => $arrayUserData]
+                    );
 
-                BasePeer::doUpdate($c1, $c2, $con);
+                    //Update DN
+                    $con = Propel::getConnection(RbacUsersPeer::DATABASE_NAME);
+                    // select set
+                    $c1 = new Criteria("rbac");
+                    $c1->add(RbacUsersPeer::UID_AUTH_SOURCE, $arrayAuthSource["AUTH_SOURCE_UID"]);
+                    $c1->add(RbacUsersPeer::USR_AUTH_USER_DN, $strUser);
+                    // update set
+                    $c2 = new Criteria("rbac");
+                    $c2->add(RbacUsersPeer::USR_AUTH_USER_DN, $userDn);
+
+                    BasePeer::doUpdate($c1, $c2, $con);
+                }
+            } catch (Exception $e) {
+                $context = Bootstrap::getDefaultContextLog();
+                $context["action"] = "ldapSynchronize";
+                $context["authSource"] = $arrayAuthSource;
+                Bootstrap::registerMonolog("ldapSynchronize", 400, $e->getMessage(), $context, $context["workspace"], "processmaker.log");
             }
 
             //Check ldap connection for user
-            $arrayAuthSource["AUTH_ANONYMOUS"]          = "0";
+            $arrayAuthSource["AUTH_ANONYMOUS"] = "0";
             $arrayAuthSource["AUTH_SOURCE_SEARCH_USER"] = $userDn;
-            $arrayAuthSource["AUTH_SOURCE_PASSWORD"]    = $strPass;
+            $arrayAuthSource["AUTH_SOURCE_PASSWORD"] = $strPass;
 
             $ldapcnn = $this->ldapConnection($arrayAuthSource);
             $flagUpdate = false;
@@ -1169,7 +1152,7 @@ class LdapAdvanced
                 $c1->add(RbacUsersPeer::USR_AUTH_USER_DN, $strUser);
                 // update set
                 $c2 = new Criteria("rbac");
-                $c2->add(RbacUsersPeer::USR_AUTH_USER_DN, $verifiedUser["sDN"]);
+                $c2->add(RbacUsersPeer::USR_AUTH_USER_DN, $userDn);
                 $c2->add(RbacUsersPeer::USR_STATUS, $statusRbac);
                 BasePeer::doUpdate($c1, $c2, $con);
                 $columnsWf = array();
@@ -1186,7 +1169,7 @@ class LdapAdvanced
             }
 
             //Check if the user is in the terminated organizational unit
-            if ($this->userIsTerminated($usrName, $attributes["AUTH_SOURCE_RETIRED_OU"])) {
+            if (!empty($verifiedUser) && $this->userIsTerminated($usrName, $attributes["AUTH_SOURCE_RETIRED_OU"])) {
                 $this->deactivateUser($usrName);
                 $this->log($ldapcnn, "user $strUser is member of Remove OU, deactivating this user.");
 
@@ -1203,7 +1186,7 @@ class LdapAdvanced
             $this->log($ldapcnn, "failure authentication for user $strUser");
         }
 
-        return $validUserPass ;
+        return $validUserPass;
     }
 
     /**
@@ -1217,17 +1200,17 @@ class LdapAdvanced
     public function getUserDataFromAttribute($username, array $arrayAttributes)
     {
         try {
-            $keyMail = (isset($arrayAttributes["mail"]))? "mail" : ((isset($arrayAttributes["userprincipalname"]))? "userprincipalname" : "nomail");
+            $keyMail = (isset($arrayAttributes["mail"])) ? "mail" : ((isset($arrayAttributes["userprincipalname"])) ? "userprincipalname" : "nomail");
 
             return array(
-                "sUsername"  => trim((is_array($username))? $username[0] : $username),
-                "sPassword"  => trim((isset($arrayAttributes["userpassword"]))? ((is_array($arrayAttributes["userpassword"]))? $arrayAttributes["userpassword"][0] : $arrayAttributes["userpassword"]) : ""),
-                "sFullname"  => trim((isset($arrayAttributes["cn"]))?           ((is_array($arrayAttributes["cn"]))?           $arrayAttributes["cn"][0] : $arrayAttributes["cn"]) : ""),
-                "sFirstname" => trim((isset($arrayAttributes["givenname"]))?    ((is_array($arrayAttributes["givenname"]))?    $arrayAttributes["givenname"][0] : $arrayAttributes["givenname"]) : ""),
-                "sLastname"  => trim((isset($arrayAttributes["sn"]))?           ((is_array($arrayAttributes["sn"]))?           $arrayAttributes["sn"][0] : $arrayAttributes["sn"]) : ""),
-                "sEmail"     => trim((isset($arrayAttributes[$keyMail]))?       ((is_array($arrayAttributes[$keyMail]))?       $arrayAttributes[$keyMail][0] : $arrayAttributes[$keyMail]) : ""),
-                "sDN"        => trim($arrayAttributes["dn"]),
-                "sManagerDN" => trim((isset($arrayAttributes["manager"]))?      ((is_array($arrayAttributes["manager"]))?      $arrayAttributes["manager"][0] : $arrayAttributes["manager"]) : "")
+                "sUsername" => trim((is_array($username)) ? $username[0] : $username),
+                "sPassword" => trim((isset($arrayAttributes["userpassword"])) ? ((is_array($arrayAttributes["userpassword"])) ? $arrayAttributes["userpassword"][0] : $arrayAttributes["userpassword"]) : ""),
+                "sFullname" => trim((isset($arrayAttributes["cn"])) ? ((is_array($arrayAttributes["cn"])) ? $arrayAttributes["cn"][0] : $arrayAttributes["cn"]) : ""),
+                "sFirstname" => trim((isset($arrayAttributes["givenname"])) ? ((is_array($arrayAttributes["givenname"])) ? $arrayAttributes["givenname"][0] : $arrayAttributes["givenname"]) : ""),
+                "sLastname" => trim((isset($arrayAttributes["sn"])) ? ((is_array($arrayAttributes["sn"])) ? $arrayAttributes["sn"][0] : $arrayAttributes["sn"]) : ""),
+                "sEmail" => trim((isset($arrayAttributes[$keyMail])) ? ((is_array($arrayAttributes[$keyMail])) ? $arrayAttributes[$keyMail][0] : $arrayAttributes[$keyMail]) : ""),
+                "sDN" => trim($arrayAttributes["dn"]),
+                "sManagerDN" => trim((isset($arrayAttributes["manager"])) ? ((is_array($arrayAttributes["manager"])) ? $arrayAttributes["manager"][0] : $arrayAttributes["manager"]) : "")
             );
         } catch (Exception $e) {
             throw $e;
@@ -1247,7 +1230,7 @@ class LdapAdvanced
         $countUser = 0;
 
         $keyword = trim(trim($keyword), "*");
-        $keyword = ($keyword != "")? "*$keyword*" : "*";
+        $keyword = ($keyword != "") ? "*$keyword*" : "*";
 
         $paged = !is_null($start) && !is_null($limit);
 
@@ -1261,8 +1244,7 @@ class LdapAdvanced
         $attributeUserSet = array();
         $attributeSetAdd = array();
 
-        if (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"])
-            && !empty($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"])
+        if (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"]) && !empty($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"])
         ) {
             foreach ($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"] as $value) {
                 $attributeSetAdd[] = $value['attributeLdap'];
@@ -1281,11 +1263,11 @@ class LdapAdvanced
             $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"] = "";
         }
 
-        $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]))? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
+        $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"])) ? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
 
         $filterUsers = trim($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"]);
 
-        $filter = ($filterUsers != "")? $filterUsers : "(" . $this->arrayObjectClassFilter["user"] . ")";
+        $filter = ($filterUsers != "") ? $filterUsers : "(" . $this->arrayObjectClassFilter["user"] . ")";
         $filter = "(&$filter(|(dn=$keyword)(uid=$keyword)(samaccountname=$keyword)(givenname=$keyword)(sn=$keyword)(cn=$keyword)(mail=$keyword)(userprincipalname=$keyword)))";
 
         $oSearch = @ldap_search($ldapcnn, $arrayAuthenticationSourceData["AUTH_SOURCE_BASE_DN"], $filter, array_merge($this->arrayAttributesForUser, $attributeSetAdd));
@@ -1300,49 +1282,49 @@ class LdapAdvanced
                 if ($entries > 0) {
                     $oEntry = ldap_first_entry($ldapcnn, $oSearch);
 
-                    $countEntries=0;
+                    $countEntries = 0;
 
                     $flagNextRecord = true;
 
                     do {
                         $aAttr = $this->ldapGetAttributes($ldapcnn, $oEntry);
-                        $sUsername = (isset($aAttr[$uidUserIdentifier]))? $aAttr[$uidUserIdentifier] : "";
+                        $sUsername = (isset($aAttr[$uidUserIdentifier])) ? $aAttr[$uidUserIdentifier] : "";
 
                         if ((is_array($sUsername) && !empty($sUsername)) || trim($sUsername) != "") {
                             $countUser++;
 
-                            /*Active Directory userAccountControl Values
-                            Normal Day to Day Values:
-                            512 - Enable Account
-                            514 - Disable account
-                            544 - Account Enabled - Require user to change password at first logon
-                            4096 - Workstation/server
-                            66048 - Enabled, password never expires
-                            66050 - Disabled, password never expires
-                            262656 - Smart Card Logon Required
-                            532480 - Domain controller
-                            1 - script
-                            2 - accountdisable
-                            8 - homedir_required
-                            16 - lockout
-                            32 - passwd_notreqd
-                            64 - passwd_cant_change
-                            128 - encrypted_text_pwd_allowed
-                            256 - temp_duplicate_account
-                            512 - normal_account
-                            2048 - interdomain_trust_account
-                            4096 - workstation_trust_account
-                            8192 - server_trust_account
-                            65536 - dont_expire_password
-                            131072 - mns_logon_account
-                            262144 - smartcard_required
-                            524288 - trusted_for_delegation
-                            1048576 - not_delegated
-                            2097152 - use_des_key_only
-                            4194304 - dont_req_preauth
-                            8388608 - password_expired
-                            16777216 - trusted_to_auth_for_delegation
-                            */
+                            /* Active Directory userAccountControl Values
+                              Normal Day to Day Values:
+                              512 - Enable Account
+                              514 - Disable account
+                              544 - Account Enabled - Require user to change password at first logon
+                              4096 - Workstation/server
+                              66048 - Enabled, password never expires
+                              66050 - Disabled, password never expires
+                              262656 - Smart Card Logon Required
+                              532480 - Domain controller
+                              1 - script
+                              2 - accountdisable
+                              8 - homedir_required
+                              16 - lockout
+                              32 - passwd_notreqd
+                              64 - passwd_cant_change
+                              128 - encrypted_text_pwd_allowed
+                              256 - temp_duplicate_account
+                              512 - normal_account
+                              2048 - interdomain_trust_account
+                              4096 - workstation_trust_account
+                              8192 - server_trust_account
+                              65536 - dont_expire_password
+                              131072 - mns_logon_account
+                              262144 - smartcard_required
+                              524288 - trusted_for_delegation
+                              1048576 - not_delegated
+                              2097152 - use_des_key_only
+                              4194304 - dont_req_preauth
+                              8388608 - password_expired
+                              16777216 - trusted_to_auth_for_delegation
+                             */
                             $userCountControl = '';
                             //Active Directory, openLdap
                             if (isset($aAttr['useraccountcontrol'])) {
@@ -1373,8 +1355,8 @@ class LdapAdvanced
                             foreach ($attributeUserSet as $key => $value) {
                                 if ($key == 'USR_STATUS') {
                                     $aUserAttributes[$key] = ($userCountControl != '') ? $userCountControl : 'ACTIVE';
-                                } elseif (isset($aAttr[ $value ])) {
-                                    $aUserAttributes[$key] = $aAttr[ $value ];
+                                } elseif (isset($aAttr[$value])) {
+                                    $aUserAttributes[$key] = $aAttr[$value];
                                 }
                             }
 
@@ -1396,18 +1378,18 @@ class LdapAdvanced
                 }
             }
             /*
-            $sUsers = "found $countEntries users: ";
+              $sUsers = "found $countEntries users: ";
 
-            foreach ($aUsers as $key => $val) {
-                $sUsers .= $val['sUsername'] . ' ';
-            }
+              foreach ($aUsers as $key => $val) {
+              $sUsers .= $val['sUsername'] . ' ';
+              }
 
-            $this->log($ldapcnn, $sUsers);
-            */
+              $this->log($ldapcnn, $sUsers);
+             */
         }
 
         //Return
-        return ($paged)? array("numRecTotal" => $totalUser, "data" => $arrayUser) : $arrayUser;
+        return ($paged) ? array("numRecTotal" => $totalUser, "data" => $arrayUser) : $arrayUser;
     }
 
     /**
@@ -1442,8 +1424,7 @@ class LdapAdvanced
             $attributeUserSet = array();
             $attributeSetAdd = array();
 
-            if (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"])
-                && !empty($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"])
+            if (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"]) && !empty($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"])
             ) {
                 foreach ($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"] as $value) {
                     $attributeSetAdd[] = $value["attributeLdap"];
@@ -1451,7 +1432,7 @@ class LdapAdvanced
                 }
             }
 
-            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]))? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
+            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"])) ? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
 
             $filter2 = "";
 
@@ -1474,7 +1455,7 @@ class LdapAdvanced
 
                         $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
-                        $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : "";
+                        $username = (isset($arrayUserLdap[$uidUserIdentifier])) ? $arrayUserLdap[$uidUserIdentifier] : "";
 
                         if ((is_array($username) && !empty($username)) || trim($username) != "") {
                             $userCountControl = "";
@@ -1510,7 +1491,7 @@ class LdapAdvanced
 
                             foreach ($attributeUserSet as $key => $value) {
                                 if ($key == "USR_STATUS") {
-                                    $aUserAttributes[$key] = ($userCountControl != "")? $userCountControl : "ACTIVE";
+                                    $aUserAttributes[$key] = ($userCountControl != "") ? $userCountControl : "ACTIVE";
                                 } else {
                                     if (isset($arrayUserLdap[$value])) {
                                         $aUserAttributes[$key] = $arrayUserLdap[$value];
@@ -1552,7 +1533,7 @@ class LdapAdvanced
                 $res = 1;
             }
 
-            if ($res == 0 &&  $this->VerifyLogin($user['sDN'], $strPass) === true) {
+            if ($res == 0 && $this->VerifyLogin($user['sDN'], $strPass) === true) {
                 $res = 1;
             }
         } else {
@@ -1568,20 +1549,20 @@ class LdapAdvanced
             }
 
             $aData = array();
-            $aData['USR_USERNAME']     = $user['sUsername'];
-            $aData["USR_PASSWORD"]     = "00000000000000000000000000000000";
-            $aData['USR_FIRSTNAME']    = $user['sFirstname'];
-            $aData['USR_LASTNAME']     = $user['sLastname'];
-            $aData['USR_EMAIL']        = $user['sEmail'];
-            $aData['USR_DUE_DATE']     = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
-            $aData['USR_CREATE_DATE']  = date('Y-m-d H:i:s');
-            $aData['USR_UPDATE_DATE']  = date('Y-m-d H:i:s');
-            $aData['USR_BIRTHDAY']     = date('Y-m-d');
-            $aData['USR_STATUS']       = (isset($user['USR_STATUS'])) ? (($user['USR_STATUS'] == 'ACTIVE') ? 1 : 0) : 1;
-            $aData['USR_AUTH_TYPE']    = strtolower($aAuthSource['AUTH_SOURCE_PROVIDER']);
-            $aData['UID_AUTH_SOURCE']  = $aAuthSource['AUTH_SOURCE_UID'];
+            $aData['USR_USERNAME'] = $user['sUsername'];
+            $aData["USR_PASSWORD"] = "00000000000000000000000000000000";
+            $aData['USR_FIRSTNAME'] = $user['sFirstname'];
+            $aData['USR_LASTNAME'] = $user['sLastname'];
+            $aData['USR_EMAIL'] = $user['sEmail'];
+            $aData['USR_DUE_DATE'] = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
+            $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
+            $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $aData['USR_BIRTHDAY'] = date('Y-m-d');
+            $aData['USR_STATUS'] = (isset($user['USR_STATUS'])) ? (($user['USR_STATUS'] == 'ACTIVE') ? 1 : 0) : 1;
+            $aData['USR_AUTH_TYPE'] = strtolower($aAuthSource['AUTH_SOURCE_PROVIDER']);
+            $aData['UID_AUTH_SOURCE'] = $aAuthSource['AUTH_SOURCE_UID'];
             $aData['USR_AUTH_USER_DN'] = $user['sDN'];
-            $aData['USR_ROLE']         = 'PROCESSMAKER_OPERATOR';
+            $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
 
             if (!empty($aAttributes)) {
                 foreach ($aAttributes as $value) {
@@ -1589,7 +1570,7 @@ class LdapAdvanced
                         $aData[$value['attributeUser']] = str_replace("*", "'", $user[$value['attributeUser']]);
                         if ($value['attributeUser'] == 'USR_STATUS') {
                             $evalValue = $aData[$value['attributeUser']];
-                            $statusValue = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] :'ACTIVE';
+                            $statusValue = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] : 'ACTIVE';
                             $aData[$value['attributeUser']] = $statusValue;
                         }
                     }
@@ -1597,7 +1578,7 @@ class LdapAdvanced
             }
 
             //req - accountexpires
-            if (isset($user["USR_DUE_DATE"]) && $user["USR_DUE_DATE"]!='') {
+            if (isset($user["USR_DUE_DATE"]) && $user["USR_DUE_DATE"] != '') {
                 $aData["USR_DUE_DATE"] = $this->convertDateADtoPM($user["USR_DUE_DATE"]);
             }
             //end
@@ -1608,7 +1589,7 @@ class LdapAdvanced
             require_once 'classes/model/Users.php';
 
             $oUser = new Users();
-            $aData['USR_STATUS']       = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] : 'ACTIVE';
+            $aData['USR_STATUS'] = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] : 'ACTIVE';
             $oUser->create($aData);
             $this->log(null, "Automatic Register for user $strUser ");
             $res = 1;
@@ -1667,10 +1648,10 @@ class LdapAdvanced
                         //The first node is root
                         if (empty($arrayDepartment)) {
                             $arrayDepartment[] = [
-                                'dn'     => $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
+                                'dn' => $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
                                 'parent' => '',
-                                'ou'     => 'ROOT',
-                                'users'  => 0
+                                'ou' => 'ROOT',
+                                'users' => 0
                             ];
                         }
 
@@ -1692,10 +1673,10 @@ class LdapAdvanced
 
                                 if (isset($arrayEntryData['ou']) && !is_array($arrayEntryData['ou'])) {
                                     $arrayDepartment[] = [
-                                        'dn'     => $arrayEntryData['dn'],
-                                        'parent' => (isset($unitsEqual[1]))? implode(',', $unitsEqual) : '',
-                                        'ou'     => trim($arrayEntryData['ou']),
-                                        'users'  => 0
+                                        'dn' => $arrayEntryData['dn'],
+                                        'parent' => (isset($unitsEqual[1])) ? implode(',', $unitsEqual) : '',
+                                        'ou' => trim($arrayEntryData['ou']),
+                                        'users' => 0
                                     ];
                                 }
                             } while ($entry = ldap_next_entry($ldapcnn, $entry));
@@ -1714,7 +1695,7 @@ class LdapAdvanced
                 $str .= ' ' . $dep['ou'];
             }
 
-            $this->log($ldapcnn, 'found '. count($arrayDepartment) . ' departments: ' . $str);
+            $this->log($ldapcnn, 'found ' . count($arrayDepartment) . ' departments: ' . $str);
 
             //Return
             return $arrayDepartment;
@@ -1842,18 +1823,18 @@ class LdapAdvanced
 
         return $terminated;
     }
-
     /* activate an user previously deactivated
       if user is now in another department, we need the second parameter, the depUid
 
       @param string $userUid
       @param string optional department DN
       @param string optional DepUid
-    */
+     */
+
     public function activateUser($userUid, $userDn = null, $depUid = null)
     {
         if (!class_exists('RbacUsers')) {
-            require_once(PATH_RBAC.'model/RbacUsers.php');
+            require_once(PATH_RBAC . 'model/RbacUsers.php');
         }
 
         $con = Propel::getConnection(RbacUsersPeer::DATABASE_NAME);
@@ -1893,7 +1874,7 @@ class LdapAdvanced
     public function deactivateUser($userUid)
     {
         if (!class_exists('RbacUsers')) {
-            require_once(PATH_RBAC.'model/RbacUsers.php');
+            require_once(PATH_RBAC . 'model/RbacUsers.php');
         }
 
         $con = Propel::getConnection(RbacUsersPeer::DATABASE_NAME);
@@ -1924,11 +1905,11 @@ class LdapAdvanced
 
     public function getTerminatedOu()
     {
-        if (trim($this->sAuthSource)!='') {
+        if (trim($this->sAuthSource) != '') {
             $rbac = &RBAC::getSingleton();
             $aAuthSource = $rbac->authSourcesObj->load($this->sAuthSource);
             $attributes = $aAuthSource['AUTH_SOURCE_DATA'];
-            $this->sTerminatedOu = isset($attributes['AUTH_SOURCE_RETIRED_OU'])?$attributes['AUTH_SOURCE_RETIRED_OU']:'';
+            $this->sTerminatedOu = isset($attributes['AUTH_SOURCE_RETIRED_OU']) ? $attributes['AUTH_SOURCE_RETIRED_OU'] : '';
         }
 
         return $this->sTerminatedOu;
@@ -1940,10 +1921,10 @@ class LdapAdvanced
       returns only AUTH_SOURCE_PROVIDER = ldapAdvanced
 
       @return array with authsources with type = ldap
-    */
+     */
     public function getAuthSources()
     {
-        require_once(PATH_RBAC.'model/AuthenticationSource.php');
+        require_once(PATH_RBAC . 'model/AuthenticationSource.php');
 
         $oCriteria = new Criteria('rbac');
         $aAuthSources = array();
@@ -1957,7 +1938,7 @@ class LdapAdvanced
             $aRow = $oDataset->getRow();
 
             if ($aRow['AUTH_SOURCE_PROVIDER'] == 'ldapAdvanced') {
-                $aRow["AUTH_SOURCE_DATA"] = ($aRow["AUTH_SOURCE_DATA"] != "")? unserialize($aRow["AUTH_SOURCE_DATA"]) : array();
+                $aRow["AUTH_SOURCE_DATA"] = ($aRow["AUTH_SOURCE_DATA"] != "") ? unserialize($aRow["AUTH_SOURCE_DATA"]) : array();
 
                 $aAuthSources[] = $aRow;
             }
@@ -1976,7 +1957,7 @@ class LdapAdvanced
 
       @param array departments obtained from LDAP/Active Directory
       @param array of departments, first call have only top level departments
-    */
+     */
     public function getRegisteredDepartments(array $arrayLdapDepartment, array $arrayDbDepartment)
     {
         $aResult = array();
@@ -2019,9 +2000,9 @@ class LdapAdvanced
     }
 
     /**
-     select departments but it is not recursive, only returns departments in this level
-     @param string $DepParent the DEP_UID for parent department
-    */
+      select departments but it is not recursive, only returns departments in this level
+      @param string $DepParent the DEP_UID for parent department
+     */
     public function getDepartments($DepParent)
     {
         try {
@@ -2037,13 +2018,13 @@ class LdapAdvanced
 
             foreach ($objects as $oDepartment) {
                 $node = array();
-                $node['DEP_UID']      = $oDepartment->getDepUid();
-                $node['DEP_PARENT']   = $oDepartment->getDepParent();
-                $node['DEP_TITLE']    = stripslashes($oDepartment->getDepTitle());
-                $node['DEP_STATUS']   = $oDepartment->getDepStatus();
-                $node['DEP_MANAGER']  = $oDepartment->getDepManager();
-                $node['DEP_LDAP_DN']  = $oDepartment->getDepLdapDn();
-                $node['DEP_LAST']     = 0;
+                $node['DEP_UID'] = $oDepartment->getDepUid();
+                $node['DEP_PARENT'] = $oDepartment->getDepParent();
+                $node['DEP_TITLE'] = stripslashes($oDepartment->getDepTitle());
+                $node['DEP_STATUS'] = $oDepartment->getDepStatus();
+                $node['DEP_MANAGER'] = $oDepartment->getDepManager();
+                $node['DEP_LDAP_DN'] = $oDepartment->getDepLdapDn();
+                $node['DEP_LAST'] = 0;
 
                 $criteriaCount = new Criteria('workflow');
                 $criteriaCount->clearSelectColumns();
@@ -2057,7 +2038,7 @@ class LdapAdvanced
             }
 
             if (count($result) >= 1) {
-                $result[ count($result) -1 ]['DEP_LAST'] = 1;
+                $result[count($result) - 1]['DEP_LAST'] = 1;
             }
 
             return $result;
@@ -2072,7 +2053,7 @@ class LdapAdvanced
 
       @param string department UID ( DEP_UID value )
       @return array of users
-    */
+     */
     public function getUserFromPM($username)
     {
         try {
@@ -2103,12 +2084,12 @@ class LdapAdvanced
 
       @param array authSource row, in this fuction we are validating if Removed OU is defined or not
       @return array of users
-    */
+     */
     public function getUsersFromRemovedOu($aAuthSource)
     {
         $aUsers = array(); //empty array is the default result
         $attributes = $aAuthSource["AUTH_SOURCE_DATA"];
-        $this->sTerminatedOu = isset($attributes['AUTH_SOURCE_RETIRED_OU'])? trim($attributes['AUTH_SOURCE_RETIRED_OU']) : '';
+        $this->sTerminatedOu = isset($attributes['AUTH_SOURCE_RETIRED_OU']) ? trim($attributes['AUTH_SOURCE_RETIRED_OU']) : '';
 
         if ($this->sTerminatedOu == '') {
             return $aUsers;
@@ -2124,11 +2105,11 @@ class LdapAdvanced
 
       @param array authSource row, in this fuction we are validating if Removed OU is defined or not
       @return array of users
-    */
+     */
     public function deactiveArrayOfUsers($aUsers)
     {
         if (!class_exists('RbacUsers')) {
-            require_once(PATH_RBAC.'model/RbacUsers.php');
+            require_once(PATH_RBAC . 'model/RbacUsers.php');
         }
 
         if (!class_exists('Users')) {
@@ -2173,7 +2154,7 @@ class LdapAdvanced
       @param array $aUser info taken from ldap
       @param string $depUid the department UID
       @return boolean
-    */
+     */
     public function createUserAndActivate($aUser, $depUid)
     {
         $rbac = &RBAC::getSingleton();
@@ -2190,34 +2171,34 @@ class LdapAdvanced
             $rbac->usersRolesObj = new UsersRoles();
         }
 
-        $sUsername  = $aUser['sUsername'];
-        $sFullname  = $aUser['sFullname'];
+        $sUsername = $aUser['sUsername'];
+        $sFullname = $aUser['sFullname'];
         $sFirstname = $aUser['sFirstname'];
-        $sLastname  = $aUser['sLastname'];
-        $sEmail     = $aUser['sEmail'];
-        $sDn        = $aUser['sDN'];
+        $sLastname = $aUser['sLastname'];
+        $sEmail = $aUser['sEmail'];
+        $sDn = $aUser['sDN'];
 
         $aData = array();
-        $aData['USR_USERNAME']     = $sUsername;
-        $aData["USR_PASSWORD"]     = "00000000000000000000000000000000";
-        $aData['USR_FIRSTNAME']    = $sFirstname;
-        $aData['USR_LASTNAME']     = $sLastname;
-        $aData['USR_EMAIL']        = $sEmail;
-        $aData['USR_DUE_DATE']     = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
-        $aData['USR_CREATE_DATE']  = date('Y-m-d H:i:s');
-        $aData['USR_UPDATE_DATE']  = date('Y-m-d H:i:s');
-        $aData['USR_BIRTHDAY']     = date('Y-m-d');
-        $aData['USR_STATUS']       = 1;
-        $aData['USR_AUTH_TYPE']    = 'ldapadvanced';
-        $aData['UID_AUTH_SOURCE']  = $this->sAuthSource;
+        $aData['USR_USERNAME'] = $sUsername;
+        $aData["USR_PASSWORD"] = "00000000000000000000000000000000";
+        $aData['USR_FIRSTNAME'] = $sFirstname;
+        $aData['USR_LASTNAME'] = $sLastname;
+        $aData['USR_EMAIL'] = $sEmail;
+        $aData['USR_DUE_DATE'] = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
+        $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
+        $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+        $aData['USR_BIRTHDAY'] = date('Y-m-d');
+        $aData['USR_STATUS'] = 1;
+        $aData['USR_AUTH_TYPE'] = 'ldapadvanced';
+        $aData['UID_AUTH_SOURCE'] = $this->sAuthSource;
         $aData['USR_AUTH_USER_DN'] = $sDn;
 
         $sUserUID = $rbac->createUser($aData, "PROCESSMAKER_OPERATOR");
 
-        $aData['USR_STATUS']       = 'ACTIVE';
-        $aData['USR_UID']          = $sUserUID;
-        $aData['DEP_UID']          = $depUid;
-        $aData['USR_ROLE']         = 'PROCESSMAKER_OPERATOR';
+        $aData['USR_STATUS'] = 'ACTIVE';
+        $aData['USR_UID'] = $sUserUID;
+        $aData['DEP_UID'] = $depUid;
+        $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
 
         require_once 'classes/model/Users.php';
 
@@ -2322,8 +2303,8 @@ class LdapAdvanced
 
                                 if (isset($arrayEntryData['cn']) && !is_array($arrayEntryData['cn'])) {
                                     $arrayGroup[] = [
-                                        'dn'    => $arrayEntryData['dn'],
-                                        'cn'    => trim($arrayEntryData['cn']),
+                                        'dn' => $arrayEntryData['dn'],
+                                        'cn' => trim($arrayEntryData['cn']),
                                         'users' => 0,
                                     ];
                                 }
@@ -2343,7 +2324,7 @@ class LdapAdvanced
                 $str .= ' ' . $group['cn'];
             }
 
-            $this->log($ldapcnn, 'found '. count($arrayGroup) . ' groups: ' . $str);
+            $this->log($ldapcnn, 'found ' . count($arrayGroup) . ' groups: ' . $str);
 
             //Return
             return $arrayGroup;
@@ -2357,7 +2338,6 @@ class LdapAdvanced
      * @param <type> $currentDN
      * @return <type>
      */
-
     public function getGrpUidIfExistsDN($currentDN)
     {
         try {
@@ -2415,8 +2395,8 @@ class LdapAdvanced
     }
 
     /**
-     select groups but it is not recursive, only returns groups in this level
-    */
+      select groups but it is not recursive, only returns groups in this level
+     */
     public function getGroups()
     {
         try {
@@ -2427,10 +2407,10 @@ class LdapAdvanced
 
             foreach ($objects as $oGroup) {
                 $node = array();
-                $node['GRP_UID']      = $oGroup->getGrpUid();
-                $node['GRP_TITLE']    = stripslashes($oGroup->getGrpTitle());
-                $node['GRP_STATUS']   = $oGroup->getGrpStatus();
-                $node['GRP_LDAP_DN']  = $oGroup->getGrpLdapDn();
+                $node['GRP_UID'] = $oGroup->getGrpUid();
+                $node['GRP_TITLE'] = stripslashes($oGroup->getGrpTitle());
+                $node['GRP_STATUS'] = $oGroup->getGrpStatus();
+                $node['GRP_LDAP_DN'] = $oGroup->getGrpLdapDn();
                 $result[] = $node;
             }
 
@@ -2450,7 +2430,7 @@ class LdapAdvanced
 
       @param array groups obtained from LDAP/Active Directory
       @param array of groups, first call have only top level groups
-    */
+     */
     public function getRegisteredGroups(array $arrayLdapGroup, array $arrayDbGroup)
     {
         $aResult = array();
@@ -2478,12 +2458,12 @@ class LdapAdvanced
     public function convertDateADtoPM($dateAD)
     {
         $unixTimestamp = ($dateAD / 10000000) - 11644560000;
-        $datePM  = date('Y-m-d', mktime(0, 0, 0, date('m'), '01', date('Y') + 2));//(date('Y') + 10)."-12-01";
-        if ($unixTimestamp >0) {
+        $datePM = date('Y-m-d', mktime(0, 0, 0, date('m'), '01', date('Y') + 2)); //(date('Y') + 10)."-12-01";
+        if ($unixTimestamp > 0) {
             $dateAux = date("Y-m-d", $unixTimestamp);
             $yearAux = date("Y", $unixTimestamp);
             if (strlen(trim($yearAux)) <= 4) {
-                $datePM  = $dateAux;
+                $datePM = $dateAux;
             }
         }
         return $datePM;
@@ -2531,7 +2511,7 @@ class LdapAdvanced
                 $userUid = $arrayUserData["USR_UID"];
                 $found = true;
 
-                $arrayData["already"]++;
+                $arrayData["already"] ++;
                 $arrayData["alreadyUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
             }
 
@@ -2539,7 +2519,6 @@ class LdapAdvanced
                 //If user DO NOT exists in this department.. do:
                 //If exists with another AuthSource -> impossible
                 //If exists in another department, but in PM and for this authsource, we need to move it
-
                 //$arrayNewUserData = $this->searchUserByUid($arrayUserLdap["sUsername"]);
                 $arrayNewUserData = $arrayUserLdap;
 
@@ -2560,7 +2539,7 @@ class LdapAdvanced
 
                         $this->activateUser($arrayUserData["USR_UID"], $arrayNewUserData["sDN"], $departmentUid);
 
-                        $arrayData["moved"]++;
+                        $arrayData["moved"] ++;
                         $arrayData["movedUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
 
                         $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Update User
@@ -2572,14 +2551,14 @@ class LdapAdvanced
                             //Impossible
                             $userUid = $arrayUserData["USR_UID"];
 
-                            $arrayData["impossible"]++;
+                            $arrayData["impossible"] ++;
                             $arrayData["impossibleUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
                         } else {
                             //User not exists
                             //Create User
                             $userUid = $this->createUserAndActivate($arrayNewUserData, $departmentUid);
 
-                            $arrayData["created"]++;
+                            $arrayData["created"] ++;
                             $arrayData["createdUsers"] .= $arrayNewUserData["sUsername"] . " ";
 
                             $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Add User
@@ -2638,7 +2617,7 @@ class LdapAdvanced
                 $userUid = $arrayUserData["USR_UID"];
                 $found = true;
 
-                $arrayData["already"]++;
+                $arrayData["already"] ++;
                 $arrayData["alreadyUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
             }
 
@@ -2646,7 +2625,6 @@ class LdapAdvanced
                 //If user DO NOT exists in this group.. do:
                 //If exists with another AuthSource -> impossible
                 //If exists in another group, but in PM and for this authsource, we need to move it
-
                 //$arrayNewUserData = $this->searchUserByUid($arrayUserLdap["sUsername"]);
                 $arrayNewUserData = $arrayUserLdap;
 
@@ -2661,7 +2639,7 @@ class LdapAdvanced
 
                     $group->addUserToGroup($groupUid, $userUid);
 
-                    $arrayData["moved"]++;
+                    $arrayData["moved"] ++;
                     $arrayData["movedUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
 
                     $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Update User
@@ -2673,7 +2651,7 @@ class LdapAdvanced
                         //Impossible
                         $userUid = $arrayUserData["USR_UID"];
 
-                        $arrayData["impossible"]++;
+                        $arrayData["impossible"] ++;
                         $arrayData["impossibleUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
                     } else {
                         //User not exists
@@ -2682,7 +2660,7 @@ class LdapAdvanced
 
                         $group->addUserToGroup($groupUid, $userUid);
 
-                        $arrayData["created"]++;
+                        $arrayData["created"] ++;
                         $arrayData["createdUsers"] .= $arrayNewUserData["sUsername"] . " ";
 
                         $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Add User
@@ -2738,13 +2716,13 @@ class LdapAdvanced
             $arrayAttributesToSync = [
                 //Default attributes to sync
                 'USR_FIRSTNAME' => 'givenname',
-                'USR_LASTNAME'  => 'sn',
-                'USR_EMAIL'     => 'mail',
-                'USR_STATUS'    => 'useraccountcontrol'
+                'USR_LASTNAME' => 'sn',
+                'USR_EMAIL' => 'mail',
+                'USR_STATUS' => 'useraccountcontrol'
             ];
 
             if (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE']) &&
-                !empty($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])
+                    !empty($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])
             ) {
                 foreach ($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'] as $value) {
                     $arrayAttributesToSync[$value['attributeUser']] = $value['attributeLdap'];
@@ -2752,8 +2730,8 @@ class LdapAdvanced
             }
 
             //Search User from LDAP Server
-            $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']))?
-                $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
+            $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'])) ?
+                    $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
 
             $arrayAttribute = array_merge($this->arrayAttributesForUser, array_values($arrayAttributesToSync));
 
@@ -2767,10 +2745,10 @@ class LdapAdvanced
 
                     $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
-                    $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : '';
+                    $username = (isset($arrayUserLdap[$uidUserIdentifier])) ? $arrayUserLdap[$uidUserIdentifier] : '';
 
                     if ((is_array($username) && !empty($username)) || trim($username) != '') {
-                        $username = trim((is_array($username))? $username[0] : $username);
+                        $username = trim((is_array($username)) ? $username[0] : $username);
 
                         if (isset($arrayUser[$username])) {
                             if (!isset($this->arrayUserUpdateChecked[$username])) {
@@ -2783,12 +2761,12 @@ class LdapAdvanced
                                     $attributeName = strtolower($value);
 
                                     if (isset($arrayUserLdap[$attributeName])) {
-                                        $ldapAttributeValue = trim((is_array($arrayUserLdap[$attributeName]))? $arrayUserLdap[$attributeName][0] : $arrayUserLdap[$attributeName]);
+                                        $ldapAttributeValue = trim((is_array($arrayUserLdap[$attributeName])) ? $arrayUserLdap[$attributeName][0] : $arrayUserLdap[$attributeName]);
 
                                         switch ($fieldName) {
                                             case 'USR_STATUS':
                                                 if ($attributeName == 'useraccountcontrol') {
-                                                    $ldapAttributeValue = (preg_match('/^(?:' . '512|544|66048|66080' . ')$/', $ldapAttributeValue))? (($arrayUser[$username][$fieldName] == 'VACATION')? 'VACATION' : 'ACTIVE') : 'INACTIVE';
+                                                    $ldapAttributeValue = (preg_match('/^(?:' . '512|544|66048|66080' . ')$/', $ldapAttributeValue)) ? (($arrayUser[$username][$fieldName] == 'VACATION') ? 'VACATION' : 'ACTIVE') : 'INACTIVE';
                                                 }
                                                 break;
                                             case 'USR_DUE_DATE':
@@ -2815,8 +2793,7 @@ class LdapAdvanced
                                 }
                             } else {
                                 $this->log(
-                                    $ldapcnn,
-                                    'User is repeated: Username "' . $username .'", DN "' . $arrayUserLdap['dn'] . '"'
+                                        $ldapcnn, 'User is repeated: Username "' . $username . '", DN "' . $arrayUserLdap['dn'] . '"'
                                 );
                             }
 
@@ -2845,12 +2822,9 @@ class LdapAdvanced
      * @return array
      */
     private function __ldapUsersUpdateData(
-        $ldapcnn,
-        array $arrayAuthSourceData,
-        $filterUsers,
-        array $arrayUserUid,
-        array $arrayData
-    ) {
+    $ldapcnn, array $arrayAuthSourceData, $filterUsers, array $arrayUserUid, array $arrayData
+    )
+    {
         try {
             $totalUser = $arrayData['totalUser'];
             $countUser = $arrayData['countUser'];
@@ -2887,15 +2861,14 @@ class LdapAdvanced
 
                     do {
                         if ($this->__ldapUserUpdateByDnAndData(
-                                $ldapcnn, $arrayAuthSourceData, ldap_get_dn($ldapcnn, $entry), $arrayUser
-                            )
+                                        $ldapcnn, $arrayAuthSourceData, ldap_get_dn($ldapcnn, $entry), $arrayUser
+                                )
                         ) {
                             $countUser++;
 
                             //Progress bar
                             $this->frontEndShow(
-                                'BAR',
-                                'Update Users data: ' . $countUser . '/' . $totalUser . ' ' . $this->progressBar($totalUser, $countUser)
+                                    'BAR', 'Update Users data: ' . $countUser . '/' . $totalUser . ' ' . $this->progressBar($totalUser, $countUser)
                             );
                         }
                     } while ($entry = ldap_next_entry($ldapcnn, $entry));
@@ -2939,7 +2912,7 @@ class LdapAdvanced
             $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
             $count = 0;
 
-            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]))? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
+            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"])) ? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
 
             $filterUsers = "";
             $arrayUserUid = array();
@@ -2954,7 +2927,7 @@ class LdapAdvanced
 
                 if ($count == $limit) {
                     list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
-                        $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
+                            $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
                     );
 
                     $count = 0;
@@ -2966,7 +2939,7 @@ class LdapAdvanced
 
             if ($count > 0) {
                 list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
-                    $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
+                        $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
                 );
             }
         } catch (Exception $e) {
@@ -3013,7 +2986,7 @@ class LdapAdvanced
                 $countEntries = ldap_count_entries($ldapcnn, $searchResult);
 
                 if ($countEntries > 0) {
-                    $limit = ($countEntries > $limit)? $limit : $countEntries;
+                    $limit = ($countEntries > $limit) ? $limit : $countEntries;
                 }
             }
 
