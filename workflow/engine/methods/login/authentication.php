@@ -293,10 +293,6 @@ try {
 
     unset($_SESSION['FAILED_LOGINS']);
 
-    // increment logins in heartbeat
-    $oServerConf =& ServerConf::getSingleton();
-    $oServerConf->sucessfulLogin();
-
     // Assign the uid of user to userloggedobj
     $RBAC->loadUserRolePermission($RBAC->sSystem, $uid);
     $res = $RBAC->userCanAccess('PM_LOGIN');
@@ -323,15 +319,6 @@ try {
     $aLog['USR_UID']            = $_SESSION['USER_LOGGED'];
     $weblog->create($aLog);
     /**end log**/
-
-    //************** background processes, here we are putting some back office routines **********
-    $heartBeatNWIDate = $oServerConf->getHeartbeatProperty('HB_NEXT_GWI_DATE','HEART_BEAT_CONF');
-    if (is_null($heartBeatNWIDate)) {
-        $heartBeatNWIDate = time();
-    }
-    if (time() >= $heartBeatNWIDate) {
-        $oServerConf->setHeartbeatProperty('HB_NEXT_GWI_DATE', strtotime('+1 day'), 'HEART_BEAT_CONF');
-    }
 
     //**** defining and saving server info, this file has the values of the global array $_SERVER ****
     //this file is useful for command line environment (no Browser), I mean for triggers, crons and other executed over command line
