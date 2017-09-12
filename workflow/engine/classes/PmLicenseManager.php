@@ -99,7 +99,7 @@ class PmLicenseManager
             } else {
                 $licInfoA = [];
             }
-            if ($licInfoA[SYS_SYS] != $resultsRegister) {
+            if (empty($licInfoA[SYS_SYS]) || ($licInfoA[SYS_SYS] != $resultsRegister)) {
                 $licInfoA[SYS_SYS] = $resultsRegister;
                 $oServerConf->setProperty('LICENSE_INFO', $licInfoA);
             }
