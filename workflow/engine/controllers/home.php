@@ -544,7 +544,9 @@ class Home extends Controller
                 $cases['data'][$i]['APP_DEL_PREVIOUS_USER'] = ucwords( $row['APP_DEL_PREVIOUS_USER'] );
             }
             // Completting with Notes
-            $notes = $appNotes->getNotesList( $row['APP_UID'], '', $notesStart, $notesLimit );
+            $notes = $appNotes->getNotesList($row['APP_UID'], '', $notesStart, $notesLimit);
+            $notes = AppNotes::applyHtmlentitiesInNotes($notes);
+
             $notes = $notes['array'];
 
             $cases['data'][$i]['NOTES_COUNT'] = $notes['totalCount'];
