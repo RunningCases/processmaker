@@ -748,6 +748,7 @@ class headPublisher
      */
     public function getExtJsViewState()
     {
+        $json = new stdClass();
         $views = array();
         $keyState = "extJsViewState";
         $prefixExtJs = "ys-";
@@ -772,7 +773,9 @@ class headPublisher
                 $views[$key] = $value[1];
             }
         }
-        $oServerConf->setProperty($keyState, G::json_encode($views));
+        if ((array)$json != $views) {
+            $oServerConf->setProperty($keyState, G::json_encode($views));
+        }
         return $views;
     }
 
