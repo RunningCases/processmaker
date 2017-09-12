@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Cache;
  * class.pmLicenseManager.php
  *
  */
-
 class PmLicenseManager
 {
     const CACHE_KEY = 'license';
@@ -17,20 +16,13 @@ class PmLicenseManager
     public function __construct($flagActivatePlugins = true)
     {
         $oServerConf = &ServerConf::getSingleton();
-        $oServerConf->setProperty('LOGIN_NO_WS', true);
 
-        //to do: this files probably needs to be in core, since they are GPL2
-        //include_once (PATH_PLUGINS . 'enterprise' . PATH_SEP . 'classes' . PATH_SEP . 'class.license.lib.php');
-        //include_once (PATH_PLUGINS . 'enterprise' . PATH_SEP . 'classes' . PATH_SEP . 'class.license.app.php');
-
+        if ($oServerConf->getProperty('LOGIN_NO_WS') === null || $oServerConf->getProperty('LOGIN_NO_WS') === false) {
+            $oServerConf->setProperty('LOGIN_NO_WS', true);
+        }
 
         //searching .dat files in workspace folder
         $server_array = $_SERVER;
-        $licfile = glob(PATH_DATA_SITE . "*.dat");
-
-        if (count($licfile) > 0 && is_file($licfile[0])) {
-            $oServerConf->setProperty('ACTIVE_LICENSE', array(SYS_SYS => ""));
-        }
 
         $activeLicenseSetting = $oServerConf->getProperty('ACTIVE_LICENSE');
 
@@ -38,7 +30,7 @@ class PmLicenseManager
             $licenseFile = $activeLicenseSetting[SYS_SYS];
         } else {
             $activeLicense = $this->getActiveLicense();
-            $oServerConf->setProperty('ACTIVE_LICENSE', array(SYS_SYS => $activeLicense ['LICENSE_PATH']));
+            $oServerConf->setProperty('ACTIVE_LICENSE', [SYS_SYS => $activeLicense['LICENSE_PATH']]);
             $licenseFile = $activeLicense['LICENSE_PATH'];
         }
 
@@ -46,45 +38,46 @@ class PmLicenseManager
         $application->set_server_vars($server_array);
         $application->DATE_STRING = 'Y-m-d H:i:s';
         $results = $application->validate();
-        $validStatus = array(
-          'OK',
-          'EXPIRED',
-          'TMINUS'
-        );
+        $validStatus = [
+            'OK',
+            'EXPIRED',
+            'TMINUS'
+        ];
 
         $this->result = $results['RESULT'];
-        $this->features = array();
-        $this->licensedfeatures = array();
-        $this->licensedfeaturesList = array();
+        $this->features = [];
+        $this->licensedfeatures = [];
+        $this->licensedfeaturesList = [];
         if (in_array($this->result, $validStatus)) {
-            $this->serial="3ptta7Xko2prrptrZnSd356aqmPXvMrayNPFj6CLdaR1pWtrW6qPw9jV0OHjxrDGu8LVxtmSm9nP5kR23HRpdZWccpeui+bKkK°DoqCt2Kqgpq6Vg37s";
-            $info['FIRST_NAME']       = $results['DATA']['FIRST_NAME'];
-            $info['LAST_NAME']        = $results['DATA']['LAST_NAME'];
+            $this->serial = "3ptta7Xko2prrptrZnSd356aqmPXvMrayNPFj6CLdaR1pWtrW6qPw9jV0OHjxrDGu8LVxtmSm9nP5kR23HRpdZWccpeui+bKkK°DoqCt2Kqgpq6Vg37s";
+            $info = [];
+            $info['FIRST_NAME'] = $results['DATA']['FIRST_NAME'];
+            $info['LAST_NAME'] = $results['DATA']['LAST_NAME'];
             $info['DOMAIN_WORKSPACE'] = $results['DATA']['DOMAIN_WORKSPACE'];
-            $this->date     = $results ['DATE'];
-            $this->info     = $info;
-            $this->type     = $results ['DATA']['TYPE'];
-            $this->plan     = isset($results ['DATA']['PLAN'])?$results ['DATA']['PLAN']:"";
-            $this->id       = $results ['ID'];
-            $this->expireIn = $this->getExpireIn ();
-            $this->features = $this->result!='TMINUS'?isset($results ['DATA']['CUSTOMER_PLUGIN'])? $results ['DATA']['CUSTOMER_PLUGIN'] : $this->getActiveFeatures() : array();
-            $this->licensedfeatures = $this->result != 'TMINUS' ? (isset($results ['DATA']['CUSTOMER_LICENSED_FEATURES']) && is_array($results ['DATA']['CUSTOMER_LICENSED_FEATURES'])) ? $results ['DATA']['CUSTOMER_LICENSED_FEATURES'] : array() : array();
-            $this->licensedfeaturesList = isset($results ['DATA']['LICENSED_FEATURES_LIST'])? $results ['DATA']['LICENSED_FEATURES_LIST'] : null;
-            $this->status   = $this->getCurrentLicenseStatus ();
+            $this->date = $results ['DATE'];
+            $this->info = $info;
+            $this->type = $results ['DATA']['TYPE'];
+            $this->plan = isset($results ['DATA']['PLAN']) ? $results ['DATA']['PLAN'] : "";
+            $this->id = $results ['ID'];
+            $this->expireIn = $this->getExpireIn();
+            $this->features = $this->result != 'TMINUS' ? isset($results ['DATA']['CUSTOMER_PLUGIN']) ? $results ['DATA']['CUSTOMER_PLUGIN'] : $this->getActiveFeatures() : [];
+            $this->licensedfeatures = $this->result != 'TMINUS' ? (isset($results ['DATA']['CUSTOMER_LICENSED_FEATURES']) && is_array($results ['DATA']['CUSTOMER_LICENSED_FEATURES'])) ? $results ['DATA']['CUSTOMER_LICENSED_FEATURES'] : [] : [];
+            $this->licensedfeaturesList = isset($results ['DATA']['LICENSED_FEATURES_LIST']) ? $results ['DATA']['LICENSED_FEATURES_LIST'] : null;
+            $this->status = $this->getCurrentLicenseStatus();
 
-            if (isset ( $results ['LIC'] )) {
+            if (isset ($results ['LIC'])) {
                 $resultsRegister = $results['LIC'];
-                $this->server    = $results['LIC']['SRV'];
-                $this->file      = $results['LIC']['FILE'];
+                $this->server = $results['LIC']['SRV'];
+                $this->file = $results['LIC']['FILE'];
                 $this->workspace = isset($results['LIC']['WORKSPACE']) ? $results['LIC']['WORKSPACE'] : 'pmLicenseSrv';
-                $this->licenseSerial      = (isset($results['LIC']['SERIAL']))              ? $results['LIC']['SERIAL']                 : '';
-                $this->supportStartDate   = (isset($results['DATA']['SUPPORT_START_DATE'])) ? $results['DATA']['SUPPORT_START_DATE']    : '';
-                $this->supportEndDate     = (isset($results['DATA']['SUPPORT_END_DATE']))   ? $results['DATA']['SUPPORT_END_DATE']      : '';
+                $this->licenseSerial = (isset($results['LIC']['SERIAL'])) ? $results['LIC']['SERIAL'] : '';
+                $this->supportStartDate = (isset($results['DATA']['SUPPORT_START_DATE'])) ? $results['DATA']['SUPPORT_START_DATE'] : '';
+                $this->supportEndDate = (isset($results['DATA']['SUPPORT_END_DATE'])) ? $results['DATA']['SUPPORT_END_DATE'] : '';
                 $this->supportStartDate = date("Y-m-d H:i:s", strtotime($this->supportStartDate));
                 $this->supportEndDate = date("Y-m-d H:i:s", strtotime($this->supportEndDate));
 
                 $conf = new Configurations();
-                if ( defined('SYS_SYS') && $conf->exists("ENVIRONMENT_SETTINGS")) {
+                if (defined('SYS_SYS') && $conf->exists("ENVIRONMENT_SETTINGS")) {
                     $this->supportStartDate = $conf->getSystemDate($this->supportStartDate);
                     $this->supportEndDate = $conf->getSystemDate($this->supportEndDate);
                 } else {
@@ -92,8 +85,8 @@ class PmLicenseManager
                     $this->supportEndDate = G::getformatedDate($this->supportEndDate, 'M d, yyyy', SYS_LANG);
                 }
             } else {
-                $resultsRegister=array();
-                $resultsRegister['ID']=$results ['DATA'] ['DOMAIN_WORKSPACE'];
+                $resultsRegister = [];
+                $resultsRegister['ID'] = $results['DATA']['DOMAIN_WORKSPACE'];
                 $this->server = null;
                 $this->file = null;
             }
@@ -101,13 +94,15 @@ class PmLicenseManager
             $resultsRegister['date'] = $results ['DATE'];
             $resultsRegister['info'] = $info;
             $resultsRegister['type'] = $results ['DATA'] ['TYPE'];
-            if ($oServerConf->getProperty ( 'LICENSE_INFO')) {
-                $licInfoA = $oServerConf->getProperty ( 'LICENSE_INFO');
+            if ($oServerConf->getProperty('LICENSE_INFO')) {
+                $licInfoA = $oServerConf->getProperty('LICENSE_INFO');
             } else {
-                $licInfoA = array();
+                $licInfoA = [];
             }
-            $licInfoA[SYS_SYS]=$resultsRegister;
-            $oServerConf->setProperty ( 'LICENSE_INFO', $licInfoA );
+            if (empty($licInfoA[SYS_SYS]) || ($licInfoA[SYS_SYS] != $resultsRegister)) {
+                $licInfoA[SYS_SYS] = $resultsRegister;
+                $oServerConf->setProperty('LICENSE_INFO', $licInfoA);
+            }
         }
 
         if ($flagActivatePlugins) {
@@ -125,23 +120,23 @@ class PmLicenseManager
 
     public function serializeInstance()
     {
-        return serialize ( self::$instance );
+        return serialize(self::$instance);
     }
 
     public function activateFeatures()
     {
         //Get a list of all Enterprise plugins and active/inactive them
-        if (file_exists ( PATH_PLUGINS . 'enterprise/data/default' )) {
-            if ($this->result=="OK") {
+        if (file_exists(PATH_PLUGINS . 'enterprise/data/default')) {
+            if ($this->result == "OK") {
                 //Disable
-                if (file_exists ( PATH_PLUGINS . 'enterprise/data/data' )) {
+                if (file_exists(PATH_PLUGINS . 'enterprise/data/data')) {
                     $oPluginRegistry = PluginRegistry::loadSingleton();
-                    $aPlugins = unserialize ( trim ( file_get_contents ( PATH_PLUGINS . 'enterprise/data/data' ) ) );
+                    $aPlugins = unserialize(trim(file_get_contents(PATH_PLUGINS . 'enterprise/data/data')));
                     foreach ($aPlugins as $aPlugin) {
-                        $sClassName = substr ( $aPlugin ['sFilename'], 0, strpos ( $aPlugin ['sFilename'], '-' ) );
+                        $sClassName = substr($aPlugin ['sFilename'], 0, strpos($aPlugin ['sFilename'], '-'));
                         require_once PATH_PLUGINS . $sClassName . '.php';
-                        $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
-                        $oPluginRegistry->disablePlugin ( $oDetails->getNamespace() );
+                        $oDetails = $oPluginRegistry->getPluginDetails($sClassName . '.php');
+                        $oPluginRegistry->disablePlugin($oDetails->getNamespace());
                         $oPluginRegistry->savePlugin($oDetails->getNamespace());
                     }
                     unlink(PATH_PLUGINS . 'enterprise/data/data');
@@ -154,7 +149,7 @@ class PmLicenseManager
                 foreach ($aPlugins as $aPlugin) {
                     if ($aPlugin ["bActive"]) {
                         $sClassName = substr($aPlugin["sFilename"], 0, strpos($aPlugin["sFilename"], "-"));
-                        require_once (PATH_PLUGINS . $sClassName . ".php");
+                        require_once(PATH_PLUGINS . $sClassName . ".php");
                         $oDetails = $oPluginRegistry->getPluginDetails($sClassName . ".php");
                         $oPluginRegistry->enablePlugin($oDetails->getNamespace());
                         $oPluginRegistry->savePlugin($oDetails->getNamespace());
@@ -162,56 +157,57 @@ class PmLicenseManager
                 }
 
                 if (file_exists(PATH_DATA_SITE . "ee")) {
-                    $aPlugins = unserialize ( trim ( file_get_contents ( PATH_DATA_SITE.'ee' ) ) );
-                    $aDenied=array();
+                    $aPlugins = unserialize(trim(file_get_contents(PATH_DATA_SITE . 'ee')));
+                    $aDenied = [];
                     foreach ($aPlugins as $aPlugin) {
-                        $sClassName = substr ( $aPlugin ['sFilename'], 0, strpos ( $aPlugin ['sFilename'], '-' ) );
-                        if (!(in_array($sClassName,$this->features))) {
+                        $sClassName = substr($aPlugin ['sFilename'], 0, strpos($aPlugin ['sFilename'], '-'));
+                        if (!(in_array($sClassName, $this->features))) {
                             if (file_exists(PATH_PLUGINS . $sClassName . '.php')) {
                                 require_once PATH_PLUGINS . $sClassName . '.php';
-                                $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
+                                $oDetails = $oPluginRegistry->getPluginDetails($sClassName . '.php');
                                 $oPluginRegistry->disablePlugin($oDetails->getNamespace());
                                 $oPluginRegistry->savePlugin($oDetails->getNamespace());
-                                $aDenied[]=$oDetails->getNamespace();
+                                $aDenied[] = $oDetails->getNamespace();
                             }
                         }
                     }
                     if (!(empty($aDenied))) {
-                        if ((SYS_COLLECTION=="enterprise")&&(SYS_TARGET=="pluginsList")) {
-                            G::SendMessageText("The following plugins were restricted due to your enterprise license: ".implode(", ",$aDenied),"INFO");
+                        if ((SYS_COLLECTION == "enterprise") && (SYS_TARGET == "pluginsList")) {
+                            G::SendMessageText("The following plugins were restricted due to your enterprise license: " . implode(", ",
+                                    $aDenied), "INFO");
                         }
                     }
                 }
             } else {
                 //Disable
                 $oPluginRegistry = PluginRegistry::loadSingleton();
-                $aPlugins = unserialize ( trim ( file_get_contents ( PATH_PLUGINS . 'enterprise/data/default' ) ) );
+                $aPlugins = unserialize(trim(file_get_contents(PATH_PLUGINS . 'enterprise/data/default')));
                 foreach ($aPlugins as $aPlugin) {
-                    $sClassName = substr ( $aPlugin ['sFilename'], 0, strpos ( $aPlugin ['sFilename'], '-' ) );
+                    $sClassName = substr($aPlugin ['sFilename'], 0, strpos($aPlugin ['sFilename'], '-'));
                     //To avoid self disable
                     if (($sClassName != "pmLicenseManager") && ($sClassName != "pmTrial") && ($sClassName != "enterprise")) {
                         require_once PATH_PLUGINS . $sClassName . '.php';
-                        $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
+                        $oDetails = $oPluginRegistry->getPluginDetails($sClassName . '.php');
                         $oPluginRegistry->disablePlugin($oDetails->getNamespace());
                     } else {
                         //Enable default and required plugins
                         require_once PATH_PLUGINS . $sClassName . '.php';
-                        $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
+                        $oDetails = $oPluginRegistry->getPluginDetails($sClassName . '.php');
                         $oPluginRegistry->enablePlugin($oDetails->getNamespace());
                     }
                     $oPluginRegistry->savePlugin($oDetails->getNamespace());
                 }
 
-                if (file_exists(PATH_DATA_SITE.'ee')) {
-                    $aPlugins = unserialize ( trim ( file_get_contents ( PATH_DATA_SITE.'ee' ) ) );
+                if (file_exists(PATH_DATA_SITE . 'ee')) {
+                    $aPlugins = unserialize(trim(file_get_contents(PATH_DATA_SITE . 'ee')));
 
                     foreach ($aPlugins as $aPlugin) {
-                        $sClassName = substr ( $aPlugin ['sFilename'], 0, strpos ( $aPlugin ['sFilename'], '-' ) );
-                        if ( strlen($sClassName) > 0 ) {
+                        $sClassName = substr($aPlugin ['sFilename'], 0, strpos($aPlugin ['sFilename'], '-'));
+                        if (strlen($sClassName) > 0) {
                             if (!class_exists($sClassName)) {
                                 require_once PATH_PLUGINS . $sClassName . '.php';
                             }
-                            $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
+                            $oDetails = $oPluginRegistry->getPluginDetails($sClassName . '.php');
                             if ($oDetails) {
                                 $oPluginRegistry->disablePlugin($oDetails->getNamespace());
                                 $oPluginRegistry->savePlugin($oDetails->getNamespace());
@@ -225,7 +221,7 @@ class PmLicenseManager
 
     public function getCurrentLicenseStatus()
     {
-        $result = array ();
+        $result = [];
         switch ($this->result) {
             case 'OK':
                 $result ['result'] = 'ok';
@@ -233,8 +229,8 @@ class PmLicenseManager
                 break;
             case 'TMINUS':
                 $result ['result'] = 'tminus';
-                $startDateA=explode(" ",$this->date['HUMAN']['START']);
-                $result ['message'] = "License will be active on ".$startDateA[0];
+                $startDateA = explode(" ", $this->date['HUMAN']['START']);
+                $result ['message'] = "License will be active on " . $startDateA[0];
                 break;
             case 'EXPIRED':
                 $result ['result'] = 'expired';
@@ -255,7 +251,7 @@ class PmLicenseManager
             case 'EMPTY':
                 $result ['result'] = 'empty';
                 $result ['message'] = "Empty License";
-                if (defined ( 'write_error' )) {
+                if (defined('write_error')) {
                     $result ['message'] = "Write error" . $result ['message'];
                 }
                 break;
@@ -270,17 +266,17 @@ class PmLicenseManager
         if (self::$instance == null) {
             self::$instance = new PluginRegistry();
         }
-        $instance = unserialize ( $serialized );
+        $instance = unserialize($serialized);
         self::$instance = $instance;
     }
 
     public function getExpireIn()
     {
-        $status = $this->getCurrentLicenseStatus ();
+        $status = $this->getCurrentLicenseStatus();
         $expireIn = 0;
         if ($status ['result'] == 'ok') {
-            if ($this->date ['END']!="NEVER") {
-                $expireIn = ceil ( ($this->date ['END'] - time ()) / 60 / 60 / 24 );
+            if ($this->date ['END'] != "NEVER") {
+                $expireIn = ceil(($this->date ['END'] - time()) / 60 / 60 / 24);
             } else {
                 $expireIn = "NEVER";
             }
@@ -290,17 +286,17 @@ class PmLicenseManager
 
     public function getLicenseInfo()
     {
-        $validStatus = array (
-          'ok',
-          'expired'
-        );
-        $status = $this->getCurrentLicenseStatus ();
+        $validStatus = [
+            'ok',
+            'expired'
+        ];
+        $status = $this->getCurrentLicenseStatus();
         $infoText = "";
-        if (in_array ( $status ['result'], $validStatus )) {
-            $start = explode ( " ", $this->date ['HUMAN'] ['START'] );
-            $end = explode ( " ", $this->date ['HUMAN'] ['END'] );
+        if (in_array($status ['result'], $validStatus)) {
+            $start = explode(" ", $this->date ['HUMAN'] ['START']);
+            $end = explode(" ", $this->date ['HUMAN'] ['END']);
             $infoText .= "<b>" . "Issued to" . ":</b> " . $this->info ['FIRST_NAME'] . " " . $this->info ['LAST_NAME'] . "<br>";
-            $infoText .= "<b>" . G::LoadTranslation('ID_WORKSPACE') .":</b> " . $this->info ['DOMAIN_WORKSPACE'] . "<br>";
+            $infoText .= "<b>" . G::LoadTranslation('ID_WORKSPACE') . ":</b> " . $this->info ['DOMAIN_WORKSPACE'] . "<br>";
             $infoText .= "<i>" . G::LoadTranslation('ID_VALID_FROM') . " " . $start [0] . " " . G::LoadTranslation('ID_TO') . " " . $end [0] . "</i>";
         }
         if ($status ['message'] != "") {
@@ -318,14 +314,14 @@ class PmLicenseManager
         if ($this->getExpireIn() != "NEVER" && ((int)$this->getExpireIn() <= 30) && ((int)$this->getExpireIn() > 0)) {
             $infoO = $this->getLicenseInfo();
             $infoText = $infoO['infoText'];
-            $js = (EnterpriseUtils::skinIsUx() == 1)? "Ext.MessageBox.show({title: '', msg: '$infoText', buttons: Ext.MessageBox.OK, icon: Ext.MessageBox.INFO});" : "msgBox('$infoText');";
-            $linkText = $linkText . "<span style=\"color: red;\">" . G::LoadTranslation('ID_EXPIRES_IN') . " " . $this->getExpireIn () . " " . G::LoadTranslation('ID_DAYS') . "</span>";
+            $js = (EnterpriseUtils::skinIsUx() == 1) ? "Ext.MessageBox.show({title: '', msg: '$infoText', buttons: Ext.MessageBox.OK, icon: Ext.MessageBox.INFO});" : "msgBox('$infoText');";
+            $linkText = $linkText . "<span style=\"color: red;\">" . G::LoadTranslation('ID_EXPIRES_IN') . " " . $this->getExpireIn() . " " . G::LoadTranslation('ID_DAYS') . "</span>";
         } else {
             if ($this->getExpireIn() != "NEVER" && (int)$this->getExpireIn() <= 0) {
                 $infoO = $this->getLicenseInfo();
                 $infoText = $infoO['infoText'];
                 $infoLabel = $infoO['infoLabel'];
-                $js = (EnterpriseUtils::skinIsUx() == 1)? "Ext.MessageBox.show({title: '', msg: '$infoText', buttons: Ext.MessageBox.OK, icon: Ext.MessageBox.INFO});" : "msgBox('$infoText');";
+                $js = (EnterpriseUtils::skinIsUx() == 1) ? "Ext.MessageBox.show({title: '', msg: '$infoText', buttons: Ext.MessageBox.OK, icon: Ext.MessageBox.INFO});" : "msgBox('$infoText');";
                 $linkText = $linkText . "<a href=\"javascript:;\" onclick=\"$js return (false);\"><span style=\"color: red;\">" . $infoLabel . "</span></a>";
             }
         }
@@ -339,16 +335,16 @@ class PmLicenseManager
             if (EnterpriseUtils::skinIsUx() == 1) {
                 $aOnclick = "onclick=\"Ext.ComponentMgr.get('mainTabPanel').setActiveTab('pm-option-setup'); Ext.ComponentMgr.get('pm-option-setup').setLocation(Ext.ComponentMgr.get('pm-option-setup').defaultSrc + 's=PMENTERPRISE', true); return (false);\"";
             }
-            $linkText = $linkText . (($linkText != null)? " | " : null) . "<a href=\"javascript:;\" $aOnclick style=\"color: #008000;\">" . G::LoadTranslation('ID_UPGRADE_SYSTEM') . "</a>";
+            $linkText = $linkText . (($linkText != null) ? " | " : null) . "<a href=\"javascript:;\" $aOnclick style=\"color: #008000;\">" . G::LoadTranslation('ID_UPGRADE_SYSTEM') . "</a>";
         }
-        $linkText = ($linkText != null)? $linkText . ((EnterpriseUtils::skinIsUx() == 1)? null : " |") : null;
+        $linkText = ($linkText != null) ? $linkText . ((EnterpriseUtils::skinIsUx() == 1) ? null : " |") : null;
         return ($linkText);
     }
 
     public function validateLicense($path)
     {
-        $application = new license_application ( $path, false, true, false, true, true );
-        $results = $application->validate ( false, false, "", "", "80", true );
+        $application = new license_application ($path, false, true, false, true, true);
+        $results = $application->validate(false, false, "", "", "80", true);
 
         if ($results ['RESULT'] != 'OK') {
             return true;
@@ -359,9 +355,9 @@ class PmLicenseManager
 
     public function installLicense($path, $redirect = true, $includeExpired = true)
     {
-        $application = new license_application ( $path, false, true, false, true, true );
+        $application = new license_application ($path, false, true, false, true, true);
 
-        $results = $application->validate ( false, false, "", "", "80", true );
+        $results = $application->validate(false, false, "", "", "80", true);
 
         //if the result is ok then it is saved into DB
         $res = $results ['RESULT'];
@@ -373,21 +369,22 @@ class PmLicenseManager
                 return false;
             }
         }
-        if (( $res != 'OK') && ($res != 'EXPIRED' ) && ($res != 'TMINUS') ) {
-            G::SendTemporalMessage ( 'ID_ISNT_LICENSE', 'tmp-info', 'labels' );
+        if (($res != 'OK') && ($res != 'EXPIRED') && ($res != 'TMINUS')) {
+            G::SendTemporalMessage('ID_ISNT_LICENSE', 'tmp-info', 'labels');
             return false;
         } else {
 
-            $oServerConf = & ServerConf::getSingleton ();
-            $oServerConf->setProperty ( 'ACTIVE_LICENSE',array(SYS_SYS => $path));
-            $this->saveDataLicense( $results, $path, $redirect );
+            $oServerConf = &ServerConf::getSingleton();
+            $oServerConf->setProperty('ACTIVE_LICENSE', [SYS_SYS => $path]);
+            $this->saveDataLicense($results, $path, $redirect);
             if ($redirect) {
-                G::Header ( 'location: ../enterprise/addonsStore' );
+                G::Header('location: ../enterprise/addonsStore');
             } else {
                 return true;
             }
         }
     }
+
     /*
       get Active License
     */
@@ -395,8 +392,8 @@ class PmLicenseManager
     {
         //get license from database, table LICENSE_MANAGER
         try {
-            $aRow = array();
-            require_once ("classes/model/LicenseManager.php");
+            $aRow = [];
+            require_once("classes/model/LicenseManager.php");
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(LicenseManagerPeer::LICENSE_USER);
             $oCriteria->addSelectColumn(LicenseManagerPeer::LICENSE_START);
@@ -408,27 +405,27 @@ class PmLicenseManager
             $oDataset->next();
             $aRow = $oDataset->getRow();
         } catch (Exception $e) {
-            G::pr ($e);
+            G::pr($e);
         }
         return $aRow;
     }
 
     public function lookForStatusLicense()
     {
-        require_once ("classes/model/LicenseManager.php");
+        require_once("classes/model/LicenseManager.php");
         //obtening info in a row that has ACTIVE status
-        $oCtia = new Criteria ( 'workflow' );
-        $oCtia->add ( LicenseManagerPeer::LICENSE_STATUS, 'ACTIVE' );
-        $oDataset = LicenseManagerPeer::doSelectRS ( $oCtia );
-        $oDataset->next ();
-        $aRow = $oDataset->getRow ();
+        $oCtia = new Criteria ('workflow');
+        $oCtia->add(LicenseManagerPeer::LICENSE_STATUS, 'ACTIVE');
+        $oDataset = LicenseManagerPeer::doSelectRS($oCtia);
+        $oDataset->next();
+        $aRow = $oDataset->getRow();
 
-        $oCtiaA = new Criteria ( 'workflow' );
-        $oCtiaA->add ( LicenseManagerPeer::LICENSE_UID, $aRow [0] );
+        $oCtiaA = new Criteria ('workflow');
+        $oCtiaA->add(LicenseManagerPeer::LICENSE_UID, $aRow [0]);
 
-        $oCtiaB = new Criteria ( 'workflow' );
-        $oCtiaB->add ( LicenseManagerPeer::LICENSE_STATUS, 'INACTIVE' );
-        BasePeer::doUpdate ( $oCtiaA, $oCtiaB, Propel::getConnection ( 'workflow' ) );
+        $oCtiaB = new Criteria ('workflow');
+        $oCtiaB->add(LicenseManagerPeer::LICENSE_STATUS, 'INACTIVE');
+        BasePeer::doUpdate($oCtiaA, $oCtiaB, Propel::getConnection('workflow'));
         return 'ACTIVE';
     }
 
@@ -436,11 +433,11 @@ class PmLicenseManager
     {
         try {
             //getting info about file
-            $LicenseUid    = G::generateUniqueID ();
-            $LicenseUser   = $results ['DATA'] ['FIRST_NAME'] . ' ' . $results ['DATA'] ['LAST_NAME'];
-            $LicenseStart  = $results ['DATE'] ['START'];
-            $LicenseEnd    = $results ['DATE'] ['END'];
-            $LicenseSpan   = $results ['DATE'] ['SPAN'];
+            $LicenseUid = G::generateUniqueID();
+            $LicenseUser = $results ['DATA'] ['FIRST_NAME'] . ' ' . $results ['DATA'] ['LAST_NAME'];
+            $LicenseStart = $results ['DATE'] ['START'];
+            $LicenseEnd = $results ['DATE'] ['END'];
+            $LicenseSpan = $results ['DATE'] ['SPAN'];
             $LicenseStatus = $this->lookForStatusLicense(); //we're looking for a status ACTIVE
 
             //getting the content from file
@@ -448,35 +445,35 @@ class PmLicenseManager
             $filter = new InputFilter();
             $path = $filter->xssFilterHard($path, 'path');
 
-            $handle = fopen ( $path, "r" );
-            $contents = fread ( $handle, filesize ( $path ) );
-            fclose ( $handle );
-            $LicenseData      = $contents;
-            $LicensePath      = $path;
+            $handle = fopen($path, "r");
+            $contents = fread($handle, filesize($path));
+            fclose($handle);
+            $LicenseData = $contents;
+            $LicensePath = $path;
             $LicenseWorkspace = isset($results['DATA']['DOMAIN_WORKSPACE']) ? $results['DATA']['DOMAIN_WORKSPACE'] : '';
-            $LicenseType      = $results['DATA']['TYPE'];
+            $LicenseType = $results['DATA']['TYPE'];
 
-            require_once ("classes/model/LicenseManager.php");
+            require_once("classes/model/LicenseManager.php");
 
             //if exists the row in the database propel will update it, otherwise will insert.
-            $tr = LicenseManagerPeer::retrieveByPK ( $LicenseUid );
-            if (! (is_object ( $tr ) && get_class ( $tr ) == 'LicenseManager')) {
+            $tr = LicenseManagerPeer::retrieveByPK($LicenseUid);
+            if (!(is_object($tr) && get_class($tr) == 'LicenseManager')) {
                 $tr = new LicenseManager ();
             }
-            $tr->setLicenseUid    ( $LicenseUid );
-            $tr->setLicenseUser   ( $LicenseUser );
-            $tr->setLicenseStart  ( $LicenseStart );
-            $tr->setLicenseEnd    ( $LicenseEnd );
-            $tr->setLicenseSpan   ( $LicenseSpan );
-            $tr->setLicenseStatus ( $LicenseStatus );
-            $tr->setLicenseData   ( $LicenseData );
-            $tr->setLicensePath   ( $LicensePath );
-            $tr->setLicenseWorkspace ( $LicenseWorkspace );
-            $tr->setLicenseType   ( $LicenseType );
+            $tr->setLicenseUid($LicenseUid);
+            $tr->setLicenseUser($LicenseUser);
+            $tr->setLicenseStart($LicenseStart);
+            $tr->setLicenseEnd($LicenseEnd);
+            $tr->setLicenseSpan($LicenseSpan);
+            $tr->setLicenseStatus($LicenseStatus);
+            $tr->setLicenseData($LicenseData);
+            $tr->setLicensePath($LicensePath);
+            $tr->setLicenseWorkspace($LicenseWorkspace);
+            $tr->setLicenseType($LicenseType);
 
-            $res = $tr->save ();
+            $res = $tr->save();
             Cache::forget(PmLicenseManager::CACHE_KEY . '.' . SYS_SYS);
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             G::pr($e);
         }
     }
@@ -484,28 +481,28 @@ class PmLicenseManager
     public function getResultQry($sNameTable, $sfield, $sCondition)
     {
         try {
-            require_once ("classes/model/LicenseManager.php");
-            $oCriteria = new Criteria ( 'workflow' );
-            $oCriteria->addSelectColumn ( LicenseManagerPeer::LICENSE_USER );
-            $oCriteria->addSelectColumn ( LicenseManagerPeer::LICENSE_START );
-            $oCriteria->addSelectColumn ( LicenseManagerPeer::LICENSE_PATH );
-            $oCriteria->addSelectColumn ( LicenseManagerPeer::LICENSE_DATA );
-            $oCriteria->add ( LicenseManagerPeer::LICENSE_STATUS, 'ACTIVE' );
-            $oDataset = LicenseManagerPeer::doSelectRS ( $oCriteria );
-            $oDataset->setFetchmode ( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next ();
-            $aRow = $oDataset->getRow ();
+            require_once("classes/model/LicenseManager.php");
+            $oCriteria = new Criteria ('workflow');
+            $oCriteria->addSelectColumn(LicenseManagerPeer::LICENSE_USER);
+            $oCriteria->addSelectColumn(LicenseManagerPeer::LICENSE_START);
+            $oCriteria->addSelectColumn(LicenseManagerPeer::LICENSE_PATH);
+            $oCriteria->addSelectColumn(LicenseManagerPeer::LICENSE_DATA);
+            $oCriteria->add(LicenseManagerPeer::LICENSE_STATUS, 'ACTIVE');
+            $oDataset = LicenseManagerPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            $aRow = $oDataset->getRow();
         } catch (Exception $e) {
-            G::pr ( $e );
-            $aRow = array ();
+            G::pr($e);
+            $aRow = [];
         }
         return $aRow;
     }
 
     public function getActiveFeatures()
     {
-        if (file_exists ( PATH_PLUGINS . 'enterprise/data/default' )) {
-            return array();
+        if (file_exists(PATH_PLUGINS . 'enterprise/data/default')) {
+            return [];
         }
         return unserialize(G::decrypt($this->serial, file_get_contents(PATH_PLUGINS . 'enterprise/data/default')));
     }
