@@ -1,6 +1,7 @@
 <?php
 
 use ProcessMaker\Core\System;
+use ProcessMaker\BusinessModel\DynaForm\SuggestTrait;
 
 /**
  * Implementing pmDynaform library in the running case.
@@ -9,6 +10,7 @@ use ProcessMaker\Core\System;
  */
 class PmDynaform
 {
+    use SuggestTrait;
 
     public static $instance = null;
     public $fields = null;
@@ -256,66 +258,7 @@ class PmDynaform
                         }
                         $sql = G::replaceDataField($json->sql, $dtFields);
                         if ($value === "suggest") {
-                            $sql = $this->sqlParse($sql, function($parsed, &$select, &$from, &$where, &$groupBy, &$having, &$orderBy, &$limit) use ($json) {
-                                $dt = $parsed["SELECT"];
-
-                                $isWhere = empty($where);
-                                if ($isWhere === false) {
-                                    $where = substr_replace($where, " (", 5, 0) . ")";
-                                }
-                                if (!isset($json->queryField) && isset($dt[0]["base_expr"])) {
-                                    $col = $dt[0]["base_expr"];
-                                    $dv = str_replace("'", "''", $json->defaultValue);
-                                    if ($dv !== "") {
-                                        $where = $isWhere ? "WHERE " . $col . "='" . $dv . "'" : $where . " AND " . $col . "='" . $dv . "'";
-                                    }
-                                }
-                                if (isset($json->queryField) && isset($dt[0]["base_expr"])) {
-                                    $col = isset($dt[1]["base_expr"]) ? $dt[1]["base_expr"] : $dt[0]["base_expr"];
-                                    $qf = str_replace("'", "''", $json->queryFilter);
-                                    $where = $isWhere ? "WHERE " . $col . " LIKE '%" . $qf . "%'" : $where . " AND " . $col . " LIKE '%" . $qf . "%'";
-                                }
-
-                                $provider = $this->getDatabaseProvider($json->dbConnection);
-                                $start = 0;
-                                $end = 10;
-                                if (isset($json->queryStart)) {
-                                    $start = $json->queryStart;
-                                }
-                                if (isset($json->queryLimit)) {
-                                    $end = $json->queryLimit;
-                                }
-                                if (empty($limit) && $provider === "mysql") {
-                                    $limit = "LIMIT " . $start . "," . $end . "";
-                                }
-                                if (empty($limit) && $provider === "pgsql") {
-                                    $limit = "OFFSET " . $start . " LIMIT " . $end . "";
-                                }
-                                if ($provider === "mssql") {
-                                    $limit = "";
-                                    if (strpos(strtoupper($select), "TOP") === false) {
-                                        $isDistinct = strpos(strtoupper($select), "DISTINCT");
-                                        $isAll = strpos(strtoupper($select), "ALL");
-                                        if ($isDistinct === false && $isAll === false) {
-                                            $select = preg_replace("/SELECT/", "SELECT TOP(" . $end . ")", strtoupper($select), 1);
-                                        }
-                                        if ($isDistinct !== false) {
-                                            $select = preg_replace("/DISTINCT/", "DISTINCT TOP(" . $end . ")", strtoupper($select), 1);
-                                        }
-                                        if ($isAll !== false) {
-                                            $select = preg_replace("/DISTINCT/", "DISTINCT TOP(" . $end . ")", strtoupper($select), 1);
-                                        }
-                                    }
-                                }
-                                if ($provider === "oracle") {
-                                    $limit = "";
-                                    $rowNumber = "";
-                                    if (strpos(strtoupper($where), "ROWNUM") === false) {
-                                        $rowNumber = " AND " . $start . " <= ROWNUM AND ROWNUM <= " . $end;
-                                    }
-                                    $where = empty($where) ? "WHERE " . $start . " <= ROWNUM AND ROWNUM <= " . $end : $where . $rowNumber;
-                                }
-                            });
+                            $sql = $this->prepareSuggestSql($sql, $json);
                         }
                         $dt = $this->getCacheQueryData($json->dbConnection, $sql, $json->type);
                         foreach ($dt as $row) {
