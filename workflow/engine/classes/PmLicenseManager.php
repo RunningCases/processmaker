@@ -91,11 +91,21 @@ class PmLicenseManager
                 $this->file = null;
             }
 
+            // The HUMAN attribute varies according to the timezone configured in the server, therefore it does not need
+            // to be considered in the comparison if the value was changed or not, it is only comparing  with te "timestamp"
+            if (isset($results['DATE']['HUMAN'])) {
+                unset($results['DATE']['HUMAN']);
+            }
             $resultsRegister['date'] = $results ['DATE'];
             $resultsRegister['info'] = $info;
             $resultsRegister['type'] = $results ['DATA'] ['TYPE'];
             if ($oServerConf->getProperty('LICENSE_INFO')) {
                 $licInfoA = $oServerConf->getProperty('LICENSE_INFO');
+                // The HUMAN attribute varies according to the timezone configured in the server, therefore it does not need
+                // to be considered in the comparison if the value was changed or not, it is only comparing  with te "timestamp"
+                if (isset($licInfoA[SYS_SYS]['date']['HUMAN'])) {
+                    unset($licInfoA[SYS_SYS]['date']['HUMAN']);
+                }
             } else {
                 $licInfoA = [];
             }
