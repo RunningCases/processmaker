@@ -1,5 +1,7 @@
 <?php
 
+use \ProcessMaker\BusinessModel\User;
+
 /**
  * class.ldapAdvanced.php
  * LDAP plugin for the RBAC class. This
@@ -68,7 +70,6 @@ class LdapAdvanced
      */
     public function __construct()
     {
-        
     }
 
     /**
@@ -444,7 +445,7 @@ class LdapAdvanced
      *
      * before the log was generated in shared/sites/<site> folder, but it was deprecated
      * and now we are saving the log in  shared/log the entry in the log file.
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
+     *
      * @param Object $_link ldap connection
      * @param String $text
      */
@@ -496,7 +497,7 @@ class LdapAdvanced
     /**
      * This method generates the ldap connection bind and returns the link object
      * for a determined authsource
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
+     *
      * @param Array $aAuthSource the authsource data
      * @return Object A object with the resulting ldap bind
      */
@@ -541,7 +542,7 @@ class LdapAdvanced
     /**
      * This method obtains the attributes of a ldap Connection passed as parameter
      * @param Object $ldapcnn ldap connection
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
+     *
      * @param Object $oEntry Entry object
      * @return Array attributes
      */
@@ -799,9 +800,7 @@ class LdapAdvanced
      *
      * @return array Return array data
      */
-    private function __ldapGroupSynchronizeMembers(
-    $ldapcnn, array $arrayAuthSourceData, $groupUid, array $arrayGroupLdap, $memberAttribute, array $arrayData = []
-    )
+    private function __ldapGroupSynchronizeMembers($ldapcnn, array $arrayAuthSourceData, $groupUid, array $arrayGroupLdap, $memberAttribute, array $arrayData = [])
     {
         try {
             unset($arrayData['countMembers']);
@@ -1006,7 +1005,7 @@ class LdapAdvanced
      * This method authentifies if a user has the RBAC_user privileges
      * also verifies if the user has the rights to start an application
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
+     *
      * @access public
 
      * @param  string $strUser    UserId  (user login)
@@ -1092,7 +1091,7 @@ class LdapAdvanced
                     $userDn = $verifiedUser['sDN'];
 
                     //Update data
-                    $user = new \ProcessMaker\BusinessModel\User();
+                    $user = new User();
                     $arrayUserData = $user->getUserRecordByPk($usrUid, [], false);
 
                     $result = $this->__ldapUserUpdateByDnAndData(
@@ -1377,18 +1376,8 @@ class LdapAdvanced
                     } while (($oEntry = ldap_next_entry($ldapcnn, $oEntry)) && $flagNextRecord);
                 }
             }
-            /*
-              $sUsers = "found $countEntries users: ";
-
-              foreach ($aUsers as $key => $val) {
-              $sUsers .= $val['sUsername'] . ' ';
-              }
-
-              $this->log($ldapcnn, $sUsers);
-             */
         }
 
-        //Return
         return ($paged) ? array("numRecTotal" => $totalUser, "data" => $arrayUser) : $arrayUser;
     }
 
@@ -1406,7 +1395,6 @@ class LdapAdvanced
 
             //Set variables
             $rbac = &RBAC::getSingleton();
-            //$rbac->userObj = new RbacUsers();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -1505,7 +1493,6 @@ class LdapAdvanced
                 }
             }
 
-            //Return
             return $arrayUserData;
         } catch (Exception $e) {
             throw $e;
@@ -1697,7 +1684,6 @@ class LdapAdvanced
 
             $this->log($ldapcnn, 'found ' . count($arrayDepartment) . ' departments: ' . $str);
 
-            //Return
             return $arrayDepartment;
         } catch (Exception $e) {
             throw $e;
@@ -1715,7 +1701,7 @@ class LdapAdvanced
 
         $aUsers = array();
         $rbac = &RBAC::getSingleton();
-        //$rbac->userObj = new RbacUsers();
+
         $rbac->authSourcesObj = new AuthenticationSource();
         $aAuthSource = $rbac->authSourcesObj->load($this->sAuthSource);
 
@@ -1739,7 +1725,6 @@ class LdapAdvanced
                         $aAttr = $this->ldapGetAttributes($ldapcnn, $oEntry);
                         $aUsers[] = $this->ldapGetUsersFromDepartment("GET", $aAttr["dn"]);
                     } while ($oEntry = ldap_next_entry($ldapcnn, $oEntry));
-                    //$this->createDepartments ($aDepts);
                 }
             }
             return $aUsers;
@@ -1802,7 +1787,6 @@ class LdapAdvanced
                 $arrayData[$row["DEP_UID"]] = $row["NUM_REC"];
             }
 
-            //Return
             return $arrayData;
         } catch (Exception $e) {
             throw $e;
@@ -1966,31 +1950,10 @@ class LdapAdvanced
             $arrayLdapDepartment[0]["ou"] = $arrayLdapDepartment[0]["ou"] . " " . $arrayLdapDepartment[0]["dn"]; //Discard ROOT
 
             foreach ($arrayLdapDepartment as $ldapDept) {
-                //$flagExists = false;
-                //
-                //foreach ($aResult as $value2) {
-                //    $arrayDepartmentData = $value2;
-                //
-                //    if ($arrayDepartmentData["DEP_LDAP_DN"] == $ldapDept["dn"]) {
-                //        $flagExists = true;
-                //        break;
-                //    }
-                //}
-                //
-                //if ($flagExists) {
-                //    continue;
-                //}
-
                 foreach ($arrayDbDepartment as $department) {
                     if ($department["DEP_TITLE"] == $ldapDept["ou"] && $department["DEP_LDAP_DN"] == $ldapDept["dn"]) {
                         $aResult[] = $department;
                         break;
-
-                        //if ($department["HAS_CHILDREN"] != 0) {
-                        //    $aTempDepartments = $this->getDepartments($department["DEP_UID"]);
-                        //    $aTempRegistered  = $this->getRegisteredDepartments($arrayLdapDepartment, $aTempDepartments);
-                        //    $aResult = array_merge($aResult, $aTempRegistered);
-                        //}
                     }
                 }
             }
@@ -2326,7 +2289,6 @@ class LdapAdvanced
 
             $this->log($ldapcnn, 'found ' . count($arrayGroup) . ' groups: ' . $str);
 
-            //Return
             return $arrayGroup;
         } catch (Exception $e) {
             throw $e;
@@ -2387,7 +2349,6 @@ class LdapAdvanced
                 $arrayData[$row["GRP_UID"]] = $row["NUM_REC"];
             }
 
-            //Return
             return $arrayData;
         } catch (Exception $e) {
             throw $e;
@@ -2451,14 +2412,13 @@ class LdapAdvanced
     /**
      * Convert 18-digit LDAP timestamps  to format PM
      *
-     * @author Ronald Escobar <ronald@colosa.com>
      * @param Date | $dateAD | Date of AD ('Windows NT time format' and 'Win32 FILETIME or SYSTEMTIME')
      * @param Date | $datePM | Date of PM
      */
     public function convertDateADtoPM($dateAD)
     {
         $unixTimestamp = ($dateAD / 10000000) - 11644560000;
-        $datePM = date('Y-m-d', mktime(0, 0, 0, date('m'), '01', date('Y') + 2)); //(date('Y') + 10)."-12-01";
+        $datePM = date('Y-m-d', mktime(0, 0, 0, date('m'), '01', date('Y') + 2));
         if ($unixTimestamp > 0) {
             $dateAux = date("Y-m-d", $unixTimestamp);
             $yearAux = date("Y", $unixTimestamp);
@@ -2582,7 +2542,6 @@ class LdapAdvanced
             $this->debugLog("class.ldapAdvanced.php > function departmentSynchronizeUser() > \$userUid ----> $userUid");
             $this->debugLog("class.ldapAdvanced.php > function departmentSynchronizeUser() > END");
 
-            //Return
             return $arrayData;
         } catch (Exception $e) {
             throw $e;
@@ -2821,9 +2780,7 @@ class LdapAdvanced
      *
      * @return array
      */
-    private function __ldapUsersUpdateData(
-    $ldapcnn, array $arrayAuthSourceData, $filterUsers, array $arrayUserUid, array $arrayData
-    )
+    private function __ldapUsersUpdateData($ldapcnn, array $arrayAuthSourceData, $filterUsers, array $arrayUserUid, array $arrayData)
     {
         try {
             $totalUser = $arrayData['totalUser'];
@@ -2844,7 +2801,6 @@ class LdapAdvanced
                     $criteria = new Criteria('workflow');
 
                     $criteria->add(UsersPeer::USR_UID, $arrayUserUid, Criteria::IN);
-                    //$criteria->add(UsersPeer::USR_USERNAME, '', Criteria::NOT_EQUAL);
                     $criteria->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
 
                     $rsCriteria = UsersPeer::doSelectRS($criteria);
@@ -2875,7 +2831,6 @@ class LdapAdvanced
                 }
             }
 
-            //Return
             return [$totalUser, $countUser];
         } catch (Exception $e) {
             throw $e;
@@ -2990,7 +2945,6 @@ class LdapAdvanced
                 }
             }
 
-            //Return
             return $limit;
         } catch (Exception $e) {
             throw $e;
