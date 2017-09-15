@@ -1095,6 +1095,7 @@ try {
                 $currentTask = $aFields['TASK'][1];
                 $isWebEntry = $bmWebEntry->isTaskAWebEntry($currentTask['TAS_UID']);
                 if ($isWebEntry) {
+                    $webEntryUrlEvaluated = '';
                     $tplFile = 'webentry/cases_ScreenDerivation';
                     $caseId = $currentTask['APP_UID'];
                     $delIndex = $currentTask['DEL_INDEX'];
@@ -1112,22 +1113,6 @@ try {
             }
 
             $G_PUBLISH->AddContent( 'smarty', $tplFile, '', '', $aFields );
-            /*
-            if (isset( $aFields['TASK'][1]['NEXT_TASK']['USER_ASSIGNED'])){
-                if($aFields['TASK'][1]['NEXT_TASK']['USER_ASSIGNED']!="ERROR" && is_array($aFields['TASK'][1]['NEXT_TASK']['USER_ASSIGNED'])){
-                $G_PUBLISH->AddContent('smarty', 'cases/cases_ScreenDerivation', '', '', $aFields);
-            } else {
-                $sMessageError = "The current user does not have a valid Reports To user.  Please contact administrator.";
-                //$aFields['TASK'][$sKey]['NEXT_TASK']['USR_HIDDEN_FIELD'] = '<input type="hidden" name="' . $hiddenName . '" id="' . $hiddenName . '" value="' . $sMessageError . '">';
-                G::SendTemporalMessage ('UID_UNDEFINED_USER', "Error");
-                $aFields['ERROR_REPORTSTO']= "Error";
-                $aFields['MESSAGE_ERROR_REPORTSTO']=G::loadTranslation("ID_MSJ_REPORSTO");;
-                $G_PUBLISH->AddContent('smarty', 'cases/cases_ShowE_Reportsto', '', '', $aFields);
-            }
-            } else {
-                $G_PUBLISH->AddContent('smarty', 'cases/cases_ScreenDerivation', '', '', $aFields);
-            }
-            */
             break;
         case 'EXTERNAL':
             if ($noShowTitle == 0) {
