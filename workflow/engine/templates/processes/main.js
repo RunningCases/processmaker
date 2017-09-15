@@ -322,7 +322,8 @@ Ext.onReady(function(){
       newTypeProcess = {
           xtype: "tbsplit",
           text: _("ID_NEW"),
-          iconCls: "button_menu_ext ss_sprite ss_add",
+          iconCls: "button_menu_ext",
+          icon: "/images/add_18.png",
           menu: arrayMenuNewOption,
           listeners: {
               "click": function (obj, e)
@@ -344,7 +345,8 @@ Ext.onReady(function(){
       }
       newTypeProcess = {
           text: _("ID_NEW"),
-          iconCls: "button_menu_ext ss_sprite ss_add",
+          iconCls: "button_menu_ext",
+          icon: "/images/add_18.png",
           handler: handler
       };
   }
@@ -480,8 +482,8 @@ Ext.onReady(function(){
     	'-'
       ,{
         text: _('ID_EDIT'),
-        iconCls: 'button_menu_ext ss_sprite  ss_pencil',
-        //icon: '/images/edit.gif',
+        iconCls: 'button_menu_ext',
+        icon: '/images/pencil.png',
         handler: editProcess
       },/*{
         text: 'Edit (New Editor)',
@@ -497,7 +499,8 @@ Ext.onReady(function(){
         disabled:true
       },{
         text: _('ID_DELETE'),
-        iconCls: "button_menu_ext ss_sprite ss_cross",
+        iconCls: "button_menu_ext",
+        icon: "/images/delete_16.png",
         handler:deleteProcess
       },{
         xtype: 'tbseparator'
@@ -513,7 +516,8 @@ Ext.onReady(function(){
       },{
         id: 'deleteCasesId',
         text: _('ID_DELETE_CASES'),
-        iconCls: "button_menu_ext ss_sprite ss_cross",
+        iconCls: "button_menu_ext",
+        icon: "/images/delete_16.png",
         handler: deleteCases,
         hidden: true
       },{
@@ -702,7 +706,8 @@ Ext.onReady(function(){
   var arrayContextMenuOption = [
       {
           text: _("ID_EDIT"),
-          iconCls: "button_menu_ext ss_sprite ss_pencil",
+          iconCls: "button_menu_ext",
+          icon: "/images/pencil.png",
           handler: editProcess
       },
       {
@@ -718,7 +723,8 @@ Ext.onReady(function(){
       },
       {
           text: _("ID_DELETE"),
-          iconCls: "button_menu_ext ss_sprite ss_cross",
+          iconCls: "button_menu_ext",
+          icon: "/images/delete_16.png",
           handler: deleteProcess
       },
       menuExportOption,
