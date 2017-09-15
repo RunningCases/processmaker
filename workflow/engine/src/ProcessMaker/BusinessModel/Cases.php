@@ -1680,6 +1680,7 @@ class Cases
 
         if (!is_null($dynaFormUid)) {
 
+            $data["APP_DATA"] = $fields['APP_DATA'];
             $data["CURRENT_DYNAFORM"] = $dynaFormUid;
             $pmDynaForm = new PmDynaform($data);
             $arrayDynaFormData = $pmDynaForm->getDynaform();

@@ -5,6 +5,7 @@ use G;
 use Exception;
 use AdditionalTables;
 use PmDynaform;
+use ProcessMaker\BusinessModel\Cases;
 
 class Variable
 {
@@ -778,6 +779,7 @@ class Variable
                 $fields = $case->loadCase($appUid, $delIndex);
                 $appData = $fields["APP_DATA"];
                 $appData = array_merge($appData, \ProcessMaker\BusinessModel\Cases::getGlobalVariables($appData));
+                $paramsWithoutAppData = $params;
                 $params = array_merge($appData, $params);
             }
 
@@ -795,6 +797,11 @@ class Variable
             $field->queryFilter = $filter;
             $field->queryStart = $start;
             $field->queryLimit = $limit;
+            //Grids only access the global variables of 'ProcessMaker', other variables are removed.
+            if (isset($field->columnWidth)) {
+                $pmDynaform->fields["APP_DATA"] = Cases::getGlobalVariables($appData);
+                $field->queryInputData = $paramsWithoutAppData;
+            }
 
             //Populate control data
             $pmDynaform->jsonr($field);
