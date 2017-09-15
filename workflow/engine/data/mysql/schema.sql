@@ -133,7 +133,8 @@ CREATE TABLE `APP_DOCUMENT`
 	`SYNC_PERMISSIONS` MEDIUMTEXT,
 	PRIMARY KEY (`APP_DOC_UID`,`DOC_VERSION`),
 	KEY `indexAppDocument`(`FOLDER_UID`, `APP_DOC_UID`),
-	KEY `indexAppUid`(`APP_UID`)
+	KEY `indexAppUid`(`APP_UID`),
+	KEY `indexAppUidDocUidDocVersionDocType`(`APP_UID`, `DOC_UID`, `DOC_VERSION`, `APP_DOC_TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documents in an Application';
 #-----------------------------------------------------------------------------
 #-- APP_MESSAGE
