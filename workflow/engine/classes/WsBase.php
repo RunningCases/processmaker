@@ -2788,7 +2788,7 @@ class WsBase
     public function getCaseNotes($applicationID, $userUid = '')
     {
         try {
-            $result = new wsGetCaseNotesResponse(0, G::loadTranslation('ID_SUCCESS'), Cases::getCaseNotes($applicationID, 'array', $userUid));
+            $result = new WsGetCaseNotesResponse(0, G::loadTranslation('ID_SUCCESS'), Cases::getCaseNotes($applicationID, 'array', $userUid));
 
             $var = array();
 
