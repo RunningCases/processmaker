@@ -349,6 +349,9 @@
     <index name="indexForAppUid">
       <index-column name="APP_UID"/>
     </index>
+    <index name="indexForMsgStatus">
+      <index-column name="APP_MSG_STATUS"/>
+    </index>
   </table>
   <table name="APP_OWNER">
     <vendor type="mysql">

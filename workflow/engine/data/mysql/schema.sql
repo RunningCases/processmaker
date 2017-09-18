@@ -164,7 +164,8 @@ CREATE TABLE `APP_MESSAGE`
 	`APP_MSG_SHOW_MESSAGE` TINYINT default 1 NOT NULL,
 	`APP_MSG_ERROR` MEDIUMTEXT,
 	PRIMARY KEY (`APP_MSG_UID`),
-	KEY `indexForAppUid`(`APP_UID`)
+	KEY `indexForAppUid`(`APP_UID`),
+	KEY `indexForMsgStatus`(`APP_MSG_STATUS`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Messages in an Application';
 #-----------------------------------------------------------------------------
 #-- APP_OWNER
