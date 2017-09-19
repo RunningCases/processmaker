@@ -448,6 +448,7 @@ class LdapAdvanced
      *
      * @param Object $_link ldap connection
      * @param String $text
+     * @return void
      */
     public function log($link, $text)
     {
