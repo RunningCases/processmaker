@@ -60,11 +60,6 @@ class ldapadvancedClassCron
         $aDepartments = $plugin->getDepartments("");
         $aGroups = $plugin->getGroups();
 
-        //$arrayDepartmentUserAd = array(); //(D) Update Users
-        //$arrayGroupUserAd = array(); //(G) Update Users
-
-        //echo "\n";
-
         $plugin->frontEndShow("START");
 
         $plugin->debugLog("START");
@@ -111,27 +106,27 @@ class ldapadvancedClassCron
                 $this->deletedRemoved = count($this->usersRemovedOu);
                 $this->deletedRemovedUsers = "";
 
-                $this->dAlready    = 0;
-                $this->dMoved      = 0;
+                $this->dAlready = 0;
+                $this->dMoved = 0;
                 $this->dImpossible = 0;
-                $this->dCreated    = 0;
-                $this->dRemoved    = 0;
-                $this->dAlreadyUsers    = "";
-                $this->dMovedUsers      = "";
+                $this->dCreated = 0;
+                $this->dRemoved = 0;
+                $this->dAlreadyUsers = "";
+                $this->dMovedUsers = "";
                 $this->dImpossibleUsers = "";
-                $this->dCreatedUsers    = "";
-                $this->dRemovedUsers    = "";
+                $this->dCreatedUsers = "";
+                $this->dRemovedUsers = "";
 
-                $this->gAlready    = 0;
-                $this->gMoved      = 0;
+                $this->gAlready = 0;
+                $this->gMoved = 0;
                 $this->gImpossible = 0;
-                $this->gCreated    = 0;
-                $this->gRemoved    = 0;
-                $this->gAlreadyUsers    = "";
-                $this->gMovedUsers      = "";
+                $this->gCreated = 0;
+                $this->gRemoved = 0;
+                $this->gAlreadyUsers = "";
+                $this->gMovedUsers = "";
                 $this->gImpossibleUsers = "";
-                $this->gCreatedUsers    = "";
-                $this->gRemovedUsers    = "";
+                $this->gCreatedUsers = "";
+                $this->gRemovedUsers = "";
 
                 //Department - Synchronize Users
                 $numDepartments = count($aRegisteredDepts);
@@ -321,28 +316,28 @@ class ldapadvancedClassCron
                 $plugin->log(null, $logResults);
 
                 if ($this->deletedRemoved > 0) {
-                     $plugin->log(null, "Deleted/Removed Users: ");
-                     $plugin->log(null, $this->deletedRemovedUsers);
+                    $plugin->log(null, "Deleted/Removed Users: ");
+                    $plugin->log(null, $this->deletedRemovedUsers);
                 }
 
                 if ($this->dAlready + $this->gAlready > 0) {
-                     $plugin->log(null, "Existing Users: ");
-                     $plugin->log(null, $this->dAlreadyUsers . " " . $this->gAlreadyUsers);
+                    $plugin->log(null, "Existing Users: ");
+                    $plugin->log(null, $this->dAlreadyUsers . " " . $this->gAlreadyUsers);
                 }
 
                 if ($this->dMoved + $this->gMoved > 0) {
-                     $plugin->log(null, "Moved Users: ");
-                     $plugin->log(null, $this->dMovedUsers . " " . $this->gMovedUsers);
+                    $plugin->log(null, "Moved Users: ");
+                    $plugin->log(null, $this->dMovedUsers . " " . $this->gMovedUsers);
                 }
 
                 if ($this->dImpossible + $this->gImpossible > 0) {
-                     $plugin->log(null, "Impossible Users: ");
-                     $plugin->log(null, $this->dImpossibleUsers . " " . $this->gImpossibleUsers);
+                    $plugin->log(null, "Impossible Users: ");
+                    $plugin->log(null, $this->dImpossibleUsers . " " . $this->gImpossibleUsers);
                 }
 
                 if ($this->dCreated + $this->gCreated > 0) {
-                     $plugin->log(null, "Created Users: ");
-                     $plugin->log(null, $this->dCreatedUsers . " " . $this->gCreatedUsers);
+                    $plugin->log(null, "Created Users: ");
+                    $plugin->log(null, $this->dCreatedUsers . " " . $this->gCreatedUsers);
                 }
 
                 if ($this->dRemoved + $this->gRemoved > 0) {
