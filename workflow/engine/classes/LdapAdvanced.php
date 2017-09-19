@@ -1180,7 +1180,7 @@ class LdapAdvanced
         }
 
         if ($validUserPass == 1) {
-            $this->log($ldapcnn, "sucessful login user " . $verifiedUser["sDN"]);
+            $this->log($ldapcnn, "sucessful login user " . $userDn);
         } else {
             $this->log($ldapcnn, "failure authentication for user $strUser");
         }

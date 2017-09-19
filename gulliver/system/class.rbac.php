@@ -435,25 +435,32 @@ class RBAC
 
         foreach ($this->aRbacPlugins as $sClassName) {
             $plugin = new $sClassName();
-            if (method_exists( $plugin, 'automaticRegister' )) {
-                $oCriteria = new Criteria( 'rbac' );
-                $oCriteria->add( AuthenticationSourcePeer::AUTH_SOURCE_PROVIDER, $sClassName );
-                $oCriteria->addAscendingOrderByColumn( AuthenticationSourcePeer::AUTH_SOURCE_NAME );
-                $oDataset = AuthenticationSourcePeer::doSelectRS( $oCriteria, Propel::getDbConnection('rbac_ro') );
-                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            if (method_exists($plugin, 'automaticRegister')) {
+                $oCriteria = new Criteria('rbac');
+                $oCriteria->add(AuthenticationSourcePeer::AUTH_SOURCE_PROVIDER, $sClassName);
+                $oCriteria->addAscendingOrderByColumn(AuthenticationSourcePeer::AUTH_SOURCE_NAME);
+                $oDataset = AuthenticationSourcePeer::doSelectRS($oCriteria, Propel::getDbConnection('rbac_ro'));
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
                 $aRow = $oDataset->getRow();
-                while (is_array( $aRow )) {
-                    $aRow = array_merge( $aRow, unserialize( $aRow['AUTH_SOURCE_DATA'] ) );
+                while (is_array($aRow)) {
+                    $aRow = array_merge($aRow, unserialize($aRow['AUTH_SOURCE_DATA']));
                     //Check if this authsource is enabled for AutoRegister, if not skip this
                     if ($aRow['AUTH_SOURCE_AUTO_REGISTER'] == 1) {
                         $plugin->sAuthSource = $aRow['AUTH_SOURCE_UID'];
                         $plugin->sSystem = $this->sSystem;
                         //search the usersRolesObj
                         //create the users in ProcessMaker
-                        $res = $plugin->automaticRegister( $aRow, $strUser, $strPass );
-                        if ($res == 1) {
-                            return $res;
+                        try {
+                            $res = $plugin->automaticRegister($aRow, $strUser, $strPass);
+                            if ($res == 1) {
+                                return $res;
+                            }
+                        } catch (Exception $e) {
+                            $context = Bootstrap::getDefaultContextLog();
+                            $context["action"] = "ldapSynchronize";
+                            $context["authSource"] = $aRow;
+                            Bootstrap::registerMonolog("ldapSynchronize", 400, $e->getMessage(), $context, $context["workspace"], "processmaker.log");
                         }
                     }
                     $oDataset->next();
@@ -461,7 +468,7 @@ class RBAC
                 }
             }
         }
-
+        return $result;
     }
 
     /**
