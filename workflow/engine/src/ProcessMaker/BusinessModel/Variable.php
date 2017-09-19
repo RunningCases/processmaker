@@ -778,7 +778,7 @@ class Variable
                 $case = new \Cases();
                 $fields = $case->loadCase($appUid, $delIndex);
                 $appData = $fields["APP_DATA"];
-                $appData = array_merge($appData, \ProcessMaker\BusinessModel\Cases::getGlobalVariables($appData));
+                $appData = array_merge($appData, Cases::getGlobalVariables($appData));
                 $paramsWithoutAppData = $params;
                 $params = array_merge($appData, $params);
             }
