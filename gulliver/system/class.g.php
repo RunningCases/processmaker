@@ -61,17 +61,23 @@ class G
     ];
 
     /**
-     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     * This function verify if exist file name in the PATH_GULLIVER
+     * @param string $strClass
+     * @return boolean
      */
-    public static function LoadSystem($strClass)
+    public function LoadSystemExist($strClass)
     {
-        //For backward compatibilities
+        if (file_exists( PATH_GULLIVER . 'class.' . $strClass . '.php' )) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
-    public function LoadSystemExist($strClass)
+    public static function LoadSystem($strClass)
     {
         //For backward compatibilities
     }
