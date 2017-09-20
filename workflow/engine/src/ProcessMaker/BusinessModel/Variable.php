@@ -774,12 +774,12 @@ class Variable
             unset($params["limit"]);
 
             //Get appData and system variables
+            $paramsWithoutAppData = $params;
             if ($appUid !== null) {
                 $case = new \Cases();
                 $fields = $case->loadCase($appUid, $delIndex);
                 $appData = $fields["APP_DATA"];
                 $appData = array_merge($appData, Cases::getGlobalVariables($appData));
-                $paramsWithoutAppData = $params;
                 $params = array_merge($appData, $params);
             }
 
@@ -798,6 +798,9 @@ class Variable
             $field->queryStart = $start;
             $field->queryLimit = $limit;
             //Grids only access the global variables of 'ProcessMaker', other variables are removed.
+            //The property 'columnWidth' is only present in the controls of a grid, 
+            //in the current change there is no specific property that indicates 
+            //if the control is in the grid.
             if (isset($field->columnWidth)) {
                 $pmDynaform->fields["APP_DATA"] = Cases::getGlobalVariables($appData);
                 $field->queryInputData = $paramsWithoutAppData;

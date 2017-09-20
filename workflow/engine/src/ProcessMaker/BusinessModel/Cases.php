@@ -13,6 +13,7 @@ use RBAC;
 use Applications;
 use PmDynaform;
 use ProcessMaker\Services\OAuth2\Server;
+use Users;
 
 class Cases
 {
@@ -1680,7 +1681,7 @@ class Cases
         $arrayCaseVariable = [];
 
         if (!is_null($dynaFormUid)) {
-
+            $data = [];
             $data["APP_DATA"] = $fields['APP_DATA'];
             $data["CURRENT_DYNAFORM"] = $dynaFormUid;
             $pmDynaForm = new PmDynaform($data);
@@ -3260,12 +3261,6 @@ class Cases
         if (!empty($appData['INDEX'])) {
             $result['INDEX'] = $appData['INDEX'];
         }
-        if (!empty($appData['USER_LOGGED'])) {
-            $result['USER_LOGGED'] = $appData['USER_LOGGED'];
-        }
-        if (!empty($appData['USR_USERNAME'])) {
-            $result['USR_USERNAME'] = $appData['USR_USERNAME'];
-        }
 
         //we try to get the missing elements
         if (!empty($dataVariable['APP_UID']) && empty($result['APPLICATION'])) {
@@ -3274,11 +3269,19 @@ class Cases
         if (!empty($dataVariable['PRO_UID']) && empty($result['PROCESS'])) {
             $result['PROCESS'] = $dataVariable['PRO_UID'];
         }
+
+        $result['USER_LOGGED'] = '';
+        $result['USR_USERNAME'] = '';
+        global $RBAC;
+        if (isset($RBAC) && isset($RBAC->aUserInfo)) {
+            $result['USER_LOGGED'] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            $result['USR_USERNAME'] = $RBAC->aUserInfo['USER_INFO']['USR_USERNAME'];
+        }
         if (empty($result['USER_LOGGED'])) {
             $result['USER_LOGGED'] = Server::getUserId();
             if (!empty($result['USER_LOGGED'])) {
                 $oUserLogged = new Users();
-                $oUserLogged->load($dataVariable['USER_LOGGED']);
+                $oUserLogged->load($result['USER_LOGGED']);
                 $result['USR_USERNAME'] = $oUserLogged->getUsrUsername();
             }
         }
