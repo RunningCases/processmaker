@@ -83,8 +83,11 @@ class Users extends BaseUsers
         try {
             $oRow = UsersPeer::retrieveByPK( $UsrUid );
             if (! is_null( $oRow )) {
+                $this->fromArray(
+                    $oRow->toArray( BasePeer::TYPE_FIELDNAME, true ),
+                    BasePeer::TYPE_FIELDNAME
+                );
                 $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
-                $this->fromArray( $aFields, BasePeer::TYPE_FIELDNAME );
                 $this->setNew( false );
                 return $aFields;
             } else {
@@ -285,13 +288,6 @@ class Users extends BaseUsers
         }
 
         try {
-            require_once ("classes/model/IsoCountry.php");
-            require_once ("classes/model/IsoLocation.php");
-            require_once ("classes/model/IsoSubdivision.php");
-            require_once ("classes/model/Language.php");
-
-            G::LoadClass( "calendar" );
-
             $aFields = $this->load( $userUid );
 
             $c = new Criteria( "workflow" );
@@ -496,5 +492,28 @@ class Users extends BaseUsers
         $criteria = new Criteria(UsersPeer::DATABASE_NAME);
         $criteria->add(UsersPeer::USR_ID, $id);
         return UsersPeer::doSelect($criteria)[0];
+    }
+    
+    /**
+     * {@inheritdoc} except USR_PASSWORD, for security reasons.
+     *
+     * @param string $keyType One of the class type constants TYPE_PHPNAME,
+     *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+     * @param boolean $original If true return de original verion of fields.
+     * @return an associative array containing the field names (as keys) and field values
+     */
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $original = false)
+    {
+        if ($original) {
+            return parent::toArray($keyType);
+        }
+        $key = UsersPeer::translateFieldName(
+            UsersPeer::USR_PASSWORD,
+            BasePeer::TYPE_COLNAME,
+            $keyType
+        );
+        $array = parent::toArray($keyType);
+        unset($array[$key]);
+        return $array;
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 //require_once 'classes/model/om/BaseAppNotes.php';
+use ProcessMaker\Core\System;
 
 /**
  * Skeleton subclass for representing a row from the 'APP_NOTES' table.
@@ -130,7 +131,6 @@ class AppNotes extends BaseAppNotes
         if ($notify) {
             if ($noteRecipients == "") {
                 $noteRecipientsA = array ();
-                G::LoadClass( 'case' );
                 $oCase = new Cases();
                 $p = $oCase->getUsersParticipatedInCase( $appUid );
                 foreach ($p['array'] as $key => $userParticipated) {
@@ -148,9 +148,7 @@ class AppNotes extends BaseAppNotes
     public function sendNoteNotification ($appUid, $usrUid, $noteContent, $noteRecipients, $sFrom = "")
     {
         try {
-            if (!class_exists('System')) {
-                G::LoadClass('system');
-            }
+
             $aConfiguration = System::getEmailConfiguration();
 
             $msgError = "";
@@ -163,7 +161,6 @@ class AppNotes extends BaseAppNotes
             $aUser = $oUser->load( $usrUid );
             $authorName = ((($aUser['USR_FIRSTNAME'] != '') || ($aUser['USR_LASTNAME'] != '')) ? $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'] . ' ' : '') . '<' . $aUser['USR_EMAIL'] . '>';
 
-            G::LoadClass( 'case' );
             $oCase = new Cases();
             $aFields = $oCase->loadCase( $appUid );
             $configNoteNotification['subject'] = G::LoadTranslation( 'ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION' ) . " @#APP_TITLE ";
@@ -177,7 +174,6 @@ class AppNotes extends BaseAppNotes
             $sSubject = G::replaceDataField( $configNoteNotification['subject'], $aFields );
             $sBody = nl2br( G::replaceDataField( $configNoteNotification['body'], $aFields ) );
 
-            G::LoadClass( 'spool' );
             $oUser = new Users();
             $recipientsArray = explode( ",", $noteRecipients );
 
@@ -186,7 +182,7 @@ class AppNotes extends BaseAppNotes
                 $aUser = $oUser->load( $recipientUid );
 
                 $sTo = ((($aUser['USR_FIRSTNAME'] != '') || ($aUser['USR_LASTNAME'] != '')) ? $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'] . ' ' : '') . '<' . $aUser['USR_EMAIL'] . '>';
-                $oSpool = new spoolRun();
+                $oSpool = new SpoolRun();
 
                 $oSpool->setConfig($aConfiguration);
                 $oSpool->create(
@@ -224,7 +220,6 @@ class AppNotes extends BaseAppNotes
         $response = $this->postNewNote($applicationUid, $userUid, $note, false);
 
         if ($sendMail == 1) {
-            G::LoadClass("case");
 
             $case = new Cases();
 

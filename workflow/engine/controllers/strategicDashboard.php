@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * StrategicDashboard controller
  * @inherits Controller

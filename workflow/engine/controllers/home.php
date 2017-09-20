@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 /**
  * Home controller
  *
@@ -99,14 +101,9 @@ class Home extends Controller
             return;
         }
 
-        require_once 'classes/model/UsersProperties.php';
-        G::LoadClass( 'process' );
-        G::LoadClass( 'case' );
-
         $userProperty = new UsersProperties();
         $process = new Process();
         $case = new Cases();
-        G::loadClass( 'system' );
         $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         //Get ProcessStatistics Info
@@ -138,7 +135,7 @@ class Home extends Controller
             }
         }
 
-        $oServerConf = & serverConf::getSingleton();
+        $oServerConf = & ServerConf::getSingleton();
 
         if ($oServerConf->isRtl( SYS_LANG )) {
             $swRtl = 1;
@@ -185,14 +182,11 @@ class Home extends Controller
 
     public function indexSingle ($httpData)
     {
-        require_once 'classes/model/Step.php';
-
         $step = new Step();
 
         $solrEnabled = false;
 
         if (($solrConf = System::solrEnv()) !== false) {
-            G::LoadClass("AppSolr");
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -212,7 +206,6 @@ class Home extends Controller
         if ($solrEnabled) {
             $cases = $ApplicationSolrIndex->getAppGridData($this->userUid, 0, 1, 'todo');
         } else {
-            G::LoadClass( 'applications' );
 
             $apps = new Applications();
 
@@ -384,7 +377,6 @@ class Home extends Controller
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null)
     {
-        require_once ("classes/model/AppNotes.php");
 
         $appNotes = new AppNotes();
 
@@ -420,7 +412,6 @@ class Home extends Controller
         ) &&
         (($solrConf = System::solrEnv()) !== false)
         ) {
-            G::LoadClass("AppSolr");
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -537,7 +528,6 @@ class Home extends Controller
             }
 
             if (isset( $row['DEL_DELEGATE_DATE'] )) {
-                G::LoadClass( "configuration" );
                 $conf = new Configurations();
                 $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
                 $cases['data'][$i]['DEL_DELEGATE_DATE'] = '';
@@ -565,7 +555,6 @@ class Home extends Controller
 
     public function startCase ($httpData)
     {
-        G::LoadClass( 'case' );
         $case = new Cases();
         $aData = $case->startCase( $httpData->id, $_SESSION['USER_LOGGED'] );
 
@@ -602,7 +591,6 @@ class Home extends Controller
 
     function getUserArray($action, $userUid, $search = null)
     {
-        G::LoadClass("configuration");
         $conf = new Configurations();
         $confEnvSetting = $conf->getFormats();
         $users = array();
@@ -649,7 +637,6 @@ class Home extends Controller
 
     function getCategoryArray ()
     {
-        require_once 'classes/model/ProcessCategory.php';
         $category = array();
         $category[] = array ("",G::LoadTranslation( "ID_ALL_CATEGORIES" ));
 

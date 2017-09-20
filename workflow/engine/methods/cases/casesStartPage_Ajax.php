@@ -1,5 +1,7 @@
 <?php
-G::LoadSystem('inputfilter');
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
@@ -32,9 +34,6 @@ $functionName( $functionParams );
 
 function getProcessList ()
 {
-    G::LoadClass( 'case' );
-    G::LoadClass( 'process' );
-    G::LoadClass( 'calendar' );
     $calendar = new Calendar();
     $oProcess = new Process();
     $oCase = new Cases();
@@ -136,10 +135,6 @@ function ellipsis ($text, $numb)
 
 function lookinginforContentProcess ($sproUid)
 {
-    require_once 'classes/model/Content.php';
-    require_once 'classes/model/Task.php';
-    require_once 'classes/model/Content.php';
-
     $oContent = new Content();
     ///we are looking for a pro title for this process $sproUid
     $oCriteria = new Criteria( 'workflow' );
@@ -179,8 +174,6 @@ function lookinginforContentProcess ($sproUid)
 
 function startCase ()
 {
-    G::LoadClass( 'case' );
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
     $_REQUEST = $filter->xssFilterHard($_REQUEST);
@@ -239,9 +232,6 @@ function startCase ()
 
 function getSimpleDashboardData ()
 {
-    G::LoadClass( "BasePeer" );
-    require_once ("classes/model/AppCacheView.php");
-    require_once 'classes/model/Process.php';
     $sUIDUserLogged = $_SESSION['USER_LOGGED'];
 
     $Criteria = new Criteria( 'workflow' );
@@ -318,7 +308,7 @@ function getSimpleDashboardData ()
 
 function getRegisteredDashboards ()
 {
-    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $dashBoardPages = $oPluginRegistry->getDashboardPages();
     print_r( G::json_encode( $dashBoardPages ) );
 }

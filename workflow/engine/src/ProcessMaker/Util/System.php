@@ -2,9 +2,17 @@
 
 namespace ProcessMaker\Util;
 
-use \ProcessMaker\Services\OAuth2\PmPdo;
-use \ProcessMaker\Services\OAuth2\Server;
-use \OAuth2\Request;
+use Bootstrap;
+use Exception;
+use Maveriks\Util\ClassLoader;
+use PMPlugin;
+use Processmaker\Core\System AS PmSystem;
+use ProcessMaker\Plugins\Interfaces\PluginDetail;
+use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Services\OAuth2\PmPdo;
+use ProcessMaker\Services\OAuth2\Server;
+use OAuth2\Request;
+use Propel;
 
 class System
 {
@@ -14,16 +22,16 @@ class System
      * Get Time Zone
      *
      * @return string Return Time Zone
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getTimeZone()
     {
         try {
-            $arraySystemConfiguration = \System::getSystemConfiguration('', '', SYS_SYS);
+            $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
 
             //Return
             return $arraySystemConfiguration['time_zone'];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -40,10 +48,10 @@ class System
     {
         $workspaces = array();
         foreach ($args as $arg) {
-            $workspaces[] = new \workspaceTools($arg);
+            $workspaces[] = new \WorkspaceTools($arg);
         }
         if (empty($workspaces) && $includeAll) {
-            $workspaces = \System::listWorkspaces();
+            $workspaces = PmSystem::listWorkspaces();
         }
         return $workspaces;
     }
@@ -57,26 +65,28 @@ class System
     {
         try {
             //Update singleton file by workspace
-            \Bootstrap::setConstantsRelatedWs($workspace->name);
-            $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace->name . PATH_SEP . "plugin.singleton";
-            $oPluginRegistry = \PMPluginRegistry::loadSingleton($pathSingleton);
-            $items = \PMPlugin::getListAllPlugins($workspace->name);
+            Bootstrap::setConstantsRelatedWs($workspace->name);
+            Propel::init(PATH_CORE . "config/databases.php");
+            $oPluginRegistry = PluginRegistry::loadSingleton();
+            $items = PMPlugin::getListAllPlugins($workspace->name);
+            /** @var PluginDetail $item */
             foreach ($items as $item) {
-                if ($item->enabled === true) {
-                    require_once($item->sFilename);
-                    $details = $oPluginRegistry->getPluginDetails(basename($item->sFilename));
+                if ($item->isEnabled()) {
+                    require_once($item->getFile());
+                    /** @var PluginDetail $details */
+                    $details = $oPluginRegistry->getPluginDetails(basename($item->getFile()));
                     //Only if the API directory structure is defined
-                    $pathApiDirectory = PATH_PLUGINS . $details->sPluginFolder . PATH_SEP . "src" . PATH_SEP . "Services" . PATH_SEP . "Api";
+                    $pathApiDirectory = PATH_PLUGINS . $details->getFolder() . PATH_SEP . "src" . PATH_SEP . "Services" . PATH_SEP . "Api";
                     if (is_dir($pathApiDirectory)) {
-                        $pluginSrcDir = PATH_PLUGINS . $details->sNamespace . PATH_SEP . 'src';
-                        $loader = \Maveriks\Util\ClassLoader::getInstance();
+                        $pluginSrcDir = PATH_PLUGINS . $details->getNamespace() . PATH_SEP . 'src';
+                        $loader = ClassLoader::getInstance();
                         $loader->add($pluginSrcDir);
-                        $oPluginRegistry->registerRestService($details->sNamespace);
-                        if (class_exists($details->sClassName)) {
-                            $oPlugin = new $details->sClassName($details->sNamespace, $details->sFilename);
+                        $oPluginRegistry->registerRestService($details->getNamespace());
+                        $className = $details->getClassName();
+                        if (class_exists($className)) {
+                            $oPlugin = new $className($details->getNamespace(), $details->getFile());
                             $oPlugin->setup();
                         }
-                        file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
                     }
                 }
             }
@@ -91,8 +101,8 @@ class System
             if (file_exists($workspace->path . '/routes.php')) {
                 unlink($workspace->path . '/routes.php');
             }
-        } catch (\Exception $e) {
-            throw new \Exception("Error: cannot perform this task. " . $e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception("Error: cannot perform this task. " . $e->getMessage());
         }
     }
 
@@ -107,7 +117,7 @@ class System
 
         $authCode = self::getAuthorizationCodeUserLogged($client);
 
-        $loader = \Maveriks\Util\ClassLoader::getInstance();
+        $loader = ClassLoader::getInstance();
         $loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
 
         $request = array(
@@ -137,7 +147,7 @@ class System
      * Get client credentials
      * @return array
      */
-    protected function getClientCredentials()
+    protected static function getClientCredentials()
     {
         $oauthQuery = new PmPdo(self::getDsn());
         return $oauthQuery->getClientDetails(self::CLIENT_ID);
@@ -147,7 +157,7 @@ class System
      * Get DNS of workspace
      * @return array
      */
-    protected function getDsn()
+    protected static function getDsn()
     {
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
         $port = empty($port) ? '' : ";port=$port";
@@ -161,7 +171,7 @@ class System
      * @param $client
      * @return bool|string
      */
-    protected function getAuthorizationCodeUserLogged($client)
+    protected static function getAuthorizationCodeUserLogged($client)
     {
         Server::setDatabaseSource(self::getDsn());
         Server::setPmClientId($client['CLIENT_ID']);

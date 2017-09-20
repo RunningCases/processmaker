@@ -25,6 +25,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Exception\RBACException;
+
 /**
  * File: $Id$
  *
@@ -72,6 +75,12 @@ class RBAC
     private static $instance = null;
     public $authorizedActions = array();
 
+    /**
+     * To enable compatibility with soap login.
+     * @var bool
+     */
+    private $enableLoginHash = false;
+
     public function __construct ()
     {
         $this->authorizedActions = array(
@@ -111,11 +120,11 @@ class RBAC
                 'downloadFileHash' => array('PM_FACTORY')
             ),
             'processProxy.php' => array(
-                'categoriesList' => array(),
-                'getCategoriesList' => array(),
+                'categoriesList' => array('PM_SETUP_PROCESS_CATEGORIES'),
+                'getCategoriesList' => array('PM_FACTORY'),
                 'saveProcess' => array('PM_FACTORY'),
-                'changeStatus' => array(),
-                'changeDebugMode' => array(),
+                'changeStatus' => array('PM_FACTORY'),
+                'changeDebugMode' => array('PM_FACTORY'),
                 'getUsers' => array(),
                 'getGroups' => array(),
                 'assignActorsTask' => array(),
@@ -126,7 +135,7 @@ class RBAC
                 'saveProperties' => array(),
                 'getCaledarList' => array(),
                 'getPMVariables' => array(),
-                'generateBpmn' => array()
+                'generateBpmn' => array('PM_FACTORY')
             ),
             'home.php' => array(
                 'login' => array('PM_LOGIN'),
@@ -145,8 +154,31 @@ class RBAC
                 'getProcessArray' => array('PM_ALLCASES'),
                 'getProcesses' => array('PM_ALLCASES'),
                 'getUsers' => array('PM_ALLCASES')
+            ),
+            'newSite.php' => array(
+                'newSite.php' => array('PM_SETUP_ADVANCE')
+            ),
+            'emailsAjax.php' => array(
+                'MessageList' => array('PM_SETUP', 'PM_SETUP_LOGS'),
+                'updateStatusMessage' => array('PM_SETUP', 'PM_SETUP_LOGS'),
+            ),
+            'processCategory_Ajax.php' => array(
+                'processCategoryList' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'updatePageSize' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'checkCategoryName' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'saveNewCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'checkEditCategoryName' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'updateCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'canDeleteCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'deleteCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES')
+            ),
+            'emailServerAjax.php' => array(
+                'INS' => array('PM_SETUP'),
+                'UPD' => array('PM_SETUP'),
+                'DEL' => array('PM_SETUP'),
+                'LST' => array('PM_SETUP'),
+                'TEST' => array('PM_SETUP')
             )
-
         );
     }
 
@@ -173,37 +205,37 @@ class RBAC
     public function initRBAC ()
     {
         if (is_null( $this->userObj )) {
-            require_once ("classes/model/RbacUsers.php");
+
             $this->userObj = new RbacUsers();
         }
 
         if (is_null( $this->systemObj )) {
-            require_once ("classes/model/Systems.php");
+
             $this->systemObj = new Systems();
         }
 
         if (is_null( $this->usersRolesObj )) {
-            require_once ("classes/model/UsersRoles.php");
+
             $this->usersRolesObj = new UsersRoles();
         }
 
         if (is_null( $this->rolesObj )) {
-            require_once ("classes/model/Roles.php");
+
             $this->rolesObj = new Roles();
         }
 
         if (is_null( $this->permissionsObj )) {
-            require_once ("classes/model/Permissions.php");
+
             $this->permissionsObj = new Permissions();
         }
 
         if (is_null( $this->rolesPermissionsObj )) {
-            require_once ("classes/model/RolesPermissions.php");
+
             $this->rolesPermissionsObj = new RolesPermissions();
         }
 
         if (is_null( $this->authSourcesObj )) {
-            require_once 'classes/model/AuthenticationSource.php';
+
             $this->authSourcesObj = new AuthenticationSource();
         }
         //hook for RBAC plugins
@@ -222,7 +254,6 @@ class RBAC
             }
         }
         if (!in_array('ldapAdvanced', $this->aRbacPlugins)) {
-            G::LoadClass('ldapAdvanced');
             if (class_exists('ldapAdvanced')) {
                 $this->aRbacPlugins[] = 'ldapAdvanced';
             }
@@ -502,10 +533,8 @@ class RBAC
     public function VerifyLogin ($strUser, $strPass)
     {
         /*----------------------------------********---------------------------------*/
-        if (!class_exists('pmLicenseManager')) {
-            G::LoadClass('pmLicenseManager');
-        }
-        $licenseManager =& pmLicenseManager::getSingleton();
+
+        $licenseManager =& PmLicenseManager::getSingleton();
         if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
             return -7;
         }
@@ -1520,6 +1549,7 @@ class RBAC
             }
         }
     }
+
     /**
      * This function verify if the user allows to the file with a specific action
      * If the action is not defined in the authorizedActions we give the allow
@@ -1547,9 +1577,34 @@ class RBAC
         }
 
         if (!$access) {
-            G::header('Location: /errors/error403.php');
-            die();
+            throw new RBACException('ID_ACCESS_DENIED', 403);
         }
+    }
+
+    /**
+     * Enable compatibility with hash login
+     */
+    public function enableLoginWithHash()
+    {
+        $this->enableLoginHash = true;
+    }
+
+    /**
+     * Disable compatibility with hash login
+     */
+    public function disableLoginWithHash()
+    {
+        $this->enableLoginHash = false;
+    }
+
+    /**
+     * Return status login with hash
+     *
+     * @return bool
+     */
+    public function loginWithHash()
+    {
+        return $this->enableLoginHash;
     }
 }
 

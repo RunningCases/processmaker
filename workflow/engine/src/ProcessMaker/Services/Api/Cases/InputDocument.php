@@ -3,6 +3,8 @@ namespace ProcessMaker\Services\Api\Cases;
 
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
+use ProcessMaker\BusinessModel\Cases\InputDocument AS CasesInputDocument;
+use Exception;
 
 /**
  * Cases\InputDocument Api Controller
@@ -54,6 +56,8 @@ class InputDocument extends Api
     }
 
     /**
+     * @access protected
+     * @class AccessControl {@className \ProcessMaker\Services\Api\Cases}
      * @url GET /:app_uid/input-document/:app_doc_uid/file
      *
      * @param string $app_uid {@min 32}{@max 32}
@@ -109,6 +113,25 @@ class InputDocument extends Api
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:app_uid/input-document/:app_doc_uid/versions
+     *
+     * @param string $app_uid {@min 32}{@max 32}
+     * @param string $app_doc_uid {@min 32}{@max 32}
+     * @return array $response
+     * @throws Exception
+     */
+    public function doGetDocumentByVersion($app_uid, $app_doc_uid)
+    {
+        try {
+            $inputDocument = new CasesInputDocument();
+            $response = $inputDocument->getAllVersionByDocUid($app_uid, $app_doc_uid);
+            return $response;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 }

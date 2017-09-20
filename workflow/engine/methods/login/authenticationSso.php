@@ -1,6 +1,8 @@
 <?php
 global $G_PUBLISH;
 
+use ProcessMaker\Core\System;
+
 try {
     if ($RBAC->singleSignOn) {
         $_SESSION['__USER_LOGGED_SSO__']  = $RBAC->userObj->fields['USR_UID'];

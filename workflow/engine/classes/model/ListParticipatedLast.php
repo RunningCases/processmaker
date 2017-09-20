@@ -34,6 +34,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aRow = $dataset->getRow();
         $data['APP_STATUS'] = $aRow['APP_STATUS'];
 
+        $currentInformation = array();
         if ($data['USR_UID'] != 'SELF_SERVICES') {
             if ($data['USR_UID'] != '') {
                 $criteria = new Criteria();
@@ -49,19 +50,24 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
                 $data['DEL_CURRENT_USR_LASTNAME'] = $aRow['USR_LASTNAME'];
                 $data['DEL_CURRENT_TAS_TITLE'] = $data['APP_TAS_TITLE'];
+                $currentInformation = array(
+                    'DEL_CURRENT_USR_USERNAME' => $data['DEL_CURRENT_USR_USERNAME'],
+                    'DEL_CURRENT_USR_FIRSTNAME' => $data['DEL_CURRENT_USR_FIRSTNAME'],
+                    'DEL_CURRENT_USR_LASTNAME' => $data['DEL_CURRENT_USR_LASTNAME'],
+                    'DEL_CURRENT_TAS_TITLE' => $data['APP_TAS_TITLE']
+                );
             }
         } else {
             $getData['USR_UID'] = $data['USR_UID_CURRENT'];
             $getData['APP_UID'] = $data['APP_UID'];
             $row = $this->getRowFromList($getData);
             if (is_array($row) && sizeof($row)) {
-                $set = array(
+                $currentInformation = array(
                     'DEL_CURRENT_USR_USERNAME' => '',
                     'DEL_CURRENT_USR_FIRSTNAME' => '',
                     'DEL_CURRENT_USR_LASTNAME' => '',
-                    'APP_TAS_TITLE' => $data['APP_TAS_TITLE'],
-                    'DEL_CURRENT_TAS_TITLE' => $data['APP_TAS_TITLE'], );
-                $this->updateCurrentUser($row, $set);
+                    'DEL_CURRENT_TAS_TITLE' => $data['APP_TAS_TITLE']
+                );
             }
         }
 
@@ -84,6 +90,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
         if (!empty($data['APP_STATUS'])) {
             $data['APP_STATUS_ID'] = Application::$app_status_values[$data['APP_STATUS']];
         }
+        //We will update the current information
+        if (count($currentInformation) > 0) {
+            $this->updateCurrentInfoByAppUid($data['APP_UID'], $currentInformation);
+        }
+
         $con = Propel::getConnection(ListParticipatedLastPeer::DATABASE_NAME);
         try {
             $this->fromArray($data, BasePeer::TYPE_FIELDNAME);
@@ -101,6 +112,27 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $con->rollback();
             throw ($e);
         }
+    }
+
+    /**
+     * This function update the row related to the appUid with the current information
+     * @param string $appUid
+     * @param array $currentInformation
+     * @return void
+    */
+    private function updateCurrentInfoByAppUid($appUid, $currentInformation)
+    {
+        //Update - WHERE
+        $criteriaWhere = new Criteria('workflow');
+        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $appUid, Criteria::EQUAL);
+        //Update - SET
+        $criteriaSet = new Criteria('workflow');
+        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_USERNAME, $currentInformation['DEL_CURRENT_USR_USERNAME']);
+        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_FIRSTNAME, $currentInformation['DEL_CURRENT_USR_FIRSTNAME']);
+        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_USR_LASTNAME, $currentInformation['DEL_CURRENT_USR_LASTNAME']);
+        $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_TAS_TITLE, $currentInformation['DEL_CURRENT_TAS_TITLE']);
+
+        BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection('workflow'));
     }
 
     /**
@@ -448,22 +480,6 @@ class ListParticipatedLast extends BaseListParticipatedLast
         return false;
     }
 
-    public function updateCurrentUser($where, $set)
-    {
-        $con = Propel::getConnection('workflow');
-        //Update - WHERE
-        $criteriaWhere = new Criteria('workflow');
-        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $where['APP_UID'], Criteria::EQUAL);
-        $criteriaWhere->add(ListParticipatedLastPeer::USR_UID, $where['USR_UID'], Criteria::EQUAL);
-        $criteriaWhere->add(ListParticipatedLastPeer::DEL_INDEX, $where['DEL_INDEX'], Criteria::EQUAL);
-        //Update - SET
-        $criteriaSet = new Criteria('workflow');
-        foreach ($set as $k => $v) {
-            eval('$criteriaSet->add( ListParticipatedLastPeer::'.$k.',$v, Criteria::EQUAL);');
-        }
-        BasePeer::doUpdate($criteriaWhere, $criteriaSet, $con);
-    }
-
     /**
      * Returns the number of cases of a user.
      *
@@ -486,5 +502,27 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aRow = $dataset->getRow();
 
         return (int) $aRow['TOTAL'];
+    }
+
+    /**
+     * @deprecated This function is deprecated, it hasn’t been removed because of its compatibility with the External Registration plugin
+     * @param $where
+     * @param $set
+     * @return void
+     */
+    public function updateCurrentUser($where, $set)
+    {
+        $con = Propel::getConnection('workflow');
+        //Update - WHERE
+        $criteriaWhere = new Criteria('workflow');
+        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $where['APP_UID'], Criteria::EQUAL);
+        $criteriaWhere->add(ListParticipatedLastPeer::USR_UID, $where['USR_UID'], Criteria::EQUAL);
+        $criteriaWhere->add(ListParticipatedLastPeer::DEL_INDEX, $where['DEL_INDEX'], Criteria::EQUAL);
+        //Update - SET
+        $criteriaSet = new Criteria('workflow');
+        foreach ($set as $k => $v) {
+            eval('$criteriaSet->add( ListParticipatedLastPeer::' . $k . ',$v, Criteria::EQUAL);');
+        }
+        BasePeer::doUpdate($criteriaWhere, $criteriaSet, $con);
     }
 }

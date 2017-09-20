@@ -27,11 +27,8 @@
 /**
  * @access public
  */
-require_once 'classes/model/om/BaseRbacUsers.php';
 
-if (!class_exists('PMLicensedFeatures')) {
-  G::LoadClass('licensedFeatures');
-}
+use ProcessMaker\Plugins\PluginRegistry;
 
 /**
  * Skeleton subclass for representing a row from the 'USERS' table.
@@ -80,12 +77,13 @@ class RbacUsers extends BaseRbacUsers
         try {
             $c = new Criteria('rbac');
             $c->add(RbacUsersPeer::USR_USERNAME, $sUsername);
+            /* @var $rs RbacUsers[] */
             $rs = RbacUsersPeer::doSelect($c, Propel::getDbConnection('rbac_ro'));
             if (is_array($rs) && isset($rs[0]) && is_object($rs[0]) && get_class($rs[0]) == 'RbacUsers') {
                 $aFields = $rs[0]->toArray(BasePeer::TYPE_FIELDNAME);
                 //verify password with md5, and md5 format
                 if (mb_strtoupper($sUsername, 'utf-8') === mb_strtoupper($aFields['USR_USERNAME'], 'utf-8')) {
-                    if( Bootstrap::verifyHashPassword($sPassword, $aFields['USR_PASSWORD']) ) {
+                    if( Bootstrap::verifyHashPassword($sPassword, $rs[0]->getUsrPassword()) ) {
                         if ($aFields['USR_DUE_DATE'] < date('Y-m-d')) {
                             return -4;
                         }
@@ -186,9 +184,10 @@ class RbacUsers extends BaseRbacUsers
         try {
             $c = new Criteria('rbac');
             $c->add(RbacUsersPeer::USR_UID, $sUsrUid);
-            $rs = RbacUsersPeer::doSelect($c, Propel::getDbConnection('rbac_ro'));
-            if (is_array($rs) && isset($rs[0]) && is_object($rs[0]) && get_class($rs[0]) == 'RbacUsers') {
-                $aFields = $rs[0]->toArray(BasePeer::TYPE_FIELDNAME);
+            $resultSet = RbacUsersPeer::doSelectRS($c, Propel::getDbConnection('rbac_ro'));
+            if ($resultSet->next()) {
+                $this->hydrate($resultSet);
+                $aFields = $this->toArray(BasePeer::TYPE_FIELDNAME);
                 return $aFields;
             }
             return false;
@@ -200,12 +199,12 @@ class RbacUsers extends BaseRbacUsers
 
     public function create($aData)
     {
-        if (class_exists('PMPluginRegistry')) {
-            $pluginRegistry = & PMPluginRegistry::getSingleton();
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
+            $pluginRegistry = PluginRegistry::loadSingleton();
             if ($pluginRegistry->existsTrigger(PM_BEFORE_CREATE_USER)) {
                 try {
                     $pluginRegistry->executeTriggers(PM_BEFORE_CREATE_USER, null);
-                } catch(Exception $error) {
+                } catch (Exception $error) {
                     throw new Exception($error->getMessage());
                 }
             }
@@ -321,6 +320,29 @@ class RbacUsers extends BaseRbacUsers
         catch (Exception $oError) {
           throw($oError);
         }
+    }
+
+    /**
+     * {@inheritdoc} except USR_PASSWORD, for security reasons.
+     *
+     * @param string $keyType One of the class type constants TYPE_PHPNAME,
+     *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+     * @param boolean $original If true return de original verion of fields.
+     * @return an associative array containing the field names (as keys) and field values
+     */
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $original = false)
+    {
+        if ($original) {
+            return parent::toArray($keyType);
+        }
+        $key = RbacUsersPeer::translateFieldName(
+            RbacUsersPeer::USR_PASSWORD,
+            BasePeer::TYPE_COLNAME,
+            $keyType
+        );
+        $array = parent::toArray($keyType);
+        unset($array[$key]);
+        return $array;
     }
 }
 

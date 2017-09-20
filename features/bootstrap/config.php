@@ -10,3 +10,14 @@ $config = array (
     'refresh_token' => "ade174976fe77f12ecde7c9e1d8307ac495f443e",
 );
 
+call_user_func(function() {
+    $phpunit = new DOMDocument;
+    $phpunit->load(__DIR__.'/../../phpunit.xml');
+    
+    foreach($phpunit->getElementsByTagName('php') as $php) {
+        foreach($php->getElementsByTagName('var') as $var) {
+            $GLOBALS[$var->getAttribute("name")] = $var->getAttribute("value");
+        }
+    }
+});
+require __DIR__.'/../../tests/bootstrap.php';

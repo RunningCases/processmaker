@@ -2,6 +2,7 @@
 namespace ProcessMaker\Services\Api;
 
 use Luracast\Restler\RestException;
+use ProcessMaker\Project\Bpmn;
 use ProcessMaker\Services\Api;
 use \ProcessMaker\Project\Adapter;
 use \ProcessMaker\Util;
@@ -10,6 +11,9 @@ use \ProcessMaker\BusinessModel\Validator;
 use \ProcessMaker\BusinessModel\Migrator\GranularExporter;
 use \ProcessMaker\BusinessModel\Migrator\ExportObjects;
 use \ProcessMaker\Util\IO\HttpStream;
+use \ProcessMaker\Util\Common;
+use ProcessMaker\Project\Adapter\BpmnWorkflow;
+use Exception;
 
 /**
  * Class Project
@@ -42,7 +46,7 @@ class Project extends Api
             $projects = Adapter\BpmnWorkflow::getList($start, $limit, $filter, CASE_LOWER);
 
             return DateTime::convertUtcToIso8601($projects, $this->arrayFieldIso8601);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -61,7 +65,7 @@ class Project extends Api
             $property = $userProperty->loadOrCreateIfNotExists($this->getUserId());
             $project['usr_setting_designer'] = isset($property['USR_SETTING_DESIGNER']) ? \G::json_decode($property['USR_SETTING_DESIGNER']) : null;
             return DateTime::convertUtcToIso8601($project, $this->arrayFieldIso8601);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -86,7 +90,7 @@ class Project extends Api
             }
             Validator::throwExceptionIfDataNotMetIso8601Format($request_data, $this->arrayFieldIso8601);
             return Adapter\BpmnWorkflow::createFromStruct(DateTime::convertDataToUtc($request_data, $this->arrayFieldIso8601));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -111,7 +115,7 @@ class Project extends Api
 
             Validator::throwExceptionIfDataNotMetIso8601Format($request_data, $this->arrayFieldIso8601);
             return Adapter\BpmnWorkflow::updateFromStruct($prj_uid, DateTime::convertDataToUtc($request_data, $this->arrayFieldIso8601));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -119,13 +123,39 @@ class Project extends Api
     /**
      * @param string $prj_uid {@min 1}{@max 32}
      * @url DELETE /:prj_uid
+     * @throws Exception
      */
     public function delete($prj_uid)
     {
         try {
-            $oBpmnWf = Adapter\BpmnWorkflow::load($prj_uid);
-            $oBpmnWf->remove();
-        } catch (\Exception $e) {
+            if (Bpmn::exists($prj_uid)) {
+                $oBpmnWf = BpmnWorkflow::load($prj_uid);
+                $oBpmnWf->remove();
+            } else {
+                throw new Exception("The project cannot be found or it was already deleted.");
+            }
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Bulk actions
+     * @url POST /bulk
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
+     * @param array $request_data
+     * @return array $response
+     * @throws Exception
+     */
+    public function bulk($request_data)
+    {
+        try {
+            $response = Bpmn::doBulk($request_data);
+            return $response;
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -143,7 +173,7 @@ class Project extends Api
             $exportProcess= new ExportObjects();
             $result = $exportProcess->objectList($prj_uid);
             return $result;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -182,7 +212,7 @@ class Project extends Api
         $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
 
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
-        $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
+        $version = Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
 
         $exporter->setMetadata("export_version", $version);
@@ -223,7 +253,7 @@ class Project extends Api
             $response = $arrayData;
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -258,7 +288,7 @@ class Project extends Api
 
             return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -278,7 +308,7 @@ class Project extends Api
             $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $arrayData = $process->update($prj_uid, DateTime::convertDataToUtc($request_data, $this->arrayFieldIso8601));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -316,7 +346,7 @@ class Project extends Api
             $response = $arrayData;
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -336,7 +366,7 @@ class Project extends Api
             $response = $process->getDynaForms($prj_uid);
 
             return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -356,7 +386,7 @@ class Project extends Api
             $response = $process->getInputDocuments($prj_uid);
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -376,7 +406,7 @@ class Project extends Api
             $response = $process->getVariables("ALL", $prj_uid);
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -398,7 +428,7 @@ class Project extends Api
             $response = ($grid_uid == "")? $process->getVariables("GRID", $prj_uid) : $process->getVariables("GRIDVARS", $prj_uid, $grid_uid);
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -418,7 +448,7 @@ class Project extends Api
             $response = $process->getLibraries($prj_uid);
 
             return $response;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
@@ -434,7 +464,7 @@ class Project extends Api
             $oRoute = new \Route();
             $result = $oRoute->updateRouteOrder($request_data);
             return $result;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
@@ -450,7 +480,7 @@ class Project extends Api
             $oRoute = new \Route();
             $result = $oRoute->updateRouteOrderFromProject($prj_uid);
             return $result;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }

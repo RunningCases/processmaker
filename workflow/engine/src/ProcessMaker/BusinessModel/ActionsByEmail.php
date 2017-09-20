@@ -2,6 +2,11 @@
 
 namespace ProcessMaker\BusinessModel;
 
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+use PmDynaform;
+use SpoolRun;
+
 /**
  * Description of ActionsByEmailService
  *
@@ -393,7 +398,6 @@ class ActionsByEmail
 
         if ($dataRes = $resultRes->getRow()) {
             if (is_null($dataRes['DEL_FINISH_DATE'])) {
-                \G::LoadClass('spool');
 
                 $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
                 $criteria = $emailServer->getEmailServerCriteria();
@@ -405,9 +409,9 @@ class ActionsByEmail
                     $arrayConfigAux = $row;
                     $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
                 }
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \System::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
 
-                $spool = new \spoolRun();
+                $spool = new SpoolRun();
                 $spool->setConfig($aSetup);
 
                 $spool->create(array(
@@ -577,9 +581,8 @@ class ActionsByEmail
         $resultD->next();
         $configuration = $resultD->getRow();
 
-        \G::LoadClass('pmDynaform');
         $field = new \stdClass();
-        $obj = new \pmDynaform($configuration);
+        $obj = new PmDynaform($configuration);
 
         if ($dataRes['ABE_RES_DATA'] !== '') {
             $value       = unserialize($dataRes['ABE_RES_DATA']);
@@ -669,9 +672,8 @@ class ActionsByEmail
                         /*----------------------------------********---------------------------------*/
                         //SSO
                         if (\PMLicensedFeatures::getSingleton()->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
-                            \G::LoadClass('pmSso');
 
-                            $sso = new \pmSsoClass();
+                            $sso = new \PmSsoClass();
 
                             if ($sso->ssocVerifyUser()) {
                                 global $RBAC;
@@ -691,7 +693,7 @@ class ActionsByEmail
                         /*----------------------------------********---------------------------------*/
 
                         if (defined('PM_SINGLE_SIGN_ON')) {
-                            $pluginRegistry = &\PMPluginRegistry::getSingleton();
+                            $pluginRegistry = PluginRegistry::loadSingleton();
 
                             if ($pluginRegistry->existsTrigger(PM_SINGLE_SIGN_ON)) {
                                 if ($pluginRegistry->executeTriggers(PM_SINGLE_SIGN_ON, null)) {

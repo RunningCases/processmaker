@@ -52,8 +52,6 @@ if (PMLicensedFeatures
         $aber = G::decrypt($_REQUEST['ABER'], URL_KEY);
         $forms = isset($_REQUEST['form']) ? $_REQUEST['form'] : [];
 
-        G::LoadClass('case');
-
         $case = new Cases();
         $casesFields = $case->loadCase($appUid, $delIndex);
 
@@ -103,9 +101,7 @@ if (PMLicensedFeatures
         //Update case info
         $case->updateCase($appUid, $casesFields);
 
-        G::LoadClass('wsBase');
-
-        $wsBaseInstance = new wsBase();
+        $wsBaseInstance = new WsBase();
         $result = $wsBaseInstance->derivateCase($casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true);
         $code = (is_array($result) ? $result['status_code'] : $result->status_code);
 
@@ -127,8 +123,6 @@ if (PMLicensedFeatures
 
         if ($code == 0) {
             //Save Cases Notes
-            include_once 'utils.php';
-
             $dataAbeRequests = loadAbeRequest($aber);
             $dataAbeConfiguration = loadAbeConfiguration($dataAbeRequests['ABE_UID']);
 

@@ -180,11 +180,6 @@ class AppEvent extends BaseAppEvent
 
     public function executeEvents ($sNow, $debug = false, &$log = array(), $cron = 0)
     {
-
-        require_once 'classes/model/Configuration.php';
-        require_once 'classes/model/Triggers.php';
-        G::LoadClass( 'case' );
-
         $debug = 1;
         $oCase = new Cases();
 

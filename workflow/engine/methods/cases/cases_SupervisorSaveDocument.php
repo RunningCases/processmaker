@@ -22,10 +22,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 try {
-    //save info
-    G::LoadClass( 'case' );
-    G::LoadClass( 'tasks' );
 
     $oAppDocument = new AppDocument();
     $aFields = array (
@@ -55,7 +54,7 @@ try {
             G::uploadFile( $_FILES['form']['tmp_name']['APP_DOC_FILENAME'], $sPathName, $sFileName );
 
             //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-            $oPluginRegistry = & PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT ) && class_exists( 'uploadDocumentData' )) {
                 $oData['APP_UID'] = $_GET['APP_UID'];
                 $documentData = new uploadDocumentData( $_GET['APP_UID'], $_SESSION['USER_LOGGED'], $sPathName . $sFileName, $aFields['APP_DOC_FILENAME'], $sAppDocUid );

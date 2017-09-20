@@ -22,7 +22,6 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 ini_set( 'display_errors', 'off' );
-G::LoadInclude( 'ajax' );
 $function = get_ajax_value( 'function' );
 $cat = get_ajax_value( 'cat' );
 $node = get_ajax_value( 'node' );
@@ -67,7 +66,6 @@ switch ($function) {
                 break;
                 break;
         }
-        G::LoadClass( "translation" );
 
         $dbc = new DBConnection();
         $obj = new Translation();

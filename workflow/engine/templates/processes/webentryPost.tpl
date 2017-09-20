@@ -65,8 +65,6 @@ try {
         {USR_VAR}
 
         if ($USR_UID == -1) {
-            G::LoadClass("sessions");
-
             global $sessionId;
 
             $sessions = new Sessions();
