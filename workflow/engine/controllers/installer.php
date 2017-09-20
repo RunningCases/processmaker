@@ -1,14 +1,12 @@
 <?php
 
-/**
- * Install Controller
- *
- * @author Erik A. O. <erik@colosa.com>
- */
-global $translation;
-include PATH_LANGUAGECONT."translation.".SYS_LANG;
+use ProcessMaker\Core\System;
 
-class Installer extends Controller
+global $translation;
+
+include PATH_LANGUAGECONT . "translation." . SYS_LANG;
+
+class InstallerModule extends Controller
 {
     public $path_config;
     public $path_languages;
@@ -80,36 +78,42 @@ class Installer extends Controller
         G::RenderPage( 'publish', 'extJs' );
     }
 
+    /**
+     * This function can be create a new workspace
+     * The user need permission PM_SETUP_ADVANCE for this action
+     * @return void
+    */
     public function newSite ()
     {
-        $textStep1 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_1');
-        $textStep2 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5');
+        if (!$this->pmIsInstalled()) {
+            $textStep1 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_1');
+            $textStep2 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5');
 
-        $this->includeExtJS( 'installer/CardLayout', false );
-        $this->includeExtJS( 'installer/Wizard', false );
-        $this->includeExtJS( 'installer/Header', false );
-        $this->includeExtJS( 'installer/Card', false );
-        $this->includeExtJS( 'installer/newSite', false );
+            $this->includeExtJS('installer/CardLayout', false);
+            $this->includeExtJS('installer/Wizard', false);
+            $this->includeExtJS('installer/Header', false);
+            $this->includeExtJS('installer/Card', false);
+            $this->includeExtJS('installer/newSite', false);
+            $this->setJSVar('textStep1', $textStep1);
+            $this->setJSVar('textStep2', $textStep2);
+            $this->setJSVar('DB_ADAPTER', DB_ADAPTER);
+            $aux = explode(':', DB_HOST);
+            $this->setJSVar('DB_HOST', $aux[0]);
+            $this->setJSVar('DB_PORT', isset( $aux[1] ) ? $aux[1] : (DB_ADAPTER == 'mssql' ? '1433' : '3306'));
+            $this->setJSVar('DB_NAME', 'workflow');
+            $this->setJSVar('DB_USER', '');
+            $this->setJSVar('DB_PASS', '');
+            $this->setJSVar('pathConfig', PATH_CORE . 'config' . PATH_SEP);
+            $this->setJSVar('pathLanguages', PATH_LANGUAGECONT);
+            $this->setJSVar('pathPlugins', PATH_PLUGINS);
+            $this->setJSVar('pathXmlforms', PATH_XMLFORM);
+            $this->setJSVar('pathShared', PATH_DATA);
+            $this->setView('installer/newSite');
 
-        $this->setJSVar( 'textStep1', $textStep1 );
-        $this->setJSVar( 'textStep2', $textStep2 );
-
-        $this->setJSVar( 'DB_ADAPTER', DB_ADAPTER );
-        $aux = explode( ':', DB_HOST );
-        $this->setJSVar( 'DB_HOST', $aux[0] );
-        $this->setJSVar( 'DB_PORT', isset( $aux[1] ) ? $aux[1] : (DB_ADAPTER == 'mssql' ? '1433' : '3306') );
-        $this->setJSVar( 'DB_NAME', 'workflow' );
-        $this->setJSVar( 'DB_USER', '' );
-        $this->setJSVar( 'DB_PASS', '' );
-        $this->setJSVar( 'pathConfig', PATH_CORE . 'config' . PATH_SEP );
-        $this->setJSVar( 'pathLanguages', PATH_LANGUAGECONT );
-        $this->setJSVar( 'pathPlugins', PATH_PLUGINS );
-        $this->setJSVar( 'pathXmlforms', PATH_XMLFORM );
-        $this->setJSVar( 'pathShared', PATH_DATA );
-
-        $this->setView( 'installer/newSite' );
-
-        G::RenderPage( 'publish', 'extJs' );
+            G::RenderPage('publish', 'extJs');
+        } else {
+            $this->displayError();
+        }
     }
 
     public function getSystemInfo ()
@@ -315,16 +319,18 @@ class Installer extends Controller
         if ($info->pathShared->result) {
             $info->pathShared->message = G::LoadTranslation('ID_WRITEABLE');
         } else {
+            //Verify and create the shared path
             G::verifyPath( $_REQUEST['pathShared'], true );
             $info->pathShared->result = G::is_writable_r( $_REQUEST['pathShared'], $noWritableFiles );
             if ($info->pathShared->result) {
                 $info->pathShared->message = G::LoadTranslation('ID_WRITEABLE');
+                $info->success = $this->verifySharedFrameworkPaths($_REQUEST['pathShared']);
             } else {
                 $info->success = false;
             }
         }
 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $pathShared = $filter->validateInput($_REQUEST['pathShared'], 'path');
 
@@ -401,7 +407,7 @@ class Installer extends Controller
             }
         }
 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $logFile = $filter->validateInput($logFile, 'path');
 
@@ -414,22 +420,49 @@ class Installer extends Controller
     /**
      * function to create a workspace
      * in fact this function is calling appropiate functions for mysql and mssql
+     * need permission PM_SETUP_ADVANCE for this action
+     * @return void
      */
     public function createWorkspace ()
     {
-        $pathSharedPartner = trim( $_REQUEST['pathShared'] );
-        if (file_exists(trim($pathSharedPartner,PATH_SEP). PATH_SEP .'partner.info')) {
-            $this->systemName = $this->getSystemName($pathSharedPartner);
-            $_REQUEST["PARTNER_FLAG"] = true;
-        }
-        $this->setResponseType( 'json' );
-        if ($_REQUEST['db_engine'] == 'mysql') {
-            $info = $this->createMySQLWorkspace();
-        } else {
-            $info = $this->createMSSQLWorkspace();
-        }
+        if (!$this->pmIsInstalled()) {
+            $pathSharedPartner = trim($_REQUEST['pathShared']);
+            if (file_exists(trim($pathSharedPartner, PATH_SEP) . PATH_SEP . 'partner.info')) {
+                $this->systemName = $this->getSystemName($pathSharedPartner);
+                $_REQUEST["PARTNER_FLAG"] = true;
+            }
+            $this->setResponseType('json');
+            if ($_REQUEST['db_engine'] == 'mysql') {
+                $info = $this->createMySQLWorkspace();
+            } else {
+                $info = $this->createMSSQLWorkspace();
+            }
 
-        return $info;
+            return $info;
+        } else {
+            $this->displayError();
+        }
+    }
+
+    /**
+     * We check if processMaker is not installed
+     *
+     * @return boolean
+    */
+    private function pmIsInstalled(){
+        return file_exists(FILE_PATHS_INSTALLED);
+    }
+
+    /**
+     * Display an error when processMaker is already installed
+     *
+     * @return void
+     */
+    private function displayError(){
+        $this->setJSVar('messageError', G::LoadTranslation('ID_PROCESSMAKER_ALREADY_INSTALLED'));
+        $this->includeExtJS('installer/stopInstall');
+        $this->setView('installer/mainStopInstall');
+        G::RenderPage('publish', 'extJs');
     }
 
     public function forceTogenerateTranslationsFiles ($url)
@@ -449,7 +482,7 @@ class Installer extends Controller
      */
     public function mysqlQuery ($sql)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $sql = $filter->preventSqlInjection($sql, Array());
         $this->installLog( $sql );
@@ -469,7 +502,7 @@ class Installer extends Controller
      */
     public function mssqlQuery ($sql)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $sql = $filter->preventSqlInjection($sql, Array());
         $this->installLog( $sql );
@@ -609,7 +642,7 @@ class Installer extends Controller
      */
     public function setGrantPrivilegesMySQL ($psUser, $psPassword, $psDatabase, $host)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $host = ($host == 'localhost' || $host == '127.0.0.1' ? 'localhost' : '%');
 
@@ -674,7 +707,7 @@ class Installer extends Controller
 
     public function createMySQLWorkspace ()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         ini_set( 'max_execution_time', '0' );
         $info = new StdClass();
@@ -928,7 +961,6 @@ class Installer extends Controller
 
 
             //erik: for new env conf handling
-            G::loadClass( 'system' );
             $envFile = PATH_CONFIG . 'env.ini';
 
             // getting configuration from env.ini
@@ -1014,7 +1046,7 @@ class Installer extends Controller
 
     public function createMSSQLWorkspace ()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         ini_set( 'max_execution_time', '0' );
 
@@ -1237,7 +1269,7 @@ class Installer extends Controller
 
     public function checkDatabases ()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $this->setResponseType( 'json' );
         $info = new stdclass();
@@ -1292,7 +1324,7 @@ class Installer extends Controller
 
     private function testMySQLconnection()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $info = new StdClass();
         $info->result = false;
@@ -1340,7 +1372,7 @@ class Installer extends Controller
 
     private function testMSSQLconnection()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $info = new stdClass();
         $info->result = false;
@@ -1437,7 +1469,7 @@ class Installer extends Controller
                 foreach ($fileTar as $value) {
                     $dataFile = pathinfo($value);
                     $nameSkinTmp = $dataFile['filename'];
-                    G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
                     $tar = new Archive_Tar( $value );
 
                     $pathSkinTmp = $pathSkinPartner . 'tmp' . PATH_SEP;
@@ -1524,7 +1556,7 @@ class Installer extends Controller
 
     public function buildParternExtras($username, $password, $workspace, $lang, $skinName)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '256M');
@@ -1706,5 +1738,26 @@ class Installer extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * Verify/create framework shared directory structure
+     *
+     */
+    private function verifySharedFrameworkPaths($sharedPath)
+    {
+        $paths = [
+            $sharedPath . 'framework' => 0770,
+            $sharedPath . 'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,
+        ];
+        foreach ($paths as $path => $permission) {
+            if (!file_exists($path)) {
+                G::mk_dir($path, $permission);
+            }
+            if (!file_exists($path)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -157,10 +157,11 @@ class ObjectPermission extends BaseObjectPermission
      * @param string $proUid the uid of the process
      * @param string $tasUid the uid of the task
      * @param string $action for the object permissions VIEW, BLOCK, RESEND
+     * @param array $caseData for review the case status DRAFT, TODO, COMPLETED, PAUSED
      *
      * @return array
      */
-    public function verifyObjectPermissionPerUser ($usrUid, $proUid, $tasUid = '', $action = '')
+    public function verifyObjectPermissionPerUser ($usrUid, $proUid, $tasUid = '', $action = '', $caseData = array())
     {
         $userPermissions = array();
         $oCriteria = new Criteria('workflow');
@@ -188,7 +189,7 @@ class ObjectPermission extends BaseObjectPermission
             $row = $rs->getRow();
 
             if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
-                $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+                $row["OP_CASE_STATUS"] == $caseData["APP_STATUS"]
             ) {
                 array_push($userPermissions, $row);
             }
@@ -203,12 +204,12 @@ class ObjectPermission extends BaseObjectPermission
      * @param string $proUid the uid of the process
      * @param string $tasUid the uid of the task
      * @param string $action for the object permissions VIEW, BLOCK, RESEND
+     * @param array $caseData for review the case status DRAFT, TODO, COMPLETED, PAUSED
      *
      * @return array
      */
-    public function verifyObjectPermissionPerGroup ($usrUid, $proUid, $tasUid = '', $action = '')
+    public function verifyObjectPermissionPerGroup ($usrUid, $proUid, $tasUid = '', $action = '', $caseData = array())
     {
-        G::loadClass('groups');
         $gr = new Groups();
         $records = $gr->getActiveGroupsForAnUser($usrUid);
         $groupPermissions = array();
@@ -232,7 +233,7 @@ class ObjectPermission extends BaseObjectPermission
                 $row = $rs->getRow();
 
                 if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
-                    $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+                    $row["OP_CASE_STATUS"] == $caseData["APP_STATUS"]
                 ) {
                     array_push($groupPermissions, $row);
                 }
@@ -384,10 +385,10 @@ class ObjectPermission extends BaseObjectPermission
         }
         switch ($obType) {
             case 'INPUT':
-                $oCriteria->add(
-                    $oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'INPUT')->
-                    addOr($oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED'))
-                );
+                $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'INPUT');
+                break;
+            case 'ATTACHED':
+                $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED');
                 break;
             case 'OUTPUT':
                 $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'OUTPUT');
@@ -400,9 +401,6 @@ class ObjectPermission extends BaseObjectPermission
         $result = array();
         while ($oDataset->next()) {
             $aRow = $oDataset->getRow();
-            if ($aRow['APP_DOC_TYPE'] == "ATTACHED") {
-                $aRow['APP_DOC_TYPE'] = "INPUT";
-            }
             if (!in_array($aRow['APP_DOC_UID'], $result)) {
                 array_push($result, $aRow['APP_DOC_UID']);
             }

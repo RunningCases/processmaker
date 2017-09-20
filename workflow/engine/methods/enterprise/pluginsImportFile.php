@@ -26,6 +26,8 @@
 
 global $RBAC;
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $RBAC->requirePermissions("PM_SETUP_ADVANCE");
 require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
 
@@ -33,8 +35,6 @@ $response = array();
 $status = 1;
 
 try {
-    //Load the variables
-    G::LoadClass("plugin");
 
     if (!isset($_FILES["form"]["error"]["PLUGIN_FILENAME"]) || $_FILES["form"]["error"]["PLUGIN_FILENAME"] == 1) {
         $str = "There was an error uploading the file, probably the file size if greater than upload_max_filesize parameter in php.ini, please check this parameter and try again.";
@@ -54,7 +54,7 @@ try {
         throw (new Exception($str));
     }
 
-    G::LoadThirdParty("pear/Archive","Tar");
+
     $tar = new Archive_Tar($path. $filename);
     $sFileName  = substr($filename, 0, strrpos($filename, "."));
     $sClassName = substr($filename, 0, strpos($filename, "-"));
@@ -77,7 +77,7 @@ try {
         throw (new Exception($str));
     }
 
-    $oPluginRegistry = &PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $pluginFile = $sClassName . '.php';
 
     if ($bMainFile && $bClassFile) {
@@ -121,37 +121,6 @@ try {
             $oClass->iPMVersion = 0;
         }
 
-        //if ($oClass->iPMVersion > 0) {
-        //  G::LoadClass("system");
-        //  if (System::getVersion() > 0) {
-        //    if ($oClass->iPMVersion > System::getVersion()) {
-        //      //throw new Exception('This plugin needs version ' . $oClass->iPMVersion . ' or higher of ProcessMaker');
-        //    }
-        //  }
-        //}
-
-        /*
-        if (!isset($oClass->aDependences)) {
-           $oClass->aDependences = null;
-        }
-        if (!empty($oClass->aDependences)) {
-            foreach ($oClass->aDependences as $aDependence) {
-                if (file_exists(PATH_PLUGINS . $aDependence['sClassName'] . '.php')) {
-                    require_once PATH_PLUGINS . $aDependence['sClassName'] . '.php';
-                    if (!$oPluginRegistry->getPluginDetails($aDependence['sClassName'] . '.php')) {
-                        throw new Exception('This plugin needs "' . $aDependence['sClassName'] . '" plugin');
-                    }
-                } else {
-                    throw new Exception('This plugin needs "' . $aDependence['sClassName'] . '" plugin');
-                }
-            }
-        }
-        unset($oClass);
-        if ($fVersionOld > $fVersionNew) {
-           throw new Exception('A recent version of this plugin was already installed.');
-        }
-        */
-
         $res = $tar->extract(PATH_PLUGINS);
     } else {
         $str = "The file $filename doesn't contain class: $sClassName ";
@@ -169,9 +138,9 @@ try {
 
     $details = $oPluginRegistry->getPluginDetails($pluginFile);
 
-    $oPluginRegistry->installPlugin($details->sNamespace);
+    $oPluginRegistry->installPlugin($details->getNamespace());
     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-    $size = file_put_contents(PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance());
+    $oPluginRegistry->savePlugin($details->getNamespace());
 
     //G::header("Location: pluginsList");
     //die;

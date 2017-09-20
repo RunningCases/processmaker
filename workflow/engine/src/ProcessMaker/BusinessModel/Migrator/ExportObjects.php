@@ -1,6 +1,8 @@
 <?php
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 class ExportObjects
 {
     /**
@@ -77,9 +79,8 @@ class ExportObjects
 
     public function processMigrablePlugins()
     {
-        \G::LoadClass("pluginRegistry");
         $plugins = array();
-        $registry = \PMPluginRegistry::getSingleton();
+        $registry = PluginRegistry::loadSingleton();
         $data = $registry->getPluginsData();
         foreach ($data as $detail) {
             $detail = (array)$detail;

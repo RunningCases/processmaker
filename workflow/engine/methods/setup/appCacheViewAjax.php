@@ -1,6 +1,5 @@
 <?php
-require_once('classes/model/AppCacheView.php');
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_GET = $filter->xssFilterHard($_GET);
@@ -27,9 +26,7 @@ function testConnection($type, $server, $user, $passwd, $port = 'none', $dbName 
         }
     }
 
-    G::LoadClass('net');
-    $Server = new NET($server);
-    G::LoadSystem('inputfilter');
+    $Server = new Net($server);
     $filter = new InputFilter();
 
     if ($Server->getErrno() == 0) {
@@ -113,7 +110,6 @@ switch ($request) {
         $result->info = array();
 
         //check the language, if no info in config about language, the default is 'en'
-        G::loadClass('configuration');
         $oConf = new Configurations();
         $oConf->loadConfig($x, 'APP_CACHE_VIEW_ENGINE', '', '', '', '');
         $appCacheViewEngine = $oConf->aConfig;
@@ -216,7 +212,6 @@ switch ($request) {
         break;
     case 'build':
         $sqlToExe = array();
-        G::LoadClass('configuration');
         $conf = new Configurations();
 
         //DEPRECATED $lang = $_POST['lang'];

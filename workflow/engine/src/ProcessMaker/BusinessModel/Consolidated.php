@@ -1,18 +1,16 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
-use \Smarty;
-use \Criteria;
-use \ReportTablePeer;
-use \ResultSet;
-use \CaseConsolidatedCorePeer;
-use \ContentPeer;
+use G;
+use Smarty;
+use Criteria;
+use ReportTablePeer;
+use ResultSet;
+use CaseConsolidatedCorePeer;
+use ContentPeer;
+use PmDynaform;
+use ReportTables;
 
-/**
- * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
- * @copyright Colosa - Bolivia
- */
 class Consolidated
 {
     /**
@@ -69,9 +67,7 @@ class Consolidated
      */
     public function postDerivate($app_uid, $app_number, $del_index, $usr_uid, $fieldName = '', $fieldValue = '')
     {
-        G::LoadClass("wsBase");
-        G::LoadClass("case");
-        $ws = new \wsBase();
+        $ws = new \WsBase();
         $oCase = new \Cases();
 
         if (!isset($Fields["DEL_INIT_DATE"])) {
@@ -251,11 +247,6 @@ class Consolidated
         $dropdownList = isset($_REQUEST ["dropList"]) ? G::json_decode($_REQUEST ["dropList"]) : array();
 
         try {
-            G::LoadClass("pmFunctions");
-            G::LoadClass("BasePeer");
-            G::LoadClass("configuration");
-            G::LoadClass("case");
-            G::LoadClass("reportTables");
 
             $response = array();
             $searchFields = array();
@@ -363,12 +354,12 @@ class Consolidated
                     $oCriteria->add($oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE));
                 }
             }
+            
 
-            G::LoadSystem('inputfilter');
             $filter = new \InputFilter();
 
             if ($sort != "") {
-                $reportTable = new \ReportTables();
+                $reportTable = new ReportTables();
                 $arrayReportTableVar = $reportTable->getTableVars($tableUid);
                 $tableName = $filter->validateInput($tableName);
                 $sort = $filter->validateInput($sort);
@@ -461,9 +452,6 @@ class Consolidated
      */
     public function getDataGenerate($pro_uid, $tas_uid, $dyn_uid)
     {
-        G::LoadClass('case');
-        G::LoadClass('pmFunctions');
-        G::LoadClass("configuration");
         $hasTextArea = false;
 
         $conf = new \Configurations();
@@ -477,9 +465,8 @@ class Consolidated
         $oDyna = new \Dynaform();
         $dataTask = $oDyna->load($dyn_uid);
         if ($dataTask['DYN_VERSION'] > 0) {
-            G::LoadClass("pmDynaform");
             $_SESSION['PROCESS'] = $pro_uid;
-            $pmDyna = new \pmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
+            $pmDyna = new PmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
             $json = G::json_decode($dataTask["DYN_CONTENT"]);
             $pmDyna->jsonr($json);
             $fieldsDyna = $json->items[0]->items;
@@ -1042,8 +1029,6 @@ class Consolidated
      */
     function consolidatedUpdate($dynaformUid, $dataUpdate, $usr_uid)
     {
-        G::LoadClass("case");
-        G::LoadClass("pmFunctions");
 
         $delIndex = 1;
         $oCase = new \Cases();

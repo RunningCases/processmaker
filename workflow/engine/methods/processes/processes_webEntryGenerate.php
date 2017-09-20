@@ -1,5 +1,8 @@
 <?php
 global $G_FORM;
+
+use ProcessMaker\Core\System;
+
 $sPRO_UID = $oData->PRO_UID;
 $sTASKS = $oData->TASKS;
 $sDYNAFORM = $oData->DYNAFORM;
@@ -10,8 +13,6 @@ $sWS_ROUNDROBIN = $oData->WS_ROUNDROBIN;
 $sWE_USR = $oData->WE_USR;
 
 $withWS = $sWE_TYPE == 'WS';
-
-G::LoadClass( "system" );
 
 try {
     $pathProcess = PATH_DATA_SITE . 'public' . PATH_SEP . $sPRO_UID . PATH_SEP;
@@ -24,7 +25,6 @@ try {
         throw (new Exception( "The task '" . $TaskFields['TAS_TITLE'] . "' doesn't have a valid assignment type. The task needs to have a 'Cyclical Assignment'." ));
     }
 
-    G::LoadClass( 'tasks' );
     $oTask = new Tasks();
     $user = $oTask->assignUsertoTask( $sTASKS );
 

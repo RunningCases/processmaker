@@ -17,12 +17,10 @@ $appDel = new AppDelegation();
 $actualThread = $appDel->Load($caseId, $actualIndex);
 $actualLastIndex = $actualThread['DEL_PREVIOUS'];
 
-require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
 $oLabels = new labelsGmail();
 $oLabels->addRelabelingToQueue($caseId, $actualIndex, $actualLastIndex, false);
 
-G::LoadClass( "pmGoogleApi" );
-$pmGoogle = new PMGoogleApi();
+$pmGoogle = new PmGoogleApi();
 if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus() ){
 	$_SESSION['gmail'] = 0;
 	unset($_SESSION['gmail']); //cleaning session

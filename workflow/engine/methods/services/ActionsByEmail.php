@@ -1,4 +1,5 @@
 <?php
+
 /*----------------------------------********---------------------------------*/
 if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
     if (PMLicensedFeatures::getSingleton()->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
@@ -10,7 +11,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                 $G_PUBLISH = new Publisher();
 
                 try {
-                    G::LoadClass('case');
 
                     //Validations
                     if (!isset($_REQUEST['APP_UID'])) {
@@ -55,8 +55,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         $dataResponses['ABE_RES_MESSAGE'] = '';
 
                         try {
-                            require_once 'classes/model/AbeResponses.php';
-
                             $abeAbeResponsesInstance = new AbeResponses();
                             $dataResponses['ABE_RES_UID'] = $abeAbeResponsesInstance->createOrUpdate($dataResponses);
                         } catch (Exception $e) {
@@ -65,9 +63,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
 
                         $case->updateCase($_REQUEST['APP_UID'], $caseFieldsABE);
 
-                        G::LoadClass('wsBase');
-
-                        $ws = new wsBase();
+                        $ws = new WsBase();
 
                         $result = $ws->derivateCase(
                             $caseFieldsABE['CURRENT_USER_UID'], $_REQUEST['APP_UID'], $_REQUEST['DEL_INDEX'], true
@@ -97,7 +93,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         $message = '<strong>' . G::loadTranslation('ID_ABE_ANSWER_SUBMITTED') . '</strong>';
 
                         //Save Cases Notes
-                        G::LoadClass('actionsByEmailUtils');
 
                         $dataAbeRequests = loadAbeRequest($_REQUEST['ABER']);
                         $dataAbeConfiguration = loadAbeConfiguration($dataAbeRequests['ABE_UID']);

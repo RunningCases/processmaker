@@ -4,6 +4,7 @@ namespace Maveriks\Extension;
 use Luracast\Restler\Defaults;
 use Luracast\Restler\Format\JsonFormat;
 use Luracast\Restler\Format\UrlEncodedFormat;
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\Api;
 use Luracast\Restler\RestException;
 
@@ -174,7 +175,7 @@ class Restler extends \Luracast\Restler\Restler
     {
         $classReflection = new \ReflectionClass($object);
         $classShortName = $classReflection->getShortName();
-        $registry = &\PMPluginRegistry::getSingleton();
+        $registry = PluginRegistry::loadSingleton();
         $pluginsApiExtend = $registry->getExtendsRestService($classShortName);
         if ($pluginsApiExtend) {
             $classFilePath = $pluginsApiExtend['filePath'];

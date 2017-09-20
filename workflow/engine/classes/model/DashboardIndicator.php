@@ -29,7 +29,6 @@ class DashboardIndicator extends BaseDashboardIndicator
     }
  function loadbyDasUid ($dasUid, $vcompareDate, $vmeasureDate, $userUid)
 	{
-		G::loadClass('indicatorsCalculator');
         $calculator = new \IndicatorsCalculator();
 
         try {

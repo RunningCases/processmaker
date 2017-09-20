@@ -34,8 +34,6 @@ class treeNode extends stdclass
 }
 
 try {
-    require_once ("classes" . PATH_SEP . "model" . PATH_SEP . "Department.php");
-    G::LoadThirdParty("pear" . PATH_SEP . "json", "class.json");
 
     $json = new Services_JSON();
     header("Content-Type: application/json;");
@@ -237,7 +235,7 @@ try {
 function getLDAPAdvanceInstance($authUid)
 {
     $RBAC = &RBAC::getSingleton();
-    $ldapAdvanced = new ldapAdvanced();
+    $ldapAdvanced = new LdapAdvanced();
     $ldapAdvanced->sAuthSource = $authUid;
     $ldapAdvanced->sSystem = $RBAC->sSystem;
 

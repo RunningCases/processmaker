@@ -182,6 +182,7 @@ class ListUnassigned extends BaseListUnassigned
         $category = isset($filters['category']) ? $filters['category'] : '';
         $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : '';
         $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : '';
+        $appUidCheck = isset($filters['appUidCheck']) ? $filters['appUidCheck'] : array();
 
         //Filter Search
         if ($search != '') {
@@ -207,6 +208,11 @@ class ListUnassigned extends BaseListUnassigned
             $aConditions[] = array(ListUnassignedPeer::PRO_UID, ProcessPeer::PRO_UID);
             $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
+        }
+
+        //Review in the specific lot of cases
+        if (!empty($appUidCheck)) {
+            $criteria->add(ListUnassignedPeer::APP_UID, $appUidCheck, Criteria::IN);
         }
     }
 
@@ -300,8 +306,6 @@ class ListUnassigned extends BaseListUnassigned
     public function getSelfServiceCasesByEvaluate($userUid)
     {
         try {
-            G::LoadClass("groups");
-
             $arrayAppAssignSelfServiceValueData = array();
 
             //Get APP_UIDs
@@ -379,8 +383,6 @@ class ListUnassigned extends BaseListUnassigned
             $row = $rs->getRow();
         }
 
-        //check groups assigned to SelfService task
-        G::LoadClass('groups');
         $group = new Groups();
         $aGroups = $group->getActiveGroupsForAnUser($userUid);
 

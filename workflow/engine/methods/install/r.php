@@ -1,5 +1,5 @@
 <?php
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 if(isset($_GET['srv'])) {
     $srv = $filter->xssFilterHard($_GET['srv']);

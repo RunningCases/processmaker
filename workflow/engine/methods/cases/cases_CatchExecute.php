@@ -49,7 +49,6 @@ if (isset( $_POST['form']['BTN_CANCEL'] )) {
 }
 
 /* Includes */
-G::LoadClass( 'case' );
 
 $oCase = new Cases();
 $sAppUid = $_SESSION['APPLICATION'];
@@ -64,8 +63,7 @@ if ($aDelegation['USR_UID'] == "") {
     /*----------------------------------********---------------------------------*/
     $licensedFeatures = &PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
-        $pmGoogle = new PMGoogleApi();
+        $pmGoogle = new PmGoogleApi();
         if($pmGoogle->getServiceGmailStatus()) {
             $labGmail = new labelsGmail();
             $labGmail->addRelabelingToQueue($sAppUid, $iDelIndex, -1, true);
@@ -73,7 +71,6 @@ if ($aDelegation['USR_UID'] == "") {
     }
 
     if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-        G::LoadClass("AppDocumentDrive");
         $drive = new AppDocumentDrive();
         if ($drive->getStatusDrive()) {
             //add users email next task

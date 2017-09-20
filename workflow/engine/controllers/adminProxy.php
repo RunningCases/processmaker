@@ -1,4 +1,8 @@
 <?php
+
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * adminProxy.php
  *
@@ -34,7 +38,6 @@ class adminProxy extends HttpProxyController
      */
     public function saveSystemConf($httpData)
     {
-        G::loadClass('system');
         $envFile = PATH_CONFIG . 'env.ini';
         $updateRedirector = false;
         $restart = false;
@@ -211,7 +214,6 @@ class adminProxy extends HttpProxyController
 
     public function uxGroupUpdate($httpData)
     {
-        G::LoadClass('groups');
         $groups = new Groups();
         $users = $groups->getUsersOfGroup($httpData->GRP_UID);
         $success = true;
@@ -295,8 +297,7 @@ class adminProxy extends HttpProxyController
         //]
 
         $form = $_POST;
-        G::LoadClass('calendar');
-        $calendarObj=new calendar();
+        $calendarObj=new Calendar();
         $calendarObj->saveCalendarInfo($form);
         echo "{success: true}";
     }
@@ -368,9 +369,6 @@ class adminProxy extends HttpProxyController
     */
     public function testConnection($params)
     {
-        G::LoadClass('net');
-        G::LoadThirdParty('phpmailer', 'class.smtp');
-
         if ($_POST['typeTest'] == 'MAIL') {
             $eregMail = "/^[0-9a-zA-Z]+(?:[._][0-9a-zA-Z]+)*@[0-9a-zA-Z]+(?:[._-][0-9a-zA-Z]+)*\.[0-9a-zA-Z]{2,3}$/";
 
@@ -436,7 +434,7 @@ class adminProxy extends HttpProxyController
         $Mailto = $_POST['eMailto'];
         $SMTPSecure  = $_POST['UseSecureCon'];
 
-        $Server = new NET($server);
+        $Server = new Net($server);
         $smtp = new SMTP;
 
         $timeout = 10;
@@ -583,8 +581,6 @@ class adminProxy extends HttpProxyController
     public function sendTestMail()
     {
         global $G_PUBLISH;
-        G::LoadClass("system");
-        G::LoadClass('spool');
 
         $aConfiguration = array(
             'MESS_ENGINE'    => $_POST['MESS_ENGINE'],
@@ -624,7 +620,7 @@ class adminProxy extends HttpProxyController
         $sBodyPre->assign('msg', $msg);
         $sBody = $sBodyPre->getOutputContent();
 
-        $oSpool = new spoolRun();
+        $oSpool = new SpoolRun();
 
         $oSpool->setConfig($aConfiguration);
 
@@ -766,8 +762,6 @@ class adminProxy extends HttpProxyController
      */
     public function loadFields()
     {
-        G::loadClass('configuration');
-
         $oConfiguration = new Configurations();
         $oConfiguration->loadConfig($x, 'Emails','','','','');
         $fields = $oConfiguration->aConfig;
@@ -795,10 +789,9 @@ class adminProxy extends HttpProxyController
      */
     public function getListImage($httpData)
     {
-        G::LoadClass('replacementLogo');
         $uplogo       = PATH_TPL . 'setup' . PATH_SEP . 'uplogo.html';
         $width        = "100%";
-        $upload       = new replacementLogo();
+        $upload       = new ReplacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
         $check        = '';
@@ -1005,7 +998,7 @@ class adminProxy extends HttpProxyController
     public function uploadImage()
     {
         //!dataSystem
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $_SERVER["REQUEST_URI"] = $filter->xssFilterHard($_SERVER["REQUEST_URI"]);
         $_FILES = $filter->xssFilterHard($_FILES);
@@ -1101,8 +1094,7 @@ class adminProxy extends HttpProxyController
      */
     public function getNameCurrentLogo()
     {
-        G::LoadClass('replacementLogo');
-        $upload       = new replacementLogo();
+        $upload       = new ReplacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
         return $sPhotoSelect;
@@ -1197,7 +1189,6 @@ class adminProxy extends HttpProxyController
                     $snameLogo = urldecode($_GET['NAMELOGO']);
                     $snameLogo = trim($snameLogo);
                     $snameLogo = self::changeNamelogo($snameLogo);
-                    G::loadClass('configuration');
                     $oConf = new Configurations;
                     $aConf = Array(
                         'WORKSPACE_LOGO_NAME' => SYS_SYS,
@@ -1213,7 +1204,6 @@ class adminProxy extends HttpProxyController
                     break;
                 case 'restoreLogo':
                     $snameLogo = $_GET['NAMELOGO'];
-                    G::loadClass('configuration');
                     $oConf = new Configurations;
                     $aConf = Array(
                       'WORKSPACE_LOGO_NAME' => '',
@@ -1243,7 +1233,7 @@ class adminProxy extends HttpProxyController
     {
         $info = @getimagesize($imagen);
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $imagen = $filter->validateInput($imagen, "path");
             
@@ -1307,7 +1297,7 @@ class adminProxy extends HttpProxyController
             $newDir .= PATH_SEP.$base64Id;
             $dir    .= PATH_SEP.$base64Id;
             
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $dir = $filter->validateInput($dir, "path");
         
@@ -1395,9 +1385,9 @@ class adminProxy extends HttpProxyController
         require_once (PATH_CONTROLLERS . "installer.php");
         $params = array ();
 
-        $oServerConf = &serverConf::getSingleton();
-        $pluginRegistry = &PMPluginRegistry::getSingleton();
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $oServerConf = &ServerConf::getSingleton();
+        $pluginRegistry = PluginRegistry::loadSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
 
         //License Information:
         $activeLicense = $licenseManager->getActiveLicense();
@@ -1437,7 +1427,7 @@ class adminProxy extends HttpProxyController
         }
 
         //Database server Version (MySQL version)
-        $installer = new Installer();
+        $installer = new InstallerModule();
         $systemInfo = $installer->getSystemInfo();
         try {
             $params['mysql'] = mysql_get_server_info();
@@ -1469,10 +1459,10 @@ class adminProxy extends HttpProxyController
             if (file_exists( PATH_PLUGINS . $sFileName . ".php" )) {
                 $plugin = array();
                 $addonDetails = $pluginRegistry->getPluginDetails( $sFileName . ".php" );
-                $plugin['name'] = $addonDetails->sNamespace;
-                $plugin['description'] = $addonDetails->sDescription;
-                $plugin['version'] = $addonDetails->iVersion;
-                $plugin['enable'] = $addonDetails->enabled;
+                $plugin['name'] = $addonDetails->getNamespace();
+                $plugin['description'] = $addonDetails->getDescription();
+                $plugin['version'] = $addonDetails->getVersion();
+                $plugin['enable'] = $addonDetails->isEnabled();
                 $plugins[] = $plugin;
             }
         }

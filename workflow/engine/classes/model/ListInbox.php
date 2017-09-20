@@ -406,6 +406,7 @@ class ListInbox extends BaseListInbox
         $filterStatus = isset($filters['filterStatus']) ? $filters['filterStatus'] : '';
         $newestthan = isset($filters['newestthan']) ? $filters['newestthan'] : '';
         $oldestthan = isset($filters['oldestthan']) ? $filters['oldestthan'] : '';
+        $appUidCheck = isset($filters['appUidCheck']) ? $filters['appUidCheck'] : array();
 
         //Check the inbox to call
         switch ($action) {
@@ -502,6 +503,11 @@ class ListInbox extends BaseListInbox
 
         if ($oldestthan != '') {
             $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
+        }
+
+        //Review in the specific lot of cases
+        if (!empty($appUidCheck)) {
+            $criteria->add(ListInboxPeer::APP_UID, $appUidCheck, Criteria::IN);
         }
     }
 

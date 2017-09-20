@@ -35,9 +35,6 @@ switch ($RBAC->userCanAccess( 'PM_CASES' )) {
         break;
 }
 
-/* Includes */
-G::LoadClass( 'case' );
-
 /* GET , POST & $_SESSION Vars */
 
 /* unset any variable, because we are starting a new case */

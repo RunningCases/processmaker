@@ -1,5 +1,4 @@
 <?php
-G::LoadClass("ldapAdvanced");
 
 $function = $_REQUEST['functionAccion'];
 
@@ -153,7 +152,7 @@ switch ($function) {
         $aFields['AUTH_SOURCE_DATA'] = $aData;
 
         //LDAP_PAGE_SIZE_LIMIT
-        $ldapAdvanced = new ldapAdvanced();
+        $ldapAdvanced = new LdapAdvanced();
 
         try {
             $arrayAuthenticationSourceData = $aFields;
@@ -206,7 +205,7 @@ switch ($function) {
             //Get data
             $arrayData = array();
 
-            $ldapAdvanced = new ldapAdvanced();
+            $ldapAdvanced = new LdapAdvanced();
             $ldapAdvanced->sAuthSource = $authenticationSourceUid;
 
             $result = $ldapAdvanced->searchUsers($keyword, $start, $limit);
@@ -298,7 +297,6 @@ switch ($function) {
             $aData['USR_UID'] = $sUserUID;
             $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
 
-            G::LoadClass("calendar");
             $calendarObj = new Calendar();
             $calendarObj->assignCalendarTo($sUserUID, '00000000000000000000000000000001', 'USER');
 
@@ -314,14 +312,13 @@ switch ($function) {
                     }
                 }
             }
-            require_once 'classes/model/Users.php';
             $oUser = new Users();
             $oUser->create( $aData );
         }
 
         $sClassName = strtolower($aFields['AUTH_SOURCE_PROVIDER']);
 
-        $plugin = new $sClassName();
+        $plugin = G::factory($sClassName);
 
         $aAuthSource = $RBAC->authSourcesObj->load($authSourceUid);
 
@@ -348,7 +345,7 @@ switch ($function) {
             $arrayAuthenticationSourceData['AUTH_SOURCE_VERSION'] = 3;
 
             //Test connection
-            $ldapAdvanced = new ldapAdvanced();
+            $ldapAdvanced = new LdapAdvanced();
 
             $ldapcnn = $ldapAdvanced->ldapConnection($arrayAuthenticationSourceData);
 

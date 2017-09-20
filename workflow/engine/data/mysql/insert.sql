@@ -3025,6 +3025,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CONFIRM_DELETE_WEB_ENTRY','en','Do you want to delete current web entry?','2014-01-15') ,
 ( 'LABEL','ID_WEB_ENTRY_SUCCESS_DELETE','en','Web Entry deleted correctly','2014-01-15') ,
 ( 'LABEL','ID_PASSWORD','en','Password','2014-01-15') ,
+( 'LABEL','ID_PASSWORD_CONFIRM','en','Confirm Password','2017-07-25') ,
 ( 'LABEL','ID_NOT_DEFINED','en','Not defined','2014-01-15') ,
 ( 'LABEL','ID_WEB_ENTRY_SUCCESS_NEW','en','Web Entry has been created correctly.','2014-01-15') ,
 ( 'LABEL','ID_REMOVE_ALL_BUTTON_FACE','en','<<','2014-01-15') ,
@@ -3822,6 +3823,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_INSTRUCTIONS','en','Instructions','2014-01-15') ,
 ( 'LABEL','ID_NOT_REQUIRED','en','Not Required','2014-01-15') ,
 ( 'LABEL','DYNAFIELD_ALREADY_EXIST','en','The variable name already exists!','2015-04-24') ,
+( 'LABEL','DYNAFIELD_PHPNAME_ALREADY_EXIST','en','Name error encountered when creating the variable: {0}. Please rename the variable you are creating with a unique name. Avoid differentiating similarly-named variables with only capitalization and ''_'' characters.','2017-08-09') ,
 ( 'LABEL','DYNAFIELD_EMPTY','en','The Field Name is empty','2014-10-21') ,
 ( 'LABEL','DYNAFIELD_NODENAME_NUMBER','en','The field name should not start with a number','2014-01-15') ,
 ( 'LABEL','ID_EMPTY_NODENAME','en','The name field is empty','2014-01-15') ,
@@ -4072,7 +4074,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SMTP_ERROR_MET_TURN_SMTP_NOT_IMPLEMENTED','en','The method TURN of the SMTP is not implemented','2014-10-21') ,
 ( 'LABEL','ID_EVENT_ADD_CURRENT','en','Add current task user','2014-02-12') ,
 ( 'LABEL','ID_EVENT_ADD_USERS','en','Add users','2014-02-12') ,
-( 'LABEL','ID_EVENT_REMOVE_SELECTED','en','Remove selected','2014-02-12') ;
+( 'LABEL','ID_SELECT_DYNAFORM_USE_IN_CASE','en','The "dyn_uid" parameter is required to configure a Web Entry of type "Single Dynaform"','2017-07-05') ,
+( 'LABEL','ID_EVENT_REMOVE_SELECTED','en','Remove selected','2014-02-12') ,
+( 'LABEL','ID_ENTER_VALID_URL','en','Enter a valid URL to redirect the browser after the web entry is completed','2017-07-04') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_EVENT_ADD_DYNAVAR','en','Add dynavar','2014-02-12') ,
@@ -4485,8 +4489,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_SENDING_EMAIL','en','Sending a test mail to: {0}','2014-12-24') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
-( 'LABEL','ID_EVENT_NOT_IS_START_EVENT','en','The event with {0}: {1} not is "Start Event".','2015-01-13') ,
-( 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED','en','The event with {0}: {1} does not is registered.','2015-01-16') ,
+( 'LABEL','ID_EVENT_NOT_IS_START_EVENT','en','The event with {0}: {1} is not a "Start Event".','2015-01-13') ,
+( 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED','en','The event with {0}: {1} is not registered.','2015-01-16') ,
 ( 'LABEL','ID_WEB_ENTRY_EVENT_TITLE_ALREADY_EXISTS','en','The WebEntry-Event title with {0}: "{1}" already exists.','2015-01-16') ,
 ( 'LABEL','ID_CASE_STOPPED_TRIGGER','en','The case has not stopped due to its trigger.','2015-01-29') ,
 ( 'LABEL','ID_TRANSLATION_NOT_WRITEABLE','en','The translation file is not writable. <br/>Please give write permission to file:','2015-01-31') ,
@@ -6176,7 +6180,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_NUMBER_CAPITALIZED','en','Case Number','2017-02-22') ,
 ( 'LABEL','ID_ANSWERED','en','Answered','2017-02-22') ,
 ( 'LABEL','ID_VIEW_RESPONSE','en','View Response','2017-02-22') ,
-( 'LABEL','ID_ERROR_MESSAGE','en','Error Message','2017-02-22') ;
+( 'LABEL','ID_ERROR_MESSAGE','en','Error Message','2017-02-22') ,
+( 'LABEL','ID_CASE_CREATED','en','Case created','2017-06-02') ,
+( 'LABEL','ID_CASE_ROUTED_TO','en','Case routed to','2017-06-02');
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
@@ -61535,10 +61541,10 @@ INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES
 ('ZW','WKI','Hwange',' ','') ;
 
 INSERT INTO DASHLET (DAS_UID,DAS_CLASS,DAS_TITLE,DAS_DESCRIPTION,DAS_VERSION,DAS_CREATE_DATE,DAS_UPDATE_DATE,DAS_STATUS) VALUES 
-('00000000000000000000000000000002','dashletProcessMakerCommunity','ProcessMaker Community','ProcessMaker Community Links and Information','1.0','2011-12-01 00:00:00','2011-12-01 00:00:00','1'),
-('00000000000000000000000000000001','dashletOpenVSCompleted','Open Cases VS Completed Cases','Open Cases VS Completed Cases','1.0','2011-10-28 00:00:00','2011-10-28 00:00:00','1'),
-('00000000000000000000000000000003','dashletProcessMakerEnterprise','ProcessMaker Enterprise Plugins and Addons','The following list of Enterprise plug-ins includes features and functionality that extend and enhance ProcessMaker''s performance and functionality.','1.0','2011-12-05 00:00:00','2011-12-05 00:00:00','1'),
-('00000000000000000000000000000004','dashletRssReader','Simple RSS reader','Simple RSS reader for ProcessMaker','1.0','2012-04-16 00:00:00','2012-04-16 00:00:00','1');
+('00000000000000000000000000000002','DashletProcessMakerCommunity','ProcessMaker Community','ProcessMaker Community Links and Information','1.0','2011-12-01 00:00:00','2011-12-01 00:00:00','1'),
+('00000000000000000000000000000001','DashletOpenVSCompleted','Open Cases VS Completed Cases','Open Cases VS Completed Cases','1.0','2011-10-28 00:00:00','2011-10-28 00:00:00','1'),
+('00000000000000000000000000000003','DashletProcessMakerEnterprise','ProcessMaker Enterprise Plugins and Addons','The following list of Enterprise plug-ins includes features and functionality that extend and enhance ProcessMaker''s performance and functionality.','1.0','2011-12-05 00:00:00','2011-12-05 00:00:00','1'),
+('00000000000000000000000000000004','DashletRssReader','Simple RSS reader','Simple RSS reader for ProcessMaker','1.0','2012-04-16 00:00:00','2012-04-16 00:00:00','1');
 
 INSERT INTO DASHLET_INSTANCE (DAS_INS_UID,DAS_UID,DAS_INS_OWNER_TYPE,DAS_INS_OWNER_UID,DAS_INS_ADDITIONAL_PROPERTIES,DAS_INS_CREATE_DATE,DAS_INS_UPDATE_DATE,DAS_INS_STATUS) VALUES 
 ('00000000000000000000000000000001','00000000000000000000000000000001','EVERYBODY','','a:7:{s:20:"DAS_INS_CONTEXT_TIME";s:5:"TODAY";s:12:"DAS_RED_FROM";s:1:"0";s:10:"DAS_RED_TO";s:2:"30";s:15:"DAS_YELLOW_FROM";s:2:"30";s:13:"DAS_YELLOW_TO";s:2:"50";s:14:"DAS_GREEN_FROM";s:2:"50";s:12:"DAS_GREEN_TO";s:3:"100";}','2011-12-02 00:00:00','2011-12-02 00:00:00',1),

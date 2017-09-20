@@ -5,6 +5,7 @@ use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 use \ProcessMaker\Util\DateTime;
 use \ProcessMaker\BusinessModel\Validator;
+use AppDocument;
 
 /**
  * Cases Api Controller
@@ -108,7 +109,27 @@ class Cases extends Api
                         }
                     }
                     break;
-                }
+                case 'doDownloadInputDocument':
+                    //Verify if the user can be download the file
+                    $appDocUid = $this->parameters[$arrayArgs['app_doc_uid']];
+                    $version = $this->parameters[$arrayArgs['v']];
+                    $usrUid = $this->getUserId();
+                    $oAppDocument = new AppDocument();
+                    if ($version == 0) {
+                        $docVersion = $oAppDocument->getLastAppDocVersion($appDocUid);
+                    } else {
+                        $docVersion = $version;
+                    }
+                    if (defined('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION') && DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION == 0) {
+                        if ($oAppDocument->canDownloadInput($usrUid, $appDocUid, $docVersion)) {
+                            return true;
+                        }
+                    } else {
+                        return true;
+                    }
+                    break;
+            }
+
             return false;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

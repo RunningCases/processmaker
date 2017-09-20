@@ -41,10 +41,6 @@ if ($RBAC->userCanAccess( 'PM_CASES' ) != 1) {
     }
 }
 
-/* Includes */
-require_once 'classes/model/AppDelay.php';
-G::LoadClass( 'case' );
-
 $oCase = new Cases();
 
 //cleaning the case session data

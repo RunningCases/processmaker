@@ -373,11 +373,6 @@ class Groupwf extends BaseGroupwf
 
     public function filterGroup ($filter, $start, $limit)
     {
-        require_once 'classes/model/Groupwf.php';
-        require_once 'classes/model/TaskUser.php';
-        require_once 'classes/model/GroupUser.php';
-        G::LoadClass( 'configuration' );
-
         $co = new Configurations();
         $config = $co->getConfiguration( 'groupList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
         $env = $co->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );

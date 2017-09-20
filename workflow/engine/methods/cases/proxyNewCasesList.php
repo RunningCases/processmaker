@@ -91,7 +91,6 @@ try {
     $filters['limit'] = (int)$filters['limit'];
     $filters['limit'] = abs($filters['limit']);
     if ($filters['limit'] == 0) {
-        G::LoadClass("configuration");
         $conf = new Configurations();
         $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
         if (isset($generalConfCasesList['casesListRowNumber'])) {

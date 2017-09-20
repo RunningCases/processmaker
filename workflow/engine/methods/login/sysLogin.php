@@ -62,9 +62,6 @@ session_regenerate_id();
 $_SESSION = array_merge($_SESSION, $arraySession);
 
 //Required classes for dbArray work
-//require_once ("propel/Propel.php");
-//require_once ("creole/Creole.php");
-//G::LoadThirdParty ("pake", "pakeColor.class");
 Propel::init (PATH_CORE . "config/databases.php");
 Creole::registerDriver ('dbarray', 'creole.contrib.DBArrayConnection');
 
@@ -89,8 +86,7 @@ function getLangFiles()
 
 function getWorkspacesAvailable()
 {
-    G::LoadClass ('serverConfiguration');
-    $oServerConf = & serverConf::getSingleton ();
+    $oServerConf = & ServerConf::getSingleton ();
     $dir = PATH_DB;
     $filesArray = array ();
     if (file_exists ($dir)) {
@@ -160,7 +156,7 @@ $version = isset($version[0]) ? intval($version[0]) : 0;
 switch (WS_IN_LOGIN) {
     case 'serverconf':
         //Get Server Configuration
-        $oServerConf = & serverConf::getSingleton ();
+        $oServerConf = & ServerConf::getSingleton ();
         if ($oServerConf->getProperty ('LOGIN_NO_WS')) {
             $fileLogin = $version >= 3 ? 'login/sysLoginNoWSpm3' : 'login/sysLoginNoWS';
         } else {

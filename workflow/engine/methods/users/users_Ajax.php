@@ -14,7 +14,6 @@ try {
             die();
             break;
     }
-    G::LoadInclude('ajax');
     if (isset($_POST['form'])) {
         $_POST = $_POST['form'];
     }
@@ -28,7 +27,6 @@ try {
     switch ($value) {
         case 'availableUsers':
             //Classic process: list of users to assign in the task
-            G::LoadClass('processMap');
             $oProcessMap = new ProcessMap();
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
@@ -37,7 +35,6 @@ try {
             break;
         case 'assign':
             //Classic process: assign users and groups in the task
-            G::LoadClass('tasks');
             $oTasks = new Tasks();
             switch ((int) $_POST['TU_RELATION']) {
                 case 1:
@@ -54,7 +51,6 @@ try {
             break;
         case 'ofToAssign':
             //Classic process: remove users and groups related a task
-            G::LoadClass('tasks');
             $oTasks = new Tasks();
             switch ((int) $_POST['TU_RELATION']) {
                 case 1:
@@ -73,7 +69,6 @@ try {
             break;
         case 'usersGroup':
             //Classic process: list of users in a group related a task
-            G::LoadClass('groups');
             $oGroup = new Groups();
             $aGroup = $oGroup->getUsersOfGroup($_POST['GRP_UID']);
             foreach ($aGroup as $iIndex => $aValues) {
@@ -82,7 +77,6 @@ try {
             break;
         case 'canDeleteUser':
             //Check before delete a user
-            G::LoadClass('case');
             $oProcessMap = new Cases();
             $userUid = $_POST['uUID'];
             $total = 0;
@@ -122,17 +116,14 @@ try {
             }
 
             //Remove from tasks
-            G::LoadClass('tasks');
             $oTasks = new Tasks();
             $oTasks->ofToAssignUserOfAllTasks($usrUid);
 
             //Remove from groups
-            G::LoadClass('groups');
             $oGroups = new Groups();
             $oGroups->removeUserOfAllGroups($usrUid);
 
             //Update the table Users
-            require_once 'classes/model/Users.php';
             $RBAC->changeUserStatus($usrUid, 'CLOSED');
             $RBAC->updateUser(array('USR_UID' => $usrUid,'USR_USERNAME' => ''), '');
             $oUser = new Users();
@@ -143,7 +134,6 @@ try {
             $oUser->update($aFields);
 
             //Delete Dashboard
-            require_once 'classes/model/DashletInstance.php';
             $criteria = new Criteria( 'workflow' );
             $criteria->add( DashletInstancePeer::DAS_INS_OWNER_UID, $usrUid );
             $criteria->add( DashletInstancePeer::DAS_INS_OWNER_TYPE , 'USER');
@@ -161,7 +151,6 @@ try {
             $response = new stdclass();
             if (isset($_REQUEST['USR_UID']) && isset($_REQUEST['NEW_USR_STATUS'])) {
                 $RBAC->changeUserStatus($_REQUEST['USR_UID'], ($_REQUEST['NEW_USR_STATUS'] == 'ACTIVE' ? 1 : 0));
-                require_once 'classes/model/Users.php';
                 $userInstance = new Users();
                 $userData = $userInstance->load($_REQUEST['USR_UID']);
                 $userData['USR_STATUS'] = $_REQUEST['NEW_USR_STATUS'];
@@ -178,7 +167,6 @@ try {
             break;
         case 'availableGroups':
             //Get the available groups for assign to user
-            G::LoadClass('groups');
             $filter = (isset($_POST['textFilter'])) ? $_POST['textFilter'] : '';
             $groups = new Groups();
             $criteria = $groups->getAvailableGroupsCriteria($_REQUEST['uUID'], $filter);
@@ -192,7 +180,6 @@ try {
             break;
         case 'assignedGroups':
             //Get the groups related to user
-            G::LoadClass('groups');
             $filter = (isset($_POST['textFilter'])) ? $_POST['textFilter'] : '';
             $groups = new Groups();
             $criteria = $groups->getAssignedGroupsCriteria($_REQUEST['uUID'], $filter);
@@ -208,7 +195,6 @@ try {
             //Assign user in a group
             $USR_UID = $_POST['USR_UID'];
             $gUIDs = explode(',', $_POST['GRP_UID']);
-            G::LoadClass('groups');
             $oGroup = new Groups();
             foreach ($gUIDs as $GRP_UID) {
                 $oGroup->addUserToGroup($GRP_UID, $USR_UID);
@@ -218,7 +204,6 @@ try {
             //Remove a user from a group
             $USR_UID = $_POST['USR_UID'];
             $gUIDs = explode(',', $_POST['GRP_UID']);
-            G::LoadClass('groups');
             $oGroup = new Groups();
             foreach ($gUIDs as $GRP_UID) {
                 $oGroup->removeUserOfGroup($GRP_UID, $USR_UID);
@@ -253,7 +238,6 @@ try {
             break;
         case 'loadAuthSourceByUID':
             //Get the authentication source assignment
-            require_once 'classes/model/Users.php';
             $oCriteria = $RBAC->load($_POST['uUID']);
             $UID_AUTH = $oCriteria['UID_AUTH_SOURCE'];
             if (($UID_AUTH != '00000000000000000000000000000000') && ($UID_AUTH != '')) {
@@ -304,7 +288,6 @@ try {
         case 'usersList':
             //Get the list of users
             //Read the configurations related to enviroments
-            G::LoadClass('configuration');
             $co = new Configurations();
             $config = $co->getConfiguration('usersList', 'pageSize', '', $_SESSION['USER_LOGGED']);
             $limit_size = isset($config['pageSize']) ? $config['pageSize'] : 20;
@@ -322,7 +305,6 @@ try {
             echo '{users: ' . G::json_encode($rows['data']) . ', total_users: ' . $oDatasetUsers["totalRows"] . '}';
             break;
         case 'updatePageSize':
-            G::LoadClass('configuration');
             $c = new Configurations();
             $arr['pageSize'] = $_REQUEST['size'];
             $arr['dateSave'] = date('Y-m-d H:i:s');
@@ -334,10 +316,6 @@ try {
             break;
         case 'summaryUserData':
             //Get all information for the summary
-            require_once 'classes/model/Users.php';
-            require_once 'classes/model/Department.php';
-            require_once 'classes/model/AppCacheView.php';
-            G::LoadClass('configuration');
             $oUser = new Users();
             $data = $oUser->loadDetailed($_REQUEST['USR_UID']);
             $data['USR_STATUS'] = G::LoadTranslation('ID_' . $data['USR_STATUS']);

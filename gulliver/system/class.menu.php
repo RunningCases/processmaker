@@ -31,6 +31,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  *
  *
@@ -91,7 +93,7 @@ class Menu
         if (!is_file($fMenu)) {
             $aux = explode(PATH_SEP, $strMenuName);
             if (count($aux) == 2) {
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 if ($oPluginRegistry->isRegisteredFolder($aux[0])) {
                     $fMenu = PATH_PLUGINS . $aux[0] . PATH_SEP . $aux[1] . ".php";
                 }
@@ -103,7 +105,7 @@ class Menu
         }
         include ($fMenu);
         //this line will add options to current menu.
-        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $oPluginRegistry->getMenus($strMenuName);
         
         $oMenuFromPlugin = array();

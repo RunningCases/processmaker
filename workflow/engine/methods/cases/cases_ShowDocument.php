@@ -125,7 +125,7 @@ if (! $sw_file_exists) {
         $downloadStatus = false;
         /*----------------------------------********---------------------------------*/
         if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-            G::LoadClass( "AppDocumentDrive" );
+
             $drive = new AppDocumentDrive();
             if ($drive->getStatusDrive()) {
                 $fieldDrive = $oAppDocument->getAppDocDriveDownload();

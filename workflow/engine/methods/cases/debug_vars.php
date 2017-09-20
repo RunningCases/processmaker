@@ -5,7 +5,6 @@ switch ($request) {
     case 'getRows':
 
         $fieldname = $_POST['fieldname'];
-        G::LoadClass('case');
         $oApp = new Cases();
         $aFields = $oApp->loadCase($_SESSION['APPLICATION']);
         $aVars = Array();
@@ -68,7 +67,7 @@ switch ($request) {
         echo G::json_encode($response);
         break;
     default:
-        G::LoadClass('case');
+
         $oApp = new Cases();
         $aFields = $oApp->loadCase($_SESSION['APPLICATION']);
 
