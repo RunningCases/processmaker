@@ -775,11 +775,13 @@ class Variable
 
             //Get appData and system variables
             $paramsWithoutAppData = $params;
+            $globalVariables = [];
             if ($appUid !== null) {
                 $case = new \Cases();
                 $fields = $case->loadCase($appUid, $delIndex);
                 $appData = $fields["APP_DATA"];
-                $appData = array_merge($appData, Cases::getGlobalVariables($appData));
+                $globalVariables = Cases::getGlobalVariables($appData);
+                $appData = array_merge($appData, $globalVariables);
                 $params = array_merge($appData, $params);
             }
 
@@ -802,7 +804,7 @@ class Variable
             //in the current change there is no specific property that indicates 
             //if the control is in the grid.
             if (isset($field->columnWidth)) {
-                $pmDynaform->fields["APP_DATA"] = Cases::getGlobalVariables($appData);
+                $pmDynaform->fields["APP_DATA"] = $globalVariables;
                 $field->queryInputData = $paramsWithoutAppData;
             }
 
