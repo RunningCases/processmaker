@@ -2567,11 +2567,7 @@ class Bootstrap
             $hashType = Bootstrap::getPasswordHashType();
         }
 
-        $filter = new InputFilter();
-        $hashType = $filter->validateInput($hashType);
-        $pass = $filter->validateInput($pass);
-
-        eval("\$var = hash('" . $hashType . "', '" . $pass . "');");
+        $var = hash($hashType, $pass);
 
         if ($includeHashType) {
             $var = $hashType . ':' . $var;
