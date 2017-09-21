@@ -101,8 +101,6 @@ if ($actionAjax == 'messageHistoryGridList_JXP') {
             if ($respMess == 'BLOCK' || $respMess == '') {
                 $appMessageArray[$index]['APP_MSG_BODY'] = "";
             }
-            $appMessageArray[$index]['APP_MSG_BODY'] = str_replace('\"','"',$appMessageArray[$index]['APP_MSG_BODY']);
-            $appMessageArray[$index]['APP_MSG_BODY'] = str_replace('"','\"',$appMessageArray[$index]['APP_MSG_BODY']);
             $aProcesses[] = array_merge($appMessageArray[$index], array('MSGS_HISTORY' => $respMess));
             $totalCount ++;
         }
