@@ -599,6 +599,16 @@ class ReportTables
                                 }
                                 $sQuery = substr($sQuery, 0, -1);
                                 $sQuery .= " WHERE APP_UID = '" . $sApplicationUid . "'";
+
+                                //Only we will to executeQuery if we have additional field
+                                if (count($aTableFields) > 0) {
+                                    try {
+                                        $rs = $stmt->executeQuery($sQuery);
+                                    } catch (Exception $e) {
+                                        Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', ['sql' => $sQuery,'error' => $e->getMessage()], SYS_SYS, 'processmaker.log');
+                                    }
+
+                                }
                             } else {
                                 $sQuery = 'INSERT INTO `' . $aRow['REP_TAB_NAME'] . '` (';
                                 $sQuery .= '`APP_UID`,`APP_NUMBER`';
@@ -630,8 +640,13 @@ class ReportTables
                                     }
                                 }
                                 $sQuery .= ')';
+
+                                try {
+                                    $rs = $stmt->executeQuery($sQuery);
+                                } catch (Exception $e) {
+                                    Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', ['sql' => $sQuery,'error' => $e->getMessage()], SYS_SYS, 'processmaker.log');
+                                }
                             }
-                            $rs = $stmt->executeQuery($sQuery);
                         } else {
                             //remove old rows from database
                             $sqlDelete = 'DELETE FROM `' . $aRow['REP_TAB_NAME'] . "` WHERE APP_UID = '" . $sApplicationUid . "'";
