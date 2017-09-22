@@ -12,6 +12,8 @@ use WsBase;
 use RBAC;
 use Applications;
 use PmDynaform;
+use ProcessMaker\Services\OAuth2\Server;
+use Users;
 
 class Cases
 {
@@ -1679,7 +1681,8 @@ class Cases
         $arrayCaseVariable = [];
 
         if (!is_null($dynaFormUid)) {
-
+            $data = [];
+            $data["APP_DATA"] = $fields['APP_DATA'];
             $data["CURRENT_DYNAFORM"] = $dynaFormUid;
             $pmDynaForm = new PmDynaform($data);
             $arrayDynaFormData = $pmDynaForm->getDynaform();
@@ -3244,26 +3247,48 @@ class Cases
         $appData = array_change_key_case($appData, CASE_UPPER);
         $dataVariable = array_change_key_case($dataVariable, CASE_UPPER);
 
-        if (!isset($dataVariable['APPLICATION']) || empty($dataVariable['APPLICATION'])) {
-            $dataVariable['APPLICATION'] = (isset($dataVariable['APP_UID']) && $dataVariable['APP_UID'] != '') ? $dataVariable['APP_UID'] : $appData['APPLICATION'];
+        $result = [];
+        //we get the appData parameters
+        if (!empty($appData['APPLICATION'])) {
+            $result['APPLICATION'] = $appData['APPLICATION'];
         }
-        if (!isset($dataVariable['PROCESS']) || empty($dataVariable['PROCESS'])) {
-            $dataVariable['PROCESS'] = (isset($dataVariable['PRO_UID']) && $dataVariable['PRO_UID'] != '') ? $dataVariable['PRO_UID'] : $appData['PROCESS'];
+        if (!empty($appData['PROCESS'])) {
+            $result['PROCESS'] = $appData['PROCESS'];
         }
-        if (isset($appData['TASK']) && !empty($appData['TASK'])) {
-            $dataVariable['TASK'] = $appData['TASK'];
+        if (!empty($appData['TASK'])) {
+            $result['TASK'] = $appData['TASK'];
         }
-        if (isset($appData['INDEX']) && !empty($appData['INDEX'])) {
-            $dataVariable['INDEX'] = $appData['INDEX'];
-        }
-        $dataVariable['USER_LOGGED'] = \ProcessMaker\Services\OAuth2\Server::getUserId();
-        if (isset($dataVariable['USER_LOGGED']) && !empty($dataVariable['USER_LOGGED'])) {
-            $oUserLogged = new \Users();
-            $oUserLogged->load($dataVariable['USER_LOGGED']);
-            $dataVariable['USR_USERNAME'] = $oUserLogged->getUsrUsername();
+        if (!empty($appData['INDEX'])) {
+            $result['INDEX'] = $appData['INDEX'];
         }
 
-        return $dataVariable;
+        //we try to get the missing elements
+        if (!empty($dataVariable['APP_UID']) && empty($result['APPLICATION'])) {
+            $result['APPLICATION'] = $dataVariable['APP_UID'];
+        }
+        if (!empty($dataVariable['PRO_UID']) && empty($result['PROCESS'])) {
+            $result['PROCESS'] = $dataVariable['PRO_UID'];
+        }
+
+        $result['USER_LOGGED'] = '';
+        $result['USR_USERNAME'] = '';
+        global $RBAC;
+        if (isset($RBAC) && isset($RBAC->aUserInfo)) {
+            $result['USER_LOGGED'] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            $result['USR_USERNAME'] = $RBAC->aUserInfo['USER_INFO']['USR_USERNAME'];
+        }
+        if (empty($result['USER_LOGGED'])) {
+            $result['USER_LOGGED'] = Server::getUserId();
+            if (!empty($result['USER_LOGGED'])) {
+                $oUserLogged = new Users();
+                $oUserLogged->load($result['USER_LOGGED']);
+                $result['USR_USERNAME'] = $oUserLogged->getUsrUsername();
+            }
+        }
+
+        //the parameter dataVariable may contain additional elements
+        $result = array_merge($dataVariable, $result);
+        return $result;
     }
 
     /**

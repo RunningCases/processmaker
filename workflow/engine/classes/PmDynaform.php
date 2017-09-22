@@ -2,6 +2,7 @@
 
 use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\DynaForm\SuggestTrait;
+use ProcessMaker\BusinessModel\Cases;
 
 /**
  * Implementing pmDynaform library in the running case.
@@ -250,11 +251,6 @@ class PmDynaform
                             $dtFields = $json->queryInputData;
                         } else {
                             $dtFields = $this->getValuesDependentFields($json);
-                            foreach ($dtFields as $keyF => $valueF) {
-                                if (isset($this->fields["APP_DATA"][$keyF])) {
-                                    $dtFields[$keyF] = $this->fields["APP_DATA"][$keyF];
-                                }
-                            }
                         }
                         $sql = G::replaceDataField($json->sql, $dtFields);
                         if ($value === "suggest") {
@@ -610,7 +606,8 @@ class PmDynaform
                     $json->dataGridEnvironment = "onDataGridEnvironment";
                     if (isset($this->fields["APP_DATA"])) {
                         $dataGridEnvironment = $this->fields["APP_DATA"];
-                        $this->fields["APP_DATA"] = [];
+                        //Grids only access the global variables of 'ProcessMaker', other variables are removed.
+                        $this->fields["APP_DATA"] = Cases::getGlobalVariables($this->fields["APP_DATA"]);
                         //restore AppData with dataVariable definition, only for columns control
                         foreach ($columnsDataVariable as $dge) {
                             if (isset($dataGridEnvironment[$dge])) {
@@ -691,7 +688,14 @@ class PmDynaform
         if (!isset($this->record["DYN_CONTENT"])) {
             return array();
         }
-        $data = array();
+        $data = [];
+        if (isset($this->fields["APP_DATA"])) {
+            foreach ($this->fields["APP_DATA"] as $keyF => $valueF) {
+                if (!isset($data[$keyF]) && !is_array($valueF)) {
+                    $data[$keyF] = $valueF;
+                }
+            }
+        }
         if (isset($json->dbConnection) && isset($json->sql)) {
             $result = array();
             preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $result, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
@@ -708,18 +712,12 @@ class PmDynaform
                 }
             }
             if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
-                if (isset($this->fields["APP_DATA"])) {
-                    foreach ($this->fields["APP_DATA"] as $keyA => $valueA) {
-                        if (!isset($data[$keyA]) && !is_array($valueA)) {
-                            $data[$keyA] = $valueA;
-                        }
-                    }
-                }
                 $sql = G::replaceDataField($json->sql, $data);
                 $dt = $this->getCacheQueryData($json->dbConnection, $sql, $json->type);
                 $row = isset($dt[0]) ? $dt[0] : [];
-                if (isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
-                    $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
+                $index = $json->variable === "" ? $json->id : $json->variable;
+                if (!isset($data[$index]) && isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
+                    $data[$index] = $row[0];
                 }
             }
         }
