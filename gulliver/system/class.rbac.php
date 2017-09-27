@@ -50,6 +50,13 @@ use ProcessMaker\Exception\RBACException;
 class RBAC
 {
     const SETUPERMISSIONUID= '00000000000000000000000000000002';
+    const PER_SYSTEM = '00000000000000000000000000000002';
+    const PM_GUEST_CASE = 'PM_GUEST_CASE';
+    const PM_GUEST_CASE_UID = '00000000000000000000000000000066';
+    const PROCESSMAKER_GUEST = 'PROCESSMAKER_GUEST';
+    const PROCESSMAKER_GUEST_UID = '00000000000000000000000000000005';
+    const GUEST_USER_UID = '00000000000000000000000000000002';
+
     /**
      *
      * @access private
@@ -394,6 +401,149 @@ class RBAC
         )
         );
         return $permissionsAdmin;
+    }
+
+    /**
+     * Create if not exists GUEST user.
+     *
+     */
+    private function verifyGuestUser(Roles $role)
+    {
+        try {
+            $strRole = $role->getRolCode();
+
+            $arrayData = array();
+            $arrayData["USR_UID"] = self::GUEST_USER_UID;
+            $arrayData["USR_USERNAME"] = 'Guest';
+            $arrayData["USR_PASSWORD"] = '674ba9750749d735ec9787d606170d78';
+            $arrayData["USR_FIRSTNAME"] = 'Guest';
+            $arrayData["USR_LASTNAME"] = '';
+            $arrayData["USR_EMAIL"] = 'guest@processmaker.com';
+            $arrayData["USR_DUE_DATE"] = '2200-01-01';
+            $arrayData["USR_CREATE_DATE"] = date("Y-m-d H:i:s");
+            $arrayData["USR_UPDATE_DATE"] = date("Y-m-d H:i:s");
+            $arrayData["USR_BIRTHDAY"] = '2009-02-01';
+            $arrayData["USR_AUTH_USER_DN"] = "";
+            $arrayData["USR_STATUS"] = 0;
+
+            $rbacUserExists = RbacUsersPeer::retrieveByPK(self::GUEST_USER_UID);
+            if (!$rbacUserExists) {
+                $rbacUser = new RbacUsers();
+                $rbacUser->fromArray($arrayData, BasePeer::TYPE_FIELDNAME);
+                $rbacUser->save();
+
+                $arrayData["USR_UID"] = $rbacUser->getUsrUid();
+                $arrayData["USR_STATUS"] = 'INACTIVE';
+                $arrayData["USR_COUNTRY"] = "";
+                $arrayData["USR_CITY"] = "";
+                $arrayData["USR_LOCATION"] = "";
+                $arrayData["USR_ADDRESS"] = "";
+                $arrayData["USR_PHONE"] = "";
+                $arrayData["USR_ZIP_CODE"] = "";
+                $arrayData["USR_POSITION"] = "";
+                $arrayData["USR_ROLE"] = $strRole;
+
+                $user = new Users();
+                $user->create($arrayData);
+                $this->assignRoleToUser($user->getUsrUid(), $strRole);
+            } elseif(
+                $rbacUserExists
+                && $rbacUserExists->getUserRole($rbacUserExists->getUsrUid())['ROL_CODE']!==self::PROCESSMAKER_GUEST
+            ) {
+                $this->assignRoleToUser($rbacUserExists->getUsrUid(), $strRole);
+            }
+        } catch (Exception $exception) {
+            throw new Exception(
+                "Can not create guest user: ".$exception->getMessage(),
+                0,
+                $exception
+            );
+        }
+    }
+
+    /**
+     * Create if not exists GUEST role.
+     *
+     */
+    private function verifyGuestRole($permissions)
+    {
+        try {
+            $criteria = new Criteria;
+            $criteria->add(RolesPeer::ROL_CODE, self::PROCESSMAKER_GUEST);
+            $roleExists = RolesPeer::doSelectOne($criteria);
+            if ($roleExists) {
+                return $roleExists;
+            }
+            $aData = [
+                'ROL_UID'         => self::PROCESSMAKER_GUEST_UID,
+                'ROL_CODE'        => self::PROCESSMAKER_GUEST,
+                'ROL_SYSTEM'      => self::PER_SYSTEM,
+                'ROL_STATUS'      => 1,
+                'ROL_NAME'        => self::PROCESSMAKER_GUEST,
+                'ROL_CREATE_DATE' => date('Y-m-d H:i:s'),
+                'ROL_UPDATE_DATE' => date('Y-m-d H:i:s'),
+            ];
+            $this->createRole($aData);
+            $role = RolesPeer::doSelectOne($criteria);
+            foreach($permissions as $permission) {
+                $o = new RolesPermissions();
+                $o->setPerUid($permission->getPerUid());
+                $o->setPermissionName('Guest case');
+                $o->setRolUid($role->getRolUid());
+                $o->save();
+            }
+            return $role;
+        } catch (Exception $exception) {
+            throw new Exception(
+                "Can not create guest role: " . $exception->getMessage(),
+                0,
+                $exception
+            );
+        }
+    }
+
+    /**
+     * Create if not exists GUEST permissions.
+     *
+     */
+    private function verifyGuestPermissions()
+    {
+        try {
+            $criteria = new Criteria();
+            $criteria->add(PermissionsPeer::PER_CODE, self::PM_GUEST_CASE);
+            $perm = PermissionsPeer::doSelectOne($criteria);
+            if ($perm) {
+                return [$perm];
+            }
+            $permission = new Permissions();
+            $permission->setPerUid(self::PM_GUEST_CASE_UID);
+            $permission->setPerCode(self::PM_GUEST_CASE);
+            $permission->setPerCreateDate(date('Y-m-d H:i:s'));
+            $permission->setPerUpdateDate(date('Y-m-d H:i:s'));
+            $permission->setPerStatus(1);
+            $permission->setPerSystem(self::PER_SYSTEM);
+            $permission->save();
+            return [$permission];
+        } catch (Exception $exception) {
+            throw new Exception(
+                "Can not set guest permissions: " . $exception->getMessage(),
+                0,
+                $exception
+            );
+        }
+    }
+
+    /**
+     * Create if not exists GUEST user.
+     * Create if not exists GUEST role.
+     * Create if not exists GUEST permissions.
+     *
+     */
+    private function verifyGuestUserRolePermission()
+    {
+        $permissions = $this->verifyGuestPermissions();
+        $role = $this->verifyGuestRole($permissions);
+        $this->verifyGuestUser($role);
     }
 
     /**
@@ -1444,6 +1594,7 @@ class RBAC
     public function verifyPermissions()
     {
         $message = array();
+        $this->verifyGuestUserRolePermission();
         $listPermissions = $this->loadPermissionAdmin();
         $criteria = new Criteria('rbac');
         $dataset = PermissionsPeer::doSelectRS($criteria);
