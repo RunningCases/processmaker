@@ -640,6 +640,10 @@ class User
     {
         try {
 
+            //check user guest
+            if (RBAC::isGuestUserUid($userUid)) {
+                throw new Exception(G::LoadTranslation("ID_USER_CAN_NOT_UPDATE", array($userUid)));
+            }
 
             //Verify data
             $validator = new Validator();
@@ -1078,6 +1082,12 @@ class User
             $history += ApplicationPeer::doCount($c);
             $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $USR_UID);
             $history += ApplicationPeer::doCount($c);
+            
+            //check user guest
+            if (RBAC::isGuestUserUid($usrUid)) {
+                throw new Exception(G::LoadTranslation("ID_MSG_CANNOT_DELETE_USER", array($USR_UID)));
+            }
+
             if ($total > 0) {
                 throw new Exception(G::LoadTranslation("ID_USER_CAN_NOT_BE_DELETED", array($USR_UID)));
             } else {
@@ -1181,6 +1191,9 @@ class User
 
             //Query
             $criteria = $this->getUserCriteria();
+
+            //Remove the guest user 
+            $criteria->add(UsersPeer::USR_UID, RBAC::GUEST_USER_UID, Criteria::NOT_EQUAL);
 
             if ($flagCondition && !empty($arrayWhere['condition'])) {
                 foreach ($arrayWhere['condition'] as $value) {
@@ -1556,6 +1569,9 @@ class User
         }
         $oCriteria->add(UsersPeer::USR_STATUS, array('CLOSED'), Criteria::NOT_IN);
 
+        //Remove the guest user 
+        $oCriteria->add(UsersPeer::USR_UID, RBAC::GUEST_USER_UID, Criteria::NOT_EQUAL);
+
         if ($authSource != '') {
             $totalRows = sizeof($aUsers);
         } else {
@@ -1583,6 +1599,10 @@ class User
         $oCriteria->addAsColumn('DUE_DATE_OK', 1);
         $sep = "'";
         $oCriteria->add(UsersPeer::USR_STATUS, array('CLOSED'), Criteria::NOT_IN);
+
+        //Remove the guest user
+        $oCriteria->add(UsersPeer::USR_UID, RBAC::GUEST_USER_UID, Criteria::NOT_EQUAL);
+
         if ($filter != '') {
             $cc = $oCriteria->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $filter . '%', Criteria::LIKE)
                 ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $filter . '%', Criteria::LIKE)

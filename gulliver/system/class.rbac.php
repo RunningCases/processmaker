@@ -1766,5 +1766,20 @@ class RBAC
     {
         return $this->enableLoginHash;
     }
+    
+    /**
+     * Returns true in case the parameter corresponds to the invited user, 
+     * otherwise it returns false.
+     * 
+     * @param boolean $usrUid
+     * @return void
+     */
+    public static function isGuestUserUid($usrUid)
+    {
+        if (RBAC::GUEST_USER_UID === $usrUid) {
+            return true;
+        }
+        return false;
+    }
 }
 
