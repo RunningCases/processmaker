@@ -406,6 +406,8 @@ class RBAC
     /**
      * Create if not exists GUEST user.
      *
+     * @param Roles $role
+     * @throws Exception
      */
     private function verifyGuestUser(Roles $role)
     {
@@ -427,7 +429,11 @@ class RBAC
             $arrayData["USR_STATUS"] = 0;
 
             $rbacUserExists = RbacUsersPeer::retrieveByPK(self::GUEST_USER_UID);
-            if (!$rbacUserExists) {
+            $isNotRbacUserGuest = !empty($rbacUserExists)
+                && $rbacUserExists instanceof RbacUsers
+                && $rbacUserExists->getUserRole($rbacUserExists->getUsrUid())['ROL_CODE']
+                !== self::PROCESSMAKER_GUEST;
+            if (empty($rbacUserExists)) {
                 $rbacUser = new RbacUsers();
                 $rbacUser->fromArray($arrayData, BasePeer::TYPE_FIELDNAME);
                 $rbacUser->save();
@@ -446,15 +452,12 @@ class RBAC
                 $user = new Users();
                 $user->create($arrayData);
                 $this->assignRoleToUser($user->getUsrUid(), $strRole);
-            } elseif(
-                $rbacUserExists
-                && $rbacUserExists->getUserRole($rbacUserExists->getUsrUid())['ROL_CODE']!==self::PROCESSMAKER_GUEST
-            ) {
+            } elseif ($isNotRbacUserGuest) {
                 $this->assignRoleToUser($rbacUserExists->getUsrUid(), $strRole);
             }
         } catch (Exception $exception) {
             throw new Exception(
-                "Can not create guest user: ".$exception->getMessage(),
+                "Can not create guest user: " . $exception->getMessage(),
                 0,
                 $exception
             );
@@ -464,6 +467,9 @@ class RBAC
     /**
      * Create if not exists GUEST role.
      *
+     * @param type $permissions
+     * @return type
+     * @throws Exception
      */
     private function verifyGuestRole($permissions)
     {
@@ -471,7 +477,7 @@ class RBAC
             $criteria = new Criteria;
             $criteria->add(RolesPeer::ROL_CODE, self::PROCESSMAKER_GUEST);
             $roleExists = RolesPeer::doSelectOne($criteria);
-            if ($roleExists) {
+            if (!empty($roleExists)) {
                 return $roleExists;
             }
             $aData = [
@@ -505,6 +511,8 @@ class RBAC
     /**
      * Create if not exists GUEST permissions.
      *
+     * @return type
+     * @throws Exception
      */
     private function verifyGuestPermissions()
     {
@@ -512,7 +520,7 @@ class RBAC
             $criteria = new Criteria();
             $criteria->add(PermissionsPeer::PER_CODE, self::PM_GUEST_CASE);
             $perm = PermissionsPeer::doSelectOne($criteria);
-            if ($perm) {
+            if (!empty($perm)) {
                 return [$perm];
             }
             $permission = new Permissions();
@@ -538,6 +546,7 @@ class RBAC
      * Create if not exists GUEST role.
      * Create if not exists GUEST permissions.
      *
+     * @throws Exception
      */
     private function verifyGuestUserRolePermission()
     {
