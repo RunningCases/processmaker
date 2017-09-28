@@ -110,6 +110,8 @@ class User
         'PREF_DEFAULT_CASES_MENUSELECTED' => 'PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS'
     );
 
+    private $guestUser = '00000000000000000000000000000002';
+
     /**
      * Constructor of the class
      */
@@ -122,6 +124,16 @@ class User
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * This function get the guest user defined
+     *
+     * @return string guestUser, uid related to this user
+     */
+    public function getGuestUser()
+    {
+        return $this->guestUser;
     }
 
     /**
