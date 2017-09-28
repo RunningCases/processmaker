@@ -2,6 +2,7 @@
 namespace ProcessMaker\BusinessModel;
 
 use ProcessMaker\Core\System;
+use WebEntryPeer;
 
 class WebEntry
 {
@@ -1079,7 +1080,7 @@ class WebEntry
      */
     public function isWebEntryOne($weUid)
     {
-        $webEntry = \WebEntryPeer::retrieveByPK($weUid);
+        $webEntry = WebEntryPeer::retrieveByPK($weUid);
         return $webEntry->getWeType() === 'SINGLE'
             && $webEntry->getWeAuthentication() === 'ANONYMOUS'
             && $webEntry->getWeCallback() === 'PROCESSMAKER';
