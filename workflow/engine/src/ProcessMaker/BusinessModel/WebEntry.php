@@ -1080,7 +1080,9 @@ class WebEntry
     public function isWebEntryOne($weUid)
     {
         $webEntry = \WebEntryPeer::retrieveByPK($weUid);
-        return $webEntry->getWeType()==='SINGLE' && $webEntry->getWeAuthentication()==='ANONYMOUS';
+        return $webEntry->getWeType() === 'SINGLE'
+            && $webEntry->getWeAuthentication() === 'ANONYMOUS'
+            && $webEntry->getWeCallback() === 'PROCESSMAKER';
     }
 
     /**
