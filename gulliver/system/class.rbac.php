@@ -1771,8 +1771,8 @@ class RBAC
      * Returns true in case the parameter corresponds to the invited user, 
      * otherwise it returns false.
      * 
-     * @param boolean $usrUid
-     * @return void
+     * @param string $usrUid
+     * @return boolean
      */
     public static function isGuestUserUid($usrUid)
     {
