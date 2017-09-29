@@ -1776,10 +1776,7 @@ class RBAC
      */
     public static function isGuestUserUid($usrUid)
     {
-        if (self::GUEST_USER_UID === $usrUid) {
-            return true;
-        }
-        return false;
+        return self::GUEST_USER_UID === $usrUid;
     }
 }
 
