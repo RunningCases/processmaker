@@ -2033,15 +2033,23 @@ class WsBase
      * This function is used when the case is derived from abe, Soap, PMFDerivateCase
      *
      * @param string $caseId, Uid related to the case
-     * @param array $appData, contain all the information about the case
+     * @param array $appData, contain all the information about the case related to the index [APP_DATA]
      * @param string $tasUid, Uid related to the task
      * @param string $stepType, before or after step
      * @param string $stepUidObj, can be -1, -2
      * @param string $triggerType, can be BEFORE, AFTER
-     * @param string $labelAssigment, label related to the triggerType
+     * @param string $labelAssignment, label related to the triggerType
+     *
+     * @return string $varTriggers updated
      */
     public function executeTriggerFromDerivate(
-    $caseId, $appData, $tasUid, $stepType, $stepUidObj, $triggerType, $labelAssigment = ''
+        $caseId,
+        $appData,
+        $tasUid,
+        $stepType,
+        $stepUidObj,
+        $triggerType,
+        $labelAssignment = ''
     ) {
         $varTriggers = "";
         $oCase = new Cases();
@@ -2050,7 +2058,7 @@ class WsBase
         $aTriggers = $oCase->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
 
         if (count($aTriggers) > 0) {
-            $varTriggers = $varTriggers . "<br /><b>" . $labelAssigment . "</b><br />";
+            $varTriggers = $varTriggers . "<br /><b>" . $labelAssignment . "</b><br />";
 
             $oPMScript = new PMScript();
 
@@ -2064,6 +2072,7 @@ class WsBase
                     $params->SID = $this->wsSessionId;
                 }
 
+                //We can set the index APP_DATA
                 $appFields["APP_DATA"] = array_merge($appData, G::getSystemConstants($params));
 
                 //PMScript
@@ -2089,6 +2098,9 @@ class WsBase
                     unset($appFields['APP_PROC_CODE']);
                     unset($appFields['APP_PIN']);
                     $oCase->updateCase($caseId, $appFields);
+
+                    //We need to update the variable $appData for use the new variables in the next trigger
+                    $appData = array_merge($appData, $appFields['APP_DATA']);
                 }
             }
         }
