@@ -110,7 +110,7 @@ class User
         'PREF_DEFAULT_CASES_MENUSELECTED' => 'PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS'
     );
 
-    private $guestUser = '00000000000000000000000000000002';
+    private $guestUser = RBAC::GUEST_USER_UID;
 
     /**
      * Constructor of the class

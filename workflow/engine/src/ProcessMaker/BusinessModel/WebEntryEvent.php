@@ -709,7 +709,8 @@ class WebEntryEvent
             $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
             //Define if the webEntry need to use the guest user
             $weUserUid = isset($arrayData["USR_UID"]) ? $arrayData["USR_UID"] : '';
-            $arrayData["USR_UID"] = $this->getWebEntryUser($arrayData["WE_AUTHENTICATION"], $weUserUid);
+            $weAuthentication = isset($arrayData["WE_AUTHENTICATION"]) ? $arrayData["WE_AUTHENTICATION"] : '';
+            $arrayData["USR_UID"] = $this->getWebEntryUser($weAuthentication, $weUserUid);
             //Verify data with the required fields
             $this->throwExceptionIfDataIsInvalid("", $projectUid, $arrayData);
 
@@ -824,7 +825,8 @@ class WebEntryEvent
                 $this->arrayFieldNameForException["webEntryEventUid"]);
             //Define if the webEntry need to use the guest user
             $weUserUid = isset($arrayData["USR_UID"]) ? $arrayData["USR_UID"] : '';
-            $arrayData["USR_UID"] = $this->getWebEntryUser($arrayData["WE_AUTHENTICATION"], $weUserUid);
+            $weAuthentication = isset($arrayData["WE_AUTHENTICATION"]) ? $arrayData["WE_AUTHENTICATION"] : '';
+            $arrayData["USR_UID"] = $this->getWebEntryUser($weAuthentication, $weUserUid);
             //Verify data with the required fields
             $this->throwExceptionIfDataIsInvalid($webEntryEventUid, $arrayWebEntryEventData["PRJ_UID"], $arrayData);
 
@@ -1392,7 +1394,9 @@ class WebEntryEvent
     */
     public function getWebEntryUser($authentication = 'ANONYMOUS', $usrUid = '')
     {
-        if ($authentication === 'ANONYMOUS') {
+        //The webEntry old does not have type of authentication defined
+        //The webEntry2.0 can be has values ANONYMOUS or LOGIN_REQUIRED
+        if ($authentication === 'ANONYMOUS' || empty($authentication)) {
             $user = new User();
             return $user->getGuestUser();
         } else {
