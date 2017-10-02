@@ -352,6 +352,7 @@ class Department
                     break;
                 case 'AVAILABLE':
                     $criteria->add(\UsersPeer::DEP_UID, '', \Criteria::EQUAL);
+                    $criteria->add(\UsersPeer::USR_UID, \RBAC::GUEST_USER_UID, \Criteria::NOT_EQUAL);
                     break;
             }
 

@@ -252,7 +252,8 @@ switch ($_POST['action']) {
         $subQuery = "SELECT " . GroupUserPeer::USR_UID .
                     " FROM " . GroupUserPeer::TABLE_NAME .
                     " WHERE " . GroupUserPeer::GRP_UID . " = '" .
-                    $inputFilter->quoteSmart($_REQUEST['gUID'], Propel::getConnection("workflow")) . "'";
+                    $inputFilter->quoteSmart($_REQUEST['gUID'], Propel::getConnection("workflow")) . "'\n" .
+                    "UNION SELECT '" . RBAC::GUEST_USER_UID . "'";
 
         $aUsers = Array ();
         $oCriteria = new Criteria( 'workflow' );

@@ -64,6 +64,7 @@ if ($actionAjax == "userValues") {
             $cUsers->addSelectColumn(UsersPeer::USR_ID);
             break;
     }
+    $cUsers->add(UsersPeer::USR_UID, [RBAC::GUEST_USER_UID], Criteria::NOT_IN);
     $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
     if (!is_null($query)) {
         $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(

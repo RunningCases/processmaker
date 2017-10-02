@@ -321,6 +321,7 @@ class User
                     break;
                 case "AVAILABLE-USERS":
                     $criteria->add(\UsersRolesPeer::ROL_UID, $roleUid, \Criteria::NOT_EQUAL);
+                    $criteria->add(\RbacUsersPeer::USR_UID, [\RBAC::GUEST_USER_UID], \Criteria::NOT_IN);
                     break;
             }
 
