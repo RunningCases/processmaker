@@ -105,7 +105,7 @@ class PluginRegistry
      */
     public function registerPlugin($Namespace, $Filename = null)
     {
-        $ClassName = $Namespace . "plugin";
+        $ClassName = $Namespace . "Plugin";
         $plugin = new $ClassName($Namespace, $Filename);
 
         if (isset($this->_aPluginDetails[$Namespace])) {
