@@ -53,7 +53,7 @@ class WebEntryEvent
         "WEE_TITLE" => array(
             "type" => "string",
             "required" => false,
-            "empty" => false,
+            "empty" => true,
             "defaultValues" => array(),
             "fieldNameAux" => "webEntryEventTitle"
         ),
