@@ -191,6 +191,8 @@ switch ($function) {
             $criteria = new Criteria("workflow");
 
             $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+            $criteria->addSelectColumn(RbacUsersPeer::UID_AUTH_SOURCE);
+            $criteria->addJoin(UsersPeer::USR_UID, RbacUsersPeer::USR_UID);
             $criteria->add(UsersPeer::USR_STATUS, "CLOSED", Criteria::NOT_EQUAL);
 
             $rsCriteria = UsersPeer::doSelectRS($criteria);
@@ -198,8 +200,7 @@ switch ($function) {
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
-
-                $arrayUser[$row["USR_USERNAME"]] = 1;
+                $arrayUser[strtolower($row["USR_USERNAME"])] = $row['UID_AUTH_SOURCE'];
             }
 
             //Get data
@@ -213,11 +214,14 @@ switch ($function) {
             foreach ($result["data"] as $value) {
                 $arrayUserData = $value;
 
-                if (!isset($arrayUser[$arrayUserData["sUsername"]])) {
-                    $arrayUserData["STATUS"] = "NOT IMPORTED";
+                if (!isset($arrayUser[strtolower($arrayUserData["sUsername"])])) {
+                    $arrayUserData["STATUS"] = G::LoadTranslation("ID_NOT_IMPORTED");
                     $arrayUserData["IMPORT"] = 1;
+                } elseif($authenticationSourceUid === $arrayUser[strtolower($arrayUserData["sUsername"])]) {
+                    $arrayUserData["STATUS"] = G::LoadTranslation("ID_IMPORTED");
+                    $arrayUserData["IMPORT"] = 0;
                 } else {
-                    $arrayUserData["STATUS"] = "IMPORTED";
+                    $arrayUserData["STATUS"] = G::LoadTranslation("ID_CANNOT_IMPORT");
                     $arrayUserData["IMPORT"] = 0;
                 }
 
