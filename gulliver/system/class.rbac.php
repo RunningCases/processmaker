@@ -416,7 +416,7 @@ class RBAC
 
             $arrayData = array();
             $arrayData["USR_UID"] = self::GUEST_USER_UID;
-            $arrayData["USR_USERNAME"] = 'Guest';
+            $arrayData["USR_USERNAME"] = 'guest';
             $arrayData["USR_PASSWORD"] = '674ba9750749d735ec9787d606170d78';
             $arrayData["USR_FIRSTNAME"] = 'Guest';
             $arrayData["USR_LASTNAME"] = '';
