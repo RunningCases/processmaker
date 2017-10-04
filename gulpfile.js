@@ -480,7 +480,9 @@ gulp.task('__env', function (cb) {
         content = 'var __env = __env || {};';
 
     gutil.log(gutil.colors.green('Creating System Constants...'));
-
+    if (!fs.existsSync(pathEnviroment)){
+        fs.mkdirSync(pathEnviroment);
+    }
     fs.writeFile(
         pathEnviroment + 'constants.js',
         content + '__env.USER_GUEST = ' + JSON.stringify(data.constants.userguest) + ';',

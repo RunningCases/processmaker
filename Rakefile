@@ -142,6 +142,8 @@ def generateEnviromentVariables()
     dataUser = JSON.parse(file)
     content = content + "__env.USER_GUEST = " + JSON.generate(dataUser['constants']['userguest'])
     dir = "vendor/colosa/MichelangeloFE/src/enviroment/"
+    # create a directory enviroment
+    Dir.mkdir dir
     File.open(dir +'constants.js', 'w') { |fileWrite|
         fileWrite.write content + ';'
     }
