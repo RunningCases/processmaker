@@ -645,10 +645,9 @@ class ListInbox extends BaseListInbox
         $filters['usr_uid'] = $usrUid;
         $criteria = new Criteria();
         $criteria->addSelectColumn('COUNT(*) AS TOTAL');
-        $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        if (count($filters)) {
-            self::loadFilters($criteria, $filters);
-        }
+
+        //The function loadFilters will add some condition in the query
+        $this->loadFilters($criteria, $filters);
         $dataset = ListInboxPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
