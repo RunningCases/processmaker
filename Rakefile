@@ -1,5 +1,5 @@
 require 'rubygems'
-
+require 'json'
 desc "Default Task - Build Library"
 task :default  => [:required] do
   Rake::Task['build'].execute
@@ -53,6 +53,7 @@ task :build => [:required] do
     mafeDir = targetDir + "/mafe"
     pmdynaformDir = targetDir + "/pmdynaform"
 
+    generateEnviromentVariables
     prepareDirs([targetDir, pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
 
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
@@ -132,6 +133,18 @@ task :build => [:required] do
 
     puts "-- DONE --\n".bold
     #task argv1.to_sym do ; end
+end
+
+def generateEnviromentVariables()
+    puts "Creating System Constants..."
+    content = "var __env = __env || {};"
+    file = File.read('./config/enviromentvariables.json')
+    data_hash = JSON.parse(file)
+    content = content + "__env.USER_GUEST = " + JSON.generate(data_hash['constants']['userguest'])
+    dir = "vendor/colosa/MichelangeloFE/src/enviroment/"
+    File.open(dir +'constans.js', 'w') { |fileWrite|
+        fileWrite.write content + ';'
+    }
 end
 
 def buildPmUi(homeDir, targetDir, mode)

@@ -477,13 +477,13 @@ gulp.task('clean', function () {
  */
 gulp.task('__env', function (cb) {
     var data = require('./config/enviromentvariables.json'),
-        pathEnviroment = 'vendor/colosa/MichelangeloFE/src/enviromentVariables/',
+        pathEnviroment = 'vendor/colosa/MichelangeloFE/src/enviroment/',
         content = 'var __env = __env || {};';
 
-    gutil.log(gutil.colors.green('Creating guest user constants...'));
+    gutil.log(gutil.colors.green('Creating System Constants...'));
 
     createFile.writeFile(
-        pathEnviroment + 'enviromentVariables.js',
+        pathEnviroment + 'constans.js',
         content + '__env.USER_GUEST = ' + JSON.stringify(data.constants.userguest) + ';',
         cb
     );
