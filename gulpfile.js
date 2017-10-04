@@ -6,6 +6,7 @@ const path = require('path'),
     _ = require('underscore'),
     gutil = require('gulp-util'),
     grename = require('gulp-rename'),
+    createFile = require('fs'),
     del = require('del'),
     exec = require('child_process').exec,
     execFile = require('child_process').execFile,
@@ -471,7 +472,24 @@ gulp.task('clean', function () {
     cleanDirectory('workflow/public_html/lib');
 });
 
-gulp.task('default', ['clean'], function (cb) {
+/**
+ * This scheduled task is to be able to create the guest user constants
+ */
+gulp.task('__env', function (cb) {
+    var data = require('./config/enviromentvariables.json'),
+        pathEnviroment = 'vendor/colosa/MichelangeloFE/src/enviromentVariables/',
+        content = 'var __env = __env || {};';
+
+    gutil.log(gutil.colors.green('Creating guest user constants...'));
+
+    createFile.writeFile(
+        pathEnviroment + 'enviromentVariables.js',
+        content + '__env.USER_GUEST = ' + JSON.stringify(data.constants.userguest) + ';',
+        cb
+    );
+});
+
+gulp.task('default', ['clean', '__env'], function (cb) {
     var i, tasks = [];
 
     gutil.log(gutil.colors.green('Initializing ProcessMaker building...'));
