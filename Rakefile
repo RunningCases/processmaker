@@ -139,10 +139,10 @@ def generateEnviromentVariables()
     puts "Creating System Constants..."
     content = "var __env = __env || {};"
     file = File.read('./config/enviromentvariables.json')
-    data_hash = JSON.parse(file)
-    content = content + "__env.USER_GUEST = " + JSON.generate(data_hash['constants']['userguest'])
+    dataUser = JSON.parse(file)
+    content = content + "__env.USER_GUEST = " + JSON.generate(dataUser['constants']['userguest'])
     dir = "vendor/colosa/MichelangeloFE/src/enviroment/"
-    File.open(dir +'constans.js', 'w') { |fileWrite|
+    File.open(dir +'constants.js', 'w') { |fileWrite|
         fileWrite.write content + ';'
     }
 end

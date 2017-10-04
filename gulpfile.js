@@ -6,7 +6,6 @@ const path = require('path'),
     _ = require('underscore'),
     gutil = require('gulp-util'),
     grename = require('gulp-rename'),
-    createFile = require('fs'),
     del = require('del'),
     exec = require('child_process').exec,
     execFile = require('child_process').execFile,
@@ -482,8 +481,8 @@ gulp.task('__env', function (cb) {
 
     gutil.log(gutil.colors.green('Creating System Constants...'));
 
-    createFile.writeFile(
-        pathEnviroment + 'constans.js',
+    fs.writeFile(
+        pathEnviroment + 'constants.js',
         content + '__env.USER_GUEST = ' + JSON.stringify(data.constants.userguest) + ';',
         cb
     );
