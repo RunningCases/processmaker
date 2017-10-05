@@ -22,7 +22,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
-$RBAC->requirePermissions( 'PM_CASES' );
+$RBAC->requirePermissions( 'PM_CASES/strict' );
 
 $G_MAIN_MENU = 'processmaker';
 $G_ID_MENU_SELECTED = 'CASES';

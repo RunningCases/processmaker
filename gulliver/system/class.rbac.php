@@ -82,6 +82,8 @@ class RBAC
     private static $instance = null;
     public $authorizedActions = array();
 
+    private $aliasPermissions = [];
+
     /**
      * To enable compatibility with soap login.
      * @var bool
@@ -146,13 +148,13 @@ class RBAC
             ),
             'home.php' => array(
                 'login' => array('PM_LOGIN'),
-                'index' => array('PM_CASES'),
-                'indexSingle' => array('PM_CASES'),
-                'appList' => array('PM_CASES'),
+                'index' => array('PM_CASES/strict'),
+                'indexSingle' => array('PM_CASES/strict'),
+                'appList' => array('PM_CASES/strict'),
                 'appAdvancedSearch' => array('PM_ALLCASES'),
                 'getApps' => array('PM_ALLCASES'),
                 'getAppsData' => array('PM_ALLCASES'),
-                'startCase' => array('PM_CASES'),
+                'startCase' => array('PM_CASES/strict'),
                 'error' => array(),
                 'getUserArray' => array('PM_ALLCASES'),
                 'getCategoryArray' => array('PM_ALLCASES'),
@@ -187,6 +189,8 @@ class RBAC
                 'TEST' => array('PM_SETUP')
             )
         );
+        $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
+        $this->aliasPermissions['PM_LOGIN'] = [self::PM_GUEST_CASE];
     }
 
     /**
@@ -760,27 +764,43 @@ class RBAC
     }
 
     /**
-     * Verify if the user has a right over the permission
+     * Verify if the user has a right over the permission. Ex.
+     *      $rbac->userCanAccess("PM_CASES");
      *
-     * @author Fernando Ontiveros
+     * Alias of permissions:
+     *      PM_CASES has alias: PM_GUES_CASE
+     * This means that a role with PM_GUES_CASE could access like one with PM_CASES
+     * unless the permission is required as strict, like this:
+     *      $rbac->userCanAccess("PM_CASES/strict");
+     *
      * @access public
-     *
      * @param string $uid id of user
      * @param string $system Code of System
-     * @param string $perm id of Permissions
+     * @param string $permBase id of Permissions
      * @return int 1: If it is ok
      * -1: System doesn't exists
      * -2: The User has not a Role
      * -3: The User has not this Permission.
      */
-    public function userCanAccess ($perm)
+    public function userCanAccess($permBase)
     {
-        if (isset( $this->aUserInfo[$this->sSystem]['PERMISSIONS'] )) {
+        $strict = substr($permBase, -7, 7) === '/strict';
+        $perm = $strict ? substr($permBase, 0, -7) : $permBase;
+        if (isset($this->aUserInfo[$this->sSystem]['PERMISSIONS'])) {
             $res = - 3;
-            //if ( !isset ( $this->aUserInfo[ $this->sSystem ]['ROLE'. 'x'] ) ) $res = -2;
             foreach ($this->aUserInfo[$this->sSystem]['PERMISSIONS'] as $key => $val) {
                 if ($perm == $val['PER_CODE']) {
                     $res = 1;
+                }
+                $hasAliasPermission = !$strict
+                    && isset($this->aliasPermissions[$perm])
+                    && array_search(
+                        $val['PER_CODE'],
+                        $this->aliasPermissions[$perm]
+                    ) !== false;
+                if ($hasAliasPermission) {
+                    $res = 1;
+                    break;
                 }
             }
         } else {

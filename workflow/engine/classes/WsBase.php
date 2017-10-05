@@ -72,7 +72,7 @@ class WsBase
             $RBAC->loadUserRolePermission($RBAC->sSystem, $uid);
             $res = $RBAC->userCanAccess("PM_LOGIN");
 
-            if ($res != 1) {
+            if ($res != 1 && $uid!== RBAC::GUEST_USER_UID) {
                 $wsResponse = new WsResponse(2, G::loadTranslation('ID_USER_HAVENT_RIGHTS_SYSTEM'));
                 throw (new Exception(serialize($wsResponse)));
             }
