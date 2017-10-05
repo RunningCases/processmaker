@@ -788,18 +788,26 @@ class AppDelegation extends BaseAppDelegation
         return $data['TAS_UID'];
     }
 
+    /**
+     * This function get the current user related to the specific case and index
+     * @param string $appUid, Uid related to the case
+     * @param integer $index, Index to review
+     * @return array
+    */
     public function getCurrentUsers($appUid, $index)
     {
-        $oCriteria = new Criteria();
-        $oCriteria->addSelectColumn( AppDelegationPeer::USR_UID );
-        $oCriteria->add( AppDelegationPeer::APP_UID, $appUid );
-        $oCriteria->add( AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
-        $oCriteria->add( AppDelegationPeer::DEL_INDEX, $index );
-        $oRuleSet = AppDelegationPeer::doSelectRS( $oCriteria );
-        $oRuleSet->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oRuleSet->next();
-        $data = $oRuleSet->getRow();
-        return $data;
+        $criteria = new Criteria();
+        $criteria->addSelectColumn( AppDelegationPeer::USR_UID );
+        $criteria->add( AppDelegationPeer::APP_UID, $appUid );
+        $criteria->add( AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
+        $criteria->add( AppDelegationPeer::DEL_INDEX, $index );
+        $dataResult = AppDelegationPeer::doSelectRS( $criteria );
+        $dataResult->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        if($dataResult->next()) {
+            return $dataResult->getRow();
+        } else {
+            return [];
+        }
     }
 
     /**
