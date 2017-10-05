@@ -87,7 +87,7 @@ class RbacUsers extends BaseRbacUsers
                         if ($aFields['USR_DUE_DATE'] < date('Y-m-d')) {
                             return -4;
                         }
-                        if ($aFields['USR_STATUS'] != 1 && $aFields['USR_UID']!== RBAC::GUEST_USER_UID) {
+                        if ($aFields['USR_STATUS'] != 1 && $aFields['USR_UID'] !== RBAC::GUEST_USER_UID) {
                             return -3;
                         }
                         $role = $this->getUserRole($aFields['USR_UID']);

@@ -768,8 +768,8 @@ class RBAC
      *      $rbac->userCanAccess("PM_CASES");
      *
      * Alias of permissions:
-     *      PM_CASES has alias: PM_GUES_CASE
-     * This means that a role with PM_GUES_CASE could access like one with PM_CASES
+     *      PM_CASES has alias: PM_GUEST_CASE
+     * This means that a role with PM_GUEST_CASE could access like one with PM_CASES
      * unless the permission is required as strict, like this:
      *      $rbac->userCanAccess("PM_CASES/strict");
      *
