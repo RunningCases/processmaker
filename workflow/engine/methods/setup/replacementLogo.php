@@ -63,7 +63,7 @@ try { //ini_set('display_errors','1');
             $snameLogo = changeNamelogo( $snameLogo );
 
             $oConf = new Configurations();
-            $aConf = Array ('WORKSPACE_LOGO_NAME' => SYS_SYS,'DEFAULT_LOGO_NAME' => $snameLogo
+            $aConf = Array ('WORKSPACE_LOGO_NAME' => config("sys_sys"),'DEFAULT_LOGO_NAME' => $snameLogo
             );
 
             $oConf->aConfig = $aConf;

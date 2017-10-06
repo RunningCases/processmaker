@@ -56,7 +56,7 @@ if ($handle = opendir(PATH_PLUGINS)) {
                     ) {
                         //Check disabled code
 
-                        $cs = new CodeScanner(SYS_SYS);
+                        $cs = new CodeScanner(config("sys_sys"));
 
                         $arrayFoundDisabledCode = array_merge(
                             $cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"),

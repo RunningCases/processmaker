@@ -44,7 +44,7 @@ class TemplatesMigrator implements Importable, Exportable
             }
             $aPath = $data['PATH'];
             foreach ($aPath as $target => $files) {
-                $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP;
+                $basePath = PATH_DATA . 'sites' . PATH_SEP . config("sys_sys") . PATH_SEP . 'mailTemplates' . PATH_SEP;
                 if (strtoupper($target) === 'TEMPLATE') {
                     foreach ($files as $file) {
                         $filename = $basePath . ((isset($file["file_path"])) ? $file["file_path"] : $file["filepath"]);

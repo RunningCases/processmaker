@@ -99,8 +99,11 @@ class WorkspaceTools
      *
      * @return void
      */
-    public function upgrade($buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
+    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("sys_sys");
+        }
         if (is_null($arrayOptTranslation)) {
             $arrayOptTranslation = ['updateXml' => true, 'updateMafe' => true];
         }
@@ -220,8 +223,11 @@ class WorkspaceTools
      * Updating cases directories structure
      *
      */
-    public function updateStructureDirectories($workSpace = SYS_SYS)
+    public function updateStructureDirectories($workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("sys_sys");
+        }
         $start = microtime(true);
         CLI::logging("> Updating cases directories structure...\n");
         $this->upgradeCasesDirectoryStructure($workSpace);
@@ -470,8 +476,11 @@ class WorkspaceTools
     /**
      * Upgrade this workspace Content.
      */
-    public function upgradeContent($workSpace = SYS_SYS)
+    public function upgradeContent($workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("sys_sys");
+        }
         $this->initPropel(true);
         //require_once 'classes/model/Translation.php';
         $translation = new Translation();
@@ -1741,10 +1750,11 @@ class WorkspaceTools
             //Restore
             if (!defined("SYS_SYS")) {
                 define("SYS_SYS", $workspaceName);
+                config(["sys_sys" => $workspaceName]);
             }
 
             if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP);
             }
 
             $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch)) ? $arrayMatch[1] : "";
@@ -3937,8 +3947,11 @@ class WorkspaceTools
      * Updating framework directory structure
      *
      */
-    private function updateFrameworkPaths($workSpace = SYS_SYS)
+    private function updateFrameworkPaths($workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("sys_sys");
+        }
         $paths = [
             PATH_DATA.'framework' => 0770,
             PATH_DATA.'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,

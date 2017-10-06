@@ -45,8 +45,7 @@ class PluginRegistry
     use PluginStructure;
     use Attributes;
     use Init;
-
-    const NAME_CACHE = SYS_SYS . __CLASS__;
+    
     /**
      * Instance of de object PluginRegistry
      * @var PluginRegistry $instance
@@ -75,9 +74,9 @@ class PluginRegistry
     public static function loadSingleton()
     {
         if (self::$instance === null) {
-            if (is_null($object = Cache::get(self::NAME_CACHE))) {
+            if (is_null($object = Cache::get(config("sys_sys") . __CLASS__))) {
                 $object = new PluginRegistry();
-                Cache::put(self::NAME_CACHE, $object, config('app.cache_lifetime'));
+                Cache::put(config("sys_sys") . __CLASS__, $object, config('app.cache_lifetime'));
             }
             self::$instance = $object;
         }
@@ -202,7 +201,7 @@ class PluginRegistry
             $fieldPlugin = PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
             PluginsRegistry::update($fieldPlugin);
         }
-        Cache::pull(self::NAME_CACHE);
+        Cache::pull(config("sys_sys") . __CLASS__);
     }
     /**
      * Get the plugin details, by filename

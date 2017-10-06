@@ -314,7 +314,7 @@ class Admin extends Controller
             );
         }
 
-        $properties[] = array ( G::LoadTranslation('ID_WORKSPACE') ,defined( "SYS_SYS" ) ? SYS_SYS : "Not defined",$pmSection
+        $properties[] = array ( G::LoadTranslation('ID_WORKSPACE') ,defined( "SYS_SYS" ) ? config("sys_sys") : "Not defined",$pmSection
         );
 
         $properties[] = array ( G::LoadTranslation('ID_SERVER_PROTOCOL') ,getenv( 'SERVER_PROTOCOL' ),$sysSection

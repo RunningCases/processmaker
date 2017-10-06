@@ -239,7 +239,7 @@ function literalDate ($date, $lang = 'en')
  */
 function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter = array())
 {
-    $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+    $sysSys = (defined("SYS_SYS"))? config("sys_sys") : "Undefined";
     $aContext = \Bootstrap::getDefaultContextLog();
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
@@ -537,7 +537,7 @@ function WSOpen ($force = false)
         );
 
         if (! isset( $_SESSION["WS_END_POINT"] )) {
-            $defaultEndpoint = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/sys" . SYS_SYS . "/en/classic/services/wsdl2";
+            $defaultEndpoint = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/sys" . config("sys_sys") . "/en/classic/services/wsdl2";
         }
 
         $endpoint = isset( $_SESSION["WS_END_POINT"] ) ? $_SESSION["WS_END_POINT"] : $defaultEndpoint;
@@ -3455,7 +3455,7 @@ function PMFCaseLink($caseUid, $workspace = null, $language = null, $skin = null
         if ($arrayApplicationData === false) {
             return false;
         }
-        $workspace = (!empty($workspace)) ? $workspace : SYS_SYS;
+        $workspace = (!empty($workspace)) ? $workspace : config("sys_sys");
         $language = (!empty($language)) ? $language : SYS_LANG;
         $skin = (!empty($skin)) ? $skin : SYS_SKIN;
 

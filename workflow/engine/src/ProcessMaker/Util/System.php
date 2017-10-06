@@ -27,7 +27,7 @@ class System
     public static function getTimeZone()
     {
         try {
-            $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
+            $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', config("sys_sys"));
 
             //Return
             return $arraySystemConfiguration['time_zone'];

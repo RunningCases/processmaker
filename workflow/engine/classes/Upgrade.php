@@ -100,7 +100,7 @@ class Upgrade
             try {
                 $num += 1;
                 printf("Upgrading workspaces ($num/$count): {$workspace->name}\n");
-                $workspace->upgrade(false, SYS_SYS, false, 'en', ['updateXml' => $first, 'updateMafe' => $first]);
+                $workspace->upgrade(false, config("sys_sys"), false, 'en', ['updateXml' => $first, 'updateMafe' => $first]);
                 $workspace->close();
                 $first = false;
             } catch (Exception $e) {

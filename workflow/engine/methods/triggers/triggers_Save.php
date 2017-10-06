@@ -61,7 +61,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
         ) {
             //Check disabled code
 
-            $cs = new CodeScanner(SYS_SYS);
+            $cs = new CodeScanner(config("sys_sys"));
 
             $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $value["TRI_WEBBOT"]);
 

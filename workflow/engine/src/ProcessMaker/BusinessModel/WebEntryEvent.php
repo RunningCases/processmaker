@@ -1350,13 +1350,13 @@ class WebEntryEvent
                 strpos($domain, 'https://') === 0;
             $url = ($hasProtocol ? '' : $http) .
                 $domain .
-                "/sys" . SYS_SYS . "/" .
+                "/sys" . config("sys_sys") . "/" .
                 $weLinkLanguage . "/" .
                 $weLinkSkin . "/" . $prj_uid;
 
             return $url . "/" . $weData;
         } else {
-            $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $prj_uid;
+            $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $prj_uid;
 
             return $url . "/" . $weData;
         }

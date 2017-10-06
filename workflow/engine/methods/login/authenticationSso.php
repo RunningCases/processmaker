@@ -20,7 +20,7 @@ try {
             }
 
             header(
-                'Location: /sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN .
+                'Location: /sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN .
                 '/login/login' . (($u != '')? '?u=' . $u : '')
             );
 
@@ -40,7 +40,7 @@ try {
     }
     /*----------------------------------********---------------------------------*/
 
-    $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
+    $arraySystemConfiguration = System::getSystemConfiguration('', '', config("sys_sys"));
 
     //Set User Time Zone
     $user = UsersPeer::retrieveByPK($userUid);

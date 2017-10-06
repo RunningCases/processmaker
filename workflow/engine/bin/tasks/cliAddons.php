@@ -48,9 +48,10 @@ function run_addon_core_install($args)
 
         if (!defined("SYS_SYS")) {
             define("SYS_SYS", $workspace);
+            config(["sys_sys" => $workspace]);
         }
         if (!defined("PATH_DATA_SITE")) {
-            define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+            define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("sys_sys") . "/");
         }
         if (!defined("DB_ADAPTER")) {
             define("DB_ADAPTER", $args[3]);
@@ -104,9 +105,10 @@ function change_hash($command, $opts)
             $response->hash = $hash;
             if (!defined("SYS_SYS")) {
                 define("SYS_SYS", $workspace->name);
+                config(["sys_sys" => $workspace->name]);
             }
             if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+                define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("sys_sys") . "/");
             }
             $_SESSION['__sw__'] = '';
             if (!$workspace->changeHashPassword($workspace->name, $response)) {

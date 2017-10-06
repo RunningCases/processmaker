@@ -92,7 +92,7 @@ $oHeadPublisher->assign("arrayContextMenuOptionPlugin", $arrayContextMenuOptionP
 $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 
 $designer = new Designer();
-$oHeadPublisher->assign('SYS_SYS', SYS_SYS);
+$oHeadPublisher->assign('SYS_SYS', config("sys_sys"));
 $oHeadPublisher->assign('SYS_LANG', SYS_LANG);
 $oHeadPublisher->assign('SYS_SKIN', SYS_SKIN);
 $oHeadPublisher->assign('HTTP_SERVER_HOSTNAME', System::getHttpServerHostnameRequestsFrontEnd());

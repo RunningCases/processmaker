@@ -21,8 +21,8 @@ class webEntryProxy extends HttpProxyController
         $editEvent['EVN_CONDITIONS'] = null;
         $event->update( $editEvent );
 
-        unlink( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . $filename );
-        unlink( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . str_replace( ".php", "Post", $filename ) . ".php" );
+        unlink( PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . $filename );
+        unlink( PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . str_replace( ".php", "Post", $filename ) . ".php" );
 
         $this->success = true;
         $this->msg = G::LoadTranslation( 'ID_WEB_ENTRY_SUCCESS_DELETE' );
@@ -46,7 +46,7 @@ class webEntryProxy extends HttpProxyController
             $http = 'http://';
         }
 
-        $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
+        $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
         @$client = new SoapClient( $endpoint );
 
         $user = $sWS_USER;
@@ -122,8 +122,8 @@ class webEntryProxy extends HttpProxyController
             $pro_uid = $params->pro_uid;
             $filename = $xDYNA;
             $filename = $filename . '.php';
-            unlink( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . $filename );
-            unlink( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . str_replace( ".php", "Post", $filename ) . ".php" );
+            unlink( PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . $filename );
+            unlink( PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . str_replace( ".php", "Post", $filename ) . ".php" );
         }
 
         $pathProcess = PATH_DATA_SITE . 'public' . PATH_SEP . $sPRO_UID . PATH_SEP;
@@ -167,8 +167,8 @@ class webEntryProxy extends HttpProxyController
         $pluginTpl = PATH_CORE . 'templates' . PATH_SEP . 'processes' . PATH_SEP . 'webentryPost.tpl';
         $template = new TemplatePower( $pluginTpl );
         $template->prepare();
-        $template->assign( 'wsdlUrl', $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2' );
-        $template->assign( 'wsUploadUrl', $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/upload' );
+        $template->assign( 'wsdlUrl', $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2' );
+        $template->assign( 'wsUploadUrl', $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/upload' );
         $template->assign( 'processUid', $sPRO_UID );
         $template->assign( 'dynaformUid', $sDYNAFORM );
         $template->assign( 'taskUid', $sTASKS );
@@ -184,7 +184,7 @@ class webEntryProxy extends HttpProxyController
 
         $template->assign( 'dynaform', $dynTitle );
         $template->assign( 'timestamp', date( 'l jS \of F Y h:i:s A' ) );
-        $template->assign( 'ws', SYS_SYS );
+        $template->assign( 'ws', config("sys_sys") );
         $template->assign( 'version', System::getVersion() );
 
         $fileName = $pathProcess . $dynTitle . 'Post.php';
@@ -218,7 +218,7 @@ class webEntryProxy extends HttpProxyController
         $aDataEvent['EVN_CONDITIONS'] = $sWS_USER;
         $output = $oEvent->update( $aDataEvent );
 
-        $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sPRO_UID . '/' . $dynTitle . '.php';
+        $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sPRO_UID . '/' . $dynTitle . '.php';
 
         $this->success = true;
         $this->msg = G::LoadTranslation( 'ID_WEB_ENTRY_SUCCESS_NEW' );

@@ -92,7 +92,7 @@ abstract class Exporter
         $data = array();
 
         $data["metadata"] = $this->getMetadata();
-        $data["metadata"]["workspace"] = defined("SYS_SYS") ? SYS_SYS : "Unknown";
+        $data["metadata"]["workspace"] = defined("SYS_SYS") ? config("sys_sys") : "Unknown";
         $data["metadata"]["name"] = $this->getProjectName();
         $data["metadata"]["uid"] = $this->getProjectUid();
 

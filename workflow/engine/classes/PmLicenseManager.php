@@ -26,11 +26,11 @@ class PmLicenseManager
 
         $activeLicenseSetting = $oServerConf->getProperty('ACTIVE_LICENSE');
 
-        if ((isset($activeLicenseSetting[SYS_SYS])) && (file_exists($activeLicenseSetting[SYS_SYS]))) {
-            $licenseFile = $activeLicenseSetting[SYS_SYS];
+        if ((isset($activeLicenseSetting[config("sys_sys")])) && (file_exists($activeLicenseSetting[config("sys_sys")]))) {
+            $licenseFile = $activeLicenseSetting[config("sys_sys")];
         } else {
             $activeLicense = $this->getActiveLicense();
-            $oServerConf->setProperty('ACTIVE_LICENSE', [SYS_SYS => $activeLicense['LICENSE_PATH']]);
+            $oServerConf->setProperty('ACTIVE_LICENSE', [config("sys_sys") => $activeLicense['LICENSE_PATH']]);
             $licenseFile = $activeLicense['LICENSE_PATH'];
         }
 
@@ -103,14 +103,14 @@ class PmLicenseManager
                 $licInfoA = $oServerConf->getProperty('LICENSE_INFO');
                 // The HUMAN attribute varies according to the timezone configured in the server, therefore it does not need
                 // to be considered in the comparison if the value was changed or not, it is only comparing  with te "timestamp"
-                if (isset($licInfoA[SYS_SYS]['date']['HUMAN'])) {
-                    unset($licInfoA[SYS_SYS]['date']['HUMAN']);
+                if (isset($licInfoA[config("sys_sys")]['date']['HUMAN'])) {
+                    unset($licInfoA[config("sys_sys")]['date']['HUMAN']);
                 }
             } else {
                 $licInfoA = [];
             }
-            if (empty($licInfoA[SYS_SYS]) || ($licInfoA[SYS_SYS] != $resultsRegister)) {
-                $licInfoA[SYS_SYS] = $resultsRegister;
+            if (empty($licInfoA[config("sys_sys")]) || ($licInfoA[config("sys_sys")] != $resultsRegister)) {
+                $licInfoA[config("sys_sys")] = $resultsRegister;
                 $oServerConf->setProperty('LICENSE_INFO', $licInfoA);
             }
         }
@@ -337,11 +337,11 @@ class PmLicenseManager
         }
 
         if (class_exists('pmTrialPlugin')) {
-            $linkText = $linkText . "<a href='/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/pmTrial/services/buyNow?n=true" . "'> <img align='absmiddle' src='/plugin/pmLicenseManager/btn_buy_now.gif' border='0' /></a>";
+            $linkText = $linkText . "<a href='/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/pmTrial/services/buyNow?n=true" . "'> <img align='absmiddle' src='/plugin/pmLicenseManager/btn_buy_now.gif' border='0' /></a>";
         }
 
         if (isset($_SESSION["__ENTERPRISE_SYSTEM_UPDATE__"]) && $_SESSION["__ENTERPRISE_SYSTEM_UPDATE__"] == 1) {
-            $aOnclick = "onclick=\"this.href='" . EnterpriseUtils::getUrlServerName() . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main?s=PMENTERPRISE';\"";
+            $aOnclick = "onclick=\"this.href='" . EnterpriseUtils::getUrlServerName() . "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main?s=PMENTERPRISE';\"";
             if (EnterpriseUtils::skinIsUx() == 1) {
                 $aOnclick = "onclick=\"Ext.ComponentMgr.get('mainTabPanel').setActiveTab('pm-option-setup'); Ext.ComponentMgr.get('pm-option-setup').setLocation(Ext.ComponentMgr.get('pm-option-setup').defaultSrc + 's=PMENTERPRISE', true); return (false);\"";
             }
@@ -385,7 +385,7 @@ class PmLicenseManager
         } else {
 
             $oServerConf = &ServerConf::getSingleton();
-            $oServerConf->setProperty('ACTIVE_LICENSE', [SYS_SYS => $path]);
+            $oServerConf->setProperty('ACTIVE_LICENSE', [config("sys_sys") => $path]);
             $this->saveDataLicense($results, $path, $redirect);
             if ($redirect) {
                 G::Header('location: ../enterprise/addonsStore');
@@ -482,7 +482,7 @@ class PmLicenseManager
             $tr->setLicenseType($LicenseType);
 
             $res = $tr->save();
-            Cache::forget(PmLicenseManager::CACHE_KEY . '.' . SYS_SYS);
+            Cache::forget(PmLicenseManager::CACHE_KEY . '.' . config("sys_sys"));
         } catch (Exception $e) {
             G::pr($e);
         }

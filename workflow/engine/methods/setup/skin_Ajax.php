@@ -162,7 +162,7 @@ function newSkin ($baseSkin = 'classic')
 
         $xmlConfiguration = file_get_contents( $configFileOriginal );
 
-        $workspace = ($_REQUEST['workspace'] == 'global') ? '' : SYS_SYS;
+        $workspace = ($_REQUEST['workspace'] == 'global') ? '' : config("sys_sys");
 
         $xmlConfigurationObj = G::xmlParser($xmlConfiguration);
         $skinInformationArray = $xmlConfigurationObj->result["skinConfiguration"]["__CONTENT__"]["information"]["__CONTENT__"];
@@ -282,7 +282,7 @@ function importSkin ()
         $configFileFinal = PATH_CUSTOM_SKINS . $skinName . PATH_SEP . 'config.xml';
         $xmlConfiguration = file_get_contents( $configFileOriginal );
 
-        $workspace = ($_REQUEST['workspace'] == 'global') ? '' : SYS_SYS;
+        $workspace = ($_REQUEST['workspace'] == 'global') ? '' : config("sys_sys");
 
         $xmlConfigurationObj = G::xmlParser($xmlConfiguration);
         $skinInformationArray = $xmlConfigurationObj->result["skinConfiguration"]["__CONTENT__"]["information"]["__CONTENT__"];

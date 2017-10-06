@@ -286,6 +286,7 @@ class Log_file extends Log
         }
         if ( !defined('SYS_SYS') ) {
           define ('SYS_SYS', '' );
+          config(["sys_sys" => ""]);
         }
         /* If a priority hasn't been specified, use the default value. */
         if ($priority === null) {
@@ -326,7 +327,7 @@ class Log_file extends Log
         $micro = date('H:i:s.') . sprintf("%04d", floor($usec * 10000 ));
         
         /* Build the string containing the complete message  */
-        $msg = sprintf ( "%s|%s|%s|%05d|%s|%s|%s|%s|%s\n", $micro,SYS_SYS,$ip, $myPid, $message, $backTrace[3], $method, $uri, $request);
+        $msg = sprintf ( "%s|%s|%s|%05d|%s|%s|%s|%s|%s\n", $micro,config("sys_sys"),$ip, $myPid, $message, $backTrace[3], $method, $uri, $request);
         /* Build the string containing the complete log line. */
         $line = $this->_format('%4$s', $micro,'',$msg );
 

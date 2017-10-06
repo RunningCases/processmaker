@@ -46,7 +46,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 function __autoload ($sClassName)
 {
     if (defined( 'SYS_SYS' )) {
-        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
         if (file_exists( $sPath . $sClassName . '.php' )) {
             require_once $sPath . $sClassName . '.php';
         }
@@ -54,7 +54,7 @@ function __autoload ($sClassName)
 }
 
 if (defined('SYS_SYS') && (!defined('PATH_DATA_SITE') || !defined('PATH_WORKSPACE'))) {
-    Bootstrap::setConstantsRelatedWs(SYS_SYS);
+    Bootstrap::setConstantsRelatedWs(config("sys_sys"));
 }
 
 //Add External Triggers

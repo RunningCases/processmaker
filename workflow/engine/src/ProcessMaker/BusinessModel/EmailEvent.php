@@ -475,7 +475,7 @@ class EmailEvent
                 \PMFSendMessage($appUID, $configEmailData['MESS_ACCOUNT'], $emailTo, '', '', $subject,
                     $contentFile['prf_filename'], array(), array(), true, 0, $configEmailData);
             } else {
-                \Bootstrap::registerMonolog('EmailEventMailError', 200, \G::LoadTranslation('ID_EMAIL_EVENT_CONFIGURATION_EMAIL', array($eventUid, $prj_uid)), ['eventUid' => $eventUid, 'prj_uid' => $prj_uid], SYS_SYS, 'processmaker.log');
+                \Bootstrap::registerMonolog('EmailEventMailError', 200, \G::LoadTranslation('ID_EMAIL_EVENT_CONFIGURATION_EMAIL', array($eventUid, $prj_uid)), ['eventUid' => $eventUid, 'prj_uid' => $prj_uid], config("sys_sys"), 'processmaker.log');
             }
         }
     }

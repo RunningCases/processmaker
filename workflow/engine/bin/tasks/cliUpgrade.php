@@ -134,10 +134,11 @@ function run_upgrade($command, $args)
     foreach ($workspaces as $index => $workspace) {
         if (!defined("SYS_SYS")) {
             define("SYS_SYS", $workspace->name);
+            config(["sys_sys" => $workspace->name]);
         }
 
         if (!defined("PATH_DATA_SITE")) {
-            define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+            define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP);
         }
 
         if(!defined('DB_ADAPTER')) {

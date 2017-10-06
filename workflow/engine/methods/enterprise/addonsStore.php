@@ -63,7 +63,7 @@ $oHeadPublisher->assign("supportStartDate", (isset($licenseManager->supportStart
 $oHeadPublisher->assign("supportEndDate", (isset($licenseManager->supportEndDate))? $licenseManager->supportEndDate : '');
 
 $oHeadPublisher->assign("PROCESSMAKER_VERSION", System::getVersion());
-$oHeadPublisher->assign("PROCESSMAKER_URL", "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN );
+$oHeadPublisher->assign("PROCESSMAKER_URL", "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN );
 $oHeadPublisher->assign("SYS_SKIN", SYS_SKIN);
 $oHeadPublisher->assign("URL_PART_LOGIN", ((substr(SYS_SKIN, 0, 2) == "ux" && SYS_SKIN != "uxs")? "main/login" : "login/login"));
 $oHeadPublisher->assign("URL_PART_SETUP", EnterpriseUtils::getUrlPartSetup());

@@ -56,7 +56,7 @@
 
     function getChart( $chartName ) {
     	$this->readConfig();
-      $prePath = '/sys' . SYS_SYS . '/' . SYS_LANG . '/blank/';
+      $prePath = '/sys' . config("sys_sys") . '/' . SYS_LANG . '/blank/';
     	$obj = new StdClass();
     	switch ($chartName) {
     	  case 'PostByForum':

@@ -332,7 +332,7 @@ class AdditionalTables extends BaseAdditionalTables
     {
         try {
             $aData = $this->load($sUID, true);
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             $sClassName = ($aData['ADD_TAB_CLASS_NAME'] != ''
                           ? $aData['ADD_TAB_CLASS_NAME']
                           : $this->getPHPName($aData['ADD_TAB_NAME']));
@@ -383,7 +383,7 @@ class AdditionalTables extends BaseAdditionalTables
             $_SESSION["PROCESS"] = $aData['PRO_UID'];
         }
         $aData['DBS_UID'] = $aData['DBS_UID'] ? $aData['DBS_UID'] : 'workflow';
-        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
         $sClassName = ($aData['ADD_TAB_CLASS_NAME'] != ''
                        ? $aData['ADD_TAB_CLASS_NAME']
                        : $this->getPHPName($aData['ADD_TAB_NAME']));
@@ -531,7 +531,7 @@ class AdditionalTables extends BaseAdditionalTables
     {
         try {
             $aData = $this->load($sUID, true);
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             $sClassName = ($aData['ADD_TAB_CLASS_NAME'] != ''
                           ? $aData['ADD_TAB_CLASS_NAME']
                           : $this->getPHPName($aData['ADD_TAB_NAME']));
@@ -550,7 +550,7 @@ class AdditionalTables extends BaseAdditionalTables
     {
         try {
             $aData = $this->load($sUID, true);
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             $sClassName = ($aData['ADD_TAB_CLASS_NAME'] != ''
                           ? $aData['ADD_TAB_CLASS_NAME']
                           : $this->getPHPName($aData['ADD_TAB_NAME']));
@@ -604,7 +604,7 @@ class AdditionalTables extends BaseAdditionalTables
     {
         try {
             $aData = $this->load($sUID, true);
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             $sClassName = ($aData['ADD_TAB_CLASS_NAME'] != ''
                           ? $aData['ADD_TAB_CLASS_NAME']
                           : $this->getPHPName($aData['ADD_TAB_NAME']));
@@ -632,7 +632,7 @@ class AdditionalTables extends BaseAdditionalTables
         try {
             //$sPMUID = $aFields['PM_UNIQUE_ID'];
             $aData = $this->load($sUID, true);
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             $sClassName = ($aData['ADD_TAB_CLASS_NAME'] != ''
                           ? $aData['ADD_TAB_CLASS_NAME']
                           : $this->getPHPName($aData['ADD_TAB_NAME']));
@@ -679,7 +679,7 @@ class AdditionalTables extends BaseAdditionalTables
     {
         try {
             $aData = $this->load($sUID, true);
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             $sClassName = ($aData['ADD_TAB_CLASS_NAME'] != ''
                           ? $aData['ADD_TAB_CLASS_NAME']
                           : $this->getPHPName($aData['ADD_TAB_NAME']));
@@ -1159,7 +1159,7 @@ class AdditionalTables extends BaseAdditionalTables
                 $sClassName = $this->getPHPName($sTableName);
             }
 
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             if (!file_exists($sPath)) {
                 G::mk_dir($sPath);
             }

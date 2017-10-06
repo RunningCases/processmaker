@@ -62,7 +62,7 @@ class Designer extends Controller
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
         $this->setVar('isDebugMode', $debug);
         $this->setVar("distribution", $distribution);
-        $this->setVar("SYS_SYS", SYS_SYS);
+        $this->setVar("SYS_SYS", config("sys_sys"));
         $this->setVar("SYS_LANG", SYS_LANG);
         $this->setVar("SYS_SKIN", SYS_SKIN);
         $this->setVar('HTTP_SERVER_HOSTNAME', System::getHttpServerHostnameRequestsFrontEnd());
@@ -219,7 +219,7 @@ class Designer extends Controller
                 }
                 Tracker::authentication($_SESSION['CASE'], $_SESSION['PIN']);
             } catch (\Exception $e) {
-                Bootstrap::registerMonolog('CaseTracker', 400, $e->getMessage(), [], SYS_SYS, 'processmaker.log');
+                Bootstrap::registerMonolog('CaseTracker', 400, $e->getMessage(), [], config("sys_sys"), 'processmaker.log');
                 \G::header('Location: /errors/error403.php');
                 die();
             }

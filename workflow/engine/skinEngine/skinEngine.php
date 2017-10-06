@@ -342,7 +342,7 @@ class SkinEngine
         }
 
         $smarty->assign('username',
-            (isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . SYS_SYS . ')' : ''));
+            (isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . config("sys_sys") . ')' : ''));
         $smarty->assign('header', $header);
         $smarty->force_compile = $this->forceTemplateCompile;
 
@@ -378,7 +378,7 @@ class SkinEngine
             $header = '';
 
             if (isset($oHeadPublisher)) {
-                $oHeadPublisher->title = isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . SYS_SYS . ')' : '';
+                $oHeadPublisher->title = isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . config("sys_sys") . ')' : '';
                 $header = $oHeadPublisher->printHeader();
                 $header .= $oHeadPublisher->getExtJsStylesheets($this->cssFileName);
             }
@@ -436,7 +436,7 @@ class SkinEngine
                 $smarty->assign('rolename', isset($_SESSION['USR_ROLENAME']) ? $_SESSION['USR_ROLENAME'] . '' : '');
                 $smarty->assign('pipe', isset($_SESSION['USR_USERNAME']) ? ' | ' : '');
                 $smarty->assign('logout', G::LoadTranslation('ID_LOGOUT'));
-                $smarty->assign('workspace', defined('SYS_SYS') ? SYS_SYS : '');
+                $smarty->assign('workspace', defined('SYS_SYS') ? config("sys_sys") : '');
                 $uws = (isset($_SESSION['USR_ROLENAME']) && $_SESSION['USR_ROLENAME'] != '') ? strtolower(G::LoadTranslation('ID_WORKSPACE_USING')) : G::LoadTranslation('ID_WORKSPACE_USING');
                 $smarty->assign('workspace_label', $uws);
 
@@ -449,7 +449,7 @@ class SkinEngine
             }
 
             if (defined('SYS_SYS')) {
-                $logout = '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/login/login';
+                $logout = '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/login/login';
             } else {
                 $logout = '/sys/' . SYS_LANG . '/' . SYS_SKIN . '/login/login';
             }
@@ -494,7 +494,7 @@ class SkinEngine
             $header = '';
 
             if (isset($oHeadPublisher)) {
-                $oHeadPublisher->title = isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . SYS_SYS . ')' : '';
+                $oHeadPublisher->title = isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . config("sys_sys") . ')' : '';
                 $header = $oHeadPublisher->printHeader();
             }
 
@@ -695,7 +695,7 @@ class SkinEngine
 
             if (isset($oHeadPublisher)) {
                 if (defined('SYS_SYS')) {
-                    $oHeadPublisher->title = isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . SYS_SYS . ')' : '';
+                    $oHeadPublisher->title = isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ' ' . G::LoadTranslation('ID_IN') . ' ' . config("sys_sys") . ')' : '';
                 }
                 $header = $enableJsScript ? $oHeadPublisher->printHeader() : '';
                 $header .= $oHeadPublisher->getExtJsStylesheets($this->cssFileName);
@@ -765,7 +765,7 @@ class SkinEngine
                 $smarty->assign('rolename', isset($_SESSION['USR_ROLENAME']) ? $_SESSION['USR_ROLENAME'] . '' : '');
                 $smarty->assign('pipe', isset($_SESSION['USR_USERNAME']) ? ' | ' : '');
                 $smarty->assign('logout', G::LoadTranslation('ID_LOGOUT'));
-                $smarty->assign('workspace', defined('SYS_SYS') ? SYS_SYS : '');
+                $smarty->assign('workspace', defined('SYS_SYS') ? config("sys_sys") : '');
                 $uws = (isset($_SESSION['USR_ROLENAME']) && $_SESSION['USR_ROLENAME'] != '') ? strtolower(G::LoadTranslation('ID_WORKSPACE_USING')) : G::LoadTranslation('ID_WORKSPACE_USING');
                 $smarty->assign('workspace_label', $uws);
 
@@ -794,7 +794,7 @@ class SkinEngine
             }
 
             if (defined('SYS_SYS')) {
-                $logout = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . ((SYS_COLLECTION != "tracker") ? "/login/login" : "/tracker/login");
+                $logout = "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . ((SYS_COLLECTION != "tracker") ? "/login/login" : "/tracker/login");
             } else {
                 $logout = '/sys/' . SYS_LANG . '/' . SYS_SKIN . '/login/login';
             }
@@ -816,9 +816,9 @@ class SkinEngine
             }
             if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined("SYS_SYS")) {
                 $oPluginRegistry = PluginRegistry::loadSingleton();
-                if (isset($sFotoSelect) && $sFotoSelect != '' && !(strcmp($sWspaceSelect, SYS_SYS))) {
+                if (isset($sFotoSelect) && $sFotoSelect != '' && !(strcmp($sWspaceSelect, config("sys_sys")))) {
                     $sCompanyLogo = $oPluginRegistry->getCompanyLogo($sFotoSelect);
-                    $sCompanyLogo = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/showLogoFile.php?id=" . base64_encode($sCompanyLogo);
+                    $sCompanyLogo = "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/showLogoFile.php?id=" . base64_encode($sCompanyLogo);
                 } else {
                     $sCompanyLogo = $oPluginRegistry->getCompanyLogo('/images/processmaker.logo.jpg');
                 }

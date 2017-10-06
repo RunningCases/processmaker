@@ -122,8 +122,8 @@ if (!$sw_file_exists) {
             print G::json_encode( $res );
     } else {
         G::SendMessageText( $error_message, "ERROR" );
-        $backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-        G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+        $backUrlObj = explode( "sys" . config("sys_sys"), $_SERVER['HTTP_REFERER'] );
+        G::header( "location: " . "/sys" . config("sys_sys") . $backUrlObj[1] );
         die();
     }
 

@@ -470,7 +470,7 @@ class LdapAdvanced
             }
 
             //log format:   date hour ipaddress workspace ldapErrorNr
-            fwrite($fpt, sprintf("%s %s %s %s %s \n", date("Y-m-d H:i:s"), getenv("REMOTE_ADDR"), SYS_SYS, $ldapErrorNr, $text));
+            fwrite($fpt, sprintf("%s %s %s %s %s \n", date("Y-m-d H:i:s"), getenv("REMOTE_ADDR"), config("sys_sys"), $ldapErrorNr, $text));
             fclose($fpt);
         } else {
             error_log("file $logFile is not writable ");

@@ -19,7 +19,7 @@ class AdditionalTablesConsolidated extends AdditionalTables
                 $sClassName = $this->getPHPName($sTableName);
             }
 
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             if (!file_exists($sPath)) {
                 G::mk_dir($sPath);
                 G::mk_dir($sPath . 'map');
@@ -626,7 +626,7 @@ class ajax_con extends WebResource
 
             $oAdditionalTables->createPropelClasses($tableName, $sClassName, $aFieldsClases, $sTasUid);
         } else {
-            $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+            $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
             @unlink($sPath . $sClassName . '.php');
             @unlink($sPath . $sClassName . 'Peer.php');
             @unlink($sPath . PATH_SEP . 'map' . PATH_SEP . $sClassName . 'MapBuilder.php');

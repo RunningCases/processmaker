@@ -3177,7 +3177,7 @@ class Cases
                         }
                         $arrayApplicationData['APP_DATA'][$key] = G::json_encode($files);
                     } catch (Exception $e) {
-                        Bootstrap::registerMonolog('DeleteFile', 400, $e->getMessage(), $value, SYS_SYS, 'processmaker.log');
+                        Bootstrap::registerMonolog('DeleteFile', 400, $e->getMessage(), $value, config("sys_sys"), 'processmaker.log');
                     }
                 }
                 $flagDelete = true;

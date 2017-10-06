@@ -14,7 +14,7 @@ if (G::is_https())
 else
     $http = 'http://';
 
-$endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
+$endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
 @$client = new SoapClient( $endpoint );
 
 $oTask = new Task();

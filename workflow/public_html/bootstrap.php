@@ -332,7 +332,7 @@ use ProcessMaker\Plugins\PluginRegistry;
       define ( 'SYS_SYS' , SYS_TEMP );
 
       // defining constant for workspace shared directory
-      define ( 'PATH_WORKSPACE' , PATH_DB . SYS_SYS . PATH_SEP );
+      define ( 'PATH_WORKSPACE' , PATH_DB . config("sys_sys") . PATH_SEP );
       // including workspace shared classes -> particularlly for pmTables
       set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
     }
@@ -382,7 +382,7 @@ use ProcessMaker\Plugins\PluginRegistry;
   }
 
   // PM Paths DATA
-  define('PATH_DATA_SITE',                 PATH_DATA      . 'sites/' . SYS_SYS . '/');
+  define('PATH_DATA_SITE',                 PATH_DATA      . 'sites/' . config("sys_sys") . '/');
   define('PATH_DOCUMENT',                  PATH_DATA_SITE . 'files/');
   define('PATH_DATA_MAILTEMPLATES',        PATH_DATA_SITE . 'mailTemplates/');
   define('PATH_DATA_PUBLIC',               PATH_DATA_SITE . 'public/');
@@ -394,7 +394,7 @@ use ProcessMaker\Plugins\PluginRegistry;
   define('SERVER_PORT',  $_SERVER ['SERVER_PORT']);
 
   // create memcached singleton
-  $memcache = & PMmemcached::getSingleton(SYS_SYS);
+  $memcache = & PMmemcached::getSingleton(config("sys_sys"));
 
   // verify configuration for rest service
   if ($isRestRequest) {
@@ -439,7 +439,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 
     // unified log file for all databases
     $logFile = PATH_DATA . 'log' . PATH_SEP . 'propel.log';
-    $logger = Log::singleton('file', $logFile, 'wf ' . SYS_SYS, null, PEAR_LOG_INFO);
+    $logger = Log::singleton('file', $logFile, 'wf ' . config("sys_sys"), null, PEAR_LOG_INFO);
     Propel::setLogger($logger);
     // log file for workflow database
     $con = Propel::getConnection('workflow');
@@ -573,13 +573,13 @@ use ProcessMaker\Plugins\PluginRegistry;
   }
 
   //redirect to login, if user changed the workspace in the URL
-  if (! $avoidChangedWorkspaceValidation && isset($_SESSION['WORKSPACE']) && $_SESSION['WORKSPACE'] != SYS_SYS) {
-    $_SESSION['WORKSPACE'] = SYS_SYS;
+  if (! $avoidChangedWorkspaceValidation && isset($_SESSION['WORKSPACE']) && $_SESSION['WORKSPACE'] != config("sys_sys")) {
+    $_SESSION['WORKSPACE'] = config("sys_sys");
     G::SendTemporalMessage ('ID_USER_HAVENT_RIGHTS_SYSTEM', "error");
     // verify if the current skin is a 'ux' variant
     $urlPart = substr(SYS_SKIN, 0, 2) == 'ux' && SYS_SKIN != 'uxs' ? '/main/login' : '/login/login';
 
-    header('Location: /sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . $urlPart);
+    header('Location: /sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . $urlPart);
     die;
   }
 

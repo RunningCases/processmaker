@@ -176,9 +176,9 @@ if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjB
     if (isset($_COOKIE['dashboardListInbox'])) {
         $oHeadPublisher->assign('valueFilterStatus', $_COOKIE['dashboardListInbox']);
         if (PHP_VERSION < 5.2) {
-            setcookie("dashboardListInbox", '', time() + (24 * 60 * 60), "/sys" . SYS_SYS, "; HttpOnly");
+            setcookie("dashboardListInbox", '', time() + (24 * 60 * 60), "/sys" . config("sys_sys"), "; HttpOnly");
         } else {
-            setcookie("dashboardListInbox", '', time() + (24 * 60 * 60), "/sys" . SYS_SYS, null, false, true);
+            setcookie("dashboardListInbox", '', time() + (24 * 60 * 60), "/sys" . config("sys_sys"), null, false, true);
         }
     }
 }

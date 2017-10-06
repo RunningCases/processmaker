@@ -146,7 +146,7 @@ try {
                         $errLabel = G::LoadTranslation('ID_ACCOUNT') . ' "' . $usr . '" ' . G::LoadTranslation('ID_ACCOUNT_DISABLED_CONTACT_ADMIN');
                     }
                     //Log failed authentications
-            	    $message  = "| Many failed authentication attempts for USER: " . $usr . " | IP: " . G::getIpAddress() . " |  WS: " . SYS_SYS;
+            	    $message  = "| Many failed authentication attempts for USER: " . $usr . " | IP: " . G::getIpAddress() . " |  WS: " . config("sys_sys");
             	    $message .= " | BROWSER: " . $_SERVER['HTTP_USER_AGENT'];
 
             	    G::log($message, PATH_DATA, 'loginFailed.log');
@@ -171,7 +171,7 @@ try {
         }
 
         if (!isset( $_SESSION['WORKSPACE'] ) ) {
-            $_SESSION['WORKSPACE'] = SYS_SYS;
+            $_SESSION['WORKSPACE'] = config("sys_sys");
         }
 
         //Execute the SSO Script from plugin
@@ -248,7 +248,7 @@ try {
         $userTimeZone = $user->getUsrTimeZone();
 
         if (trim($userTimeZone) == '') {
-            $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
+            $arraySystemConfiguration = System::getSystemConfiguration('', '', config("sys_sys"));
 
             $userTimeZone = $arraySystemConfiguration['time_zone'];
         }
@@ -409,7 +409,7 @@ try {
         die;
     }
 
-    $configS = System::getSystemConfiguration('', '', SYS_SYS);
+    $configS = System::getSystemConfiguration('', '', config("sys_sys"));
     $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block']:true;
     if ($activeSession){
         setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');

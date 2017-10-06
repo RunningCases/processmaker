@@ -8,7 +8,7 @@ if (!defined("PATH_PM_ENTERPRISE")) {
 }
 
 if (!defined("PATH_DATA_SITE")) {
-    define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+    define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("sys_sys") . "/");
 }
 
 set_include_path(PATH_PM_ENTERPRISE . PATH_SEPARATOR . get_include_path());
@@ -78,12 +78,12 @@ class enterprisePlugin extends PMPlugin
             unset($_SESSION["__EE_SW_PMLICENSEMANAGER__"]);
 
             ///////
-            $js = "window.open(\"/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main?s=PLUGINS\", \"_top\", \"\");";
+            $js = "window.open(\"/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main?s=PLUGINS\", \"_top\", \"\");";
 
             if (substr(SYS_SKIN, 0, 2) == "ux" && SYS_SKIN != "uxs") {
-                //$js = "parent.window.location.href = \"/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main_init?s=PLUGINS\";";
-                //$js = "window.location.href = \"/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/pluginsImport\";";
-                $js = "window.open(\"/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/main\", \"_top\", \"\");";
+                //$js = "parent.window.location.href = \"/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main_init?s=PLUGINS\";";
+                //$js = "window.location.href = \"/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/pluginsImport\";";
+                $js = "window.open(\"/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/main\", \"_top\", \"\");";
             }
 
             ///////

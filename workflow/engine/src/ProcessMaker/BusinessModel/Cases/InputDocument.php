@@ -802,8 +802,8 @@ class InputDocument
                         break;
                 }
                 G::SendMessageText( $message, "ERROR" );
-                $backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-                G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+                $backUrlObj = explode( "sys" . config("sys_sys"), $_SERVER['HTTP_REFERER'] );
+                G::header( "location: " . "/sys" . config("sys_sys") . $backUrlObj[1] );
                 die();
             }
 
@@ -855,9 +855,9 @@ class InputDocument
                     if ($msg != '') {
                         if ($runningWorkflow) {
                             G::SendMessageText($msg, 'ERROR');
-                            $backUrlObj = explode('sys' . SYS_SYS, $_SERVER['HTTP_REFERER']);
+                            $backUrlObj = explode('sys' . config("sys_sys"), $_SERVER['HTTP_REFERER']);
 
-                            G::header('location: ' . '/sys' . SYS_SYS . $backUrlObj[1]);
+                            G::header('location: ' . '/sys' . config("sys_sys") . $backUrlObj[1]);
                             exit(0);
                         } else {
                             throw new Exception($msg);
@@ -1005,8 +1005,8 @@ class InputDocument
                             }
                             $message = $res->message;
                             G::SendMessageText($message, "ERROR");
-                            $backUrlObj = explode("sys" . SYS_SYS, $_SERVER['HTTP_REFERER']);
-                            G::header("location: " . "/sys" . SYS_SYS . $backUrlObj[1]);
+                            $backUrlObj = explode("sys" . config("sys_sys"), $_SERVER['HTTP_REFERER']);
+                            G::header("location: " . "/sys" . config("sys_sys") . $backUrlObj[1]);
                             die();
                         }
 
@@ -1019,8 +1019,8 @@ class InputDocument
                         if ($inpDocMaxFilesize > 0 && $fileSizeByField > 0) {
                             if ($fileSizeByField > $inpDocMaxFilesize) {
                                 G::SendMessageText(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"), "ERROR");
-                                $arrayAux1 = explode("sys" . SYS_SYS, $_SERVER["HTTP_REFERER"]);
-                                G::header("location: /sys" . SYS_SYS . $arrayAux1[1]);
+                                $arrayAux1 = explode("sys" . config("sys_sys"), $_SERVER["HTTP_REFERER"]);
+                                G::header("location: /sys" . config("sys_sys") . $arrayAux1[1]);
                                 exit(0);
                             }
                         }
@@ -1035,8 +1035,8 @@ class InputDocument
                         $message = G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
                         Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, 'processmaker.log');
                         G::SendMessageText($message, "ERROR");
-                        $backUrlObj = explode("sys" . SYS_SYS, $_SERVER['HTTP_REFERER']);
-                        G::header("location: " . "/sys" . SYS_SYS . $backUrlObj[1]);
+                        $backUrlObj = explode("sys" . config("sys_sys"), $_SERVER['HTTP_REFERER']);
+                        G::header("location: " . "/sys" . config("sys_sys") . $backUrlObj[1]);
                         die();
                     }
 

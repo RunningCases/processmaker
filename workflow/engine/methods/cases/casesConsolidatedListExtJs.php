@@ -71,7 +71,7 @@ while ($rsSql->next()) {
 }
 
 if (count($arrayTabItem) > 0) {
-    $urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/consolidated/';
+    $urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . config("sys_sys") . '/consolidated/';
     $clientId = 'x-pm-local-client';
     $client = getClientCredentials($clientId);
     $authCode = getAuthorizationCode($client);

@@ -290,7 +290,7 @@ class WebApplication
         }
 
         // Setting current workspace to Api class
-        Services\Api::setWorkspace(SYS_SYS);
+        Services\Api::setWorkspace(config("sys_sys"));
         $cacheDir = defined("PATH_WORKSPACE") ? PATH_WORKSPACE : (defined("PATH_C") ? PATH_C : sys_get_temp_dir());
 
         $sysConfig = System::getSystemConfiguration();
@@ -387,7 +387,7 @@ class WebApplication
             }
         }
 
-        Services\OAuth2\Server::setWorkspace(SYS_SYS);
+        Services\OAuth2\Server::setWorkspace(config("sys_sys"));
         $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
 
         return $uri;
@@ -498,15 +498,16 @@ class WebApplication
         }
 
         define("SYS_SYS", $workspace);
+        config(["sys_sys" => $workspace]);
 
-        if (!file_exists(PATH_DB . SYS_SYS . PATH_SEP . "db.php")) {
+        if (!file_exists(PATH_DB . config("sys_sys") . PATH_SEP . "db.php")) {
             $rest = new \Maveriks\Extension\Restler();
             $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, \G::LoadTranslation("ID_NOT_WORKSPACE")));
 
             exit(0);
         }
 
-        $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
+        $arraySystemConfiguration = System::getSystemConfiguration('', '', config("sys_sys"));
 
         //Do not change any of these settings directly, use env.ini instead
         ini_set('display_errors', $arraySystemConfiguration['display_errors']);
@@ -524,11 +525,11 @@ class WebApplication
         define('SYS_SKIN', $arraySystemConfiguration['default_skin']);
         define('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION', $arraySystemConfiguration['disable_download_documents_session_validation']);
 
-        require_once(PATH_DB . SYS_SYS . "/db.php");
+        require_once(PATH_DB . config("sys_sys") . "/db.php");
 
         // defining constant for workspace shared directory
-        $this->workspaceDir = PATH_DB . SYS_SYS . PATH_SEP;
-        $this->workspaceCacheDir = PATH_DB . SYS_SYS . PATH_SEP . "cache" . PATH_SEP;
+        $this->workspaceDir = PATH_DB . config("sys_sys") . PATH_SEP;
+        $this->workspaceCacheDir = PATH_DB . config("sys_sys") . PATH_SEP . "cache" . PATH_SEP;
 
         define("PATH_WORKSPACE", $this->workspaceDir);
         // including workspace shared classes -> particularlly for pmTables
@@ -539,7 +540,7 @@ class WebApplication
         define("PATH_SMARTY_C", PATH_C . "smarty" . PATH_SEP . "c");
         define("PATH_SMARTY_CACHE", PATH_C . "smarty" . PATH_SEP . "cache");
 
-        define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+        define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("sys_sys") . "/");
         define("PATH_DOCUMENT", PATH_DATA_SITE . "files/");
         define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
         define("PATH_DATA_PUBLIC", PATH_DATA_SITE . "public/");

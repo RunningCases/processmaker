@@ -310,9 +310,9 @@ class Menu
         $target = $this->Options[$intPos];
         if ($this->Types[$intPos] != "absolute") {
             if (defined('ENABLE_ENCRYPT')) {
-                $target = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
+                $target = "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
             } elseif (defined('SYS_SYS')) {
-                $target = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
+                $target = "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
             } else {
                 $target = "/sys/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
             }

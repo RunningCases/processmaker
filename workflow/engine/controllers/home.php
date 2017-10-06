@@ -131,7 +131,7 @@ class Home extends Controller
         if (!isset($_COOKIE['workspaceSkin'])) {
             if (substr( $sysConf['default_skin'], 0, 2 ) == 'ux') {
                 $_SESSION['_defaultUserLocation'] = $switchLink;
-                $switchLink = '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . $sysConf['default_skin'] . '/main';
+                $switchLink = '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . $sysConf['default_skin'] . '/main';
             }
         }
 

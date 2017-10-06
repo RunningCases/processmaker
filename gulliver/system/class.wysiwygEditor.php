@@ -75,7 +75,7 @@ class XmlFormFieldWYSIWYGEditor extends XmlFormField
     public function attachEvents ($element)
     {
         $editorDefinition  = 'tinyMCE.baseURL = "/js/tinymce/jscripts/tiny_mce"; ';
-        $editorDefinition .= 'var domainURL   = "/sys'.SYS_SYS.'/'.SYS_LANG.'/'.SYS_SKIN.'/"';
+        $editorDefinition .= 'var domainURL   = "/sys'.config("sys_sys").'/'.SYS_LANG.'/'.SYS_SKIN.'/"';
         $serverConf =& ServerConf::getSingleton();
 
         switch ($this->editorType){

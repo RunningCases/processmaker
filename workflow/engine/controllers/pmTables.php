@@ -147,7 +147,7 @@ class pmTables extends Controller
 
     public function streamExported ($httpData)
     {
-        $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP;
+        $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . config("sys_sys") . PATH_SEP . 'public' . PATH_SEP;
         $sFileName = $httpData->f;
 
         $realPath = $PUBLIC_ROOT_PATH . $sFileName;

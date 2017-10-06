@@ -856,7 +856,7 @@ class Derivation
      */
     function derivate(array $currentDelegation, array $nextDelegations, $removeList = true)
     {
-        $this->sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+        $this->sysSys = (defined("SYS_SYS"))? config("sys_sys") : "Undefined";
         $this->context = Bootstrap::getDefaultContextLog();
         $aContext = $this->context;
         $this->removeList = $removeList;

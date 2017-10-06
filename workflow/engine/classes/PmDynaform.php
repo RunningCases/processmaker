@@ -35,7 +35,7 @@ class PmDynaform
 
     public function __construct($fields = array())
     {
-        $this->sysSys = (defined("SYS_SYS")) ? SYS_SYS : "Undefined";
+        $this->sysSys = (defined("SYS_SYS")) ? config("sys_sys") : "Undefined";
         $this->context = \Bootstrap::getDefaultContextLog();
         $this->dataSources = array("database", "dataVariable");
         $this->pathRTLCss = '/lib/pmdynaform/build/css/PMDynaform-rtl.css';
@@ -1007,7 +1007,7 @@ class PmDynaform
                 var app_uid = \"" . $this->fields["APP_UID"] . "\";
                 var prj_uid = \"" . $this->fields["PRO_UID"] . "\";
                 var step_mode = \"\";
-                var workspace = \"" . SYS_SYS . "\";
+                var workspace = \"" . config("sys_sys") . "\";
                 var credentials = " . G::json_encode($this->credentials) . ";
                 var filePost = \"\";
                 var fieldsRequired = null;
@@ -1068,7 +1068,7 @@ class PmDynaform
                 "var app_uid = '" . $this->fields["APP_UID"] . "';\n" .
                 "var prj_uid = '" . $this->fields["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("sys_sys") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
@@ -1147,7 +1147,7 @@ class PmDynaform
                 "var app_uid = '" . $this->fields["APP_UID"] . "';\n" .
                 "var prj_uid = '" . $this->fields["PRO_UID"] . "';\n" .
                 "var step_mode = '" . $this->fields["STEP_MODE"] . "';\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("sys_sys") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
@@ -1204,7 +1204,7 @@ class PmDynaform
             var app_uid = \"" . $this->fields["APP_UID"] . "\";
             var prj_uid = \"" . $this->fields["PRO_UID"] . "\";
             var step_mode = null;
-            var workspace = \"" . SYS_SYS . "\";
+            var workspace = \"" . config("sys_sys") . "\";
             var credentials = " . G::json_encode($this->credentials) . ";
             var filePost = \"cases_SaveDataSupervisor?UID=" . $this->fields["CURRENT_DYNAFORM"] . "\";
             var fieldsRequired = null;
@@ -1248,7 +1248,7 @@ class PmDynaform
                 "var app_uid = null;\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("sys_sys") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = '" . $filename . "';\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
@@ -1290,7 +1290,7 @@ class PmDynaform
                 "var app_uid = '" . G::decrypt($record['APP_UID'], URL_KEY) . "';\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("sys_sys") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = '" . $filename . "';\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
@@ -1354,7 +1354,7 @@ class PmDynaform
                 "var app_uid = null;\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("sys_sys") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
@@ -2100,7 +2100,7 @@ class PmDynaform
                 400,
                 'JSON encoded string error ' . $jsonLastError . ': ' . $jsonLastErrorMsg,
                 ['token' => $token, 'projectUid' => $this->record['PRO_UID'], 'dynaFormUid' => $this->record['DYN_UID']],
-                SYS_SYS,
+                config("sys_sys"),
                 'processmaker.log'
             );
         }

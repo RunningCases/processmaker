@@ -54,8 +54,8 @@ if ((isset( $_FILES['form'] )) && ($_FILES['form']['error']['APP_DOC_FILENAME'] 
             break;
     }
     G::SendMessageText( $message, "ERROR" );
-    $backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-    G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+    $backUrlObj = explode( "sys" . config("sys_sys"), $_SERVER['HTTP_REFERER'] );
+    G::header( "location: " . "/sys" . config("sys_sys") . $backUrlObj[1] );
     die();
 }
 
@@ -106,8 +106,8 @@ if(isset($_FILES["form"]["name"]["APP_DOC_FILENAME"]) && isset($_FILES["form"]["
 if($res->status == 0){
 	$message = $res->message;
 	G::SendMessageText( $message, "ERROR" );
-	$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-	G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+	$backUrlObj = explode( "sys" . config("sys_sys"), $_SERVER['HTTP_REFERER'] );
+	G::header( "location: " . "/sys" . config("sys_sys") . $backUrlObj[1] );
 	die();
 }
 
@@ -134,8 +134,8 @@ if (isset($_FILES) && isset($_FILES["form"]) && count($_FILES["form"]) > 0) {
     } catch (Exception $e) {
         G::SendMessageText($e->getMessage(), "ERROR");
 
-        $arrayAux = explode("sys" . SYS_SYS, $_SERVER["HTTP_REFERER"]);
-        G::header("location: /sys" . SYS_SYS . $arrayAux[1]);
+        $arrayAux = explode("sys" . config("sys_sys"), $_SERVER["HTTP_REFERER"]);
+        G::header("location: /sys" . config("sys_sys") . $arrayAux[1]);
         exit(0);
     }
 }

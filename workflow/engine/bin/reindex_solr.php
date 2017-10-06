@@ -144,11 +144,12 @@ if (! defined ('SYS_SYS')) {
     if (file_exists (PATH_DB . $sObject . PATH_SEP . 'db.php')) {
 
       define ('SYS_SYS', $sObject);
+      config(["sys_sys" => $sObject]);
 
       // ****************************************
       // read initialize file
       require_once PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.system.php';
-      $config = System::getSystemConfiguration ('', '', SYS_SYS);
+      $config = System::getSystemConfiguration ('', '', config("sys_sys"));
       define ('MEMCACHED_ENABLED', $config ['memcached']);
       define ('MEMCACHED_SERVER', $config ['memcached_server']);
       define ('TIME_ZONE', $config ['time_zone']);
@@ -170,7 +171,7 @@ if (! defined ('SYS_SYS')) {
       include_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
 
       // ***************** PM Paths DATA **************************
-      define ('PATH_DATA_SITE', PATH_DATA . 'sites/' . SYS_SYS . '/');
+      define ('PATH_DATA_SITE', PATH_DATA . 'sites/' . config("sys_sys") . '/');
       define ('PATH_DOCUMENT', PATH_DATA_SITE . 'files/');
       define ('PATH_DATA_MAILTEMPLATES', PATH_DATA_SITE . 'mailTemplates/');
       define ('PATH_DATA_PUBLIC', PATH_DATA_SITE . 'public/');
@@ -264,7 +265,7 @@ function processWorkspace()
 
   try {
 
-    if (($solrConf = System::solrEnv (SYS_SYS)) !== false) {
+    if (($solrConf = System::solrEnv (config("sys_sys"))) !== false) {
       print "Solr Configuration file: " . PATH_DATA_SITE . "env.ini\n";
       print "solr_enabled: " . $solrConf ['solr_enabled'] . "\n";
       print "solr_host: " . $solrConf ['solr_host'] . "\n";

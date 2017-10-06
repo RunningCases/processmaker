@@ -2448,7 +2448,7 @@ class G
         global $RBAC;
 
         if (isset( $_SESSION['USER_LOGGED'] ) && $_SESSION['USER_LOGGED'] == '') {
-            $sys = (ENABLE_ENCRYPT == 'yes' ? SYS_SYS : "sys" . SYS_SYS);
+            $sys = (ENABLE_ENCRYPT == 'yes' ? config("sys_sys") : "sys" . config("sys_sys"));
             $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
             $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
             $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login' ), URL_KEY ) : 'login');
@@ -2466,7 +2466,7 @@ class G
         $sessionBrowser = defined( 'SESSION_BROWSER' ) ? SESSION_BROWSER : '';
         if (($sessionPc == "1") or ($sessionBrowser == "1")) {
             if ($row['LOG_STATUS'] == 'X') {
-                $sys = (ENABLE_ENCRYPT == 'yes' ? SYS_SYS : "sys" . SYS_SYS);
+                $sys = (ENABLE_ENCRYPT == 'yes' ? config("sys_sys") : "sys" . config("sys_sys"));
                 $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
                 $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
                 $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login' ), URL_KEY ) : 'login');
@@ -2502,7 +2502,7 @@ class G
 
         if ($sw == 0 && $urlNoAccess != "") {
             $aux = explode( '/', $urlNoAccess );
-            $sys = (ENABLE_ENCRYPT == 'yes' ? SYS_SYS : "/sys" . SYS_LANG);
+            $sys = (ENABLE_ENCRYPT == 'yes' ? config("sys_sys") : "/sys" . SYS_LANG);
             $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
             $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
             $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( $aux[0] ), URL_KEY ) : $aux[0]);
@@ -2977,7 +2977,7 @@ class G
         }
 
         if (defined("SYS_SYS")) {
-            $sysCon["SYS_SYS"] = SYS_SYS;
+            $sysCon["SYS_SYS"] = config("sys_sys");
         }
 
         $sysCon["APPLICATION"]  = (isset($_SESSION["APPLICATION"]))?  $_SESSION["APPLICATION"]  : "";
@@ -5445,7 +5445,7 @@ class G
     */
     public static function auditLog($actionToLog, $valueToLog = "")
     {
-	    $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+	    $workspace = defined('SYS_SYS') ? config("sys_sys") : 'Wokspace Undefined';
         $conf = new Configurations();
         $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
         $sflagAudit = $sflag == 'true' ? true : false;
