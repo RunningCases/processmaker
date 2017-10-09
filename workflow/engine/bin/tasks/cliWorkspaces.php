@@ -316,6 +316,17 @@ CLI::taskArg('workspace');
 CLI::taskRun("cliListIds");
 
 /**
+ * Upgrade the CONTENT table
+ */
+CLI::taskName('upgrade-content');
+CLI::taskDescription(<<<EOT
+    Upgrade the content table
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun("run_upgrade_content");
+
+/**
  *
  */
 CLI::taskName('regenerate-pmtable-classes');
@@ -372,6 +383,56 @@ function run_workspace_upgrade($args, $opts)
         } catch (Exception $e) {
             G::outRes("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
         }
+    }
+}
+
+/**
+ * We will upgrade the CONTENT table
+ * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
+ * @param string $args, workspaceName that we need to apply the upgrade-content
+ * @param string $opts
+ *
+ * @return void
+ */
+function run_upgrade_content($args, $opts)
+{
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        upgradeContent($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker upgrade-content ' . $workspace->name);
+        }
+    }
+}
+/**
+ * This function will upgrade the CONTENT table for a workspace
+ * This function is executed only for one workspace
+ * @param array $args, workspaceName that we will to apply the command
+ * @param array $opts, we can send additional parameters
+ *
+ * @return void
+ */
+function upgradeContent($args, $opts)
+{
+    try {
+        //Load the attributes for the workspace
+        $arrayWorkspace = get_workspaces_from_args($args);
+        //Loop, read all the attributes related to the one workspace
+        $wsName = $arrayWorkspace[key($arrayWorkspace)]->name;
+        Bootstrap::setConstantsRelatedWs($wsName);
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            try {
+                G::outRes("Upgrading content for " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+                $workspace->upgradeContent($workspace->name, true);
+            } catch (Exception $e) {
+                G::outRes("Errors upgrading content of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
+            }
+        }
+    } catch (Exception $e) {
+        G::outRes(CLI::error($e->getMessage()) . "\n");
     }
 }
 
