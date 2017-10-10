@@ -109,6 +109,8 @@ class Step extends Api
 
     /**
      * @url DELETE /:prj_uid/activity/:act_uid/step/:step_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $step_uid {@min 32}{@max 32}
      * @param string $act_uid  {@min 32}{@max 32}

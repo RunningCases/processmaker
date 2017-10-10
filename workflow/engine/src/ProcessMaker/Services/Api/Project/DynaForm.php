@@ -83,6 +83,8 @@ class DynaForm extends Api
 
     /**
      * @url DELETE /:prj_uid/dynaform/:dyn_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}

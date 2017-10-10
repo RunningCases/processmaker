@@ -924,13 +924,12 @@ class Cases extends Api
 
     /**
      * Delete Case
+     * @url DELETE /:cas_uid
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      *
      * @param string $cas_uid {@min 1}{@max 32}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url DELETE /:cas_uid
      */
     public function doDeleteCase($cas_uid)
     {

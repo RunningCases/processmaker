@@ -95,6 +95,9 @@ class OutputDocuments extends Api
 
     /**
      * @url DELETE /:prjUid/output-document/:outputDocumentUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $outputDocumentUid {@min 32} {@max 32}
      *

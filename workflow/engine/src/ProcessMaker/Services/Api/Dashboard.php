@@ -262,6 +262,8 @@ class Dashboard extends Api
 
     /**
      * @url DELETE /:das_uid
+     * @access protected
+     * @class AccessControl {@permission PM_DASHBOARD}
      *
      * @param string $das_uid  {@min 32}{@max 32}
      *
@@ -300,6 +302,8 @@ class Dashboard extends Api
 
     /**
      * @url DELETE /:das_uid/owner/:owner_uid
+     * @access protected
+     * @class AccessControl {@permission PM_DASHBOARD}
      *
      * @param string $das_uid  {@min 32}{@max 32}
      * @param string $owner_uid  {@min 32}{@max 32}
@@ -358,6 +362,8 @@ class Dashboard extends Api
 
     /**
      * @url DELETE /indicator/:ind_uid
+     * @access protected
+     * @class AccessControl {@permission PM_DASHBOARD}
      *
      * @param string $ind_uid  {@min 32}{@max 32}
      *

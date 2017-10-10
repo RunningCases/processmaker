@@ -111,6 +111,8 @@ class WebEntry extends Api
 
     /**
      * @url DELETE /:prj_uid/web-entry/:we_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $we_uid  {@min 32}{@max 32}

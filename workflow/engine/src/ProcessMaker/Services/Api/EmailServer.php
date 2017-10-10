@@ -141,6 +141,8 @@ class EmailServer extends Api
 
     /**
      * @url DELETE /:mess_uid
+     * @access protected
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
      *
      * @param string $mess_uid {@min 32}{@max 32}
      *

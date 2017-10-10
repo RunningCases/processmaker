@@ -96,6 +96,8 @@ class EmailEvent extends Api
     
     /**
      * @url DELETE /:prj_uid/email-event/:email_event_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid   {@min 32}{@max 32}
      * @param string $email_event_uid {@min 32}{@max 32}
@@ -111,6 +113,8 @@ class EmailEvent extends Api
     
     /**
      * @url DELETE /:prj_uid/email-event/by-event/:act_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid   {@min 32}{@max 32}
      * @param string $act_uid {@min 32}{@max 32}

@@ -81,25 +81,5 @@ class Catalog extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-
-    /**
-     * @url DELETE /:cat_uid/:cat_type
-     *
-     * @param string $cat_uid  {@min 32}{@max 32}
-     * @param string $cat_type      {@min 32}{@max 32}
-     *
-     * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
-     * @copyright Colosa - Bolivia
-     */
-    public function doDelete($cat_uid, $cat_type)
-    {
-        try {
-            $catalog = new \ProcessMaker\BusinessModel\Catalog();
-
-            $arrayData = $catalog->delete($cat_uid, $cat_type);
-        } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
-        }
-    }
 }
 

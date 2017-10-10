@@ -796,24 +796,24 @@ class Light extends Api
     /**
      * Delete case
      *
-     * @copyright Colosa - Bolivia
-     *
      * @url DELETE /case/:app_uid/delete
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      *
      * @param string $app_uid {@min 32}{@max 32}
      */
     public function doDeleteCases($app_uid)
     {
         try {
-            $oCase = new ClassesCases();
-            $oCase->removeCase($app_uid);
+            $usr_uid = $this->getUserId();
+            $cases = new BusinessModelCases();
+            $cases->deleteCase($app_uid, $usr_uid);
             $result = array(
                 "message" => G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY")
             );
         } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
-
         return $result;
     }
 

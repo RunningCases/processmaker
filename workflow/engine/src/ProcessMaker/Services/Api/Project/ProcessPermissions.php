@@ -165,15 +165,14 @@ class ProcessPermissions extends Api
     }
 
     /**
+     * @url DELETE /:prj_uid/process-permission/:ob_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $ob_uid {@min 1} {@max 32}
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @return void
-     *
-     * @url DELETE /:prj_uid/process-permission/:ob_uid
      */
     public function doDeleteProcessPermission($prj_uid, $ob_uid)
     {

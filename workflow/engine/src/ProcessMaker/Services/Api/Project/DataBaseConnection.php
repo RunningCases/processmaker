@@ -173,14 +173,13 @@ class DataBaseConnection extends Api
     }
 
     /**
+     * @url DELETE /:prj_uid/database-connection/:dbs_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $dbs_uid {@min 1} {@max 32}
      * @return void
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url DELETE /:prj_uid/database-connection/:dbs_uid
      */
     public function doDeleteDataBaseConnection($prj_uid, $dbs_uid)
     {

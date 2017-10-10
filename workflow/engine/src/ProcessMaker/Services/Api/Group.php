@@ -115,6 +115,8 @@ class Group extends Api
 
     /**
      * @url DELETE /:grp_uid
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      *
      * @param string $grp_uid {@min 32}{@max 32}
      */

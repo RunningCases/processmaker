@@ -78,14 +78,14 @@ class NotificationDevice extends Api
     }
 
     /**
+     * @url DELETE /notification/:dev_uid
+     * This actions is executed in the logout action
+     *
      * Delete record device with dev_uid and usr_uid
      *
      * @param string $dev_uid {@min 32}{@max 32}
      *
-     * @author Ronald Quenta <ronald.quenta@processmaker.com>
      * @return array
-     *
-     * @url DELETE /notification/:dev_uid
      */
     public function deleteDevice($dev_uid)
     {

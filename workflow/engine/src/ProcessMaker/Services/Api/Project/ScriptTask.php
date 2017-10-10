@@ -118,6 +118,8 @@ class ScriptTask extends Api
 
     /**
      * @url DELETE /:prj_uid/script-task/:scrtas_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid    {@min 32}{@max 32}
      * @param string $scrtas_uid {@min 32}{@max 32}

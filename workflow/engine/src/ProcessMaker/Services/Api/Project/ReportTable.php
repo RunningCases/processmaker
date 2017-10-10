@@ -161,14 +161,14 @@ class ReportTable extends Api
     }
 
     /**
+     * @url DELETE /:prj_uid/report-table/:rep_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $rep_uid {@min 1} {@max 32}
      * @return void
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url DELETE /:prj_uid/report-table/:rep_uid
      */
     public function doDeleteReportTable($prj_uid, $rep_uid)
     {
