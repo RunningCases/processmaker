@@ -178,7 +178,11 @@ class RBAC
                 'DEL' => array('PM_SETUP'),
                 'LST' => array('PM_SETUP'),
                 'TEST' => array('PM_SETUP')
-            )
+            ),
+            'processes_GetFile.php' => [
+                'mailTemplates' => ['PM_FACTORY'],
+                'public' => ['PM_FACTORY']
+            ]
         );
     }
 
