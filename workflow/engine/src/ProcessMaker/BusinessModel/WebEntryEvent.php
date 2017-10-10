@@ -796,7 +796,7 @@ class WebEntryEvent
      * @return array Return data of the WebEntry-Event updated
      * @throws Exception
      */
-    public function update($webEntryEventUid, $userUidUpdater, array $arrayData)
+    public function update($webEntryEventUid, $userUidUpdater, array $arrayData, $updateUser = true)
     {
         try {
             //Verify data
@@ -826,7 +826,9 @@ class WebEntryEvent
             //Define if the webEntry need to use the guest user
             $weUserUid = isset($arrayData["USR_UID"]) ? $arrayData["USR_UID"] : '';
             $weAuthentication = isset($arrayData["WE_AUTHENTICATION"]) ? $arrayData["WE_AUTHENTICATION"] : '';
-            $arrayData["USR_UID"] = $this->getWebEntryUser($weAuthentication, $weUserUid);
+            if ($updateUser) {
+                $arrayData["USR_UID"] = $this->getWebEntryUser($weAuthentication, $weUserUid);
+            }
             //Verify data with the required fields
             $this->throwExceptionIfDataIsInvalid($webEntryEventUid, $arrayWebEntryEventData["PRJ_UID"], $arrayData);
 
