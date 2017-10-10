@@ -48,7 +48,7 @@ if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkd
 }
 /*----------------------------------********---------------------------------*/
 
-$arraySystemConfiguration = System::getSystemConfiguration('', '', config("sys_sys"));
+$arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'users/users', true ); //adding a javascript file .js

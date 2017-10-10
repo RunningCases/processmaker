@@ -258,10 +258,10 @@ class UsersProperties extends BaseUsersProperties
                     $url = $this->_getDefaultLocation();
                     return $url;
                 } else {
-                    $url = '/sys' . config("sys_sys") . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/main';
+                    $url = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/main';
                 }
             } else {
-                $url = '/sys' . config("sys_sys") . '/' . $this->lang . '/' . SYS_SKIN . '/main';
+                $url = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . SYS_SKIN . '/main';
             }
             global $RBAC;
             $oConf = new Configurations();
@@ -330,9 +330,9 @@ class UsersProperties extends BaseUsersProperties
                     $pathMethod = $detail->getPathMethod();
                     if (isset($pathMethod) && $detail->equalRoleCodeTo($userRole)) {
                         if (isset($_COOKIE['workspaceSkin'])) {
-                            $url = '/sys' . config("sys_sys") . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/' . $pathMethod;
+                            $url = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/' . $pathMethod;
                         } else {
-                            $url = '/sys' . config("sys_sys") . '/' . $this->lang . '/' . SYS_SKIN . '/' . $pathMethod;
+                            $url = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . SYS_SKIN . '/' . $pathMethod;
                         }
                     }
                 }
@@ -376,7 +376,7 @@ class UsersProperties extends BaseUsersProperties
             case 'SINGLE':
                 $_SESSION['user_experience'] = $uxType;
                 $_SESSION['user_last_skin'] = SYS_SKIN;
-                $url = '/sys' . config("sys_sys") . '/' . $this->lang . '/uxs/' . 'home';
+                $url = '/sys' . config("system.workspace") . '/' . $this->lang . '/uxs/' . 'home';
                 break;
         }
 
@@ -393,11 +393,11 @@ class UsersProperties extends BaseUsersProperties
         $oConf = new Configurations();
         $oConf->loadConfig( $x, 'USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED'], '' );
 
-        //$baseUrl = '/sys' . config("sys_sys") . '/' . $this->lang . '/' . SYS_SKIN . '/';
+        //$baseUrl = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . SYS_SKIN . '/';
         if (isset($_COOKIE['workspaceSkin'])) {
-            $baseUrl = '/sys' . config("sys_sys") . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/';
+            $baseUrl = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/';
         } else {
-            $baseUrl = '/sys' . config("sys_sys") . '/' . $this->lang . '/' . SYS_SKIN . '/';
+            $baseUrl = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . SYS_SKIN . '/';
         }
         $url = '';
 

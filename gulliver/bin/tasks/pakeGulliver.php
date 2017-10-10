@@ -2232,7 +2232,7 @@ function run_update_plugin_attributes($task, $args)
         // virtual SYS_SYS for cache
         $sys_sys = uniqid();
         define('SYS_SYS', $sys_sys);
-        config(["sys_sys" => $sys_sys]);
+        config(["system.workspace" => $sys_sys]);
         foreach (PmSystem::listWorkspaces() as $value) {
             \ProcessMaker\Util\Cnn::connect($value->name);
             //Update plugin attributes

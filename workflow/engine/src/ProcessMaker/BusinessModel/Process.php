@@ -964,7 +964,7 @@ class Process
 
         $process = new \Process();
 
-        $memcache = &\PMmemcached::getSingleton(config("sys_sys"));
+        $memcache = &\PMmemcached::getSingleton(config("system.workspace"));
 
         $memkey = "no memcache";
         $memcacheUsed = "not used";
@@ -1775,8 +1775,8 @@ class Process
         $aInvalidTypes = array("title", "subtitle", "file", "button", "reset", "submit", "javascript");
         $aMultipleSelectionFields = array("listbox", "checkgroup", "grid");
 
-        if (is_file( PATH_DATA . '/sites/'. config("sys_sys") .'/xmlForms/'. $proUid .'/'.$dynUid. '.xml' ) && filesize( PATH_DATA . '/sites/'. config("sys_sys") .'/xmlForms/'. $proUid .'/'. $dynUid .'.xml' ) > 0) {
-            $dyn = new DynaformHandler( PATH_DATA . '/sites/'. config("sys_sys") .'/xmlForms/' .$proUid. '/' . $dynUid .'.xml' );
+        if (is_file( PATH_DATA . '/sites/'. config("system.workspace") .'/xmlForms/'. $proUid .'/'.$dynUid. '.xml' ) && filesize( PATH_DATA . '/sites/'. config("system.workspace") .'/xmlForms/'. $proUid .'/'. $dynUid .'.xml' ) > 0) {
+            $dyn = new DynaformHandler( PATH_DATA . '/sites/'. config("system.workspace") .'/xmlForms/' .$proUid. '/' . $dynUid .'.xml' );
             $dynaformFields[] = $dyn->getFields();
 
             $fields = $dyn->getFields();

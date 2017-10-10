@@ -72,6 +72,6 @@ class SkinsTest extends \WorkflowTestCase
         $this->assertCount(4, $skins);
         $this->assertEquals($skins[2]['SKIN_FOLDER_ID'], 'test');
         $this->assertEquals($skins[3]['SKIN_FOLDER_ID'], 'test2');
-        $this->assertEquals($skins[3]['SKIN_WORKSPACE'], config("sys_sys"));
+        $this->assertEquals($skins[3]['SKIN_WORKSPACE'], config("system.workspace"));
     }
 }

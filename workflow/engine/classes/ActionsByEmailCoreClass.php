@@ -160,7 +160,7 @@ class ActionsByEmailCoreClass extends PMPlugin
                             if (!empty($envPort) && strpos($envHost, $envPort) === false) {
                                 $envHost = $envHost . $envPort;
                             }
-                            $link = (G::is_https() || $envProtocol ? 'https://' : 'http://') . $envHost . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . $envSkin . '/services/ActionsByEmail';
+                            $link = (G::is_https() || $envProtocol ? 'https://' : 'http://') . $envHost . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . $envSkin . '/services/ActionsByEmail';
 
                             switch ($configuration['ABE_TYPE']) {
                                 case 'CUSTOM':

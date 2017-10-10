@@ -146,7 +146,7 @@ class ConsolidatedCases
         }
 
         $sClassName = $TableName;
-        $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
+        $sPath = PATH_DB . config("system.workspace") . PATH_SEP . 'classes' . PATH_SEP;
 
         @unlink($sPath . $sClassName . '.php');
         @unlink($sPath . $sClassName . 'Peer.php');

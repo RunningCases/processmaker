@@ -33,7 +33,7 @@ $oProcess = new Process();
 $oProcess->dir = $dir;
 $oProcess->sort = $sort;
 
-//$memcache = & PMmemcached::getSingleton( config("sys_sys") );
+//$memcache = & PMmemcached::getSingleton( config("system.workspace") );
 
 $memkey = 'no memcache';
 $memcacheUsed = 'not used';

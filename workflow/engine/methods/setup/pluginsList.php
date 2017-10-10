@@ -24,5 +24,5 @@
  */
 $RBAC->requirePermissions('PM_SETUP_ADVANCE');
 
-$items = \PMPlugin::getListPluginsManager(config("sys_sys"));
+$items = \PMPlugin::getListPluginsManager(config("system.workspace"));
 echo G::json_encode($items);

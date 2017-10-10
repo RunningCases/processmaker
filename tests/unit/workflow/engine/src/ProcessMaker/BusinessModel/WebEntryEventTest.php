@@ -284,7 +284,7 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->createWebEntryEvent(
             $processUid, $entryEvents,
             [
-                'WEE_URL'                 => $this->domain."/sys".config("sys_sys")."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
+                'WEE_URL'                 => $this->domain."/sys".config("system.workspace")."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
                 'WE_TYPE'                 => "NOT-VALID-SINGLE",
                 'WE_CUSTOM_TITLE'         => $this->customTitle,
                 'WE_AUTHENTICATION'       => 'NOT-VALID-ANONYMOUS',
@@ -373,7 +373,7 @@ class WebEntryEventTest extends \WorkflowTestCase
             $webEntryEventUid,
             $userUidUpdater,
             [
-                'WEE_URL'                 => $this->domain."/sys".config("sys_sys")."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
+                'WEE_URL'                 => $this->domain."/sys".config("system.workspace")."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
                 'WE_TYPE'                 => "NOT-VALID-SINGLE",
                 'WE_CUSTOM_TITLE'         => $this->customTitle,
                 'WE_AUTHENTICATION'       => 'NOT-VALID-ANONYMOUS',
@@ -671,7 +671,7 @@ class WebEntryEventTest extends \WorkflowTestCase
     private function getSimpleWebEntryUrl(\WebEntry $we)
     {
         return (\G::is_https() ? "https://" : "http://").
-            $_SERVER["HTTP_HOST"]."/sys".config("sys_sys")."/".
+            $_SERVER["HTTP_HOST"]."/sys".config("system.workspace")."/".
             SYS_LANG."/".SYS_SKIN."/".$we->getProUid()."/".$we->getWeData();
     }
 

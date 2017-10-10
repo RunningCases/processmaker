@@ -6,7 +6,7 @@ if (!isset($_GET["file_hash"])) {
 }
 
 $httpStream = new \ProcessMaker\Util\IO\HttpStream();
-$outputDir = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
+$outputDir = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
 $fileName = urldecode(base64_decode($_GET["file_hash"]));
 $processFile = $outputDir . $fileName;
 

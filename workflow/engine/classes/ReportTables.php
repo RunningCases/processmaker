@@ -605,7 +605,7 @@ class ReportTables
                                     try {
                                         $rs = $stmt->executeQuery($sQuery);
                                     } catch (Exception $e) {
-                                        Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', ['sql' => $sQuery,'error' => $e->getMessage()], config("sys_sys"), 'processmaker.log');
+                                        Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', ['sql' => $sQuery,'error' => $e->getMessage()], config("system.workspace"), 'processmaker.log');
                                     }
 
                                 }
@@ -644,7 +644,7 @@ class ReportTables
                                 try {
                                     $rs = $stmt->executeQuery($sQuery);
                                 } catch (Exception $e) {
-                                    Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', ['sql' => $sQuery,'error' => $e->getMessage()], config("sys_sys"), 'processmaker.log');
+                                    Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', ['sql' => $sQuery,'error' => $e->getMessage()], config("system.workspace"), 'processmaker.log');
                                 }
                             }
                         } else {

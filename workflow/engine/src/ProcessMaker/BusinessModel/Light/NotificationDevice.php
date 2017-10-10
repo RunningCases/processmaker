@@ -12,7 +12,7 @@ class NotificationDevice
 
     public function checkMobileNotifications()
     {
-        $conf = System::getSystemConfiguration('', '', config("sys_sys"));
+        $conf = System::getSystemConfiguration('', '', config("system.workspace"));
         $activeNotifications = true;
         if (isset($conf['mobileNotifications'])) {
             $activeNotifications = $conf['mobileNotifications'] == 1 ? true : false;

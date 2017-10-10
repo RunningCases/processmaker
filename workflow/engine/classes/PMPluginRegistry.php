@@ -1103,7 +1103,7 @@ class PMPluginRegistry
         try {
             $iPlugins = 0;
             $oServerConf = & ServerConf::getSingleton();
-            $oServerConf->addPlugin( config("sys_sys"), $this->_aPluginDetails );
+            $oServerConf->addPlugin( config("system.workspace"), $this->_aPluginDetails );
             foreach ($this->_aPluginDetails as $namespace => $detail) {
                 if (isset( $detail->enabled ) && $detail->enabled) {
                     if (! empty( $detail->sFilename ) && file_exists( $detail->sFilename )) {

@@ -33,7 +33,7 @@ class StrategicDashboard extends Controller
         $user = new Users();
         $user = $user->load($RBAC->aUserInfo['USER_INFO']['USR_UID']);
         $this->usrUnitCost = $this->currencySymbolToShow($user);
-        $this->urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . config("sys_sys") . '/';
+        $this->urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . config("system.workspace") . '/';
         //change
         $clientId = 'x-pm-local-client';
         $client = $this->getClientCredentials($clientId);
@@ -194,7 +194,7 @@ class StrategicDashboard extends Controller
             $this->setView( 'strategicDashboard/viewDashboard' );
 
             $this->setVar('urlProxy', $this->urlProxy);
-            $this->setVar('SYS_SYS', config("sys_sys"));
+            $this->setVar('SYS_SYS', config("system.workspace"));
             $this->setVar('usrId', $this->usrId);
             $this->setVar('credentials', $this->clientToken);
             $this->setVar('unitCost', $this->usrUnitCost);

@@ -74,9 +74,9 @@ class PluginRegistry
     public static function loadSingleton()
     {
         if (self::$instance === null) {
-            if (is_null($object = Cache::get(config("sys_sys") . __CLASS__))) {
+            if (is_null($object = Cache::get(config("system.workspace") . __CLASS__))) {
                 $object = new PluginRegistry();
-                Cache::put(config("sys_sys") . __CLASS__, $object, config('app.cache_lifetime'));
+                Cache::put(config("system.workspace") . __CLASS__, $object, config('app.cache_lifetime'));
             }
             self::$instance = $object;
         }
@@ -201,7 +201,7 @@ class PluginRegistry
             $fieldPlugin = PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
             PluginsRegistry::update($fieldPlugin);
         }
-        Cache::pull(config("sys_sys") . __CLASS__);
+        Cache::pull(config("system.workspace") . __CLASS__);
     }
     /**
      * Get the plugin details, by filename

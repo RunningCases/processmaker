@@ -24,7 +24,7 @@
 use  ProcessMaker\Util\Common;
 
 $response = new StdClass();
-$outputDir = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
+$outputDir = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
 
 try {
 	if(empty($_GET)){

@@ -227,7 +227,7 @@ class ProjectUser
             } else {
                 $http = 'http://';
             }
-            $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
+            $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
             @$client = new \SoapClient( $endpoint );
             $user = $sWS_USER;
             $pass = $sWS_PASS;
@@ -325,7 +325,7 @@ class ProjectUser
         try {
             $http = (\G::is_https())? "https://" : "http://";
 
-            $client = new \SoapClient($http . $_SERVER["HTTP_HOST"] . "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/services/wsdl2");
+            $client = new \SoapClient($http . $_SERVER["HTTP_HOST"] . "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/services/wsdl2");
 
             $params = array(
                 "userid"   => $username,

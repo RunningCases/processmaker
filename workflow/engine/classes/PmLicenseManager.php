@@ -26,11 +26,11 @@ class PmLicenseManager
 
         $activeLicenseSetting = $oServerConf->getProperty('ACTIVE_LICENSE');
 
-        if ((isset($activeLicenseSetting[config("sys_sys")])) && (file_exists($activeLicenseSetting[config("sys_sys")]))) {
-            $licenseFile = $activeLicenseSetting[config("sys_sys")];
+        if ((isset($activeLicenseSetting[config("system.workspace")])) && (file_exists($activeLicenseSetting[config("system.workspace")]))) {
+            $licenseFile = $activeLicenseSetting[config("system.workspace")];
         } else {
             $activeLicense = $this->getActiveLicense();
-            $oServerConf->setProperty('ACTIVE_LICENSE', [config("sys_sys") => $activeLicense['LICENSE_PATH']]);
+            $oServerConf->setProperty('ACTIVE_LICENSE', [config("system.workspace") => $activeLicense['LICENSE_PATH']]);
             $licenseFile = $activeLicense['LICENSE_PATH'];
         }
 
@@ -77,7 +77,7 @@ class PmLicenseManager
                 $this->supportEndDate = date("Y-m-d H:i:s", strtotime($this->supportEndDate));
 
                 $conf = new Configurations();
-                if (defined('SYS_SYS') && $conf->exists("ENVIRONMENT_SETTINGS")) {
+                if (!empty(config("system.workspace")) && $conf->exists("ENVIRONMENT_SETTINGS")) {
                     $this->supportStartDate = $conf->getSystemDate($this->supportStartDate);
                     $this->supportEndDate = $conf->getSystemDate($this->supportEndDate);
                 } else {
@@ -103,14 +103,14 @@ class PmLicenseManager
                 $licInfoA = $oServerConf->getProperty('LICENSE_INFO');
                 // The HUMAN attribute varies according to the timezone configured in the server, therefore it does not need
                 // to be considered in the comparison if the value was changed or not, it is only comparing  with te "timestamp"
-                if (isset($licInfoA[config("sys_sys")]['date']['HUMAN'])) {
-                    unset($licInfoA[config("sys_sys")]['date']['HUMAN']);
+                if (isset($licInfoA[config("system.workspace")]['date']['HUMAN'])) {
+                    unset($licInfoA[config("system.workspace")]['date']['HUMAN']);
                 }
             } else {
                 $licInfoA = [];
             }
-            if (empty($licInfoA[config("sys_sys")]) || ($licInfoA[config("sys_sys")] != $resultsRegister)) {
-                $licInfoA[config("sys_sys")] = $resultsRegister;
+            if (empty($licInfoA[config("system.workspace")]) || ($licInfoA[config("system.workspace")] != $resultsRegister)) {
+                $licInfoA[config("system.workspace")] = $resultsRegister;
                 $oServerConf->setProperty('LICENSE_INFO', $licInfoA);
             }
         }
@@ -337,11 +337,11 @@ class PmLicenseManager
         }
 
         if (class_exists('pmTrialPlugin')) {
-            $linkText = $linkText . "<a href='/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/pmTrial/services/buyNow?n=true" . "'> <img align='absmiddle' src='/plugin/pmLicenseManager/btn_buy_now.gif' border='0' /></a>";
+            $linkText = $linkText . "<a href='/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/pmTrial/services/buyNow?n=true" . "'> <img align='absmiddle' src='/plugin/pmLicenseManager/btn_buy_now.gif' border='0' /></a>";
         }
 
         if (isset($_SESSION["__ENTERPRISE_SYSTEM_UPDATE__"]) && $_SESSION["__ENTERPRISE_SYSTEM_UPDATE__"] == 1) {
-            $aOnclick = "onclick=\"this.href='" . EnterpriseUtils::getUrlServerName() . "/sys" . config("sys_sys") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main?s=PMENTERPRISE';\"";
+            $aOnclick = "onclick=\"this.href='" . EnterpriseUtils::getUrlServerName() . "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main?s=PMENTERPRISE';\"";
             if (EnterpriseUtils::skinIsUx() == 1) {
                 $aOnclick = "onclick=\"Ext.ComponentMgr.get('mainTabPanel').setActiveTab('pm-option-setup'); Ext.ComponentMgr.get('pm-option-setup').setLocation(Ext.ComponentMgr.get('pm-option-setup').defaultSrc + 's=PMENTERPRISE', true); return (false);\"";
             }
@@ -385,7 +385,7 @@ class PmLicenseManager
         } else {
 
             $oServerConf = &ServerConf::getSingleton();
-            $oServerConf->setProperty('ACTIVE_LICENSE', [config("sys_sys") => $path]);
+            $oServerConf->setProperty('ACTIVE_LICENSE', [config("system.workspace") => $path]);
             $this->saveDataLicense($results, $path, $redirect);
             if ($redirect) {
                 G::Header('location: ../enterprise/addonsStore');
@@ -482,7 +482,7 @@ class PmLicenseManager
             $tr->setLicenseType($LicenseType);
 
             $res = $tr->save();
-            Cache::forget(PmLicenseManager::CACHE_KEY . '.' . config("sys_sys"));
+            Cache::forget(PmLicenseManager::CACHE_KEY . '.' . config("system.workspace"));
         } catch (Exception $e) {
             G::pr($e);
         }

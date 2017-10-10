@@ -131,7 +131,7 @@ class Home extends Controller
         if (!isset($_COOKIE['workspaceSkin'])) {
             if (substr( $sysConf['default_skin'], 0, 2 ) == 'ux') {
                 $_SESSION['_defaultUserLocation'] = $switchLink;
-                $switchLink = '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . $sysConf['default_skin'] . '/main';
+                $switchLink = '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . $sysConf['default_skin'] . '/main';
             }
         }
 
@@ -531,7 +531,7 @@ class Home extends Controller
                 $conf = new Configurations();
                 $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
                 $cases['data'][$i]['DEL_DELEGATE_DATE'] = '';
-                if (defined('SYS_SYS')) {
+                if (!empty(config("system.workspace"))) {
                     if (isset( $generalConfCasesList['casesListDateFormat'] ) && ! empty( $generalConfCasesList['casesListDateFormat'] )) {
                         $cases['data'][$i]['DEL_DELEGATE_DATE'] = $conf->getSystemDate($row['DEL_DELEGATE_DATE'], 'casesListDateFormat');
                     }

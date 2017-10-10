@@ -65,7 +65,7 @@ class GranularExporter
         $projectData = $bpmnProject->getProject();
         $this->prjName = $projectData['PRJ_NAME'];
         $getProjectName = $this->publisher->truncateName($projectData['PRJ_NAME'], false);
-        $outputDir = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
+        $outputDir = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
         $version = Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx2") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx2");
 
@@ -143,7 +143,7 @@ class GranularExporter
             "export_server_os" => PHP_OS ,
             "export_server_php_version" => PHP_VERSION_ID,
         );
-        $data["metadata"]["workspace"] = defined("SYS_SYS") ? config("sys_sys") : "Unknown";
+        $data["metadata"]["workspace"] = !empty(config("system.workspace")) ? config("system.workspace") : "Unknown";
         $data["metadata"]["name"] = $projectData['PRJ_NAME'];
         $data["metadata"]["uid"] = $projectData['PRJ_UID'];
         $data["metadata"]["export_version"] = $version;

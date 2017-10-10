@@ -2755,7 +2755,7 @@ class ProcessMap
                 $http = 'http://';
             }
 
-            $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sProcessUID . '/';
+            $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sProcessUID . '/';
 
             $row = array();
             $c = 0;
@@ -2767,8 +2767,8 @@ class ProcessMap
             $TaskFields['TAS_ASSIGN_TYPE'] = '';
             $row[] = array('W_TITLE' => '', 'W_DELETE' => '', 'TAS_ASSIGN_TYPE' => $TaskFields['TAS_ASSIGN_TYPE'] );
 
-            if (is_dir(PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $sProcessUID)) {
-                $dir = opendir(PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $sProcessUID);
+            if (is_dir(PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "public" . PATH_SEP . $sProcessUID)) {
+                $dir = opendir(PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "public" . PATH_SEP . $sProcessUID);
                 while ($archivo = readdir($dir)) {
                     //print $archivo." **** <hr>";
                     if ($archivo != '.') {
@@ -3115,7 +3115,7 @@ class ProcessMap
     public function listNoProcessesUser($sProcessUID)
     {
 
-        $memcache = & PMmemcached::getSingleton(config("sys_sys"));
+        $memcache = & PMmemcached::getSingleton(config("system.workspace"));
 
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ProcessUserPeer::USR_UID);
@@ -4777,7 +4777,7 @@ class ProcessMap
                         $http = 'http://';
                     }
 
-                    $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sProcessUID . '/';
+                    $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sProcessUID . '/';
 
                     $row = array();
                     $c = 0;
@@ -4790,8 +4790,8 @@ class ProcessMap
                     //$row [] = array ('W_TITLE' => '', 'W_DELETE' => '', 'TAS_ASSIGN_TYPE' => $TaskFields ['TAS_ASSIGN_TYPE'] );
 
 
-                    if (is_dir(PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $sProcessUID)) {
-                        $dir = opendir(PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $sProcessUID);
+                    if (is_dir(PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "public" . PATH_SEP . $sProcessUID)) {
+                        $dir = opendir(PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "public" . PATH_SEP . $sProcessUID);
                         $dynTitle = str_replace(' ', '_', str_replace('/', '_', $dynTitle));
                         $arlink = $link . $dynTitle . '.php';
                         //$arlink     = "<a href='" . $alink . "' target='blank'><font color='#9999CC'>" . $alink . "</font></a>";
@@ -5812,7 +5812,7 @@ class ProcessMap
     public function listExtNoProcessesUser($sProcessUID)
     {
 
-        $memcache = & PMmemcached::getSingleton(config("sys_sys"));
+        $memcache = & PMmemcached::getSingleton(config("system.workspace"));
 
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ProcessUserPeer::USR_UID);

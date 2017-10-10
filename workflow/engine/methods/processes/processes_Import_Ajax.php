@@ -70,7 +70,7 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
 
         if (!empty($arrayTrigger)) {
 
-            $cs = new CodeScanner(config("sys_sys"));
+            $cs = new CodeScanner(config("system.workspace"));
 
             $strFoundDisabledCode = "";
 

@@ -200,7 +200,7 @@ class FixReferencePath
      */
     public function regeneratePropelClasses($repTabName, $className, $fields, $guid)
     {
-        $sourcePath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
+        $sourcePath = PATH_DB . config("system.workspace") . PATH_SEP . 'classes' . PATH_SEP;
 
         @unlink($sourcePath . $className . '.php');
         @unlink($sourcePath . $className . 'Peer.php');

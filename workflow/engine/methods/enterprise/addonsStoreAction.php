@@ -160,7 +160,7 @@ try {
                 }
 
                 ///////
-                $workspace = config("sys_sys");
+                $workspace = config("system.workspace");
                 $dbAdapter = DB_ADAPTER;
 
                 $addon->setAddonState("download-start");

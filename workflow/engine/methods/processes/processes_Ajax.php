@@ -189,13 +189,13 @@ try {
 
             $filter = new InputFilter();
             $form = $_REQUEST;
-            $filePath = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $form['PRO_UID'] . PATH_SEP . $form['FILENAME'];
+            $filePath = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "public" . PATH_SEP . $form['PRO_UID'] . PATH_SEP . $form['FILENAME'];
             if (file_exists($filePath)) {
                 unlink($filter->validateInput($filePath, 'path'));
                 $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
                 $webEntry->deleteClassic($form['PRO_UID'], $filePath);
             }
-            $filePath = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP . $form['PRO_UID'] . PATH_SEP . str_replace(".php", "Post", $form['FILENAME']) . ".php";
+            $filePath = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "public" . PATH_SEP . $form['PRO_UID'] . PATH_SEP . str_replace(".php", "Post", $form['FILENAME']) . ".php";
             if (file_exists($filePath)) {
                 unlink($filter->validateInput($filePath, 'path'));
             }
@@ -900,8 +900,8 @@ try {
             $resultArray = array();
             $proUid = isset($_REQUEST['PRO_UID']) ? $_REQUEST['PRO_UID'] : '';
             $dynUid = isset($_REQUEST['DYN_UID']) ? $_REQUEST['DYN_UID'] : '';
-            if (is_file(PATH_DATA . '/sites/' . config("sys_sys") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') && filesize(PATH_DATA . '/sites/' . config("sys_sys") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') > 0) {
-                $dyn = new DynaformHandler(PATH_DATA . '/sites/' . config("sys_sys") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml');
+            if (is_file(PATH_DATA . '/sites/' . config("system.workspace") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') && filesize(PATH_DATA . '/sites/' . config("system.workspace") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') > 0) {
+                $dyn = new DynaformHandler(PATH_DATA . '/sites/' . config("system.workspace") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml');
                 $dynaformFields[] = $dyn->getFields();
             }
             foreach ($dynaformFields as $aDynFormFields) {

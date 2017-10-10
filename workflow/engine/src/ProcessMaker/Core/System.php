@@ -1060,7 +1060,7 @@ class System
                     $workspace = explode("|", $res['SKIN_WORKSPACE']);
                     $swWS = false;
                     foreach ($workspace as $key => $value) {
-                        if ($value == config("sys_sys")) {
+                        if ($value == config("system.workspace")) {
                             $swWS = true;
                             break;
                         }

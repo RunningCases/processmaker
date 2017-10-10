@@ -2121,8 +2121,8 @@ class Bootstrap
             $sysCon["SYS_SKIN"] = SYS_SKIN;
         }
 
-        if (defined("SYS_SYS")) {
-            $sysCon["SYS_SYS"] = config("sys_sys");
+        if (!empty(config("system.workspace"))) {
+            $sysCon["SYS_SYS"] = config("system.workspace");
         }
 
         $sysCon["APPLICATION"] = (isset($_SESSION["APPLICATION"])) ? $_SESSION["APPLICATION"] : "";
@@ -2682,7 +2682,7 @@ class Bootstrap
      * @return array $aContext void
      */
     public static function getDefaultContextLog(){
-        $sysSys = (defined("SYS_SYS"))? config("sys_sys") : "Undefined";
+        $sysSys = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined";
         $date = \ProcessMaker\Util\DateTime::convertUtcToTimeZone(date('Y-m-d H:m:s'));
         $aContext = array(
             'ip'           => \G::getIpAddress()
@@ -2722,7 +2722,7 @@ class Bootstrap
             $context['url'] = SYS_CURRENT_URI . '?' . SYS_CURRENT_PARMS;
         }
         $context['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '';
-        $sysSys = defined("SYS_SYS") ? config("sys_sys") : "Undefined";
+        $sysSys = !empty(config("system.workspace")) ? config("system.workspace") : "Undefined";
         \Bootstrap::registerMonolog($channel, $level, $message, $context, $sysSys, 'processmaker.log');
     }
 
@@ -2734,13 +2734,13 @@ class Bootstrap
      * @return void
      */
     public static function setConstantsRelatedWs($wsName = null) {
-        if (!defined('SYS_SYS') && !is_null($wsName)) {
+        if (empty(config("system.workspace")) && !is_null($wsName)) {
             //If SYS_SYS exists, is not update with $wsName
             define('SYS_SYS', $wsName);
-            config(["sys_sys" => $wsName]);
+            config(["system.workspace" => $wsName]);
         }
-        if (defined('SYS_SYS') && !defined('PATH_DATA_SITE')) {
-            define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . config("sys_sys") . PATH_SEP);
+        if (!empty(config("system.workspace")) && !defined('PATH_DATA_SITE')) {
+            define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP);
         }
         if (defined('PATH_DATA_SITE') && !defined('PATH_WORKSPACE')) {
             define('PATH_WORKSPACE', PATH_DATA_SITE);

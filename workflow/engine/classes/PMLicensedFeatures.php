@@ -337,7 +337,7 @@ class PMLicensedFeatures
     /*----------------------------------********---------------------------------*/
     public function verifyfeature ($featureName)
     {
-        $cached = Cache::get(PmLicenseManager::CACHE_KEY . '.' . config("sys_sys"), []);
+        $cached = Cache::get(PmLicenseManager::CACHE_KEY . '.' . config("system.workspace"), []);
         if (isset($cached[$featureName])) {
             return $cached[$featureName];
         }
@@ -360,7 +360,7 @@ class PMLicensedFeatures
         $this->featuresDetails[$value[0]]->enabled = $enable;
 
         $cached[$featureName] = $enable;
-        Cache::put(PmLicenseManager::CACHE_KEY . '.' . config("sys_sys"), $cached, Carbon::now()->addDay(1));
+        Cache::put(PmLicenseManager::CACHE_KEY . '.' . config("system.workspace"), $cached, Carbon::now()->addDay(1));
 
         return $enable;
     }

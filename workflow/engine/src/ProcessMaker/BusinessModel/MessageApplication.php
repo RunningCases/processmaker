@@ -371,7 +371,7 @@ class MessageApplication
             $ws = new \WsBase();
             $case = new \Cases();
             $common = new \ProcessMaker\Util\Common();
-            $sysSys = (defined("SYS_SYS"))? config("sys_sys") : "Undefined";
+            $sysSys = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined";
 
             $common->setFrontEnd($frontEnd);
 
@@ -683,7 +683,7 @@ class MessageApplication
     )
     {
         try {
-            \Bootstrap::registerMonolog('MessageEventCron', $level, $message, $aContext, config("sys_sys"), 'processmaker.log');
+            \Bootstrap::registerMonolog('MessageEventCron', $level, $message, $aContext, config("system.workspace"), 'processmaker.log');
         } catch (\Exception $e) {
             throw $e;
         }

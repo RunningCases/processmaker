@@ -98,7 +98,7 @@ print "PATH_DB: " . PATH_DB . "\n";
 print "PATH_CORE: " . PATH_CORE . "\n";
 
 // define the site name (instance name)
-if (! defined ('SYS_SYS')) {
+if (empty(config("system.workspace"))) {
   $sObject = $workspaceName;
   $sNow = ''; // $argv[2];
   /*
@@ -115,12 +115,12 @@ if (! defined ('SYS_SYS')) {
     if (file_exists (PATH_DB . $sObject . PATH_SEP . 'db.php')) {
 
       define ('SYS_SYS', $sObject);
-      config(["sys_sys" => $sObject]);
+      config(["system.workspace" => $sObject]);
 
       // ****************************************
       // read initialize file
       require_once PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.system.php';
-      $config = System::getSystemConfiguration ('', '', config("sys_sys"));
+      $config = System::getSystemConfiguration ('', '', config("system.workspace"));
       define ('MEMCACHED_ENABLED', $config ['memcached']);
       define ('MEMCACHED_SERVER', $config ['memcached_server']);
       define ('TIME_ZONE', $config ['time_zone']);
@@ -143,7 +143,7 @@ if (! defined ('SYS_SYS')) {
       print "MEMCACHED_SERVER: " . $MEMCACHED_SERVER . "\n";
 
       // ***************** PM Paths DATA **************************
-      define ('PATH_DATA_SITE', PATH_DATA . 'sites/' . config("sys_sys") . '/');
+      define ('PATH_DATA_SITE', PATH_DATA . 'sites/' . config("system.workspace") . '/');
       define ('PATH_DOCUMENT', PATH_DATA_SITE . 'files/');
       define ('PATH_DATA_MAILTEMPLATES', PATH_DATA_SITE . 'mailTemplates/');
       define ('PATH_DATA_PUBLIC', PATH_DATA_SITE . 'public/');
@@ -338,7 +338,7 @@ function displayMissingCases($aAppUidsDB, $aAppUidsSolr)
 
 function getListUids($usrUid, $action)
 {
-  if (($solrConf = System::solrEnv (config("sys_sys"))) !== false) {
+  if (($solrConf = System::solrEnv (config("system.workspace"))) !== false) {
 
     print "Solr Configuration file: " . PATH_DATA_SITE . "env.ini\n";
     print "solr_enabled: " . $solrConf ['solr_enabled'] . "\n";

@@ -171,7 +171,7 @@ class Trigger
         ) {
             //Check disabled code
 
-            $cs = new \CodeScanner(config("sys_sys"));
+            $cs = new \CodeScanner(config("system.workspace"));
 
             $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $dataTrigger["TRI_WEBBOT"]);
 

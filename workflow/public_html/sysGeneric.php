@@ -39,8 +39,8 @@ function transactionLog($transactionName){
 
 
         //Custom parameters
-        if(defined("SYS_SYS")){
-            newrelic_add_custom_parameter ("workspace", config("sys_sys"));
+        if(!empty(config("system.workspace"))){
+            newrelic_add_custom_parameter ("workspace", config("system.workspace"));
         }
         if(defined("SYS_LANG")){
             newrelic_add_custom_parameter ("lang", SYS_LANG);
@@ -65,8 +65,8 @@ function transactionLog($transactionName){
         }
 
         //Show correct transaction name
-        if(defined("SYS_SYS")){
-            newrelic_set_appname ("PM-".config("sys_sys").";$baseName");
+        if(!empty(config("system.workspace"))){
+            newrelic_set_appname ("PM-".config("system.workspace").";$baseName");
         }
         if(defined("PATH_CORE")){
             $transactionName=str_replace(PATH_CORE,"",$transactionName);
@@ -584,10 +584,10 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
     if (file_exists( $pathFile )) {
         require_once ($pathFile);
         define( 'SYS_SYS', SYS_TEMP );
-        config(["sys_sys" => SYS_TEMP]);
+        config(["system.workspace" => SYS_TEMP]);
 
         // defining constant for workspace shared directory
-        define( 'PATH_WORKSPACE', PATH_DB . config("sys_sys") . PATH_SEP );
+        define( 'PATH_WORKSPACE', PATH_DB . config("system.workspace") . PATH_SEP );
         // including workspace shared classes -> particularlly for pmTables
         set_include_path( get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE );
     } else {
@@ -638,7 +638,7 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
 }
 
 // PM Paths DATA
-define( 'PATH_DATA_SITE', PATH_DATA . 'sites/' . config("sys_sys") . '/' );
+define( 'PATH_DATA_SITE', PATH_DATA . 'sites/' . config("system.workspace") . '/' );
 define( 'PATH_DOCUMENT', PATH_DATA_SITE . 'files/' );
 define( 'PATH_DATA_MAILTEMPLATES', PATH_DATA_SITE . 'mailTemplates/' );
 define( 'PATH_DATA_PUBLIC', PATH_DATA_SITE . 'public/' );
@@ -652,7 +652,7 @@ define( 'SERVER_PORT', $_SERVER['SERVER_PORT'] );
 
 
 // create memcached singleton
-$memcache = & PMmemcached::getSingleton( config("sys_sys") );
+$memcache = & PMmemcached::getSingleton( config("system.workspace") );
 
 // load Plugins base class
 
@@ -671,7 +671,7 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 
     // unified log file for all databases
     $logFile = PATH_DATA . 'log' . PATH_SEP . 'propel.log';
-    $logger = Log::singleton( 'file', $logFile, 'wf ' . config("sys_sys"), null, PEAR_LOG_INFO );
+    $logger = Log::singleton( 'file', $logFile, 'wf ' . config("system.workspace"), null, PEAR_LOG_INFO );
     Propel::setLogger( $logger );
     // log file for workflow database
     $con = Propel::getConnection( 'workflow' );
@@ -887,13 +887,13 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
 }
 
 //redirect to login, if user changed the workspace in the URL
-if (! $avoidChangedWorkspaceValidation && isset( $_SESSION['WORKSPACE'] ) && $_SESSION['WORKSPACE'] != config("sys_sys")) {
-    $_SESSION['WORKSPACE'] = config("sys_sys");
+if (! $avoidChangedWorkspaceValidation && isset( $_SESSION['WORKSPACE'] ) && $_SESSION['WORKSPACE'] != config("system.workspace")) {
+    $_SESSION['WORKSPACE'] = config("system.workspace");
     Bootstrap::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', "error" );
     // verify if the current skin is a 'ux' variant
     $urlPart = substr( SYS_SKIN, 0, 2 ) == 'ux' && SYS_SKIN != 'uxs' ? '/main/login' : '/login/login';
 
-    header( 'Location: /sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . $urlPart );
+    header( 'Location: /sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . $urlPart );
     die();
 }
 

@@ -29,7 +29,7 @@ if (G::is_https()) {
     $http = 'http://';
 }
 
-$endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("sys_sys") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
+$endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
 $client = new SoapClient( $endpoint, $streamContext );
 
 $user = $sWS_USER;

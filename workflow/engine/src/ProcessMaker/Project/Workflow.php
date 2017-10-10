@@ -1123,10 +1123,10 @@ class Workflow extends Handler
                         $basePath = PATH_DYNAFORM;
                         break;
                     case "PUBLIC":
-                        $basePath = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "public" . PATH_SEP;
+                        $basePath = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "public" . PATH_SEP;
                         break;
                     case "TEMPLATES":
-                        $basePath = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP . "mailTemplates" . PATH_SEP;
+                        $basePath = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "mailTemplates" . PATH_SEP;
                         break;
                     default:
                         $basePath = "";
@@ -1213,7 +1213,7 @@ class Workflow extends Handler
 
             //Get templates and public files
             $workspaceTargetDirs = array("TEMPLATES" => "mailTemplates", "PUBLIC" => "public");
-            $workspaceDir = PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP;
+            $workspaceDir = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP;
 
             foreach ($workspaceTargetDirs as $target => $workspaceTargetDir) {
                 $templatesDir = $workspaceDir . $workspaceTargetDir . PATH_SEP . $processUid;

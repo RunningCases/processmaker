@@ -117,7 +117,7 @@ class adminProxy extends HttpProxyController
 
         $this->success = true;
         $this->restart = $restart;
-        $this->url     = "/sys" . config("sys_sys") . "/" . (($sysConf["default_lang"] != "")? $sysConf["default_lang"] : ((defined("SYS_LANG") && SYS_LANG != "")? SYS_LANG : "en")) . "/" . $sysConf["default_skin"] . $urlPart;
+        $this->url     = "/sys" . config("system.workspace") . "/" . (($sysConf["default_lang"] != "")? $sysConf["default_lang"] : ((defined("SYS_LANG") && SYS_LANG != "")? SYS_LANG : "en")) . "/" . $sysConf["default_skin"] . $urlPart;
         $this->message = 'Saved Successfully';
         $msg = "";
         if ($httpData->proxy_host != '' || $httpData->proxy_port != '' || $httpData->proxy_user != '') {
@@ -1191,7 +1191,7 @@ class adminProxy extends HttpProxyController
                     $snameLogo = self::changeNamelogo($snameLogo);
                     $oConf = new Configurations;
                     $aConf = Array(
-                        'WORKSPACE_LOGO_NAME' => config("sys_sys"),
+                        'WORKSPACE_LOGO_NAME' => config("system.workspace"),
                         'DEFAULT_LOGO_NAME'   => $snameLogo
                     );
 
@@ -1356,7 +1356,7 @@ class adminProxy extends HttpProxyController
                 '%s://%s/sys%s/%s/%s/oauth2/grant',
                 $http,
                 $host,
-                config("sys_sys"),
+                config("system.workspace"),
                 $lang,
                 SYS_SKIN
             );
@@ -1416,7 +1416,7 @@ class adminProxy extends HttpProxyController
 
         //On premise or cloud
         $licInfo = $oServerConf->getProperty( 'LICENSE_INFO' );
-        $params['lt'] = isset($licInfo[config("sys_sys")]) ? isset($licInfo[config("sys_sys")]['TYPE'])? $licInfo[config("sys_sys")]['TYPE'] : ''  : '';
+        $params['lt'] = isset($licInfo[config("system.workspace")]) ? isset($licInfo[config("system.workspace")]['TYPE'])? $licInfo[config("system.workspace")]['TYPE'] : ''  : '';
 
         //ProcessMaker Version
         $params['v'] = System::getVersion();
@@ -1511,7 +1511,7 @@ class adminProxy extends HttpProxyController
         $params['t'] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
         $params['w'] = count(System::listWorkspaces());
 
-        $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . config("sys_sys") . '-' . date('YmdHis'), false, false) . '.spm';
+        $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . config("system.workspace") . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));
         G::streamFile($support, true);
         G::rm_dir($support);

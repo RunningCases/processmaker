@@ -78,7 +78,7 @@ try {
     $configuration = new Configurations();
     $importResults = $language->import( $languageFile );
 
-    $renegerateContent = new WorkspaceTools( config("sys_sys") );
+    $renegerateContent = new WorkspaceTools( config("system.workspace") );
     $messs = $renegerateContent->upgradeContent();
 
     $result->msg = G::LoadTranslation( 'IMPORT_LANGUAGE_SUCCESS' ) . "\n";

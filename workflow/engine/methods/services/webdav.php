@@ -37,7 +37,7 @@ function AuthenticationBasicHTTP ($realm)
     return false;
 }
 
-$realm = 'ProcessMaker Filesystem for Workspace ' . config("sys_sys");
+$realm = 'ProcessMaker Filesystem for Workspace ' . config("system.workspace");
 
 # Choice an authentification type Digest or Basic
 //AuthenticationDigestHTTP($realm, $users, $phpcgi);

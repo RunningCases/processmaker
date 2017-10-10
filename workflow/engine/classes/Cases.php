@@ -1068,7 +1068,7 @@ class Cases
                     $oDerivation->verifyIsCaseChild($sAppUid);
                 }
             } catch (Exception $e) {
-                Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], config("sys_sys"), 'processmaker.log');
+                Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], config("system.workspace"), 'processmaker.log');
             }
 
             //Delete the registries in the table SUB_APPLICATION
@@ -2211,7 +2211,7 @@ class Cases
             "delIndex" => $iDelIndex,
             "appInitDate" => $Fields['APP_INIT_DATE']
         ];
-        Bootstrap::registerMonolog('CreateCase', 200, "Create case", $data, config("sys_sys"), 'processmaker.log');
+        Bootstrap::registerMonolog('CreateCase', 200, "Create case", $data, config("system.workspace"), 'processmaker.log');
 
         //call plugin
         if (class_exists('folderData')) {
@@ -3375,7 +3375,7 @@ class Cases
             $oPMScript->setFields($aFields);
 
             /*----------------------------------********---------------------------------*/
-            $cs = new CodeScanner(config("sys_sys"));
+            $cs = new CodeScanner(config("system.workspace"));
 
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/

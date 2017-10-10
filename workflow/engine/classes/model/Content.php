@@ -315,7 +315,7 @@ class Content extends BaseContent
     public function regenerateContent ($langs, $workSpace = null)
     {
         if ($workSpace === null) {
-            $workSpace = config("sys_sys");
+            $workSpace = config("system.workspace");
         }
         //Search the language
         $key = array_search( 'en', $langs );

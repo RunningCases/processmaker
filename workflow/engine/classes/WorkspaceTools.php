@@ -102,7 +102,7 @@ class WorkspaceTools
     public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
     {
         if ($workSpace === null) {
-            $workSpace = config("sys_sys");
+            $workSpace = config("system.workspace");
         }
         if (is_null($arrayOptTranslation)) {
             $arrayOptTranslation = ['updateXml' => true, 'updateMafe' => true];
@@ -226,7 +226,7 @@ class WorkspaceTools
     public function updateStructureDirectories($workSpace = null)
     {
         if ($workSpace === null) {
-            $workSpace = config("sys_sys");
+            $workSpace = config("system.workspace");
         }
         $start = microtime(true);
         CLI::logging("> Updating cases directories structure...\n");
@@ -479,7 +479,7 @@ class WorkspaceTools
     public function upgradeContent($workSpace = null)
     {
         if ($workSpace === null) {
-            $workSpace = config("sys_sys");
+            $workSpace = config("system.workspace");
         }
         $this->initPropel(true);
         //require_once 'classes/model/Translation.php';
@@ -1748,13 +1748,13 @@ class WorkspaceTools
             $aParameters = array('dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass);
 
             //Restore
-            if (!defined("SYS_SYS")) {
+            if (empty(config("system.workspace"))) {
                 define("SYS_SYS", $workspaceName);
-                config(["sys_sys" => $workspaceName]);
+                config(["system.workspace" => $workspaceName]);
             }
 
             if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("sys_sys") . PATH_SEP);
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
             }
 
             $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch)) ? $arrayMatch[1] : "";
@@ -3950,7 +3950,7 @@ class WorkspaceTools
     private function updateFrameworkPaths($workSpace = null)
     {
         if ($workSpace === null) {
-            $workSpace = config("sys_sys");
+            $workSpace = config("system.workspace");
         }
         $paths = [
             PATH_DATA.'framework' => 0770,

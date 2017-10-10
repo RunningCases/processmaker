@@ -212,7 +212,7 @@ class PmTable
         }
 
         $this->schemaFilename = 'schema.xml';
-        $this->baseDir = PATH_DB . config("sys_sys") . PATH_SEP;
+        $this->baseDir = PATH_DB . config("system.workspace") . PATH_SEP;
         $this->targetDir = $this->baseDir . 'pmt-propel' . PATH_SEP . $this->dataSource . PATH_SEP;
         $this->configDir = $this->targetDir . 'config' . PATH_SEP;
         $this->dataDir = $this->targetDir . 'data' . PATH_SEP;

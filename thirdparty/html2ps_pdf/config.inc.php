@@ -102,7 +102,7 @@ define('MAX_IMAGE_ROW_LEN',16);
 define('MAX_TRANSPARENT_IMAGE_ROW_LEN',16);
 
 define('CACHE_DIR', HTML2PS_DIR.'cache/');
-//define('OUTPUT_FILE_DIRECTORY', HTML2PS_DIR.'out/'.(defined('SYS_SYS') ? config("sys_sys") . '/' : ''));
+//define('OUTPUT_FILE_DIRECTORY', HTML2PS_DIR.'out/'.(!empty(config("system.workspace")) ? config("system.workspace") . '/' : ''));
 define('OUTPUT_FILE_DIRECTORY', PATH_OUTPUT_FILE_DIRECTORY);
 define('FPDF_PATH', HTML2PS_DIR.'fpdf/');
 

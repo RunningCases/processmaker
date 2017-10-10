@@ -56,7 +56,7 @@
 
     function getChart( $chartName ) {
     	$this->readConfig();
-      $prePath = '/sys' . config("sys_sys") . '/' . SYS_LANG . '/blank/';
+      $prePath = '/sys' . config("system.workspace") . '/' . SYS_LANG . '/blank/';
     	$obj = new StdClass();
       $obj->title = 'Standard ProcessMaker Reports';
       $obj->height = 220;

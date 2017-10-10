@@ -263,7 +263,7 @@ if ($sStatus == '1') {
 
     $oAdditionalTables->createPropelClasses($tableName, $sClassName, $aFieldsClases, $sTasUid);
 } else {
-    $sPath = PATH_DB . config("sys_sys") . PATH_SEP . 'classes' . PATH_SEP;
+    $sPath = PATH_DB . config("system.workspace") . PATH_SEP . 'classes' . PATH_SEP;
     @unlink($sPath . $sClassName . '.php');
     @unlink($sPath . $sClassName . 'Peer.php');
     @unlink($sPath . PATH_SEP . 'map' . PATH_SEP . $sClassName . 'MapBuilder.php');
