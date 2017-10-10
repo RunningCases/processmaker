@@ -239,11 +239,10 @@ class PmBootstrap extends Bootstrap
     public function initPropel($sys = '')
     {
         if (empty($sys)) {
-            if (empty(config("system.workspace"))) {
-                throw new Exception("Error: Undefined syemtem env. constant 'SYS_SYS'");
-            }
-
             $sys = config("system.workspace");
+            if (empty($sys)) {
+                throw new Exception("Error: Undefined system environment (workspace).");
+            }
         }
 
         // setup propel definitions and logging
