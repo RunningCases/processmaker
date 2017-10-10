@@ -24,12 +24,12 @@ switch ($mainDirectory) {
         break;
 }
 
-$directory .= $proUid;
+$directory .= $proUid . PATH_SEP;
 
 //Delete return directory because path exists in PATH_DATA_MAILTEMPLATES or PATH_DATA_PUBLIC
 foreach (pathinfo($currentDirectory) as $value) {
     if ($value !== '..') {
-        $directory .= PATH_SEP . $value;
+        $directory .= $value . PATH_SEP;
     }
 }
 $file .= $extension;
