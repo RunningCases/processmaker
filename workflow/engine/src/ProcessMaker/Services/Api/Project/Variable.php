@@ -49,10 +49,10 @@ class Variable extends Api
 
     /**
      * @url POST /:prj_uid/process-variable
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
      * @status 201
      */
     public function doPostVariable($prj_uid, $request_data)
@@ -110,7 +110,8 @@ class Variable extends Api
 
     /**
      * @url POST /:prj_uid/process-variable/:var_name/execute-query
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY, PM_CASES}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $var_name
      * @param array  $request_data
@@ -132,7 +133,8 @@ class Variable extends Api
 
     /**
      * @url POST /:prj_uid/process-variable/:var_name/execute-query-suggest
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY, PM_CASES}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $var_name
      * @param array  $request_data

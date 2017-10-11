@@ -51,11 +51,11 @@ class CaseScheduler extends Api
     }
 
     /**
+     * @url POST /:prjUid/case-scheduler
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prjUid {@min 32} {@max 32}
      * @param CaseSchedulerStructure $request_data
-     *
-     * @url POST /:prjUid/case-scheduler
-     *
      * @status 201
      */
     public function doPostProjectCaseScheduler($prjUid, CaseSchedulerStructure $request_data =  null)

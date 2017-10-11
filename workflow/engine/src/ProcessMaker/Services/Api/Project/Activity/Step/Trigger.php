@@ -35,12 +35,12 @@ class Trigger extends Api
 
     /**
      * @url POST /:prj_uid/activity/:act_uid/step/:step_uid/trigger
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $step_uid
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepTriggerPostStructure $request_data
-     *
      * @status 201
      */
     public function doPostActivityStepTrigger($step_uid, $act_uid, $prj_uid, StepTriggerPostStructure $request_data = null)
@@ -123,11 +123,11 @@ class Trigger extends Api
 
     /**
      * @url POST /:prj_uid/activity/:act_uid/step/trigger
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepAssignTaskTriggerPostStructure $request_data
-     *
      * @status 201
      */
     public function doPostActivityStepAssignTaskTrigger($act_uid, $prj_uid, StepAssignTaskTriggerPostStructure $request_data = null)

@@ -63,6 +63,10 @@ class Process extends Api
         return $response;
     }
 
+    /**
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     */
     public function post($request_data = null)
     {
         defined('SYS_LANG') || define("SYS_LANG", $request_data["lang"]);

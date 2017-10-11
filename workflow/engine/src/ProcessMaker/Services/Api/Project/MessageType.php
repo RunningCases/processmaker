@@ -66,10 +66,10 @@ class MessageType extends Api
 
     /**
      * @url POST /:prj_uid/message-type
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
      * @status 201
      */
     public function doPostMessageType($prj_uid, array $request_data)

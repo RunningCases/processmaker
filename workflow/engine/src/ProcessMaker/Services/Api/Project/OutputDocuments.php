@@ -52,10 +52,10 @@ class OutputDocuments extends Api
 
     /**
      * @url POST /:prjUid/output-document
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prjUid {@min 32} {@max 32}
      * @param OutputDocumentStructure $request_data
-     *
      * @status 201
      */
     public function doPostProjectOutputDocument($prjUid, OutputDocumentStructure $request_data = null)

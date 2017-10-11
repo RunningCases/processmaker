@@ -12,8 +12,9 @@ use \Luracast\Restler\RestException;
 class File extends Api
 {
     /**
-     *
      * @url POST /upload
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param array  $request_data
      */
     public function doPostFilesUpload($request_data)

@@ -32,14 +32,14 @@ class CaseTrackerObject extends Api
 
     /**
      * @url POST /:prj_uid/case-tracker/object
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid       {@min 32}{@max 32}
      * @param array  $request_data
      * @param string $cto_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
      * @param string $cto_uid_obj   {@from body}{@min 32}{@max 32}{@required true}
      * @param string $cto_condition {@from body}
      * @param int    $cto_position  {@from body}{@min 1}
-     *
      * @status 201
      */
     public function doPostCaseTrackerObject(

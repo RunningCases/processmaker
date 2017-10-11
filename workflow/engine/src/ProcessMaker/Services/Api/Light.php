@@ -967,15 +967,14 @@ class Light extends Api
     /**
      * Execute Trigger case
      *
+     * @url POST /process/:prj_uid/task/:act_uid/case/:cas_uid/step/:step_uid/execute-trigger/:type
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $prj_uid {@min 1}{@max 32}
      * @param string $act_uid {@min 1}{@max 32}
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $step_uid {@min 32}{@max 32}
      * @param string $type {@choice before,after}
-     *
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /process/:prj_uid/task/:act_uid/case/:cas_uid/step/:step_uid/execute-trigger/:type
      */
     public function doPutExecuteTriggerCase($prj_uid, $act_uid, $cas_uid, $step_uid, $type)
     {
@@ -1134,7 +1133,8 @@ class Light extends Api
 
     /**
      * @url POST /process/:pro_uid/task/:task_uid/start-case
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $pro_uid {@min 32}{@max 32}
      * @param string $task_uid {@min 32}{@max 32}
      */
@@ -1229,7 +1229,8 @@ class Light extends Api
 
     /**
      * @url POST /case/:app_uid/upload/location
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $app_uid { @min 32}{@max 32}
      * @param float $latitude {@min -90}{@max 90}
      * @param float $longitude {@min -180}{@max 180}
@@ -1271,7 +1272,8 @@ class Light extends Api
 
     /**
      * @url POST /case/:app_uid/download64
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $app_uid {@min 32}{@max 32}
      */
     public function postDownloadFile($app_uid, $request_data)
@@ -1369,7 +1371,8 @@ class Light extends Api
 
     /**
      * @url POST /case/:app_uid/upload
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param $access
      * @param $refresh
      * @return mixed
@@ -1389,7 +1392,8 @@ class Light extends Api
 
     /**
      * @url POST /case/:app_uid/upload/:app_doc_uid
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param $access
      * @param $refresh
      * @return mixed
@@ -1409,7 +1413,8 @@ class Light extends Api
 
     /**
      * @url POST /case/:app_uid/claim
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param $app_uid {@min 1}{@max 32}
      * @return mixed
      */
@@ -1500,13 +1505,13 @@ class Light extends Api
     /**
      * Post Case Notes
      *
+     * @url POST /case/:app_uid/note
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $app_uid {@min 1}{@max 32}
      * @param string $noteContent {@min 1}{@max 500}
      * @param int $sendMail {@choice 1,0}
-     *
      * @copyright Colosa - Bolivia
-     *
-     * @url POST /case/:app_uid/note
      */
     public function doPostCaseNote($app_uid, $noteContent, $sendMail = 0)
     {
@@ -1591,13 +1596,13 @@ class Light extends Api
     }
 
     /**
-     * @return stdclass
-     * @throws RestException
-     *
+     * @url POST /reassign/:app_uid/user/:to_usr_uid
+     * @access protected
+     * @class AccessControl {@permission PM_REASSIGNCASE, PM_REASSIGNCASE_SUPERVISOR}
      * @param string $app_uid {@min 1}{@max 32}
      * @param string $to_usr_uid {@min 1}{@max 32}
-     *
-     * @url POST /reassign/:app_uid/user/:to_usr_uid
+     * @return stdclass
+     * @throws RestException
      */
     public function reassignCase($app_uid, $to_usr_uid)
     {
@@ -1615,12 +1620,12 @@ class Light extends Api
     /**
      * Paused Case
      *
+     * @url POST /cases/:app_uid/pause
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @param string $app_uid {@min 1}{@max 32}
      * @return stdclass
      * @throws RestException
-     *
-     * @param string $app_uid {@min 1}{@max 32}
-     *
-     * @url POST /cases/:app_uid/pause
      */
     public function pauseCase($app_uid, $request_data)
     {
@@ -1639,12 +1644,12 @@ class Light extends Api
     /**
      * Unpaused Case
      *
+     * @url POST /cases/:app_uid/unpause
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @param string $app_uid {@min 1}{@max 32}
      * @return stdclass
      * @throws RestException
-     *
-     * @param string $app_uid {@min 1}{@max 32}
-     *
-     * @url POST /cases/:app_uid/unpause
      */
     public function unpauseCase($app_uid)
     {
@@ -1664,11 +1669,10 @@ class Light extends Api
     /**
      * Cancel Case
      *
-     * @param string $cas_uid {@min 1}{@max 32}
-     *
-     * @copyright Colosa - Bolivia
-     *
      * @url POST /cases/:app_uid/cancel
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @param string $cas_uid {@min 1}{@max 32}
      */
     public function doPutCancelCase($app_uid)
     {
@@ -1837,6 +1841,8 @@ class Light extends Api
      * Get next step
      *
      * @url POST /get-next-step/:app_uid
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @return array
      */
     public function doGetStep($app_uid, $request_data)
@@ -1931,8 +1937,12 @@ class Light extends Api
     }
 
     /**
-     * This function checks if the application uids sent are in the draft list for the specified user
+     * This function checks if the application uids sent are in the draft list for 
+     * the specified user.
+     * 
      * @url POST /draft/check
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param array $requestData
      * @return array $response
      * @throws Exception

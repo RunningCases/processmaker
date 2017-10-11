@@ -134,7 +134,8 @@ class OutputDocument extends Api
 
     /**
      * @url POST /:app_uid/:del_index/output-document/:out_doc_uid
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $app_uid     {@min 32}{@max 32}
      * @param int    $del_index   {@min 1}
      * @param string $out_doc_uid {@min 32}{@max 32}

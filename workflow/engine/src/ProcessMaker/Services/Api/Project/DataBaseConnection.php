@@ -55,9 +55,11 @@ class DataBaseConnection extends Api
     }
 
     /**
+     * @url POST /:prj_uid/database-connection/test
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
      * @param string $dbs_type {@from body} {@required true}
      * @param string $dbs_server {@from body} {@required false}
      * @param string $dbs_database_name {@from body} {@required false}
@@ -66,11 +68,6 @@ class DataBaseConnection extends Api
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
      * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /:prj_uid/database-connection/test
      */
     public function doPostTestDataBaseConnection(
         $prj_uid,
@@ -94,9 +91,11 @@ class DataBaseConnection extends Api
     }
 
     /**
+     * @url POST /:prj_uid/database-connection
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
      * @param string $dbs_type {@from body} {@required true}
      * @param string $dbs_server {@from body} {@required false}
      * @param string $dbs_database_name {@from body} {@required false}
@@ -105,11 +104,6 @@ class DataBaseConnection extends Api
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
      * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /:prj_uid/database-connection
      * @status 201
      */
     public function doPostDataBaseConnection(

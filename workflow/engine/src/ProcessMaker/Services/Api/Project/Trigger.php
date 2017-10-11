@@ -55,6 +55,9 @@ class Trigger extends Api
     }
 
     /**
+     * @url POST /:projectUid/trigger
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $projectUid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $tri_title {@from body} {@min 1}
@@ -63,11 +66,6 @@ class Trigger extends Api
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
      * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /:projectUid/trigger
      * @status 201
      */
     public function doPostTrigger($projectUid, $request_data, $tri_title, $tri_description = '', $tri_type = 'SCRIPT', $tri_webbot = '', $tri_param = '')

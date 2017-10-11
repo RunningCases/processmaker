@@ -103,12 +103,11 @@ class Department extends Api
 
     /**
      * @url POST /:dep_uid/assign-user
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      * @param string $dep_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
      * @status 201
-     *
      */
     public function doPostAssignUser($dep_uid, array $request_data)
     {
@@ -181,14 +180,12 @@ class Department extends Api
 
     /**
      * @url POST
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      * @param array $request_data
      * @param string $dep_title {@from body} {@min 1}
-     *
      * @return array
-     *
      * @status 201
-     *
      */
     public function doPost($request_data, $dep_title)
     {

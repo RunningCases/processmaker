@@ -133,18 +133,16 @@ class Consolidated extends Api
     /**
      * Post Derivate
      *
+     * @url POST /derivate/:app_uid/:app_number/:del_index/:field_grid/:field_grid_val
+     * @url POST /derivate/:app_uid/:app_number/:del_index/:field_grid/
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $app_uid {@min 1} {@max 32}
      * @param string $app_number
      * @param int $del_index
      * @param string $field_grid
      * @param string $field_grid_val
      * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /derivate/:app_uid/:app_number/:del_index/:field_grid/:field_grid_val
-     * @url POST /derivate/:app_uid/:app_number/:del_index/:field_grid/
      */
     public function doPostDerivate($app_uid, $app_number, $del_index, $field_grid, $field_grid_val = '')
     {

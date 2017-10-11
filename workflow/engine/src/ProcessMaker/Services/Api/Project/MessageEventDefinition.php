@@ -81,10 +81,10 @@ class MessageEventDefinition extends Api
 
     /**
      * @url POST /:prj_uid/message-event-definition
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
      * @status 201
      */
     public function doPostMessageEventDefinition($prj_uid, array $request_data)

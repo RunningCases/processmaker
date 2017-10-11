@@ -13,10 +13,10 @@ class User extends Api
 {
     /**
      * @url POST /:grp_uid/user
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      * @param string $grp_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
      * @status 201
      */
     public function doPostUser($grp_uid, $request_data)
@@ -33,9 +33,9 @@ class User extends Api
 
     /**
      * @url POST /batch-users
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      * @param array $request_data
-     *
      * @status 201
      */
     public function doPostBatchUsers($request_data)

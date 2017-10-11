@@ -757,11 +757,11 @@ class Cases extends Api
 
     /**
      * @url POST
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $pro_uid {@from body} {@min 32}{@max 32}
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
-     *
      */
     public function doPostCase($pro_uid, $tas_uid, $variables = null)
     {
@@ -777,12 +777,12 @@ class Cases extends Api
 
     /**
      * @url POST /impersonate
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $pro_uid {@from body} {@min 32}{@max 32}
      * @param string $usr_uid {@from body} {@min 32}{@max 32}
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
-     *
      */
     public function doPostCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables = null)
     {
@@ -1097,14 +1097,12 @@ class Cases extends Api
     /**
      * Put Case Variables
      *
+     * @url POST /:app_uid/note
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $app_uid {@min 1}{@max 32}
      * @param string $note_content {@min 1}{@max 500}
      * @param int $send_mail {@choice 1,0}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /:app_uid/note
      */
     public function doPostCaseNote($app_uid, $note_content, $send_mail = 0)
     {
@@ -1231,10 +1229,11 @@ class Cases extends Api
 
     /**
      * Mark a task process as a bookmark
+     * 
      * @url POST /bookmark/:tas_uid
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $tas_uid {@min 32}{@max 32}
-     *
      */
     public function doPostBookmarkStartCase($tas_uid)
     {

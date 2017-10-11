@@ -86,7 +86,8 @@ class EmailServer extends Api
 
     /**
      * @url POST /test-connection
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
      * @param array $request_data
      */
     public function doPostTestConnection(array $request_data)
@@ -104,9 +105,9 @@ class EmailServer extends Api
 
     /**
      * @url POST
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
      * @param array $request_data
-     *
      * @status 201
      */
     public function doPost(array $request_data)

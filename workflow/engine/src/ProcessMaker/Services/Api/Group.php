@@ -74,9 +74,9 @@ class Group extends Api
 
     /**
      * @url POST
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      * @param array $request_data
-     *
      * @status 201
      */
     public function doPost($request_data)

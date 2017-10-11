@@ -97,7 +97,8 @@ class InputDocument extends Api
 
     /**
      * @url POST /:app_uid/input-document
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $app_uid         { @min 32}{@max 32}
      * @param string $tas_uid         {@min 32}{@max 32}
      * @param string $app_doc_comment

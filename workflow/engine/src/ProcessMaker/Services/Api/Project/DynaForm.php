@@ -39,10 +39,10 @@ class DynaForm extends Api
     
     /**
      * @url POST /:prj_uid/dynaform
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
      * @status 201
      */
     public function doPostDynaForm($prj_uid, $request_data)
@@ -138,7 +138,8 @@ class DynaForm extends Api
 
     /**
      * @url POST /:prj_uid/dynaform/:dyn_uid/upload-language
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -155,7 +156,8 @@ class DynaForm extends Api
 
     /**
      * @url POST /:prj_uid/dynaform/:dyn_uid/delete-language/:lang
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -189,7 +191,8 @@ class DynaForm extends Api
 
     /**
      * @url POST /:prj_uid/dynaform/:dyn_uid/history
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * @param array  $request_data

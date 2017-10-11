@@ -67,12 +67,12 @@ class TriggerWizard extends Api
 
     /**
      * @url POST /:prj_uid/trigger-wizard/:lib_name/:fn_name
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $lib_name
      * @param string $fn_name
      * @param array  $request_data
-     *
      * @status 201
      */
     public function doPostTriggerWizard($prj_uid, $lib_name, $fn_name, $request_data)

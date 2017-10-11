@@ -39,12 +39,9 @@ class Catalog extends Api
 
     /**
      * @url POST
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_DASHBOARD}
      * @param array $request_data
-     *
-     * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @status 201
      */
     public function doPost($request_data)

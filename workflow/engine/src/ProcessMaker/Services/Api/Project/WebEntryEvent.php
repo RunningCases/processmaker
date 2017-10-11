@@ -89,11 +89,10 @@ class WebEntryEvent extends Api
 
     /**
      * @url POST /:prj_uid/web-entry-event
-     * @class  AccessControl {@permission PM_FACTORY}
-     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
      * @status 201
      */
     public function doPostWebEntryEvent($prj_uid, array $request_data)
