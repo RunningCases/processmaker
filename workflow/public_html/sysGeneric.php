@@ -999,9 +999,11 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
                 }
             }
 
-            if ($bRedirect &&
-                (!isset($_GET['tracker_designer']) || (!isset($_SESSION['CASE']) && !isset($_SESSION['PIN']))) &&
-                $_GET['tracker_designer'] !== 1) {
+            if (isset($_GET['tracker_designer']) && intval($_GET['tracker_designer']) !== 1) {
+                unset($_GET['tracker_designer']);
+            }
+
+            if ($bRedirect && (!isset($_GET['tracker_designer']) || (!isset($_SESSION['CASE']) && !isset($_SESSION['PIN'])))) {
                 if (substr(SYS_SKIN, 0, 2) === 'ux' && SYS_SKIN !== 'uxs') { // verify if the current skin is a 'ux' variant
                     $loginUrl = 'main/login';
                 } else if (strpos($_SERVER['REQUEST_URI'], '/home') !== false) { //verify is it is using the uxs skin for simplified interface
