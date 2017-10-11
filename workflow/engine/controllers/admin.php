@@ -196,15 +196,20 @@ class Admin extends Controller
         $this->render('extJs');
     }
 
-    function getSystemInfo ()
+    public function getSystemInfo()
     {
-        $this->setResponseType( 'json' );
-        $infoList = $this->_getSystemInfo();
-        $data = array ();
+        global $RBAC;
+        $RBAC->requirePermissions('PM_SETUP');
 
-        foreach ($infoList as $row) {
-            $data[] = array ('label' => $row[0],'value' => $row[1],'section' => $row[2]
-            );
+        $this->setResponseType('json');
+        $data = [];
+
+        foreach ($this->_getSystemInfo() as $row) {
+            $data[] = [
+                'label' => $row[0],
+                'value' => $row[1],
+                'section' => $row[2]
+            ];
         }
         return $data;
     }
