@@ -146,7 +146,7 @@ class Pmtable extends Api
      * @copyright Colosa - Bolivia
      *
      * @access protected
-     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
+     * @class AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url PUT /:pmt_uid
      */
     public function doPutPmTable(
@@ -164,15 +164,10 @@ class Pmtable extends Api
 
     /**
      * @param string $pmt_uid {@min 1} {@max 32}
-     *
      * @param array $request_data
      * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @access protected
-     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
+     * @class AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url PUT /:pmt_uid/data
      */
     public function doPutPmTableData(

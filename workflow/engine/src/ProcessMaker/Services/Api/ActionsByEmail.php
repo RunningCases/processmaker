@@ -65,6 +65,8 @@ class ActionsByEmail extends Api
     /**
      *
      * @url PUT /updateTemplate
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
+     * @access protected
      */
     public function updateTemplate($params)
     {
@@ -83,6 +85,8 @@ class ActionsByEmail extends Api
     /**
      *
      * @url PUT /saveConfiguration
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
+     * @access protected
      */
     public function saveConfiguration($params)
     {

@@ -79,7 +79,8 @@ class OutputDocuments extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $outputDocumentUid {@min 32} {@max 32}
      * @param array $request_data
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutProjectOutputDocument($prjUid, $outputDocumentUid, $request_data)
     {

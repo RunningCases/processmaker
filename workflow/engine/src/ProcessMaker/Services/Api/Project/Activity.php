@@ -101,17 +101,17 @@ class Activity extends Api
         }
     }
 
-
     /**
+     * Update an activity.
+     *
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $act_uid {@min 32} {@max 32}
      * @param ActivityPropertiesStructure $properties {@from body}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @return array
-     *
      * @url PUT /:prj_uid/activity/:act_uid
+     * @throws RestException
      */
     public function doPutProjectActivity($prj_uid, $act_uid, ActivityPropertiesStructure $properties, $request_data =  array())
     {
@@ -217,9 +217,12 @@ class Activity extends Api
     }
     
     /**
-     * @url PUT /:prj_uid/activity/validate-active-cases
+     * Get activity validate self service.
      *
+     * @url PUT /:prj_uid/activity/validate-active-cases
      * @param string $prj_uid {@min 32}{@max 32}
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doGetActivityValidateSelfService($prj_uid, $request_data =  array())
     {

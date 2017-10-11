@@ -78,6 +78,16 @@ class Process extends Api
         }
     }
 
+    /**
+     * Update a process by UID.
+     *
+     * @param type $processUid
+     * @param type $request_data
+     * @return type
+     * @throws RestException
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
+     */
     public function put($processUid, $request_data = null)
     {
         $response = array();

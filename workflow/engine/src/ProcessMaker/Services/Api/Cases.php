@@ -802,6 +802,8 @@ class Cases extends Api
      * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
      * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
      * @param string $del_index {@from body}
+     * @class AccessControl {@permission PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR}
+     * @access protected
      */
     public function doPutReassignCase($app_uid, $usr_uid_source, $usr_uid_target, $del_index = null)
     {
@@ -816,10 +818,12 @@ class Cases extends Api
 
     /**
      * Route Case
-     * @url PUT /:app_uid/route-case
      *
+     * @url PUT /:app_uid/route-case
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $del_index {@from body}
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      */
     public function doPutRouteCase($app_uid, $del_index = null)
     {
@@ -836,10 +840,8 @@ class Cases extends Api
      * Cancel Case
      *
      * @param string $cas_uid {@min 1}{@max 32}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_CANCELCASE}
+     * @access protected
      * @url PUT /:cas_uid/cancel
      */
     public function doPutCancelCase($cas_uid)
@@ -858,10 +860,8 @@ class Cases extends Api
      *
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $unpaused_date {@from body}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      * @url PUT /:cas_uid/pause
      */
     public function doPutPauseCase($cas_uid, $unpaused_date = null)
@@ -883,10 +883,8 @@ class Cases extends Api
      * Unpause Case
      *
      * @param string $cas_uid {@min 1}{@max 32}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      * @url PUT /:cas_uid/unpause
      */
     public function doPutUnpauseCase($cas_uid)
@@ -905,10 +903,8 @@ class Cases extends Api
      *
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $tri_uid {@min 1}{@max 32}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      * @url PUT /:cas_uid/execute-trigger/:tri_uid
      */
     public function doPutExecuteTriggerCase($cas_uid, $tri_uid)
@@ -977,10 +973,8 @@ class Cases extends Api
      * @param array $request_data
      * @param string $dyn_uid {@from path}
      * @param int $del_index {@from path}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      * @url PUT /:app_uid/variable
      */
     public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
@@ -1144,9 +1138,8 @@ class Cases extends Api
      * @param int $del_index {@from body}
      * @param string $obj_type {@from body}
      * @param string $obj_uid {@from body}
-     *
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      * @url PUT /:app_uid/execute-triggers
      */
     public function doPutExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)

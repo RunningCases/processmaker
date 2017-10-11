@@ -63,13 +63,11 @@ class Catalog extends Api
 
     /**
      * @url PUT /:cat_uid/:cat_type
-     *
      * @param string $cat_uid  {@min 32}{@max 32}
      * @param string $cat_type      {@min 32}{@max 32}
      * @param array  $request_data
-     *
-     * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @class AccessControl {@permission PM_DASHBOARD}
+     * @access protected
      */
     public function doPut($cat_uid, $cat_type, $request_data)
     {

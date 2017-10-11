@@ -124,10 +124,10 @@ class EmailServer extends Api
 
     /**
      * @url PUT /:mess_uid
-     *
      * @param string $mess_uid     {@min 32}{@max 32}
      * @param array  $request_data
-     *
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
+     * @access protected
      * @status 200
      */
     public function doPut($mess_uid, array $request_data)

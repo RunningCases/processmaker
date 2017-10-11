@@ -65,7 +65,8 @@ class CaseTrackerObject extends Api
 
     /**
      * @url PUT /:prj_uid/case-tracker/object/:cto_uid
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @param string $cto_uid       {@min 32}{@max 32}
      * @param string $prj_uid       {@min 32}{@max 32}
      * @param array  $request_data

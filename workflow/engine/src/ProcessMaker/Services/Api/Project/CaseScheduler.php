@@ -76,11 +76,11 @@ class CaseScheduler extends Api
 
     /**
      * @url PUT /:prjUid/case-scheduler/:schUid
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $schUid {@min 32} {@max 32}
      * @param CaseSchedulerStructure $request_data     
-     *
      */
     public function doPutProjectCaseScheduler($prjUid, $schUid, CaseSchedulerStructure $request_data)
     {

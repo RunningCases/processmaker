@@ -84,7 +84,6 @@ class Calendar extends Api
      * @access protected
      * @class  AccessControl {@permission PM_SETUP_CALENDAR}
      * @url PUT /:cal_uid
-     *
      * @param string $cal_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */

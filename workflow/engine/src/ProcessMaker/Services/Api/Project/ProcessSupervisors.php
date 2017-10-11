@@ -358,12 +358,12 @@ class ProcessSupervisors extends Api
 
     /**
      * @url PUT /:prjUid/process-supervisor/dynaform/:pud_uid
-     *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $pud_uid {@min 32} {@max 32}
      * @param int $pud_position
-     *
      * @status 201
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutProcessSupervisorDynaform($prjUid, $pud_uid, $pud_position = null)
     {
@@ -385,8 +385,9 @@ class ProcessSupervisors extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $pui_uid {@min 32} {@max 32}
      * @param int $pui_position
-     *
      * @status 201
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutProcessSupervisorInputDocument($prjUid, $pui_uid, $pui_position = null)
     {

@@ -136,13 +136,10 @@ class ReportTable extends Api
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $rep_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
      * @param string $rep_tab_dsc {@from body}
      * @return void
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @url PUT /:prj_uid/report-table/:rep_uid
      */
     public function doPutReportTable(

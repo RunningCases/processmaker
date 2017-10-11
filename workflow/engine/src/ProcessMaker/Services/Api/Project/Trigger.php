@@ -91,11 +91,9 @@ class Trigger extends Api
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
      * @return void
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @url PUT /:projectUid/trigger/:triggerUid
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutTrigger($projectUid, $triggerUid, $request_data, $tri_title = '', $tri_description = '', $tri_type = 'SCRIPT', $tri_webbot = '', $tri_param = '')
     {

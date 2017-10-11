@@ -110,7 +110,8 @@ class TimerEvent extends Api
 
     /**
      * @url PUT /:prj_uid/timer-event/:tmrevn_uid
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $tmrevn_uid   {@min 32}{@max 32}
      * @param array  $request_data

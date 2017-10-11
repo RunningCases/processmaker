@@ -133,10 +133,11 @@ class DataBaseConnection extends Api
     }
 
     /**
+     * Update database connection.
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $dbs_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
      * @param string $dbs_type {@from body} {@required true}
      * @param string $dbs_server {@from body} {@required true}
      * @param string $dbs_database_name {@from body} {@required true}
@@ -145,11 +146,9 @@ class DataBaseConnection extends Api
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
      * @return void
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @url PUT /:prj_uid/database-connection/:dbs_uid
+     * @class AccessControl {@permission PM_SETUP}
+     * @access protected
      */
     public function doPutDataBaseConnection(
         $prj_uid,

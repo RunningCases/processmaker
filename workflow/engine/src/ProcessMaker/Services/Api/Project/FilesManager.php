@@ -83,7 +83,8 @@ class FilesManager extends Api
      * @param string $prj_uid {@min 32} {@max 32}
      * @param ProcessFilesManagerStructure $request_data
      * @param string $prf_uid {@min 32} {@max 32}
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @url PUT /:prj_uid/file-manager/:prf_uid
      */
     public function doPutProcessFilesManager($prj_uid, ProcessFilesManagerStructure $request_data, $prf_uid)

@@ -90,7 +90,8 @@ class Variable extends Api
 
     /**
      * @url PUT /:prj_uid/message-type/:msgt_uid/variable/:msgtv_uid
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $msgt_uid     {@min 32}{@max 32}
      * @param string $msgtv_uid    {@min 32}{@max 32}

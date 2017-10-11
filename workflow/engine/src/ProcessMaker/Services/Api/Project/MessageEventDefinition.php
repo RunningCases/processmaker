@@ -102,7 +102,8 @@ class MessageEventDefinition extends Api
 
     /**
      * @url PUT /:prj_uid/message-event-definition/:msged_uid
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $msged_uid    {@min 32}{@max 32}
      * @param array  $request_data

@@ -105,7 +105,8 @@ class Variable extends Api
      * @param int    $del_index    {@min 1}
      * @param string $var_name
      * @param array  $request_data
-     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      * @status 204
      */
     public function doPutVariable($app_uid, $del_index, $var_name, array $request_data)

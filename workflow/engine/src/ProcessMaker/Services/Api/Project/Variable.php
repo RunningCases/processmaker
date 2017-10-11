@@ -73,7 +73,8 @@ class Variable extends Api
 
     /**
      * @url PUT /:prj_uid/process-variable/:var_uid
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $var_uid      {@min 32}{@max 32}
      * @param array  $request_data

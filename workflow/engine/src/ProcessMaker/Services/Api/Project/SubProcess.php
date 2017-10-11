@@ -46,12 +46,9 @@ class Subprocess extends Api
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $tas_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @return void
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @url PUT /:prj_uid/subprocess/:tas_uid
      */
     public function doPutSubprocess($prj_uid, $tas_uid, $request_data)

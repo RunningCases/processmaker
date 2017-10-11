@@ -97,7 +97,8 @@ class Group extends Api
 
     /**
      * @url PUT /:grp_uid
-     *
+     * @class AccessControl {@permission PM_USERS}
+     * @access protected
      * @param string $grp_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */

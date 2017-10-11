@@ -64,6 +64,8 @@ class Trigger extends Api
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepTriggerPutStructure $request_data
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutActivityStepTrigger($tri_uid, $step_uid, $act_uid, $prj_uid, StepTriggerPutStructure $request_data = null)
     {
@@ -150,6 +152,8 @@ class Trigger extends Api
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepAssignTaskTriggerPutStructure $request_data
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutActivityStepAssignTaskTrigger($tri_uid, $act_uid, $prj_uid, StepAssignTaskTriggerPutStructure $request_data = null)
     {

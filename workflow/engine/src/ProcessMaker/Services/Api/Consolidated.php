@@ -113,10 +113,8 @@ class Consolidated extends Api
      * @param string $pro_uid {@min 1} {@max 32}
      * @param array $request_data
      * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      * @url PUT /cases/:tas_uid/:dyn_uid/:pro_uid
      */
     public function doPutCasesConsolidated($tas_uid, $dyn_uid, $pro_uid, $request_data)

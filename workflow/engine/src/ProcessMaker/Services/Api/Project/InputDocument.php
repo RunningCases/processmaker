@@ -59,10 +59,11 @@ class InputDocument extends Api
 
     /**
      * @url PUT /:prj_uid/input-document/:inp_doc_uid
-     *
      * @param string $inp_doc_uid  {@min 32}{@max 32}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutInputDocument($inp_doc_uid, $prj_uid, $request_data)
     {

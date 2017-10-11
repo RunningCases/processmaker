@@ -142,12 +142,11 @@ class Department extends Api
 
     /**
      * @url PUT /:dep_uid/set-manager/:usr_uid
-     *
+     * @class AccessControl {@permission PM_USERS}
+     * @access protected
      * @param string $dep_uid {@min 1}{@max 32}
      * @param string $usr_uid {@min 1}{@max 32}
-     *
      * @return array
-     *
      */
     public function doPutSetManager($dep_uid, $usr_uid)
     {
@@ -203,10 +202,10 @@ class Department extends Api
 
     /**
      * @url PUT /:dep_uid
-     *
      * @param string $dep_uid      {@min 1}{@max 32}
      * @param array  $request_data
-     *
+     * @class AccessControl {@permission PM_USERS}
+     * @access protected
      */
     public function doPut($dep_uid, $request_data)
     {

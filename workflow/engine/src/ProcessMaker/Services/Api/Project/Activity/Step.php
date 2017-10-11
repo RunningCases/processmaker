@@ -84,6 +84,8 @@ class Step extends Api
      * @param string $step_condition {@from body}
      * @param int    $step_position  {@from body}{@min 1}
      * @param string $step_mode      {@from body}{@choice EDIT,VIEW}
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      */
     public function doPutActivityStep(
         $step_uid,

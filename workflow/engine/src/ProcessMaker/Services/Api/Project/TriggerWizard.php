@@ -94,7 +94,8 @@ class TriggerWizard extends Api
 
     /**
      * @url PUT /:prj_uid/trigger-wizard/:lib_name/:fn_name/:tri_uid
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $lib_name
      * @param string $fn_name

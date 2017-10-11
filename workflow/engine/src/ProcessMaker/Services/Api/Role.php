@@ -99,12 +99,15 @@ class Role extends Api
     }
 
     /**
+     * Update a role.
+     *
      * @access protected
      * @class  AccessControl {@permission PM_USERS}
      * @url PUT /:rol_uid
-     *
+     * @class AccessControl {@permission PM_USERS}
      * @param string $rol_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     * @throws RestException
      */
     public function doPut($rol_uid, array $request_data)
     {

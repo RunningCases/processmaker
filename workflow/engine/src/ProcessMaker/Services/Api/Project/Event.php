@@ -155,13 +155,9 @@ class Event extends Api
      * @param string $evn_tas_uid_from {@from body}
      * @param string $evn_tas_uid_to {@from body}
      * @param string $evn_conditions {@from body}
-     *
-     * @access public
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @class AccessControl {@permission PM_FACTORY}
+     * @access protected
      * @return void
-     *
      * @url PUT /:prj_uid/event/:evn_uid
      */
     public function doPutEvent (
