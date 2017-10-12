@@ -66,6 +66,8 @@ class Process extends Api
     /**
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
+     * @param array $request_data
+     * @return array
      */
     public function post($request_data = null)
     {
