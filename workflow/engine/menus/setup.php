@@ -202,10 +202,10 @@ if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1 && $RBAC->userCanAccess('PM_U
 }
 
 if ($RBAC->userCanAccess('PM_SETUP') === 1 && $RBAC->userCanAccess('PM_SETUP_LOGS') === 1) {
-    $G_TMP_MENU->AddIdRawOption('EVENT', '../events/eventList', G::LoadTranslation('ID_EVENTS'), '', '', 'logs');
+    $G_TMP_MENU->AddIdRawOption('EVENT', '../events/eventList', G::LoadTranslation('ID_EVENTS_CLASSIC'), '', '', 'logs');
     $G_TMP_MENU->AddIdRawOption(
         'LOG_CASE_SCHEDULER', '../cases/cases_Scheduler_Log',
-        G::LoadTranslation('ID_CASE_SCHEDULER'),
+        G::LoadTranslation('ID_CASE_SCHEDULER_CLASSIC'),
         "icon-logs-list.png", '', 'logs'
     );
     $G_TMP_MENU->AddIdRawOption("CRON", "../setup/cron", G::LoadTranslation("ID_CRON_ACTIONS"), null, null, 'logs');
