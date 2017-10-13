@@ -979,8 +979,10 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
                     require_once 'classes/model/Users.php';
                     $oUser = new Users();
                     $aUser = $oUser->load( $aSession['USR_UID'] );
-                    $_SESSION['USER_LOGGED'] = $aUser['USR_UID'];
-                    $_SESSION['USR_USERNAME'] = $aUser['USR_USERNAME'];
+                    initUserSession(
+                        $_SESSION['USER_LOGGED'],
+                        $aUser['USR_USERNAME']
+                    );
                     $bRedirect = false;
                     if ((preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 ||
                         $config['ie_cookie_lifetime'] == 1) &&

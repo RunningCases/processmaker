@@ -1,4 +1,8 @@
 <?php
+
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Str;
+
 /**
  * We will send a case note in the actions by email
  * @param object $httpData
@@ -360,4 +364,34 @@ function eprintln ($s = "", $c = null)
         }
         print "$s\n";
     }
+}
+
+/**
+ * Initialize the user logged session
+ */
+function initUserSession($usrUid, $usrName)
+{
+    $_SESSION['USER_LOGGED'] = $usrUid;
+    $_SESSION['USR_USERNAME'] = $usrName;
+    $_SESSION['USR_CSRF_TOKEN'] = Str::random(40);
+}
+
+function verifyCsrfToken($request)
+{
+    $headers = getallheaders();
+    $token = isset($request['_token'])
+        ? $request['_token']
+        : (isset($headers['X-CSRF-TOKEN'])
+        ? $headers['X-CSRF-TOKEN']
+        : null);
+    $match = is_string($_SESSION['USR_CSRF_TOKEN'])
+        && is_string($token)
+        && hash_equals($_SESSION['USR_CSRF_TOKEN'], $token);
+    if (!$match) {
+        throw new TokenMismatchException();
+    }
+}
+function csrfToken()
+{
+    return isset($_SESSION['USR_CSRF_TOKEN']) ? $_SESSION['USR_CSRF_TOKEN'] : '';
 }

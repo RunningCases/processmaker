@@ -24,8 +24,7 @@ try {
         throw new \Exception('WebEntry User not found');
     }
 
-    $_SESSION['USER_LOGGED'] = $userUid;
-    $_SESSION['USR_USERNAME'] = $userInfo['username'];
+    initUserSession($userUid, $userInfo['username']);
 
     $result = [
         'user_logged'  => $userUid,
