@@ -38,7 +38,6 @@ if (isset ( $_GET ['x'] )) {
     }
 } else {
 	if (! isset ( $_SESSION ['END_POINT'] )) {
-		//$wsdl = 'http://'.$_SERVER['HTTP_HOST'].'/sys'.config("system.workspace").'/en/classic/services/wsdl';
 		$wsdl = 'http://' . $_SERVER ['HTTP_HOST'];
 		$workspace = config("system.workspace");
 	} else {

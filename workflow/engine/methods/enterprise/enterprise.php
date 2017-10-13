@@ -81,8 +81,6 @@ class enterprisePlugin extends PMPlugin
             $js = "window.open(\"/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main?s=PLUGINS\", \"_top\", \"\");";
 
             if (substr(SYS_SKIN, 0, 2) == "ux" && SYS_SKIN != "uxs") {
-                //$js = "parent.window.location.href = \"/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/main_init?s=PLUGINS\";";
-                //$js = "window.location.href = \"/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/setup/pluginsImport\";";
                 $js = "window.open(\"/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/main\", \"_top\", \"\");";
             }
 

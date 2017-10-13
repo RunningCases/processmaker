@@ -393,7 +393,6 @@ class UsersProperties extends BaseUsersProperties
         $oConf = new Configurations();
         $oConf->loadConfig( $x, 'USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED'], '' );
 
-        //$baseUrl = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . SYS_SKIN . '/';
         if (isset($_COOKIE['workspaceSkin'])) {
             $baseUrl = '/sys' . config("system.workspace") . '/' . $this->lang . '/' . $_COOKIE['workspaceSkin'] . '/';
         } else {

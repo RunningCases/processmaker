@@ -94,7 +94,6 @@ switch ($_POST['action']) {
         $_SESSION['_DBArray'] = $_DBArray;
 
         if (! isset( $_SESSION['END_POINT'] )) {
-            //$wsdl = 'http://'.$_SERVER['HTTP_HOST'].'/sys'.config("system.workspace"). '/'. SYS_LANG .'/classic/services/wsdl';
             $wsdl = 'http://' . $_SERVER['HTTP_HOST'];
             $workspace = config("system.workspace");
         } else {
