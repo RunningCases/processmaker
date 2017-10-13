@@ -3408,9 +3408,11 @@ class Cases
      * @param string $defaultSort, name of column by sort default
      * @param string $additionalClassName, name of the className of pmTable
      * @param array $additionalColumns, columns related to the custom cases list with the format TABLE_NAME.COLUMN_NAME
+     * @param string $userDisplayFormat, user information display format
+     *
      * @return string $tableName
      */
-    public function getSortColumn($listPeer, $field, $sort, $defaultSort, $additionalClassName = '', $additionalColumns = array())
+    public function getSortColumn($listPeer, $field, $sort, $defaultSort, $additionalClassName = '', $additionalColumns = array(), $userDisplayFormat = '')
     {
         $columnSort = $defaultSort;
         $tableName = '';
@@ -3418,7 +3420,17 @@ class Cases
         //We will check if the column by sort is a LIST table
         $columnsList = $listPeer::getFieldNames($field);
         if (in_array($sort, $columnsList)) {
-            $columnSort  = $listPeer::TABLE_NAME . '.' . $sort;
+            switch ($sort) {
+                case 'DEL_PREVIOUS_USR_UID':
+                    $columnSort = $this->buildOrderFieldFormatted($columnsList, $userDisplayFormat, 'DEL_PREVIOUS_');
+                    break;
+                case 'USR_UID':
+                    $columnSort = $this->buildOrderFieldFormatted($columnsList, $userDisplayFormat, 'DEL_CURRENT_');
+                    break;
+                default:
+                    $columnSort  = $listPeer::TABLE_NAME . '.' . $sort;
+            }
+
         } else {
             //We will sort by CUSTOM CASE LIST table
             if (count($additionalColumns) > 0) {
@@ -3433,6 +3445,49 @@ class Cases
             }
         }
 
+        return $columnSort;
+    }
+
+    /**
+     * When we order columns related to the user information we need to use the userDisplayFormat
+     *
+     * @param array $columnsList, the list of columns in the table
+     * @param string $format, the user display format
+     * @param string $prefix, the initial name of the columns related to the USR_FIRSTNAME USR_LASTNAME USR_USERNAME
+     * @return string $columnSort, columns  by apply the sql command ORDER BY
+     */
+    public function buildOrderFieldFormatted($columnsList, $format, $prefix = 'DEL_PREVIOUS_')
+    {
+        $columnSort = '';
+
+        if (in_array($prefix . 'USR_FIRSTNAME', $columnsList) &&
+            in_array($prefix . 'USR_LASTNAME', $columnsList) &&
+            in_array($prefix . 'USR_USERNAME', $columnsList)
+        ) {
+            switch ($format) {
+                case '@firstName @lastName':
+                    $columnSort = $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_LASTNAME';
+                    break;
+                case '@firstName @lastName (@userName)':
+                    $columnSort = $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_LASTNAME' . ',' . $prefix . 'USR_USERNAME';
+                    break;
+                case '@userName':
+                    $columnSort = $prefix . 'USR_USERNAME';
+                    break;
+                case '@userName (@firstName @lastName)':
+                    $columnSort = $prefix . 'USR_USERNAME' . ',' . $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_LASTNAME';
+                    break;
+                case '@lastName, @firstName':
+                    $columnSort = $prefix . 'USR_LASTNAME' . ',' . $prefix . 'USR_FIRSTNAME';
+                    break;
+                case '@lastName, @firstName (@userName)':
+                    $columnSort = $prefix . 'USR_LASTNAME' . ',' . $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_USERNAME';
+                    break;
+                default:
+                    $columnSort = $prefix . 'USR_USERNAME';
+                    break;
+            }
+        }
         return $columnSort;
     }
 }

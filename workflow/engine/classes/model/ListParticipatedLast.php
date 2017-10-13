@@ -1,7 +1,7 @@
 <?php
 
-// @codingStandardsIgnoreStart
 require_once 'classes/model/om/BaseListParticipatedLast.php';
+use ProcessMaker\BusinessModel\Cases as BmCases;
 
 /**
  * Skeleton subclass for representing a row from the 'LIST_PARTICIPATED_LAST' table.
@@ -15,6 +15,49 @@ require_once 'classes/model/om/BaseListParticipatedLast.php';
 class ListParticipatedLast extends BaseListParticipatedLast
 {
     private $additionalClassName = '';
+    private $userDisplayFormat = '';
+
+    /**
+     * Get the $additionalClassName value.
+     *
+     * @return string
+     */
+    public function getAdditionalClassName()
+    {
+        return $this->additionalClassName;
+    }
+
+    /**
+     * Set the value of $additionalClassName.
+     *
+     * @param string $v new value
+     * @return void
+     */
+    public function setAdditionalClassName($v)
+    {
+        $this->additionalClassName = $v;
+    }
+
+    /**
+     * Get the $userDisplayFormat value.
+     *
+     * @return string
+     */
+    public function getUserDisplayFormat()
+    {
+        return $this->userDisplayFormat;
+    }
+
+    /**
+     * Set the value of $userDisplayFormat.
+     *
+     * @param string $v new value
+     * @return void
+     */
+    public function setUserDisplayFormat($v)
+    {
+        $this->userDisplayFormat = $v;
+    }
 
     /**
      * Create List Participated History Table.
@@ -22,6 +65,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @param type $data
      *
      * @return type
+     * @throws Exception
      */
     public function create($data)
     {
@@ -142,7 +186,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      *
      * @return type
      *
-     * @throws type
+     * @throws Exception
      */
     public function update($data)
     {
@@ -180,11 +224,12 @@ class ListParticipatedLast extends BaseListParticipatedLast
     /**
      * Refresh List Participated Last.
      *
-     * @param type $seqName
+     * @param array $data
+     * @param boolean $isSelfService
      *
      * @return type
      *
-     * @throws type
+     * @throws Exception
      */
     public function refresh($data, $isSelfService = false)
     {
@@ -235,11 +280,13 @@ class ListParticipatedLast extends BaseListParticipatedLast
     /**
      * Remove List Participated History.
      *
-     * @param type $seqName
+     * @param string $app_uid
+     * @param string $usr_uid
+     * @param integer $del_index
      *
      * @return type
      *
-     * @throws type
+     * @throws Exception
      */
     public function remove($app_uid, $usr_uid, $del_index)
     {
@@ -319,8 +366,14 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $criteria->add(ListParticipatedLastPeer::APP_UID, $search, Criteria::EQUAL);
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
-                $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList = new BmCases();
+                $casesList->getSearchCriteriaListCases(
+                    $criteria,
+                    __CLASS__ . 'Peer',
+                    $search,
+                    $this->getAdditionalClassName(),
+                    $additionalColumns
+                );
             }
         }
 
@@ -352,7 +405,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * This function get the information in the corresponding cases list
      * @param string $usr_uid, must be show cases related to this user
      * @param array $filters for apply in the result
-     * @param null $callbackRecord
+     * @param callable $callbackRecord
      * @param string $appUid related to the specific case
      * @return array $data
      * @throws PropelException
@@ -361,7 +414,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
     {
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('sent');
-        $this->additionalClassName = $pmTable->tableClassName;
+        $this->setAdditionalClassName($pmTable->tableClassName);
         $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
@@ -397,14 +450,15 @@ class ListParticipatedLast extends BaseListParticipatedLast
         self::loadFilters($criteria, $filters, $additionalColumns);
 
         //We will be defined the sort
-        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $casesList = new BmCases();
         $sort = $casesList->getSortColumn(
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "DEL_DELEGATE_DATE" : $filters['sort'],
             "DEL_DELEGATE_DATE",
-            $this->additionalClassName,
-            $additionalColumns
+            $this->getAdditionalClassName(),
+            $additionalColumns,
+            $this->getUserDisplayFormat()
         );
 
         $dir = isset($filters['dir']) ? $filters['dir'] : 'ASC';
