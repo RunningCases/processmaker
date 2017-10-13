@@ -261,7 +261,7 @@ class SkinEngine
 
         $template = new TemplatePower($templateFile);
         $template->prepare();
-        $header = '<meta name="csrf-token" content="'. csrfToken().'" />' . "\n" . $header;
+        $header = '<meta name="csrf-token" content="' . csrfToken() . '" />' . "\n" . $header;
         $template->assign('header', $header);
         $template->assign('styles', $styles);
         $template->assign('bodyTemplate', $body);

@@ -376,6 +376,12 @@ function initUserSession($usrUid, $usrName)
     $_SESSION['USR_CSRF_TOKEN'] = Str::random(40);
 }
 
+/**
+ * Verify token for an incoming request.
+ *
+ * @param type $request
+ * @throws TokenMismatchException
+ */
 function verifyCsrfToken($request)
 {
     $headers = getallheaders();
@@ -386,11 +392,18 @@ function verifyCsrfToken($request)
         : null);
     $match = is_string($_SESSION['USR_CSRF_TOKEN'])
         && is_string($token)
+        && !empty($_SESSION['USR_CSRF_TOKEN'])
         && hash_equals($_SESSION['USR_CSRF_TOKEN'], $token);
     if (!$match) {
         throw new TokenMismatchException();
     }
 }
+
+/**
+ * Get the current user CSRF token.
+ *
+ * @return string
+ */
 function csrfToken()
 {
     return isset($_SESSION['USR_CSRF_TOKEN']) ? $_SESSION['USR_CSRF_TOKEN'] : '';
