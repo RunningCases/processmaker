@@ -36,12 +36,14 @@ class NotificationDevice extends Api
     }
 
     /**
-     * Post Create register device with userUid
+     * Update device language.
+     *
+     * @url PUT /notification/:dev_uid
      *
      * @param string $dev_uid {@min 32}{@max 32}
      * @param array $request_data
+     *
      * @return array
-     * @url PUT /notification/:dev_uid
      * @throws RestException
      */
     public function updateDeviceLanguage($dev_uid, $request_data)

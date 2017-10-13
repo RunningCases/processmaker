@@ -133,14 +133,20 @@ class ReportTable extends Api
     }
 
     /**
+     * Update report table.
+     *
+     * @url PUT /:prj_uid/report-table/:rep_uid
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $rep_uid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $rep_tab_dsc {@from body}
+     *
      * @return void
-     * @class AccessControl {@permission PM_FACTORY}
+     * @throws RestException
+     *
      * @access protected
-     * @url PUT /:prj_uid/report-table/:rep_uid
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutReportTable(
         $prj_uid,

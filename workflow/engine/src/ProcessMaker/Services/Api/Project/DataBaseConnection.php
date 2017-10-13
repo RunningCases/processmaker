@@ -135,6 +135,8 @@ class DataBaseConnection extends Api
     /**
      * Update database connection.
      *
+     * @url PUT /:prj_uid/database-connection/:dbs_uid
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $dbs_uid {@min 1} {@max 32}
      * @param array $request_data
@@ -145,10 +147,12 @@ class DataBaseConnection extends Api
      * @param string $dbs_encode {@from body} {@required true}
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
+     *
      * @return void
-     * @url PUT /:prj_uid/database-connection/:dbs_uid
-     * @class AccessControl {@permission PM_SETUP}
+     * @throws RestException
+     *
      * @access protected
+     * @class AccessControl {@permission PM_SETUP}
      */
     public function doPutDataBaseConnection(
         $prj_uid,

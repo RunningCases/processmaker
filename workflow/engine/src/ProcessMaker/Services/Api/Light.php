@@ -1177,11 +1177,15 @@ class Light extends Api
      * Route Case
      *
      * @url PUT /cases/:app_uid/route-case
-     * @class AccessControl {@permission PM_CASES}
-     * @access protected
+     *
      * @param string $app_uid {@min 32}{@max 32}
      * @param int $del_index {@from body}
      * @param array $tasks {@from body}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutRouteCase($app_uid, $del_index = null, $tasks = array())
     {
@@ -1718,13 +1722,17 @@ class Light extends Api
     /**
      * Put Case Variables
      *
+     * @url PUT /:app_uid/variable
+     *
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
      * @param string $dyn_uid {@from path}
      * @param int $del_index {@from path}
-     * @class AccessControl {@permission PM_CASES}
+     *
+     * @throws RestException
+     *
      * @access protected
-     * @url PUT /:app_uid/variable
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
     {

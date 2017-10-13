@@ -99,15 +99,20 @@ class Variable extends Api
     }
 
     /**
+     * Update variable.
+     *
      * @url PUT /:app_uid/:del_index/variable/:var_name
+     * @status 204
      *
      * @param string $app_uid      {@min 32}{@max 32}
      * @param int    $del_index    {@min 1}
      * @param string $var_name
      * @param array  $request_data
-     * @class AccessControl {@permission PM_CASES}
+     *
+     * @throws RestException
+     *
      * @access protected
-     * @status 204
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutVariable($app_uid, $del_index, $var_name, array $request_data)
     {

@@ -115,6 +115,10 @@ class ProcessPermissions extends Api
     }
 
     /**
+     * Update process permisson.
+     *
+     * @url PUT /:prj_uid/process-permission/:ob_uid
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $ob_uid {@min 1} {@max 32}
      * @param array $request_data
@@ -129,10 +133,12 @@ class ProcessPermissions extends Api
      * @param string $dynaforms {@from body}
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
+     *
      * @return array
-     * @url PUT /:prj_uid/process-permission/:ob_uid
-     * @class AccessControl {@permission PM_FACTORY}
+     * @throws RestException
+     *
      * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutProcessPermission(
         $prj_uid,

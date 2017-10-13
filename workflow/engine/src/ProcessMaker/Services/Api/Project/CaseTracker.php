@@ -30,14 +30,20 @@ class CaseTracker extends Api
     }
 
     /**
+     * Update case tracker.
+     *
      * @url PUT /:prj_uid/case-tracker/property
-     * @class AccessControl {@permission PM_FACTORY}
-     * @access protected
+     *
      * @param string $prj_uid         {@min 32}{@max 32}
      * @param array  $request_data
      * @param string $map_type        {@from body}{@choice NONE,PROCESSMAP,STAGES}
      * @param int    $routing_history {@from body}{@choice 0,1}
      * @param int    $message_history {@from body}{@choice 0,1}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutCaseTracker(
         $prj_uid,

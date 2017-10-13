@@ -93,14 +93,20 @@ class TriggerWizard extends Api
     }
 
     /**
+     * Update trigger wizard.
+     *
      * @url PUT /:prj_uid/trigger-wizard/:lib_name/:fn_name/:tri_uid
-     * @class AccessControl {@permission PM_FACTORY}
-     * @access protected
+     *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $lib_name
      * @param string $fn_name
      * @param string $tri_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutTriggerWizard($prj_uid, $lib_name, $fn_name, $tri_uid, $request_data)
     {

@@ -90,13 +90,17 @@ class ProcessCategory extends Api
     }
 
     /**
+     * Update category.
+     *
+     * @url PUT /category/:cat_uid
+     *
+     * @param string $cat_uid {@min 32}{@max 32}
+     * @param array  $request_data
+     *
+     * @throws RestException
      *
      * @access protected
-     * @class AccessControl {@permission PM_FACTORY,PM_SETUP_PROCESS_CATEGORIES}
-     * @url PUT /category/:cat_uid
-     * @param string $cat_uid      {@min 32}{@max 32}
-     * @param array  $request_data
-     * @throws RestException
+     * @class AccessControl {@permission PM_SETUP_PROCESS_CATEGORIES}
      */
     public function doPutCategory($cat_uid, array $request_data)
     {

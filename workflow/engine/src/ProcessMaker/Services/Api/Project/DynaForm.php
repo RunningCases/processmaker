@@ -66,11 +66,15 @@ class DynaForm extends Api
      * Update dynaform.
      *
      * @url PUT /:prj_uid/dynaform/:dyn_uid
-     * @class AccessControl {@permission PM_FACTORY}
-     * @access protected
+     *
      * @param string $dyn_uid      {@min 32}{@max 32}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutDynaForm($dyn_uid, $prj_uid, $request_data)
     {

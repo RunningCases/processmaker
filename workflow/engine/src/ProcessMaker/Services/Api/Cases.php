@@ -796,14 +796,19 @@ class Cases extends Api
     }
 
     /**
+     * Update case reassignment.
+     *
      * @url PUT /:app_uid/reassign-case
      *
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
      * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
      * @param string $del_index {@from body}
-     * @class AccessControl {@permission PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR}
+     *
+     * @throws RestException
+     *
      * @access protected
+     * @class AccessControl {@permission PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR}
      */
     public function doPutReassignCase($app_uid, $usr_uid_source, $usr_uid_target, $del_index = null)
     {
@@ -817,13 +822,17 @@ class Cases extends Api
     }
 
     /**
-     * Route Case
+     * Route Case.
      *
      * @url PUT /:app_uid/route-case
+     *
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $del_index {@from body}
-     * @class AccessControl {@permission PM_CASES}
+     *
+     * @throws RestException
+     *
      * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutRouteCase($app_uid, $del_index = null)
     {
@@ -839,10 +848,14 @@ class Cases extends Api
     /**
      * Cancel Case
      *
-     * @param string $cas_uid {@min 1}{@max 32}
-     * @class AccessControl {@permission PM_CANCELCASE}
-     * @access protected
      * @url PUT /:cas_uid/cancel
+     *
+     * @param string $cas_uid {@min 1}{@max 32}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CANCELCASE}
      */
     public function doPutCancelCase($cas_uid)
     {
@@ -858,11 +871,15 @@ class Cases extends Api
     /**
      * Pause Case
      *
+     * @url PUT /:cas_uid/pause
+     *
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $unpaused_date {@from body}
-     * @class AccessControl {@permission PM_CASES}
+     *
+     * @throws RestException
+     *
      * @access protected
-     * @url PUT /:cas_uid/pause
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutPauseCase($cas_uid, $unpaused_date = null)
     {
@@ -882,10 +899,14 @@ class Cases extends Api
     /**
      * Unpause Case
      *
-     * @param string $cas_uid {@min 1}{@max 32}
-     * @class AccessControl {@permission PM_CASES}
-     * @access protected
      * @url PUT /:cas_uid/unpause
+     *
+     * @param string $cas_uid {@min 1}{@max 32}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutUnpauseCase($cas_uid)
     {
@@ -899,13 +920,17 @@ class Cases extends Api
     }
 
     /**
-     * Unpause Case
+     * Execute trigger in a case.
+     *
+     * @url PUT /:cas_uid/execute-trigger/:tri_uid
      *
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $tri_uid {@min 1}{@max 32}
-     * @class AccessControl {@permission PM_CASES}
+     *
+     * @throws RestException
+     *
      * @access protected
-     * @url PUT /:cas_uid/execute-trigger/:tri_uid
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutExecuteTriggerCase($cas_uid, $tri_uid)
     {
@@ -969,13 +994,17 @@ class Cases extends Api
     /**
      * Put Case Variables
      *
+     * @url PUT /:app_uid/variable
+     *
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
      * @param string $dyn_uid {@from path}
      * @param int $del_index {@from path}
-     * @class AccessControl {@permission PM_CASES}
+     *
+     * @throws RestException
+     *
      * @access protected
-     * @url PUT /:app_uid/variable
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
     {
@@ -1134,13 +1163,17 @@ class Cases extends Api
     /**
      * Execute triggers
      *
+     * @url PUT /:app_uid/execute-triggers
+     *
      * @param string $app_uid {@min 1}{@max 32}
      * @param int $del_index {@from body}
      * @param string $obj_type {@from body}
      * @param string $obj_uid {@from body}
+     *
+     * @throws RestException
+     *
      * @class AccessControl {@permission PM_CASES}
      * @access protected
-     * @url PUT /:app_uid/execute-triggers
      */
     public function doPutExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)
     {

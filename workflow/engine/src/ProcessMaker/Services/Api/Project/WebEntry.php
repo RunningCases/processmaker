@@ -93,13 +93,18 @@ class WebEntry extends Api
     }
 
     /**
+     * Update web-entry.
+     *
      * @url PUT /:prj_uid/web-entry/:we_uid
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $we_uid       {@min 32}{@max 32}
      * @param array  $request_data
-     * @class AccessControl {@permission PM_FACTORY}
+     *
+     * @throws RestException
+     *
      * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutWebEntry($prj_uid, $we_uid, array $request_data)
     {

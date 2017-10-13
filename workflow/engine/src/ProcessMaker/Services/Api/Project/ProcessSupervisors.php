@@ -357,13 +357,19 @@ class ProcessSupervisors extends Api
     }
 
     /**
+     * Update process supervisor dynaform.
+     *
      * @url PUT /:prjUid/process-supervisor/dynaform/:pud_uid
+     * @status 201
+     *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $pud_uid {@min 32} {@max 32}
      * @param int $pud_position
-     * @status 201
-     * @class AccessControl {@permission PM_FACTORY}
+     *
+     * @throws RestException
+     *
      * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutProcessSupervisorDynaform($prjUid, $pud_uid, $pud_position = null)
     {
@@ -380,14 +386,19 @@ class ProcessSupervisors extends Api
     }
 
     /**
+     * Update process supervisor input document.
+     *
      * @url PUT /:prjUid/process-supervisor/input-document/:pui_uid
+     * @status 201
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $pui_uid {@min 32} {@max 32}
      * @param int $pui_position
-     * @status 201
-     * @class AccessControl {@permission PM_FACTORY}
+     *
+     * @throws RestException
+     *
      * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutProcessSupervisorInputDocument($prjUid, $pui_uid, $pui_position = null)
     {

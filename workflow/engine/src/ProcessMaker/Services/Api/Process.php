@@ -83,10 +83,12 @@ class Process extends Api
      *
      * @param type $processUid
      * @param type $request_data
+     *
      * @return type
      * @throws RestException
-     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function put($processUid, $request_data = null)
     {
