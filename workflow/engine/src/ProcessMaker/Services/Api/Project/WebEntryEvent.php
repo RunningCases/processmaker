@@ -129,6 +129,7 @@ class WebEntryEvent extends Api
 
     /**
      * @url DELETE /:prj_uid/web-entry-event/:wee_uid
+     * @access protected
      * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}

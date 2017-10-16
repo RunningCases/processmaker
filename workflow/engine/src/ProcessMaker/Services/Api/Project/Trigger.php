@@ -109,14 +109,14 @@ class Trigger extends Api
     }
 
     /**
+     * @url DELETE /:projectUid/trigger/:triggerUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $projectUid {@min 1} {@max 32}
      * @param string $triggerUid {@min 1} {@max 32}
      * @return void
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url DELETE /:projectUid/trigger/:triggerUid
      */
     public function doDeleteTrigger($projectUid, $triggerUid)
     {

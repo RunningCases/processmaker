@@ -112,6 +112,8 @@ class Assignee extends Api
 
     /**
      * @url DELETE /:prjUid/activity/:actUid/assignee/:aasUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $actUid {@min 32} {@max 32}
@@ -211,6 +213,8 @@ class Assignee extends Api
 
     /**
      * @url DELETE /:prjUid/activity/:actUid/adhoc-assignee/:adaUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $actUid {@min 32} {@max 32}

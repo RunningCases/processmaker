@@ -93,6 +93,8 @@ class Variable extends Api
 
     /**
      * @url DELETE /:prj_uid/process-variable/:var_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $var_uid {@min 32}{@max 32}

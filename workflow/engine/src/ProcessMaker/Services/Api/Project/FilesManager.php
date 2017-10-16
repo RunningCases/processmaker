@@ -103,10 +103,12 @@ class FilesManager extends Api
     }
 
     /**
+     * @url DELETE /:prj_uid/file-manager/:prf_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $prf_uid {@min 32} {@max 32}
-     *
-     * @url DELETE /:prj_uid/file-manager/:prf_uid
      */
     public function doDeleteProcessFilesManager($prj_uid, $prf_uid)
     {
@@ -137,10 +139,12 @@ class FilesManager extends Api
     }
 
     /**
+     * @url DELETE /:prj_uid/file-manager/folder
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $path
-     *
-     * @url DELETE /:prj_uid/file-manager/folder
      */
     public function doDeleteFolderProcessFilesManager($prj_uid, $path)
     {

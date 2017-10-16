@@ -100,6 +100,9 @@ class CaseScheduler extends Api
 
     /**
      * @url DELETE /:prjUid/case-scheduler/:schUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $schUid {@min 32} {@max 32}
      *

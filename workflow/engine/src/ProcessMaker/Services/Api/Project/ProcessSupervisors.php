@@ -304,6 +304,8 @@ class ProcessSupervisors extends Api
 
     /**
      * @url DELETE /:prjUid/process-supervisor/:puUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $puUid {@min 32} {@max 32}
@@ -322,6 +324,8 @@ class ProcessSupervisors extends Api
 
     /**
      * @url DELETE /:prjUid/process-supervisor/dynaform/:pudUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $pudUid {@min 32} {@max 32}
@@ -340,6 +344,8 @@ class ProcessSupervisors extends Api
 
     /**
      * @url DELETE /:prjUid/process-supervisor/input-document/:puiUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $puiUid {@min 32} {@max 32}

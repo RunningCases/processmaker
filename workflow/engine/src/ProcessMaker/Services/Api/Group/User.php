@@ -63,6 +63,8 @@ class User extends Api
 
     /**
      * @url DELETE /:grp_uid/user/:usr_uid
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      *
      * @param string $grp_uid {@min 32}{@max 32}
      * @param string $usr_uid {@min 32}{@max 32}

@@ -123,6 +123,8 @@ class Department extends Api
 
     /**
      * @url DELETE /:dep_uid/unassign-user/:usr_uid
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      *
      * @param string $dep_uid {@min 1}{@max 32}
      * @param string $usr_uid {@min 1}{@max 32}
@@ -221,6 +223,8 @@ class Department extends Api
 
     /**
      * @url DELETE /:dep_uid
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      *
      * @param string $dep_uid {@min 1}{@max 32}
      *

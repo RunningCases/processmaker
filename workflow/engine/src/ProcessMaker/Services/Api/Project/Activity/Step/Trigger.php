@@ -80,6 +80,8 @@ class Trigger extends Api
 
     /**
      * @url DELETE /:prj_uid/activity/:act_uid/step/:step_uid/trigger/:tri_uid/:type
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $tri_uid
      * @param string $step_uid
@@ -166,6 +168,8 @@ class Trigger extends Api
 
     /**
      * @url DELETE /:prj_uid/activity/:act_uid/step/trigger/:tri_uid/:type
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $tri_uid
      * @param string $act_uid

@@ -117,6 +117,8 @@ class OutputDocument extends Api
 
     /**
      * @url DELETE /:app_uid/output-document/:app_doc_uid
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      *
      * @param string $app_uid     {@min 32}{@max 32}
      * @param string $app_doc_uid     {@min 32}{@max 32}

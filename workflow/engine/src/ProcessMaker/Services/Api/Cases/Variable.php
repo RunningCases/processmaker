@@ -119,6 +119,8 @@ class Variable extends Api
 
     /**
      * @url DELETE /:app_uid/:del_index/variable/:var_name
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      *
      * @param string $app_uid   {@min 32}{@max 32}
      * @param int    $del_index {@min 1}

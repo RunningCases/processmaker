@@ -201,17 +201,13 @@ class Event extends Api
     }
 
     /**
+     * @url DELETE /:prj_uid/event/:evn_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $evn_uid {@min 1} {@max 32}
      * @return void
-     *
-     * @access public
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @return void
-     *
-     * @url DELETE /:prj_uid/event/:evn_uid
      */
     public function doDeleteEvent($prj_uid, $evn_uid)
     {

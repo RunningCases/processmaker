@@ -118,6 +118,8 @@ class MessageEventDefinition extends Api
 
     /**
      * @url DELETE /:prj_uid/message-event-definition/:msged_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid   {@min 32}{@max 32}
      * @param string $msged_uid {@min 32}{@max 32}

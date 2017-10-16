@@ -106,7 +106,9 @@ class Variable extends Api
     }
 
     /**
-     * @url DELETE /:prj_uid/message-type/:msgt_uid/variable/:msgtv_uid
+     * @url DELETE /:prj_uid/user/message-type/:msgt_uid/variable/:msgtv_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid   {@min 32}{@max 32}
      * @param string $msgt_uid  {@min 32}{@max 32}
