@@ -644,8 +644,7 @@ use ProcessMaker\Plugins\PluginRegistry;
             require_once 'classes/model/Users.php';
             $oUser = new Users();
             $aUser = $oUser->load($aSession['USR_UID']);
-            $_SESSION['USER_LOGGED']  = $aUser['USR_UID'];
-            $_SESSION['USR_USERNAME'] = $aUser['USR_USERNAME'];
+            initUserSession($aUser['USR_UID'], $aUser['USR_USERNAME']);
             $bRedirect = false;
             if (PHP_VERSION < 5.2) {
               setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');

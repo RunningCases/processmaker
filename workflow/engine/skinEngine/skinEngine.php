@@ -261,9 +261,11 @@ class SkinEngine
 
         $template = new TemplatePower($templateFile);
         $template->prepare();
+        $header = '<meta name="csrf-token" content="' . csrfToken() . '" />' . "\n" . $header;
         $template->assign('header', $header);
         $template->assign('styles', $styles);
         $template->assign('bodyTemplate', $body);
+        $template->assign('csrf_token', csrfToken());
 
         $doctype = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
         $meta = null;
@@ -569,6 +571,7 @@ class SkinEngine
         $smarty->cache_dir = PATH_SMARTY_CACHE;
         $smarty->config_dir = PATH_THIRDPARTY . 'smarty/configs';
         $smarty->register_function('translate', 'translate');
+        $smarty->register_function('csrf_token', 'csrfToken');
 
         $viewVars = $oHeadPublisher->getVars();
 
