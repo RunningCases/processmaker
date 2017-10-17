@@ -199,7 +199,7 @@ class Admin extends Controller
     public function getSystemInfo()
     {
         global $RBAC;
-        $RBAC->requirePermissions('PM_SETUP');
+        $RBAC->requirePermissions('PM_SETUP_ADVANCE');
 
         $this->setResponseType('json');
         $data = [];
