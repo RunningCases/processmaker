@@ -281,10 +281,20 @@ class Users extends BaseUsers
         return $row;
     }
 
+    /**
+     * Get all information about the user
+     * @param string $userUid
+     * @return array $arrayData
+     * @throws Exception
+    */
     public function getAllInformation ($userUid)
     {
-        if (! isset( $userUid ) || $userUid == "") {
-            throw (new Exception( "$userUid is empty." ));
+        if (!isset($userUid) || empty($userUid)) {
+            throw (new Exception('$userUid is empty.'));
+        }
+        if (RBAC::isGuestUserUid($userUid)) {
+            throw new Exception(G::LoadTranslation("ID_USER_CAN_NOT_UPDATE", array($userUid)));
+            return false;
         }
 
         try {

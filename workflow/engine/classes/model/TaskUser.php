@@ -43,38 +43,52 @@ class TaskUser extends BaseTaskUser
 {
 
     /**
-     * Create the application document registry
+     * Create the new record in the table TaskUser
      *
-     * @param array $aData
+     * @param array $requestData
      * @return string
+     * @throws Exception
      *
      */
-    public function create ($aData)
+    public function create ($requestData)
     {
-        $oConnection = Propel::getConnection( TaskUserPeer::DATABASE_NAME );
+        $connection = Propel::getConnection(TaskUserPeer::DATABASE_NAME);
         try {
-            $taskUser = TaskUserPeer::retrieveByPK( $aData['TAS_UID'], $aData['USR_UID'], $aData['TU_TYPE'], $aData['TU_RELATION'] );
-
-            if (is_object( $taskUser )) {
-                return - 1;
+            //Check the usrUid value
+            if (RBAC::isGuestUserUid($requestData['USR_UID'])) {
+                throw new Exception(G::LoadTranslation("ID_USER_CAN_NOT_UPDATE", array($requestData['USR_UID'])));
+                return false;
             }
-            $oTaskUser = new TaskUser();
-            $oTaskUser->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
-            if ($oTaskUser->validate()) {
-                $oConnection->begin();
-                $iResult = $oTaskUser->save();
-                $oConnection->commit();
-                return $iResult;
+
+            $taskUser = TaskUserPeer::retrieveByPK(
+                $requestData['TAS_UID'],
+                $requestData['USR_UID'],
+                $requestData['TU_TYPE'],
+                $requestData['TU_RELATION']
+            );
+
+            if (is_object($taskUser)) {
+                return -1;
+            }
+
+            $taskUser = new TaskUser();
+            $taskUser->fromArray($requestData, BasePeer::TYPE_FIELDNAME);
+            if ($taskUser->validate()) {
+                $connection->begin();
+                $result = $taskUser->save();
+                $connection->commit();
+
+                return $result;
             } else {
-                $sMessage = '';
-                $aValidationFailures = $oTaskUser->getValidationFailures();
+                $message = '';
+                $aValidationFailures = $taskUser->getValidationFailures();
                 foreach ($aValidationFailures as $oValidationFailure) {
-                    $sMessage .= $oValidationFailure->getMessage() . '<br />';
+                    $message .= $oValidationFailure->getMessage() . '<br />';
                 }
-                throw (new Exception( 'The registry cannot be created!<br />' . $sMessage ));
+                throw (new Exception('The registry cannot be created!<br />' . $message));
             }
         } catch (Exception $oError) {
-            $oConnection->rollback();
+            $connection->rollback();
             throw ($oError);
         }
     }

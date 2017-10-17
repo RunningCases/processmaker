@@ -34,22 +34,16 @@ use ProcessMaker\Exception\RBACException;
  * RBAC class definition
  *
  * @package gulliver.system
- * @copyright (C) 2002 by Colosa Development Team.
- * @link http://www.colosa.com
- * @link http://manuals.colosa.com/gulliver/rbac.html
- * @author Fernando Ontiveros
  */
 
 /**
  * Clase Wrapper
  *
  * @package gulliver.system
- * @author Fernando Ontiveros
  */
-
 class RBAC
 {
-    const SETUPERMISSIONUID= '00000000000000000000000000000002';
+    const SETUPERMISSIONUID = '00000000000000000000000000000002';
     const PER_SYSTEM = '00000000000000000000000000000002';
     const PM_GUEST_CASE = 'PM_GUEST_CASE';
     const PM_GUEST_CASE_UID = '00000000000000000000000000000066';
@@ -73,14 +67,14 @@ class RBAC
     public $rolesPermissionsObj;
     public $authSourcesObj;
 
-    public $aUserInfo = array ();
-    public $aRbacPlugins = array ();
+    public $aUserInfo = [];
+    public $aRbacPlugins = [];
     public $sSystem = '';
 
     public $singleSignOn = false;
 
     private static $instance = null;
-    public $authorizedActions = array();
+    public $authorizedActions = [];
 
     private $aliasPermissions = [];
 
@@ -90,105 +84,105 @@ class RBAC
      */
     private $enableLoginHash = false;
 
-    public function __construct ()
+    public function __construct()
     {
-        $this->authorizedActions = array(
-            'users_Ajax.php' => array(
-                'availableUsers' => array('PM_FACTORY'),
-                'assign' => array('PM_FACTORY'),
-                'changeView' => array(),
-                'ofToAssign' => array('PM_FACTORY'),
-                'usersGroup' => array('PM_FACTORY'),
-                'canDeleteUser' => array('PM_USERS'),
-                'deleteUser' => array('PM_USERS'),
-                'changeUserStatus' => array('PM_USERS'),
-                'availableGroups' => array('PM_USERS'),
-                'assignedGroups' => array('PM_USERS'),
-                'assignGroupsToUserMultiple' => array('PM_USERS'),
-                'deleteGroupsToUserMultiple' => array('PM_USERS'),
-                'authSources' => array('PM_USERS'),
-                'loadAuthSourceByUID' => array('PM_USERS'),
-                'updateAuthServices' => array('PM_USERS'),
-                'usersList' => array('PM_USERS'),
-                'updatePageSize' => array(),
-                'summaryUserData' => array('PM_USERS'),
-                'verifyIfUserAssignedAsSupervisor' => array('PM_USERS')
-            ),
-            'skin_Ajax.php' => array(
-                'updatePageSize' => array(),
-                'skinList' => array('PM_SETUP_SKIN'),
-                'newSkin' => array('PM_SETUP_SKIN'),
-                'importSkin' => array('PM_SETUP_SKIN'),
-                'exportSkin' => array('PM_SETUP_SKIN'),
-                'deleteSkin' => array('PM_SETUP_SKIN'),
-                'streamSkin' => array('PM_SETUP_SKIN'),
-                'addTarFolder' => array('PM_SETUP_SKIN'),
-                'copy_skin_folder' => array('PM_SETUP_SKIN')
-            ),
-            'processes_DownloadFile.php' => array(
-                'downloadFileHash' => array('PM_FACTORY')
-            ),
-            'processProxy.php' => array(
-                'categoriesList' => array('PM_SETUP_PROCESS_CATEGORIES'),
-                'getCategoriesList' => array('PM_FACTORY'),
-                'saveProcess' => array('PM_FACTORY'),
-                'changeStatus' => array('PM_FACTORY'),
-                'changeDebugMode' => array('PM_FACTORY'),
-                'getUsers' => array(),
-                'getGroups' => array(),
-                'assignActorsTask' => array(),
-                'removeActorsTask' => array(),
-                'getActorsTask' => array(),
-                'getProcessDetail' => array(),
-                'getProperties' => array(),
-                'saveProperties' => array(),
-                'getCaledarList' => array(),
-                'getPMVariables' => array(),
-                'generateBpmn' => array('PM_FACTORY')
-            ),
-            'home.php' => array(
-                'login' => array('PM_LOGIN'),
-                'index' => array('PM_CASES/strict'),
-                'indexSingle' => array('PM_CASES/strict'),
-                'appList' => array('PM_CASES/strict'),
-                'appAdvancedSearch' => array('PM_ALLCASES'),
-                'getApps' => array('PM_ALLCASES'),
-                'getAppsData' => array('PM_ALLCASES'),
-                'startCase' => array('PM_CASES/strict'),
-                'error' => array(),
-                'getUserArray' => array('PM_ALLCASES'),
-                'getCategoryArray' => array('PM_ALLCASES'),
-                'getAllUsersArray' => array('PM_ALLCASES'),
-                'getStatusArray' => array('PM_ALLCASES'),
-                'getProcessArray' => array('PM_ALLCASES'),
-                'getProcesses' => array('PM_ALLCASES'),
-                'getUsers' => array('PM_ALLCASES')
-            ),
-            'newSite.php' => array(
-                'newSite.php' => array('PM_SETUP_ADVANCE')
-            ),
-            'emailsAjax.php' => array(
-                'MessageList' => array('PM_SETUP', 'PM_SETUP_LOGS'),
-                'updateStatusMessage' => array('PM_SETUP', 'PM_SETUP_LOGS'),
-            ),
-            'processCategory_Ajax.php' => array(
-                'processCategoryList' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
-                'updatePageSize' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
-                'checkCategoryName' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
-                'saveNewCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
-                'checkEditCategoryName' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
-                'updateCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
-                'canDeleteCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
-                'deleteCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES')
-            ),
-            'emailServerAjax.php' => array(
-                'INS' => array('PM_SETUP'),
-                'UPD' => array('PM_SETUP'),
-                'DEL' => array('PM_SETUP'),
-                'LST' => array('PM_SETUP'),
-                'TEST' => array('PM_SETUP')
-            )
-        );
+        $this->authorizedActions = [
+            'users_Ajax.php' => [
+                'availableUsers' => ['PM_FACTORY'],
+                'assign' => ['PM_FACTORY'],
+                'changeView' => [],
+                'ofToAssign' => ['PM_FACTORY'],
+                'usersGroup' => ['PM_FACTORY'],
+                'canDeleteUser' => ['PM_USERS'],
+                'deleteUser' => ['PM_USERS'],
+                'changeUserStatus' => ['PM_USERS'],
+                'availableGroups' => ['PM_USERS'],
+                'assignedGroups' => ['PM_USERS'],
+                'assignGroupsToUserMultiple' => ['PM_USERS'],
+                'deleteGroupsToUserMultiple' => ['PM_USERS'],
+                'authSources' => ['PM_USERS'],
+                'loadAuthSourceByUID' => ['PM_USERS'],
+                'updateAuthServices' => ['PM_USERS'],
+                'usersList' => ['PM_USERS'],
+                'updatePageSize' => [],
+                'summaryUserData' => ['PM_USERS'],
+                'verifyIfUserAssignedAsSupervisor' => ['PM_USERS']
+            ],
+            'skin_Ajax.php' => [
+                'updatePageSize' => [],
+                'skinList' => ['PM_SETUP_SKIN'],
+                'newSkin' => ['PM_SETUP_SKIN'],
+                'importSkin' => ['PM_SETUP_SKIN'],
+                'exportSkin' => ['PM_SETUP_SKIN'],
+                'deleteSkin' => ['PM_SETUP_SKIN'],
+                'streamSkin' => ['PM_SETUP_SKIN'],
+                'addTarFolder' => ['PM_SETUP_SKIN'],
+                'copy_skin_folder' => ['PM_SETUP_SKIN']
+            ],
+            'processes_DownloadFile.php' => [
+                'downloadFileHash' => ['PM_FACTORY']
+            ],
+            'processProxy.php' => [
+                'categoriesList' => ['PM_SETUP_PROCESS_CATEGORIES'],
+                'getCategoriesList' => ['PM_FACTORY'],
+                'saveProcess' => ['PM_FACTORY'],
+                'changeStatus' => ['PM_FACTORY'],
+                'changeDebugMode' => ['PM_FACTORY'],
+                'getUsers' => [],
+                'getGroups' => [],
+                'assignActorsTask' => [],
+                'removeActorsTask' => [],
+                'getActorsTask' => [],
+                'getProcessDetail' => [],
+                'getProperties' => [],
+                'saveProperties' => [],
+                'getCaledarList' => [],
+                'getPMVariables' => [],
+                'generateBpmn' => ['PM_FACTORY']
+            ],
+            'home.php' => [
+                'login' => ['PM_LOGIN'],
+                'index' => ['PM_CASES/strict'],
+                'indexSingle' => ['PM_CASES/strict'],
+                'appList' => ['PM_CASES/strict'],
+                'appAdvancedSearch' => ['PM_ALLCASES'],
+                'getApps' => ['PM_ALLCASES'],
+                'getAppsData' => ['PM_ALLCASES'],
+                'startCase' => ['PM_CASES/strict'],
+                'error' => [],
+                'getUserArray' => ['PM_ALLCASES'],
+                'getCategoryArray' => ['PM_ALLCASES'],
+                'getAllUsersArray' => ['PM_ALLCASES'],
+                'getStatusArray' => ['PM_ALLCASES'],
+                'getProcessArray' => ['PM_ALLCASES'],
+                'getProcesses' => ['PM_ALLCASES'],
+                'getUsers' => ['PM_ALLCASES']
+            ],
+            'newSite.php' => [
+                'newSite.php' => ['PM_SETUP_ADVANCE']
+            ],
+            'emailsAjax.php' => [
+                'MessageList' => ['PM_SETUP', 'PM_SETUP_LOGS'],
+                'updateStatusMessage' => ['PM_SETUP', 'PM_SETUP_LOGS'],
+            ],
+            'processCategory_Ajax.php' => [
+                'processCategoryList' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'],
+                'updatePageSize' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'],
+                'checkCategoryName' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'],
+                'saveNewCategory' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'],
+                'checkEditCategoryName' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'],
+                'updateCategory' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'],
+                'canDeleteCategory' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'],
+                'deleteCategory' => ['PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES']
+            ],
+            'emailServerAjax.php' => [
+                'INS' => ['PM_SETUP'],
+                'UPD' => ['PM_SETUP'],
+                'DEL' => ['PM_SETUP'],
+                'LST' => ['PM_SETUP'],
+                'TEST' => ['PM_SETUP']
+            ]
+        ];
         $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
         $this->aliasPermissions['PM_LOGIN'] = [self::PM_GUEST_CASE];
     }
@@ -199,66 +193,68 @@ class RBAC
      * @access public
      * @return object
      */
-    public function &getSingleton ()
+    public function &getSingleton()
     {
         if (self::$instance == null) {
             self::$instance = new RBAC();
         }
+
         return self::$instance;
     }
 
     /**
-     * to get start with some classess
+     * to get start with some classes
      *
      * @access public
      * @return object
      */
-    public function initRBAC ()
+    public function initRBAC()
     {
-        if (is_null( $this->userObj )) {
+        if (is_null($this->userObj)) {
 
             $this->userObj = new RbacUsers();
         }
 
-        if (is_null( $this->systemObj )) {
+        if (is_null($this->systemObj)) {
 
             $this->systemObj = new Systems();
         }
 
-        if (is_null( $this->usersRolesObj )) {
+        if (is_null($this->usersRolesObj)) {
 
             $this->usersRolesObj = new UsersRoles();
         }
 
-        if (is_null( $this->rolesObj )) {
+        if (is_null($this->rolesObj)) {
 
             $this->rolesObj = new Roles();
         }
 
-        if (is_null( $this->permissionsObj )) {
+        if (is_null($this->permissionsObj)) {
 
             $this->permissionsObj = new Permissions();
         }
 
-        if (is_null( $this->rolesPermissionsObj )) {
+        if (is_null($this->rolesPermissionsObj)) {
 
             $this->rolesPermissionsObj = new RolesPermissions();
         }
 
-        if (is_null( $this->authSourcesObj )) {
+        if (is_null($this->authSourcesObj)) {
 
             $this->authSourcesObj = new AuthenticationSource();
         }
         //hook for RBAC plugins
         $pathPlugins = PATH_RBAC . 'plugins';
-        if (is_dir( $pathPlugins )) {
-            if ($handle = opendir( $pathPlugins )) {
-                while (false !== ($file = readdir( $handle ))) {
-                    if (strpos( $file, '.php', 1 ) && is_file( $pathPlugins . PATH_SEP . $file ) && substr( $file, 0, 6 ) == 'class.' && substr( $file, - 4 ) == '.php') {
+        if (is_dir($pathPlugins)) {
+            if ($handle = opendir($pathPlugins)) {
+                while (false !== ($file = readdir($handle))) {
+                    if (strpos($file, '.php', 1) && is_file($pathPlugins . PATH_SEP . $file) && substr($file, 0,
+                            6) == 'class.' && substr($file, -4) == '.php') {
 
-                        $sClassName = substr( $file, 6, strlen( $file ) - 10 );
-                        require_once ($pathPlugins . PATH_SEP . $file);
-                        $this->aRbacPlugins[] = $sClassName;
+                        $className = substr($file, 6, strlen($file) - 10);
+                        require_once($pathPlugins . PATH_SEP . $file);
+                        $this->aRbacPlugins[] = $className;
 
                     }
                 }
@@ -279,131 +275,335 @@ class RBAC
      */
     public function loadPermissionAdmin()
     {
-        $permissionsAdmin = array(array("PER_UID" => "00000000000000000000000000000001", "PER_CODE" => "PM_LOGIN",
-            "PER_NAME" => "Login"
-        ), array("PER_UID" => "00000000000000000000000000000002", "PER_CODE" => "PM_SETUP", "PER_NAME" => "Setup"
-        ), array("PER_UID" => "00000000000000000000000000000003", "PER_CODE" => "PM_USERS", "PER_NAME" => "Users"
-        ), array("PER_UID" => "00000000000000000000000000000004", "PER_CODE" => "PM_FACTORY", "PER_NAME" => "Design
-        Process"
-        ), array("PER_UID" => "00000000000000000000000000000005", "PER_CODE" => "PM_CASES", "PER_NAME" => "Create Users"
-        ), array("PER_UID" => "00000000000000000000000000000006", "PER_CODE" => "PM_ALLCASES", "PER_NAME" => "All Cases"
-        ), array("PER_UID" => "00000000000000000000000000000007", "PER_CODE" => "PM_REASSIGNCASE", "PER_NAME" =>
-            "Reassign case"
-        ), array("PER_UID" => "00000000000000000000000000000008", "PER_CODE" => "PM_REPORTS", "PER_NAME" => "PM reports"
-        ), array("PER_UID" => "00000000000000000000000000000009", "PER_CODE" => "PM_SUPERVISOR", "PER_NAME" =>
-            "Supervisor"
-        ), array("PER_UID" => "00000000000000000000000000000010", "PER_CODE" => "PM_SETUP_ADVANCE", "PER_NAME" =>
-            "Setup Advanced"
-        ), array("PER_UID" => "00000000000000000000000000000011", "PER_CODE" => "PM_DASHBOARD", "PER_NAME" => "Dashboard"
-        ), array("PER_UID" => "00000000000000000000000000000012", "PER_CODE" => "PM_WEBDAV", "PER_NAME" => "WebDav"
-        ), array("PER_UID" => "00000000000000000000000000000013", "PER_CODE" => "PM_DELETECASE", "PER_NAME" => "Cancel
-         cases"
-        ), array("PER_UID" => "00000000000000000000000000000014", "PER_CODE" => "PM_EDITPERSONALINFO", "PER_NAME" =>
-            "Edit Personal Info"
-        ), array("PER_UID" => "00000000000000000000000000000015", "PER_CODE" => "PM_FOLDERS_VIEW", "PER_NAME" => "View
-         Folders"
-        ), array("PER_UID" => "00000000000000000000000000000016", "PER_CODE" => "PM_FOLDERS_ADD_FOLDER", "PER_NAME" =>
-            "Delete folders"
-        ), array("PER_UID" => "00000000000000000000000000000017", "PER_CODE" => "PM_FOLDERS_ADD_FILE", "PER_NAME" =>
-            "Delete folders"
-        ), array("PER_UID" => "00000000000000000000000000000018", "PER_CODE" => "PM_CANCELCASE", "PER_NAME" => "Cancel
-         cases"
-        ), array("PER_UID" => "00000000000000000000000000000019", "PER_CODE" => "PM_FOLDER_DELETE", "PER_NAME" =>
-            "Cancel cases"
-        ), array("PER_UID" => "00000000000000000000000000000020", "PER_CODE" => "PM_SETUP_LOGO", "PER_NAME" => "Setup
-        Logo"
-        ), array("PER_UID" => "00000000000000000000000000000021", "PER_CODE" => "PM_SETUP_EMAIL", "PER_NAME" => "Setup
-         Email"
-        ), array("PER_UID" => "00000000000000000000000000000022", "PER_CODE" => "PM_SETUP_CALENDAR", "PER_NAME" =>
-            "Setup Calendar"
-        ), array("PER_UID" => "00000000000000000000000000000023", "PER_CODE" => "PM_SETUP_PROCESS_CATEGORIES",
-            "PER_NAME" => "Setup Process Categories"
-        ), array("PER_UID" => "00000000000000000000000000000024", "PER_CODE" => "PM_SETUP_CLEAR_CACHE", "PER_NAME" =>
-            "Setup Clear Cache"
-        ), array("PER_UID" => "00000000000000000000000000000025", "PER_CODE" => "PM_SETUP_HEART_BEAT", "PER_NAME" =>
-            "Setup Heart Beat"
-        ), array("PER_UID" => "00000000000000000000000000000026", "PER_CODE" => "PM_SETUP_ENVIRONMENT", "PER_NAME" =>
-            "Setup Environment"
-        ), array("PER_UID" => "00000000000000000000000000000027", "PER_CODE" => "PM_SETUP_PM_TABLES", "PER_NAME" =>
-            "Setup PM Tables"
-        ), array("PER_UID" => "00000000000000000000000000000028", "PER_CODE" => "PM_SETUP_LOGIN", "PER_NAME" => "Setup
-         Login"
-        ), array("PER_UID" => "00000000000000000000000000000029", "PER_CODE" => "PM_SETUP_DASHBOARDS", "PER_NAME" =>
-            "Setup Dashboards"
-        ), array("PER_UID" => "00000000000000000000000000000030", "PER_CODE" => "PM_SETUP_LANGUAGE", "PER_NAME" =>
-            "Setup Language"
-        ), array("PER_UID" => "00000000000000000000000000000031", "PER_CODE" => "PM_SETUP_SKIN", "PER_NAME" => "Setup
-        Skin"
-        ), array("PER_UID" => "00000000000000000000000000000032", "PER_CODE" => "PM_SETUP_CASES_LIST_CACHE_BUILDER",
-            "PER_NAME" => "Setup Case List Cache Builder"
-        ), array("PER_UID" => "00000000000000000000000000000033", "PER_CODE" => "PM_SETUP_PLUGINS", "PER_NAME" =>
-            "Setup Plugins"
-        ), array("PER_UID" => "00000000000000000000000000000034", "PER_CODE" =>
-            "PM_SETUP_USERS_AUTHENTICATION_SOURCES", "PER_NAME" => "Setup User Authentication Sources"
-        ), array("PER_UID" => "00000000000000000000000000000035", "PER_CODE" => "PM_SETUP_LOGS", "PER_NAME" => "Setup
-        Logs"
-        ), array("PER_UID" => "00000000000000000000000000000036", "PER_CODE" => "PM_DELETE_PROCESS_CASES", "PER_NAME" =>
-            "Delete process cases"
-        ), array("PER_UID" => "00000000000000000000000000000037", "PER_CODE" => "PM_EDITPERSONALINFO_CALENDAR",
-            "PER_NAME" => "Edit personal info Calendar"
-        ), array("PER_UID" => "00000000000000000000000000000038", "PER_CODE" => "PM_UNCANCELCASE",
-            "PER_NAME" => "Undo cancel case"
-        ), array("PER_UID" => "00000000000000000000000000000039", "PER_CODE" => "PM_REST_API_APPLICATIONS",
-            "PER_NAME" => "Create rest API Aplications"
-        ), array("PER_UID" => "00000000000000000000000000000040", "PER_CODE" => "PM_EDIT_USER_PROFILE_FIRST_NAME",
-            "PER_NAME" => "Edit User profile First Name"
-        ), array("PER_UID" => "00000000000000000000000000000041", "PER_CODE" => "PM_EDIT_USER_PROFILE_LAST_NAME",
-            "PER_NAME" => "Edit User profile Last Name"
-        ), array("PER_UID" => "00000000000000000000000000000042", "PER_CODE" => "PM_EDIT_USER_PROFILE_USERNAME",
-            "PER_NAME" => "Edit User profile Username"
-        ), array("PER_UID" => "00000000000000000000000000000043", "PER_CODE" => "PM_EDIT_USER_PROFILE_EMAIL",
-            "PER_NAME" => "Edit User profile Email"
-        ), array("PER_UID" => "00000000000000000000000000000044", "PER_CODE" => "PM_EDIT_USER_PROFILE_ADDRESS",
-            "PER_NAME" => "Edit User profile Address"
-        ), array("PER_UID" => "00000000000000000000000000000045", "PER_CODE" => "PM_EDIT_USER_PROFILE_ZIP_CODE",
-            "PER_NAME" => "Edit User profile Zip Code"
-        ), array("PER_UID" => "00000000000000000000000000000046", "PER_CODE" => "PM_EDIT_USER_PROFILE_COUNTRY",
-            "PER_NAME" => "Edit User profile Country"
-        ), array("PER_UID" => "00000000000000000000000000000047", "PER_CODE" => "PM_EDIT_USER_PROFILE_STATE_OR_REGION",
-            "PER_NAME" => "Edit User profile State or Region"
-        ), array("PER_UID" => "00000000000000000000000000000048", "PER_CODE" => "PM_EDIT_USER_PROFILE_LOCATION",
-            "PER_NAME" => "Edit User profile Location"
-        ), array("PER_UID" => "00000000000000000000000000000049", "PER_CODE" => "PM_EDIT_USER_PROFILE_PHONE",
-            "PER_NAME" => "Edit User profile Phone"
-        ), array("PER_UID" => "00000000000000000000000000000050", "PER_CODE" => "PM_EDIT_USER_PROFILE_POSITION",
-            "PER_NAME" => "Edit User profile Position"
-        ), array("PER_UID" => "00000000000000000000000000000051", "PER_CODE" => "PM_EDIT_USER_PROFILE_REPLACED_BY",
-            "PER_NAME" => "Edit User profile Replaced By"
-        ), array("PER_UID" => "00000000000000000000000000000052", "PER_CODE" => "PM_EDIT_USER_PROFILE_EXPIRATION_DATE",
-            "PER_NAME" => "Edit User profile Expiration Date"
-        ), array("PER_UID" => "00000000000000000000000000000053", "PER_CODE" => "PM_EDIT_USER_PROFILE_CALENDAR",
-            "PER_NAME" => "Edit User profile Calendar"
-        ), array("PER_UID" => "00000000000000000000000000000054", "PER_CODE" => "PM_EDIT_USER_PROFILE_STATUS",
-            "PER_NAME" => "Edit User profile Status"
-        ), array("PER_UID" => "00000000000000000000000000000055", "PER_CODE" => "PM_EDIT_USER_PROFILE_ROLE",
-            "PER_NAME" => "Edit User profile Role"
-        ), array("PER_UID" => "00000000000000000000000000000056", "PER_CODE" => "PM_EDIT_USER_PROFILE_TIME_ZONE",
-            "PER_NAME" => "Edit User profile Time Zone"
-        ), array("PER_UID" => "00000000000000000000000000000057", "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_LANGUAGE",
-            "PER_NAME" => "Edit User profile Default Language"
-        ), array("PER_UID" => "00000000000000000000000000000058", "PER_CODE" => "PM_EDIT_USER_PROFILE_COSTS",
-            "PER_NAME" => "Edit User profile Costs"
-        ), array("PER_UID" => "00000000000000000000000000000059", "PER_CODE" => "PM_EDIT_USER_PROFILE_PASSWORD",
-            "PER_NAME" => "Edit User profile Password"
-        ), array("PER_UID" => "00000000000000000000000000000060", "PER_CODE" => "PM_EDIT_USER_PROFILE_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON",
-            "PER_NAME" => "Edit User profile Must Change Password at next Logon"
-        ), array("PER_UID" => "00000000000000000000000000000061", "PER_CODE" => "PM_EDIT_USER_PROFILE_PHOTO",
-            "PER_NAME" => "Edit User profile Photo"
-        ), array("PER_UID" => "00000000000000000000000000000062", "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_MAIN_MENU_OPTIONS",
-            "PER_NAME" => "Edit User profile Default Main Menu Options"
-        ), array("PER_UID" => "00000000000000000000000000000063", "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS",
-            "PER_NAME" => "Edit User profile Default Cases Menu Options"
-        ), array("PER_UID" => "00000000000000000000000000000064", "PER_CODE" => "PM_REASSIGNCASE_SUPERVISOR",
-            "PER_NAME" => "Reassign case supervisor"
-        ), array("PER_UID" => "00000000000000000000000000000065", "PER_CODE" => "PM_SETUP_CUSTOM_CASES_LIST",
-            "PER_NAME" => "Setup Custom Cases List"
-        )
-        );
+        $permissionsAdmin = [
+            [
+                "PER_UID" => "00000000000000000000000000000001",
+                "PER_CODE" => "PM_LOGIN",
+                "PER_NAME" => "Login"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000002",
+                "PER_CODE" => "PM_SETUP",
+                "PER_NAME" => "Setup"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000003",
+                "PER_CODE" => "PM_USERS",
+                "PER_NAME" => "Users"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000004",
+                "PER_CODE" => "PM_FACTORY",
+                "PER_NAME" => "Design Process"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000005",
+                "PER_CODE" => "PM_CASES",
+                "PER_NAME" => "Create Users"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000006",
+                "PER_CODE" => "PM_ALLCASES",
+                "PER_NAME" => "All Cases"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000007",
+                "PER_CODE" => "PM_REASSIGNCASE",
+                "PER_NAME" => "Reassign case"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000008",
+                "PER_CODE" => "PM_REPORTS",
+                "PER_NAME" => "PM reports"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000009",
+                "PER_CODE" => "PM_SUPERVISOR",
+                "PER_NAME" => "Supervisor"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000010",
+                "PER_CODE" => "PM_SETUP_ADVANCE",
+                "PER_NAME" => "Setup Advanced"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000011",
+                "PER_CODE" => "PM_DASHBOARD",
+                "PER_NAME" => "Dashboard"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000012",
+                "PER_CODE" => "PM_WEBDAV",
+                "PER_NAME" => "WebDav"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000013",
+                "PER_CODE" => "PM_DELETECASE",
+                "PER_NAME" => "Cancel cases"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000014",
+                "PER_CODE" => "PM_EDITPERSONALINFO",
+                "PER_NAME" => "Edit Personal Info"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000015",
+                "PER_CODE" => "PM_FOLDERS_VIEW",
+                "PER_NAME" => "View Folders"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000016",
+                "PER_CODE" => "PM_FOLDERS_ADD_FOLDER",
+                "PER_NAME" => "Delete folders"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000017",
+                "PER_CODE" => "PM_FOLDERS_ADD_FILE",
+                "PER_NAME" =>
+                    "Delete folders"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000018",
+                "PER_CODE" => "PM_CANCELCASE",
+                "PER_NAME" => "Cancel cases"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000019",
+                "PER_CODE" => "PM_FOLDER_DELETE",
+                "PER_NAME" => "Cancel cases"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000020",
+                "PER_CODE" => "PM_SETUP_LOGO",
+                "PER_NAME" => "Setup Logo"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000021",
+                "PER_CODE" => "PM_SETUP_EMAIL",
+                "PER_NAME" => "Setup Email"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000022",
+                "PER_CODE" => "PM_SETUP_CALENDAR",
+                "PER_NAME" => "Setup Calendar"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000023",
+                "PER_CODE" => "PM_SETUP_PROCESS_CATEGORIES",
+                "PER_NAME" => "Setup Process Categories"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000024",
+                "PER_CODE" => "PM_SETUP_CLEAR_CACHE",
+                "PER_NAME" => "Setup Clear Cache"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000025",
+                "PER_CODE" => "PM_SETUP_HEART_BEAT",
+                "PER_NAME" => "Setup Heart Beat"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000026",
+                "PER_CODE" => "PM_SETUP_ENVIRONMENT",
+                "PER_NAME" => "Setup Environment"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000027",
+                "PER_CODE" => "PM_SETUP_PM_TABLES",
+                "PER_NAME" => "Setup PM Tables"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000028",
+                "PER_CODE" => "PM_SETUP_LOGIN",
+                "PER_NAME" => "Setup Login"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000029",
+                "PER_CODE" => "PM_SETUP_DASHBOARDS",
+                "PER_NAME" => "Setup Dashboards"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000030",
+                "PER_CODE" => "PM_SETUP_LANGUAGE",
+                "PER_NAME" => "Setup Language"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000031",
+                "PER_CODE" => "PM_SETUP_SKIN",
+                "PER_NAME" => "Setup Skin"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000032",
+                "PER_CODE" => "PM_SETUP_CASES_LIST_CACHE_BUILDER",
+                "PER_NAME" => "Setup Case List Cache Builder"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000033",
+                "PER_CODE" => "PM_SETUP_PLUGINS",
+                "PER_NAME" => "Setup Plugins"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000034",
+                "PER_CODE" => "PM_SETUP_USERS_AUTHENTICATION_SOURCES",
+                "PER_NAME" => "Setup User Authentication Sources"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000035",
+                "PER_CODE" => "PM_SETUP_LOGS",
+                "PER_NAME" => "Setup Logs"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000036",
+                "PER_CODE" => "PM_DELETE_PROCESS_CASES",
+                "PER_NAME" => "Delete process cases"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000037",
+                "PER_CODE" => "PM_EDITPERSONALINFO_CALENDAR",
+                "PER_NAME" => "Edit personal info Calendar"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000038",
+                "PER_CODE" => "PM_UNCANCELCASE",
+                "PER_NAME" => "Undo cancel case"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000039",
+                "PER_CODE" => "PM_REST_API_APPLICATIONS",
+                "PER_NAME" => "Create rest API Aplications"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000040",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_FIRST_NAME",
+                "PER_NAME" => "Edit User profile First Name"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000041",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_LAST_NAME",
+                "PER_NAME" => "Edit User profile Last Name"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000042",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_USERNAME",
+                "PER_NAME" => "Edit User profile Username"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000043",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_EMAIL",
+                "PER_NAME" => "Edit User profile Email"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000044",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_ADDRESS",
+                "PER_NAME" => "Edit User profile Address"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000045",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_ZIP_CODE",
+                "PER_NAME" => "Edit User profile Zip Code"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000046",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_COUNTRY",
+                "PER_NAME" => "Edit User profile Country"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000047",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_STATE_OR_REGION",
+                "PER_NAME" => "Edit User profile State or Region"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000048",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_LOCATION",
+                "PER_NAME" => "Edit User profile Location"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000049",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_PHONE",
+                "PER_NAME" => "Edit User profile Phone"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000050",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_POSITION",
+                "PER_NAME" => "Edit User profile Position"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000051",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_REPLACED_BY",
+                "PER_NAME" => "Edit User profile Replaced By"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000052",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_EXPIRATION_DATE",
+                "PER_NAME" => "Edit User profile Expiration Date"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000053",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_CALENDAR",
+                "PER_NAME" => "Edit User profile Calendar"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000054",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_STATUS",
+                "PER_NAME" => "Edit User profile Status"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000055",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_ROLE",
+                "PER_NAME" => "Edit User profile Role"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000056",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_TIME_ZONE",
+                "PER_NAME" => "Edit User profile Time Zone"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000057",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_LANGUAGE",
+                "PER_NAME" => "Edit User profile Default Language"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000058",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_COSTS",
+                "PER_NAME" => "Edit User profile Costs"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000059",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_PASSWORD",
+                "PER_NAME" => "Edit User profile Password"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000060",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON",
+                "PER_NAME" => "Edit User profile Must Change Password at next Logon"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000061",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_PHOTO",
+                "PER_NAME" => "Edit User profile Photo"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000062",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_MAIN_MENU_OPTIONS",
+                "PER_NAME" => "Edit User profile Default Main Menu Options"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000063",
+                "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS",
+                "PER_NAME" => "Edit User profile Default Cases Menu Options"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000064",
+                "PER_CODE" => "PM_REASSIGNCASE_SUPERVISOR",
+                "PER_NAME" => "Reassign case supervisor"
+            ],
+            [
+                "PER_UID" => "00000000000000000000000000000065",
+                "PER_CODE" => "PM_SETUP_CUSTOM_CASES_LIST",
+                "PER_NAME" => "Setup Custom Cases List"
+            ]
+        ];
+
         return $permissionsAdmin;
     }
 
@@ -418,7 +618,7 @@ class RBAC
         try {
             $strRole = $role->getRolCode();
 
-            $arrayData = array();
+            $arrayData = [];
             $arrayData["USR_UID"] = self::GUEST_USER_UID;
             $arrayData["USR_USERNAME"] = 'guest';
             $arrayData["USR_PASSWORD"] = '674ba9750749d735ec9787d606170d78';
@@ -484,24 +684,25 @@ class RBAC
             if (!empty($roleExists)) {
                 return $roleExists;
             }
-            $aData = [
-                'ROL_UID'         => self::PROCESSMAKER_GUEST_UID,
-                'ROL_CODE'        => self::PROCESSMAKER_GUEST,
-                'ROL_SYSTEM'      => self::PER_SYSTEM,
-                'ROL_STATUS'      => 1,
-                'ROL_NAME'        => self::PROCESSMAKER_GUEST,
+            $dataCase = [
+                'ROL_UID' => self::PROCESSMAKER_GUEST_UID,
+                'ROL_CODE' => self::PROCESSMAKER_GUEST,
+                'ROL_SYSTEM' => self::PER_SYSTEM,
+                'ROL_STATUS' => 1,
+                'ROL_NAME' => self::PROCESSMAKER_GUEST,
                 'ROL_CREATE_DATE' => date('Y-m-d H:i:s'),
                 'ROL_UPDATE_DATE' => date('Y-m-d H:i:s'),
             ];
-            $this->createRole($aData);
+            $this->createRole($dataCase);
             $role = RolesPeer::doSelectOne($criteria);
-            foreach($permissions as $permission) {
+            foreach ($permissions as $permission) {
                 $o = new RolesPermissions();
                 $o->setPerUid($permission->getPerUid());
                 $o->setPermissionName('Guest case');
                 $o->setRolUid($role->getRolUid());
                 $o->save();
             }
+
             return $role;
         } catch (Exception $exception) {
             throw new Exception(
@@ -535,6 +736,7 @@ class RBAC
             $permission->setPerStatus(1);
             $permission->setPerSystem(self::PER_SYSTEM);
             $permission->save();
+
             return [$permission];
         } catch (Exception $exception) {
             throw new Exception(
@@ -564,22 +766,21 @@ class RBAC
      *
      * gets the Role and their permissions for one User
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
      *
      * @param string $sSystem the system
      * @param string $sUser the user
      * @return $this->aUserInfo[ $sSystem ]
      */
-    public function loadUserRolePermission ($sSystem, $sUser)
+    public function loadUserRolePermission($sSystem, $sUser)
     {
         //in previous versions  we provided a path data and session we will cache the session Info for this user
         //now this is deprecated, and all the aUserInfo is in the memcache
         $this->sSystem = $sSystem;
-        $fieldsSystem = $this->systemObj->loadByCode( $sSystem );
-        $fieldsRoles = $this->usersRolesObj->getRolesBySystem( $fieldsSystem['SYS_UID'], $sUser );
-        $fieldsPermissions = $this->usersRolesObj->getAllPermissions( $fieldsRoles['ROL_UID'], $sUser );
-        $this->aUserInfo['USER_INFO'] = $this->userObj->load( $sUser );
+        $fieldsSystem = $this->systemObj->loadByCode($sSystem);
+        $fieldsRoles = $this->usersRolesObj->getRolesBySystem($fieldsSystem['SYS_UID'], $sUser);
+        $fieldsPermissions = $this->usersRolesObj->getAllPermissions($fieldsRoles['ROL_UID'], $sUser);
+        $this->aUserInfo['USER_INFO'] = $this->userObj->load($sUser);
         $this->aUserInfo[$sSystem]['SYS_UID'] = $fieldsSystem['SYS_UID'];
         $this->aUserInfo[$sSystem]['ROLE'] = $fieldsRoles;
         $this->aUserInfo[$sSystem]['PERMISSIONS'] = $fieldsPermissions;
@@ -594,35 +795,35 @@ class RBAC
      * @param string $strPass the password
      * @return $res
      */
-    public function checkAutomaticRegister ($strUser, $strPass)
+    public function checkAutomaticRegister($strUser, $strPass)
     {
-        $result = - 1; //default return value,
+        $result = -1; //default return value,
 
-        foreach ($this->aRbacPlugins as $sClassName) {
-            $plugin = new $sClassName();
-            if (method_exists( $plugin, 'automaticRegister' )) {
-                $oCriteria = new Criteria( 'rbac' );
-                $oCriteria->add( AuthenticationSourcePeer::AUTH_SOURCE_PROVIDER, $sClassName );
-                $oCriteria->addAscendingOrderByColumn( AuthenticationSourcePeer::AUTH_SOURCE_NAME );
-                $oDataset = AuthenticationSourcePeer::doSelectRS( $oCriteria, Propel::getDbConnection('rbac_ro') );
-                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-                $oDataset->next();
-                $aRow = $oDataset->getRow();
-                while (is_array( $aRow )) {
-                    $aRow = array_merge( $aRow, unserialize( $aRow['AUTH_SOURCE_DATA'] ) );
+        foreach ($this->aRbacPlugins as $className) {
+            $plugin = new $className();
+            if (method_exists($plugin, 'automaticRegister')) {
+                $criteria = new Criteria('rbac');
+                $criteria->add(AuthenticationSourcePeer::AUTH_SOURCE_PROVIDER, $className);
+                $criteria->addAscendingOrderByColumn(AuthenticationSourcePeer::AUTH_SOURCE_NAME);
+                $dataset = AuthenticationSourcePeer::doSelectRS($criteria, Propel::getDbConnection('rbac_ro'));
+                $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $dataset->next();
+                $row = $dataset->getRow();
+                while (is_array($row)) {
+                    $row = array_merge($row, unserialize($row['AUTH_SOURCE_DATA']));
                     //Check if this authsource is enabled for AutoRegister, if not skip this
-                    if ($aRow['AUTH_SOURCE_AUTO_REGISTER'] == 1) {
-                        $plugin->sAuthSource = $aRow['AUTH_SOURCE_UID'];
+                    if ($row['AUTH_SOURCE_AUTO_REGISTER'] == 1) {
+                        $plugin->sAuthSource = $row['AUTH_SOURCE_UID'];
                         $plugin->sSystem = $this->sSystem;
                         //search the usersRolesObj
                         //create the users in ProcessMaker
-                        $res = $plugin->automaticRegister( $aRow, $strUser, $strPass );
+                        $res = $plugin->automaticRegister($row, $strUser, $strPass);
                         if ($res == 1) {
                             return $res;
                         }
                     }
-                    $oDataset->next();
-                    $aRow = $oDataset->getRow();
+                    $dataset->next();
+                    $row = $dataset->getRow();
                 }
             }
         }
@@ -634,54 +835,52 @@ class RBAC
      *
      *
      * @access public
-     * @param string $sAuthType
-     * @param string $sAuthSource
-     * @param string $aUserFields
-     * @param string $sAuthUserDn
+     * @param string $authType
+     * @param string $userFields
      * @param string $strPass
      * @return number -2: wrong password
      * -3: inactive user
      * -4: due date
      * -5: invalid authentication source
      */
-    public function VerifyWithOtherAuthenticationSource ($sAuthType, $aUserFields, $strPass)
+    public function VerifyWithOtherAuthenticationSource($authType, $userFields, $strPass)
     {
-        if ($sAuthType == '' || $sAuthType == 'MYSQL') {
+        if ($authType == '' || $authType == 'MYSQL') {
             //check if the user is active
-            if ($aUserFields['USR_STATUS'] != 1) {
-                return - 3; //inactive user
+            if ($userFields['USR_STATUS'] != 1) {
+                return -3; //inactive user
             }
 
             //check if the user's due date is valid
-            if ($aUserFields['USR_DUE_DATE'] < date( 'Y-m-d' )) {
-                return - 4; //due date
+            if ($userFields['USR_DUE_DATE'] < date('Y-m-d')) {
+                return -4; //due date
             }
         }
 
-        foreach ($this->aRbacPlugins as $sClassName) {
-            if (strtolower( $sClassName ) == strtolower( $sAuthType )) {
-                $plugin = new $sClassName();
-                $plugin->sAuthSource = $aUserFields["UID_AUTH_SOURCE"];
+        foreach ($this->aRbacPlugins as $className) {
+            if (strtolower($className) == strtolower($authType)) {
+                $plugin = new $className();
+                $plugin->sAuthSource = $userFields["UID_AUTH_SOURCE"];
                 $plugin->sSystem = $this->sSystem;
 
                 $bValidUser = false;
-                $bValidUser = $plugin->VerifyLogin( $aUserFields["USR_AUTH_USER_DN"], $strPass );
+                $bValidUser = $plugin->VerifyLogin($userFields["USR_AUTH_USER_DN"], $strPass);
                 if ($bValidUser === true) {
-                    return ($aUserFields['USR_UID']);
+                    return ($userFields['USR_UID']);
                 } else {
-                    return - 2; //wrong password
+                    return -2; //wrong password
                 }
             }
         }
-        return - 5; //invalid authentication source
+
+        return -5; //invalid authentication source
     }
 
     /**
      * authentication of an user through of class RBAC_user
      *
-     * checking that an user has right to start an applicaton
+     * checking that an user has right to start an application
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
      *
      * @param string $strUser UserId (login) an user
@@ -693,44 +892,47 @@ class RBAC
      * -5: invalid authentication source ( **new )
      * n : uid of user
      */
-    public function VerifyLogin ($strUser, $strPass)
+    public function VerifyLogin($strUser, $strPass)
     {
         /*----------------------------------********---------------------------------*/
 
         $licenseManager =& PmLicenseManager::getSingleton();
-        if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
+        if (in_array(G::encryptOld($licenseManager->result),
+            array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
             return -7;
         }
         /*----------------------------------********---------------------------------*/
 
-        if (strlen( $strPass ) == 0) {
-            return - 2;
+        if (strlen($strPass) == 0) {
+            return -2;
         }
         //check if the user exists in the table RB_WORKFLOW.USERS
         $this->initRBAC();
         //if the user exists, the VerifyUser function will return the user properties
-        if ($this->userObj->verifyUser( $strUser ) == 0) {
+        if ($this->userObj->verifyUser($strUser) == 0) {
             //here we are checking if the automatic user Register is enabled, ioc return -1
-            $res = $this->checkAutomaticRegister( $strUser, $strPass );
+            $res = $this->checkAutomaticRegister($strUser, $strPass);
             if ($res == 1) {
-                $this->userObj->verifyUser( $strUser );
+                $this->userObj->verifyUser($strUser);
             } else {
                 return $res;
             }
         }
 
         //default values
-        $sAuthType = 'mysql';
-        if (isset( $this->userObj->fields['USR_AUTH_TYPE'] )) {
-            $sAuthType = strtolower( $this->userObj->fields['USR_AUTH_TYPE'] );
+        $authType = 'mysql';
+        if (isset($this->userObj->fields['USR_AUTH_TYPE'])) {
+            $authType = strtolower($this->userObj->fields['USR_AUTH_TYPE']);
         }
         //Hook for RBAC plugins
-        if ($sAuthType != "mysql" && $sAuthType != "") {
-            $res = $this->VerifyWithOtherAuthenticationSource( $sAuthType, $this->userObj->fields, $strPass );
+        if ($authType != "mysql" && $authType != "") {
+            $res = $this->VerifyWithOtherAuthenticationSource($authType, $this->userObj->fields, $strPass);
+
             return $res;
         } else {
             $this->userObj->reuseUserFields = true;
-            $res = $this->userObj->VerifyLogin( $strUser, $strPass );
+            $res = $this->userObj->VerifyLogin($strUser, $strPass);
+
             return $res;
         }
     }
@@ -743,23 +945,24 @@ class RBAC
      * @param string $strUser
      * @return $res
      */
-    public function verifyUser ($strUser)
+    public function verifyUser($strUser)
     {
-        $res = $this->userObj->verifyUser( $strUser );
+        $res = $this->userObj->verifyUser($strUser);
+
         return $res;
     }
 
     /**
      * Verify if the user exist or not exists, the argument is the UserUID
      *
-     * @author Everth S. Berrios
      * @access public
      * @param string $strUserId
      * @return $res
      */
-    public function verifyUserId ($strUserId)
+    public function verifyUserId($strUserId)
     {
-        $res = $this->userObj->verifyUserId( $strUserId );
+        $res = $this->userObj->verifyUserId($strUserId);
+
         return $res;
     }
 
@@ -787,7 +990,7 @@ class RBAC
         $strict = substr($permBase, -7, 7) === '/strict';
         $perm = $strict ? substr($permBase, 0, -7) : $permBase;
         if (isset($this->aUserInfo[$this->sSystem]['PERMISSIONS'])) {
-            $res = - 3;
+            $res = -3;
             foreach ($this->aUserInfo[$this->sSystem]['PERMISSIONS'] as $key => $val) {
                 if ($perm == $val['PER_CODE']) {
                     $res = 1;
@@ -804,7 +1007,7 @@ class RBAC
                 }
             }
         } else {
-            $res = - 1;
+            $res = -1;
         }
 
         return $res;
@@ -814,114 +1017,118 @@ class RBAC
      * to create an user
      *
      * @access public
-     * @param array $aData
-     * @param string $sRolCode
-     * @return $sUserUID
+     * @param array $dataCase
+     * @param string $rolCode
+     * @return $userUid
      */
-    public function createUser ($aData = array(), $sRolCode = '')
+    public function createUser($dataCase = [], $rolCode = '')
     {
-        if ($aData["USR_STATUS"] . "" == "1") {
-            $aData["USR_STATUS"] = "ACTIVE";
+        if ($dataCase["USR_STATUS"] . "" == "1") {
+            $dataCase["USR_STATUS"] = "ACTIVE";
         }
 
-        if ($aData["USR_STATUS"] . "" == "0") {
-            $aData["USR_STATUS"] = "INACTIVE";
+        if ($dataCase["USR_STATUS"] . "" == "0") {
+            $dataCase["USR_STATUS"] = "INACTIVE";
         }
 
-        if ($aData['USR_STATUS'] == 'ACTIVE') {
-            $aData['USR_STATUS'] = 1;
+        if ($dataCase['USR_STATUS'] == 'ACTIVE') {
+            $dataCase['USR_STATUS'] = 1;
         }
-        if ($aData['USR_STATUS'] == 'INACTIVE') {
-            $aData['USR_STATUS'] = 0;
+        if ($dataCase['USR_STATUS'] == 'INACTIVE') {
+            $dataCase['USR_STATUS'] = 0;
         }
 
-        $sUserUID = $this->userObj->create( $aData );
+        $userUid = $this->userObj->create($dataCase);
 
-        if ($sRolCode != '') {
-            $this->assignRoleToUser( $sUserUID, $sRolCode );
+        if ($rolCode != '') {
+            $this->assignRoleToUser($userUid, $rolCode);
         }
-        return $sUserUID;
+
+        return $userUid;
     }
 
     /**
-     * updated an user
+     * Update an user
      *
      * @access public
-     * @param array $aData
-     * @param string $sRolCode
+     * @param array $dataCase
+     * @param string $rolCode
      * @return void
      */
-    public function updateUser ($aData = array(), $sRolCode = '')
+    public function updateUser($dataCase = [], $rolCode = '')
     {
-        if (isset( $aData['USR_STATUS'] )) {
-            if ($aData['USR_STATUS'] == 'ACTIVE') {
-                $aData['USR_STATUS'] = 1;
+        if (isset($dataCase['USR_STATUS'])) {
+            if ($dataCase['USR_STATUS'] == 'ACTIVE') {
+                $dataCase['USR_STATUS'] = 1;
             }
         }
-        $this->userObj->update( $aData );
-        if ($sRolCode != '') {
-            $this->removeRolesFromUser( $aData['USR_UID'] );
-            $this->assignRoleToUser( $aData['USR_UID'], $sRolCode );
+
+        $this->userObj->update($dataCase);
+        if ($rolCode != '') {
+            $this->removeRolesFromUser($dataCase['USR_UID']);
+            $this->assignRoleToUser($dataCase['USR_UID'], $rolCode);
         }
     }
 
     /**
-     * to put role an user
+     * To put role an user
      *
      * @access public
-     * @param string $sUserUID
-     * @param string $sRolCode
+     * @param string $userUid
+     * @param string $rolCode
      * @return void
      */
-    public function assignRoleToUser ($sUserUID = '', $sRolCode = '')
+    public function assignRoleToUser($userUid = '', $rolCode = '')
     {
-        $aRol = $this->rolesObj->loadByCode( $sRolCode );
-        $this->usersRolesObj->create( $sUserUID, $aRol['ROL_UID'] );
+        $aRol = $this->rolesObj->loadByCode($rolCode);
+        $this->usersRolesObj->create($userUid, $aRol['ROL_UID']);
     }
 
     /**
-     * remove a role from an user
+     * Remove a role from an user
      *
      * @access public
-     * @param array $sUserUID
+     * @param string $userUid
      * @return void
      */
-    public function removeRolesFromUser ($sUserUID = '')
+    public function removeRolesFromUser($userUid = '')
     {
-        $oCriteria = new Criteria( 'rbac' );
-        $oCriteria->add( UsersRolesPeer::USR_UID, $sUserUID );
-        UsersRolesPeer::doDelete( $oCriteria );
+        $criteria = new Criteria('rbac');
+        $criteria->add(UsersRolesPeer::USR_UID, $userUid);
+        $criteria->add(UsersRolesPeer::ROL_UID, [RBAC::PROCESSMAKER_GUEST_UID], Criteria::NOT_IN);
+        UsersRolesPeer::doDelete($criteria);
     }
 
     /**
      * change status of an user
      *
      * @access public
-     * @param array $sUserUID
+     * @param string $userUid
+     * @param string $userStatus
      * @return void
      */
-    public function changeUserStatus ($sUserUID = '', $sStatus = 'ACTIVE')
+    public function changeUserStatus($userUid = '', $userStatus = 'ACTIVE')
     {
-        if ($sStatus === 'ACTIVE') {
-            $sStatus = 1;
+        if ($userStatus === 'ACTIVE') {
+            $userStatus = 1;
         }
 
-        $aFields = $this->userObj->load( $sUserUID );
-        $aFields['USR_STATUS'] = $sStatus;
-        $this->userObj->update( $aFields );
+        $aFields = $this->userObj->load($userUid);
+        $aFields['USR_STATUS'] = $userStatus;
+        $this->userObj->update($aFields);
     }
 
     /**
      * remove an user
      *
      * @access public
-     * @param array $sUserUID
+     * @param string $userUid
      * @return void
      */
-    public function removeUser ($sUserUID = '')
+    public function removeUser($userUid = '')
     {
-        $this->userObj->remove( $sUserUID );
-        $this->removeRolesFromUser( $sUserUID );
+        $this->userObj->remove($userUid);
+        $this->removeRolesFromUser($userUid);
     }
     //
 
@@ -931,36 +1138,22 @@ class RBAC
      *
      * getting datas that is saved in rbac
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
      *
      * @param string $uid id user
      * @return array with info of an user
      */
-    public function load ($uid)
+    public function load($uid)
     {
         $this->initRBAC();
-        $this->userObj->Fields = $this->userObj->load( $uid );
+        $this->userObj->Fields = $this->userObj->load($uid);
 
-        $fieldsSystem = $this->systemObj->loadByCode( $this->sSystem );
-        $fieldsRoles = $this->usersRolesObj->getRolesBySystem( $fieldsSystem['SYS_UID'], $uid );
+        $fieldsSystem = $this->systemObj->loadByCode($this->sSystem);
+        $fieldsRoles = $this->usersRolesObj->getRolesBySystem($fieldsSystem['SYS_UID'], $uid);
         $this->userObj->Fields['USR_ROLE'] = $fieldsRoles['ROL_CODE'];
+
         return $this->userObj->Fields;
     }
-
-    /**
-     * loading permission by code
-     *
-     *
-     * @access public
-     *
-     * @param string $sCode
-     * @return void
-     */
-    //  function loadPermissionByCode($sCode) {
-    //    return $this->permissionsObj->loadByCode($sCode);
-    //  }
-
 
     /**
      * create permission
@@ -968,27 +1161,13 @@ class RBAC
      *
      * @access public
      *
-     * @param string $sCode
+     * @param string $code
      * @return void
      */
-    public function createPermision ($sCode)
+    public function createPermision($code)
     {
-        return $this->permissionsObj->create( array ('PER_CODE' => $sCode) );
+        return $this->permissionsObj->create(array('PER_CODE' => $code));
     }
-
-    /**
-     * loading role by code
-     *
-     *
-     * @access public
-     *
-     * @param string $sCode
-     * @return void
-     */
-    //  function loadRoleByCode($sCode) {
-    //    return $this->rolesObj->loadByCode($sCode);
-    //  }
-
 
     /**
      * list all roles
@@ -1000,9 +1179,9 @@ class RBAC
      * @return $this->rolesObj
      */
 
-    public function listAllRoles ($systemCode = 'PROCESSMAKER')
+    public function listAllRoles($systemCode = 'PROCESSMAKER')
     {
-        return $this->rolesObj->listAllRoles( $systemCode );
+        return $this->rolesObj->listAllRoles($systemCode);
     }
 
     /**
@@ -1014,9 +1193,9 @@ class RBAC
      * @param string $systemCode
      * @return $this->rolesObj->getAllRoles
      */
-    public function getAllRoles ($systemCode = 'PROCESSMAKER')
+    public function getAllRoles($systemCode = 'PROCESSMAKER')
     {
-        return $this->rolesObj->getAllRoles( $systemCode );
+        return $this->rolesObj->getAllRoles($systemCode);
     }
 
     /**
@@ -1027,9 +1206,9 @@ class RBAC
      * @param string $filter
      * @return $this->rolesObj->getAllRolesFilter
      */
-    public function getAllRolesFilter ($start, $limit, $filter)
+    public function getAllRolesFilter($start, $limit, $filter)
     {
-        return $this->rolesObj->getAllRolesFilter( $start, $limit, $filter );
+        return $this->rolesObj->getAllRolesFilter($start, $limit, $filter);
     }
 
     /**
@@ -1041,9 +1220,9 @@ class RBAC
      * @param string $systemCode
      * @return $this->rolesObj->listAllPermissions
      */
-    public function listAllPermissions ($systemCode = 'PROCESSMAKER')
+    public function listAllPermissions($systemCode = 'PROCESSMAKER')
     {
-        return $this->rolesObj->listAllPermissions( $systemCode );
+        return $this->rolesObj->listAllPermissions($systemCode);
     }
 
     /**
@@ -1052,12 +1231,12 @@ class RBAC
      *
      * @access public
      *
-     * @param array $aData
+     * @param array $dataCase
      * @return $this->rolesObj->createRole
      */
-    public function createRole ($aData)
+    public function createRole($dataCase)
     {
-        return $this->rolesObj->createRole( $aData );
+        return $this->rolesObj->createRole($dataCase);
     }
 
     /**
@@ -1066,12 +1245,12 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * $@return $this->rolesObj->removeRole
      */
-    public function removeRole ($ROL_UID)
+    public function removeRole($rolUid)
     {
-        return $this->rolesObj->removeRole( $ROL_UID );
+        return $this->rolesObj->removeRole($rolUid);
     }
 
     /**
@@ -1083,9 +1262,9 @@ class RBAC
      * @param string $code
      * @return $this->rolesObj->verifyNewRole
      */
-    public function verifyNewRole ($code)
+    public function verifyNewRole($code)
     {
-        return $this->rolesObj->verifyNewRole( $code );
+        return $this->rolesObj->verifyNewRole($code);
     }
 
     /**
@@ -1097,9 +1276,9 @@ class RBAC
      * @param string $fields
      * @return $this->rolesObj->updateRole
      */
-    public function updateRole ($fields)
+    public function updateRole($fields)
     {
-        return $this->rolesObj->updateRole( $fields );
+        return $this->rolesObj->updateRole($fields);
     }
 
     /**
@@ -1108,12 +1287,12 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @return $this->rolesObj->loadById
      */
-    public function loadById ($ROL_UID)
+    public function loadById($rolUid)
     {
-        return $this->rolesObj->loadById( $ROL_UID );
+        return $this->rolesObj->loadById($rolUid);
     }
 
     /**
@@ -1122,10 +1301,10 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @return $this->rolesObj->getRoleUsers
      */
-    public function getRoleUsers ($ROL_UID, $filter = '')
+    public function getRoleUsers($rolUid, $filter = '')
     {
         throw new Exception(__METHOD__ . ': The method is deprecated');
     }
@@ -1135,11 +1314,10 @@ class RBAC
      *
      *
      * @access public
-     * @author : Enrique Ponce de Leon <enrique@colosa.com>
      *
      * @return $this->rolesObj->getAllUsersByRole
      */
-    public function getAllUsersByRole ()
+    public function getAllUsersByRole()
     {
         return $this->rolesObj->getAllUsersByRole();
     }
@@ -1149,11 +1327,10 @@ class RBAC
      *
      *
      * @access public
-     * @author : Enrique Ponce de Leon <enrique@colosa.com>
      *
      * @return $this->rolesObj->getAllUsersByRole
      */
-    public function getAllUsersByDepartment ()
+    public function getAllUsersByDepartment()
     {
         return $this->rolesObj->getAllUsersByDepartment();
     }
@@ -1164,12 +1341,12 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @return $this->rolesObj->getRoleCode
      */
-    public function getRoleCode ($ROL_UID)
+    public function getRoleCode($rolUid)
     {
-        return $this->rolesObj->getRoleCode( $ROL_UID );
+        return $this->rolesObj->getRoleCode($rolUid);
     }
 
     /**
@@ -1178,13 +1355,13 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @param string $USR_UID
      * @return $this->rolesObj->deleteUserRole
      */
-    public function deleteUserRole ($ROL_UID, $USR_UID)
+    public function deleteUserRole($rolUid, $USR_UID)
     {
-        return $this->rolesObj->deleteUserRole( $ROL_UID, $USR_UID );
+        return $this->rolesObj->deleteUserRole($rolUid, $USR_UID);
     }
 
     /**
@@ -1193,10 +1370,10 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @return $this->rolesObj->getAllUsers
      */
-    public function getAllUsers ($ROL_UID, $filter = '')
+    public function getAllUsers($rolUid, $filter = '')
     {
         throw new Exception(__METHOD__ . ': The method is deprecated');
     }
@@ -1207,12 +1384,12 @@ class RBAC
      *
      * @access public
      *
-     * @param array $aData
+     * @param array $dataCase
      * @return $this->rolesObj->assignUserToRole
      */
-    public function assignUserToRole ($aData)
+    public function assignUserToRole($dataCase)
     {
-        return $this->rolesObj->assignUserToRole( $aData );
+        return $this->rolesObj->assignUserToRole($dataCase);
     }
 
     /**
@@ -1221,26 +1398,26 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @return $this->rolesObj->getRolePermissionsByPerUid
      */
-    public function getRolePermissionsByPerUid($ROL_UID)
+    public function getRolePermissionsByPerUid($rolUid)
     {
-        return $this->rolesObj->getRolePermissionsByPerUid($ROL_UID);
+        return $this->rolesObj->getRolePermissionsByPerUid($rolUid);
     }
 
     /**
-     * this function is Assigne role permission
+     * this function is Assignee role permission
      *
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @return $this->rolesObj->isAssigneRolePermission
      */
-    public function getPermissionAssignedRole($ROL_UID, $PER_UID)
+    public function getPermissionAssignedRole($rolUid, $perUid)
     {
-        return $this->rolesObj->getPermissionAssignedRole($ROL_UID, $PER_UID);
+        return $this->rolesObj->getPermissionAssignedRole($rolUid, $perUid);
     }
 
     /**
@@ -1249,12 +1426,14 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
+     * @param string $filter
+     * @param string $status
      * @return $this->rolesObj->getRolePermissions
      */
-    public function getRolePermissions ($ROL_UID, $filter = '', $status = null)
+    public function getRolePermissions($rolUid, $filter = '', $status = null)
     {
-        return $this->rolesObj->getRolePermissions( $ROL_UID, $filter, $status );
+        return $this->rolesObj->getRolePermissions($rolUid, $filter, $status);
     }
 
     /**
@@ -1263,13 +1442,15 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
-     * @param string $PER_SYSTEM
+     * @param string $rolUid
+     * @param string $perSystem
+     * @param string $filter
+     * @param string $status
      * @return $this->rolesObj->getAllPermissions
      */
-    public function getAllPermissions ($ROL_UID, $PER_SYSTEM = "", $filter = '', $status = null)
+    public function getAllPermissions($rolUid, $perSystem = "", $filter = '', $status = null)
     {
-        return $this->rolesObj->getAllPermissions( $ROL_UID, $PER_SYSTEM, $filter, $status );
+        return $this->rolesObj->getAllPermissions($rolUid, $perSystem, $filter, $status);
     }
 
     /**
@@ -1278,12 +1459,12 @@ class RBAC
      *
      * @access public
      *
-     * @param array $aData
+     * @param array $dataCase
      * @return $this->rolesObj->assignPermissionRole
      */
-    public function assignPermissionRole ($sData)
+    public function assignPermissionRole($dataCase)
     {
-        return $this->rolesObj->assignPermissionRole( $sData );
+        return $this->rolesObj->assignPermissionRole($dataCase);
     }
 
     /**
@@ -1292,13 +1473,13 @@ class RBAC
      *
      * @access public
      *
-     * @param string $sRoleUID
-     * @param string $sPermissionUID
+     * @param string $roleUid
+     * @param string $permissionUid
      * @return $this->rolesPermissionsObj->create
      */
-    public function assignPermissionToRole ($sRoleUID, $sPermissionUID)
+    public function assignPermissionToRole($roleUid, $permissionUid)
     {
-        return $this->rolesPermissionsObj->create( array ('ROL_UID' => $sRoleUID,'PER_UID' => $sPermissionUID ) );
+        return $this->rolesPermissionsObj->create(array('ROL_UID' => $roleUid, 'PER_UID' => $permissionUid));
     }
 
     /**
@@ -1307,13 +1488,13 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
-     * @param string $PER_UID
+     * @param string $rolUid
+     * @param string $perUid
      * @return $this->rolesObj->deletePermissionRole
      */
-    public function deletePermissionRole ($ROL_UID, $PER_UID)
+    public function deletePermissionRole($rolUid, $perUid)
     {
-        return $this->rolesObj->deletePermissionRole( $ROL_UID, $PER_UID );
+        return $this->rolesObj->deletePermissionRole($rolUid, $perUid);
     }
 
     /**
@@ -1322,12 +1503,12 @@ class RBAC
      *
      * @access public
      *
-     * @param string $ROL_UID
+     * @param string $rolUid
      * @return $this->rolesObj->numUsersWithRole
      */
-    public function numUsersWithRole ($ROL_UID)
+    public function numUsersWithRole($rolUid)
     {
-        return $this->rolesObj->numUsersWithRole( $ROL_UID );
+        return $this->rolesObj->numUsersWithRole($rolUid);
     }
 
     /**
@@ -1336,13 +1517,14 @@ class RBAC
      *
      * @access public
      *
-     * @param string $sCode
+     * @param string $code
      * @return $this->systemObj->create
      */
-    public function createSystem ($sCode)
+    public function createSystem($code)
     {
-        return $this->systemObj->create( array ('SYS_CODE' => $sCode
-        ) );
+        return $this->systemObj->create(array(
+            'SYS_CODE' => $code
+        ));
     }
 
     /**
@@ -1351,12 +1533,12 @@ class RBAC
      *
      * @access public
      *
-     * @param string $sCode
+     * @param string $code
      * @return $this->rolesObj->verifyByCode
      */
-    public function verifyByCode ($sCode)
+    public function verifyByCode($code)
     {
-        return $this->rolesObj->verifyByCode( $sCode );
+        return $this->rolesObj->verifyByCode($code);
     }
 
     /**
@@ -1369,7 +1551,7 @@ class RBAC
      * @return $this->authSourcesObj->getAllAuthSources()
      */
 
-    public function getAllAuthSources ()
+    public function getAllAuthSources()
     {
         return $this->authSourcesObj->getAllAuthSources();
     }
@@ -1384,7 +1566,7 @@ class RBAC
      * @return $this->authSourcesObj->getAllAuthSources()
      */
 
-    public function getAllAuthSourcesByUser ()
+    public function getAllAuthSourcesByUser()
     {
         return $this->authSourcesObj->getAllAuthSourcesByUser();
     }
@@ -1401,9 +1583,9 @@ class RBAC
      * @return $this->authSourcesObj->getAuthenticationSources()
      */
 
-    public function getAuthenticationSources ($start, $limit, $filter = '')
+    public function getAuthenticationSources($start, $limit, $filter = '')
     {
-        return $this->authSourcesObj->getAuthenticationSources( $start, $limit, $filter );
+        return $this->authSourcesObj->getAuthenticationSources($start, $limit, $filter);
     }
 
     /**
@@ -1412,19 +1594,20 @@ class RBAC
      *
      * @access public
      *
-     * @param string $sUID
+     * @param string $uid
      * @return $this->authSourcesObj->load
      */
-    public function getAuthSource ($sUID)
+    public function getAuthSource($uid)
     {
-        $data = $this->authSourcesObj->load( $sUID );
-        $pass = explode( "_", $data['AUTH_SOURCE_PASSWORD'] );
+        $data = $this->authSourcesObj->load($uid);
+        $pass = explode("_", $data['AUTH_SOURCE_PASSWORD']);
         foreach ($pass as $index => $value) {
             if ($value == '2NnV3ujj3w') {
-                $data['AUTH_SOURCE_PASSWORD'] = G::decrypt( $pass[0], $data['AUTH_SOURCE_SERVER_NAME'] );
+                $data['AUTH_SOURCE_PASSWORD'] = G::decrypt($pass[0], $data['AUTH_SOURCE_SERVER_NAME']);
             }
         }
         $this->authSourcesObj->Fields = $data;
+
         return $this->authSourcesObj->Fields;
     }
 
@@ -1434,13 +1617,14 @@ class RBAC
      *
      * @access public
      *
-     * @param array $aData
+     * @param array $dataCase
      * @return $this->authSourcesObj->create
      */
-    public function createAuthSource ($aData)
+    public function createAuthSource($dataCase)
     {
-        $aData['AUTH_SOURCE_PASSWORD'] = G::encrypt( $aData['AUTH_SOURCE_PASSWORD'], $aData['AUTH_SOURCE_SERVER_NAME'] ) . "_2NnV3ujj3w";
-        $this->authSourcesObj->create( $aData );
+        $dataCase['AUTH_SOURCE_PASSWORD'] = G::encrypt($dataCase['AUTH_SOURCE_PASSWORD'],
+                $dataCase['AUTH_SOURCE_SERVER_NAME']) . "_2NnV3ujj3w";
+        $this->authSourcesObj->create($dataCase);
     }
 
     /**
@@ -1449,13 +1633,14 @@ class RBAC
      *
      * @access public
      *
-     * @param array $aData
+     * @param array $dataCase
      * @return $this->authSourcesObj->create
      */
-    public function updateAuthSource ($aData)
+    public function updateAuthSource($dataCase)
     {
-        $aData['AUTH_SOURCE_PASSWORD'] = G::encrypt( $aData['AUTH_SOURCE_PASSWORD'], $aData['AUTH_SOURCE_SERVER_NAME'] ) . "_2NnV3ujj3w";
-        $this->authSourcesObj->update( $aData );
+        $dataCase['AUTH_SOURCE_PASSWORD'] = G::encrypt($dataCase['AUTH_SOURCE_PASSWORD'],
+                $dataCase['AUTH_SOURCE_SERVER_NAME']) . "_2NnV3ujj3w";
+        $this->authSourcesObj->update($dataCase);
     }
 
     /**
@@ -1464,12 +1649,12 @@ class RBAC
      *
      * @access public
      *
-     * @param string $sUID
+     * @param string $uid
      * @return $this->authSourcesObj->remove
      */
-    public function removeAuthSource ($sUID)
+    public function removeAuthSource($uid)
     {
-        $this->authSourcesObj->remove( $sUID );
+        $this->authSourcesObj->remove($uid);
     }
 
     /**
@@ -1481,7 +1666,7 @@ class RBAC
      * @return $this->userObj->getAllUsersByAuthSource()
      */
 
-    public function getAllUsersByAuthSource ()
+    public function getAllUsersByAuthSource()
     {
         return $this->userObj->getAllUsersByAuthSource();
     }
@@ -1495,9 +1680,9 @@ class RBAC
      * @return $this->userObj->getAllUsersByAuthSource()
      */
 
-    public function getListUsersByAuthSource ($aSource)
+    public function getListUsersByAuthSource($source)
     {
-        return $this->userObj->getListUsersByAuthSource( $aSource );
+        return $this->userObj->getListUsersByAuthSource($source);
     }
 
     /**
@@ -1506,123 +1691,128 @@ class RBAC
      *
      * @access public
      *
-     * @param string $sUID
-     * @param string $sKeyword
+     * @param string $uid
+     * @param string $keyword
      * @return array
      */
-    public function searchUsers ($sUID, $sKeyword)
+    public function searchUsers($uid, $keyword)
     {
-        $aAuthSource = $this->getAuthSource( $sUID );
-        $sAuthType = strtolower( $aAuthSource['AUTH_SOURCE_PROVIDER'] );
-        foreach ($this->aRbacPlugins as $sClassName) {
-            if (strtolower( $sClassName ) == $sAuthType) {
-                $plugin = new $sClassName();
-                $plugin->sAuthSource = $sUID;
+        $aAuthSource = $this->getAuthSource($uid);
+        $authType = strtolower($aAuthSource['AUTH_SOURCE_PROVIDER']);
+        foreach ($this->aRbacPlugins as $className) {
+            if (strtolower($className) == $authType) {
+                $plugin = new $className();
+                $plugin->sAuthSource = $uid;
                 $plugin->sSystem = $this->sSystem;
-                return $plugin->searchUsers( $sKeyword );
+
+                return $plugin->searchUsers($keyword);
             }
         }
-        return array ();
+
+        return [];
     }
 
-    public function requirePermissions ($permissions)
+    public function requirePermissions($permissions)
     {
         $numPerms = func_num_args();
         $permissions = func_get_args();
 
-        $access = - 1;
+        $access = -1;
 
         if ($numPerms == 1) {
-            $access = $this->userCanAccess( $permissions[0] );
+            $access = $this->userCanAccess($permissions[0]);
         } elseif ($numPerms > 0) {
             foreach ($permissions as $perm) {
-                $access = $this->userCanAccess( $perm );
+                $access = $this->userCanAccess($perm);
                 if ($access == 1) {
                     $access = 1;
                     break;
                 }
             }
         } else {
-            throw new Exception( 'function requirePermissions() ->ERROR: Parameters missing!' );
+            throw new Exception('function requirePermissions() ->ERROR: Parameters missing!');
         }
 
         if ($access == 1) {
             return true;
         } else {
             switch ($access) {
-                case - 2:
-                    G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels' );
-                    G::header( 'location: ../login/login' );
+                case -2:
+                    G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels');
+                    G::header('location: ../login/login');
                     break;
-                case - 1:
+                case -1:
                 default:
-                    G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
-                    G::header( 'location: ../login/login' );
+                    G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
+                    G::header('location: ../login/login');
                     break;
             }
-            exit( 0 );
+            exit(0);
         }
     }
 
-    private function getAllFiles ($directory, $recursive = true)
+    private function getAllFiles($directory, $recursive = true)
     {
-        $result = array ();
-        if (is_dir( $directory )) {
-            $handle = opendir( $directory );
-            while ($datei = readdir( $handle )) {
+        $result = [];
+        if (is_dir($directory)) {
+            $handle = opendir($directory);
+            while ($datei = readdir($handle)) {
                 if (($datei != '.') && ($datei != '..')) {
                     $file = $directory . $datei;
-                    if (is_dir( $file )) {
+                    if (is_dir($file)) {
                         if ($recursive) {
-                            $result = array_merge( $result, getAllFiles( $file . '/' ) );
+                            $result = array_merge($result, getAllFiles($file . '/'));
                         }
                     } else {
                         $result[] = $file;
                     }
                 }
             }
-            closedir( $handle );
+            closedir($handle);
         }
+
         return $result;
     }
 
-    private function getFilesTimestamp ($directory, $recursive = true)
+    private function getFilesTimestamp($directory, $recursive = true)
     {
-        $allFiles = self::getAllFiles( $directory, $recursive );
-        $fileArray = array ();
+        $allFiles = self::getAllFiles($directory, $recursive);
+        $fileArray = [];
         foreach ($allFiles as $val) {
             $timeResult['file'] = $val;
-            $timeResult['timestamp'] = filemtime( $val );
+            $timeResult['timestamp'] = filemtime($val);
             $fileArray[] = $timeResult;
         }
+
         return $fileArray;
     }
 
-    public function cleanSessionFiles ($hours = 72)
+    public function cleanSessionFiles($hours = 72)
     {
-        $currentTime = strtotime( "now" );
+        $currentTime = strtotime("now");
         $timeDifference = $hours * 60 * 60;
         $limitTime = $currentTime - $timeDifference;
         $sessionsPath = PATH_DATA . 'session' . PATH_SEP;
-        $filesResult = self::getFilesTimestamp( $sessionsPath );
+        $filesResult = self::getFilesTimestamp($sessionsPath);
         $count = 0;
         foreach ($filesResult as $file) {
             if ($file['timestamp'] < $limitTime) {
-                unlink( $file['file'] );
-                $count ++;
+                unlink($file['file']);
+                $count++;
             }
         }
     }
+
     /**
-     * this function permissions
-     *
+     * This function verify the permissions
      *
      * @access public
      *
+     * @return array
      */
     public function verifyPermissions()
     {
-        $message = array();
+        $message = [];
         $this->verifyGuestUserRolePermission();
         $listPermissions = $this->loadPermissionAdmin();
         $criteria = new Criteria('rbac');
@@ -1642,7 +1832,7 @@ class RBAC
         }
         foreach ($listPermissions as $key => $item) {
             //Adding new permissions
-            $data = array();
+            $data = [];
             $data['PER_UID'] = $item['PER_UID'];
             $data['PER_CODE'] = $item['PER_CODE'];
             $data['PER_CREATE_DATE'] = date('Y-m-d H:i:s');
@@ -1660,6 +1850,7 @@ class RBAC
             $this->assigningNewPermissionsPmSetup($item);
             $this->assigningNewPermissionsPmEditProfile($item);
         }
+
         return $message;
     }
 
@@ -1667,7 +1858,7 @@ class RBAC
      * Permissions for tab ADMIN
      * @param array $item
      */
-    public function assigningNewPermissionsPmSetup($item = array())
+    public function assigningNewPermissionsPmSetup($item = [])
     {
         if (strpos($item['PER_CODE'], 'PM_SETUP_') !== false) {
             $rolesWithPermissionSetup = $this->getRolePermissionsByPerUid(self::SETUPERMISSIONUID);
@@ -1675,7 +1866,7 @@ class RBAC
             while ($aRow = $rolesWithPermissionSetup->getRow()) {
                 $isAssignedNewpermissions = $this->getPermissionAssignedRole($aRow['ROL_UID'], $item['PER_UID']);
                 if (!$isAssignedNewpermissions) {
-                    $dataPermissions = array();
+                    $dataPermissions = [];
                     $dataPermissions['ROL_UID'] = $aRow['ROL_UID'];
                     $dataPermissions['PER_UID'] = $item['PER_UID'];
                     $this->assignPermissionRole($dataPermissions);
@@ -1689,7 +1880,7 @@ class RBAC
      * Permissions for Edit Profile User
      * @param array $item
      */
-    public function assigningNewPermissionsPmEditProfile($item = array())
+    public function assigningNewPermissionsPmEditProfile($item = [])
     {
         if (strpos($item['PER_CODE'], 'PM_EDIT_USER_PROFILE_') !== false) {
             $allRolesRolUid = $this->getAllRoles('PROCESSMAKER');
@@ -1709,18 +1900,20 @@ class RBAC
                 $isAssignedNewpermissions = $this->getPermissionAssignedRole($aRow['ROL_UID'], $item['PER_UID']);
                 $assignPermissions = true;
                 if (!$isAssignedNewpermissions) {
-                    if ($aRow['ROL_CODE'] == 'PROCESSMAKER_OPERATOR' && in_array($item['PER_CODE'], $permissionsForOperator)) {
+                    if ($aRow['ROL_CODE'] == 'PROCESSMAKER_OPERATOR' && in_array($item['PER_CODE'],
+                            $permissionsForOperator)) {
                         $assignPermissions = false;
                     }
                     if (!in_array($aRow['ROL_CODE'], $perCodePM)) {
                         $assignPermissions = false;
-                        $checkPermisionEdit = $this->getPermissionAssignedRole($aRow['ROL_UID'], '00000000000000000000000000000014');
+                        $checkPermisionEdit = $this->getPermissionAssignedRole($aRow['ROL_UID'],
+                            '00000000000000000000000000000014');
                         if ($checkPermisionEdit && !in_array($item['PER_CODE'], $permissionsForOperator)) {
                             $assignPermissions = true;
                         }
                     }
                     if ($assignPermissions) {
-                        $dataPermissions = array();
+                        $dataPermissions = [];
                         $dataPermissions['ROL_UID'] = $aRow['ROL_UID'];
                         $dataPermissions['PER_UID'] = $item['PER_UID'];
                         $this->assignPermissionRole($dataPermissions);
@@ -1737,6 +1930,7 @@ class RBAC
      * @param string $action
      *
      * @return void
+     * @throws RBACException
      */
     public function allows($file, $action)
     {
@@ -1786,11 +1980,11 @@ class RBAC
     {
         return $this->enableLoginHash;
     }
-    
+
     /**
-     * Returns true in case the parameter corresponds to the invited user, 
+     * Returns true in case the parameter corresponds to the invited user,
      * otherwise it returns false.
-     * 
+     *
      * @param string $usrUid
      * @return boolean
      */
