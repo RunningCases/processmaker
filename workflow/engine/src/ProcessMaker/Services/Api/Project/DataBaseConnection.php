@@ -55,7 +55,7 @@ class DataBaseConnection extends Api
     }
 
     /**
-     * Tests a database connection with the provided settings.
+     * Test a database connection with the provided settings.
      * 
      * @url POST /:prj_uid/database-connection/test
      * 
