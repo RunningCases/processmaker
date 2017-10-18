@@ -34,7 +34,7 @@ class Step extends Api
     }
 
     /**
-     * Assigns a step to a task.
+     * Assign a step to a task.
      * 
      * @url POST /:prj_uid/activity/:act_uid/step
      * @status 201
