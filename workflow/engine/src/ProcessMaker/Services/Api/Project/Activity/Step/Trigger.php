@@ -129,7 +129,7 @@ class Trigger extends Api
     }
 
     /**
-     * Assigns a trigger to the "Assignment" or "Routing" step section of an activity.
+     * Assign a trigger to the "Assignment" or "Routing" step section of an activity.
      * 
      * @url POST /:prj_uid/activity/:act_uid/step/trigger
      * @status 201

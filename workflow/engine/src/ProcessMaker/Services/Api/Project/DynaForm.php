@@ -147,7 +147,7 @@ class DynaForm extends Api
      * Upload language for a Dynaform.
      * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/upload-language
-     * 
+     *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * 
@@ -172,7 +172,7 @@ class DynaForm extends Api
      * Delete language from a Dynaform.
      * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/delete-language/:lang
-     * 
+     *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $lang
@@ -215,7 +215,7 @@ class DynaForm extends Api
      * Get Dynaform's history.
      * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/history
-     * 
+     *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * @param array  $request_data
