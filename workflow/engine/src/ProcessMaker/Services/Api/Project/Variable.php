@@ -56,6 +56,9 @@ class Variable extends Api
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -123,6 +126,9 @@ class Variable extends Api
      * @param string $var_name
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY, PM_CASES}
      */
@@ -151,6 +157,9 @@ class Variable extends Api
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $var_name
      * @param array  $request_data
+     * 
+     * @return array
+     * @throws RestException
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY, PM_CASES}

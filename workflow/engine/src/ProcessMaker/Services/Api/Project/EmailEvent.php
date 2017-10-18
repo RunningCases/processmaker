@@ -68,6 +68,9 @@ class EmailEvent extends Api
      * 
      * @param string $prj_uid {@min 1} {@max 32}
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */

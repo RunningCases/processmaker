@@ -141,7 +141,9 @@ class Consolidated extends Api
      * @param int $del_index
      * @param string $field_grid
      * @param string $field_grid_val
+     * 
      * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}

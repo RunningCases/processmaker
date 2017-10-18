@@ -243,6 +243,9 @@ class ProcessSupervisors extends Api
      * @param string $usr_uid {@min 32} {@max 32}
      * @param string $pu_type {@choice SUPERVISOR,GROUP_SUPERVISOR}
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -270,6 +273,9 @@ class ProcessSupervisors extends Api
      * @param string $dyn_uid {@min 32} {@max 32}
      * @param int $pud_position
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -296,6 +302,9 @@ class ProcessSupervisors extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $inp_doc_uid {@min 32} {@max 32}
      * @param int $pui_position
+     * 
+     * @return array
+     * @throws RestException
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

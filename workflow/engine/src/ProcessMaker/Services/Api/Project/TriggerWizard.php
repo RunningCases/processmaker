@@ -76,6 +76,9 @@ class TriggerWizard extends Api
      * @param string $fn_name
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */

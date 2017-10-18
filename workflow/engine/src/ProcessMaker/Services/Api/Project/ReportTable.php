@@ -107,7 +107,9 @@ class ReportTable extends Api
      * @param string $rep_tab_connection {@from body}
      * @param string $rep_tab_type {@from body} {@choice NORMAL,GRID}
      * @param string $rep_tab_grid {@from body}
+     * 
      * @return array
+     * @throws RestException
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

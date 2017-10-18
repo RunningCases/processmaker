@@ -766,6 +766,9 @@ class Cases extends Api
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -796,6 +799,9 @@ class Cases extends Api
      * @param string $usr_uid {@from body} {@min 32}{@max 32}
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -1121,6 +1127,9 @@ class Cases extends Api
      * @param string $note_content {@min 1}{@max 500}
      * @param int $send_mail {@choice 1,0}
      * 
+     * @return void
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -1253,6 +1262,9 @@ class Cases extends Api
      * @url POST /bookmark/:tas_uid
      * 
      * @param string $tas_uid {@min 32}{@max 32}
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}

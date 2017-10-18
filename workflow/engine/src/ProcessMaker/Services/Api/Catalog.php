@@ -45,6 +45,9 @@ class Catalog extends Api
      * 
      * @param array $request_data
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_DASHBOARD}
      * @deprecated The method has been deprecated.

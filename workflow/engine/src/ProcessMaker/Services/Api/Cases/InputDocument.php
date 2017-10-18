@@ -106,6 +106,9 @@ class InputDocument extends Api
      * @param string $app_doc_comment
      * @param string $inp_doc_uid     {@min 32}{@max 32}
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */

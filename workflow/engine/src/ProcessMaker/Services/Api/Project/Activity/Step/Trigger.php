@@ -44,6 +44,9 @@ class Trigger extends Api
      * @param string $prj_uid
      * @param StepTriggerPostStructure $request_data
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -134,6 +137,9 @@ class Trigger extends Api
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepAssignTaskTriggerPostStructure $request_data
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

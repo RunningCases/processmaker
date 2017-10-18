@@ -112,6 +112,9 @@ class Department extends Api
      * @param string $dep_uid      {@min 32}{@max 32}
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_USERS}
      */
@@ -192,7 +195,9 @@ class Department extends Api
      * 
      * @param array $request_data
      * @param string $dep_title {@from body} {@min 1}
+     * 
      * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_USERS}

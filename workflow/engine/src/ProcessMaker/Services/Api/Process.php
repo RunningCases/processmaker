@@ -67,7 +67,9 @@ class Process extends Api
      * Create process
      * 
      * @param array $request_data
+     * 
      * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

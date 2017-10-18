@@ -45,6 +45,9 @@ class FilesManager extends Api
      * @param ProcessFilesManagerStructurePost $request_data
      * @param string $prf_content
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -72,6 +75,9 @@ class FilesManager extends Api
      * 
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $prf_uid {@min 32} {@max 32}
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

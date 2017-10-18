@@ -48,6 +48,9 @@ class Step extends Api
      * @param int    $step_position  {@from body}{@min 1}
      * @param string $step_mode      {@from body}{@choice EDIT,VIEW}{@required true}
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -235,6 +238,9 @@ class Step extends Api
      * @param string $step_condition {@from body}
      * @param int    $step_position  {@from body}{@min 1}
      * @param string $step_mode      {@from body}{@choice EDIT,VIEW}{@required true}
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

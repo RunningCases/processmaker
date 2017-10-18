@@ -59,6 +59,9 @@ class CaseScheduler extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param CaseSchedulerStructure $request_data
      * 
+     * @return mixed
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */

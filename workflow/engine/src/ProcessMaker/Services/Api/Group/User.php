@@ -20,6 +20,9 @@ class User extends Api
      * @param string $grp_uid      {@min 32}{@max 32}
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_USERS}
      */
@@ -42,6 +45,9 @@ class User extends Api
      * @status 201
      * 
      * @param array $request_data
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_USERS}

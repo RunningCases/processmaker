@@ -74,6 +74,9 @@ class Variable extends Api
      * @param string $msgt_uid     {@min 32}{@max 32}
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */

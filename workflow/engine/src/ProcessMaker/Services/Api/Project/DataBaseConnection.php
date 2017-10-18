@@ -68,7 +68,9 @@ class DataBaseConnection extends Api
      * @param string $dbs_encode {@from body} {@required true}
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
+     * 
      * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
@@ -109,7 +111,9 @@ class DataBaseConnection extends Api
      * @param string $dbs_encode {@from body} {@required true}
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
+     * 
      * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

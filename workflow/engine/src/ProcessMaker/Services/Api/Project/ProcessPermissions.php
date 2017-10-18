@@ -76,7 +76,9 @@ class ProcessPermissions extends Api
      * @param string $dynaforms {@from body}
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
+     * 
      * @return array
+     * @throws RestException
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

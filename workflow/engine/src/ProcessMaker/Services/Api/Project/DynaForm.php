@@ -46,6 +46,9 @@ class DynaForm extends Api
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -148,6 +151,9 @@ class DynaForm extends Api
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * 
+     * @return void
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -169,6 +175,9 @@ class DynaForm extends Api
      * 
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
+     * 
+     * @return void
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
@@ -209,6 +218,9 @@ class DynaForm extends Api
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * @param array  $request_data
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

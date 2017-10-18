@@ -43,6 +43,9 @@ class CaseTrackerObject extends Api
      * @param string $cto_condition {@from body}
      * @param int    $cto_position  {@from body}{@min 1}
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */

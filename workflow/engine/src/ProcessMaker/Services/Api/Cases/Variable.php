@@ -88,6 +88,9 @@ class Variable extends Api
      * @param string $var_name
      * @param array  $request_data
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */

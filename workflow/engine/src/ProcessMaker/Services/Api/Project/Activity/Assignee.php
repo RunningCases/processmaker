@@ -102,6 +102,9 @@ class Assignee extends Api
      * @param string $aas_uid {@min 32} {@max 32}
      * @param string $aas_type {@choice user,group}
      * 
+     * @return void
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
@@ -204,6 +207,9 @@ class Assignee extends Api
      * @param string $actUid {@min 32} {@max 32}
      * @param string $ada_uid {@min 32} {@max 32}
      * @param string $ada_type {@choice user,group}
+     * 
+     * @return void
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

@@ -78,6 +78,9 @@ class ProjectUsers extends Api
      * @param string $act_uid {@min 32} {@max 32}
      * @param wsUserCanStartTaskStructure $request_data
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */

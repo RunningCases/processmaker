@@ -148,6 +148,9 @@ class OutputDocument extends Api
      * @param int    $del_index   {@min 1}
      * @param string $out_doc_uid {@min 32}{@max 32}
      * 
+     * @return object
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */

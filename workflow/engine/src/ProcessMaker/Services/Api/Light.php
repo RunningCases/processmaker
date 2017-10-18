@@ -975,6 +975,9 @@ class Light extends Api
      * @param string $step_uid {@min 32}{@max 32}
      * @param string $type {@choice before,after}
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -1144,6 +1147,9 @@ class Light extends Api
      * @param string $pro_uid {@min 32}{@max 32}
      * @param string $task_uid {@min 32}{@max 32}
      * 
+     * @return array
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -1246,6 +1252,9 @@ class Light extends Api
      * @param float $latitude {@min -90}{@max 90}
      * @param float $longitude {@min -180}{@max 180}
      * 
+     * @return mixed
+     * @throws RestException 
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -1290,6 +1299,9 @@ class Light extends Api
      * @url POST /case/:app_uid/download64
      * 
      * @param string $app_uid {@min 32}{@max 32}
+     * 
+     * @return mixed
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -1402,7 +1414,9 @@ class Light extends Api
      * 
      * @param $access
      * @param $refresh
+     * 
      * @return mixed
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -1435,7 +1449,9 @@ class Light extends Api
      * 
      * @param $access
      * @param $refresh
+     * 
      * @return mixed
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -1459,7 +1475,9 @@ class Light extends Api
      * @url POST /case/:app_uid/claim
      * 
      * @param $app_uid {@min 1}{@max 32}
+     * 
      * @return mixed
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -1558,6 +1576,9 @@ class Light extends Api
      * @param string $app_uid {@min 1}{@max 32}
      * @param string $noteContent {@min 1}{@max 500}
      * @param int $sendMail {@choice 1,0}
+     * 
+     * @return mixed
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -1734,6 +1755,9 @@ class Light extends Api
      * @url POST /cases/:app_uid/cancel
      * 
      * @param string $cas_uid {@min 1}{@max 32}
+     * 
+     * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -1912,6 +1936,7 @@ class Light extends Api
      * @url POST /get-next-step/:app_uid
      * 
      * @return array
+     * @throws RestException 
      * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}

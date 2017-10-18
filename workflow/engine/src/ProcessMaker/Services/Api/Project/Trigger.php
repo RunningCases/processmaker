@@ -67,7 +67,9 @@ class Trigger extends Api
      * @param string $tri_type {@from body}
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
+     * 
      * @return array
+     * @throws RestException
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

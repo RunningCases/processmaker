@@ -59,6 +59,9 @@ class OutputDocuments extends Api
      * @param string $prjUid {@min 32} {@max 32}
      * @param OutputDocumentStructure $request_data
      * 
+     * @return array
+     * @throws RestException
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
      */
