@@ -92,7 +92,7 @@ class Assignee extends Api
     }
 
     /**
-     * Assigns a user or group to a task.
+     * Assign an user or group to a task.
      * 
      * @url POST /:prjUid/activity/:actUid/assignee
      * @status 201
@@ -198,7 +198,7 @@ class Assignee extends Api
     }
 
     /**
-     * Assigns a user or group to a task on an ad hoc basis.
+     * Assign an user or group to a task (Ad-hoc assignment).
      * 
      * @url POST /:prjUid/activity/:actUid/adhoc-assignee
      * @status 201
