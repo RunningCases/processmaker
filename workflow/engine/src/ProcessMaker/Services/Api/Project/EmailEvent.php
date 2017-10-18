@@ -64,9 +64,12 @@ class EmailEvent extends Api
     }
     
     /**
+     * Save Data for email event.
+     * 
      * @url POST /:prj_uid/email-event
      * 
      * @param string $prj_uid {@min 1} {@max 32}
+     * @param array $request_data
      * 
      * @return array
      * @throws RestException 

@@ -38,7 +38,7 @@ class DynaForm extends Api
     }
     
     /**
-     * Create dynaform.
+     * Create Dynaform.
      * 
      * @url POST /:prj_uid/dynaform
      * @status 201
@@ -144,7 +144,7 @@ class DynaForm extends Api
     }
 
     /**
-     * Upload language for dynaform.
+     * Upload language for a Dynaform.
      * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/upload-language
      * 
@@ -169,12 +169,13 @@ class DynaForm extends Api
     }
 
     /**
-     * Delete language for dynaform.
+     * Delete language from a Dynaform.
      * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/delete-language/:lang
      * 
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $lang
      * 
      * @return void
      * @throws RestException 
@@ -211,7 +212,7 @@ class DynaForm extends Api
     }
 
     /**
-     * DynaForm History.
+     * Get Dynaform's history.
      * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/history
      * 

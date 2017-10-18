@@ -148,7 +148,7 @@ class Variable extends Api
     }
 
     /**
-     * Queries the options in a suggest box, dropdown box, checkgroup or radiogroup, 
+     * Gets the options in a suggest box, dropdown box, checkgroup or radiogroup, 
      * which uses an SQL query to populate its list of options (or uses a datasource 
      * which is "array variable" in version 3.0.1.8 or later).
      * 

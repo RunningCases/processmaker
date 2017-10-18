@@ -31,7 +31,7 @@ class CaseTrackerObject extends Api
     }
 
     /**
-     * Assigns an object (Dynaform, Input Document, Output Document) to a case tracker.
+     * Assign an object (Dynaform, Input Document, Output Document) to a case tracker.
      * 
      * @url POST /:prj_uid/case-tracker/object
      * @status 201

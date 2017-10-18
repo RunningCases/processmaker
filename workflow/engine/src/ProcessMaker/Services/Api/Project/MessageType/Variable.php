@@ -67,6 +67,8 @@ class Variable extends Api
     }
 
     /**
+     * Return data of the new Message created.
+     * 
      * @url POST /:prj_uid/message-type/:msgt_uid/variable
      * @status 201
      * 
