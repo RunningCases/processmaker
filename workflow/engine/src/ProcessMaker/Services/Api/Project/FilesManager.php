@@ -37,12 +37,16 @@ class FilesManager extends Api
     }
 
     /**
+     * Creates a file in the File Manager.
+     * 
      * @url POST /:prj_uid/file-manager
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * 
      * @param string $prj_uid {@min 32} {@max 32}
      * @param ProcessFilesManagerStructurePost $request_data
      * @param string $prf_content
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProcessFilesManager($prj_uid, ProcessFilesManagerStructurePost $request_data, $prf_content=null)
     {
@@ -62,11 +66,15 @@ class FilesManager extends Api
     }
 
     /**
+     * Uploads a document to the File Manager.
+     * 
      * @url POST /:prj_uid/file-manager/:prf_uid/upload
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * 
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $prf_uid {@min 32} {@max 32}
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProcessFilesManagerUpload($prj_uid, $prf_uid)
     {

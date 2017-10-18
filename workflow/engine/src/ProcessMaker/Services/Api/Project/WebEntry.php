@@ -71,12 +71,16 @@ class WebEntry extends Api
     }
 
     /**
+     * Creates a new Web Entry using the method "PHP pages with Web Services".
+     * 
      * @url POST /:prj_uid/web-entry
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostWebEntry($prj_uid, array $request_data)
     {

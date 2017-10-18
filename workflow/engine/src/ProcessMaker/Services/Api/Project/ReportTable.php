@@ -95,9 +95,11 @@ class ReportTable extends Api
     }
 
     /**
+     * Creates a new Report Table.
+     * 
      * @url POST /:prj_uid/report-table
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $rep_tab_name {@from body}
@@ -106,7 +108,9 @@ class ReportTable extends Api
      * @param string $rep_tab_type {@from body} {@choice NORMAL,GRID}
      * @param string $rep_tab_grid {@from body}
      * @return array
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostReportTable(
         $prj_uid,

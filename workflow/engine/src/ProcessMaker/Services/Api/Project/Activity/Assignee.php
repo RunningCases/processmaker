@@ -92,14 +92,18 @@ class Assignee extends Api
     }
 
     /**
+     * Assigns a user or group to a task.
+     * 
      * @url POST /:prjUid/activity/:actUid/assignee
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $actUid {@min 32} {@max 32}
      * @param string $aas_uid {@min 32} {@max 32}
      * @param string $aas_type {@choice user,group}
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostActivityAssignee($prjUid, $actUid, $aas_uid, $aas_type)
     {
@@ -191,14 +195,18 @@ class Assignee extends Api
     }
 
     /**
+     * Assigns a user or group to a task on an ad hoc basis.
+     * 
      * @url POST /:prjUid/activity/:actUid/adhoc-assignee
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $actUid {@min 32} {@max 32}
      * @param string $ada_uid {@min 32} {@max 32}
      * @param string $ada_type {@choice user,group}
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostActivityAdhocAssignee($prjUid, $actUid, $ada_uid, $ada_type)
     {

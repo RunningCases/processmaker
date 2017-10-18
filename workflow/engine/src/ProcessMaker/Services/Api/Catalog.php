@@ -38,11 +38,16 @@ class Catalog extends Api
     }
 
     /**
+     * Deprecated.
+     * 
      * @url POST
+     * @status 201
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_DASHBOARD}
-     * @param array $request_data
-     * @status 201
+     * @deprecated The method has been deprecated.
      */
     public function doPost($request_data)
     {

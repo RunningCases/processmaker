@@ -65,9 +65,11 @@ class EmailEvent extends Api
     
     /**
      * @url POST /:prj_uid/email-event
+     * 
+     * @param string $prj_uid {@min 1} {@max 32}
+     * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
-     * @param string $prj_uid {@min 1} {@max 32}
      */
     public function doPostEmailEvent($prj_uid, array $request_data)
     {

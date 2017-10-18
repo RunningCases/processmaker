@@ -85,10 +85,14 @@ class EmailServer extends Api
     }
 
     /**
+     * Test connection.
+     * 
      * @url POST /test-connection
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_SETUP_EMAIL}
-     * @param array $request_data
      */
     public function doPostTestConnection(array $request_data)
     {
@@ -104,11 +108,15 @@ class EmailServer extends Api
     }
 
     /**
+     * Create email server.
+     * 
      * @url POST
+     * @status 201
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_SETUP_EMAIL}
-     * @param array $request_data
-     * @status 201
      */
     public function doPost(array $request_data)
     {

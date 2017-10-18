@@ -58,9 +58,11 @@ class ProcessPermissions extends Api
     }
 
     /**
+     * Creates a new Process Permission for a project.
+     * 
      * @url POST /:prj_uid/process-permission/
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $usr_uid {@from body} {@min 1} {@max 32}
@@ -75,7 +77,9 @@ class ProcessPermissions extends Api
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
      * @return array
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProcessPermission(
         $prj_uid,

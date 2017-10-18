@@ -68,12 +68,14 @@ class Variable extends Api
 
     /**
      * @url POST /:prj_uid/message-type/:msgt_uid/variable
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $msgt_uid     {@min 32}{@max 32}
      * @param array  $request_data
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostMessageTypeVariable($prj_uid, $msgt_uid, array $request_data)
     {

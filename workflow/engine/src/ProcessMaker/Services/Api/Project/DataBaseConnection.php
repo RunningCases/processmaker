@@ -55,9 +55,10 @@ class DataBaseConnection extends Api
     }
 
     /**
+     * Tests a database connection with the provided settings.
+     * 
      * @url POST /:prj_uid/database-connection/test
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * 
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $dbs_type {@from body} {@required true}
@@ -68,6 +69,9 @@ class DataBaseConnection extends Api
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
      * @return array
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostTestDataBaseConnection(
         $prj_uid,
@@ -91,9 +95,11 @@ class DataBaseConnection extends Api
     }
 
     /**
+     * Creates a new database connection.
+     * 
      * @url POST /:prj_uid/database-connection
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
      * @param string $dbs_type {@from body} {@required true}
@@ -104,7 +110,9 @@ class DataBaseConnection extends Api
      * @param string $dbs_password {@from body}
      * @param string $dbs_description {@from body}
      * @return array
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostDataBaseConnection(
         $prj_uid,

@@ -220,11 +220,15 @@ class Dashboard extends Api
     }
 
     /**
+     * Create dashboard.
+     * 
      * @url POST
+     * @status 201
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_DASHBOARD}
-     * @param array $request_data
-     * @status 201
      */
     public function doPostDashboard($request_data)
     {
@@ -278,11 +282,15 @@ class Dashboard extends Api
     }
 
     /**
+     * Create owner
+     * 
      * @url POST /owner
+     * @status 201
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_DASHBOARD}
-     * @param array $request_data
-     * @status 201
      */
     public function doPostOwner($request_data)
     {
@@ -315,11 +323,15 @@ class Dashboard extends Api
     }
 
     /**
+     * Create indicator.
+     * 
      * @url POST /indicator
+     * @status 201
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_DASHBOARD}
-     * @param array $request_data
-     * @status 201
      */
     public function doPostIndicator($request_data)
     {
@@ -374,9 +386,11 @@ class Dashboard extends Api
      * Post dashboards configuration by userUid
      *
      * @url POST /config/
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_DASHBOARD}
-     * @param array $request_data
      */
     public function doPostDashboardConfigByUsrUid($request_data)
     {

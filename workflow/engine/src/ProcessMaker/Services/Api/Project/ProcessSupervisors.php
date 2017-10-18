@@ -234,13 +234,17 @@ class ProcessSupervisors extends Api
     }
 
     /**
+     * Assign a user or group as a process supervisor.
+     * 
      * @url POST /:prjUid/process-supervisor
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $usr_uid {@min 32} {@max 32}
      * @param string $pu_type {@choice SUPERVISOR,GROUP_SUPERVISOR}
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProcessSupervisor($prjUid, $usr_uid, $pu_type)
     {
@@ -257,13 +261,17 @@ class ProcessSupervisors extends Api
     }
 
     /**
+     * Assigns a Dynaform to a Process Supervisor.
+     * 
      * @url POST /:prjUid/process-supervisor/dynaform
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $dyn_uid {@min 32} {@max 32}
      * @param int $pud_position
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProcessSupervisorDynaform($prjUid, $dyn_uid, $pud_position = null)
     {
@@ -280,13 +288,17 @@ class ProcessSupervisors extends Api
     }
 
     /**
+     * Assigns an input document to a Process Supervisor.
+     * 
      * @url POST /:prjUid/process-supervisor/input-document
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $inp_doc_uid {@min 32} {@max 32}
      * @param int $pui_position
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProcessSupervisorInputDocument($prjUid, $inp_doc_uid, $pui_position = null)
     {

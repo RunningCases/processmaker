@@ -34,9 +34,11 @@ class Step extends Api
     }
 
     /**
+     * Assigns a step to a task.
+     * 
      * @url POST /:prj_uid/activity/:act_uid/step
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $act_uid        {@min 32}{@max 32}
      * @param string $prj_uid        {@min 32}{@max 32}
      * @param array  $request_data
@@ -45,7 +47,9 @@ class Step extends Api
      * @param string $step_condition {@from body}
      * @param int    $step_position  {@from body}{@min 1}
      * @param string $step_mode      {@from body}{@choice EDIT,VIEW}{@required true}
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostActivityStep(
         $act_uid,
@@ -218,9 +222,11 @@ class Step extends Api
     }
 
     /**
+     * Create Steps for a Task.
+     * 
      * @url POST /:prj_uid/activity/:act_uid/step/all
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $act_uid        {@min 32}{@max 32}
      * @param string $prj_uid        {@min 32}{@max 32}
      * @param array  $request_data
@@ -229,7 +235,9 @@ class Step extends Api
      * @param string $step_condition {@from body}
      * @param int    $step_position  {@from body}{@min 1}
      * @param string $step_mode      {@from body}{@choice EDIT,VIEW}{@required true}
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostActivityStepAll(
         $act_uid,

@@ -78,14 +78,18 @@ class Variable extends Api
     }
 
     /**
+     * Create a variable in a case, meaning the variable is instantiated in the case.
+     * 
      * @url POST /:app_uid/:del_index/variable/:var_name
-     * @access protected
-     * @class AccessControl {@permission PM_CASES}
+     * @status 201
+     * 
      * @param string $app_uid      {@min 32}{@max 32}
      * @param int    $del_index    {@min 1}
      * @param string $var_name
      * @param array  $request_data
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPostVariable($app_uid, $del_index, $var_name, array $request_data)
     {

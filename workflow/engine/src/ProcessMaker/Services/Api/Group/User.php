@@ -12,12 +12,16 @@ use \Luracast\Restler\RestException;
 class User extends Api
 {
     /**
+     * Assign a user to a specified group.
+     * 
      * @url POST /:grp_uid/user
-     * @access protected
-     * @class AccessControl {@permission PM_USERS}
+     * @status 201
+     * 
      * @param string $grp_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      */
     public function doPostUser($grp_uid, $request_data)
     {
@@ -32,11 +36,15 @@ class User extends Api
     }
 
     /**
+     * Assign a group of users to a specified group or groups.
+     * 
      * @url POST /batch-users
+     * @status 201
+     * 
+     * @param array $request_data
+     * 
      * @access protected
      * @class AccessControl {@permission PM_USERS}
-     * @param array $request_data
-     * @status 201
      */
     public function doPostBatchUsers($request_data)
     {

@@ -38,12 +38,16 @@ class DynaForm extends Api
     }
     
     /**
+     * Create dynaform.
+     * 
      * @url POST /:prj_uid/dynaform
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     * @status 201
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostDynaForm($prj_uid, $request_data)
     {
@@ -137,11 +141,15 @@ class DynaForm extends Api
     }
 
     /**
+     * Upload language for dynaform.
+     * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/upload-language
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * 
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostDynaFormLanguage($dyn_uid, $prj_uid)
     {
@@ -155,11 +163,15 @@ class DynaForm extends Api
     }
 
     /**
+     * Delete language for dynaform.
+     * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/delete-language/:lang
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * 
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doDeleteDynaFormLanguage($dyn_uid, $prj_uid, $lang)
     {
@@ -190,12 +202,16 @@ class DynaForm extends Api
     }
 
     /**
+     * DynaForm History.
+     * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/history
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * 
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * @param array  $request_data
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doGetDynaFormHistory($dyn_uid, $prj_uid, $request_data)
     {
