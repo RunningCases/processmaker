@@ -224,6 +224,9 @@ class ProcessPermissions
             if ($opUid != '') {
                 $opUid  = $this->validateOpUid($opUid);
             }
+            if (empty($data['USR_UID']) || $data['USR_UID'] === "null") {
+                throw (new \Exception(\G::LoadTranslation("ID_SELECT_USER_OR_GROUP")));
+            }
             if ($data['OP_USER_RELATION'] == "1") {
                 $this->validateUsrUid($data['USR_UID']);
             } else {
@@ -381,7 +384,7 @@ class ProcessPermissions
     {
         $usr_uid = trim($usr_uid);
         if ($usr_uid == '') {
-            throw (new \Exception(\G::LoadTranslation("ID_SELECT_USER_OR_GROUP")));
+            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array('usr_uid',''))));
         }
         $oUsers = new \Users();
         if (!($oUsers->userExists($usr_uid))) {
@@ -403,7 +406,7 @@ class ProcessPermissions
     {
         $grp_uid = trim($grp_uid);
         if ($grp_uid == '') {
-            throw (new \Exception(\G::LoadTranslation("ID_SELECT_USER_OR_GROUP")));
+            throw (new \Exception(\G::LoadTranslation("ID_GROUP_NOT_EXIST", array('grp_uid',''))));
         }
         $oGroup = new \Groupwf();
         if (!($oGroup->GroupwfExists($grp_uid))) {

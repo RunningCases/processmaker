@@ -1748,6 +1748,12 @@ msgid "Changes saved"
 msgstr "Changes saved"
 
 # TRANSLATION
+# LABEL/ID_SELECT_USER_OR_GROUP
+#: LABEL/ID_SELECT_USER_OR_GROUP
+msgid "Please select the name of a user or a group in the Group or User field"
+msgstr "Please select the name of a user or a group in the Group or User field"
+
+# TRANSLATION
 # LABEL/ID_EMAILS
 #: LABEL/ID_EMAILS
 msgid "EMAILS"
@@ -27868,12 +27874,6 @@ msgstr "NOT IMPORTED"
 #: LABEL/ID_CANNOT_IMPORT
 msgid "CANNOT IMPORT"
 msgstr "CANNOT IMPORT"
-
-# TRANSLATION
-# LABEL/ID_SELECT_USER_OR_GROUP
-#: LABEL/ID_SELECT_USER_OR_GROUP
-msgid "Please select the name of a user or a group in the Group or User field"
-msgstr "Please select the name of a user or a group in the Group or User field"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
