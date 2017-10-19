@@ -1245,15 +1245,18 @@ class PluginRegistry
      */
     public function registerExtendsRestService($Namespace, $ClassName)
     {
-        $baseSrcPluginPath = PATH_PLUGINS . $Namespace . PATH_SEP . "src";
-        $apiPath = PATH_SEP . "Services" . PATH_SEP . "Ext" . PATH_SEP;
+        $baseSrcPluginPath = PATH_PLUGINS . $Namespace . PATH_SEP . 'src';
+        $apiPath = PATH_SEP . 'Services' . PATH_SEP . 'Ext' . PATH_SEP;
         $classFile = $baseSrcPluginPath . $apiPath . 'Ext' . $ClassName . '.php';
-        if (file_exists($classFile)) {
-            $this->_restExtendServices[$Namespace][$ClassName] = array(
-                "filePath" => $classFile,
-                "classParent" => $ClassName,
-                "classExtend" => 'Ext' . $ClassName
-            );
+        if (\file_exists($classFile)) {
+            if (empty($this->_restExtendServices[$Namespace])) {
+                $this->_restExtendServices[$Namespace] = new \stdClass();
+            }
+            $this->_restExtendServices[$Namespace]->{$ClassName} = [
+                'filePath' => $classFile,
+                'classParent' => $ClassName,
+                'classExtend' => 'Ext' . $ClassName
+            ];
         }
     }
 
@@ -1264,10 +1267,10 @@ class PluginRegistry
      */
     public function getExtendsRestService($ClassName)
     {
-        $responseRestExtendService = array();
+        $responseRestExtendService = [];
         foreach ($this->_restExtendServices as $Namespace => $restExtendService) {
-            if (isset($restExtendService[$ClassName])) {
-                $responseRestExtendService = $restExtendService[$ClassName];
+            if (isset($restExtendService->{$ClassName})) {
+                $responseRestExtendService = $restExtendService->{$ClassName};
                 break;
             }
         }
@@ -1282,10 +1285,10 @@ class PluginRegistry
      */
     public function disableExtendsRestService($Namespace, $ClassName = '')
     {
-        if (isset($this->_restExtendServices[$Namespace][$ClassName]) && !empty($ClassName)) {
-            unset($this->_restExtendServices[$Namespace][$ClassName]);
-        } elseif (empty($ClassName)) {
+        if (empty($ClassName)) {
             unset($this->_restExtendServices[$Namespace]);
+        } elseif (isset($this->_restExtendServices[$Namespace]->{$ClassName})) {
+            unset($this->_restExtendServices[$Namespace]->{$ClassName});
         }
     }
 

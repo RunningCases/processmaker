@@ -116,7 +116,7 @@ trait PluginStructure
                 $this->buildCss(G::json_decode($plugin['PluginCss'], true));
                 $this->buildJs(G::json_decode($plugin['PluginJs'], true));
                 $this->buildRestService(G::json_decode($plugin['PluginRestService'], true));
-                $this->buildAttributes($plugin['PluginNamespace'], G::json_decode($plugin['PluginAttributes'], true));
+                $this->buildAttributes($plugin['PluginNamespace'], G::json_decode($plugin['PluginAttributes']));
             }
         }
     }
