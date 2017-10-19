@@ -1250,9 +1250,9 @@ class G
                 $aAux = explode('/', $filename);
                 $downloadFileName = $aAux[count($aAux) - 1];
             }
-            header('Content-Disposition: attachment; filename="' . $downloadFileName . '"');
+            header('Content-Disposition: attachment; filename="' . G::inflect($downloadFileName) . '"');
         } else {
-            header('Content-Disposition: inline; filename="' . $downloadFileName . '"');
+            header('Content-Disposition: inline; filename="' . G::inflect($downloadFileName) . '"');
         }
         header('Content-Type: ' . $contentType);
 
