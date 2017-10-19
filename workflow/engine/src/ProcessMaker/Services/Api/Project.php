@@ -189,7 +189,7 @@ class Project extends Api
         $objects = \G::json_decode($objects);
         $granularExporter = new GranularExporter($prj_uid);
         $outputFilename = $granularExporter->export($objects);
-        $outputFilename = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'files' . PATH_SEP . 'output' .
+        $outputFilename = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'files' . PATH_SEP . 'output' .
             PATH_SEP . $outputFilename;
         $httpStream = new HttpStream();
         $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
@@ -211,7 +211,7 @@ class Project extends Api
         $exporter = new \ProcessMaker\Exporter\XmlExporter($prj_uid);
         $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
 
-        $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
+        $outputDir = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
         $version = Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
 

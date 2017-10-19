@@ -705,7 +705,7 @@ class Applications
                 $tableName = implode( '', $newTableName );
                 // so the pm table class can be invoqued from the pm table model clases
                 if (! class_exists( $tableName )) {
-                    require_once (PATH_DB . SYS_SYS . PATH_SEP . "classes" . PATH_SEP . $tableName . ".php");
+                    require_once (PATH_DB . config("system.workspace") . PATH_SEP . "classes" . PATH_SEP . $tableName . ".php");
                 }
             }
             $totalCount = AppCacheViewPeer::doCount($CriteriaCount, $distinct);

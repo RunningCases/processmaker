@@ -97,7 +97,7 @@ class caseSchedulerProxy extends HttpProxyController
         } else {
             $http = 'http://';
         }
-        $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
+        $endpoint = $http . $_SERVER['HTTP_HOST'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/wsdl2';
         @$client = new SoapClient( $endpoint );
 
         $user = $sWS_USER;

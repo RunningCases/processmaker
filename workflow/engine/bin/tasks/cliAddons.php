@@ -46,11 +46,12 @@ function run_addon_core_install($args)
         $storeId = $args[1];
         $addonName = $args[2];
 
-        if (!defined("SYS_SYS")) {
+        if (empty(config("system.workspace"))) {
             define("SYS_SYS", $workspace);
+            config(["system.workspace" => $workspace]);
         }
         if (!defined("PATH_DATA_SITE")) {
-            define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+            define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("system.workspace") . "/");
         }
         if (!defined("DB_ADAPTER")) {
             define("DB_ADAPTER", $args[3]);
@@ -102,11 +103,12 @@ function change_hash($command, $opts)
             $response = new stdclass();
             $response->workspace = $workspace;
             $response->hash = $hash;
-            if (!defined("SYS_SYS")) {
+            if (empty(config("system.workspace"))) {
                 define("SYS_SYS", $workspace->name);
+                config(["system.workspace" => $workspace->name]);
             }
             if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites/" . SYS_SYS . "/");
+                define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("system.workspace") . "/");
             }
             $_SESSION['__sw__'] = '';
             if (!$workspace->changeHashPassword($workspace->name, $response)) {
