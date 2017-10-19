@@ -17,7 +17,7 @@ class Main extends Controller
 
     public function __construct ()
     {
-        $this->memcache = & PMmemcached::getSingleton( defined( 'SYS_SYS' ) ? SYS_SYS : '' );
+        $this->memcache = & PMmemcached::getSingleton( !empty(config("system.workspace")) ? config("system.workspace") : '' );
 
         define( 'ERROR_EXCEPTION', 1 );
         define( 'INFO_EXCEPTION', 3 );
@@ -40,7 +40,7 @@ class Main extends Controller
         $this->setVar( 'pipe', isset( $_SESSION['USR_USERNAME'] ) ? ' | ' : '' );
         $this->setVar( 'rolename', $this->getUserRole() );
         $this->setVar( 'logout', G::LoadTranslation( 'ID_LOGOUT' ) );
-        $this->setVar( 'workspace', defined( 'SYS_SYS' ) ? ucfirst( SYS_SYS ) : '' );
+        $this->setVar( 'workspace', !empty(config("system.workspace")) ? ucfirst( config("system.workspace") ) : '' );
         $this->setVar( 'user_avatar', 'users/users_ViewPhotoGrid?pUID=' . $_SESSION['USER_LOGGED'] . '&h=' . rand() );
 
         // license notification
@@ -464,7 +464,7 @@ class Main extends Controller
     {
         $sCompanyLogo = '/images/processmaker2.logo2.png';
 
-        if (defined( "SYS_SYS" )) {
+        if (!empty(config("system.workspace"))) {
             if (($aFotoSelect = $this->memcache->get( 'aFotoSelect' )) === false) {
                 $oLogoR = new ReplacementLogo();
                 $aFotoSelect = $oLogoR->getNameLogo( (isset( $_SESSION['USER_LOGGED'] )) ? $_SESSION['USER_LOGGED'] : '' );
@@ -480,9 +480,9 @@ class Main extends Controller
             $logoPlugin = $oPluginRegistry->getCompanyLogo( $sCompanyLogo );
             if ($logoPlugin != '/images/processmaker2.logo2.png') {
                 $sCompanyLogo = $logoPlugin;
-            } elseif (isset( $sFotoSelect ) && $sFotoSelect != '' && ! (strcmp( $sWspaceSelect, SYS_SYS ))) {
+            } elseif (isset( $sFotoSelect ) && $sFotoSelect != '' && ! (strcmp( $sWspaceSelect, config("system.workspace") ))) {
                 $sCompanyLogo = $oPluginRegistry->getCompanyLogo( $sFotoSelect );
-                $sCompanyLogo = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/adminProxy/showLogoFile?id=" . base64_encode( $sCompanyLogo );
+                $sCompanyLogo = "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/adminProxy/showLogoFile?id=" . base64_encode( $sCompanyLogo );
             }
         }
         return $sCompanyLogo;
@@ -778,7 +778,7 @@ class Main extends Controller
             );
         }
 
-        $properties[] = array ( G::LoadTranslation('ID_WORKSPACE') ,defined( "SYS_SYS" ) ? SYS_SYS : "Not defined",$pmSection
+        $properties[] = array ( G::LoadTranslation('ID_WORKSPACE') ,!empty(config("system.workspace")) ? config("system.workspace") : "Not defined",$pmSection
         );
 
         $properties[] = array ( G::LoadTranslation('ID_SERVER_PROTOCOL') ,getenv( 'SERVER_PROTOCOL' ),$sysSection

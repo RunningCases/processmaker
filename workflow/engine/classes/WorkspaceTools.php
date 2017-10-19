@@ -219,8 +219,11 @@ class WorkspaceTools
      *
      * @return void
      */
-    public function upgrade($buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
+    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("system.workspace");
+        }
         if (is_null($arrayOptTranslation)) {
             $arrayOptTranslation = ['updateXml' => true, 'updateMafe' => true];
         }
@@ -340,8 +343,11 @@ class WorkspaceTools
      * Updating cases directories structure
      *
      */
-    public function updateStructureDirectories($workSpace = SYS_SYS)
+    public function updateStructureDirectories($workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("system.workspace");
+        }
         $start = microtime(true);
         CLI::logging("> Updating cases directories structure...\n");
         $this->upgradeCasesDirectoryStructure($workSpace);
@@ -593,8 +599,11 @@ class WorkspaceTools
      * @param boolean $executeRegenerateContent
      * @return void
      */
-    public function upgradeContent($workspace = SYS_SYS, $executeRegenerateContent = false)
+    public function upgradeContent($workspace = null, $executeRegenerateContent = false)
     {
+        if ($workspace === null) {
+            $workspace = config("system.workspace");
+        }
         $this->initPropel(true);
         //If the execute flag is false we will check if we needed
         if (!$executeRegenerateContent) {
@@ -615,9 +624,8 @@ class WorkspaceTools
                 }
             }
 
-            //If the flag is not created we will check the last Content migration
-            //The $lastContentMigrateTable return true if content is migrated
-            if (!$executeRegenerateContent && !$this->getLastContentMigrateTable()) {
+            //The $lastContentMigrateTable return false if we need to force regenerate content
+            if (!$this->getLastContentMigrateTable()) {
                 $executeRegenerateContent = true;
             }
         }
@@ -1896,12 +1904,13 @@ class WorkspaceTools
             $aParameters = array('dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass);
 
             //Restore
-            if (!defined("SYS_SYS")) {
+            if (empty(config("system.workspace"))) {
                 define("SYS_SYS", $workspaceName);
+                config(["system.workspace" => $workspaceName]);
             }
 
             if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
             }
 
             $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch)) ? $arrayMatch[1] : "";
@@ -1957,13 +1966,13 @@ class WorkspaceTools
 
             $start = microtime(true);
             CLI::logging("> Verify License Enterprise...\n");
-            $workspace->verifyLicenseEnterprise($workspaceName);
+            //$workspace->verifyLicenseEnterprise($workspaceName);
             $stop = microtime(true);
             CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
 
             $start = microtime(true);
             CLI::logging("> Check Mafe Requirements...\n");
-            $workspace->checkMafeRequirements($workspaceName, $lang);
+            //$workspace->checkMafeRequirements($workspaceName, $lang);
             $stop = microtime(true);
             CLI::logging("<*>   Check Mafe Requirements Process took " . ($stop - $start) . " seconds.\n");
 
@@ -4018,8 +4027,11 @@ class WorkspaceTools
      * Updating framework directory structure
      *
      */
-    private function updateFrameworkPaths($workSpace = SYS_SYS)
+    private function updateFrameworkPaths($workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("system.workspace");
+        }
         $paths = [
             PATH_DATA.'framework' => 0770,
             PATH_DATA.'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,

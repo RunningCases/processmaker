@@ -66,7 +66,7 @@ switch ($_POST['action']) {
 
         if (! isset( $_SESSION['END_POINT'] )) {
             $aFields['WS_HOST'] = $_SERVER['HTTP_HOST'];
-            $aFields['WS_WORKSPACE'] = SYS_SYS;
+            $aFields['WS_WORKSPACE'] = config("system.workspace");
         } else {
             if (strpos( $_SESSION['END_POINT'], 'https' ) !== false) {
                 preg_match( '@^(?:https://)?([^/]+)@i', $_SESSION['END_POINT'], $coincidencias );
@@ -94,15 +94,14 @@ switch ($_POST['action']) {
         $_SESSION['_DBArray'] = $_DBArray;
 
         if (! isset( $_SESSION['END_POINT'] )) {
-            //$wsdl = 'http://'.$_SERVER['HTTP_HOST'].'/sys'.SYS_SYS. '/'. SYS_LANG .'/classic/services/wsdl';
             $wsdl = 'http://' . $_SERVER['HTTP_HOST'];
-            $workspace = SYS_SYS;
+            $workspace = config("system.workspace");
         } else {
             $wsdl = $_SESSION['END_POINT'];
             $workspace = $_SESSION['WS_WORKSPACE'];
         }
 
-        $defaultEndpoint = 'http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/classic/services/wsdl2';
+        $defaultEndpoint = 'http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/classic/services/wsdl2';
 
         $wsdl = isset( $_SESSION['END_POINT'] ) ? $_SESSION['END_POINT'] : $defaultEndpoint;
 
@@ -144,7 +143,7 @@ try {
         if (isset( $_POST["epr"] )) {
             $_SESSION['END_POINT'] = $_POST["epr"];
         }
-        $defaultEndpoint = 'http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/classic/services/wsdl2';
+        $defaultEndpoint = 'http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/classic/services/wsdl2';
 
         $endpoint = isset( $_SESSION['END_POINT'] ) ? $_SESSION['END_POINT'] : $defaultEndpoint;
 
@@ -616,7 +615,7 @@ try {
                 $caseNumber = $oCases->getAppNumber();
 
                 // generating the path for the template msj
-                $templateFile = PATH_DB . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP . $proUid . PATH_SEP . 'tempTemplate.hml';
+                $templateFile = PATH_DB . config("system.workspace") . PATH_SEP . 'mailTemplates' . PATH_SEP . $proUid . PATH_SEP . 'tempTemplate.hml';
                 // generating the file adding the msj variable
                 $messageBody = "message for case: " . $caseNumber . "<br>" . $message;
                 file_put_contents( $templateFile, $messageBody );
@@ -1461,7 +1460,7 @@ try {
 
                 function sendFile ($FILENAME, $USR_UID, $APP_UID, $DEL_INDEX = 1, $DOC_UID = null, $title = null, $comment = null)
                 {
-                    $defaultEndpoint = 'http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/classic/services/upload';
+                    $defaultEndpoint = 'http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/classic/services/upload';
                     $upload = isset( $_SESSION['END_POINT'] ) ? $_SESSION['END_POINT'] : $defaultEndpoint;
 
                     $DOC_UID = ($DOC_UID != null) ? $DOC_UID : - 1;

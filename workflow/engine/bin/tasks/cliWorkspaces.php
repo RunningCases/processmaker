@@ -369,12 +369,13 @@ function run_workspace_upgrade($args, $opts)
 
     foreach ($workspaces as $workspace) {
         try {
-            if (!defined("SYS_SYS")) {
+            if (empty(config("system.workspace"))) {
                 define("SYS_SYS", $workspace->name);
+                config(["system.workspace" => $workspace->name]);
             }
 
             if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
             }
 
             $workspace->upgrade($buildCacheView, $workspace->name, false, $lang, ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]);

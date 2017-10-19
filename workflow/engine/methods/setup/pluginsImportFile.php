@@ -251,7 +251,7 @@ try {
         if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
             //Check disabled code
 
-            $cs = new CodeScanner(SYS_SYS);
+            $cs = new CodeScanner(config("system.workspace"));
 
             $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", $path . $pluginFile), $cs->checkDisabledCode("PATH", $path . $sClassName));
 

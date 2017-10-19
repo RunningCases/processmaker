@@ -919,6 +919,7 @@ class InstallerModule extends Controller
             define( 'SYSTEM_HASH', $sh );
             define( 'PATH_DB', $pathShared . 'sites' . PATH_SEP );
             define( 'SYS_SYS', $workspace );
+            config(["system.workspace" => $workspace]);
 
             require_once ("propel/Propel.php");
 

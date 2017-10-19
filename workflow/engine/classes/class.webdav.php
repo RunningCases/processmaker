@@ -39,7 +39,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
     public function ServeRequest($base = false)
     {
         //$this->base = '/';
-        $this->uriBase = '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/webdav/';
+        $this->uriBase = '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/webdav/';
 
         // let the base class do all the work
         parent::ServeRequest();
@@ -72,7 +72,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
         // prepare property array
         $files["files"] = array();
 
-        $pathClasses = PATH_DB . PATH_SEP . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        $pathClasses = PATH_DB . PATH_SEP . config("system.workspace") . PATH_SEP . 'classes' . PATH_SEP;
         if (count($paths) == 0 && is_dir($pathClasses)) {
             $props = array();
             $props[] = $this->mkprop("displayname", 'Classes');
@@ -110,7 +110,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
         } //path classes
 
 
-        $pathProcesses = PATH_DB . SYS_SYS . PATH_SEP;
+        $pathProcesses = PATH_DB . config("system.workspace") . PATH_SEP;
         if (count($paths) == 0 && is_dir($pathProcesses)) {
             $props = array();
             $props[] = $this->mkprop("displayname", 'Processes');
@@ -404,7 +404,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
         $options = $filter->xssFilterHard($options);
         $paths = $filter->xssFilterHard($this->paths);
 
-        $pathClasses = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        $pathClasses = PATH_DB . config("system.workspace") . PATH_SEP . 'classes' . PATH_SEP;
         if (count($paths) > 0 && $paths[0] == 'classes' && is_dir($pathClasses)) {
             $fsFile = $pathClasses . $paths[1];
             $fsFile = $filter->xssFilterHard($fsFile);
@@ -419,7 +419,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
             }
         }
 
-        $pathProcesses = PATH_DB . SYS_SYS . PATH_SEP;
+        $pathProcesses = PATH_DB . config("system.workspace") . PATH_SEP;
         if (count($paths) > 0 && $paths[0] == 'processes' && is_dir($pathProcesses)) {
             if (count($paths) == 4 && $paths[2] == 'xmlforms') {
                 $pathXmlform = $pathProcesses . 'xmlForms' . PATH_SEP . $paths[1] . PATH_SEP;
@@ -636,7 +636,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
             }
         }
 
-        $pathProcesses = PATH_DB . SYS_SYS . PATH_SEP;
+        $pathProcesses = PATH_DB . config("system.workspace") . PATH_SEP;
         if (count($paths) > 0 && $paths[0] == 'processes' && is_dir($pathProcesses)) {
             if ($paths[2] == 'xmlforms') {
                 $pathTemplates = $pathProcesses . 'xmlForms' . PATH_SEP . $paths[1] . PATH_SEP;
