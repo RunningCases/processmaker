@@ -1966,13 +1966,13 @@ class WorkspaceTools
 
             $start = microtime(true);
             CLI::logging("> Verify License Enterprise...\n");
-            //$workspace->verifyLicenseEnterprise($workspaceName);
+            $workspace->verifyLicenseEnterprise($workspaceName);
             $stop = microtime(true);
             CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
 
             $start = microtime(true);
             CLI::logging("> Check Mafe Requirements...\n");
-            //$workspace->checkMafeRequirements($workspaceName, $lang);
+            $workspace->checkMafeRequirements($workspaceName, $lang);
             $stop = microtime(true);
             CLI::logging("<*>   Check Mafe Requirements Process took " . ($stop - $start) . " seconds.\n");
 
