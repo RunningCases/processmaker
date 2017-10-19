@@ -381,7 +381,7 @@ class ProcessPermissions
     {
         $usr_uid = trim($usr_uid);
         if ($usr_uid == '') {
-            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array('usr_uid',''))));
+            throw (new \Exception(\G::LoadTranslation("ID_SELECT_USER_OR_GROUP")));
         }
         $oUsers = new \Users();
         if (!($oUsers->userExists($usr_uid))) {
@@ -403,7 +403,7 @@ class ProcessPermissions
     {
         $grp_uid = trim($grp_uid);
         if ($grp_uid == '') {
-            throw (new \Exception(\G::LoadTranslation("ID_GROUP_NOT_EXIST", array('grp_uid',''))));
+            throw (new \Exception(\G::LoadTranslation("ID_SELECT_USER_OR_GROUP")));
         }
         $oGroup = new \Groupwf();
         if (!($oGroup->GroupwfExists($grp_uid))) {
