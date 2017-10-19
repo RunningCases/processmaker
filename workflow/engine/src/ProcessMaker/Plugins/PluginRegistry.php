@@ -92,7 +92,7 @@ class PluginRegistry
     public static function newInstance()
     {
         self::$instance = new PluginRegistry();
-        if (! is_object(self::$instance) || get_class(self::$instance) != "ProcessMaker\Plugins\PluginRegistry") {
+        if (!is_object(self::$instance) || get_class(self::$instance) != "ProcessMaker\Plugins\PluginRegistry") {
             throw new Exception("Can't load main PluginRegistry object.");
         }
         return self::$instance;
@@ -122,10 +122,10 @@ class PluginRegistry
             $plugin->sDescription,
             $plugin->sSetupPage,
             $plugin->iVersion,
-            isset($plugin->sCompanyLogo) ? $plugin->sCompanyLogo: '',
-            isset($plugin->aWorkspaces) ? $plugin->aWorkspaces: [],
-            isset($plugin->enable) ? $plugin->enable: false,
-            isset($plugin->bPrivate) ? $plugin->bPrivate: false
+            isset($plugin->sCompanyLogo) ? $plugin->sCompanyLogo : '',
+            isset($plugin->aWorkspaces) ? $plugin->aWorkspaces : [],
+            isset($plugin->enable) ? $plugin->enable : false,
+            isset($plugin->bPrivate) ? $plugin->bPrivate : false
         );
         $this->_aPluginDetails[$Namespace] = $detail;
     }
@@ -204,6 +204,7 @@ class PluginRegistry
         }
         Cache::pull(self::NAME_CACHE);
     }
+
     /**
      * Get the plugin details, by filename
      * @param string $Filename
@@ -476,7 +477,7 @@ class PluginRegistry
             if (isset($this->_aPluginDetails[$Namespace])) {
                 /** @var PluginDetail $detail */
                 $detail = $this->_aPluginDetails[$Namespace];
-                $className= $detail->getClassName();
+                $className = $detail->getClassName();
                 /** @var enterprisePlugin $oPlugin */
                 $oPlugin = new $className($detail->getNamespace(), $detail->getFile());
                 $oPlugin->setup();
@@ -857,13 +858,13 @@ class PluginRegistry
                     require_once($classFile);
                     $sClassNameA = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
                         str_replace(
-                            ['Plugin','plugin'],
+                            ['Plugin', 'plugin'],
                             'Class',
                             substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
                         );
                     $sClassNameB = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
                         str_replace(
-                            ['Plugin','plugin'],
+                            ['Plugin', 'plugin'],
                             'class',
                             substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
                         );
@@ -891,7 +892,7 @@ class PluginRegistry
     public function existsTrigger($TriggerId)
     {
         $found = false;
-        /** @var TriggerDetail  $trigger */
+        /** @var TriggerDetail $trigger */
         foreach ($this->_aTriggers as $trigger) {
             if ($trigger->equalTriggerId($TriggerId)) {
                 //review all folders registered for this namespace
@@ -1125,7 +1126,8 @@ class PluginRegistry
         $ActionSave,
         $ActionExecute,
         $ActionGetFields
-    ) {
+    )
+    {
         $found = false;
         /** @var CaseSchedulerPlugin $caseScheduler */
         foreach ($this->_aCaseSchedulerPlugin as $caseScheduler) {
@@ -1248,9 +1250,9 @@ class PluginRegistry
         $baseSrcPluginPath = PATH_PLUGINS . $Namespace . PATH_SEP . 'src';
         $apiPath = PATH_SEP . 'Services' . PATH_SEP . 'Ext' . PATH_SEP;
         $classFile = $baseSrcPluginPath . $apiPath . 'Ext' . $ClassName . '.php';
-        if (\file_exists($classFile)) {
+        if (file_exists($classFile)) {
             if (empty($this->_restExtendServices[$Namespace])) {
-                $this->_restExtendServices[$Namespace] = new \stdClass();
+                $this->_restExtendServices[$Namespace] = new stdClass();
             }
             $this->_restExtendServices[$Namespace]->{$ClassName} = [
                 'filePath' => $classFile,

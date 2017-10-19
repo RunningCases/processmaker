@@ -1375,7 +1375,7 @@ class PMPluginRegistry
         $classFile = $baseSrcPluginPath . $apiPath . 'Ext' . $className . '.php';
         if (file_exists($classFile)) {
             if (empty($this->_restExtendServices[$namespace])) {
-                $this->_restExtendServices[$namespace] = new \stdClass();
+                $this->_restExtendServices[$namespace] = new stdClass();
             }
             $this->_restExtendServices[$namespace]->{$className} = [
                 'filePath' => $classFile,
