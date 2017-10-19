@@ -1182,6 +1182,7 @@ class Light extends Api
      * @param int $del_index {@from body}
      * @param array $tasks {@from body}
      *
+     * @return array
      * @throws RestException
      *
      * @access protected

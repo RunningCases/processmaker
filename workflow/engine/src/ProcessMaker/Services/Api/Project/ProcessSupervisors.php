@@ -395,6 +395,7 @@ class ProcessSupervisors extends Api
      * @param string $pui_uid {@min 32} {@max 32}
      * @param int $pui_position
      *
+     * @return array
      * @throws RestException
      *
      * @access protected

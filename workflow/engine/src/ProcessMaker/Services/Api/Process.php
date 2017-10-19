@@ -81,10 +81,10 @@ class Process extends Api
     /**
      * Update a process by UID.
      *
-     * @param type $processUid
-     * @param type $request_data
+     * @param string $processUid
+     * @param array $request_data
      *
-     * @return type
+     * @return array
      * @throws RestException
      *
      * @access protected

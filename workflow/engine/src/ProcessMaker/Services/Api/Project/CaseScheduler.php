@@ -83,6 +83,7 @@ class CaseScheduler extends Api
      * @param string $schUid {@min 32} {@max 32}
      * @param CaseSchedulerStructure $request_data
      *
+     * @return array
      * @throws RestException
      *
      * @access protected

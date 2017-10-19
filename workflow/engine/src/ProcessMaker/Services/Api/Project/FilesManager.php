@@ -88,6 +88,7 @@ class FilesManager extends Api
      * @param ProcessFilesManagerStructure $request_data
      * @param string $prf_uid {@min 32} {@max 32}
      *
+     * @return array
      * @throws RestException
      *
      * @access protected

@@ -246,6 +246,7 @@ class Dashboard extends Api
      *
      * @param array $request_data
      *
+     * @return string
      * @throws RestException
      *
      * @access protected
@@ -344,6 +345,7 @@ class Dashboard extends Api
      *
      * @param array $request_data
      *
+     * @return string
      * @throws RestException
      *
      * @class AccessControl {@permission PM_DASHBOARD}
@@ -425,6 +427,7 @@ class Dashboard extends Api
      *
      * @param array $request_data
      *
+     * @return array
      * @throws RestException
      *
      * @access protected

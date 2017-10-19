@@ -145,6 +145,7 @@ class Pmtable extends Api
      * @param array $request_data
      *
      * @return void
+     * @throw RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_SETUP_PM_TABLES}
