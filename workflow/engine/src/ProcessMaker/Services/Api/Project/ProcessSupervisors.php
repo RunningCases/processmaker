@@ -264,7 +264,7 @@ class ProcessSupervisors extends Api
     }
 
     /**
-     * Assigns a Dynaform to a Process Supervisor.
+     * Assign a Dynaform to a Process Supervisor.
      * 
      * @url POST /:prjUid/process-supervisor/dynaform
      * @status 201
@@ -294,7 +294,7 @@ class ProcessSupervisors extends Api
     }
 
     /**
-     * Assigns an input document to a Process Supervisor.
+     * Assign an input document to a Process Supervisor.
      * 
      * @url POST /:prjUid/process-supervisor/input-document
      * @status 201

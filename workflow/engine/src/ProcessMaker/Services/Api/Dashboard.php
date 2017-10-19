@@ -227,7 +227,7 @@ class Dashboard extends Api
      * 
      * @param array $request_data
      * 
-     * @return id
+     * @return integer
      * @throws RestException 
      * 
      * @access protected
@@ -292,7 +292,7 @@ class Dashboard extends Api
      * 
      * @param array $request_data
      * 
-     * @return string
+     * @return object
      * @throws RestException 
      * 
      * @access protected
@@ -398,7 +398,7 @@ class Dashboard extends Api
      * 
      * @param array $request_data
      * 
-     * @return array
+     * @return integer
      * @throws RestException 
      * 
      * @access protected

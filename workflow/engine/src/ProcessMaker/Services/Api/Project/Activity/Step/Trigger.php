@@ -34,7 +34,7 @@ class Trigger extends Api
     }
 
     /**
-     * Assigns a trigger to a step.
+     * Assign a trigger to a step.
      * 
      * @url POST /:prj_uid/activity/:act_uid/step/:step_uid/trigger
      * @status 201

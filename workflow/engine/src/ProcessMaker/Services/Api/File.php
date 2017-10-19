@@ -19,10 +19,7 @@ class File extends Api
      * @param array  $request_data
      * 
      * @return array
-     * @throws RestException 
-     * 
-     * @return array
-     * @throws RestException 
+     * @throws RestException
      * 
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}

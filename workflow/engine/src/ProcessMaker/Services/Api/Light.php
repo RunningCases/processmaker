@@ -1137,7 +1137,7 @@ class Light extends Api
     }
 
     /**
-     * Starts a new case and assigns the logged-in user to work on the initial task 
+     * Starts a new case and assign the logged-in user to work on the initial task 
      * in the case. Note that the logged-in user must be in the pool of assigned 
      * users of the initial task. Also note that the new case's status will be 
      * set to "DRAFT", not "TO_DO".
@@ -1470,7 +1470,7 @@ class Light extends Api
     }
 
     /**
-     * Assigns the user logged-in to an unassigned case.
+     * Assign the user logged-in to an unassigned case.
      * 
      * @url POST /case/:app_uid/claim
      * 
@@ -1726,7 +1726,7 @@ class Light extends Api
      * 
      * @param string $app_uid {@min 1}{@max 32}
      * 
-     * @return stdclass
+     * @return array
      * @throws RestException
      * 
      * @access protected
@@ -1934,6 +1934,9 @@ class Light extends Api
      * actions 1 and 2.
      *
      * @url POST /get-next-step/:app_uid
+     * 
+     * @param string $app_uid
+     * @param array $request_data
      * 
      * @return array
      * @throws RestException 

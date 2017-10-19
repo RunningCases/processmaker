@@ -1263,7 +1263,7 @@ class Cases extends Api
      * 
      * @param string $tas_uid {@min 32}{@max 32}
      * 
-     * @return array
+     * @return void
      * @throws RestException 
      * 
      * @access protected
