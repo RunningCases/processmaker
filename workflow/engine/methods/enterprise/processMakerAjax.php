@@ -63,7 +63,7 @@ function install($file)
         $context = stream_context_create($option);
 
         ///////
-        $fileData = @fopen(EnterpriseUtils::getUrlServerName() . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/enterprise/services/processMakerUpgrade", "rb", false, $context);
+        $fileData = @fopen(EnterpriseUtils::getUrlServerName() . "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/enterprise/services/processMakerUpgrade", "rb", false, $context);
 
         if ($fileData === false) {
             throw (new Exception("Could not open services url."));

@@ -188,9 +188,9 @@ session_start();
 session_regenerate_id();
 
 if (PHP_VERSION < 5.2) {
-    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . SYS_SYS, "; HttpOnly");
+    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), "; HttpOnly");
 } else {
-    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . SYS_SYS, null, false, true);
+    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, false, true);
 }
 
 if (strlen($msg) > 0) {
@@ -361,7 +361,7 @@ $flagForgotPassword = isset($oConf->aConfig['login_enableForgotPassword'])
 
 setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_URI);
 
-$configS = System::getSystemConfiguration('', '', SYS_SYS);
+$configS = System::getSystemConfiguration('', '', config("system.workspace"));
 $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block'] : true;
 if ($activeSession) {
     setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');

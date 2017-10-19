@@ -138,7 +138,7 @@ class Bpmn extends Handler
         //Define the variables for the logging
         $info = array(
             'ip' => G::getIpAddress(),
-            'workspace' => (defined("SYS_SYS"))? SYS_SYS : "Workspace undefined"
+            'workspace' => (!empty(config("system.workspace")))? config("system.workspace") : "Workspace undefined"
         );
         $this->setContextLog($info);
     }

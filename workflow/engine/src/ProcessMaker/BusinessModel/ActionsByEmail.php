@@ -724,7 +724,7 @@ class ActionsByEmail
 
                     if ($flagLogin) {
                         header(
-                            'Location: /sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN .
+                            'Location: /sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN .
                             '/login/login?u=' . urlencode($_SERVER['REQUEST_URI'])
                         );
 

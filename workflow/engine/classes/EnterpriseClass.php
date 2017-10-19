@@ -101,11 +101,11 @@ class EnterpriseClass extends PMPlugin
     {
         $oServerConf = &ServerConf::getSingleton();
         $infoLicense =$oServerConf->getProperty('LICENSE_INFO');
-        if (isset($infoLicense[SYS_SYS]['LIMIT_USERS'])) {
+        if (isset($infoLicense[config("system.workspace")]['LIMIT_USERS'])) {
             $criteria = new Criteria('workflow');
             $criteria->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
             $count = UsersPeer::doCount($criteria);
-            if ($count >= $infoLicense[SYS_SYS]['LIMIT_USERS'] ) {
+            if ($count >= $infoLicense[config("system.workspace")]['LIMIT_USERS'] ) {
                 throw new Exception("You can\'t add more users to the System, this reach the limit of allowed users by license that it has installed now");
             }
         }

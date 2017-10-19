@@ -110,8 +110,10 @@ class Applications
                 $sqlData .= " AND APPLICATION.APP_STATUS = 'TO_DO'";
                 break;
             default: //All status
+                //When the status is TO_DO, we will get all the open threads
                 $sqlData .= " AND (APP_DELEGATION.DEL_THREAD_STATUS = 'OPEN' ";
-                $sqlData .= " OR (APP_DELEGATION.DEL_THREAD_STATUS = 'CLOSED' AND APP_DELEGATION.DEL_LAST_INDEX = 1)) ";
+                //When the status is COMPLETED, we will get the last task that with completed the case
+                $sqlData .= " OR (APP_DELEGATION.DEL_THREAD_STATUS = 'CLOSED' AND APP_DELEGATION.DEL_LAST_INDEX = 1 AND APPLICATION.APP_STATUS_ID = 3)) ";
                 break;
         }
 
@@ -703,7 +705,7 @@ class Applications
                 $tableName = implode( '', $newTableName );
                 // so the pm table class can be invoqued from the pm table model clases
                 if (! class_exists( $tableName )) {
-                    require_once (PATH_DB . SYS_SYS . PATH_SEP . "classes" . PATH_SEP . $tableName . ".php");
+                    require_once (PATH_DB . config("system.workspace") . PATH_SEP . "classes" . PATH_SEP . $tableName . ".php");
                 }
             }
             $totalCount = AppCacheViewPeer::doCount($CriteriaCount, $distinct);

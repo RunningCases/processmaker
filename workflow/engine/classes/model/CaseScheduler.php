@@ -332,7 +332,7 @@ class CaseScheduler extends BaseCaseScheduler
                 }
             }
 
-            $url = SERVER_NAME . $port . "/sys" . SYS_SYS . "/" . SYS_LANG . "/classic/services/wsdl2";
+            $url = SERVER_NAME . $port . "/sys" . config("system.workspace") . "/" . SYS_LANG . "/classic/services/wsdl2";
             
             $testConnection = true;
             try {

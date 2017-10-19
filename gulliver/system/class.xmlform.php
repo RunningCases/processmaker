@@ -255,7 +255,7 @@ class XmlFormField
                 $rs = $con->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
-                $workspace = defined("SYS_SYS")? SYS_SYS : "Wokspace Undefined";
+                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Wokspace Undefined";
                 G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
 
                 return $result;
@@ -267,7 +267,7 @@ class XmlFormField
                 $rs = $stmt->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
-                $workspace = defined("SYS_SYS")? SYS_SYS : "Wokspace Undefined";
+                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Wokspace Undefined";
                 G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
 
                 return $result;
@@ -5482,7 +5482,7 @@ class XmlForm
         $this->fileName = $filename;
         $parsedFile = dirname( $filename ) . PATH_SEP . basename( $filename, 'xml' ) . $language;
 
-        $parsedFilePath = defined( 'PATH_C' ) ? (defined( 'SYS_SYS' ) ? PATH_C . 'ws' . PATH_SEP . SYS_SYS . PATH_SEP : PATH_C) : PATH_DATA;
+        $parsedFilePath = defined('PATH_C') ? (!empty(config("system.workspace")) ? PATH_C . 'ws' . PATH_SEP . config("system.workspace") . PATH_SEP : PATH_C) : PATH_DATA;
         $parsedFilePath .= 'xmlform/' . substr( $parsedFile, strlen( $this->home ) );
 
         // Improvement for the js cache - Start

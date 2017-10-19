@@ -31,7 +31,7 @@ class PmDrive extends PmGoogleApi
         $this->folderIdPMDrive = empty($dataUser['USR_PMDRIVE_FOLDER_UID']) ? '' : $dataUser['USR_PMDRIVE_FOLDER_UID'];
 
         $conf = $this->getConfigGmail();
-        $this->folderNamePMDrive = empty($conf->aConfig['folderNamePMDrive']) ? 'PMDrive (' . SYS_SYS . ')' : $conf->aConfig['folderNamePMDrive'];
+        $this->folderNamePMDrive = empty($conf->aConfig['folderNamePMDrive']) ? 'PMDrive (' . config("system.workspace") . ')' : $conf->aConfig['folderNamePMDrive'];
 
         if ($this->folderIdPMDrive == '') {
             $folderid = $this->createFolder($this->folderNamePMDrive);
