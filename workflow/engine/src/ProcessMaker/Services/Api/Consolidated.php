@@ -108,16 +108,18 @@ class Consolidated extends Api
     /**
      * Get Cases Consolidated
      *
+     * @url PUT /cases/:tas_uid/:dyn_uid/:pro_uid
+     *
      * @param string $tas_uid {@min 1} {@max 32}
      * @param string $dyn_uid {@min 1} {@max 32}
      * @param string $pro_uid {@min 1} {@max 32}
      * @param array $request_data
+     *
      * @return array
+     * @throws RestException
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url PUT /cases/:tas_uid/:dyn_uid/:pro_uid
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutCasesConsolidated($tas_uid, $dyn_uid, $pro_uid, $request_data)
     {

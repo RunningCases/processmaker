@@ -138,12 +138,18 @@ class EmailServer extends Api
     }
 
     /**
+     * Update email server.
+     *
      * @url PUT /:mess_uid
+     * @status 200
      *
      * @param string $mess_uid     {@min 32}{@max 32}
      * @param array  $request_data
      *
-     * @status 200
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
      */
     public function doPut($mess_uid, array $request_data)
     {

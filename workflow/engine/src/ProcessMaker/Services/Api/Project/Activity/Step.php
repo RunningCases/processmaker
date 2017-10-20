@@ -80,6 +80,8 @@ class Step extends Api
     }
 
     /**
+     * Update step.
+     *
      * @url PUT /:prj_uid/activity/:act_uid/step/:step_uid
      *
      * @param string $step_uid       {@min 32}{@max 32}
@@ -91,6 +93,11 @@ class Step extends Api
      * @param string $step_condition {@from body}
      * @param int    $step_position  {@from body}{@min 1}
      * @param string $step_mode      {@from body}{@choice EDIT,VIEW}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutActivityStep(
         $step_uid,

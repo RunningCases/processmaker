@@ -96,12 +96,19 @@ class Variable extends Api
     }
 
     /**
+     * Update message type variable.
+     *
      * @url PUT /:prj_uid/message-type/:msgt_uid/variable/:msgtv_uid
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $msgt_uid     {@min 32}{@max 32}
      * @param string $msgtv_uid    {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutMessageTypeVariable($prj_uid, $msgt_uid, $msgtv_uid, array $request_data)
     {

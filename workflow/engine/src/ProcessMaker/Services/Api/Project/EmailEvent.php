@@ -88,11 +88,18 @@ class EmailEvent extends Api
     }
     
     /**
+     * Update email event.
+     *
      * @url PUT /:prj_uid/email-event/:email_event_uid
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $email_event_uid    {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutEmailEvent($prj_uid, $email_event_uid, array $request_data)
     {

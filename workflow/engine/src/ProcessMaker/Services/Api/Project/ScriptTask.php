@@ -108,11 +108,18 @@ class ScriptTask extends Api
     }
 
     /**
+     * Update script task.
+     *
      * @url PUT /:prj_uid/script-task/:scrtas_uid
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $scrtas_uid   {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutScriptTask($prj_uid, $scrtas_uid, array $request_data)
     {

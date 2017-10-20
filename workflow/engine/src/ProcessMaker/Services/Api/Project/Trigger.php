@@ -86,6 +86,10 @@ class Trigger extends Api
     }
 
     /**
+     * Update trigger.
+     *
+     * @url PUT /:projectUid/trigger/:triggerUid
+     *
      * @param string $projectUid {@min 1} {@max 32}
      * @param string $triggerUid {@min 1} {@max 32}
      * @param array $request_data
@@ -94,12 +98,12 @@ class Trigger extends Api
      * @param string $tri_type {@from body}
      * @param string $tri_webbot {@from body}
      * @param string $tri_param {@from body}
+     *
      * @return void
+     * @throws RestException
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
-     * @url PUT /:projectUid/trigger/:triggerUid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutTrigger($projectUid, $triggerUid, $request_data, $tri_title = '', $tri_description = '', $tri_type = 'SCRIPT', $tri_webbot = '', $tri_param = '')
     {

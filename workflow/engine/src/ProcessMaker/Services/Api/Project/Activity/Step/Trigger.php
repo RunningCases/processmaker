@@ -64,6 +64,8 @@ class Trigger extends Api
     }
 
     /**
+     * Update activity step trigger.
+     *
      * @url PUT /:prj_uid/activity/:act_uid/step/:step_uid/trigger/:tri_uid
      *
      * @param string $tri_uid
@@ -71,6 +73,11 @@ class Trigger extends Api
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepTriggerPutStructure $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutActivityStepTrigger($tri_uid, $step_uid, $act_uid, $prj_uid, StepTriggerPutStructure $request_data = null)
     {
@@ -160,12 +167,19 @@ class Trigger extends Api
     }
 
     /**
+     * Update activity step assign task trigger.
+     *
      * @url PUT /:prj_uid/activity/:act_uid/step/trigger/:tri_uid
      *
      * @param string $tri_uid
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepAssignTaskTriggerPutStructure $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutActivityStepAssignTaskTrigger($tri_uid, $act_uid, $prj_uid, StepAssignTaskTriggerPutStructure $request_data = null)
     {

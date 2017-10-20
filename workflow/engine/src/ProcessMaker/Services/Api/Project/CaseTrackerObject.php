@@ -71,6 +71,8 @@ class CaseTrackerObject extends Api
     }
 
     /**
+     * Update case tracker object.
+     *
      * @url PUT /:prj_uid/case-tracker/object/:cto_uid
      *
      * @param string $cto_uid       {@min 32}{@max 32}
@@ -80,6 +82,11 @@ class CaseTrackerObject extends Api
      * @param string $cto_uid_obj   {@from body}{@min 32}{@max 32}
      * @param string $cto_condition {@from body}
      * @param int    $cto_position  {@from body}{@min 1}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutCaseTrackerObject(
         $cto_uid,

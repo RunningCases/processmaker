@@ -116,11 +116,18 @@ class TimerEvent extends Api
     }
 
     /**
+     * Update timer event.
+     *
      * @url PUT /:prj_uid/timer-event/:tmrevn_uid
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $tmrevn_uid   {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutTimerEvent($prj_uid, $tmrevn_uid, array $request_data)
     {

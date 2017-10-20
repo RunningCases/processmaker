@@ -117,10 +117,13 @@ class ProcessPermissions extends Api
     }
 
     /**
+     * Update process permisson.
+     *
+     * @url PUT /:prj_uid/process-permission/:ob_uid
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $ob_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
      * @param string $usr_uid {@from body} {@min 1} {@max 32}
      * @param string $op_user_relation {@from body} {@choice 1,2}
      * @param string $op_case_status {@from body} {@choice ALL,DRAFT,TO_DO,PAUSED,COMPLETED}
@@ -133,12 +136,11 @@ class ProcessPermissions extends Api
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @return array
+     * @throws RestException
      *
-     * @url PUT /:prj_uid/process-permission/:ob_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutProcessPermission(
         $prj_uid,

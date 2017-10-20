@@ -81,12 +81,18 @@ class OutputDocuments extends Api
     }
 
     /**
+     * Update project output document.
+     *
      * @url PUT /:prjUid/output-document/:outputDocumentUid
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $outputDocumentUid {@min 32} {@max 32}
      * @param array $request_data
      *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutProjectOutputDocument($prjUid, $outputDocumentUid, $request_data)
     {

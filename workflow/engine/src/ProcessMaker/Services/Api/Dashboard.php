@@ -248,11 +248,15 @@ class Dashboard extends Api
     /**
      * Put dashboards configuration
      *
-     * @param array $request_data
-     *
-     *
      * @url PUT
      *
+     * @param array $request_data
+     *
+     * @return string
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_DASHBOARD}
      */
     public function doPutDashboard($request_data)
     {
@@ -363,8 +367,11 @@ class Dashboard extends Api
      *
      * @param array $request_data
      *
-     * @url PUT /indicator
+     * @return string
+     * @throws RestException
      *
+     * @class AccessControl {@permission PM_DASHBOARD}
+     * @access protected
      */
     public function doPutIndicator($request_data)
     {
@@ -445,10 +452,15 @@ class Dashboard extends Api
     /**
      * Put dashboards configuration by usr_uid
      *
-     * @param array $request_data
-     *
      * @url PUT /config
      *
+     * @param array $request_data
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_DASHBOARD}
      */
     public function doPutDashboardConfigByUsrUid($request_data)
     {

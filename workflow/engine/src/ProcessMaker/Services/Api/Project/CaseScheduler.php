@@ -82,12 +82,19 @@ class CaseScheduler extends Api
     }
 
     /**
+     * Update project case scheduler.
+     *
      * @url PUT /:prjUid/case-scheduler/:schUid
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $schUid {@min 32} {@max 32}
-     * @param CaseSchedulerStructure $request_data     
+     * @param CaseSchedulerStructure $request_data
      *
+     * @return array
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutProjectCaseScheduler($prjUid, $schUid, CaseSchedulerStructure $request_data)
     {

@@ -79,11 +79,18 @@ class Variable extends Api
     }
 
     /**
+     * Update variable.
+     *
      * @url PUT /:prj_uid/process-variable/:var_uid
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $var_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutVariable($prj_uid, $var_uid, array $request_data)
     {

@@ -103,10 +103,17 @@ class Group extends Api
     }
 
     /**
+     * Update group.
+     *
      * @url PUT /:grp_uid
      *
      * @param string $grp_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      */
     public function doPut($grp_uid, $request_data)
     {

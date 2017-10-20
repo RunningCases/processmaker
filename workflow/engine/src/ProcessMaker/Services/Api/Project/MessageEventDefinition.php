@@ -108,11 +108,18 @@ class MessageEventDefinition extends Api
     }
 
     /**
+     * Update message event definition.
+     *
      * @url PUT /:prj_uid/message-event-definition/:msged_uid
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $msged_uid    {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutMessageEventDefinition($prj_uid, $msged_uid, array $request_data)
     {

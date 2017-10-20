@@ -116,12 +116,19 @@ class WebEntryEvent extends Api
     }
 
     /**
+     * Update web-entry event.
+     *
      * @url PUT /:prj_uid/web-entry-event/:wee_uid
-     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $wee_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @return mixed
+     * @throws RestException
+     *
+     * @access protected
+     * @class  AccessControl {@permission PM_FACTORY}
      */
     public function doPutWebEntryEvent($prj_uid, $wee_uid, array $request_data)
     {
