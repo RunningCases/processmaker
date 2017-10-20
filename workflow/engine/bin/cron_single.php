@@ -820,7 +820,7 @@ function executeCaseSelfService()
                         unset($appFields['APP_PIN']);
                         $case->updateCase($appFields["APP_UID"], $appFields);
 
-                        saveLog("unassignedCase", "action", "OK Executed tigger to the case $appcacheAppNumber");
+                        saveLog("unassignedCase", "action", "OK Executed trigger to the case $appcacheAppNumber");
                     }
                 }
 

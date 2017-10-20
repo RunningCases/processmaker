@@ -980,8 +980,10 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
                     require_once 'classes/model/Users.php';
                     $oUser = new Users();
                     $aUser = $oUser->load( $aSession['USR_UID'] );
-                    $_SESSION['USER_LOGGED'] = $aUser['USR_UID'];
-                    $_SESSION['USR_USERNAME'] = $aUser['USR_USERNAME'];
+                    initUserSession(
+                        $_SESSION['USER_LOGGED'],
+                        $aUser['USR_USERNAME']
+                    );
                     $bRedirect = false;
                     if ((preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 ||
                         $config['ie_cookie_lifetime'] == 1) &&
@@ -1000,23 +1002,27 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
                 }
             }
 
-            if ($bRedirect && !isset($_GET["tracker_designer"])) {
-                if (substr( SYS_SKIN, 0, 2 ) == 'ux' && SYS_SKIN != 'uxs') { // verify if the current skin is a 'ux' variant
+            if (isset($_GET['tracker_designer']) && intval($_GET['tracker_designer']) !== 1) {
+                unset($_GET['tracker_designer']);
+            }
+
+            if ($bRedirect && (!isset($_GET['tracker_designer']) || (!isset($_SESSION['CASE']) && !isset($_SESSION['PIN'])))) {
+                if (substr(SYS_SKIN, 0, 2) === 'ux' && SYS_SKIN !== 'uxs') { // verify if the current skin is a 'ux' variant
                     $loginUrl = 'main/login';
-                } else if (strpos( $_SERVER['REQUEST_URI'], '/home' ) !== false) { //verify is it is using the uxs skin for simplified interface
+                } else if (strpos($_SERVER['REQUEST_URI'], '/home') !== false) { //verify is it is using the uxs skin for simplified interface
                     $loginUrl = 'home/login';
                 } else {
                     $loginUrl = 'login/login'; // just set up the classic login
                 }
 
-                if (empty( $_POST )) {
-                    header( 'location: ' . SYS_URI . $loginUrl . '?u=' . urlencode( $_SERVER['REQUEST_URI'] ) );
+                if (empty($_POST)) {
+                    header('location: ' . SYS_URI . $loginUrl . '?u=' . urlencode($_SERVER['REQUEST_URI']));
 
                 } else {
                     if ($isControllerCall) {
-                        header( "HTTP/1.0 302 session lost in controller" );
+                        header("HTTP/1.0 302 session lost in controller");
                     } else {
-                        header( 'location: ' . SYS_URI . $loginUrl );
+                        header('location: ' . SYS_URI . $loginUrl);
                     }
                 }
                 die();

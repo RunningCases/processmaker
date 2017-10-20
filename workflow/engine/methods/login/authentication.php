@@ -182,14 +182,12 @@ try {
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
         EnterpriseClass::enterpriseSystemUpdate($loginInfo);
-        $_SESSION['USER_LOGGED']  = $uid;
-        $_SESSION['USR_USERNAME'] = $usr;
+        initUserSession($uid, $usr);
     } else {
         setcookie("singleSignOn", '1', time() + (24 * 60 * 60), '/');
         $uid = $RBAC->userObj->fields['USR_UID'];
         $usr = $RBAC->userObj->fields['USR_USERNAME'];
-        $_SESSION['USER_LOGGED']  = $uid;
-        $_SESSION['USR_USERNAME'] = $usr;
+        initUserSession($uid, $usr);
     }
 
     //Set default Languaje

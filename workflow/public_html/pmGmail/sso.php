@@ -15,7 +15,7 @@ $server = isset($_GET['server']) ? $_GET['server'] : '';
 
 //We do need the server to continue.
 if( !isset($_GET['server']) || $server == "" ){
-	throw new \Exception(Bootstrap::LoadTranslation( 'ID_GMAIL_NEED_SERVER' ));
+    throw new \Exception(Bootstrap::LoadTranslation( 'ID_GMAIL_NEED_SERVER' ));
 }
 
 //First check if the feature is enabled in the license.
@@ -53,75 +53,77 @@ curl_close($curl);
 $decodedResp = G::json_decode($curl_response);
 
 if(!is_object($decodedResp) || property_exists($decodedResp,'error')) {
-	die($decodedResp->error->message);
+    die($decodedResp->error->message);
 }
 
 //getting the enviroment
 $enviroment = $decodedResp->enviroment;
 
 if(count($decodedResp->user) > 1){
-	echo Bootstrap::LoadTranslation( 'ID_EMAIL_MORE_THAN_ONE_USER' );
-	die;
+    echo Bootstrap::LoadTranslation( 'ID_EMAIL_MORE_THAN_ONE_USER' );
+    die;
 } else if(count($decodedResp->user) < 1){
-	echo Bootstrap::LoadTranslation( 'ID_USER_NOT_FOUND' );
-	die;
+    echo Bootstrap::LoadTranslation( 'ID_USER_NOT_FOUND' );
+    die;
 }
 
 //validationg if there is an actual PM session
 if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp->user['0']->USR_UID){
-	$url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token='.$gmailToken;
+    $url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token='.$gmailToken;
 
-	// init curl object
-	$ch = curl_init();
-	// define options
-	$optArray = array(
+    // init curl object
+    $ch = curl_init();
+    // define options
+    $optArray = array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false
-	);
-	// apply those options
-	curl_setopt_array($ch, $optArray);
-	// execute request and get response
-	$result = curl_exec($ch);
-	$response = (G::json_decode($result));
-	curl_close($ch);
+    );
+    // apply those options
+    curl_setopt_array($ch, $optArray);
+    // execute request and get response
+    $result = curl_exec($ch);
+    $response = (G::json_decode($result));
+    curl_close($ch);
 
-	//First validate if this user (mail) corresponds to a PM user
-	if(isset($response->email) && ($gmail == $response->email)){
-	    //If the email corresponds I get the username and with the gmail user_id the session is created.
-	    if($decodedResp->user['0']->USR_STATUS == "ACTIVE"){
-		    //User Active! lets create the Session
-	    	@session_destroy();
-	    	session_start();
-	    	session_regenerate_id();
-	    	
-			if (PHP_VERSION < 5.2) {
-		        setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, "; HttpOnly");
-		    } else {
-		        setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, null, false, true);
-		    }
+    //First validate if this user (mail) corresponds to a PM user
+    if(isset($response->email) && ($gmail == $response->email)){
+        //If the email corresponds I get the username and with the gmail user_id the session is created.
+        if($decodedResp->user['0']->USR_STATUS == "ACTIVE"){
+            //User Active! lets create the Session
+            @session_destroy();
+            session_start();
+            session_regenerate_id();
 
-			$_SESSION = array();
-			$_SESSION['__EE_INSTALLATION__'] = 2;
-			$_SESSION['__EE_SW_PMLICENSEMANAGER__'] = 1;
-			$_SESSION['phpLastFileFound'] = '';
-			$_SESSION['USERNAME_PREVIOUS1'] = $decodedResp->user['0']->USR_USERNAME;
-			$_SESSION['USERNAME_PREVIOUS2'] = $decodedResp->user['0']->USR_USERNAME;
-			$_SESSION['WORKSPACE'] = $pmws;
-			$_SESSION['USER_LOGGED'] = $decodedResp->user['0']->USR_UID;
-			$_SESSION['USR_USERNAME'] = $decodedResp->user['0']->USR_USERNAME;
-			$_SESSION['USR_FULLNAME'] = $decodedResp->user['0']->USR_FIRSTNAME. ' ' .$decodedResp->user['0']->USR_LASTNAME;
-			$_SESSION['__sw__'] = 1;
-			//session created
-		} else {
-			echo Bootstrap::LoadTranslation( 'ID_USER_NOT_ACTIVE' );
-		    die;
-		}
-	} else {
-		echo Bootstrap::LoadTranslation( 'ID_USER_DOES_NOT_CORRESPOND' );
-	    die;
-	}
+            if (PHP_VERSION < 5.2) {
+                setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, "; HttpOnly");
+            } else {
+                setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, null, false, true);
+            }
+
+            $_SESSION = array();
+            $_SESSION['__EE_INSTALLATION__'] = 2;
+            $_SESSION['__EE_SW_PMLICENSEMANAGER__'] = 1;
+            $_SESSION['phpLastFileFound'] = '';
+            $_SESSION['USERNAME_PREVIOUS1'] = $decodedResp->user['0']->USR_USERNAME;
+            $_SESSION['USERNAME_PREVIOUS2'] = $decodedResp->user['0']->USR_USERNAME;
+            $_SESSION['WORKSPACE'] = $pmws;
+            $_SESSION['USR_FULLNAME'] = $decodedResp->user['0']->USR_FIRSTNAME. ' ' .$decodedResp->user['0']->USR_LASTNAME;
+            $_SESSION['__sw__'] = 1;
+            initUserSession(
+                $decodedResp->user['0']->USR_UID,
+                $decodedResp->user['0']->USR_USERNAME
+            );
+            //session created
+        } else {
+            echo Bootstrap::LoadTranslation( 'ID_USER_NOT_ACTIVE' );
+            die;
+        }
+    } else {
+        echo Bootstrap::LoadTranslation( 'ID_USER_DOES_NOT_CORRESPOND' );
+        die;
+    }
 }
 
 $_SESSION['server'] = 'https://' . $server . '/sys'. $pmws .'/en/'.$enviroment.'/';
