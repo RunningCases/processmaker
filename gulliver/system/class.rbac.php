@@ -178,7 +178,11 @@ class RBAC
                 'DEL' => array('PM_SETUP'),
                 'LST' => array('PM_SETUP'),
                 'TEST' => array('PM_SETUP')
-            )
+            ),
+            'processes_GetFile.php' => [
+                'mailTemplates' => ['PM_FACTORY'],
+                'public' => ['PM_FACTORY']
+            ]
         );
     }
 
@@ -338,7 +342,7 @@ class RBAC
         ), array("PER_UID" => "00000000000000000000000000000038", "PER_CODE" => "PM_UNCANCELCASE",
             "PER_NAME" => "Undo cancel case"
         ), array("PER_UID" => "00000000000000000000000000000039", "PER_CODE" => "PM_REST_API_APPLICATIONS",
-            "PER_NAME" => "Create rest API Aplications"
+            "PER_NAME" => "Register External Applications"
         ), array("PER_UID" => "00000000000000000000000000000040", "PER_CODE" => "PM_EDIT_USER_PROFILE_FIRST_NAME",
             "PER_NAME" => "Edit User profile First Name"
         ), array("PER_UID" => "00000000000000000000000000000041", "PER_CODE" => "PM_EDIT_USER_PROFILE_LAST_NAME",

@@ -117,7 +117,7 @@ class pmTablesProxy extends HttpProxyController
         $dbConn = new DbConnections();
         $dbConnections = $dbConn->getConnectionsProUid( $proUid, array('mysql') );
 
-        $workSpace = new WorkspaceTools(SYS_SYS);
+        $workSpace = new WorkspaceTools(config("system.workspace"));
         $workspaceDB = $workSpace->getDBInfo();
 
         if ($workspaceDB['DB_NAME'] == $workspaceDB['DB_RBAC_NAME']) {
@@ -399,7 +399,7 @@ class pmTablesProxy extends HttpProxyController
         $primaryKeys = $oAdditionalTables->getPrimaryKeys( 'keys' );
         $this->className = $table['ADD_TAB_CLASS_NAME'];
         $this->classPeerName = $this->className . 'Peer';
-        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        $sPath = PATH_DB . config("system.workspace") . PATH_SEP . 'classes' . PATH_SEP;
 
         if (! file_exists( $sPath . $this->className . '.php' )) {
             throw new Exception( 'Update:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
@@ -440,7 +440,7 @@ class pmTablesProxy extends HttpProxyController
         $table = $oAdditionalTables->load( $httpData->id, true );
         $this->className = $table['ADD_TAB_CLASS_NAME'];
         $this->classPeerName = $this->className . 'Peer';
-        $sPath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
+        $sPath = PATH_DB . config("system.workspace") . PATH_SEP . 'classes' . PATH_SEP;
 
         if (! file_exists( $sPath . $this->className . '.php' )) {
             throw new Exception( 'Destroy:: ' . G::loadTranslation( 'ID_PMTABLE_CLASS_DOESNT_EXIST', $this->className ) );
@@ -664,7 +664,7 @@ class pmTablesProxy extends HttpProxyController
             $rows = $resultData['rows'];
             $count = $resultData['count'];
 
-            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP;
+            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'public' . PATH_SEP;
             $filenameOnly = strtolower($aAdditionalTables['ADD_TAB_NAME'] . "_" . date("Y-m-d") . '_' . date("Hi") . ".csv");
             $filename = $PUBLIC_ROOT_PATH . $filenameOnly;
             $fp = fopen($filename, "wb");
@@ -733,7 +733,7 @@ class pmTablesProxy extends HttpProxyController
             $_SESSION['FILES_FORM'] = $_FILES['form'];
 
 
-            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP;
+            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'public' . PATH_SEP;
             $filename = $_FILES['form']['name']['FILENAME'];
             $tempName = $_FILES['form']['tmp_name']['FILENAME'];
 
@@ -923,7 +923,7 @@ class pmTablesProxy extends HttpProxyController
             $result = new stdClass();
             $net = new Net( G::getIpAddress() );
 
-            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
+            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . config("system.workspace") . "\n" . " @Export trace back:\n\n";
 
             $EXPORT_TRACEBACK = Array ();
             $c = 0;
@@ -947,9 +947,9 @@ class pmTablesProxy extends HttpProxyController
             $META .= $sTrace;
 
             ///////////////EXPORT PROCESS
-            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP;
+            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'public' . PATH_SEP;
 
-            $filenameOnly = strtolower( 'SYS-' . SYS_SYS . "_" . date( "Y-m-d" ) . '_' . date( "Hi" ) . ".pmt" );
+            $filenameOnly = strtolower( 'SYS-' . config("system.workspace") . "_" . date( "Y-m-d" ) . '_' . date( "Hi" ) . ".pmt" );
 
             $filename = $PUBLIC_ROOT_PATH . $filenameOnly;
             $fp = fopen( $filename, "wb" );

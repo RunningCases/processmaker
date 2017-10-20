@@ -4131,7 +4131,7 @@ class Processes
                 try {
                     $result = $scriptTask->create($processUid, $record);
                 } catch (Exception $e) {
-                    Bootstrap::registerMonolog('DataError', 400, $e->getMessage(), $record, SYS_SYS, 'processmaker.log');
+                    Bootstrap::registerMonolog('DataError', 400, $e->getMessage(), $record, config("system.workspace"), 'processmaker.log');
                 }
             }
         } catch (Exception $e) {
@@ -4499,7 +4499,7 @@ class Processes
         $proTitle = (substr(G::inflect($data->process['PRO_TITLE']), 0, 245));
         $proTitle = preg_replace("/[^A-Za-z0-9_]/", "", $proTitle);
         //Calculating the maximum length of file name
-        $pathLength = strlen(PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP);
+        $pathLength = strlen(PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP);
         $length = strlen($proTitle) + $pathLength;
         $limit = 200;
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -4578,7 +4578,7 @@ class Processes
 
 
         // for mailtemplates files
-        $MAILS_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP . $data->process['PRO_UID'];
+        $MAILS_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'mailTemplates' . PATH_SEP . $data->process['PRO_UID'];
 
         $isMailTempSent = false;
         $isPublicSent = false;
@@ -4615,7 +4615,7 @@ class Processes
         }
 
         // for public files
-        $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP . $data->process['PRO_UID'];
+        $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'public' . PATH_SEP . $data->process['PRO_UID'];
 
         //Get WebEntry file names
         $arrayWebEntryFile = array();
@@ -4671,7 +4671,7 @@ class Processes
 
         /*
         // for public files
-        $PUBLIC_ROOT_PATH = PATH_DATA.'sites'.PATH_SEP.SYS_SYS.PATH_SEP.'public'.PATH_SEP.$data->process['PRO_UID'];
+        $PUBLIC_ROOT_PATH = PATH_DATA.'sites'.PATH_SEP.config("system.workspace").PATH_SEP.'public'.PATH_SEP.$data->process['PRO_UID'];
         //if this process have any mailfile
         if ( is_dir( $PUBLIC_ROOT_PATH ) ) {
             //get mail files list from this directory
@@ -5067,7 +5067,7 @@ class Processes
                                 $context['url'] = SYS_CURRENT_URI . '?' . SYS_CURRENT_PARMS;
                             }
                             $context['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '';
-                            $sysSys = defined("SYS_SYS") ? SYS_SYS : "Undefined";
+                            $sysSys = !empty(config("system.workspace")) ? config("system.workspace") : "Undefined";
                             $message = 'The imported template has a number of byes different than the original template, please verify if the file \'' . $newFileName . '\' is correct.';
                             $level = 400;
                             Bootstrap::registerMonolog($channel, $level, $message, $context, $sysSys, 'processmaker.log');
@@ -6079,7 +6079,7 @@ class Processes
             }
 
             //Set variables
-            $cs = new CodeScanner((!is_null($workspaceName))? $workspaceName : SYS_SYS);
+            $cs = new CodeScanner((!is_null($workspaceName))? $workspaceName : config("system.workspace"));
 
             $delimiter = DBAdapter::getStringDelimiter();
 

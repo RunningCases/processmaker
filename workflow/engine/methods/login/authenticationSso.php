@@ -20,7 +20,7 @@ try {
             }
 
             header(
-                'Location: /sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN .
+                'Location: /sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN .
                 '/login/login' . (($u != '')? '?u=' . $u : '')
             );
 
@@ -40,7 +40,7 @@ try {
     }
     /*----------------------------------********---------------------------------*/
 
-    $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
+    $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
 
     //Set User Time Zone
     $user = UsersPeer::retrieveByPK($userUid);
@@ -129,9 +129,10 @@ try {
 
     setcookie('singleSignOn', '1', time() + (24 * 60 * 60), '/');
 
-    $_SESSION['USER_LOGGED']  = $_SESSION['__USER_LOGGED_SSO__'];
-    $_SESSION['USR_USERNAME'] = $_SESSION['__USR_USERNAME_SSO__'];
-
+    initUserSession(
+        $_SESSION['__USER_LOGGED_SSO__'],
+        $_SESSION['__USR_USERNAME_SSO__']
+    );
     unset($_SESSION['__USER_LOGGED_SSO__'], $_SESSION['__USR_USERNAME_SSO__']);
 
     G::header('Location: ' . $location);

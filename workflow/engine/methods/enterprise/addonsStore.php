@@ -9,7 +9,7 @@ $oHeadPublisher = &headPublisher::getSingleton();
 
 if (isset($licenseManager->date) && is_array($licenseManager->date)) {
     $conf = new Configurations();
-    if ( defined('SYS_SYS') && $conf->exists("ENVIRONMENT_SETTINGS")) {
+    if (!empty(config("system.workspace")) && $conf->exists("ENVIRONMENT_SETTINGS")) {
         $licenseManager->date['START']  = date("Y-m-d H:i:s", strtotime($licenseManager->date['HUMAN']['START']));
         $licenseManager->date['END']    = date("Y-m-d H:i:s", strtotime($licenseManager->date['HUMAN']['END']));
         $licenseManager->date['START']  = $conf->getSystemDate($licenseManager->date['START']);
@@ -63,7 +63,7 @@ $oHeadPublisher->assign("supportStartDate", (isset($licenseManager->supportStart
 $oHeadPublisher->assign("supportEndDate", (isset($licenseManager->supportEndDate))? $licenseManager->supportEndDate : '');
 
 $oHeadPublisher->assign("PROCESSMAKER_VERSION", System::getVersion());
-$oHeadPublisher->assign("PROCESSMAKER_URL", "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN );
+$oHeadPublisher->assign("PROCESSMAKER_URL", "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN );
 $oHeadPublisher->assign("SYS_SKIN", SYS_SKIN);
 $oHeadPublisher->assign("URL_PART_LOGIN", ((substr(SYS_SKIN, 0, 2) == "ux" && SYS_SKIN != "uxs")? "main/login" : "login/login"));
 $oHeadPublisher->assign("URL_PART_SETUP", EnterpriseUtils::getUrlPartSetup());

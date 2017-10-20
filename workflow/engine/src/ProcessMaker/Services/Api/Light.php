@@ -1715,24 +1715,26 @@ class Light extends Api
 
     /**
      * Put Case Variables
+     * @access protected
+     * @class  AccessControl {@className \ProcessMaker\Services\Api\Cases}
+     * @url PUT /:app_uid/variable
      *
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
      * @param string $dyn_uid {@from path}
      * @param int $del_index {@from path}
      *
-     * @url PUT /:app_uid/variable
+     * @return void
+     * @throws RestException
      */
     public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
     {
         try {
             //Check if the user is a supervisor or have permissions
             $usr_uid = $this->getUserId();
-            $cases = new BusinessModelCases();
-            $hasAccess = $cases->checkUserHasPermissionsOrSupervisor($usr_uid, $app_uid, $dyn_uid);
 
             //When the user is a supervisor del_index is 0
-            if ($del_index <= 0 && !$hasAccess) {
+            if ($del_index < 0) {
                 throw (new Exception(G::LoadTranslation('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER',
                     array('del_index')), Api::STAT_APP_EXCEPTION));
             }
@@ -1740,6 +1742,7 @@ class Light extends Api
                 throw (new Exception(G::LoadTranslation('ID_CAN_NOT_BE_NULL', array('del_index')),
                     Api::STAT_APP_EXCEPTION));
             }
+            $cases = new BusinessModelCases();
             if ($del_index > 0) {
                 if ($cases->caseAlreadyRouted($app_uid, $del_index, $usr_uid)) {
                     throw (new Exception(G::LoadTranslation('ID_CASE_ALREADY_DERIVATED'), Api::STAT_APP_EXCEPTION));

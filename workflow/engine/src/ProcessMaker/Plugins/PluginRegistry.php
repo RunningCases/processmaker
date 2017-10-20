@@ -45,8 +45,7 @@ class PluginRegistry
     use PluginStructure;
     use Attributes;
     use Init;
-
-    const NAME_CACHE = SYS_SYS . __CLASS__;
+    
     /**
      * Instance of de object PluginRegistry
      * @var PluginRegistry $instance
@@ -75,9 +74,9 @@ class PluginRegistry
     public static function loadSingleton()
     {
         if (self::$instance === null) {
-            if (is_null($object = Cache::get(self::NAME_CACHE))) {
+            if (is_null($object = Cache::get(config("system.workspace") . __CLASS__))) {
                 $object = new PluginRegistry();
-                Cache::put(self::NAME_CACHE, $object, config('app.cache_lifetime'));
+                Cache::put(config("system.workspace") . __CLASS__, $object, config('app.cache_lifetime'));
             }
             self::$instance = $object;
         }
@@ -202,7 +201,7 @@ class PluginRegistry
             $fieldPlugin = PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
             PluginsRegistry::update($fieldPlugin);
         }
-        Cache::pull(self::NAME_CACHE);
+        Cache::pull(config("system.workspace") . __CLASS__);
     }
     /**
      * Get the plugin details, by filename
@@ -855,12 +854,19 @@ class PluginRegistry
                 }
                 if ($found) {
                     require_once($classFile);
-                    $sClassName = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
+                    $sClassNameA = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
                         str_replace(
-                            'plugin',
+                            ['Plugin','plugin'],
+                            'Class',
+                            substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
+                        );
+                    $sClassNameB = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
+                        str_replace(
+                            ['Plugin','plugin'],
                             'class',
                             substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
                         );
+                    $sClassName = class_exists($sClassNameA) ? $sClassNameA : $sClassNameB;
                     $obj = new $sClassName();
                     $methodName = $trigger->getTriggerName();
                     $response = $obj->{$methodName}($oData);

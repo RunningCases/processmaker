@@ -16,12 +16,10 @@ use ProcessMaker\Project\Adapter\BpmnWorkflow;
 use Exception;
 
 /**
- * Class Project
- *
  * @package Services\Api\ProcessMaker
- * @author Erik Amaru Ortiz <aortiz.erik@gmail.com, erik@colosa.com>
- *
  * @protected
+ * @access protected
+ * @class AccessControl {@permission PM_FACTORY}
  */
 class Project extends Api
 {
@@ -53,7 +51,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doGetProject($prj_uid)
@@ -75,10 +72,6 @@ class Project extends Api
      *
      * @param string $prj_name
      * @param array $request_data
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @url POST
      * @status 201
      */
@@ -97,7 +90,6 @@ class Project extends Api
 
     /**
      * @url PUT /:prj_uid
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doPutProject($prj_uid, $request_data)
@@ -141,11 +133,10 @@ class Project extends Api
 
     /**
      * Bulk actions
+     * 
      * @url POST /bulk
-     *
      * @access protected
      * @class AccessControl {@permission PM_FACTORY}
-     *
      * @param array $request_data
      * @return array $response
      * @throws Exception
@@ -162,7 +153,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/export/listObjects
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      * @return mixed|string
      * @throws RestException
@@ -180,7 +170,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/export-granular
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $objects
      */
@@ -189,7 +178,7 @@ class Project extends Api
         $objects = \G::json_decode($objects);
         $granularExporter = new GranularExporter($prj_uid);
         $outputFilename = $granularExporter->export($objects);
-        $outputFilename = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'files' . PATH_SEP . 'output' .
+        $outputFilename = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'files' . PATH_SEP . 'output' .
             PATH_SEP . $outputFilename;
         $httpStream = new HttpStream();
         $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
@@ -203,7 +192,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/export
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function export($prj_uid)
@@ -211,7 +199,7 @@ class Project extends Api
         $exporter = new \ProcessMaker\Exporter\XmlExporter($prj_uid);
         $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
 
-        $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
+        $outputDir = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
         $version = Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
 
@@ -230,9 +218,7 @@ class Project extends Api
 
     /**
      * @url POST /import
-     *
      * @param array $request_data
-     *
      * @status 201
      */
     public function doPostImport(array $request_data, $option = null, $option_group = null)
@@ -260,7 +246,6 @@ class Project extends Api
 
     /**
      * @url POST /save-as
-     *
      * @param string $prj_uid         {@from body}
      * @param string $prj_name        {@from body}
      * @param string $prj_description {@from body}
@@ -274,7 +259,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/process
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doGetProcess($prj_uid)
@@ -295,7 +279,6 @@ class Project extends Api
 
     /**
      * @url PUT /:prj_uid/process
-     *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
      */
@@ -315,9 +298,7 @@ class Project extends Api
 
     /**
      * @url POST /generate-bpmn
-     *
      * @param array $request_data
-     *
      * @status 201
      */
     public function doPostGenerateBpmn(array $request_data)
@@ -353,7 +334,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/dynaforms
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doGetDynaForms($prj_uid)
@@ -373,7 +353,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/input-documents
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doGetInputDocuments($prj_uid)
@@ -393,7 +372,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/variables
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doGetVariables($prj_uid)
@@ -414,7 +392,6 @@ class Project extends Api
     /**
      * @url GET /:prj_uid/grid/variables
      * @url GET /:prj_uid/grid/:grid_uid/variables
-     *
      * @param string $prj_uid  {@min 32}{@max 32}
      * @param string $grid_uid
      */
@@ -435,7 +412,6 @@ class Project extends Api
 
     /**
      * @url GET /:prj_uid/trigger-wizards
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doGetTriggerWizards($prj_uid)
@@ -455,7 +431,6 @@ class Project extends Api
 
     /**
      * @url PUT /:prj_uid/update-route-order
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doPutUpdateRouteOrder($prj_uid, $request_data)
@@ -471,7 +446,6 @@ class Project extends Api
 
     /**
      * @url PUT /:prj_uid/update-route-order-from-project
-     *
      * @param string $prj_uid {@min 32}{@max 32}
      */
     public function doPutUpdateRouteOrderFromProject($prj_uid)

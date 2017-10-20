@@ -129,6 +129,7 @@ switch ($_POST['action']) {
     case 'saveUser':
     case 'savePersonalInfo':
         try {
+            verifyCsrfToken($_POST);
             $user = new \ProcessMaker\BusinessModel\User();
             $form = $_POST;
             $permissionsToSaveData = $user->getPermissionsForEdit();

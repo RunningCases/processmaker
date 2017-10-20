@@ -144,8 +144,8 @@ class Server implements iAuthenticate
         $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
         $host = $http .'://'. $host;
 
-        $applicationsLink = sprintf('%s/%s/oauth2/apps', $host, SYS_SYS);
-        $authorizationLink = sprintf('%s/%s/oauth2/authorize?response_type=code&client_id=[the-client-id]&scope=*', $host, SYS_SYS);
+        $applicationsLink = sprintf('%s/%s/oauth2/apps', $host, config("system.workspace"));
+        $authorizationLink = sprintf('%s/%s/oauth2/authorize?response_type=code&client_id=[the-client-id]&scope=*', $host, config("system.workspace"));
 
         $view = new \Maveriks\Pattern\Mvc\SmartyView(PATH_CORE . "templates/oauth2/index.html");
         $view->assign('host', $host);
@@ -180,7 +180,7 @@ class Server implements iAuthenticate
             $host = $http . '://' . $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
             $redirect = urlencode($host.'/'.self::$workspace.$_SERVER['REQUEST_URI']);
 
-            $loginLink = sprintf('%s/sys%s/%s/%s/login/login?u=%s', $host, SYS_SYS, SYS_LANG, SYS_SKIN, $redirect);
+            $loginLink = sprintf('%s/sys%s/%s/%s/login/login?u=%s', $host, config("system.workspace"), SYS_LANG, SYS_SKIN, $redirect);
             header('location: ' . $loginLink);
             die;
         }
@@ -214,7 +214,7 @@ class Server implements iAuthenticate
         $view = new \Maveriks\Pattern\Mvc\SmartyView(PATH_CORE . "templates/oauth2/authorize.html");
         $view->assign('user', $user);
         $view->assign('client', $client);
-        $view->assign('postUri', '/' . SYS_SYS . '/oauth2/authorize?' . $_SERVER['QUERY_STRING']);
+        $view->assign('postUri', '/' . config("system.workspace") . '/oauth2/authorize?' . $_SERVER['QUERY_STRING']);
         $view->render();
         exit();
     }
@@ -364,7 +364,7 @@ class Server implements iAuthenticate
                 $userTimeZone = $user->getUsrTimeZone();
 
                 if (trim($userTimeZone) == '') {
-                    $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
+                    $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
 
                     $userTimeZone = $arraySystemConfiguration['time_zone'];
                 }

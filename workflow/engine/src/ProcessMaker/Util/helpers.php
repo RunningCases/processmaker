@@ -1,4 +1,8 @@
 <?php
+
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Str;
+
 /**
  * We will send a case note in the actions by email
  * @param object $httpData
@@ -251,8 +255,8 @@ function getVarsGrid($proUid, $dynUid)
 
     $dynaformFields = array();
 
-    if (is_file(PATH_DATA . '/sites/' . SYS_SYS . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') && filesize(PATH_DATA . '/sites/' . SYS_SYS . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') > 0) {
-        $dyn = new dynaFormHandler(PATH_DATA . '/sites/' . SYS_SYS . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml');
+    if (is_file(PATH_DATA . '/sites/' . config("system.workspace") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') && filesize(PATH_DATA . '/sites/' . config("system.workspace") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') > 0) {
+        $dyn = new dynaFormHandler(PATH_DATA . '/sites/' . config("system.workspace") . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml');
         $dynaformFields[] = $dyn->getFields();
     }
 
@@ -360,4 +364,47 @@ function eprintln ($s = "", $c = null)
         }
         print "$s\n";
     }
+}
+
+/**
+ * Initialize the user logged session
+ */
+function initUserSession($usrUid, $usrName)
+{
+    $_SESSION['USER_LOGGED'] = $usrUid;
+    $_SESSION['USR_USERNAME'] = $usrName;
+    $_SESSION['USR_CSRF_TOKEN'] = Str::random(40);
+}
+
+/**
+ * Verify token for an incoming request.
+ *
+ * @param type $request
+ * @throws TokenMismatchException
+ */
+function verifyCsrfToken($request)
+{
+    $headers = getallheaders();
+    $token = isset($request['_token'])
+        ? $request['_token']
+        : (isset($headers['X-CSRF-TOKEN'])
+        ? $headers['X-CSRF-TOKEN']
+        : null);
+    $match = is_string($_SESSION['USR_CSRF_TOKEN'])
+        && is_string($token)
+        && !empty($_SESSION['USR_CSRF_TOKEN'])
+        && hash_equals($_SESSION['USR_CSRF_TOKEN'], $token);
+    if (!$match) {
+        throw new TokenMismatchException();
+    }
+}
+
+/**
+ * Get the current user CSRF token.
+ *
+ * @return string
+ */
+function csrfToken()
+{
+    return isset($_SESSION['USR_CSRF_TOKEN']) ? $_SESSION['USR_CSRF_TOKEN'] : '';
 }

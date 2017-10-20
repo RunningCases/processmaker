@@ -255,7 +255,7 @@ class XmlFormField
                 $rs = $con->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
-                $workspace = defined("SYS_SYS")? SYS_SYS : "Wokspace Undefined";
+                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Wokspace Undefined";
                 G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
 
                 return $result;
@@ -267,7 +267,7 @@ class XmlFormField
                 $rs = $stmt->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
-                $workspace = defined("SYS_SYS")? SYS_SYS : "Wokspace Undefined";
+                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Wokspace Undefined";
                 G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
 
                 return $result;
@@ -1354,8 +1354,7 @@ class XmlFormFieldSuggest extends XmlFormFieldSimpleText
                 } else {
                     $sCallBack = '';
                 }
-
-                $hash = str_rot13( base64_encode( $this->sql . '@|' . $this->sqlConnection ) );
+                
                 $sSQL = $this->sql;
                 $nCount = preg_match_all( '/\@(?:([\@\%\#\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $sSQL, $match, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE );
 
@@ -1405,8 +1404,8 @@ class XmlFormFieldSuggest extends XmlFormFieldSimpleText
                 $sOptions = 'script: function (input) { ';
                 $sOptions .= '  var inputValue = base64_encode(getField(\'' . $this->name . '_label\').value); ';
 
-                $sOptions .= '  return "' . $this->ajaxServer . '?request=suggest&json=true&limit=' . $this->maxresults;
-                $sOptions .= '&hash=' . $hash . '&dependentFieldsKeys=' . $sResultKeys . '&dependentFieldsValue="';
+                $sOptions .= '  return "' . $this->ajaxServer . '?request=suggest&type=form&form=' . $owner->id . '&variable=' . $this->name . '&json=true&limit=' . $this->maxresults;
+                $sOptions .= '&dependentFieldsKeys=' . $sResultKeys . '&dependentFieldsValue="';
 
                 $sOptions .= $depValues . '"&input="+inputValue+"&inputEnconde64=enable&searchType=' . $this->searchType . '";';
 
@@ -1561,7 +1560,6 @@ class XmlFormFieldSuggest extends XmlFormFieldSimpleText
                     $sCallBack = '';
                 }
 
-                $hash = str_rot13( base64_encode( $this->sql . '@|' . $this->sqlConnection ) );
                 $sSQL = $this->sql;
                 $nCount = preg_match_all( '/\@(?:([\@\%\#\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $sSQL, $match, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE );
 
@@ -1602,8 +1600,8 @@ class XmlFormFieldSuggest extends XmlFormFieldSimpleText
 
                 $sOptions .= '  var inputValue = base64_encode(getField(\'' . $rowIdField . '[' . $this->name . '_label\').value); ';
 
-                $sOptions .= '  return "' . $this->ajaxServer . '?request=suggest&json=true&limit=' . $this->maxresults;
-                $sOptions .= '&hash=' . $hash . '&dependentFieldsKeys=' . $sResultKeys . '&dependentFieldsValue="';
+                $sOptions .= '  return "' . $this->ajaxServer . '?request=suggest&type=grid&form=' . $owner->id . '&grid=' . $owner->name . '&variable=' . $this->name . '&json=true&limit=' . $this->maxresults;
+                $sOptions .= '&dependentFieldsKeys=' . $sResultKeys . '&dependentFieldsValue="';
                 $sOptions .= $depValues . '"&input="+inputValue+"&inputEnconde64=enable&searchType=' . $this->searchType . '";';
 
                 $sOptions .= '},';
@@ -5482,7 +5480,7 @@ class XmlForm
         $this->fileName = $filename;
         $parsedFile = dirname( $filename ) . PATH_SEP . basename( $filename, 'xml' ) . $language;
 
-        $parsedFilePath = defined( 'PATH_C' ) ? (defined( 'SYS_SYS' ) ? PATH_C . 'ws' . PATH_SEP . SYS_SYS . PATH_SEP : PATH_C) : PATH_DATA;
+        $parsedFilePath = defined('PATH_C') ? (!empty(config("system.workspace")) ? PATH_C . 'ws' . PATH_SEP . config("system.workspace") . PATH_SEP : PATH_C) : PATH_DATA;
         $parsedFilePath .= 'xmlform/' . substr( $parsedFile, strlen( $this->home ) );
 
         // Improvement for the js cache - Start

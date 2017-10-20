@@ -29,7 +29,7 @@ $ses = new DBSession( $dbc );
 
 if (! isset( $_SESSION['END_POINT'] )) {
     $aFields['WS_HOST'] = $_SERVER['HTTP_HOST'];
-    $aFields['WS_WORKSPACE'] = SYS_SYS;
+    $aFields['WS_WORKSPACE'] = config("system.workspace");
 } else {
     if (strpos( $_SESSION['END_POINT'], 'https' ) !== false) {
         preg_match( '@^(?:https://)?([^/]+)@i', $_SESSION['END_POINT'], $coincidencias );

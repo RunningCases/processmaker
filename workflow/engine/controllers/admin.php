@@ -196,15 +196,20 @@ class Admin extends Controller
         $this->render('extJs');
     }
 
-    function getSystemInfo ()
+    public function getSystemInfo()
     {
-        $this->setResponseType( 'json' );
-        $infoList = $this->_getSystemInfo();
-        $data = array ();
+        global $RBAC;
+        $RBAC->requirePermissions('PM_SETUP_ADVANCE');
 
-        foreach ($infoList as $row) {
-            $data[] = array ('label' => $row[0],'value' => $row[1],'section' => $row[2]
-            );
+        $this->setResponseType('json');
+        $data = [];
+
+        foreach ($this->_getSystemInfo() as $row) {
+            $data[] = [
+                'label' => $row[0],
+                'value' => $row[1],
+                'section' => $row[2]
+            ];
         }
         return $data;
     }
@@ -314,7 +319,7 @@ class Admin extends Controller
             );
         }
 
-        $properties[] = array ( G::LoadTranslation('ID_WORKSPACE') ,defined( "SYS_SYS" ) ? SYS_SYS : "Not defined",$pmSection
+        $properties[] = array(G::LoadTranslation('ID_WORKSPACE'), !empty(config("system.workspace")) ? config("system.workspace") : "Not defined", $pmSection
         );
 
         $properties[] = array ( G::LoadTranslation('ID_SERVER_PROTOCOL') ,getenv( 'SERVER_PROTOCOL' ),$sysSection

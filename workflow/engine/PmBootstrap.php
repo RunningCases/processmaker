@@ -239,11 +239,10 @@ class PmBootstrap extends Bootstrap
     public function initPropel($sys = '')
     {
         if (empty($sys)) {
-            if (! defined(SYS_SYS)) {
-                throw new Exception("Error: Undefined syemtem env. constant 'SYS_SYS'");
+            $sys = config("system.workspace");
+            if (empty($sys)) {
+                throw new Exception("Error: Undefined system environment (workspace).");
             }
-
-            $sys = SYS_SYS;
         }
 
         // setup propel definitions and logging
@@ -323,8 +322,7 @@ class PmBootstrap extends Bootstrap
             require_once 'classes/model/Users.php';
             $oUser = new Users();
             $aUser = $oUser->load($aSession['USR_UID']);
-            $_SESSION['USER_LOGGED']  = $aUser['USR_UID'];
-            $_SESSION['USR_USERNAME'] = $aUser['USR_USERNAME'];
+            initUserSession($aUser['USR_UID'], $aUser['USR_USERNAME']);
             $bRedirect = false;
             $RBAC->initRBAC();
             $RBAC->loadUserRolePermission( $RBAC->sSystem, $_SESSION['USER_LOGGED'] );
