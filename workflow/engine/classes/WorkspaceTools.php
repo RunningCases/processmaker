@@ -614,19 +614,22 @@ class WorkspaceTools
                 $blackList = unserialize($configData['CFG_VALUE']);
             }
 
-            $content = $this->getListContentMigrateTable();
-
-            foreach ($content as $className => $fields) {
-                //We check if all the label was migrated from content table
-                if (!in_array($className, $blackList)) {
-                    $executeRegenerateContent = true;
-                    break;
+            if (count($blackList) > 0) {
+                //If we have the flag MIGRATED_CONTENT we will check the $blackList
+                $content = $this->getListContentMigrateTable();
+                foreach ($content as $className => $fields) {
+                    //We check if all the label was migrated from content table
+                    if (!in_array($className, $blackList)) {
+                        $executeRegenerateContent = true;
+                        break;
+                    }
                 }
-            }
-
-            //The $lastContentMigrateTable return false if we need to force regenerate content
-            if (!$this->getLastContentMigrateTable()) {
-                $executeRegenerateContent = true;
+            } else {
+                //If the flag does not exist we will check over the schema
+                //The $lastContentMigrateTable return false if we need to force regenerate content
+                if (!$this->getLastContentMigrateTable()) {
+                    $executeRegenerateContent = true;
+                }
             }
         }
 
