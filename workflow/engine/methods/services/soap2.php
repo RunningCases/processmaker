@@ -981,14 +981,7 @@ function ifPermission($sessionId, $permission)
 
     $oRBAC = RBAC::getSingleton();
     $oRBAC->loadUserRolePermission($oRBAC->sSystem, $user['USR_UID']);
-    $aPermissions = $oRBAC->aUserInfo[$oRBAC->sSystem]['PERMISSIONS'];
-    $sw = 0;
-
-    foreach ($aPermissions as $aPermission) {
-        if ($aPermission['PER_CODE'] == $permission) {
-            $sw = 1;
-        }
-    }
+    $sw = $oRBAC->userCanAccess($permission) === 1 ? 1 : 0;
 
     return $sw;
 }

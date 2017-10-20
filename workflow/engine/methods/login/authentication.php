@@ -293,7 +293,7 @@ try {
 
     // Assign the uid of user to userloggedobj
     $RBAC->loadUserRolePermission($RBAC->sSystem, $uid);
-    $res = $RBAC->userCanAccess('PM_LOGIN');
+    $res = $RBAC->userCanAccess('PM_LOGIN/strict');
     if ($res != 1 ) {
         if ($res == -2) {
             G::SendTemporalMessage ('ID_USER_HAVENT_RIGHTS_SYSTEM', "error");

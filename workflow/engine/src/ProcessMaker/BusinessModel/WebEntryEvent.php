@@ -9,6 +9,23 @@ use WebEntryPeer;
 use Exception;
 use G;
 use BpmnFlowPeer;
+use ProcessMaker\BusinessModel\Process as BusinessModelProcess;
+use ProcessMaker\BusinessModel\Validator as BusinessModelValidator;
+use ProcessMaker\Project\Workflow;
+use WebEntryEvent as ModelWebEntryEvent;
+use ProcessMaker\Util\Common;
+use Task as ModelTask;
+use Propel;
+use BasePeer;
+use Content;
+use Tasks;
+use Step;
+use TaskPeer;
+use StepPeer;
+use ResultSet;
+use TaskUser;
+use TaskUserPeer;
+
 
 class WebEntryEvent
 {
@@ -358,13 +375,7 @@ class WebEntryEvent
 
             $arrayFinalData = array_merge($arrayWebEntryEventData, $arrayData);
 
-            //Verify data - Field definition
-            $process = new \ProcessMaker\BusinessModel\Process();
-            //Dependent fields:
-            if (!isset($arrayData['WE_AUTHENTICATION']) || $arrayData['WE_AUTHENTICATION']
-                == 'ANONYMOUS') {
-                $this->arrayFieldDefinition['USR_UID']['required'] = true;
-            }
+            //Define the required dependent fields:
             if (!isset($arrayData['WE_TYPE']) || $arrayData['WE_TYPE']
                 == 'SINGLE') {
                 $this->arrayFieldDefinition['DYN_UID']['required'] = true;
@@ -391,6 +402,7 @@ class WebEntryEvent
                 $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['defaultValues'] = $languages;
             }
 
+            $process = new BusinessModelProcess();
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition,
                 $this->arrayFieldNameForException, $flagInsert);
 
@@ -513,11 +525,11 @@ class WebEntryEvent
             $arrayEventData = $bpmn->getEvent($eventUid);
 
             //Task
-            $task = new \Task();
+            $task = new ModelTask();
 
             $tasUid = static::getTaskUidFromEvnUid($eventUid);
 
-            if (\TaskPeer::retrieveByPK($tasUid)) {
+            if (TaskPeer::retrieveByPK($tasUid)) {
                 $this->webEntryEventWebEntryTaskUid = $tasUid;
             } else {
                 $this->webEntryEventWebEntryTaskUid = $task->create(
@@ -535,7 +547,7 @@ class WebEntryEvent
 
                 if (!isset($arrayData['WE_TYPE']) || $arrayData['WE_TYPE'] === 'SINGLE') {
                     //Task - Step
-                    $step = new \Step();
+                    $step = new Step();
 
                     $stepUid = $step->create(array(
                         "PRO_UID" => $projectUid,
@@ -553,13 +565,13 @@ class WebEntryEvent
                 }
 
                 //Task - User
-                $task = new \Tasks();
+                $task = new Tasks();
                 if (!(isset($arrayData['WE_AUTHENTICATION']) && $arrayData['WE_AUTHENTICATION'] === 'LOGIN_REQUIRED')) {
                     $task->assignUser($this->webEntryEventWebEntryTaskUid, $userUid, 1);
                 }
 
                 //Route
-                $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
+                $workflow = Workflow::load($projectUid);
 
                 $result = $workflow->addRoute($this->webEntryEventWebEntryTaskUid, $activityUid, "SEQUENTIAL");
 
@@ -622,10 +634,10 @@ class WebEntryEvent
     {
         try {
             if ($webEntryTaskUid != "") {
-                $obj = \TaskPeer::retrieveByPK($webEntryTaskUid);
+                $obj = TaskPeer::retrieveByPK($webEntryTaskUid);
 
                 if (!is_null($obj)) {
-                    $task = new \Tasks();
+                    $task = new Tasks();
 
                     $task->deleteTask($webEntryTaskUid);
                 }
@@ -657,8 +669,8 @@ class WebEntryEvent
     {
         try {
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-            $validator = new \ProcessMaker\BusinessModel\Validator();
+            $process = new BusinessModelProcess();
+            $validator = new BusinessModelValidator();
 
             $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
             $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
@@ -693,17 +705,19 @@ class WebEntryEvent
                 $arrayData["WEE_TITLE"] = null;
             }
 
-            //Verify data
+            //Verify data related to the process
             $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
-
+            //Define if the webEntry need to use the guest user
+            $weUserUid = isset($arrayData["USR_UID"]) ? $arrayData["USR_UID"] : '';
+            $weAuthentication = isset($arrayData["WE_AUTHENTICATION"]) ? $arrayData["WE_AUTHENTICATION"] : '';
+            $arrayData["USR_UID"] = $this->getWebEntryUser($weAuthentication, $weUserUid);
+            //Verify data with the required fields
             $this->throwExceptionIfDataIsInvalid("", $projectUid, $arrayData);
-
-            //Create
-            $cnn = \Propel::getConnection("workflow");
 
             $this->webEntryEventWebEntryUid = "";
             $this->webEntryEventWebEntryTaskUid = "";
-
+            //Create the connection
+            $cnn = Propel::getConnection("workflow");
             try {
                 //WebEntry
                 $this->createWebEntry(
@@ -719,11 +733,11 @@ class WebEntryEvent
                 );
 
                 //WebEntry-Event
-                $webEntryEvent = new \WebEntryEvent();
+                $webEntryEvent = new ModelWebEntryEvent();
 
-                $webEntryEvent->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
+                $webEntryEvent->fromArray($arrayData, BasePeer::TYPE_FIELDNAME);
 
-                $webEntryEventUid = \ProcessMaker\Util\Common::generateUID();
+                $webEntryEventUid = Common::generateUID();
 
                 $webEntryEvent->setWeeUid($webEntryEventUid);
                 $webEntryEvent->setPrjUid($projectUid);
@@ -739,13 +753,13 @@ class WebEntryEvent
 
                     //Set WEE_TITLE
                     if (isset($arrayData["WEE_TITLE"])) {
-                        $result = \Content::addContent("WEE_TITLE", "", $webEntryEventUid, SYS_LANG,
+                        $result = Content::addContent("WEE_TITLE", "", $webEntryEventUid, SYS_LANG,
                             $arrayData["WEE_TITLE"]);
                     }
 
                     //Set WEE_DESCRIPTION
                     if (isset($arrayData["WEE_DESCRIPTION"])) {
-                        $result = \Content::addContent("WEE_DESCRIPTION", "", $webEntryEventUid, SYS_LANG,
+                        $result = Content::addContent("WEE_DESCRIPTION", "", $webEntryEventUid, SYS_LANG,
                             $arrayData["WEE_DESCRIPTION"]);
                     }
 
@@ -782,12 +796,12 @@ class WebEntryEvent
      * @return array Return data of the WebEntry-Event updated
      * @throws Exception
      */
-    public function update($webEntryEventUid, $userUidUpdater, array $arrayData)
+    public function update($webEntryEventUid, $userUidUpdater, array $arrayData, $updateUser = true)
     {
         try {
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-            $validator = new \ProcessMaker\BusinessModel\Validator();
+            $process = new BusinessModelProcess();
+            $validator = new BusinessModelValidator();
 
             $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
             $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
@@ -806,14 +820,20 @@ class WebEntryEvent
 
             $arrayFinalData = array_merge($arrayWebEntryEventData, $arrayData);
 
-            //Verify data
+            //Verify data related to the process
             $this->throwExceptionIfNotExistsWebEntryEvent($webEntryEventUid,
                 $this->arrayFieldNameForException["webEntryEventUid"]);
-
+            //Define if the webEntry need to use the guest user
+            $weUserUid = isset($arrayData["USR_UID"]) ? $arrayData["USR_UID"] : '';
+            $weAuthentication = isset($arrayData["WE_AUTHENTICATION"]) ? $arrayData["WE_AUTHENTICATION"] : '';
+            if ($updateUser) {
+                $arrayData["USR_UID"] = $this->getWebEntryUser($weAuthentication, $weUserUid);
+            }
+            //Verify data with the required fields
             $this->throwExceptionIfDataIsInvalid($webEntryEventUid, $arrayWebEntryEventData["PRJ_UID"], $arrayData);
 
             //Update
-            $cnn = \Propel::getConnection("workflow");
+            $cnn = Propel::getConnection("workflow");
 
             $this->webEntryEventWebEntryUid = "";
             $this->webEntryEventWebEntryTaskUid = "";
@@ -821,20 +841,20 @@ class WebEntryEvent
             try {
                 //WebEntry
                 if ($arrayWebEntryEventData["WEE_WE_UID"] != "") {
-                    $task = new \Tasks();
+                    $task = new Tasks();
 
                     //Task - Step for WE_TYPE=SINGLE
                     $weType = !empty($arrayData["WE_TYPE"]) ? $arrayData["WE_TYPE"] : $arrayWebEntryEventData["WE_TYPE"];
                     if (isset($arrayData["DYN_UID"]) && $arrayData["DYN_UID"] !== $arrayWebEntryEventData["DYN_UID"] && $weType === 'SINGLE') {
                         //Delete
-                        $step = new \Step();
+                        $step = new Step();
 
                         $criteria = new Criteria("workflow");
 
-                        $criteria->add(\StepPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
+                        $criteria->add(StepPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
 
-                        $rsCriteria = \StepPeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                        $rsCriteria = StepPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
                         while ($rsCriteria->next()) {
                             $row = $rsCriteria->getRow();
@@ -843,7 +863,7 @@ class WebEntryEvent
                         }
 
                         //Add
-                        $step = new \Step();
+                        $step = new Step();
 
                         $stepUid = $step->create(array(
                             "PRO_UID" => $arrayWebEntryEventData["PRJ_UID"],
@@ -859,16 +879,21 @@ class WebEntryEvent
                     }
 
                     //Task - User
-                    if (!empty($arrayData["USR_UID"]) && $arrayData["USR_UID"] != $arrayWebEntryEventData["USR_UID"]) {
+                    $proUser = new ProjectUser();
+                    $newUser = !empty($arrayData["USR_UID"]) ? $arrayData["USR_UID"] : "";
+                    $oldUser = $arrayWebEntryEventData["USR_UID"];
+                    $isAssigned = $proUser->userIsAssignedToTask($newUser, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
+                    $shouldUpdate = !empty($newUser) && ($newUser !== $oldUser || !$isAssigned);
+                    if ($shouldUpdate) {
                         //Unassign
-                        $taskUser = new \TaskUser();
+                        $taskUser = new TaskUser();
 
                         $criteria = new Criteria("workflow");
 
-                        $criteria->add(\TaskUserPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
+                        $criteria->add(TaskUserPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
 
-                        $rsCriteria = \TaskUserPeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                        $rsCriteria = TaskUserPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
                         while ($rsCriteria->next()) {
                             $row = $rsCriteria->getRow();
@@ -878,8 +903,11 @@ class WebEntryEvent
                         }
 
                         //Assign
-                        $result = $task->assignUser($arrayWebEntryEventData["WEE_WE_TAS_UID"], $arrayData["USR_UID"],
-                            1);
+                        $result = $task->assignUser(
+                            $arrayWebEntryEventData["WEE_WE_TAS_UID"],
+                            $arrayData["USR_UID"],
+                            1
+                        );
                     }
 
                     //Route
@@ -892,7 +920,7 @@ class WebEntryEvent
                         }
 
                         //Add
-                        $workflow = \ProcessMaker\Project\Workflow::load($arrayWebEntryEventData["PRJ_UID"]);
+                        $workflow = Workflow::load($arrayWebEntryEventData["PRJ_UID"]);
 
                         $result = $workflow->addRoute($arrayWebEntryEventData["WEE_WE_TAS_UID"], $arrayData["ACT_UID"],
                             "SEQUENTIAL");
@@ -925,15 +953,18 @@ class WebEntryEvent
                     }
 
                     if (count($arrayDataAux) > 0) {
-                        $arrayDataAux = $this->webEntry->update($arrayWebEntryEventData["WEE_WE_UID"], $userUidUpdater,
-                            $arrayDataAux);
+                        $arrayDataAux = $this->webEntry->update(
+                            $arrayWebEntryEventData["WEE_WE_UID"],
+                            $userUidUpdater,
+                            $arrayDataAux
+                        );
                     }
                 }
 
                 //WebEntry-Event
                 $webEntryEvent = WebEntryEventPeer::retrieveByPK($webEntryEventUid);
 
-                $webEntryEvent->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
+                $webEntryEvent->fromArray($arrayData, BasePeer::TYPE_FIELDNAME);
 
                 if ($webEntryEvent->validate()) {
                     $cnn->begin();
@@ -944,13 +975,13 @@ class WebEntryEvent
 
                     //Set WEE_TITLE
                     if (isset($arrayData["WEE_TITLE"])) {
-                        $result = \Content::addContent("WEE_TITLE", "", $webEntryEventUid, SYS_LANG,
+                        $result = Content::addContent("WEE_TITLE", "", $webEntryEventUid, SYS_LANG,
                             $arrayData["WEE_TITLE"]);
                     }
 
                     //Set WEE_DESCRIPTION
                     if (isset($arrayData["WEE_DESCRIPTION"])) {
-                        $result = \Content::addContent("WEE_DESCRIPTION", "", $webEntryEventUid, SYS_LANG,
+                        $result = Content::addContent("WEE_DESCRIPTION", "", $webEntryEventUid, SYS_LANG,
                             $arrayData["WEE_DESCRIPTION"]);
                     }
 
@@ -1123,7 +1154,7 @@ class WebEntryEvent
             $arrayWebEntryEvent = array();
 
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
+            $process = new BusinessModelProcess();
 
             $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
 
@@ -1133,7 +1164,7 @@ class WebEntryEvent
             $criteria->add(WebEntryEventPeer::PRJ_UID, $projectUid, Criteria::EQUAL);
 
             $rsCriteria = WebEntryEventPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
@@ -1174,7 +1205,7 @@ class WebEntryEvent
             }
             $criteria->add(ProcessPeer::PRO_STATUS, 'ACTIVE', Criteria::EQUAL);
             $rsCriteria = WebEntryEventPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
                 $result[] = $this->getWebEntryEventDataFromRecord($row);
@@ -1208,7 +1239,7 @@ class WebEntryEvent
             $criteria->add(WebEntryEventPeer::WEE_UID, $webEntryEventUid, Criteria::EQUAL);
 
             $rsCriteria = WebEntryEventPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             $rsCriteria->next();
 
@@ -1235,7 +1266,7 @@ class WebEntryEvent
     {
         try {
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
+            $process = new BusinessModelProcess();
 
             $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
 
@@ -1251,7 +1282,7 @@ class WebEntryEvent
             $criteria->add(WebEntryEventPeer::EVN_UID, $eventUid, Criteria::EQUAL);
 
             $rsCriteria = WebEntryEventPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             $rsCriteria->next();
 
@@ -1359,6 +1390,24 @@ class WebEntryEvent
             $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $prj_uid;
 
             return $url . "/" . $weData;
+        }
+    }
+
+    /**
+     * This function return the uid of user related to the webEntry
+     * @param string $authentication, can be ANONYMOUS, LOGIN_REQUIRED
+     * @param string $usrUid
+     * @return string
+    */
+    public function getWebEntryUser($authentication = 'ANONYMOUS', $usrUid = '')
+    {
+        //The webEntry old does not have type of authentication defined
+        //The webEntry2.0 can be has values ANONYMOUS or LOGIN_REQUIRED
+        if ($authentication === 'ANONYMOUS' || empty($authentication)) {
+            $user = new User();
+            return $user->getGuestUser();
+        } else {
+            return $usrUid;
         }
     }
 }

@@ -115,6 +115,7 @@ class Roles extends BaseRoles {
             $oCriteria->addSelectColumn(RolesPeer::ROL_UPDATE_DATE);
             $oCriteria->addSelectColumn(RolesPeer::ROL_STATUS);
             $oCriteria->add(RolesPeer::ROL_UID, '', Criteria::NOT_EQUAL);
+            $oCriteria->add(RolesPeer::ROL_CODE, RBAC::PROCESSMAKER_GUEST, Criteria::NOT_EQUAL);
             $oCriteria->add(SystemsPeer::SYS_CODE, $systemCode);
             $oCriteria->add(RolesPeer::ROL_CREATE_DATE, '', Criteria::NOT_EQUAL);
             $oCriteria->add(RolesPeer::ROL_UPDATE_DATE, '', Criteria::NOT_EQUAL);
@@ -158,7 +159,7 @@ class Roles extends BaseRoles {
         $oCriteria->addSelectColumn(RolesPeer::ROL_CREATE_DATE);
         $oCriteria->addSelectColumn(RolesPeer::ROL_UPDATE_DATE);
         $oCriteria->addSelectColumn(RolesPeer::ROL_STATUS);
-        $oCriteria->add(RolesPeer::ROL_UID, '', Criteria::NOT_EQUAL);
+        $oCriteria->add(RolesPeer::ROL_UID, ['', RBAC::PROCESSMAKER_GUEST_UID], Criteria::NOT_IN);
         $oCriteria->add(SystemsPeer::SYS_CODE, $systemCode);
         $oCriteria->add(RolesPeer::ROL_CREATE_DATE, '', Criteria::NOT_EQUAL);
         $oCriteria->add(RolesPeer::ROL_UPDATE_DATE, '', Criteria::NOT_EQUAL);
@@ -572,7 +573,7 @@ class Roles extends BaseRoles {
             $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $result->next();
 
-            $a = Array();
+            $a = [RBAC::PM_GUEST_CASE_UID];
             while( $row = $result->getRow() ) {
                 $a[] = $row['PER_UID'];
                 $result->next();

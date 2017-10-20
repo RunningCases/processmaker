@@ -77,28 +77,38 @@ class Groups
     /**
      * Set a user to group
      *
-     * @param string $GrpUid, $UsrUid
-     * @return array
+     * @param string $grpUid
+     * @param string $usrUid
+     * @return boolean
+     * @throws exception
      */
-    public function addUserToGroup($GrpUid, $UsrUid)
+    public function addUserToGroup($grpUid, $usrUid)
     {
         try {
-            $oGrp = GroupUserPeer::retrieveByPk($GrpUid, $UsrUid);
-            if (is_object($oGrp) && get_class($oGrp) == 'GroupUser') {
+            //Check the usrUid value
+            if (RBAC::isGuestUserUid($usrUid)) {
+                throw new Exception(G::LoadTranslation("ID_USER_CAN_NOT_UPDATE", array($usrUid)));
+                return false;
+            }
+
+            $groupUser = GroupUserPeer::retrieveByPk($grpUid, $usrUid);
+            if (is_object($groupUser) && get_class($groupUser) == 'GroupUser') {
                 return true;
             } else {
-                $oGrp = new GroupUser();
-                $oGrp->setGrpUid($GrpUid);
-                $oGrp->setUsrUid($UsrUid);
-                $oGrp->Save();
+                $groupUser = new GroupUser();
+                $groupUser->setGrpUid($grpUid);
+                $groupUser->setUsrUid($usrUid);
+                $groupUser->Save();
 
-                $oGrpwf = new Groupwf();
-                $grpName = $oGrpwf->loadByGroupUid($GrpUid);
+                $groupWf = new Groupwf();
+                $grpName = $groupWf->loadByGroupUid($grpUid);
 
-                $oUsr = new Users();
-                $usrName = $oUsr->load($UsrUid);
+                $users = new Users();
+                $usrName = $users->load($usrUid);
                 
-                G::auditLog("AssignUserToGroup", "Assign user ". $usrName['USR_USERNAME'] ." (".$UsrUid.") to group ".$grpName['CON_VALUE']." (".$GrpUid.") ");
+                G::auditLog("AssignUserToGroup", "Assign user ". $usrName['USR_USERNAME'] ." (".$usrUid.") to group ".$grpName['CON_VALUE']." (".$grpUid.") ");
+
+                return true;
             }
         } catch (exception $oError) {
             throw ($oError);
@@ -107,13 +117,14 @@ class Groups
 
     /**
      * Remove a user from group
-     * @param string $GrpUid, $UsrUid
+     * @param string $grpUid
+     * @param string $usrUid
      * @return array
      */
-    public function removeUserOfGroup($GrpUid, $UsrUid)
+    public function removeUserOfGroup($grpUid, $usrUid)
     {
         $gu = new GroupUser();
-        $gu->remove($GrpUid, $UsrUid);
+        $gu->remove($grpUid, $usrUid);
     }
 
     /**

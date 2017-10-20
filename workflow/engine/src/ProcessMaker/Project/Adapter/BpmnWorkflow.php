@@ -2086,7 +2086,8 @@ class BpmnWorkflow extends Project\Bpmn
                     $arrayResult = $webEntryEvent->update(
                         $arrayWebEntryEventData['WEE_UID'],
                         $bpmnProject->getPrjAuthor(),
-                        (!is_null($arrayData))? $arrayData : $arrayWebEntryEventData
+                        (!is_null($arrayData))? $arrayData : $arrayWebEntryEventData,
+                        false
                     );
                 }
             }
