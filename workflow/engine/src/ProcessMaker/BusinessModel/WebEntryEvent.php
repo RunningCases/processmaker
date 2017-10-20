@@ -879,7 +879,12 @@ class WebEntryEvent
                     }
 
                     //Task - User
-                    if (!empty($arrayData["USR_UID"]) && $arrayData["USR_UID"] != $arrayWebEntryEventData["USR_UID"]) {
+                    $proUser = new ProjectUser();
+                    $newUser = !empty($arrayData["USR_UID"]) ? $arrayData["USR_UID"] : "";
+                    $oldUser = $arrayWebEntryEventData["USR_UID"];
+                    $isAssigned = $proUser->userIsAssignedToTask($newUser, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
+                    $shouldUpdate = !empty($newUser) && ($newUser !== $oldUser || !$isAssigned);
+                    if ($shouldUpdate) {
                         //Unassign
                         $taskUser = new TaskUser();
 
