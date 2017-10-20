@@ -58,9 +58,13 @@ class ProcessPermissions extends Api
     }
 
     /**
+     * Creates a new Process Permission for a project.
+     * 
+     * @url POST /:prj_uid/process-permission/
+     * @status 201
+     * 
      * @param string $prj_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
      * @param string $usr_uid {@from body} {@min 1} {@max 32}
      * @param string $op_user_relation {@from body} {@choice 1,2}
      * @param string $op_case_status {@from body} {@choice ALL,DRAFT,TO_DO,PAUSED,COMPLETED}
@@ -72,14 +76,12 @@ class ProcessPermissions extends Api
      * @param string $dynaforms {@from body}
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * 
      * @return array
-     *
-     * @url POST /:prj_uid/process-permission/
-     * @status 201
+     * @throws RestException
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProcessPermission(
         $prj_uid,
@@ -115,10 +117,13 @@ class ProcessPermissions extends Api
     }
 
     /**
+     * Update process permisson.
+     *
+     * @url PUT /:prj_uid/process-permission/:ob_uid
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $ob_uid {@min 1} {@max 32}
      * @param array $request_data
-     *
      * @param string $usr_uid {@from body} {@min 1} {@max 32}
      * @param string $op_user_relation {@from body} {@choice 1,2}
      * @param string $op_case_status {@from body} {@choice ALL,DRAFT,TO_DO,PAUSED,COMPLETED}
@@ -131,12 +136,11 @@ class ProcessPermissions extends Api
      * @param string $inputs {@from body}
      * @param string $outputs {@from body}
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @return array
+     * @throws RestException
      *
-     * @url PUT /:prj_uid/process-permission/:ob_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutProcessPermission(
         $prj_uid,
@@ -165,15 +169,14 @@ class ProcessPermissions extends Api
     }
 
     /**
+     * @url DELETE /:prj_uid/process-permission/:ob_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
+     *
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $ob_uid {@min 1} {@max 32}
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @return void
-     *
-     * @url DELETE /:prj_uid/process-permission/:ob_uid
      */
     public function doDeleteProcessPermission($prj_uid, $ob_uid)
     {

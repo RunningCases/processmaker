@@ -83,12 +83,17 @@ class User extends Api
     }
 
     /**
-     * @access protected
-     * @class  AccessControl {@permission PM_USERS}
+     * Update a user.
+     *
      * @url PUT /:usr_uid
      *
      * @param string $usr_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class  AccessControl {@permission PM_USERS}
      */
     public function doPutUser($usr_uid, $request_data)
     {

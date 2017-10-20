@@ -38,12 +38,19 @@ class DynaForm extends Api
     }
     
     /**
+     * Create Dynaform.
+     * 
      * @url POST /:prj_uid/dynaform
-     *
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostDynaForm($prj_uid, $request_data)
     {
@@ -63,11 +70,18 @@ class DynaForm extends Api
     }
 
     /**
+     * Update dynaform.
+     *
      * @url PUT /:prj_uid/dynaform/:dyn_uid
      *
      * @param string $dyn_uid      {@min 32}{@max 32}
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPutDynaForm($dyn_uid, $prj_uid, $request_data)
     {
@@ -83,6 +97,8 @@ class DynaForm extends Api
 
     /**
      * @url DELETE /:prj_uid/dynaform/:dyn_uid
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
@@ -137,10 +153,18 @@ class DynaForm extends Api
     }
 
     /**
+     * Upload language for a Dynaform.
+     * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/upload-language
      *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
+     * 
+     * @return void
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostDynaFormLanguage($dyn_uid, $prj_uid)
     {
@@ -154,10 +178,19 @@ class DynaForm extends Api
     }
 
     /**
+     * Delete language from a Dynaform.
+     * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/delete-language/:lang
      *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $lang
+     * 
+     * @return void
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doDeleteDynaFormLanguage($dyn_uid, $prj_uid, $lang)
     {
@@ -188,11 +221,19 @@ class DynaForm extends Api
     }
 
     /**
+     * Get Dynaform's history.
+     * 
      * @url POST /:prj_uid/dynaform/:dyn_uid/history
      *
      * @param string $dyn_uid {@min 32}{@max 32}
      * @param string $prj_uid {@min 32}{@max 32}
      * @param array  $request_data
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doGetDynaFormHistory($dyn_uid, $prj_uid, $request_data)
     {
