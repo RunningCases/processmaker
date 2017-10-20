@@ -160,6 +160,12 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     protected $plugin_rest_service;
 
     /**
+     * The value for the plugin_task_extended_properties field.
+     * @var        string
+     */
+    protected $plugin_task_extended_properties;
+
+    /**
      * The value for the plugin_attributes field.
      * @var        string
      */
@@ -419,6 +425,17 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     {
 
         return $this->plugin_rest_service;
+    }
+
+    /**
+     * Get the [plugin_task_extended_properties] column value.
+     * 
+     * @return     string
+     */
+    public function getPluginTaskExtendedProperties()
+    {
+
+        return $this->plugin_task_extended_properties;
     }
 
     /**
@@ -917,6 +934,28 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     } // setPluginRestService()
 
     /**
+     * Set the value of [plugin_task_extended_properties] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setPluginTaskExtendedProperties($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->plugin_task_extended_properties !== $v) {
+            $this->plugin_task_extended_properties = $v;
+            $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_TASK_EXTENDED_PROPERTIES;
+        }
+
+    } // setPluginTaskExtendedProperties()
+
+    /**
      * Set the value of [plugin_attributes] column.
      * 
      * @param      string $v new value
@@ -999,14 +1038,16 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
 
             $this->plugin_rest_service = $rs->getString($startcol + 21);
 
-            $this->plugin_attributes = $rs->getString($startcol + 22);
+            $this->plugin_task_extended_properties = $rs->getString($startcol + 22);
+
+            $this->plugin_attributes = $rs->getString($startcol + 23);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 23; // 23 = PluginsRegistryPeer::NUM_COLUMNS - PluginsRegistryPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 24; // 24 = PluginsRegistryPeer::NUM_COLUMNS - PluginsRegistryPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating PluginsRegistry object", $e);
@@ -1277,6 +1318,9 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
                 return $this->getPluginRestService();
                 break;
             case 22:
+                return $this->getPluginTaskExtendedProperties();
+                break;
+            case 23:
                 return $this->getPluginAttributes();
                 break;
             default:
@@ -1321,7 +1365,8 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
             $keys[19] => $this->getPluginCss(),
             $keys[20] => $this->getPluginJs(),
             $keys[21] => $this->getPluginRestService(),
-            $keys[22] => $this->getPluginAttributes(),
+            $keys[22] => $this->getPluginTaskExtendedProperties(),
+            $keys[23] => $this->getPluginAttributes(),
         );
         return $result;
     }
@@ -1420,6 +1465,9 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
                 $this->setPluginRestService($value);
                 break;
             case 22:
+                $this->setPluginTaskExtendedProperties($value);
+                break;
+            case 23:
                 $this->setPluginAttributes($value);
                 break;
         } // switch()
@@ -1534,7 +1582,11 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[22], $arr)) {
-            $this->setPluginAttributes($arr[$keys[22]]);
+            $this->setPluginTaskExtendedProperties($arr[$keys[22]]);
+        }
+
+        if (array_key_exists($keys[23], $arr)) {
+            $this->setPluginAttributes($arr[$keys[23]]);
         }
 
     }
@@ -1636,6 +1688,10 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
             $criteria->add(PluginsRegistryPeer::PLUGIN_REST_SERVICE, $this->plugin_rest_service);
         }
 
+        if ($this->isColumnModified(PluginsRegistryPeer::PLUGIN_TASK_EXTENDED_PROPERTIES)) {
+            $criteria->add(PluginsRegistryPeer::PLUGIN_TASK_EXTENDED_PROPERTIES, $this->plugin_task_extended_properties);
+        }
+
         if ($this->isColumnModified(PluginsRegistryPeer::PLUGIN_ATTRIBUTES)) {
             $criteria->add(PluginsRegistryPeer::PLUGIN_ATTRIBUTES, $this->plugin_attributes);
         }
@@ -1735,6 +1791,8 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
         $copyObj->setPluginJs($this->plugin_js);
 
         $copyObj->setPluginRestService($this->plugin_rest_service);
+
+        $copyObj->setPluginTaskExtendedProperties($this->plugin_task_extended_properties);
 
         $copyObj->setPluginAttributes($this->plugin_attributes);
 

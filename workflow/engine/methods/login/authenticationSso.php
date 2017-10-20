@@ -129,9 +129,10 @@ try {
 
     setcookie('singleSignOn', '1', time() + (24 * 60 * 60), '/');
 
-    $_SESSION['USER_LOGGED']  = $_SESSION['__USER_LOGGED_SSO__'];
-    $_SESSION['USR_USERNAME'] = $_SESSION['__USR_USERNAME_SSO__'];
-
+    initUserSession(
+        $_SESSION['__USER_LOGGED_SSO__'],
+        $_SESSION['__USR_USERNAME_SSO__']
+    );
     unset($_SESSION['__USER_LOGGED_SSO__'], $_SESSION['__USR_USERNAME_SSO__']);
 
     G::header('Location: ' . $location);

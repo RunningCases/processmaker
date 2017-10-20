@@ -4,7 +4,6 @@ ini_set("max_execution_time", 0);
 
 $filter = new InputFilter();
 $_FILES = $filter->xssFilterHard($_FILES);
-$_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
 
 if (isset($_FILES["PROCESS_FILENAME"]) &&
         pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "bpmn"

@@ -809,6 +809,12 @@ Ext.onReady(function () {
       comboDefaultCasesMenuOption
     ]
   });
+  
+  var csrfToken = {
+      xtype : 'hidden',
+      name  : '_token',
+      value : document.querySelector('meta[name="csrf-token"]').content
+    };
 
   frmDetails = new Ext.FormPanel({
     id            : 'frmDetails',
@@ -828,6 +834,7 @@ Ext.onReady(function () {
       align      : 'center'
     },
     items : [
+      csrfToken,
       informationFields,
       /*----------------------------------********---------------------------------*/
       costByHour,
