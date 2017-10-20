@@ -159,7 +159,7 @@ if (!$sw_file_exists) {
         }
         /*----------------------------------********---------------------------------*/
         if (!$downloadStatus) {
-            G::streamFile( $realPath, $download, $nameFile); //download
+            G::streamFile( $realPath, $download, G::inflect($nameFile)); //download
         }
     }
 }
