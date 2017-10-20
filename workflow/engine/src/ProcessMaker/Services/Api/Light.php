@@ -967,15 +967,19 @@ class Light extends Api
     /**
      * Execute Trigger case
      *
+     * @url POST /process/:prj_uid/task/:act_uid/case/:cas_uid/step/:step_uid/execute-trigger/:type
+     * 
      * @param string $prj_uid {@min 1}{@max 32}
      * @param string $act_uid {@min 1}{@max 32}
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $step_uid {@min 32}{@max 32}
      * @param string $type {@choice before,after}
-     *
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /process/:prj_uid/task/:act_uid/case/:cas_uid/step/:step_uid/execute-trigger/:type
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutExecuteTriggerCase($prj_uid, $act_uid, $cas_uid, $step_uid, $type)
     {
@@ -1133,10 +1137,21 @@ class Light extends Api
     }
 
     /**
+     * Starts a new case and assign the logged-in user to work on the initial task 
+     * in the case. Note that the logged-in user must be in the pool of assigned 
+     * users of the initial task. Also note that the new case's status will be 
+     * set to "DRAFT", not "TO_DO".
+     * 
      * @url POST /process/:pro_uid/task/:task_uid/start-case
-     *
+     * 
      * @param string $pro_uid {@min 32}{@max 32}
      * @param string $task_uid {@min 32}{@max 32}
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function postStartCase($pro_uid, $task_uid)
     {
@@ -1228,11 +1243,20 @@ class Light extends Api
     }
 
     /**
+     * Generates a Google Maps .jpg image file for a case. This image can be found 
+     * in the Documents section under the Home tab.
+     * 
      * @url POST /case/:app_uid/upload/location
-     *
+     * 
      * @param string $app_uid { @min 32}{@max 32}
      * @param float $latitude {@min -90}{@max 90}
      * @param float $longitude {@min -180}{@max 180}
+     * 
+     * @return mixed
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function postInputDocumentLocation($app_uid, $latitude, $longitude)
     {
@@ -1270,9 +1294,17 @@ class Light extends Api
     }
 
     /**
+     * Generates a base64 string of a file.
+     * 
      * @url POST /case/:app_uid/download64
-     *
+     * 
      * @param string $app_uid {@min 32}{@max 32}
+     * 
+     * @return mixed
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function postDownloadFile($app_uid, $request_data)
     {
@@ -1368,11 +1400,26 @@ class Light extends Api
     }
 
     /**
+     * Creates new case file record(s) in a specified case. These case files can 
+     * be attached files (used by File controls), Input Document files, or Output Document 
+     * files in version 1.0.1.8 and later. In version 1.0.1.7 and earlier, the case 
+     * files can only be attached files. (Note that case files are known as AppDocuments 
+     * in ProcessMaker). This endpoint adds new record(s) to the APP_DOCUMENT table 
+     * and stores their file name(s) in the CONTENT table in the database. It returns 
+     * the generated case file ID and version number for each file. This information 
+     * can then be used to call the POST /light/case/{app_uid}/upload/{app_doc_uid} 
+     * endpoint to upload each file.
+     * 
      * @url POST /case/:app_uid/upload
-     *
+     * 
      * @param $access
      * @param $refresh
+     * 
      * @return mixed
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function uidUploadFiles($app_uid, $request_data)
     {
@@ -1388,11 +1435,26 @@ class Light extends Api
     }
 
     /**
+     * Creates new case file record(s) in a specified case. These case files can 
+     * be attached files (used by File controls), Input Document files, or Output Document 
+     * files in version 1.0.1.8 and later. In version 1.0.1.7 and earlier, the case 
+     * files can only be attached files. (Note that case files are known as AppDocuments 
+     * in ProcessMaker). This endpoint adds new record(s) to the APP_DOCUMENT table 
+     * and stores their file name(s) in the CONTENT table in the database. It returns 
+     * the generated case file ID and version number for each file. This information 
+     * can then be used to call the POST /light/case/{app_uid}/upload/{app_doc_uid} 
+     * endpoint to upload each file.
+     * 
      * @url POST /case/:app_uid/upload/:app_doc_uid
-     *
+     * 
      * @param $access
      * @param $refresh
+     * 
      * @return mixed
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function documentUploadFiles($app_uid, $app_doc_uid, $request_data)
     {
@@ -1408,10 +1470,17 @@ class Light extends Api
     }
 
     /**
+     * Assign the user logged-in to an unassigned case.
+     * 
      * @url POST /case/:app_uid/claim
-     *
+     * 
      * @param $app_uid {@min 1}{@max 32}
+     * 
      * @return mixed
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function claimCaseUser($app_uid)
     {
@@ -1498,15 +1567,21 @@ class Light extends Api
     }
 
     /**
-     * Post Case Notes
+     * Creates a new case note for a given case. Note that only users who are 
+     * currently assigned to work on the case or have Process Permissions to access 
+     * case notes may create a case note.
      *
+     * @url POST /case/:app_uid/note
+     * 
      * @param string $app_uid {@min 1}{@max 32}
      * @param string $noteContent {@min 1}{@max 500}
      * @param int $sendMail {@choice 1,0}
-     *
-     * @copyright Colosa - Bolivia
-     *
-     * @url POST /case/:app_uid/note
+     * 
+     * @return mixed
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPostCaseNote($app_uid, $noteContent, $sendMail = 0)
     {
@@ -1591,13 +1666,18 @@ class Light extends Api
     }
 
     /**
-     * @return stdclass
-     * @throws RestException
-     *
+     * Reassign a case.
+     * 
+     * @url POST /reassign/:app_uid/user/:to_usr_uid
+     * 
      * @param string $app_uid {@min 1}{@max 32}
      * @param string $to_usr_uid {@min 1}{@max 32}
-     *
-     * @url POST /reassign/:app_uid/user/:to_usr_uid
+     * 
+     * @return stdclass
+     * @throws RestException
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_REASSIGNCASE, PM_REASSIGNCASE_SUPERVISOR}
      */
     public function reassignCase($app_uid, $to_usr_uid)
     {
@@ -1615,12 +1695,15 @@ class Light extends Api
     /**
      * Paused Case
      *
+     * @url POST /cases/:app_uid/pause
+     * 
+     * @param string $app_uid {@min 1}{@max 32}
+     * 
      * @return stdclass
      * @throws RestException
-     *
-     * @param string $app_uid {@min 1}{@max 32}
-     *
-     * @url POST /cases/:app_uid/pause
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function pauseCase($app_uid, $request_data)
     {
@@ -1639,12 +1722,15 @@ class Light extends Api
     /**
      * Unpaused Case
      *
-     * @return stdclass
-     * @throws RestException
-     *
-     * @param string $app_uid {@min 1}{@max 32}
-     *
      * @url POST /cases/:app_uid/unpause
+     * 
+     * @param string $app_uid {@min 1}{@max 32}
+     * 
+     * @return array
+     * @throws RestException
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function unpauseCase($app_uid)
     {
@@ -1662,13 +1748,19 @@ class Light extends Api
     }
 
     /**
-     * Cancel Case
-     *
-     * @param string $cas_uid {@min 1}{@max 32}
-     *
-     * @copyright Colosa - Bolivia
+     * Cancels a case assigned to the user logged-in. The case's status is changed 
+     * to "CANCELLED" and it is no longer possible to open or change the case, 
+     * but all the case data will remain in the database.
      *
      * @url POST /cases/:app_uid/cancel
+     * 
+     * @param string $cas_uid {@min 1}{@max 32}
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutCancelCase($app_uid)
     {
@@ -1834,10 +1926,23 @@ class Light extends Api
     }
 
     /**
-     * Get next step
+     * This endpoint executes the following three actions:
+     * 1. Executes a trigger before a step: First, it executes any trigger assigned 
+     * before the indicated step.
+     * 2. Get the Next Step: It obtains the details about the next step of the case.
+     * 3. Get Variables: Finally, it returns any variable stored or changed by 
+     * actions 1 and 2.
      *
      * @url POST /get-next-step/:app_uid
+     * 
+     * @param string $app_uid
+     * @param array $request_data
+     * 
      * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doGetStep($app_uid, $request_data)
     {
@@ -1931,11 +2036,18 @@ class Light extends Api
     }
 
     /**
-     * This function checks if the application uids sent are in the draft list for the specified user
+     * This function checks if the application uids sent are in the draft list for 
+     * the specified user.
+     * 
      * @url POST /draft/check
+     * 
      * @param array $requestData
+     * 
      * @return array $response
      * @throws Exception
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doGetDraftCheck($requestData)
     {

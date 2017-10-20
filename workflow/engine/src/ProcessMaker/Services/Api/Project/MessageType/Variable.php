@@ -67,13 +67,20 @@ class Variable extends Api
     }
 
     /**
+     * Return data of the new Message created.
+     * 
      * @url POST /:prj_uid/message-type/:msgt_uid/variable
-     *
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $msgt_uid     {@min 32}{@max 32}
      * @param array  $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostMessageTypeVariable($prj_uid, $msgt_uid, array $request_data)
     {

@@ -33,12 +33,19 @@ class InputDocument extends Api
     }
 
     /**
+     * Create a new Input Document in a project.
+     * 
      * @url POST /:prj_uid/input-document
-     *
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostInputDocument($prj_uid, $request_data)
     {

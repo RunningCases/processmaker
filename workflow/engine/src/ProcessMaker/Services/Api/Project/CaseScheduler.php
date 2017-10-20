@@ -51,12 +51,19 @@ class CaseScheduler extends Api
     }
 
     /**
+     * Creates a new Case Scheduler. 
+     * 
+     * @url POST /:prjUid/case-scheduler
+     * @status 201
+     * 
      * @param string $prjUid {@min 32} {@max 32}
      * @param CaseSchedulerStructure $request_data
-     *
-     * @url POST /:prjUid/case-scheduler
-     *
-     * @status 201
+     * 
+     * @return mixed
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProjectCaseScheduler($prjUid, CaseSchedulerStructure $request_data =  null)
     {

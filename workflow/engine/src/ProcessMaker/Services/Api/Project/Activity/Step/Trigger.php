@@ -34,14 +34,21 @@ class Trigger extends Api
     }
 
     /**
+     * Assign a trigger to a step.
+     * 
      * @url POST /:prj_uid/activity/:act_uid/step/:step_uid/trigger
-     *
+     * @status 201
+     * 
      * @param string $step_uid
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepTriggerPostStructure $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostActivityStepTrigger($step_uid, $act_uid, $prj_uid, StepTriggerPostStructure $request_data = null)
     {
@@ -124,13 +131,20 @@ class Trigger extends Api
     }
 
     /**
+     * Assign a trigger to the "Assignment" or "Routing" step section of an activity.
+     * 
      * @url POST /:prj_uid/activity/:act_uid/step/trigger
-     *
+     * @status 201
+     * 
      * @param string $act_uid
      * @param string $prj_uid
      * @param StepAssignTaskTriggerPostStructure $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostActivityStepAssignTaskTrigger($act_uid, $prj_uid, StepAssignTaskTriggerPostStructure $request_data = null)
     {

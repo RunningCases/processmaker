@@ -51,12 +51,19 @@ class OutputDocuments extends Api
     }
 
     /**
+     * Create a new output document for a project.
+     * 
      * @url POST /:prjUid/output-document
-     *
+     * @status 201
+     * 
      * @param string $prjUid {@min 32} {@max 32}
      * @param OutputDocumentStructure $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostProjectOutputDocument($prjUid, OutputDocumentStructure $request_data = null)
     {

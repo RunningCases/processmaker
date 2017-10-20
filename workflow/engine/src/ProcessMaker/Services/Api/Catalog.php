@@ -38,14 +38,19 @@ class Catalog extends Api
     }
 
     /**
+     * Deprecated.
+     * 
      * @url POST
-     *
-     * @param array $request_data
-     *
-     * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
      * @status 201
+     * 
+     * @param array $request_data
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_DASHBOARD}
+     * @deprecated The method has been deprecated.
      */
     public function doPost($request_data)
     {

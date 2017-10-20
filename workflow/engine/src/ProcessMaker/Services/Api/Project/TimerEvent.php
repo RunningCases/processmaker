@@ -86,12 +86,19 @@ class TimerEvent extends Api
     }
 
     /**
+     * Create timer event for a project.
+     * 
      * @url POST /:prj_uid/timer-event
-     *
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostTimerEvent($prj_uid, array $request_data)
     {

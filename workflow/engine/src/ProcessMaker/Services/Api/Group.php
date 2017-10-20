@@ -73,11 +73,18 @@ class Group extends Api
     }
 
     /**
+     * Create a new group.
+     * 
      * @url POST
-     *
-     * @param array $request_data
-     *
      * @status 201
+     * 
+     * @param array $request_data
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_USERS}
      */
     public function doPost($request_data)
     {

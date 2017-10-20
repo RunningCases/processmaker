@@ -56,8 +56,6 @@ class InputDocument extends Api
     }
 
     /**
-     * @access protected
-     * @class AccessControl {@className \ProcessMaker\Services\Api\Cases}
      * @url GET /:app_uid/input-document/:app_doc_uid/file
      *
      * @param string $app_uid {@min 32}{@max 32}
@@ -98,12 +96,23 @@ class InputDocument extends Api
     }
 
     /**
+     * Uploads a new Input Document file to a specified case. Note that the 
+     * logged-in user must either be currently assigned to work on the case or a 
+     * Process Supervisor with permissions to access the Input Document; otherwise, 
+     * this endpoint returns an HTTP status code of 302.
+     * 
      * @url POST /:app_uid/input-document
-     *
+     * 
      * @param string $app_uid         { @min 32}{@max 32}
      * @param string $tas_uid         {@min 32}{@max 32}
      * @param string $app_doc_comment
      * @param string $inp_doc_uid     {@min 32}{@max 32}
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPostInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid)
     {

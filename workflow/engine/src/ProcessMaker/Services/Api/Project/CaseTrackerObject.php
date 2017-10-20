@@ -31,16 +31,23 @@ class CaseTrackerObject extends Api
     }
 
     /**
+     * Assign an object (Dynaform, Input Document, Output Document) to a case tracker.
+     * 
      * @url POST /:prj_uid/case-tracker/object
-     *
+     * @status 201
+     * 
      * @param string $prj_uid       {@min 32}{@max 32}
      * @param array  $request_data
      * @param string $cto_type_obj  {@from body}{@choice DYNAFORM,INPUT_DOCUMENT,OUTPUT_DOCUMENT}{@required true}
      * @param string $cto_uid_obj   {@from body}{@min 32}{@max 32}{@required true}
      * @param string $cto_condition {@from body}
      * @param int    $cto_position  {@from body}{@min 1}
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostCaseTrackerObject(
         $prj_uid,
