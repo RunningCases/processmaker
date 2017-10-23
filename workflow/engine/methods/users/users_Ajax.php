@@ -95,6 +95,11 @@ try {
                 $total = $webEntry->getWebEntryRelatedToUser($userUid);
             }
 
+            //check user guest
+            if (RBAC::isGuestUserUid($userUid)) {
+                $total++;
+            }
+
             $response = '{success: true, candelete: ';
             $response .= ($total > 0) ? 'false' : 'true';
             $response .= ', hashistory: ';

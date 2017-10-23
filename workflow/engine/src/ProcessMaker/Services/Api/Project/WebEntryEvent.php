@@ -88,13 +88,19 @@ class WebEntryEvent extends Api
     }
 
     /**
+     * Create web entry event for a project.
+     * 
      * @url POST /:prj_uid/web-entry-event
-     * @class  AccessControl {@permission PM_FACTORY}
-     *
+     * @status 201
+     * 
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
-     *
-     * @status 201
+     * 
+     * @return array
+     * @throws RestException
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function doPostWebEntryEvent($prj_uid, array $request_data)
     {
@@ -110,12 +116,19 @@ class WebEntryEvent extends Api
     }
 
     /**
+     * Update web-entry event.
+     *
      * @url PUT /:prj_uid/web-entry-event/:wee_uid
-     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $wee_uid      {@min 32}{@max 32}
      * @param array  $request_data
+     *
+     * @return mixed
+     * @throws RestException
+     *
+     * @access protected
+     * @class  AccessControl {@permission PM_FACTORY}
      */
     public function doPutWebEntryEvent($prj_uid, $wee_uid, array $request_data)
     {
@@ -129,6 +142,7 @@ class WebEntryEvent extends Api
 
     /**
      * @url DELETE /:prj_uid/web-entry-event/:wee_uid
+     * @access protected
      * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}

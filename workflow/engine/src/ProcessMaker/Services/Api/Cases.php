@@ -764,12 +764,21 @@ class Cases extends Api
     }
 
     /**
+     * Start a new case and assign the logged-in user to work on the initial task 
+     * in the case. Note that the logged-in user must be in the pool of assigned 
+     * users for the initial task.
+     * 
      * @url POST
-     *
+     * 
      * @param string $pro_uid {@from body} {@min 32}{@max 32}
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
-     *
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPostCase($pro_uid, $tas_uid, $variables = null)
     {
@@ -784,13 +793,26 @@ class Cases extends Api
     }
 
     /**
+     * Creates a new case. It is similar to POST /cases, but it impersonates the 
+     * session variables, so it is more robust than POST /cases. Note that the 
+     * specified user to work on the case must be assigned to the pool of users 
+     * for the initial task. Also note that the new case's status will be set to 
+     * "DRAFT", not "TO_DO". If wishing to change the new case's status to "TO_DO", 
+     * then create the following trigger in the process and use 
+     * PUT /cases/{app_uid}/execute-trigger/{tri_uid} to execute it.
+     * 
      * @url POST /impersonate
-     *
+     * 
      * @param string $pro_uid {@from body} {@min 32}{@max 32}
      * @param string $usr_uid {@from body} {@min 32}{@max 32}
      * @param string $tas_uid {@from body} {@min 32}{@max 32}
      * @param array $variables {@from body}
-     *
+     * 
+     * @return array
+     * @throws RestException 
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPostCaseImpersonate($pro_uid, $usr_uid, $tas_uid, $variables = null)
     {
@@ -804,12 +826,19 @@ class Cases extends Api
     }
 
     /**
+     * Update case reassignment.
+     *
      * @url PUT /:app_uid/reassign-case
      *
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
      * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
      * @param string $del_index {@from body}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR}
      */
     public function doPutReassignCase($app_uid, $usr_uid_source, $usr_uid_target, $del_index = null)
     {
@@ -823,11 +852,17 @@ class Cases extends Api
     }
 
     /**
-     * Route Case
+     * Route Case.
+     *
      * @url PUT /:app_uid/route-case
      *
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $del_index {@from body}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutRouteCase($app_uid, $del_index = null)
     {
@@ -843,12 +878,14 @@ class Cases extends Api
     /**
      * Cancel Case
      *
+     * @url PUT /:cas_uid/cancel
+     *
      * @param string $cas_uid {@min 1}{@max 32}
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @throws RestException
      *
-     * @url PUT /:cas_uid/cancel
+     * @access protected
+     * @class AccessControl {@permission PM_CANCELCASE}
      */
     public function doPutCancelCase($cas_uid)
     {
@@ -864,11 +901,15 @@ class Cases extends Api
     /**
      * Pause Case
      *
+     * @url PUT /:cas_uid/pause
+     *
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $unpaused_date {@from body}
-     * @throws Exception
      *
-     * @url PUT /:cas_uid/pause
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutPauseCase($cas_uid, $unpaused_date = null)
     {
@@ -888,10 +929,14 @@ class Cases extends Api
     /**
      * Unpause Case
      *
-     * @param string $cas_uid {@min 1}{@max 32}
-     * @throws Exception
-     *
      * @url PUT /:cas_uid/unpause
+     *
+     * @param string $cas_uid {@min 1}{@max 32}
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutUnpauseCase($cas_uid)
     {
@@ -905,13 +950,17 @@ class Cases extends Api
     }
 
     /**
-     * Unpause Case
+     * Execute trigger in a case.
+     *
+     * @url PUT /:cas_uid/execute-trigger/:tri_uid
      *
      * @param string $cas_uid {@min 1}{@max 32}
      * @param string $tri_uid {@min 1}{@max 32}
-     * @throws Exception
      *
-     * @url PUT /:cas_uid/execute-trigger/:tri_uid
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutExecuteTriggerCase($cas_uid, $tri_uid)
     {
@@ -926,11 +975,14 @@ class Cases extends Api
 
     /**
      * Delete Case
+     * @url DELETE /:cas_uid
      *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      * @param string $cas_uid {@min 1}{@max 32}
      * @throws Exception
      *
-     * @url DELETE /:cas_uid
+     * @param string $cas_uid {@min 1}{@max 32}
      */
     public function doDeleteCase($cas_uid)
     {
@@ -973,13 +1025,17 @@ class Cases extends Api
     /**
      * Put Case Variables
      *
+     * @url PUT /:app_uid/variable
+     *
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
      * @param string $dyn_uid {@from path}
      * @param int $del_index {@from path}
-     * @throws Exception
      *
-     * @url PUT /:app_uid/variable
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
     {
@@ -1089,14 +1145,21 @@ class Cases extends Api
     }
 
     /**
-     * Put Case Variables
+     * Create a new case note for a given case. Note that only users who are
+     * currently assigned to work on the case or have Process Permissions to
+     * access case notes may create a case note.
+     *
+     * @url POST /:app_uid/note
      *
      * @param string $app_uid {@min 1}{@max 32}
      * @param string $note_content {@min 1}{@max 500}
      * @param int $send_mail {@choice 1,0}
-     * @throws Exception
      *
-     * @url POST /:app_uid/note
+     * @return void
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPostCaseNote($app_uid, $note_content, $send_mail = 0)
     {
@@ -1132,13 +1195,17 @@ class Cases extends Api
     /**
      * Execute triggers
      *
+     * @url PUT /:app_uid/execute-triggers
+     *
      * @param string $app_uid {@min 1}{@max 32}
      * @param int $del_index {@from body}
      * @param string $obj_type {@from body}
      * @param string $obj_uid {@from body}
-     * @throws Exception
      *
-     * @url PUT /:app_uid/execute-triggers
+     * @throws RestException
+     *
+     * @class AccessControl {@permission PM_CASES}
+     * @access protected
      */
     public function doPutExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)
     {
@@ -1224,11 +1291,16 @@ class Cases extends Api
 
     /**
      * Mark a task process as a bookmark
+     *
      * @url POST /bookmark/:tas_uid
      *
      * @param string $tas_uid {@min 32}{@max 32}
-     * @throws Exception
      *
+     * @return void
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
      */
     public function doPostBookmarkStartCase($tas_uid)
     {
