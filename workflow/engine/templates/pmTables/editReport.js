@@ -972,10 +972,10 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
             var dataStoreAux = types.getRange(0);
             comboReport.setValue(dataStoreAux[0].data.REP_TAB_TYPE);
             comboGridsList.setVisible(false);
-
-            comboDbConnections.getStore().reload({params: {PRO_UID: Ext.getCmp("PROCESS").getValue()}});
+            PRO_UID = Ext.getCmp('PROCESS').getValue().trim();
+            comboDbConnections.getStore().reload({params: {PRO_UID: PRO_UID}});
         if (Ext.getCmp('REP_TAB_TYPE').getValue() == 'GRID') {
-          gridsListStore.reload({params:{PRO_UID : Ext.getCmp('PROCESS').getValue()}});
+                gridsListStore.reload({params: {PRO_UID: PRO_UID}});
         } else {
           loadFieldNormal();
         }
