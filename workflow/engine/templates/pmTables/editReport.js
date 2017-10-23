@@ -1036,14 +1036,18 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
     bodyStyle:'padding:10px',
     waitMsgTarget : true,
     frame: true,
-    height: _plugin_permissions !== false ? 224 : 200,
     defaults: {
       allowBlank: false,
       msgTarget: 'side',
       align:'center'
     },
+    listeners: {
+      afterRender: function () {
+          this.setHeight('auto');
+      }
+    },
     items: items
-  }
+  };
 
   var frmDetails = new Ext.FormPanel(frmDetailsConfig);
 

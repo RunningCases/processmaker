@@ -739,7 +739,7 @@ class Process extends BaseProcess
 
         }
 
-        $memcache = & PMmemcached::getSingleton( SYS_SYS );
+        $memcache = & PMmemcached::getSingleton( config("system.workspace") );
         if (isset($memcache) && $memcache->enabled == 1 ) {
         	return $aProcesses;
         }
@@ -766,7 +766,7 @@ class Process extends BaseProcess
           GROUP BY PRO_UID, APP_STATUS*/
         require_once 'classes/model/Application.php';
 
-        $memcache = & PMmemcached::getSingleton( SYS_SYS );
+        $memcache = & PMmemcached::getSingleton( config("system.workspace") );
         $memkey = 'getCasesCountInAllProcesses';
         if (($aProcesses = $memcache->get( $memkey )) === false) {
             $oCriteria = new Criteria( 'workflow' );
@@ -877,7 +877,7 @@ class Process extends BaseProcess
         $limit = 25;
         $start = 0;
 
-        $memcache = PMmemcached::getSingleton( SYS_SYS );
+        $memcache = PMmemcached::getSingleton( config("system.workspace") );
 
         for ($start = 0; $start <= 50 - 1; $start ++) {
             $memkey = "processList-allProcesses-" . ($start * $limit) . "-" . $limit;

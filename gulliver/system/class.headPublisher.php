@@ -388,7 +388,7 @@ class headPublisher
          */
         // Load external/plugin css
         // NOTE is necesary to move this to decorator server
-        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined('SYS_SYS')) {
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && !empty(config("system.workspace"))) {
             $oPluginRegistry = PluginRegistry::loadSingleton();
             $registeredCss = $oPluginRegistry->getRegisteredCss();
             /** @var \ProcessMaker\Plugins\Interfaces\CssFile $cssFile */
@@ -553,7 +553,7 @@ class headPublisher
         $this->extJsScript[] = '/extjs/' . $cacheName;
 
         //hook for registered javascripts from plugins
-        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined('SYS_SYS')) {
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && !empty(config("system.workspace"))) {
             $oPluginRegistry = PluginRegistry::loadSingleton();
             $pluginJavascripts = $oPluginRegistry->getRegisteredJavascriptBy($filename);
         } else {

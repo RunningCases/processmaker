@@ -2,6 +2,7 @@
 
 use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\DynaForm\SuggestTrait;
+use ProcessMaker\BusinessModel\Cases;
 
 /**
  * Implementing pmDynaform library in the running case.
@@ -34,7 +35,7 @@ class PmDynaform
 
     public function __construct($fields = array())
     {
-        $this->sysSys = (defined("SYS_SYS")) ? SYS_SYS : "Undefined";
+        $this->sysSys = (!empty(config("system.workspace"))) ? config("system.workspace") : "Undefined";
         $this->context = \Bootstrap::getDefaultContextLog();
         $this->dataSources = array("database", "dataVariable");
         $this->pathRTLCss = '/lib/pmdynaform/build/css/PMDynaform-rtl.css';
@@ -250,11 +251,6 @@ class PmDynaform
                             $dtFields = $json->queryInputData;
                         } else {
                             $dtFields = $this->getValuesDependentFields($json);
-                            foreach ($dtFields as $keyF => $valueF) {
-                                if (isset($this->fields["APP_DATA"][$keyF])) {
-                                    $dtFields[$keyF] = $this->fields["APP_DATA"][$keyF];
-                                }
-                            }
                         }
                         $sql = G::replaceDataField($json->sql, $dtFields);
                         if ($value === "suggest") {
@@ -610,7 +606,8 @@ class PmDynaform
                     $json->dataGridEnvironment = "onDataGridEnvironment";
                     if (isset($this->fields["APP_DATA"])) {
                         $dataGridEnvironment = $this->fields["APP_DATA"];
-                        $this->fields["APP_DATA"] = [];
+                        //Grids only access the global variables of 'ProcessMaker', other variables are removed.
+                        $this->fields["APP_DATA"] = Cases::getGlobalVariables($this->fields["APP_DATA"]);
                         //restore AppData with dataVariable definition, only for columns control
                         foreach ($columnsDataVariable as $dge) {
                             if (isset($dataGridEnvironment[$dge])) {
@@ -691,7 +688,14 @@ class PmDynaform
         if (!isset($this->record["DYN_CONTENT"])) {
             return array();
         }
-        $data = array();
+        $data = [];
+        if (isset($this->fields["APP_DATA"])) {
+            foreach ($this->fields["APP_DATA"] as $keyF => $valueF) {
+                if (!isset($data[$keyF]) && !is_array($valueF)) {
+                    $data[$keyF] = $valueF;
+                }
+            }
+        }
         if (isset($json->dbConnection) && isset($json->sql)) {
             $result = array();
             preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $result, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
@@ -708,18 +712,12 @@ class PmDynaform
                 }
             }
             if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
-                if (isset($this->fields["APP_DATA"])) {
-                    foreach ($this->fields["APP_DATA"] as $keyA => $valueA) {
-                        if (!isset($data[$keyA]) && !is_array($valueA)) {
-                            $data[$keyA] = $valueA;
-                        }
-                    }
-                }
                 $sql = G::replaceDataField($json->sql, $data);
                 $dt = $this->getCacheQueryData($json->dbConnection, $sql, $json->type);
                 $row = isset($dt[0]) ? $dt[0] : [];
-                if (isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
-                    $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
+                $index = $json->variable === "" ? $json->id : $json->variable;
+                if (!isset($data[$index]) && isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
+                    $data[$index] = $row[0];
                 }
             }
         }
@@ -1009,7 +1007,7 @@ class PmDynaform
                 var app_uid = \"" . $this->fields["APP_UID"] . "\";
                 var prj_uid = \"" . $this->fields["PRO_UID"] . "\";
                 var step_mode = \"\";
-                var workspace = \"" . SYS_SYS . "\";
+                var workspace = \"" . config("system.workspace") . "\";
                 var credentials = " . G::json_encode($this->credentials) . ";
                 var filePost = \"\";
                 var fieldsRequired = null;
@@ -1070,7 +1068,7 @@ class PmDynaform
                 "var app_uid = '" . $this->fields["APP_UID"] . "';\n" .
                 "var prj_uid = '" . $this->fields["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("system.workspace") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
@@ -1149,7 +1147,7 @@ class PmDynaform
                 "var app_uid = '" . $this->fields["APP_UID"] . "';\n" .
                 "var prj_uid = '" . $this->fields["PRO_UID"] . "';\n" .
                 "var step_mode = '" . $this->fields["STEP_MODE"] . "';\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("system.workspace") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
@@ -1206,7 +1204,7 @@ class PmDynaform
             var app_uid = \"" . $this->fields["APP_UID"] . "\";
             var prj_uid = \"" . $this->fields["PRO_UID"] . "\";
             var step_mode = null;
-            var workspace = \"" . SYS_SYS . "\";
+            var workspace = \"" . config("system.workspace") . "\";
             var credentials = " . G::json_encode($this->credentials) . ";
             var filePost = \"cases_SaveDataSupervisor?UID=" . $this->fields["CURRENT_DYNAFORM"] . "\";
             var fieldsRequired = null;
@@ -1250,7 +1248,7 @@ class PmDynaform
                 "var app_uid = null;\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("system.workspace") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = '" . $filename . "';\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
@@ -1292,7 +1290,7 @@ class PmDynaform
                 "var app_uid = '" . G::decrypt($record['APP_UID'], URL_KEY) . "';\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("system.workspace") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = '" . $filename . "';\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
@@ -1356,7 +1354,7 @@ class PmDynaform
                 "var app_uid = null;\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . SYS_SYS . "';\n" .
+                "var workspace = '" . config("system.workspace") . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
@@ -2102,7 +2100,7 @@ class PmDynaform
                 400,
                 'JSON encoded string error ' . $jsonLastError . ': ' . $jsonLastErrorMsg,
                 ['token' => $token, 'projectUid' => $this->record['PRO_UID'], 'dynaFormUid' => $this->record['DYN_UID']],
-                SYS_SYS,
+                config("system.workspace"),
                 'processmaker.log'
             );
         }

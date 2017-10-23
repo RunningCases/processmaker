@@ -131,7 +131,7 @@ class Home extends Controller
         if (!isset($_COOKIE['workspaceSkin'])) {
             if (substr( $sysConf['default_skin'], 0, 2 ) == 'ux') {
                 $_SESSION['_defaultUserLocation'] = $switchLink;
-                $switchLink = '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . $sysConf['default_skin'] . '/main';
+                $switchLink = '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . $sysConf['default_skin'] . '/main';
             }
         }
 
@@ -531,7 +531,7 @@ class Home extends Controller
                 $conf = new Configurations();
                 $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
                 $cases['data'][$i]['DEL_DELEGATE_DATE'] = '';
-                if (defined('SYS_SYS')) {
+                if (!empty(config("system.workspace"))) {
                     if (isset( $generalConfCasesList['casesListDateFormat'] ) && ! empty( $generalConfCasesList['casesListDateFormat'] )) {
                         $cases['data'][$i]['DEL_DELEGATE_DATE'] = $conf->getSystemDate($row['DEL_DELEGATE_DATE'], 'casesListDateFormat');
                     }
@@ -544,7 +544,9 @@ class Home extends Controller
                 $cases['data'][$i]['APP_DEL_PREVIOUS_USER'] = ucwords( $row['APP_DEL_PREVIOUS_USER'] );
             }
             // Completting with Notes
-            $notes = $appNotes->getNotesList( $row['APP_UID'], '', $notesStart, $notesLimit );
+            $notes = $appNotes->getNotesList($row['APP_UID'], '', $notesStart, $notesLimit);
+            $notes = AppNotes::applyHtmlentitiesInNotes($notes);
+
             $notes = $notes['array'];
 
             $cases['data'][$i]['NOTES_COUNT'] = $notes['totalCount'];

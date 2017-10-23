@@ -310,9 +310,9 @@ class Menu
         $target = $this->Options[$intPos];
         if ($this->Types[$intPos] != "absolute") {
             if (defined('ENABLE_ENCRYPT')) {
-                $target = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
-            } elseif (defined('SYS_SYS')) {
-                $target = "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
+                $target = "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
+            } elseif (!empty(config("system.workspace"))) {
+                $target = "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
             } else {
                 $target = "/sys/" . SYS_LANG . "/" . SYS_SKIN . "/" . $target;
             }
@@ -358,7 +358,7 @@ class Menu
                     $target = $this->Options[$ncount];
                 }
                 if ($this->Types[$ncount] != 'absolute') {
-                    if (defined('SYS_SYS')) {
+                    if (!empty(config("system.workspace"))) {
                         $target = '/sys' . SYS_TEMP . G::encryptLink('/' . SYS_LANG . '/' . SYS_SKIN . '/' . $this->Options[$ncount]);
                     } else {
                         $target = '/sys/' . G::encryptLink(SYS_LANG . '/' . SYS_SKIN . '/' . $this->Options[$ncount]);

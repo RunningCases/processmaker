@@ -1748,10 +1748,70 @@ msgid "Changes saved"
 msgstr "Changes saved"
 
 # TRANSLATION
+# LABEL/ID_SELECT_USER_OR_GROUP
+#: LABEL/ID_SELECT_USER_OR_GROUP
+msgid "Please select the name of a user or a group in the Group or User field"
+msgstr "Please select the name of a user or a group in the Group or User field"
+
+# TRANSLATION
 # LABEL/ID_EMAILS
 #: LABEL/ID_EMAILS
-msgid "EMAILS"
-msgstr "EMAILS"
+msgid "Emails"
+msgstr "Emails"
+
+# TRANSLATION
+# LABEL/ID_NO_PREVIOUS_USR_UID
+#: LABEL/ID_NO_PREVIOUS_USR_UID
+msgid "The previous task doesn't have any users."
+msgstr "The previous task doesn't have any users."
+
+# TRANSLATION
+# LABEL/ID_SET_NO_MANAGER
+#: LABEL/ID_SET_NO_MANAGER
+msgid "Unassign Manager"
+msgstr "Unassign Manager"
+
+# TRANSLATION
+# LABEL/ID_ERROR_EMAIL
+#: LABEL/ID_ERROR_EMAIL
+msgid "Error"
+msgstr "Error"
+
+# TRANSLATION
+# LABEL/ID_CASE_SCHEDULER_CLASSIC
+#: LABEL/ID_CASE_SCHEDULER_CLASSIC
+msgid "Case Scheduler (classic processes)"
+msgstr "Case Scheduler (classic processes)"
+
+# TRANSLATION
+# LABEL/ID_PROCESS_IS_REQUIRED
+#: LABEL/ID_PROCESS_IS_REQUIRED
+msgid "Process field is required"
+msgstr "Process field is required"
+
+# TRANSLATION
+# LABEL/ID_DELEGATE_DATE_FROM
+#: LABEL/ID_DELEGATE_DATE_FROM
+msgid "Date from"
+msgstr "Date from"
+
+# TRANSLATION
+# LABEL/ID_REASSIGN_CONFIRM
+#: LABEL/ID_REASSIGN_CONFIRM
+msgid "Do you want to reassign the case?"
+msgstr "Do you want to reassign the case?"
+
+# TRANSLATION
+# LABEL/ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION
+#: LABEL/ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION
+msgid "A note has been added to the case"
+msgstr "A note has been added to the case"
+
+# TRANSLATION
+# LABEL/ID_EVENTS_CLASSIC
+#: LABEL/ID_EVENTS_CLASSIC
+msgid "Events (classic processes)"
+msgstr "Events (classic processes)"
 
 # TRANSLATION
 # LABEL/ID_REPORT2
@@ -5361,12 +5421,6 @@ msgid "User or password is empty."
 msgstr "User or password is empty."
 
 # TRANSLATION
-# LABEL/ID_DELEGATE_DATE_FROM
-#: LABEL/ID_DELEGATE_DATE_FROM
-msgid "Delegated date from"
-msgstr "Delegated date from"
-
-# TRANSLATION
 # JAVASCRIPT/ID_DUPLICATE_CATEGORY_NAME
 #: JAVASCRIPT/ID_DUPLICATE_CATEGORY_NAME
 msgid "Duplicate category name."
@@ -6871,12 +6925,6 @@ msgstr "Last Name"
 #: LABEL/ID_REASSIGNMENT_SUCCESS
 msgid "Case #{APP_NUMBER} was reassigned to user {USER}."
 msgstr "Case #{APP_NUMBER} was reassigned to user {USER}."
-
-# TRANSLATION
-# LABEL/ID_REASSIGN_CONFIRM
-#: LABEL/ID_REASSIGN_CONFIRM
-msgid "Are you sure to reassign the current case?"
-msgstr "Are you sure to reassign the current case?"
 
 # TRANSLATION
 # LABEL/ID_CASE_PAUSED_SUCCESSFULLY
@@ -10507,12 +10555,6 @@ msgstr "From each table select at least one Schema/Data to export."
 #: LABEL/ID_CONFIRM_DELETE_SKIN
 msgid "Do you want to delete the selected skin?"
 msgstr "Do you want to delete the selected skin?"
-
-# TRANSLATION
-# LABEL/ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION
-#: LABEL/ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION
-msgid "A note has been added to the case."
-msgstr "A note has been added to the case."
 
 # TRANSLATION
 # LABEL/ID_MSG_CANNOT_EXPORT_DEFAULT_SKIN
@@ -18686,12 +18728,6 @@ msgid "You can click on one of the dashboards to view the data or click on the f
 msgstr "You can click on one of the dashboards to view the data or click on the favorite icon to make it your main dashboard."
 
 # TRANSLATION
-# LABEL/ID_SET_NO_MANAGER
-#: LABEL/ID_SET_NO_MANAGER
-msgid "No set Manager"
-msgstr "No set Manager"
-
-# TRANSLATION
 # LABEL/ID_NO_SET_MANAGER_SUCCES
 #: LABEL/ID_NO_SET_MANAGER_SUCCES
 msgid "Manager unassigned correctly"
@@ -18894,12 +18930,6 @@ msgstr "(Goal value)"
 #: LABEL/ID_PLEASE_ENTER_CREDENTIALS
 msgid "Please enter your credentials below"
 msgstr "Please enter your credentials below"
-
-# TRANSLATION
-# LABEL/ID_ERROR_EMAIL
-#: LABEL/ID_ERROR_EMAIL
-msgid "Error email"
-msgstr "Error email"
 
 # TRANSLATION
 # LABEL/ID_AVAILABLE_DATABASE
@@ -27472,12 +27502,6 @@ msgstr "Error: The application {0} is not canceled."
 #: LABEL/ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION
 msgid "Error: Thread status does not exist for the application {0}."
 msgstr "Error: Thread status does not exist for the application {0}."
-
-# TRANSLATION
-# LABEL/ID_NO_PREVIOUS_USR_UID
-#: LABEL/ID_NO_PREVIOUS_USR_UID
-msgid "The previuos task doesn't have any users."
-msgstr "The previuos task doesn't have any users."
 
 # TRANSLATION
 # LABEL/ID_WARNING_GATEWAY_CONVERGENT_WITH_CONDITION

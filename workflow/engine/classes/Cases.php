@@ -1068,7 +1068,7 @@ class Cases
                     $oDerivation->verifyIsCaseChild($sAppUid);
                 }
             } catch (Exception $e) {
-                Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], SYS_SYS, 'processmaker.log');
+                Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], config("system.workspace"), 'processmaker.log');
             }
 
             //Delete the registries in the table SUB_APPLICATION
@@ -2211,7 +2211,7 @@ class Cases
             "delIndex" => $iDelIndex,
             "appInitDate" => $Fields['APP_INIT_DATE']
         ];
-        Bootstrap::registerMonolog('CreateCase', 200, "Create case", $data, SYS_SYS, 'processmaker.log');
+        Bootstrap::registerMonolog('CreateCase', 200, "Create case", $data, config("system.workspace"), 'processmaker.log');
 
         //call plugin
         if (class_exists('folderData')) {
@@ -3375,7 +3375,7 @@ class Cases
             $oPMScript->setFields($aFields);
 
             /*----------------------------------********---------------------------------*/
-            $cs = new CodeScanner(SYS_SYS);
+            $cs = new CodeScanner(config("system.workspace"));
 
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
@@ -6969,11 +6969,20 @@ class Cases
         return $response;
     }
 
+    /**
+     * This method return the cases notes
+     * @param $applicationID
+     * @param string $type
+     * @param string $userUid
+     * @return array|stdclass|string
+     */
     public function getCaseNotes($applicationID, $type = 'array', $userUid = '')
     {
         require_once("classes/model/AppNotes.php");
         $appNotes = new AppNotes();
         $appNotes = $appNotes->getNotesList($applicationID, $userUid);
+        $appNotes = AppNotes::applyHtmlentitiesInNotes($appNotes);
+
         $response = '';
         if (is_array($appNotes)) {
             switch ($type) {
@@ -7005,10 +7014,10 @@ class Cases
                     $response = '';
                     foreach ($appNotes['array']['notes'] as $key => $value) {
                         $response .= $value['USR_FIRSTNAME'] . " " .
-                                $value['USR_LASTNAME'] . " " .
-                                "(" . $value['USR_USERNAME'] . ")" .
-                                " " . $value['NOTE_CONTENT'] . " " . " (" . $value['NOTE_DATE'] . " ) " .
-                                " \n";
+                            $value['USR_LASTNAME'] . " " .
+                            "(" . $value['USR_USERNAME'] . ")" .
+                            " " . $value['NOTE_CONTENT'] . " " . " (" . $value['NOTE_DATE'] . " ) " .
+                            " \n";
                     }
                     break;
             }

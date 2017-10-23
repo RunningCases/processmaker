@@ -38,16 +38,15 @@ if (isset ( $_GET ['x'] )) {
     }
 } else {
 	if (! isset ( $_SESSION ['END_POINT'] )) {
-		//$wsdl = 'http://'.$_SERVER['HTTP_HOST'].'/sys'.SYS_SYS.'/en/classic/services/wsdl';
 		$wsdl = 'http://' . $_SERVER ['HTTP_HOST'];
-		$workspace = SYS_SYS;
+		$workspace = config("system.workspace");
 	} else {
 		$wsdl = $_SESSION ['END_POINT'];
 		$workspace = $_SESSION ['WS_WORKSPACE'];
 	}
 }
 
-$defaultEndpoint = 'http://' . $_SERVER ['SERVER_NAME'] . ':' . $_SERVER ['SERVER_PORT'] . '/sys' . SYS_SYS . '/en/classic/services/wsdl2';
+$defaultEndpoint = 'http://' . $_SERVER ['SERVER_NAME'] . ':' . $_SERVER ['SERVER_PORT'] . '/sys' . config("system.workspace") . '/en/classic/services/wsdl2';
 
 $wsdl = isset ( $_SESSION ['END_POINT'] ) ? $_SESSION ['END_POINT'] : $defaultEndpoint;
 

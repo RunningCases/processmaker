@@ -1832,11 +1832,9 @@ class Light extends Api
         try {
             //Check if the user is a supervisor or have permissions
             $usr_uid = $this->getUserId();
-            $cases = new BusinessModelCases();
-            $hasAccess = $cases->checkUserHasPermissionsOrSupervisor($usr_uid, $app_uid, $dyn_uid);
 
             //When the user is a supervisor del_index is 0
-            if ($del_index <= 0 && !$hasAccess) {
+            if ($del_index < 0) {
                 throw (new Exception(G::LoadTranslation('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER',
                     array('del_index')), Api::STAT_APP_EXCEPTION));
             }
@@ -1844,6 +1842,7 @@ class Light extends Api
                 throw (new Exception(G::LoadTranslation('ID_CAN_NOT_BE_NULL', array('del_index')),
                     Api::STAT_APP_EXCEPTION));
             }
+            $cases = new BusinessModelCases();
             if ($del_index > 0) {
                 if ($cases->caseAlreadyRouted($app_uid, $del_index, $usr_uid)) {
                     throw (new Exception(G::LoadTranslation('ID_CASE_ALREADY_DERIVATED'), Api::STAT_APP_EXCEPTION));

@@ -735,7 +735,7 @@ class User
                         $aUserProperty = $userProperty->loadOrCreateIfNotExists($userUid, array("USR_PASSWORD_HISTORY" => serialize(array(Bootstrap::hashPassword($arrayData["USR_PASSWORD"])))));
 
                         $memKey = "rbacSession" . session_id();
-                        $memcache = &PMmemcached::getSingleton(defined("SYS_SYS") ? SYS_SYS : "");
+                        $memcache = &PMmemcached::getSingleton(!empty(config("system.workspace")) ? config("system.workspace") : "");
 
                         if (($rbac->aUserInfo = $memcache->get($memKey)) == false) {
                             $rbac->loadUserRolePermission("PROCESSMAKER", $userUidLogged);

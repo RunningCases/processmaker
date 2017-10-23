@@ -367,7 +367,7 @@ class AddonsStore extends BaseAddonsStore
                         $sStatus = $oDetails->isEnabled() ? G::LoadTranslation('ID_ENABLED') : G::LoadTranslation('ID_DISABLED');
 
                         if ($oDetails->getWorkspaces()) {
-                            if (!in_array(SYS_SYS, $oDetails->getWorkspaces())) {
+                            if (!in_array(config("system.workspace"), $oDetails->getWorkspaces())) {
                                 continue;
                             }
                         }
