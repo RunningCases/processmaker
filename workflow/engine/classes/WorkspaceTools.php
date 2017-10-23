@@ -635,7 +635,7 @@ class WorkspaceTools
 
         //We will to regenerate the Content table
         if ($executeRegenerateContent) {
-            CLI::logging("->   Start To update...\n");
+            CLI::logging("->   Start To Update...\n");
             $translation = new Translation();
             $information = $translation->getTranslationEnvironments();
             $arrayLang = [];
