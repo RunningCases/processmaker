@@ -2174,6 +2174,15 @@ class PmDynaform
         $result['file'] = $e->getFile();
         $result['line'] = $e->getLine();
         $result['message'] = $e->getMessage();
+
+        if (property_exists($e, 'nativeError')) {
+            $result['nativeError'] = $e->getNativeError();
+        }
+
+        if (property_exists($e, 'userInfo')) {
+            $result['nativeError'] = $e->getUserInfo();
+        }
+
         return $result;
     }
 }
