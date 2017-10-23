@@ -198,4 +198,5 @@ class Restler extends \Luracast\Restler\Restler
         }
         return $object;
     }
+
 }
