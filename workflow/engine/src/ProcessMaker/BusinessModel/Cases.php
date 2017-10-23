@@ -3547,7 +3547,7 @@ class Cases
      * @param array $additionalColumns, columns related to the custom cases list with the format TABLE_NAME.COLUMN_NAME
      * @param string $userDisplayFormat, user information display format
      *
-     * @return string $tableName
+     * @return string|array could be an string $tableName, could be an array $columnSort
      */
     public function getSortColumn(
         $listPeer,
@@ -3598,11 +3598,11 @@ class Cases
      * @param string $format, the user display format
      * @param string $prefix, the initial name of the columns related to the USR_FIRSTNAME USR_LASTNAME USR_USERNAME
      * 
-     * @return string $columnSort, columns  by apply the sql command ORDER BY
+     * @return array $columnSort, columns  by apply the sql command ORDER BY
      */
     public function buildOrderFieldFormatted($columnsList, $format, $prefix = 'DEL_PREVIOUS_')
     {
-        $columnSort = '';
+        $columnSort = [];
 
         if (in_array($prefix . 'USR_FIRSTNAME', $columnsList) &&
             in_array($prefix . 'USR_LASTNAME', $columnsList) &&
@@ -3610,25 +3610,37 @@ class Cases
         ) {
             switch ($format) {
                 case '@firstName @lastName':
-                    $columnSort = $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_LASTNAME';
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
                     break;
                 case '@firstName @lastName (@userName)':
-                    $columnSort = $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_LASTNAME' . ',' . $prefix . 'USR_USERNAME';
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
                     break;
                 case '@userName':
-                    $columnSort = $prefix . 'USR_USERNAME';
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
                     break;
                 case '@userName (@firstName @lastName)':
-                    $columnSort = $prefix . 'USR_USERNAME' . ',' . $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_LASTNAME';
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
                     break;
                 case '@lastName, @firstName':
-                    $columnSort = $prefix . 'USR_LASTNAME' . ',' . $prefix . 'USR_FIRSTNAME';
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    break;
+                case '@lastName @firstName':
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
                     break;
                 case '@lastName, @firstName (@userName)':
-                    $columnSort = $prefix . 'USR_LASTNAME' . ',' . $prefix . 'USR_FIRSTNAME' . ',' . $prefix . 'USR_USERNAME';
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
                     break;
                 default:
-                    $columnSort = $prefix . 'USR_USERNAME';
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
                     break;
             }
         }

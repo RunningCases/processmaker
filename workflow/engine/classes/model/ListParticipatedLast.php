@@ -466,10 +466,20 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $limit = isset($filters['limit']) ? $filters['limit'] : '25';
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
 
-        if ($dir == 'DESC') {
-            $criteria->addDescendingOrderByColumn($sort);
+        if (is_array($sort) && count($sort) > 0) {
+            foreach ($sort as $key) {
+                if ($dir == 'DESC') {
+                    $criteria->addDescendingOrderByColumn($key);
+                } else {
+                    $criteria->addAscendingOrderByColumn($key);
+                }
+            }
         } else {
-            $criteria->addAscendingOrderByColumn($sort);
+            if ($dir == 'DESC') {
+                $criteria->addDescendingOrderByColumn($sort);
+            } else {
+                $criteria->addAscendingOrderByColumn($sort);
+            }
         }
 
         if ($paged == 1) {
