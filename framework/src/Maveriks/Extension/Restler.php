@@ -175,7 +175,7 @@ class Restler extends \Luracast\Restler\Restler
      * Review the API extensions, if the extension exists a new instance is 
      * returned.
      * 
-     * @param objecy $object
+     * @param object $object
      * @param string $className
      * @return \Maveriks\Extension\classExtName
      */
