@@ -2579,13 +2579,15 @@ class G
     }
 
     /**
-     * Funtion used to fix 32K issue related to ext3 max subdirectory storage, but checking Version first.
+     * Function used to fix 32K issue related to ext3 max subdirectory storage, but checking Version first.
+     *
      * @param string $uid
      * @param int $splitSize
      * @param int $pieces
+     *
      * @return string xxx/xxx/xxx/xxxxxxxxxxxxxxxxxxxxx
      */
-    public function getPathFromUID($uid, $splitSize = 3, $pieces = 3)
+    public static function getPathFromUID($uid, $splitSize = 3, $pieces = 3)
     {
         if (! G::gotDirectoryStructureVer2()) {
             return $uid;
@@ -2600,7 +2602,7 @@ class G
      * @param int $pieces
      * @return string xxx/xxx/xxx/xxxxxxxxxxxxxxxxxxxxx
      */
-    public function getPathFromUIDPlain($uid, $splitSize = 3, $pieces = 3)
+    public static function getPathFromUIDPlain($uid, $splitSize = 3, $pieces = 3)
     {
         $dirArray = array();
         if (is_string($uid) && strlen($uid) >= 32 && $uid != G::getBlackHoleDir()) {
@@ -2620,7 +2622,7 @@ class G
      * @param string $path
      * @return string
      */
-    public function getUIDfromPath($path)
+    public static function getUIDfromPath($path)
     {
         $uid = '';
         $item = explode($path, '/');
@@ -2642,7 +2644,7 @@ class G
      * @param int $pieces
      * @return array index:0 got the path, index:1 got the filename
      */
-    public function getPathFromFileUID($appUid, $fileUid, $splitSize = 3, $pieces = 3)
+    public static function getPathFromFileUID($appUid, $fileUid, $splitSize = 3, $pieces = 3)
     {
         if (! G::gotDirectoryStructureVer2()) {
             $response = array();
