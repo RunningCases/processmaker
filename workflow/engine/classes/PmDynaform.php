@@ -761,7 +761,12 @@ class PmDynaform
         } catch (Exception $e) {
             $this->context["action"] = "execute-sql" . $type;
             $this->context["exception"] = (array) $e;
-            \Bootstrap::registerMonolog("sqlExecution", 400, "Sql Execution", $this->context, $this->sysSys, "processmaker.log");
+            \Bootstrap::registerMonolog("sqlExecution",
+                                            400,
+                                            "Sql Execution",
+                                            $this->basicExceptionData($e, $sql),
+                                            $this->sysSys,
+                                            "processmaker.log");
         }
         return $data;
     }
@@ -2155,4 +2160,31 @@ class PmDynaform
         }
     }
 
+    /**
+     * Returns an array with the basic fields of the Exception class. It isn't returned any extra fields information
+     * of any derivated Exception class. This way we have a lightweight version of the exception data that can
+     * be used when logging the exception, for example.
+     * @param $e an Exception class derivate
+     * @param $sql query that was executed when the exception was generated
+     * @return array
+     */
+    private function basicExceptionData($e, $sql)
+    {
+        $result = [];
+        $result['code'] = $e->getCode();
+        $result['file'] = $e->getFile();
+        $result['line'] = $e->getLine();
+        $result['message'] = $e->getMessage();
+        $result['nativeQuery'] = $sql;
+
+        if (property_exists($e, 'nativeError')) {
+            $result['nativeError'] = $e->getNativeError();
+        }
+
+        if (property_exists($e, 'userInfo')) {
+            $result['userInfo'] = $e->getUserInfo();
+        }
+
+        return $result;
+    }
 }
