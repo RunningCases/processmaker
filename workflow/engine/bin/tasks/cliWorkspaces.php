@@ -356,29 +356,61 @@ function run_info($args, $opts)
     }
 }
 
+/**
+ * Check if we need to execute the workspace-upgrade
+ * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
+ *
+ * @param string $args, workspace name that we need to apply the database-upgrade
+ * @param string $opts, additional arguments
+ *
+ * @return void
+ */
 function run_workspace_upgrade($args, $opts)
 {
-    $filter = new InputFilter();
-    $opts = $filter->xssFilterHard($opts);
-    $args = $filter->xssFilterHard($args);
-    $workspaces = get_workspaces_from_args($args);
+    //Read the additional parameters for this command
+    $parameters = '';
+    $parameters .= array_key_exists('buildACV', $opts) ? '--buildACV ' : '';
+    $parameters .= array_key_exists('noxml', $opts) ? '--no-xml ' : '';
+    $parameters .= array_key_exists("lang", $opts) ? 'lang=' . $opts['lang'] : 'lang=' . SYS_LANG;
+
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        workspace_upgrade($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker upgrade ' . $parameters . ' ' . $workspace->name);
+        }
+    }
+}
+
+/**
+ * This function is executed only by one workspace, for the command workspace-upgrade
+ *
+ * @param array $args, workspace name for to apply the upgrade
+ * @param array $opts, specify additional arguments for language, flag for buildACV, flag for noxml
+ *
+ * @return void
+ */
+function workspace_upgrade($args, $opts) {
     $first = true;
+    $workspaces = get_workspaces_from_args($args);
     $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
     $buildCacheView = array_key_exists('buildACV', $opts);
     $flagUpdateXml = !array_key_exists('noxml', $opts);
 
+    $wsName = $workspaces[key($workspaces)]->name;
+    Bootstrap::setConstantsRelatedWs($wsName);
+    //Loop, read all the attributes related to the one workspace
     foreach ($workspaces as $workspace) {
         try {
-            if (empty(config("system.workspace"))) {
-                define("SYS_SYS", $workspace->name);
-                config(["system.workspace" => $workspace->name]);
-            }
-
-            if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
-            }
-
-            $workspace->upgrade($buildCacheView, $workspace->name, false, $lang, ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]);
+            $workspace->upgrade(
+                $buildCacheView,
+                $workspace->name,
+                false,
+                $lang,
+                ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]
+            );
             $first = false;
             $flagUpdateXml = false;
         } catch (Exception $e) {
