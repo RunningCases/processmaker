@@ -764,7 +764,7 @@ class PmDynaform
             \Bootstrap::registerMonolog("sqlExecution",
                                             400,
                                             "Sql Execution",
-                                            $this->basicExceptionData($e),
+                                            $this->basicExceptionData($e, $sql),
                                             $this->sysSys,
                                             "processmaker.log");
         }
@@ -2167,20 +2167,21 @@ class PmDynaform
      * @param $e an Exception class derivate
      * @return array
      */
-    private function basicExceptionData($e)
+    private function basicExceptionData($e, $sql)
     {
         $result = [];
         $result['code'] = $e->getCode();
         $result['file'] = $e->getFile();
         $result['line'] = $e->getLine();
         $result['message'] = $e->getMessage();
+        $result['nativeQuery'] = $sql;
 
         if (property_exists($e, 'nativeError')) {
             $result['nativeError'] = $e->getNativeError();
         }
 
         if (property_exists($e, 'userInfo')) {
-            $result['nativeError'] = $e->getUserInfo();
+            $result['userInfo'] = $e->getUserInfo();
         }
 
         return $result;
