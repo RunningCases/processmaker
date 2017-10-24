@@ -1260,20 +1260,6 @@ class AppCacheView extends BaseAppCacheView
         }
     }
 
-    public function setSuperForUser($mysqlUser)
-    {
-        try {
-            $con = Propel::getConnection("root");
-            $stmt = $con->createStatement();
-            $sql = "GRANT SUPER on *.* to '$mysqlUser' ";
-            $rs1 = $stmt->executeQuery($sql, ResultSet::FETCHMODE_NUM);
-
-            return array();
-        } catch (Exception $e) {
-            return array('error' => true, 'msg' => $e->getMessage());
-        }
-    }
-
     /**
      * search for table APP_CACHE_VIEW
      * @return void
