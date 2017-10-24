@@ -4321,8 +4321,8 @@ class Cases
             unset($rowListCanceled['DEL_CURRENT_USR_FIRSTNAME']);
             unset($rowListCanceled['DEL_CURRENT_USR_LASTNAME']);
             unset($rowListCanceled['APP_CANCELED_DATE']);
-            $listInbox = new ListInbox();
-            $listInbox->create($rowListCanceled);
+
+            $this->putCaseInInboxList($rowListCanceled, $userUID);
 
             //ListParticipatedLast
             $criteriaListParticipatedLast = new Criteria("workflow");
@@ -7266,6 +7266,19 @@ class Cases
             return true;
         }
         return false;
+    }
+
+    /**
+     * Inserts int the ListInbox of the user $targetUserId case whose data is in the variable $caseDataRow
+     * @param array $caseDataRow, assoc. array with the data of the case
+     * @param int $targetUserId, id of the user that will have the case.
+     * @return void
+     */
+    private function putCaseInInboxList($caseDataRow, $targetUserId)
+    {
+        $listInbox = new ListInbox();
+        $caseDataRow["USR_UID"] = $targetUserId;
+        $listInbox->create($caseDataRow);
     }
 }
 
