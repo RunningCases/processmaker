@@ -2165,6 +2165,7 @@ class PmDynaform
      * of any derivated Exception class. This way we have a lightweight version of the exception data that can
      * be used when logging the exception, for example.
      * @param $e an Exception class derivate
+     * @param $sql query that was executed when the exception was generated
      * @return array
      */
     private function basicExceptionData($e, $sql)
