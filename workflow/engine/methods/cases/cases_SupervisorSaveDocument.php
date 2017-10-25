@@ -36,10 +36,15 @@ try {
         "APP_DOC_CREATE_DATE" => date( "Y-m-d H:i:s" ),
         "APP_DOC_COMMENT" => isset( $_POST["form"]["APP_DOC_COMMENT"] ) ? $_POST["form"]["APP_DOC_COMMENT"] : "",
         "APP_DOC_TITLE" => "",
-        "APP_DOC_FILENAME" => isset( $_FILES["form"]["name"]["APP_DOC_FILENAME"] ) ? $_FILES["form"]["name"]["APP_DOC_FILENAME"] : "",
-        "APP_DOC_UID" => $_GET["APP_DOC_UID"],
-        "DOC_VERSION" => $_GET["DOC_VERSION"]
+        "APP_DOC_FILENAME" => isset( $_FILES["form"]["name"]["APP_DOC_FILENAME"] ) ? $_FILES["form"]["name"]["APP_DOC_FILENAME"] : ""
     );
+    if (!empty($_GET["APP_DOC_UID"])) {
+        $aFields['APP_DOC_UID'] = $_GET["APP_DOC_UID"];
+    }
+    if (!empty($_GET["DOC_VERSION"])) {
+        $aFields['DOC_VERSION'] = $_GET["DOC_VERSION"];
+    }
+
 
     $oAppDocument->create( $aFields );
     $sAppDocUid = $oAppDocument->getAppDocUid();
