@@ -3539,13 +3539,15 @@ class Cases
      * This function get the table.column by order by the result
      * We can include the additional table related to the custom cases list
      *
-     * @param string $listPeer , name of the list class
-     * @param string $field , name of the fieldName
-     * @param string $sort , name of column by sort
-     * @param string $defaultSort , name of column by sort default
-     * @param string $additionalClassName , name of the className of pmTable
-     * @param array $additionalColumns , columns related to the custom cases list with the format TABLE_NAME.COLUMN_NAME
-     * @return string $tableName
+     * @param string $listPeer, name of the list class
+     * @param string $field, name of the fieldName
+     * @param string $sort, name of column by sort
+     * @param string $defaultSort, name of column by sort default
+     * @param string $additionalClassName, name of the className of pmTable
+     * @param array $additionalColumns, columns related to the custom cases list with the format TABLE_NAME.COLUMN_NAME
+     * @param string $userDisplayFormat, user information display format
+     *
+     * @return string|array could be an string $tableName, could be an array $columnSort
      */
     public function getSortColumn(
         $listPeer,
@@ -3553,7 +3555,8 @@ class Cases
         $sort,
         $defaultSort,
         $additionalClassName = '',
-        $additionalColumns = array()
+        $additionalColumns = array(),
+        $userDisplayFormat = ''
     ) {
         $columnSort = $defaultSort;
         $tableName = '';
@@ -3561,7 +3564,16 @@ class Cases
         //We will check if the column by sort is a LIST table
         $columnsList = $listPeer::getFieldNames($field);
         if (in_array($sort, $columnsList)) {
-            $columnSort = $listPeer::TABLE_NAME . '.' . $sort;
+            switch ($sort) {
+                case 'DEL_PREVIOUS_USR_UID':
+                    $columnSort = $this->buildOrderFieldFormatted($columnsList, $userDisplayFormat, 'DEL_PREVIOUS_');
+                    break;
+                case 'USR_UID':
+                    $columnSort = $this->buildOrderFieldFormatted($columnsList, $userDisplayFormat, 'DEL_CURRENT_');
+                    break;
+                default:
+                    $columnSort  = $listPeer::TABLE_NAME . '.' . $sort;
+            }
         } else {
             //We will sort by CUSTOM CASE LIST table
             if (count($additionalColumns) > 0) {
@@ -3580,7 +3592,63 @@ class Cases
     }
 
     /**
-     * This function verify if the user is a supervisor
+     * When we order columns related to the user information we need to use the userDisplayFormat
+     *
+     * @param array $columnsList, the list of columns in the table
+     * @param string $format, the user display format
+     * @param string $prefix, the initial name of the columns related to the USR_FIRSTNAME USR_LASTNAME USR_USERNAME
+     * 
+     * @return array $columnSort, columns  by apply the sql command ORDER BY
+     */
+    public function buildOrderFieldFormatted($columnsList, $format, $prefix = 'DEL_PREVIOUS_')
+    {
+        $columnSort = [];
+
+        if (in_array($prefix . 'USR_FIRSTNAME', $columnsList) &&
+            in_array($prefix . 'USR_LASTNAME', $columnsList) &&
+            in_array($prefix . 'USR_USERNAME', $columnsList)
+        ) {
+            switch ($format) {
+                case '@firstName @lastName':
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    break;
+                case '@firstName @lastName (@userName)':
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
+                    break;
+                case '@userName':
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
+                    break;
+                case '@userName (@firstName @lastName)':
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    break;
+                case '@lastName, @firstName':
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    break;
+                case '@lastName @firstName':
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    break;
+                case '@lastName, @firstName (@userName)':
+                    array_push($columnSort, $prefix . 'USR_LASTNAME');
+                    array_push($columnSort, $prefix . 'USR_FIRSTNAME');
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
+                    break;
+                default:
+                    array_push($columnSort, $prefix . 'USR_USERNAME');
+                    break;
+            }
+        }
+
+        return $columnSort;
+    }
+
+     /** This function verify if the user is a supervisor
      * If we send the formUid we will to review if has the object form assigned
      *
      * @param string $usrUid, Uid related to the user

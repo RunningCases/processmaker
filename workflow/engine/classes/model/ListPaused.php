@@ -1,7 +1,7 @@
 <?php
 
 require_once 'classes/model/om/BaseListPaused.php';
-
+use ProcessMaker\BusinessModel\Cases as BmCases;
 
 /**
  * Skeleton subclass for representing a row from the 'LIST_PAUSED' table.
@@ -14,17 +14,60 @@ require_once 'classes/model/om/BaseListPaused.php';
  *
  * @package    classes.model
  */
-// @codingStandardsIgnoreStart
+
 class ListPaused extends BaseListPaused
 {
     private $additionalClassName = '';
+    private $userDisplayFormat = '';
+
+    /**
+     * Get the $additionalClassName value.
+     *
+     * @return string
+     */
+    public function getAdditionalClassName()
+    {
+        return $this->additionalClassName;
+    }
+
+    /**
+     * Set the value of $additionalClassName.
+     *
+     * @param string $v new value
+     * @return void
+     */
+    public function setAdditionalClassName($v)
+    {
+        $this->additionalClassName = $v;
+    }
+
+    /**
+     * Get the $userDisplayFormat value.
+     *
+     * @return string
+     */
+    public function getUserDisplayFormat()
+    {
+        return $this->userDisplayFormat;
+    }
+
+    /**
+     * Set the value of $userDisplayFormat.
+     *
+     * @param string $v new value
+     * @return void
+     */
+    public function setUserDisplayFormat($v)
+    {
+        $this->userDisplayFormat = $v;
+    }
 
     /**
      * Create List Paused Table
      *
      * @param type $data
      * @return type
-     *
+     * @throws Exception
      */
     public function create($data)
     {
@@ -153,7 +196,7 @@ class ListPaused extends BaseListPaused
      *
      * @param type $data
      * @return type
-     * @throws type
+     * @throws Exception
      */
     public function update($data)
     {
@@ -187,9 +230,12 @@ class ListPaused extends BaseListPaused
     /**
      * Remove List Paused
      *
-     * @param type $seqName
+     * @param string $app_uid
+     * @param integer $del_index
+     * @param array $data_inbox
+     *
      * @return type
-     * @throws type
+     * @throws Exception
      *
      */
     public function remove($app_uid, $del_index, $data_inbox)
@@ -246,8 +292,14 @@ class ListPaused extends BaseListPaused
                 $criteria->add(ListPausedPeer::APP_UID, $search, Criteria::EQUAL);
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
-                $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList = new BmCases();
+                $casesList->getSearchCriteriaListCases(
+                    $criteria,
+                    __CLASS__ . 'Peer',
+                    $search,
+                    $this->getAdditionalClassName(),
+                    $additionalColumns
+                );
             }
         }
 
@@ -270,7 +322,7 @@ class ListPaused extends BaseListPaused
      * This function get the information in the corresponding cases list
      * @param string $usr_uid, must be show cases related to this user
      * @param array $filters for apply in the result
-     * @param null $callbackRecord
+     * @param callable $callbackRecord
      * @return array $data
      * @throws PropelException
      */
@@ -279,7 +331,7 @@ class ListPaused extends BaseListPaused
         $resp = array();
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('paused');
-        $this->additionalClassName = $pmTable->tableClassName;
+        $this->setAdditionalClassName($pmTable->tableClassName);
         $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListPausedPeer::APP_UID);
@@ -308,14 +360,15 @@ class ListPaused extends BaseListPaused
         self::loadFilters($criteria, $filters, $additionalColumns);
 
         //We will be defined the sort
-        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $casesList = new BmCases();
         $sort = $casesList->getSortColumn(
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "APP_PAUSED_DATE" : $filters['sort'],
             "APP_PAUSED_DATE",
-            $this->additionalClassName,
-            $additionalColumns
+            $this->getAdditionalClassName(),
+            $additionalColumns,
+            $this->getUserDisplayFormat()
         );
 
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
@@ -323,10 +376,20 @@ class ListPaused extends BaseListPaused
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
 
-        if ($dir == "DESC") {
-            $criteria->addDescendingOrderByColumn($sort);
+        if (is_array($sort) && count($sort) > 0) {
+            foreach ($sort as $key) {
+                if ($dir == 'DESC') {
+                    $criteria->addDescendingOrderByColumn($key);
+                } else {
+                    $criteria->addAscendingOrderByColumn($key);
+                }
+            }
         } else {
-            $criteria->addAscendingOrderByColumn($sort);
+            if ($dir == 'DESC') {
+                $criteria->addDescendingOrderByColumn($sort);
+            } else {
+                $criteria->addAscendingOrderByColumn($sort);
+            }
         }
 
         if ($paged == 1) {
