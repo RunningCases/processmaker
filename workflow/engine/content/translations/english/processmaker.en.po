@@ -1,5 +1,4 @@
 msgid ""
-
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.2.2)\n"
 "POT-Creation-Date: \n"
