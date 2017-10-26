@@ -5738,13 +5738,21 @@ class Cases
             "MSGS_HISTORY" => array()
             /*----------------------------------********---------------------------------*/
             , "SUMMARY_FORM" => 0
-                /*----------------------------------********---------------------------------*/
+            /*----------------------------------********---------------------------------*/
         );
 
         $oObjectPermission = new ObjectPermission();
         $userPermissions = $oObjectPermission->verifyObjectPermissionPerUser($usrUid, $proUid, $tasUid, $action, $caseData);
         $groupPermissions = $oObjectPermission->verifyObjectPermissionPerGroup($usrUid, $proUid, $tasUid, $action, $caseData);
         $permissions = array_merge($userPermissions, $groupPermissions);
+
+        $resultDynaforms = [];
+        $resultInputs = [];
+        $resultAttachments = [];
+        $resultOutputs = [];
+        $resultCaseNotes = [];
+        $resultSummary = [];
+        $resultMessages = [];
 
         foreach ($permissions as $row) {
             $userUid = $row['USR_UID'];
@@ -5779,14 +5787,16 @@ class Cases
                 switch ($opType) {
                     case 'ANY':
                         //For dynaforms
-                        $result['DYNAFORM'] = $oObjectPermission->objectPermissionByDynaform(
+                        $listDynaform = $oObjectPermission->objectPermissionByDynaform(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultDynaforms = array_merge($resultDynaforms, $listDynaform);
+
                         //For Ouputs
-                        $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listOutput = $oObjectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5794,8 +5804,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultOutputs = array_merge($resultOutputs, $listOutput);
+
                         //For Inputs
-                        $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listInput = $oObjectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5803,8 +5815,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultInputs = array_merge($resultInputs, $listInput);
+
                         //For Attachment
-                        $result['ATTACHMENT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listAttchment = $oObjectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5812,14 +5826,15 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultAttachments = array_merge($resultAttachments, $listAttchment);
 
-                        $result['CASES_NOTES'] = 1;
+                        $resultCaseNotes = 1;
                         /*----------------------------------********---------------------------------*/
-                        $result['SUMMARY_FORM'] = 1;
+                        $resultSummary = 1;
                         /*----------------------------------********---------------------------------*/
 
                         //Message History
-                        $result['MSGS_HISTORY'] = $oObjectPermission->objectPermissionMessage(
+                        $listMessage = $oObjectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
                             $userUid,
@@ -5829,17 +5844,19 @@ class Cases
                             $caseData['APP_STATUS'],
                             $opParticipated
                         );
+                        $resultMessages = array_merge($resultMessages, $listMessage);
                         break;
                     case 'DYNAFORM':
-                        $result['DYNAFORM'] = $oObjectPermission->objectPermissionByDynaform(
+                        $listDynaform = $oObjectPermission->objectPermissionByDynaform(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultDynaforms = array_merge($resultDynaforms, $listDynaform);
                         break;
                     case 'INPUT':
-                        $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listInput= $oObjectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5847,9 +5864,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultInputs = array_merge($resultInputs, $listInput);
                         break;
                     case 'ATTACHMENT':
-                        $result['ATTACHMENT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listAttchment= $oObjectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5857,9 +5875,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultAttachments = array_merge($resultAttachments, $listAttchment);
                         break;
                     case 'OUTPUT':
-                        $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listOutput = $oObjectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5867,17 +5886,18 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultOutputs = array_merge($resultOutputs, $listOutput);
                         break;
                     case 'CASES_NOTES':
-                        $result['CASES_NOTES'] = 1;
+                        $resultCaseNotes = 1;
                         break;
                     /*----------------------------------********---------------------------------*/
                     case 'SUMMARY_FORM':
-                        $result['SUMMARY_FORM'] = 1;
+                        $resultSummary = 1;
                         break;
                     /*----------------------------------********---------------------------------*/
                     case 'MSGS_HISTORY':
-                        $result['MSGS_HISTORY'] = $oObjectPermission->objectPermissionMessage(
+                        $listMessage = $oObjectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
                             $userUid,
@@ -5887,21 +5907,22 @@ class Cases
                             $caseData['APP_STATUS'],
                             $opParticipated
                         );
+                        $resultMessages = array_merge($resultMessages, $listMessage);
                         break;
                 }
             }
         }
 
         return array(
-            "DYNAFORMS" => $result['DYNAFORM'],
-            "INPUT_DOCUMENTS" => $result['INPUT'],
-            "ATTACHMENTS" => $result['ATTACHMENT'],
-            "OUTPUT_DOCUMENTS" => $result['OUTPUT'],
-            "CASES_NOTES" => $result['CASES_NOTES'],
-            "MSGS_HISTORY" => $result['MSGS_HISTORY']
+            "DYNAFORMS" => $resultDynaforms,
+            "INPUT_DOCUMENTS" => $resultInputs,
+            "ATTACHMENTS" => $resultAttachments,
+            "OUTPUT_DOCUMENTS" => $resultOutputs,
+            "CASES_NOTES" => $resultCaseNotes,
+            "MSGS_HISTORY" => $resultMessages
             /*----------------------------------********---------------------------------*/
-            , "SUMMARY_FORM" => $result['SUMMARY_FORM']
-                /*----------------------------------********---------------------------------*/
+            , "SUMMARY_FORM" => $resultSummary
+            /*----------------------------------********---------------------------------*/
         );
     }
 
