@@ -51762,5 +51762,5 @@ msgstr "versioning"
 # TRANSLATION
 # LABEL/ID_SELECT_VARIABLE
 #: LABEL/ID_SELECT_VARIABLE
-msgid "Select Variable"
-msgstr "Select Variable"
+msgid "Select Variable "
+msgstr "Select Variable "
