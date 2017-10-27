@@ -5815,7 +5815,7 @@ class Cases
                         $resultInputs = array_merge($resultInputs, $listInput);
 
                         //For Attachment
-                        $listAttchment = $objectPermission->objectPermissionByOutputInput(
+                        $listAttachment = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5823,7 +5823,7 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
-                        $resultAttachments = array_merge($resultAttachments, $listAttchment);
+                        $resultAttachments = array_merge($resultAttachments, $listAttachment);
 
                         $resultCaseNotes = 1;
                         /*----------------------------------********---------------------------------*/
@@ -5864,7 +5864,7 @@ class Cases
                         $resultInputs = array_merge($resultInputs, $listInput);
                         break;
                     case 'ATTACHMENT':
-                        $listAttchment = $objectPermission->objectPermissionByOutputInput(
+                        $listAttachment = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5872,7 +5872,7 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
-                        $resultAttachments = array_merge($resultAttachments, $listAttchment);
+                        $resultAttachments = array_merge($resultAttachments, $listAttachment);
                         break;
                     case 'OUTPUT':
                         $listOutput = $objectPermission->objectPermissionByOutputInput(
