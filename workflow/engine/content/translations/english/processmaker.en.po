@@ -1502,6 +1502,12 @@ msgid "Please select a .po file"
 msgstr "Please select a .po file"
 
 # TRANSLATION
+# LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
+#: LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
+msgid "Please complete the reassign reason."
+msgstr "Please complete the reassign reason."
+
+# TRANSLATION
 # LABEL/ID_EMAIL
 #: LABEL/ID_EMAIL
 msgid "Email"
@@ -2946,12 +2952,6 @@ msgstr "Process"
 #: LABEL/ID_REASSIGN_CASES
 msgid "Reassign Cases"
 msgstr "Reassign Cases"
-
-# TRANSLATION
-# LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
-#: LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
-msgid "Please complete the reassign reason."
-msgstr "Please complete the reassign reason."
 
 # TRANSLATION
 # LABEL/ID_ALERT_MESSAGE
