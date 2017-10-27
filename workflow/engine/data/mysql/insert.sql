@@ -1757,7 +1757,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_REASSIGN','en','Reassign','2014-01-15') ,
 ( 'LABEL','ID_REASON','en','Reason','2016-10-20') ,
 ( 'LABEL','ID_NOTIFY','en','Notify','2016-10-20') ,
-( 'JAVASCRIPT','ID_THE_REASON_REASSIGN_USER_EMPTY','en','Please complete the reassign reason.','2016-10-20') ,
+( 'LABEL','ID_THE_REASON_REASSIGN_USER_EMPTY','en','Please complete the reassign reason.','2016-10-20') ,
 ( 'LABEL','ID_PRIORITY_VH','en','VERY HIGH','2014-01-15') ,
 ( 'LABEL','ID_GROUPS','en','Groups','2014-01-15') ,
 ( 'LABEL','ID_CONFIRM_DELETE_CASE','en','Are you sure you want to delete this case?','2014-01-15') ,

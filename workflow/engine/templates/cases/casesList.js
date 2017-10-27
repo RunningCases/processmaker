@@ -1516,7 +1516,7 @@ Ext.onReady ( function() {
 
         if( rowSelected ) {
             if (Ext.getCmp('idTextareaReasonCasesList').getValue() === '') {
-                Ext.Msg.alert(_('ID_ALERT'), _('ID_CAN_NOT_BE_EMPTY', _('ID_REASON_REASSIGN')));
+                Ext.Msg.alert(_('ID_ALERT'), _('ID_THE_REASON_REASSIGN_USER_EMPTY'));
                 return;
             }
             PMExt.confirm(_('ID_CONFIRM'), _('ID_REASSIGN_CONFIRM'), function(){
