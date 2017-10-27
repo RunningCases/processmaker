@@ -108,8 +108,6 @@ if ($actionAjax == 'messageHistoryGridList_JXP') {
 
     $aProcesses = array_splice($aProcesses, $_REQUEST['start'], $_REQUEST['limit']);
 
-    $newDir = '/tmp/test/directory';
-    G::verifyPath( $newDir );
     $r = new stdclass();
     $r->data = $aProcesses;
     $r->totalCount = $totalCount;

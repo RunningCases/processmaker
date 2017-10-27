@@ -48,8 +48,6 @@ if ($actionAjax == 'historyGridList_JXP') {
         $aProcesses[] = $result;
     }
 
-    $newDir = '/tmp/test/directory';
-    G::verifyPath($newDir);
     $r = new stdclass();
     $r->data = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($aProcesses);
     $r->totalCount = $totalCount;
