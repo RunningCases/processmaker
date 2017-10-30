@@ -5696,7 +5696,7 @@
             <parameter name="Collation" value="utf8_general_ci"/>
             <parameter name="Checksum" value=""/>
             <parameter name="Create_options" value=""/>
-            <parameter name="Comment" value="Registry of plugins details"/>
+            <parameter name="Comment" value="Details of plugins registry"/>
         </vendor>
         <!--PluginDetails-->
         <column name="PR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
