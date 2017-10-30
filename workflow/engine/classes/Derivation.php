@@ -1770,6 +1770,10 @@ class Derivation
                 $dataEmail['applicationUid'] = $appFields['APP_UID'];
                 $dataEmail['delIndex'] = $iNewDelIndex;
                 array_push($taskData, $nextDel);
+                //Load the TAS_ID
+                if (isset($nextDel['TAS_ID'])) {
+                    $appFields['APP_DATA']['TAS_ID'] = $nextDel['TAS_ID'];
+                }
                 $this->case->sendMessage($dataEmail, $appFields['APP_DATA'], $taskData);
             }
             return true;

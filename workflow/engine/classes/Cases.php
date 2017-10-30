@@ -5498,19 +5498,23 @@ class Cases
             $arrayApplicationData = $this->loadCase($applicationUid);
             $arrayData['APP_NUMBER'] = $arrayApplicationData['APP_NUMBER'];
 
-            $oTask = new Task();
-            $aTaskInfo = $oTask->load($taskUid);
+            $task = new Task();
+            $taskInfo = $task->load($taskUid);
 
-            if ($aTaskInfo['TAS_SEND_LAST_EMAIL'] == 'TRUE') {
-                $dataLastEmail = $this->loadDataSendEmail($aTaskInfo, $arrayData, $from, 'LAST');
+            if ($taskInfo['TAS_SEND_LAST_EMAIL'] == 'TRUE') {
+                $dataLastEmail = $this->loadDataSendEmail($taskInfo, $arrayData, $from, 'LAST');
                 $dataLastEmail['applicationUid'] = $applicationUid;
                 $dataLastEmail['delIndex'] = $delIndex;
+                //Load the TAS_ID
+                if (isset($taskInfo['TAS_ID'])) {
+                    $arrayData['TAS_ID'] = $taskInfo['TAS_ID'];
+                }
                 $this->sendMessage($dataLastEmail, $arrayData, $arrayTask);
             } else {
                 return false;
             }
-        } catch (Exception $oException) {
-            throw $oException;
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 
