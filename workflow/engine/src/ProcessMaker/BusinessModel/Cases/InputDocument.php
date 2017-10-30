@@ -1140,4 +1140,42 @@ class InputDocument
             throw $e;
         }
     }
+
+    /**
+     * This function get all the supervisor's documents
+     * When the DEL_INDEX = 100000
+     *
+     * @param string $proUid, uid related to the process
+     * @param string $appUid, uid related to the case
+     * @param array $docType, can be INPUT, ATTACHED, OUTPUT
+     * @param array $docStatus, can be ACTIVE, DELETED
+     *
+     * @return array $documents
+     * @throws Exception
+    */
+    public function getSupervisorDocuments($proUid, $appUid, $docType = ['INPUT'], $docStatus = ['ACTIVE'])
+    {
+        try {
+            $criteria = new Criteria('workflow');
+            $criteria->add(AppDocumentPeer::APP_UID, $appUid);
+            $criteria->add(AppDocumentPeer::APP_DOC_TYPE, $docType, Criteria::IN);
+            $criteria->add(AppDocumentPeer::APP_DOC_STATUS, $docStatus, Criteria::IN);
+            $criteria->add(AppDocumentPeer::DEL_INDEX, 100000);
+            $criteria->add(ApplicationPeer::PRO_UID, $proUid);
+            $criteria->addJoin(AppDocumentPeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
+            $dataset = AppDocumentPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $documents = [];
+            while ($row = $dataset->getRow()) {
+                $documents[] = $row;
+                $dataset->next();
+            }
+
+            return $documents;
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+    }
 }
