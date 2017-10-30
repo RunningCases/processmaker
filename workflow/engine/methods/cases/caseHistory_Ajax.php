@@ -112,6 +112,4 @@ switch ($actionAjax) {
 
         echo G::json_encode($result);
         break;
-    default:
-        break;
 }

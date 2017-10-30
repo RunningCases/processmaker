@@ -34,7 +34,7 @@ switch ($actionAjax) {
         $appMessageArray = $case->getHistoryMessagesTrackerExt($_SESSION['APPLICATION'], true, $_REQUEST['start'], $_REQUEST['limit']);
         $appMessageCountArray = $case->getHistoryMessagesTrackerExt($_SESSION['APPLICATION'], true);
         $result = new stdClass();
-        $aProcesses = array();
+        $process = [];
 
 
         $proUid = $_SESSION['PROCESS'];
@@ -78,18 +78,18 @@ switch ($actionAjax) {
                 if ($respMess === 'BLOCK' || $respMess === '') {
                     $appMessageArray[$index]['APP_MSG_BODY'] = '';
                 }
-                $aProcesses[] = array_merge($appMessageArray[$index], ['MSGS_HISTORY' => $respMess]);
+                $process[] = array_merge($appMessageArray[$index], ['MSGS_HISTORY' => $respMess]);
                 $totalCount++;
             }
         }
 
-        $aProcesses = array_splice($aProcesses, $_REQUEST['start'], $_REQUEST['limit']);
+        $process = array_splice($process, $_REQUEST['start'], $_REQUEST['limit']);
 
         $response = new stdclass();
-        $response->data = $aProcesses;
+        $response->data = $process;
         $response->totalCount = $totalCount;
 
-        if (!empty($aProcesses)) {
+        if (!empty($process)) {
             if (!isset($response->data[0])) {
                 $response->data[0] = array('APP_MSG_TYPE' => '');
             }
@@ -147,7 +147,7 @@ switch ($actionAjax) {
         <script language="javascript">
             <?php
             global $G_FORM; ?>
-            function loadForm_ <?php echo $G_FORM->id; ?>(parametro1) {
+            function loadForm_ <?php echo $G_FORM->id; ?>(parameter) {
             }
         </script>
         <?php
@@ -189,7 +189,5 @@ switch ($actionAjax) {
         }
 
         echo $message;
-        break;
-    default:
         break;
 }
