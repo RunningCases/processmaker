@@ -15,17 +15,26 @@ use ProcessMaker\BusinessModel\Cases\InputDocument;
 
 class ObjectPermission extends BaseObjectPermission
 {
-    public function load ($UID)
+    /**
+     * Get the fields related to the user uid
+     *
+     * @param string $usrUid
+     *
+     * @return array
+     * @throws Exception
+    */
+    public function load($usrUid)
     {
         try {
-            $oRow = ObjectPermissionPeer::retrieveByPK( $UID );
-            if (! is_null( $oRow )) {
-                $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
-                $this->fromArray( $aFields, BasePeer::TYPE_FIELDNAME );
-                $this->setNew( false );
-                return $aFields;
+            $row = ObjectPermissionPeer::retrieveByPK($usrUid);
+            if (!is_null($row)) {
+                $fields = $row->toArray(BasePeer::TYPE_FIELDNAME);
+                $this->fromArray($fields, BasePeer::TYPE_FIELDNAME);
+                $this->setNew(false);
+
+                return $fields;
             } else {
-                throw (new Exception( "The row '" . $UsrUid . "' in table USER doesn't exist!" ));
+                throw (new Exception("The row '" . $usrUid . "' in table USER doesn't exist!"));
             }
         } catch (Exception $oError) {
             throw ($oError);
@@ -362,47 +371,47 @@ class ObjectPermission extends BaseObjectPermission
      */
     public function objectPermissionByOutputInput ($appUid, $proUid, $opTaskSource, $obType = 'OUTPUT', $opObjUid = '', $statusCase = '')
     {
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
-        $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
+        $criteria = new Criteria('workflow');
+        $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
+        $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
         $arrayCondition = array();
         $arrayCondition[] = array(AppDelegationPeer::APP_UID, AppDocumentPeer::APP_UID, Criteria::EQUAL);
         $arrayCondition[] = array(AppDelegationPeer::DEL_INDEX, AppDocumentPeer::DEL_INDEX, Criteria::EQUAL);
-        $oCriteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
-        $oCriteria->add(AppDelegationPeer::APP_UID, $appUid);
-        $oCriteria->add(AppDelegationPeer::PRO_UID, $proUid);
+        $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+        $criteria->add(AppDelegationPeer::APP_UID, $appUid);
+        $criteria->add(AppDelegationPeer::PRO_UID, $proUid);
 
         if ($statusCase != 'COMPLETED' && $opTaskSource != '' && (int)$opTaskSource != 0) {
-            $oCriteria->add(AppDelegationPeer::TAS_UID, $opTaskSource);
+            $criteria->add(AppDelegationPeer::TAS_UID, $opTaskSource);
         }
         if ($opObjUid != '' && $opObjUid != '0') {
-            $oCriteria->add(AppDocumentPeer::DOC_UID, $opObjUid);
+            $criteria->add(AppDocumentPeer::DOC_UID, $opObjUid);
         }
 
         $supervisorDocuments = [];
         switch ($obType) {
             case 'INPUT':
-                $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'INPUT');
+                $criteria->add(AppDocumentPeer::APP_DOC_TYPE, 'INPUT');
                 //We will to get the supervisor's documents with index = 100000
                 $inputDocument = new InputDocument();
-                $supervisorDocuments = $inputDocument->getSupervisorDocuments($proUid, $appUid);
+                $supervisorDocuments = $inputDocument->getSupervisorDocuments($appUid);
                 break;
             case 'ATTACHED':
-                $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED');
+                $criteria->add(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED');
                 break;
             case 'OUTPUT':
-                $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'OUTPUT');
+                $criteria->add(AppDocumentPeer::APP_DOC_TYPE, 'OUTPUT');
                 break;
         }
 
-        $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset = AppDelegationPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-        $result = array();
-        while ($oDataset->next()) {
-            $aRow = $oDataset->getRow();
-            if (!in_array($aRow['APP_DOC_UID'], $result)) {
-                array_push($result, $aRow['APP_DOC_UID']);
+        $result = [];
+        while ($dataset->next()) {
+            $row = $dataset->getRow();
+            if (!in_array($row['APP_DOC_UID'], $result)) {
+                array_push($result, $row['APP_DOC_UID']);
             }
         }
 
