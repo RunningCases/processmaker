@@ -51758,3 +51758,10 @@ msgstr "Flow"
 #: LABEL/ID_MAFE_f775fa07e143b2e671946a48af8f42ca
 msgid "versioning"
 msgstr "versioning"
+
+# TRANSLATION
+# LABEL/ID_SELECT_VARIABLE
+#: LABEL/ID_SELECT_VARIABLE
+msgid "Select Variable"
+msgstr "Select Variable"
+
