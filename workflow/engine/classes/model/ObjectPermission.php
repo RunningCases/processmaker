@@ -1,13 +1,5 @@
 <?php
 /**
- * ObjectPermission.php
- *
- * @package workflow.engine.classes.model
- */
-
-//require_once 'classes/model/om/BaseObjectPermission.php';
-
-/**
  * Skeleton subclass for representing a row from the 'OBJECT_PERMISSION' table.
  *
  *
@@ -18,6 +10,9 @@
  *
  * @package workflow.engine.classes.model
  */
+
+use ProcessMaker\BusinessModel\Cases\InputDocument;
+
 class ObjectPermission extends BaseObjectPermission
 {
     public function load ($UID)
@@ -383,9 +378,14 @@ class ObjectPermission extends BaseObjectPermission
         if ($opObjUid != '' && $opObjUid != '0') {
             $oCriteria->add(AppDocumentPeer::DOC_UID, $opObjUid);
         }
+
+        $supervisorDocuments = [];
         switch ($obType) {
             case 'INPUT':
                 $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'INPUT');
+                //We will to get the supervisor's documents with index = 100000
+                $inputDocument = new InputDocument();
+                $supervisorDocuments = $inputDocument->getSupervisorDocuments($proUid, $appUid);
                 break;
             case 'ATTACHED':
                 $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED');
@@ -405,6 +405,14 @@ class ObjectPermission extends BaseObjectPermission
                 array_push($result, $aRow['APP_DOC_UID']);
             }
         }
+
+        //We will to add the supervisor's documents in the result
+        foreach ($supervisorDocuments as $key => $value) {
+            if (!in_array($value['APP_DOC_UID'], $result)) {
+                array_push($result, $value['APP_DOC_UID']);
+            }
+        }
+
         return $result;
     }
 
