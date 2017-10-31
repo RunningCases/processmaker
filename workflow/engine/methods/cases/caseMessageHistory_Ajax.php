@@ -72,10 +72,10 @@ switch ($actionAjax) {
 
         $totalCount = 0;
         foreach ($appMessageArray as $index => $value) {
-            if (($appMessageArray[$index]['APP_MSG_SHOW_MESSAGE'] === 1 && $respMess !== 'BLOCK') &&
-                ($appMessageArray[$index]['DEL_INDEX'] === 0 || in_array($appMessageArray[$index]['DEL_INDEX'], $delIndex))) {
+            if (($appMessageArray[$index]['APP_MSG_SHOW_MESSAGE'] == 1 && $respMess != 'BLOCK') &&
+                ($appMessageArray[$index]['DEL_INDEX'] == 0 || in_array($appMessageArray[$index]['DEL_INDEX'], $delIndex))) {
                 $appMessageArray[$index]['ID_MESSAGE'] = $appMessageArray[$index]['APP_UID'] . '_' . $appMessageArray[$index]['APP_MSG_UID'];
-                if ($respMess === 'BLOCK' || $respMess === '') {
+                if ($respMess == 'BLOCK' || $respMess == '') {
                     $appMessageArray[$index]['APP_MSG_BODY'] = '';
                 }
                 $process[] = array_merge($appMessageArray[$index], ['MSGS_HISTORY' => $respMess]);
