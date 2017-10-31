@@ -1682,6 +1682,7 @@ function mapPMFieldType(id)
         case 'dropdown':
         case 'yesno':
         case 'checkbox':
+        case 'radio':
         case 'radiogroup':
         case 'hidden':
             typeField = 'VARCHAR';
