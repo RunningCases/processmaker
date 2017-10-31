@@ -856,7 +856,6 @@ class WorkspaceTools
 
         if (!$currentUserIsSuper) {
             $appCache->checkGrantsForUser(true);
-            $appCache->setSuperForUser($currentUser);
             $currentUserIsSuper = true;
         }
 

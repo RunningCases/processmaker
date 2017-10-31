@@ -35,7 +35,7 @@ $_REQUEST['sSymbol']= isset($_REQUEST["sSymbol"])?$_REQUEST["sSymbol"]:'';
 
 $_SERVER["QUERY_STRING"] = $filter->xssFilterHard($_SERVER["QUERY_STRING"]);
 
-$html = '<title>Upload Variable</title>';
+$html = '<title>' . G::LoadTranslation('ID_SELECT_VARIABLE') . '</title>';
 $html .= '<form action="uploader.php?'.$_SERVER["QUERY_STRING"].'&q=upload" onLoad="onLoad()" method="post" enctype="multipart/form-data" onsubmit="" style="height:0px;">';
 $html .= '<div id="d_variables">';
 $html .= '<table width="90%" align="center">';

@@ -1758,7 +1758,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_REASSIGN','en','Reassign','2014-01-15') ,
 ( 'LABEL','ID_REASON','en','Reason','2016-10-20') ,
 ( 'LABEL','ID_NOTIFY','en','Notify','2016-10-20') ,
-( 'JAVASCRIPT','ID_THE_REASON_REASSIGN_USER_EMPTY','en','Please complete the reassign reason.','2016-10-20') ,
+( 'LABEL','ID_THE_REASON_REASSIGN_USER_EMPTY','en','Please complete the reassign reason.','2016-10-20') ,
 ( 'LABEL','ID_PRIORITY_VH','en','VERY HIGH','2014-01-15') ,
 ( 'LABEL','ID_GROUPS','en','Groups','2014-01-15') ,
 ( 'LABEL','ID_CONFIRM_DELETE_CASE','en','Are you sure you want to delete this case?','2014-01-15') ,
@@ -6285,7 +6285,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_e6fe2cb291ace4c56d3f9481b3b963af','en','Select a language','2017-10-25') ,
 ( 'LABEL','ID_MAFE_e9cb217697088a98b1937d111d936281','en','Attachment','2017-10-25') ,
 ( 'LABEL','ID_MAFE_f1a76f66cca677c6e628d9ca58a6c8fc','en','Flow','2017-10-25') ,
-( 'LABEL','ID_MAFE_f775fa07e143b2e671946a48af8f42ca','en','versioning','2017-10-25') ;
+( 'LABEL','ID_MAFE_f775fa07e143b2e671946a48af8f42ca','en','versioning','2017-10-25'),
+( 'LABEL','ID_SELECT_VARIABLE','en','Select Variable','2017-10-27');
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
