@@ -7270,11 +7270,13 @@ class Cases
 
     /**
      * Inserts int the ListInbox of the user $targetUserId case whose data is in the variable $caseDataRow
+     *
      * @param array $caseDataRow, assoc. array with the data of the case
      * @param int $targetUserId, id of the user that will have the case.
+     *
      * @return void
      */
-    private function putCaseInInboxList($caseDataRow, $targetUserId)
+    private function putCaseInInboxList(array $caseDataRow, $targetUserId)
     {
         $listInbox = new ListInbox();
         $caseDataRow["USR_UID"] = $targetUserId;
