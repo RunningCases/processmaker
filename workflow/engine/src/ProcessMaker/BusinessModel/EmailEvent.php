@@ -472,8 +472,7 @@ class EmailEvent
             if (!empty($emailTo)) {
                 $subject = $arrayData[5];
                 $subject = \G::replaceDataField($arrayData[5], $arrayApplicationData['APP_DATA']);
-                $emailFrom = \G::buildFrom($configEmailData);
-                \PMFSendMessage($appUID, $emailFrom, $emailTo, '', '', $subject,
+                \PMFSendMessage($appUID, \G::buildFrom($configEmailData), $emailTo, '', '', $subject,
                     $contentFile['prf_filename'], array(), array(), true, 0, $configEmailData);
             } else {
                 \Bootstrap::registerMonolog('EmailEventMailError', 200, \G::LoadTranslation('ID_EMAIL_EVENT_CONFIGURATION_EMAIL', array($eventUid, $prj_uid)), ['eventUid' => $eventUid, 'prj_uid' => $prj_uid], config("system.workspace"), 'processmaker.log');
