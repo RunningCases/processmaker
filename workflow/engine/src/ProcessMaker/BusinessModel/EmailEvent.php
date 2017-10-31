@@ -472,7 +472,7 @@ class EmailEvent
             if (!empty($emailTo)) {
                 $subject = $arrayData[5];
                 $subject = \G::replaceDataField($arrayData[5], $arrayApplicationData['APP_DATA']);
-                $emailFrom = ($configEmailData["MESS_FROM_NAME"] . ' <' . $configEmailData["MESS_FROM_MAIL"] . '>');
+                $emailFrom = \G::buildFrom($configEmailData);
                 \PMFSendMessage($appUID, $emailFrom, $emailTo, '', '', $subject,
                     $contentFile['prf_filename'], array(), array(), true, 0, $configEmailData);
             } else {
