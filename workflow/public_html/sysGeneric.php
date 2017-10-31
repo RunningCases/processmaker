@@ -519,6 +519,12 @@ $oHeadPublisher = & headPublisher::getSingleton();
 if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     // new installer, extjs based
     define( 'PATH_DATA', PATH_C );
+    
+    //important to start laravel classes
+    app()->useStoragePath(realpath(PATH_DATA));
+    app()->make(Kernel::class)->bootstrap();
+    restore_error_handler();
+
     //NewRelic Snippet - By JHL
     transactionLog(PATH_CONTROLLERS.'installer.php');
     $pathFile = PATH_CONTROLLERS . 'installer.php';
