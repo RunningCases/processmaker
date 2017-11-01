@@ -1696,7 +1696,7 @@ class Cases
                             }
                             foreach ($appData as $key => $val) {
                                 if (in_array($key, $field, true) != false) {
-                                    $caseVariable[$key] = $appData[$key];
+                                    $caseVariable[$key] = $this->getFieldValue($field, $appData[$key]);
                                     if (isset($appData[$key . '_label'])) {
                                         $caseVariable[$key . '_label'] = $appData[$key . '_label'];
                                     }
@@ -1714,6 +1714,23 @@ class Cases
             return $caseVariable;
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Return the field value to be used in the front-end client.
+     *
+     * @param type $field
+     * @param type $value
+     * @return type
+     */
+    private function getFieldValue($field, $value)
+    {
+        switch ($field['type']) {
+            case 'file':
+                return $field['data']['app_doc_uid'];
+            default:
+                return $value;
         }
     }
 
