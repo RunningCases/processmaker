@@ -69,7 +69,7 @@ class PluginsRegistryMapBuilder
 
         $tMap->addColumn('PLUGIN_NAMESPACE', 'PluginNamespace', 'string', CreoleTypes::VARCHAR, true, 100);
 
-        $tMap->addColumn('PLUGIN_DESCRIPTION', 'PluginDescription', 'string', CreoleTypes::VARCHAR, false, 200);
+        $tMap->addColumn('PLUGIN_DESCRIPTION', 'PluginDescription', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
         $tMap->addColumn('PLUGIN_CLASS_NAME', 'PluginClassName', 'string', CreoleTypes::VARCHAR, true, 100);
 
