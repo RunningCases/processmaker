@@ -181,6 +181,10 @@ class RBAC
                 'DEL' => ['PM_SETUP'],
                 'LST' => ['PM_SETUP'],
                 'TEST' => ['PM_SETUP']
+            ],
+            'processes_GetFile.php' => [
+                'mailTemplates' => ['PM_FACTORY'],
+                'public' => ['PM_FACTORY']
             ]
         ];
         $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
