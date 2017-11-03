@@ -45,7 +45,7 @@ class FileHandler
     {
         $workflowFile = array();
         $workspaceTargetDir = ($target === 'PUBLIC') ? 'public' : 'mailTemplates';
-        $workspaceDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP;
+        $workspaceDir = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP;
 
         $templatesDir = $workspaceDir . $workspaceTargetDir . PATH_SEP . $prj_uid;
         $templatesFiles = Util\Common::rglob("$templatesDir/*", 0, true);

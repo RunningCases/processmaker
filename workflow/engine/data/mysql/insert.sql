@@ -45,6 +45,7 @@ INSERT INTO CONTENT (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG,CON_VALUE) VALUES
 ('PER_NAME','','00000000000000000000000000000036','en','Delete process cases'),
 ('PER_NAME','','00000000000000000000000000000037','en','Edit personal info Calendar'),
 ('PER_NAME','','00000000000000000000000000000038','en','Undo cancel case'),
+('PER_NAME','','00000000000000000000000000000039','en','Register External Applications'),
 ('PER_NAME','','00000000000000000000000000000040','en','Edit User profile First Name'),
 ('PER_NAME','','00000000000000000000000000000041','en','Edit User profile Last Name'),
 ('PER_NAME','','00000000000000000000000000000042','en','Edit User profile Username'),
@@ -1731,7 +1732,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'JAVASCRIPT','ID_DBS_NEW','en','Add new Database Source','2014-01-15') ,
 ( 'JAVASCRIPT','ID_DBS_LIST','en','Databases Source List','2014-01-15') ,
 ( 'LABEL','ID_CHANGES_SAVED','en','Changes saved','2014-01-15') ,
-( 'LABEL','ID_EMAILS','en','EMAILS','2014-01-15') ,
+( 'LABEL','ID_EMAILS','en','Emails','2017-10-18') ,
 ( 'LABEL','ID_REPORT2','en','Number of cases per process','2014-01-15') ,
 ( 'LABEL','ID_REPORT1','en','Case duration by process and task','2014-01-15') ,
 ( 'LABEL','ID_IUD','en','#','2014-01-15') ,
@@ -2347,7 +2348,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'JAVASCRIPT','ID_EXIST_INPUTDOCUMENT','en','Can not save, because there is an Input Document with the same name in this process.','2014-01-15') ,
 ( 'JAVASCRIPT','ID_EXIST_OUTPUTDOCUMENT','en','Can not save, because, there is an Output Document with the same name in this process.','2014-01-15') ,
 ( 'LABEL','ID_CASE_SCHEDULER_VALIDATE_ALERT','en','User or password is empty.','2014-10-21') ,
-( 'LABEL','ID_DELEGATE_DATE_FROM','en','Delegated date from','2014-01-15') ,
+( 'LABEL','ID_DELEGATE_DATE_FROM','en','Date from','2017-10-18') ,
 ( 'JAVASCRIPT','ID_DUPLICATE_CATEGORY_NAME','en','Duplicate category name.','2014-01-15') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
@@ -2607,7 +2608,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_FIRSTNAME','en','First Name','2014-01-15') ,
 ( 'LABEL','ID_LASTNAME','en','Last Name','2014-01-15') ,
 ( 'LABEL','ID_REASSIGNMENT_SUCCESS','en','Case #{APP_NUMBER} was reassigned to user {USER}.','2014-01-15') ,
-( 'LABEL','ID_REASSIGN_CONFIRM','en','Are you sure to reassign the current case?','2014-01-15') ,
+( 'LABEL','ID_REASSIGN_CONFIRM','en','Do you want to reassign the case?','2017-10-18') ,
 ( 'LABEL','ID_CASE_PAUSED_SUCCESSFULLY','en','The Case {APP_NUMBER} was paused successfully and it will be unpaused on date {UNPAUSE_DATE}','2014-01-15') ,
 ( 'LABEL','ID_VACATION','en','Vacation','2014-01-15') ,
 ( 'JAVASCRIPT','ID_DB_CONNECTION_ASSIGN','en','You cannot delete this database connection. It is assigned to a step.','2014-01-15') ,
@@ -3227,7 +3228,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TABLES_TO_EXPORT','en','Tables To Export','2014-01-15') ,
 ( 'LABEL','ID_PMTABLES_NOTICE_EXPORT','en','From each table select at least one Schema/Data to export.','2014-10-21') ,
 ( 'LABEL','ID_CONFIRM_DELETE_SKIN','en','Do you want to delete the selected skin?','2017-04-21') ,
-( 'LABEL','ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION','en','A note has been added to the case.','2014-10-21') ,
+( 'LABEL','ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION','en','A note has been added to the case','2017-10-18') ,
 ( 'LABEL','ID_MSG_CANNOT_EXPORT_DEFAULT_SKIN','en','Default skin can''t be exported. Instead create new one based on default','2014-01-15') ,
 ( 'LABEL','ID_MSG_CANNOT_EXPORT_SKIN','en','Can''t export skin. Server Error','2014-01-15') ,
 ( 'LABEL','ID_NEW_SKIN','en','New Skin','2014-01-15') ,
@@ -3868,6 +3869,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EVENT_DESCRIPTION','en','Event Description','2014-01-15') ,
 ( 'LABEL','ID_EVENT_ACTION','en','Event Type','2014-01-15') ,
 ( 'LABEL','ID_EVENTS','en','Events','2014-01-15') ,
+( 'LABEL','ID_EVENTS_CLASSIC','en','Events (classic processes)','2017-13-10') ,
+( 'LABEL','ID_CASE_SCHEDULER_CLASSIC','en','Case Scheduler (classic processes)','2017-13-10') ,
+( 'LABEL','ID_PROCESS_IS_REQUIRED','en','Process field is required','2017-13-10') ,
 ( 'LABEL','ID_EVENT_LIST','en','Log of events','2014-01-15') ,
 ( 'LABEL','ID_EMPTY_TYPE','en','Select a Type','2014-01-15') ,
 ( 'LABEL','ID_GRID_PAGE_NO_EVENT_MESSAGE','en','No Events to display','2014-01-15') ,
@@ -4625,7 +4629,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DASH_COMPARE_MONTH','en','Compare this month with','2015-05-26') ,
 ( 'LABEL','ID_DASH_COMPARE','en','Compare','2015-03-18') ,
 ( 'LABEL','ID_DASH_CLICK_TO_VIEW','en','You can click on one of the dashboards to view the data or click on the favorite icon to make it your main dashboard.','2015-03-18') ,
-( 'LABEL','ID_SET_NO_MANAGER','en','No set Manager','2015-03-18') ,
+( 'LABEL','ID_SET_NO_MANAGER','en','Unassign Manager','2017-10-18') ,
 ( 'LABEL','ID_NO_SET_MANAGER_SUCCES','en','Manager unassigned correctly','2015-03-18') ,
 ( 'LABEL','ID_INDICATOR_PROCESS_REQUIRED','en','The field Process of indicator "{0}" is required.','2015-03-18') ,
 ( 'LABEL','ID_INDICATOR_TITLE_REQUIRED','en','The field Title of indicator "{0}" is required.','2015-03-18') ,
@@ -4662,7 +4666,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UNTITLED_TASK','en','Untitled task','2015-04-01') ,
 ( 'LABEL','ID_GOAL_HELP','en','(Goal value)','2015-04-06') ,
 ( 'LABEL','ID_PLEASE_ENTER_CREDENTIALS','en','Please enter your credentials below','2015-04-09') ,
-( 'LABEL','ID_ERROR_EMAIL','en','Error email','2015-04-20') ,
+( 'LABEL','ID_ERROR_EMAIL','en','Error','2017-10-18') ,
 ( 'LABEL','ID_AVAILABLE_DATABASE','en','Available.','2015-04-21') ,
 ( 'LABEL','ID_NOT_AVAILABLE_DATABASE','en','Not available.','2015-04-21') ,
 ( 'LABEL','ID_WRONG_USER_PASS','en','Wrong username or password.','2015-04-22') ,
@@ -6125,7 +6129,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_YOU_DO_NOT_HAVE_PERMISSION','en','Error: You do not have permission.','2016-06-15') ,
 ( 'LABEL','ID_THE_APPLICATION_IS_NOT_CANCELED','en','Error: The application {0} is not canceled.','2016-06-15') ,
 ( 'LABEL','ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION','en','Error: Thread status does not exist for the application {0}.','2016-06-15') ,
-( 'LABEL','ID_NO_PREVIOUS_USR_UID','en','The previuos task doesn''t have any users.','2016-06-17') ,
+( 'LABEL','ID_NO_PREVIOUS_USR_UID','en','The previous task doesn''t have any users.','2017-10-18') ,
 ( 'LABEL','ID_WARNING_GATEWAY_CONVERGENT_WITH_CONDITION','en','Your Gateway Convergent has a condition, save again your process.','2016-06-23') ,
 ( 'LABEL','ID_RT_RENAME_NAME_TABLE','en','All references to the previous table name are going to be invalid. Do you really want to change the table name?','2016-06-29') ,
 ( 'LABEL','ID_RT_CONTINUE_TABLE_RENAME','en','Continue renaming the table','2016-06-30') ;
@@ -6186,7 +6190,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_ROUTED_TO','en','Case routed to','2017-06-02'),
 ( 'LABEL','ID_IMPORTED','en','IMPORTED','2017-10-03'),
 ( 'LABEL','ID_NOT_IMPORTED','en','NOT IMPORTED','2017-10-03'),
-( 'LABEL','ID_CANNOT_IMPORT','en','CANNOT IMPORT','2017-10-03');
+( 'LABEL','ID_CANNOT_IMPORT','en','CANNOT IMPORT','2017-10-03'),
+( 'LABEL','ID_SELECT_USER_OR_GROUP','en','Please select the name of a user or a group in the Group or User field','2017-10-19');
 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
@@ -6280,7 +6285,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_e6fe2cb291ace4c56d3f9481b3b963af','en','Select a language','2017-10-25') ,
 ( 'LABEL','ID_MAFE_e9cb217697088a98b1937d111d936281','en','Attachment','2017-10-25') ,
 ( 'LABEL','ID_MAFE_f1a76f66cca677c6e628d9ca58a6c8fc','en','Flow','2017-10-25') ,
-( 'LABEL','ID_MAFE_f775fa07e143b2e671946a48af8f42ca','en','versioning','2017-10-25') ;
+( 'LABEL','ID_MAFE_f775fa07e143b2e671946a48af8f42ca','en','versioning','2017-10-25'),
+( 'LABEL','ID_SELECT_VARIABLE','en','Select Variable','2017-10-27');
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
@@ -61655,7 +61661,8 @@ INSERT INTO CONFIGURATION (CFG_UID,OBJ_UID,CFG_VALUE,PRO_UID,USR_UID,APP_UID) VA
 ('MIGRATED_LIST','list','true','list','list','list'),
 ('MIGRATED_LIST_UNASSIGNED','list','true','list','list','list'),
 ('SKIN_CRON','','s:10:"neoclassic";','','',''),
-('AUDIT_LOG','log','s:5:"false";','','','');
+('AUDIT_LOG','log','s:5:"false";','','',''),
+('MIGRATED_CONTENT', 'content', 'a:12:{i:0;s:7:"Groupwf";i:1;s:7:"Process";i:2;s:10:"Department";i:3;s:4:"Task";i:4;s:13:"InputDocument";i:5;s:11:"Application";i:6;s:11:"AppDocument";i:7;s:8:"Dynaform";i:8;s:14:"OutputDocument";i:9;s:11:"ReportTable";i:10;s:8:"Triggers";i:11;s:41:"\\ProcessMaker\\BusinessModel\\WebEntryEvent";}', '', '', '');
 
 INSERT INTO CATALOG (CAT_UID, CAT_LABEL_ID, CAT_TYPE, CAT_FLAG, CAT_OBSERVATION, CAT_CREATE_DATE, CAT_UPDATE_DATE) VALUES
 ('10','ID_BARS','GRAPHIC','','','2015-03-04','2015-03-04'),

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'classes/model/om/BaseListInbox.php';
+use ProcessMaker\BusinessModel\Cases as BmCases;
 
 /**
  * Skeleton subclass for representing a row from the 'LIST_INBOX' table.
@@ -13,17 +14,60 @@ require_once 'classes/model/om/BaseListInbox.php';
  *
  * @package    classes.model
  */
-// @codingStandardsIgnoreStart
+
 class ListInbox extends BaseListInbox
 {
     private $additionalClassName = '';
+    private $userDisplayFormat = '';
+
+    /**
+     * Get the $additionalClassName value.
+     *
+     * @return string
+     */
+    public function getAdditionalClassName()
+    {
+        return $this->additionalClassName;
+    }
+
+    /**
+     * Set the value of $additionalClassName.
+     *
+     * @param string $v new value
+     * @return void
+     */
+    public function setAdditionalClassName($v)
+    {
+        $this->additionalClassName = $v;
+    }
+
+    /**
+     * Get the $userDisplayFormat value.
+     *
+     * @return string
+     */
+    public function getUserDisplayFormat()
+    {
+        return $this->userDisplayFormat;
+    }
+
+    /**
+     * Set the value of $userDisplayFormat.
+     *
+     * @param string $v new value
+     * @return void
+     */
+    public function setUserDisplayFormat($v)
+    {
+        $this->userDisplayFormat = $v;
+    }
 
     /**
      * Create List Inbox Table
      *
      * @param type $data
      * @return type
-     *
+     * @throws Exception
      */
     public function create($data, $isSelfService = false)
     {
@@ -115,7 +159,7 @@ class ListInbox extends BaseListInbox
      *
      * @param type $data
      * @return type
-     * @throws type
+     * @throws Exception
      */
     public function update($data, $isSelfService = false)
     {
@@ -209,7 +253,7 @@ class ListInbox extends BaseListInbox
      *
      * @param type $seqName
      * @return type
-     * @throws type
+     * @throws Exception
      *
      */
     public function remove($app_uid, $del_index)
@@ -233,7 +277,7 @@ class ListInbox extends BaseListInbox
      *
      * @param type $seqName
      * @return type
-     * @throws type
+     * @throws Exception
      *
      */
     public function removeAll($app_uid)
@@ -478,8 +522,14 @@ class ListInbox extends BaseListInbox
                 $criteria->add(ListInboxPeer::APP_UID, $search, Criteria::EQUAL);
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
-                $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList = new BmCases();
+                $casesList->getSearchCriteriaListCases(
+                    $criteria,
+                    __CLASS__ . 'Peer',
+                    $search,
+                    $this->getAdditionalClassName(),
+                    $additionalColumns
+                );
             }
         }
 
@@ -515,7 +565,7 @@ class ListInbox extends BaseListInbox
      * This function get the information in the corresponding cases list
      * @param string $usr_uid, must be show cases related to this user
      * @param array $filters for apply in the result
-     * @param null $callbackRecord
+     * @param callable $callbackRecord
      * @return array $data
      * @throws PropelException
      */
@@ -524,7 +574,7 @@ class ListInbox extends BaseListInbox
         $pmTable = new PmTable();
         $list = isset($filters['action']) ? $filters['action'] : "";
         $criteria = $pmTable->addPMFieldsToList($list);
-        $this->additionalClassName = $pmTable->tableClassName;
+        $this->setAdditionalClassName($pmTable->tableClassName);
         $additionalColumns = $criteria->getSelectColumns();
         $filters['usr_uid'] = $usr_uid;
 
@@ -556,14 +606,16 @@ class ListInbox extends BaseListInbox
         self::loadFilters($criteria, $filters, $additionalColumns);
 
         //We will be defined the sort
-        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $casesList = new BmCases();
+
         $sort = $casesList->getSortColumn(
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "APP_UPDATE_DATE" : $filters['sort'],
             "APP_UPDATE_DATE",
-            $this->additionalClassName,
-            $additionalColumns
+            $this->getAdditionalClassName(),
+            $additionalColumns,
+            $this->getUserDisplayFormat()
         );
 
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
@@ -571,10 +623,20 @@ class ListInbox extends BaseListInbox
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
 
-        if ($dir == "DESC") {
-            $criteria->addDescendingOrderByColumn($sort);
+        if (is_array($sort) && count($sort) > 0) {
+            foreach ($sort as $key) {
+                if ($dir == 'DESC') {
+                    $criteria->addDescendingOrderByColumn($key);
+                } else {
+                    $criteria->addAscendingOrderByColumn($key);
+                }
+            }
         } else {
-            $criteria->addAscendingOrderByColumn($sort);
+            if ($dir == 'DESC') {
+                $criteria->addDescendingOrderByColumn($sort);
+            } else {
+                $criteria->addAscendingOrderByColumn($sort);
+            }
         }
 
         if ($paged == 1) {
@@ -645,10 +707,9 @@ class ListInbox extends BaseListInbox
         $filters['usr_uid'] = $usrUid;
         $criteria = new Criteria();
         $criteria->addSelectColumn('COUNT(*) AS TOTAL');
-        $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        if (count($filters)) {
-            self::loadFilters($criteria, $filters);
-        }
+
+        //The function loadFilters will add some condition in the query
+        $this->loadFilters($criteria, $filters);
         $dataset = ListInboxPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();

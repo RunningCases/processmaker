@@ -239,7 +239,7 @@ function literalDate ($date, $lang = 'en')
  */
 function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter = array())
 {
-    $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+    $sysSys = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined";
     $aContext = \Bootstrap::getDefaultContextLog();
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
@@ -537,7 +537,7 @@ function WSOpen ($force = false)
         );
 
         if (! isset( $_SESSION["WS_END_POINT"] )) {
-            $defaultEndpoint = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/sys" . SYS_SYS . "/en/classic/services/wsdl2";
+            $defaultEndpoint = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/sys" . config("system.workspace") . "/en/classic/services/wsdl2";
         }
 
         $endpoint = isset( $_SESSION["WS_END_POINT"] ) ? $_SESSION["WS_END_POINT"] : $defaultEndpoint;
@@ -2098,7 +2098,7 @@ function PMFDerivateCase ($caseId, $delIndex, $bExecuteTriggersBeforeAssignment 
  * @param string(32) | $processId | Process ID | The unique ID of the process.
  * @param string(32) | $userId | User ID | The unique ID of the user.
  * @param array | $variables | Array of variables | An associative array of the variables which will be sent to the case.
- * @param string(32) | $taskId | The unique ID of the task taha is in the starting group.
+ * @param string(32) | $taskId | The unique ID of the task that is in the starting group.
  * @return int | $result | Result | Returns 1 if new case was created successfully; otherwise, returns 0 if an error occurred.
  *
  */
@@ -3455,7 +3455,7 @@ function PMFCaseLink($caseUid, $workspace = null, $language = null, $skin = null
         if ($arrayApplicationData === false) {
             return false;
         }
-        $workspace = (!empty($workspace)) ? $workspace : SYS_SYS;
+        $workspace = (!empty($workspace)) ? $workspace : config("system.workspace");
         $language = (!empty($language)) ? $language : SYS_LANG;
         $skin = (!empty($skin)) ? $skin : SYS_SKIN;
 

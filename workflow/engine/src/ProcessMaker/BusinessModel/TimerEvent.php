@@ -1151,7 +1151,7 @@ class TimerEvent
     private function log($action, $value = "", $status = "action")
     {
         try {
-            $workspace = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
+            $workspace = (!empty(config("system.workspace")))? config("system.workspace") : "Wokspace Undefined";
             $ipClient = \G::getIpAddress();
 
             $actionTimer = "timereventcron: ";
@@ -1192,7 +1192,7 @@ class TimerEvent
     )
     {
         try {
-            \Bootstrap::registerMonolog('TimerEventCron', $level, $message, $aContext, SYS_SYS, 'processmaker.log');
+            \Bootstrap::registerMonolog('TimerEventCron', $level, $message, $aContext, config("system.workspace"), 'processmaker.log');
         } catch (\Exception $e) {
             throw $e;
         }
@@ -1214,7 +1214,7 @@ class TimerEvent
             $ws = new \WsBase();
             $case = new \Cases();
             $common = new \ProcessMaker\Util\Common();
-            $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+            $sysSys = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined";
 
             $common->setFrontEnd($frontEnd);
 

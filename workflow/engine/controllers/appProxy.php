@@ -73,14 +73,11 @@ class AppProxy extends HttpProxyController
             $proUid = $httpData->pro;
         }
 
-        if(!isset($httpData->tas) || empty($httpData->tas))
-        {
-            $tasUid = $_SESSION['TASK'];
+        if (!isset($httpData->tas) || empty($httpData->tas)) {
+            $tasUid = isset($_SESSION['TASK']) ? $_SESSION['TASK'] : "";
         } else {
             $tasUid = $httpData->tas;
         }
-        //$proUid = (!isset($httpData->pro)) ? $_SESSION['PROCESS'] : $httpData->pro;
-        //$tasUid = (!isset($httpData->tas)) ? ((isset($_SESSION['TASK'])) ? $_SESSION['TASK'] : '') : $httpData->tas;
         $usrUid = $_SESSION['USER_LOGGED'];
 
         $respView  = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, "VIEW",  $delIndex);
@@ -91,11 +88,12 @@ class AppProxy extends HttpProxyController
             );
         }
 
-        $usrUid = isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : "";
+        $usrUid = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : "";
         $appNotes = new AppNotes();
-        $response = $appNotes->getNotesList( $appUid, '', $httpData->start, $httpData->limit );
+        $response = $appNotes->getNotesList($appUid, '', $httpData->start, $httpData->limit);
+        $response = AppNotes::applyHtmlentitiesInNotes($response);
 
-        require_once ("classes/model/Application.php");
+        require_once("classes/model/Application.php");
         $oApplication = new Application();
         $aApplication = $oApplication->Load($appUid);
         $response['array']['appTitle'] = $aApplication['APP_TITLE'];

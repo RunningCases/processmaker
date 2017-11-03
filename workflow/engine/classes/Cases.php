@@ -1068,7 +1068,7 @@ class Cases
                     $oDerivation->verifyIsCaseChild($sAppUid);
                 }
             } catch (Exception $e) {
-                Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], SYS_SYS, 'processmaker.log');
+                Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], config("system.workspace"), 'processmaker.log');
             }
 
             //Delete the registries in the table SUB_APPLICATION
@@ -2211,7 +2211,7 @@ class Cases
             "delIndex" => $iDelIndex,
             "appInitDate" => $Fields['APP_INIT_DATE']
         ];
-        Bootstrap::registerMonolog('CreateCase', 200, "Create case", $data, SYS_SYS, 'processmaker.log');
+        Bootstrap::registerMonolog('CreateCase', 200, "Create case", $data, config("system.workspace"), 'processmaker.log');
 
         //call plugin
         if (class_exists('folderData')) {
@@ -3375,7 +3375,7 @@ class Cases
             $oPMScript->setFields($aFields);
 
             /*----------------------------------********---------------------------------*/
-            $cs = new CodeScanner(SYS_SYS);
+            $cs = new CodeScanner(config("system.workspace"));
 
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
@@ -4321,8 +4321,8 @@ class Cases
             unset($rowListCanceled['DEL_CURRENT_USR_FIRSTNAME']);
             unset($rowListCanceled['DEL_CURRENT_USR_LASTNAME']);
             unset($rowListCanceled['APP_CANCELED_DATE']);
-            $listInbox = new ListInbox();
-            $listInbox->create($rowListCanceled);
+
+            $this->putCaseInInboxList($rowListCanceled, $userUID);
 
             //ListParticipatedLast
             $criteriaListParticipatedLast = new Criteria("workflow");
@@ -5664,48 +5664,55 @@ class Cases
 
     /**
      * Obtain all user permits for Dynaforms, Input and output documents
+     * function getAllObjects ($proUid, $appUid, $tasUid, $usrUid)
      *
-     * function getAllObjects ($PRO_UID, $APP_UID, $TAS_UID, $USR_UID)
-     * @author Erik Amaru Ortiz <erik@colosa.com>
      * @access public
-     * @param  Process ID, Application ID, Task ID and User ID
-     * @return Array within all user permitions all objects' types
+     * @param string $proUid, Process ID
+     * @param string $appUid, Application ID,
+     * @param string $tasUid, Task ID
+     * @param string $usrUid, User ID
+     * @param integer $delIndex, User ID
+     *
+     * @return array within all user permissions all objects' types
      */
-    public function getAllObjects($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '', $delIndex = 0)
+    public function getAllObjects($proUid, $appUid, $tasUid = '', $usrUid = '', $delIndex = 0)
     {
-        $ACTIONS = array('VIEW', 'BLOCK', 'DELETE'); //TO COMPLETE
-        $MAIN_OBJECTS = array();
-        $RESULT_OBJECTS = array();
+        $permissionAction = ['VIEW', 'BLOCK', 'DELETE']; //TO COMPLETE
+        $mainObjects = [];
+        $resultObjects = [];
 
-        foreach ($ACTIONS as $action) {
-            $MAIN_OBJECTS[$action] = $this->getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $action, $delIndex);
+        foreach ($permissionAction as $action) {
+            $mainObjects[$action] = $this->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, $action, $delIndex);
         }
-        /* ADDITIONAL OPERATIONS */
-        /*         * * BETWEN VIEW AND BLOCK** */
-        $RESULT_OBJECTS['DYNAFORMS'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['DYNAFORMS'], $MAIN_OBJECTS['BLOCK']['DYNAFORMS']
+        //We will review data with VIEW and BLOCK
+        //Dynaforms BLOCK it means does not show in the list
+        $resultObjects['DYNAFORMS'] = G::arrayDiff(
+            $mainObjects['VIEW']['DYNAFORMS'], $mainObjects['BLOCK']['DYNAFORMS']
         );
-        $RESULT_OBJECTS['INPUT_DOCUMENTS'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['INPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['INPUT_DOCUMENTS']
+        //Input BLOCK it means does not show in the list
+        $resultObjects['INPUT_DOCUMENTS'] = G::arrayDiff(
+            $mainObjects['VIEW']['INPUT_DOCUMENTS'], $mainObjects['BLOCK']['INPUT_DOCUMENTS']
         );
-        $RESULT_OBJECTS['OUTPUT_DOCUMENTS'] = array_merge_recursive(
-                G::arrayDiff($MAIN_OBJECTS['VIEW']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($MAIN_OBJECTS['DELETE']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS'])
+        //Output BLOCK it means does not show in the list
+        $resultObjects['OUTPUT_DOCUMENTS'] = array_merge_recursive(
+            G::arrayDiff($mainObjects['VIEW']['OUTPUT_DOCUMENTS'], $mainObjects['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($mainObjects['DELETE']['OUTPUT_DOCUMENTS'], $mainObjects['BLOCK']['OUTPUT_DOCUMENTS'])
         );
-        $RESULT_OBJECTS['CASES_NOTES'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
+        //Case notes BLOCK it means does not show in the list
+        $resultObjects['CASES_NOTES'] = G::arrayDiff(
+            $mainObjects['VIEW']['CASES_NOTES'], $mainObjects['BLOCK']['CASES_NOTES']
         );
-        array_push($RESULT_OBJECTS["DYNAFORMS"], -1, -2);
-        array_push($RESULT_OBJECTS['INPUT_DOCUMENTS'], -1);
-        array_push($RESULT_OBJECTS['OUTPUT_DOCUMENTS'], -1);
-        array_push($RESULT_OBJECTS['CASES_NOTES'], -1);
+        array_push($resultObjects["DYNAFORMS"], -1, -2);
+        array_push($resultObjects['INPUT_DOCUMENTS'], -1);
+        array_push($resultObjects['OUTPUT_DOCUMENTS'], -1);
+        array_push($resultObjects['CASES_NOTES'], -1);
 
-        return $RESULT_OBJECTS;
+        return $resultObjects;
     }
 
     /**
      * Obtain all object permissions for Dynaforms, Input, Output and Message history
-     *
      * This function return information about a specific object permissions or for all = ANY
+     *
      * @access public
      * @param string $proUid
      * @param string $appUid
@@ -5713,6 +5720,7 @@ class Cases
      * @param string $usrUid
      * @param string $action some action [VIEW, BLOCK, RESEND]
      * @param integer $delIndex
+     *
      * @return array within all user permissions all objects' types
      */
     public function getAllObjectsFrom($proUid, $appUid, $tasUid = '', $usrUid = '', $action = '', $delIndex = 0)
@@ -5727,24 +5735,21 @@ class Cases
             }
         }
 
-        $userPermissions = array();
-        $groupPermissions = array();
-        $result = array(
-            "DYNAFORM" => array(),
-            "INPUT" => array(),
-            "ATTACHMENT" => array(),
-            "OUTPUT" => array(),
-            "CASES_NOTES" => 0,
-            "MSGS_HISTORY" => array()
-            /*----------------------------------********---------------------------------*/
-            , "SUMMARY_FORM" => 0
-                /*----------------------------------********---------------------------------*/
-        );
+        $userPermissions = [];
+        $groupPermissions = [];
 
-        $oObjectPermission = new ObjectPermission();
-        $userPermissions = $oObjectPermission->verifyObjectPermissionPerUser($usrUid, $proUid, $tasUid, $action, $caseData);
-        $groupPermissions = $oObjectPermission->verifyObjectPermissionPerGroup($usrUid, $proUid, $tasUid, $action, $caseData);
+        $objectPermission = new ObjectPermission();
+        $userPermissions = $objectPermission->verifyObjectPermissionPerUser($usrUid, $proUid, $tasUid, $action, $caseData);
+        $groupPermissions = $objectPermission->verifyObjectPermissionPerGroup($usrUid, $proUid, $tasUid, $action, $caseData);
         $permissions = array_merge($userPermissions, $groupPermissions);
+
+        $resultDynaforms = [];
+        $resultInputs = [];
+        $resultAttachments = [];
+        $resultOutputs = [];
+        $resultCaseNotes = 0;
+        $resultSummary = 0;
+        $resultMessages = [];
 
         foreach ($permissions as $row) {
             $userUid = $row['USR_UID'];
@@ -5758,35 +5763,37 @@ class Cases
             //The values of obCaseStatus is [ALL, COMPLETED, DRAFT, TO_DO, PAUSED]
             //If the case is todo and we need the participate
             //but we did not participated did not validate nothing and return array empty
-            $sw_participate = false; // must be false for default
+            $swParticipate = false; // must be false for default
             if ($obCaseStatus != 'COMPLETED' && $opParticipated == 1) {
-                $oCriteriax = new Criteria('workflow');
-                $oCriteriax->add(AppDelegationPeer::USR_UID, $usrUid);
-                $oCriteriax->add(AppDelegationPeer::APP_UID, $appUid);
-                $datasetx = AppDelegationPeer::doSelectRS($oCriteriax);
-                $datasetx->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $datasetx->next();
-                $aRow = $datasetx->getRow();
-                if (!is_array($aRow)) {
+                $criteria = new Criteria('workflow');
+                $criteria->add(AppDelegationPeer::USR_UID, $usrUid);
+                $criteria->add(AppDelegationPeer::APP_UID, $appUid);
+                $dataset = AppDelegationPeer::doSelectRS($criteria);
+                $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $dataset->next();
+                $row = $dataset->getRow();
+                if (!is_array($row)) {
                     //The user was not participated in the case and the participation is required
-                    $sw_participate = true;
+                    $swParticipate = true;
                 }
             }
 
             //If user can be see the objects process
             //We will be prepare the data relate to the Type can be ANY, DYNAFORM, INPUT, OUTPUT, ...
-            if (!$sw_participate) {
+            if (!$swParticipate) {
                 switch ($opType) {
                     case 'ANY':
                         //For dynaforms
-                        $result['DYNAFORM'] = $oObjectPermission->objectPermissionByDynaform(
+                        $listDynaform = $objectPermission->objectPermissionByDynaform(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultDynaforms = array_merge($resultDynaforms, $listDynaform);
+
                         //For Ouputs
-                        $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listOutput = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5794,8 +5801,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultOutputs = array_merge($resultOutputs, $listOutput);
+
                         //For Inputs
-                        $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listInput = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5803,8 +5812,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultInputs = array_merge($resultInputs, $listInput);
+
                         //For Attachment
-                        $result['ATTACHMENT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listAttachment = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5812,14 +5823,15 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultAttachments = array_merge($resultAttachments, $listAttachment);
 
-                        $result['CASES_NOTES'] = 1;
+                        $resultCaseNotes = 1;
                         /*----------------------------------********---------------------------------*/
-                        $result['SUMMARY_FORM'] = 1;
+                        $resultSummary = 1;
                         /*----------------------------------********---------------------------------*/
 
                         //Message History
-                        $result['MSGS_HISTORY'] = $oObjectPermission->objectPermissionMessage(
+                        $listMessage = $objectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
                             $userUid,
@@ -5829,17 +5841,19 @@ class Cases
                             $caseData['APP_STATUS'],
                             $opParticipated
                         );
+                        $resultMessages = array_merge($resultMessages, $listMessage);
                         break;
                     case 'DYNAFORM':
-                        $result['DYNAFORM'] = $oObjectPermission->objectPermissionByDynaform(
+                        $listDynaform = $objectPermission->objectPermissionByDynaform(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultDynaforms = array_merge($resultDynaforms, $listDynaform);
                         break;
                     case 'INPUT':
-                        $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listInput = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5847,9 +5861,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultInputs = array_merge($resultInputs, $listInput);
                         break;
                     case 'ATTACHMENT':
-                        $result['ATTACHMENT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listAttachment = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5857,9 +5872,10 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultAttachments = array_merge($resultAttachments, $listAttachment);
                         break;
                     case 'OUTPUT':
-                        $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                        $listOutput = $objectPermission->objectPermissionByOutputInput(
                             $appUid,
                             $proUid,
                             $opTaskSource,
@@ -5867,17 +5883,18 @@ class Cases
                             $opObjUid,
                             $caseData['APP_STATUS']
                         );
+                        $resultOutputs = array_merge($resultOutputs, $listOutput);
                         break;
                     case 'CASES_NOTES':
-                        $result['CASES_NOTES'] = 1;
+                        $resultCaseNotes = 1;
                         break;
                     /*----------------------------------********---------------------------------*/
                     case 'SUMMARY_FORM':
-                        $result['SUMMARY_FORM'] = 1;
+                        $resultSummary = 1;
                         break;
                     /*----------------------------------********---------------------------------*/
                     case 'MSGS_HISTORY':
-                        $result['MSGS_HISTORY'] = $oObjectPermission->objectPermissionMessage(
+                        $listMessage= $objectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
                             $userUid,
@@ -5887,21 +5904,22 @@ class Cases
                             $caseData['APP_STATUS'],
                             $opParticipated
                         );
+                        $resultMessages = array_merge($resultMessages, $listMessage);
                         break;
                 }
             }
         }
 
         return array(
-            "DYNAFORMS" => $result['DYNAFORM'],
-            "INPUT_DOCUMENTS" => $result['INPUT'],
-            "ATTACHMENTS" => $result['ATTACHMENT'],
-            "OUTPUT_DOCUMENTS" => $result['OUTPUT'],
-            "CASES_NOTES" => $result['CASES_NOTES'],
-            "MSGS_HISTORY" => $result['MSGS_HISTORY']
+            "DYNAFORMS" => $resultDynaforms,
+            "INPUT_DOCUMENTS" => $resultInputs,
+            "ATTACHMENTS" => $resultAttachments,
+            "OUTPUT_DOCUMENTS" => $resultOutputs,
+            "CASES_NOTES" => $resultCaseNotes,
+            "MSGS_HISTORY" => $resultMessages
             /*----------------------------------********---------------------------------*/
-            , "SUMMARY_FORM" => $result['SUMMARY_FORM']
-                /*----------------------------------********---------------------------------*/
+            , "SUMMARY_FORM" => $resultSummary
+            /*----------------------------------********---------------------------------*/
         );
     }
 
@@ -6969,11 +6987,20 @@ class Cases
         return $response;
     }
 
+    /**
+     * This method return the cases notes
+     * @param $applicationID
+     * @param string $type
+     * @param string $userUid
+     * @return array|stdclass|string
+     */
     public function getCaseNotes($applicationID, $type = 'array', $userUid = '')
     {
         require_once("classes/model/AppNotes.php");
         $appNotes = new AppNotes();
         $appNotes = $appNotes->getNotesList($applicationID, $userUid);
+        $appNotes = AppNotes::applyHtmlentitiesInNotes($appNotes);
+
         $response = '';
         if (is_array($appNotes)) {
             switch ($type) {
@@ -7005,10 +7032,10 @@ class Cases
                     $response = '';
                     foreach ($appNotes['array']['notes'] as $key => $value) {
                         $response .= $value['USR_FIRSTNAME'] . " " .
-                                $value['USR_LASTNAME'] . " " .
-                                "(" . $value['USR_USERNAME'] . ")" .
-                                " " . $value['NOTE_CONTENT'] . " " . " (" . $value['NOTE_DATE'] . " ) " .
-                                " \n";
+                            $value['USR_LASTNAME'] . " " .
+                            "(" . $value['USR_USERNAME'] . ")" .
+                            " " . $value['NOTE_CONTENT'] . " " . " (" . $value['NOTE_DATE'] . " ) " .
+                            " \n";
                     }
                     break;
             }
@@ -7257,6 +7284,21 @@ class Cases
             return true;
         }
         return false;
+    }
+
+    /**
+     * Inserts int the ListInbox of the user $targetUserId case whose data is in the variable $caseDataRow
+     *
+     * @param array $caseDataRow, assoc. array with the data of the case
+     * @param int $targetUserId, id of the user that will have the case.
+     *
+     * @return void
+     */
+    private function putCaseInInboxList(array $caseDataRow, $targetUserId)
+    {
+        $listInbox = new ListInbox();
+        $caseDataRow["USR_UID"] = $targetUserId;
+        $listInbox->create($caseDataRow);
     }
 }
 

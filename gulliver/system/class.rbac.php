@@ -189,6 +189,7 @@ class RBAC
         ];
         $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
         $this->aliasPermissions['PM_LOGIN'] = [self::PM_GUEST_CASE];
+
     }
 
     /**
@@ -797,7 +798,7 @@ class RBAC
      * @access public
      * @param string $strUser the system
      * @param string $strPass the password
-     * @return $res
+     * @return $result
      */
     public function checkAutomaticRegister($strUser, $strPass)
     {
@@ -821,17 +822,25 @@ class RBAC
                         $plugin->sSystem = $this->sSystem;
                         //search the usersRolesObj
                         //create the users in ProcessMaker
-                        $res = $plugin->automaticRegister($row, $strUser, $strPass);
-                        if ($res == 1) {
-                            return $res;
+                        try {
+                            $res = $plugin->automaticRegister($row, $strUser, $strPass);
+                            if ($res == 1) {
+                                return $res;
+                            }
+                        } catch (Exception $e) {
+                            $context = Bootstrap::getDefaultContextLog();
+                            $context["action"] = "ldapSynchronize";
+                            $context["authSource"] = $row;
+                            Bootstrap::registerMonolog("ldapSynchronize", 400, $e->getMessage(), $context, $context["workspace"], "processmaker.log");
                         }
                     }
+
                     $dataset->next();
                     $row = $dataset->getRow();
                 }
             }
         }
-
+        return $result;
     }
 
     /**

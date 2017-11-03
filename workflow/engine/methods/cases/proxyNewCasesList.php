@@ -90,8 +90,11 @@ try {
 
     $filters['limit'] = (int)$filters['limit'];
     $filters['limit'] = abs($filters['limit']);
+    $conf = new Configurations();
+    $formats = $conf->getFormats();
+    $list->setUserDisplayFormat($formats['format']);
+
     if ($filters['limit'] == 0) {
-        $conf = new Configurations();
         $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
         if (isset($generalConfCasesList['casesListRowNumber'])) {
             $filters['limit'] = (int)$generalConfCasesList['casesListRowNumber'];
@@ -101,10 +104,11 @@ try {
     } else {
         $filters['limit'] = (int)$filters['limit'];
     }
-    
+
     switch ($filters['sort']) {
         case 'APP_CURRENT_USER':
-            $filters['sort'] = 'DEL_CURRENT_USR_LASTNAME';
+            //This value is format according to the userDisplayFormat, for this reason we will sent the UID
+            $filters['sort'] = 'USR_UID';
             break;
         case 'DEL_TASK_DUE_DATE':
             $filters['sort'] = 'DEL_DUE_DATE';
@@ -113,7 +117,8 @@ try {
             $filters['sort'] = 'DEL_DELEGATE_DATE';
             break;
         case 'APP_DEL_PREVIOUS_USER':
-            $filters['sort'] = 'DEL_DUE_DATE';
+            //This value is format according to the userDisplayFormat, for this reason we will sent the UID
+            $filters['sort'] = 'DEL_PREVIOUS_USR_UID';
             break;
         case 'DEL_CURRENT_TAS_TITLE':
             $filters['sort'] = 'APP_TAS_TITLE';
