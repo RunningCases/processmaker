@@ -4,6 +4,8 @@ namespace ProcessMaker\BusinessModel;
 use G;
 use Criteria;
 use DynaformHandler;
+use ProcessPeer;
+use ResultSet;
 
 class Process
 {
@@ -1835,6 +1837,45 @@ class Process
         //Return
         return $arrayVariables;
 
+    }
+
+    /**
+     * We will get the process list
+     * will be return the "PRO_ID" value for the processes, otherwise, return the "PRO_UID" value
+     *
+     * @param string $search
+     * @param boolean $useProId, we can define if we use the PRO ID instead of PRO_UID
+     *
+     * @return array
+     */
+    public function getProcessList($search = '', $useProId = false)
+    {
+        $processes = [];
+        $processes[] = ["", G::LoadTranslation("ID_ALL_PROCESS")];
+
+        $process = new Criteria("workflow");
+        $process->clearSelectColumns();
+        $process->addSelectColumn(ProcessPeer::PRO_ID);
+        $process->addSelectColumn(ProcessPeer::PRO_UID);
+        $process->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $process->add(ProcessPeer::PRO_STATUS, "ACTIVE");
+        if (!empty($search)) {
+            $process->add(ProcessPeer::PRO_TITLE, "%$search%", Criteria::LIKE);
+        }
+        $dataset = ProcessPeer::doSelectRS($process);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        while ($row = $dataset->getRow()) {
+            if ($useProId) {
+                $processes[] = [$row["PRO_ID"], $row["PRO_TITLE"]];
+            } else {
+                $processes[] = [$row['PRO_UID'], $row['PRO_TITLE']];
+            }
+
+            $dataset->next();
+        }
+
+        return $processes;
     }
 
 }

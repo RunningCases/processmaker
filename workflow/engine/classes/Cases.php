@@ -5445,6 +5445,12 @@ class Cases
             if ($sTo != null) {
                 $oSpool = new SpoolRun();
 
+                //Load the TAS_ID
+                if (!isset($arrayData['TAS_ID'])) {
+                    $task= new Task();
+                    $taskId = $task->load($arrayData['TASK'])['TAS_ID'];
+                }
+
                 $oSpool->setConfig($dataLastEmail['configuration']);
                 $oSpool->create(array(
                     "msg_uid" => "",
@@ -5460,7 +5466,9 @@ class Cases
                     "app_msg_attach" => "",
                     "app_msg_template" => "",
                     "app_msg_status" => "pending",
-                    "app_msg_error" => $dataLastEmail['msgError']
+                    "app_msg_error" => $dataLastEmail['msgError'],
+                    "tas_id" => $taskId,
+                    "app_number" => isset($arrayData['APP_NUMBER']) ? $arrayData['APP_NUMBER'] : ''
                 ));
 
                 if ($dataLastEmail['msgError'] == '') {

@@ -385,6 +385,7 @@ class ActionsByEmail
         $criteria->addSelectColumn(\AbeRequestsPeer::ABE_REQ_STATUS);
 
         $criteria->addSelectColumn(\AppDelegationPeer::DEL_FINISH_DATE);
+        $criteria->addSelectColumn(\AppDelegationPeer::APP_NUMBER);
 
         $criteria->add(\AbeRequestsPeer::ABE_REQ_UID, $arrayData['REQ_UID']);
         $criteria->addJoin(\AbeRequestsPeer::ABE_UID, \AbeConfigurationPeer::ABE_UID);
@@ -414,6 +415,12 @@ class ActionsByEmail
                 $spool = new SpoolRun();
                 $spool->setConfig($aSetup);
 
+                //Load the TAS_ID
+                if (!isset($arrayData['TAS_ID'])) {
+                    $task= new Task();
+                    $taskId = $task->load($dataRes['TAS_UID'])['TAS_ID'];
+                }
+
                 $spool->create(array(
                     'msg_uid' => '',
                     'app_uid' => $dataRes['APP_UID'],
@@ -427,7 +434,9 @@ class ActionsByEmail
                     'app_msg_bcc' => '',
                     'app_msg_attach' => '',
                     'app_msg_template' => '',
-                    'app_msg_status' => 'pending'
+                    'app_msg_status' => 'pending',
+                    "tas_id" => $taskId,
+                    "app_number" => isset($dataRes['APP_NUMBER']) ? $dataRes['APP_NUMBER'] : ''
                 ));
 
                 if ($spool->sendMail()) {

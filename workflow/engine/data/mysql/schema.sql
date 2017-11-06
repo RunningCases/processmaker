@@ -163,9 +163,13 @@ CREATE TABLE `APP_MESSAGE`
 	`APP_MSG_SEND_DATE` DATETIME  NOT NULL,
 	`APP_MSG_SHOW_MESSAGE` TINYINT default 1 NOT NULL,
 	`APP_MSG_ERROR` MEDIUMTEXT,
+	`TAS_ID` INTEGER default 0,
+	`APP_NUMBER` INTEGER default 0,
 	PRIMARY KEY (`APP_MSG_UID`),
 	KEY `indexForAppUid`(`APP_UID`),
-	KEY `indexForMsgStatus`(`APP_MSG_STATUS`)
+	KEY `indexForMsgStatus`(`APP_MSG_STATUS`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`),
+	KEY `INDEX_APP_NUMBER`(`APP_NUMBER`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Messages in an Application';
 #-----------------------------------------------------------------------------
 #-- APP_OWNER
@@ -3180,6 +3184,6 @@ CREATE TABLE `PLUGINS_REGISTRY`
 	`PLUGIN_TASK_EXTENDED_PROPERTIES` MEDIUMTEXT,
 	`PLUGIN_ATTRIBUTES` MEDIUMTEXT,
 	PRIMARY KEY (`PR_UID`)
-)ENGINE=InnoDB ;
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Details of plugins registry';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

@@ -350,11 +350,19 @@
         <column name="APP_MSG_SEND_DATE" type="TIMESTAMP" required="true"/>
         <column name="APP_MSG_SHOW_MESSAGE" type="TINYINT" required="true" default="1"/>
         <column name="APP_MSG_ERROR" type="LONGVARCHAR" required="false"/>
+        <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
+        <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
         <index name="indexForAppUid">
             <index-column name="APP_UID"/>
         </index>
         <index name="indexForMsgStatus">
             <index-column name="APP_MSG_STATUS"/>
+        </index>
+        <index name="INDEX_TAS_ID">
+            <index-column name="TAS_ID"/>
+        </index>
+        <index name="INDEX_APP_NUMBER">
+            <index-column name="APP_NUMBER"/>
         </index>
     </table>
     <table name="APP_OWNER">
