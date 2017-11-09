@@ -1574,7 +1574,11 @@ class Derivation
                         }
                         $currentDelegation2 = array('APP_UID' => $aSA['APP_PARENT'], 'DEL_INDEX' => $aSA['DEL_INDEX_PARENT'], 'APP_STATUS' => 'TO_DO', 'TAS_UID' => $aParentCase['TAS_UID'], 'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
                         );
+                        $g = new G();
+                        $g->sessionVarSave();
+                        $_SESSION['PROCESS'] = $aParentCase['PRO_UID'];
                         $this->derivate($currentDelegation2, $nextDelegations2);
+                        $g->sessionVarRestore();
 
                         if ($delIndex > 0) {
                             $flagNotification = false;
