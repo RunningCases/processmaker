@@ -5449,6 +5449,8 @@ class Cases
                 if (!isset($arrayData['TAS_ID'])) {
                     $task= new Task();
                     $taskId = $task->load($arrayData['TASK'])['TAS_ID'];
+                } else {
+                    $taskId = $arrayData['TAS_ID'];
                 }
 
                 $oSpool->setConfig($dataLastEmail['configuration']);
@@ -5483,12 +5485,16 @@ class Cases
     }
 
     /**
+     * This function send an email notification when tas_send_last_email = true
+     * The users assigned to the next task will receive a custom email message when the case is routed
+     *
      * @param $taskUid
      * @param $arrayTask
      * @param $arrayData
      * @param $applicationUid
      * @param $delIndex
      * @param string $from
+     *
      * @return bool
      * @throws Exception
      */
