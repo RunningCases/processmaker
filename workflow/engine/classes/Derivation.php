@@ -1479,7 +1479,7 @@ class Derivation
     }
 
     /**
-     * Verify case is child
+     * Verify if the case is child from another case
      *
      * @param string $applicationUid
      * @param int $delIndex
