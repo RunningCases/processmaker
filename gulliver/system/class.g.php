@@ -5447,7 +5447,7 @@ class G
     */
     public static function auditLog($actionToLog, $valueToLog = "")
     {
-	    $workspace = !empty(config("system.workspace")) ? config("system.workspace") : 'Wokspace Undefined';
+	    $workspace = !empty(config("system.workspace")) ? config("system.workspace") : 'Undefined Workspace';
         $conf = new Configurations();
         $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
         $sflagAudit = $sflag == 'true' ? true : false;

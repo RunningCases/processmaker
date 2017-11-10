@@ -267,7 +267,7 @@ class DataBaseMaintenance
         // Commented that is not assigned to a variable.
         // mysql_escape_string("';");
         if (! @mysql_query( $sql )) {
-            $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Wokspace Undefined";
+            $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined Workspace";
             Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'processmaker.log');
             $varRes = mysql_error() . "\n";
             G::outRes( $varRes );
@@ -288,7 +288,7 @@ class DataBaseMaintenance
         $tableName = str_replace( '.dump', '', basename( $backupFile ) );
         $sql = "LOAD DATA INFILE '$backupFile' INTO TABLE $tableName FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
         if (! @mysql_query( $sql )) {
-            $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Wokspace Undefined";
+            $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined Workspace";
             Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'processmaker.log');
             $varRes = mysql_error() . "\n";
             G::outRes( $varRes );

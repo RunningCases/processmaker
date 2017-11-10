@@ -1151,7 +1151,7 @@ class TimerEvent
     private function log($action, $value = "", $status = "action")
     {
         try {
-            $workspace = (!empty(config("system.workspace")))? config("system.workspace") : "Wokspace Undefined";
+            $workspace = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined Workspace";
             $ipClient = \G::getIpAddress();
 
             $actionTimer = "timereventcron: ";

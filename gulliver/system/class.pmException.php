@@ -21,7 +21,7 @@ class PMException extends Exception
     }
 
     public static function registerErrorLog($error, $token){
-        $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Wokspace Undefined";
+        $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined Workspace";
         Bootstrap::registerMonolog('ExceptionCron', 400, $error->getMessage(), array('token'=>$token), $ws, 'processmaker.log');
     }
 }
