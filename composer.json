@@ -42,7 +42,8 @@
         "phpmailer/phpmailer": "5.2.*",
         "pear/archive_tar": "1.4.*",
         "pear/console_getopt": "1.4.*",
-        "TYPO3/class-alias-loader": "^1.0"
+        "TYPO3/class-alias-loader": "^1.0",
+        "ralouphie/getallheaders": "^2.0"
     },
     "require-dev": {
         "guzzle/guzzle": "~3.1.1",
