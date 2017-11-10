@@ -5488,11 +5488,11 @@ class Cases
      * This function send an email notification when tas_send_last_email = true
      * The users assigned to the next task will receive a custom email message when the case is routed
      *
-     * @param $taskUid
-     * @param $arrayTask
-     * @param $arrayData
-     * @param $applicationUid
-     * @param $delIndex
+     * @param string $taskUid
+     * @param array $arrayTask
+     * @param array $arrayData
+     * @param string $applicationUid
+     * @param integer $delIndex
      * @param string $from
      *
      * @return bool
