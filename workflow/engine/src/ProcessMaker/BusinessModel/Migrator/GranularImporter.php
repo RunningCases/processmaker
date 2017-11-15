@@ -330,6 +330,10 @@ class GranularImporter
             $newData['tables']['workflow'] = $arrayWorkflowTables;
             $newData['tables']['plugins'] = isset($data["tables"]["plugins"]) ? $data["tables"]["plugins"] : [];
             $newData['files']['workflow'] = $arrayWorkflowFiles;
+
+            $definition = new \ProcessMaker\BusinessModel\Migrator\ProcessDefinitionMigrator();
+            $definition->afterImport($newData['tables']);
+            
             $this->regeneratedUids = $result;
 
             return array(
