@@ -6,8 +6,11 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use ProcessMaker\BusinessModel\Migrator\ProcessDefinitionMigrator;
 use ProcessMaker\Importer\XmlImporter;
 use ProcessMaker\Project\Adapter;
+use ProcessMaker\Project\Workflow;
+
 
 class GranularImporter
 {
@@ -300,7 +303,9 @@ class GranularImporter
     }
 
     /**
-     * @param $data
+     * Regenerate All UIDs of process and Import
+     * 
+     * @param array $data
      * @param bool $generateUid
      * @return array
      * @throws \Exception
@@ -308,37 +313,39 @@ class GranularImporter
     public function regenerateAllUids($data, $generateUid = true)
     {
         try {
-            $newData = array();
-            $arrayBpmnTables = $data["tables"]["bpmn"];
-            $arrayWorkflowTables = $data["tables"]["workflow"];
-            $arrayWorkflowFiles = $data["files"]["workflow"];
+            $newData = [];
+            $arrayBpmnTables = $data['tables']['bpmn'];
+            $arrayWorkflowTables = $data['tables']['workflow'];
+            $arrayWorkflowFiles = $data['files']['workflow'];
             $arrayBpmnTablesFormat = $this->structureBpmnData($arrayBpmnTables);
             $arrayBpmnTablesFormat['prj_type'] = $arrayWorkflowTables['process']['PRO_TYPE'];
             $arrayBpmnTablesFormat['pro_status'] = $arrayWorkflowTables['process']['PRO_STATUS'];
             $result = $this->bpmn->createFromStruct($arrayBpmnTablesFormat, $generateUid);
-            $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
-            $projectUid = ($generateUid) ? $result[0]["new_uid"] : $result;
+            $projectUidOld = $arrayBpmnTables['project'][0]['prj_uid'];
+            $projectUid = ($generateUid) ? $result[0]['new_uid'] : $result;
             if ($generateUid) {
-                $result[0]["object"] = "project";
-                $result[0]["old_uid"] = $projectUidOld;
-                $result[0]["new_uid"] = $projectUid;
+                $result[0]['object'] = 'project';
+                $result[0]['old_uid'] = $projectUidOld;
+                $result[0]['new_uid'] = $projectUid;
 
-                $workflow = new \ProcessMaker\Project\Workflow();
+                $workflow = new Workflow();
 
                 list($arrayWorkflowTables, $arrayWorkflowFiles) = $workflow->updateDataUidByArrayUid($arrayWorkflowTables, $arrayWorkflowFiles, $result);
             }
             $newData['tables']['workflow'] = $arrayWorkflowTables;
-            $newData['tables']['plugins'] = isset($data["tables"]["plugins"]) ? $data["tables"]["plugins"] : [];
+            $newData['tables']['plugins'] = isset($data['tables']['plugins']) ? $data['tables']['plugins'] : [];
             $newData['files']['workflow'] = $arrayWorkflowFiles;
 
-            $definition = new \ProcessMaker\BusinessModel\Migrator\ProcessDefinitionMigrator();
+            //Process Definition
+            $definition = new ProcessDefinitionMigrator();
             $definition->afterImport($newData['tables']);
-            
+
             $this->regeneratedUids = $result;
 
-            return array(
+            return [
                 'data' => $newData,
-                'new_uid' => $projectUid);
+                'new_uid' => $projectUid
+            ];
 
         } catch (\Exception $e) {
             throw $e;
