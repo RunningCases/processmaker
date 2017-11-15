@@ -336,7 +336,8 @@ class GranularImporter
             $newData['tables']['plugins'] = isset($data['tables']['plugins']) ? $data['tables']['plugins'] : [];
             $newData['files']['workflow'] = $arrayWorkflowFiles;
 
-            //Process Definition
+            //Update Process Definition after import
+            //@todo We need check and improve the "Granular Importer", some methods and classes probably can be simplified.
             $definition = new ProcessDefinitionMigrator();
             $definition->afterImport($newData['tables']);
 
