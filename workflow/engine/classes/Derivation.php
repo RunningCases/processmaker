@@ -1478,139 +1478,168 @@ class Derivation
         }
     }
 
-    /* verifyIsCaseChild
+    /**
+     * Verify if the case is child from another case
      *
-     * @param   string   $sApplicationUID
-     * @return  void
+     * @param string $applicationUid
+     * @param int $delIndex
+     *
+     * @return void
      */
-    function verifyIsCaseChild ($sApplicationUID, $delIndex = 0)
+    function verifyIsCaseChild($applicationUid, $delIndex = 0)
     {
         //Obtain the related row in the table SUB_APPLICATION
-        $oCriteria = new Criteria( 'workflow' );
-        $oCriteria->add( SubApplicationPeer::APP_UID, $sApplicationUID );
-        $oDataset = SubApplicationPeer::doSelectRS( $oCriteria );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset->next();
-        $aSA = $oDataset->getRow();
-        if ($aSA) {
-            //Obtain the related row in the table SUB_PROCESS
-            $oCase = new Cases();
-            $aParentCase = $oCase->loadCase( $aSA['APP_PARENT'], $aSA['DEL_INDEX_PARENT'] );
-            $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( SubProcessPeer::PRO_PARENT, $aParentCase['PRO_UID'] );
-            $oCriteria->add( SubProcessPeer::TAS_PARENT, $aParentCase['TAS_UID'] );
-            $oDataset = SubProcessPeer::doSelectRS( $oCriteria );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-            $aSP = $oDataset->getRow();
-            if ($aSP['SP_SYNCHRONOUS'] == 1 || $aSA['SA_STATUS'] == "ACTIVE") {
-                $appFields = $oCase->loadCase($sApplicationUID, $delIndex);
-                //Copy case variables to parent case
-                $aFields = unserialize($aSP['SP_VARIABLES_IN']);
-                $aNewFields = array();
-                foreach ($aFields as $sOriginField => $sTargetField) {
-                    $sOriginField = str_replace('@', '', $sOriginField);
-                    $sOriginField = str_replace('#', '', $sOriginField);
-                    $sOriginField = str_replace('%', '', $sOriginField);
-                    $sOriginField = str_replace('?', '', $sOriginField);
-                    $sOriginField = str_replace('$', '', $sOriginField);
-                    $sOriginField = str_replace('=', '', $sOriginField);
-                    $sTargetField = str_replace('@', '', $sTargetField);
-                    $sTargetField = str_replace('#', '', $sTargetField);
-                    $sTargetField = str_replace('%', '', $sTargetField);
-                    $sTargetField = str_replace('?', '', $sTargetField);
-                    $sTargetField = str_replace('$', '', $sTargetField);
-                    $sTargetField = str_replace('=', '', $sTargetField);
-                    $aNewFields[$sTargetField] = isset($appFields['APP_DATA'][$sOriginField]) ? $appFields['APP_DATA'][$sOriginField] : '';
+        $criteria = new Criteria('workflow');
+        $criteria->add(SubApplicationPeer::APP_UID, $applicationUid);
+        $dataSet = SubApplicationPeer::doSelectRS($criteria);
+        $dataSet->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-                    if (array_key_exists($sOriginField . '_label', $appFields['APP_DATA'])) {
-                        $aNewFields[$sTargetField . '_label'] = $appFields['APP_DATA'][$sOriginField . '_label'];
+        if ($dataSet->next()) {
+            $subApplication = $dataSet->getRow();
+            //Obtain the related row in the table SUB_PROCESS
+            $case = new Cases();
+            $parentCase = $case->loadCase($subApplication['APP_PARENT'], $subApplication['DEL_INDEX_PARENT']);
+            $criteria = new Criteria('workflow');
+            $criteria->add(SubProcessPeer::PRO_PARENT, $parentCase['PRO_UID']);
+            $criteria->add(SubProcessPeer::TAS_PARENT, $parentCase['TAS_UID']);
+            $dataSet = SubProcessPeer::doSelectRS($criteria);
+            $dataSet->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataSet->next();
+            $subApplicationParent = $dataSet->getRow();
+            if ($subApplicationParent['SP_SYNCHRONOUS'] == 1 || $subApplication['SA_STATUS'] == 'ACTIVE') {
+                $appFields = $case->loadCase($applicationUid, $delIndex);
+                //Copy case variables to parent case
+                $fields = unserialize($subApplicationParent['SP_VARIABLES_IN']);
+                $newFields = [];
+                foreach ($fields as $originField => $targetField) {
+                    $originField = str_replace('@', '', $originField);
+                    $originField = str_replace('#', '', $originField);
+                    $originField = str_replace('%', '', $originField);
+                    $originField = str_replace('?', '', $originField);
+                    $originField = str_replace('$', '', $originField);
+                    $originField = str_replace('=', '', $originField);
+                    $targetField = str_replace('@', '', $targetField);
+                    $targetField = str_replace('#', '', $targetField);
+                    $targetField = str_replace('%', '', $targetField);
+                    $targetField = str_replace('?', '', $targetField);
+                    $targetField = str_replace('$', '', $targetField);
+                    $targetField = str_replace('=', '', $targetField);
+                    $newFields[$targetField] = isset($appFields['APP_DATA'][$originField]) ? $appFields['APP_DATA'][$originField] : '';
+
+                    if (array_key_exists($originField . '_label', $appFields['APP_DATA'])) {
+                        $newFields[$targetField . '_label'] = $appFields['APP_DATA'][$originField . '_label'];
                     } else {
-                        if (array_key_exists($sTargetField . '_label', $aParentCase['APP_DATA'])) {
-                            $aNewFields[$sTargetField . '_label'] = '';
+                        if (array_key_exists($targetField . '_label', $parentCase['APP_DATA'])) {
+                            $newFields[$targetField . '_label'] = '';
                         }
                     }
                 }
-                $aParentCase['APP_DATA'] = array_merge($aParentCase['APP_DATA'], $aNewFields);
-                $oCase->updateCase($aSA['APP_PARENT'], $aParentCase);
+                $parentCase['APP_DATA'] = array_merge($parentCase['APP_DATA'], $newFields);
+                $case->updateCase($subApplication['APP_PARENT'], $parentCase);
+
                 /*----------------------------------********---------------------------------*/
                 $inbox = new ListInbox();
-                $inbox->update($aParentCase);
+                $inbox->update($parentCase);
                 /*----------------------------------********---------------------------------*/
 
                 //Update table SUB_APPLICATION
-                $oSubApplication = new SubApplication();
-                $oSubApplication->update(array('APP_UID' => $sApplicationUID, 'APP_PARENT' => $aSA['APP_PARENT'], 'DEL_INDEX_PARENT' => $aSA['DEL_INDEX_PARENT'], 'DEL_THREAD_PARENT' => $aSA['DEL_THREAD_PARENT'], 'SA_STATUS' => 'FINISHED', 'SA_VALUES_IN' => serialize($aNewFields), 'SA_FINISH_DATE' => date('Y-m-d H:i:s')
-                ));
+                $newSubApplication = new SubApplication();
+                $newSubApplication->update([
+                    'APP_UID' => $applicationUid,
+                    'APP_PARENT' => $subApplication['APP_PARENT'],
+                    'DEL_INDEX_PARENT' => $subApplication['DEL_INDEX_PARENT'],
+                    'DEL_THREAD_PARENT' => $subApplication['DEL_THREAD_PARENT'],
+                    'SA_STATUS' => 'FINISHED', 'SA_VALUES_IN' => serialize($newFields),
+                    'SA_FINISH_DATE' => date('Y-m-d H:i:s')
+                ]);
 
                 //Derive the parent case
-                $aDeriveTasks = $this->prepareInformation(array('USER_UID' => -1, 'APP_UID' => $aSA['APP_PARENT'], 'DEL_INDEX' => $aSA['DEL_INDEX_PARENT']
-                ));
-                if (isset($aDeriveTasks[1])) {
-                    if ($aDeriveTasks[1]['ROU_TYPE'] != 'SELECT') {
-                        $nextDelegations2 = array();
-                        foreach ($aDeriveTasks as $aDeriveTask) {
-                            if (!isset($aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'])) {
-                                $selectedUser = $aDeriveTask['NEXT_TASK']['USER_ASSIGNED'][0];
-                                unset($aDeriveTask['NEXT_TASK']['USER_ASSIGNED']);
-                                $aDeriveTask['NEXT_TASK']['USER_ASSIGNED'] = $selectedUser;
-                                $myLabels = array($aDeriveTask['NEXT_TASK']['TAS_TITLE'], $aParentCase['APP_NUMBER'], $selectedUser['USR_USERNAME'], $selectedUser['USR_FIRSTNAME'], $selectedUser['USR_LASTNAME']
-                                );
-                                if ($aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'] == "MANUAL") {
+                $deriveTasks = $this->prepareInformation([
+                    'USER_UID' => -1,
+                    'APP_UID' => $subApplication['APP_PARENT'],
+                    'DEL_INDEX' => $subApplication['DEL_INDEX_PARENT']
+                ]);
+                if (isset($deriveTasks[1])) {
+                    if ($deriveTasks[1]['ROU_TYPE'] !== 'SELECT') {
+                        $nextDelegations2 = [];
+                        foreach ($deriveTasks as $deriveTask) {
+                            if (!isset($deriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'])) {
+                                $selectedUser = $deriveTask['NEXT_TASK']['USER_ASSIGNED'][0];
+                                unset($deriveTask['NEXT_TASK']['USER_ASSIGNED']);
+                                $deriveTask['NEXT_TASK']['USER_ASSIGNED'] = $selectedUser;
+                                $myLabels = [
+                                    $deriveTask['NEXT_TASK']['TAS_TITLE'],
+                                    $parentCase['APP_NUMBER'],
+                                    $selectedUser['USR_USERNAME'],
+                                    $selectedUser['USR_FIRSTNAME'],
+                                    $selectedUser['USR_LASTNAME']
+                                ];
+                                if ($deriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'] === 'MANUAL') {
                                     G::SendTemporalMessage('ID_TASK_WAS_ASSIGNED_TO_USER', 'warning', 'labels', 10, null, $myLabels);
                                 }
 
                             }
-                            $nextDelegations2[] = array(
-                                'TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'],
-                                'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'],
-                                'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'],
-                                'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'],
+                            $nextDelegations2[] = [
+                                'TAS_UID' => $deriveTask['NEXT_TASK']['TAS_UID'],
+                                'USR_UID' => $deriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'],
+                                'TAS_ASSIGN_TYPE' => $deriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'],
+                                'TAS_DEF_PROC_CODE' => $deriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'],
                                 'DEL_PRIORITY' => 3,
-                                'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT'],
-                                'ROU_PREVIOUS_TASK' => isset($aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK']) ? $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK'] : '',
-                                'ROU_PREVIOUS_TYPE' => isset($aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE']) ? $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE'] : ''
-                            );
+                                'TAS_PARENT' => $deriveTask['NEXT_TASK']['TAS_PARENT'],
+                                'ROU_PREVIOUS_TASK' => isset($deriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK']) ? $deriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK'] : '',
+                                'ROU_PREVIOUS_TYPE' => isset($deriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE']) ? $deriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE'] : ''
+                            ];
                         }
-                        $currentDelegation2 = array('APP_UID' => $aSA['APP_PARENT'], 'DEL_INDEX' => $aSA['DEL_INDEX_PARENT'], 'APP_STATUS' => 'TO_DO', 'TAS_UID' => $aParentCase['TAS_UID'], 'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
-                        );
+                        $currentDelegation2 = [
+                            'APP_UID' => $subApplication['APP_PARENT'],
+                            'DEL_INDEX' => $subApplication['DEL_INDEX_PARENT'],
+                            'APP_STATUS' => 'TO_DO',
+                            'TAS_UID' => $parentCase['TAS_UID'],
+                            'ROU_TYPE' => $deriveTasks[1]['ROU_TYPE']
+                        ];
+
+                        $g = new G();
+                        $g->sessionVarSave();
+                        $_SESSION['PROCESS'] = $parentCase['PRO_UID'];
                         $this->derivate($currentDelegation2, $nextDelegations2);
+                        $g->sessionVarRestore();
 
                         if ($delIndex > 0) {
                             $flagNotification = false;
-                            if ($appFields["CURRENT_USER_UID"] == '') {
-                                $oCriteriaTaskDummy = new Criteria('workflow');
-                                $oCriteriaTaskDummy->add(TaskPeer::PRO_UID, $appFields['PRO_UID']);
-                                $oCriteriaTaskDummy->add(TaskPeer::TAS_UID, $appFields['TAS_UID']);
-                                $oCriteriaTaskDummy->add(
-                                    $oCriteriaTaskDummy->getNewCriterion(TaskPeer::TAS_TYPE, 'SCRIPT-TASK', Criteria::EQUAL)->addOr(
-                                        $oCriteriaTaskDummy->getNewCriterion(TaskPeer::TAS_TYPE, 'INTERMEDIATE-THROW-EMAIL-EVENT', Criteria::EQUAL))
+                            if ($appFields['CURRENT_USER_UID'] == '') {
+                                $criteriaTaskDummy = new Criteria('workflow');
+                                $criteriaTaskDummy->add(TaskPeer::PRO_UID, $appFields['PRO_UID']);
+                                $criteriaTaskDummy->add(TaskPeer::TAS_UID, $appFields['TAS_UID']);
+                                $criteriaTaskDummy->add(
+                                    $criteriaTaskDummy->getNewCriterion(TaskPeer::TAS_TYPE, 'SCRIPT-TASK', Criteria::EQUAL)->addOr(
+                                        $criteriaTaskDummy->getNewCriterion(TaskPeer::TAS_TYPE, 'INTERMEDIATE-THROW-EMAIL-EVENT', Criteria::EQUAL))
                                 );
-                                $oCriteriaTaskDummy->setLimit(1);
-                                $oDataset = AppDelegationPeer::doSelectRS($oCriteriaTaskDummy);
-                                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                                $oDataset->next();
-                                if ($row = $oDataset->getRow()) {
+                                $criteriaTaskDummy->setLimit(1);
+                                $dataSet = AppDelegationPeer::doSelectRS($criteriaTaskDummy);
+                                $dataSet->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                                $dataSet->next();
+                                if ($row = $dataSet->getRow()) {
                                     $flagNotification = true;
                                 }
                             }
                             if (!$flagNotification) {
                                 // Send notifications - Start
-                                $oUser = new Users();
-                                $aUser = $oUser->load($appFields["CURRENT_USER_UID"]);
+                                $user = new Users();
+                                $informationUser = $user->load($appFields['CURRENT_USER_UID']);
 
-                                $sFromName = $aUser["USR_FIRSTNAME"] . " " . $aUser["USR_LASTNAME"] . ($aUser["USR_EMAIL"] != "" ? " <" . $aUser["USR_EMAIL"] . ">" : "");
+                                $sFromName = $informationUser['USR_FIRSTNAME'] . ' ' . $informationUser['USR_LASTNAME'] . ($informationUser['USR_EMAIL'] != '' ? ' <' . $informationUser['USR_EMAIL'] . '>' : '');
 
                                 try {
-                                    $oCase->sendNotifications($appFields["TAS_UID"],
+                                    $case->sendNotifications(
+                                        $appFields['TAS_UID'],
                                         $nextDelegations2,
-                                        $appFields["APP_DATA"],
-                                        $sApplicationUID,
+                                        $appFields['APP_DATA'],
+                                        $applicationUid,
                                         $delIndex,
                                         $sFromName);
 
                                 } catch (Exception $e) {
-                                    G::SendTemporalMessage(G::loadTranslation("ID_NOTIFICATION_ERROR") . " - " . $e->getMessage(), "warning", "string", null, "100%");
+                                    G::SendTemporalMessage(G::loadTranslation('ID_NOTIFICATION_ERROR') . ' - ' . $e->getMessage(), 'warning', 'string', null, '100%');
                                 }
                                 // Send notifications - End
                             }
