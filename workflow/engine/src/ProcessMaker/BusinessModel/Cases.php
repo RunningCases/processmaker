@@ -28,6 +28,7 @@ use EntitySolrRequestData;
 use G;
 use Groups;
 use InvalidIndexSearchTextException;
+use ListParticipatedLast;
 use PmDynaform;
 use ProcessMaker\BusinessModel\Task as BmTask;
 use ProcessMaker\BusinessModel\User as BmUser;
@@ -3096,61 +3097,47 @@ class Cases
         return !(boolean)AppDelegationPeer::doCount($c);
     }
 
+    /**
+     * This function review if the user has processPermissions or the user is supervisor
+     *
+     * @param string $userUid
+     * @param string $applicationUid
+     * @param string $dynaformUid
+     *
+     * @return boolean
+    */
     public function checkUserHasPermissionsOrSupervisor($userUid, $applicationUid, $dynaformUid)
     {
         $arrayApplicationData = $this->getApplicationRecordByPk($applicationUid, [], false);
-        //Check whether the process supervisor
-        $supervisor = new BmProcessSupervisor();
-        $userAccess = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $userUid);
-        if (!empty($dynaformUid)) {
-            //Check if have objects assigned (Supervisor)
-            $flagSupervisors = $this->isSupervisorFromForm(
-                $userUid,
-                $applicationUid,
-                $dynaformUid,
-                $arrayApplicationData['PRO_UID']
-            );
+        //Get all access for the user, we no consider the permissions
+        $userCanAccess = $this->userAuthorization(
+            $userUid,
+            $arrayApplicationData['PRO_UID'],
+            $applicationUid,
+            [],
+            [],
+            true
+        );
 
-            //Check if have permissions VIEW
-            $case = new ClassesCases();
-            $arrayAllObjectsFrom = $case->getAllObjectsFrom($arrayApplicationData['PRO_UID'], $applicationUid, '',
-                $userUid, 'VIEW', 0);
-            $flagPermissionsVIEW = false;
-            if (array_key_exists('DYNAFORMS', $arrayAllObjectsFrom) &&
-                !empty($arrayAllObjectsFrom['DYNAFORMS'])
-            ) {
-                foreach ($arrayAllObjectsFrom['DYNAFORMS'] as $value) {
-                    if ($value == $dynaformUid) {
-                        $flagPermissionsVIEW = true;
-                    }
-                }
-            }
-            //Check if have permissions BLOCK
-            $arrayAllObjectsFrom = $case->getAllObjectsFrom($arrayApplicationData['PRO_UID'], $applicationUid, '',
-                $userUid, 'BLOCK', 0);
-            $flagPermissionsBLOCK = false;
-            if (array_key_exists('DYNAFORMS', $arrayAllObjectsFrom) &&
-                !empty($arrayAllObjectsFrom['DYNAFORMS'])
-            ) {
-                foreach ($arrayAllObjectsFrom['DYNAFORMS'] as $value) {
-                    if ($value == $dynaformUid) {
-                        $flagPermissionsBLOCK = true;
-                    }
-                }
-            }
-            //check case Tracker
-            $flagCaseTracker = $case->getAllObjectsTrackerDynaform($arrayApplicationData['PRO_UID'], $dynaformUid);
+        //We need to get all the object permission consider the BLOCK
+        $case = new ClassesCases();
+        $allObjectPermissions = $case->getAllObjects($arrayApplicationData['PRO_UID'], $applicationUid, '', $userUid);
 
-            return ($flagSupervisors && $userAccess) || $flagPermissionsVIEW || $flagPermissionsBLOCK || $flagCaseTracker;
-        } else {
-            $arrayResult = $this->getStatusInfo($applicationUid, 0, $userUid);
-            $flagParticipated = false;
-            if ($arrayResult || $userAccess) {
-                $flagParticipated = true;
-            }
+        //Check case tracker
+        $flagCaseTracker = $case->getAllObjectsTrackerDynaform($arrayApplicationData['PRO_UID'], $dynaformUid);
 
-            return $flagParticipated;
-        }
+        //Review if the user has participated in the case
+        //Review if the user is supervisor in the case and if had assign the objectSupervisor
+        //Review if the user has process permission SUMMARY FORM
+        //Review if the user has process permission DYNAFORM for the specific form
+        //Review if the form is configured for case tracker
+        return (
+            $userCanAccess['participated']
+            || ($userCanAccess['supervisor'] && in_array($dynaformUid, $userCanAccess['objectSupervisor']))
+            || $allObjectPermissions['SUMMARY_FORM']
+            || in_array($dynaformUid, $allObjectPermissions['DYNAFORMS'])
+            || $flagCaseTracker
+        );
     }
 
     /**
@@ -3325,33 +3312,41 @@ class Cases
     }
 
     /**
-     * Get Permissions, Participate, Access
+     * Get Permissions, Participate, Access, Objects supervisor
      *
      * @param string $usrUid
      * @param string $proUid
      * @param string $appUid
-     * @param array $rolesPermissions
-     * @param array $objectPermissions
-     * @return array Returns array with all access
+     * @param array $rolesPermissions, the roles that we need to review
+     * @param array $objectPermissions, the permissions that we need to review
+     * @param boolean $objectSupervisor, if we need to get all the objects supervisor
+     * @return array
      */
     public function userAuthorization(
         $usrUid,
         $proUid,
         $appUid,
-        $rolesPermissions = array(),
-        $objectPermissions = array()
+        $rolesPermissions = [],
+        $objectPermissions = [],
+        $objectSupervisor = false
     ) {
-        $arrayAccess = array();
+        $arrayAccess = [];
 
         //User has participated
-        $oParticipated = new \ListParticipatedLast();
-        $aParticipated = $oParticipated->loadList($usrUid, array(), null, $appUid);
-        $arrayAccess['participated'] = (count($aParticipated) == 0) ? false : true;
+        $participated = new ListParticipatedLast();
+        $listParticipated = $participated->loadList($usrUid, [], null, $appUid);
+        $arrayAccess['participated'] = (count($listParticipated) == 0) ? false : true;
 
         //User is supervisor
         $supervisor = new BmProcessSupervisor();
         $isSupervisor = $supervisor->isUserProcessSupervisor($proUid, $usrUid);
         $arrayAccess['supervisor'] = ($isSupervisor) ? true : false;
+
+        //If the user is supervisor we will to return the object assigned
+        if ($isSupervisor && $objectSupervisor) {
+            $ps = new BmProcessSupervisor();
+            $arrayAccess['objectSupervisor']  = $ps->getObjectSupervisor($proUid);
+        }
 
         //Roles Permissions
         if (count($rolesPermissions) > 0) {
@@ -3363,9 +3358,9 @@ class Cases
 
         //Object Permissions
         if (count($objectPermissions) > 0) {
-            $oCase = new ClassesCases();
+            $case = new ClassesCases();
             foreach ($objectPermissions as $key => $value) {
-                $resPermission = $oCase->getAllObjectsFrom($proUid, $appUid, '', $usrUid, $value);
+                $resPermission = $case->getAllObjectsFrom($proUid, $appUid, '', $usrUid, $value);
                 if (isset($resPermission[$key])) {
                     $arrayAccess['objectPermissions'][$key] = $resPermission[$key];
                 }

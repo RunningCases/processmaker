@@ -5702,6 +5702,7 @@ class Cases
         foreach ($permissionAction as $action) {
             $mainObjects[$action] = $this->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, $action, $delIndex);
         }
+
         //We will review data with VIEW and BLOCK
         //Dynaforms BLOCK it means does not show in the list
         $resultObjects['DYNAFORMS'] = G::arrayDiff(
@@ -5719,6 +5720,9 @@ class Cases
         $resultObjects['CASES_NOTES'] = G::arrayDiff(
             $mainObjects['VIEW']['CASES_NOTES'], $mainObjects['BLOCK']['CASES_NOTES']
         );
+        //Summary form it means does not show in the list
+        $resultObjects['SUMMARY_FORM'] = isset($mainObjects['VIEW']['SUMMARY_FORM']) ? $mainObjects['VIEW']['SUMMARY_FORM'] : 0;
+
         array_push($resultObjects["DYNAFORMS"], -1, -2);
         array_push($resultObjects['INPUT_DOCUMENTS'], -1);
         array_push($resultObjects['OUTPUT_DOCUMENTS'], -1);
