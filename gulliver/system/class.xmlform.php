@@ -255,7 +255,7 @@ class XmlFormField
                 $rs = $con->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
-                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Wokspace Undefined";
+                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Undefined Workspace";
                 G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
 
                 return $result;
@@ -267,7 +267,7 @@ class XmlFormField
                 $rs = $stmt->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
-                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Wokspace Undefined";
+                $workspace = !empty(config("system.workspace"))? config("system.workspace") : "Undefined Workspace";
                 G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
 
                 return $result;

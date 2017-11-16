@@ -63,7 +63,7 @@ class EmailServer
             $currentUser = $RBAC->aUserInfo['USER_INFO'];
             $info = array(
                 'ip' => G::getIpAddress(),
-                'workspace' => (!empty(config("system.workspace"))) ? config("system.workspace") : "Workspace undefined",
+                'workspace' => (!empty(config("system.workspace"))) ? config("system.workspace") : "Undefined Workspace",
                 'usrUid' => $currentUser['USR_UID']
             );
             $this->setContextLog($info);
