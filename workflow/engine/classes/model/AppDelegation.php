@@ -922,4 +922,37 @@ class AppDelegation extends BaseAppDelegation
         return $index;
     }
 
+    /**
+     * This function get the columns by Id indexing
+     *
+     * @param string $appUid
+     * @param integer $delIndex
+     *
+     * @return array|null
+     * @throws Exception
+     */
+    public function getColumnIds($appUid, $delIndex)
+    {
+        try {
+            $columnsId = [];
+            if ($delIndex > 0) {
+                $row = AppDelegationPeer::retrieveByPK($appUid, $delIndex);
+                if (!is_null($row)) {
+                    $fields = $row->toArray(BasePeer::TYPE_FIELDNAME);
+                    $this->fromArray($fields, BasePeer::TYPE_FIELDNAME);
+                    $columnsId['APP_NUMBER'] = $fields['APP_NUMBER'];
+                    $columnsId['USR_ID'] = $fields['USR_ID'];
+                    $columnsId['TAS_ID'] = $fields['TAS_ID'];
+                    $columnsId['PRO_ID'] = $fields['PRO_ID'];
+                    return $columnsId;
+                } else {
+                    throw (new Exception("The row '" . $appUid . "' , '" . $delIndex . "' in table APP_DELEGATION doesn't exist!"));
+                }
+            }
+
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
 }

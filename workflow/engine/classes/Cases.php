@@ -5445,6 +5445,14 @@ class Cases
             if ($sTo != null) {
                 $oSpool = new SpoolRun();
 
+                //Load the TAS_ID
+                if (!isset($arrayData['TAS_ID'])) {
+                    $task= new Task();
+                    $taskId = $task->load($arrayData['TASK'])['TAS_ID'];
+                } else {
+                    $taskId = $arrayData['TAS_ID'];
+                }
+
                 $oSpool->setConfig($dataLastEmail['configuration']);
                 $oSpool->create(array(
                     "msg_uid" => "",
@@ -5460,7 +5468,9 @@ class Cases
                     "app_msg_attach" => "",
                     "app_msg_template" => "",
                     "app_msg_status" => "pending",
-                    "app_msg_error" => $dataLastEmail['msgError']
+                    "app_msg_error" => $dataLastEmail['msgError'],
+                    "tas_id" => $taskId,
+                    "app_number" => isset($arrayData['APP_NUMBER']) ? $arrayData['APP_NUMBER'] : ''
                 ));
 
                 if ($dataLastEmail['msgError'] == '') {
@@ -5475,12 +5485,16 @@ class Cases
     }
 
     /**
-     * @param $taskUid
-     * @param $arrayTask
-     * @param $arrayData
-     * @param $applicationUid
-     * @param $delIndex
+     * This function send an email notification when tas_send_last_email = true
+     * The users assigned to the next task will receive a custom email message when the case is routed
+     *
+     * @param string $taskUid
+     * @param array $arrayTask
+     * @param array $arrayData
+     * @param string $applicationUid
+     * @param integer $delIndex
      * @param string $from
+     *
      * @return bool
      * @throws Exception
      */
@@ -5490,19 +5504,23 @@ class Cases
             $arrayApplicationData = $this->loadCase($applicationUid);
             $arrayData['APP_NUMBER'] = $arrayApplicationData['APP_NUMBER'];
 
-            $oTask = new Task();
-            $aTaskInfo = $oTask->load($taskUid);
+            $task = new Task();
+            $taskInfo = $task->load($taskUid);
 
-            if ($aTaskInfo['TAS_SEND_LAST_EMAIL'] == 'TRUE') {
-                $dataLastEmail = $this->loadDataSendEmail($aTaskInfo, $arrayData, $from, 'LAST');
+            if ($taskInfo['TAS_SEND_LAST_EMAIL'] == 'TRUE') {
+                $dataLastEmail = $this->loadDataSendEmail($taskInfo, $arrayData, $from, 'LAST');
                 $dataLastEmail['applicationUid'] = $applicationUid;
                 $dataLastEmail['delIndex'] = $delIndex;
+                //Load the TAS_ID
+                if (isset($taskInfo['TAS_ID'])) {
+                    $arrayData['TAS_ID'] = $taskInfo['TAS_ID'];
+                }
                 $this->sendMessage($dataLastEmail, $arrayData, $arrayTask);
             } else {
                 return false;
             }
-        } catch (Exception $oException) {
-            throw $oException;
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 

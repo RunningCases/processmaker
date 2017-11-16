@@ -3855,6 +3855,34 @@ class WorkspaceTools
                                    WHERE AD.APP_NUMBER = 0");
         $con->commit();
 
+        // Populating APP_MESSAGE.APP_NUMBER
+        CLI::logging("->   Populating APP_MESSAGE.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AD
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AD.APP_UID = APP.APP_UID)
+                                   SET AD.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AD.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_MESSAGE.TAS_ID
+        CLI::logging("->   Populating APP_MESSAGE.TAS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AD
+                                   INNER JOIN (
+                                       SELECT APP_DELEGATION.TAS_ID, APP_DELEGATION.APP_NUMBER, APP_DELEGATION.TAS_UID, APP_DELEGATION.DEL_INDEX
+                                       FROM APP_DELEGATION
+                                   ) AS DEL
+                                   ON (AD.APP_NUMBER = DEL.APP_NUMBER AND AD.DEL_INDEX = DEL.DEL_INDEX)
+                                   SET AD.TAS_ID = DEL.TAS_ID
+                                   WHERE AD.TAS_ID = 0 AND AD.APP_NUMBER != 0 AND AD.DEL_INDEX != 0");
+        $con->commit();
+
         CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
 
         // Populating PRO_ID, USR_ID
