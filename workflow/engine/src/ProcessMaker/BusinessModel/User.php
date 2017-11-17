@@ -807,7 +807,7 @@ class User
                 }
 
                 //Update in rbac
-                $rbac->load($userUid);
+                $rbac->userObj = new RbacUsers();
                 if (isset($arrayData["USR_ROLE"])) {
                     $rbac->updateUser($arrayData, $arrayData["USR_ROLE"]);
                 } else {
