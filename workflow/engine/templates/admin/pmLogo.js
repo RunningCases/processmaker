@@ -243,13 +243,31 @@ Ext.onReady(function() {
         emptyText  : '',
         fieldLabel : _('ID_IMAGE'),
         buttonText : _('ID_SELECT_FILE'),
-        name       : 'img'
+        name       : 'img',
+          validator: function (filePath) {
+              var flag, btn;
+              btn = Ext.getCmp('btnUpload');
+              btn.disable();
+
+              filePath = filePath.replace(/^\s|\s$/g, ""); //trims string
+              if (filePath.match(/([^\/\\]+)\.(gif|png|jpg|jpeg|pjpeg|x-png)$/i)) {
+                  flag = true;
+                  btn.enable();
+              } else {
+                  messageError = _('ID_ERROR_UPLOADING_IMAGE_TYPE');
+                  PMExt.notify(_('ID_SUCCESS'), messageError);
+                  flag = false;
+              }
+              return flag;
+          }
       }
     ],
     buttons :
     [
       {
         text    : _('ID_UPLOAD'),
+          id : 'btnUpload',
+          disabled: true,
         handler : function() {
           panelRightTop.getForm().submit({
             url     : '../adminProxy/uploadImage',
