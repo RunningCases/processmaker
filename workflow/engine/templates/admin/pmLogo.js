@@ -255,7 +255,7 @@ Ext.onReady(function () {
                             btn.enable();
                         } else {
                             messageError = _('ID_ERROR_UPLOADING_IMAGE_TYPE');
-                            PMExt.notify(_('ID_SUCCESS'), messageError);
+                            PMExt.notify(_('ID_ERROR'), messageError);
                             flag = false;
                         }
                         return flag;
