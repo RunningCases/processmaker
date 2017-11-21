@@ -51,6 +51,15 @@ trait ListBaseTrait
         $this->userDisplayFormat = $v;
     }
 
+    /**
+     * Returns the number of cases by class and user.
+     *
+     * @param type $peerClass
+     * @param type $usrUid
+     * @param type $filters
+     *
+     * @return type
+     */
     protected function getCountListFromPeer($peerClass, $usrUid, $filters = [])
     {
         $criteria = new Criteria();
@@ -62,7 +71,7 @@ trait ListBaseTrait
         $dataset = $peerClass::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
-        $aRow = $dataset->getRow();
-        return (int) $aRow['TOTAL'];
+        $row = $dataset->getRow();
+        return (int) $row['TOTAL'];
     }
 }
