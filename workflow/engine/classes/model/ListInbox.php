@@ -661,7 +661,16 @@ class ListInbox extends BaseListInbox implements ListInterface
      */
     public function getCountList($usrUid, $filters = array())
     {
-        return $this->getCountListFromPeer
-                (ListInboxPeer::class, $usrUid, $filters);
+        $filters['usr_uid'] = $usrUid;
+        $criteria = new Criteria();
+        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
+
+        //The function loadFilters will add some condition in the query
+        $this->loadFilters($criteria, $filters);
+        $dataset = ListInboxPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $row = $dataset->getRow();
+        return (int) $row['TOTAL'];
     }
 }
