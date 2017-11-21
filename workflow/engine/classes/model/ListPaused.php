@@ -15,52 +15,9 @@ use ProcessMaker\BusinessModel\Cases as BmCases;
  * @package    classes.model
  */
 
-class ListPaused extends BaseListPaused
+class ListPaused extends BaseListPaused implements ListInterface
 {
-    private $additionalClassName = '';
-    private $userDisplayFormat = '';
-
-    /**
-     * Get the $additionalClassName value.
-     *
-     * @return string
-     */
-    public function getAdditionalClassName()
-    {
-        return $this->additionalClassName;
-    }
-
-    /**
-     * Set the value of $additionalClassName.
-     *
-     * @param string $v new value
-     * @return void
-     */
-    public function setAdditionalClassName($v)
-    {
-        $this->additionalClassName = $v;
-    }
-
-    /**
-     * Get the $userDisplayFormat value.
-     *
-     * @return string
-     */
-    public function getUserDisplayFormat()
-    {
-        return $this->userDisplayFormat;
-    }
-
-    /**
-     * Set the value of $userDisplayFormat.
-     *
-     * @param string $v new value
-     * @return void
-     */
-    public function setUserDisplayFormat($v)
-    {
-        $this->userDisplayFormat = $v;
-    }
+    use ListBaseTrait;
 
     /**
      * Create List Paused Table
@@ -326,7 +283,7 @@ class ListPaused extends BaseListPaused
      * @return array $data
      * @throws PropelException
      */
-    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
+    public function loadList($usr_uid, $filters = array(), callable $callbackRecord = null)
     {
         $resp = array();
         $pmTable = new PmTable();
@@ -417,16 +374,7 @@ class ListPaused extends BaseListPaused
      */
     public function getCountList($usrUid, $filters = array())
     {
-        $criteria = new Criteria();
-        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
-        $criteria->add(ListPausedPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        if (count($filters)) {
-            self::loadFilters($criteria, $filters);
-        }
-        $dataset = ListPausedPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-        return (int)$aRow['TOTAL'];
+        return $this->getCountListFromPeer
+                (ListPausedPeer::class, $usrUid, $filters);
     }
 } // ListPaused

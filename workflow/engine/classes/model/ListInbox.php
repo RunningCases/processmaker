@@ -15,52 +15,9 @@ use ProcessMaker\BusinessModel\Cases as BmCases;
  * @package    classes.model
  */
 
-class ListInbox extends BaseListInbox
+class ListInbox extends BaseListInbox implements ListInterface
 {
-    private $additionalClassName = '';
-    private $userDisplayFormat = '';
-
-    /**
-     * Get the $additionalClassName value.
-     *
-     * @return string
-     */
-    public function getAdditionalClassName()
-    {
-        return $this->additionalClassName;
-    }
-
-    /**
-     * Set the value of $additionalClassName.
-     *
-     * @param string $v new value
-     * @return void
-     */
-    public function setAdditionalClassName($v)
-    {
-        $this->additionalClassName = $v;
-    }
-
-    /**
-     * Get the $userDisplayFormat value.
-     *
-     * @return string
-     */
-    public function getUserDisplayFormat()
-    {
-        return $this->userDisplayFormat;
-    }
-
-    /**
-     * Set the value of $userDisplayFormat.
-     *
-     * @param string $v new value
-     * @return void
-     */
-    public function setUserDisplayFormat($v)
-    {
-        $this->userDisplayFormat = $v;
-    }
+    use ListBaseTrait;
 
     /**
      * Create List Inbox Table
@@ -569,7 +526,7 @@ class ListInbox extends BaseListInbox
      * @return array $data
      * @throws PropelException
      */
-    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
+    public function loadList($usr_uid, $filters = array(), callable $callbackRecord = null)
     {
         $pmTable = new PmTable();
         $list = isset($filters['action']) ? $filters['action'] : "";
@@ -713,7 +670,7 @@ class ListInbox extends BaseListInbox
         $dataset = ListInboxPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
-        $aRow = $dataset->getRow();
-        return (int)$aRow['TOTAL'];
+        $row = $dataset->getRow();
+        return (int) $row['TOTAL'];
     }
 }

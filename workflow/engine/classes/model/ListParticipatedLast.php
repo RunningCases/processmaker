@@ -12,52 +12,9 @@ use ProcessMaker\BusinessModel\Cases as BmCases;
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  */
-class ListParticipatedLast extends BaseListParticipatedLast
+class ListParticipatedLast extends BaseListParticipatedLast implements ListInterface
 {
-    private $additionalClassName = '';
-    private $userDisplayFormat = '';
-
-    /**
-     * Get the $additionalClassName value.
-     *
-     * @return string
-     */
-    public function getAdditionalClassName()
-    {
-        return $this->additionalClassName;
-    }
-
-    /**
-     * Set the value of $additionalClassName.
-     *
-     * @param string $v new value
-     * @return void
-     */
-    public function setAdditionalClassName($v)
-    {
-        $this->additionalClassName = $v;
-    }
-
-    /**
-     * Get the $userDisplayFormat value.
-     *
-     * @return string
-     */
-    public function getUserDisplayFormat()
-    {
-        return $this->userDisplayFormat;
-    }
-
-    /**
-     * Set the value of $userDisplayFormat.
-     *
-     * @param string $v new value
-     * @return void
-     */
-    public function setUserDisplayFormat($v)
-    {
-        $this->userDisplayFormat = $v;
-    }
+    use ListBaseTrait;
 
     /**
      * Create List Participated History Table.
@@ -410,7 +367,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @return array $data
      * @throws PropelException
      */
-    public function loadList($usr_uid, $filters = array(), $callbackRecord = null, $appUid = '')
+    public function loadList($usr_uid, $filters = array(), callable $callbackRecord = null, $appUid = '')
     {
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('sent');
@@ -554,18 +511,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
      */
     public function getCountList($usrUid, $filters = array())
     {
-        $criteria = new Criteria();
-        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
-        $criteria->add(ListParticipatedLastPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        if (count($filters)) {
-            self::loadFilters($criteria, $filters);
-        }
-        $dataset = ListParticipatedLastPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-
-        return (int) $aRow['TOTAL'];
+        return $this->getCountListFromPeer
+                (ListParticipatedLastPeer::class, $usrUid, $filters);
     }
 
     /**
