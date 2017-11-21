@@ -630,7 +630,7 @@ class RBAC
             $arrayData["USR_FIRSTNAME"] = 'Guest';
             $arrayData["USR_LASTNAME"] = '';
             $arrayData["USR_EMAIL"] = 'guest@processmaker.com';
-            $arrayData["USR_DUE_DATE"] = '2200-01-01';
+            $arrayData["USR_DUE_DATE"] = '2030-01-01';
             $arrayData["USR_CREATE_DATE"] = date("Y-m-d H:i:s");
             $arrayData["USR_UPDATE_DATE"] = date("Y-m-d H:i:s");
             $arrayData["USR_BIRTHDAY"] = '2009-02-01';
