@@ -419,7 +419,7 @@ class WebEntry
                     $fileContent .= "if (\$a->isResponsive()) {\n";
                     $fileContent .= "    \$a->printWebEntry(\"" . $fileName . "Post.php\");\n";
                     $fileContent .= "} else {\n";
-                    $fileContent .= "    \$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . PATH_SEP . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
+                    $fileContent .= "    \$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . (PATH_SEP === '\\' ? '\\\\' : PATH_SEP) . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
                     $fileContent .= "    G::RenderPage(\"publish\", \"blank\");\n";
                     $fileContent .= "}\n";
 
