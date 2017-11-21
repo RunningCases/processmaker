@@ -3582,6 +3582,9 @@ class Cases
                     break;
                 case 'USR_UID':
                     $columnSort = $this->buildOrderFieldFormatted($columnsList, $userDisplayFormat, 'DEL_CURRENT_');
+                    if (empty($columnSort)) {
+                        $columnSort = $this->buildOrderFieldFormatted($columnsList, $userDisplayFormat, '', false);
+                    }
                     break;
                 default:
                     $columnSort  = $listPeer::TABLE_NAME . '.' . $sort;
@@ -3612,13 +3615,13 @@ class Cases
      * 
      * @return array $columnSort, columns  by apply the sql command ORDER BY
      */
-    public function buildOrderFieldFormatted($columnsList, $format, $prefix = 'DEL_PREVIOUS_')
+    public function buildOrderFieldFormatted($columnsList, $format, $prefix = 'DEL_PREVIOUS_', $validate = true)
     {
         $columnSort = [];
 
-        if (in_array($prefix . 'USR_FIRSTNAME', $columnsList) &&
+        if (!$validate || (in_array($prefix . 'USR_FIRSTNAME', $columnsList) &&
             in_array($prefix . 'USR_LASTNAME', $columnsList) &&
-            in_array($prefix . 'USR_USERNAME', $columnsList)
+            in_array($prefix . 'USR_USERNAME', $columnsList))
         ) {
             switch ($format) {
                 case '@firstName @lastName':

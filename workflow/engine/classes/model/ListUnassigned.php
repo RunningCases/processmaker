@@ -15,9 +15,10 @@ require_once 'classes/model/om/BaseListUnassigned.php';
  * @package    classes.model
  */
 // @codingStandardsIgnoreStart
-class ListUnassigned extends BaseListUnassigned
+class ListUnassigned extends BaseListUnassigned implements ListInterface
 {
-    private $additionalClassName = '';
+    use ListBaseTrait;
+
     private $total = 0;
 
     /**
@@ -192,7 +193,7 @@ class ListUnassigned extends BaseListUnassigned
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
                 $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->getAdditionalClassName(), $additionalColumns);
             }
         }
 
@@ -228,7 +229,7 @@ class ListUnassigned extends BaseListUnassigned
     {
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('unassigned');
-        $this->additionalClassName = $pmTable->tableClassName;
+        $this->setAdditionalClassName($pmTable->tableClassName);
         $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListUnassignedPeer::APP_UID);
@@ -260,8 +261,9 @@ class ListUnassigned extends BaseListUnassigned
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "DEL_DELEGATE_DATE" : $filters['sort'],
             "DEL_DELEGATE_DATE",
-            $this->additionalClassName,
-            $additionalColumns
+            $this->getAdditionalClassName(),
+            $additionalColumns,
+            $this->getUserDisplayFormat()
         );
 
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
@@ -269,10 +271,20 @@ class ListUnassigned extends BaseListUnassigned
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
         $count = isset($filters['count']) ? $filters['count'] : 1;
-        if ($dir == "DESC") {
-            $criteria->addDescendingOrderByColumn($sort);
+        if (is_array($sort) && count($sort) > 0) {
+            foreach ($sort as $key) {
+                if ($dir == 'DESC') {
+                    $criteria->addDescendingOrderByColumn($key);
+                } else {
+                    $criteria->addAscendingOrderByColumn($key);
+                }
+            }
         } else {
-            $criteria->addAscendingOrderByColumn($sort);
+            if ($dir == 'DESC') {
+                $criteria->addDescendingOrderByColumn($sort);
+            } else {
+                $criteria->addAscendingOrderByColumn($sort);
+            }
         }
         $this->total = ListUnassignedPeer::doCount($criteria);
         if ($paged == 1) {
