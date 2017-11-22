@@ -1895,7 +1895,7 @@ class WorkspaceTools
             $shared_stat = stat(PATH_DATA);
 
             if ($shared_stat !== false) {
-                WorkspaceTools::dirPerms($workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] & 0777);
             } else {
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
@@ -2185,7 +2185,7 @@ class WorkspaceTools
             CLI::logging("    Copying Enterprise Directory to $pathNewFile...\n");
 
             if ($shared_stat !== false) {
-                WorkspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] & 0777);
             } else {
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
@@ -2202,7 +2202,7 @@ class WorkspaceTools
         if (file_exists($pathFileEnterprise)) {
             CLI::logging("    Copying Enterprise.php file to $pathNewFile...\n");
             if ($shared_stat !== false) {
-                WorkspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] & 0777);
             } else {
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
