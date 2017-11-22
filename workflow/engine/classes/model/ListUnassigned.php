@@ -363,14 +363,17 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
     }
 
     /**
-     * get user's SelfService tasks
+     * Get user's SelfService tasks
+     *
      * @param string $userUid
+     * @param boolean $adHocUsers
+     *
      * @return array $tasks
      */
-    public function getSelfServiceTasks($userUid = '')
+    public function getSelfServiceTasks($userUid = '', $adHocUsers = false)
     {
-        $rows[] = array();
-        $tasks  = array();
+        $rows[] = [];
+        $tasks  = [];
 
         //check self service tasks assigned directly to this user
         $c = new Criteria();
@@ -383,6 +386,10 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
         $c->add(TaskPeer::TAS_GROUP_VARIABLE, '');
         $c->add(TaskUserPeer::USR_UID, $userUid);
+        //TU_TYPE = 2 is a AdHoc task
+        if (!$adHocUsers) {
+            $c->add(TaskUserPeer::TU_TYPE, 1);
+        }
 
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -396,7 +403,7 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         }
 
         $group = new Groups();
-        $aGroups = $group->getActiveGroupsForAnUser($userUid);
+        $groupsList = $group->getActiveGroupsForAnUser($userUid);
 
         $c = new Criteria();
         $c->clearSelectColumns();
@@ -407,7 +414,11 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
         $c->add(TaskPeer::TAS_GROUP_VARIABLE, '');
-        $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
+        $c->add(TaskUserPeer::USR_UID, $groupsList, Criteria::IN);
+        //TU_TYPE = 2 is a AdHoc task
+        if (!$adHocUsers) {
+            $c->add(TaskUserPeer::TU_TYPE, 1);
+        }
 
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
