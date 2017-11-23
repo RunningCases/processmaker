@@ -106,7 +106,10 @@ class AddonsStore extends BaseAddonsStore
 
             $sw = 1;
             if ($type == 'plugin') {
-                $addonInLicense = in_array($addon->getAddonId(), $licenseManager->features);
+                $addonInLicense = false;
+                if (!empty($addon->getAddonId()) && !empty($licenseManager->features)) {
+                    $addonInLicense = in_array($addon->getAddonId(), $licenseManager->features);
+                }
 
                 if ($sw == 1 && $addon->getAddonId() != "enterprise" && !$addonInLicense) {
                     $sw = 0;
@@ -211,7 +214,11 @@ class AddonsStore extends BaseAddonsStore
             }
 
             $sw = 1;
-            $addonInLicense = in_array($addon->getAddonId(), $licenseManager->features);
+
+            $addonInLicense = false;
+            if (!empty($addon->getAddonId()) && !empty($licenseManager->features)) {
+                $addonInLicense = in_array($addon->getAddonId(), $licenseManager->features);
+            }
 
             if ($sw == 1 && $addon->getAddonId() != "enterprise" && !$addonInLicense) {
                 $sw = 0;
