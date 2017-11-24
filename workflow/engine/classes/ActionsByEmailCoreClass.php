@@ -180,17 +180,17 @@ class ActionsByEmailCoreClass extends PMPlugin
                                     $__ABE__ .= '<td><table align="left" cellpadding="2"><tr>';
                                     foreach ($customGrid as $key => $value) {
                                         $__ABE__ .= '<td align="center"><a style="' . $value['abe_custom_format'] . '" ';
-                                        $__ABE__ .= 'href="' . urldecode(urlencode($link)) . '?ACTION=' . G::encrypt('processABE', URL_KEY) . '&APP_UID=';
-                                        $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY);
-                                        $__ABE__ .= '&FIELD=' . G::encrypt($actionField, URL_KEY) . '&VALUE=' . G::encrypt($value['abe_custom_value'], URL_KEY);
-                                        $__ABE__ .= '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank" >' . $value['abe_custom_label'];
+                                        $__ABE__ .= 'href="' . urldecode(urlencode($link)) . '?ACTION=' . G::encrypt('processABE', URL_KEY, true) . '&APP_UID=';
+                                        $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY, true) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY);
+                                        $__ABE__ .= '&FIELD=' . G::encrypt($actionField, URL_KEY, true) . '&VALUE=' . G::encrypt($value['abe_custom_value'], URL_KEY, true);
+                                        $__ABE__ .= '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY, true) . '" target="_blank" >' . $value['abe_custom_label'];
                                         $__ABE__ .= '</a></td>' . (($index % 5 == 0) ? '</tr><tr>' : '  ');
                                         $index++;
                                     }
                                     $__ABE__ .= '</tr></table></div>';
                                     break;
                                 case 'LINK':
-                                    $__ABE__ .= '<a href="' . $link . 'DataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Please complete this form</a>';
+                                    $__ABE__ .= '<a href="' . $link . 'DataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY, true) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY, true) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY, true) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY, true) . '" target="_blank">Please complete this form</a>';
                                     break;
                                 // coment
                                 case 'FIELD':
@@ -242,10 +242,10 @@ class ActionsByEmailCoreClass extends PMPlugin
                                                     $__ABE__ .= 'background-image: -o-linear-gradient(top, #EFEFEF, #BCBCBC); border: 1px solid #AAAAAA; ';
                                                     $__ABE__ .= 'border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); ';
                                                     $__ABE__ .= 'font-family: Arial,serif; font-size: 9pt; font-weight: 400; line-height: 14px; margin: 2px 0; padding: 2px 7px; ';
-                                                    $__ABE__ .= 'text-decoration: none; text-transform: capitalize;" href="' .urldecode(urlencode($link)). '?ACTION='.G::encrypt('processABE', URL_KEY).'&APP_UID=';
-                                                    $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY);
-                                                    $__ABE__ .= '&FIELD=' . G::encrypt($actionField, URL_KEY) . '&VALUE=' . G::encrypt($optValue, URL_KEY);
-                                                    $__ABE__ .= '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank" >' . $optName;
+                                                    $__ABE__ .= 'text-decoration: none; text-transform: capitalize;" href="' .urldecode(urlencode($link)). '?ACTION='.G::encrypt('processABE', URL_KEY, true).'&APP_UID=';
+                                                    $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY, true) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY, true);
+                                                    $__ABE__ .= '&FIELD=' . G::encrypt($actionField, URL_KEY, true) . '&VALUE=' . G::encrypt($optValue, URL_KEY, true);
+                                                    $__ABE__ .= '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY, true) . '" target="_blank" >' . $optName;
                                                     $__ABE__ .= '</a></td>' . (($index % 5 == 0) ? '</tr><tr>' : '  ');
                                                     $index++;
                                                 }
@@ -253,12 +253,12 @@ class ActionsByEmailCoreClass extends PMPlugin
                                                 $__ABE__.='</tr></table></td>';
                                                 break;
                                             case 'yesno':
-                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY) . '&APP_UID=' . urlencode(G::encrypt($data->APP_UID, URL_KEY)) . '&DEL_INDEX=' . urlencode(G::encrypt($data->DEL_INDEX, URL_KEY)). '&FIELD=' . urlencode(G::encrypt($actionField, URL_KEY)) . '&VALUE=' . urlencode(G::encrypt(1, URL_KEY)) . '&ABER=' . urlencode(G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY)) . '" target="_blank">' . G::LoadTranslation('ID_YES_VALUE') . '</a></td>';
-                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY) . '&APP_UID=' . urlencode(G::encrypt($data->APP_UID, URL_KEY)) . '&DEL_INDEX=' . urlencode(G::encrypt($data->DEL_INDEX, URL_KEY)) . '&FIELD=' . urlencode(G::encrypt($actionField, URL_KEY)) . '&VALUE=' . urlencode(G::encrypt(0, URL_KEY)) . '&ABER=' . urlencode(G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY)) . '" target="_blank">' . G::LoadTranslation('ID_NO_VALUE') . '</a></td>';
+                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY, true) . '&APP_UID=' . urlencode(G::encrypt($data->APP_UID, URL_KEY, true)) . '&DEL_INDEX=' . urlencode(G::encrypt($data->DEL_INDEX, URL_KEY, true)). '&FIELD=' . urlencode(G::encrypt($actionField, URL_KEY, true)) . '&VALUE=' . urlencode(G::encrypt(1, URL_KEY, true)) . '&ABER=' . urlencode(G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY, true, true)) . '" target="_blank">' . G::LoadTranslation('ID_YES_VALUE') . '</a></td>';
+                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY, true) . '&APP_UID=' . urlencode(G::encrypt($data->APP_UID, URL_KEY, true)) . '&DEL_INDEX=' . urlencode(G::encrypt($data->DEL_INDEX, URL_KEY, true)) . '&FIELD=' . urlencode(G::encrypt($actionField, URL_KEY, true)) . '&VALUE=' . urlencode(G::encrypt(0, URL_KEY, true)) . '&ABER=' . urlencode(G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY, true, true)) . '" target="_blank">' . G::LoadTranslation('ID_NO_VALUE') . '</a></td>';
                                                 break;
                                             case 'checkbox':
-                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY) . '&APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&FIELD=' . G::encrypt($actionField, URL_KEY) . '&VALUE=' . G::encrypt($field->value, URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Check</a></td>';
-                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY) . '&APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&FIELD=' . G::encrypt($actionField, URL_KEY) . '&VALUE=' . G::encrypt($field->value, URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Uncheck</a></td>';
+                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY, true) . '&APP_UID=' . G::encrypt($data->APP_UID, URL_KEY, true) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY, true) . '&FIELD=' . G::encrypt($actionField, URL_KEY, true) . '&VALUE=' . G::encrypt($field->value, URL_KEY, true) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY, true) . '" target="_blank">Check</a></td>';
+                                                $__ABE__ .= '<td align="center"><a href="' . $link . '?ACTION=' . G::encrypt('processABE', URL_KEY, true) . '&APP_UID=' . G::encrypt($data->APP_UID, URL_KEY, true) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY, true) . '&FIELD=' . G::encrypt($actionField, URL_KEY, true) . '&VALUE=' . G::encrypt($field->value, URL_KEY, true) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY, true) . '" target="_blank">Uncheck</a></td>';
                                                 break;
                                         }
                                         $__ABE__ .= '</tr></table>';

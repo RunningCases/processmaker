@@ -29,11 +29,11 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         throw new Exception('The parameter DEL_INDEX is empty.');
                     }
 
-                    $_REQUEST['APP_UID'] = G::decrypt(urldecode(utf8_encode($_REQUEST['APP_UID'])), URL_KEY);
-                    $_REQUEST['DEL_INDEX'] = G::decrypt(urldecode(utf8_encode($_REQUEST['DEL_INDEX'])), URL_KEY);
-                    $_REQUEST['FIELD'] = G::decrypt(urldecode(utf8_encode($_REQUEST['FIELD'])), URL_KEY);
-                    $_REQUEST['VALUE'] = G::decrypt(urldecode(utf8_encode($_REQUEST['VALUE'])), URL_KEY);
-                    $_REQUEST['ABER'] = G::decrypt(urldecode(utf8_encode($_REQUEST['ABER'])), URL_KEY);
+                    $_REQUEST['APP_UID'] = G::decrypt(urldecode(utf8_encode($_REQUEST['APP_UID'])), URL_KEY, true);
+                    $_REQUEST['DEL_INDEX'] = G::decrypt(urldecode(utf8_encode($_REQUEST['DEL_INDEX'])), URL_KEY, true);
+                    $_REQUEST['FIELD'] = G::decrypt(rawurldecode(utf8_encode($_REQUEST['FIELD'])), URL_KEY, true);
+                    $_REQUEST['VALUE'] = G::decrypt(urldecode(utf8_encode($_REQUEST['VALUE'])), URL_KEY, true);
+                    $_REQUEST['ABER'] = G::decrypt(urldecode(utf8_encode($_REQUEST['ABER'])), URL_KEY, true);
 
                     $case = new Cases();
                     $actionsByEmail = new \ProcessMaker\BusinessModel\ActionsByEmail();
