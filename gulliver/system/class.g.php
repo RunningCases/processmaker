@@ -416,15 +416,13 @@ class G
         }
 
         $result = base64_encode($result);
-        $search = ['/', '='];
-        $replace = ['°', ''];
+        $search = ['/' => '°', '=' => ''];
 
         if ($urlSafe) {
-            $search[] = '+';
-            $replace[] = '_';
+            $search['+'] = '-';
         }
 
-        return str_replace($search, $replace, $result);
+        return strtr($result, $search);
     }
 
     /**
@@ -441,18 +439,15 @@ class G
     public static function decrypt($string, $key, $urlSafe = false)
     {
         $result = '';
-        $search = ['°'];
-        $replace = ['/'];
+        $search = ['°' => '/'];
 
         if ($urlSafe) {
-            $search[] = '_';
-            $replace[] = '+';
+            $search['-'] = '+';
         }
 
-        $string = str_replace($search, $replace, $string);
-        $string_jhl = explode("?", $string);
-        $string = base64_decode($string);
-        $string = base64_decode($string_jhl[0]);
+        $string = strtr($string, $search);
+        $complement = explode('?', $string);
+        $string = base64_decode($complement[0]);
 
         for ($i = 0; $i < strlen($string); $i++) {
             $char = substr($string, $i, 1);
@@ -460,8 +455,8 @@ class G
             $char = chr(ord($char) - ord($keychar));
             $result .= $char;
         }
-        if (!empty($string_jhl[1])) {
-            $result .= '?' . $string_jhl[1];
+        if (!empty($complement[1])) {
+            $result .= '?' . $complement[1];
         }
         return $result;
     }

@@ -31,7 +31,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
 
                     $_REQUEST['APP_UID'] = G::decrypt(urldecode(utf8_encode($_REQUEST['APP_UID'])), URL_KEY, true);
                     $_REQUEST['DEL_INDEX'] = G::decrypt(urldecode(utf8_encode($_REQUEST['DEL_INDEX'])), URL_KEY, true);
-                    $_REQUEST['FIELD'] = G::decrypt(rawurldecode(utf8_encode($_REQUEST['FIELD'])), URL_KEY, true);
+                    $_REQUEST['FIELD'] = G::decrypt(urldecode(utf8_encode($_REQUEST['FIELD'])), URL_KEY, true);
                     $_REQUEST['VALUE'] = G::decrypt(urldecode(utf8_encode($_REQUEST['VALUE'])), URL_KEY, true);
                     $_REQUEST['ABER'] = G::decrypt(urldecode(utf8_encode($_REQUEST['ABER'])), URL_KEY, true);
 
