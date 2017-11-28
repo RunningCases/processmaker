@@ -1882,15 +1882,25 @@ class PmDynaform
 
     /**
      * Remove the posted values that are not in the definition of Dynaform.
+     * 
      * @param array $post
+     * 
      * @return array
      */
-    public function validatePost($post = array())
+    public function validatePost($post = [])
     {
         $result = array();
         $previusFunction = $this->onPropertyRead;
         $this->onPropertyRead = function($json, $key, $value) use (&$post) {
             if ($key === "type" && isset($json->variable) && !empty($json->variable)) {
+                //Clears the data in the appData for grids
+                if ($json->type === 'grid' &&
+                        array_key_exists($json->id, $this->fields) &&
+                        !array_key_exists($json->id, $post)
+                ) {
+                    $post[$json->variable] = [[]];
+                }
+                //validate 'protectedValue' property
                 if (isset($json->protectedValue) && $json->protectedValue === true) {
                     if (isset($post[$json->variable])) {
                         unset($post[$json->variable]);
@@ -1918,12 +1928,6 @@ class PmDynaform
                 $validatorClass = ProcessMaker\BusinessModel\DynaForm\ValidatorFactory::createValidatorClass($json->type, $json);
                 if ($validatorClass !== null) {
                     $validatorClass->validatePost($post);
-                }
-                //Clears the data in the appData for grids
-                if (array_key_exists($json->id, $this->fields) && $json->type === 'grid' &&
-                    !array_key_exists($json->id, $post)
-                ) {
-                    $post[$json->variable] = array(array());
                 }
             }
         };
