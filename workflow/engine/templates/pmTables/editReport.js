@@ -1682,10 +1682,11 @@ function mapPMFieldType(id)
         case 'dropdown':
         case 'yesno':
         case 'checkbox':
+        case 'radio':
         case 'radiogroup':
         case 'hidden':
             typeField = 'VARCHAR';
-            sizeField = '32';
+            sizeField = '255';
             break;
         case 'currency':
             typeField = 'INTEGER';
@@ -1717,21 +1718,21 @@ function mapPMFieldType(id)
             sizeField = '11';
             break;
         case 'boolean':
-            typeField = 'INTEGER';
-            sizeField = '1';
+            typeField = 'BOOLEAN';
+            sizeField = '';
             break;
         case 'date':
-            typeField = 'VARCHAR';
-            sizeField = '255';
+            typeField = 'DATE';
+            sizeField = '';
             break;
         case 'datetime':
-            typeField = 'VARCHAR';
-            sizeField = '255';
+            typeField = 'DATETIME';
+            sizeField = '';
             break;
 
         default:
-            typeField = 'TEXT';
-            sizeField = '';
+            typeField = 'VARCHAR';
+            sizeField = '255';
             break;
     }
 
