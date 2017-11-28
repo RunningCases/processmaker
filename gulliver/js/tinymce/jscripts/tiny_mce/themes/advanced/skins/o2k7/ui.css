@@ -1,7 +1,7 @@
 /* Reset */
 .o2k7Skin table, .o2k7Skin tbody, .o2k7Skin a, .o2k7Skin img, .o2k7Skin tr, .o2k7Skin div, .o2k7Skin td, .o2k7Skin iframe, .o2k7Skin span, .o2k7Skin *, .o2k7Skin .mceText {border:0; margin:0; padding:0; background:transparent; white-space:nowrap; text-decoration:none; font-weight:normal; cursor:default; color:#000; vertical-align:baseline; width:auto; border-collapse:separate; text-align:left}
 .o2k7Skin a:hover, .o2k7Skin a:link, .o2k7Skin a:visited, .o2k7Skin a:active {text-decoration:none; font-weight:normal; cursor:default; color:#000}
-.o2k7Skin table td {vertical-align:top; background-color: white;}
+.o2k7Skin table td {vertical-align:middle}
 
 /* Containers */
 .o2k7Skin table {background:transparent}
@@ -15,7 +15,6 @@
 
 /* Layout */
 .o2k7Skin table.mceLayout {border:0; border-left:1px solid #ABC6DD; border-right:1px solid #ABC6DD}
-.o2k7Skin table.mceLayout tr.mceLast {height:1px !important}
 .o2k7Skin table.mceLayout tr.mceFirst td {border-top:1px solid #ABC6DD}
 .o2k7Skin table.mceLayout tr.mceLast td {border-bottom:1px solid #ABC6DD}
 .o2k7Skin table.mceToolbar, .o2k7Skin tr.mceFirst .mceToolbar tr td, .o2k7Skin tr.mceLast .mceToolbar tr td {border:0; margin:0; padding:0}
@@ -221,8 +220,3 @@
 .o2k7Skin span.mce_restoredraft {background-position:-20px -40px}
 .o2k7Skin span.mce_spellchecker {background-position:-540px -20px}
 .o2k7Skin span.mce_visualblocks {background-position: -40px -40px}
-
-
-a.mce_pmSimpleUploader, a.mce_pmVariablePicker, a.mce_pmGrids { border: 1px solid #BBBBBB; border-width: 1px 0 1px 0; background: #EEEEEE !important;}
-a.mce_pmSimpleUploader:hover, a.mce_pmVariablePicker:hover, a.mce_pmGrids:hover {background: #FFDB6F !important;}
-a.mce_pmSimpleUploader img, a.mce_pmVariablePicker img, a.mce_pmGrids img {margin: 0.25em 0 0 0.25em !important; width: 14px !important; height: 14px !important;}
