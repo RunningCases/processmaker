@@ -1,6 +1,8 @@
 <?php
 
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Util\DateTime;
+
 
 $filter = new InputFilter();
 
@@ -339,14 +341,14 @@ try {
             $FieldsPmDynaform["STEP_MODE"] = $oStep->getStepMode();
             $FieldsPmDynaform["PRO_SHOW_MESSAGE"] = $noShowTitle;
             $FieldsPmDynaform["TRIGGER_DEBUG"] = $_SESSION['TRIGGER_DEBUG']['ISSET'];
-            $a = new PmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
+            $a = new PmDynaform(DateTime::convertUtcToTimeZone($FieldsPmDynaform));
             if ($a->isResponsive()) {
                 $a->printEdit();
             } else {
             	if(array_key_exists('gmail',$_GET) && $_GET['gmail'] == 1){
-            		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', \ProcessMaker\Util\DateTime::convertUtcToTimeZone($Fields['APP_DATA']), 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'] . '&gmail=1', '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
+            		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', DateTime::convertUtcToTimeZone($Fields['APP_DATA']), 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'] . '&gmail=1', '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
             	}else{
-            		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', \ProcessMaker\Util\DateTime::convertUtcToTimeZone($Fields['APP_DATA']), 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
+            		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', DateTime::convertUtcToTimeZone($Fields['APP_DATA']), 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
             	}
             }
             break;
@@ -710,6 +712,7 @@ try {
                     $oAppDocument = new AppDocument();
                     $lastVersion = $oAppDocument->getLastAppDocVersion( $_GET['DOC'], $_SESSION['APPLICATION'] );
                     $aFields = $oAppDocument->load( $_GET['DOC'], $lastVersion );
+                    $aFields['APP_DOC_CREATE_DATE'] = DateTime::convertUtcToTimeZone($aFields['APP_DOC_CREATE_DATE']);
                     $listing = false;
                     $oPluginRegistry = PluginRegistry::loadSingleton();
                     if ($oPluginRegistry->existsTrigger( PM_CASE_DOCUMENT_LIST )) {
