@@ -390,63 +390,73 @@ class G
     /**
      * * Encrypt and decrypt functions ***
      */
+
     /**
      * Encrypt string
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
+     * 
      * @param string $string
      * @param string $key
+     * @param bool $urlSafe if it is used in url
+     *
      * @return string
      */
-    public static function encrypt ($string, $key)
+    public static function encrypt ($string, $key, $urlSafe = false)
     {
-        //print $string;
-        //    if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
-        if (strpos( $string, '|', 0 ) !== false) {
+        if (strpos($string, '|', 0) !== false) {
             return $string;
         }
         $result = '';
-        for ($i = 0; $i < strlen( $string ); $i ++) {
-            $char = substr( $string, $i, 1 );
-            $keychar = substr( $key, ($i % strlen( $key )) - 1, 1 );
-            $char = chr( ord( $char ) + ord( $keychar ) );
+        for ($i = 0; $i < strlen($string); $i++) {
+            $char = substr($string, $i, 1);
+            $keychar = substr($key, ($i % strlen($key)) - 1, 1);
+            $char = chr(ord($char) + ord($keychar));
             $result .= $char;
         }
 
-        $result = base64_encode( $result );
-        $result = str_replace( '/', '°', $result );
-        $result = str_replace( '=', '', $result );
-        return $result;
+        $result = base64_encode($result);
+        $search = ['/' => '°', '=' => ''];
+
+        if ($urlSafe) {
+            $search['+'] = '-';
+        }
+
+        return strtr($result, $search);
     }
 
     /**
      * Decrypt string
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
+     * 
      * @param string $string
      * @param string $key
+     * @param bool $urlSafe if it is used in url
+     *
      * @return string
      */
-    public static function decrypt($string, $key)
+    public static function decrypt($string, $key, $urlSafe = false)
     {
-        //   if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
-        //if (strpos($string, '|', 0) !== false) return $string;
         $result = '';
-        $string = str_replace( '°', '/', $string );
-        $string_jhl = explode( "?", $string );
-        $string = base64_decode( $string );
-        $string = base64_decode( $string_jhl[0] );
+        $search = ['°' => '/'];
 
-        for ($i = 0; $i < strlen( $string ); $i ++) {
-            $char = substr( $string, $i, 1 );
-            $keychar = substr( $key, ($i % strlen( $key )) - 1, 1 );
-            $char = chr( ord( $char ) - ord( $keychar ) );
+        if ($urlSafe) {
+            $search['-'] = '+';
+        }
+
+        $string = strtr($string, $search);
+        $complement = explode('?', $string);
+        $string = base64_decode($complement[0]);
+
+        for ($i = 0; $i < strlen($string); $i++) {
+            $char = substr($string, $i, 1);
+            $keychar = substr($key, ($i % strlen($key)) - 1, 1);
+            $char = chr(ord($char) - ord($keychar));
             $result .= $char;
         }
-        if (! empty( $string_jhl[1] )) {
-            $result .= '?' . $string_jhl[1];
+        if (!empty($complement[1])) {
+            $result .= '?' . $complement[1];
         }
         return $result;
     }
