@@ -3,6 +3,7 @@
 use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\DynaForm\SuggestTrait;
 use ProcessMaker\BusinessModel\Cases;
+use ProcessMaker\BusinessModel\DynaForm\ValidatorFactory;
 
 /**
  * Implementing pmDynaform library in the running case.
@@ -1882,48 +1883,36 @@ class PmDynaform
 
     /**
      * Remove the posted values that are not in the definition of Dynaform.
+     * 
      * @param array $post
+     * 
      * @return array
      */
-    public function validatePost($post = array())
+    public function validatePost($post = [])
     {
         $result = array();
         $previusFunction = $this->onPropertyRead;
         $this->onPropertyRead = function($json, $key, $value) use (&$post) {
             if ($key === "type" && isset($json->variable) && !empty($json->variable)) {
-                if (isset($json->protectedValue) && $json->protectedValue === true) {
-                    if (isset($post[$json->variable])) {
-                        unset($post[$json->variable]);
-                    }
-                    if (isset($post[$json->variable . "_label"])) {
-                        unset($post[$json->variable . "_label"]);
-                    }
+                //clears the data in the appData for grids
+                $isThereIdIntoPost = array_key_exists($json->id, $post);
+                $isThereIdIntoFields = array_key_exists($json->id, $this->fields);
+                if ($json->type === 'grid' && !$isThereIdIntoPost && $isThereIdIntoFields) {
+                    $post[$json->variable] = [[]];
                 }
-                if ($json->type === "grid" && is_array($json->columns)) {
-                    foreach ($json->columns as $column) {
-                        if (isset($column->protectedValue) && $column->protectedValue === true) {
-                            $dataGrid = is_array($post[$json->variable]) ? $post[$json->variable] : array();
-                            foreach ($dataGrid as $keyRow => $row) {
-                                if (isset($post[$json->variable][$keyRow][$column->id])) {
-                                    unset($post[$json->variable][$keyRow][$column->id]);
-                                }
-                                if (isset($post[$json->variable][$keyRow][$column->id . "_label"])) {
-                                    unset($post[$json->variable][$keyRow][$column->id . "_label"]);
-                                }
-                            }
-                        }
+                //validate 'protectedValue' property
+                if (isset($json->protectedValue) && $json->protectedValue === true) {
+                    if (isset($this->fields[$json->variable])) {
+                        $post[$json->variable] = $this->fields[$json->variable];
+                    }
+                    if (isset($this->fields[$json->variable . "_label"])) {
+                        $post[$json->variable . "_label"] = $this->fields[$json->variable . "_label"];
                     }
                 }
                 //validator data
-                $validatorClass = ProcessMaker\BusinessModel\DynaForm\ValidatorFactory::createValidatorClass($json->type, $json);
+                $validatorClass = ValidatorFactory::createValidatorClass($json->type, $json);
                 if ($validatorClass !== null) {
                     $validatorClass->validatePost($post);
-                }
-                //Clears the data in the appData for grids
-                if (array_key_exists($json->id, $this->fields) && $json->type === 'grid' &&
-                    !array_key_exists($json->id, $post)
-                ) {
-                    $post[$json->variable] = array(array());
                 }
             }
         };
