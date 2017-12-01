@@ -185,6 +185,12 @@ class RBAC
             'processes_GetFile.php' => [
                 'mailTemplates' => ['PM_FACTORY'],
                 'public' => ['PM_FACTORY']
+            ],
+            'tools/ajaxListener.php' => [
+                'getList' => ['PM_SETUP'],
+                'save' => ['PM_SETUP'],
+                'delete' => ['PM_SETUP'],
+                'rebuild' => ['PM_SETUP']
             ]
         ];
         $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
