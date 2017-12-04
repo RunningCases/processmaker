@@ -29,7 +29,7 @@ class PmGoogleApi
 
     public function __construct()
     {
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if (!($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') || $licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M='))) {
             G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
             G::header('location: ../login/login');
@@ -64,7 +64,7 @@ class PmGoogleApi
         $this->configuration->loadConfig($gmail, 'GOOGLE_API_SETTINGS', '');
     }
 
-    public function setConfigGmail ($id, $value)
+    public function setConfigGmail($id, $value)
     {
         $this->configuration->aConfig[$id] = $value;
         $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
@@ -81,7 +81,7 @@ class PmGoogleApi
         return $this->serviceAccountEmail;
     }
 
-    public function setServiceAccountCertificate ($serviceAccountCertificate)
+    public function setServiceAccountCertificate($serviceAccountCertificate)
     {
         $this->setConfigGmail('serviceAccountCertificate', $serviceAccountCertificate);
         $this->serviceAccountCertificate = $serviceAccountCertificate;
@@ -94,7 +94,7 @@ class PmGoogleApi
 
     public function setServiceGmailStatus($status)
     {
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if (!$licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
             $status = false;
         }
@@ -109,7 +109,7 @@ class PmGoogleApi
 
     public function setServiceDriveStatus($status)
     {
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if (!$licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
             $status = false;
         }
@@ -183,7 +183,6 @@ class PmGoogleApi
      */
     public function testService($credentials)
     {
-
         $scope = array(
             static::DRIVE,
             static::DRIVE_FILE,

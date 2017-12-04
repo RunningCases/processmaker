@@ -25,13 +25,13 @@
 /*----------------------------------********---------------------------------*/
 //Browser Compatibility
 $browserSupported = G::checkBrowserCompatibility();
-if ($browserSupported==false){
-	if(!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == ""){
-		G::SendTemporalMessage ('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
-	}
+if ($browserSupported==false) {
+    if (!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == "") {
+        G::SendTemporalMessage('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
+    }
 }
 /*----------------------------------********---------------------------------*/
-if (isset ($_POST['form']['USER_ENV'])) {
+if (isset($_POST['form']['USER_ENV'])) {
     @session_destroy();
     session_start();
     $_SESSION['sysLogin'] = $_POST['form'];
@@ -62,23 +62,22 @@ session_regenerate_id();
 $_SESSION = array_merge($_SESSION, $arraySession);
 
 //Required classes for dbArray work
-Propel::init (PATH_CORE . "config/databases.php");
-Creole::registerDriver ('dbarray', 'creole.contrib.DBArrayConnection');
+Propel::init(PATH_CORE . "config/databases.php");
+Creole::registerDriver('dbarray', 'creole.contrib.DBArrayConnection');
 
 function getLangFiles()
 {
     $dir = PATH_LANGUAGECONT;
-    $filesArray = array ();
-    if (file_exists ($dir)) {
-        if ($handle = opendir ($dir)) {
-            while (false !== ($file = readdir ($handle))) {
-
-                $fileParts = explode (".", $file);
+    $filesArray = array();
+    if (file_exists($dir)) {
+        if ($handle = opendir($dir)) {
+            while (false !== ($file = readdir($handle))) {
+                $fileParts = explode(".", $file);
                 if ($fileParts [0] == "translation") {
                     $filesArray [$fileParts [1]] = $file;
                 }
             }
-            closedir ($handle);
+            closedir($handle);
         }
     }
     return $filesArray;
@@ -86,28 +85,28 @@ function getLangFiles()
 
 function getWorkspacesAvailable()
 {
-    $oServerConf = & ServerConf::getSingleton ();
+    $oServerConf = ServerConf::getSingleton();
     $dir = PATH_DB;
-    $filesArray = array ();
-    if (file_exists ($dir)) {
-        if ($handle = opendir ($dir)) {
-            while (false !== ($file = readdir ($handle))) {
+    $filesArray = array();
+    if (file_exists($dir)) {
+        if ($handle = opendir($dir)) {
+            while (false !== ($file = readdir($handle))) {
                 if (($file != ".") && ($file != "..")) {
-                    if (file_exists (PATH_DB . $file . '/db.php')) {
-                        if (! $oServerConf->isWSDisabled ($file)) {
+                    if (file_exists(PATH_DB . $file . '/db.php')) {
+                        if (! $oServerConf->isWSDisabled($file)) {
                             $filesArray [] = $file;
                         }
                     }
                 }
             }
-            closedir ($handle);
+            closedir($handle);
         }
     }
-    sort ($filesArray, SORT_STRING);
+    sort($filesArray, SORT_STRING);
     return $filesArray;
 }
 
-$availableWorkspace = getWorkspacesAvailable ();
+$availableWorkspace = getWorkspacesAvailable();
 
 //Translations
 //$Translations = G::getModel("Translation");  <-- ugly way to get a class
@@ -115,8 +114,8 @@ require_once "classes/model/Translation.php";
 $Translations = new Translation();
 $translationsTable = $Translations->getTranslationEnvironments();
 
-$availableLangArray = array ();
-$availableLangArray [] = array ('LANG_ID' => 'char', 'LANG_NAME' => 'char');
+$availableLangArray = array();
+$availableLangArray [] = array('LANG_ID' => 'char', 'LANG_NAME' => 'char');
 
 foreach ($translationsTable as $locale) {
     $aFields['LANG_ID'] = $locale['LOCALE'];
@@ -129,10 +128,10 @@ foreach ($translationsTable as $locale) {
     $availableLangArray [] = $aFields;
 }
 
-$availableWorkspaceArray = array ();
-$availableWorkspaceArray [] = array ('ENV_ID' => 'char', 'ENV_NAME' => 'char');
+$availableWorkspaceArray = array();
+$availableWorkspaceArray [] = array('ENV_ID' => 'char', 'ENV_NAME' => 'char');
 foreach ($availableWorkspace as $envKey => $envName) {
-    $aFields = array ('ENV_ID' => $envName, 'ENV_NAME' => $envName);
+    $aFields = array('ENV_ID' => $envName, 'ENV_NAME' => $envName);
     $availableWorkspaceArray [] = $aFields;
 }
 
@@ -143,10 +142,10 @@ $_DBArray ['availableWorkspace'] = $availableWorkspaceArray;
 
 $_SESSION ['_DBArray'] = $_DBArray;
 
-$aField ['LOGIN_VERIFY_MSG'] = G::loadTranslation ('LOGIN_VERIFY_MSG');
+$aField ['LOGIN_VERIFY_MSG'] = G::loadTranslation('LOGIN_VERIFY_MSG');
 $aField['USER_LANG'] = SYS_LANG;
 
-$G_PUBLISH = new Publisher ();
+$G_PUBLISH = new Publisher();
 if (!defined('WS_IN_LOGIN')) {
     define('WS_IN_LOGIN', 'serverconf');
 }
@@ -156,8 +155,8 @@ $version = isset($version[0]) ? intval($version[0]) : 0;
 switch (WS_IN_LOGIN) {
     case 'serverconf':
         //Get Server Configuration
-        $oServerConf = & ServerConf::getSingleton ();
-        if ($oServerConf->getProperty ('LOGIN_NO_WS')) {
+        $oServerConf = ServerConf::getSingleton();
+        if ($oServerConf->getProperty('LOGIN_NO_WS')) {
             $fileLogin = $version >= 3 ? 'login/sysLoginNoWSpm3' : 'login/sysLoginNoWS';
         } else {
             $fileLogin = 'login/sysLogin';
@@ -173,12 +172,12 @@ switch (WS_IN_LOGIN) {
         $fileLogin = 'login/sysLogin';
         break;
 }
-setcookie("PM-Warning", trim(G::LoadTranslation('ID_BLOCKER_MSG'),'*'), time() + (24 * 60 * 60), SYS_CURRENT_URI);
+setcookie("PM-Warning", trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_CURRENT_URI);
 setcookie("PM-TabPrimary", uniqid(), time() + (24 * 60 * 60), '/');
-$oHeadPublisher = & headPublisher::getSingleton();
+$oHeadPublisher = headPublisher::getSingleton();
 $oHeadPublisher->addScriptFile('/jscore/src/PM.js');
 $oHeadPublisher->addScriptFile('/jscore/src/Sessions.js');
 $oHeadPublisher->addScriptFile('/jscore/src/Register.js');
 
-$G_PUBLISH->AddContent ('xmlform', 'xmlform', $fileLogin, '', $aField, 'sysLogin');
-G::RenderPage ("publish");
+$G_PUBLISH->AddContent('xmlform', 'xmlform', $fileLogin, '', $aField, 'sysLogin');
+G::RenderPage("publish");

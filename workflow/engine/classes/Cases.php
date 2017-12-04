@@ -7116,7 +7116,9 @@ class Cases
 
         // BUG 8134, FIX!// for single/double quote troubles // Unserialize with utf8 content get trouble
         if ($unserializedData === false) {
-            $unserializedData = preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $data);
+            $unserializedData = preg_replace_callback('!s:(\d+):"(.*?)";!', function ($m) {
+                return 's:' . strlen($m[2]) . ':"' . $m[2] . '";';
+            }, $data);
             $unserializedData = @unserialize($unserializedData);
         }
 

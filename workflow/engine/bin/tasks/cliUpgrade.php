@@ -35,7 +35,8 @@ CLI::taskOpt('noxml', 'If this option is enabled, the XML files translation is n
 CLI::taskRun("run_upgrade");
 /*----------------------------------********---------------------------------*/
 CLI::taskName('unify-database');
-CLI::taskDescription(<<<EOT
+CLI::taskDescription(
+    <<<EOT
     Unify RBAC, Reports and Workflow database schemas to match the latest version
 
     Specify the workspaces whose databases schemas should be unified.
@@ -141,7 +142,7 @@ function run_upgrade($command, $args)
             define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
         }
 
-        if(!defined('DB_ADAPTER')) {
+        if (!defined('DB_ADAPTER')) {
             define('DB_ADAPTER', 'mysql');
         }
 
@@ -205,13 +206,16 @@ function run_upgrade($command, $args)
     $flag = G::isPMUnderUpdating(0);
 }
 
-function listFiles($dir) {
+function listFiles($dir)
+{
     $files = array();
     $lista = glob($dir.'/*');
-    foreach($lista as $valor) {
+    foreach ($lista as $valor) {
         if (is_dir($valor)) {
             $inner_files =  listFiles($valor);
-            if (is_array($inner_files)) $files = array_merge($files, $inner_files);
+            if (is_array($inner_files)) {
+                $files = array_merge($files, $inner_files);
+            }
         }
         if (is_file($valor)) {
             array_push($files, $valor);
@@ -224,12 +228,12 @@ function run_unify_database($args)
 {
     $workspaces = array();
 
-    if (sizeof($args) > 2) {
+    if (count($args) > 2) {
         $filename = array_pop($args);
         foreach ($args as $arg) {
             $workspaces[] = new WorkspaceTools($arg);
         }
-    } else if (sizeof($args) > 0) {
+    } elseif (count($args) > 0) {
         $workspace = new WorkspaceTools($args[0]);
         $workspaces[] = $workspace;
     }
@@ -243,7 +247,7 @@ function run_unify_database($args)
     $count = count($workspaces);
 
     if ($count > 1) {
-        if(!Bootstrap::isLinuxOs()){
+        if (!Bootstrap::isLinuxOs()) {
             CLI::error("This is not a Linux enviroment, please specify workspace.\n");
             return;
         }
@@ -264,7 +268,7 @@ function run_unify_database($args)
             }
 
             $ws = $workspace->name;
-            $sContent = file_get_contents (PATH_DB . $ws . PATH_SEP . 'db.php');
+            $sContent = file_get_contents(PATH_DB . $ws . PATH_SEP . 'db.php');
 
             if (strpos($sContent, 'rb_')) {
                 $workspace->onedb = false;
@@ -277,47 +281,47 @@ function run_unify_database($args)
             } else {
                 //create destination path
                 $parentDirectory = PATH_DATA . "upgrade";
-                if (! file_exists( $parentDirectory )) {
-                    mkdir( $parentDirectory );
+                if (! file_exists($parentDirectory)) {
+                    mkdir($parentDirectory);
                 }
                 $tempDirectory = $parentDirectory . basename(tempnam(__FILE__, ''));
-                if (is_writable( $parentDirectory )) {
-                    mkdir( $tempDirectory );
+                if (is_writable($parentDirectory)) {
+                    mkdir($tempDirectory);
                 } else {
-                    throw new Exception( "Could not create directory:" . $parentDirectory );
+                    throw new Exception("Could not create directory:" . $parentDirectory);
                 }
                 $metadata = $workspace->getMetadata();
-                CLI::logging( "Exporting rb and rp databases to a temporal location...\n" );
-                $metadata["databases"] = $workspace->exportDatabase( $tempDirectory,true );
+                CLI::logging("Exporting rb and rp databases to a temporal location...\n");
+                $metadata["databases"] = $workspace->exportDatabase($tempDirectory, true);
                 $metadata["version"] = 1;
 
-                list ($dbHost, $dbUser, $dbPass) = @explode( SYSTEM_HASH, G::decrypt( HASH_INSTALLATION, SYSTEM_HASH ) );
-                $link = mysql_connect( $dbHost, $dbUser, $dbPass );
+                list($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
+                $link = mysqli_connect($dbHost, $dbUser, $dbPass);
 
                 foreach ($metadata['databases'] as $db) {
                     $dbName = $metadata['DB_NAME'];
-                    CLI::logging( "+> Restoring {$db['name']} to $dbName database\n" );
+                    CLI::logging("+> Restoring {$db['name']} to $dbName database\n");
 
                     $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
 
-                    $restore = $workspace->executeScript( $dbName, "$tempDirectory/{$db['name']}.sql", $aParameters);
+                    $restore = $workspace->executeScript($dbName, "$tempDirectory/{$db['name']}.sql", $aParameters, $link);
 
                     if ($restore) {
-                        CLI::logging( "+> Remove {$db['name']} database\n" );
+                        CLI::logging("+> Remove {$db['name']} database\n");
 
                         $sql = "DROP DATABASE IF EXISTS {$db['name']};";
-                        if (! @mysql_query( $sql )) {
-                            throw new Exception( mysql_error() );
+                        if (!mysqli_query($link, $sql)) {
+                            throw new Exception(mysqli_error($link));
                         }
                     }
                 }
 
-                CLI::logging( "Removing temporary files\n" );
-                G::rm_dir( $tempDirectory );
+                CLI::logging("Removing temporary files\n");
+                G::rm_dir($tempDirectory);
 
-                $newDBNames = $workspace->resetDBInfo( $dbHost, true, true, true );
+                $newDBNames = $workspace->resetDBInfo($dbHost, true, true, true);
 
-                CLI::logging( CLI::info( "Done restoring databases" ) . "\n" );
+                CLI::logging(CLI::info("Done restoring databases") . "\n");
             }
         } catch (Exception $e) {
             CLI::logging("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");

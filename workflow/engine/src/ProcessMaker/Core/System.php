@@ -1195,7 +1195,7 @@ class System
      * @return string $result
      * @throws Exception
      */
-    public function updateIndexFile($conf)
+    public static function updateIndexFile($conf)
     {
         if (!file_exists(PATH_HTML . 'index.html')) {
             throw new Exception('The public index file "' . PATH_HTML . 'index.html" does not exist!');
