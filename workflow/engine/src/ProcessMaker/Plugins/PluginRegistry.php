@@ -242,6 +242,8 @@ class PluginRegistry
                     $currentPlugin->getNamespace(),
                     $currentPlugin->getFile()
                 );
+                $this->_aPluginDetails[$Namespace]->sFriendlyName = $Plugin->sFriendlyName;
+                $this->_aPluginDetails[$Namespace]->sDescription = $Plugin->sDescription;
             } else {
                 $Plugin = $currentPlugin;
             }
