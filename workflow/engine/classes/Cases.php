@@ -4418,7 +4418,7 @@ class Cases
             $fieldsDel['PRO_UID'],
             $fieldsDel['APP_UID'],
             $fieldsDel['TAS_UID'],
-            (empty($user)) ? 0 : $user->getUsrId(),
+            $newUserUid,
             $fieldsDel['DEL_THREAD'],
             3,
             false,
