@@ -238,16 +238,18 @@ class PluginRegistry
             $className = $currentPlugin->getClassName();
             /** @var enterprisePlugin $Plugin */
             if (class_exists($className)) {
-                $Plugin = new $className(
+                $plugin = new $className(
                     $currentPlugin->getNamespace(),
                     $currentPlugin->getFile()
                 );
+                $this->_aPluginDetails[$Namespace]->sFriendlyName = $plugin->sFriendlyName;
+                $this->_aPluginDetails[$Namespace]->sDescription = $plugin->sDescription;
             } else {
-                $Plugin = $currentPlugin;
+                $plugin = $currentPlugin;
             }
-            $this->_aPlugins[$Namespace] = $Plugin;
-            if (method_exists($Plugin, 'enable')) {
-                $Plugin->enable();
+            $this->_aPlugins[$Namespace] = $plugin;
+            if (method_exists($plugin, 'enable')) {
+                $plugin->enable();
             }
             /*
              * 1. register <plugin-dir>/src directory for autoloading
@@ -264,7 +266,7 @@ class PluginRegistry
             if (array_key_exists($currentPlugin->getNamespace(), $this->_restServiceEnabled)
                 && $this->_restServiceEnabled[$currentPlugin->getNamespace()] == true
             ) {
-                $Plugin->registerRestService();
+                $plugin->registerRestService();
             }
             return true;
         } else {
