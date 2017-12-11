@@ -187,6 +187,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                 var weUid = <?php echo  G::json_encode($webEntryModel->getWeUid()); ?>;
                 var forceLogin = <?php echo  G::json_encode($webEntryModel->getWeAuthentication()==='LOGIN_REQUIRED'); ?>;
                 var isLogged = <?php echo  G::json_encode(!empty($_SESSION['USER_LOGGED'])); ?>;
+                var currentLoggedIsGuest = <?php echo G::json_encode(!empty($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] === RBAC::GUEST_USER_UID); ?>;
                 var closeSession = <?php echo  G::json_encode($webEntryModel->getWeCallback()==='CUSTOM_CLEAR'); ?>;
                 var hideInformationBar = <?php echo  G::json_encode(!!$webEntryModel->getWeHideInformationBar()); ?>;
                 if (!forceLogin) {
@@ -263,7 +264,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                 };
                 var login = function () {
                     return new Promise(function (logged, failure) {
-                        if (!isLogged) {
+                        if (!isLogged || currentLoggedIsGuest) {
                             log("login");
                             open('../login/login?inIFrame=1&u=' + encodeURIComponent(location.pathname + '/../../webentry/logged'))
                               .then(function (userInformation) {

@@ -24,6 +24,7 @@ try {
         throw new Exception('WebEntry User not found');
     }
 
+    $_SESSION = [];
     initUserSession($userUid, $userInfo->getUsrUsername());
 
     $result = [
