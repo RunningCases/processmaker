@@ -22,9 +22,11 @@ use IsoLocationPeer;
 use IsoSubdivisionPeer;
 use ListParticipatedLast;
 use PMmemcached;
+use ProcessMaker\BusinessModel\ProcessSupervisor as BmProcessSupervisor;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\DateTime;
 use ProcessMaker\Util\System;
+use ProcessUser;
 use Propel;
 use RBAC;
 use RbacUsers;
@@ -1712,5 +1714,54 @@ class User
         $dataUsers['totalCount'] = $totalRows;
 
         return $dataUsers;
+    }
+
+    /**
+     * This function get the list of process that the user can reassign
+     * If the user has the permission PM_REASSIGNCASE can reassign any process
+     * If the user has the permission PM_REASSIGNCASE_SUPERVISOR can reassign only their processes
+     *
+     * @param array $listPermissions
+     *
+     * @return mixed array|null where:
+     * Array empty if he can reassign any process
+     * List of processes that he can reassign
+     * Will be return null if can not reassign
+     */
+    public function getProcessToReassign($listPermissions = [])
+    {
+        global $RBAC;
+        $processes = [];
+        if (in_array('PM_REASSIGNCASE', $listPermissions) && $RBAC->userCanAccess('PM_REASSIGNCASE') === 1){
+            //The user can reassign any process
+            return $processes;
+        } elseif (in_array('PM_REASSIGNCASE_SUPERVISOR', $listPermissions) && $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') === 1){
+            $userLogged = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            $processUser = new ProcessUser();
+            $processes = $processUser->getProUidSupervisor($userLogged);
+            //The user can reassign only their processes
+            return $processes;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * This function review if the user can reassign cases
+     *
+     * @param string $usrUid
+     * @param string $proUid
+     *
+     * @return boolean
+     */
+    public function userCanReassign($usrUid, $proUid)
+    {
+        if ($this->checkPermission($usrUid, 'PM_REASSIGNCASE')) {
+            return true;
+        } elseif ($this->checkPermission($usrUid, 'PM_REASSIGNCASE_SUPERVISOR')) {
+            $processSupervisor = new BmProcessSupervisor();
+            $isSupervisor = $processSupervisor->isUserProcessSupervisor($proUid, $usrUid);
+            return $isSupervisor;
+        }
     }
 }

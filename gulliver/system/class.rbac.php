@@ -191,6 +191,15 @@ class RBAC
                 'save' => ['PM_SETUP'],
                 'delete' => ['PM_SETUP'],
                 'rebuild' => ['PM_SETUP']
+            ],
+            'proxyNewCasesList.php' => [
+                'todo' => ['PM_CASES'],
+                'draft' => ['PM_CASES'],
+                'sent' => ['PM_CASES'],
+                'paused' => ['PM_CASES'],
+                'unassigned' => ['PM_CASES'],
+                'to_reassign' => ['PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR'],
+                'to_revise' => ['PM_SUPERVISOR']
             ]
         ];
         $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
@@ -1959,8 +1968,12 @@ class RBAC
             $totalPermissions = count($permissions);
             $countAccess = 0;
             foreach ($permissions as $key => $value) {
-                if ($this->userCanAccess($value) == 1) {
-                    $countAccess++;
+                $atLeastPermission = explode(',', $value);
+                foreach ($atLeastPermission as $permission) {
+                    if ($this->userCanAccess(trim($permission)) == 1) {
+                        $countAccess++;
+                        break;
+                    }
                 }
             }
             //Check if the user has all permissions that needed
