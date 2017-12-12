@@ -25,6 +25,7 @@ if (empty($userInfo)) {
         'mail'        => $userInfo->getUsrEmail(),
         'image'       => '../users/users_ViewPhoto?t=' . microtime(true),
     ];
+}
 ?>
                 parent.fullfill(<?= G::json_encode($result) ?>);
         </script>
