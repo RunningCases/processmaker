@@ -64,6 +64,15 @@ if (defined('PATH_DB') && !empty(config("system.workspace"))) {
 
     $pro ['datasources']['rp']['connection'] = $dsnReport;
     $pro ['datasources']['rp']['adapter'] = DB_ADAPTER;
+    
+    $dbHost = explode(':', DB_HOST);
+    config(['database.connections.workflow.host' => $dbHost[0]]);
+    config(['database.connections.workflow.database' => DB_NAME]);
+    config(['database.connections.workflow.username' => DB_USER]);
+    config(['database.connections.workflow.password' => DB_PASS]);
+    if (count($dbHost) > 1) {
+        config(['database.connections.workflow.port' => $dbHost[1]]);
+    }
 }
 
 $pro ['datasources']['dbarray']['connection'] = 'dbarray://user:pass@localhost/pm_os';
