@@ -160,7 +160,7 @@ class LDAP
                             // assign the givenname and sn fields if these are set
                             $aUsers[] = [
                                 'sUsername'  => $sUsername,
-                                'sFullname'  => $aAttr['cn'],
+                                'sFullname'  => isset($aAttr['cn']) ? $aAttr['cn'] : '',
                                 'sFirstname' => isset($aAttr['givenname']) ? $aAttr['givenname'] : '',
                                 'sLastname'  => isset($aAttr['sn']) ? $aAttr['sn'] : '',
                                 'sEmail'     => isset($aAttr['mail'])
