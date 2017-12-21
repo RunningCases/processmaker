@@ -1196,6 +1196,7 @@ class Light extends Api
      * @param string $app_uid {@min 32}{@max 32}
      * @param int $del_index {@from body}
      * @param array $tasks {@from body}
+     * @param boolean $executeTriggersBeforeAssignment {@from body}
      *
      * @return array
      * @throws RestException
@@ -1203,11 +1204,11 @@ class Light extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPutRouteCase($app_uid, $del_index = null, $tasks = array())
+    public function doPutRouteCase($app_uid, $del_index = null, $tasks = array(), $executeTriggersBeforeAssignment = false)
     {
         try {
             $oMobile = new BusinessModelLight();
-            $response = $oMobile->updateRouteCase($app_uid, $this->getUserId(), $del_index, $tasks);
+            $response = $oMobile->updateRouteCase($app_uid, $this->getUserId(), $del_index, $tasks, $executeTriggersBeforeAssignment);
         } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

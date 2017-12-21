@@ -547,12 +547,12 @@ class Light
      * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      * @param string $delIndex
-     * @param array $tasks
-     * @param string $bExecuteTriggersBeforeAssignment
+     * @param string $tasks
+     * @param boolean $executeTriggersBeforeAssignment
      *
      * return array Return an array with Task Case
      */
-    public function updateRouteCase($applicationUid, $userUid, $delIndex, $tasks)
+    public function updateRouteCase($applicationUid, $userUid, $delIndex, $tasks, $executeTriggersBeforeAssignment)
     {
         try {
             if (!$delIndex) {
@@ -560,8 +560,15 @@ class Light
             }
 
             $ws = new \WsBase();
-            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false,
-                $tasks);
+
+            $fields = $ws->derivateCase(
+                $userUid,
+                $applicationUid,
+                $delIndex,
+                $executeTriggersBeforeAssignment,
+                $tasks
+            );
+
             $array = json_decode(json_encode($fields), true);
             $array['message'] = trim(strip_tags($array['message']));
             if ($array ["status_code"] != 0) {

@@ -860,18 +860,19 @@ class Cases extends Api
      *
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $del_index {@from body}
+     * @param boolean $executeTriggersBeforeAssignment {@from body}
      *
      * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPutRouteCase($app_uid, $del_index = null)
+    public function doPutRouteCase($app_uid, $del_index = null, $executeTriggersBeforeAssignment = false)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new BmCases();
-            $cases->updateRouteCase($app_uid, $userUid, $del_index);
+            $cases->updateRouteCase($app_uid, $userUid, $del_index, $executeTriggersBeforeAssignment);
         } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
