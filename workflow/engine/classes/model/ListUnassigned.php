@@ -333,27 +333,25 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         try {
             $arrayAppAssignSelfServiceValueData = array();
 
-            //Get APP_UIDs
-            $group = new Groups();
-            $arrayUid   = $group->getActiveGroupsForAnUser($userUid); //Set UIDs of Groups (Groups of User)
-            $arrayUid[] = $userUid;                                   //Set UID of User
-
             $criteria = new Criteria("workflow");
+
+            $sql = "("
+                    . AppAssignSelfServiceValueGroupPeer::ASSIGNEE_ID . " IN ("
+                    . "        SELECT " . GroupUserPeer::GRP_ID . " "
+                    . "        FROM " . GroupUserPeer::TABLE_NAME . " "
+                    . "        LEFT JOIN " . GroupwfPeer::TABLE_NAME . " ON (" . GroupUserPeer::GRP_ID . "=" . GroupwfPeer::GRP_ID . ") "
+                    . "        WHERE " . GroupUserPeer::USR_UID . "='" . $userUid . "' AND " . GroupwfPeer::GRP_STATUS . "='ACTIVE'"
+                    . "    ) AND "
+                    . "    " . AppAssignSelfServiceValueGroupPeer::ASSIGNEE_TYPE . "=2 "
+                    . ")";
 
             $criteria->setDistinct();
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::APP_UID);
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::DEL_INDEX);
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::TAS_UID);
-
-            $criteria->add(
-                AppAssignSelfServiceValuePeer::ID,
-                AppAssignSelfServiceValuePeer::ID.
-                " IN (SELECT ".AppAssignSelfServiceValueGroupPeer::ID.
-                " FROM ".AppAssignSelfServiceValueGroupPeer::TABLE_NAME.
-                " WHERE ".AppAssignSelfServiceValueGroupPeer::GRP_UID." IN ('".
-                implode("','", $arrayUid)."'))",
-                Criteria::CUSTOM
-            );
+            $criteria->addJoin(AppAssignSelfServiceValuePeer::ID, AppAssignSelfServiceValueGroupPeer::ID, Criteria::INNER_JOIN);
+            $criteria->add(AppAssignSelfServiceValueGroupPeer::GRP_UID, $userUid, Criteria::EQUAL);
+            $criteria->addOr(AppAssignSelfServiceValueGroupPeer::GRP_UID, $sql, Criteria::CUSTOM);
 
             $rsCriteria = AppAssignSelfServiceValuePeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -368,7 +366,6 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
                 );
             }
 
-            //Return
             return $arrayAppAssignSelfServiceValueData;
         } catch (Exception $e) {
             throw $e;
