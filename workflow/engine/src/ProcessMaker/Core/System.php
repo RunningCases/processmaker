@@ -1157,8 +1157,7 @@ class System
         self::$debug = $config['debug'];
 
         if ($config['proxy_pass'] != '') {
-            $G = new G();
-            $config['proxy_pass'] = $G->decrypt($config['proxy_pass'], 'proxy_pass');
+            $config['proxy_pass'] = G::decrypt($config['proxy_pass'], 'proxy_pass');
         }
 
         return $config;
