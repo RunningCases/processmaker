@@ -399,7 +399,7 @@ class Light
         $_SESSION["PROCESS"] = $prj_uid;
         $_SESSION["TASK"] = $act_uid;
         $_SESSION["USER_LOGGED"] = $usr_uid;
-        $_SESSION["USR_USERNAME"] = $userData['firstName'];
+        $_SESSION["USR_USERNAME"] = $userData['userName'];
         $_SESSION["INDEX"] = $Fields["DEL_INDEX"] = $del_index !== null ? $del_index : \AppDelegation::getCurrentIndex($cas_uid);
         $Fields['APP_DATA'] = array_merge($Fields['APP_DATA'], G::getSystemConstants());
         $triggers = $oCase->loadTriggers($act_uid, 'DYNAFORM', $step_uid_obj, strtoupper($type));
