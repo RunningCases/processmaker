@@ -4609,7 +4609,6 @@ msgstr "The answer has been submitted. Thank you."
 msgid "The response has already been sent."
 msgstr "The response has already been sent."
 
-
 # TRANSLATION
 # LABEL/ID_CASESLIST_DEL_INDEX
 #: LABEL/ID_CASESLIST_DEL_INDEX
@@ -15482,6 +15481,7 @@ msgstr "Remove selected"
 msgid "The \"dyn_uid\" parameter is required to configure a Web Entry of type \"Single Dynaform\""
 msgstr "The \"dyn_uid\" parameter is required to configure a Web Entry of type \"Single Dynaform\""
 
+# TRANSLATION
 # LABEL/ID_ENTER_VALID_URL
 #: LABEL/ID_ENTER_VALID_URL
 msgid "Enter a valid URL to redirect the browser after the web entry is completed"
