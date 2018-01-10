@@ -157,6 +157,11 @@ function run_upgrade($command, $args)
         }
     }
 
+    //Verify information singleton ServConf by change name of class.
+    CLI::logging("\nCheck serverConf.singleton integrity\n\n");
+    $serverConf = ServerConf::getSingleton();
+    $serverConf->syncronizeNameProperties();
+
     // SAVE Upgrades/Patches
     $arrayPatch = glob(PATH_TRUNK . 'patch-*');
 
