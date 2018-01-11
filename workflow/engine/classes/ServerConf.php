@@ -486,9 +486,9 @@ class ServerConf
     }
 
     /**
-     * Change name class of serverConf to ServerConf for version minors to 3.2.2
+     * Change class name from "serverConf" to "ServerConf" for previous versions to 3.2.2
      */
-    public function syncronizeNameProperties()
+    public function updateClassNameInFile()
     {
         if (file_exists(self::$instance->filePath) && filesize(self::$instance->filePath) > 0) {
             $file = file_get_contents(self::$instance->filePath);
