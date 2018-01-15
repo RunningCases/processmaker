@@ -1383,7 +1383,7 @@ class adminProxy extends HttpProxyController
 
     public function generateInfoSupport ()
     {
-        require_once (PATH_CONTROLLERS . "installer.php");
+        require_once (PATH_CONTROLLERS . "InstallerModule.php");
         $params = array ();
 
         $oServerConf = &ServerConf::getSingleton();

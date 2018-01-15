@@ -520,8 +520,8 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     // new installer, extjs based
     define( 'PATH_DATA', PATH_C );
     //NewRelic Snippet - By JHL
-    transactionLog(PATH_CONTROLLERS.'installer.php');
-    $pathFile = PATH_CONTROLLERS . 'installer.php';
+    transactionLog(PATH_CONTROLLERS . 'InstallerModule.php');
+    $pathFile = PATH_CONTROLLERS . 'InstallerModule.php';
     require_once ($pathFile);
     $controller = InstallerModule::class;
 
@@ -535,8 +535,7 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     $controllerAction = ($controllerAction != '' && $controllerAction != 'login') ? $controllerAction : 'index';
 
     // create the installer controller and call its method
-    if (is_callable( Array (InstallerModule::class,$controllerAction
-    ) )) {
+    if (is_callable([InstallerModule::class, $controllerAction])) {
         $installer = new $controller();
         $installer->setHttpRequestData( $_REQUEST );
         //NewRelic Snippet - By JHL
@@ -968,7 +967,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
 
         $noLoginFolders[] = 'services';
         $noLoginFolders[] = 'tracker';
-        $noLoginFolders[] = 'installer';
+        $noLoginFolders[] = 'InstallerModule';
 
         // This sentence is used when you lost the Session
         if (! in_array( SYS_TARGET, $noLoginFiles ) && ! in_array( SYS_COLLECTION, $noLoginFolders ) && $bWE != true && $collectionPlugin != 'services') {
