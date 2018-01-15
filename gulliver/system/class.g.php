@@ -5707,28 +5707,42 @@ class G
     }
 
     /**
-    * Check the browser compativility
-    */
-	public function checkBrowserCompatibility($browser = null, $version = null){
-	    if($browser == null || $version == null){
-	    	$info = G::getBrowser();
-	    	$browser = $info['name'];
-	    	$version = $info['version'];
-	    }
-		if ((($browser== 'msie') && (($version >= 8) && ($version <= 11))) ||
-			(($browser== 'chrome') && ($version >= 26)) ||
-			(($browser== 'firefox') && ($version >= 20))
-		){
-			return true;
-		}
-		return false;
+     * Check the browser compatibility
+     *
+     * @param string $browser
+     * @param integer $version
+     *
+     * @return boolean
+     */
+    public function checkBrowserCompatibility($browser = null, $version = null)
+    {
+        if ($browser == null || $version == null) {
+            $info = G::getBrowser();
+            $browser = $info['name'];
+            $version = $info['version'];
+        }
+
+        if (
+            (($browser == 'msie') && (($version >= 8) && ($version <= 11))) ||
+            (($browser == 'chrome') && ($version >= 26)) ||
+            (($browser == 'firefox') && ($version >= 20)) ||
+            (($browser == 'safari') && ($version >= 10))
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
-    /*
-    *     $string       - The string to sanitize.
-    *     $lowercase    - Force the string to lowercase?
-    *     $alpha        - If set to *true*, will remove all non-alphanumeric characters.
-    */
+    /**
+     * This function sanitizes the string
+     *
+     * @param string $string, The string to sanitize.
+     * @param boolean $lowercase, Force the string to lowercase
+     * @param boolean $alpha, If set to *true*, will remove all non-alphanumeric characters.
+     *
+     * @return string
+     */
     public function sanitizeString ($string, $lowercase = true, $alpha = false)
     {
        $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
