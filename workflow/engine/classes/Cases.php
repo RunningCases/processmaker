@@ -351,8 +351,6 @@ class Cases
             $row = $rs->getRow();
         }
 
-        
-
         $c = new Criteria();
         $c->addSelectColumn(TaskPeer::TAS_UID);
         $c->addSelectColumn(TaskPeer::TAS_TITLE);
