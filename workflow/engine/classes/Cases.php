@@ -351,6 +351,8 @@ class Cases
             $row = $rs->getRow();
         }
 
+        
+
         $c = new Criteria();
         $c->addSelectColumn(TaskPeer::TAS_UID);
         $c->addSelectColumn(TaskPeer::TAS_TITLE);
@@ -380,40 +382,36 @@ class Cases
         $tasks = $this->getSelfServiceTasks($USR_UID);
 
         foreach ($tasks as $key => $val) {
-            if ($TAS_UID == $val['uid']) {
+            if ($TAS_UID === $val['uid']) {
                 return true;
             }
         }
 
-        if ($APP_UID != '') {
+        if (!empty($APP_UID)) {
             $task = new Task();
             $arrayTaskData = $task->load($TAS_UID);
 
-            $taskGroupVariable = trim($arrayTaskData["TAS_GROUP_VARIABLE"], " @#");
+            $taskGroupVariable = trim($arrayTaskData['TAS_GROUP_VARIABLE'], ' @#');
 
             $caseData = $this->loadCase($APP_UID);
 
-            if (isset($caseData["APP_DATA"][$taskGroupVariable])) {
-                $dataVariable = $caseData["APP_DATA"][$taskGroupVariable];
+            if (isset($caseData['APP_DATA'][$taskGroupVariable])) {
+                $dataVariable = $caseData['APP_DATA'][$taskGroupVariable];
 
-                if (is_array($dataVariable)) {
-                    //UIDs of Users
-                    if (!empty($dataVariable) && in_array($USR_UID, $dataVariable)) {
+                if (empty($dataVariable)) {
+                    return false;
+                }
+
+                $dataVariable = is_array($dataVariable)? $dataVariable : (array)trim($dataVariable);
+
+                if (in_array($USR_UID, $dataVariable, true)) {
+                    return true;
+                }
+
+                $groups = new Groups();
+                foreach ($groups->getActiveGroupsForAnUser($USR_UID) as $key => $group) {
+                    if (in_array($group, $dataVariable, true)) {
                         return true;
-                    }
-                } else {
-                    //UID of Group
-                    $dataVariable = trim($dataVariable);
-
-                    $group = new Groups();
-
-                    if (!empty($dataVariable) && in_array($dataVariable, $group->getActiveGroupsForAnUser($USR_UID))) {
-                        return true;
-                    } else {
-                        //UID of User
-                        if (!empty($dataVariable) && $dataVariable == $USR_UID) {
-                            return true;
-                        }
                     }
                 }
             }
