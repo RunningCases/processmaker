@@ -11,7 +11,7 @@ $data['USR_USERNAME'] = strip_tags($data['USR_USERNAME']);
 $userData = $rbacUser->getByUsername($data['USR_USERNAME']);
 $userExists = $userData === false ? false : true;
 
-if ($userExists && $userData['USR_EMAIL'] != '' && $userData['USR_EMAIL'] === $data['USR_EMAIL'] && ($userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] == 'MYSQL')) {
+if ($userExists === true && $userData['USR_EMAIL'] != '' && $userData['USR_EMAIL'] === $data['USR_EMAIL'] && ($userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] == 'MYSQL')) {
     $aSetup = System::getEmailConfiguration();
     if (count($aSetup) == 0 || !isset($aSetup['MESS_ENGINE'])) {
         G::SendTemporalMessage('ID_EMAIL_ENGINE_IS_NOT_ENABLED', "warning");
@@ -91,10 +91,14 @@ if ($userExists && $userData['USR_EMAIL'] != '' && $userData['USR_EMAIL'] === $d
         G::SendTemporalMessage($e->getMessage(), "warning", 'string');
     }
 } else {
-    if ($userExists === false || $userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] === 'MYSQL') {
+    if ($userExists === true || $userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] === 'MYSQL') {
         $msg = G::LoadTranslation('ID_USER') . ' ' . htmlentities($data['USR_USERNAME'], ENT_QUOTES, 'UTF-8') . ' ' . G::LoadTranslation('ID_IS_NOT_REGISTERED');
     } else {
-        $msg = G::LoadTranslation('ID_USER_NOT_FUNCTIONALITY');
+        if ($userExists === false) {
+            $msg = G::LoadTranslation('ID_THE_USERNAME_EMAIL_IS_INCORRECT');
+        } else {
+            $msg = G::LoadTranslation('ID_USER_NOT_FUNCTIONALITY');
+        }
     }
     G::SendTemporalMessage($msg, "warning", 'string');
     G::header('location: forgotPassword');

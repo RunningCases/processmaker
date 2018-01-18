@@ -58532,6 +58532,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ISO8601_INVALID_FORMAT','en','Invalid value for "{0}", this has not the format ISO 8601.','2015-11-04') ,
 ( 'LABEL','ID_ISSUED_TO','en','Issued to','2014-09-18') ,
 ( 'LABEL','ID_IS_NOT_REGISTERED','en','is not registered!','2014-01-15') ,
+( 'LABEL','ID_THE_USERNAME_EMAIL_IS_INCORRECT','en','The username or email is incorrect','2018-01-18') ,
 ( 'LABEL','ID_IS_REQUIRED','en','is required','2014-01-15') ,
 ( 'LABEL','ID_IUD','en','#','2014-01-15') ,
 ( 'LABEL','ID_JAVASCRIPTS','en','JavaScripts','2014-01-15') ,
