@@ -1299,10 +1299,10 @@ class System
      */
     public static function getServerVersion()
     {
-        $serverVersion = '';
+        $serverVersion = 'Undetermined';
 
         if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
-            $serverVersion = apache_get_version();
+            $serverVersion = function_exists('apache_get_version') ? apache_get_version() : $_SERVER['SERVER_SOFTWARE'];
         }
 
         if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {

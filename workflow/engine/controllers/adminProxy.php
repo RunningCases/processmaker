@@ -1439,7 +1439,7 @@ class adminProxy extends HttpProxyController
         //PHP Version
         $params['php'] = $systemInfo->php->version;
 
-        //Apache - nginx IIS Version
+        //Apache - nginx - IIS Version
 
         $params['serverSoftwareVersion'] = System::getServerVersion();
 
