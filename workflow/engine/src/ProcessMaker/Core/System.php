@@ -1291,5 +1291,25 @@ class System
             throw $e;
         }
     }
+
+    /**
+     * Return version server software Apache/Nginx
+     *
+     * @return string version server software Apache/Nginx
+     */
+    public static function getServerVersion()
+    {
+        $serverVersion = '';
+
+        if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
+            $serverVersion = apache_get_version();
+        }
+
+        if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
+            $serverVersion = $_SERVER['SERVER_SOFTWARE'];
+        }
+
+        return $serverVersion;
+    }
 }
 // end System class
