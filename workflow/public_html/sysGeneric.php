@@ -979,7 +979,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
                     $oUser = new Users();
                     $aUser = $oUser->load( $aSession['USR_UID'] );
                     initUserSession(
-                        $_SESSION['USER_LOGGED'],
+                        $aUser['USR_UID'],
                         $aUser['USR_USERNAME']
                     );
                     $bRedirect = false;
