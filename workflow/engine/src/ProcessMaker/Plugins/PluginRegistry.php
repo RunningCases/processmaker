@@ -174,6 +174,8 @@ class PluginRegistry
                             $Plugin = new $className($pluginDetail->getNamespace(), $pluginDetail->getFile());
                             $this->_aPlugins[$pluginDetail->getNamespace()] = $Plugin;
                             $iPlugins++;
+                            $Plugin->registerPmFunction();
+                            $this->init();
                             $Plugin->setup();
                         }
                     }
