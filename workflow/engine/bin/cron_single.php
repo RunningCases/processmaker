@@ -234,6 +234,10 @@ try {
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
 
+        // We load plugins' pmFunctions
+        $oPluginRegistry = PluginRegistry::loadSingleton();
+        $oPluginRegistry->init();
+
         try {
             switch ($cronName) {
                 case 'cron':
@@ -284,9 +288,6 @@ try {
 function processWorkspace()
 {
     try {
-        $oPluginRegistry = PluginRegistry::loadSingleton();
-        $oPluginRegistry->init();
-
         global $sObject;
         global $sLastExecution;
 
