@@ -696,7 +696,9 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 //the singleton has a list of enabled plugins
 $oPluginRegistry = PluginRegistry::loadSingleton();
 $attributes = $oPluginRegistry->getAttributes();
-Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
+Bootstrap::LoadTranslationPlugins(defined('SYS_LANG') ? SYS_LANG : "en", $attributes);
+// Initialization functions plugins
+$oPluginRegistry->init();
 
 //Set Time Zone
 /*----------------------------------********---------------------------------*/

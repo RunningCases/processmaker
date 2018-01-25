@@ -174,6 +174,8 @@ class PluginRegistry
                             $Plugin = new $className($pluginDetail->getNamespace(), $pluginDetail->getFile());
                             $this->_aPlugins[$pluginDetail->getNamespace()] = $Plugin;
                             $iPlugins++;
+                            $Plugin->registerPmFunction();
+                            $this->init();
                             $Plugin->setup();
                         }
                     }
@@ -482,6 +484,9 @@ class PluginRegistry
                 $className = $detail->getClassName();
                 /** @var enterprisePlugin $oPlugin */
                 $oPlugin = new $className($detail->getNamespace(), $detail->getFile());
+                $oPlugin->registerPmFunction();
+                $detail->setEnabled(true);
+                $this->init();
                 $oPlugin->setup();
                 $this->_aPlugins[$detail->getNamespace()] = $oPlugin;
                 $oPlugin->install();
