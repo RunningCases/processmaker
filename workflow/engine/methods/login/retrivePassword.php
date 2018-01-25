@@ -30,6 +30,9 @@ if ($userExists === true && $userData['USR_EMAIL'] != '' && $userData['USR_EMAIL
         $oUserProperty = $oUserProperty->update($aUserPropertyData);
     }
 
+    if (!isset($sFrom)) {
+        $sFrom = '';
+    }
     $sFrom = G::buildFrom($aSetup, $sFrom);
 
     $sSubject = G::LoadTranslation('ID_RESET_PASSWORD') . ' - ProcessMaker';
