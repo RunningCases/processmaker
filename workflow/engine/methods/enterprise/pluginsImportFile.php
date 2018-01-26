@@ -102,25 +102,6 @@ try {
             throw new Exception(G::LoadTranslation('ID_EEPLUGIN_IMPORT_PLUGIN_NOT_IS_ENTERPRISE', [$filename]));
         }
 
-        //Get contents of plugin file
-        $sContent = file_get_contents($path . $pluginFile);
-        $sContent = str_ireplace($sAux, $sAux . '_', $sContent);
-        $sContent = str_ireplace('PATH_PLUGINS', "'".$path."'", $sContent);
-        $sContent = preg_replace("/\\\$oPluginRegistry\s*=\s*&\s*PMPluginRegistry::getSingleton\s*\(\s*\)\s*;/i", null, $sContent);
-        $sContent = preg_replace("/\\\$oPluginRegistry->registerPlugin\s*\(\s*[\"\']" . $sClassName . "[\"\']\s*,\s*__FILE__\s*\)\s*;/i", null, $sContent);
-
-        //header('Content-Type: text/plain');var_dump($sClassName, $sContent);die;
-        file_put_contents($path . $pluginFile, $sContent);
-        $sAux = $sAux . '_';
-
-        include ($path . $pluginFile);
-
-        $oClass = new $sAux($sClassName);
-        $fVersionNew = $oClass->iVersion;
-        if (!isset($oClass->iPMVersion)) {
-            $oClass->iPMVersion = 0;
-        }
-
         $res = $tar->extract(PATH_PLUGINS);
     } else {
         $str = "The file $filename doesn't contain class: $sClassName ";
