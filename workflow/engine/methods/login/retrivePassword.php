@@ -94,7 +94,12 @@ if ($userExists === true && $userData['USR_EMAIL'] != '' && $userData['USR_EMAIL
         G::SendTemporalMessage($e->getMessage(), "warning", 'string');
     }
 } else {
-    if ($userExists === true || $userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] === 'MYSQL') {
+    $correctEmail = true;
+    if ($userExists === true && $data['USR_EMAIL'] !== $userData['USR_EMAIL']) {
+        $correctEmail = false;
+        $userExists = false;
+    }
+    if ($correctEmail === true && ($userExists === true || $userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] === 'MYSQL')) {
         $msg = G::LoadTranslation('ID_USER') . ' ' . htmlentities($data['USR_USERNAME'], ENT_QUOTES, 'UTF-8') . ' ' . G::LoadTranslation('ID_IS_NOT_REGISTERED');
     } else {
         if ($userExists === false) {
