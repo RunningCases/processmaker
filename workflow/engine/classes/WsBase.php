@@ -2048,7 +2048,7 @@ class WsBase
      */
     public function executeTriggerFromDerivate(
         $caseId,
-        $appData,
+        &$appData,
         $tasUid,
         $stepType,
         $stepUidObj,
@@ -2058,7 +2058,7 @@ class WsBase
         $varTriggers = "";
         $oCase = new Cases();
 
-        //Execute triggers before assignment
+        //Load the triggers assigned in the $triggerType
         $aTriggers = $oCase->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
 
         if (count($aTriggers) > 0) {
@@ -2298,8 +2298,6 @@ class WsBase
             $oDerivation->beforeDerivate(
                     $aData, $nextDelegations, $nextRouteType, $aCurrentDerivation
             );
-
-            $appFields = $oCase->loadCase($caseId);
 
             //Execute triggers after routing
             $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
