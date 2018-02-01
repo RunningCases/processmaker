@@ -1,30 +1,6 @@
 <?php
-/**
- * cliUpgrade.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- * @author Alexandre Rosenfeld <alexandre@colosa.com>
- * @package workflow-engine-bin-tasks
- */
 
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
 
 CLI::taskName('upgrade');
@@ -296,25 +272,24 @@ function run_unify_database($args)
                 $metadata["version"] = 1;
 
                 list($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
-                $link = mysqli_connect($dbHost, $dbUser, $dbPass);
+                $connectionName = 'UPGRADE';
+                InstallerModule::setNewConnection($connectionName, $dbHost, $dbUser, $dbPass,'', '');
 
                 foreach ($metadata['databases'] as $db) {
                     $dbName = $metadata['DB_NAME'];
                     CLI::logging("+> Restoring {$db['name']} to $dbName database\n");
 
-                    $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
+                    $aParameters = ['dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass];
 
-                    $restore = $workspace->executeScript($dbName, "$tempDirectory/{$db['name']}.sql", $aParameters, $link);
+                    $restore = $workspace->executeScript($dbName, "$tempDirectory/{$db['name']}.sql", $aParameters, $connectionName);
 
                     if ($restore) {
                         CLI::logging("+> Remove {$db['name']} database\n");
 
-                        $sql = "DROP DATABASE IF EXISTS {$db['name']};";
-                        if (!mysqli_query($link, $sql)) {
-                            throw new Exception(mysqli_error($link));
-                        }
+                        DB::connection($connectionName)->statement("DROP DATABASE IF EXISTS {$db['name']}");
                     }
                 }
+                DB::disconnect($connectionName);
 
                 CLI::logging("Removing temporary files\n");
                 G::rm_dir($tempDirectory);

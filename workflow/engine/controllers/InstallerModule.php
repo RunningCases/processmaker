@@ -1,6 +1,11 @@
 <?php
 
+use ProcessMaker\Util\Common;
 use ProcessMaker\Core\System;
+
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 global $translation;
 
@@ -18,7 +23,18 @@ class InstallerModule extends Controller
 
     public $link; #resource for database connection
 
+    /**
+     * Default name for connection
+     *
+     * @var string
+     */
+    const CONNECTION_INSTALL = 'install';
+    const CONNECTION_TEST_INSTALL = 'testInstall';
 
+    /**
+     * Constructor
+     * We defined the paths for the installer
+     */
     public function __construct()
     {
         $this->path_config = PATH_CORE . 'config/';
@@ -116,6 +132,56 @@ class InstallerModule extends Controller
         }
     }
 
+    /**
+     * Set config connection
+     *
+     * @param string $nameConnection name Connection
+     * @param string $host
+     * @param string $user
+     * @param string $pass
+     * @param string $database
+     * @param int $port
+     * @param array $options
+     *
+     * @throws Exception
+     */
+    public static function setNewConnection($nameConnection, $host, $user, $pass, $database, $port, $options = [])
+    {
+        try {
+            if (empty($port)) {
+                $dbHost = explode(':', $host);
+                $port = 3306;
+                if (count($dbHost) > 1) {
+                    $port = $dbHost[1];
+                }
+                $host = $dbHost[0];
+            }
+            config(['database.connections.' . $nameConnection => [
+                'driver' => 'mysql',
+                'host' => $host,
+                'port' => $port,
+                'database' => $database,
+                'username' => $user,
+                'password' => $pass,
+                'unix_socket' => '',
+                'charset' => 'utf8',
+                'collation' => 'utf8_unicode_ci',
+                'prefix' => '',
+                'strict' => false,
+                'engine' => 'InnoDB',
+                'options' => $options
+            ]]);
+            DB::connection($nameConnection)->getPdo();
+        } catch (Exception $e) {
+            throw new Exception(G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG'));
+        }
+    }
+
+    /**
+     * Get system information for review the requirements to install ProcessMaker
+     *
+     * @return object
+     */
     public function getSystemInfo()
     {
         $this->setResponseType('json');
@@ -241,7 +307,7 @@ class InstallerModule extends Controller
         $this->setResponseType('json');
         $info = new StdClass();
         $info->success = true;
-        $noWritableFiles = array();
+        $noWritableFiles = [];
         $noWritable = G::LoadTranslation('ID_INDEX_NOT_WRITEABLE');
         $writable = G::LoadTranslation('ID_WRITEABLE');
 
@@ -387,16 +453,15 @@ class InstallerModule extends Controller
      * the install.log files should be placed in shared/logs
      * for that reason we are using the $_REQUEST of pathShared
      */
-    public function installLog($text)
+    private function installLog($text)
     {
-        $serverAddr = $_SERVER['SERVER_ADDR'];
         //if this function is called outside the createWorkspace, just returns and do nothing
         if (!isset($_REQUEST['pathShared'])) {
             return;
         }
         //log file is in shared/logs
         $pathShared = trim($_REQUEST['pathShared']);
-        if (substr($pathShared, -1) != '/') {
+        if (substr($pathShared, -1) !== '/') {
             $pathShared .= '/';
         }
         $pathSharedLog = $pathShared . 'log/';
@@ -410,11 +475,10 @@ class InstallerModule extends Controller
                 fwrite($fpt, sprintf("%s %s\n", date('Y:m:d H:i:s'), '----- ' . G::LoadTranslation('ID_STARTING_LOG_FILE') . ' ------'));
                 fclose($fpt);
             } else {
-                throw (new Exception(G::LoadTranslation('ID_FILE_NOT_WRITEABLE', SYS_LANG, array($logFile))));
+                throw new Exception(G::LoadTranslation('ID_FILE_NOT_WRITEABLE', SYS_LANG, [$logFile]));
                 return $false;
             }
         }
-
 
         $filter = new InputFilter();
         $logFile = $filter->validateInput($logFile, 'path');
@@ -497,26 +561,12 @@ class InstallerModule extends Controller
     }
 
     /**
-     * send a query to MySQL and log the query
-     */
-    public function mysqlQuery($sql)
-    {
-        $this->installLog($sql);
-        $query = mysqli_query($this->link, $sql);
-        if (!$query) {
-            $errorMessage = mysqli_error($this->link);
-            $this->installLog(G::LoadTranslation('ID_MYSQL_ERROR', SYS_LANG, array($errorMessage)));
-            throw new \Exception($errorMessage);
-            return false;
-        }
-        if (is_object($query)) {
-            mysqli_free_result($query);
-        }
-        return true;
-    }
-
-    /**
-     * send a query to MSSQL and log the query
+     * Send a query to MSSQL and log the query
+     *
+     * @param string $sql
+     *
+     * @return boolean
+     * @throws Exception
      */
     public function mssqlQuery($sql)
     {
@@ -544,32 +594,30 @@ class InstallerModule extends Controller
     public function mysqlFileQuery($file)
     {
         if (!is_file($file)) {
-            throw (new Exception(G::LoadTranslation('ID_SQL_FILE_INVALID', SYS_LANG, array($file))));
+            throw new Exception(G::LoadTranslation('ID_SQL_FILE_INVALID', SYS_LANG, [$file]));
             return $false;
         }
-        $this->installLog(G::LoadTranslation('ID_PROCESING', SYS_LANG, array($file)));
+        $this->installLog(G::LoadTranslation('ID_PROCESING', SYS_LANG, [$file]));
         $startTime = microtime(true);
         //New Update, to support more complex queries
 
-
         $lines = file($file);
         $previous = null;
-        $errors = '';
-        mysqli_query($this->link, "SET NAMES 'utf8';");
+        DB::connection(self::CONNECTION_INSTALL)
+            ->statement("SET NAMES 'utf8'");
         foreach ($lines as $j => $line) {
             $line = trim($line); // Remove comments from the script
 
-
-            if (strpos($line, "--") === 0) {
-                $line = substr($line, 0, strpos($line, "--"));
+            if (strpos($line, '--') === 0) {
+                $line = substr($line, 0, strpos($line, '--'));
             }
 
             if (empty($line)) {
                 continue;
             }
 
-            if (strpos($line, "#") === 0) {
-                $line = substr($line, 0, strpos($line, "#"));
+            if (strpos($line, '#') === 0) {
+                $line = substr($line, 0, strpos($line, '#'));
             }
 
             if (empty($line)) {
@@ -578,23 +626,24 @@ class InstallerModule extends Controller
 
             // Concatenate the previous line, if any, with the current
             if ($previous) {
-                $line = $previous . " " . $line;
+                $line = $previous . ' ' . $line;
             }
             $previous = null;
 
             // If the current line doesnt end with ; then put this line together
             // with the next one, thus supporting multi-line statements.
-            if (strrpos($line, ";") != strlen($line) - 1) {
+            if (strrpos($line, ';') !== strlen($line) - 1) {
                 $previous = $line;
                 continue;
             }
 
-            $line = substr($line, 0, strrpos($line, ";"));
-            mysqli_query($this->link, $line);
+            $line = substr($line, 0, strrpos($line, ';'));
+            DB::connection(self::CONNECTION_INSTALL)
+                ->statement($line);
         }
 
         $endTime = microtime(true);
-        $this->installLog(G::LoadTranslation('ID_FILE_PROCESSED', SYS_LANG, array(basename($file), $endTime - $startTime)));
+        $this->installLog(G::LoadTranslation('ID_FILE_PROCESSED', SYS_LANG, [basename($file), $endTime - $startTime]));
         return true;
     }
 
@@ -636,31 +685,25 @@ class InstallerModule extends Controller
      * @param string $psUser
      * @param string $psPassword
      * @param string $psDatabase
-     * @return void
+     * @param string $host
+     *
+     * @throws Exception
      */
-    public function setGrantPrivilegesMySQL($psUser, $psPassword, $psDatabase, $host)
+    private function setGrantPrivilegesMySQL($psUser, $psPassword, $psDatabase, $host)
     {
-        $filter = new InputFilter();
-        $host = ($host == 'localhost' || $host == '127.0.0.1' ? 'localhost' : '%');
+        try {
+            $host = $host === 'localhost' || $host === '127.0.0.1' ? 'localhost' : '%';
 
-        $query = "GRANT ALL PRIVILEGES ON `%s`.* TO %s@'%s' IDENTIFIED BY '%s' WITH GRANT OPTION";
-        $sql = sprintf($query, $psDatabase, $psUser, $host, $psPassword);
-        $sql = $filter->preventSqlInjection($query, array($psDatabase, $psUser, $host, $psPassword), $this->link);
-        $query = mysqli_query($this->link, $sql);
+            $query = "GRANT ALL PRIVILEGES ON `$psDatabase`.* TO $psUser@'$host' IDENTIFIED BY '$psPassword' WITH GRANT OPTION";
+            DB::connection(self::CONNECTION_INSTALL)
+                ->statement($query);
 
-        if (!$query) {
-            $errorMessage = mysqli_error($this->link);
-            $this->installLog(G::LoadTranslation('ID_MYSQL_ERROR', SYS_LANG, array($errorMessage)));
-            if (mysqli_errno($this->link) === 1410 || mysqli_errno($this->link) === 1132) {
-                $errorMessage .= '. ' . G::LoadTranslation('ID_INSTALL_USE_CURRENT_USER');
-            }
-            throw new Exception($errorMessage);
-            return false;
+            $this->installLog($query);
+
+        } catch (QueryException $e) {
+            $this->installLog(G::LoadTranslation('ID_MYSQL_ERROR', SYS_LANG, [$e->getMessage()]));
+            throw new Exception($e->getMessage());
         }
-        if (is_object($query)) {
-            mysqli_free_result($query);
-        }
-        $this->installLog($sql);
     }
 
     /**
@@ -703,12 +746,11 @@ class InstallerModule extends Controller
         return true;
     }
 
-    private function file_get_contents_utf8($fn) {
-        $content = file_get_contents($fn);
-        return mb_convert_encoding($content, 'UTF-8',
-            mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
-    }
-
+    /**
+     * Create a workspace in a MySQL database
+     *
+     * @return StdClass object
+     */
     public function createMySQLWorkspace()
     {
         $filter = new InputFilter();
@@ -726,76 +768,61 @@ class InstallerModule extends Controller
         $db_password = urlencode(trim($_REQUEST['db_password']));
         $db_password = urldecode($filter->validateInput($db_password));
         $wf = trim($_REQUEST['wfDatabase']);
-        $rb = trim($_REQUEST['wfDatabase']);
-        $rp = trim($_REQUEST['wfDatabase']);
         $workspace = trim($_REQUEST['workspace']);
-        $pathConfig = trim($_REQUEST['pathConfig']);
-        $pathLanguages = trim($_REQUEST['pathLanguages']);
-        $pathPlugins = trim($_REQUEST['pathPlugins']);
         $pathShared = trim($_REQUEST['pathShared']);
-        $pathXmlforms = trim($_REQUEST['pathXmlforms']);
         $adminPassword = trim($_REQUEST['adminPassword']);
         $adminPassword = $filter->validateInput($adminPassword);
         $adminUsername = trim($_REQUEST['adminUsername']);
         $adminUsername = $filter->validateInput($adminUsername);
-        $deleteDB = ($_REQUEST['deleteDB'] == 'true');
-        $userLogged = (isset($_REQUEST['userLogged']) ? ($_REQUEST['userLogged'] == 'true') : false);
+        $deleteDB = $_REQUEST['deleteDB'] === 'true';
+        $userLogged = isset($_REQUEST['userLogged']) ? $_REQUEST['userLogged'] === 'true' : false;
         $userLogged = $filter->validateInput($userLogged);
 
-        if (substr($pathShared, -1) != '/') {
+        if (substr($pathShared, -1) !== '/') {
             $pathShared .= '/';
         }
 
         $this->installLog('-------------------------------------------');
-        $this->installLog(G::LoadTranslation('ID_CREATING_WORKSPACE', SYS_LANG, array($workspace)));
+        $this->installLog(G::LoadTranslation('ID_CREATING_WORKSPACE', SYS_LANG, [$workspace]));
 
         try {
+            self::setNewConnection(self::CONNECTION_TEST_INSTALL, $db_hostname, $db_username, $db_password, '', $db_port);
             $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;
-            $this->link = mysqli_connect($db_host, $db_username, $db_password);
 
-            mysqli_set_charset($this->link, 'utf8');
-            $this->installLog(G::LoadTranslation('ID_CONNECT_TO_SERVER', SYS_LANG, array($db_hostname, $db_port, $db_username)));
+            $this->installLog(G::LoadTranslation('ID_CONNECT_TO_SERVER', SYS_LANG, [$db_hostname, $db_port, $db_username]));
 
             if ($deleteDB) {
-                $q = sprintf('DROP DATABASE IF EXISTS %s;', $wf, $wf);
-                $this->mysqlQuery($q);
+                $query = sprintf('DROP DATABASE IF EXISTS %s', $wf);
+                DB::connection(self::CONNECTION_TEST_INSTALL)->statement($query);
             }
 
-            // CREATE databases wf_workflow, rb_workflow and rp_workflow
-            $q = sprintf('CREATE DATABASE IF NOT EXISTS %s;', $wf, $wf);
-            $this->mysqlQuery($q);
+            // CREATE databases wf_workflow
+            DB::connection(self::CONNECTION_TEST_INSTALL)
+                ->statement("CREATE DATABASE IF NOT EXISTS $wf");
+
+            self::setNewConnection(self::CONNECTION_INSTALL, $db_hostname, $db_username, $db_password, $wf, $db_port);
 
             // CREATE users and GRANT Privileges
             $wf_workspace = $wf;
             $wfGrantUser = uniqid('wf_');
-            $rb_workspace = $wf;
-            $rp_workspace = $wf;
             if (!$userLogged) {
                 $wfPass = G::generate_password(15);
                 $this->setGrantPrivilegesMySQL($wfGrantUser, $wfPass, $wf, $db_hostname);
-                $this->setGrantPrivilegesMySQL($wfGrantUser, $wfPass, $wf, $db_hostname);
-                $this->setGrantPrivilegesMySQL($wfGrantUser, $wfPass, $wf, $db_hostname);
             } else {
                 $wfPass = $db_password;
-                $rbPass = $db_password;
-                $rpPass = $db_password;
                 $wf = $db_username;
                 $wfGrantUser = $db_username;
-                $rb = $db_username;
-                $rp = $db_username;
             }
 
-
             // Generate the db.php file and folders
-            $pathSharedSites = $pathShared;
-            $path_site = $pathShared . "/sites/" . $workspace . "/";
+            $path_site = $pathShared . '/sites/' . $workspace . '/';
 
             @mkdir($path_site, 0777, true);
-            @mkdir($path_site . "files/", 0777, true);
-            @mkdir($path_site . "mailTemplates/", 0777, true);
-            @mkdir($path_site . "public/", 0777, true);
-            @mkdir($path_site . "reports/", 0777, true);
-            @mkdir($path_site . "xmlForms", 0777, true);
+            @mkdir($path_site . 'files/', 0777, true);
+            @mkdir($path_site . 'mailTemplates/', 0777, true);
+            @mkdir($path_site . 'public/', 0777, true);
+            @mkdir($path_site . 'reports/', 0777, true);
+            @mkdir($path_site . 'xmlForms', 0777, true);
 
             $db_file = $path_site . 'db.php';
             $dbText = "<?php\n";
@@ -816,13 +843,13 @@ class InstallerModule extends Controller
 
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $dbText .= "\n";
-                $dbText .= "  define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG')) ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG'] : 'false')) . ");\n";
-                if ($this->systemName != '') {
+                $dbText .= "  define ('PARTNER_FLAG', " . (defined('PARTNER_FLAG') ? PARTNER_FLAG : isset($_REQUEST['PARTNER_FLAG']) ? $_REQUEST['PARTNER_FLAG'] : 'false') . ");\n";
+                if (!empty($this->systemName)) {
                     $dbText .= "  define ('SYSTEM_NAME', '" . $this->systemName . "');\n";
                 }
             }
 
-            $this->installLog(G::LoadTranslation('ID_CREATING', SYS_LANG, array($db_file)));
+            $this->installLog(G::LoadTranslation('ID_CREATING', SYS_LANG, [$db_file]));
             file_put_contents($db_file, $dbText);
 
             /*----------------------------------********---------------------------------*/
@@ -854,15 +881,8 @@ class InstallerModule extends Controller
             $this->installLog(G::LoadTranslation('ID_CREATING', SYS_LANG, array($databases_file)));
             file_put_contents($databases_file, $databasesText);
 
-            // Execute scripts to create and populates databases
-            $query = sprintf("USE %s;", $wf_workspace);
-            $this->mysqlQuery($query);
-
             $this->mysqlFileQuery(PATH_RBAC_HOME . 'engine/data/mysql/schema.sql');
             $this->mysqlFileQuery(PATH_RBAC_HOME . 'engine/data/mysql/insert.sql');
-
-            $query = sprintf("USE %s;", $wf_workspace);
-            $this->mysqlQuery($query);
             $this->mysqlFileQuery(PATH_HOME . 'engine/data/mysql/schema.sql');
             $this->mysqlFileQuery(PATH_HOME . 'engine/data/mysql/insert.sql');
 
@@ -877,61 +897,86 @@ class InstallerModule extends Controller
                 file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationUpdate.sql') &&
                 file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationDelete.sql') &&
                 file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerContentUpdate.sql')) {
-                $this->mysqlQuery($this->file_get_contents_utf8(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationInsert.sql'));
-                $this->mysqlQuery($this->file_get_contents_utf8(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationUpdate.sql'));
-                $this->mysqlQuery($this->file_get_contents_utf8(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationUpdate.sql'));
-                $this->mysqlQuery($this->file_get_contents_utf8(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationDelete.sql'));
-                $this->mysqlQuery($this->file_get_contents_utf8(PATH_HOME . "engine/methods/setup/setupSchemas/triggerSubApplicationInsert.sql"));
-                $this->mysqlQuery($this->file_get_contents_utf8(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerContentUpdate.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationInsert.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationUpdate.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationUpdate.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationDelete.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerSubApplicationInsert.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerContentUpdate.sql'));
 
-                $this->mysqlQuery("INSERT INTO `CONFIGURATION` (
-                            `CFG_UID`,
-                            `CFG_VALUE`
-                           )
-                           VALUES (
-                             'APP_CACHE_VIEW_ENGINE',
-                             '" . mysqli_real_escape_string(serialize(array('LANG' => 'en', 'STATUS' => 'active'
-                    ))) . "'
-                           )");
+                DB::connection(self::CONNECTION_INSTALL)
+                    ->table('CONFIGURATION')
+                    ->insert([
+                        'CFG_UID' => 'APP_CACHE_VIEW_ENGINE',
+                        'CFG_VALUE' => serialize(['LANG' => 'en', 'STATUS' => 'active'])
+                    ]);
 
-                $this->mysqlQuery("INSERT INTO EMAIL_SERVER(MESS_UID, MESS_ENGINE) VALUES('" . \ProcessMaker\Util\Common::generateUID() . "', 'MAIL')");
+                DB::connection(self::CONNECTION_INSTALL)
+                    ->table('EMAIL_SERVER')
+                    ->insert([
+                        'MESS_UID' => Common::generateUID(),
+                        'MESS_ENGINE' => 'MAIL'
+                    ]);
             }
 
             // Change admin user
-            $query = sprintf("USE %s;", $wf_workspace);
-            $this->mysqlQuery($query);
+            DB::connection(self::CONNECTION_INSTALL)
+                ->table('USERS')
+                ->where('USR_UID', '00000000000000000000000000000001')
+                ->update([
+                    'USR_USERNAME' => $adminUsername,
+                    'USR_LASTNAME' => $adminUsername,
+                    'USR_PASSWORD' => Bootstrap::hashPassword($adminPassword, Bootstrap::hashBcrypt)
+                ]);
 
-            $query = sprintf("UPDATE USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, G::encryptHash($adminPassword));
-            $this->mysqlQuery($query);
-
-            $query = sprintf("UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, G::encryptHash($adminPassword));
-            $this->mysqlQuery($query);
-
+            DB::connection(self::CONNECTION_INSTALL)
+                ->table('RBAC_USERS')
+                ->where('USR_UID', '00000000000000000000000000000001')
+                ->update([
+                    'USR_USERNAME' => $adminUsername,
+                    'USR_LASTNAME' => $adminUsername,
+                    'USR_PASSWORD' => Bootstrap::hashPassword($adminPassword, Bootstrap::hashBcrypt)
+                ]);
             // Write the paths_installed.php file (contains all the information configured so far)
             if (!file_exists(FILE_PATHS_INSTALLED)) {
                 $sh = G::encryptOld(filemtime(PATH_GULLIVER . '/class.g.php'));
-                $h = G::encrypt($db_hostname . $sh . $db_username . $sh . $db_password, $sh);
+                $h = G::encrypt($db_host . $sh . $db_username . $sh . $db_password, $sh);
                 $dbText = "<?php\n";
                 $dbText .= sprintf("  define('PATH_DATA',         '%s');\n", $pathShared);
                 $dbText .= sprintf("  define('PATH_C',            '%s');\n", $pathShared . 'compiled/');
                 $dbText .= sprintf("  define('HASH_INSTALLATION', '%s');\n", $h);
                 $dbText .= sprintf("  define('SYSTEM_HASH',       '%s');\n", $sh);
-                $this->installLog(G::LoadTranslation('ID_CREATING', SYS_LANG, array(FILE_PATHS_INSTALLED)));
+                $this->installLog(G::LoadTranslation('ID_CREATING', SYS_LANG, [FILE_PATHS_INSTALLED]));
                 file_put_contents(FILE_PATHS_INSTALLED, $dbText);
             }
 
             /**
              * AppCacheView Build
              */
-            define( 'HASH_INSTALLATION', $h );
-            define( 'SYSTEM_HASH', $sh );
-            define( 'PATH_DB', $pathShared . 'sites' . PATH_SEP );
-            define( 'SYS_SYS', $workspace );
-            config(["system.workspace" => $workspace]);
+            define('HASH_INSTALLATION', $h);
+            define('SYSTEM_HASH', $sh);
+            define('PATH_DB', $pathShared . 'sites' . PATH_SEP);
+            define('SYS_SYS', $workspace);
+            config(['system.workspace' => $workspace]);
 
-            require_once("propel/Propel.php");
+            System::setConnectionConfig(
+                'mysql',
+                $db_host,
+                $wf_workspace,
+                $wfGrantUser,
+                $wfPass,
+                $db_host,
+                $wf_workspace,
+                $wfGrantUser,
+                $wfPass,
+                $db_host,
+                $wf_workspace,
+                $wfGrantUser,
+                $wfPass);
 
-            Propel::init(PATH_CORE . "config/databases.php");
+            require_once('propel/Propel.php');
+
+            Propel::init(PATH_CORE . 'config/databases.php');
             $con = Propel::getConnection('workflow');
 
             require_once('classes/model/AppCacheView.php');
@@ -990,8 +1035,8 @@ class InstallerModule extends Controller
             $info->uri = PATH_SEP . 'sys' . $_REQUEST['workspace'] . PATH_SEP . $langUri . PATH_SEP . $skinUri . PATH_SEP . 'login' . PATH_SEP . 'login';
 
             //register PMDesigner Client
-            $http = (G::is_https() == true) ? 'https' : 'http';
-            $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
+            $http = G::is_https() ? 'https' : 'http';
+            $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] !== '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
 
             $endpoint = sprintf(
                 '%s://%s/sys%s/%s/%s/oauth2/grant',
@@ -1003,15 +1048,17 @@ class InstallerModule extends Controller
             );
 
             // inserting the outh_client
-            if (!$userLogged) {
-                $query = sprintf("USE %s;", $wf);
-            } else {
-                $query = sprintf("USE %s;", trim($_REQUEST['wfDatabase']));
-            }
-            $this->mysqlQuery($query);
-            $query = ("INSERT INTO OAUTH_CLIENTS (CLIENT_ID,CLIENT_SECRET,CLIENT_NAME,CLIENT_DESCRIPTION,CLIENT_WEBSITE,REDIRECT_URI,USR_UID ) VALUES
-                ('x-pm-local-client','179ad45c6ce2cb97cf1029e212046e81','PM Web Designer','ProcessMaker Web Designer App','www.processmaker.com','" . $endpoint . "','00000000000000000000000000000001' )");
-            $this->mysqlQuery($query);
+            DB::connection(self::CONNECTION_INSTALL)
+                ->table('OAUTH_CLIENTS')
+                ->insert([
+                    'CLIENT_ID' => 'x-pm-local-client',
+                    'CLIENT_SECRET' => '179ad45c6ce2cb97cf1029e212046e81',
+                    'CLIENT_NAME' => 'PM Web Designer',
+                    'CLIENT_DESCRIPTION' => 'ProcessMaker Web Designer App',
+                    'CLIENT_WEBSITE' => 'www.processmaker.com',
+                    'REDIRECT_URI' => $endpoint,
+                    'USR_UID' => '00000000000000000000000000000001'
+                ]);
 
             $indexFileUpdated = true;
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
@@ -1021,30 +1068,30 @@ class InstallerModule extends Controller
                     G::update_php_ini($envFile, $updatedConf);
                 } catch (Exception $e) {
                     $info->result = false;
-                    $info->message = G::LoadTranslation('ID_PROCESSMAKER_WRITE_CONFIG_INDEX', SYS_LANG, array($envFile));
+                    $info->message = G::LoadTranslation('ID_PROCESSMAKER_WRITE_CONFIG_INDEX', SYS_LANG, [$envFile]);
                     $info->message .= G::LoadTranslation('ID_PROCESSMAKER_UI_NOT_INSTALL');
-                    $this->installLog(G::LoadTranslation('ID_INSTALL_BUT_ERROR', SYS_LANG, array('env.ini')));
+                    $this->installLog(G::LoadTranslation('ID_INSTALL_BUT_ERROR', SYS_LANG, ['env.ini']));
                     return $info;
                 }
 
                 try {
                     // update the main index file
-                    $indexFileUpdated = System::updateIndexFile(array('lang' => 'en', 'skin' => $updatedConf['default_skin']));
+                    $indexFileUpdated = System::updateIndexFile(['lang' => 'en', 'skin' => $updatedConf['default_skin']]);
                 } catch (Exception $e) {
                     $info->result = false;
-                    $info->message = G::LoadTranslation('ID_PROCESSMAKER_WRITE_CONFIG_INDEX', SYS_LANG, array(PATH_HTML . "index.html."));
+                    $info->message = G::LoadTranslation('ID_PROCESSMAKER_WRITE_CONFIG_INDEX', SYS_LANG, [PATH_HTML . "index.html."]);
                     $info->message .= G::LoadTranslation('ID_PROCESSMAKER_UI_NOT_INSTALL');
-                    $this->installLog(G::LoadTranslation('ID_INSTALL_BUT_ERROR', SYS_LANG, array('index.html')));
+                    $this->installLog(G::LoadTranslation('ID_INSTALL_BUT_ERROR', SYS_LANG, ['index.html']));
                     return $info;
                 }
             }
 
-            $this->installLog(G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, array($indexFileUpdated, $sysConf['default_lang'], $sysConf['default_skin'])));
+            $this->installLog(G::LoadTranslation('ID_INDEX_FILE_UPDATED', SYS_LANG, [$indexFileUpdated, $sysConf['default_lang'], $sysConf['default_skin']]));
             $this->installLog(G::LoadTranslation('ID_INSTALL_SUCESS'));
 
             $info->result = true;
             $info->message = G::LoadTranslation('ID_INSTALL_SUCESS');
-            $info->messageFinish = G::LoadTranslation('ID_PROCESSMAKER_SUCCESS_INSTALLED', SYS_LANG, array($workspace));;
+            $info->messageFinish = G::LoadTranslation('ID_PROCESSMAKER_SUCCESS_INSTALLED', SYS_LANG, [$workspace]);
         } catch (Exception $e) {
             $info->canRedirect = false;
             $info->result = false;
@@ -1185,7 +1232,7 @@ class InstallerModule extends Controller
                 $this->mssqlQuery(@file_get_contents(PATH_HOME . 'engine/plugins/enterprise/data/triggerAppDelegationUpdate.sql'));
                 $this->mssqlQuery(@file_get_contents(PATH_HOME . 'engine/plugins/enterprise/data/triggerApplicationUpdate.sql'));
                 $this->mssqlQuery(@file_get_contents(PATH_HOME . 'engine/plugins/enterprise/data/triggerApplicationDelete.sql'));
-                $this->mysqlQuery(@file_get_contents(PATH_HOME . "engine/methods/setup/setupSchemas/triggerSubApplicationInsert.sql"));
+                $this->mssqlQuery(@file_get_contents(PATH_HOME . "engine/methods/setup/setupSchemas/triggerSubApplicationInsert.sql"));
                 $this->mssqlQuery(@file_get_contents(PATH_HOME . 'engine/plugins/enterprise/data/triggerContentUpdate.sql'));
                 $this->mssqlQuery("INSERT INTO CONFIGURATION (
                             CFG_UID,
@@ -1197,7 +1244,7 @@ class InstallerModule extends Controller
                     ))) . "'
                            )");
 
-                $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_UID, MESS_ENGINE) VALUES('" . \ProcessMaker\Util\Common::generateUID() . "','MAIL')");
+                $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_UID, MESS_ENGINE) VALUES('" . Common::generateUID() . "','MAIL')");
             }
 
             //change admin user
@@ -1230,7 +1277,6 @@ class InstallerModule extends Controller
             $info->message = G::LoadTranslation('ID_INSTALL_SUCESS');
             $info->url = '/sys' . $_REQUEST['workspace'] . '/en/neoclassic/login/login';
             $info->messageFinish = G::LoadTranslation('ID_PROCESSMAKER_SUCCESS_INSTALLED', SYS_LANG, array($workspace));
-            ;
         } catch (Exception $e) {
             $info->result = false;
             $info->message = $e->getMessage();
@@ -1254,10 +1300,15 @@ class InstallerModule extends Controller
         return $systemName;
     }
 
+    /**
+     * Get the Database engines list
+     *
+     * @return object
+     */
     public function getEngines()
     {
         $this->setResponseType('json');
-        $engines = array();
+        $engines = [];
         if (function_exists('mysqli_query')) {
             $engine = new stdclass();
             $engine->id = 'mysql';
@@ -1290,15 +1341,13 @@ class InstallerModule extends Controller
 
         switch ($_REQUEST['db_engine']) {
             case 'mysql':
-                if ($db_port !== '3306') {
-                    $db_hostname = $db_hostname . ':' . $db_port;
-                }
                 $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
-                $link = mysqli_connect($db_hostname, $db_username, $db_password, $wfDatabase);
-                $query = "show databases like '%s' ";
-                $query = $filter->preventSqlInjection($query, array($wfDatabase), $link);
-                $dataSet = mysqli_query($link, $query);
-                $info->wfDatabaseExists = (mysqli_num_rows($dataSet) > 0);
+
+                self::setNewConnection(self::CONNECTION_TEST_INSTALL, $db_hostname, $db_username, $db_password, '', $db_port);
+                $response = DB::connection(self::CONNECTION_TEST_INSTALL)
+                    ->select("show databases like '$wfDatabase'");
+
+                $info->wfDatabaseExists = count($response) > 0;
                 break;
             case 'mssql':
                 $link = @mssql_connect($db_hostname, $db_username, $db_password);
@@ -1332,51 +1381,53 @@ class InstallerModule extends Controller
 
     private function testMySQLConnection()
     {
-        $filter = new InputFilter();
-        $info = new StdClass();
-        $info->result = false;
-        $info->message = '';
-        if (!function_exists('mysqli_connect')) {
-            $info->message = G::LoadTranslation('ID_PHP_MYSQLI_NOT_INSTALL');
-            return $info;
-        }
-        $dataRequest = $_REQUEST;
-        $db_hostname = $filter->validateInput($dataRequest['db_hostname']);
-        $db_port = $filter->validateInput($dataRequest['db_port']);
-        $db_username = $filter->validateInput($dataRequest['db_username']);
-        $db_password = urlencode($dataRequest['db_password']);
-        $db_password = urldecode($filter->validateInput($db_password));
-        $fp = @fsockopen($db_hostname, $db_port, $errno, $errstr, 30);
-        if (!$fp) {
-            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, array("$errstr ($errno)"));
-            return $info;
-        }
+        try {
+            $filter = new InputFilter();
+            $info = new StdClass();
+            $info->result = false;
+            $info->message = '';
+            if (!function_exists('mysqli_connect')) {
+                $info->message = G::LoadTranslation('ID_PHP_MYSQLI_NOT_INSTALL');
+                return $info;
+            }
+            $dataRequest = $_REQUEST;
+            $db_hostname = $filter->validateInput($dataRequest['db_hostname']);
+            $db_port = $filter->validateInput($dataRequest['db_port']);
+            $db_username = $filter->validateInput($dataRequest['db_username']);
+            $db_password = urlencode($dataRequest['db_password']);
+            $db_password = urldecode($filter->validateInput($db_password));
+            $fp = @fsockopen($db_hostname, $db_port, $errno, $errstr, 30);
+            if (!$fp) {
+                $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, ["$errstr ($errno)"]);
+                return $info;
+            }
 
-        $db_host = ($db_port !== '' && $db_port !== 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
+            $db_username = $filter->validateInput($db_username, 'nosql');
+            $db_hostname = $filter->validateInput($db_hostname, 'nosql');
 
-        $link = new mysqli($db_host, $db_username, $db_password);
-        if ($link->connect_error) {
-            $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
-            return $info;
+            self::setNewConnection(self::CONNECTION_TEST_INSTALL, $db_hostname, $db_username, $db_password, '', $db_port);
+            $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'$db_username'@'$db_hostname'\" OR GRANTEE = \"'$db_username'@'%%'\") ";
+
+            $response = DB::connection(self::CONNECTION_TEST_INSTALL)->select($query);
+
+            if (!is_array($response)) {
+                $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR_PRIVILEGE', SYS_LANG, [$db_username]);
+                return $info;
+            }
+            $info->message .= G::LoadTranslation('ID_MYSQL_SUCCESS_CONNECT');
+            $info->result = true;
+        } catch (Exception $e) {
+            $info->result = false;
+            $info->message = G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
         }
-        $db_username = $filter->validateInput($db_username, 'nosql');
-        $db_hostname = $filter->validateInput($db_hostname, 'nosql');
-        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%%'\") ";
-        $query = $filter->preventSqlInjection($query, array($db_username, $db_hostname, $db_username), $link);
-        $res = $link->query($query);
-        $row = $res->fetch_array();
-        $hasSuper = is_array($row);
-        $res->free();
-        $link->close();
-        if (!$hasSuper) {
-            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR_PRIVILEGE', SYS_LANG, array($db_username));
-            return $info;
-        }
-        $info->message .= G::LoadTranslation('ID_MYSQL_SUCCESS_CONNECT');
-        $info->result = true;
         return $info;
     }
 
+    /**
+     * This function test a SQL Server connection
+     *
+     * @return object
+     */
     private function testMSSQLConnection()
     {
         $filter = new InputFilter();
@@ -1400,6 +1451,7 @@ class InstallerModule extends Controller
             $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, array("$errstr ($errno)"));
             return $info;
         }
+        \Illuminate\Support\Facades\DB::connection();
 
         $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
 
@@ -1454,13 +1506,18 @@ class InstallerModule extends Controller
         return $info;
     }
 
-    public function setPartner()
+    /**
+     * This function define the partner behaviour when the PARTNER_FLAG is defined
+     * Execute to change of skin
+     *
+     * @return void
+     */
+    private function setPartner()
     {
         if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
             // Execute sql for partner
             $pathMysqlPartner = PATH_CORE . 'data' . PATH_SEP . 'partner' . PATH_SEP . 'mysql' . PATH_SEP;
             if (G::verifyPath($pathMysqlPartner)) {
-                $res = array();
                 $filesSlq = glob($pathMysqlPartner . '*.sql');
                 foreach ($filesSlq as $value) {
                     $this->mysqlFileQuery($value);
@@ -1470,7 +1527,6 @@ class InstallerModule extends Controller
             // Execute to change of skin
             $pathSkinPartner = PATH_CORE . 'data' . PATH_SEP . 'partner' . PATH_SEP . 'skin' . PATH_SEP;
             if (G::verifyPath($pathSkinPartner)) {
-                $res = array();
                 $fileTar = glob($pathSkinPartner . '*.tar');
                 foreach ($fileTar as $value) {
                     $dataFile = pathinfo($value);
@@ -1503,10 +1559,19 @@ class InstallerModule extends Controller
         }
     }
 
+    /**
+     * Copy a directory or file
+     *
+     * @param string $fromDir
+     * @param string $toDir
+     * @param integer $chmod
+     *
+     * @return void
+     */
     public function copyFile($fromDir, $toDir, $chmod = 0777)
     {
-        $errors = array();
-        $messages = array();
+        $errors = [];
+        $messages = [];
 
         if (!is_writable($toDir)) {
             $errors[] = 'target ' . $toDir . ' is not writable';
@@ -1546,32 +1611,33 @@ class InstallerModule extends Controller
         closedir($handle);
     }
 
-    public function setConfiguration()
-    {
-        //a:4:{s:26:"login_enableForgotPassword";b:0;s:27:"login_enableVirtualKeyboard";b:0;s:21:"login_defaultLanguage";s:5:"pt-BR";s:10:"dateFormat";s:15:"d \\d\\e F \\d\\e Y";}
-        $value = array(
-            'login_defaultLanguage' => "pt-BR",
-            "dateFormat" => 'd \d\e F \d\e Y'
-        );
-
-        $value = serialize($value);
-        $query = "INSERT INTO CONFIGURATION (CFG_UID, CFG_VALUE) VALUES ('ENVIRONMENT_SETTINGS', '" . mysqli_real_escape_string($this->link, $value) . "')";
-
-        $this->mysqlQuery($query);
-    }
-
-    public function buildParternExtras($username, $password, $workspace, $lang, $skinName)
+    /**
+     * Define build Pattern Extras related to:
+     * Upload translation .po file
+     * Upload skin file
+     * Upload plugin file
+     * Active plugins to enterprise
+     *
+     * @param string $username
+     * @param string $password
+     * @param string $workspace
+     * @param string $lang
+     * @param string $skinName
+     *
+     * @return void
+     */
+    private function buildParternExtras($username, $password, $workspace, $lang, $skinName)
     {
         $filter = new InputFilter();
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '256M');
 
         $serv = 'http://';
-        if (isset($_SERVER['HTTPS']) && trim($_SERVER['HTTPS']) != '') {
+        if (isset($_SERVER['HTTPS']) && !empty(trim($_SERVER['HTTPS']))) {
             $serv = 'https://';
         }
         $serv .= $_SERVER['SERVER_NAME'];
-        if (isset($_SERVER['SERVER_PORT']) && trim($_SERVER['SERVER_PORT']) != '') {
+        if (isset($_SERVER['SERVER_PORT']) && !empty(trim($_SERVER['SERVER_PORT']))) {
             $serv .= ':' . $_SERVER['SERVER_PORT'];
         }
 
@@ -1610,7 +1676,7 @@ class InstallerModule extends Controller
          */
 
         $ch = curl_init();
-        $postData = array();
+        $postData = [];
         // File to upload/post
 
         $postData['form[LANGUAGE_FILENAME]'] = "@" . PATH_CORE . "content/translations/processmaker.$lang.po";
@@ -1633,7 +1699,7 @@ class InstallerModule extends Controller
          */
 
         $ch = curl_init();
-        $postData = array();
+        $postData = [];
 
         $skins = glob(PATH_CORE . "data/partner/*.tar");
         if (count($skins) > 0) {
@@ -1666,7 +1732,7 @@ class InstallerModule extends Controller
          */
 
         $ch = curl_init();
-        $postData = array();
+        $postData = [];
         // resolv the plugin name
         $plugins = glob(PATH_CORE . "plugins/*.tar");
         if (count($plugins) > 0) {
@@ -1703,7 +1769,7 @@ class InstallerModule extends Controller
         foreach ($plugins as $value) {
             $dataPlugin = pathinfo($value);
             $namePlugin = $dataPlugin['filename'];
-            if ($value != 'enterprise') {
+            if ($value !== 'enterprise') {
                 $db_hostname = trim($_REQUEST['db_hostname']);
                 $db_hostname = $filter->validateInput($db_hostname);
                 $db_port = trim($_REQUEST['db_port']);
@@ -1717,12 +1783,15 @@ class InstallerModule extends Controller
 
                 $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;
 
-                $link = mysqli_connect($db_host, $db_username, $db_password, $wf);
-                mysqli_select_db($link, $wf);
-                $res = mysqli_query($link, "SELECT STORE_ID FROM ADDONS_MANAGER WHERE ADDON_NAME = '" . $namePlugin . "'");
-                if ($row = mysqli_fetch_array($res)) {
+                $row = DB::connection(self::CONNECTION_INSTALL)
+                    ->table('ADDONS_MANAGER')
+                    ->select('STORE_ID')
+                    ->where('ADDON_NAME', $namePlugin)
+                    ->toArray();
+
+                if ($row) {
                     $ch = curl_init();
-                    $postData = array();
+                    $postData = [];
                     $postData['action'] = "enable";
                     $postData['addon'] = $namePlugin;
                     $postData['store'] = $row['STORE_ID'];

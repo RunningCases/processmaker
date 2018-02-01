@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+
 class Net
 {
     public $hostname;
@@ -223,30 +225,20 @@ class Net
         if (isset($this->db_user) && (isset($this->db_passwd) || $this->db_passwd == "") && (isset($this->db_sourcename) || $flagTns == 1)) {
             switch ($pDbDriver) {
                 case 'mysql':
-                    // Note, we suppress warnings on the connection calls because we want to avoid displaying warning
-                    // When utilizing this code in an API call.  Otherwise it will return invalid JSON overall.
-                    if ($this->db_passwd == '') {
-                        $link = @mysqli_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_sourcename);
-                    } else {
-                        $link = @mysqli_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd, $this->db_sourcename);
-                    }
-                    if ($link) {
-                        if (mysqli_ping($link)) {
-                            $stat->status = 'SUCCESS';
-                            $this->errstr = "";
-                            $this->errno = 0;
-                        } else {
-                            $this->error = "Lost MySql Connection";
-                            $this->errstr = "NET::MYSQL->Lost Connection";
-                            $this->errno = 10010;
-                        }
-                    } else {
-                        $this->error = "MySql connection refused!";
-                        $this->errstr = "NET::MYSQL->The connection was refused";
+
+                    try {
+                        InstallerModule::setNewConnection('NET', $this->ip, $this->db_user, $this->db_passwd, $this->db_sourcename, $this->db_port);
+                        $stat->status = 'SUCCESS';
+                        $this->errstr = '';
+                        $this->errno = 0;
+                    } catch (Exception $exception) {
+                        $this->error = 'MySql connection refused!';
+                        $this->errstr = 'NET::MYSQL->The connection was refused';
                         $this->errno = 10001;
                     }
                     break;
                 case 'pgsql':
+                    //todo
                     $this->db_port = ($this->db_port == "") ? "5432" : $this->db_port;
                     $link = @pg_connect("host='$this->ip' port='$this->db_port' user='$this->db_user' password='$this->db_passwd' dbname='$this->db_sourcename'");
                     if ($link) {
@@ -260,6 +252,7 @@ class Net
                     }
                     break;
                 case 'mssql':
+                    //todo
                     if ($this->db_instance != "") {
                         $str_port = "";
                         $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
@@ -279,6 +272,7 @@ class Net
                     }
                     break;
                 case 'oracle':
+                    //todo
                     try {
                         if ($flagTns == 0) {
                             $this->db_port = ($this->db_port == "" || $this->db_port == 0) ? "1521" : $this->db_port;
@@ -349,28 +343,23 @@ class Net
         if (isset($this->db_user) && (isset($this->db_passwd) || $this->db_passwd == "") && (isset($this->db_sourcename) || $flagTns == 1)) {
             switch ($pDbDriver) {
                 case 'mysql':
-                    $link = mysqli_connect($this->ip . (($this->db_port !== '') && ($this->db_port !== 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd, $this->db_sourcename);
-                    $db = mysqli_select_db($link, $this->db_sourcename);
-                    $this->error = 'MySql connection refused!';
-                    $this->errstr = 'NET::MYSQL->The connection was refused';
-                    $this->errno = 10001;
+                    try {
+                        $this->errstr = 'NET::MYSQL->The connection was refused';
+                        $this->errno = 10001;
+                        $connection = 'NET_' . $this->db_sourcename;
+                        InstallerModule::setNewConnection($connection, $this->ip, $this->db_user, $this->db_passwd, $this->db_sourcename, $this->db_port);
 
-                    if ($link) {
-                        $this->error = 'The $this->db_sourcename data base does\'n exist!';
-                        $this->errstr = 'NET::MYSQL->Select data base failed';
-                        $this->errno = 10011;
-                        if ($db) {
-                            $result = mysqli_query($link, 'show tables;');
-                            $this->error = 'the user $this->db_user doesn\'t have privileges to run queries!';
-                            $this->errstr = 'NET::MYSQL->Test query failed';
-                            $this->errno = 10100;
-                            if ($result) {
-                                $stat->status = 'SUCCESS';
-                                $this->errstr = '';
-                                $this->errno = 0;
-                                mysqli_free_result($result);
-                            }
+                        $this->errstr = 'NET::MYSQL->Test query failed';
+                        $this->errno = 10100;
+
+                        $result = DB::connection($connection)->statement('show tables');
+                        if ($result) {
+                            $stat->status = 'SUCCESS';
+                            $this->errstr = '';
+                            $this->errno = 0;
                         }
+                    } catch (Exception $exception) {
+                        $this->error = $exception->getMessage();
                     }
                     break;
                 case 'pgsql':
