@@ -94,19 +94,9 @@ if ($userExists === true && $userData['USR_EMAIL'] != '' && $userData['USR_EMAIL
         G::SendTemporalMessage($e->getMessage(), "warning", 'string');
     }
 } else {
-    $correctEmail = true;
-    if ($userExists === true && $data['USR_EMAIL'] !== $userData['USR_EMAIL']) {
-        $correctEmail = false;
-        $userExists = false;
-    }
-    if ($correctEmail === true && ($userExists === true || $userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] === 'MYSQL')) {
-        $msg = G::LoadTranslation('ID_USER') . ' ' . htmlentities($data['USR_USERNAME'], ENT_QUOTES, 'UTF-8') . ' ' . G::LoadTranslation('ID_IS_NOT_REGISTERED');
-    } else {
-        if ($userExists === false) {
-            $msg = G::LoadTranslation('ID_THE_USERNAME_EMAIL_IS_INCORRECT');
-        } else {
-            $msg = G::LoadTranslation('ID_USER_NOT_FUNCTIONALITY');
-        }
+    $msg = G::LoadTranslation('ID_THE_USERNAME_EMAIL_IS_INCORRECT');
+    if ($userData !== false && $userData['USR_AUTH_TYPE'] !== '' && $userData['USR_EMAIL'] === $data['USR_EMAIL']) {
+        $msg = G::LoadTranslation('ID_USER_NOT_FUNCTIONALITY');
     }
     G::SendTemporalMessage($msg, "warning", 'string');
     G::header('location: forgotPassword');
