@@ -85,6 +85,7 @@ return array(
     'wsResponse' => WsResponse::class,
     'XMLConnection' => XMLConnection::class,
     'XMLDB' => XMLDB::class,
+    'xmlform' => XmlForm::class,
     'XmlForm_Field' => XmlFormField::class,
     'XmlForm_Field_Button' => XmlFormFieldButton::class,
     'XmlForm_Field_Caption' => XmlFormFieldCaption::class,
