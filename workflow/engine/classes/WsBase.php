@@ -2045,7 +2045,7 @@ class WsBase
      * @param string $labelAssigment, label related to the triggerType
      */
     public function executeTriggerFromDerivate(
-    $caseId, $appData, $tasUid, $stepType, $stepUidObj, $triggerType, $labelAssigment = ''
+    $caseId, &$appData, $tasUid, $stepType, $stepUidObj, $triggerType, $labelAssigment = ''
     ) {
         $varTriggers = "";
         $oCase = new Cases();
@@ -2093,6 +2093,9 @@ class WsBase
                     unset($appFields['APP_PROC_CODE']);
                     unset($appFields['APP_PIN']);
                     $oCase->updateCase($caseId, $appFields);
+
+                    //We need to update the variable $appData for use the new variables in the next trigger
+                    $appData = array_merge($appData, $appFields['APP_DATA']);
                 }
             }
         }
@@ -2286,8 +2289,6 @@ class WsBase
             $oDerivation->beforeDerivate(
                     $aData, $nextDelegations, $nextRouteType, $aCurrentDerivation
             );
-
-            $appFields = $oCase->loadCase($caseId);
 
             //Execute triggers after routing
             $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
