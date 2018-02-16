@@ -1261,11 +1261,10 @@ class PluginRegistry
             if (empty($this->_restExtendServices[$Namespace])) {
                 $this->_restExtendServices[$Namespace] = new stdClass();
             }
-            $this->_restExtendServices[$Namespace]->{$ClassName} = [
-                'filePath' => $classFile,
-                'classParent' => $ClassName,
-                'classExtend' => 'Ext' . $ClassName
-            ];
+            $this->_restExtendServices[$Namespace]->{$ClassName} = new stdClass();
+            $this->_restExtendServices[$Namespace]->{$ClassName}->filePath = $classFile;
+            $this->_restExtendServices[$Namespace]->{$ClassName}->classParent = $ClassName;
+            $this->_restExtendServices[$Namespace]->{$ClassName}->classExtend = 'Ext' . $ClassName;
         }
     }
 
