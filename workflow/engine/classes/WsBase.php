@@ -1333,6 +1333,8 @@ class WsBase
                     $result = new WsResponse(-1, G::LoadTranslation("ID_INVALID_DATA") . " $status");
 
                     return $result;
+                } else {
+                    $status == 'INACTIVE' ? $RBAC->destroySessionUser($userUid) : null;
                 }
             }
 
