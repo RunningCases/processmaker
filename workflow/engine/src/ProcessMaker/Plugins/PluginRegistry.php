@@ -485,7 +485,7 @@ class PluginRegistry
                 /** @var enterprisePlugin $oPlugin */
                 $oPlugin = new $className($detail->getNamespace(), $detail->getFile());
                 $oPlugin->registerPmFunction();
-                $detail->setEnabled(true);
+                $detail->setEnabled(false);
                 $this->init();
                 $oPlugin->setup();
                 $this->_aPlugins[$detail->getNamespace()] = $oPlugin;
