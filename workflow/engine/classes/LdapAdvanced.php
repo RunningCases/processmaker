@@ -1229,9 +1229,6 @@ class LdapAdvanced
         $totalUser = 0;
         $countUser = 0;
 
-        $keyword = trim(trim($keyword), "*");
-        $keyword = ($keyword != "") ? "*$keyword*" : "*";
-
         $paged = !is_null($start) && !is_null($limit);
 
         $rbac = &RBAC::getSingleton();
