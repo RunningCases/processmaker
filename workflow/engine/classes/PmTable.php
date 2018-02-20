@@ -28,6 +28,7 @@ class PmTable
     private $alterTable = true;
     private $keepData = false;
     public $tableClassName = '';
+    private $columnsToExclude = ['APP_UID'];
 
     public function __construct($tableName = null)
     {
@@ -122,6 +123,24 @@ class PmTable
     public function setDbConfigAdapter($adapter)
     {
         $this->dbConfig->adapter = $adapter;
+    }
+
+    /**
+     * Set ColumnsToExclude
+     *
+     * @param array $value
+     */
+    public function setColumnsToExclude($value)
+    {
+        $this->columnsToExclude = $value;
+    }
+
+    /**
+     * Get ColumnsToExclude values
+     */
+    public function getColumnsToExclude()
+    {
+        return $this->columnsToExclude;
     }
 
     /**
@@ -954,7 +973,10 @@ class PmTable
                 if (in_array($fieldData["name"], $tableField)) {
                     $fieldTable = $fieldData["name"];
                     $fieldName = $tableName . "." . $fieldTable;
-                    $oCriteria->addSelectColumn($fieldName);
+                    //We are not include some columns for the search
+                    if (!in_array($fieldTable, $this->getColumnsToExclude())){
+                        $oCriteria->addSelectColumn($fieldName);
+                    }
                 }
             }
 
