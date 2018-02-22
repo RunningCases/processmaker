@@ -270,7 +270,11 @@ class Admin extends Controller
         $pmSection = G::LoadTranslation('ID_PROCESS_INFORMATION');
 
         $properties = array ();
-        $ee = class_exists( 'pmLicenseManager' ) ? " - Enterprise Edition" : '';
+        $ee = '';
+        /*----------------------------------********---------------------------------*/
+        // In the community version this text must not be presented
+        $ee = ' - Enterprise Edition';
+        /*----------------------------------********---------------------------------*/
         $systemName = 'ProcessMaker';
         if (defined('SYSTEM_NAME')) {
             $systemName = SYSTEM_NAME;
