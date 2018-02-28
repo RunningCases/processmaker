@@ -59,7 +59,7 @@ class ReportTablesMigrator implements Importable, Exportable
                     if (!$replace) {
                         $additionalTable = new \AdditionalTables();
 
-                        if ($additionalTable->loadByName($arrayTable['ADD_TAB_NAME']) !== false) {
+                        if ($additionalTable->loadByName($arrayTable['ADD_TAB_NAME'])) {
                             $arrayTablesToExclude[] = $arrayTable['ADD_TAB_NAME'];
                         }
                     }

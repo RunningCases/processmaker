@@ -138,6 +138,14 @@ class AdditionalTables extends BaseAdditionalTables
         return $this->primaryKeys;
     }
 
+    /**
+     * Load Additional table by name
+     *
+     * @param string $name
+     * @return array
+     *
+     * @throws Exception
+     */
     public function loadByName($name)
     {
         try {
