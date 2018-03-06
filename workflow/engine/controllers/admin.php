@@ -23,7 +23,7 @@ class Admin extends Controller
 
         $skinsList = System::getSkingList();
         foreach ($skinsList['skins'] as $key => $value) {
-            if ($value['SKIN_WORKSPACE'] != 'Global') {
+            if ($value['SKIN_TYPE_GLOBAL'] === false) {
                 unset( $skinsList['skins'][$key] );
             }
         }

@@ -1053,7 +1053,17 @@ class System
                 }
                 $res['SKIN_CREATEDATE'] = (isset($res['SKIN_CREATEDATE'])) ? $res['SKIN_CREATEDATE'] : '';
                 $res['SKIN_MODIFIEDDATE'] = (isset($res['SKIN_MODIFIEDDATE'])) ? $res['SKIN_MODIFIEDDATE'] : '';
-                $res['SKIN_WORKSPACE'] = (isset($res['SKIN_WORKSPACE'])) ? (($res['SKIN_WORKSPACE'] != '') ? $res['SKIN_WORKSPACE'] : $global) : $global;
+                
+                $res['SKIN_TYPE_GLOBAL'] = false;
+                if (isset($res['SKIN_WORKSPACE'])) {
+                    if ($res['SKIN_WORKSPACE'] === '') {
+                        $res['SKIN_WORKSPACE'] = $global;
+                        $res['SKIN_TYPE_GLOBAL'] = true;
+                    }
+                } else {
+                    $res['SKIN_WORKSPACE'] = $global;
+                    $res['SKIN_TYPE_GLOBAL'] = true;
+                }
 
                 $swWS = true;
                 if ($res['SKIN_WORKSPACE'] != $global) {

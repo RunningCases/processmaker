@@ -10200,6 +10200,12 @@ msgid "is not registered!"
 msgstr "is not registered!"
 
 # TRANSLATION
+# LABEL/ID_THE_USERNAME_EMAIL_IS_INCORRECT
+#: LABEL/ID_THE_USERNAME_EMAIL_IS_INCORRECT
+msgid "The username or email is incorrect"
+msgstr "The username or email is incorrect"
+
+# TRANSLATION
 # LABEL/ID_IS_REQUIRED
 #: LABEL/ID_IS_REQUIRED
 msgid "is required"
