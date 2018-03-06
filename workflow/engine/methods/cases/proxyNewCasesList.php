@@ -30,6 +30,9 @@ try {
     $filters['sort'] = G::toUpper($filters['sort']);
     $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '') ? $_REQUEST['openApplicationUid'] : null;
 
+    global $RBAC;
+    $RBAC->allows(basename(__FILE__), $filters['action']);
+
     //Define user when is reassign
     if ($filters['action'] == 'to_reassign') {
         if ($filters['user'] == '' ) {

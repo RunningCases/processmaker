@@ -27,6 +27,7 @@ use Exception;
 use EntitySolrRequestData;
 use G;
 use Groups;
+use GroupUserPeer;
 use InvalidIndexSearchTextException;
 use ListParticipatedLast;
 use PmDynaform;
@@ -36,6 +37,7 @@ use ProcessMaker\BusinessModel\ProcessSupervisor as BmProcessSupervisor;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
+use ProcessUser;
 use ProcessUserPeer;
 use ProcessPeer;
 use RBAC;
@@ -876,9 +878,8 @@ class Cases
             throw (new Exception(G::LoadTranslation("ID_CASE_ALREADY_CANCELED", array($app_uid))));
         }
 
-        $appCacheView = new AppCacheView();
-
-        $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
+        $processUser = new ProcessUser();
+        $arrayProcess = $processUser->getProUidSupervisor($usr_uid);
 
         $criteria = new Criteria("workflow");
 
@@ -937,9 +938,8 @@ class Cases
             throw (new Exception(G::LoadTranslation("ID_CASE_PAUSED", array($app_uid))));
         }
 
-        $appCacheView = new AppCacheView();
-
-        $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
+        $processUser = new ProcessUser();
+        $arrayProcess = $processUser->getProUidSupervisor($usr_uid);
 
         $criteria = new Criteria("workflow");
 
@@ -996,9 +996,8 @@ class Cases
             throw (new Exception(G::LoadTranslation("ID_CASE_NOT_PAUSED", array($app_uid))));
         }
 
-        $appCacheView = new AppCacheView();
-
-        $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
+        $processUser = new ProcessUser();
+        $arrayProcess = $processUser->getProUidSupervisor($usr_uid);
 
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
@@ -1844,15 +1843,15 @@ class Cases
             throw new Exception(G::LoadTranslation("ID_CASE_IS_COMPLETED", array($app_uid)));
         }
 
-        $appCacheView = new AppCacheView();
-        $isProcessSupervisor = $appCacheView->getProUidSupervisor($usr_uid);
+        $processUser = new ProcessUser();
+        $listProcess = $processUser->getProUidSupervisor($usr_uid);
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
         $criteria->add(AppDelegationPeer::APP_UID, $app_uid, Criteria::EQUAL);
         $criteria->add(AppDelegationPeer::USR_UID, $usr_uid, Criteria::EQUAL);
         $criteria->add(
             $criteria->getNewCriterion(AppDelegationPeer::USR_UID, $usr_uid, Criteria::EQUAL)->addOr(
-                $criteria->getNewCriterion(AppDelegationPeer::PRO_UID, $isProcessSupervisor, Criteria::IN))
+                $criteria->getNewCriterion(AppDelegationPeer::PRO_UID, $listProcess, Criteria::IN))
         );
         $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
 

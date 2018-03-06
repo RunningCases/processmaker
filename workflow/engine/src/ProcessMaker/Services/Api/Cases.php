@@ -92,22 +92,15 @@ class Cases extends Api
                     //Check if the user is supervisor process
                     $case = new BmCases();
                     $user = new BmUser();
-
                     $count = 0;
-
                     foreach ($arrayParameters as $value) {
                         $arrayApplicationData = $case->getApplicationRecordByPk($value['APP_UID'], [], false);
 
                         if (!empty($arrayApplicationData)) {
-                            if (!$user->checkPermission($usrUid, 'PM_REASSIGNCASE')) {
-                                if ($user->checkPermission($usrUid, 'PM_REASSIGNCASE_SUPERVISOR')) {
-                                    $supervisor = new BmProcessSupervisor();
-                                    $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $usrUid);
-                                    if (!$flagps) {
-                                        $count = $count + 1;
-                                    }
-
-                                }
+                            $canReassign = $user->userCanReassign($usrUid, $arrayApplicationData['PRO_UID']);
+                            if (!$canReassign) {
+                                //We count when the user is not supervisor to the process
+                                $count = $count + 1;
                             }
                         }
                     }
@@ -115,6 +108,15 @@ class Cases extends Api
                     if ($count == 0) {
                         return true;
                     }
+                    break;
+                case 'doPutReassignCase':
+                    $appUid = $this->parameters[$arrayArgs['app_uid']];
+                    $usrUid = $this->getUserId();
+                    $case = new BmCases();
+                    $user = new BmUser();
+                    $arrayApplicationData = $case->getApplicationRecordByPk($appUid, [], false);
+
+                    return $user->userCanReassign($usrUid, $arrayApplicationData['PRO_UID']);
                     break;
                 case "doGetCaseInfo" :
                     $appUid = $this->parameters[$arrayArgs['app_uid']];
@@ -838,7 +840,7 @@ class Cases extends Api
      * @throws RestException
      *
      * @access protected
-     * @class AccessControl {@permission PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR}
+     * @class AccessControl {@className \ProcessMaker\Services\Api\Cases}
      */
     public function doPutReassignCase($app_uid, $usr_uid_source, $usr_uid_target, $del_index = null)
     {

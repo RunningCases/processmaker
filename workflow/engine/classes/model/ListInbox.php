@@ -2,6 +2,7 @@
 
 require_once 'classes/model/om/BaseListInbox.php';
 use ProcessMaker\BusinessModel\Cases as BmCases;
+use ProcessMaker\BusinessModel\User as BmUser;
 
 /**
  * Skeleton subclass for representing a row from the 'LIST_INBOX' table.
@@ -417,12 +418,24 @@ class ListInbox extends BaseListInbox implements ListInterface
                 break;
             case 'to_revise':
                 $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
-                $oAppCache = new AppCacheView();
-                $aProcesses = $oAppCache->getProUidSupervisor($usrUid);
-                $criteria->add(ListInboxPeer::PRO_UID, $aProcesses, Criteria::IN);
+                $processUser = new ProcessUser();
+                $listProcess = $processUser->getProUidSupervisor($usrUid);
+                $criteria->add(ListInboxPeer::PRO_UID, $listProcess, Criteria::IN);
                 break;
             case 'to_reassign':
+                global $RBAC;
                 $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
+                $user = new BmUser();
+                $listProcess = $user->getProcessToReassign(['PM_REASSIGNCASE','PM_REASSIGNCASE_SUPERVISOR']);
+
+                //If is not a supervisor and does not have the permission for view all cases we can not list cases
+                //If is a supervisor, we can list only his processes
+                if (
+                    (empty($listProcess) && $RBAC->userCanAccess('PM_REASSIGNCASE') !== 1) ||
+                    (is_array($listProcess) && count($listProcess) > 0)
+                ) {
+                    $criteria->add(ListInboxPeer::PRO_UID, $listProcess, Criteria::IN);
+                }
                 if ($usrUid !== '') {
                     $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
                 }
@@ -617,6 +630,15 @@ class ListInbox extends BaseListInbox implements ListInterface
         return $data;
     }
 
+    /**
+     * This function get the TAS_PRIORITY_VARIABLE related to the task
+     *
+     * @param string $taskUid
+     * @param string $proUid
+     * @param string $appUid
+     *
+     * @return integer
+    */
     public function getTaskPriority($taskUid, $proUid, $appUid)
     {
         $criteria = new Criteria();
@@ -639,6 +661,14 @@ class ListInbox extends BaseListInbox implements ListInterface
         return $priority != "" ? $priority : 3;
     }
 
+    /**
+     * This function get the TAS_PRIORITY_VARIABLE related to the task
+     *
+     * @param array $filters
+     * @param string $fieldName
+     *
+     * @return mixed null|string
+     */
     public function getAppDelegationInfo($filters, $fieldName)
     {
         $criteria = new Criteria();
@@ -655,8 +685,10 @@ class ListInbox extends BaseListInbox implements ListInterface
 
     /**
      * Returns the number of cases of a user
+     *
      * @param string $usrUid
      * @param array  $filters
+     *
      * @return int
      */
     public function getCountList($usrUid, $filters = array())

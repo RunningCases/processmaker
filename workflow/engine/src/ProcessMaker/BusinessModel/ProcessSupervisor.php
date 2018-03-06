@@ -1,12 +1,14 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use G;
 use Criteria;
 use DynaformPeer;
+use Exception;
+use G;
+use GroupUserPeer;
+use ProcessUserPeer;
 use ResultSet;
 use StepSupervisorPeer;
-use Exception;
 
 class ProcessSupervisor
 {
