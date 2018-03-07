@@ -1,7 +1,14 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
+use Criteria;
+use DynaformPeer;
+use Exception;
+use G;
+use GroupUserPeer;
+use ProcessUserPeer;
+use ResultSet;
+use StepSupervisorPeer;
 
 class ProcessSupervisor
 {
@@ -1525,5 +1532,41 @@ class ProcessSupervisor
         }
 
         return $canEdit;
+    }
+
+    /**
+     * Return the objects supervisor
+     *
+     * @param string $proUid
+     * @param array $typeObject, can be DYNAFORM or INPUT_DOCUMENT
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getObjectSupervisor($proUid, $typeObject = [])
+    {
+        try {
+            $result = [];
+            $criteria = new Criteria('workflow');
+            $criteria->addSelectColumn(StepSupervisorPeer::STEP_UID);
+            $criteria->addSelectColumn(StepSupervisorPeer::PRO_UID);
+            $criteria->addSelectColumn(StepSupervisorPeer::STEP_TYPE_OBJ);
+            $criteria->addSelectColumn(StepSupervisorPeer::STEP_UID_OBJ);
+            $criteria->addSelectColumn(StepSupervisorPeer::STEP_POSITION);
+            $criteria->add(StepSupervisorPeer::PRO_UID, $proUid);
+            if (!empty($typeObject)) {
+                $criteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, $typeObject, Criteria::IN);
+            }
+            $dataset = StepSupervisorPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            while ($row = $dataset->getRow()) {
+                $result[] = $row['STEP_UID_OBJ'];
+                $dataset->next();
+            }
+            return $result;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }

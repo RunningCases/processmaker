@@ -1,40 +1,6 @@
 <?php
-/**
- * cases/ajaxListener.php Ajax Listener for Cases rpc requests
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- */
 
 use ProcessMaker\Plugins\PluginRegistry;
-
-/**
- *
- * @author Erik Amaru Ortiz <erik@colosa.com>
- * @date Jan 3th, 2010
- */
-//require_once 'classes/model/Application.php';
-//require_once 'classes/model/Users.php';
-//require_once 'classes/model/AppThread.php';
-//require_once 'classes/model/AppDelay.php';
-//require_once 'classes/model/Process.php';
-//require_once 'classes/model/Task.php';
 
 if (!isset($_SESSION['USER_LOGGED'])) {
     $responseObject = new stdclass();
@@ -44,7 +10,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
     print G::json_encode( $responseObject );
     die();
 }
-
 
 $filter = new InputFilter();
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
@@ -68,9 +33,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession" ) {
         } elseif ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
             $response->reassigncase = false;
             $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
-            $oAppCache = new AppCacheView();
-            $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
-            if(in_array($_SESSION['PROCESS'], $aProcesses)){
+            $processUser = new ProcessUser();
+            $listProcess = $processUser->getProUidSupervisor($_SESSION['USER_LOGGED']);
+            if (in_array($_SESSION['PROCESS'], $listProcess)) {
                 $response->reassigncase = true;
             }
         }

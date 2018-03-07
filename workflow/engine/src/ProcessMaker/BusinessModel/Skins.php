@@ -99,7 +99,7 @@ class Skins
 
             $xmlConfiguration = file_get_contents($configFileOriginal);
 
-            $workspace = ($skinWorkspace == 'global') ? '' : SYS_SYS;
+            $workspace = ($skinWorkspace == 'global') ? '' : config("system.workspace");
 
             $xmlConfigurationObj = G::xmlParser($xmlConfiguration);
             $skinInformationArray = $xmlConfigurationObj->result["skinConfiguration"]["__CONTENT__"]["information"]["__CONTENT__"];

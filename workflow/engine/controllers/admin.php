@@ -23,7 +23,7 @@ class Admin extends Controller
 
         $skinsList = System::getSkingList();
         foreach ($skinsList['skins'] as $key => $value) {
-            if ($value['SKIN_WORKSPACE'] != 'Global') {
+            if ($value['SKIN_TYPE_GLOBAL'] === false) {
                 unset( $skinsList['skins'][$key] );
             }
         }
@@ -323,7 +323,7 @@ class Admin extends Controller
             );
         }
 
-        $properties[] = array ( G::LoadTranslation('ID_WORKSPACE') ,defined( "SYS_SYS" ) ? SYS_SYS : "Not defined",$pmSection
+        $properties[] = array(G::LoadTranslation('ID_WORKSPACE'), !empty(config("system.workspace")) ? config("system.workspace") : "Not defined", $pmSection
         );
 
         $properties[] = array ( G::LoadTranslation('ID_SERVER_PROTOCOL') ,getenv( 'SERVER_PROTOCOL' ),$sysSection

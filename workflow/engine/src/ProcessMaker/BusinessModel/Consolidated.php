@@ -297,7 +297,7 @@ class Consolidated
             $className = $tableName;
 
             if (!class_exists($className)) {
-                require_once(PATH_DB . SYS_SYS . PATH_SEP . "classes" . PATH_SEP . $className . ".php");
+                require_once(PATH_DB . config("system.workspace") . PATH_SEP . "classes" . PATH_SEP . $className . ".php");
             }
 
             $oCriteria = new Criteria("workflow");
@@ -1056,7 +1056,7 @@ class Consolidated
             }
         }
 
-        @unlink(PATH_C . "ws" . PATH_SEP . SYS_SYS . PATH_SEP . "xmlform" . PATH_SEP . $pro_uid . PATH_SEP . $dyn_uid . "." . SYS_LANG);
+        @unlink(PATH_C . "ws" . PATH_SEP . config("system.workspace") . PATH_SEP . "xmlform" . PATH_SEP . $pro_uid . PATH_SEP . $dyn_uid . "." . SYS_LANG);
 
 
         $array ['columnModel'] = $caseColumns;

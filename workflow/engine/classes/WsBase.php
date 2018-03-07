@@ -2037,24 +2037,32 @@ class WsBase
      * This function is used when the case is derived from abe, Soap, PMFDerivateCase
      *
      * @param string $caseId, Uid related to the case
-     * @param array $appData, contain all the information about the case
+     * @param array $appData, contain all the information about the case related to the index [APP_DATA]
      * @param string $tasUid, Uid related to the task
      * @param string $stepType, before or after step
      * @param string $stepUidObj, can be -1, -2
      * @param string $triggerType, can be BEFORE, AFTER
-     * @param string $labelAssigment, label related to the triggerType
+     * @param string $labelAssignment, label related to the triggerType
+     *
+     * @return string $varTriggers updated
      */
     public function executeTriggerFromDerivate(
-    $caseId, &$appData, $tasUid, $stepType, $stepUidObj, $triggerType, $labelAssigment = ''
+        $caseId,
+        &$appData,
+        $tasUid,
+        $stepType,
+        $stepUidObj,
+        $triggerType,
+        $labelAssignment = ''
     ) {
         $varTriggers = "";
         $oCase = new Cases();
 
-        //Execute triggers before assignment
+        //Load the triggers assigned in the $triggerType
         $aTriggers = $oCase->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
 
         if (count($aTriggers) > 0) {
-            $varTriggers = $varTriggers . "<br /><b>" . $labelAssigment . "</b><br />";
+            $varTriggers = $varTriggers . "<br /><b>" . $labelAssignment . "</b><br />";
 
             $oPMScript = new PMScript();
 
@@ -2068,6 +2076,7 @@ class WsBase
                     $params->SID = $this->wsSessionId;
                 }
 
+                //We can set the index APP_DATA
                 $appFields["APP_DATA"] = array_merge($appData, G::getSystemConstants($params));
 
                 //PMScript
@@ -2793,7 +2802,7 @@ class WsBase
     public function getCaseNotes($applicationID, $userUid = '')
     {
         try {
-            $result = new wsGetCaseNotesResponse(0, G::loadTranslation('ID_SUCCESS'), Cases::getCaseNotes($applicationID, 'array', $userUid));
+            $result = new WsGetCaseNotesResponse(0, G::loadTranslation('ID_SUCCESS'), Cases::getCaseNotes($applicationID, 'array', $userUid));
 
             $var = [];
 

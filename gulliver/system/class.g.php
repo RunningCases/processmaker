@@ -390,63 +390,73 @@ class G
     /**
      * * Encrypt and decrypt functions ***
      */
+
     /**
      * Encrypt string
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
+     * 
      * @param string $string
      * @param string $key
+     * @param bool $urlSafe if it is used in url
+     *
      * @return string
      */
-    public static function encrypt ($string, $key)
+    public static function encrypt ($string, $key, $urlSafe = false)
     {
-        //print $string;
-        //    if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
-        if (strpos( $string, '|', 0 ) !== false) {
+        if (strpos($string, '|', 0) !== false) {
             return $string;
         }
         $result = '';
-        for ($i = 0; $i < strlen( $string ); $i ++) {
-            $char = substr( $string, $i, 1 );
-            $keychar = substr( $key, ($i % strlen( $key )) - 1, 1 );
-            $char = chr( ord( $char ) + ord( $keychar ) );
+        for ($i = 0; $i < strlen($string); $i++) {
+            $char = substr($string, $i, 1);
+            $keychar = substr($key, ($i % strlen($key)) - 1, 1);
+            $char = chr(ord($char) + ord($keychar));
             $result .= $char;
         }
 
-        $result = base64_encode( $result );
-        $result = str_replace( '/', '°', $result );
-        $result = str_replace( '=', '', $result );
-        return $result;
+        $result = base64_encode($result);
+        $search = ['/' => '°', '=' => ''];
+
+        if ($urlSafe) {
+            $search['+'] = '-';
+        }
+
+        return strtr($result, $search);
     }
 
     /**
      * Decrypt string
      *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
+     * 
      * @param string $string
      * @param string $key
+     * @param bool $urlSafe if it is used in url
+     *
      * @return string
      */
-    public static function decrypt($string, $key)
+    public static function decrypt($string, $key, $urlSafe = false)
     {
-        //   if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
-        //if (strpos($string, '|', 0) !== false) return $string;
         $result = '';
-        $string = str_replace( '°', '/', $string );
-        $string_jhl = explode( "?", $string );
-        $string = base64_decode( $string );
-        $string = base64_decode( $string_jhl[0] );
+        $search = ['°' => '/'];
 
-        for ($i = 0; $i < strlen( $string ); $i ++) {
-            $char = substr( $string, $i, 1 );
-            $keychar = substr( $key, ($i % strlen( $key )) - 1, 1 );
-            $char = chr( ord( $char ) - ord( $keychar ) );
+        if ($urlSafe) {
+            $search['-'] = '+';
+        }
+
+        $string = strtr($string, $search);
+        $complement = explode('?', $string);
+        $string = base64_decode($complement[0]);
+
+        for ($i = 0; $i < strlen($string); $i++) {
+            $char = substr($string, $i, 1);
+            $keychar = substr($key, ($i % strlen($key)) - 1, 1);
+            $char = chr(ord($char) - ord($keychar));
             $result .= $char;
         }
-        if (! empty( $string_jhl[1] )) {
-            $result .= '?' . $string_jhl[1];
+        if (!empty($complement[1])) {
+            $result .= '?' . $complement[1];
         }
         return $result;
     }
@@ -2448,7 +2458,7 @@ class G
         global $RBAC;
 
         if (isset( $_SESSION['USER_LOGGED'] ) && $_SESSION['USER_LOGGED'] == '') {
-            $sys = (ENABLE_ENCRYPT == 'yes' ? SYS_SYS : "sys" . SYS_SYS);
+            $sys = (ENABLE_ENCRYPT == 'yes' ? config("system.workspace") : "sys" . config("system.workspace"));
             $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
             $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
             $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login' ), URL_KEY ) : 'login');
@@ -2466,7 +2476,7 @@ class G
         $sessionBrowser = defined( 'SESSION_BROWSER' ) ? SESSION_BROWSER : '';
         if (($sessionPc == "1") or ($sessionBrowser == "1")) {
             if ($row['LOG_STATUS'] == 'X') {
-                $sys = (ENABLE_ENCRYPT == 'yes' ? SYS_SYS : "sys" . SYS_SYS);
+                $sys = (ENABLE_ENCRYPT == 'yes' ? config("system.workspace") : "sys" . config("system.workspace"));
                 $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
                 $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
                 $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login' ), URL_KEY ) : 'login');
@@ -2502,7 +2512,7 @@ class G
 
         if ($sw == 0 && $urlNoAccess != "") {
             $aux = explode( '/', $urlNoAccess );
-            $sys = (ENABLE_ENCRYPT == 'yes' ? SYS_SYS : "/sys" . SYS_LANG);
+            $sys = (ENABLE_ENCRYPT == 'yes' ? config("system.workspace") : "/sys" . SYS_LANG);
             $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
             $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
             $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( $aux[0] ), URL_KEY ) : $aux[0]);
@@ -2563,7 +2573,7 @@ class G
     {
 
         $configuration = new Configurations();
-        if (defined('SYS_SYS') && $configuration->exists("ENVIRONMENT_SETTINGS")) {
+        if (!empty(config("system.workspace")) && $configuration->exists("ENVIRONMENT_SETTINGS")) {
             return ($configuration->getDirectoryStructureVer() > 1);
         }
         return false;
@@ -2579,13 +2589,15 @@ class G
     }
 
     /**
-     * Funtion used to fix 32K issue related to ext3 max subdirectory storage, but checking Version first.
+     * Function used to fix 32K issue related to ext3 max subdirectory storage, but checking Version first.
+     *
      * @param string $uid
      * @param int $splitSize
      * @param int $pieces
+     *
      * @return string xxx/xxx/xxx/xxxxxxxxxxxxxxxxxxxxx
      */
-    public function getPathFromUID($uid, $splitSize = 3, $pieces = 3)
+    public static function getPathFromUID($uid, $splitSize = 3, $pieces = 3)
     {
         if (! G::gotDirectoryStructureVer2()) {
             return $uid;
@@ -2600,7 +2612,7 @@ class G
      * @param int $pieces
      * @return string xxx/xxx/xxx/xxxxxxxxxxxxxxxxxxxxx
      */
-    public function getPathFromUIDPlain($uid, $splitSize = 3, $pieces = 3)
+    public static function getPathFromUIDPlain($uid, $splitSize = 3, $pieces = 3)
     {
         $dirArray = array();
         if (is_string($uid) && strlen($uid) >= 32 && $uid != G::getBlackHoleDir()) {
@@ -2620,7 +2632,7 @@ class G
      * @param string $path
      * @return string
      */
-    public function getUIDfromPath($path)
+    public static function getUIDfromPath($path)
     {
         $uid = '';
         $item = explode($path, '/');
@@ -2642,7 +2654,7 @@ class G
      * @param int $pieces
      * @return array index:0 got the path, index:1 got the filename
      */
-    public function getPathFromFileUID($appUid, $fileUid, $splitSize = 3, $pieces = 3)
+    public static function getPathFromFileUID($appUid, $fileUid, $splitSize = 3, $pieces = 3)
     {
         if (! G::gotDirectoryStructureVer2()) {
             $response = array();
@@ -2976,8 +2988,8 @@ class G
             $sysCon["SYS_SKIN"] = SYS_SKIN;
         }
 
-        if (defined("SYS_SYS")) {
-            $sysCon["SYS_SYS"] = SYS_SYS;
+        if (!empty(config("system.workspace"))) {
+            $sysCon["SYS_SYS"] = config("system.workspace");
         }
 
         $sysCon["APPLICATION"]  = (isset($_SESSION["APPLICATION"]))?  $_SESSION["APPLICATION"]  : "";
@@ -5445,7 +5457,7 @@ class G
     */
     public static function auditLog($actionToLog, $valueToLog = "")
     {
-	    $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+	    $workspace = !empty(config("system.workspace")) ? config("system.workspace") : 'Undefined Workspace';
         $conf = new Configurations();
         $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
         $sflagAudit = $sflag == 'true' ? true : false;

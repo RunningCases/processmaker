@@ -1,7 +1,7 @@
 <?php
 
-// @codingStandardsIgnoreStart
 require_once 'classes/model/om/BaseListParticipatedLast.php';
+use ProcessMaker\BusinessModel\Cases as BmCases;
 
 /**
  * Skeleton subclass for representing a row from the 'LIST_PARTICIPATED_LAST' table.
@@ -12,9 +12,9 @@ require_once 'classes/model/om/BaseListParticipatedLast.php';
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  */
-class ListParticipatedLast extends BaseListParticipatedLast
+class ListParticipatedLast extends BaseListParticipatedLast implements ListInterface
 {
-    private $additionalClassName = '';
+    use ListBaseTrait;
 
     /**
      * Create List Participated History Table.
@@ -22,6 +22,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @param type $data
      *
      * @return type
+     * @throws Exception
      */
     public function create($data)
     {
@@ -142,7 +143,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      *
      * @return type
      *
-     * @throws type
+     * @throws Exception
      */
     public function update($data)
     {
@@ -180,11 +181,12 @@ class ListParticipatedLast extends BaseListParticipatedLast
     /**
      * Refresh List Participated Last.
      *
-     * @param type $seqName
+     * @param array $data
+     * @param boolean $isSelfService
      *
      * @return type
      *
-     * @throws type
+     * @throws Exception
      */
     public function refresh($data, $isSelfService = false)
     {
@@ -235,11 +237,13 @@ class ListParticipatedLast extends BaseListParticipatedLast
     /**
      * Remove List Participated History.
      *
-     * @param type $seqName
+     * @param string $app_uid
+     * @param string $usr_uid
+     * @param integer $del_index
      *
      * @return type
      *
-     * @throws type
+     * @throws Exception
      */
     public function remove($app_uid, $usr_uid, $del_index)
     {
@@ -319,8 +323,14 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $criteria->add(ListParticipatedLastPeer::APP_UID, $search, Criteria::EQUAL);
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
-                $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList = new BmCases();
+                $casesList->getSearchCriteriaListCases(
+                    $criteria,
+                    __CLASS__ . 'Peer',
+                    $search,
+                    $this->getAdditionalClassName(),
+                    $additionalColumns
+                );
             }
         }
 
@@ -352,16 +362,16 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * This function get the information in the corresponding cases list
      * @param string $usr_uid, must be show cases related to this user
      * @param array $filters for apply in the result
-     * @param null $callbackRecord
+     * @param callable $callbackRecord
      * @param string $appUid related to the specific case
      * @return array $data
      * @throws PropelException
      */
-    public function loadList($usr_uid, $filters = array(), $callbackRecord = null, $appUid = '')
+    public function loadList($usr_uid, $filters = array(), callable $callbackRecord = null, $appUid = '')
     {
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('sent');
-        $this->additionalClassName = $pmTable->tableClassName;
+        $this->setAdditionalClassName($pmTable->tableClassName);
         $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
@@ -397,14 +407,15 @@ class ListParticipatedLast extends BaseListParticipatedLast
         self::loadFilters($criteria, $filters, $additionalColumns);
 
         //We will be defined the sort
-        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $casesList = new BmCases();
         $sort = $casesList->getSortColumn(
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "DEL_DELEGATE_DATE" : $filters['sort'],
             "DEL_DELEGATE_DATE",
-            $this->additionalClassName,
-            $additionalColumns
+            $this->getAdditionalClassName(),
+            $additionalColumns,
+            $this->getUserDisplayFormat()
         );
 
         $dir = isset($filters['dir']) ? $filters['dir'] : 'ASC';
@@ -412,10 +423,20 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $limit = isset($filters['limit']) ? $filters['limit'] : '25';
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
 
-        if ($dir == 'DESC') {
-            $criteria->addDescendingOrderByColumn($sort);
+        if (is_array($sort) && count($sort) > 0) {
+            foreach ($sort as $key) {
+                if ($dir == 'DESC') {
+                    $criteria->addDescendingOrderByColumn($key);
+                } else {
+                    $criteria->addAscendingOrderByColumn($key);
+                }
+            }
         } else {
-            $criteria->addAscendingOrderByColumn($sort);
+            if ($dir == 'DESC') {
+                $criteria->addDescendingOrderByColumn($sort);
+            } else {
+                $criteria->addAscendingOrderByColumn($sort);
+            }
         }
 
         if ($paged == 1) {
@@ -490,18 +511,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
      */
     public function getCountList($usrUid, $filters = array())
     {
-        $criteria = new Criteria();
-        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
-        $criteria->add(ListParticipatedLastPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        if (count($filters)) {
-            self::loadFilters($criteria, $filters);
-        }
-        $dataset = ListParticipatedLastPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-
-        return (int) $aRow['TOTAL'];
+        return $this->getCountListFromPeer
+                (ListParticipatedLastPeer::class, $usrUid, $filters);
     }
 
     /**

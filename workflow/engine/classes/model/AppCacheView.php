@@ -448,50 +448,6 @@ class AppCacheView extends BaseAppCacheView
         return $this->getUnassigned($userUid, false);
     }
 
-    public function getProUidSupervisor($userUid)
-    {
-        //finding cases PRO_UID where $userUid is supervising
-        require_once ('classes/model/ProcessUser.php');
-        require_once ('classes/model/GroupUser.php');
-
-        $oCriteria = new Criteria('workflow');
-
-        if (!empty($userUid)) {
-            $oCriteria->add(ProcessUserPeer::USR_UID, $userUid);
-        }
-
-        $oCriteria->add(ProcessUserPeer::PU_TYPE, 'SUPERVISOR');
-        $oDataset = ProcessUserPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aProcesses = array();
-
-        while ($aRow = $oDataset->getRow()) {
-            $aProcesses[] = $aRow['PRO_UID'];
-            $oDataset->next();
-        }
-
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->addSelectColumn(ProcessUserPeer::PRO_UID);
-        $oCriteria->add(ProcessUserPeer::PU_TYPE, 'GROUP_SUPERVISOR');
-        $oCriteria->addJoin(ProcessUserPeer::USR_UID, GroupUserPeer::GRP_UID, Criteria::LEFT_JOIN);
-
-        if (!empty($userUid)) {
-            $oCriteria->add(GroupUserPeer::USR_UID, $userUid);
-        }
-
-        $oDataset = ProcessUserPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-
-        while ($aRow = $oDataset->getRow()) {
-            $aProcesses[] = $aRow['PRO_UID'];
-            $oDataset->next();
-        }
-
-        return $aProcesses;
-    }
-
     /**
      * gets the PAUSED cases list criteria
      * param $userUid the current userUid
@@ -509,7 +465,8 @@ class AppCacheView extends BaseAppCacheView
             $criteria = $this->addPMFieldsToCriteria('paused');
         }
 
-        $aProcesses = $this->getProUidSupervisor($userUid);
+        $processUser = new ProcessUser();
+        $listProcess = $processUser->getProUidSupervisor($userUid);
 
         //add a validation to show the processes of which $userUid is supervisor
         //$criteria->add(AppCacheViewPeer::USR_UID, $userUid);
@@ -517,16 +474,16 @@ class AppCacheView extends BaseAppCacheView
         if (!empty($userUid)) {
             $criterionAux = $criteria->getNewCriterion(AppCacheViewPeer::USR_UID, $userUid, Criteria::EQUAL);
 
-            if ($flagSupervisor && !empty($aProcesses)) {
+            if ($flagSupervisor && !empty($listProcess)) {
                 $criterionAux = $criterionAux->addOr(
-                    $criteria->getNewCriterion(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN)
+                    $criteria->getNewCriterion(AppCacheViewPeer::PRO_UID, $listProcess, Criteria::IN)
                 );
             }
 
             $criteria->add($criterionAux);
         } else {
-            if ($flagSupervisor && !empty($aProcesses)) {
-                $criteria->add(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN);
+            if ($flagSupervisor && !empty($listProcess)) {
+                $criteria->add(AppCacheViewPeer::PRO_UID, $listProcess, Criteria::IN);
             }
         }
 
@@ -576,7 +533,8 @@ class AppCacheView extends BaseAppCacheView
      */
     public function getToRevise($userUid, $doCount)
     {
-        $aProcesses = $this->getProUidSupervisor($userUid, $doCount);
+        $processUser = new ProcessUser();
+        $listProcess = $processUser->getProUidSupervisor($userUid);
 
         if ($doCount && !isset($this->confCasesList['PMTable']) && !empty($this->confCasesList['PMTable'])) {
             $c = new Criteria('workflow');
@@ -584,7 +542,7 @@ class AppCacheView extends BaseAppCacheView
             $c = $this->addPMFieldsToCriteria('todo');
         }
 
-        $c->add(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN);
+        $c->add(AppCacheViewPeer::PRO_UID, $listProcess, Criteria::IN);
         $c->add(AppCacheViewPeer::APP_STATUS, 'TO_DO');
         $c->add(AppCacheViewPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
         $c->add(AppCacheViewPeer::APP_THREAD_STATUS, 'OPEN');
@@ -1168,9 +1126,10 @@ class AppCacheView extends BaseAppCacheView
         GLOBAL $RBAC;
         $aUser = $RBAC->userObj->load( $_SESSION['USER_LOGGED'] );
 
-        $aProcesses = $this->getProUidSupervisor($aUser['USR_UID']);
+        $processUser = new ProcessUser();
+        $listProcess = $processUser->getProUidSupervisor($aUser['USR_UID']);
         $criteria = $this->getToReassign($userUid, true);
-        $criteria->add(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN);
+        $criteria->add(AppCacheViewPeer::PRO_UID, $listProcess, Criteria::IN);
         return $criteria;
     }
 
@@ -1183,9 +1142,10 @@ class AppCacheView extends BaseAppCacheView
         GLOBAL $RBAC;
         $aUser = $RBAC->userObj->load( $_SESSION['USER_LOGGED'] );
 
-        $aProcesses = $this->getProUidSupervisor($aUser['USR_UID']);
+        $processUser = new ProcessUser();
+        $listProcess = $processUser->getProUidSupervisor($aUser['USR_UID']);
         $criteria = $this->getToReassign($userUid, false);
-        $criteria->add(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN);
+        $criteria->add(AppCacheViewPeer::PRO_UID, $listProcess, Criteria::IN);
         return $criteria;
     }
 
@@ -1255,20 +1215,6 @@ class AppCacheView extends BaseAppCacheView
             }
 
             return array('user' => $mysqlUser, 'super' => $super);
-        } catch (Exception $e) {
-            return array('error' => true, 'msg' => $e->getMessage());
-        }
-    }
-
-    public function setSuperForUser($mysqlUser)
-    {
-        try {
-            $con = Propel::getConnection("root");
-            $stmt = $con->createStatement();
-            $sql = "GRANT SUPER on *.* to '$mysqlUser' ";
-            $rs1 = $stmt->executeQuery($sql, ResultSet::FETCHMODE_NUM);
-
-            return array();
         } catch (Exception $e) {
             return array('error' => true, 'msg' => $e->getMessage());
         }

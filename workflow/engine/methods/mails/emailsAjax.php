@@ -30,81 +30,13 @@ switch ($req) {
         $dateTo = isset($_POST["dateTo"]) ? substr($_POST["dateTo"], 0, 10) : "";
         $filterBy = (isset($_REQUEST['filterBy'])) ? $_REQUEST['filterBy'] : 'ALL';
 
-        $response = new stdclass();
-        $response->status = 'OK';
-
-        $delimiter = DBAdapter::getStringDelimiter();
-
-        $criteria = new Criteria();
-        $criteria->addJoin(AppMessagePeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
-
-        if ($emailStatus != '') {
-            $criteria->add(AppMessagePeer::APP_MSG_STATUS, $emailStatus);
-        }
-        if ($proUid != '') {
-            $criteria->add(ApplicationPeer::PRO_UID, $proUid);
-        }
-
+        //Review the External Registration
         $arrayType = [];
-
         $pluginRegistry = PluginRegistry::loadSingleton();
         $flagEr = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
-
         if ($flagEr == 0) {
             $arrayType[] = 'EXTERNAL_REGISTRATION';
         }
-
-        switch ($filterBy) {
-            case 'CASES':
-                $criteria->add(AppMessagePeer::APP_MSG_TYPE, ['TEST', 'EXTERNAL_REGISTRATION'], Criteria::NOT_IN);
-                break;
-            case 'TEST':
-                $criteria->add(AppMessagePeer::APP_MSG_TYPE, 'TEST', Criteria::EQUAL);
-                break;
-            case 'EXTERNAL-REGISTRATION':
-                $criteria->add(AppMessagePeer::APP_MSG_TYPE, 'EXTERNAL_REGISTRATION', Criteria::EQUAL);
-                break;
-            default:
-                if (!empty($arrayType)) {
-                    $criteria->add(AppMessagePeer::APP_MSG_TYPE, $arrayType, Criteria::NOT_IN);
-                }
-                break;
-        }
-
-        if ($dateFrom != "") {
-            if ($dateTo != "") {
-                if ($dateFrom == $dateTo) {
-                    $dateSame = $dateFrom;
-                    $dateFrom = $dateSame . " 00:00:00";
-                    $dateTo = $dateSame . " 23:59:59";
-                } else {
-                    $dateFrom = $dateFrom . " 00:00:00";
-                    $dateTo = $dateTo . " 23:59:59";
-                }
-
-                $criteria->add($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateFrom, Criteria::GREATER_EQUAL)->addAnd($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateTo, Criteria::LESS_EQUAL)));
-            } else {
-                $dateFrom = $dateFrom . " 00:00:00";
-                $criteria->add(AppMessagePeer::APP_MSG_DATE, $dateFrom, Criteria::GREATER_EQUAL);
-            }
-        } elseif ($dateTo != "") {
-            $dateTo = $dateTo . " 23:59:59";
-            $criteria->add(AppMessagePeer::APP_MSG_DATE, $dateTo, Criteria::LESS_EQUAL);
-        }
-
-        //Number records total
-        $criteriaCount = clone $criteria;
-
-        $criteriaCount->clearSelectColumns();
-        $criteriaCount->addSelectColumn('COUNT(' . AppMessagePeer::APP_MSG_UID . ') AS NUM_REC');
-
-        $rsCriteriaCount = AppMessagePeer::doSelectRS($criteriaCount);
-        $rsCriteriaCount->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        $resultCount = $rsCriteriaCount->next();
-        $rowCount = $rsCriteriaCount->getRow();
-
-        $totalCount = (int)($rowCount['NUM_REC']);
 
         $criteria = new Criteria();
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_UID);
@@ -113,7 +45,6 @@ switch ($req) {
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_TYPE);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_SUBJECT);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_FROM);
-
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_TO);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_BODY);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_STATUS);
@@ -121,18 +52,24 @@ switch ($req) {
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_SEND_DATE);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_SHOW_MESSAGE);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_ERROR);
-
         $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
+        $criteria->addSelectColumn(ApplicationPeer::APP_TITLE);
         $criteria->addSelectColumn(ApplicationPeer::APP_NUMBER);
         $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $criteria->addSelectColumn(TaskPeer::TAS_TITLE);
+        $criteria->addJoin(AppMessagePeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
+        $criteria->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+        $criteria->addJoin(AppMessagePeer::TAS_ID, TaskPeer::TAS_ID, Criteria::LEFT_JOIN);
 
-        if ($emailStatus != '') {
+        //Status can be: All, Participated, Pending
+        if (!empty($emailStatus)) {
             $criteria->add(AppMessagePeer::APP_MSG_STATUS, $emailStatus);
         }
-        if ($proUid != '') {
+        //Process uid
+        if (!empty($proUid)) {
             $criteria->add(ApplicationPeer::PRO_UID, $proUid);
         }
-
+        //Filter by can be: All, Cases, Test
         switch ($filterBy) {
             case 'CASES':
                 $criteria->add(AppMessagePeer::APP_MSG_TYPE, ['TEST', 'EXTERNAL_REGISTRATION'], Criteria::NOT_IN);
@@ -149,29 +86,30 @@ switch ($req) {
                 }
                 break;
         }
-
-        if ($dateFrom != "") {
-            if ($dateTo != "") {
-                if ($dateFrom == $dateTo) {
-                    $dateSame = $dateFrom;
-                    $dateFrom = $dateSame . " 00:00:00";
-                    $dateTo = $dateSame . " 23:59:59";
-                } else {
-                    $dateFrom = $dateFrom . " 00:00:00";
-                    $dateTo = $dateTo . " 23:59:59";
-                }
-
-                $criteria->add($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateFrom, Criteria::GREATER_EQUAL)->addAnd($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateTo, Criteria::LESS_EQUAL)));
-            } else {
-                $dateFrom = $dateFrom . " 00:00:00";
+        //Date from and to
+        if (!empty($dateFrom) && !empty($dateTo)) {
+            $criteria->add($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateFrom, Criteria::GREATER_EQUAL)->addAnd($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateTo, Criteria::LESS_EQUAL)));
+        } else {
+            if (!empty($dateFrom)) {
                 $criteria->add(AppMessagePeer::APP_MSG_DATE, $dateFrom, Criteria::GREATER_EQUAL);
             }
-        } elseif ($dateTo != "") {
-            $dateTo = $dateTo . " 23:59:59";
-            $criteria->add(AppMessagePeer::APP_MSG_DATE, $dateTo, Criteria::LESS_EQUAL);
+            if (!empty($dateTo)) {
+                $dateTo = $dateTo . " 23:59:59";
+                $criteria->add(AppMessagePeer::APP_MSG_DATE, $dateTo, Criteria::LESS_EQUAL);
+            }
         }
 
-        if ($sort != '') {
+        //Number records total
+        $criteriaCount = clone $criteria;
+        $criteriaCount->clearSelectColumns();
+        $criteriaCount->addSelectColumn('COUNT(' . AppMessagePeer::APP_MSG_UID . ') AS NUM_REC');
+        $rsCriteriaCount = AppMessagePeer::doSelectRS($criteriaCount);
+        $rsCriteriaCount->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $resultCount = $rsCriteriaCount->next();
+        $rowCount = $rsCriteriaCount->getRow();
+        $totalCount = (int)($rowCount['NUM_REC']);
+
+        if (!empty($sort)) {
             if (!in_array($sort, AppMessagePeer::getFieldNames(BasePeer::TYPE_FIELDNAME))) {
                 throw new Exception(G::LoadTranslation('ID_INVALID_VALUE_FOR', array('$sort')));
             }
@@ -183,14 +121,10 @@ switch ($req) {
         } else {
             $oCriteria->addDescendingOrderByColumn(AppMessagePeer::APP_MSG_SEND_DATE);
         }
-        if ($limit != '') {
+        if (!empty($limit)) {
             $criteria->setLimit($limit);
             $criteria->setOffset($start);
         }
-
-        $criteria->addJoin(AppMessagePeer::APP_UID, ApplicationPeer::APP_UID);
-        $criteria->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID);
-
 
         $result = AppMessagePeer::doSelectRS($criteria);
         $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -209,48 +143,15 @@ switch ($req) {
                     if ($row['DEL_INDEX'] != 0) {
                         $index = $row['DEL_INDEX'];
                     }
-
-                    $criteria = new Criteria();
-
-                    $criteria->addSelectColumn(AppCacheViewPeer::APP_TITLE);
-                    $criteria->addSelectColumn(AppCacheViewPeer::APP_TAS_TITLE);
-                    $criteria->add(AppCacheViewPeer::APP_UID, $row['APP_UID'], Criteria::EQUAL);
-                    $criteria->add(AppCacheViewPeer::DEL_INDEX, $index, Criteria::EQUAL);
-
-                    $resultCacheView = AppCacheViewPeer::doSelectRS($criteria);
-                    $resultCacheView->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                    $row['APP_TITLE'] = '-';
-
-                    while ($resultCacheView->next()) {
-                        $rowCacheView = $resultCacheView->getRow();
-                        $row['APP_TITLE'] = $rowCacheView['APP_TITLE'];
-                        $row['TAS_TITLE'] = $rowCacheView['APP_TAS_TITLE'];
-                    }
-
                     if ($row['DEL_INDEX'] == 0) {
                         $row['TAS_TITLE'] = $tasTitleDefault;
                     }
-                    break;
-                case 'TEST':
-                    $row['PRO_UID'] = '';
-                    $row['APP_NUMBER'] = '';
-                    $row['PRO_TITLE'] = '';
-                    $row['APP_TITLE'] = '';
-                    $row['TAS_TITLE'] = '';
-                    break;
-                case 'EXTERNAL-REGISTRATION':
-                    $row['PRO_UID'] = '';
-                    $row['APP_NUMBER'] = '';
-                    $row['PRO_TITLE'] = '';
-                    $row['APP_TITLE'] = '';
-                    $row['TAS_TITLE'] = '';
                     break;
             }
 
             $data[] = $row;
         }
-        $response = array();
+        $response = [];
         $response['totalCount'] = $totalCount;
         $response['data'] = $data;
         die(G::json_encode($response));

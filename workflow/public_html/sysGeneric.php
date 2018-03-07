@@ -39,8 +39,8 @@ function transactionLog($transactionName){
 
 
         //Custom parameters
-        if(defined("SYS_SYS")){
-            newrelic_add_custom_parameter ("workspace", SYS_SYS);
+        if(!empty(config("system.workspace"))){
+            newrelic_add_custom_parameter ("workspace", config("system.workspace"));
         }
         if(defined("SYS_LANG")){
             newrelic_add_custom_parameter ("lang", SYS_LANG);
@@ -65,8 +65,8 @@ function transactionLog($transactionName){
         }
 
         //Show correct transaction name
-        if(defined("SYS_SYS")){
-            newrelic_set_appname ("PM-".SYS_SYS.";$baseName");
+        if(!empty(config("system.workspace"))){
+            newrelic_set_appname ("PM-".config("system.workspace").";$baseName");
         }
         if(defined("PATH_CORE")){
             $transactionName=str_replace(PATH_CORE,"",$transactionName);
@@ -519,6 +519,12 @@ $oHeadPublisher = & headPublisher::getSingleton();
 if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     // new installer, extjs based
     define( 'PATH_DATA', PATH_C );
+    
+    //important to start laravel classes
+    app()->useStoragePath(realpath(PATH_DATA));
+    app()->make(Kernel::class)->bootstrap();
+    restore_error_handler();
+
     //NewRelic Snippet - By JHL
     transactionLog(PATH_CONTROLLERS . 'InstallerModule.php');
     $pathFile = PATH_CONTROLLERS . 'InstallerModule.php';
@@ -583,9 +589,10 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
     if (file_exists( $pathFile )) {
         require_once ($pathFile);
         define( 'SYS_SYS', SYS_TEMP );
+        config(["system.workspace" => SYS_TEMP]);
 
         // defining constant for workspace shared directory
-        define( 'PATH_WORKSPACE', PATH_DB . SYS_SYS . PATH_SEP );
+        define( 'PATH_WORKSPACE', PATH_DB . config("system.workspace") . PATH_SEP );
         // including workspace shared classes -> particularlly for pmTables
         set_include_path( get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE );
     } else {
@@ -636,7 +643,7 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
 }
 
 // PM Paths DATA
-define( 'PATH_DATA_SITE', PATH_DATA . 'sites/' . SYS_SYS . '/' );
+define( 'PATH_DATA_SITE', PATH_DATA . 'sites/' . config("system.workspace") . '/' );
 define( 'PATH_DOCUMENT', PATH_DATA_SITE . 'files/' );
 define( 'PATH_DATA_MAILTEMPLATES', PATH_DATA_SITE . 'mailTemplates/' );
 define( 'PATH_DATA_PUBLIC', PATH_DATA_SITE . 'public/' );
@@ -650,7 +657,7 @@ define( 'SERVER_PORT', $_SERVER['SERVER_PORT'] );
 
 
 // create memcached singleton
-$memcache = & PMmemcached::getSingleton( SYS_SYS );
+$memcache = & PMmemcached::getSingleton( config("system.workspace") );
 
 // load Plugins base class
 
@@ -669,7 +676,7 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 
     // unified log file for all databases
     $logFile = PATH_DATA . 'log' . PATH_SEP . 'propel.log';
-    $logger = Log::singleton( 'file', $logFile, 'wf ' . SYS_SYS, null, PEAR_LOG_INFO );
+    $logger = Log::singleton( 'file', $logFile, 'wf ' . config("system.workspace"), null, PEAR_LOG_INFO );
     Propel::setLogger( $logger );
     // log file for workflow database
     $con = Propel::getConnection( 'workflow' );
@@ -887,13 +894,13 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
 }
 
 //redirect to login, if user changed the workspace in the URL
-if (! $avoidChangedWorkspaceValidation && isset( $_SESSION['WORKSPACE'] ) && $_SESSION['WORKSPACE'] != SYS_SYS) {
-    $_SESSION['WORKSPACE'] = SYS_SYS;
+if (! $avoidChangedWorkspaceValidation && isset( $_SESSION['WORKSPACE'] ) && $_SESSION['WORKSPACE'] != config("system.workspace")) {
+    $_SESSION['WORKSPACE'] = config("system.workspace");
     Bootstrap::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', "error" );
     // verify if the current skin is a 'ux' variant
     $urlPart = substr( SYS_SKIN, 0, 2 ) == 'ux' && SYS_SKIN != 'uxs' ? '/main/login' : '/login/login';
 
-    header( 'Location: /sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . $urlPart );
+    header( 'Location: /sys' . config("system.workspace") . '/' . SYS_LANG . '/' . SYS_SKIN . $urlPart );
     die();
 }
 

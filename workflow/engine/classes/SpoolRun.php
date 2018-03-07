@@ -645,6 +645,28 @@ class SpoolRun
         $spool->setAppMsgShowMessage($db_spool['app_msg_show_message']); // Add by Ankit
         $spool->setAppMsgError($db_spool['app_msg_error']);
 
+        if (empty($db_spool['app_number'])) {
+            $appDelegation = new AppDelegation();
+            $delegationIds = $appDelegation->getColumnIds($db_spool['app_uid'], $db_spool['del_index']);
+            if (is_array($delegationIds) && count($delegationIds) > 0) {
+                $delegationIds = array_change_key_case($delegationIds);
+                $appNumber = $delegationIds['app_number'];
+            } else {
+                //The notification is not related to case
+                $appNumber = 0;
+            }
+        } else {
+            $appNumber = $db_spool['app_number'];
+        }
+
+        if (empty($db_spool['tas_id'])) {
+            $tasId = isset($delegationIds['tas_id']) ? $delegationIds['tas_id'] : 0;
+        } else {
+            $tasId = $db_spool['tas_id'];
+        }
+
+        $spool->setAppNumber($appNumber);
+        $spool->setTasId($tasId);
 
         if (!$spool->validate()) {
             $errors = $spool->getValidationFailures();

@@ -490,13 +490,14 @@ function redirect(href){
 Ext.onReady ( function() {
     setExtStateManagerSetProvider('casesGrid', action);
 
-    var ids = '';
-    var filterProcess = '';
-    var filterCategory = '';
-    var filterUser    = '';
-    var caseIdToDelete = '';
-    var caseIdToUnpause = '';
-    var caseIndexToUnpause = '';
+    var ids = '',
+        filterProcess = '',
+        filterCategory = '',
+        filterUser    = '',
+        caseIdToDelete = '',
+        caseIdToUnpause = '',
+        caseIndexToUnpause = '',
+        searchProcessId = '';
     try {
         parent._action = action;
     }
@@ -1016,14 +1017,45 @@ Ext.onReady ( function() {
             scope: this,
             'select': function() {
                 filterProcess = suggestProcess.value;
-                if ( action == 'search' ){
+                if (action === 'search') {
                     storeCases.setBaseParam('dateFrom', dateFrom.getValue());
                     storeCases.setBaseParam('dateTo', dateTo.getValue());
                 }
                 storeCases.setBaseParam('process', filterProcess);
+            },
+            'blur': function () {
+                var param  = suggestProcess.getValue() !== '' ?
+                    processStore.getTotalCount() === 0 ?
+                        "null" :
+                        searchProcessId(suggestProcess.getValue(), processStore):
+                    suggestProcess.getValue() ;
+
+                storeCases.setBaseParam('process', param);
             }
         }
     });
+
+    /**
+     * Search the PRO_UID in processStore with the value.
+     * @param value
+     * @param processStore
+     * @returns {string}
+     */
+    searchProcessId = function (value, processStore) {
+        var i,
+            totalProcessStore = processStore.getTotalCount();
+        try {
+            for (i = 0; i < totalProcessStore; i += 1) {
+                if (processStore.data.items[i].data.PRO_TITLE === value ||
+                    processStore.data.items[i].data.PRO_UID === value) {
+                    return processStore.data.items[i].data.PRO_UID;
+                }
+            }
+            return "null";
+        } catch (e) {
+            // Nothing to do
+        }
+    };
 
     var resetProcessButton = {
         text:'X',
