@@ -1378,11 +1378,10 @@ class PMPluginRegistry
             if (empty($this->_restExtendServices[$namespace])) {
                 $this->_restExtendServices[$namespace] = new stdClass();
             }
-            $this->_restExtendServices[$namespace]->{$className} = [
-                'filePath' => $classFile,
-                'classParent' => $className,
-                'classExtend' => 'Ext' . $className
-            ];
+            $this->_restExtendServices[$Namespace]->{$className} = new stdClass();
+            $this->_restExtendServices[$Namespace]->{$className}->filePath = $classFile;
+            $this->_restExtendServices[$Namespace]->{$className}->classParent = $className;
+            $this->_restExtendServices[$Namespace]->{$className}->classExtend = 'Ext' . $className;
         }
     }
 

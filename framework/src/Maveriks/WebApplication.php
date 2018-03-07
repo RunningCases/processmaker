@@ -594,7 +594,9 @@ class WebApplication
         Bootstrap::LoadTranslationPlugins(defined('SYS_LANG') ? SYS_LANG : "en", $attributes);
         // Initialization functions plugins
         $oPluginRegistry->init();
-        //Return
+        //get and setup enabled plugins
+        $oPluginRegistry->setupPlugins();
+
         return true;
     }
 

@@ -211,8 +211,8 @@ class PmBootstrap extends Bootstrap
     {
         // new installer, extjs based
         define('PATH_DATA', PATH_C);
-        require_once ( PATH_CONTROLLERS . 'installer.php' );
-        $controller = 'Installer';
+        require_once ( PATH_CONTROLLERS . 'InstallerModule.php' );
+        $controller = InstallerModule::class;
 
         // if the method name is empty set default to index method
         if (strpos(SYS_TARGET, '/') !== false) {
@@ -225,7 +225,7 @@ class PmBootstrap extends Bootstrap
         $controllerAction = ($controllerAction != '' && $controllerAction != 'login')? $controllerAction: 'index';
 
         // create the installer controller and call its method
-        if( is_callable(Array('Installer', $controllerAction)) ) {
+        if (is_callable([InstallerModule::class, $controllerAction])) {
             $installer = new $controller();
             $installer->setHttpRequestData($_REQUEST);
             $installer->call($controllerAction);
@@ -306,7 +306,7 @@ class PmBootstrap extends Bootstrap
 
         $noLoginFolders[] = 'services';
         $noLoginFolders[] = 'tracker';
-        $noLoginFolders[] = 'installer';
+        $noLoginFolders[] = 'InstallerModule';
 
       // This sentence is used when you lost the Session
       if (! in_array(SYS_TARGET, $noLoginFiles)

@@ -484,4 +484,17 @@ class ServerConf
         $lang = substr($lang, 0, 2);
         return in_array($lang, $this->rtlLang);
     }
+
+    /**
+     * Change class name from "serverConf" to "ServerConf" for previous versions to 3.2.2
+     */
+    public function updateClassNameInFile()
+    {
+        if (file_exists(self::$instance->filePath) && filesize(self::$instance->filePath) > 0) {
+            $file = file_get_contents(self::$instance->filePath);
+            $file = str_replace('serverConf', self::class, $file);
+            self::$instance->unSerializeInstance($file);
+            $this->saveSingleton();
+        }
+    }
 }

@@ -1,15 +1,24 @@
 <?php
+
 namespace ProcessMaker\BusinessModel;
 
+use Cases as classesCases;
+use Configurations;
 use G;
 use Smarty;
 use Criteria;
+use Exception;
+use ListInboxPeer;
 use ReportTablePeer;
 use ResultSet;
 use CaseConsolidatedCorePeer;
 use ContentPeer;
 use PmDynaform;
 use ReportTables;
+use TaskPeer;
+use XmlForm;
+use WsBase;
+
 
 class Consolidated
 {
@@ -17,11 +26,10 @@ class Consolidated
      * Get Consolidated
      *
      * @access public
-     * @param string $tas_uid , Task Uid
-     * @return array
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $tas_uid , Task Uid
+     *
+     * @return array
      */
     public function get($tas_uid)
     {
@@ -47,6 +55,7 @@ class Consolidated
                 'CON_VALUE' => '__' . $tas_uid,
             );
         }
+
         return array_change_key_case($response, CASE_LOWER);;
     }
 
@@ -54,21 +63,20 @@ class Consolidated
      * Put Data Generate
      *
      * @access public
+     *
      * @param string $app_uid , Process Uid
      * @param string $app_number , Task Uid
      * @param string $del_index , Task Uid
      * @param string $usr_uid , Task Uid
      * @param string $fieldName , Field Name
      * @param string $fieldValue , Field Value
-     * @return string
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return array
      */
     public function postDerivate($app_uid, $app_number, $del_index, $usr_uid, $fieldName = '', $fieldValue = '')
     {
-        $ws = new \WsBase();
-        $oCase = new \Cases();
+        $ws = new WsBase();
+        $oCase = new ClassesCases();
 
         if (!isset($Fields["DEL_INIT_DATE"])) {
             $oCase->setDelInitDate($app_uid, $del_index);
@@ -117,6 +125,7 @@ class Consolidated
         } else {
             $response ["message"] = G::LoadTranslation("ID_CASE") . " " . $app_number . " " . $res->message;
         }
+
         return $response;
     }
 
@@ -133,10 +142,10 @@ class Consolidated
         $numRec = 0;
 
         $criteria->clearSelectColumns();
-        $criteria->addAsColumn('NUMREC', 'COUNT(' . \ListInboxPeer::TAS_UID . ')');
-        $criteria->addJoin(CaseConsolidatedCorePeer::TAS_UID, \ListInboxPeer::TAS_UID, \Criteria::LEFT_JOIN);
-        $criteria->add(\ListInboxPeer::USR_UID, $userUid, Criteria::EQUAL);
-        $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
+        $criteria->addAsColumn('NUMREC', 'COUNT(' . ListInboxPeer::TAS_UID . ')');
+        $criteria->addJoin(CaseConsolidatedCorePeer::TAS_UID, ListInboxPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteria->add(ListInboxPeer::USR_UID, $userUid, Criteria::EQUAL);
+        $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
         $rsSql = CaseConsolidatedCorePeer::doSelectRS($criteria);
         $rsSql->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
@@ -146,6 +155,7 @@ class Consolidated
         }
 
         $numRec = ($activeNumRec > 0) ? $numRec : 0;
+
         return $numRec;
     }
 
@@ -154,13 +164,14 @@ class Consolidated
      * Put Data Generate
      *
      * @access public
-     * @param string $pro_uid , Process Uid
-     * @param string $tas_uid , Task Uid
-     * @param string $dyn_uid , Dynaform Uid
-     * @return string
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $pro_uid, Process Uid
+     * @param string $tas_uid, Task Uid
+     * @param string $dyn_uid, DynaForm Uid
+     * @param string $usr_uid, User Uid
+     * @param array $data
+     *
+     * @return array
      */
     public function putDataGrid($pro_uid, $tas_uid, $dyn_uid, $usr_uid, $data)
     {
@@ -181,7 +192,7 @@ class Consolidated
                         self::consolidatedUpdate($dyn_uid, $data, $usr_uid);
                     }
                     $response["status"] = "OK";
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $response["message"] = $e->getMessage();
                     $status = 0;
                 }
@@ -199,7 +210,7 @@ class Consolidated
                     self::consolidatedUpdate($dynUid, $data, $usr_uid);
                     $response["status"] = "OK";
                     $response["success"] = true;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $response["message"] = $e->getMessage();
                     $status = 0;
                 }
@@ -210,6 +221,7 @@ class Consolidated
                 }
                 break;
         }
+
         return $response;
     }
 
@@ -217,13 +229,17 @@ class Consolidated
      * Get Data Generate
      *
      * @access public
-     * @param string $pro_uid , Process Uid
-     * @param string $tas_uid , Task Uid
-     * @param string $dyn_uid , Dynaform Uid
-     * @return string
+     * @param string $pro_uid, Process Uid
+     * @param string $tas_uid, Task Uid
+     * @param string $dyn_uid, DynaForm Uid
+     * @param string $usr_uid, User Uid
+     * @param string $start
+     * @param string $limit
+     * @param string $search
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
+     * 
+     * @throws Exception
      */
     public function getDataGrid($pro_uid, $tas_uid, $dyn_uid, $usr_uid, $start = '', $limit = '', $search = '')
     {
@@ -274,7 +290,7 @@ class Consolidated
                     $tableUid = $item["REP_TAB_UID"];
                     $tableName = $row["REP_TAB_NAME"];
                 } else {
-                    throw new \Exception("Not found the report table");
+                    throw new Exception("Not found the report table");
                 }
             }
 
@@ -289,11 +305,11 @@ class Consolidated
             $oCriteria->addSelectColumn("*");
             $oCriteria->addSelectColumn($tableName . ".APP_UID");
 
-            $oCriteria->addJoin($tableName . ".APP_UID", \ListInboxPeer::APP_UID, \Criteria::LEFT_JOIN);
+            $oCriteria->addJoin($tableName . ".APP_UID", ListInboxPeer::APP_UID, Criteria::LEFT_JOIN);
 
-            $oCriteria->add(\ListInboxPeer::TAS_UID, $tas_uid);
-            $oCriteria->add(\ListInboxPeer::USR_UID, $usr_uid);
-            $oCriteria->add(\ListInboxPeer::APP_STATUS, "TO_DO");
+            $oCriteria->add(ListInboxPeer::TAS_UID, $tas_uid);
+            $oCriteria->add(ListInboxPeer::USR_UID, $usr_uid);
+            $oCriteria->add(ListInboxPeer::APP_STATUS, "TO_DO");
 
             if ($search != "") {
                 $filename = $pro_uid . PATH_SEP . $dyn_uid . ".xml";
@@ -301,7 +317,7 @@ class Consolidated
                 if (!class_exists('Smarty')) {
                     require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');
                 }
-                $G_FORM = new \xmlform();
+                $G_FORM = new XmlForm();
                 $G_FORM->home = PATH_DYNAFORM;
                 $G_FORM->parseFile($filename, SYS_LANG, true);
 
@@ -339,7 +355,8 @@ class Consolidated
                                 $oTmpCriteria = $oNewCriteria->getNewCriterion($field, $search)->addOr($oTmpCriteria);
                             }
                         } else {
-                            $oTmpCriteria = $oNewCriteria->getNewCriterion($field, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
+                            $oTmpCriteria = $oNewCriteria->getNewCriterion($field, "%" . $search . "%",
+                                Criteria::LIKE)->addOr($oTmpCriteria);
                         }
                     }
 
@@ -348,13 +365,14 @@ class Consolidated
 
                 if ($oTmpCriteria != null) {
                     $oCriteria->add(
-                        $oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE)->addOr($oTmpCriteria)
+                        $oCriteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search,
+                            Criteria::LIKE)->addOr($oTmpCriteria)
                     );
                 } else {
-                    $oCriteria->add($oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE));
+                    $oCriteria->add($oCriteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE));
                 }
             }
-            
+
 
             $filter = new \InputFilter();
 
@@ -367,7 +385,7 @@ class Consolidated
                     $sort = strtoupper($sort);
                     eval('$field = ' . $tableName . 'Peer::' . $sort . ';');
                 } else {
-                    eval('$field = \ListInboxPeer::' . $sort . ';');
+                    eval('$field = ListInboxPeer::' . $sort . ';');
                 }
 
                 if ($dir == "ASC") {
@@ -376,13 +394,13 @@ class Consolidated
                     $oCriteria->addDescendingOrderByColumn($field);
                 }
             } else {
-                $oCriteria->addDescendingOrderByColumn(\ListInboxPeer::APP_NUMBER);
+                $oCriteria->addDescendingOrderByColumn(ListInboxPeer::APP_NUMBER);
             }
 
             $oCriteria->setLimit($limit);
             $oCriteria->setOffset($start);
 
-            $oDataset = \ListInboxPeer::doSelectRS($oCriteria);
+            $oDataset = ListInboxPeer::doSelectRS($oCriteria);
 
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
@@ -396,7 +414,8 @@ class Consolidated
                         if ($tmpField == $datakey) {
                             $appUid = $aRow["APP_UID"];
                             $fieldVal = $aRow[$tmpField];
-                            $aRow[$tmpField] = self::getDropdownLabel($appUid, $pro_uid, $dyn_uid, $tmpField, $fieldVal);
+                            $aRow[$tmpField] = self::getDropdownLabel($appUid, $pro_uid, $dyn_uid, $tmpField,
+                                $fieldVal);
                         }
                     }
                 }
@@ -416,12 +435,12 @@ class Consolidated
             }
 
             $criteria = new Criteria();
-            $criteria->addAsColumn('QTY', 'COUNT(' . \ListInboxPeer::TAS_UID . ')');
-            $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \TaskPeer::TAS_UID, \Criteria::LEFT_JOIN);
-            $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \ListInboxPeer::TAS_UID, \Criteria::LEFT_JOIN);
-            $criteria->add(\ListInboxPeer::USR_UID, $usr_uid, \Criteria::EQUAL);
-            $criteria->add(\ListInboxPeer::TAS_UID, $tas_uid, \Criteria::EQUAL);
-            $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO', \Criteria::EQUAL);
+            $criteria->addAsColumn('QTY', 'COUNT(' . ListInboxPeer::TAS_UID . ')');
+            $criteria->addJoin(CaseConsolidatedCorePeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+            $criteria->addJoin(CaseConsolidatedCorePeer::TAS_UID, ListInboxPeer::TAS_UID, Criteria::LEFT_JOIN);
+            $criteria->add(ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL);
+            $criteria->add(ListInboxPeer::TAS_UID, $tas_uid, Criteria::EQUAL);
+            $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
             $count = CaseConsolidatedCorePeer::doSelectRS($criteria);
             $count->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
@@ -442,19 +461,18 @@ class Consolidated
      * Get Data Generate
      *
      * @access public
+     *
      * @param string $pro_uid , Process Uid
      * @param string $tas_uid , Task Uid
      * @param string $dyn_uid , Dynaform Uid
-     * @return string
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
      */
     public function getDataGenerate($pro_uid, $tas_uid, $dyn_uid)
     {
         $hasTextArea = false;
 
-        $conf = new \Configurations();
+        $conf = new Configurations();
         $generalConfCasesList = $conf->getConfiguration("ENVIRONMENT_SETTINGS", "");
         if (isset($generalConfCasesList["casesListDateFormat"]) && !empty($generalConfCasesList["casesListDateFormat"])) {
             $dateFormat = $generalConfCasesList["casesListDateFormat"];
@@ -520,7 +538,7 @@ class Consolidated
             if (!class_exists('Smarty')) {
                 require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');
             }
-            $xmlfrm = new \XmlForm();
+            $xmlfrm = new XmlForm();
             $xmlfrm->home = PATH_DYNAFORM;
             $xmlfrm->parseFile($filename, SYS_LANG, true);
         }
@@ -531,11 +549,34 @@ class Consolidated
         $dropList = array();
         $comboBoxYesNoList = array();
 
-        $caseColumns[] = array("header" => "APP_UID", "dataIndex" => "APP_UID", "width" => 100, "hidden" => true, "hideable" => false);
+        $caseColumns[] = array(
+            "header" => "APP_UID",
+            "dataIndex" => "APP_UID",
+            "width" => 100,
+            "hidden" => true,
+            "hideable" => false
+        );
         $caseColumns[] = array("header" => "#", "dataIndex" => "APP_NUMBER", "width" => 40, "sortable" => true);
-        $caseColumns[] = array("header" => G::LoadTranslation("ID_TITLE"), "dataIndex" => "APP_TITLE", "width" => 180, "renderer" => "renderTitle", "sortable" => true);
-        $caseColumns[] = array("header" => G::LoadTranslation("ID_SUMMARY"), "width" => 60, "renderer" => "renderSummary", "align" => "center");
-        $caseColumns[] = array("header" => "DEL_INDEX", "dataIndex" => "DEL_INDEX", "width" => 100, "hidden" => true, "hideable" => false);
+        $caseColumns[] = array(
+            "header" => G::LoadTranslation("ID_TITLE"),
+            "dataIndex" => "APP_TITLE",
+            "width" => 180,
+            "renderer" => "renderTitle",
+            "sortable" => true
+        );
+        $caseColumns[] = array(
+            "header" => G::LoadTranslation("ID_SUMMARY"),
+            "width" => 60,
+            "renderer" => "renderSummary",
+            "align" => "center"
+        );
+        $caseColumns[] = array(
+            "header" => "DEL_INDEX",
+            "dataIndex" => "DEL_INDEX",
+            "width" => 100,
+            "hidden" => true,
+            "hideable" => false
+        );
 
         $caseReaderFields[] = array("name" => "APP_UID");
         $caseReaderFields[] = array("name" => "APP_NUMBER");
@@ -633,7 +674,17 @@ class Consolidated
                     $editor = $this->removeLineBreaks($editor);
                     $width = $field->colWidth;
 
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+                    $caseColumns[] = array(
+                        "xtype" => "combocolumn",
+                        "gridId" => "gridId",
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "frame" => "true",
+                        "clicksToEdit" => "1"
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "date":
@@ -663,7 +714,16 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "editor" => $editor,
+                        "renderer" => $renderer,
+                        "frame" => true,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "currency":
@@ -691,7 +751,16 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "frame" => true,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "percentage":
@@ -722,7 +791,17 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "renderer" => $renderer,
+                        "frame" => true,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "textarea":
@@ -752,7 +831,17 @@ class Consolidated
                     $editor = $this->removeLineBreaks($editor);
                     $renderer = "* function (value) {  return (value);  } *";
                     $renderer = $this->removeLineBreaks($renderer);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "renderer" => $renderer,
+                        "frame" => true,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
 
                     $hasTextArea = true;
@@ -780,7 +869,16 @@ class Consolidated
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
                     $renderer = $this->removeLineBreaks($renderer);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "editor" => $editor,
+                        "renderer" => $renderer,
+                        "frame" => true,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "link":
@@ -799,7 +897,19 @@ class Consolidated
                                        return linkRenderer(value);
                                    } *";
                     $renderer = $this->removeLineBreaks($renderer);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "hidden" => false, "hideable" => false, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "renderer" => $renderer,
+                        "frame" => true,
+                        "hidden" => false,
+                        "hideable" => false,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "hidden":
@@ -814,7 +924,17 @@ class Consolidated
 
                     $editor = "* new Ext.form.TextField({ allowBlank: false }) *";
                     $editor = $this->removeLineBreaks($editor);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) $width, "align" => $align, "editor" => $editor, "frame" => "true", "hidden" => "true", "hideable" => false, "clicksToEdit" => "1");
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)$width,
+                        "align" => $align,
+                        "editor" => $editor,
+                        "frame" => "true",
+                        "hidden" => "true",
+                        "hideable" => false,
+                        "clicksToEdit" => "1"
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "yesno":
@@ -857,7 +977,17 @@ class Consolidated
                                  cls: \"\"
                                }) *";
                     $editor = $this->removeLineBreaks($editor);
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+                    $caseColumns[] = array(
+                        "xtype" => "combocolumn",
+                        "gridId" => "gridId",
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "frame" => "true",
+                        "clicksToEdit" => "1"
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "checkbox":
@@ -883,7 +1013,16 @@ class Consolidated
 
                     $editor = "* new Ext.form.CheckboxCustom({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\" " . $inputValue . $uncheckedValue . " }) *";
                     $editor = $this->removeLineBreaks($editor);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "frame" => true,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "text":
@@ -903,7 +1042,16 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array(
+                        "header" => $fieldLabel,
+                        "dataIndex" => $field->name,
+                        "width" => (int)($width),
+                        "align" => $align,
+                        "editor" => $editor,
+                        "frame" => true,
+                        "clicksToEdit" => 1,
+                        "sortable" => true
+                    );
                     $caseReaderFields[] = array("name" => $field->name);
             }
         }
@@ -934,8 +1082,13 @@ class Consolidated
     /**
      * Get Dropdown Label
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $appUid
+     * @param string $pro_uid
+     * @param string $dyn_uid
+     * @param string $fieldName
+     * @param string $fieldVal
+     *
+     * @return string
      */
     public function getDropdownLabel($appUid, $pro_uid, $dyn_uid, $fieldName, $fieldVal)
     {
@@ -1009,8 +1162,10 @@ class Consolidated
     /**
      * Check Valid Date
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $field
+     *
+     * @return boolean
+     *
      */
     public function checkValidDate($field)
     {
@@ -1022,16 +1177,20 @@ class Consolidated
     }
 
     /**
-     * consolidatedUpdate
+     * This function update the case with the consolidate data
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $dynaformUid
+     * @param array $dataUpdate
+     * @param string $usr_uid
+     *
+     * @return void
+     *
      */
     function consolidatedUpdate($dynaformUid, $dataUpdate, $usr_uid)
     {
 
         $delIndex = 1;
-        $oCase = new \Cases();
+        $oCase = new ClassesCases();
 
         $array = array();
         $array["form"] = $dataUpdate;
@@ -1081,7 +1240,9 @@ class Consolidated
     /**
      * Important for windows servers, because the character '\r' breaks the json
      * definition.
+     *
      * @param string $string
+     *
      * @return string
      */
     public function removeLineBreaks($string)
@@ -1090,17 +1251,21 @@ class Consolidated
     }
 
     /**
+     * Get total
+     *
      * @param $usrUid
+     *
      * @return int
      */
     public function getCountList($usrUid)
     {
         $criteria = new Criteria();
-        $criteria->add(\CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
-        $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \ListInboxPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(\ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
-        $total = \CaseConsolidatedCorePeer::doCount($criteria);
+        $criteria->add(CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
+        $criteria->addJoin(CaseConsolidatedCorePeer::TAS_UID, ListInboxPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
+        $total = CaseConsolidatedCorePeer::doCount($criteria);
+
         return (int)$total;
     }
 }

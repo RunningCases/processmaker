@@ -118,8 +118,6 @@ class InstallerModule extends Controller
 
     public function getSystemInfo ()
     {
-        //$echo "<script> document.write(TRANSLATIONS) </script>";
-        //print_r ($valu);die();
         $this->setResponseType( 'json' );
 
         // PHP info and verification

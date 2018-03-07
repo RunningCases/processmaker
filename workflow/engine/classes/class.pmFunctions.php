@@ -234,7 +234,9 @@ function literalDate ($date, $lang = 'en')
  *
  * @param string(32) | $SqlStatement | Sql query | The SQL statement to be executed. Do NOT include the database name in the SQL statement.
  * @param string(32) | $DBConnectionUID="workflow"| UID database | The UID of the database connection where the SQL statement will be executed.
+ *
  * @return array or string | $Resultquery | Result | Result of the query | If executing a SELECT statement, it returns an array of associative arrays
+ * @throws SQLException
  *
  */
 function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter = array())
@@ -244,7 +246,7 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
     $blackList = System::getQueryBlackList();
-    $aListQueries = explode('|', $blackList['queries']);
+    $listQueries = explode('|', isset($blackList['queries']) ? $blackList['queries'] : '');
     $aListAllTables = explode(
         '|',
         ((isset($blackList['tables']))? $blackList['tables'] : '') .
@@ -262,7 +264,7 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
         $nameOfTable = '';
         $arrayOfTables = array();
         foreach ($aParseSqlStm as $key => $value) {
-            if(in_array($key, $aListQueries)){
+            if(in_array($key, $listQueries)){
                 if(isset($value['table'])){
                     $nameOfTable = $value['table'];
                 } else {

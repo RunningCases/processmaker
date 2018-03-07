@@ -181,8 +181,8 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         $caseLink = isset($filters['caseLink']) ? $filters['caseLink'] : '';
         $process = isset($filters['process']) ? $filters['process'] : '';
         $category = isset($filters['category']) ? $filters['category'] : '';
-        $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : '';
-        $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : '';
+        $newestthan = isset($filters['newestthan']) ? $filters['newestthan'] : '';
+        $oldestthan = isset($filters['oldestthan']) ? $filters['oldestthan'] : '';
         $appUidCheck = isset($filters['appUidCheck']) ? $filters['appUidCheck'] : array();
 
         //Filter Search
@@ -209,6 +209,19 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
             $aConditions[] = array(ListUnassignedPeer::PRO_UID, ProcessPeer::PRO_UID);
             $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
+        }
+
+        //Those filters: $newestthan, $oldestthan is used from mobile GET /light/unassigned
+        if ($newestthan != '') {
+            $criteria->add(
+                $criteria->getNewCriterion(ListUnassignedPeer::DEL_DELEGATE_DATE, $newestthan, Criteria::GREATER_THAN)
+            );
+        }
+
+        if ($oldestthan != '') {
+            $criteria->add(
+                $criteria->getNewCriterion(ListUnassignedPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN)
+            );
         }
 
         //Review in the specific lot of cases

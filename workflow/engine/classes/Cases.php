@@ -380,40 +380,36 @@ class Cases
         $tasks = $this->getSelfServiceTasks($USR_UID);
 
         foreach ($tasks as $key => $val) {
-            if ($TAS_UID == $val['uid']) {
+            if ($TAS_UID === $val['uid']) {
                 return true;
             }
         }
 
-        if ($APP_UID != '') {
+        if (!empty($APP_UID)) {
             $task = new Task();
             $arrayTaskData = $task->load($TAS_UID);
 
-            $taskGroupVariable = trim($arrayTaskData["TAS_GROUP_VARIABLE"], " @#");
+            $taskGroupVariable = trim($arrayTaskData['TAS_GROUP_VARIABLE'], ' @#');
 
             $caseData = $this->loadCase($APP_UID);
 
-            if (isset($caseData["APP_DATA"][$taskGroupVariable])) {
-                $dataVariable = $caseData["APP_DATA"][$taskGroupVariable];
+            if (isset($caseData['APP_DATA'][$taskGroupVariable])) {
+                $dataVariable = $caseData['APP_DATA'][$taskGroupVariable];
 
-                if (is_array($dataVariable)) {
-                    //UIDs of Users
-                    if (!empty($dataVariable) && in_array($USR_UID, $dataVariable)) {
+                if (empty($dataVariable)) {
+                    return false;
+                }
+
+                $dataVariable = is_array($dataVariable)? $dataVariable : (array)trim($dataVariable);
+
+                if (in_array($USR_UID, $dataVariable, true)) {
+                    return true;
+                }
+
+                $groups = new Groups();
+                foreach ($groups->getActiveGroupsForAnUser($USR_UID) as $key => $group) {
+                    if (in_array($group, $dataVariable, true)) {
                         return true;
-                    }
-                } else {
-                    //UID of Group
-                    $dataVariable = trim($dataVariable);
-
-                    $group = new Groups();
-
-                    if (!empty($dataVariable) && in_array($dataVariable, $group->getActiveGroupsForAnUser($USR_UID))) {
-                        return true;
-                    } else {
-                        //UID of User
-                        if (!empty($dataVariable) && $dataVariable == $USR_UID) {
-                            return true;
-                        }
                     }
                 }
             }
@@ -4396,28 +4392,30 @@ class Cases
     }
 
     /**
-     * reassign a case
+     * Reassign a case
      *
      * @name reassignCase
-     * @param string $sApplicationUID
-     * @param string $iDelegation
-     * @param string $sUserUID
-     * @param string $newUserUID
-     * @param string $sType
+     *
+     * @param string $appUid
+     * @param string $delIndex
+     * @param string $currentUserUid
+     * @param string $newUserUid
+     * @param string $type
+     *
      * @return true
      */
-    public function reassignCase($sApplicationUID, $iDelegation, $sUserUID, $newUserUID, $sType = 'REASSIGN')
+    public function reassignCase($appUid, $delIndex, $currentUserUid, $newUserUid, $type = 'REASSIGN')
     {
-        $this->CloseCurrentDelegation($sApplicationUID, $iDelegation);
-        $user = UsersPeer::retrieveByPK($newUserUID);
-        $oAppDelegation = new AppDelegation();
-        $aFieldsDel = $oAppDelegation->Load($sApplicationUID, $iDelegation);
-        $iIndex = $oAppDelegation->createAppDelegation(
-            $aFieldsDel['PRO_UID'],
-            $aFieldsDel['APP_UID'],
-            $aFieldsDel['TAS_UID'],
-            (empty($user)) ? 0 : $user->getUsrId(),
-            $aFieldsDel['DEL_THREAD'],
+        $this->CloseCurrentDelegation($appUid, $delIndex);
+        $user = UsersPeer::retrieveByPK($newUserUid);
+        $appDelegation = new AppDelegation();
+        $fieldsDel = $appDelegation->Load($appUid, $delIndex);
+        $newDelIndex = $appDelegation->createAppDelegation(
+            $fieldsDel['PRO_UID'],
+            $fieldsDel['APP_UID'],
+            $fieldsDel['TAS_UID'],
+            $newUserUid,
+            $fieldsDel['DEL_THREAD'],
             3,
             false,
             -1,
@@ -4425,79 +4423,80 @@ class Cases
             false,
             false,
             0,
-            $aFieldsDel['APP_NUMBER'],
-            $aFieldsDel['TAS_ID'],
+            $fieldsDel['APP_NUMBER'],
+            $fieldsDel['TAS_ID'],
             (empty($user)) ? 0 : $user->getUsrId(),
-            $aFieldsDel['PRO_ID']
+            $fieldsDel['PRO_ID']
         );
-        $newDelIndex = $iIndex;
-        $aData = array();
-        $aData['APP_UID'] = $aFieldsDel['APP_UID'];
-        $aData['DEL_INDEX'] = $iIndex;
-        $aData['DEL_PREVIOUS'] = $aFieldsDel['DEL_PREVIOUS'];
-        $aData['DEL_TYPE'] = $aFieldsDel['DEL_TYPE'];
-        $aData['DEL_PRIORITY'] = $aFieldsDel['DEL_PRIORITY'];
-        $aData['DEL_DELEGATE_DATE'] = $aFieldsDel['DEL_DELEGATE_DATE'];
-        $aData['USR_UID'] = $newUserUID;
-        $aData['DEL_INIT_DATE'] = null;
-        $aData['DEL_FINISH_DATE'] = null;
-        $aData['USR_ID'] = (empty($user)) ? 0 : $user->getUsrId();
-        $oAppDelegation->update($aData);
-        $oAppThread = new AppThread();
-        $oAppThread->update(
-                array(
-                    'APP_UID' => $sApplicationUID,
-                    'APP_THREAD_INDEX' => $aFieldsDel['DEL_THREAD'],
-                    'DEL_INDEX' => $iIndex)
+
+        $newData = [];
+        $newData['APP_UID'] = $fieldsDel['APP_UID'];
+        $newData['DEL_INDEX'] = $newDelIndex;
+        $newData['DEL_PREVIOUS'] = $fieldsDel['DEL_PREVIOUS'];
+        $newData['DEL_TYPE'] = $fieldsDel['DEL_TYPE'];
+        $newData['DEL_PRIORITY'] = $fieldsDel['DEL_PRIORITY'];
+        $newData['DEL_DELEGATE_DATE'] = $fieldsDel['DEL_DELEGATE_DATE'];
+        $newData['USR_UID'] = $newUserUid;
+        $newData['DEL_INIT_DATE'] = null;
+        $newData['DEL_FINISH_DATE'] = null;
+        $newData['USR_ID'] = (empty($user)) ? 0 : $user->getUsrId();
+        $appDelegation->update($newData);
+        $appThread = new AppThread();
+        $appThread->update(
+            [
+                'APP_UID' => $appUid,
+                'APP_THREAD_INDEX' => $fieldsDel['DEL_THREAD'],
+                'DEL_INDEX' => $newDelIndex
+            ]
         );
 
         //Save in APP_DELAY
-        $oApplication = new Application();
-        $aFields = $oApplication->Load($sApplicationUID);
-        $aData['PRO_UID'] = $aFieldsDel['PRO_UID'];
-        $aData['APP_UID'] = $sApplicationUID;
-        $aData['APP_THREAD_INDEX'] = $aFieldsDel['DEL_THREAD'];
-        $aData['APP_DEL_INDEX'] = $iDelegation;
-        $aData['APP_TYPE'] = ($sType != '' ? $sType : 'REASSIGN');
-        $aData['APP_STATUS'] = $aFields['APP_STATUS'];
-        $aData['APP_DELEGATION_USER'] = $sUserUID;
-        $aData['APP_ENABLE_ACTION_USER'] = $sUserUID;
-        $aData['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
-        $aData['APP_NUMBER'] = $aFieldsDel['APP_NUMBER'];
-        $oAppDelay = new AppDelay();
-        $oAppDelay->create($aData);
+        $application = new Application();
+        $dataFields = $application->Load($appUid);
+        $newData['PRO_UID'] = $fieldsDel['PRO_UID'];
+        $newData['APP_UID'] = $appUid;
+        $newData['APP_THREAD_INDEX'] = $fieldsDel['DEL_THREAD'];
+        $newData['APP_DEL_INDEX'] = $delIndex;
+        $newData['APP_TYPE'] = ($type != '' ? $type : 'REASSIGN');
+        $newData['APP_STATUS'] = $dataFields['APP_STATUS'];
+        $newData['APP_DELEGATION_USER'] = $currentUserUid;
+        $newData['APP_ENABLE_ACTION_USER'] = $currentUserUid;
+        $newData['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
+        $newData['APP_NUMBER'] = $fieldsDel['APP_NUMBER'];
+        $appDelay = new AppDelay();
+        $appDelay->create($newData);
 
         //update searchindex
         if ($this->appSolr != null) {
-            $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
+            $this->appSolr->updateApplicationSearchIndex($appUid);
         }
 
         /*----------------------------------********---------------------------------*/
         $participated = new ListParticipatedLast();
-        $participated->remove($aData['APP_UID'], $newUserUID, $iDelegation);
+        $participated->remove($newData['APP_UID'], $newUserUid, $delIndex);
 
-        $aFieldsDel = array_merge($aData, $aFieldsDel);
-        $aFieldsDel['USR_UID'] = $newUserUID;
-        $aFieldsDel['DEL_INDEX'] = $newDelIndex;
+        $fieldsDel = array_merge($newData, $fieldsDel);
+        $fieldsDel['USR_UID'] = $newUserUid;
+        $fieldsDel['DEL_INDEX'] = $newDelIndex;
         $inbox = new ListInbox();
-        $inbox->newRow($aFieldsDel, $sUserUID);
+        $inbox->newRow($fieldsDel, $currentUserUid);
 
         //Update - WHERE
         $criteriaWhere = new Criteria("workflow");
-        $criteriaWhere->add(ListInboxPeer::APP_UID, $aFieldsDel["APP_UID"], Criteria::EQUAL);
-        $criteriaWhere->add(ListInboxPeer::USR_UID, $aFieldsDel['USR_UID'], Criteria::EQUAL);
-        $criteriaWhere->add(ListInboxPeer::DEL_INDEX, $aFieldsDel['DEL_INDEX'], Criteria::EQUAL);
+        $criteriaWhere->add(ListInboxPeer::APP_UID, $fieldsDel["APP_UID"], Criteria::EQUAL);
+        $criteriaWhere->add(ListInboxPeer::USR_UID, $fieldsDel['USR_UID'], Criteria::EQUAL);
+        $criteriaWhere->add(ListInboxPeer::DEL_INDEX, $fieldsDel['DEL_INDEX'], Criteria::EQUAL);
         //Update - SET
         $criteriaSet = new Criteria("workflow");
-        $criteriaSet->add(ListInboxPeer::DEL_INDEX, $aData['DEL_INDEX']);
+        $criteriaSet->add(ListInboxPeer::DEL_INDEX, $newData['DEL_INDEX']);
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
         /*----------------------------------********---------------------------------*/
-        $this->getExecuteTriggerProcess($sApplicationUID, 'REASSIGNED');
+        $this->getExecuteTriggerProcess($appUid, 'REASSIGNED');
 
         //Delete record of the table LIST_UNASSIGNED
         $unassigned = new ListUnassigned();
-        $unassigned->remove($sApplicationUID, $iDelegation);
+        $unassigned->remove($appUid, $delIndex);
 
         return true;
     }

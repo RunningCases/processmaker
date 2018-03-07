@@ -173,6 +173,8 @@ class PluginRegistry
                             $Plugin = new $className($pluginDetail->getNamespace(), $pluginDetail->getFile());
                             $this->_aPlugins[$pluginDetail->getNamespace()] = $Plugin;
                             $iPlugins++;
+                            $Plugin->registerPmFunction();
+                            $this->init();
                             $Plugin->setup();
                         }
                     }
@@ -237,16 +239,18 @@ class PluginRegistry
             $className = $currentPlugin->getClassName();
             /** @var enterprisePlugin $Plugin */
             if (class_exists($className)) {
-                $Plugin = new $className(
+                $plugin = new $className(
                     $currentPlugin->getNamespace(),
                     $currentPlugin->getFile()
                 );
+                $this->_aPluginDetails[$Namespace]->sFriendlyName = $plugin->sFriendlyName;
+                $this->_aPluginDetails[$Namespace]->sDescription = $plugin->sDescription;
             } else {
-                $Plugin = $currentPlugin;
+                $plugin = $currentPlugin;
             }
-            $this->_aPlugins[$Namespace] = $Plugin;
-            if (method_exists($Plugin, 'enable')) {
-                $Plugin->enable();
+            $this->_aPlugins[$Namespace] = $plugin;
+            if (method_exists($plugin, 'enable')) {
+                $plugin->enable();
             }
             /*
              * 1. register <plugin-dir>/src directory for autoloading
@@ -263,7 +267,7 @@ class PluginRegistry
             if (array_key_exists($currentPlugin->getNamespace(), $this->_restServiceEnabled)
                 && $this->_restServiceEnabled[$currentPlugin->getNamespace()] == true
             ) {
-                $Plugin->registerRestService();
+                $plugin->registerRestService();
             }
             return true;
         } else {
@@ -479,6 +483,9 @@ class PluginRegistry
                 $className = $detail->getClassName();
                 /** @var enterprisePlugin $oPlugin */
                 $oPlugin = new $className($detail->getNamespace(), $detail->getFile());
+                $oPlugin->registerPmFunction();
+                $detail->setEnabled(false);
+                $this->init();
                 $oPlugin->setup();
                 $this->_aPlugins[$detail->getNamespace()] = $oPlugin;
                 $oPlugin->install();
@@ -855,18 +862,8 @@ class PluginRegistry
                 }
                 if ($found) {
                     require_once($classFile);
-                    $sClassNameA = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
-                        str_replace(
-                            ['Plugin', 'plugin'],
-                            'Class',
-                            substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
-                        );
-                    $sClassNameB = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
-                        str_replace(
-                            ['Plugin', 'plugin'],
-                            'class',
-                            substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
-                        );
+                    $sClassNameA = preg_replace("/plugin$/i", 'Class', $this->_aPluginDetails[$trigger->getNamespace()]->getClassName());
+                    $sClassNameB = preg_replace("/plugin$/i", 'class', $this->_aPluginDetails[$trigger->getNamespace()]->getClassName());
                     $sClassName = class_exists($sClassNameA) ? $sClassNameA : $sClassNameB;
                     $obj = new $sClassName();
                     $methodName = $trigger->getTriggerName();
@@ -1253,11 +1250,10 @@ class PluginRegistry
             if (empty($this->_restExtendServices[$Namespace])) {
                 $this->_restExtendServices[$Namespace] = new stdClass();
             }
-            $this->_restExtendServices[$Namespace]->{$ClassName} = [
-                'filePath' => $classFile,
-                'classParent' => $ClassName,
-                'classExtend' => 'Ext' . $ClassName
-            ];
+            $this->_restExtendServices[$Namespace]->{$ClassName} = new stdClass();
+            $this->_restExtendServices[$Namespace]->{$ClassName}->filePath = $classFile;
+            $this->_restExtendServices[$Namespace]->{$ClassName}->classParent = $ClassName;
+            $this->_restExtendServices[$Namespace]->{$ClassName}->classExtend = 'Ext' . $ClassName;
         }
     }
 

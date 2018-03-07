@@ -2680,7 +2680,7 @@ class WorkspaceTools
                     
                       SELECT
                         ACV.APP_UID,
-                        ACV.USR_UID,
+                        IF(ACV.USR_UID=\'\', \'SELF_SERVICES\', ACV.USR_UID),
                         ACV.DEL_INDEX,
                         ACV.TAS_UID,
                         ACV.PRO_UID,

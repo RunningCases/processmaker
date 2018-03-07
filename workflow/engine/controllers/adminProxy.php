@@ -841,21 +841,22 @@ class adminProxy extends HttpProxyController
     */
     public function changeNamelogo($snameLogo)
     {
-        $snameLogo = preg_replace("/[áàâãª]/", "a", $snameLogo);
-        $snameLogo = preg_replace("/[ÁÀÂÃ]/",  "A", $snameLogo);
-        $snameLogo = preg_replace("/[ÍÌÎ]/",   "I", $snameLogo);
-        $snameLogo = preg_replace("/[íìî]/",   "i", $snameLogo);
-        $snameLogo = preg_replace("/[éèê]/",   "e", $snameLogo);
-        $snameLogo = preg_replace("/[ÉÈÊ]/",   "E", $snameLogo);
-        $snameLogo = preg_replace("/[óòôõº]/", "o", $snameLogo);
-        $snameLogo = preg_replace("/[ÓÒÔÕ]/",  "O", $snameLogo);
-        $snameLogo = preg_replace("/[úùû]/",   "u", $snameLogo);
-        $snameLogo = preg_replace("/[ÚÙÛ]/",   "U", $snameLogo);
-        $snameLogo = str_replace( "ç",         "c", $snameLogo);
-        $snameLogo = str_replace( "Ç",         "C", $snameLogo);
-        $snameLogo = str_replace( "[ñ]",       "n", $snameLogo);
-        $snameLogo = str_replace( "[Ñ]",       "N", $snameLogo);
-        return ($snameLogo);
+        $result = $snameLogo;
+        $result = mb_ereg_replace("[áàâãª]", "a", $result);
+        $result = mb_ereg_replace("[ÁÀÂÃ]", "A", $result);
+        $result = mb_ereg_replace("[ÍÌÎ]", "I", $result);
+        $result = mb_ereg_replace("[íìî]", "i", $result);
+        $result = mb_ereg_replace("[éèê]", "e", $result);
+        $result = mb_ereg_replace("[ÉÈÊ]", "E", $result);
+        $result = mb_ereg_replace("[óòôõº]", "o", $result);
+        $result = mb_ereg_replace("[ÓÒÔÕ]", "O", $result);
+        $result = mb_ereg_replace("[úùû]", "u", $result);
+        $result = mb_ereg_replace("[ÚÙÛ]", "U", $result);
+        $result = mb_ereg_replace("[ç]", "c", $result);
+        $result = mb_ereg_replace("[Ç]", "C", $result);
+        $result = mb_ereg_replace("[ñ]", "n", $result);
+        $result = mb_ereg_replace("[Ñ]", "N", $result);
+        return ($result);
     }
 
     /**
@@ -1382,7 +1383,7 @@ class adminProxy extends HttpProxyController
 
     public function generateInfoSupport ()
     {
-        require_once (PATH_CONTROLLERS . "installer.php");
+        require_once (PATH_CONTROLLERS . "InstallerModule.php");
         $params = array ();
 
         $oServerConf = &ServerConf::getSingleton();
@@ -1438,12 +1439,9 @@ class adminProxy extends HttpProxyController
         //PHP Version
         $params['php'] = $systemInfo->php->version;
 
-        //Apache - IIS Version
-        try {
-            $params['apache'] = apache_get_version();
-        } catch (Exception $e) {
-            $params['apache'] = '';
-        }
+        //Apache - nginx - IIS Version
+
+        $params['serverSoftwareVersion'] = System::getServerVersion();
 
         //Installed Plugins (license info?)
         $arrayAddon = array ();
