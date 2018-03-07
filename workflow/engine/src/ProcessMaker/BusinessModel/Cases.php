@@ -2552,7 +2552,6 @@ class Cases
 
             $arrayCondition = array();
             $arrayCondition[] = array(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::EQUAL);
-            $arrayCondition[] = array(ApplicationPeer::APP_UID, AppThreadPeer::APP_UID, Criteria::EQUAL);
             $arrayCondition[] = array(
                 ApplicationPeer::APP_UID,
                 $delimiter . $applicationUid . $delimiter,
@@ -2563,12 +2562,10 @@ class Cases
             $criteria->add(
                 $criteria->getNewCriterion(ApplicationPeer::APP_STATUS, "TO_DO", Criteria::EQUAL)->addAnd(
                     $criteria->getNewCriterion(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL))->addAnd(
-                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))->addAnd(
-                    $criteria->getNewCriterion(AppThreadPeer::APP_THREAD_STATUS, "OPEN"))
+                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))
             )->addOr(
                 $criteria->getNewCriterion(ApplicationPeer::APP_STATUS, "DRAFT", Criteria::EQUAL)->addAnd(
-                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))->addAnd(
-                    $criteria->getNewCriterion(AppThreadPeer::APP_THREAD_STATUS, "OPEN"))
+                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))
             );
 
             if ($delIndex != 0) {
