@@ -5,6 +5,7 @@ namespace ProcessMaker\Plugins\Traits;
 use BasePeer;
 use G;
 use PluginsRegistry;
+use ProcessMaker\Plugins\Interfaces\CronFile;
 use ProcessMaker\Plugins\Interfaces\CssFile;
 use ProcessMaker\Plugins\Interfaces\FolderDetail;
 use ProcessMaker\Plugins\Interfaces\JsFile;
@@ -116,6 +117,7 @@ trait PluginStructure
                 $this->buildCss(G::json_decode($plugin['PluginCss'], true));
                 $this->buildJs(G::json_decode($plugin['PluginJs'], true));
                 $this->buildRestService(G::json_decode($plugin['PluginRestService'], true));
+                $this->buildCronFiles($plugin['PluginNamespace'], G::json_decode($plugin['PluginCronFiles'], true));
                 $this->buildAttributes($plugin['PluginNamespace'], G::json_decode($plugin['PluginAttributes']));
             }
         }
@@ -259,6 +261,23 @@ trait PluginStructure
     private function buildRestService($restServices)
     {
         $this->_restServices = array_merge($this->_restServices, $restServices);
+    }
+
+    /**
+     * Builds an array with the Cron Files configurations and set to the respective attribute
+     *
+     * @param string $pluginName
+     * @param array $cronFilesToAdd
+     */
+    private function buildCronFiles($pluginName, $cronFilesToAdd)
+    {
+        $cronFiles = [];
+        if ($cronFilesToAdd) {
+            foreach ($cronFilesToAdd as $cronFile) {
+                $cronFiles[] = new CronFile($pluginName, $cronFile['CronFile']);
+            }
+        }
+        $this->_aCronFiles = array_merge($this->_aCronFiles, $cronFiles);
     }
 
     /**

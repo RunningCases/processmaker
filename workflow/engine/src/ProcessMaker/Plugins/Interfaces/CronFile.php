@@ -53,4 +53,24 @@ class CronFile
     {
         return $CronFile == $this->CronFile;
     }
+
+    /**
+     * Get plugin name
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->Namespace;
+    }
+
+    /**
+     * Get Cron file
+     *
+     * @return string
+     */
+    public function getCronFile()
+    {
+        return $this->CronFile;
+    }
 }
