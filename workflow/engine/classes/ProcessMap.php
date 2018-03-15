@@ -803,7 +803,7 @@ class ProcessMap
                             if ($val->equalStepIdTo($aRow['STEP_UID_OBJ'])) {
                                 $sTitle = $val->getStepTitle();
                                 if (trim($val->getSetupStepPage()) != '') {
-                                    $urlEdit = "externalStepEdit('" . $aRow['STEP_UID'] . "', '" . $val->sSetupStepPage . "');";
+                                    $urlEdit = "externalStepEdit('" . $aRow['STEP_UID'] . "', '" . $val->getSetupStepPage() . "');";
                                     $linkEditValue = 'Edit';
                                 } else {
                                     $urlEdit = "";

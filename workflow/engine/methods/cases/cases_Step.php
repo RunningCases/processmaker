@@ -1124,9 +1124,9 @@ try {
             $sNamespace = '';
             $sStepName = '';
             foreach ($externalSteps as $key => $val) {
-                if ($val->sStepId == $_GET['UID']) {
-                    $sNamespace = $val->sNamespace;
-                    $sStepName = $val->sStepName;
+                if ($val->getStepId() == $_GET['UID']) {
+                    $sNamespace = $val->getNamespace();
+                    $sStepName = $val->getStepName();
 
                 }
             }

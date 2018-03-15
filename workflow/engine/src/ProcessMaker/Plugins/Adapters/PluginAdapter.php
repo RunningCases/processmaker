@@ -90,6 +90,7 @@ class PluginAdapter
         '_aJavascripts' => ['name' => 'PLUGIN_JS', 'type' => 'array'],
         '_aJs' => ['name' => 'PLUGIN_JS', 'type' => 'array'],
         '_restServices' => ['name' => 'PLUGIN_REST_SERVICE', 'type' => 'array'],
+        '_aCronFiles' => ['name' => 'PLUGIN_CRON_FILES', 'type' => 'array'],
         '_aTaskExtendedProperties' => ['name' => 'PLUGIN_TASK_EXTENDED_PROPERTIES', 'type' => 'array'],
     ];
 
