@@ -109,6 +109,8 @@ class PluginsRegistryMapBuilder
 
         $tMap->addColumn('PLUGIN_REST_SERVICE', 'PluginRestService', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
+        $tMap->addColumn('PLUGIN_CRON_FILES', 'PluginCronFiles', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addColumn('PLUGIN_TASK_EXTENDED_PROPERTIES', 'PluginTaskExtendedProperties', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
         $tMap->addColumn('PLUGIN_ATTRIBUTES', 'PluginAttributes', 'string', CreoleTypes::LONGVARCHAR, false, null);

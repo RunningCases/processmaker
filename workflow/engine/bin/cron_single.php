@@ -439,8 +439,16 @@ function executePlugins()
     // -> Execute functions
     if (!empty($cronFiles)) {
         setExecutionMessage('Executing registered cron files for Workspace: ' . SYS_SYS);
+        /**
+         * @var \ProcessMaker\Plugins\Interfaces\CronFile $cronFile
+         */
         foreach($cronFiles as $cronFile) {
-            executeCustomCronFunction(PATH_PLUGINS . $cronFile->namespace . PATH_SEP . 'bin' . PATH_SEP . $cronFile->cronFile . '.php', $cronFile->cronFile);
+            $path = PATH_PLUGINS . $cronFile->getNamespace() . PATH_SEP . 'bin' . PATH_SEP . $cronFile->getCronFile() . '.php';
+            if (file_exists($path)) {
+                executeCustomCronFunction($path, $cronFile->getCronFile());
+            } else {
+                setExecutionMessage('File ' . $cronFile->getCronFile() . '.php ' . 'does not exist.');
+            }
         }
     }
 

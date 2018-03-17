@@ -1355,22 +1355,23 @@ class PluginRegistry
 
     /**
      * Register a cron file
-     * @param string $Namespace Name of Plugin
-     * @param string $CronFile
+     * @param string $pluginName Name of Plugin
+     * @param string $cronFileToRegister
      */
-    public function registerCronFile($Namespace, $CronFile)
+    public function registerCronFile($pluginName, $cronFileToRegister)
     {
         $found = false;
         /** @var CronFile $cronFile */
         foreach ($this->_aCronFiles as $cronFile) {
-            if ($cronFile->equalCronFileTo($CronFile) && $cronFile->equalNamespaceTo($Namespace)) {
-                $cronFile->setCronFile($CronFile);
+            if ($cronFile instanceof CronFile &&
+                $cronFile->equalNamespaceTo($pluginName) &&
+                $cronFile->equalCronFileTo($cronFileToRegister)) {
+                $cronFile->setCronFile($cronFileToRegister);
                 $found = true;
             }
         }
         if (!$found) {
-            $CronFile = new CronFile($Namespace, $CronFile);
-            $this->_aCronFiles[] = $CronFile;
+            $this->_aCronFiles[] = new CronFile($pluginName, $cronFileToRegister);
         }
     }
 

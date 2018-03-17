@@ -5673,6 +5673,7 @@
     <column name="PLUGIN_CSS" type="LONGVARCHAR"/>
     <column name="PLUGIN_JS" type="LONGVARCHAR"/>
     <column name="PLUGIN_REST_SERVICE" type="LONGVARCHAR"/>
+    <column name="PLUGIN_CRON_FILES" type="LONGVARCHAR"/>
     <column name="PLUGIN_TASK_EXTENDED_PROPERTIES" type="LONGVARCHAR"/>
     <column name="PLUGIN_ATTRIBUTES" type="LONGVARCHAR"/>
   </table>
