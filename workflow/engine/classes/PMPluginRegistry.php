@@ -1480,21 +1480,22 @@ class PMPluginRegistry
     /**
      * Register a cron file in the singleton
      *
-     * @param unknown_type $namespace
-     * @param unknown_type $cronFile
+     * @param string $pluginName
+     * @param string $cronFileToRegister
      */
-    public function registerCronFile($namespace, $cronFile)
+    public function registerCronFile($pluginName, $cronFileToRegister)
     {
         $found = false;
-        foreach ($this->_aCronFiles as $row => $detail) {
-            if ($cronFile == $detail->cronFile && $namespace == $detail->namespace) {
-                $detail->cronFile = $cronFile;
+        foreach ($this->_aCronFiles as $cronFile) {
+            if ($cronFile instanceof cronFile &&
+                $cronFileToRegister === $cronFile->cronFile &&
+                $pluginName === $cronFile->namespace) {
+                $cronFile->cronFile = $cronFileToRegister;
                 $found = true;
             }
         }
         if (!$found) {
-            $cronFile = new cronFile($namespace, $cronFile);
-            $this->_aCronFiles[] = $cronFile;
+            $this->_aCronFiles[] = new cronFile($pluginName, $cronFileToRegister);
         }
     }
 
