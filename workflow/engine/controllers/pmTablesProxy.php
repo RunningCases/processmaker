@@ -1152,7 +1152,13 @@ class pmTablesProxy extends HttpProxyController
         }
     }
 
-    public function genDataReport ($httpData)
+    /**
+     * It eliminates and generates the data report from the cases of a process.
+     * 
+     * @param object $httpData
+     * @return object
+     */
+    public function genDataReport($httpData)
     {
         $result = new stdClass();
 
@@ -1160,12 +1166,26 @@ class pmTablesProxy extends HttpProxyController
         $result->success = true;
 
         $additionalTables = new AdditionalTables();
-        $table = $additionalTables->load( $httpData->id );
-        if ($table['PRO_UID'] != '') {
-            $additionalTables->populateReportTable( $table['ADD_TAB_NAME'], PmTable::resolveDbSource( $table['DBS_UID'] ), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID'] );
-            $result->message = 'generated for table ' . $table['ADD_TAB_NAME'];
-        }
+        $table = $additionalTables->load($httpData->id);
 
+        if (!empty($table) && $table['PRO_UID'] != '') {
+            try {
+                $additionalTables->populateReportTable($table['ADD_TAB_NAME'], PmTable::resolveDbSource($table['DBS_UID']), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID']);
+                $result->message = 'Generated for table ' . $table['ADD_TAB_NAME'];
+            } catch (Exception $e) {
+                $context = Bootstrap::getDefaultContextLog();
+                $context['proUid'] = $table['PRO_UID'];
+                $context['tableName'] = $table['ADD_TAB_NAME'];
+                $context['message'] = $e->getMessage();
+                Bootstrap::registerMonolog('dataReport', 500, 'Generation of data report could not be completed', $context, $context['workspace'], 'processmaker.log');
+
+                $result->message = 'Generation of data report could not be completed. Please check the processmaker.log for more details.';
+                $result->success = false;
+            }
+        } else {
+            $result->message = 'Unable to retrieve the table for this id: ' . $httpData->id . '.';
+            $result->success = false;
+        }
         return $result;
     }
 
