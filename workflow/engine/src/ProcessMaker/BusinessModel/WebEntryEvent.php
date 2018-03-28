@@ -400,6 +400,13 @@ class WebEntryEvent
                     $languages[] = $mLang['LANG_ID'];
                 }
                 $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['defaultValues'] = $languages;
+            } else {
+                $this->arrayFieldDefinition['WE_LINK_SKIN']['required'] = false;
+                $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['required'] = false;
+                $this->arrayFieldDefinition['WE_LINK_DOMAIN']['required'] = false;
+                $this->arrayFieldDefinition['WE_LINK_SKIN']['empty'] = true;
+                $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['empty'] = true;
+                $this->arrayFieldDefinition['WE_LINK_DOMAIN']['empty'] = true;
             }
 
             $process = new BusinessModelProcess();

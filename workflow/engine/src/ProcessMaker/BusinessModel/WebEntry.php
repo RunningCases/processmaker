@@ -337,7 +337,7 @@ class WebEntry
      *
      * return void
      */
-    protected function setWeData($webEntryUid, $arrayData)
+    protected function setWeData($webEntryUid)
     {
         try {
             //Verify data
@@ -559,17 +559,15 @@ class WebEntry
             }
 
             //Update
-            if (!isset($arrayData['WE_LINK_GENERATION']) || $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
-                //Update where
-                $criteriaWhere = new \Criteria("workflow");
-                $criteriaWhere->add(\WebEntryPeer::WE_UID, $webEntryUid);
+            //Update where
+            $criteriaWhere = new \Criteria("workflow");
+            $criteriaWhere->add(\WebEntryPeer::WE_UID, $webEntryUid);
 
-                //Update set
-                $criteriaSet = new \Criteria("workflow");
-                $criteriaSet->add(\WebEntryPeer::WE_DATA, $webEntryData);
+            //Update set
+            $criteriaSet = new \Criteria("workflow");
+            $criteriaSet->add(\WebEntryPeer::WE_DATA, $webEntryData);
 
-                \BasePeer::doUpdate($criteriaWhere, $criteriaSet, \Propel::getConnection("workflow"));
-            }
+            \BasePeer::doUpdate($criteriaWhere, $criteriaSet, \Propel::getConnection("workflow"));
         } catch (\Exception $e) {
             throw $e;
         }
@@ -639,7 +637,7 @@ class WebEntry
                     }
 
                     //Set WE_DATA
-                    $this->setWeData($webEntryUid, $arrayData);
+                    $this->setWeData($webEntryUid);
 
                     //Return
                     return $this->getWebEntry($webEntryUid);
@@ -720,7 +718,7 @@ class WebEntry
                     }
 
                     //Set WE_DATA
-                    $this->setWeData($webEntryUid, $arrayData);
+                    $this->setWeData($webEntryUid);
 
                     //Return
                     if (!$this->formatFieldNameInUppercase) {
