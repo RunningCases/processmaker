@@ -88,6 +88,7 @@ switch ($req) {
         }
         //Date from and to
         if (!empty($dateFrom) && !empty($dateTo)) {
+            $dateTo = $dateTo . " 23:59:59";
             $criteria->add($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateFrom, Criteria::GREATER_EQUAL)->addAnd($criteria->getNewCriterion(AppMessagePeer::APP_MSG_DATE, $dateTo, Criteria::LESS_EQUAL)));
         } else {
             if (!empty($dateFrom)) {
