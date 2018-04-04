@@ -337,6 +337,7 @@
         <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="APP_MSG_TYPE" type="VARCHAR" size="100" required="true" default=""/>
+        <column name="APP_MSG_TYPE_ID" type="TINYINT" required="false" default="0"/>
         <column name="APP_MSG_SUBJECT" type="VARCHAR" size="150" required="true" default=""/>
         <column name="APP_MSG_FROM" type="VARCHAR" size="100" required="true" default=""/>
         <column name="APP_MSG_TO" type="LONGVARCHAR" required="true"/>
@@ -346,10 +347,12 @@
         <column name="APP_MSG_BCC" type="LONGVARCHAR" required="false"/>
         <column name="APP_MSG_TEMPLATE" type="LONGVARCHAR" required="false"/>
         <column name="APP_MSG_STATUS" type="VARCHAR" size="20"/>
+        <column name="APP_MSG_STATUS_ID" type="TINYINT" required="false" default="0"/>
         <column name="APP_MSG_ATTACH" type="LONGVARCHAR" required="false"/>
         <column name="APP_MSG_SEND_DATE" type="TIMESTAMP" required="true"/>
         <column name="APP_MSG_SHOW_MESSAGE" type="TINYINT" required="true" default="1"/>
         <column name="APP_MSG_ERROR" type="LONGVARCHAR" required="false"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
         <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
         <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
         <index name="indexForAppUid">
@@ -358,11 +361,20 @@
         <index name="indexForMsgStatus">
             <index-column name="APP_MSG_STATUS"/>
         </index>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
         <index name="INDEX_TAS_ID">
             <index-column name="TAS_ID"/>
         </index>
         <index name="INDEX_APP_NUMBER">
             <index-column name="APP_NUMBER"/>
+        </index>
+        <index name="INDEX_APP_MSG_TYPE_ID">
+            <index-column name="APP_MSG_STATUS_ID"/>
+        </index>
+        <index name="INDEX_APP_MSG_STATUS_ID">
+            <index-column name="APP_MSG_STATUS_ID"/>
         </index>
     </table>
     <table name="APP_OWNER">

@@ -1862,6 +1862,7 @@ class Process
         if (!empty($search)) {
             $process->add(ProcessPeer::PRO_TITLE, "%$search%", Criteria::LIKE);
         }
+        $process->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
         $dataset = ProcessPeer::doSelectRS($process);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();

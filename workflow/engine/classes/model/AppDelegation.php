@@ -305,21 +305,26 @@ class AppDelegation extends BaseAppDelegation
     /**
      * Load the Application Delegation row specified in [app_id] column value.
      *
-     * @param string $AppUid the uid of the application
+     * @param string $appUid the uid of the application
+     * @param integer $delIndex
+     *
      * @return array $Fields the fields
+     *
+     * @throws Exception
      */
 
-    public function Load ($AppUid, $sDelIndex)
+    public function Load ($appUid, $delIndex)
     {
-        $con = Propel::getConnection( AppDelegationPeer::DATABASE_NAME );
+        $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
         try {
-            $oAppDel = AppDelegationPeer::retrieveByPk( $AppUid, $sDelIndex );
-            if (is_object( $oAppDel ) && get_class( $oAppDel ) == 'AppDelegation') {
-                $aFields = $oAppDel->toArray( BasePeer::TYPE_FIELDNAME );
-                $this->fromArray( $aFields, BasePeer::TYPE_FIELDNAME );
-                return $aFields;
+            $oAppDel = AppDelegationPeer::retrieveByPk($appUid, $delIndex);
+            if (is_object($oAppDel) && get_class($oAppDel) == 'AppDelegation') {
+                $fields = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
+                $this->fromArray($fields, BasePeer::TYPE_FIELDNAME);
+
+                return $fields;
             } else {
-                throw (new Exception( "The row '$AppUid, $sDelIndex' in table AppDelegation doesn't exist!" ));
+                throw (new Exception("The row '$appUid, $delIndex' in table AppDelegation doesn't exist!"));
             }
         } catch (Exception $oError) {
             throw ($oError);
@@ -953,6 +958,46 @@ class AppDelegation extends BaseAppDelegation
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Get the user assigned in the index
+     *
+     * @param string $appUid
+     * @param string $delIndex
+     *
+     * @return string|null
+    */
+    public function getUserAssignedInThread($appUid, $delIndex)
+    {
+        $currentUserUid = null;
+
+        $result = $this->Load($appUid, $delIndex);
+        if (isset($result["USR_UID"])) {
+            $currentUserUid = $result["USR_UID"];
+        }
+
+        return $currentUserUid;
+    }
+
+    /**
+     * Get column PRO_ID related to the APP_NUMBER
+     *
+     * @param integer $appNumber
+     *
+     * @return integer
+    */
+    public function getProcessId($appNumber)
+    {
+        $proId = 0;
+        $criteria = new Criteria("workflow");
+        $criteria->add(AppDelegationPeer::APP_NUMBER, $appNumber);
+        $dataset = AppDelegationPeer::doSelectOne($criteria);
+        if (!is_null($dataset)) {
+            $proId = $dataset->getProId();
+        }
+
+        return $proId;
     }
 
 }

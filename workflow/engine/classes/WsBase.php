@@ -2,6 +2,7 @@
 
 //It works with the table CONFIGURATION in a WF dataBase
 use ProcessMaker\Core\System;
+use ProcessMaker\BusinessModel\EmailServer;
 
 /**
  * Copyright (C) 2009 COLOSA
@@ -776,22 +777,34 @@ class WsBase
     /**
      * send message
      *
-     * @param string $caseId
-     * @param string $sFrom
-     * @param string $sTo
-     * @param string $sCc
-     * @param string $sBcc
-     * @param string $sSubject
-     * @param string $sTemplate
+     * @param string $appUid
+     * @param string $from
+     * @param string $to
+     * @param string $cc
+     * @param string $bcc
+     * @param string $subject
+     * @param string $template
      * @param $appFields = null
-     * @param $aAttachment = null
+     * @param $attachment = null
      * @param boolean $showMessage = true
      * @param int $delIndex = 0
      * @param $config = array
      * @return $result will return an object
      */
     public function sendMessage(
-    $caseId, $sFrom, $sTo, $sCc, $sBcc, $sSubject, $sTemplate, $appFields = null, $aAttachment = null, $showMessage = true, $delIndex = 0, $config = [], $gmail = 0
+        $appUid,
+        $from,
+        $to,
+        $cc,
+        $bcc,
+        $subject,
+        $template,
+        $appFields = null,
+        $attachment = null,
+        $showMessage = true,
+        $delIndex = 0,
+        $config = [],
+        $gmail = 0
     ) {
         try {
 
@@ -805,56 +818,50 @@ class WsBase
                     }
                 } else {
                     if (PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0=")) {
-                        $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
-
+                        $emailServer = new EmailServer();
                         $criteria = $emailServer->getEmailServerCriteria();
-
                         $criteria->add(EmailServerPeer::MESS_UID, $config, Criteria::EQUAL);
-
                         $rsCriteria = EmailServerPeer::doSelectRS($criteria);
                         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
                         if ($rsCriteria->next()) {
                             $row = $rsCriteria->getRow();
-
                             $arrayConfigAux = $row;
                             $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
                         }
                     }
                 }
 
-                $aSetup = (!empty($arrayConfigAux)) ? $arrayConfigAux : System::getEmailConfiguration();
+                $setup = (!empty($arrayConfigAux)) ? $arrayConfigAux : System::getEmailConfiguration();
 
-                if (!isset($aSetup['MESS_ENABLED'])) {
-                    $aSetup['MESS_ENABLED'] = 1;
-                    $aSetup['SMTPSecure'] = $aSetup['SMTPSECURE'];
-                    unset($aSetup['SMTPSECURE']);
+                if (!isset($setup['MESS_ENABLED'])) {
+                    $setup['MESS_ENABLED'] = 1;
+                    $setup['SMTPSecure'] = $setup['SMTPSECURE'];
+                    unset($setup['SMTPSECURE']);
                 }
             } else {
                 /*----------------------------------********---------------------------------*/
-                $aSetup = System::getEmailConfiguration();
+                $setup = System::getEmailConfiguration();
                 /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
 
             $msgError = "";
-            if (sizeof($aSetup) == 0) {
+            if (sizeof($setup) == 0) {
                 $msgError = "The default configuration wasn't defined";
             }
 
-            $oSpool = new SpoolRun();
+            $spool = new SpoolRun();
+            $spool->setConfig($setup);
 
-            $oSpool->setConfig($aSetup);
-
-            $oCase = new Cases();
-
-            $oldFields = $oCase->loadCase($caseId);
+            $case = new Cases();
+            $oldFields = $case->loadCase($appUid);
             if ($gmail == 1) {
                 $pathEmail = PATH_DATA_SITE . 'mailTemplates' . PATH_SEP;
             } else {
                 $pathEmail = PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $oldFields['PRO_UID'] . PATH_SEP;
             }
-            $fileTemplate = $pathEmail . $sTemplate;
+            $fileTemplate = $pathEmail . $template;
             G::mk_dir($pathEmail, 0777, true);
 
             if (!file_exists($fileTemplate)) {
@@ -865,48 +872,45 @@ class WsBase
             }
 
             if ($appFields == null) {
-                $Fields = $oldFields['APP_DATA'];
+                $fieldsCase = $oldFields['APP_DATA'];
             } else {
-                $Fields = array_merge($oldFields['APP_DATA'], $appFields);
+                $fieldsCase = array_merge($oldFields['APP_DATA'], $appFields);
             }
 
-            $sBody = G::replaceDataGridField(file_get_contents($fileTemplate), $Fields, false);
-
-            $sFrom = G::buildFrom($aSetup, $sFrom);
-
-            $showMessage = ($showMessage) ? 1 : 0;
-
-            $messageArray = array(
-                "msg_uid" => "",
-                "app_uid" => $caseId,
-                "del_index" => $delIndex,
-                "app_msg_type" => "TRIGGER",
-                "app_msg_subject" => $sSubject,
-                "app_msg_from" => $sFrom,
-                "app_msg_to" => $sTo,
-                "app_msg_body" => $sBody,
-                "app_msg_cc" => $sCc,
-                "app_msg_bcc" => $sBcc,
-                "app_msg_attach" => $aAttachment,
-                "app_msg_template" => "",
-                "app_msg_status" => "pending",
-                "app_msg_show_message" => $showMessage,
-                "app_msg_error" => $msgError,
-                "contentTypeIsHtml" => (preg_match("/^.+\.html?$/i", $fileTemplate)) ? true : false
+            $messageArray = AppMessage::buildMessageRow(
+                '',
+                $appUid,
+                $delIndex,
+                'TRIGGER',
+                $subject,
+                G::buildFrom($setup, $from),
+                $to,
+                G::replaceDataGridField(file_get_contents($fileTemplate), $fieldsCase, false),
+                $cc,
+                $bcc,
+                '',
+                '',
+                'pending',
+                ($showMessage) ? 1 : 0,
+                $msgError,
+                (preg_match("/^.+\.html?$/i", $fileTemplate)) ? true : false,
+                isset($fieldsCase['APP_NUMBER']) ? $fieldsCase['APP_NUMBER'] : 0,
+                isset($fieldsCase['PRO_ID']) ? $fieldsCase['PRO_ID'] : 0,
+                isset($fieldsCase['TAS_ID']) ? $fieldsCase['TAS_ID'] : 0
             );
+            $spool->create($messageArray);
 
-            $oSpool->create($messageArray);
+            $result = "";
             if ($gmail != 1) {
-                $oSpool->sendMail();
+                $spool->sendMail();
 
-                if ($oSpool->status == 'sent') {
-                    $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $sTo);
+                if ($spool->status == 'sent') {
+                    $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
                 } else {
-                    $result = new WsResponse(29, $oSpool->status . ' ' . $oSpool->error . print_r($aSetup, 1));
+                    $result = new WsResponse(29, $spool->status . ' ' . $spool->error . print_r($setup, 1));
                 }
-            } else {
-                $result = "";
             }
+
             return $result;
         } catch (Exception $e) {
             return new WsResponse(100, $e->getMessage());
@@ -2315,19 +2319,26 @@ class WsBase
                 $sFromName = "\"" . $arrayUserData["USR_FIRSTNAME"] . " " . $arrayUserData["USR_LASTNAME"] . "\" <" . $arrayUserData["USR_EMAIL"] . ">";
             }
 
-            $oCase->sendNotifications($appdel['TAS_UID'], $nextDelegations, $appFields['APP_DATA'], $caseId, $delIndex, $sFromName);
+            $process = new Process();
+            $processFieds = $process->Load($appFields['PRO_UID']);
+            $appFields['APP_DATA']['PRO_ID'] = $processFieds['PRO_ID'];
 
-            $oProcess = new Process();
-            $oProcessFieds = $oProcess->Load($appFields['PRO_UID']);
+            $oCase->sendNotifications(
+                $appdel['TAS_UID'],
+                $nextDelegations,
+                $appFields['APP_DATA'],
+                $caseId,
+                $delIndex,
+                $sFromName
+            );
+
             //here debug mode in web entry
-
-
-            if (isset($oProcessFieds['PRO_DEBUG']) && $oProcessFieds['PRO_DEBUG']) {
+            if (isset($processFieds['PRO_DEBUG']) && $processFieds['PRO_DEBUG']) {
                 $result = new WsResponse(0, $varResponse . "
                         <br><br><table width='100%' cellpadding='0' cellspacing='0'><tr><td class='FormTitle'>
                     " . G::LoadTranslation('ID_DEBUG_MESSAGE') . "</td></tr></table>" . $varTriggers);
             } else {
-                $result = new WsResponse(0, $varResponse . " --- " . $oProcessFieds['PRO_DEBUG']);
+                $result = new WsResponse(0, $varResponse . " --- " . $processFieds['PRO_DEBUG']);
             }
 
             $res = $result->getPayloadArray();

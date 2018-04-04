@@ -22,17 +22,17 @@ $G_ID_SUB_MENU_SELECTED = 'EMAILS';
 
 //get values for the comboBoxes
 $userUid = (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') ? $_SESSION['USER_LOGGED'] : null;
-$status = array(
-    array('', G::LoadTranslation('ID_ALL')),
-    array("sent", G::LoadTranslation('ID_SENT')),
-    array("pending", G::LoadTranslation('ID_PENDING'))
-);
 
+//Get the status values
+$status = AppMessage::getAllStatus();
+
+//Get the process values
+$process = new BmProcess();
+$processes = $process->getProcessList('', true);
+
+//Review if the plugin External is enable
 $pluginRegistry = PluginRegistry::loadSingleton();
 $flagER = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
-
-$process = new BmProcess();
-$processes = $process->getProcessList();
 
 $G_PUBLISH = new Publisher();
 

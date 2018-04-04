@@ -1803,6 +1803,10 @@ class Derivation
                 if (isset($nextDel['TAS_ID'])) {
                     $appFields['APP_DATA']['TAS_ID'] = $nextDel['TAS_ID'];
                 }
+                //Load the PRO_ID
+                if (isset($nextDel['PRO_ID'])) {
+                    $appFields['APP_DATA']['PRO_ID'] = $nextDel['PRO_ID'];
+                }
                 $this->case->sendMessage($dataEmail, $appFields['APP_DATA'], $taskData);
             }
             return true;

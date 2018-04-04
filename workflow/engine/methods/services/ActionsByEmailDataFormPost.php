@@ -5,28 +5,7 @@ if (PMLicensedFeatures
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
     $G_PUBLISH = new Publisher();
     try {
-        /**
-         * $backupSession = serialize($_SESSION);
-         * This script runs with $ _SESSION ['USER_LOGGED'] = '00000000000000000000000000000001', 
-         * this action enables login as admin if you enter the url 'http://myserver.net/sysworkflow/en/neoclassic/processes/main', 
-         * in the Browser that invoked this script. 
-         * This action ensures that any changes to the session variables required by 
-         * this script do not affect the main session if it exists, for example 
-         * when multiple tabs are open.
-         * Serialization is used because for object types the simple assignment: 
-         * $backupSession = $ _SESSION will not work because the assignment is by 
-         * reference, eg:
-         * <?php
-         * $obj = new stdClass();
-         * $obj->value = "value";
-         * 
-         * $a = ["one" => 1, "two" => $obj, "three" => 3];
-         * $b = $a;
 
-         * $a["two"]->value = "modify";
-         * 
-         * In 'b' is reflected the output of 'a'.
-         */
         $backupSession = serialize($_SESSION);
 
         if (empty($_GET['APP_UID'])) {
@@ -52,46 +31,19 @@ if (PMLicensedFeatures
         $aber = G::decrypt($_REQUEST['ABER'], URL_KEY);
         $forms = isset($_REQUEST['form']) ? $_REQUEST['form'] : [];
 
+        //Load data related to the case
         $case = new Cases();
         $casesFields = $case->loadCase($appUid, $delIndex);
-
         $casesFields['APP_DATA'] = array_merge($casesFields['APP_DATA'], $forms);
 
-        //Get user info
-        $current_user_uid = null;
-        $currentUsrName = null;
-
-        $criteria = new Criteria("workflow");
-
-        $criteria->addSelectColumn(AppDelegationPeer::USR_UID);
-        $criteria->add(AppDelegationPeer::APP_UID, $appUid);
-        $criteria->add(AppDelegationPeer::DEL_INDEX, $delIndex);
-
-        $rsSQL = AppDelegationPeer::doSelectRS($criteria);
-        $rsSQL->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        while ($rsSQL->next()) {
-            $row = $rsSQL->getRow();
-
-            $current_user_uid = $row["USR_UID"];
-        }
-
-        if ($current_user_uid != null) {
-            $criteria = new Criteria("workflow");
-
-            $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
-            $criteria->add(UsersPeer::USR_UID, $current_user_uid);
-
-            $rsSQL = UsersPeer::doSelectRS($criteria);
-            $rsSQL->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            $rsSQL->next();
-
-            $row = $rsSQL->getRow();
-            $currentUsrName = $row["USR_USERNAME"];
-
-            $casesFields["APP_DATA"]["USER_LOGGED"] = $current_user_uid;
-            $casesFields["APP_DATA"]["USR_USERNAME"] = $currentUsrName;
+        //Get current user info
+        $delegation = new AppDelegation();
+        $currentUsrUid = $delegation->getUserAssignedInThread($appUid, $delIndex);
+        if (!is_null($currentUsrUid)) {
+            $users = new Users();
+            $userInfo = $users->loadDetails($currentUsrUid);
+            $casesFields["APP_DATA"]["USER_LOGGED"] = $currentUsrUid;
+            $casesFields["APP_DATA"]["USR_USERNAME"] = $userInfo['USR_USERNAME'];
         }
 
         foreach ($casesFields["APP_DATA"] as $index => $value) {
@@ -102,7 +54,12 @@ if (PMLicensedFeatures
         $case->updateCase($appUid, $casesFields);
 
         $wsBaseInstance = new WsBase();
-        $result = $wsBaseInstance->derivateCase($casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true);
+        $result = $wsBaseInstance->derivateCase(
+            $casesFields['CURRENT_USER_UID'],
+            $appUid,
+            $delIndex,
+            true
+        );
         $code = (is_array($result) ? $result['status_code'] : $result->status_code);
 
         $dataResponses = array();
@@ -130,8 +87,8 @@ if (PMLicensedFeatures
                 $response = new stdclass();
                 $response->usrUid = $casesFields['APP_DATA']['USER_LOGGED'];
                 $response->appUid = $appUid;
+                $response->delIndex = $delIndex;
                 $response->noteText = "Check the information that was sent for the receiver: " . $dataAbeRequests['ABE_REQ_SENT_TO'];
-
                 postNote($response);
             }
 
@@ -141,7 +98,7 @@ if (PMLicensedFeatures
             if (isset($_FILES ['form'])) {
                 if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
                     $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
-                    $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $current_user_uid, $appUid, $delIndex);
+                    $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $currentUsrUid, $appUid, $delIndex);
                 }
             }
 

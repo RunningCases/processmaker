@@ -582,7 +582,7 @@ class adminProxy extends HttpProxyController
     {
         global $G_PUBLISH;
 
-        $aConfiguration = array(
+        $configuration = [
             'MESS_ENGINE'    => $_POST['MESS_ENGINE'],
             'MESS_SERVER'    => $_POST['MESS_SERVER'],
             'MESS_PORT'      => $_POST['MESS_PORT'],
@@ -592,12 +592,11 @@ class adminProxy extends HttpProxyController
             'MESS_FROM_MAIL' => $_POST["FROM_EMAIL"],
             'MESS_RAUTH'     => $_POST['MESS_RAUTH'],
             'SMTPSecure'     => isset($_POST['SMTPSecure'])?$_POST['SMTPSecure']:'none'
-        );
+        ];
 
-        $sFrom = G::buildFrom($aConfiguration);
-
-        $sSubject = G::LoadTranslation('ID_MESS_TEST_SUBJECT');
-        $msg      = G::LoadTranslation('ID_MESS_TEST_BODY');
+        $from = G::buildFrom($configuration);
+        $subject = G::LoadTranslation('ID_MESS_TEST_SUBJECT');
+        $msg = G::LoadTranslation('ID_MESS_TEST_BODY');
 
         switch ($_POST['MESS_ENGINE']) {
             case 'MAIL':
@@ -611,50 +610,46 @@ class adminProxy extends HttpProxyController
                 break;
         }
 
-        $sBodyPre  = new TemplatePower(PATH_TPL . 'admin' . PATH_SEP . 'email.tpl');
+        $sBodyPre = new TemplatePower(PATH_TPL . 'admin' . PATH_SEP . 'email.tpl');
         $sBodyPre->prepare();
         $sBodyPre->assign('server', $_SERVER['SERVER_NAME']);
         $sBodyPre->assign('date', date('H:i:s'));
         $sBodyPre->assign('ver', System::getVersion());
         $sBodyPre->assign('engine', $engine);
         $sBodyPre->assign('msg', $msg);
-        $sBody = $sBodyPre->getOutputContent();
+        $body = $sBodyPre->getOutputContent();
 
-        $oSpool = new SpoolRun();
-
-        $oSpool->setConfig($aConfiguration);
-
-        $oSpool->create(
-            array(
-                'msg_uid'          => '',
-                'app_uid'          => '',
-                'del_index'        => 0,
-                'app_msg_type'     => 'TEST',
-                'app_msg_subject'  => $sSubject,
-                'app_msg_from'     => $sFrom,
-                'app_msg_to'       => $_POST['TO'],
-                'app_msg_body'     => $sBody,
-                'app_msg_cc'       => '',
-                'app_msg_bcc'      => '',
-                'app_msg_attach'   => '',
-                'app_msg_template' => '',
-                'app_msg_status'   => 'pending',
-                'app_msg_attach'=>'' // Added By Ankit
-            )
+        $spool = new SpoolRun();
+        $spool->setConfig($configuration);
+        $messageArray = AppMessage::buildMessageRow(
+            '',
+            '',
+            '',
+            'TEST',
+            $subject,
+            $from,
+            $_POST['TO'],
+            $body,
+            '',
+            '',
+            '',
+            '',
+            'pending'
         );
+        $spool->create($messageArray);
 
-        $oSpool->sendMail();
+        $spool->sendMail();
         $G_PUBLISH = new Publisher();
 
         $o = new stdclass();
-        if ($oSpool->status == 'sent') {
+        if ($spool->status == 'sent') {
             $o->status = true;
             $o->success = true;
             $o->msg = G::LoadTranslation('ID_MAIL_TEST_SUCCESS');
         } else {
             $o->status = false;
             $o->success = false;
-            $o->msg = $oSpool->error;
+            $o->msg = $spool->error;
         }
         return $o;
     }

@@ -3869,18 +3869,65 @@ class WorkspaceTools
                                    WHERE AD.APP_NUMBER = 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.TAS_ID
-        CLI::logging("->   Populating APP_MESSAGE.TAS_ID \n");
+        // Populating APP_MESSAGE.TAS_ID AND APP_MESSAGE.PRO_ID
+        CLI::logging("->   Populating APP_MESSAGE.TAS_ID and APP_MESSAGE.PRO_ID \n");
         $con->begin();
         $stmt = $con->createStatement();
-        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AD
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AM
                                    INNER JOIN (
-                                       SELECT APP_DELEGATION.TAS_ID, APP_DELEGATION.APP_NUMBER, APP_DELEGATION.TAS_UID, APP_DELEGATION.DEL_INDEX
+                                       SELECT APP_DELEGATION.TAS_ID, 
+                                              APP_DELEGATION.APP_NUMBER, 
+                                              APP_DELEGATION.TAS_UID, 
+                                              APP_DELEGATION.DEL_INDEX, 
+                                              APP_DELEGATION.PRO_ID
                                        FROM APP_DELEGATION
                                    ) AS DEL
-                                   ON (AD.APP_NUMBER = DEL.APP_NUMBER AND AD.DEL_INDEX = DEL.DEL_INDEX)
-                                   SET AD.TAS_ID = DEL.TAS_ID
-                                   WHERE AD.TAS_ID = 0 AND AD.APP_NUMBER != 0 AND AD.DEL_INDEX != 0");
+                                   ON (AM.APP_NUMBER = DEL.APP_NUMBER AND AM.DEL_INDEX = DEL.DEL_INDEX)
+                                   SET AM.TAS_ID = DEL.TAS_ID, AM.PRO_ID = DEL.PRO_ID
+                                   WHERE AM.TAS_ID = 0 AND AM.PRO_ID = 0 AND AM.APP_NUMBER != 0 AND AM.DEL_INDEX != 0");
+        $con->commit();
+
+        // Populating APP_MESSAGE.PRO_ID when does not exits DEL_INDEX
+        CLI::logging("->   Populating APP_MESSAGE.PRO_ID\n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AM
+                                   INNER JOIN (
+                                       SELECT APP_DELEGATION.APP_NUMBER,
+                                              APP_DELEGATION.DEL_INDEX,
+                                              APP_DELEGATION.PRO_ID
+                                       FROM APP_DELEGATION
+                                   ) AS DEL
+                                   ON (AM.APP_NUMBER = DEL.APP_NUMBER)
+                                   SET AM.PRO_ID = DEL.PRO_ID
+                                   WHERE AM.PRO_ID = 0 AND AM.APP_NUMBER != 0");
+        $con->commit();
+
+        // Populating APP_MESSAGE.PRO_ID
+        CLI::logging("->   Populating APP_MESSAGE.APP_MSG_STATUS_ID \n");
+        $con->begin();
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE
+                                    SET APP_MSG_STATUS_ID = (case
+                                        when APP_MSG_STATUS = 'sent' then 1
+                                        when APP_MSG_STATUS = 'pending' then 2
+                                        when APP_MSG_STATUS = 'failed' then 3
+                                    end)
+                                    WHERE APP_MSG_STATUS in ('sent', 'pending', 'failed') AND
+                                    APP_MSG_STATUS_ID = 0");
+        $con->commit();
+
+        // Populating APP_MESSAGE.PRO_ID
+        CLI::logging("->   Populating APP_MESSAGE.APP_MSG_STATUS_ID \n");
+        $con->begin();
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE
+                                    SET APP_MSG_TYPE_ID = (case
+                                        when APP_MSG_TYPE = 'TEST' then 1
+                                        when APP_MSG_TYPE = 'TRIGGER' then 2
+                                        when APP_MSG_TYPE = 'DERIVATION' then 3
+                                        when APP_MSG_TYPE = 'EXTERNAL_REGISTRATION' then 4
+                                    end)
+                                    WHERE APP_MSG_TYPE in ('TEST', 'TRIGGER', 'DERIVATION', 'EXTERNAL_REGISTRATION') AND
+                                    APP_MSG_TYPE_ID = 0");
         $con->commit();
 
         CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
