@@ -2024,7 +2024,7 @@ class WorkspaceTools
             CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
             //Updating generated class files for PM Tables
-            passthru('./processmaker regenerate-pmtable-classes ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
             mysql_close($link);
         }
