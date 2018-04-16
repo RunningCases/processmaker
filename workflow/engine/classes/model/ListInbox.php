@@ -1,6 +1,8 @@
 <?php
 
 require_once 'classes/model/om/BaseListInbox.php';
+use ProcessMaker\BusinessModel\Cases as BmCases;
+use ProcessMaker\BusinessModel\User as BmUser;
 
 /**
  * Skeleton subclass for representing a row from the 'LIST_INBOX' table.
@@ -13,17 +15,17 @@ require_once 'classes/model/om/BaseListInbox.php';
  *
  * @package    classes.model
  */
-// @codingStandardsIgnoreStart
-class ListInbox extends BaseListInbox
+
+class ListInbox extends BaseListInbox implements ListInterface
 {
-    private $additionalClassName = '';
+    use ListBaseTrait;
 
     /**
      * Create List Inbox Table
      *
      * @param type $data
      * @return type
-     *
+     * @throws Exception
      */
     public function create($data, $isSelfService = false)
     {
@@ -115,7 +117,7 @@ class ListInbox extends BaseListInbox
      *
      * @param type $data
      * @return type
-     * @throws type
+     * @throws Exception
      */
     public function update($data, $isSelfService = false)
     {
@@ -209,7 +211,7 @@ class ListInbox extends BaseListInbox
      *
      * @param type $seqName
      * @return type
-     * @throws type
+     * @throws Exception
      *
      */
     public function remove($app_uid, $del_index)
@@ -233,7 +235,7 @@ class ListInbox extends BaseListInbox
      *
      * @param type $seqName
      * @return type
-     * @throws type
+     * @throws Exception
      *
      */
     public function removeAll($app_uid)
@@ -416,12 +418,24 @@ class ListInbox extends BaseListInbox
                 break;
             case 'to_revise':
                 $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
-                $oAppCache = new AppCacheView();
-                $aProcesses = $oAppCache->getProUidSupervisor($usrUid);
-                $criteria->add(ListInboxPeer::PRO_UID, $aProcesses, Criteria::IN);
+                $processUser = new ProcessUser();
+                $listProcess = $processUser->getProUidSupervisor($usrUid);
+                $criteria->add(ListInboxPeer::PRO_UID, $listProcess, Criteria::IN);
                 break;
             case 'to_reassign':
+                global $RBAC;
                 $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
+                $user = new BmUser();
+                $listProcess = $user->getProcessToReassign(['PM_REASSIGNCASE','PM_REASSIGNCASE_SUPERVISOR']);
+
+                //If is not a supervisor and does not have the permission for view all cases we can not list cases
+                //If is a supervisor, we can list only his processes
+                if (
+                    (empty($listProcess) && $RBAC->userCanAccess('PM_REASSIGNCASE') !== 1) ||
+                    (is_array($listProcess) && count($listProcess) > 0)
+                ) {
+                    $criteria->add(ListInboxPeer::PRO_UID, $listProcess, Criteria::IN);
+                }
                 if ($usrUid !== '') {
                     $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
                 }
@@ -478,8 +492,14 @@ class ListInbox extends BaseListInbox
                 $criteria->add(ListInboxPeer::APP_UID, $search, Criteria::EQUAL);
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
-                $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList = new BmCases();
+                $casesList->getSearchCriteriaListCases(
+                    $criteria,
+                    __CLASS__ . 'Peer',
+                    $search,
+                    $this->getAdditionalClassName(),
+                    $additionalColumns
+                );
             }
         }
 
@@ -515,16 +535,16 @@ class ListInbox extends BaseListInbox
      * This function get the information in the corresponding cases list
      * @param string $usr_uid, must be show cases related to this user
      * @param array $filters for apply in the result
-     * @param null $callbackRecord
+     * @param callable $callbackRecord
      * @return array $data
      * @throws PropelException
      */
-    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
+    public function loadList($usr_uid, $filters = array(), callable $callbackRecord = null)
     {
         $pmTable = new PmTable();
         $list = isset($filters['action']) ? $filters['action'] : "";
         $criteria = $pmTable->addPMFieldsToList($list);
-        $this->additionalClassName = $pmTable->tableClassName;
+        $this->setAdditionalClassName($pmTable->tableClassName);
         $additionalColumns = $criteria->getSelectColumns();
         $filters['usr_uid'] = $usr_uid;
 
@@ -556,14 +576,16 @@ class ListInbox extends BaseListInbox
         self::loadFilters($criteria, $filters, $additionalColumns);
 
         //We will be defined the sort
-        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $casesList = new BmCases();
+
         $sort = $casesList->getSortColumn(
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "APP_UPDATE_DATE" : $filters['sort'],
             "APP_UPDATE_DATE",
-            $this->additionalClassName,
-            $additionalColumns
+            $this->getAdditionalClassName(),
+            $additionalColumns,
+            $this->getUserDisplayFormat()
         );
 
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
@@ -571,10 +593,20 @@ class ListInbox extends BaseListInbox
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
 
-        if ($dir == "DESC") {
-            $criteria->addDescendingOrderByColumn($sort);
+        if (is_array($sort) && count($sort) > 0) {
+            foreach ($sort as $key) {
+                if ($dir == 'DESC') {
+                    $criteria->addDescendingOrderByColumn($key);
+                } else {
+                    $criteria->addAscendingOrderByColumn($key);
+                }
+            }
         } else {
-            $criteria->addAscendingOrderByColumn($sort);
+            if ($dir == 'DESC') {
+                $criteria->addDescendingOrderByColumn($sort);
+            } else {
+                $criteria->addAscendingOrderByColumn($sort);
+            }
         }
 
         if ($paged == 1) {
@@ -598,6 +630,15 @@ class ListInbox extends BaseListInbox
         return $data;
     }
 
+    /**
+     * This function get the TAS_PRIORITY_VARIABLE related to the task
+     *
+     * @param string $taskUid
+     * @param string $proUid
+     * @param string $appUid
+     *
+     * @return integer
+    */
     public function getTaskPriority($taskUid, $proUid, $appUid)
     {
         $criteria = new Criteria();
@@ -620,6 +661,14 @@ class ListInbox extends BaseListInbox
         return $priority != "" ? $priority : 3;
     }
 
+    /**
+     * This function get the TAS_PRIORITY_VARIABLE related to the task
+     *
+     * @param array $filters
+     * @param string $fieldName
+     *
+     * @return mixed null|string
+     */
     public function getAppDelegationInfo($filters, $fieldName)
     {
         $criteria = new Criteria();
@@ -636,8 +685,10 @@ class ListInbox extends BaseListInbox
 
     /**
      * Returns the number of cases of a user
+     *
      * @param string $usrUid
      * @param array  $filters
+     *
      * @return int
      */
     public function getCountList($usrUid, $filters = array())
@@ -645,14 +696,13 @@ class ListInbox extends BaseListInbox
         $filters['usr_uid'] = $usrUid;
         $criteria = new Criteria();
         $criteria->addSelectColumn('COUNT(*) AS TOTAL');
-        $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        if (count($filters)) {
-            self::loadFilters($criteria, $filters);
-        }
+
+        //The function loadFilters will add some condition in the query
+        $this->loadFilters($criteria, $filters);
         $dataset = ListInboxPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
-        $aRow = $dataset->getRow();
-        return (int)$aRow['TOTAL'];
+        $row = $dataset->getRow();
+        return (int) $row['TOTAL'];
     }
 }

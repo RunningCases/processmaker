@@ -132,12 +132,13 @@ function run_upgrade($command, $args)
     $flagUpdateXml  = !array_key_exists('noxml', $args);
 
     foreach ($workspaces as $index => $workspace) {
-        if (!defined("SYS_SYS")) {
+        if (empty(config("system.workspace"))) {
             define("SYS_SYS", $workspace->name);
+            config(["system.workspace" => $workspace->name]);
         }
 
         if (!defined("PATH_DATA_SITE")) {
-            define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+            define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
         }
 
         if(!defined('DB_ADAPTER')) {

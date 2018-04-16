@@ -132,12 +132,13 @@ try {
 
     if (is_dir(PATH_DB . $workspace) && file_exists(PATH_DB . $workspace . PATH_SEP . 'db.php')) {
         define('SYS_SYS', $workspace);
+        config(["system.workspace" => $workspace]);
 
         include_once(PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths_installed.php');
         include_once(PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
 
         //PM Paths DATA
-        define('PATH_DATA_SITE',                PATH_DATA      . 'sites/' . SYS_SYS . '/');
+        define('PATH_DATA_SITE',                PATH_DATA      . 'sites/' . config("system.workspace") . '/');
         define('PATH_DOCUMENT',                 PATH_DATA_SITE . 'files/');
         define('PATH_DATA_MAILTEMPLATES',       PATH_DATA_SITE . 'mailTemplates/');
         define('PATH_DATA_PUBLIC',              PATH_DATA_SITE . 'public/');
@@ -418,7 +419,7 @@ function executePlugins()
     }
 
     if ($handle = opendir($pathCronPlugins)) {
-        setExecutionMessage('Executing cron files in bin/plugins directory in Workspace: ' . SYS_SYS);
+        setExecutionMessage('Executing cron files in bin/plugins directory in Workspace: ' . config("system.workspace"));
         while (false !== ($file = readdir($handle))) {
             if (strpos($file, '.php',1) && is_file($pathCronPlugins . $file)) {
                 $filename  = str_replace('.php' , '', $file);
@@ -438,7 +439,7 @@ function executePlugins()
 
     // -> Execute functions
     if (!empty($cronFiles)) {
-        setExecutionMessage('Executing registered cron files for Workspace: ' . SYS_SYS);
+        setExecutionMessage('Executing registered cron files for Workspace: ' . config("system.workspace"));
         /**
          * @var \ProcessMaker\Plugins\Interfaces\CronFile $cronFile
          */
@@ -828,7 +829,7 @@ function executeCaseSelfService()
                         unset($appFields['APP_PIN']);
                         $case->updateCase($appFields["APP_UID"], $appFields);
 
-                        saveLog("unassignedCase", "action", "OK Executed tigger to the case $appcacheAppNumber");
+                        saveLog("unassignedCase", "action", "OK Executed trigger to the case $appcacheAppNumber");
                     }
                 }
 

@@ -31,7 +31,7 @@ class MonologProvider
     public $numOfKeepFiles = 60;
     public $levelDebug = 100;
     public $bubble = true;
-    public $filePermission = 0775;
+    public $filePermission = 0666;
 
     public function __construct ($channel, $fileLog)
     {

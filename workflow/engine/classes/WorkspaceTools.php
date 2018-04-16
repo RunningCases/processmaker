@@ -57,6 +57,8 @@ class WorkspaceTools
         'UPDATE LIST_UNASSIGNED_GROUP SET
             USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID)',
     );
+    private $lastContentMigrateTable = false;
+    private $listContentMigrateTable = [];
 
     /**
      * Create a workspace tools object.
@@ -76,6 +78,124 @@ class WorkspaceTools
         if ($this->workspaceExists()) {
             $this->getDBInfo();
         }
+        $this->setListContentMigrateTable();
+    }
+
+    /**
+     * Gets the last content migrate table
+     *
+     * @return string
+     */
+    public function getLastContentMigrateTable()
+    {
+        return $this->lastContentMigrateTable;
+    }
+
+    /**
+     * Sets the last content migrate table
+     *
+     * @param string $tableColumn
+     *
+     */
+    public function setLastContentMigrateTable($tableColumn)
+    {
+        $this->lastContentMigrateTable = $tableColumn;
+    }
+
+    /**
+     * Gets the array for list content migrate table
+     *
+     * @return array
+     */
+    public function getListContentMigrateTable()
+    {
+        return $this->listContentMigrateTable;
+    }
+
+    /**
+     * Sets the array list content migrate table
+     */
+    public function setListContentMigrateTable()
+    {
+        $migrateTables = array(
+            'Groupwf' => array(
+                'uid' => 'GRP_UID',
+                'fields' => array('GRP_TITLE'),
+                'methods' => array('exists' => 'GroupwfExists')
+            ),
+            'Process' => array(
+                'uid' => 'PRO_UID',
+                'fields' => array('PRO_TITLE', 'PRO_DESCRIPTION'),
+                'methods' => array('exists' => 'exists')
+            ),
+            'Department' => array(
+                'uid' => 'DEP_UID',
+                'fields' => array('DEPO_TITLE'),
+                'alias' => array('DEPO_TITLE' => 'DEP_TITLE'),
+                'methods' => array('exists' => 'existsDepartment')
+            ),
+            'Task' => array(
+                'uid' => 'TAS_UID',
+                'fields' => array('TAS_TITLE', 'TAS_DESCRIPTION', 'TAS_DEF_TITLE', 'TAS_DEF_SUBJECT_MESSAGE', 'TAS_DEF_PROC_CODE', 'TAS_DEF_MESSAGE', 'TAS_DEF_DESCRIPTION'),
+                'methods' => array('exists' => 'taskExists')
+            ),
+            'InputDocument' => array(
+                'uid' => 'INP_DOC_UID',
+                'fields' => array('INP_DOC_TITLE', 'INP_DOC_DESCRIPTION'),
+                'methods' => array('exists' => 'InputExists')
+            ),
+            'Application' => array(
+                'uid' => 'APP_UID',
+                'fields' => array('APP_TITLE', 'APP_DESCRIPTION'),
+                'methods' => array('exists' => 'exists')
+            ),
+            'AppDocument' => array(
+                'uid' => 'APP_DOC_UID',
+                'alias' => array('CON_PARENT' => 'DOC_VERSION'),
+                'fields' => array('APP_DOC_TITLE', 'APP_DOC_COMMENT', 'APP_DOC_FILENAME'),
+                'methods' => array('exists' => 'exists')
+            ),
+            'Dynaform' => array(
+                'uid' => 'DYN_UID',
+                'fields' => array('DYN_TITLE', 'DYN_DESCRIPTION'),
+                'methods' => array('exists' => 'exists')
+            ),
+            'OutputDocument' => array(
+                'uid' => 'OUT_DOC_UID',
+                'fields' => array('OUT_DOC_TITLE', 'OUT_DOC_DESCRIPTION', 'OUT_DOC_FILENAME', 'OUT_DOC_TEMPLATE'),
+                'methods' => array('exists' => 'OutputExists')
+            ),
+            'ReportTable' => array(
+                'uid' => 'REP_TAB_UID',
+                'fields' => array('REP_TAB_TITLE'),
+                'methods' => array('exists' => 'reportTableExists', 'update' => function ($row) {
+                    $oRepTab = \ReportTablePeer::retrieveByPK($row['REP_TAB_UID']);
+                    $oRepTab->fromArray($row, BasePeer::TYPE_FIELDNAME);
+                    if ($oRepTab->validate()) {
+                        $result = $oRepTab->save();
+                    }
+                })
+            ),
+            'Triggers' => array(
+                'uid' => 'TRI_UID',
+                'fields' => array('TRI_TITLE', 'TRI_DESCRIPTION'),
+                'methods' => array('exists' => 'TriggerExists')
+            ),
+            '\ProcessMaker\BusinessModel\WebEntryEvent' => array(
+                'uid' => 'WEE_UID',
+                'fields' => array('WEE_TITLE', 'WEE_DESCRIPTION'),
+                'methods' => array('exists' => 'exists', 'update' => function ($row) {
+                    $webEntry = \WebEntryEventPeer::retrieveByPK($row['WEE_UID']);
+                    $webEntry->fromArray($row, BasePeer::TYPE_FIELDNAME);
+                    if ($webEntry->validate()) {
+                        $result = $webEntry->save();
+                    }
+                }),
+                'peer' => 'WebEntryEventPeer'
+            )
+        );
+
+        $this->listContentMigrateTable = $migrateTables;
     }
 
     /**
@@ -99,8 +219,11 @@ class WorkspaceTools
      *
      * @return void
      */
-    public function upgrade($buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
+    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("system.workspace");
+        }
         if (is_null($arrayOptTranslation)) {
             $arrayOptTranslation = ['updateXml' => true, 'updateMafe' => true];
         }
@@ -220,8 +343,11 @@ class WorkspaceTools
      * Updating cases directories structure
      *
      */
-    public function updateStructureDirectories($workSpace = SYS_SYS)
+    public function updateStructureDirectories($workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("system.workspace");
+        }
         $start = microtime(true);
         CLI::logging("> Updating cases directories structure...\n");
         $this->upgradeCasesDirectoryStructure($workSpace);
@@ -469,19 +595,57 @@ class WorkspaceTools
 
     /**
      * Upgrade this workspace Content.
+     * @param string $workspace
+     * @param boolean $executeRegenerateContent
+     * @return void
      */
-    public function upgradeContent($workSpace = SYS_SYS)
+    public function upgradeContent($workspace = null, $executeRegenerateContent = false)
     {
-        $this->initPropel(true);
-        //require_once 'classes/model/Translation.php';
-        $translation = new Translation();
-        $information = $translation->getTranslationEnvironments();
-        $arrayLang = array();
-        foreach ($information as $key => $value) {
-            $arrayLang[] = trim($value['LOCALE']);
+        if ($workspace === null) {
+            $workspace = config("system.workspace");
         }
-        $regenerateContent = new Content();
-        $regenerateContent->regenerateContent($arrayLang, $workSpace);
+        $this->initPropel(true);
+        //If the execute flag is false we will check if we needed
+        if (!$executeRegenerateContent) {
+            $conf = new Configuration();
+            $blackList = [];
+            if ($conf->exists('MIGRATED_CONTENT', 'content')) {
+                $configData = $conf->load('MIGRATED_CONTENT', 'content');
+                $blackList = unserialize($configData['CFG_VALUE']);
+            }
+
+            if (count($blackList) > 0) {
+                //If we have the flag MIGRATED_CONTENT we will check the $blackList
+                $content = $this->getListContentMigrateTable();
+                foreach ($content as $className => $fields) {
+                    //We check if all the label was migrated from content table
+                    if (!in_array($className, $blackList)) {
+                        $executeRegenerateContent = true;
+                        break;
+                    }
+                }
+            } else {
+                //If the flag does not exist we will check over the schema
+                //The $lastContentMigrateTable return false if we need to force regenerate content
+                if (!$this->getLastContentMigrateTable()) {
+                    $executeRegenerateContent = true;
+                }
+            }
+        }
+
+        //We will to regenerate the Content table
+        if ($executeRegenerateContent) {
+            CLI::logging("->   Start To Update...\n");
+            $translation = new Translation();
+            $information = $translation->getTranslationEnvironments();
+            $arrayLang = [];
+            foreach ($information as $key => $value) {
+                $arrayLang[] = trim($value['LOCALE']);
+            }
+            $regenerateContent = new Content();
+            $regenerateContent->regenerateContent($arrayLang, $workspace);
+        }
+
     }
 
     /**
@@ -692,7 +856,6 @@ class WorkspaceTools
 
         if (!$currentUserIsSuper) {
             $appCache->checkGrantsForUser(true);
-            $appCache->setSuperForUser($currentUser);
             $currentUserIsSuper = true;
         }
 
@@ -1004,6 +1167,10 @@ class WorkspaceTools
             }
         }
         $workspaceSchema = $this->getSchema($rbac);
+
+        //We will check if the database has the last content table migration
+        $this->checkLastContentMigrate($workspaceSchema);
+
         $changes = System::compareSchema($workspaceSchema, $schema);
 
         $changed = (count($changes['tablesToAdd']) > 0 || count($changes['tablesToAlter']) > 0 || count($changes['tablesWithNewIndex']) > 0 || count($changes['tablesToAlterIndex']) > 0);
@@ -1728,7 +1895,7 @@ class WorkspaceTools
             $shared_stat = stat(PATH_DATA);
 
             if ($shared_stat !== false) {
-                WorkspaceTools::dirPerms($workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] & 0777);
             } else {
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
@@ -1739,12 +1906,13 @@ class WorkspaceTools
             $aParameters = array('dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass);
 
             //Restore
-            if (!defined("SYS_SYS")) {
+            if (empty(config("system.workspace"))) {
                 define("SYS_SYS", $workspaceName);
+                config(["system.workspace" => $workspaceName]);
             }
 
             if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
             }
 
             $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch)) ? $arrayMatch[1] : "";
@@ -1856,7 +2024,7 @@ class WorkspaceTools
             CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
             //Updating generated class files for PM Tables
-            passthru('./processmaker regenerate-pmtable-classes ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
             mysql_close($link);
         }
@@ -2017,7 +2185,7 @@ class WorkspaceTools
             CLI::logging("    Copying Enterprise Directory to $pathNewFile...\n");
 
             if ($shared_stat !== false) {
-                WorkspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] & 0777);
             } else {
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
@@ -2034,7 +2202,7 @@ class WorkspaceTools
         if (file_exists($pathFileEnterprise)) {
             CLI::logging("    Copying Enterprise.php file to $pathNewFile...\n");
             if ($shared_stat !== false) {
-                WorkspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] & 0777);
             } else {
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
@@ -3421,83 +3589,7 @@ class WorkspaceTools
         if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
             define('MEMCACHED_ENABLED', false);
         }
-        $content = array(
-            'Groupwf' => array(
-                'uid' => 'GRP_UID',
-                'fields' => array('GRP_TITLE'),
-                'methods' => array('exists' => 'GroupwfExists')
-            ),
-            'Process' => array(
-                'uid' => 'PRO_UID',
-                'fields' => array('PRO_TITLE', 'PRO_DESCRIPTION'),
-                'methods' => array('exists' => 'exists')
-            ),
-            'Department' => array(
-                'uid' => 'DEP_UID',
-                'fields' => array('DEPO_TITLE'),
-                'alias' => array('DEPO_TITLE' => 'DEP_TITLE'),
-                'methods' => array('exists' => 'existsDepartment')
-            ),
-            'Task' => array(
-                'uid' => 'TAS_UID',
-                'fields' => array('TAS_TITLE', 'TAS_DESCRIPTION', 'TAS_DEF_TITLE', 'TAS_DEF_SUBJECT_MESSAGE', 'TAS_DEF_PROC_CODE', 'TAS_DEF_MESSAGE', 'TAS_DEF_DESCRIPTION'),
-                'methods' => array('exists' => 'taskExists')
-            ),
-            'InputDocument' => array(
-                'uid' => 'INP_DOC_UID',
-                'fields' => array('INP_DOC_TITLE', 'INP_DOC_DESCRIPTION'),
-                'methods' => array('exists' => 'InputExists')
-            ),
-            'Application' => array(
-                'uid' => 'APP_UID',
-                'fields' => array('APP_TITLE', 'APP_DESCRIPTION'),
-                'methods' => array('exists' => 'exists')
-            ),
-            'AppDocument' => array(
-                'uid' => 'APP_DOC_UID',
-                'alias' => array('CON_PARENT' => 'DOC_VERSION'),
-                'fields' => array('APP_DOC_TITLE', 'APP_DOC_COMMENT', 'APP_DOC_FILENAME'),
-                'methods' => array('exists' => 'exists')
-            ),
-            'Dynaform' => array(
-                'uid' => 'DYN_UID',
-                'fields' => array('DYN_TITLE', 'DYN_DESCRIPTION'),
-                'methods' => array('exists' => 'exists')
-            ),
-            'OutputDocument' => array(
-                'uid' => 'OUT_DOC_UID',
-                'fields' => array('OUT_DOC_TITLE', 'OUT_DOC_DESCRIPTION', 'OUT_DOC_FILENAME', 'OUT_DOC_TEMPLATE'),
-                'methods' => array('exists' => 'OutputExists')
-            ),
-            'ReportTable' => array(
-                'uid' => 'REP_TAB_UID',
-                'fields' => array('REP_TAB_TITLE'),
-                'methods' => array('exists' => 'reportTableExists', 'update' => function ($row) {
-                    $oRepTab = \ReportTablePeer::retrieveByPK($row['REP_TAB_UID']);
-                    $oRepTab->fromArray($row, BasePeer::TYPE_FIELDNAME);
-                    if ($oRepTab->validate()) {
-                        $result = $oRepTab->save();
-                    }
-                })
-            ),
-            'Triggers' => array(
-                'uid' => 'TRI_UID',
-                'fields' => array('TRI_TITLE', 'TRI_DESCRIPTION'),
-                'methods' => array('exists' => 'TriggerExists')
-            ),
-            '\ProcessMaker\BusinessModel\WebEntryEvent' => array(
-                'uid' => 'WEE_UID',
-                'fields' => array('WEE_TITLE', 'WEE_DESCRIPTION'),
-                'methods' => array('exists' => 'exists', 'update' => function ($row) {
-                    $webEntry = \WebEntryEventPeer::retrieveByPK($row['WEE_UID']);
-                    $webEntry->fromArray($row, BasePeer::TYPE_FIELDNAME);
-                    if ($webEntry->validate()) {
-                        $result = $webEntry->save();
-                    }
-                }),
-                'peer' => 'WebEntryEventPeer'
-            )
-        );
+        $content = $this->getListContentMigrateTable();
 
         foreach ($content as $className => $fields) {
             if (!in_array($className, $blackList)) {
@@ -3763,6 +3855,34 @@ class WorkspaceTools
                                    WHERE AD.APP_NUMBER = 0");
         $con->commit();
 
+        // Populating APP_MESSAGE.APP_NUMBER
+        CLI::logging("->   Populating APP_MESSAGE.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AD
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AD.APP_UID = APP.APP_UID)
+                                   SET AD.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AD.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_MESSAGE.TAS_ID
+        CLI::logging("->   Populating APP_MESSAGE.TAS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AD
+                                   INNER JOIN (
+                                       SELECT APP_DELEGATION.TAS_ID, APP_DELEGATION.APP_NUMBER, APP_DELEGATION.TAS_UID, APP_DELEGATION.DEL_INDEX
+                                       FROM APP_DELEGATION
+                                   ) AS DEL
+                                   ON (AD.APP_NUMBER = DEL.APP_NUMBER AND AD.DEL_INDEX = DEL.DEL_INDEX)
+                                   SET AD.TAS_ID = DEL.TAS_ID
+                                   WHERE AD.TAS_ID = 0 AND AD.APP_NUMBER != 0 AND AD.DEL_INDEX != 0");
+        $con->commit();
+
         CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
 
         // Populating PRO_ID, USR_ID
@@ -3937,8 +4057,11 @@ class WorkspaceTools
      * Updating framework directory structure
      *
      */
-    private function updateFrameworkPaths($workSpace = SYS_SYS)
+    private function updateFrameworkPaths($workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("system.workspace");
+        }
         $paths = [
             PATH_DATA.'framework' => 0770,
             PATH_DATA.'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,
@@ -3948,6 +4071,19 @@ class WorkspaceTools
                 G::mk_dir($path, $permission);
             }
             CLI::logging("    $path [" . (file_exists($path) ? 'OK' : 'MISSING') . "]\n");
+        }
+    }
+
+    /**
+     * This function get the last table migrated for the labels
+     * @param array $workspaceSchema, the current schema in the database
+     * @return void
+    */
+    private function checkLastContentMigrate(array $workspaceSchema){
+        $content = end($this->getListContentMigrateTable());
+        $lastContent = isset($content['peer']) ? $content['peer'] : null;
+        if (!is_null($lastContent) && isset($workspaceSchema[$lastContent::TABLE_NAME][$content['fields'][0]])) {
+            $this->setLastContentMigrateTable(true);
         }
     }
 }

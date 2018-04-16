@@ -56,7 +56,7 @@ function run_flush_cache($args, $opts)
         flush_cache($workspaces[0]);
     } else {
         foreach ($workspaces as $workspace) {
-            passthru("./processmaker flush-cache " . $workspace->name);
+            passthru(PHP_BINARY . " processmaker flush-cache " . $workspace->name);
         }
     }
 }

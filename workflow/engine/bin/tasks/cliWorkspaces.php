@@ -316,6 +316,17 @@ CLI::taskArg('workspace');
 CLI::taskRun("cliListIds");
 
 /**
+ * Upgrade the CONTENT table
+ */
+CLI::taskName('upgrade-content');
+CLI::taskDescription(<<<EOT
+    Upgrade the content table
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun("run_upgrade_content");
+
+/**
  *
  */
 CLI::taskName('regenerate-pmtable-classes');
@@ -345,33 +356,116 @@ function run_info($args, $opts)
     }
 }
 
+/**
+ * Check if we need to execute the workspace-upgrade
+ * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
+ *
+ * @param string $args, workspace name that we need to apply the database-upgrade
+ * @param string $opts, additional arguments
+ *
+ * @return void
+ */
 function run_workspace_upgrade($args, $opts)
 {
-    $filter = new InputFilter();
-    $opts = $filter->xssFilterHard($opts);
-    $args = $filter->xssFilterHard($args);
-    $workspaces = get_workspaces_from_args($args);
+    //Read the additional parameters for this command
+    $parameters = '';
+    $parameters .= array_key_exists('buildACV', $opts) ? '--buildACV ' : '';
+    $parameters .= array_key_exists('noxml', $opts) ? '--no-xml ' : '';
+    $parameters .= array_key_exists("lang", $opts) ? 'lang=' . $opts['lang'] : 'lang=' . SYS_LANG;
+
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        workspace_upgrade($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru(PHP_BINARY . ' processmaker upgrade ' . $parameters . ' ' . $workspace->name);
+        }
+    }
+}
+
+/**
+ * This function is executed only by one workspace, for the command workspace-upgrade
+ *
+ * @param array $args, workspace name for to apply the upgrade
+ * @param array $opts, specify additional arguments for language, flag for buildACV, flag for noxml
+ *
+ * @return void
+ */
+function workspace_upgrade($args, $opts) {
     $first = true;
+    $workspaces = get_workspaces_from_args($args);
     $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
     $buildCacheView = array_key_exists('buildACV', $opts);
     $flagUpdateXml = !array_key_exists('noxml', $opts);
 
+    $wsName = $workspaces[key($workspaces)]->name;
+    Bootstrap::setConstantsRelatedWs($wsName);
+    //Loop, read all the attributes related to the one workspace
     foreach ($workspaces as $workspace) {
         try {
-            if (!defined("SYS_SYS")) {
-                define("SYS_SYS", $workspace->name);
-            }
-
-            if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
-            }
-
-            $workspace->upgrade($buildCacheView, $workspace->name, false, $lang, ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]);
+            $workspace->upgrade(
+                $buildCacheView,
+                $workspace->name,
+                false,
+                $lang,
+                ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]
+            );
             $first = false;
             $flagUpdateXml = false;
         } catch (Exception $e) {
             G::outRes("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
         }
+    }
+}
+
+/**
+ * We will upgrade the CONTENT table
+ * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
+ * @param string $args, workspaceName that we need to apply the upgrade-content
+ * @param string $opts
+ *
+ * @return void
+ */
+function run_upgrade_content($args, $opts)
+{
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        upgradeContent($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru(PHP_BINARY . ' processmaker upgrade-content ' . $workspace->name);
+        }
+    }
+}
+/**
+ * This function will upgrade the CONTENT table for a workspace
+ * This function is executed only for one workspace
+ * @param array $args, workspaceName that we will to apply the command
+ * @param array $opts, we can send additional parameters
+ *
+ * @return void
+ */
+function upgradeContent($args, $opts)
+{
+    try {
+        //Load the attributes for the workspace
+        $arrayWorkspace = get_workspaces_from_args($args);
+        //Loop, read all the attributes related to the one workspace
+        $wsName = $arrayWorkspace[key($arrayWorkspace)]->name;
+        Bootstrap::setConstantsRelatedWs($wsName);
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            try {
+                G::outRes("Upgrading content for " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+                $workspace->upgradeContent($workspace->name, true);
+            } catch (Exception $e) {
+                G::outRes("Errors upgrading content of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
+            }
+        }
+    } catch (Exception $e) {
+        G::outRes(CLI::error($e->getMessage()) . "\n");
     }
 }
 
@@ -397,7 +491,7 @@ function run_translation_upgrade($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker translation-repair ' . $noXml . $noMafe . ' ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker translation-repair ' . $noXml . $noMafe . ' ' . $workspace->name);
         }
     }
 }
@@ -494,7 +588,7 @@ function run_database_upgrade($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker database-upgrade ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker database-upgrade ' . $workspace->name);
         }
     }
 }
@@ -905,7 +999,7 @@ function run_check_workspace_disabled_code($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker check-workspace-disabled-code ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker check-workspace-disabled-code ' . $workspace->name);
         }
     }
 }
@@ -1044,7 +1138,7 @@ function run_migrate_content($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker migrate-content ' . $lang . ' ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker migrate-content ' . $lang . ' ' . $workspace->name);
         }
     }
 }
@@ -1122,7 +1216,7 @@ function run_migrate_plugin($args, $opts)
         CLI::logging("> Migrating and populating data...\n");
         $start = microtime(true);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker migrate-plugins-singleton-information ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker migrate-plugins-singleton-information ' . $workspace->name);
         }
         $stop = microtime(true);
         CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");

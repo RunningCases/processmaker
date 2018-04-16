@@ -5,6 +5,7 @@ use Behat\Behat\Exception\Exception;
 use \G;
 use \Criteria;
 use \ObjectPermissionPeer;
+use \Exception as StandardException;
 
 /**
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -223,6 +224,9 @@ class ProcessPermissions
             $this->validateProUid($data['PRO_UID']);
             if ($opUid != '') {
                 $opUid  = $this->validateOpUid($opUid);
+            }
+            if (empty($data['USR_UID']) || (isset($data['USR_UID']) && $data['USR_UID'] === "null")) {
+                throw (new StandardException(G::LoadTranslation("ID_SELECT_USER_OR_GROUP")));
             }
             if ($data['OP_USER_RELATION'] == "1") {
                 $this->validateUsrUid($data['USR_UID']);

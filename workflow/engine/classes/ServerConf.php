@@ -152,12 +152,12 @@ class ServerConf
     public function sucessfulLogin()
     {
         $this->logins++;
-        if (isset($this->workspaces[SYS_SYS]) && isset($this->workspaces[SYS_SYS]['WSP_LOGINS'])) {
-            $this->workspaces[SYS_SYS]['WSP_LOGINS']++;
+        if (isset($this->workspaces[config("system.workspace")]) && isset($this->workspaces[config("system.workspace")]['WSP_LOGINS'])) {
+            $this->workspaces[config("system.workspace")]['WSP_LOGINS']++;
         }
 
-        if (isset($this->workspaces[SYS_SYS]) && !isset($this->workspaces[SYS_SYS]['WSP_LOGINS'])) {
-            $this->workspaces[SYS_SYS]['WSP_LOGINS'] = 1;
+        if (isset($this->workspaces[config("system.workspace")]) && !isset($this->workspaces[config("system.workspace")]['WSP_LOGINS'])) {
+            $this->workspaces[config("system.workspace")]['WSP_LOGINS'] = 1;
         }
 
         $this->saveSingleton();

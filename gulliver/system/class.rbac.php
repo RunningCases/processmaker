@@ -185,10 +185,26 @@ class RBAC
             'processes_GetFile.php' => [
                 'mailTemplates' => ['PM_FACTORY'],
                 'public' => ['PM_FACTORY']
+            ],
+            'tools/ajaxListener.php' => [
+                'getList' => ['PM_SETUP'],
+                'save' => ['PM_SETUP'],
+                'delete' => ['PM_SETUP'],
+                'rebuild' => ['PM_SETUP']
+            ],
+            'proxyNewCasesList.php' => [
+                'todo' => ['PM_CASES'],
+                'draft' => ['PM_CASES'],
+                'sent' => ['PM_CASES'],
+                'paused' => ['PM_CASES'],
+                'unassigned' => ['PM_CASES'],
+                'to_reassign' => ['PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR'],
+                'to_revise' => ['PM_SUPERVISOR']
             ]
         ];
         $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
         $this->aliasPermissions['PM_LOGIN'] = [self::PM_GUEST_CASE];
+
     }
 
     /**
@@ -797,7 +813,7 @@ class RBAC
      * @access public
      * @param string $strUser the system
      * @param string $strPass the password
-     * @return $res
+     * @return $result
      */
     public function checkAutomaticRegister($strUser, $strPass)
     {
@@ -821,17 +837,25 @@ class RBAC
                         $plugin->sSystem = $this->sSystem;
                         //search the usersRolesObj
                         //create the users in ProcessMaker
-                        $res = $plugin->automaticRegister($row, $strUser, $strPass);
-                        if ($res == 1) {
-                            return $res;
+                        try {
+                            $res = $plugin->automaticRegister($row, $strUser, $strPass);
+                            if ($res == 1) {
+                                return $res;
+                            }
+                        } catch (Exception $e) {
+                            $context = Bootstrap::getDefaultContextLog();
+                            $context["action"] = "ldapSynchronize";
+                            $context["authSource"] = $row;
+                            Bootstrap::registerMonolog("ldapSynchronize", 400, $e->getMessage(), $context, $context["workspace"], "processmaker.log");
                         }
                     }
+
                     $dataset->next();
                     $row = $dataset->getRow();
                 }
             }
         }
-
+        return $result;
     }
 
     /**
@@ -1944,8 +1968,12 @@ class RBAC
             $totalPermissions = count($permissions);
             $countAccess = 0;
             foreach ($permissions as $key => $value) {
-                if ($this->userCanAccess($value) == 1) {
-                    $countAccess++;
+                $atLeastPermission = explode(',', $value);
+                foreach ($atLeastPermission as $permission) {
+                    if ($this->userCanAccess(trim($permission)) == 1) {
+                        $countAccess++;
+                        break;
+                    }
                 }
             }
             //Check if the user has all permissions that needed

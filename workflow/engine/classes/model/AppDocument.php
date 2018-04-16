@@ -611,10 +611,14 @@ class AppDocument extends BaseAppDocument
                     $aColumns['PRO_UID'],
                     $appUid,
                     array(),
-                    array('INPUT_DOCUMENTS' => 'VIEW')
+                    array('INPUT_DOCUMENTS' => 'VIEW', 'ATTACHMENTS' => 'VIEW')
                 );
                 //Has permissions?
                 if (in_array($appDocUid, $userAuthorization['objectPermissions']['INPUT_DOCUMENTS'])) {
+                    return true;
+                }
+                //Has permissions?
+                if (in_array($appDocUid, $userAuthorization['objectPermissions']['ATTACHMENTS'])) {
                     return true;
                 }
                 //Is supervisor?

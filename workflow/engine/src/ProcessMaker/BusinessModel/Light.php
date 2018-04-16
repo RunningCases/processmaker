@@ -328,7 +328,7 @@ class Light
 
             //Log
             Bootstrap::registerMonolog('MobileCreateCase', 200, "Create case",
-                ['application_uid' => $aData['APPLICATION'], 'usr_uid' => $userId], SYS_SYS, 'processmaker.log');
+                ['application_uid' => $aData['APPLICATION'], 'usr_uid' => $userId], config("system.workspace"), 'processmaker.log');
         } catch (Exception $e) {
             $response['status'] = 'failure';
             $response['message'] = $e->getMessage();
@@ -399,7 +399,7 @@ class Light
         $_SESSION["PROCESS"] = $prj_uid;
         $_SESSION["TASK"] = $act_uid;
         $_SESSION["USER_LOGGED"] = $usr_uid;
-        $_SESSION["USR_USERNAME"] = $userData['firstName'];
+        $_SESSION["USR_USERNAME"] = $userData['userName'];
         $_SESSION["INDEX"] = $Fields["DEL_INDEX"] = $del_index !== null ? $del_index : \AppDelegation::getCurrentIndex($cas_uid);
         $Fields['APP_DATA'] = array_merge($Fields['APP_DATA'], G::getSystemConstants());
         $triggers = $oCase->loadTriggers($act_uid, 'DYNAFORM', $step_uid_obj, strtoupper($type));
@@ -574,7 +574,7 @@ class Light
 
             //Log
             Bootstrap::registerMonolog('MobileRouteCase', 200, 'Route case',
-                ['application_uid' => $applicationUid, 'usr_uid' => $userUid], SYS_SYS, 'processmaker.log');
+                ['application_uid' => $applicationUid, 'usr_uid' => $userUid], config("system.workspace"), 'processmaker.log');
         } catch (Exception $e) {
             throw $e;
         }
@@ -807,7 +807,7 @@ class Light
         session_start();
         session_regenerate_id();
 
-        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . SYS_SYS, null, false, true);
+        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, false, true);
 
         if (strlen($msg) > 0) {
             $_SESSION['G_MESSAGE'] = $msg;
@@ -1236,7 +1236,7 @@ class Light
     public function getUsersToReassign($usr_uid, $task_uid)
     {
 
-        $memcache = PMmemcached::getSingleton(SYS_SYS);
+        $memcache = PMmemcached::getSingleton(config("system.workspace"));
         $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
         $RBAC->sSystem = 'PROCESSMAKER';
         $RBAC->initRBAC();
@@ -1323,7 +1323,7 @@ class Light
      */
     public function getConfiguration($params)
     {
-        $sysConf = Bootstrap::getSystemConfiguration('', '', SYS_SYS);
+        $sysConf = Bootstrap::getSystemConfiguration('', '', config("system.workspace"));
         $multiTimeZone = false;
         //Set Time Zone
         /*----------------------------------********---------------------------------*/

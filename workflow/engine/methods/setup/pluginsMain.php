@@ -30,7 +30,7 @@ $RBAC->requirePermissions( 'PM_SETUP' );
 
 $headPublisher = & headPublisher::getSingleton();
 $headPublisher->addExtJsScript( 'setup/pluginsMain', false );
-$headPublisher->assign( "PROCESSMAKER_URL", "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN );
+$headPublisher->assign( "PROCESSMAKER_URL", "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN );
 $headPublisher->assign( "SYS_SKIN", SYS_SKIN );
 
 $oPluginRegistry = PluginRegistry::loadSingleton();

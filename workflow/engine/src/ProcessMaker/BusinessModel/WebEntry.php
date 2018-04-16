@@ -43,7 +43,7 @@ class WebEntry
     {
         $this->pathDataPublic = defined("PATH_DATA_PUBLIC") ? PATH_DATA_PUBLIC : \G::$pathDataPublic;
         $this->httpHost = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : \G::$httpHost;
-        $this->sysSys = defined("SYS_SYS") ? SYS_SYS : \G::$sysSys;
+        $this->sysSys = !empty(config("system.workspace")) ? config("system.workspace") : \G::$sysSys;
         $this->sysSkin = defined("SYS_SKIN") ? SYS_SKIN : \G::$sysSkin;
         try {
             foreach ($this->arrayFieldDefinition as $key => $value) {
@@ -851,7 +851,7 @@ class WebEntry
         try {
             if ((!isset($record['WE_LINK_GENERATION']) || $record['WE_LINK_GENERATION']==='DEFAULT') && $record["WE_METHOD"] == "WS") {
                 $http = (\G::is_https())? "https://" : "http://";
-                $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $record["PRO_UID"];
+                $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . config("system.workspace") . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $record["PRO_UID"];
 
                 $record["WE_DATA"] = $url . "/" . $record["WE_DATA"];
             }

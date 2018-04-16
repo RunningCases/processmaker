@@ -312,8 +312,11 @@ class Content extends BaseContent
     *
     * @param  array  $langs
     */
-    public function regenerateContent ($langs, $workSpace = SYS_SYS)
+    public function regenerateContent ($langs, $workSpace = null)
     {
+        if ($workSpace === null) {
+            $workSpace = config("system.workspace");
+        }
         //Search the language
         $key = array_search( 'en', $langs );
         if ($key === false) {

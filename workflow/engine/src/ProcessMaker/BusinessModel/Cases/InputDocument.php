@@ -802,8 +802,8 @@ class InputDocument
                         break;
                 }
                 G::SendMessageText( $message, "ERROR" );
-                $backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-                G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+                $backUrlObj = explode( "sys" . config("system.workspace"), $_SERVER['HTTP_REFERER'] );
+                G::header( "location: " . "/sys" . config("system.workspace") . $backUrlObj[1] );
                 die();
             }
 
@@ -855,9 +855,9 @@ class InputDocument
                     if ($msg != '') {
                         if ($runningWorkflow) {
                             G::SendMessageText($msg, 'ERROR');
-                            $backUrlObj = explode('sys' . SYS_SYS, $_SERVER['HTTP_REFERER']);
+                            $backUrlObj = explode('sys' . config("system.workspace"), $_SERVER['HTTP_REFERER']);
 
-                            G::header('location: ' . '/sys' . SYS_SYS . $backUrlObj[1]);
+                            G::header('location: ' . '/sys' . config("system.workspace") . $backUrlObj[1]);
                             exit(0);
                         } else {
                             throw new Exception($msg);
@@ -1005,8 +1005,8 @@ class InputDocument
                             }
                             $message = $res->message;
                             G::SendMessageText($message, "ERROR");
-                            $backUrlObj = explode("sys" . SYS_SYS, $_SERVER['HTTP_REFERER']);
-                            G::header("location: " . "/sys" . SYS_SYS . $backUrlObj[1]);
+                            $backUrlObj = explode("sys" . config("system.workspace"), $_SERVER['HTTP_REFERER']);
+                            G::header("location: " . "/sys" . config("system.workspace") . $backUrlObj[1]);
                             die();
                         }
 
@@ -1019,8 +1019,8 @@ class InputDocument
                         if ($inpDocMaxFilesize > 0 && $fileSizeByField > 0) {
                             if ($fileSizeByField > $inpDocMaxFilesize) {
                                 G::SendMessageText(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"), "ERROR");
-                                $arrayAux1 = explode("sys" . SYS_SYS, $_SERVER["HTTP_REFERER"]);
-                                G::header("location: /sys" . SYS_SYS . $arrayAux1[1]);
+                                $arrayAux1 = explode("sys" . config("system.workspace"), $_SERVER["HTTP_REFERER"]);
+                                G::header("location: /sys" . config("system.workspace") . $arrayAux1[1]);
                                 exit(0);
                             }
                         }
@@ -1035,8 +1035,8 @@ class InputDocument
                         $message = G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
                         Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, 'processmaker.log');
                         G::SendMessageText($message, "ERROR");
-                        $backUrlObj = explode("sys" . SYS_SYS, $_SERVER['HTTP_REFERER']);
-                        G::header("location: " . "/sys" . SYS_SYS . $backUrlObj[1]);
+                        $backUrlObj = explode("sys" . config("system.workspace"), $_SERVER['HTTP_REFERER']);
+                        G::header("location: " . "/sys" . config("system.workspace") . $backUrlObj[1]);
                         die();
                     }
 
@@ -1139,5 +1139,41 @@ class InputDocument
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * This function get all the supervisor's documents
+     * When the DEL_INDEX = 100000
+     *
+     * @param string $appUid, uid related to the case
+     * @param array $docType, can be INPUT, ATTACHED, OUTPUT
+     * @param array $docStatus, can be ACTIVE, DELETED
+     *
+     * @return array $documents
+     * @throws Exception
+    */
+    public function getSupervisorDocuments($appUid, $docType = ['INPUT'], $docStatus = ['ACTIVE'])
+    {
+        try {
+            $criteria = new Criteria('workflow');
+            $criteria->add(AppDocumentPeer::APP_UID, $appUid);
+            $criteria->add(AppDocumentPeer::APP_DOC_TYPE, $docType, Criteria::IN);
+            $criteria->add(AppDocumentPeer::APP_DOC_STATUS, $docStatus, Criteria::IN);
+            $criteria->add(AppDocumentPeer::DEL_INDEX, 100000);
+            $criteria->addJoin(AppDocumentPeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
+            $dataset = AppDocumentPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $documents = [];
+            while ($row = $dataset->getRow()) {
+                $documents[] = $row;
+                $dataset->next();
+            }
+
+            return $documents;
+        } catch (Exception $e) {
+            throw $e;
+        }
+
     }
 }

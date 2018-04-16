@@ -142,8 +142,8 @@ if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
 					if($res->status == 0){
 						$message = $res->message;
 						G::SendMessageText( $message, "ERROR" );
-						$backUrlObj = explode( "sys" . SYS_SYS, $_SERVER['HTTP_REFERER'] );
-						G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
+						$backUrlObj = explode( "sys" . config("system.workspace"), $_SERVER['HTTP_REFERER'] );
+						G::header( "location: " . "/sys" . config("system.workspace") . $backUrlObj[1] );
 						die();
 					}
 
@@ -156,8 +156,8 @@ if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
 					if ($inpDocMaxFilesize > 0 && $fileSizeByField > 0) {
 						if ($fileSizeByField > $inpDocMaxFilesize) {
 							G::SendMessageText(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"), "ERROR");
-							$arrayAux1 = explode("sys" . SYS_SYS, $_SERVER["HTTP_REFERER"]);
-							G::header("location: /sys" . SYS_SYS . $arrayAux1[1]);
+							$arrayAux1 = explode("sys" . config("system.workspace"), $_SERVER["HTTP_REFERER"]);
+							G::header("location: /sys" . config("system.workspace") . $arrayAux1[1]);
 							exit(0);
 						}
 					}

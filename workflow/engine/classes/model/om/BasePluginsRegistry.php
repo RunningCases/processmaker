@@ -43,7 +43,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
      * The value for the plugin_description field.
      * @var        string
      */
-    protected $plugin_description = '';
+    protected $plugin_description;
 
     /**
      * The value for the plugin_class_name field.
@@ -525,7 +525,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->plugin_description !== $v || $v === '') {
+        if ($this->plugin_description !== $v) {
             $this->plugin_description = $v;
             $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_DESCRIPTION;
         }

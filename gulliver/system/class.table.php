@@ -461,7 +461,7 @@ class Table
 
             //$res .= "<a class=\"" . $strClass . "Link\" href=\"";
             $res .= "<a class=\"" . $strClass . "\" href=\"";
-            $res .= (ENABLE_ENCRYPT == 'yes' ? str_replace( G::encrypt( 'sys' . SYS_SYS, URL_KEY ), SYS_SYS, G::encryptUrl( urldecode( SYS_CURRENT_URI ), URL_KEY ) ) : SYS_CURRENT_URI) . "?order=" . $this->Columns[$intPos]['Name'] . "&page=" . $pa . "&label=true";
+            $res .= (ENABLE_ENCRYPT == 'yes' ? str_replace( G::encrypt( 'sys' . config("system.workspace"), URL_KEY ), config("system.workspace"), G::encryptUrl( urldecode( SYS_CURRENT_URI ), URL_KEY ) ) : SYS_CURRENT_URI) . "?order=" . $this->Columns[$intPos]['Name'] . "&page=" . $pa . "&label=true";
             //$res .= $_SERVER['REDIRECT_URL'] . "?order=" . $this->Columns[$intPos]['Name']."&page=".$pa."&label=true";
             $res .= "\">" . $this->Labels[$intPos] . "</a>";
 
