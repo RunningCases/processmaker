@@ -5677,7 +5677,6 @@
             <index-column name="STATUS"/>
         </index>
     </table>
-
     <table name="NOTIFICATION_QUEUE" idMethod="native">
         <column name="NOT_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
         <column name="DEV_TYPE" type="VARCHAR" size="50" required="true"/>
@@ -5739,6 +5738,7 @@
         <column name="PLUGIN_CSS" type="LONGVARCHAR"/>
         <column name="PLUGIN_JS" type="LONGVARCHAR"/>
         <column name="PLUGIN_REST_SERVICE" type="LONGVARCHAR"/>
+        <column name="PLUGIN_CRON_FILES" type="LONGVARCHAR"/>
         <column name="PLUGIN_TASK_EXTENDED_PROPERTIES" type="LONGVARCHAR"/>
         <column name="PLUGIN_ATTRIBUTES" type="LONGVARCHAR"/>
     </table>
