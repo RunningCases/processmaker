@@ -1106,11 +1106,11 @@ class Cases
      * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      * @param string $delIndex
-     * @param string $bExecuteTriggersBeforeAssignment
+     * @param boolean $executeTriggersBeforeAssignment
      *
      * return array Return an array with Task Case
      */
-    public function updateRouteCase($applicationUid, $userUid, $delIndex)
+    public function updateRouteCase($applicationUid, $userUid, $delIndex, $executeTriggersBeforeAssignment)
     {
         try {
             if (!$delIndex) {
@@ -1124,8 +1124,7 @@ class Cases
             }
 
             $ws = new WsBase();
-            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex,
-                $bExecuteTriggersBeforeAssignment = false);
+            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $executeTriggersBeforeAssignment);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 throw (new Exception($array ["message"]));
