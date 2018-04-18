@@ -63,11 +63,13 @@ if (isset( $arrayConfig["DEFAULT_CASES_MENU"] )) {
 }
 
 if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
+    $openAppUid = $_SESSION['__OPEN_APPLICATION_UID__'];
+    unset($_SESSION['__OPEN_APPLICATION_UID__']);
     $case = new \ProcessMaker\BusinessModel\Cases();
 
     $confDefaultOption = 'CASES_SEARCH';
     $action = 'search';
-    $arrayResult = $case->getStatusInfo($_SESSION['__OPEN_APPLICATION_UID__'], 0, $_SESSION['USER_LOGGED']);
+    $arrayResult = $case->getStatusInfo($openAppUid, 0, $_SESSION['USER_LOGGED']);
     $arrayDelIndex = [];
 
     if (!empty($arrayResult)) {
@@ -86,7 +88,7 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
 
         $arrayDelIndex = $arrayResult['DEL_INDEX'];
     } else {
-        $arrayResultData = $case->getStatusInfo($_SESSION['__OPEN_APPLICATION_UID__']);
+        $arrayResultData = $case->getStatusInfo($openAppUid);
         $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
         $isSupervisor = $supervisor->isUserProcessSupervisor($arrayResultData['PRO_UID'], $_SESSION['USER_LOGGED']);
         if ($isSupervisor) {
@@ -94,9 +96,9 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
             $arrayDelIndex = $arrayResultData['DEL_INDEX'];
         } else {
             $_SESSION['PROCESS'] = $arrayResultData['PRO_UID'];
-            $_GET['APP_UID'] = $_SESSION['__OPEN_APPLICATION_UID__'];
+            $_GET['APP_UID'] = $openAppUid;
             $_SESSION['ACTION'] = 'jump';
-            $_SESSION['APPLICATION'] = $_SESSION['__OPEN_APPLICATION_UID__'];
+            $_SESSION['APPLICATION'] = $openAppUid;
             $_SESSION['INDEX'] = $arrayResultData['DEL_INDEX'][0];
             require_once(PATH_METHODS . 'cases' . PATH_SEP . 'cases_Resume.php');
             exit();
@@ -104,14 +106,12 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
     }
 
     if (count($arrayDelIndex) == 1) {
-        $defaultOption = '../cases/open?APP_UID=' . $_SESSION['__OPEN_APPLICATION_UID__'] .
+        $defaultOption = '../cases/open?APP_UID=' . $openAppUid .
             '&DEL_INDEX=' . $arrayDelIndex[0] . '&action=' . $action;
     } else {
         $defaultOption = '../cases/casesListExtJs?action=' . $action .
-            '&openApplicationUid=' . $_SESSION['__OPEN_APPLICATION_UID__'];
+            '&openApplicationUid=' . $openAppUid;
     }
-
-    unset($_SESSION['__OPEN_APPLICATION_UID__']);
 } else {
     if (isset($_GET['id'])) {
         $defaultOption = '../cases/open?APP_UID=' . $_GET['id'] . '&DEL_INDEX=' . $_GET['i'];
