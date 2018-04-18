@@ -71,14 +71,11 @@ class EmailEvent
                 $row = $result->getRow();
                 if (!empty($row['MESS_UID'])) {
                     $row['EMAIL'] = $row['MESS_ACCOUNT'];
-
-                    if (empty($row['EMAIL']) && $row['MESS_ENGINE'] === 'MAIL') {
-                        $row['MESS_ACCOUNT'] = $row['EMAIL'] = 'Mail (PHP)';
-                    }
-                    $row['MESS_LABEL'] = $row['MESS_FROM_MAIL'];
-                    if (empty($row['MESS_FROM_MAIL'])) {
-                        $row['MESS_LABEL'] = $row['MESS_ACCOUNT'];
-                    }
+                    $row['MESS_LABEL'] = EmailServer::getMessLabel(
+                        $row['MESS_ENGINE'],
+                        $row['MESS_ACCOUNT'],
+                        $row['MESS_FROM_MAIL']
+                    );
                     $accounts[] = array_change_key_case($row, CASE_LOWER);
                 }
             }
@@ -108,7 +105,14 @@ class EmailEvent
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
             $row = $rsCriteria->getRow();
+            $emailServer = new EmailServer();
             if ($row) {
+                $emailServerData = $emailServer->getEmailServer($row['EMAIL_SERVER_UID'], true);
+                $row['MESS_LABEL'] = EmailServer::getMessLabel(
+                    $emailServerData['MESS_ENGINE'],
+                    $emailServerData['MESS_ACCOUNT'],
+                    $emailServerData['MESS_FROM_MAIL']
+                );
                 $row = array_change_key_case($row, CASE_LOWER);
             }
             return $row;
