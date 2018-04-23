@@ -4179,12 +4179,15 @@ class Processes
             $arrayEmailServerDefault = $emailServer->getEmailServerDefault();
 
             foreach ($arrayData as $value) {
-                unset($value['EMAIL_EVENT_FROM']);
-                unset($value['EMAIL_SERVER_UID']);
-
-                if (!empty($arrayEmailServerDefault)) {
-                    $value['EMAIL_EVENT_FROM'] = $arrayEmailServerDefault['MESS_ACCOUNT'];
-                    $value['EMAIL_SERVER_UID'] = $arrayEmailServerDefault['MESS_UID'];
+                if (isset($value['__EMAIL_SERVER_UID_PRESERVED__']) && $value['__EMAIL_SERVER_UID_PRESERVED__'] === true) {
+                    unset($value['__EMAIL_SERVER_UID_PRESERVED__']);
+                } else {
+                    unset($value['EMAIL_EVENT_FROM']);
+                    unset($value['EMAIL_SERVER_UID']);
+                    if (!empty($arrayEmailServerDefault)) {
+                        $value['EMAIL_EVENT_FROM'] = $arrayEmailServerDefault['MESS_ACCOUNT'];
+                        $value['EMAIL_SERVER_UID'] = $arrayEmailServerDefault['MESS_UID'];
+                    }
                 }
 
                 $emailEventData = $emailEvent->save($processUid, $value);
