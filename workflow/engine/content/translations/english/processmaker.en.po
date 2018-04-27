@@ -19110,6 +19110,12 @@ msgid "Notify users of case"
 msgstr "Notify users of case"
 
 # TRANSLATION
+# LABEL/ID_NOT_ABLE_REASSIGN
+#: LABEL/ID_NOT_ABLE_REASSIGN
+msgid "You are not able to reassign cases of this process."
+msgstr "You are not able to reassign cases of this process."
+
+# TRANSLATION
 # LABEL/ID_NOT_AVAILABLE_DATABASE
 #: LABEL/ID_NOT_AVAILABLE_DATABASE
 msgid "Not available."
@@ -21744,6 +21750,12 @@ msgid "Reassign All Cases by Task"
 msgstr "Reassign All Cases by Task"
 
 # TRANSLATION
+# LABEL/ID_REASSIGN_CASE
+#: LABEL/ID_REASSIGN_CASE
+msgid "Reassign Case"
+msgstr "Reassign Case"
+
+# TRANSLATION
 # LABEL/ID_REASSIGN_CASES
 #: LABEL/ID_REASSIGN_CASES
 msgid "Reassign Cases"
@@ -21754,6 +21766,12 @@ msgstr "Reassign Cases"
 #: LABEL/ID_REASSIGN_CONFIRM
 msgid "Do you want to reassign the case?"
 msgstr "Do you want to reassign the case?"
+
+# TRANSLATION
+# LABEL/ID_REASSIGN_MY_CASES
+#: LABEL/ID_REASSIGN_MY_CASES
+msgid "Reassign my cases"
+msgstr "Reassign my cases"
 
 # TRANSLATION
 # LABEL/ID_REASSIGN_TO

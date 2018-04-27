@@ -3349,6 +3349,7 @@ class Cases
      * @param array $rolesPermissions, the roles that we need to review
      * @param array $objectPermissions, the permissions that we need to review
      * @param boolean $objectSupervisor, if we need to get all the objects supervisor
+     * @param string $tasUid
      * @return array
      */
     public function userAuthorization(
@@ -3357,7 +3358,8 @@ class Cases
         $appUid,
         $rolesPermissions = [],
         $objectPermissions = [],
-        $objectSupervisor = false
+        $objectSupervisor = false,
+        $tasUid = ''
     ) {
         $arrayAccess = [];
 
@@ -3389,7 +3391,7 @@ class Cases
         if (count($objectPermissions) > 0) {
             $case = new ClassesCases();
             foreach ($objectPermissions as $key => $value) {
-                $resPermission = $case->getAllObjectsFrom($proUid, $appUid, '', $usrUid, $value);
+                $resPermission = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, $value);
                 if (isset($resPermission[$key])) {
                     $arrayAccess['objectPermissions'][$key] = $resPermission[$key];
                 }

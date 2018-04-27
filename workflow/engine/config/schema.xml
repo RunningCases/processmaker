@@ -1998,7 +1998,7 @@
         <column name="OP_USER_RELATION" type="INTEGER" required="true" default="0"/>
         <column name="OP_TASK_SOURCE" type="VARCHAR" size="32" required="" default="0"/>
         <column name="OP_PARTICIPATE" type="INTEGER" required="true" default="0"/>
-        <column name="OP_OBJ_TYPE" type="VARCHAR" size="15" required="true" default="0"/>
+        <column name="OP_OBJ_TYPE" type="VARCHAR" size="20" required="true" default="0"/>
         <column name="OP_OBJ_UID" type="VARCHAR" size="32" required="true" default="0"/>
         <column name="OP_ACTION" type="VARCHAR" size="10" required="true" default="0"/>
         <column name="OP_CASE_STATUS" type="VARCHAR" size="10" required="false" default="0"/>
@@ -2031,7 +2031,7 @@
             <rule name="required" message="Participation is required."/>
         </validator>
         <validator column="OP_OBJ_TYPE">
-            <rule name="maxLength" value="15" message="Object type can be no larger than ${value} in size"/>
+            <rule name="maxLength" value="20" message="Object type can be no larger than ${value} in size"/>
             <rule name="required" message="Object type is required."/>
         </validator>
         <validator column="OP_OBJ_UID">
