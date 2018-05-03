@@ -51,14 +51,14 @@
         },
         {
             "name": "colosa/MichelangeloFE",
-            "version": "dev-release/3.2.2",
+            "version": "dev-release/3.2.3",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/michelangelofe.git",
-                "reference": "8ae8cc428412d8c964bc657b2d87ca7ea0194d15"
+                "reference": "a44fbc3e9d0c9c1ce1f0e7697cedc809f8a3a220"
             },
             "require": {
-                "colosa/pmui": "release/3.2.2-dev"
+                "colosa/pmui": "release/3.2.3-dev"
             },
             "type": "library",
             "description": "ProcessMaker Michelangelo Front End",
@@ -66,15 +66,15 @@
             "keywords": [
                 "js app ProcessMaker"
             ],
-            "time": "2018-01-27T00:51:59+00:00"
+            "time": "2018-04-27T20:10:38+00:00"
         },
         {
             "name": "colosa/pmDynaform",
-            "version": "dev-release/3.2.2",
+            "version": "dev-release/3.2.3",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmdynaform.git",
-                "reference": "fc2c73afeb721da2c0ddfc15d4ce892049938f4b"
+                "reference": "fa6a9eb4520a090aaf50e46c90e49596b0794f04"
             },
             "type": "library",
             "description": "JS Library to render ProcessMaker Dynaforms",
@@ -82,15 +82,15 @@
             "keywords": [
                 "js lib ProcessMaker Dynaforms"
             ],
-            "time": "2017-11-30T19:21:05+00:00"
+            "time": "2018-04-16T15:41:04+00:00"
         },
         {
             "name": "colosa/pmUI",
-            "version": "dev-release/3.2.2",
+            "version": "dev-release/3.2.3",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmui.git",
-                "reference": "1f25446c547ac61042661f191ea4647ad25ab11d"
+                "reference": "583402fdb1a5da606d02cc25f4a5573c3ff800b2"
             },
             "type": "library",
             "description": "JS UI Library",
@@ -98,7 +98,7 @@
             "keywords": [
                 "js lib ProcessMaker UI"
             ],
-            "time": "2017-10-17T17:56:43+00:00"
+            "time": "2018-04-19T20:17:00+00:00"
         },
         {
             "name": "dapphp/securimage",
