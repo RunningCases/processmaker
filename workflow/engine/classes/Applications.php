@@ -112,8 +112,8 @@ class Applications
             default: //All status
                 //When the status is TO_DO, we will get all the open threads
                 $sqlData .= " AND (APP_DELEGATION.DEL_THREAD_STATUS = 'OPEN' ";
-                //When the status is COMPLETED, we will get the last task that with completed the case
-                $sqlData .= " OR (APP_DELEGATION.DEL_THREAD_STATUS = 'CLOSED' AND APP_DELEGATION.DEL_LAST_INDEX = 1 AND APPLICATION.APP_STATUS_ID = 3)) ";
+                //When the status is COMPLETED or CANCELLED, we will get the last task that with completed/cancelled the case
+                $sqlData .= " OR (APP_DELEGATION.DEL_THREAD_STATUS = 'CLOSED' AND APP_DELEGATION.DEL_LAST_INDEX = 1 AND APPLICATION.APP_STATUS_ID IN (3,4))) ";
                 break;
         }
 
