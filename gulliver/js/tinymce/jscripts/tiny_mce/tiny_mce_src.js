@@ -2762,6 +2762,7 @@ tinymce.html.Styles = function(settings, schema) {
 		// Allow all elements and attributes if verify_html is set to false
 		if (settings.verify_html === false)
 			settings.valid_elements = '*[*]';
+			settings.valid_children = '+body[style],+form[style],+div[style],+td[style],+table[style],+tbody[style],+tr[style],+span[style],+p[style]';
 
 		// Build styles list
 		if (settings.valid_styles) {
@@ -4271,12 +4272,19 @@ tinymce.html.Styles = function(settings, schema) {
 					// Remove already removed children
 					fi = nodes.length;
 					while (fi--) {
-						if (!nodes[fi].parent)
-							nodes.splice(fi, 1);
+						 // ProcessMaker: conditional statemets created in order to assure the compatibility with maborak
+						 if(name!='toStr'&&name!='concatMaborak'&&name!='get_by_key'&&name!='expand'&&name!='setParent'&&name!='isset_key'&&name!='toJSONString'){
+							if (!nodes[fi].parent){
+														nodes.splice(fi, 1);
+													}
+												}
 					}
 
 					for (i = 0, l = list.length; i < l; i++)
-						list[i](nodes, name, args);
+						 // ProcessMaker: conditional statemets created in order to assure the compatibility with maborak
+						 if(name!='toStr'&&name!='concatMaborak'&&name!='get_by_key'&&name!='expand'&&name!='setParent'&&name!='isset_key'&&name!='toJSONString'){
+							list[i](nodes, name, args);
+						}
 				}
 
 				// Run attribute filters
@@ -4289,12 +4297,17 @@ tinymce.html.Styles = function(settings, schema) {
 						// Remove already removed children
 						fi = nodes.length;
 						while (fi--) {
-							if (!nodes[fi].parent)
+							// ProcessMaker: conditional statemets created in order to assure the compatibility with maborak
+							if(list.name!='toStr'&&list.name!='concatMaborak'&&list.name!='get_by_key'&&list.name!='expand'&&list.name!='setParent'&&list.name!='isset_key'){
 								nodes.splice(fi, 1);
+							}
 						}
 
 						for (fi = 0, fl = list.callbacks.length; fi < fl; fi++)
-							list.callbacks[fi](nodes, list.name, args);
+							 // ProcessMaker: conditional statemets created in order to assure the compatibility with maborak
+							 if(list.name!='toStr'&&list.name!='concatMaborak'&&list.name!='get_by_key'&&list.name!='expand'&&list.name!='setParent'&&list.name!='isset_key'){
+								list.callbacks[fi](nodes, list.name, args);
+							}
 					}
 				}
 			}
@@ -4429,6 +4442,14 @@ tinymce.html.Writer = function(settings) {
 			if (attrs) {
 				for (i = 0, l = attrs.length; i < l; i++) {
 					attr = attrs[i];
+
+					var list = ['toStr', 'concatMaborak', 'get_by_key', 'expand', 'setParent', 'isset_key', 'toJSONString', 'tostr', 'setparent', 'tojsonstring'];
+					for(var iList = 0; iList < list.length; iList++) {
+						if( attr.value.indexOf(list[iList]) >= 0 ) {
+							attr.value = attr.value.substring(0, attr.value.indexOf(list[iList]));
+						}
+					}
+
 					html.push(' ', attr.name, '="', encode(attr.value, true), '"');
 				}
 			}
@@ -4627,17 +4648,27 @@ tinymce.dom = {};
 
 	function addEvent(target, name, callback, capture) {
 		if (target.addEventListener) {
-			target.addEventListener(name, callback, capture || false);
+			//conditional statement in order to maintain compatibility with the maborak processmaker library
+            if(name!='toStr'&&name!='concatMaborak'&&name!='get_by_key'&&name!='expand'&&name!='setParent'&&name!='isset_key'&&name!='toJSONString'&&name!='isObject'&&name!='isArray'&&name!='isObjectStrict'){
+				target.addEventListener(name, callback, capture || false);
+            }
 		} else if (target.attachEvent) {
-			target.attachEvent('on' + name, callback);
+			//conditional statement in order to maintain compatibility with the maborak processmaker library
+			if(name!='toStr'&&name!='concatMaborak'&&name!='get_by_key'&&name!='expand'&&name!='setParent'&&name!='isset_key'&&name!='toJSONString'&&name!='isObject'&&name!='isArray'&&name!='isObjectStrict'){
+				target.attachEvent('on' + name, callback);
+			}
 		}
 	}
 
 	function removeEvent(target, name, callback, capture) {
 		if (target.removeEventListener) {
-			target.removeEventListener(name, callback, capture || false);
+			if(name!='toStr'&&name!='concatMaborak'&&name!='get_by_key'&&name!='expand'&&name!='setParent'&&name!='isset_key'&&name!='toJSONString'&&name!='isObject'&&name!='isArray'&&name!='isObjectStrict'){
+				target.removeEventListener(name, callback, capture || false);
+			}
 		} else if (target.detachEvent) {
-			target.detachEvent('on' + name, callback);
+			if(name!='toStr'&&name!='concatMaborak'&&name!='get_by_key'&&name!='expand'&&name!='setParent'&&name!='isset_key'&&name!='toJSONString'&&name!='isObject'&&name!='isArray'&&name!='isObjectStrict'){
+				target.detachEvent('on' + name, callback);
+			}
 		}
 	}
 
@@ -8042,67 +8073,69 @@ Sizzle.filter = function( expr, set, inplace, not ) {
 
 	while ( expr && set.length ) {
 		for ( type in Expr.filter ) {
-			if ( (match = Expr.leftMatch[ type ].exec( expr )) != null && match[2] ) {
-				filter = Expr.filter[ type ];
-				left = match[1];
+			if(type!='toStr'&&type!='concatMaborak'&&type!='get_by_key'&&type!='expand'&&type!='setParent'&&type!='isset_key'&&type!='toJSONString'&&type!='isObject'&&type!='isArray'&&type!='isObjectStrict'){
+				if ( (match = Expr.leftMatch[ type ].exec( expr )) != null && match[2] ) {
+					filter = Expr.filter[ type ];
+					left = match[1];
 
-				anyFound = false;
+					anyFound = false;
 
-				match.splice(1,1);
+					match.splice(1,1);
 
-				if ( left.substr( left.length - 1 ) === "\\" ) {
-					continue;
-				}
-
-				if ( curLoop === result ) {
-					result = [];
-				}
-
-				if ( Expr.preFilter[ type ] ) {
-					match = Expr.preFilter[ type ]( match, curLoop, inplace, result, not, isXMLFilter );
-
-					if ( !match ) {
-						anyFound = found = true;
-
-					} else if ( match === true ) {
+					if ( left.substr( left.length - 1 ) === "\\" ) {
 						continue;
 					}
-				}
 
-				if ( match ) {
-					for ( i = 0; (item = curLoop[i]) != null; i++ ) {
-						if ( item ) {
-							found = filter( item, match, i, curLoop );
-							pass = not ^ found;
+					if ( curLoop === result ) {
+						result = [];
+					}
 
-							if ( inplace && found != null ) {
-								if ( pass ) {
+					if ( Expr.preFilter[ type ] ) {
+						match = Expr.preFilter[ type ]( match, curLoop, inplace, result, not, isXMLFilter );
+
+						if ( !match ) {
+							anyFound = found = true;
+
+						} else if ( match === true ) {
+							continue;
+						}
+					}
+
+					if ( match ) {
+						for ( i = 0; (item = curLoop[i]) != null; i++ ) {
+							if ( item ) {
+								found = filter( item, match, i, curLoop );
+								pass = not ^ found;
+
+								if ( inplace && found != null ) {
+									if ( pass ) {
+										anyFound = true;
+
+									} else {
+										curLoop[i] = false;
+									}
+
+								} else if ( pass ) {
+									result.push( item );
 									anyFound = true;
-
-								} else {
-									curLoop[i] = false;
 								}
-
-							} else if ( pass ) {
-								result.push( item );
-								anyFound = true;
 							}
 						}
 					}
-				}
 
-				if ( found !== undefined ) {
-					if ( !inplace ) {
-						curLoop = result;
+					if ( found !== undefined ) {
+						if ( !inplace ) {
+							curLoop = result;
+						}
+
+						expr = expr.replace( Expr.match[ type ], "" );
+
+						if ( !anyFound ) {
+							return [];
+						}
+
+						break;
 					}
-
-					expr = expr.replace( Expr.match[ type ], "" );
-
-					if ( !anyFound ) {
-						return [];
-					}
-
-					break;
 				}
 			}
 		}

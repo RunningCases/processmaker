@@ -32,6 +32,8 @@ class Project extends Api
     ];
 
     /**
+     * Get all Projects.
+     * 
      * @url GET
      */
     public function doGetProjects()
@@ -50,8 +52,13 @@ class Project extends Api
     }
 
     /**
+     * Get a Project by identifier.
+     * 
      * @url GET /:prj_uid
      * @param string $prj_uid {@min 32}{@max 32}
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY, PM_CASES}
      */
     public function doGetProject($prj_uid)
     {
@@ -68,7 +75,7 @@ class Project extends Api
     }
 
     /**
-     * Post Project
+     * Create Project from structure.
      *
      * @param string $prj_name
      * @param array $request_data
@@ -89,6 +96,8 @@ class Project extends Api
     }
 
     /**
+     * Update Project from structure.
+     * 
      * @url PUT /:prj_uid
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -113,6 +122,8 @@ class Project extends Api
     }
 
     /**
+     * Remove Project BPMN.
+     * 
      * @param string $prj_uid {@min 1}{@max 32}
      * @url DELETE /:prj_uid
      * @throws Exception
@@ -135,11 +146,13 @@ class Project extends Api
      * Bulk actions
      * 
      * @url POST /bulk
-     * @access protected
-     * @class AccessControl {@permission PM_FACTORY}
+     * 
      * @param array $request_data
      * @return array $response
      * @throws Exception
+     * 
+     * @access protected
+     * @class AccessControl {@permission PM_FACTORY}
      */
     public function bulk($request_data)
     {
@@ -152,6 +165,8 @@ class Project extends Api
     }
 
     /**
+     * Get a list of exportable objects.
+     * 
      * @url GET /:prj_uid/export/listObjects
      * @param string $prj_uid {@min 32}{@max 32}
      * @return mixed|string
@@ -169,6 +184,8 @@ class Project extends Api
     }
 
     /**
+     * Export Project (Promotion Manager).
+     * 
      * @url GET /:prj_uid/export-granular
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $objects
@@ -191,6 +208,8 @@ class Project extends Api
     }
 
     /**
+     * Export Project (Normal).
+     * 
      * @url GET /:prj_uid/export
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -217,6 +236,8 @@ class Project extends Api
     }
 
     /**
+     * Import Project.
+     * 
      * @url POST /import
      * @param array $request_data
      * @status 201
@@ -245,6 +266,8 @@ class Project extends Api
     }
 
     /**
+     * Save an existing Project as another Project.
+     * 
      * @url POST /save-as
      * @param string $prj_uid         {@from body}
      * @param string $prj_name        {@from body}
@@ -258,6 +281,8 @@ class Project extends Api
     }
 
     /**
+     * Get the Process related to a Project.
+     * 
      * @url GET /:prj_uid/process
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -278,6 +303,8 @@ class Project extends Api
     }
 
     /**
+     * Update the Process related to a Project.
+     * 
      * @url PUT /:prj_uid/process
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
@@ -297,6 +324,8 @@ class Project extends Api
     }
 
     /**
+     * Generate a BPMN Project.
+     * 
      * @url POST /generate-bpmn
      * @param array $request_data
      * @status 201
@@ -333,6 +362,8 @@ class Project extends Api
     }
 
     /**
+     * Get the Dynaforms list of a Project.
+     * 
      * @url GET /:prj_uid/dynaforms
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -352,6 +383,8 @@ class Project extends Api
     }
 
     /**
+     * Get the Input Documents list of a Project.
+     * 
      * @url GET /:prj_uid/input-documents
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -371,6 +404,8 @@ class Project extends Api
     }
 
     /**
+     * Get the Variables list of a Project.
+     * 
      * @url GET /:prj_uid/variables
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -390,6 +425,8 @@ class Project extends Api
     }
 
     /**
+     * Get the list of the Grid Variables of a Project.
+     * 
      * @url GET /:prj_uid/grid/variables
      * @url GET /:prj_uid/grid/:grid_uid/variables
      * @param string $prj_uid  {@min 32}{@max 32}
@@ -411,6 +448,8 @@ class Project extends Api
     }
 
     /**
+     * Get the PM Functions definition for the Triggers wizard module
+     * 
      * @url GET /:prj_uid/trigger-wizards
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -430,6 +469,8 @@ class Project extends Api
     }
 
     /**
+     * Update route order of a Process related to a Project.
+     * 
      * @url PUT /:prj_uid/update-route-order
      * @param string $prj_uid {@min 32}{@max 32}
      */
@@ -445,6 +486,8 @@ class Project extends Api
     }
 
     /**
+     * Update route order of a Project.
+     * 
      * @url PUT /:prj_uid/update-route-order-from-project
      * @param string $prj_uid {@min 32}{@max 32}
      */

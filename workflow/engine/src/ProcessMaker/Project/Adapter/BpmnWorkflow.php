@@ -1311,7 +1311,7 @@ class BpmnWorkflow extends Project\Bpmn
             $data["PRO_STATUS"] = $projectData['pro_status'];
         }
 
-        if (isset($projectData['prjCreateUser'])){
+        if (!empty($projectData['prjCreateUser'])) {
             $data["PRO_CREATE_USER"] = $projectData['prjCreateUser'];
         }
 

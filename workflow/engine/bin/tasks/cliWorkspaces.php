@@ -379,7 +379,7 @@ function run_workspace_upgrade($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker upgrade ' . $parameters . ' ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker upgrade ' . $parameters . ' ' . $workspace->name);
         }
     }
 }
@@ -435,7 +435,7 @@ function run_upgrade_content($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker upgrade-content ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker upgrade-content ' . $workspace->name);
         }
     }
 }
@@ -491,7 +491,7 @@ function run_translation_upgrade($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker translation-repair ' . $noXml . $noMafe . ' ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker translation-repair ' . $noXml . $noMafe . ' ' . $workspace->name);
         }
     }
 }
@@ -588,7 +588,7 @@ function run_database_upgrade($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker database-upgrade ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker database-upgrade ' . $workspace->name);
         }
     }
 }
@@ -999,7 +999,7 @@ function run_check_workspace_disabled_code($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker check-workspace-disabled-code ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker check-workspace-disabled-code ' . $workspace->name);
         }
     }
 }
@@ -1138,7 +1138,7 @@ function run_migrate_content($args, $opts)
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker migrate-content ' . $lang . ' ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker migrate-content ' . $lang . ' ' . $workspace->name);
         }
     }
 }
@@ -1216,7 +1216,7 @@ function run_migrate_plugin($args, $opts)
         CLI::logging("> Migrating and populating data...\n");
         $start = microtime(true);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker migrate-plugins-singleton-information ' . $workspace->name);
+            passthru(PHP_BINARY . ' processmaker migrate-plugins-singleton-information ' . $workspace->name);
         }
         $stop = microtime(true);
         CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");

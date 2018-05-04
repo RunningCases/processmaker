@@ -342,7 +342,7 @@ class Server implements iAuthenticate
             $pmAccessToken = new \PmoauthUserAccessTokens();
             $session = $pmAccessToken->getSessionData($token['ACCESS_TOKEN']);
 
-            if ($session !== false &&  array_key_exists($session->getSessionName(), $_COOKIE)) {
+            if ($session !== false && array_key_exists($session->getSessionName(), $_COOKIE)) {
                 // increase the timeout for local php session cookie
                 $config = \Bootstrap::getSystemConfiguration();
                 if (isset($config['session.gc_maxlifetime'])) {
@@ -356,21 +356,21 @@ class Server implements iAuthenticate
 
                 setcookie($session->getSessionName(), $_COOKIE[$session->getSessionName()], time() + $lifetime, "/", null, false, true);
             }
+        }
 
-            //Set User Time Zone
-            $user = \UsersPeer::retrieveByPK(self::$userId);
+        //Set User Time Zone
+        $user = \UsersPeer::retrieveByPK(self::$userId);
 
-            if (!is_null($user)) {
-                $userTimeZone = $user->getUsrTimeZone();
+        if (!is_null($user)) {
+            $userTimeZone = $user->getUsrTimeZone();
 
-                if (trim($userTimeZone) == '') {
-                    $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
+            if (trim($userTimeZone) == '') {
+                $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
 
-                    $userTimeZone = $arraySystemConfiguration['time_zone'];
-                }
-
-                $_SESSION['USR_TIME_ZONE'] = $userTimeZone;
+                $userTimeZone = $arraySystemConfiguration['time_zone'];
             }
+
+            $_SESSION['USR_TIME_ZONE'] = $userTimeZone;
         }
 
         return $allowed;

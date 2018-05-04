@@ -5689,7 +5689,6 @@
             <index-column name="STATUS"/>
         </index>
     </table>
-
     <table name="NOTIFICATION_QUEUE" idMethod="native">
         <column name="NOT_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
         <column name="DEV_TYPE" type="VARCHAR" size="50" required="true"/>
