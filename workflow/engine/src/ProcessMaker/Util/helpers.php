@@ -12,6 +12,7 @@ function postNote($httpData)
 {
     $appUid = (isset($httpData->appUid)) ? $httpData->appUid : '';
     $usrUid = (isset($httpData->usrUid)) ? $httpData->usrUid : '';
+    $delIndex = (isset($httpData->delIndex)) ? $httpData->delIndex : 0;
     $appNotes = new AppNotes();
     $noteContent = addslashes($httpData->noteText);
     $result = $appNotes->postNewNote($appUid, $usrUid, $noteContent, false);
@@ -33,7 +34,7 @@ function postNote($httpData)
     }
 
     $noteRecipients = implode(",", $noteRecipientsList);
-    $appNotes->sendNoteNotification($appUid, $usrUid, $noteContent, $noteRecipients);
+    $appNotes->sendNoteNotification($appUid, $usrUid, $noteContent, $noteRecipients, '', $delIndex);
 }
 
 /**

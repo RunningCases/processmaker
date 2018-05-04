@@ -489,6 +489,7 @@ class Cases
                 //Update the global variables
                 $aFields['TASK'] = $aAppDel['TAS_UID'];
                 $aFields['INDEX'] = $aAppDel['DEL_INDEX'];
+                $aFields['TAS_ID'] = $aAppDel['TAS_ID'];
                 $aFields['PRO_ID'] = $aAppDel['PRO_ID'];
                 try {
                     $oCurUser = new Users();
@@ -5418,13 +5419,13 @@ class Cases
             } else {
                 $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2);
             }
-            $sBody2 = G::replaceDataGridField($dataLastEmail['body'], $arrayData2, false);
-            $sTo = null;
-            $sCc = '';
+            $body2 = G::replaceDataGridField($dataLastEmail['body'], $arrayData2, false);
+            $to = null;
+            $cc = '';
             if ($aTask['TAS_UID'] != '-1') {
                 $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
-                $sTo = $respTo['to'];
-                $sCc = $respTo['cc'];
+                $to = $respTo['to'];
+                $cc = $respTo['cc'];
             }
 
             if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
@@ -5437,12 +5438,12 @@ class Cases
                     ) {
                         @copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'), $fileTemplate);
                     }
-                    $sBody2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
+                    $body2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
                 }
             }
 
-            if ($sTo != null) {
-                $oSpool = new SpoolRun();
+            if ($to != null) {
+                $spool = new SpoolRun();
 
                 //Load the TAS_ID
                 if (!isset($arrayData['TAS_ID'])) {
@@ -5451,32 +5452,43 @@ class Cases
                 } else {
                     $taskId = $arrayData['TAS_ID'];
                 }
+                //Load the PRO_ID
+                if (!isset($arrayData['PRO_ID'])) {
+                    $process = new Process();
+                    $proId = $process->load($arrayData['PROCESS'])['PRO_ID'];
+                } else {
+                    $proId = $arrayData['PRO_ID'];
+                }
 
-                $oSpool->setConfig($dataLastEmail['configuration']);
-                $oSpool->create(array(
-                    "msg_uid" => "",
-                    'app_uid' => $dataLastEmail['applicationUid'],
-                    'del_index' => $dataLastEmail['delIndex'],
-                    "app_msg_type" => "DERIVATION",
-                    "app_msg_subject" => $dataLastEmail['subject'],
-                    'app_msg_from' => $dataLastEmail['from'],
-                    "app_msg_to" => $sTo,
-                    'app_msg_body' => $sBody2,
-                    "app_msg_cc" => $sCc,
-                    "app_msg_bcc" => "",
-                    "app_msg_attach" => "",
-                    "app_msg_template" => "",
-                    "app_msg_status" => "pending",
-                    "app_msg_error" => $dataLastEmail['msgError'],
-                    "tas_id" => $taskId,
-                    "app_number" => isset($arrayData['APP_NUMBER']) ? $arrayData['APP_NUMBER'] : ''
-                ));
+                $spool->setConfig($dataLastEmail['configuration']);
+                $messageArray = AppMessage::buildMessageRow(
+                    '',
+                    $dataLastEmail['applicationUid'],
+                    $dataLastEmail['delIndex'],
+                    'DERIVATION',
+                    $dataLastEmail['subject'],
+                    $dataLastEmail['from'],
+                    $to,
+                    $body2,
+                    $cc,
+                    '',
+                    '',
+                    '',
+                    'pending',
+                    '',
+                    $dataLastEmail['msgError'],
+                    true,
+                    isset($arrayData['APP_NUMBER']) ? $arrayData['APP_NUMBER'] : 0,
+                    $proId,
+                    $taskId
+                );
+                $spool->create($messageArray);
 
                 if ($dataLastEmail['msgError'] == '') {
                     if (($dataLastEmail['configuration']["MESS_BACKGROUND"] == "") ||
                             ($dataLastEmail['configuration']["MESS_TRY_SEND_INMEDIATLY"] == "1")
                     ) {
-                        $oSpool->sendMail();
+                        $spool->sendMail();
                     }
                 }
             }
@@ -5525,8 +5537,8 @@ class Cases
 
     public function getTo($taskUid, $userUid, $arrayData)
     {
-        $sTo = null;
-        $sCc = null;
+        $to = null;
+        $cc = null;
         $arrayResp = array();
         $tasks = new Tasks();
         $group = new Groups();
@@ -5670,9 +5682,9 @@ class Cases
                 if (isset($userUid) && !empty($userUid)) {
                     $aUser = $oUser->load($userUid);
 
-                    $sTo = ((($aUser ["USR_FIRSTNAME"] != "") || ($aUser ["USR_LASTNAME"] != "")) ? $aUser ["USR_FIRSTNAME"] . " " . $aUser ["USR_LASTNAME"] . " " : "") . "<" . $aUser ["USR_EMAIL"] . ">";
+                    $to = ((($aUser ["USR_FIRSTNAME"] != "") || ($aUser ["USR_LASTNAME"] != "")) ? $aUser ["USR_FIRSTNAME"] . " " . $aUser ["USR_LASTNAME"] . " " : "") . "<" . $aUser ["USR_EMAIL"] . ">";
                 }
-                $arrayResp ['to'] = $sTo;
+                $arrayResp ['to'] = $to;
                 $arrayResp ['cc'] = '';
                 break;
         }
@@ -6306,62 +6318,6 @@ class Cases
         $oCriteria->setDBArrayTable('messages');
 
         return $oCriteria;
-    }
-
-    /**
-     * funcion History messages for case tracker ExtJS
-     * @name getHistoryMessagesTrackerExt
-     * @param string sApplicationUID
-     * @param string Msg_UID
-     * @return array
-     */
-    public function getHistoryMessagesTrackerExt($sApplicationUID, $onlyVisibles = false, $start = null, $limit = null)
-    {
-        global $_DBArray;
-
-        $oAppDocument = new AppDocument();
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->add(AppMessagePeer::APP_UID, $sApplicationUID);
-        if ($onlyVisibles) {
-            $oCriteria->add(AppMessagePeer::APP_MSG_SHOW_MESSAGE, 1);
-        }
-        $oCriteria->addAscendingOrderByColumn(AppMessagePeer::APP_MSG_DATE);
-
-        $oDataset = AppMessagePeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aMessages = array();
-
-        while ($aRow = $oDataset->getRow()) {
-            //Head for IE quirks mode
-            $sBody = '<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />' . $aRow['APP_MSG_BODY'];
-            $aMessages[] = array('APP_MSG_UID' => $aRow['APP_MSG_UID'],
-                'APP_UID' => $aRow['APP_UID'],
-                'DEL_INDEX' => $aRow['DEL_INDEX'],
-                'APP_MSG_TYPE' => $aRow['APP_MSG_TYPE'],
-                'APP_MSG_SUBJECT' => $aRow['APP_MSG_SUBJECT'],
-                'APP_MSG_FROM' => $aRow['APP_MSG_FROM'],
-                'APP_MSG_TO' => $aRow['APP_MSG_TO'],
-                'APP_MSG_BODY' => $sBody,
-                'APP_MSG_DATE' => $aRow['APP_MSG_DATE'],
-                'APP_MSG_CC' => $aRow['APP_MSG_CC'],
-                'APP_MSG_BCC' => $aRow['APP_MSG_BCC'],
-                'APP_MSG_TEMPLATE' => $aRow['APP_MSG_TEMPLATE'],
-                'APP_MSG_STATUS' => $aRow['APP_MSG_STATUS'],
-                'APP_MSG_ATTACH' => $aRow['APP_MSG_ATTACH'],
-                'APP_MSG_SHOW_MESSAGE' => $aRow['APP_MSG_SHOW_MESSAGE']
-            );
-            $oDataset->next();
-        }
-
-        $_DBArray['messages'] = $aMessages;
-        $_SESSION['_DBArray'] = $_DBArray;
-
-        $oCriteria = new Criteria('dbarray');
-        $oCriteria->setDBArrayTable('messages');
-
-        usort($aMessages, array($this, "ordProcess"));
-        return $aMessages;
     }
 
     /**
@@ -7150,30 +7106,6 @@ class Cases
                 eval($pmTableName . "Peer::doDelete(\$criteria3);");
             } catch (Exception $e) {
                 throw $e;
-            }
-        }
-    }
-
-    public function ordProcess($a, $b)
-    {
-        if ($this->sort == '') {
-            $this->sort = 'APP_MSG_DATE';
-        }
-        if ($this->dir == 'ASC') {
-            if ($a[$this->sort] > $b[$this->sort]) {
-                return 1;
-            } elseif ($a[$this->sort] < $b[$this->sort]) {
-                return - 1;
-            } else {
-                return 0;
-            }
-        } else {
-            if ($a[$this->sort] > $b[$this->sort]) {
-                return - 1;
-            } elseif ($a[$this->sort] < $b[$this->sort]) {
-                return 1;
-            } else {
-                return 0;
             }
         }
     }

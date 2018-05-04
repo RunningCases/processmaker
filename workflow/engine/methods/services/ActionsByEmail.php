@@ -66,7 +66,10 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         $ws = new WsBase();
 
                         $result = $ws->derivateCase(
-                            $caseFieldsABE['CURRENT_USER_UID'], $_REQUEST['APP_UID'], $_REQUEST['DEL_INDEX'], true
+                            $caseFieldsABE['CURRENT_USER_UID'],
+                            $_REQUEST['APP_UID'],
+                            $_REQUEST['DEL_INDEX'],
+                            true
                         );
 
                         $code = (is_array($result))? $result['status_code'] : $result->status_code;
@@ -101,9 +104,9 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                             $response = new stdClass();
                             $response->usrUid = $caseFieldsABE['APP_DATA']['USER_LOGGED'];
                             $response->appUid = $_REQUEST['APP_UID'];
+                            $response->delIndex = $_REQUEST['DEL_INDEX'];
                             $response->noteText = 'Check the information that was sent for the receiver: ' .
                                 $dataAbeRequests['ABE_REQ_SENT_TO'];
-
                             postNote($response);
                         }
 
