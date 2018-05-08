@@ -65,7 +65,7 @@ class G
      * @param string $strClass
      * @return boolean
      */
-    public function LoadSystemExist($strClass)
+    public static function LoadSystemExist($strClass)
     {
         if (file_exists(PATH_GULLIVER . 'class.' . $strClass . '.php')) {
             return true;
@@ -119,7 +119,7 @@ class G
      * @access public
      * @return void
      */
-    public function LoadAllModelClasses()
+    public static function LoadAllModelClasses()
     {
         $baseDir = PATH_CORE . 'classes' . PATH_SEP . 'model';
         if ($handle = opendir($baseDir)) {
@@ -153,7 +153,7 @@ class G
      * @param Boolean $recursive
      * @return Array
      */
-    public function array_fill_value($arr = array(), $value = '', $recursive = false)
+    public static function array_fill_value($arr = array(), $value = '', $recursive = false)
     {
         if (is_array($arr)) {
             foreach ($arr as $key => $val) {
@@ -272,7 +272,7 @@ class G
      * @param Array
      * @return Array
      */
-    public function array_concat()
+    public static function array_concat()
     {
         $nums = func_num_args();
         $vars = func_get_args();
@@ -295,7 +295,7 @@ class G
      * @param  void $var1-N
      * @return Boolean
      */
-    public function var_compare($value = true)
+    public static function var_compare($value = true)
     {
         $nums = func_num_args();
         if ($nums < 2) {
@@ -381,8 +381,7 @@ class G
      *
      * @return array_sum(explode(' ',microtime()))
      */
-    /*public static*/
-    public function microtime_float()
+    public static function microtime_float()
     {
         return array_sum(explode(' ', microtime()));
     }
@@ -395,14 +394,14 @@ class G
      * Encrypt string
      *
      * @access public
-     * 
+     *
      * @param string $string
      * @param string $key
      * @param bool $urlSafe if it is used in url
      *
      * @return string
      */
-    public static function encrypt ($string, $key, $urlSafe = false)
+    public static function encrypt($string, $key, $urlSafe = false)
     {
         if (strpos($string, '|', 0) !== false) {
             return $string;
@@ -429,7 +428,7 @@ class G
      * Decrypt string
      *
      * @access public
-     * 
+     *
      * @param string $string
      * @param string $key
      * @param bool $urlSafe if it is used in url
@@ -546,7 +545,7 @@ class G
      * @param string $dir
      * @return void
      */
-    public function delTree($dir)
+    public static function delTree($dir)
     {
         $files = glob($dir . '*', GLOB_MARK);
         foreach ($files as $file) {
@@ -567,7 +566,7 @@ class G
      * @param string $destination
      * @return boolean
      */
-    public function recursive_copy($source, $destination)
+    public static function recursive_copy($source, $destination)
     {
         if ($source == $destination) {
             return false;
@@ -725,7 +724,7 @@ class G
      * @access public
      * @return void
      */
-    public function LoadAllPluginModelClasses()
+    public static function LoadAllPluginModelClasses()
     {
         //Get the current Include path, where the plugins directories should be
         if (! defined('PATH_SEPARATOR')) {
@@ -757,7 +756,7 @@ class G
      * @param string $strTemplateName
      * @return void
      */
-    public function LoadTemplate($strTemplateName)
+    public static function LoadTemplate($strTemplateName)
     {
         if ($strTemplateName == '') {
             return;
@@ -787,7 +786,7 @@ class G
      * @param string $urlLink
      * @return string
      */
-    public function encryptlink($url)
+    public static function encryptlink($url)
     {
         if (defined('ENABLE_ENCRYPT') && ENABLE_ENCRYPT == 'yes') {
             return urlencode(G::encrypt($url, URL_KEY));
@@ -830,7 +829,7 @@ class G
         }
     }
 
-    public function parseNormalUri($aRequestUri)
+    public static function parseNormalUri($aRequestUri)
     {
         if (substr($aRequestUri[1], 0, 3) == 'sys') {
             define('SYS_TEMP', substr($aRequestUri[1], 3));
@@ -902,7 +901,7 @@ class G
         return $args;
     }
 
-    public function parseRestUri($requestUri)
+    public static function parseRestUri($requestUri)
     {
         $args = array();
         //$args['SYS_TEMP'] = $requestUri[1];
@@ -921,7 +920,7 @@ class G
         return $args;
     }
 
-    public function strip_slashes($vVar)
+    public static function strip_slashes($vVar)
     {
         if (is_array($vVar)) {
             foreach ($vVar as $sKey => $vValue) {
@@ -941,7 +940,7 @@ class G
     /**
      * function to calculate the time used to render a page
      */
-    public function logTimeByPage()
+    public static function logTimeByPage()
     {
         if (! defined(PATH_DATA)) {
             return false;
@@ -964,7 +963,7 @@ class G
      * @param string $file
      * @return string
      */
-    public function streamCSSBigFile($filename)
+    public static function streamCSSBigFile($filename)
     {
         header('Content-Type: text/css');
 
@@ -1081,7 +1080,7 @@ class G
      * @param string $downloadFileName
      * @return string
      */
-    public function streamJSTranslationFile($filename, $locale = 'en')
+    public static function streamJSTranslationFile($filename, $locale = 'en')
     {
         $defaultTranslations = array();
         $foreignTranslations = array();
@@ -1251,7 +1250,7 @@ class G
      *
      * @return void
      */
-    public function sendHeaders($filename, $contentType = '', $download = false, $downloadFileName = '')
+    public static function sendHeaders($filename, $contentType = '', $download = false, $downloadFileName = '')
     {
         if ($download) {
             if ($downloadFileName == '') {
@@ -1322,7 +1321,7 @@ class G
      * @param string $realPath = local path
      * @return boolean
      */
-    public function virtualURI($url, $convertionTable, &$realPath)
+    public static function virtualURI($url, $convertionTable, &$realPath)
     {
         foreach ($convertionTable as $urlPattern => $localPath) {
             //      $urlPattern = addcslashes( $urlPattern , '/');
@@ -1376,7 +1375,7 @@ class G
      * @param string $scope
      * @return string
      */
-    public function getUIDName($uid, $scope = '')
+    public static function getUIDName($uid, $scope = '')
     {
         $e = str_replace(array('=','+','/'
         ), array('___','__','_'
@@ -1393,7 +1392,7 @@ class G
      * @param  int/string $num
      * @return string number
     */
-    public function formatNumber($num, $language = 'latin')
+    public static function formatNumber($num, $language = 'latin')
     {
         switch ($language) {
             default:
@@ -1576,7 +1575,7 @@ class G
      * Here's a little wrapper for array_diff - I found myself needing
      * to iterate through the edited array, and I didn't need to original keys for anything.
      */
-    public function arrayDiff($array1, $array2)
+    public static function arrayDiff($array1, $array2)
     {
         if (! is_array($array1)) {
             $array1 = (array) $array1;
@@ -1696,7 +1695,7 @@ class G
      * @return Boolean
      *
      */
-    public function MySQLSintaxis()
+    public static function MySQLSintaxis()
     {
         $DBEngine = DB_ADAPTER;
         switch ($DBEngine) {
@@ -1893,7 +1892,7 @@ class G
      * @parameter $languageId   (es|en|...).
      * @parameter $forceParse   Force to read and parse the xml file.
      */
-    public function loadLanguageFile($filename, $languageId = '', $forceParse = false)
+    public static function loadLanguageFile($filename, $languageId = '', $forceParse = false)
     {
         global $arrayXmlMessages;
         if ($languageId === '') {
@@ -1929,7 +1928,7 @@ class G
      *   Registra en la base de datos los labels xml usados en el sistema
      * @author David Callizaya <calidavidx21@hotmail.com>
      */
-    public function registerLabel($id, $label)
+    public static function registerLabel($id, $label)
     {
         return 1;
         $dbc = new DBConnection();
@@ -1950,7 +1949,7 @@ class G
      * @param eter string msgID
      * @return string
      */
-    public function LoadMenuXml($msgID)
+    public static function LoadMenuXml($msgID)
     {
         global $arrayXmlMessages;
         if (! isset($arrayXmlMessages['menus'])) {
@@ -1970,7 +1969,7 @@ class G
      * @param eter string file
      * @return string
      */
-    public function SendMessageXml($msgID, $strType, $file = "labels")
+    public static function SendMessageXml($msgID, $strType, $file = "labels")
     {
         global $arrayXmlMessages;
         if (! isset($arrayXmlMessages[$file])) {
@@ -2030,7 +2029,7 @@ class G
      *
      * @return void
      */
-    public function SendMessage($msgID, $strType, $file = "labels")
+    public static function SendMessage($msgID, $strType, $file = "labels")
     {
         global $arrayXmlMessages;
         $_SESSION['G_MESSAGE_TYPE'] = $strType;
@@ -2046,7 +2045,7 @@ class G
      *
      * @return void
      */
-    public function SendMessageText($text, $strType)
+    public static function SendMessageText($text, $strType)
     {
         global $arrayXmlMessages;
         $_SESSION['G_MESSAGE_TYPE'] = $strType;
@@ -2131,7 +2130,7 @@ class G
      * @param string lang
      * @return void
      */
-    public function LoadTranslationObject($lang = SYS_LANG)
+    public static function LoadTranslationObject($lang = SYS_LANG)
     {
         $defaultTranslations = array();
         $foreignTranslations = array();
@@ -2209,7 +2208,7 @@ class G
      * @param eter array data
      * @return string
      */
-    public function LoadTranslationPlugin($namePlugin, $msgID, $data = null)
+    public static function LoadTranslationPlugin($namePlugin, $msgID, $data = null)
     {
         eval('global $translation' . $namePlugin . ';');
 
@@ -2243,7 +2242,7 @@ class G
      * @param eter string file
      * @return string
      */
-    public function getTranslations($msgIDs, $lang = SYS_LANG)
+    public static function getTranslations($msgIDs, $lang = SYS_LANG)
     {
         if (! is_array($msgIDs)) {
             return null;
@@ -2264,7 +2263,7 @@ class G
      * @param string $strFile
      * @return void
      */
-    public function LoadArrayFile($strFile = '')
+    public static function LoadArrayFile($strFile = '')
     {
         $res = null;
         if ($strFile != '') {
@@ -2287,7 +2286,7 @@ class G
      * @param string $methodPage the method directory and the page
      * @return the expanded uri, later, will encryt the uri...
      */
-    public function expandUri($methodPage)
+    public static function expandUri($methodPage)
     {
         $uri = explode('/', getenv('REQUEST_URI'));
         $sw = 0;
@@ -2364,7 +2363,7 @@ class G
      *
      * @return string $string
      */
-    public function capitalize($string)
+    public static function capitalize($string)
     {
         return ucfirst($string);
     }
@@ -2401,7 +2400,7 @@ class G
      *
      * @return array $res
      */
-    public function http_build_query($formdata, $numeric_prefix = null, $key = null)
+    public static function http_build_query($formdata, $numeric_prefix = null, $key = null)
     {
         $res = array();
         foreach ((array) $formdata as $k => $v) {
@@ -2450,7 +2449,7 @@ class G
      * @param string $urlNoAccess
      * @return void
      */
-    public function forceLogin($permission = "", $urlNoAccess = "")
+    public static function forceLogin($permission = "", $urlNoAccess = "")
     {
         global $RBAC;
 
@@ -2565,7 +2564,7 @@ class G
      * Extract the structure version value from serializated table field and check it.
      * @return true if the version is bigger than 1
      */
-    public function gotDirectoryStructureVer2()
+    public static function gotDirectoryStructureVer2()
     {
         $configuration = new Configurations();
         if (!empty(config("system.workspace")) && $configuration->exists("ENVIRONMENT_SETTINGS")) {
@@ -2577,7 +2576,7 @@ class G
     /**
      * Get the default blank directory 0 for external files
      */
-    public function getBlackHoleDir()
+    public static function getBlackHoleDir()
     {
         //len32:12345678901234567890123456789012
         return "00000000000000000000000000000000";
@@ -2668,7 +2667,7 @@ class G
      * @param int $pieces
      * @return array index:0 got the path, index:1 got the filename
      */
-    public function getPathFromFileUIDPlain($appUid, $fileUid, $splitSize = 3, $pieces = 3)
+    public static function getPathFromFileUIDPlain($appUid, $fileUid, $splitSize = 3, $pieces = 3)
     {
         $response = array();
         if ($appUid == G::getBlackHoleDir()) {
@@ -2752,7 +2751,7 @@ class G
      *
      * @return void
      */
-    public function resizeImage($path, $resWidth, $resHeight, $saveTo = null)
+    public static function resizeImage($path, $resWidth, $resHeight, $saveTo = null)
     {
         $imageInfo = @getimagesize($path);
 
@@ -2939,7 +2938,7 @@ class G
      *
      * @return string utf8_encode()
      */
-    public function is_utf8($string)
+    public static function is_utf8($string)
     {
         if (preg_match('//u', $string)) {
             return true;
@@ -2956,7 +2955,7 @@ class G
      * @access public
      * @return void
      */
-    public function CurDate($sFormat = '')
+    public static function CurDate($sFormat = '')
     {
         $sFormat = ($sFormat != '')? $sFormat : 'Y-m-d H:i:s';
 
@@ -3028,7 +3027,7 @@ class G
      * Return the Friendly Title for a string, capitalize every word and remove spaces
      *   param : text string
      */
-    public function capitalizeWords($text)
+    public static function capitalizeWords($text)
     {
         return mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
     }
@@ -3040,7 +3039,7 @@ class G
      *
      * @return string substring
      */
-    public function unhtmlentities($string)
+    public static function unhtmlentities($string)
     {
         if (version_compare(PHP_VERSION, '5.4.0', '<')) {
             $trans_tbl = get_html_translation_table(HTML_ENTITIES);
@@ -3060,7 +3059,7 @@ class G
      *
      * @author Erik Amaru Ortiz <erik@colosa.com>
      */
-    public function xmlParser(&$string)
+    public static function xmlParser(&$string)
     {
         $parser = xml_parser_create();
         xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
@@ -3137,7 +3136,7 @@ class G
      * @return void
      */
     // _Internal: Remove recursion in result array
-    public function _del_p(&$ary)
+    public static function _del_p(&$ary)
     {
         foreach ($ary as $k => $v) {
             if ($k === '_p') {
@@ -3160,7 +3159,7 @@ class G
      * @return void
      */
     // Array to XML
-    public function ary2xml($cary, $d = 0, $forcetag = '')
+    public static function ary2xml($cary, $d = 0, $forcetag = '')
     {
         $res = array();
         foreach ($cary as $tag => $r) {
@@ -3219,7 +3218,7 @@ class G
      *
      * @return void
      */
-    public function evalJScript($c)
+    public static function evalJScript($c)
     {
         /*
 
@@ -3237,7 +3236,7 @@ class G
      * @param (array) additional characteres map
      *
      */
-    public function inflect($string, $replacement = '_', $map = array())
+    public static function inflect($string, $replacement = '_', $map = array())
     {
         if (is_array($replacement)) {
             $map = $replacement;
@@ -3274,7 +3273,7 @@ class G
      *
      * @return void
      */
-    public function pr($var)
+    public static function pr($var)
     {
         print("<pre>") ;
         print_r($var);
@@ -3302,7 +3301,7 @@ class G
      *
      * @return string str_replace
      */
-    public function stripCDATA($string)
+    public static function stripCDATA($string)
     {
         preg_match_all('/<!\[cdata\[(.*?)\]\]>/is', $string, $matches);
         return str_replace($matches[0], $matches[1], $string);
@@ -3314,7 +3313,7 @@ class G
      *
      * @author <erik@colosa.com>
      */
-    public function sys_get_temp_dir()
+    public static function sys_get_temp_dir()
     {
         if (! function_exists('sys_get_temp_dir')) {
             // Based on http://www.phpit.net/
@@ -3349,7 +3348,7 @@ class G
      *
      * @author <erik@colosa.com>
      */
-    public function PMWSCompositeResponse($oResp, $prop)
+    public static function PMWSCompositeResponse($oResp, $prop)
     {
         $Resp = new stdClass();
 
@@ -3406,7 +3405,7 @@ class G
      *      -> returns a object within $o->email => erik@colosa.com and $o->name => erik A.O. in other case returns false
      *
      */
-    public function emailAddress($sEmail)
+    public static function emailAddress($sEmail)
     {
         $o = new stdClass();
 
@@ -3490,7 +3489,7 @@ class G
      * @param string $body contains the email body (text plain or html)
      * @return mixed boolean or string : if the email was sent successfully returns true, otherwise returns a string within error message
      */
-    public function sendMail($from, $fromName, $address, $subject, $body)
+    public static function sendMail($from, $fromName, $address, $subject, $body)
     {
         // require_once "classes/class.pmFunctions.php";
 
@@ -3565,7 +3564,7 @@ class G
      *                    'bcc' => array('email@host.com', 'some name or empty string', ...)
      *                 )
      */
-    public function envelopEmailAddresses($address)
+    public static function envelopEmailAddresses($address)
     {
         $emailAddressList = array();
         $emailAddressList['to'] = array();
@@ -3681,7 +3680,7 @@ class G
         return @round($size/pow(1024, ($i=floor(log($size, 1024)))), 2).' '.$unit[$i];
     }
 
-    public function getFormatUserList($format, $aUserInfo)
+    public static function getFormatUserList($format, $aUserInfo)
     {
         switch ($format) {
             case '@firstName @lastName':
@@ -3736,7 +3735,7 @@ class G
      * @param $pattern pattern to filter some specified files
      * @return <boolean> if the $path, assuming that is a directory -> all files in it are writeables or not
      */
-    public function is_rwritable($path, $pattern = '*')
+    public static function is_rwritable($path, $pattern = '*')
     {
         $files = G::rglob($pattern, 0, $path);
         foreach ($files as $file) {
@@ -3767,7 +3766,7 @@ class G
         return $files;
     }
 
-    public function browser_detection($which_test, $test_excludes = '', $external_ua_string = '')
+    public static function browser_detection($which_test, $test_excludes = '', $external_ua_string = '')
     {
         G::script_time(); // set script timer to start timing
 
@@ -4244,7 +4243,7 @@ class G
     }
 
     // gets which os from the browser string
-    public function get_os_data($pv_browser_string, $pv_browser_name, $pv_version_number)
+    public static function get_os_data($pv_browser_string, $pv_browser_name, $pv_version_number)
     {
         // initialize variables
         $os_working_type = '';
@@ -4366,7 +4365,7 @@ class G
         return $a_os_data;
     }
 
-    public function get_item_version($pv_browser_user_agent, $pv_search_string, $pv_b_break_last = '', $pv_extra_search = '')
+    public static function get_item_version($pv_browser_user_agent, $pv_search_string, $pv_b_break_last = '', $pv_extra_search = '')
     {
         $substring_length = 15;
         $start_pos = 0; // set $start_pos to 0 for first iteration
@@ -4392,7 +4391,7 @@ class G
         return $string_working_number;
     }
 
-    public function get_set_count($pv_type, $pv_value = '')
+    public static function get_set_count($pv_type, $pv_value = '')
     {
         static $slice_increment;
         $return_value = '';
@@ -4411,7 +4410,7 @@ class G
         }
     }
 
-    public function check_is_mobile($pv_browser_user_agent)
+    public static function check_is_mobile($pv_browser_user_agent)
     {
         $mobile_working_test = '';
         $a_mobile_search = array(
@@ -4435,7 +4434,7 @@ class G
         return $mobile_working_test;
     }
 
-    public function get_mobile_data($pv_browser_user_agent)
+    public static function get_mobile_data($pv_browser_user_agent)
     {
         $mobile_browser = '';
         $mobile_browser_number = '';
@@ -4497,7 +4496,7 @@ class G
         return $a_mobile_data;
     }
 
-    public function getBrowser()
+    public static function getBrowser()
     {
         $u_agent = $_SERVER['HTTP_USER_AGENT'];
         $bname = 'Unknown';
@@ -4579,7 +4578,7 @@ class G
     }
 
     // track total script execution time
-    public function script_time()
+    public static function script_time()
     {
         static $script_time;
         $elapsed_time = '';
@@ -4600,7 +4599,7 @@ class G
         }
     }
 
-    public function getDirectorySize($path, $maxmtime = 0)
+    public static function getDirectorySize($path, $maxmtime = 0)
     {
         $totalsize = 0;
         $totalcount = 0;
@@ -4797,7 +4796,7 @@ class G
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @param $resources array a list of files to verify write access
      */
-    public function verifyWriteAccess($resources)
+    public static function verifyWriteAccess($resources)
     {
         $noWritable = array();
         foreach ($resources as $i => $resource) {
@@ -4820,7 +4819,7 @@ class G
      * @param $template string containing the template filename on /gulliver/templates/ directory
      * @param $data associative array containig the template data
      */
-    public function renderTemplate($template, $data = array())
+    public static function renderTemplate($template, $data = array())
     {
         if (! defined('PATH_THIRDPARTY')) {
             throw new Exception('System constant (PATH_THIRDPARTY) is not defined!');
@@ -4881,7 +4880,7 @@ class G
      * @param $data associative array containig the template data
      * @return $content string containing the parsed template content
      */
-    public function parseTemplate($template, $data = array())
+    public static function parseTemplate($template, $data = array())
     {
         $content = '';
 
@@ -5002,7 +5001,7 @@ class G
      *
      * @author Erik Amaru Ortiz <aortiz.erik@gmail.com>
      */
-    public function dispatchRestService($uri, $config, $apiClassesPath = '')
+    public static function dispatchRestService($uri, $config, $apiClassesPath = '')
     {
         require_once 'restler/restler.php';
 
@@ -5125,7 +5124,7 @@ class G
     *                   nameWorkspace to specific workspace
     * return            true if the file exists, otherwise false.
     */
-    public function isPMUnderUpdating($setFlag = 2, $content="true")
+    public static function isPMUnderUpdating($setFlag = 2, $content="true")
     {
         if (!defined('PATH_DATA')) {
             return false;
@@ -5377,7 +5376,7 @@ class G
         return $path;
     }
 
-    public function isUserFunction($functionName)
+    public static function isUserFunction($functionName)
     {
         $allFunctions = get_defined_functions();
         if (!isset($allFunctions['user'])) {
@@ -5397,7 +5396,7 @@ class G
       * @param int $attrMethod - 0= allow just user-defined, 1= allow all but user-defined
       * @param int $xssAuto - 0= only auto clean essentials, 1= allow clean blacklisted tags/attr
       */
-    public function sanitizeInput($data, $tagsArray = array(), $attrArray = array(), $tagsMethod = 0, $attrMethod = 0, $xssAuto = 1)
+    public static function sanitizeInput($data, $tagsArray = array(), $attrArray = array(), $tagsMethod = 0, $attrMethod = 0, $xssAuto = 1)
     {
         $filtro = new InputFilter($tagsArray, $attrArray, $tagsMethod, $attrMethod, $xssAuto);
         return $filtro->process($data);
@@ -5531,7 +5530,7 @@ class G
      *
      *
      */
-    public function verifyInputDocExtension($InpDocAllowedFiles, $fileName, $filesTmpName)
+    public static function verifyInputDocExtension($InpDocAllowedFiles, $fileName, $filesTmpName)
     {
         // Initialize variables
         $res = new stdclass();
@@ -5702,7 +5701,7 @@ class G
      *
      * @return boolean
      */
-    public function checkBrowserCompatibility($browser = null, $version = null)
+    public static function checkBrowserCompatibility($browser = null, $version = null)
     {
         if ($browser == null || $version == null) {
             $info = G::getBrowser();
@@ -5731,7 +5730,7 @@ class G
      *
      * @return string
      */
-    public function sanitizeString ($string, $lowercase = true, $alpha = false)
+    public static function sanitizeString($string, $lowercase = true, $alpha = false)
     {
         $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
                       "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
@@ -5784,7 +5783,7 @@ class G
     *
     * @return md5_file($string)
     */
-    public function encryptFileOld($string)
+    public static function encryptFileOld($string)
     {
         $consthashFx = self::hashFile;
         return $consthashFx($string);
