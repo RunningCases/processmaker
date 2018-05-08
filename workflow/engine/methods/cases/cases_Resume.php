@@ -22,15 +22,15 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 /* Permissions */
-switch ($RBAC->userCanAccess( 'PM_CASES' )) {
+switch ($RBAC->userCanAccess('PM_CASES')) {
     case - 2:
-        G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels' );
-        G::header( 'location: ../login/login' );
+        G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels');
+        G::header('location: ../login/login');
         die();
         break;
     case - 1:
-        G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
-        G::header( 'location: ../login/login' );
+        G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
+        G::header('location: ../login/login');
         die();
         break;
 }
@@ -57,7 +57,7 @@ $aUserCanAccess = $objCase->userAuthorization(
 );
 
 if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
-    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['ACTION']);
+    $Fields = $oCase->loadCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['ACTION']);
     $process = new Process();
     $processData = $process->load($Fields['PRO_UID']);
     if (isset($processData['PRO_DYNAFORMS']['PROCESS']) && $processData['PRO_DYNAFORMS']['PROCESS'] != '' &&
@@ -70,23 +70,23 @@ if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
         exit();
     }
 } else {
-    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX']);
+    $Fields = $oCase->loadCase($_SESSION['APPLICATION'], $_SESSION['INDEX']);
 }
 
 if (!$aUserCanAccess['participated'] && !$aUserCanAccess['supervisor'] && !$aUserCanAccess['rolesPermissions']['PM_ALLCASES'] && !$aUserCanAccess['objectPermissions']['SUMMARY_FORM']) {
-    $aMessage['MESSAGE'] = G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' );
+    $aMessage['MESSAGE'] = G::LoadTranslation('ID_NO_PERMISSION_NO_PARTICIPATED');
     $G_PUBLISH = new Publisher();
-    $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
-    G::RenderPage( 'publishBlank', 'blank' );
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', $aMessage);
+    G::RenderPage('publishBlank', 'blank');
     die();
 }
-if (isset( $aRow['APP_TYPE'] )) {
+if (isset($aRow['APP_TYPE'])) {
     switch ($aRow['APP_TYPE']) {
         case 'PAUSE':
-            $Fields['STATUS'] = ucfirst( strtolower( G::LoadTranslation( 'ID_PAUSED' ) ) );
+            $Fields['STATUS'] = ucfirst(strtolower(G::LoadTranslation('ID_PAUSED')));
             break;
         case 'CANCEL':
-            $Fields['STATUS'] = ucfirst( strtolower( G::LoadTranslation( 'ID_CANCELLED' ) ) );
+            $Fields['STATUS'] = ucfirst(strtolower(G::LoadTranslation('ID_CANCELLED')));
             break;
     }
 }
@@ -97,16 +97,16 @@ if (isset($_GET['action']) && $_GET['action'] == 'paused') {
 }
 
     /* Render page */
-$oHeadPublisher = & headPublisher::getSingleton();
+$oHeadPublisher = headPublisher::getSingleton();
 
-$oHeadPublisher->addScriptCode( "
+$oHeadPublisher->addScriptCode("
   if (typeof parent != 'undefined') {
     if (parent.showCaseNavigatorPanel) {
       parent.showCaseNavigatorPanel('{$Fields['APP_STATUS']}');
     }
-  }" );
+  }");
 
-$oHeadPublisher->addScriptCode( '
+$oHeadPublisher->addScriptCode('
   var Cse = {};
   Cse.panels = {};
   var leimnud = new maborak();
@@ -116,21 +116,21 @@ $oHeadPublisher->addScriptCode( '
   leimnud.Package.Load("cases_Step",{Type:"file",Absolute:true,Path:"/jscore/cases/core/cases_Step.js"});
   leimnud.Package.Load("processmap",{Type:"file",Absolute:true,Path:"/jscore/processmap/core/processmap.js"});
   leimnud.exec(leimnud.fix.memoryLeak);
-  ' );
+  ');
 
 require_once 'classes/model/Process.php';
 
 $objProc = new Process();
-$aProc = $objProc->load( $Fields['PRO_UID'] );
+$aProc = $objProc->load($Fields['PRO_UID']);
 $Fields['PRO_TITLE'] = $aProc['PRO_TITLE'];
 
 $objTask = new Task();
-if(!isset($Fields['TAS_UID']) || $Fields['TAS_UID'] == '') {
+if (!isset($Fields['TAS_UID']) || $Fields['TAS_UID'] == '') {
     $Fields['TAS_UID'] = $Fields['APP_DATA']['TASK'];
 }
 
 $tasksInParallel = explode('|', $Fields['TAS_UID']);
-$tasksInParallel = array_filter($tasksInParallel, function($value) {
+$tasksInParallel = array_filter($tasksInParallel, function ($value) {
     return !empty($value);
 });
 $nTasksInParallel = count($tasksInParallel);
@@ -144,22 +144,22 @@ if ($nTasksInParallel > 1) {
 $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
 
 $objUser = new Users();
-$oHeadPublisher = & headPublisher::getSingleton();
-$oHeadPublisher->addScriptFile( '/jscore/cases/core/cases_Step.js' );
+$oHeadPublisher = headPublisher::getSingleton();
+$oHeadPublisher->addScriptFile('/jscore/cases/core/cases_Step.js');
 $G_PUBLISH = new Publisher();
-$G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
+$G_PUBLISH->AddContent('xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '');
 if ($Fields['APP_STATUS'] != 'COMPLETED') {
-    $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task_Title.xml', '', $Fields, '' );
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'cases/cases_Resume_Current_Task_Title.xml', '', $Fields, '');
     $objDel = new AppDelegation();
     $parallel = $objDel->LoadParallel($Fields['APP_UID']);
     $FieldsPar = $Fields;
     foreach ($parallel as $row) {
         $FieldsPar['TAS_UID'] = $row['TAS_UID'];
-        $aTask = $objTask->load( $row['TAS_UID'] );
+        $aTask = $objTask->load($row['TAS_UID']);
         $FieldsPar['TAS_TITLE'] = $aTask['TAS_TITLE'];
         $FieldsPar['USR_UID'] = $row['USR_UID'];
         if (isset($row['USR_UID']) && !empty($row['USR_UID'])) {
-            $aUser = $objUser->loadDetails ($row['USR_UID']);
+            $aUser = $objUser->loadDetails($row['USR_UID']);
             $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];
         } else {
             $FieldsPar['CURRENT_USER'] = '';
@@ -168,7 +168,7 @@ if ($Fields['APP_STATUS'] != 'COMPLETED') {
         $FieldsPar['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
         $FieldsPar['DEL_TASK_DUE_DATE'] = $row['DEL_TASK_DUE_DATE'];
         $FieldsPar['DEL_FINISH_DATE']   = $row['DEL_FINISH_DATE'];
-        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task.xml', '', $FieldsPar);
+        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'cases/cases_Resume_Current_Task.xml', '', $FieldsPar);
     }
 }
 

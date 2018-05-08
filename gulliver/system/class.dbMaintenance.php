@@ -36,7 +36,6 @@
  *
  * @package gulliver.system
  */
-
 class DataBaseMaintenance
 {
     private $host;
@@ -54,19 +53,19 @@ class DataBaseMaintenance
     /**
      * __construct
      *
-     * @param string $host is null
-     * @param string $user is null
+     * @param string $host   is null
+     * @param string $user   is null
      * @param string $passwd is null
      *
      * @return none
      */
-    public function __construct ($host = null, $user = null, $passwd = null)
+    public function __construct($host = null, $user = null, $passwd = null)
     {
         $this->tmpDir = './';
         $this->link = null;
         $this->dbName = null;
         $this->isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-        if (isset( $host ) && isset( $user ) && isset( $passwd )) {
+        if (isset($host) && isset($user) && isset($passwd)) {
             $this->host = $host;
             $this->user = $user;
             $this->passwd = $passwd;
@@ -80,7 +79,7 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    public function setUser ($user)
+    public function setUser($user)
     {
         $this->user = $user;
     }
@@ -92,7 +91,7 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    public function setPasswd ($passwd)
+    public function setPasswd($passwd)
     {
         $this->passwd = $passwd;
     }
@@ -104,7 +103,7 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    public function setHost ($host)
+    public function setHost($host)
     {
         $this->host = $host;
     }
@@ -116,11 +115,11 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    public function setTempDir ($tmpDir)
+    public function setTempDir($tmpDir)
     {
         $this->tmpDir = $tmpDir;
-        if (! file_exists( $tmpDir )) {
-            mkdir( $this->tmpDir );
+        if (!file_exists($tmpDir)) {
+            mkdir($this->tmpDir);
         }
     }
 
@@ -129,7 +128,7 @@ class DataBaseMaintenance
      *
      * @return $this->tmpDir
      */
-    public function getTempDir ()
+    public function getTempDir()
     {
         return $this->tmpDir;
     }
@@ -139,7 +138,7 @@ class DataBaseMaintenance
      *
      * @return $this->link
      */
-    public function status ()
+    public function status()
     {
         return $$this->link;
     }
@@ -151,25 +150,25 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    public function connect ($dbname = null)
+    public function connect($dbname = null)
     {
         if ($this->link != null) {
-            mysql_close( $this->link );
+            mysqli_close($this->link);
             $this->link = null;
         }
-        if (isset( $dbname )) {
+        if (isset($dbname)) {
             $this->dbName = $dbname;
         }
 
-        $this->link = mysql_connect( $this->host, $this->user, $this->passwd );
-        @mysql_query( "SET NAMES 'utf8';" );
-        @mysql_query( "SET FOREIGN_KEY_CHECKS=0;" );
-        if (! $this->link) {
-            throw new Exception( "Couldn't connect to host {$this->host} with user {$this->user}" );
+        $this->link = mysqli_connect($this->host, $this->user, $this->passwd, $this->dbName);
+        if (!$this->link) {
+            throw new Exception("Couldn't connect to host {$this->host} with user {$this->user}");
         }
+        mysqli_query($this->link, "SET NAMES 'utf8';");
+        mysqli_query($this->link, "SET FOREIGN_KEY_CHECKS=0;");
 
         if ($this->dbName != null) {
-            $this->selectDataBase( $this->dbName );
+            $this->selectDataBase($this->dbName);
         }
     }
 
@@ -180,7 +179,7 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    public function setDbName ($dbname)
+    public function setDbName($dbname)
     {
         $this->dbName = $dbname;
     }
@@ -189,14 +188,15 @@ class DataBaseMaintenance
      * selectDataBase
      *
      * @param string $dbname
+     * @param        $dbname
      *
-     * @return none
+     * @throws Exception
      */
-    public function selectDataBase ($dbname)
+    public function selectDataBase($dbname)
     {
-        $this->setDbName( $dbname );
-        if (! @mysql_select_db( $this->dbName, $this->link )) {
-            throw new Exception( "Couldn't select database $dbname" );
+        $this->setDbName($dbname);
+        if (!mysqli_select_db($this->link, $this->dbName)) {
+            throw new Exception("Couldn't select database $dbname");
         }
     }
 
@@ -207,13 +207,13 @@ class DataBaseMaintenance
      *
      * @return $aRows
      */
-    public function query ($sql)
+    public function query($sql)
     {
-        $this->result = @mysql_query( $sql );
+        $this->result = mysqli_query($this->link, $sql);
         if ($this->result) {
-            $aRows = Array ();
-            while ($aRow = @mysql_fetch_assoc( $this->result )) {
-                array_push( $aRows, $aRow );
+            $aRows = [];
+            while ($aRow = mysqli_fetch_assoc($this->result)) {
+                $aRows[] = $aRow;
             }
             return $aRows;
         } else {
@@ -224,26 +224,26 @@ class DataBaseMaintenance
     /**
      * error
      *
-     * @return @mysql_error()
+     * @return mysqli_error()
      */
-    public function error ()
+    public function error()
     {
-        return @mysql_error( $this->link );
+        return mysqli_error($this->link);
     }
 
     /**
      * getTablesList
      *
-     * @return $aRows
+     * @return array
      */
-    public function getTablesList ()
+    public function getTablesList()
     {
-        $this->result = @mysql_query( "SHOW TABLES;" );
-        $aRows = Array ();
-        while ($aRow = mysql_fetch_row( $this->result )) {
-            array_push( $aRows, $aRow[0] );
+        $this->result = mysqli_query($this->link, 'SHOW TABLES;');
+        $rows = [];
+        while ($row = mysqli_fetch_row($this->result)) {
+            $rows[] = $row[0];
         }
-        return $aRows;
+        return $rows;
     }
 
     /**
@@ -253,24 +253,24 @@ class DataBaseMaintenance
      *
      * @return boolean true or false
      */
-    function dumpData ($table)
+    public function dumpData($table)
     {
         $this->outfile = $this->tmpDir . $table . '.dump';
 
         //if the file exists delete it
-        if (is_file( $this->outfile )) {
-            @unlink( $this->outfile );
+        if (is_file($this->outfile)) {
+            @unlink($this->outfile);
         }
 
         $sql = "SELECT * INTO OUTFILE '{$this->outfile}' FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n' FROM $table";
         // The mysql_escape_string function has been DEPRECATED as of PHP 5.3.0.
         // Commented that is not assigned to a variable.
         // mysql_escape_string("';");
-        if (! @mysql_query( $sql )) {
-            $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined Workspace";
-            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'processmaker.log');
-            $varRes = mysql_error() . "\n";
-            G::outRes( $varRes );
+        if (!@mysqli_query($this->link, $sql)) {
+            $ws = (!empty(config('system.workspace'))) ? config('system.workspace') : 'Undefined Workspace';
+            Bootstrap::registerMonolog('MysqlCron', 400, mysqli_error($this->link), ['sql' => $sql], $ws, 'processmaker.log');
+            $varRes = mysqli_error($this->link) . "\n";
+            G::outRes($varRes);
             return false;
         }
         return true;
@@ -283,15 +283,15 @@ class DataBaseMaintenance
      *
      * @return boolean true or false
      */
-    function restoreData ($backupFile)
+    public function restoreData($backupFile)
     {
-        $tableName = str_replace( '.dump', '', basename( $backupFile ) );
+        $tableName = str_replace('.dump', '', basename($backupFile));
         $sql = "LOAD DATA INFILE '$backupFile' INTO TABLE $tableName FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
-        if (! @mysql_query( $sql )) {
-            $ws = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined Workspace";
-            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'processmaker.log');
-            $varRes = mysql_error() . "\n";
-            G::outRes( $varRes );
+        if (!@mysqli_query($this->link, $sql)) {
+            $ws = (!empty(config("system.workspace"))) ? config("system.workspace") : "Wokspace Undefined";
+            Bootstrap::registerMonolog('MysqlCron', 400, mysqli_error($this->link), ['sql' => $sql], $ws, 'processmaker.log');
+            $varRes = mysqli_error($this->link) . "\n";
+            G::outRes($varRes);
             return false;
         }
         return true;
@@ -304,26 +304,25 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    function restoreAllData ($type = null)
+    public function restoreAllData($type = null)
     {
-
         $aTables = $this->getTablesList();
 
         foreach ($aTables as $table) {
-            if (isset( $type ) && $type == 'sql') {
+            if (isset($type) && $type == 'sql') {
                 $this->infile = $this->tmpDir . $table . ".sql";
-                if (is_file( $this->infile )) {
-                    $queries = $this->restoreFromSql( $this->infile, true );
-                    if (! isset( $queries )) {
+                if (is_file($this->infile)) {
+                    $queries = $this->restoreFromSql($this->infile, true);
+                    if (!isset($queries)) {
                         $queries = "unknown";
                     }
-                    printf( "%-59s%20s", "Restored table $table", "$queries queries\n" );
+                    printf("%-59s%20s", "Restored table $table", "$queries queries\n");
                 }
             } else {
                 $this->infile = $this->tmpDir . $table . ".dump";
-                if (is_file( $this->infile )) {
-                    $this->restoreData( $this->infile );
-                    printf( "%20s %s %s\n", 'Restoring data from ', $this->infile, " in table $table" );
+                if (is_file($this->infile)) {
+                    $this->restoreData($this->infile);
+                    printf("%20s %s %s\n", 'Restoring data from ', $this->infile, " in table $table");
                 }
             }
         }
@@ -337,17 +336,17 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    function createDb ($dbname, $drop = false)
+    public function createDb($dbname, $drop = false)
     {
         if ($drop) {
             $sql = "DROP DATABASE IF EXISTS $dbname;";
-            if (! @mysql_query( $sql )) {
-                throw new Exception( mysql_error() );
+            if (!mysqli_query($this->link, $sql)) {
+                throw new Exception(mysqli_error($this->link));
             }
         }
         $sql = "CREATE DATABASE IF NOT EXISTS $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
-        if (! @mysql_query( $sql )) {
-            throw new Exception( mysql_error() );
+        if (!mysqli_query($this->link, $sql)) {
+            throw new Exception(mysqli_error($this->link));
         }
     }
 
@@ -358,24 +357,23 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    function restoreFromSql2 ($sqlfile)
+    public function restoreFromSql2($sqlfile)
     {
-
-        ini_set( 'memory_limit', '512M' );
-        if (! is_file( $sqlfile )) {
-            throw new Exception( "the $sqlfile doesn't exist!" );
+        ini_set('memory_limit', '512M');
+        if (!is_file($sqlfile)) {
+            throw new Exception("the $sqlfile doesn't exist!");
         }
-        $query = file_get_contents( $sqlfile );
-        $mysqli = new mysqli( $this->host, $this->user, $this->passwd, $this->dbName );
+        $query = file_get_contents($sqlfile);
+        $mysqli = new mysqli($this->host, $this->user, $this->passwd, $this->dbName);
 
         /* check connection */
         if (mysqli_connect_errno()) {
-            printf( "Connect failed: %s\n", mysqli_connect_error() );
+            printf("Connect failed: %s\n", mysqli_connect_error());
             exit();
         }
 
         /* execute multi query */
-        if ($mysqli->multi_query( $query )) {
+        if ($mysqli->multi_query($query)) {
             do {
                 /* store first result set */
                 if ($result = $mysqli->store_result()) {
@@ -383,7 +381,6 @@ class DataBaseMaintenance
                     }
                     $result->free();
                 }
-
             } while ($mysqli->next_result());
         }
 
@@ -398,12 +395,12 @@ class DataBaseMaintenance
      *
      * @return none
      */
-    function backupDataBase ($outfile)
+    public function backupDataBase($outfile)
     {
         $password = escapeshellarg($this->passwd);
-        
-        //On Windows, escapeshellarg() instead replaces percent signs, exclamation 
-        //marks (delayed variable substitution) and double quotes with spaces and 
+
+        //On Windows, escapeshellarg() instead replaces percent signs, exclamation
+        //marks (delayed variable substitution) and double quotes with spaces and
         //adds double quotes around the string.
         //See: http://php.net/manual/en/function.escapeshellarg.php
         if ($this->isWindows) {
@@ -437,16 +434,16 @@ class DataBaseMaintenance
 
     /**
      * string escapeshellargCustom ( string $arg , character $quotes)
-     * 
-     * escapeshellarg() adds single quotes around a string and quotes/escapes any 
-     * existing single quotes allowing you to pass a string directly to a shell 
-     * function and having it be treated as a single safe argument. This function 
-     * should be used to escape individual arguments to shell functions coming 
-     * from user input. The shell functions include exec(), system() and the 
+     *
+     * escapeshellarg() adds single quotes around a string and quotes/escapes any
+     * existing single quotes allowing you to pass a string directly to a shell
+     * function and having it be treated as a single safe argument. This function
+     * should be used to escape individual arguments to shell functions coming
+     * from user input. The shell functions include exec(), system() and the
      * backtick operator.
-     * 
-     * On Windows, escapeshellarg() instead replaces percent signs, exclamation 
-     * marks (delayed variable substitution) and double quotes with spaces and 
+     *
+     * On Windows, escapeshellarg() instead replaces percent signs, exclamation
+     * marks (delayed variable substitution) and double quotes with spaces and
      * adds double quotes around the string.
      */
     private function escapeshellargCustom($string, $quotes = "")
@@ -489,57 +486,56 @@ class DataBaseMaintenance
      *
      * @return boolean false or true
      */
-    function restoreFromSql ($sqlfile, $type = 'file')
+    public function restoreFromSql($sqlfile, $type = 'file')
     {
-        ini_set( 'memory_limit', '64M' );
-        if ($type == 'file' && ! is_file( $sqlfile )) {
-            throw new Exception( "the $sqlfile doesn't exist!" );
+        ini_set('memory_limit', '64M');
+        if ($type == 'file' && !is_file($sqlfile)) {
+            throw new Exception("the $sqlfile doesn't exist!");
         }
 
-        $metaFile = str_replace( '.sql', '.meta', $sqlfile );
+        $metaFile = str_replace('.sql', '.meta', $sqlfile);
 
         $queries = 0;
 
-        if (is_file( $metaFile )) {
+        if (is_file($metaFile)) {
             echo "Using $metaFile as metadata.\n";
-            $fp = fopen( $sqlfile, 'rb' );
-            $fpmd = fopen( $metaFile, 'r' );
-            while ($offset = fgets( $fpmd, 1024 )) {
-                $buffer = intval( $offset ); //reading the size of $oData
-                $query = fread( $fp, $buffer ); //reading string $oData
+            $fp = fopen($sqlfile, 'rb');
+            $fpmd = fopen($metaFile, 'r');
+            while ($offset = fgets($fpmd, 1024)) {
+                $buffer = intval($offset); //reading the size of $oData
+                $query = fread($fp, $buffer); //reading string $oData
                 $queries += 1;
 
-                if (! @mysql_query( $query )) {
-                    $varRes = mysql_error() . "\n";
-                    G::outRes( $varRes );
+                if (!mysqli_query($this->link, $query)) {
+                    $varRes = mysqli_error($this->link) . "\n";
+                    G::outRes($varRes);
                     $varRes = "==>" . $query . "<==\n";
-                    G::outRes( $varRes );
+                    G::outRes($varRes);
                 }
             }
-
         } else {
             $queries = null;
             try {
-                $mysqli = new mysqli( $this->host, $this->user, $this->passwd, $this->dbName );
+                $mysqli = new mysqli($this->host, $this->user, $this->passwd, $this->dbName);
                 /* check connection */
                 if (mysqli_connect_errno()) {
-                    printf( "Connect failed: %s\n", mysqli_connect_error() );
+                    printf("Connect failed: %s\n", mysqli_connect_error());
                     exit();
                 }
-                if ($type == 'file') {
-                    $query = file_get_contents( $sqlfile );
-                } else if ($type == 'string') {
+                if ($type === 'file') {
+                    $query = file_get_contents($sqlfile);
+                } elseif ($type === 'string') {
                     $query = $sqlfile;
                 } else {
                     return false;
                 }
 
-                if (trim( $query ) == "") {
+                if (trim($query) == "") {
                     return false;
                 }
 
-                    /* execute multi query */
-                if ($mysqli->multi_query( $query )) {
+                /* execute multi query */
+                if ($mysqli->multi_query($query)) {
                     do {
                         /* store first result set */
                         if ($result = $mysqli->store_result()) {
@@ -554,16 +550,16 @@ class DataBaseMaintenance
                         }
                     } while ($mysqli->next_result());
                 } else {
-                    throw new Exception( mysqli_error( $mysqli ) );
+                    throw new Exception(mysqli_error($mysqli));
                 }
 
-                    /* close connection */
+                /* close connection */
                 $mysqli->close();
             } catch (Exception $e) {
                 echo $query;
                 $token = strtotime("now");
                 PMException::registerErrorLog($e, $token);
-                G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
+                G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)));
             }
         }
         return $queries;
@@ -576,20 +572,20 @@ class DataBaseMaintenance
      *
      * @return string $tableSchema
      */
-    function getSchemaFromTable ($tablename)
+    public function getSchemaFromTable($tablename)
     {
         //$tableSchema = "/* Structure for table `$tablename` */\n";
         //$tableSchema .= "DROP TABLE IF EXISTS `$tablename`;\n\n";
         $tableSchema = "";
         $sql = "show create table `$tablename`; ";
-        $result = @mysql_query( $sql );
+        $result = mysqli_query($this->link, $sql);
         if ($result) {
-            if ($row = mysql_fetch_assoc( $result )) {
+            if ($row = mysqli_fetch_assoc($result)) {
                 $tableSchema .= $row['Create Table'] . ";\n\n";
             }
-            mysql_free_result( $result );
+            mysqli_free_result($result);
         } else {
-            G::outRes( mysql_error() );
+            G::outRes(mysqli_error($this->link));
         }
         return $tableSchema;
     }
@@ -601,12 +597,12 @@ class DataBaseMaintenance
      *
      * @return string $str
      */
-    function removeCommentsIntoString ($str)
+    public function removeCommentsIntoString($str)
     {
-        $str = preg_replace( '/\/\*[\w\W]*\*\//', '', $str );
-        $str = preg_replace( "/--[\w\W]*\\n/", '', $str );
-        $str = preg_replace( "/\/\/[\w\W]*\\n/", '', $str );
-        $str = preg_replace( "/\#[\w\W]*\\n/", '', $str );
+        $str = preg_replace('/\/\*[\w\W]*\*\//', '', $str);
+        $str = preg_replace("/--[\w\W]*\\n/", '', $str);
+        $str = preg_replace("/\/\/[\w\W]*\\n/", '', $str);
+        $str = preg_replace("/\#[\w\W]*\\n/", '', $str);
         return $str;
     }
 }

@@ -48,7 +48,7 @@ if ($sort == 'APP_STATUS_LABEL') {
 
 try {
     $userUid = (isset($_SESSION["USER_LOGGED"]) && $_SESSION["USER_LOGGED"] != "") ? $_SESSION["USER_LOGGED"] : null;
-    $result = "";
+    $result = [];
 
     switch ($action) {
         case "search":
@@ -111,4 +111,3 @@ try {
     $msg = array("error" => $e->getMessage());
     echo G::json_encode($msg);
 }
-

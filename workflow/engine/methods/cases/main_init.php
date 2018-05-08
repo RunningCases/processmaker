@@ -24,29 +24,29 @@
 
 $conf = new Configurations();
 
-$oHeadPublisher = &headPublisher::getSingleton();
-$oHeadPublisher->addExtJsScript( "cases/main", false ); //Adding a javascript file .js
-$oHeadPublisher->addContent( "cases/main" ); //Adding a html file  .html.
+$oHeadPublisher = headPublisher::getSingleton();
+$oHeadPublisher->addExtJsScript("cases/main", false); //Adding a javascript file .js
+$oHeadPublisher->addContent("cases/main"); //Adding a html file  .html.
 
 $keyMem = "USER_PREFERENCES" . $_SESSION["USER_LOGGED"];
-$memcache = &PMmemcached::getSingleton( config("system.workspace") );
+$memcache = PMmemcached::getSingleton(config("system.workspace"));
 
-if (($arrayConfig = $memcache->get( $keyMem )) === false) {
-    $conf->loadConfig( $x, "USER_PREFERENCES", "", "", $_SESSION["USER_LOGGED"], "" );
+if (($arrayConfig = $memcache->get($keyMem)) === false) {
+    $conf->loadConfig($x, "USER_PREFERENCES", "", "", $_SESSION["USER_LOGGED"], "");
     $arrayConfig = $conf->aConfig;
-    $memcache->set( $keyMem, $arrayConfig, PMmemcached::ONE_HOUR );
+    $memcache->set($keyMem, $arrayConfig, PMmemcached::ONE_HOUR);
 }
 
 $confDefaultOption = "";
 
-if (isset( $arrayConfig["DEFAULT_CASES_MENU"] )) {
+if (isset($arrayConfig["DEFAULT_CASES_MENU"])) {
     //this user has a configuration record
     $confDefaultOption = $arrayConfig["DEFAULT_CASES_MENU"];
 
     global $G_TMP_MENU;
 
     $oMenu = new Menu();
-    $oMenu->load( "cases" );
+    $oMenu->load("cases");
     $defaultOption = "";
 
     foreach ($oMenu->Id as $i => $id) {
@@ -74,13 +74,13 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
 
     if (!empty($arrayResult)) {
         $arrayDefaultOption = [
-            'TO_DO'        => ['CASES_INBOX', 'todo'],
-            'DRAFT'        => ['CASES_DRAFT', 'draft'],
-            'CANCELLED'    => ['CASES_SENT',  'sent'],
-            'COMPLETED'    => ['CASES_SENT',  'sent'],
-            'PARTICIPATED' => ['CASES_SENT',  'sent'],
-            'UNASSIGNED'   => ['CASES_SELFSERVICE', 'unassigned'],
-            'PAUSED'       => ['CASES_PAUSED',      'paused']
+            'TO_DO' => ['CASES_INBOX', 'todo'],
+            'DRAFT' => ['CASES_DRAFT', 'draft'],
+            'CANCELLED' => ['CASES_SENT', 'sent'],
+            'COMPLETED' => ['CASES_SENT', 'sent'],
+            'PARTICIPATED' => ['CASES_SENT', 'sent'],
+            'UNASSIGNED' => ['CASES_SELFSERVICE', 'unassigned'],
+            'PAUSED' => ['CASES_PAUSED', 'paused']
         ];
 
         $confDefaultOption = $arrayDefaultOption[$arrayResult['APP_STATUS']][0];
@@ -122,8 +122,8 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
     }
 }
 
-$oServerConf = & ServerConf::getSingleton();
-if ($oServerConf->isRtl( SYS_LANG )) {
+$oServerConf = ServerConf::getSingleton();
+if ($oServerConf->isRtl(SYS_LANG)) {
     $regionTreePanel = 'east';
     $regionDebug = 'west';
 } else {
@@ -158,7 +158,7 @@ function getDsn()
 {
     list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
     $port = empty($port) ? '' : ";port=$port";
-    $dsn = DB_ADAPTER.':host='.$host.';dbname='.DB_NAME.$port;
+    $dsn = DB_ADAPTER . ':host=' . $host . ';dbname=' . DB_NAME . $port;
 
     return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
 }
@@ -179,7 +179,7 @@ function getAuthorizationCode($client)
     ));
 
     $response = $oauthServer->postAuthorize($authorize, $userId, true);
-    $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+    $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
 
     return $code;
 }

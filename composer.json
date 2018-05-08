@@ -27,12 +27,13 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "php": ">=5.6",
         "laravel/framework": "5.4.*",
         "luracast/restler": "^3.0",
         "bshaffer/oauth2-server-php": "v1.0",
-        "colosa/pmUI": "release/3.2.3-dev",
-        "colosa/MichelangeloFE": "release/3.2.3-dev",
-        "colosa/pmdynaform": "release/3.2.3-dev",
+        "colosa/pmUI": "release/3.2.4-dev",
+        "colosa/MichelangeloFE": "release/3.2.4-dev",
+        "colosa/pmdynaform": "release/3.2.4-dev",
         "google/apiclient": "1.1.6",
         "dapphp/securimage": "^3.6",
         "psr/log":"1.0.0",
@@ -43,9 +44,11 @@
         "pear/archive_tar": "1.4.*",
         "pear/console_getopt": "1.4.*",
         "TYPO3/class-alias-loader": "^1.0",
-        "ralouphie/getallheaders": "^2.0"
+        "ralouphie/getallheaders": "^2.0",
+        "smarty/smarty": "2.6.30"
     },
     "require-dev": {
+        "fzaninotto/faker": "^1.7",
         "guzzle/guzzle": "~3.1.1",
         "phpunit/phpunit": "~5.7",
         "lmc/steward": "^2.2",
@@ -59,7 +62,8 @@
             "ProcessMaker\\": "workflow/engine/src"
         },
         "psr-4": {
-            "Maveriks\\": "framework/src/Maveriks/"
+          "Maveriks\\": "framework/src/Maveriks/",
+          "Tests\\": "tests/"
         },
         "classmap": [
             "gulliver/system/",
@@ -68,7 +72,6 @@
             "workflow/engine/classes/",
             "workflow/engine/controllers/",
             "workflow/engine/includes/",
-            "thirdparty/smarty/libs/Smarty.class.php",
             "thirdparty/jsmin/jsmin.php",
             "thirdparty/pear",
             "thirdparty/html2ps_pdf",
@@ -79,7 +82,6 @@
         "files": [
             "gulliver/includes/inc.ajax.php",
             "gulliver/includes/smarty_plugins/function.pmos.php",
-            "thirdparty/pear/PEAR.php",
             "thirdparty/pake/pakeFunction.php",
             "thirdparty/HTMLPurifier/HTMLPurifier.auto.php",
             "workflow/engine/classes/class.pmFunctions.php",

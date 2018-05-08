@@ -25,8 +25,9 @@
 
 if (defined('PATH_DB') && !empty(config("system.workspace"))) {
 
-    if (!file_exists(PATH_DB . config("system.workspace") . '/db.php'))
+    if (!file_exists(PATH_DB . config("system.workspace") . '/db.php')) {
         throw new Exception("Could not find db.php in current workspace " . config("system.workspace"));
+    }
 
     require_once(PATH_DB . config("system.workspace") . '/db.php');
     //to do: enable for other databases
@@ -63,7 +64,6 @@ if (defined('PATH_DB') && !empty(config("system.workspace"))) {
 
     $pro ['datasources']['rp']['connection'] = $dsnReport;
     $pro ['datasources']['rp']['adapter'] = DB_ADAPTER;
-
 }
 
 $pro ['datasources']['dbarray']['connection'] = 'dbarray://user:pass@localhost/pm_os';

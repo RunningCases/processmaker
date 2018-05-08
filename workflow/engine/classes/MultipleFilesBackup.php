@@ -196,11 +196,11 @@ class MultipleFilesBackup
             list($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
 
             CLI::logging("> Connecting to system database in '$dbHost'\n");
-            $link = mysql_connect($dbHost, $dbUser, $dbPass);
-            @mysql_query("SET NAMES 'utf8';");
-            @mysql_query("SET FOREIGN_KEY_CHECKS=0;");
+            $link = mysqli_connect($dbHost, $dbUser, $dbPass);
+            mysqli_query($link, "SET NAMES 'utf8';");
+            mysqli_query($link, "SET FOREIGN_KEY_CHECKS=0;");
             if (!$link) {
-                throw new Exception('Could not connect to system database: ' . mysql_error());
+                throw new Exception('Could not connect to system database: ' . mysqli_error($link));
             }
 
             if (strpos($metadata->DB_RBAC_NAME, 'rb_') === false) {
@@ -215,12 +215,12 @@ class MultipleFilesBackup
             foreach ($metadata->databases as $db) {
                 $dbName = $newDBNames[$db->name];
                 CLI::logging("+> Restoring database {$db->name} to $dbName\n");
-                $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters);
-                $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName);
-                $workspace->createDBUser($dbName, $db->pass, "%", $dbName);
+                $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, 1, $link);
+                $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName, $link);
+                $workspace->createDBUser($dbName, $db->pass, "%", $dbName, $link);
             }
             $workspace->upgradeCacheView(false);
-            mysql_close($link);
+            mysqli_close($link);
         }
         CLI::logging("Removing temporary files\n");
         G::rm_dir($tempDirectory);

@@ -174,21 +174,20 @@ try {
 
     $flagGmail = false;
     /*----------------------------------********---------------------------------*/
-    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+    $licensedFeatures = PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-        $pmGoogle = new PmGoogleApi ();
+        $pmGoogle = new PmGoogleApi();
         if ($pmGoogle->getServiceGmailStatus()) {
             $flagGmail = true;
 
-            $appDel = new AppDelegation ();
+            $appDel = new AppDelegation();
             $actualThread = $appDel->Load($_SESSION ['APPLICATION'], $_SESSION ['INDEX']);
 
             $appDelPrev = $appDel->LoadParallel($_SESSION ['APPLICATION']);
-            $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail ();
+            $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
             foreach ($appDelPrev as $app) {
                 if (($app ['DEL_INDEX'] != $_SESSION ['INDEX']) && ($app ['DEL_PREVIOUS'] != $actualThread ['DEL_PREVIOUS'])) {
-                    $Pmgmail->gmailsIfSelfServiceValueBased($_SESSION ['APPLICATION'], $app ['DEL_INDEX'],
-                        $_POST ['form'] ['TASKS'], $appFields ['APP_DATA']);
+                    $Pmgmail->gmailsIfSelfServiceValueBased($_SESSION ['APPLICATION'], $app ['DEL_INDEX'], $_POST ['form'] ['TASKS'], $appFields ['APP_DATA']);
                 }
             }
         }
@@ -239,9 +238,8 @@ try {
 
     /*----------------------------------********---------------------------------*/
     // Set users drive - start
-    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+    $licensedFeatures = PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-
         $drive = new AppDocumentDrive();
         if ($drive->getStatusDrive()) {
             //add users email next task

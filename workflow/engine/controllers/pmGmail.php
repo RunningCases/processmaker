@@ -18,8 +18,6 @@ class pmGmail extends Controller
         $httpData->serviceDriveStatus = !empty($httpData->serviceDriveStatus) ? $httpData->serviceDriveStatus == 1 ? true : false : false;
 
         if ($httpData->serviceGmailStatus || $httpData->serviceDriveStatus) {
-
-
             $pmGoogle->setServiceGmailStatus($httpData->serviceGmailStatus);
             $pmGoogle->setServiceDriveStatus($httpData->serviceDriveStatus);
 
@@ -58,7 +56,7 @@ class pmGmail extends Controller
     {
         try {
             $this->includeExtJS('admin/pmGmail');
-            if (!empty ($_SESSION['__PMGMAIL_ERROR__'])) {
+            if (!empty($_SESSION['__PMGMAIL_ERROR__'])) {
                 $this->setJSVar('__PMGMAIL_ERROR__', $_SESSION['__PMGMAIL_ERROR__']);
                 unset($_SESSION['__PMGMAIL_ERROR__']);
             }
@@ -70,7 +68,7 @@ class pmGmail extends Controller
             $disableGmail = true;
             $disableDrive = true;
 
-            $licensedFeatures = &PMLicensedFeatures::getSingleton();
+            $licensedFeatures = PMLicensedFeatures::getSingleton();
             if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
                 $disableGmail = false;
             }
