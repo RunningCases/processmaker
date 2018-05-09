@@ -1,83 +1,53 @@
 <?php
 
-/**
- * class.database_base.php
- *
- * @package gulliver.system
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 /**
  *
  *
  * Database Maintenance class
  *
- * author Erik A. Ortiz <erik@colosa.com, aortiz.erik@gmail.com>
- * date May 17th, 2010
  *
  * @package gulliver.system
  */
 class DataBaseMaintenance
 {
-    private $host;
-    private $user;
-    private $passwd;
+    private $host = null;
+    private $user = null;
+    private $passwd = null;
 
-    private $link;
-    private $dbName;
+    private $connect = null;
+    private $dbName = null;
     public $result;
-    protected $tmpDir;
+    protected $tmpDir = null;
     protected $outfile;
     protected $infile;
     protected $isWindows;
 
     /**
-     * __construct
+     * DataBaseMaintenance constructor.
      *
-     * @param string $host   is null
-     * @param string $user   is null
-     * @param string $passwd is null
+     * @param string $host
+     * @param string $user
+     * @param string $passwd
      *
-     * @return none
      */
     public function __construct($host = null, $user = null, $passwd = null)
     {
         $this->tmpDir = './';
-        $this->link = null;
-        $this->dbName = null;
+        $this->setConnection(null);
+        $this->setDbName(null);
         $this->isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-        if (isset($host) && isset($user) && isset($passwd)) {
-            $this->host = $host;
-            $this->user = $user;
-            $this->passwd = $passwd;
-        }
+        $this->setUser($user);
+        $this->setHost($host);
+        $this->setPasswd($passwd);
     }
 
     /**
      * setUser
      *
      * @param string $user
-     *
-     * @return none
      */
     public function setUser($user)
     {
@@ -85,11 +55,9 @@ class DataBaseMaintenance
     }
 
     /**
-     * setPasswd
+     * Set Password
      *
      * @param string $passwd
-     *
-     * @return none
      */
     public function setPasswd($passwd)
     {
@@ -97,11 +65,9 @@ class DataBaseMaintenance
     }
 
     /**
-     * setHost
+     * Set Host
      *
      * @param string $host
-     *
-     * @return none
      */
     public function setHost($host)
     {
@@ -109,11 +75,9 @@ class DataBaseMaintenance
     }
 
     /**
-     * setTempDir
+     * Set TempDir
      *
      * @param string $tmpDir
-     *
-     * @return none
      */
     public function setTempDir($tmpDir)
     {
@@ -124,7 +88,64 @@ class DataBaseMaintenance
     }
 
     /**
-     * getTempDir
+     * Set Db Name
+     *
+     * @param $dbName
+     */
+    public function setDbName($dbName)
+    {
+        $this->dbName = $dbName;
+    }
+
+    /**
+     * Set Connection
+     *
+     * @param $name
+     */
+    public function setConnection($name)
+    {
+        $this->connect = 'DB_' . $name;
+    }
+
+    /**
+     * Get User
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Get Password
+     * @return string
+     */
+    public function getPasswd()
+    {
+        return $this->passwd;
+    }
+
+    /**
+     * Get Host
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * Get Name Connection
+     *
+     * @return string
+     */
+    public function getConnect()
+    {
+        return $this->connect;
+    }
+
+    /**
+     * get TempDir
      *
      * @return $this->tmpDir
      */
@@ -134,116 +155,74 @@ class DataBaseMaintenance
     }
 
     /**
-     * status
+     * Get Name DB
      *
-     * @return $this->link
+     * @return string
      */
-    public function status()
+    public function getDbName()
     {
-        return $$this->link;
+        return $this->dbName;
     }
 
     /**
-     * connect
+     * Connect to DB
      *
-     * @param string $dbname is null
-     *
-     * @return none
-     */
-    public function connect($dbname = null)
-    {
-        if ($this->link != null) {
-            mysqli_close($this->link);
-            $this->link = null;
-        }
-        if (isset($dbname)) {
-            $this->dbName = $dbname;
-        }
-
-        $this->link = mysqli_connect($this->host, $this->user, $this->passwd, $this->dbName);
-        if (!$this->link) {
-            throw new Exception("Couldn't connect to host {$this->host} with user {$this->user}");
-        }
-        mysqli_query($this->link, "SET NAMES 'utf8';");
-        mysqli_query($this->link, "SET FOREIGN_KEY_CHECKS=0;");
-
-        if ($this->dbName != null) {
-            $this->selectDataBase($this->dbName);
-        }
-    }
-
-    /**
-     * setDbName
-     *
-     * @param string $dbname is null
-     *
-     * @return none
-     */
-    public function setDbName($dbname)
-    {
-        $this->dbName = $dbname;
-    }
-
-    /**
-     * selectDataBase
-     *
-     * @param string $dbname
-     * @param        $dbname
+     * @param string $dbName
      *
      * @throws Exception
      */
-    public function selectDataBase($dbname)
+    public function connect($dbName)
     {
-        $this->setDbName($dbname);
-        if (!mysqli_select_db($this->link, $this->dbName)) {
-            throw new Exception("Couldn't select database $dbname");
+        try {
+            $this->setConnection($dbName);
+            $this->setDbName($dbName);
+            InstallerModule::setNewConnection(
+                $this->getConnect(),
+                $this->getHost(),
+                $this->getUser(),
+                $this->getPasswd(),
+                $this->getDbName(),
+                '');
+
+            DB::connection($this->getConnect())
+                ->statement("SET NAMES 'utf8'");
+            DB::connection($this->getConnect())
+                ->statement('SET FOREIGN_KEY_CHECKS=0');
+
+        } catch (QueryException $exception) {
+            throw new Exception("Couldn't connect to host {$this->getHost()} with user {$this->getUser()}" . $exception->getMessage());
         }
     }
 
     /**
-     * query
+     * Query
      *
      * @param string $sql
      *
-     * @return $aRows
+     * @return array
+     * @throws Exception
      */
     public function query($sql)
     {
-        $this->result = mysqli_query($this->link, $sql);
-        if ($this->result) {
-            $aRows = [];
-            while ($aRow = mysqli_fetch_assoc($this->result)) {
-                $aRows[] = $aRow;
-            }
-            return $aRows;
-        } else {
-            return false;
+        try {
+            $result = DB::connection($this->getConnect())
+                ->select($sql);
+
+            return $result;
+        } catch (QueryException $exception) {
+            throw new Exception("Couldn't connect to host {$this->getHost()} with user {$this->getUser()}" . $exception->getMessage());
         }
     }
 
     /**
-     * error
-     *
-     * @return mysqli_error()
-     */
-    public function error()
-    {
-        return mysqli_error($this->link);
-    }
-
-    /**
-     * getTablesList
+     * get Tables List
      *
      * @return array
+     * @throws Exception
      */
     public function getTablesList()
     {
-        $this->result = mysqli_query($this->link, 'SHOW TABLES;');
-        $rows = [];
-        while ($row = mysqli_fetch_row($this->result)) {
-            $rows[] = $row[0];
-        }
-        return $rows;
+        return $this->query('SHOW TABLES');
     }
 
     /**
@@ -255,25 +234,26 @@ class DataBaseMaintenance
      */
     public function dumpData($table)
     {
-        $this->outfile = $this->tmpDir . $table . '.dump';
+        try {
+            $this->outfile = $this->tmpDir . $table . '.dump';
 
-        //if the file exists delete it
-        if (is_file($this->outfile)) {
-            @unlink($this->outfile);
-        }
+            //if the file exists delete it
+            if (is_file($this->outfile)) {
+                @unlink($this->outfile);
+            }
 
-        $sql = "SELECT * INTO OUTFILE '{$this->outfile}' FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n' FROM $table";
-        // The mysql_escape_string function has been DEPRECATED as of PHP 5.3.0.
-        // Commented that is not assigned to a variable.
-        // mysql_escape_string("';");
-        if (!@mysqli_query($this->link, $sql)) {
+            $sql = "SELECT * INTO OUTFILE '{$this->outfile}' FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n' FROM $table";
+
+            DB::connection($this->getConnect())->raw($sql);
+
+            return true;
+        } catch (QueryException $exception) {
             $ws = (!empty(config('system.workspace'))) ? config('system.workspace') : 'Undefined Workspace';
-            Bootstrap::registerMonolog('MysqlCron', 400, mysqli_error($this->link), ['sql' => $sql], $ws, 'processmaker.log');
-            $varRes = mysqli_error($this->link) . "\n";
+            Bootstrap::registerMonolog('MysqlCron', 400, $exception->getMessage(), ['sql' => $sql], $ws, 'processmaker.log');
+            $varRes = $exception->getMessage() . "\n";
             G::outRes($varRes);
             return false;
         }
-        return true;
     }
 
     /**
@@ -285,16 +265,20 @@ class DataBaseMaintenance
      */
     public function restoreData($backupFile)
     {
-        $tableName = str_replace('.dump', '', basename($backupFile));
-        $sql = "LOAD DATA INFILE '$backupFile' INTO TABLE $tableName FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
-        if (!@mysqli_query($this->link, $sql)) {
+        try {
+            $tableName = str_replace('.dump', '', basename($backupFile));
+            $sql = "LOAD DATA INFILE '$backupFile' INTO TABLE $tableName FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
+
+            DB::connection($this->getConnect())->raw($sql);
+
+            return true;
+        } catch (QueryException $exception) {
             $ws = (!empty(config("system.workspace"))) ? config("system.workspace") : "Wokspace Undefined";
-            Bootstrap::registerMonolog('MysqlCron', 400, mysqli_error($this->link), ['sql' => $sql], $ws, 'processmaker.log');
-            $varRes = mysqli_error($this->link) . "\n";
+            Bootstrap::registerMonolog('MysqlCron', 400, $exception->getMessage(), ['sql' => $sql], $ws, 'processmaker.log');
+            $varRes = $exception->getMessage() . "\n";
             G::outRes($varRes);
             return false;
         }
-        return true;
     }
 
     /**
@@ -302,24 +286,22 @@ class DataBaseMaintenance
      *
      * @param string $type default value null
      *
-     * @return none
+     * @throws Exception
      */
     public function restoreAllData($type = null)
     {
-        $aTables = $this->getTablesList();
-
-        foreach ($aTables as $table) {
-            if (isset($type) && $type == 'sql') {
-                $this->infile = $this->tmpDir . $table . ".sql";
+        foreach ($this->getTablesList() as $table) {
+            if (isset($type) && $type === 'sql') {
+                $this->infile = $this->tmpDir . $table . '.sql';
                 if (is_file($this->infile)) {
                     $queries = $this->restoreFromSql($this->infile, true);
                     if (!isset($queries)) {
-                        $queries = "unknown";
+                        $queries = 'unknown';
                     }
                     printf("%-59s%20s", "Restored table $table", "$queries queries\n");
                 }
             } else {
-                $this->infile = $this->tmpDir . $table . ".dump";
+                $this->infile = $this->tmpDir . $table . '.dump';
                 if (is_file($this->infile)) {
                     $this->restoreData($this->infile);
                     printf("%20s %s %s\n", 'Restoring data from ', $this->infile, " in table $table");
@@ -329,63 +311,27 @@ class DataBaseMaintenance
     }
 
     /**
-     * createDb
+     * Create DB
      *
      * @param string $dbname
-     * @param string $drop default value false
+     * @param boolean $drop
      *
-     * @return none
+     * @return bool
+     * @throws Exception
      */
     public function createDb($dbname, $drop = false)
     {
-        if ($drop) {
-            $sql = "DROP DATABASE IF EXISTS $dbname;";
-            if (!mysqli_query($this->link, $sql)) {
-                throw new Exception(mysqli_error($this->link));
+        try {
+            if ($drop) {
+                DB::connection($this->getConnect())->statement("DROP DATABASE IF EXISTS $dbname");
             }
-        }
-        $sql = "CREATE DATABASE IF NOT EXISTS $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
-        if (!mysqli_query($this->link, $sql)) {
-            throw new Exception(mysqli_error($this->link));
-        }
-    }
 
-    /**
-     * restoreFromSql2
-     *
-     * @param string $sqlfile
-     *
-     * @return none
-     */
-    public function restoreFromSql2($sqlfile)
-    {
-        ini_set('memory_limit', '512M');
-        if (!is_file($sqlfile)) {
-            throw new Exception("the $sqlfile doesn't exist!");
-        }
-        $query = file_get_contents($sqlfile);
-        $mysqli = new mysqli($this->host, $this->user, $this->passwd, $this->dbName);
+            DB::connection($this->getConnect())->statement("CREATE DATABASE IF NOT EXISTS $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
 
-        /* check connection */
-        if (mysqli_connect_errno()) {
-            printf("Connect failed: %s\n", mysqli_connect_error());
-            exit();
+            return true;
+        } catch (QueryException $exception) {
+            throw new Exception($exception->getMessage());
         }
-
-        /* execute multi query */
-        if ($mysqli->multi_query($query)) {
-            do {
-                /* store first result set */
-                if ($result = $mysqli->store_result()) {
-                    while ($row = $result->fetch_row()) {
-                    }
-                    $result->free();
-                }
-            } while ($mysqli->next_result());
-        }
-
-        /* close connection */
-        $mysqli->close();
     }
 
     /**
@@ -397,36 +343,36 @@ class DataBaseMaintenance
      */
     public function backupDataBase($outfile)
     {
-        $password = escapeshellarg($this->passwd);
+        $password = escapeshellarg($this->getPasswd());
 
         //On Windows, escapeshellarg() instead replaces percent signs, exclamation
         //marks (delayed variable substitution) and double quotes with spaces and
         //adds double quotes around the string.
         //See: http://php.net/manual/en/function.escapeshellarg.php
         if ($this->isWindows) {
-            $password = $this->escapeshellargCustom($this->passwd);
+            $password = $this->escapeshellargCustom($this->getPasswd());
         }
-        $aHost = explode(':', $this->host);
+        $aHost = explode(':', $this->getHost());
         $dbHost = $aHost[0];
         if (isset($aHost[1])) {
             $dbPort = $aHost[1];
             $command = 'mysqldump'
-                . ' --user=' . $this->user
+                . ' --user=' . $this->getUser()
                 . ' --password=' . $password
                 . ' --host=' . $dbHost
                 . ' --port=' . $dbPort
                 . ' --opt'
                 . ' --skip-comments'
-                . ' ' . $this->dbName
+                . ' ' . $this->getDbName()
                 . ' > ' . $outfile;
         } else {
             $command = 'mysqldump'
                 . ' --host=' . $dbHost
-                . ' --user=' . $this->user
+                . ' --user=' . $this->getUser()
                 . ' --opt'
                 . ' --skip-comments'
                 . ' --password=' . $password
-                . ' ' . $this->dbName
+                . ' ' . $this->getDbName()
                 . ' > ' . $outfile;
         }
         shell_exec($command);
@@ -448,21 +394,21 @@ class DataBaseMaintenance
      */
     private function escapeshellargCustom($string, $quotes = "")
     {
-        if ($quotes === "") {
+        if ($quotes === '') {
             $quotes = $this->isWindows ? "\"" : "'";
         }
         $n = strlen($string);
         $special = ["!", "%", "\""];
-        $substring = "";
+        $substring = '';
         $result1 = [];
         $result2 = [];
         for ($i = 0; $i < $n; $i++) {
             if (in_array($string[$i], $special, true)) {
                 $result2[] = $string[$i];
                 $result1[] = $substring;
-                $substring = "";
+                $substring = '';
             } else {
-                $substring = $substring . $string[$i];
+                $substring .= $string[$i];
             }
         }
         $result1[] = $substring;
@@ -471,43 +417,47 @@ class DataBaseMaintenance
         for ($i = 0; $i < $n; $i++) {
             $result1[$i] = trim(escapeshellarg($result1[$i]), $quotes);
             if (isset($result2[$i])) {
-                $result1[$i] = $result1[$i] . $result2[$i];
+                $result1[$i] .= $result2[$i];
             }
         }
         //add simple quotes, see escapeshellarg function
-        $newString = $quotes . implode("", $result1) . $quotes;
+        $newString = $quotes . implode('', $result1) . $quotes;
         return $newString;
     }
 
     /**
-     * restoreFromSql
+     * Restore from sql
      *
-     * @param string $sqlfile
+     * @param string $sqlFile
+     * @param string $type
      *
      * @return boolean false or true
+     * @throws Exception
      */
-    public function restoreFromSql($sqlfile, $type = 'file')
+    public function restoreFromSql($sqlFile, $type = 'file')
     {
         ini_set('memory_limit', '64M');
-        if ($type == 'file' && !is_file($sqlfile)) {
-            throw new Exception("the $sqlfile doesn't exist!");
+        if ($type == 'file' && !is_file($sqlFile)) {
+            throw new Exception("the $sqlFile doesn't exist!");
         }
 
-        $metaFile = str_replace('.sql', '.meta', $sqlfile);
+        $metaFile = str_replace('.sql', '.meta', $sqlFile);
 
         $queries = 0;
 
         if (is_file($metaFile)) {
             echo "Using $metaFile as metadata.\n";
-            $fp = fopen($sqlfile, 'rb');
+            $fp = fopen($sqlFile, 'rb');
             $fpmd = fopen($metaFile, 'r');
             while ($offset = fgets($fpmd, 1024)) {
                 $buffer = intval($offset); //reading the size of $oData
                 $query = fread($fp, $buffer); //reading string $oData
-                $queries += 1;
+                $queries++;
 
-                if (!mysqli_query($this->link, $query)) {
-                    $varRes = mysqli_error($this->link) . "\n";
+                try {
+                    DB::connection($this->getConnect())->raw($query);
+                } catch (QueryException $exception) {
+                    $varRes = $exception->getMessage() . "\n";
                     G::outRes($varRes);
                     $varRes = "==>" . $query . "<==\n";
                     G::outRes($varRes);
@@ -516,45 +466,25 @@ class DataBaseMaintenance
         } else {
             $queries = null;
             try {
-                $mysqli = new mysqli($this->host, $this->user, $this->passwd, $this->dbName);
-                /* check connection */
-                if (mysqli_connect_errno()) {
-                    printf("Connect failed: %s\n", mysqli_connect_error());
-                    exit();
-                }
+
                 if ($type === 'file') {
-                    $query = file_get_contents($sqlfile);
+                    $query = file_get_contents($sqlFile);
                 } elseif ($type === 'string') {
-                    $query = $sqlfile;
+                    $query = $sqlFile;
                 } else {
                     return false;
                 }
 
-                if (trim($query) == "") {
+                if (empty(trim($query))) {
                     return false;
                 }
 
-                /* execute multi query */
-                if ($mysqli->multi_query($query)) {
-                    do {
-                        /* store first result set */
-                        if ($result = $mysqli->store_result()) {
-                            while ($row = $result->fetch_row()) {
-                                //printf("%s\n", $row[0]);
-                            }
-                            $result->free();
-                        }
-                        /* print divider */
-                        if ($mysqli->more_results()) {
-                            //printf("-----------------\n");
-                        }
-                    } while ($mysqli->next_result());
-                } else {
-                    throw new Exception(mysqli_error($mysqli));
+                try {
+                    DB::connection($this->getConnect())->raw($query);
+                } catch (QueryException $exception) {
+                    throw new Exception($exception->getMessage());
                 }
 
-                /* close connection */
-                $mysqli->close();
             } catch (Exception $e) {
                 echo $query;
                 $token = strtotime("now");
@@ -574,19 +504,18 @@ class DataBaseMaintenance
      */
     public function getSchemaFromTable($tablename)
     {
-        //$tableSchema = "/* Structure for table `$tablename` */\n";
-        //$tableSchema .= "DROP TABLE IF EXISTS `$tablename`;\n\n";
-        $tableSchema = "";
-        $sql = "show create table `$tablename`; ";
-        $result = mysqli_query($this->link, $sql);
-        if ($result) {
-            if ($row = mysqli_fetch_assoc($result)) {
-                $tableSchema .= $row['Create Table'] . ";\n\n";
+        try {
+            $tableSchema = '';
+            $result = DB::connection($this->getConnect())->select("show create table `$tablename`");
+
+            if ($result) {
+                $tableSchema = $result['Create Table'] . ";\n\n";
             }
-            mysqli_free_result($result);
-        } else {
-            G::outRes(mysqli_error($this->link));
+
+        } catch (QueryException $exception) {
+            G::outRes($exception->getMessage());
         }
+
         return $tableSchema;
     }
 

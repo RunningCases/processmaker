@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\System;
 use ProcessMaker\Util\FixReferencePath;
@@ -751,55 +753,51 @@ class WorkspaceTools
      */
     public function getSchema($rbac = false)
     {
-        $oDataBase = $this->getDatabase($rbac);
+        $database = $this->getDatabase($rbac);
 
-        $aOldSchema = [];
+        $oldSchema = [];
 
         try {
-            $oDataBase->iFetchType = MYSQLI_NUM;
-            $oDataset1 = $oDataBase->executeQuery($oDataBase->generateShowTablesSQL());
+            $database->iFetchType = MYSQLI_NUM;
+            $result = $database->executeQuery($database->generateShowTablesSQL());
         } catch (Exception $e) {
-            $oDataBase->logQuery($e->getmessage());
+            $database->logQuery($e->getmessage());
             return null;
         }
 
         //going thru all tables in current WF_ database
-        while ($aRow1 = $oDataBase->getRegistry($oDataset1)) {
-            $aPrimaryKeys = [];
-            $sTable = strtoupper($aRow1[0]);
+        foreach ($result as $table) {
+            $table = strtoupper($table);
 
             //get description of each table, ( column and primary keys )
-            //$oDataset2 = $oDataBase->executeQuery( $oDataBase->generateDescTableSQL($aRow1[0]) );
-            $oDataset2 = $oDataBase->executeQuery($oDataBase->generateDescTableSQL($sTable));
-            $aOldSchema[$sTable] = [];
-            $oDataBase->iFetchType = MYSQLI_ASSOC;
-            while ($aRow2 = $oDataBase->getRegistry($oDataset2)) {
-                $aOldSchema[$sTable][$aRow2['Field']]['Field'] = $aRow2['Field'];
-                $aOldSchema[$sTable][$aRow2['Field']]['Type'] = $aRow2['Type'];
-                $aOldSchema[$sTable][$aRow2['Field']]['Null'] = $aRow2['Null'];
-                $aOldSchema[$sTable][$aRow2['Field']]['Default'] = $aRow2['Default'];
+            $database->iFetchType = MYSQLI_ASSOC;
+            $description = $database->executeQuery($database->generateDescTableSQL($table));
+            $oldSchema[$table] = [];
+            foreach ($description as $field) {
+                $oldSchema[$table][$field['Field']]['Field'] = $field['Field'];
+                $oldSchema[$table][$field['Field']]['Type'] = $field['Type'];
+                $oldSchema[$table][$field['Field']]['Null'] = $field['Null'];
+                $oldSchema[$table][$field['Field']]['Default'] = $field['Default'];
             }
 
             //get indexes of each table  SHOW INDEX FROM `ADDITIONAL_TABLES`;   -- WHERE Key_name <> 'PRIMARY'
-            $oDataset2 = $oDataBase->executeQuery($oDataBase->generateTableIndexSQL($aRow1[0]));
-            $oDataBase->iFetchType = MYSQLI_ASSOC;
-            while ($aRow2 = $oDataBase->getRegistry($oDataset2)) {
-                if (!isset($aOldSchema[$sTable]['INDEXES'])) {
-                    $aOldSchema[$sTable]['INDEXES'] = [];
+            $description = $database->executeQuery($database->generateTableIndexSQL($table));
+            foreach ($description as $field) {
+                if (!isset($oldSchema[$table]['INDEXES'])) {
+                    $oldSchema[$table]['INDEXES'] = [];
                 }
-                if (!isset($aOldSchema[$sTable]['INDEXES'][$aRow2['Key_name']])) {
-                    $aOldSchema[$sTable]['INDEXES'][$aRow2['Key_name']] = [];
+                if (!isset($oldSchema[$table]['INDEXES'][$field['Key_name']])) {
+                    $oldSchema[$table]['INDEXES'][$field['Key_name']] = [];
                 }
-                $aOldSchema[$sTable]['INDEXES'][$aRow2['Key_name']][] = $aRow2['Column_name'];
+                $oldSchema[$table]['INDEXES'][$field['Key_name']][] = $field['Column_name'];
             }
 
-            $oDataBase->iFetchType = MYSQLI_NUM; //this line is neccesary because the next fetch needs to be with MYSQLI_NUM
         }
         //finally return the array with old schema obtained from the Database
-        if (count($aOldSchema) === 0) {
-            $aOldSchema = null;
+        if (count($oldSchema) === 0) {
+            $oldSchema = null;
         }
-        return $aOldSchema;
+        return $oldSchema;
     }
 
     /**
@@ -1154,14 +1152,14 @@ class WorkspaceTools
         $this->setFormatRows();
 
         $workspaceSchema = $this->getSchema($rbac);
-        $oDataBase = $this->getDatabase($rbac);
+        $database = $this->getDatabase($rbac);
 
         if (!$onedb) {
             if ($rbac) {
                 $rename = System::verifyRbacSchema($workspaceSchema);
                 if (count($rename) > 0) {
                     foreach ($rename as $tableName) {
-                        $oDataBase->executeQuery($oDataBase->generateRenameTableSQL($tableName));
+                        $database->executeQuery($database->generateRenameTableSQL($tableName));
                     }
                 }
             }
@@ -1184,19 +1182,19 @@ class WorkspaceTools
             }
         }
 
-        $oDataBase->iFetchType = $this->num;
+        $database->iFetchType = $this->num;
 
-        $oDataBase->logQuery(count($changes));
+        $database->logQuery(count($changes));
 
         if (!empty($changes['tablesToAdd'])) {
             CLI::logging("-> " . count($changes['tablesToAdd']) . " tables to add\n");
         }
 
         foreach ($changes['tablesToAdd'] as $sTable => $aColumns) {
-            $oDataBase->executeQuery($oDataBase->generateCreateTableSQL($sTable, $aColumns));
+            $database->executeQuery($database->generateCreateTableSQL($sTable, $aColumns));
             if (isset($changes['tablesToAdd'][$sTable]['INDEXES'])) {
                 foreach ($changes['tablesToAdd'][$sTable]['INDEXES'] as $indexName => $aIndex) {
-                    $oDataBase->executeQuery($oDataBase->generateAddKeysSQL($sTable, $indexName, $aIndex));
+                    $database->executeQuery($database->generateAddKeysSQL($sTable, $indexName, $aIndex));
                 }
             }
         }
@@ -1210,17 +1208,17 @@ class WorkspaceTools
                 foreach ($aAction as $sColumn => $vData) {
                     switch ($sAction) {
                         case 'DROP':
-                            $oDataBase->executeQuery($oDataBase->generateDropColumnSQL($sTable, $vData));
+                            $database->executeQuery($database->generateDropColumnSQL($sTable, $vData));
                             break;
                         case 'ADD':
-                            if ($oDataBase->checkPatchHor1787($sTable, $sColumn, $vData)) {
-                                $oDataBase->executeQuery($oDataBase->generateCheckAddColumnSQL($sTable, $sColumn, $vData));
-                                $oDataBase->executeQuery($oDataBase->deleteAllIndexesIntable($sTable, $sColumn, $vData));
+                            if ($database->checkPatchHor1787($sTable, $sColumn, $vData)) {
+                                $database->executeQuery($database->generateCheckAddColumnSQL($sTable, $sColumn, $vData));
+                                $database->executeQuery($database->deleteAllIndexesIntable($sTable, $sColumn, $vData));
                             }
-                            $oDataBase->executeQuery($oDataBase->generateAddColumnSQL($sTable, $sColumn, $vData));
+                            $database->executeQuery($database->generateAddColumnSQL($sTable, $sColumn, $vData));
                             break;
                         case 'CHANGE':
-                            $oDataBase->executeQuery($oDataBase->generateChangeColumnSQL($sTable, $sColumn, $vData));
+                            $database->executeQuery($database->generateChangeColumnSQL($sTable, $sColumn, $vData));
                             break;
                     }
                 }
@@ -1232,7 +1230,7 @@ class WorkspaceTools
         }
         foreach ($changes['tablesWithNewIndex'] as $sTable => $aIndexes) {
             foreach ($aIndexes as $sIndexName => $aIndexFields) {
-                $oDataBase->executeQuery($oDataBase->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
+                $database->executeQuery($database->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
             }
         }
 
@@ -1241,8 +1239,8 @@ class WorkspaceTools
         }
         foreach ($changes['tablesToAlterIndex'] as $sTable => $aIndexes) {
             foreach ($aIndexes as $sIndexName => $aIndexFields) {
-                $oDataBase->executeQuery($oDataBase->generateDropKeySQL($sTable, $sIndexName));
-                $oDataBase->executeQuery($oDataBase->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
+                $database->executeQuery($database->generateDropKeySQL($sTable, $sIndexName));
+                $database->executeQuery($database->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
             }
         }
         $this->closeDatabase();
@@ -1288,7 +1286,7 @@ class WorkspaceTools
             case 4:
                 $sql = $dataBase->generateSelectSQL($data['table'], $data['keys'], $data['data']);
                 $dataset = $dataBase->executeQuery($sql);
-                if ($dataBase->getRegistry($dataset)) {
+                if ($dataset) {
                     $sql = $dataBase->generateDeleteSQL($data['table'], $data['keys'], $data['data']);
                     $dataBase->executeQuery($sql);
                 }
@@ -1414,31 +1412,31 @@ class WorkspaceTools
     /**
      * exports this workspace database to the specified path
      *
-     * This function is used mainly for backup purposes.
-     *
      * @param string $path the directory where to create the sql files
+     * @param boolean $onedb
+     *
+     * @return array
+     * @throws Exception
      */
     public function exportDatabase($path, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
 
+        $databases = ['wf', 'rp', 'rb'];
         if ($onedb) {
-            $databases = array("rb", "rp");
-        } elseif ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
-            $databases = array("wf");
-        } else {
-            $databases = array("wf", "rp", "rb");
+            $databases = ['rb', 'rp'];
+        } else if ($dbInfo['DB_NAME'] === $dbInfo['DB_RBAC_NAME']) {
+            $databases = ['wf'];
         }
 
         $dbNames = [];
-
         foreach ($databases as $db) {
             $dbInfo = $this->getDBCredentials($db);
-            $oDbMaintainer = new DataBaseMaintenance($dbInfo["host"], $dbInfo["user"], $dbInfo["pass"]);
-            CLI::logging("Saving database {$dbInfo["name"]}\n");
-            $oDbMaintainer->connect($dbInfo["name"]);
-            $oDbMaintainer->setTempDir($path . "/");
-            $oDbMaintainer->backupDataBase($oDbMaintainer->getTempDir() . $dbInfo["name"] . ".sql");
+            $oDbMaintainer = new DataBaseMaintenance($dbInfo['host'], $dbInfo['user'], $dbInfo['pass']);
+            CLI::logging("Saving database {$dbInfo['name']}\n");
+            $oDbMaintainer->connect($dbInfo['name']);
+            $oDbMaintainer->setTempDir($path . '/');
+            $oDbMaintainer->backupDataBase($oDbMaintainer->getTempDir() . $dbInfo['name'] . '.sql');
             $dbNames[] = $dbInfo;
         }
         return $dbNames;
@@ -1548,29 +1546,29 @@ class WorkspaceTools
      * @param string $password password
      * @param string $hostname the hostname the user will be connecting from
      * @param string $database the database to grant permissions
+     * @param string $connection name
+     *
+     * @throws Exception
      */
-    public function createDBUser($username, $password, $hostname, $database, $connection = null)
+    public function createDBUser($username, $password, $hostname, $database, $connection)
     {
-        mysqli_select_db($connection, 'mysql');
-        $hosts = explode(':', $hostname);
-        $hostname = array_shift($hosts);
+        try {
+            $message = 'Unable to retrieve users: ';
+            $hosts = explode(':', $hostname);
+            $hostname = array_shift($hosts);
 
-        $sqlstmt = "SELECT * FROM user WHERE user = '$username' AND host = '$hostname'";
-        $result = mysqli_query($connection, $sqlstmt);
-        if ($result === false) {
-            throw new Exception('Unable to retrieve users: ' . mysqli_error($connection));
-        }
-        $users = mysqli_num_rows($result);
-        if ($users === 0) {
-            CLI::logging("Creating user $username for $hostname\n");
-            $result = mysqli_query($connection, "CREATE USER '$username'@'$hostname' IDENTIFIED BY '$password'");
-            if ($result === false) {
-                throw new Exception("Unable to create user $username: " . mysqli_error($connection));
+            $result = DB::connection($connection)->select(DB::raw("SELECT * FROM mysql.user WHERE user = '$username' AND host = '$hostname'"));
+
+            if (count($result) === 0) {
+                $message = "Unable to create user $username: ";
+                CLI::logging("Creating user $username for $hostname\n");
+
+                DB::connection($connection)->statement("CREATE USER '$username'@'$hostname' IDENTIFIED BY '$password'");
             }
-        }
-        $result = mysqli_query($connection, "GRANT ALL ON $database.* TO '$username'@'$hostname'");
-        if ($result === false) {
-            throw new Exception("Unable to grant priviledges to user $username: " . mysqli_error($connection));
+            $message = "Unable to grant priviledges to user $username: ";
+            DB::connection($connection)->statement("GRANT ALL ON $database.* TO '$username'@'$hostname'");
+        } catch (QueryException $exception) {
+            throw new Exception($message . $exception->getMessage());
         }
     }
 
@@ -1596,19 +1594,20 @@ class WorkspaceTools
      * @param string $database the database to execute this script into
      * @param $parameters
      * @param int $versionBackupEngine
-     * @param object $connection
+     * @param string $connection
      */
-    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1, $connection = null)
+    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1, $connection)
     {
-        mysqli_query($connection, 'CREATE DATABASE IF NOT EXISTS ' . mysqli_real_escape_string($connection, $database));
+        DB::connection($connection)
+            ->statement('CREATE DATABASE IF NOT EXISTS ' . $database);
 
         //check function shell_exec
         $disabled_functions = ini_get('disable_functions');
         $flag = false;
-        if ($disabled_functions != '') {
+        if (!empty($disabled_functions)) {
             $arr = explode(',', $disabled_functions);
             sort($arr);
-            if (in_array("shell_exec", $arr)) {
+            if (in_array('shell_exec', $arr)) {
                 $flag = true;
             }
         }
@@ -1619,8 +1618,8 @@ class WorkspaceTools
             $flagFunction = shell_exec('mysql --version');
         }
 
-        $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i", "/SET\s*FOREIGN_KEY_CHECKS\s*=\s*0\s*;/");
-        $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1", "SET FOREIGN_KEY_CHECKS=0;\nSET unique_checks=0;\nSET AUTOCOMMIT=0;");
+        $arrayRegExpEngineSearch = ["/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i", "/SET\s*FOREIGN_KEY_CHECKS\s*=\s*0\s*;/"];
+        $arrayRegExpEngineReplace = [") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1", "SET FOREIGN_KEY_CHECKS=0;\nSET unique_checks=0;\nSET AUTOCOMMIT=0;"];
 
         //replace DEFINER
         $script = preg_replace('/DEFINER=[^*]*/', '', file_get_contents($filename));
@@ -1632,8 +1631,8 @@ class WorkspaceTools
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
                 file_put_contents($filename, $script . "\nCOMMIT;");
             } else {
-                $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i");
-                $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1");
+                $arrayRegExpEngineSearch = ["/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i"];
+                $arrayRegExpEngineReplace = [") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1"];
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
                 file_put_contents($filename, $script);
             }
@@ -1647,7 +1646,7 @@ class WorkspaceTools
                     . ' --port=' . $dbPort
                     . ' --user=' . $parameters['dbUser']
                     . ' --password=' . escapeshellarg($parameters['dbPass'])
-                    . ' --database=' . mysqli_real_escape_string($connection, $database)
+                    . ' --database=' . $database
                     . ' --default_character_set utf8'
                     . ' --execute="SOURCE ' . $filename . '"';
             } else {
@@ -1655,7 +1654,7 @@ class WorkspaceTools
                     . ' --host=' . $dbHost
                     . ' --user=' . $parameters['dbUser']
                     . ' --password=' . escapeshellarg($parameters['dbPass'])
-                    . ' --database=' . mysqli_real_escape_string($connection, $database)
+                    . ' --database=' . $database
                     . ' --default_character_set utf8'
                     . ' --execute="SOURCE ' . $filename . '"';
             }
@@ -1663,7 +1662,8 @@ class WorkspaceTools
         } else {
             //If the safe mode of the server is actived
             try {
-                mysqli_select_db($connection, $database);
+                $connection = 'RESTORE_' . $database;
+                InstallerModule::setNewConnection($connection, $parameters['dbHost'], $parameters['dbUser'], $parameters['dbPass'], $database, '');
 
                 //Replace TYPE by ENGINE
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
@@ -1677,51 +1677,55 @@ class WorkspaceTools
                 foreach ($lines as $j => $line) {
                     // Remove comments from the script
                     $line = trim($line);
-                    if (strpos($line, "--") === 0) {
-                        $line = substr($line, 0, strpos($line, "--"));
+                    if (strpos($line, '--') === 0) {
+                        $line = substr($line, 0, strpos($line, '--'));
                     }
                     if (empty($line)) {
                         continue;
                     }
                     // Concatenate the previous line, if any, with the current
                     if ($previous) {
-                        $line = $previous . " " . $line;
+                        $line = $previous . ' ' . $line;
                     }
                     $previous = null;
 
                     // If the current line doesnt end with ; then put this line together
                     // with the next one, thus supporting multi-line statements.
-                    if (strrpos($line, ";") != strlen($line) - 1) {
+                    if (strrpos($line, ';') !== strlen($line) - 1) {
                         $previous = $line;
                         continue;
                     }
-                    $line = substr($line, 0, strrpos($line, ";"));
+                    $line = substr($line, 0, strrpos($line, ';'));
 
-                    if (strrpos($line, "INSERT INTO") !== false) {
+                    if (strrpos($line, 'INSERT INTO') !== false) {
                         $insert = true;
                         if ($insert) {
-                            $result = mysqli_query($connection, "START TRANSACTION");
+                            DB::connection($connection)->beginTransaction();
                             $insert = false;
                         }
-                        $result = mysqli_query($connection, $line);
+                        $result = DB::connection($connection)->statement($line);
                         continue;
                     } else {
                         if (!$insert) {
-                            $result = mysqli_query($connection, "COMMIT");
+                            DB::connection($connection)->commitTransaction();
                             $insert = true;
                         }
                     }
 
-                    $result = mysqli_query($connection, $line);
+                    $result = DB::connection($connection)->statement($line);
                     if ($result === false) {
-                        throw new Exception("Error when running script '$filename', line $j, query '$line': " . mysqli_error($connection));
+                        DB::connection($connection)->rollbackTransaction();
+                        throw new Exception("Error when running script '$filename', line $j, query '$line' ");
                     }
                 }
                 if (!$insert) {
-                    $result = mysqli_query($connection, "COMMIT");
+                    DB::connection($connection)->commitTransaction();
                 }
             } catch (Exception $e) {
                 CLI::logging(CLI::error("Error:" . "There are problems running script '$filename': " . $e));
+            } catch (QueryException $exception) {
+                DB::connection($connection)->rollbackTransaction();
+                throw new Exception("Error when running script '$filename', line $j, query '$line': " . $exception->getMessage());
             }
         }
     }
@@ -1919,28 +1923,31 @@ class WorkspaceTools
             if ($port != '') {
                 $dbHost = $dbHost . $port; //127.0.0.1:3306
             }
-            $aParameters = array('dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass);
+            $aParameters = ['dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass];
 
             //Restore
-            if (empty(config("system.workspace"))) {
-                define("SYS_SYS", $workspaceName);
-                config(["system.workspace" => $workspaceName]);
+            if (empty(config('system.workspace'))) {
+                define('SYS_SYS', $workspaceName);
+                config(['system.workspace' => $workspaceName]);
             }
 
-            if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
+            if (!defined('PATH_DATA_SITE')) {
+                define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . config('system.workspace') . PATH_SEP);
             }
 
-            $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch)) ? $arrayMatch[1] : "";
+            $pmVersionWorkspaceToRestore = preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch) ? $arrayMatch[1] : '';
 
             CLI::logging("> Connecting to system database in '$dbHost'\n");
-            $link = mysqli_connect($dbHost, $dbUser, $dbPass);
-            mysqli_query($link, "SET NAMES 'utf8';");
-            mysqli_query($link, "SET FOREIGN_KEY_CHECKS=0;");
-            mysqli_query($link, "SET GLOBAL log_bin_trust_routine_creators = 1;");
 
-            if (!$link) {
-                throw new Exception('Could not connect to system database: ' . mysqli_error($link));
+            try {
+                $connection = 'RESTORE';
+                InstallerModule::setNewConnection('RESTORE', $dbHost, $dbUser, $dbPass, '', '');
+                DB::connection($connection)
+                    ->statement("SET NAMES 'utf8'");
+                DB::connection($connection)
+                    ->statement('SET FOREIGN_KEY_CHECKS=0');
+            } catch (Exception $exception) {
+                throw new Exception('Could not connect to system database: ' . $exception->getMessage());
             }
 
             $dbName = '';
@@ -1952,17 +1959,16 @@ class WorkspaceTools
                     if (isset($newDBNames['DB_USER'])) {
                         $dbUser = $newDBNames['DB_USER'];
                     }
-                    if (mysqli_select_db($link, $dbName)) {
-                        if (!$overwrite) {
-                            throw new Exception("Destination Database already exist (use -o to overwrite)");
-                        }
+                    $result = DB::connection($connection)->select("show databases like '$dbName'");
+                    if (count($result) > 0 && !$overwrite) {
+                        throw new Exception("Destination Database already exist (use -o to overwrite)");
                     }
 
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
                     $versionBackupEngine = (isset($metadata->backupEngineVersion)) ? $metadata->backupEngineVersion : 1;
-                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine, $link);
-                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "localhost", $dbName, $link);
-                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "%", $dbName, $link);
+                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine, $connection);
+                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "localhost", $dbName, $connection);
+                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "%", $dbName, $connection);
                 }
             }
 
@@ -2048,7 +2054,6 @@ class WorkspaceTools
             //Updating generated class files for PM Tables
             passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
-            mysqli_close($link);
         }
 
         CLI::logging("Removing temporary files\n");

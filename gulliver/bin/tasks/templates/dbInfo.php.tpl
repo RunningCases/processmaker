@@ -68,11 +68,11 @@ function lookup($target)
       try {
           switch ($driver) {
         case 'mysql':
-            if ($link = mysqli_connect(DB_HOST, DB_USER, DB_PASS)) {
-                $v = mysqli_get_server_info($link);
-            } else {
-                throw new Exception(mysqli_error($link));
-            }
+            $results = \Illuminate\Support\Facades\DB::select(DB::raw("select version()"));
+
+            preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $results[0]->{'version()'}, $version);
+
+            $v = $version[0];
             break;
       }
           return (isset($v))?$v:'none';

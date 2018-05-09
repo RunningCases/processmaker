@@ -1,43 +1,7 @@
 <?php
-/**
- * Content.php
- *
- * @package workflow.engine.classes.model
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
 
-//require_once 'classes/model/om/BaseContent.php';
+use Illuminate\Support\Facades\DB;
 
-/**
- * Skeleton subclass for representing a row from the 'CONTENT' table.
- *
- *
- *
- * You should add additional methods to this class to meet the
- * application requirements. This class will only be generated as
- * long as it does not already exist in the output directory.
- *
- * @package workflow.engine.classes.model
- */
 class Content extends BaseContent
 {
     public $langs;
@@ -335,51 +299,56 @@ class Content extends BaseContent
         $this->rowsUnchanged = 0;
         $this->rowsClustered = 0;
 
-        //Creating table CONTENT_BACKUP
-        $connection = Propel::getConnection('workflow');
-        $oStatement = $connection->prepareStatement("CREATE TABLE IF NOT EXISTS `CONTENT_BACKUP` (
+        $workSpace = new WorkspaceTools($workSpace);
+        $workSpace->getDBInfo();
+
+        $connection = 'regenerate';
+        InstallerModule::setNewConnection(
+            $connection,
+            $workSpace->dbHost,
+            $workSpace->dbUser,
+            $workSpace->dbPass,
+            $workSpace->dbName,
+            '',
+            ['PDO::MYSQL_ATTR_INIT_COMMAND' => 'SET SESSION SQL_BIG_SELECTS=1']);
+
+        $query = "CREATE TABLE IF NOT EXISTS `CONTENT_BACKUP` (
             `CON_CATEGORY` VARCHAR(30) default '' NOT NULL,
             `CON_PARENT` VARCHAR(32) default '' NOT NULL,
             `CON_ID` VARCHAR(100) default '' NOT NULL,
             `CON_LANG` VARCHAR(10) default '' NOT NULL,
             `CON_VALUE` MEDIUMTEXT NOT NULL,
             CONSTRAINT CONTENT_BACKUP_PK PRIMARY KEY (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG)
-        )Engine=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Table for add content';");
-        $oStatement->executeQuery();
+        )Engine=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Table for add content'";
 
-        $sql = ' SELECT DISTINCT CON_LANG FROM CONTENT ';
-        $stmt = $connection->createStatement();
-        $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-        while ($rs->next()) {
-            $row = $rs->getRow();
-            $language = $row['CON_LANG'];
-            if (array_search($row['CON_LANG'], $langs) === false) {
-                Content::removeLanguageContent($row['CON_LANG']);
+        DB::connection($connection)->statement($query);
+
+        $languages = DB::table('CONTENT')->select('CON_LANG')->distinct()->get();
+
+        foreach ($languages as $value) {
+            if (array_search($value->CON_LANG, $langs) === false) {
+                Content::removeLanguageContent($value->CON_LANG);
             }
         }
 
-        $sql = " SELECT CON_ID, CON_CATEGORY, CON_LANG, CON_PARENT, CON_VALUE
-                FROM CONTENT
-                ORDER BY CON_ID, CON_CATEGORY, CON_PARENT, CON_LANG";
+        DB::connection($connection)->statement('SET NAMES "utf8"');
+        DB::connection($connection)->statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::connection($connection)->statement('SET SQL_BIG_SELECTS=1');
 
-        $workSpace = new WorkspaceTools($workSpace);
-        $workSpace->getDBInfo();
-
-        $mysqli = new mysqli($workSpace->dbHost, $workSpace->dbUser, $workSpace->dbPass, $workSpace->dbName) or die("Could not connect");
-
-        $mysqli->query( 'SET NAMES "utf8";');
-        $mysqli->query( 'SET FOREIGN_KEY_CHECKS=0;');
-        $mysqli->query( 'SET OPTION SQL_BIG_SELECTS=1');
-        $result = $mysqli->query( $sql, MYSQLI_USE_RESULT);
+        $result = DB::table('CONTENT')
+            ->select('CON_ID', 'CON_CATEGORY', 'CON_LANG', 'CON_PARENT', 'CON_VALUE')
+            ->orderBy('CON_ID', 'CON_CATEGORY', 'CON_LANG', 'CON_PARENT', 'CON_VALUE')
+            ->get();
         $list = [];
         $default = [];
-        $sw = array('CON_ID' => '','CON_CATEGORY' => '','CON_PARENT' => ''
-        );
-        while ($row = $result->fetch_assoc()) {
+        $sw = ['CON_ID' => '', 'CON_CATEGORY' => '', 'CON_PARENT' => ''];
+
+        foreach ($result as $value) {
+            $row = (array)$value;
             if ($sw['CON_ID'] === $row['CON_ID'] && $sw['CON_CATEGORY'] === $row['CON_CATEGORY'] && $sw['CON_PARENT'] === $row['CON_PARENT']) {
                 $list[] = $row;
             } else {
-                $this->rowsClustered ++;
+                $this->rowsClustered++;
                 if (count($langs) !== count($list)) {
                     $this->checkLanguage($list, $default);
                 } else {
@@ -399,37 +368,30 @@ class Content extends BaseContent
             if ($sw['CON_LANG'] === $langs[$key]) {
                 $default = $row;
             }
-            $this->rowsProcessed ++;
+            $this->rowsProcessed++;
         }
+
         if (count($langs) !== count($list)) {
             $this->checkLanguage($list, $default);
         } else {
             $this->rowsUnchanged += count($langs);
         }
-        mysqli_free_result($result);
         $total = $this->rowsProcessed + $this->rowsInserted;
 
-        $result->close();
-
-        $statement = $connection->prepareStatement("REPLACE INTO CONTENT
+        DB::connection($connection)->statement('REPLACE INTO CONTENT
             SELECT CON_CATEGORY, CON_PARENT, CON_ID , CON_LANG, CON_VALUE
-            FROM CONTENT_BACKUP");
-        $statement->executeQuery();
+            FROM CONTENT_BACKUP');
 
-        $statement = $connection->prepareStatement("DROP TABLE CONTENT_BACKUP");
-        $statement->executeQuery();
+        DB::connection($connection)->statement('DROP TABLE CONTENT_BACKUP');
 
-        //close connection
-        $sql = "SELECT * FROM information_schema.processlist WHERE command = 'Sleep' and user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
-        $stmt = $connection->createStatement();
-        $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-        while ($rs->next()) {
-            $row = $rs->getRow();
-            $oStatement = $connection->prepareStatement("kill ". $row['ID']);
-            $oStatement->executeQuery();
+        $result = DB::connection($connection)
+            ->select("SELECT * FROM information_schema.processlist WHERE command = 'Sleep' and user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id");
+
+        foreach ($result as $value) {
+            DB::connection($connection)->statement('kill ' . $value->ID);
         }
 
-        if (! isset($_SERVER['SERVER_NAME'])) {
+        if (!isset($_SERVER['SERVER_NAME'])) {
             CLI::logging("Rows Processed ---> $this->rowsProcessed ..... \n");
             CLI::logging("Rows Clustered ---> $this->rowsClustered ..... \n");
             CLI::logging("Rows Unchanged ---> $this->rowsUnchanged ..... \n");
@@ -457,12 +419,14 @@ class Content extends BaseContent
 
     public function fastInsertContent($ConCategory, $ConParent, $ConId, $ConLang, $ConValue)
     {
-        $connection = Propel::getConnection('workflow');
-        $ConValue = mysqli_real_escape_string($connection, $ConValue);
-        $statement = $connection->prepareStatement("INSERT INTO CONTENT_BACKUP (
-        CON_CATEGORY, CON_PARENT, CON_ID , CON_LANG, CON_VALUE)
-        VALUES ('$ConCategory', '$ConParent', '$ConId', '$ConLang', '$ConValue');");
-        $statement->executeQuery();
+        DB::table('CONTENT_BACKUP')
+            ->insert([
+                'CON_CATEGORY' => $ConCategory,
+                'CON_PARENT' => $ConParent,
+                'CON_ID' => $ConId,
+                'CON_LANG' => $ConLang,
+                'CON_VALUE' => $ConValue
+            ]);
     }
 
     public function removeLanguageContent($lanId)
