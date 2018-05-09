@@ -2832,7 +2832,7 @@ class G
      * @param string $array_i
      * @return array
      */
-    public function array_merge_2(&$array, &$array_i)
+    public static function array_merge_2(&$array, &$array_i)
     {
         foreach ($array_i as $k => $v) {
             if (is_array($v)) {

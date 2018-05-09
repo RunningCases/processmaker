@@ -926,7 +926,7 @@ class InstallerModule extends Controller
                 ->update([
                     'USR_USERNAME' => $adminUsername,
                     'USR_LASTNAME' => $adminUsername,
-                    'USR_PASSWORD' => Bootstrap::hashPassword($adminPassword, Bootstrap::hashBcrypt)
+                    'USR_PASSWORD' => G::encryptHash($adminPassword)
                 ]);
 
             DB::connection(self::CONNECTION_INSTALL)
@@ -935,7 +935,7 @@ class InstallerModule extends Controller
                 ->update([
                     'USR_USERNAME' => $adminUsername,
                     'USR_LASTNAME' => $adminUsername,
-                    'USR_PASSWORD' => Bootstrap::hashPassword($adminPassword, Bootstrap::hashBcrypt)
+                    'USR_PASSWORD' => G::encryptHash($adminPassword)
                 ]);
             // Write the paths_installed.php file (contains all the information configured so far)
             if (!file_exists(FILE_PATHS_INSTALLED)) {
