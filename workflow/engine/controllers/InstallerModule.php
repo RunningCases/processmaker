@@ -798,7 +798,7 @@ class InstallerModule extends Controller
 
             // CREATE databases wf_workflow
             DB::connection(self::CONNECTION_TEST_INSTALL)
-                ->statement("CREATE DATABASE IF NOT EXISTS $wf");
+                ->statement("CREATE DATABASE IF NOT EXISTS $wf DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
 
             self::setNewConnection(self::CONNECTION_INSTALL, $db_hostname, $db_username, $db_password, $wf, $db_port);
 
