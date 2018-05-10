@@ -1740,22 +1740,30 @@ class Derivation
         return $aGrp;
     }
 
-    function checkReplacedByUser ($user)
+    /**
+     * Review the replaced by configuration
+     *
+     * @param string $user
+     *
+     * @return string
+     * @throws Exception
+    */
+    function checkReplacedByUser($user)
     {
-        if (is_string( $user )) {
-            $userInstance = UsersPeer::retrieveByPK( $user );
+        if (is_string($user)) {
+            $userInstance = UsersPeer::retrieveByPK($user);
         } else {
             $userInstance = $user;
         }
-        if (! is_object( $userInstance )) {
-            throw new Exception( "The user with the UID '$user' doesn't exist." );
+        if (is_string($user)) {
+            throw new Exception("The user with the UID " . $user . " doesn't exist.");
         }
         if ($userInstance->getUsrStatus() == 'ACTIVE') {
             return $userInstance->getUsrUid();
         } else {
-            $userReplace = trim( $userInstance->getUsrReplacedBy() );
+            $userReplace = trim($userInstance->getUsrReplacedBy());
             if ($userReplace != '') {
-                return $this->checkReplacedByUser( UsersPeer::retrieveByPK( $userReplace ) );
+                return $this->checkReplacedByUser(UsersPeer::retrieveByPK($userReplace));
             } else {
                 return '';
             }
