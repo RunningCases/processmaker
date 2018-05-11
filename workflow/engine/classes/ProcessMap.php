@@ -2003,7 +2003,7 @@ class ProcessMap
         $oDataset = InputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
-        $inputDocArray = "";
+        $inputDocArray = [];
         $inputDocArray[] = array('INP_DOC_UID' => 'char', 'PRO_UID' => 'char', 'INP_DOC_TITLE' => 'char', 'INP_DOC_DESCRIPTION' => 'char' );
         while ($aRow = $oDataset->getRow()) {
             if (($aRow['INP_DOC_TITLE'] == null) || ($aRow['INP_DOC_TITLE'] == "")) {
