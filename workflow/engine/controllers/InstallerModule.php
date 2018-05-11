@@ -798,7 +798,7 @@ class InstallerModule extends Controller
 
             // CREATE databases wf_workflow
             DB::connection(self::CONNECTION_TEST_INSTALL)
-                ->statement("CREATE DATABASE IF NOT EXISTS $wf");
+                ->statement("CREATE DATABASE IF NOT EXISTS $wf DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
 
             self::setNewConnection(self::CONNECTION_INSTALL, $db_hostname, $db_username, $db_password, $wf, $db_port);
 
@@ -926,7 +926,7 @@ class InstallerModule extends Controller
                 ->update([
                     'USR_USERNAME' => $adminUsername,
                     'USR_LASTNAME' => $adminUsername,
-                    'USR_PASSWORD' => Bootstrap::hashPassword($adminPassword, Bootstrap::hashBcrypt)
+                    'USR_PASSWORD' => G::encryptHash($adminPassword)
                 ]);
 
             DB::connection(self::CONNECTION_INSTALL)
@@ -935,7 +935,7 @@ class InstallerModule extends Controller
                 ->update([
                     'USR_USERNAME' => $adminUsername,
                     'USR_LASTNAME' => $adminUsername,
-                    'USR_PASSWORD' => Bootstrap::hashPassword($adminPassword, Bootstrap::hashBcrypt)
+                    'USR_PASSWORD' => G::encryptHash($adminPassword)
                 ]);
             // Write the paths_installed.php file (contains all the information configured so far)
             if (!file_exists(FILE_PATHS_INSTALLED)) {

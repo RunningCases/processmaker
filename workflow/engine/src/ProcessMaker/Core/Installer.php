@@ -513,7 +513,7 @@ class Installer
             ->where('USR_UID', '00000000000000000000000000000001')
             ->update([
                 'USR_USERNAME' => $this->options['admin']['username'],
-                'USR_PASSWORD' => Bootstrap::hashPassword($this->options['admin']['password'], Bootstrap::hashBcrypt)
+                'USR_PASSWORD' => G::encryptHash($this->options['admin']['password'])
             ]);
 
         DB::connection(self::CONNECTION_INSTALL)
@@ -521,7 +521,7 @@ class Installer
             ->where('USR_UID', '00000000000000000000000000000001')
             ->update([
                 'USR_USERNAME' => $this->options['admin']['username'],
-                'USR_PASSWORD' => Bootstrap::hashPassword($this->options['admin']['password'], Bootstrap::hashBcrypt)
+                'USR_PASSWORD' => G::encryptHash($this->options['admin']['password'])
             ]);
     }
 

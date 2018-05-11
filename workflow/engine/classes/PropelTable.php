@@ -261,7 +261,8 @@ class PropelTable
         $totalWidth = 0;
         foreach ($this->fields as $r => $rval) {
             if ($this->style[$r]['showInTable'] != '0') {
-                $totalWidth += $this->style[$r]['colWidth'];
+                $colWidth = empty($this->style[$r]['colWidth']) ? 0 : $this->style[$r]['colWidth'];
+                $totalWidth += $colWidth;
             }
         }
         $this->totalWidth = $totalWidth;
@@ -327,7 +328,8 @@ class PropelTable
                     $this->tpl->assign("width", $this->style[$r]['colWidth']);
                 }
                 if (isset($this->style[$r]['colWidth'])) {
-                    $this->tpl->assign("widthPercent", ($this->style[$r]['colWidth'] * 100 / $this->totalWidth) . "%");
+                    $colWidth = empty($this->style[$r]['colWidth']) ? 1 : $this->style[$r]['colWidth'];
+                    $this->tpl->assign("widthPercent", ($colWidth * 100 / $this->totalWidth) . "%");
                     //Hook for special skin with RTL languajes
                 }
                 if (defined('SYS_LANG_DIRECTION') && SYS_LANG_DIRECTION == 'R') {

@@ -450,7 +450,7 @@ function custom_ldap_explode_dn($dn)
     unset($result["count"]);
 
     foreach ($result as $key => $value) {
-        $result[$key] = addcslashes(preg_replace("/\\\([0-9A-Fa-f]{2})/", function ($m) {
+        $result[$key] = addcslashes(preg_replace_callback("/\\\([0-9A-Fa-f]{2})/", function ($m) {
             return chr(hexdec($m[1]));
         }, $value), '<>,"');
     }

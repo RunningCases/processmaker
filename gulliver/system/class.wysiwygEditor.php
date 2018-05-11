@@ -56,8 +56,11 @@ class XmlFormFieldWYSIWYGEditor extends XmlFormField
      * @return string
      *
      */
-    public function render($value, $owner = null)
+    public function render($value = null, $owner = null)
     {
+        if ($value === null) {
+            $value = '';
+        }
         $value = ($value == '') ? '<br/>' : $value;
         $html = "<textArea class='tmceEditor' id='form[" . $this->name . "]' name='form[" . $this->name . "]' >" . htmlentities($value,
                 ENT_QUOTES, 'UTF-8') . "</textarea>";

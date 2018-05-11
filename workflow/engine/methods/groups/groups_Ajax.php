@@ -160,7 +160,8 @@ switch ($_POST['action']) {
         $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 0;
         $limit = isset($_REQUEST['limit']) ? $_REQUEST['limit'] : $limit_size;
         $filter = isset($_REQUEST['textFilter']) ? $_REQUEST['textFilter'] : '';
-        $groupUid = $inputFilter->quoteSmart($_REQUEST['gUID'], Propel::getConnection("workflow")->getResource());
+        $connection = Propel::getConnection("workflow")->getResource();
+        $groupUid = $inputFilter->quoteSmart($_REQUEST['gUID'], $connection);
 
         $groupUsers = new GroupUser();
         $type = $_POST['action'] === 'assignedMembers' ? 'USERS' : 'AVAILABLE-USERS';
