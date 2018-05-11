@@ -384,8 +384,11 @@ class XmlFormField
      * @param string values
      * @return string
      */
-    public function renderGrid($values = array(), $owner = null, $onlyValue = false, $therow = -1)
+    public function renderGrid($values = null, $owner = null, $onlyValue = false, $therow = -1)
     {
+        if ($values === null) {
+            $values = [];
+        }
         $result = [];
         $r = 1;
         foreach ($values as $v) {
