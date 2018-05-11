@@ -1755,8 +1755,11 @@ class Derivation
         } else {
             $userInstance = $user;
         }
-        if (is_string($user)) {
-            throw new Exception("The user with the UID " . $user . " doesn't exist.");
+        if (!is_object($userInstance)) {
+            if (!is_string($user)) {
+                $user = gettype($user);
+            }
+            throw new Exception("The user with the UID '" . $user . "' doesn't exist.");
         }
         if ($userInstance->getUsrStatus() == 'ACTIVE') {
             return $userInstance->getUsrUid();
