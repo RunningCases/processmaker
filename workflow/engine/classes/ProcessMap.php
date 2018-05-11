@@ -2071,11 +2071,11 @@ class ProcessMap
         $oDataset = TriggersPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
-        $triggersArray = "";
+        $triggersArray = [];
         $triggersArray[] = array('TRI_UID' => 'char', 'PRO_UID' => 'char', 'TRI_TITLE' => 'char', 'TRI_DESCRIPTION' => 'char');
         while ($aRow = $oDataset->getRow()) {
             if (($aRow['TRI_TITLE'] == null) || ($aRow['TRI_TITLE'] == "")) {
-                // There is no transaltion for this Trigger name, try to get/regenerate the label
+                // There is no translation for this Trigger name, try to get/regenerate the label
                 $triggerO = new Triggers();
                 $triggerObj = $triggerO->load($aRow['TRI_UID']);
                 $aRow['TRI_TITLE'] = $triggerObj['TRI_TITLE'];
