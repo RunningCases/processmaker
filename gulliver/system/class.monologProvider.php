@@ -55,7 +55,7 @@ class MonologProvider
      * @access public
      * @return object
      */
-    public function getSingleton ($channel, $fileLog)
+    public static function getSingleton ($channel, $fileLog)
     {
         if (self::$instance == null) {
             self::$instance = new MonologProvider($channel, $fileLog);

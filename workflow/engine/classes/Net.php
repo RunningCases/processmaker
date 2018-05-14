@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+
 class Net
 {
     public $hostname;
@@ -79,7 +81,7 @@ class Net
         }
         if ($this->is_ipaddress($ipHost)) {
             $this->ip = $ipHost;
-            if (! $this->hostname = @gethostbyaddr($ipHost)) {
+            if (!$this->hostname = @gethostbyaddr($ipHost)) {
                 $this->errno = 2000;
                 $this->errstr = "NET::Host down";
                 $this->error = G::loadTranslation('ID_HOST_UNREACHABLE');
@@ -87,7 +89,7 @@ class Net
         } else {
             $ip = @gethostbyname($ipHost);
             $long = ip2long($ip);
-            if ($long == - 1 || $long === false) {
+            if ($long == -1 || $long === false) {
                 $this->errno = 2000;
                 $this->errstr = "NET::Host down";
                 $this->error = G::loadTranslation('ID_HOST_UNREACHABLE');
@@ -134,8 +136,8 @@ class Net
         #if have a ip address format
         if (count($tmp) == 4) {
             #if a correct ip address
-            for ($i = 0; $i < count($tmp); $i ++) {
-                if (! is_int($tmp[$i])) {
+            for ($i = 0; $i < count($tmp); $i++) {
+                if (!is_int($tmp[$i])) {
                     $key = false;
                     break;
                 }
@@ -157,7 +159,7 @@ class Net
         $cmd = "ping -w $pTTL $this->ip";
         $output = exec($cmd, $a, $a1);
         $this->errstr = "";
-        for ($i = 0; $i < count($a); $i ++) {
+        for ($i = 0; $i < count($a); $i++) {
             $this->errstr += $a[$i];
         }
         $this->errno = $a1;
@@ -193,7 +195,7 @@ class Net
      * This function tries to connect to server
      *
      * @param string $pDbDriver
-     * @param array  $arrayServerData
+     * @param array $arrayServerData
      *
      * @return void
      */
@@ -212,39 +214,31 @@ class Net
 
         if (array_key_exists("connectionType", $arrayServerData) || array_key_exists("DBS_TYPEORACLE", $arrayServerData)) {
             if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
-                $flagTns=1;
+                $flagTns = 1;
             } else {
-                $flagTns=0;
+                $flagTns = 0;
             }
         } else {
-            $flagTns=0;
+            $flagTns = 0;
         }
 
         if (isset($this->db_user) && (isset($this->db_passwd) || $this->db_passwd == "") && (isset($this->db_sourcename) || $flagTns == 1)) {
             switch ($pDbDriver) {
                 case 'mysql':
-                    if ($this->db_passwd == '') {
-                        $link = @mysql_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user);
-                    } else {
-                        $link = @mysql_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd);
-                    }
-                    if ($link) {
-                        if (@mysql_ping($link)) {
-                            $stat->status = 'SUCCESS';
-                            $this->errstr = "";
-                            $this->errno = 0;
-                        } else {
-                            $this->error = "Lost MySql Connection";
-                            $this->errstr = "NET::MYSQL->Lost Connection";
-                            $this->errno = 10010;
-                        }
-                    } else {
-                        $this->error = "MySql connection refused!";
-                        $this->errstr = "NET::MYSQL->The connection was refused";
+
+                    try {
+                        InstallerModule::setNewConnection('NET', $this->ip, $this->db_user, $this->db_passwd, $this->db_sourcename, $this->db_port);
+                        $stat->status = 'SUCCESS';
+                        $this->errstr = '';
+                        $this->errno = 0;
+                    } catch (Exception $exception) {
+                        $this->error = 'MySql connection refused!';
+                        $this->errstr = 'NET::MYSQL->The connection was refused';
                         $this->errno = 10001;
                     }
                     break;
                 case 'pgsql':
+                    //todo
                     $this->db_port = ($this->db_port == "") ? "5432" : $this->db_port;
                     $link = @pg_connect("host='$this->ip' port='$this->db_port' user='$this->db_user' password='$this->db_passwd' dbname='$this->db_sourcename'");
                     if ($link) {
@@ -258,6 +252,7 @@ class Net
                     }
                     break;
                 case 'mssql':
+                    //todo
                     if ($this->db_instance != "") {
                         $str_port = "";
                         $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
@@ -277,9 +272,10 @@ class Net
                     }
                     break;
                 case 'oracle':
+                    //todo
                     try {
                         if ($flagTns == 0) {
-                            $this->db_port = ($this->db_port == "" || $this->db_port == 0)? "1521" : $this->db_port;
+                            $this->db_port = ($this->db_port == "" || $this->db_port == 0) ? "1521" : $this->db_port;
 
                             $cnn = @oci_connect($this->db_user, $this->db_passwd, "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP) (HOST=$this->ip) (PORT=$this->db_port) )) (CONNECT_DATA=(SERVICE_NAME=$this->db_sourcename)))", $dbsEncode);
                         } else {
@@ -315,7 +311,7 @@ class Net
      * This function tries to open to the DB
      *
      * @param string $pDbDriver
-     * @param array  $arrayServerData
+     * @param array $arrayServerData
      *
      * @return void
      */
@@ -336,41 +332,34 @@ class Net
 
         if (array_key_exists("connectionType", $arrayServerData) || array_key_exists("DBS_TYPEORACLE", $arrayServerData)) {
             if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
-                $flagTns=1;
+                $flagTns = 1;
             } else {
-                $flagTns=0;
+                $flagTns = 0;
             }
         } else {
-            $flagTns=0;
+            $flagTns = 0;
         }
 
         if (isset($this->db_user) && (isset($this->db_passwd) || $this->db_passwd == "") && (isset($this->db_sourcename) || $flagTns == 1)) {
             switch ($pDbDriver) {
                 case 'mysql':
-                    $link = @mysql_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd);
-                    $db = @mysql_select_db($this->db_sourcename);
-                    if ($link) {
-                        if ($db) {
-                            $result = @mysql_query("show tables;");
-                            if ($result) {
-                                $stat->status = 'SUCCESS';
-                                $this->errstr = "";
-                                $this->errno = 0;
-                                @mysql_free_result($result);
-                            } else {
-                                $this->error = "the user $this->db_user doesn't have privileges to run queries!";
-                                $this->errstr = "NET::MYSQL->Test query failed";
-                                $this->errno = 10100;
-                            }
-                        } else {
-                            $this->error = "The $this->db_sourcename data base does'n exist!";
-                            $this->errstr = "NET::MYSQL->Select data base failed";
-                            $this->errno = 10011;
-                        }
-                    } else {
-                        $this->error = "MySql connection refused!";
-                        $this->errstr = "NET::MYSQL->The connection was refused";
+                    try {
+                        $this->errstr = 'NET::MYSQL->The connection was refused';
                         $this->errno = 10001;
+                        $connection = 'NET_' . $this->db_sourcename;
+                        InstallerModule::setNewConnection($connection, $this->ip, $this->db_user, $this->db_passwd, $this->db_sourcename, $this->db_port);
+
+                        $this->errstr = 'NET::MYSQL->Test query failed';
+                        $this->errno = 10100;
+
+                        $result = DB::connection($connection)->statement('show tables');
+                        if ($result) {
+                            $stat->status = 'SUCCESS';
+                            $this->errstr = '';
+                            $this->errno = 0;
+                        }
+                    } catch (Exception $exception) {
+                        $this->error = $exception->getMessage();
                     }
                     break;
                 case 'pgsql':
@@ -393,8 +382,6 @@ class Net
                     }
                     break;
                 case 'mssql':
-                    //          $str_port = (($this->db_port == "")  || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ":".$this->db_port;
-                    //          $link = @mssql_connect($this->ip . $str_port, $this->db_user, $this->db_passwd);
                     if ($this->db_instance != "") {
                         $str_port = "";
                         $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
@@ -421,7 +408,7 @@ class Net
                     break;
                 case 'oracle':
                     if ($flagTns == 0) {
-                        $this->db_port = ($this->db_port == "" || $this->db_port == 0)? "1521" : $this->db_port;
+                        $this->db_port = ($this->db_port == "" || $this->db_port == 0) ? "1521" : $this->db_port;
 
                         $cnn = @oci_connect($this->db_user, $this->db_passwd, "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP) (HOST=$this->ip) (PORT=$this->db_port) )) (CONNECT_DATA=(SERVICE_NAME=$this->db_sourcename)))", $dbsEncode);
                     } else {
@@ -466,13 +453,13 @@ class Net
      */
     public function getDbServerVersion($driver)
     {
-        if (! isset($this->ip)) {
+        if (!isset($this->ip)) {
             $this->ip = getenv('HTTP_CLIENT_IP');
         }
 
         if (isset($this->ip) && isset($this->db_user) && isset($this->db_passwd)) {
             try {
-                if (! isset($this->db_sourcename)) {
+                if (!isset($this->db_sourcename)) {
                     $this->db_sourcename = DB_NAME;
                 }
                 $value = 'none';
@@ -540,7 +527,7 @@ class Net
       </div>
     </fieldset>
     <center>";
-            print($msg) ;
+            print($msg);
         }
     }
 

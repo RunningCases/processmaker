@@ -32,7 +32,7 @@ $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 /*----------------------------------********---------------------------------*/
 $conf = new Configurations();
 $sAudit = $conf->getConfiguration('AUDIT_LOG', 'log');
-$licensedFeatures = &PMLicensedFeatures::getSingleton();
+$licensedFeatures = PMLicensedFeatures::getSingleton();
 /*----------------------------------********---------------------------------*/
 if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     $pmSetupPermission = true;
@@ -40,7 +40,7 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
         $G_TMP_MENU->AddIdRawOption(
             'LOGO', '../admin/pmLogo',
             G::LoadTranslation('ID_LOGO'),
-            'icon-pmlogo.png', '','settings'
+            'icon-pmlogo.png', '', 'settings'
         );
     }
     if ($RBAC->userCanAccess('PM_SETUP_EMAIL') === 1) {
@@ -76,7 +76,7 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     }
     if (!$partnerFlag) {
         /**
-         * Remove heartbeat config from core, it will probably be used again 
+         * Remove heartbeat config from core, it will probably be used again
          * when the functionality will be redesigned.
          */
         if ($RBAC->userCanAccess('PM_SETUP_HEART_BEAT') === 1 && false) {
@@ -148,7 +148,7 @@ if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1) {
         $G_TMP_MENU->AddIdRawOption(
             'LANGUAGES', 'languages',
             G::LoadTranslation('ID_LANGUAGES'),
-            'icon-language.png','', 'settings'
+            'icon-language.png', '', 'settings'
         );
     }
     if ($RBAC->userCanAccess('PM_SETUP_CASES_LIST_CACHE_BUILDER') === 1) {
@@ -202,7 +202,8 @@ if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1 && $RBAC->userCanAccess('PM_U
 }
 
 if ($RBAC->userCanAccess('PM_SETUP') === 1 && $RBAC->userCanAccess('PM_SETUP_LOGS') === 1) {
-    $G_TMP_MENU->AddIdRawOption('EVENT', '../events/eventList', G::LoadTranslation('ID_EVENTS_CLASSIC'), '', '', 'logs');
+    $G_TMP_MENU->AddIdRawOption('EVENT', '../events/eventList', G::LoadTranslation('ID_EVENTS_CLASSIC'), '', '',
+        'logs');
     $G_TMP_MENU->AddIdRawOption(
         'LOG_CASE_SCHEDULER', '../cases/cases_Scheduler_Log',
         G::LoadTranslation('ID_CASE_SCHEDULER_CLASSIC'),
@@ -236,14 +237,14 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     $G_TMP_MENU->AddIdRawOption(
         'PHP_INFO', '../setup/systemInfo?option=php',
         G::LoadTranslation('ID_PHP_INFO'),
-        '','', 'settings'
+        '', '', 'settings'
     );
     /*----------------------------------********---------------------------------*/
     if ($licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
         $G_TMP_MENU->AddIdRawOption(
             "AUDIT_LOG", "auditLogConfig",
             G::LoadTranslation("ID_AUDITLOG_DISPLAY"),
-            "", "","settings"
+            "", "", "settings"
         );
     }
     /*----------------------------------********---------------------------------*/
@@ -255,7 +256,7 @@ if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
     $enterprise->enable();
     $enterprise->setup();
 }
-$pmLicenseManagerO = &PmLicenseManager::getSingleton();
+$pmLicenseManagerO = PmLicenseManager::getSingleton();
 $licenseStatusInfo = $pmLicenseManagerO->getCurrentLicenseStatus();
 $licStatusMsg = null;
 

@@ -15,7 +15,7 @@ if ($aux['extension'] != 'dat') {
     G::uploadFile($aInfoLoadFile["tmp_name"], $dir, $aInfoLoadFile["name"]);
     //reading the file that was uploaded
 
-    $licenseManager =& PmLicenseManager::getSingleton();
+    $licenseManager = PmLicenseManager::getSingleton();
     $response = $licenseManager->installLicense($dir . $aInfoLoadFile["name"], false, false);
 
     if ($response) {

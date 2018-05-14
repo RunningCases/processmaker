@@ -303,13 +303,12 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
             switch (true) {
                 case preg_match( "/^(SELECT|EXECUTE|EXEC|SHOW|DESCRIBE|EXPLAIN|BEGIN)\s/i", $statement ):
                     $rs = $con->executeQuery( $SqlStatement );
-                    $con->commit();
-
                     $result = Array ();
                     $i = 1;
                     while ($rs->next()) {
                         $result[$i ++] = $rs->getRow();
                     }
+                    $con->commit();
                     break;
                 case preg_match( "/^INSERT\s/i", $statement ):
                     $rs = $con->executeUpdate( $SqlStatement );

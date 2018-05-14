@@ -7,7 +7,7 @@ if (!isset($_SESSION['USER_LOGGED'])) {
     $responseObject->error = G::LoadTranslation('ID_LOGIN_AGAIN');
     $responseObject->success = true;
     $responseObject->lostSession = true;
-    print G::json_encode( $responseObject );
+    print G::json_encode($responseObject);
     die();
 }
 
@@ -15,19 +15,19 @@ $filter = new InputFilter();
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
 $_POST = $filter->xssFilterHard($_POST);
 
-if(isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession" ) {
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession") {
     if (!isset($_SESSION['USER_LOGGED'])) {
         $response = new stdclass();
         $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
         $response->lostSession = true;
-        print G::json_encode( $response );
+        print G::json_encode($response);
         die();
     } else {
         $response = new stdclass();
 
         //Check if the user is a supervisor to this Process
-        GLOBAL $RBAC;
-        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
+        global $RBAC;
+        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
             $response->reassigncase = true;
             $response->message = '';
         } elseif ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
@@ -40,13 +40,12 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession" ) {
             }
         }
 
-        print G::json_encode( $response );
+        print G::json_encode($response);
         die();
     }
 }
 class Ajax
 {
-
     public function getCaseMenu($params)
     {
         global $G_TMP_MENU;
@@ -57,13 +56,13 @@ class Ajax
         $oMenu = new Menu();
         $oMenu->load('caseOptions');
 
-        $menuOptions = Array();
+        $menuOptions = array();
         foreach ($oMenu->Options as $i => $action) {
-            $option = Array('id' => $oMenu->Id[$i], 'label' => $oMenu->Labels[$i], 'action' => $action);
+            $option = array('id' => $oMenu->Id[$i], 'label' => $oMenu->Labels[$i], 'action' => $action);
 
             switch ($option['id']) {
                 case 'STEPS':
-                    $option['options'] = Array();
+                    $option['options'] = array();
                     break;
                 case 'ACTIONS':
                     $option['options'] = $this->getActionOptions();
@@ -84,7 +83,7 @@ class Ajax
             $response = new stdclass();
             $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
             $response->lostSession = true;
-            print G::json_encode( $response );
+            print G::json_encode($response);
             die();
         }
 
@@ -131,16 +130,16 @@ class Ajax
 
     public function getInformationOptions()
     {
-        $options = Array();
-        $options[] = Array('text' => G::LoadTranslation('ID_PROCESS_MAP'), 'fn' => 'processMap');
-        $options[] = Array('text' => G::LoadTranslation('ID_PROCESS_INFORMATION'), 'fn' => 'processInformation');
-        $options[] = Array('text' => G::LoadTranslation('ID_TASK_INFORMATION'), 'fn' => 'taskInformation');
-        $options[] = Array('text' => G::LoadTranslation('ID_CASE_HISTORY'), 'fn' => 'caseHistory');
-        $options[] = Array('text' => G::LoadTranslation('ID_HISTORY_MESSAGE_CASE'), 'fn' => 'messageHistory');
-        $options[] = Array('text' => G::LoadTranslation('ID_DYNAFORMS'), 'fn' => 'dynaformHistory');
-        $options[] = Array('text' => G::LoadTranslation('ID_DYNAFORM_HISTORY'), 'fn' => 'changeLogHistory');
-        $options[] = Array('text' => G::LoadTranslation('ID_UPLOADED_DOCUMENTS'), 'fn' => 'uploadedDocuments');
-        $options[] = Array('text' => G::LoadTranslation('ID_GENERATED_DOCUMENTS'), 'fn' => 'generatedDocuments');
+        $options = array();
+        $options[] = array('text' => G::LoadTranslation('ID_PROCESS_MAP'), 'fn' => 'processMap');
+        $options[] = array('text' => G::LoadTranslation('ID_PROCESS_INFORMATION'), 'fn' => 'processInformation');
+        $options[] = array('text' => G::LoadTranslation('ID_TASK_INFORMATION'), 'fn' => 'taskInformation');
+        $options[] = array('text' => G::LoadTranslation('ID_CASE_HISTORY'), 'fn' => 'caseHistory');
+        $options[] = array('text' => G::LoadTranslation('ID_HISTORY_MESSAGE_CASE'), 'fn' => 'messageHistory');
+        $options[] = array('text' => G::LoadTranslation('ID_DYNAFORMS'), 'fn' => 'dynaformHistory');
+        $options[] = array('text' => G::LoadTranslation('ID_DYNAFORM_HISTORY'), 'fn' => 'changeLogHistory');
+        $options[] = array('text' => G::LoadTranslation('ID_UPLOADED_DOCUMENTS'), 'fn' => 'uploadedDocuments');
+        $options[] = array('text' => G::LoadTranslation('ID_GENERATED_DOCUMENTS'), 'fn' => 'generatedDocuments');
 
         return $options;
     }
@@ -159,54 +158,54 @@ class Ajax
         $oCase = new Cases();
         $aFields = $oCase->loadCase($_SESSION['APPLICATION'], $_SESSION['INDEX']);
 
-        GLOBAL $RBAC;
+        global $RBAC;
 
-        $options = Array();
+        $options = array();
 
         switch ($aFields['APP_STATUS']) {
             case 'DRAFT':
                 if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                    $options[] = Array('text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate');
+                    $options[] = array('text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate');
                 } else {
-                    $options[] = Array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
+                    $options[] = array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
                 }
 
-                $options[] = Array('text' => G::LoadTranslation('ID_DELETE'), 'fn' => 'deleteCase');
+                $options[] = array('text' => G::LoadTranslation('ID_DELETE'), 'fn' => 'deleteCase');
 
                 if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
                     if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                        $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                        $options[] = array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
                     }
                 }
                 break;
             case 'TO_DO':
                 if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                    $options[] = Array('text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate');
+                    $options[] = array('text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate');
                     if ($cant == 1) {
                         if ($RBAC->userCanAccess('PM_CANCELCASE') == 1) {
-                            $options[] = Array('text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase');
+                            $options[] = array('text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase');
                         } else {
-                            $options[] = Array('text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase', 'hide' => 'hiden');
+                            $options[] = array('text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase', 'hide' => 'hiden');
                         }
                     }
                 } else {
-                    $options[] = Array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
+                    $options[] = array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
                 }
                 if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
                     if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                        $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                        $options[] = array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
                     }
                 }
                 break;
             case 'CANCELLED':
-                $options[] = Array('text' => G::LoadTranslation('ID_REACTIVATE'), 'fn' => 'reactivateCase');
+                $options[] = array('text' => G::LoadTranslation('ID_REACTIVATE'), 'fn' => 'reactivateCase');
                 break;
         }
 
         if ($_SESSION["TASK"] != "" && $_SESSION["TASK"] != "-1") {
             $oTask = new Task();
             $tasksInParallel = explode('|', $_SESSION['TASK']);
-            $tasksInParallel = array_filter($tasksInParallel, function($value) {
+            $tasksInParallel = array_filter($tasksInParallel, function ($value) {
                 return !empty($value);
             });
             $nTasksInParallel = count($tasksInParallel);
@@ -218,7 +217,7 @@ class Ajax
             }
 
             if ($aTask['TAS_TYPE'] == 'ADHOC') {
-                $options[] = Array('text' => G::LoadTranslation('ID_ADHOC_ASSIGNMENT'), 'fn' => 'adhocAssignmentUsers');
+                $options[] = array('text' => G::LoadTranslation('ID_ADHOC_ASSIGNMENT'), 'fn' => 'adhocAssignmentUsers');
             }
         }
         return $options;
@@ -236,7 +235,7 @@ class Ajax
         $oTemplatePower->prepare();
         $G_PUBLISH = new Publisher();
         $G_PUBLISH->AddContent('template', '', '', '', $oTemplatePower);
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
 
         //$oHeadPublisher->addScriptfile('/jscore/processmap/core/processmap.js');
         $oHeadPublisher->addScriptCode('
@@ -329,7 +328,7 @@ class Ajax
             $response = new stdclass();
             $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
             $response->lostSession = true;
-            print G::json_encode( $response );
+            print G::json_encode($response);
             die();
         }
         $process = new Process();
@@ -346,7 +345,7 @@ class Ajax
         $conf = new Configurations();
         $conf->getFormats();
         $processData['PRO_CREATE_DATE'] = $conf->getSystemDate($processData['PRO_CREATE_DATE']);
-        print (G::json_encode($processData));
+        print(G::json_encode($processData));
     }
 
     public function getTaskInformation()
@@ -355,7 +354,7 @@ class Ajax
             $response = new stdclass();
             $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
             $response->lostSession = true;
-            print G::json_encode( $response );
+            print G::json_encode($response);
             die();
         }
 
@@ -367,14 +366,14 @@ class Ajax
 
         $taskData = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($taskData);
 
-        print (G::json_encode($taskData));
+        print(G::json_encode($taskData));
     }
 
     public function caseHistory()
     {
         global $G_PUBLISH;
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/caseHistory', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/caseHistory'); //adding a html file  .html.
@@ -386,7 +385,7 @@ class Ajax
     {
         global $G_PUBLISH;
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/caseMessageHistory', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/caseMessageHistory'); //adding a html file  .html.
@@ -398,7 +397,7 @@ class Ajax
     {
         global $G_PUBLISH;
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/caseHistoryDynaformPage', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/caseHistoryDynaformPage'); //adding a html file  .html.
@@ -417,7 +416,7 @@ class Ajax
             $_SESSION['TASK']
         );
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/caseChangeLog', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/caseChangeLog'); //adding a html file  .html.
@@ -431,12 +430,12 @@ class Ajax
             $response = new stdclass();
             $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
             $response->lostSession = true;
-            print G::json_encode( $response );
+            print G::json_encode($response);
             die();
         }
         global $G_PUBLISH;
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/casesUploadedDocumentsPage', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/casesUploadedDocumentsPage'); //adding a html file  .html.
@@ -449,7 +448,7 @@ class Ajax
     {
         global $G_PUBLISH;
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/casesUploadedDocumentsPage', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/casesUploadedDocumentsPage'); //adding a html file  .html.
@@ -462,7 +461,7 @@ class Ajax
     {
         global $G_PUBLISH;
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/casesGenerateDocumentPage', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/casesGenerateDocumentPage'); //adding a html file  .html.
@@ -475,7 +474,7 @@ class Ajax
     {
         global $G_PUBLISH;
 
-        $oHeadPublisher = & headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         $conf = new Configurations();
         $oHeadPublisher->addExtJsScript('cases/casesGenerateDocumentPage', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/casesGenerateDocumentPage'); //adding a html file  .html.
@@ -508,7 +507,7 @@ class Ajax
 
         // Save the note pause reason
         if ($_POST['NOTE_REASON'] != '') {
-            require_once ("classes/model/AppNotes.php");
+            require_once("classes/model/AppNotes.php");
             $appNotes = new AppNotes();
             $noteContent = addslashes($_POST['NOTE_REASON']);
             $appNotes->postNewNote($APP_UID, $_SESSION['USER_LOGGED'], $noteContent, $_POST['NOTIFY_PAUSE']);
@@ -531,11 +530,11 @@ class Ajax
             $response = new stdclass();
             $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
             $response->lostSession = true;
-            print G::json_encode( $response );
+            print G::json_encode($response);
             die();
         }
 
-        if(isset($_SESSION['TASK']) && $_SESSION['TASK'] != '-1'){
+        if (isset($_SESSION['TASK']) && $_SESSION['TASK'] != '-1') {
             $taskUid  = $_SESSION['TASK'];
         } else {
             $taskUid  = $_SESSION['CURRENT_TASK'];
@@ -578,13 +577,13 @@ class Ajax
         $TO_USR_UID = $_POST['USR_UID'];
         try {
             //Current users of OPEN DEL_INDEX thread
-            if(isset($_SESSION['APPLICATION']) && isset($_SESSION['INDEX'])){
+            if (isset($_SESSION['APPLICATION']) && isset($_SESSION['INDEX'])) {
                 $aCurUser = $oAppDel->getCurrentUsers($_SESSION['APPLICATION'], $_SESSION['INDEX']);
             }
             $flagReassign = true;
-            if(!empty($aCurUser)){
+            if (!empty($aCurUser)) {
                 foreach ($aCurUser as $key => $value) {
-                    if($value === $TO_USR_UID){
+                    if ($value === $TO_USR_UID) {
                         $flagReassign = false;
                     }
                 }
@@ -594,7 +593,7 @@ class Ajax
             }
 
             //If the currentUser is diferent to nextUser, create the thread
-            if($flagReassign){
+            if ($flagReassign) {
                 $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
             }
 
@@ -608,7 +607,7 @@ class Ajax
 
             // Save the note reassign reason
             if (isset($_POST['NOTE_REASON']) && $_POST['NOTE_REASON'] !== '') {
-                require_once ("classes/model/AppNotes.php");
+                require_once("classes/model/AppNotes.php");
                 $appNotes = new AppNotes();
                 $noteContent = addslashes($_POST['NOTE_REASON']);
                 $notifyReassign = $_POST['NOTIFY_REASSIGN'] === 'true' ? true: false;
@@ -641,7 +640,7 @@ class Ajax
 
             // Save the note pause reason
             if ($_REQUEST['NOTE_REASON'] != '') {
-                require_once ("classes/model/AppNotes.php");
+                require_once("classes/model/AppNotes.php");
                 $appNotes = new AppNotes();
                 $noteContent = addslashes($_REQUEST['NOTE_REASON']);
                 $appNotes->postNewNote($APP_UID, $_SESSION['USER_LOGGED'], $noteContent, $_REQUEST['NOTIFY_PAUSE']);
@@ -750,7 +749,7 @@ class Ajax
             $response = new stdclass();
             $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
             $response->lostSession = true;
-            print G::json_encode( $response );
+            print G::json_encode($response);
             die();
         }
         try {
@@ -770,8 +769,7 @@ class Ajax
             $result = new stdclass();
 
             $G_PUBLISH = new Publisher();
-            $G_PUBLISH->AddContent('view', 'cases/cases_DynaformHistory');
-            ?>
+            $G_PUBLISH->AddContent('view', 'cases/cases_DynaformHistory'); ?>
             <link rel="stylesheet" type="text/css" href="/css/classic.css" />
             <style type="text/css">
                 html {
@@ -948,22 +946,19 @@ class Ajax
             $a->printView();
         } else {
             $G_PUBLISH->AddContent("dynaform", "xmlform", $_SESSION["PROCESS"] . "/" . $_POST["DYN_UID"], "", $Fields["APP_DATA"], "", "", "view");
-        }
-        ?>
+        } ?>
 
         <script type="text/javascript">
 
         <?php
-        global $G_FORM;
-        ?>
+        global $G_FORM; ?>
 
             function loadForm_<?php echo $G_FORM->id; ?>(parametro1) {
             }
         </script>
 
         <?php
-        G::RenderPage("publish", "raw");
-        ?>
+        G::RenderPage("publish", "raw"); ?>
 
         <style type="text/css">
             html {
@@ -978,8 +973,7 @@ class Ajax
         <script type="text/javascript">
 
         <?php
-        global $G_FORM;
-        ?>
+        global $G_FORM; ?>
 
             function loadForm_<?php echo $G_FORM->id; ?>(parametro1) {
             }

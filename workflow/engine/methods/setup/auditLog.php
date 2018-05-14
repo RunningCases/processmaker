@@ -7,10 +7,10 @@ if ($RBAC->userCanAccess("PM_SETUP") != 1) {
 }
 
 $c = new Configurations();
-$configPage = $c->getConfiguration( "auditLogList", "pageSize", null, $_SESSION["USER_LOGGED"] );
+$configPage = $c->getConfiguration("auditLogList", "pageSize", null, $_SESSION["USER_LOGGED"]);
 
-$config = array ();
-$config["pageSize"] = (isset( $configPage["pageSize"] )) ? $configPage["pageSize"] : 20;
+$config = array();
+$config["pageSize"] = (isset($configPage["pageSize"])) ? $configPage["pageSize"] : 20;
 
 $arrayAction = array(
     "CreateUser"                 => G::LoadTranslation("ID_CREATE_USER"),
@@ -164,9 +164,8 @@ foreach ($arrayActionAux as $key => $value) {
     $arrayAction[] = array($key, $value);
 }
 
-$oHeadPublisher = &headPublisher::getSingleton();
-$oHeadPublisher->addExtJsScript( "setup/auditLog", true );
-$oHeadPublisher->assign( "CONFIG", $config );
-$oHeadPublisher->assign( "ACTION", $arrayAction );
-G::RenderPage( "publish", "extJs" );
-
+$oHeadPublisher = headPublisher::getSingleton();
+$oHeadPublisher->addExtJsScript("setup/auditLog", true);
+$oHeadPublisher->assign("CONFIG", $config);
+$oHeadPublisher->assign("ACTION", $arrayAction);
+G::RenderPage("publish", "extJs");
