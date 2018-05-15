@@ -253,12 +253,27 @@ class Net
                     break;
                 case 'mssql':
                     //todo
-                    if ($this->db_instance != "") {
-                        $str_port = "";
-                        $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
+                    if (!extension_loaded('sqlsrv')) {
+                        if ($this->db_instance != "") {
+                            $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
+                        } else {
+                            $port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ":" . $this->db_port;
+                            $link = @mssql_connect($this->ip . $port, $this->db_user, $this->db_passwd);
+                        }
                     } else {
-                        $str_port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ":" . $this->db_port;
-                        $link = @mssql_connect($this->ip . $str_port, $this->db_user, $this->db_passwd);
+                        if ($this->db_instance != "") {
+                            $server = $this->ip . "\\" . $this->db_instance;
+                        } else {
+                            $server = $this->ip;
+                        }
+                        $port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ", " . $this->db_port;
+                        $server .= $port;
+                        $opt = [
+                            'UID' => $this->db_user,
+                            'PWD' => $this->db_passwd,
+                            'Database' => $this->db_sourcename
+                        ];
+                        $link = @sqlsrv_connect($server, $opt);
                     }
 
                     if ($link) {
@@ -382,15 +397,32 @@ class Net
                     }
                     break;
                 case 'mssql':
-                    if ($this->db_instance != "") {
-                        $str_port = "";
-                        $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
+                    if (!extension_loaded('sqlsrv')) {
+                        if ($this->db_instance != "") {
+                            $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
+                        } else {
+                            $port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ":" . $this->db_port;
+                            $link = @mssql_connect($this->ip . $port, $this->db_user, $this->db_passwd);
+                        }
                     } else {
-                        $str_port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ":" . $this->db_port;
-                        $link = @mssql_connect($this->ip . $str_port, $this->db_user, $this->db_passwd);
+                        if ($this->db_instance != "") {
+                            $server = $this->ip . "\\" . $this->db_instance;
+                        } else {
+                            $server = $this->ip;
+                        }
+                        $port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ", " . $this->db_port;
+                        $server .= $port;
+                        $opt = [
+                            'UID' => $this->db_user,
+                            'PWD' => $this->db_passwd,
+                            'Database' => $this->db_sourcename
+                        ];
+                        $link = $db = @sqlsrv_connect($server, $opt);
                     }
                     if ($link) {
-                        $db = @mssql_select_db($this->db_sourcename, $link);
+                        if (!extension_loaded('sqlsrv')) {
+                            $db = @mssql_select_db($this->db_sourcename, $link);
+                        }
                         if ($db) {
                             $stat->status = 'SUCCESS';
                             $this->errstr = "";
