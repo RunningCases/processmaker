@@ -1396,6 +1396,17 @@ class adminProxy extends HttpProxyController
             $oauthClients->setClientWebsite('www.processmaker.com');
             $oauthClients->setRedirectUri($endpoint);
             $oauthClients->save();
+            
+            if (!empty(config('oauthClients.mobile.clientId'))) {
+                $oauthClients = new OauthClients();
+                $oauthClients->setClientId(config('oauthClients.mobile.clientId'));
+                $oauthClients->setClientSecret(config('oauthClients.mobile.clientSecret'));
+                $oauthClients->setClientName(config('oauthClients.mobile.clientName'));
+                $oauthClients->setClientDescription(config('oauthClients.mobile.clientDescription'));
+                $oauthClients->setClientWebsite(config('oauthClients.mobile.clientWebsite'));
+                $oauthClients->setRedirectUri($endpoint);
+                $oauthClients->save();
+            }
 
             $result['success'] = true;
             $result['message'] = '';
