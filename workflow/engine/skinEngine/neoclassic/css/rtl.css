@@ -672,6 +672,6 @@ td.x-date-mp-sep {
 .ext-ie .x-menu-item-checked .x-menu-group-item .x-menu-item-icon {
   right: 0x !important;
 }
-span:after, font:after {
-  content: "\200E‎";
+#startCaseTreePanel span:after, font:after {
+    content: "\200E‎";
 }
