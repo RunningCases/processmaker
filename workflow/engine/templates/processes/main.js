@@ -703,7 +703,6 @@ Ext.onReady(function(){
   var arrayContextMenuOption = [
       {
           text: _("ID_EDIT"),
-          iconCls: "button_menu_ext",
           icon: "/images/pencil.png",
           handler: editProcess
       },
@@ -720,7 +719,6 @@ Ext.onReady(function(){
       },
       {
           text: _("ID_DELETE"),
-          iconCls: "button_menu_ext",
           icon: "/images/delete_16.png",
           handler: deleteProcess
       },
