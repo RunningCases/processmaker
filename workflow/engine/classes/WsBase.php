@@ -2300,6 +2300,7 @@ class WsBase
             );
 
             //Execute triggers after routing
+            $appFields = $oCase->loadCase($caseId);
             $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
 
             $sFromName = "";
