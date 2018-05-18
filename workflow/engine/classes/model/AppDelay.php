@@ -13,6 +13,7 @@
 class AppDelay extends BaseAppDelay
 {
     const APP_TYPE_CANCEL = 'CANCEL';
+    const APP_TYPE_UNCANCEL = 'UNCANCEL';
     const APP_TYPE_PAUSE = 'PAUSE';
 
     /**
@@ -161,6 +162,7 @@ class AppDelay extends BaseAppDelay
      * @param string $appType
      * @param string $appStatus
      * @param string $usrUid
+     * @param integer $usrId
      *
      * @return array
     */
@@ -173,11 +175,11 @@ class AppDelay extends BaseAppDelay
         $delIndex = 0,
         $appType = 'CANCEL',
         $appStatus = 'CANCELLED',
-        $usrUid = ''
+        $usrUid = '',
+        $usrId = 0
     ) {
         $row = [];
         $row['PRO_UID'] = $proUid;
-        $row['PRO_ID'] = $proId;
         $row['APP_UID'] = $appUid;
         $row['APP_NUMBER'] = $appNumber;
         $row['APP_THREAD_INDEX'] = $appThreadIndex;
@@ -186,15 +188,56 @@ class AppDelay extends BaseAppDelay
         $row['APP_STATUS'] = $appStatus;
         $row['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
 
+        //Load the PRO_ID if does not exit
+        if (empty($proId) || $proId === 0) {
+            $u = new Process();
+            $proId = $u->load($proUid)['PRO_ID'];
+        }
+
+        $row['PRO_ID'] = $proId;
         //Define the user that execute the insert
         if (empty($usrUid)) {
             global $RBAC;
             $usrUid = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            $u = new Users();
+            $usrId = $u->load($usrUid)['USR_ID'];
         }
         $row['APP_DELEGATION_USER'] = $usrUid;
         $row['APP_ENABLE_ACTION_USER'] = $usrUid;
+        $row['APP_DELEGATION_USER_ID'] = $usrId;
 
         return $row;
+    }
+
+    /**
+     * Return all threads with the status canceled
+     *
+     * @param string $appUid
+     * @param string $status
+     *
+     * @return array
+     * @throws Exception
+    */
+    public function getThreadByStatus($appUid, $status)
+    {
+        try {
+            $criteria = new Criteria('workflow');
+            $criteria->add(AppDelayPeer::APP_UID, $appUid);
+            $criteria->add(AppDelayPeer::APP_STATUS, $status);
+            $criteria->addDescendingOrderByColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
+            $dataset = AppDelayPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $result = [];
+            while ($row = $dataset->getRow()) {
+                $result[] = $row;
+                $dataset->next();
+            }
+
+            return $result;
+        } catch (Exception $error) {
+            throw $error;
+        }
     }
 }
 

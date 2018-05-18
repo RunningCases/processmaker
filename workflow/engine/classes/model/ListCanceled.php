@@ -190,6 +190,25 @@ class ListCanceled extends BaseListCanceled implements ListInterface
         }
     }
 
+    /**
+     * Remove all records related to the APP_UID
+     *
+     * @param string $appUid
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function removeAll($appUid)
+    {
+        try {
+            $criteria = new Criteria("workflow");
+            $criteria->add(ListCanceledPeer::APP_UID, $appUid);
+            ListCanceledPeer::doDelete($criteria);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     public function loadFilters(&$criteria, $filters)
     {
         $filter = isset($filters['filter']) ? $filters['filter'] : "";
