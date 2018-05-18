@@ -36,6 +36,8 @@ if (!isset($_POST)) {
 }
 if (isset($_SESSION['sysLogin'])) {
     $_POST['form'] = $_SESSION['sysLogin'];
+    // Destroy variables already assigned to the global variable $_POST
+    unset($_SESSION['sysLogin']);
 }
 
 require_once 'authentication.php';
