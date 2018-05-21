@@ -2131,7 +2131,8 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
-        if (empty($pmRestClient)) {
+        $pmMobileRestClient = OauthClientsPeer::retrieveByPK(config('oauthClients.mobile.clientId'));
+        if (empty($pmRestClient) || empty($pmMobileRestClient)) {
             if (!is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
                 $_CSERVER = $_SERVER;
                 unset($_CSERVER['REQUEST_TIME']);
@@ -2159,14 +2160,27 @@ class WorkspaceTools
                     $skin
                 );
 
-                $oauthClients = new OauthClients();
-                $oauthClients->setClientId('x-pm-local-client');
-                $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
-                $oauthClients->setClientName('PM Web Designer');
-                $oauthClients->setClientDescription('ProcessMaker Web Designer App');
-                $oauthClients->setClientWebsite('www.processmaker.com');
-                $oauthClients->setRedirectUri($endpoint);
-                $oauthClients->save();
+                if (empty($pmRestClient)) {
+                    $oauthClients = new OauthClients();
+                    $oauthClients->setClientId('x-pm-local-client');
+                    $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
+                    $oauthClients->setClientName('PM Web Designer');
+                    $oauthClients->setClientDescription('ProcessMaker Web Designer App');
+                    $oauthClients->setClientWebsite('www.processmaker.com');
+                    $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->save();
+                }
+
+                if (empty($pmMobileRestClient) && !empty(config('oauthClients.mobile.clientId'))) {
+                    $oauthClients = new OauthClients();
+                    $oauthClients->setClientId(config('oauthClients.mobile.clientId'));
+                    $oauthClients->setClientSecret(config('oauthClients.mobile.clientSecret'));
+                    $oauthClients->setClientName(config('oauthClients.mobile.clientName'));
+                    $oauthClients->setClientDescription(config('oauthClients.mobile.clientDescription'));
+                    $oauthClients->setClientWebsite(config('oauthClients.mobile.clientWebsite'));
+                    $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->save();
+                }
             } else {
                 eprintln("WARNING! No server info found!", 'red');
             }

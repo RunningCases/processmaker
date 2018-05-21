@@ -1059,6 +1059,20 @@ class InstallerModule extends Controller
                     'REDIRECT_URI' => $endpoint,
                     'USR_UID' => '00000000000000000000000000000001'
                 ]);
+            
+            if (!empty(config('oauthClients.mobile.clientId'))) {
+                DB::connection(self::CONNECTION_INSTALL)
+                    ->table('OAUTH_CLIENTS')
+                    ->insert([
+                        'CLIENT_ID' => config('oauthClients.mobile.clientId'),
+                        'CLIENT_SECRET' => config('oauthClients.mobile.clientSecret'),
+                        'CLIENT_NAME' => config('oauthClients.mobile.clientName'),
+                        'CLIENT_DESCRIPTION' => config('oauthClients.mobile.clientDescription'),
+                        'CLIENT_WEBSITE' => config('oauthClients.mobile.clientWebsite'),
+                        'REDIRECT_URI' => $endpoint,
+                        'USR_UID' => '00000000000000000000000000000001'
+                ]);
+            }
 
             $indexFileUpdated = true;
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
