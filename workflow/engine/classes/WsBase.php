@@ -2939,7 +2939,6 @@ class WsBase
             }
 
             $result = new WsResponse(0, G::loadTranslation('ID_COMMAND_EXECUTED_SUCCESSFULLY'));
-
             $g->sessionVarRestore();
 
             return $result;
@@ -3066,14 +3065,7 @@ class WsBase
             $case->removeCase($caseUid);
 
             //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
-
-            $result = array(
-                "status_code" => $res->status_code,
-                "message" => $res->message,
-                "timestamp" => $res->timestamp
-            );
-
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
 
             return $result;
@@ -3093,7 +3085,7 @@ class WsBase
      * @param int    delIndex : Delegation index of the case.
      * @param string userUid : The unique ID of the user who will cancel the case.
      *
-     * @return $result will return an object
+     * @return array | object
      */
     public function cancelCase($caseUid, $delIndex, $userUid)
     {
@@ -3107,62 +3099,68 @@ class WsBase
             $_SESSION["USER_LOGGED"] = $userUid;
 
             if (empty($caseUid)) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " caseUid");
-
                 $g->sessionVarRestore();
 
-                return $result;
-            }
-
-            if (empty($delIndex)) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " delIndex");
-
-                $g->sessionVarRestore();
-
-                return $result;
-            }
-
-            if (empty($userUid)) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " userUid");
-
-                $g->sessionVarRestore();
-
-                return $result;
-            }
-
-            $oApplication = new Application();
-            $aFields = $oApplication->load($caseUid);
-            if ($aFields['APP_STATUS'] == 'DRAFT') {
-                $result = new WsResponse(100, G::LoadTranslation("ID_CASE_IN_STATUS") . " DRAFT");
-                $g->sessionVarRestore();
-                return $result;
-            }
-            $oAppThread = new AppThread();
-            $cant = $oAppThread->countStatus($caseUid, 'OPEN');
-            if ($cant > 1) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_CASE_CANCELLED_PARALLEL"));
-                $g->sessionVarRestore();
-                return $result;
+                return self::messageRequiredField('caseUid');
             }
 
             $case = new Cases();
-            $case->cancelCase($caseUid, $delIndex, $userUid);
+            $statusCase = $case->loadCase($caseUid)['APP_STATUS'];
+            if ($statusCase !== 'TO_DO') {
+                $g->sessionVarRestore();
 
-            //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
+                return self::messageIllegalValues('ID_CASE_IN_STATUS', ' ' . $statusCase);
+            }
 
-            $result = array(
-                "status_code" => $res->status_code,
-                "message" => $res->message,
-                "timestamp" => $res->timestamp
-            );
+            /** If those parameters are null we will to force the cancelCase */
+            if (is_null($delIndex) && is_null($userUid)) {
+                /*----------------------------------********---------------------------------*/
+                $case->cancelCase($caseUid, null, null);
+                $result = self::messageExecuteSuccessfully();
+                $g->sessionVarRestore();
 
+                return $result;
+                /*----------------------------------********---------------------------------*/
+            }
+
+            /** We will to continue with review the threads */
+            if (empty($delIndex)) {
+                $g->sessionVarRestore();
+
+                return self::messageRequiredField('delIndex');
+            }
+
+            $delegation = new AppDelegation();
+            $indexOpen = $delegation->LoadParallel($caseUid, $delIndex);
+            if (empty($indexOpen)) {
+                $g->sessionVarRestore();
+
+                return self::messageIllegalValues('ID_CASE_DELEGATION_ALREADY_CLOSED');
+            }
+
+            if (empty($userUid)) {
+                $g->sessionVarRestore();
+
+                return self::messageRequiredField('userUid');
+            }
+
+            if (AppThread::countStatus($caseUid, 'OPEN') > 1) {
+                $g->sessionVarRestore();
+
+                return self::messageIllegalValues("ID_CASE_CANCELLED_PARALLEL");
+            }
+
+
+            /** Cancel case */
+            $case->cancelCase($caseUid, (int)$delIndex, $userUid);
+
+            //Define the result of the cancelCase
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
 
             return $result;
         } catch (Exception $e) {
             $result = new WsResponse(100, $e->getMessage());
-
             $g->sessionVarRestore();
 
             return $result;
@@ -3228,15 +3226,9 @@ class WsBase
             $case->pauseCase($caseUid, $delIndex, $userUid, $unpauseDate);
 
             //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
-
-            $result = array(
-                "status_code" => $res->status_code,
-                "message" => $res->message,
-                "timestamp" => $res->timestamp
-            );
-
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
+
             return $result;
         } catch (Exception $e) {
             $result = new WsResponse(100, $e->getMessage());
@@ -3295,14 +3287,7 @@ class WsBase
             $case->unpauseCase($caseUid, $delIndex, $userUid);
 
             //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
-
-            $result = array(
-                "status_code" => $res->status_code,
-                "message" => $res->message,
-                "timestamp" => $res->timestamp
-            );
-
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
 
             return $result;
@@ -3408,5 +3393,53 @@ class WsBase
             $result = new WsResponse(100, $e->getMessage());
             return $result;
         }
+    }
+
+    /**
+     * Define the message for the required fields
+     *
+     * @param string $field
+     * @param integer code
+     *
+     * @return object
+    */
+    private function messageRequiredField($field, $code = 100)
+    {
+        $result = new WsResponse($code, G::LoadTranslation("ID_REQUIRED_FIELD") . ' ' . $field);
+
+        return $result;
+    }
+
+    /**
+     * Define the message for the required fields
+     *
+     * @param string $translationId
+     * @param string $field
+     * @param integer code
+     *
+     * @return object
+     */
+    private function messageIllegalValues($translationId, $field = '', $code = 100)
+    {
+        $result = new WsResponse($code, G::LoadTranslation($translationId) . $field);
+
+        return $result;
+    }
+
+    /**
+     * Define the result when it's execute successfully
+     *
+     * @return object
+     */
+    private function messageExecuteSuccessfully()
+    {
+        $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
+        $result = [
+            "status_code" => $res->status_code,
+            "message" => $res->message,
+            "timestamp" => $res->timestamp
+        ];
+
+        return $result;
     }
 }
