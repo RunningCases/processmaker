@@ -1089,9 +1089,6 @@
             <rule name="maxLength" value="10" message="Report table connection can be no larger than ${value} in size"/>
             <rule name="required" message="Report table connection is required."/>
         </validator>
-        <!--<validator column="REP_TAB_CREATE_DATE">
-      <rule name="required" message="Report table creation date is required." />
-    </validator>-->
         <validator column="REP_TAB_STATUS">
             <rule name="validValues" value="ACTIVE|INACTIVE" message="Please select a valid status."/>
             <rule name="required" message="Report table status is required."/>
@@ -3001,18 +2998,6 @@
         <column name="SCH_DEL_USER_PASS" type="VARCHAR" size="100" required="true"/>
         <column name="SCH_DEL_USER_UID" type="VARCHAR" size="100" required="true"/>
         <column name="SCH_NAME" type="VARCHAR" size="100" required="true"/>
-        <!--
-    <column name="SCH_PROGRAM" type="VARCHAR" size="100" required="true">
-      <vendor type="mysql">
-        <parameter name="Field" value="SCH_PROGRAM"/>
-        <parameter name="Type" value="varchar(100)"/>
-        <parameter name="Null" value="NO"/>
-        <parameter name="Key" value=""/>
-        <parameter name="Default" value=""/>
-        <parameter name="Extra" value=""/>
-      </vendor>
-    </column>
-//-->
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="SCH_TIME_NEXT_RUN" type="TIMESTAMP" required="true"/>
@@ -3446,8 +3431,8 @@
     </table>
 
     <!--
-    OAUTH TABLES DEFINITION
-  -->
+      OAUTH TABLES DEFINITION
+    -->
     <table name="OAUTH_ACCESS_TOKENS">
         <vendor type="mysql">
             <parameter name="Name" value="OAUTH_ACCESS_TOKENS"/>
@@ -3566,8 +3551,8 @@
     </table>
 
     <!--
-    BPMN TABLES DEFINITION
-  -->
+      BPMN TABLES DEFINITION
+    -->
     <table name="BPMN_PROJECT">
         <vendor type="mysql">
             <parameter name="Name" value="BPMN_PROJECT"/>
@@ -5753,5 +5738,53 @@
         <column name="PLUGIN_CRON_FILES" type="LONGVARCHAR"/>
         <column name="PLUGIN_TASK_EXTENDED_PROPERTIES" type="LONGVARCHAR"/>
         <column name="PLUGIN_ATTRIBUTES" type="LONGVARCHAR"/>
+    </table>
+    
+    <table name="APP_DATA_CHANGE_LOG" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Name" value="APP_DATA_CHANGE_LOG"/>
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Version" value="10"/>
+            <parameter name="Row_format" value="Dynamic"/>
+            <parameter name="Data_free" value="0"/>
+            <parameter name="Auto_increment" value=""/>
+            <parameter name="Check_time" value=""/>
+            <parameter name="Collation" value="utf8_general_ci"/>
+            <parameter name="Checksum" value=""/>
+            <parameter name="Create_options" value=""/>
+            <parameter name="Comment" value="Change log"/>
+        </vendor>
+        <column name="CHANGE_LOG_ID" type="INTEGER" required="true" autoIncrement="true" unique="true" primaryKey="true"/>
+        <column name="DATE" type="TIMESTAMP" required="false"/>
+        <column name="APP_NUMBER" type="INTEGER" default="0" required="false"/>
+        <column name="DEL_INDEX" type="INTEGER" default="0" required="false"/>
+        <column name="PRO_ID" type="INTEGER" default="0" required="false"/>
+        <column name="TAS_ID" type="INTEGER" default="0" required="false"/>
+        <column name="USR_ID" type="INTEGER" default="0" required="false"/>
+        <column name="DYN_ID" type="INTEGER" default="0" required="false"/>
+        <column name="SOURCE_ID" type="VARCHAR" size="32" default="" required="false"/>
+        <column name="ST_TYPE" type="VARCHAR" size="32" default="" required="false"/>
+        <column name="DATA" type="LONGVARCHAR" required="true"/>
+        <column name="SOURCE_TO_SAVE" type="VARCHAR" size="32" default="" required="false"/>
+        <column name="SKIN" type="VARCHAR" size="32" default="" required="false"/>
+        <column name="LANGUAGE" type="VARCHAR" size="32" default="" required="false"/>
+        <index name="indexAppNumber">
+            <index-column name="APP_NUMBER"/>
+        </index>
+        <index name="indexDelIndex">
+            <index-column name="DEL_INDEX"/>
+        </index>
+        <index name="indexProId">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="indexTasId">
+            <index-column name="TAS_ID"/>
+        </index>
+        <index name="indexUsrId">
+            <index-column name="USR_ID"/>
+        </index>
+        <index name="indexDynId">
+            <index-column name="DYN_ID"/>
+        </index>
     </table>
 </database>

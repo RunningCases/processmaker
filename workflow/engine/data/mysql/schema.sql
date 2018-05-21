@@ -3192,5 +3192,36 @@ CREATE TABLE `PLUGINS_REGISTRY`
 	`PLUGIN_ATTRIBUTES` MEDIUMTEXT,
 	PRIMARY KEY (`PR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Details of plugins registry';
+#-----------------------------------------------------------------------------
+#-- APP_DATA_CHANGE_LOG
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `APP_DATA_CHANGE_LOG`;
+
+
+CREATE TABLE `APP_DATA_CHANGE_LOG`
+(
+	`CHANGE_LOG_ID` INTEGER  NOT NULL AUTO_INCREMENT,
+	`DATE` DATETIME,
+	`APP_NUMBER` INTEGER default 0,
+	`DEL_INDEX` INTEGER default 0,
+	`PRO_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`DYN_ID` INTEGER default 0,
+	`SOURCE_ID` VARCHAR(32) default '',
+	`ST_TYPE` VARCHAR(32) default '',
+	`DATA` MEDIUMTEXT  NOT NULL,
+	`SOURCE_TO_SAVE` VARCHAR(32) default '',
+	`SKIN` VARCHAR(32) default '',
+	`LANGUAGE` VARCHAR(32) default '',
+	PRIMARY KEY (`CHANGE_LOG_ID`),
+	KEY `indexAppNumber`(`APP_NUMBER`),
+	KEY `indexDelIndex`(`DEL_INDEX`),
+	KEY `indexProId`(`PRO_ID`),
+	KEY `indexTasId`(`TAS_ID`),
+	KEY `indexUsrId`(`USR_ID`),
+	KEY `indexDynId`(`DYN_ID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Change log';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
