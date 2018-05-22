@@ -2533,10 +2533,11 @@ class Cases
      * Get the transfer History
      *
      * @name getTransferHistoryCriteria
-     * @param string $sAppUid
-     * @return array
+     * @param integer $appNumber
+     *
+     * @return object
      */
-    public function getTransferHistoryCriteria($sAppUid)
+    public function getTransferHistoryCriteria($appNumber)
     {
         $c = new Criteria('workflow');
         $c->addSelectColumn(UsersPeer::USR_FIRSTNAME);
@@ -2546,41 +2547,52 @@ class Cases
         $c->addSelectColumn(AppDelegationPeer::TAS_UID);
         $c->addSelectColumn(AppDelegationPeer::APP_UID);
         $c->addSelectColumn(AppDelegationPeer::DEL_INDEX);
-        ///-- $c->addAsColumn('USR_NAME', "CONCAT(USR_LASTNAME, ' ', USR_FIRSTNAME)");
-        $sDataBase = 'database_' . strtolower(DB_ADAPTER);
-        if (G::LoadSystemExist($sDataBase)) {
-            $oDataBase = new database();
-            $c->addAsColumn('USR_NAME', $oDataBase->concatString("USR_LASTNAME", "' '", "USR_FIRSTNAME"));
-            $c->addAsColumn(
-                    'DEL_FINISH_DATE', $oDataBase->getCaseWhen("DEL_FINISH_DATE IS NULL", "'-'", AppDelegationPeer::DEL_FINISH_DATE)
-            );
-            $c->addAsColumn(
-                    'APP_TYPE', $oDataBase->getCaseWhen("DEL_FINISH_DATE IS NULL", "'IN_PROGRESS'", AppDelayPeer::APP_TYPE)
-            );
-        }
         $c->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
-        $c->addSelectColumn(TaskPeer::TAS_TITLE);
-        //APP_DELEGATION LEFT JOIN USERS
-        $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
 
-        //APP_DELAY FOR MORE DESCRIPTION
-        //$c->addJoin(AppDelegationPeer::DEL_INDEX, AppDelayPeer::APP_DEL_INDEX, Criteria::LEFT_JOIN);
-        //$c->addJoin(AppDelegationPeer::APP_UID, AppDelayPeer::APP_UID, Criteria::LEFT_JOIN);
+        //We added this custom query for the case tracker
+        $c->addAsColumn(
+            'TAS_TITLE',
+            'CASE WHEN TASK.TAS_TITLE = "INTERMEDIATE-THROW-EMAIL-EVENT" THEN "' . G::LoadTranslation('ID_INTERMEDIATE_THROW_EMAIL_EVENT') . '"
+                   WHEN TASK.TAS_TITLE = "INTERMEDIATE-THROW-MESSAGE-EVENT" THEN "' . G::LoadTranslation('ID_INTERMEDIATE_THROW_MESSAGE_EVENT') . '"
+                   WHEN TASK.TAS_TITLE = "INTERMEDIATE-CATCH-MESSAGE-EVENT" THEN "' . G::LoadTranslation('ID_INTERMEDIATE_CATCH_MESSAGE_EVENT') . '"
+                   WHEN TASK.TAS_TITLE = "INTERMEDIATE-CATCH-TIMER-EVENT" THEN "' . G::LoadTranslation('ID_INTERMEDIATE_CATCH_TIMER_EVENT') . '"
+                   ELSE TASK.TAS_TITLE
+                   END'
+        );
+
+        $dbAdapter = 'database_' . strtolower(DB_ADAPTER);
+        if (G::LoadSystemExist($dbAdapter)) {
+            $dataBase = new database();
+            $c->addAsColumn(
+                'USR_NAME',
+                $dataBase->concatString("USR_LASTNAME", "' '", "USR_FIRSTNAME")
+            );
+            $c->addAsColumn(
+                'DEL_FINISH_DATE',
+                $dataBase->getCaseWhen("DEL_FINISH_DATE IS NULL", "'-'", AppDelegationPeer::DEL_FINISH_DATE)
+            );
+            $c->addAsColumn(
+                'APP_TYPE',
+                $dataBase->getCaseWhen("DEL_FINISH_DATE IS NULL", "'IN_PROGRESS'", AppDelayPeer::APP_TYPE)
+            );
+        }
+
+        //Define the joins
+        $c->addJoin(AppDelegationPeer::USR_ID, UsersPeer::USR_ID, Criteria::LEFT_JOIN);
+        $c->addJoin(AppDelegationPeer::TAS_ID, TaskPeer::TAS_ID, Criteria::LEFT_JOIN);
+
         $del = DBAdapter::getStringDelimiter();
-        $app = array();
-        $app[] = array(AppDelegationPeer::DEL_INDEX, AppDelayPeer::APP_DEL_INDEX);
-        $app[] = array(AppDelegationPeer::APP_UID, AppDelayPeer::APP_UID);
+        $app = [];
+        $app[] = [AppDelegationPeer::DEL_INDEX, AppDelayPeer::APP_DEL_INDEX];
+        $app[] = [AppDelegationPeer::APP_NUMBER, AppDelayPeer::APP_NUMBER];
         $c->addJoinMC($app, Criteria::LEFT_JOIN);
 
-        //LEFT JOIN TASK TAS_TITLE
-        $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+        //Define the where
+        $c->add(AppDelegationPeer::APP_NUMBER, $appNumber);
 
-        //WHERE
-        $c->add(AppDelegationPeer::APP_UID, $sAppUid);
-
-        //ORDER BY
+        //Order by
         $c->clearOrderByColumns();
         $c->addAscendingOrderByColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
 

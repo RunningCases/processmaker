@@ -16,11 +16,18 @@
  */
 class Task extends BaseTask
 {
+    const tas_type_events = [
+        'INTERMEDIATE-THROW-MESSAGE-EVENT',
+        'INTERMEDIATE-THROW-EMAIL-EVENT',
+        'INTERMEDIATE-CATCH-TIMER-EVENT',
+        'INTERMEDIATE-CATCH-MESSAGE-EVENT'
+    ];
     /**
      * This value goes in the content table
      * @var        string
      */
     protected $tas_title_content = '';
+
 
     /**
      * Get the tas_title column value.
