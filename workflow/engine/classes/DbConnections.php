@@ -258,22 +258,10 @@ class DbConnections
 
         $dbServices = array ('mysql' => array ('id' => 'mysql','command' => 'mysqli_connect','name' => 'MySql'
         ),'pgsql' => array ('id' => 'pgsql','command' => 'pg_connect','name' => 'PostgreSql'
-        ),'mssql' => array ('id' => 'mssql','command' => 'mssql_connect','name' => 'Microsoft SQL Server'
+        ),'mssql' => array ('id' => 'mssql','command' => 'mssql_connect','name' => 'Microsoft SQL Server (mssql extension)'
+        ),'sqlsrv' => array ('id' => 'mssql','command' => 'sqlsrv_connect','name' => 'Microsoft SQL Server (sqlsrv extension)'
         ),'oracle' => array ('id' => 'oracle','command' => 'oci_connect','name' => 'Oracle'
-        )
-        );
-        /*,
-      'informix'=> Array(
-                'id'        => 'informix',
-                'command'   => 'ifx_connect',
-                'name'      => 'Informix'
-            ),
-      'sqlite' => Array(
-                'id'        => 'sqlite',
-                'command'   => 'sqlite_open',
-                'name'      => 'SQLite'
-            )
-    */
+        ));
 
         foreach ($dbServices as $service) {
             if (@function_exists($service['command'])) {
