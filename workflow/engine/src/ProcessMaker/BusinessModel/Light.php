@@ -6,6 +6,7 @@ use ProcessMaker\BusinessModel\Lists;
 use G;
 use Criteria;
 use UsersPeer;
+use AppDelegation;
 use AppDelegationPeer;
 use AppDelayPeer;
 use ProcessMaker\Core\System;
@@ -1076,28 +1077,30 @@ class Light
     }
 
     /**
-     * claim case
+     * Claim case
      *
-     * @param $userUid
-     * @param $Fields
-     * @param $type
+     * @param string $userUid
+     * @param string $appUid
+     * @param integer $delIndex
+     *
+     * @return array
      * @throws Exception
      */
-    public function claimCaseUser($userUid, $sAppUid)
+    public function claimCaseUser($userUid, $appUid, $delIndex = null)
     {
-        $response = array("status" => "fail");
-        $oCase = new Cases();
-        $iDelIndex = $oCase->getCurrentDelegation($sAppUid, '', true);
+        $response = ['status' => 'fail'];
+        $case = new Cases();
+        $appDelegation = new AppDelegation();
+        if (empty($delIndex)) {
+            $delIndex = $case->getCurrentDelegation($appUid, '', true);
+        }
 
-        $oAppDelegation = new \AppDelegation();
-        $aDelegation = $oAppDelegation->load($sAppUid, $iDelIndex);
+        $delegation = $appDelegation->Load($appUid, $delIndex);
 
         //if there are no user in the delegation row, this case is still in selfservice
-        if ($aDelegation['USR_UID'] == "") {
-            $oCase->setCatchUser($sAppUid, $iDelIndex, $userUid);
-            $response = array("status" => "ok");
-        } else {
-            //G::SendMessageText( G::LoadTranslation( 'ID_CASE_ALREADY_DERIVATED' ), 'error' );
+        if (empty($delegation['USR_UID'])) {
+            $case->setCatchUser($appUid, $delIndex, $userUid);
+            $response['status'] = 'ok';
         }
 
         return $response;
