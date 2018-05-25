@@ -281,7 +281,7 @@ class RBAC
      * gets the Role and their permissions for Administrator Processmaker
      *
      * @access public
-     * @return $this->permissionsAdmin[ $permissionsAdmin ]
+     * @return array $this->permissionsAdmin[ $permissionsAdmin ]
      */
     public function loadPermissionAdmin()
     {
@@ -611,7 +611,13 @@ class RBAC
                 "PER_UID" => "00000000000000000000000000000065",
                 "PER_CODE" => "PM_SETUP_CUSTOM_CASES_LIST",
                 "PER_NAME" => "Setup Custom Cases List"
+            ],
+            [
+                'PER_UID' => '00000000000000000000000000000067',
+                'PER_CODE' => 'PM_SETUP_LOG_FILES',
+                'PER_NAME' => 'Log Files'
             ]
+
         ];
 
         return $permissionsAdmin;

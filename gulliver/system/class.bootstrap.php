@@ -2654,20 +2654,17 @@ class Bootstrap
     /**
      * Stores a message in the log file, if the file size exceeds
      *
-     * @param string $channel
-     * @param string $message
-     * @param array  $context
-     * @param string $file
-     * @param string $pathData
-     * @param string $ws workspace
-     *
-     * @return void
+     * @param string $channel The logging channel
+     * @param int $level The logging level
+     * @param string $message The log message
+     * @param array $context The log context
+     * @param string $workspace name workspace
+     * @param string $file name file
+     * @param string $pathData path of file
      */
-    public static function registerMonolog($channel, $level, $message, $context, $ws, $file = 'cron.log', $pathData = PATH_DATA)
+    public static function registerMonolog($channel, $level, $message, $context, $workspace, $file = 'cron.log', $pathData = PATH_DATA)
     {
-        $fileLog = $pathData .'sites'. PATH_SEP . $ws . PATH_SEP . 'log' . PATH_SEP . $file;
-
-        $registerLogger = MonologProvider::getSingleton($channel, $fileLog);
+        $registerLogger = MonologProvider::getSingleton($channel, $file);
         $registerLogger->addLog($level, $message, $context);
     }
 

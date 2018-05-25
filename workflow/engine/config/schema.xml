@@ -4180,7 +4180,7 @@
         <column name="ADDON_NICK" type="VARCHAR" size="255" required="true"/>
         <column name="ADDON_DOWNLOAD_FILENAME" type="VARCHAR" size="1024" required="false"/>
         <column name="ADDON_DESCRIPTION" type="VARCHAR" size="2048" required="false"/>
-        <column name="ADDON_STATE" type="VARCHAR" size="255" required="true"/>
+        <column name="ADDON_STATE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="ADDON_STATE_CHANGED" type="TIMESTAMP" required="false"/>
         <column name="ADDON_STATUS" type="VARCHAR" size="255" required="true"/>
         <column name="ADDON_VERSION" type="VARCHAR" size="255" required="true"/>

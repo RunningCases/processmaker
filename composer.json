@@ -45,7 +45,9 @@
         "pear/console_getopt": "1.4.*",
         "TYPO3/class-alias-loader": "^1.0",
         "ralouphie/getallheaders": "^2.0",
-        "smarty/smarty": "2.6.30"
+        "smarty/smarty": "2.6.30",
+        "pdepend/pdepend" : "@stable",
+        "chumper/zipper" : "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.7",
