@@ -140,7 +140,7 @@ class InstallerModule extends Controller
         $info->memory = new stdclass();
 
         $info->php->version = phpversion();
-        $info->php->result = (version_compare(phpversion(), '5.4', '>=') && version_compare(phpversion(), '7.0', '<')) ? true : false;
+        $info->php->result = (version_compare(phpversion(), '5.6', '>=') && version_compare(phpversion(), '7.0', '<')) ? true : false;
 
         // MYSQL info and verification
         $info->mysql->result = false;
