@@ -2767,6 +2767,7 @@ function PMFCancelCase ($caseUid, $delIndex, $userUid)
 {
     $ws = new WsBase();
     $result = $ws->cancelCase($caseUid, $delIndex, $userUid);
+    $result = (object)$result;
 
     if ($result->status_code == 0) {
         if (isset($_SESSION['APPLICATION']) && isset($_SESSION['INDEX'])) {

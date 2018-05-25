@@ -1,8 +1,10 @@
 <?php
 
-use \ProcessMaker\BusinessModel\WebEntryEvent;
+use ProcessMaker\BusinessModel\User as BusinessModelUser;
+use ProcessMaker\BusinessModel\WebEntryEvent;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
+
 
 /**
  * A Cases object where you can do start, load, update, refresh about cases
@@ -4196,11 +4198,11 @@ class Cases
             $dataList = [];
             $rowDelay = AppDelay::buildAppDelayRow(
                 $caseFields['PRO_UID'],
-                $caseFields['PRO_ID'],
+                isset($caseFields['PRO_ID']) ? $caseFields['PRO_ID'] : 0,
                 $appUid,
                 $caseFields['APP_NUMBER'],
-                $value['DEL_INDEX'],
                 $value['DEL_THREAD'],
+                $value['DEL_INDEX'],
                 AppDelay::APP_TYPE_CANCEL,
                 Application::APP_STATUS_CANCELLED,
                 is_null($usrUid) ? '' : $usrUid
@@ -4247,7 +4249,7 @@ class Cases
             /** Close the specific delIndex in APP_DELEGATION and APP_THREAD */
             $this->CloseCurrentDelegation($appUid, $delIndex);
             $resultDelegation = $delegation->Load($appUid, $delIndex);
-            $this->closeAppThread($appUid, $result['DEL_THREAD']);
+            $this->closeAppThread($appUid, $resultDelegation['DEL_THREAD']);
             $result[] = $resultDelegation;
         }
 
@@ -4257,114 +4259,114 @@ class Cases
     /**
      * Un cancel case
      *
-     * @param string $caseUID
-     * @param string $userUID
-     * @return int
+     * @param string $appUid
+     * @param string $usrUid
+     *
+     * @return void
+     * @throws Exception
      */
-    public function unCancelCase($appUID, $userUID)
+    public function unCancelCase($appUid, $usrUid)
     {
         try {
-            $oUser = new \ProcessMaker\BusinessModel\User();
-            if (!$oUser->checkPermission($userUID, 'PM_UNCANCELCASE')) {
+            $user = new BusinessModelUser();
+            /** Review if the user has the permission PM_UNCANCELCASE */
+            if (!$user->checkPermission($usrUid, 'PM_UNCANCELCASE')) {
                 throw new Exception(G::LoadTranslation('ID_YOU_DO_NOT_HAVE_PERMISSION'));
             }
 
-            $application = new Application();
-            $rowApplication = $application->load($appUID);
-            if ($rowApplication["APP_STATUS"] !== "CANCELLED") {
-                throw new Exception(G::LoadTranslation('ID_THE_APPLICATION_IS_NOT_CANCELED', [$appUID]));
+            $caseFields = $this->loadCase($appUid);
+            /** Review if the case has the status CANCELLED */
+            if ($caseFields["APP_STATUS"] !== Application::APP_STATUS_CANCELLED) {
+                throw new Exception(G::LoadTranslation('ID_THE_APPLICATION_IS_NOT_CANCELED', [$appUid]));
             }
 
-            $criteriaAppDelay = new Criteria('workflow');
-            $criteriaAppDelay->add(AppDelayPeer::APP_UID, $appUID);
-            $criteriaAppDelay->add(AppDelayPeer::APP_STATUS, 'CANCELLED');
-            $criteriaAppDelay->add(AppDelayPeer::PRO_UID, $rowApplication['PRO_UID']);
-            $criteriaAppDelay->addDescendingOrderByColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
-            $resultSetAppDelay = AppDelayPeer::doSelectRS($criteriaAppDelay);
-            $resultSetAppDelay->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultSetAppDelay->next();
-            $rowAppDelay = $resultSetAppDelay->getRow();
-            if (!isset($rowAppDelay['APP_STATUS'])) {
-                throw new Exception(G::LoadTranslation('ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION.', [$appUID]));
-            }
+            //Load the USR_ID
+            $u = new Users();
+            $userId = $u->load($usrUid)['USR_ID'];
 
-            //Application
-            $rowApplication['APP_STATUS'] = 'TO_DO';
-            $rowApplication['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            $application->update($rowApplication);
-
-            //AppDelegation
-            $appDelegation = new AppDelegation();
-            $rowAppDelegation = $appDelegation->Load($appUID, $rowAppDelay['APP_DEL_INDEX']);
-
-            $appDelegation = new AppDelegation();
-            $delIndex = $appDelegation->createAppDelegation($rowAppDelegation['PRO_UID'], $rowAppDelegation['APP_UID'], $rowAppDelegation['TAS_UID'], $userUID, $rowAppDelay['APP_THREAD_INDEX']);
-
-            //AppThread
-            $dataAppThread = [
-                'APP_UID' => $rowApplication['APP_UID'],
-                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
-                'APP_THREAD_STATUS' => 'OPEN',
-                'DEL_INDEX' => $delIndex
-            ];
-            $appThread = new AppThread();
-            $appThread->update($dataAppThread);
-
-            //AppDelay
-            $dataAppDelay = [
-                'PRO_UID' => $rowApplication['PRO_UID'],
-                'APP_UID' => $rowApplication['APP_UID'],
-                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
-                'APP_DELINDEX' => $delIndex,
-                'APP_TYPE' => 'UNCANCEL',
-                'APP_STATUS' => $rowApplication['APP_STATUS'],
-                'APP_NEXT_TASK' => 0,
-                'APP_DELEGATION_USER' => $userUID,
-                'APP_ENABLE_ACTION_USER' => $userUID,
-                'APP_ENABLE_ACTION_DATE' => date('Y-m-d H:i:s'),
-                'APP_DISABLE_ACTION_USER' => 0
-            ];
+            //Get the list of thread that close with the CancelCase
             $appDelay = new AppDelay();
-            $appDelay->create($dataAppDelay);
+            $threadsCanceled = $appDelay->getThreadByStatus($appUid, Application::APP_STATUS_CANCELLED);
 
-            //ListCanceled
-            $criteriaListCanceled = new Criteria("workflow");
-            $criteriaListCanceled->add(ListCanceledPeer::APP_UID, $appUID);
-            $resultSetListCanceled = ListCanceledPeer::doSelectRS($criteriaListCanceled);
-            $resultSetListCanceled->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultSetListCanceled->next();
-            $rowListCanceled = $resultSetListCanceled->getRow();
-            ListCanceledPeer::doDelete($criteriaListCanceled);
+            //Get all the threads in the AppDelay
+            foreach ($threadsCanceled as $row){
+                //Load the thread CLOSED
+                $appDelegation = new AppDelegation();
+                $delegationClosed = $appDelegation->Load($appUid, $row['APP_DEL_INDEX']);
+                //Create an appDelegation for each thread
+                $appDelegation = new AppDelegation();
+                $delIndex = $appDelegation->createAppDelegation(
+                    $delegationClosed['PRO_UID'],
+                    $delegationClosed['APP_UID'],
+                    $delegationClosed['TAS_UID'],
+                    $usrUid,
+                    $delegationClosed['DEL_THREAD'],
+                    3,
+                    false,
+                    $delegationClosed['DEL_PREVIOUS'],
+                    null,
+                    false,
+                    false,
+                    0,
+                    $delegationClosed['APP_NUMBER'],
+                    $delegationClosed['TAS_ID'],
+                    $userId,
+                    $delegationClosed['PRO_ID']
+                );
 
-            //ListInbox
-            $rowListCanceled['DEL_PREVIOUS_USR_USERNAME'] = $rowListCanceled['DEL_CURRENT_USR_USERNAME'];
-            $rowListCanceled['DEL_PREVIOUS_USR_FIRSTNAME'] = $rowListCanceled['DEL_CURRENT_USR_FIRSTNAME'];
-            $rowListCanceled['DEL_PREVIOUS_USR_LASTNAME'] = $rowListCanceled['DEL_CURRENT_USR_LASTNAME'];
-            $rowListCanceled['APP_STATUS'] = 'TO_DO';
-            $rowListCanceled['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            $rowListCanceled['DEL_RISK_DATE'] = date('Y-m-d H:i:s');
-            $rowListCanceled['DEL_INDEX'] = $delIndex;
-            unset($rowListCanceled['DEL_CURRENT_USR_USERNAME']);
-            unset($rowListCanceled['DEL_CURRENT_USR_FIRSTNAME']);
-            unset($rowListCanceled['DEL_CURRENT_USR_LASTNAME']);
-            unset($rowListCanceled['APP_CANCELED_DATE']);
+                //Update the appThread
+                $dataAppThread = [
+                    'APP_UID' => $row['APP_UID'],
+                    'APP_THREAD_INDEX' => $delegationClosed['DEL_THREAD'],
+                    'APP_THREAD_STATUS' => 'OPEN',
+                    'DEL_INDEX' => $delIndex
+                ];
+                $appThread = new AppThread();
+                $res = $appThread->update($dataAppThread);
 
-            $this->putCaseInInboxList($rowListCanceled, $userUID);
+                //New register in AppDelay
+                $newAppDelay = AppDelay::buildAppDelayRow(
+                    $row['PRO_UID'],
+                    $delegationClosed['PRO_ID'],
+                    $row['APP_UID'],
+                    $delegationClosed['APP_NUMBER'],
+                    $row['APP_THREAD_INDEX'],
+                    $delIndex,
+                    AppDelay::APP_TYPE_UNCANCEL,
+                    Application::APP_STATUS_TODO,
+                    $usrUid,
+                    $userId
+                );
+                $appDelay->create($newAppDelay);
 
-            //ListParticipatedLast
-            $criteriaListParticipatedLast = new Criteria("workflow");
-            $criteriaListParticipatedLast->add(ListParticipatedLastPeer::APP_UID, $appUID);
-            $resultSetListParticipatedLast = ListParticipatedLastPeer::doSelectRS($criteriaListParticipatedLast);
-            $resultSetListParticipatedLast->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultSetListParticipatedLast->next();
-            $rowListParticipatedLast = $resultSetListParticipatedLast->getRow();
-            $rowListParticipatedLast['APP_STATUS'] = 'TO_DO';
-            $rowListParticipatedLast['DEL_THREAD_STATUS'] = 'OPEN';
-            $rowListParticipatedLast['DEL_INIT_DATE'] = null;
-            $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->update($rowListParticipatedLast);
-        } catch (Exception $oException) {
-            throw $oException;
+                //New register in the listInbox
+                $newDelegation = array_merge($newAppDelay, $delegationClosed);
+                $newDelegation['USR_UID'] = $usrUid;
+                $newDelegation['DEL_INDEX'] = $delIndex;
+                $newDelegation['APP_STATUS'] = Application::APP_STATUS_TODO;
+                $inbox = new ListInbox();
+                //Get the previous user
+                //When the status of the case is DRAFT we does not have a previous thread
+                $previousUser = '';
+                if ($delegationClosed['DEL_PREVIOUS'] != 0){
+                    $appDelegation = new AppDelegation();
+                    $delegationPrevious = $appDelegation->Load($appUid, $delegationClosed['DEL_PREVIOUS']);
+                    $previousUser = $delegationPrevious['USR_UID'];
+                }
+
+                $inbox->newRow($newDelegation, $previousUser);
+            }
+
+            //Update the status of the case
+            $caseFields['APP_STATUS'] = Application::APP_STATUS_TODO;
+            $this->updateCase($appUid, $caseFields);
+
+            //Remove the case from the list Canceled
+            $listCanceled = new ListCanceled();
+            $listCanceled->removeAll($appUid);
+
+        } catch (Exception $exception) {
+            throw $exception;
         }
     }
 
