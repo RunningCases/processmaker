@@ -5783,6 +5783,7 @@ class Cases
         $resultCaseNotes = 0;
         $resultSummary = 0;
         $resultMessages = [];
+        $resultReassignCases = [];
 
         foreach ($permissions as $row) {
             $userUid = $row['USR_UID'];
@@ -5927,7 +5928,7 @@ class Cases
                         break;
                     /*----------------------------------********---------------------------------*/
                     case 'MSGS_HISTORY':
-                        $listMessage= $objectPermission->objectPermissionMessage(
+                        $listMessage = $objectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
                             $userUid,
@@ -5939,11 +5940,17 @@ class Cases
                         );
                         $resultMessages = array_merge($resultMessages, $listMessage);
                         break;
+                    /*----------------------------------********---------------------------------*/
+                    case 'REASSIGN_MY_CASES':
+                        $listReassign = $objectPermission->objectPermissionByReassignCases($appUid, $proUid, $tasUid);
+                        $resultReassignCases = array_merge($resultReassignCases, $listReassign);
+                        break;
+                    /*----------------------------------********---------------------------------*/
                 }
             }
         }
 
-        return array(
+        return [
             "DYNAFORMS" => $resultDynaforms,
             "INPUT_DOCUMENTS" => $resultInputs,
             "ATTACHMENTS" => $resultAttachments,
@@ -5951,9 +5958,10 @@ class Cases
             "CASES_NOTES" => $resultCaseNotes,
             "MSGS_HISTORY" => $resultMessages
             /*----------------------------------********---------------------------------*/
+            , "REASSIGN_MY_CASES" => $resultReassignCases
             , "SUMMARY_FORM" => $resultSummary
             /*----------------------------------********---------------------------------*/
-        );
+        ];
     }
 
     /**

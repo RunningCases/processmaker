@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\Plugins\PluginRegistry;
 
 if (!isset($_SESSION['USER_LOGGED'])) {
@@ -23,27 +24,41 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession") {
         print G::json_encode($response);
         die();
     } else {
-        $response = new stdclass();
-
-        //Check if the user is a supervisor to this Process
+        /** Action: Reassign from openCase */
         global $RBAC;
-        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
+        $proUid = $_SESSION['PROCESS'];
+        $appUid = $_SESSION['APPLICATION'];
+        $tasUid = $_SESSION['TASK'];
+
+        $response = new stdclass();
+        $cases = new BmCases();
+        $userAuthorization = $cases->userAuthorization(
+            $RBAC->aUserInfo['USER_INFO']['USR_UID'],
+            $proUid,
+            $appUid,
+            ['PM_REASSIGNCASE', 'PM_REASSIGNCASE_SUPERVISOR'],
+            ['REASSIGN_MY_CASES' => ''],
+            true,
+            $tasUid
+        );
+
+        if (
+            $userAuthorization['rolesPermissions']['PM_REASSIGNCASE'] ||
+            ($userAuthorization['rolesPermissions']['PM_REASSIGNCASE_SUPERVISOR'] && $userAuthorization['supervisor']) ||
+            in_array($appUid, $userAuthorization['objectPermissions']['REASSIGN_MY_CASES'])
+        ) {
             $response->reassigncase = true;
             $response->message = '';
-        } elseif ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
+        } else {
             $response->reassigncase = false;
             $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
-            $processUser = new ProcessUser();
-            $listProcess = $processUser->getProUidSupervisor($_SESSION['USER_LOGGED']);
-            if (in_array($_SESSION['PROCESS'], $listProcess)) {
-                $response->reassigncase = true;
-            }
         }
 
         print G::json_encode($response);
         die();
     }
 }
+
 class Ajax
 {
     public function getCaseMenu($params)
@@ -144,61 +159,83 @@ class Ajax
         return $options;
     }
 
+    /**
+     * Get the options menu from action
+     *
+     * @return array
+    */
     public function getActionOptions()
     {
-        $APP_UID = $_SESSION['APPLICATION'];
+        $appUid = $_SESSION['APPLICATION'];
+        $index = $_SESSION['INDEX'];
+        $proUid = $_SESSION['PROCESS'];
+        $tasUid = $_SESSION['TASK'];
 
         $c = new Criteria('workflow');
         $c->clearSelectColumns();
         $c->addSelectColumn(AppThreadPeer::APP_THREAD_PARENT);
-        $c->add(AppThreadPeer::APP_UID, $APP_UID);
+        $c->add(AppThreadPeer::APP_UID, $appUid);
         $c->add(AppThreadPeer::APP_THREAD_STATUS, 'OPEN');
         $cant = AppThreadPeer::doCount($c);
 
         $oCase = new Cases();
-        $aFields = $oCase->loadCase($_SESSION['APPLICATION'], $_SESSION['INDEX']);
+        $aFields = $oCase->loadCase($appUid, $index);
 
         global $RBAC;
 
-        $options = array();
+        $options = [];
 
         switch ($aFields['APP_STATUS']) {
             case 'DRAFT':
-                if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                    $options[] = array('text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate');
+                if (!AppDelay::isPaused($appUid, $index)) {
+                    $options[] = ['text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate'];
                 } else {
-                    $options[] = array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
+                    $options[] = ['text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase'];
                 }
 
-                $options[] = array('text' => G::LoadTranslation('ID_DELETE'), 'fn' => 'deleteCase');
+                $options[] = ['text' => G::LoadTranslation('ID_DELETE'), 'fn' => 'deleteCase'];
 
                 if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
-                    if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                        $options[] = array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                    if (!AppDelay::isPaused($appUid, $index)) {
+                        $options[] = ['text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign'];
                     }
                 }
                 break;
             case 'TO_DO':
-                if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                    $options[] = array('text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate');
+                if (!AppDelay::isPaused($appUid, $index)) {
+                    $options[] = ['text' => G::LoadTranslation('ID_PAUSED_CASE'), 'fn' => 'setUnpauseCaseDate'];
                     if ($cant == 1) {
                         if ($RBAC->userCanAccess('PM_CANCELCASE') == 1) {
-                            $options[] = array('text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase');
+                            $options[] = ['text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase'];
                         } else {
-                            $options[] = array('text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase', 'hide' => 'hiden');
+                            $options[] = ['text' => G::LoadTranslation('ID_CANCEL'), 'fn' => 'cancelCase', 'hide' => 'hiden'];
                         }
                     }
                 } else {
-                    $options[] = array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
+                    $options[] = ['text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase'];
                 }
-                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
-                    if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
-                        $options[] = array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                $cases = new BmCases();
+                $userAuthorization = $cases->userAuthorization(
+                    $RBAC->aUserInfo['USER_INFO']['USR_UID'],
+                    $proUid,
+                    $appUid,
+                    [],
+                    ['REASSIGN_MY_CASES' => ''],
+                    false,
+                    $tasUid
+                );
+                if (
+                    $RBAC->userCanAccess('PM_REASSIGNCASE') == 1
+                    || $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1
+                    || in_array($appUid, $userAuthorization['objectPermissions']['REASSIGN_MY_CASES'])
+                ) {
+                    if (!AppDelay::isPaused($appUid, $index)) {
+                        $options[] = ['text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign'];
                     }
                 }
                 break;
             case 'CANCELLED':
-                $options[] = array('text' => G::LoadTranslation('ID_REACTIVATE'), 'fn' => 'reactivateCase');
+                $options[] = ['text' => G::LoadTranslation('ID_REACTIVATE'), 'fn' => 'reactivateCase'];
                 break;
         }
 
@@ -217,9 +254,10 @@ class Ajax
             }
 
             if ($aTask['TAS_TYPE'] == 'ADHOC') {
-                $options[] = array('text' => G::LoadTranslation('ID_ADHOC_ASSIGNMENT'), 'fn' => 'adhocAssignmentUsers');
+                $options[] = ['text' => G::LoadTranslation('ID_ADHOC_ASSIGNMENT'), 'fn' => 'adhocAssignmentUsers'];
             }
         }
+
         return $options;
     }
 
@@ -550,7 +588,7 @@ class Ajax
         $response = [];
 
         try {
-            $case = new \ProcessMaker\BusinessModel\Cases();
+            $case = new BmCases();
 
             $result = $case->getUsersToReassign($_SESSION['USER_LOGGED'], $taskUid, ['filter' => $search], $sortField, $sortDir, $start, $limit);
 

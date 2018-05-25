@@ -184,12 +184,13 @@ if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjB
 }
 /*----------------------------------********---------------------------------*/
 
-//menu permissions
+/** Define actions menu in the cases list */
 $cnt = '';
-$reassignCase    = ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) ? 'true' : 'false';
-$reassignCaseSup = ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) ? 'true':'false';
+$reassignCase = ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) ? 'true' : 'false';
+$reassignCaseSup = ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) ? 'true' : 'false';
 $oHeadPublisher->assign('varReassignCase', $reassignCase);
 $oHeadPublisher->assign('varReassignCaseSupervisor', $reassignCaseSup);
+
 $c = new Configurations();
 $oHeadPublisher->addExtJsScript('app/main', true);
 $oHeadPublisher->addExtJsScript('cases/casesList', false); //adding a javascript file .js
