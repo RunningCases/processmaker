@@ -1,8 +1,10 @@
 <?php
 
-use \ProcessMaker\BusinessModel\WebEntryEvent;
+use ProcessMaker\BusinessModel\User as BusinessModelUser;
+use ProcessMaker\BusinessModel\WebEntryEvent;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
+
 
 /**
  * A Cases object where you can do start, load, update, refresh about cases
@@ -1856,14 +1858,16 @@ class Cases
      * This function updates a row in APP_DELEGATION
      *
      * @name closeAllDelegations
-     * @param string $sAppUid
+     * @param string $appUid
+     *
      * @return void
+     * @throws Exception
      */
-    public function closeAllThreads($sAppUid)
+    public function closeAllThreads($appUid)
     {
         try {
             $c = new Criteria();
-            $c->add(AppThreadPeer::APP_UID, $sAppUid);
+            $c->add(AppThreadPeer::APP_UID, $appUid);
             $c->add(AppThreadPeer::APP_THREAD_STATUS, 'OPEN');
             $rowObj = AppThreadPeer::doSelect($c);
             foreach ($rowObj as $appThread) {
@@ -1878,11 +1882,12 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
             }
-            //update searchindex
+
+            /** Update search index */
             if ($this->appSolr != null) {
-                $this->appSolr->updateApplicationSearchIndex($sAppUid);
+                $this->appSolr->updateApplicationSearchIndex($appUid);
             }
-        } catch (exception $e) {
+        } catch (Exception $e) {
             throw ($e);
         }
     }
@@ -1915,19 +1920,22 @@ class Cases
     /**
      * With this function we can change status to CLOSED in APP_DELEGATION
      *
-     * @name closeAllDelegations
-     * @param string $sAppUid
-     * @return
+     * @param string $appUid
+     *
+     * @return void
+     * @throws Exception
      */
-    public function closeAllDelegations($sAppUid)
+    public function closeAllDelegations($appUid)
     {
         try {
-            $c = new Criteria();
-            $c->add(AppDelegationPeer::APP_UID, $sAppUid);
-            $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
-            $rowObj = AppDelegationPeer::doSelect($c);
+            $criteria = new Criteria();
+            $criteria->add(AppDelegationPeer::APP_UID, $appUid);
+            $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+            $rowObj = AppDelegationPeer::doSelect($criteria);
+            $data = [];
             foreach ($rowObj as $appDel) {
                 $appDel->setDelThreadStatus('CLOSED');
+                $appDel->setDelFinishDate('now');
                 if ($appDel->Validate()) {
                     $appDel->Save();
                 } else {
@@ -1937,12 +1945,31 @@ class Cases
                     }
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
+
+                /*----------------------------------********---------------------------------*/
+                $delIndex = $appDel->getDelIndex();
+                $inbox = new ListInbox();
+                $inbox->remove($appUid, $delIndex);
+                $data['DEL_THREAD_STATUS'] = 'CLOSED';
+                $data['APP_UID'] = $appUid;
+                $data['DEL_INDEX'] = $delIndex;
+                $data['USR_UID'] = $appDel->getUsrUid();
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->refresh($data);
+                /*----------------------------------********---------------------------------*/
+
+                /** This case is subProcess? */
+                if (SubApplication::isCaseSubProcess($appUid)) {
+                    $route = new Derivation();
+                    $route->verifyIsCaseChild($appUid, $delIndex);
+                }
             }
-            //update searchindex
+
+            /** Update search index */
             if ($this->appSolr != null) {
-                $this->appSolr->updateApplicationSearchIndex($sAppUid);
+                $this->appSolr->updateApplicationSearchIndex($appUid);
             }
-        } catch (exception $e) {
+        } catch (Exception $e) {
             throw ($e);
         }
     }
@@ -1950,18 +1977,19 @@ class Cases
     /**
      * With this we can change the status to CLOSED in APP_DELEGATION
      *
-     * @name CloseCurrentDelegation
-     * @param string $sAppUid
-     * @param string $iDelIndex
-     * @return Fields
+     * @param string $appUid
+     * @param string $delIndex
+     *
+     * @return void
+     * @throws Exception
      */
-    public function CloseCurrentDelegation($sAppUid, $iDelIndex)
+    public function CloseCurrentDelegation($appUid, $delIndex)
     {
         try {
-            $c = new Criteria();
-            $c->add(AppDelegationPeer::APP_UID, $sAppUid);
-            $c->add(AppDelegationPeer::DEL_INDEX, $iDelIndex);
-            $rowObj = AppDelegationPeer::doSelect($c);
+            $criteria = new Criteria();
+            $criteria->add(AppDelegationPeer::APP_UID, $appUid);
+            $criteria->add(AppDelegationPeer::DEL_INDEX, $delIndex);
+            $rowObj = AppDelegationPeer::doSelect($criteria);
             $user = '';
             foreach ($rowObj as $appDel) {
                 $appDel->setDelThreadStatus('CLOSED');
@@ -1977,17 +2005,30 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
             }
+
             /*----------------------------------********---------------------------------*/
             $inbox = new ListInbox();
-            $inbox->remove($sAppUid, $iDelIndex);
+            $data = [];
+            $inbox->remove($appUid, $delIndex);
             $data['DEL_THREAD_STATUS'] = 'CLOSED';
-            $data['APP_UID'] = $sAppUid;
-            $data['DEL_INDEX'] = $iDelIndex;
+            $data['APP_UID'] = $appUid;
+            $data['DEL_INDEX'] = $delIndex;
             $data['USR_UID'] = $user;
             $listParticipatedLast = new ListParticipatedLast();
             $listParticipatedLast->refresh($data);
             /*----------------------------------********---------------------------------*/
-        } catch (exception $e) {
+
+            /** This case is subProcess? */
+            if (SubApplication::isCaseSubProcess($appUid)) {
+                $route = new Derivation();
+                $route->verifyIsCaseChild($appUid, $delIndex);
+            }
+
+            /** Update searchindex */
+            if ($this->appSolr != null) {
+                $this->appSolr->updateApplicationSearchIndex($appUid);
+            }
+        } catch (Exception $e) {
             throw ($e);
         }
     }
@@ -4125,216 +4166,207 @@ class Cases
     }
 
     /**
-     * cancel a case
+     * Cancel case without matter the threads
+     * if the force is true, we will cancel it does not matter the threads
+     * if the force is false, we will to cancel one thread
      *
-     * @name cancelCase
-     * @param string $sApplicationUID
-     * @param string $iIndex
-     * @param string $user_logged
-     * @return void
-     */
-    public function cancelCase($sApplicationUID, $iIndex, $user_logged)
+     * @param string $appUid
+     * @param integer $delIndex
+     * @param string $usrUid
+     *
+     * @return boolean|string
+    */
+    public function cancelCase($appUid, $delIndex = null, $usrUid = null)
     {
-        $this->getExecuteTriggerProcess($sApplicationUID, 'CANCELED');
+        /** Execute a trigger when a case is cancelled */
+        $this->getExecuteTriggerProcess($appUid, 'CANCELED');
 
-        $oApplication = new Application();
-        $aFields = $oApplication->load($sApplicationUID);
+        $caseFields = $this->loadCase($appUid);
+        $appStatusCurrent = $caseFields['APP_STATUS'];
 
-        $appData = self::unserializeData($aFields['APP_DATA']);
-        $appData = G::array_merges(G::getSystemConstants(), $appData);
+        /** Update the status CANCELLED in the tables related */
+        $caseFields['APP_STATUS'] = Application::APP_STATUS_CANCELLED;
+        $this->updateCase($appUid, $caseFields);
 
-        $appStatusCurrent = $aFields['APP_STATUS'];
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
-        $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
-        $resAppDel = AppDelegationPeer::doCount($oCriteria);
+        /** Close the thread(s) in APP_DELEGATION and APP_THREAD */
+        $indexesClosed = self::closeCaseThreads($appUid, $delIndex);
 
-        $this->CloseCurrentDelegation($sApplicationUID, $iIndex);
-        if ($resAppDel == 1) {
-            $aFields['APP_STATUS'] = 'CANCELLED';
-            $oApplication->update($aFields);
-
-            require_once 'classes/model/AdditionalTables.php';
-            $oReportTables = new ReportTables();
-            $addtionalTables = new additionalTables();
-            $oReportTables->updateTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $appData);
-            $addtionalTables->updateReportTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $appData, $aFields['APP_STATUS']);
-        }
-        $oAppDel = new AppDelegation();
-        $oAppDel->Load($sApplicationUID, $iIndex);
-        $aAppDel = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
-        $this->closeAppThread($sApplicationUID, $aAppDel['DEL_THREAD']);
-
+        /** Create a register in APP_DELAY */
         $delay = new AppDelay();
-        $array['PRO_UID'] = $aFields['PRO_UID'];
-        $array['APP_UID'] = $sApplicationUID;
 
-        $c = new Criteria('workflow');
-        $c->clearSelectColumns();
-        $c->addSelectColumn(AppThreadPeer::APP_THREAD_INDEX);
-        $c->add(AppThreadPeer::APP_UID, $sApplicationUID);
-        $c->add(AppThreadPeer::DEL_INDEX, $iIndex);
-        $oDataset = AppThreadPeer::doSelectRS($c);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aRow = $oDataset->getRow();
-        $array['APP_THREAD_INDEX'] = $aRow['APP_THREAD_INDEX'];
-        $array['APP_DEL_INDEX'] = $iIndex;
-        $array['APP_TYPE'] = 'CANCEL';
+        foreach ($indexesClosed as $value){
+            $dataList = [];
+            $rowDelay = AppDelay::buildAppDelayRow(
+                $caseFields['PRO_UID'],
+                isset($caseFields['PRO_ID']) ? $caseFields['PRO_ID'] : 0,
+                $appUid,
+                $caseFields['APP_NUMBER'],
+                $value['DEL_THREAD'],
+                $value['DEL_INDEX'],
+                AppDelay::APP_TYPE_CANCEL,
+                Application::APP_STATUS_CANCELLED,
+                is_null($usrUid) ? '' : $usrUid
+            );
+            $delay->create($rowDelay);
 
-        $c = new Criteria('workflow');
-        $c->clearSelectColumns();
-        $c->addSelectColumn(ApplicationPeer::APP_STATUS);
-        $c->add(ApplicationPeer::APP_UID, $sApplicationUID);
-        $oDataset = ApplicationPeer::doSelectRS($c);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aRow1 = $oDataset->getRow();
-        $array['APP_STATUS'] = $aRow1['APP_STATUS'];
+            /*----------------------------------********---------------------------------*/
+            $dataList = [
+                'APP_UID' => $appUid,
+                'DEL_INDEX' => $value['DEL_INDEX'],
+                'USR_UID' => $rowDelay['APP_DELEGATION_USER'],
+                'APP_STATUS_CURRENT' => $appStatusCurrent
+            ];
 
-        $array['APP_DELEGATION_USER'] = $user_logged;
-        $array['APP_ENABLE_ACTION_USER'] = $user_logged;
-        $array['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
-        $array['APP_NUMBER'] = $oApplication->getAppNumber();
-        $delay->create($array);
+            $dataList = array_merge($caseFields, $dataList);
+            $listCanceled = new ListCanceled();
+            $listCanceled->create($dataList);
+            /*----------------------------------********---------------------------------*/
+        }
+    }
 
-        //Before cancel a case verify if is a child case
-        $oCriteria2 = new Criteria('workflow');
-        $oCriteria2->add(SubApplicationPeer::APP_UID, $sApplicationUID);
-        $oCriteria2->add(SubApplicationPeer::SA_STATUS, 'ACTIVE');
-        if (SubApplicationPeer::doCount($oCriteria2) > 0) {
-            $oDerivation = new Derivation();
-            $oDerivation->verifyIsCaseChild($sApplicationUID, $iIndex);
+    /**
+     * This function will be close the one or all threads
+     *
+     * @param string $appUid
+     * @param integer $delIndex, if is null we will to close all threads
+     *
+     * @return array
+    */
+    private function closeCaseThreads($appUid, $delIndex = null)
+    {
+        $delegation = new AppDelegation();
+        $result = [];
+
+        /** Close all the threads in APP_DELEGATION and APP_THREAD */
+        if (is_null($delIndex)) {
+            /*----------------------------------********---------------------------------*/
+            $result = $delegation->LoadParallel($appUid);
+            $this->closeAllDelegations($appUid);
+            $this->closeAllThreads($appUid);
+            /*----------------------------------********---------------------------------*/
+
+        } else {
+            /** Close the specific delIndex in APP_DELEGATION and APP_THREAD */
+            $this->CloseCurrentDelegation($appUid, $delIndex);
+            $resultDelegation = $delegation->Load($appUid, $delIndex);
+            $this->closeAppThread($appUid, $resultDelegation['DEL_THREAD']);
+            $result[] = $resultDelegation;
         }
 
-        //update searchindex
-        if ($this->appSolr != null) {
-            $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
-        }
-        /*----------------------------------********---------------------------------*/
-        $data = array(
-            'APP_UID' => $sApplicationUID,
-            'DEL_INDEX' => $iIndex,
-            'USR_UID' => $user_logged,
-            'APP_STATUS_CURRENT' => $appStatusCurrent
-        );
-        $data = array_merge($aFields, $data);
-        $oListCanceled = new ListCanceled();
-        $oListCanceled->create($data);
-        /*----------------------------------********---------------------------------*/
+        return $result;
     }
 
     /**
      * Un cancel case
      *
-     * @param string $caseUID
-     * @param string $userUID
-     * @return int
+     * @param string $appUid
+     * @param string $usrUid
+     *
+     * @return void
+     * @throws Exception
      */
-    public function unCancelCase($appUID, $userUID)
+    public function unCancelCase($appUid, $usrUid)
     {
         try {
-            $oUser = new \ProcessMaker\BusinessModel\User();
-            if (!$oUser->checkPermission($userUID, 'PM_UNCANCELCASE')) {
+            $user = new BusinessModelUser();
+            /** Review if the user has the permission PM_UNCANCELCASE */
+            if (!$user->checkPermission($usrUid, 'PM_UNCANCELCASE')) {
                 throw new Exception(G::LoadTranslation('ID_YOU_DO_NOT_HAVE_PERMISSION'));
             }
 
-            $application = new Application();
-            $rowApplication = $application->load($appUID);
-            if ($rowApplication["APP_STATUS"] !== "CANCELLED") {
-                throw new Exception(G::LoadTranslation('ID_THE_APPLICATION_IS_NOT_CANCELED', [$appUID]));
+            $caseFields = $this->loadCase($appUid);
+            /** Review if the case has the status CANCELLED */
+            if ($caseFields["APP_STATUS"] !== Application::APP_STATUS_CANCELLED) {
+                throw new Exception(G::LoadTranslation('ID_THE_APPLICATION_IS_NOT_CANCELED', [$appUid]));
             }
 
-            $criteriaAppDelay = new Criteria('workflow');
-            $criteriaAppDelay->add(AppDelayPeer::APP_UID, $appUID);
-            $criteriaAppDelay->add(AppDelayPeer::APP_STATUS, 'CANCELLED');
-            $criteriaAppDelay->add(AppDelayPeer::PRO_UID, $rowApplication['PRO_UID']);
-            $criteriaAppDelay->addDescendingOrderByColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
-            $resultSetAppDelay = AppDelayPeer::doSelectRS($criteriaAppDelay);
-            $resultSetAppDelay->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultSetAppDelay->next();
-            $rowAppDelay = $resultSetAppDelay->getRow();
-            if (!isset($rowAppDelay['APP_STATUS'])) {
-                throw new Exception(G::LoadTranslation('ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION.', [$appUID]));
-            }
+            //Load the USR_ID
+            $u = new Users();
+            $userId = $u->load($usrUid)['USR_ID'];
 
-            //Application
-            $rowApplication['APP_STATUS'] = 'TO_DO';
-            $rowApplication['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            $application->update($rowApplication);
-
-            //AppDelegation
-            $appDelegation = new AppDelegation();
-            $rowAppDelegation = $appDelegation->Load($appUID, $rowAppDelay['APP_DEL_INDEX']);
-
-            $appDelegation = new AppDelegation();
-            $delIndex = $appDelegation->createAppDelegation($rowAppDelegation['PRO_UID'], $rowAppDelegation['APP_UID'], $rowAppDelegation['TAS_UID'], $userUID, $rowAppDelay['APP_THREAD_INDEX']);
-
-            //AppThread
-            $dataAppThread = [
-                'APP_UID' => $rowApplication['APP_UID'],
-                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
-                'APP_THREAD_STATUS' => 'OPEN',
-                'DEL_INDEX' => $delIndex
-            ];
-            $appThread = new AppThread();
-            $appThread->update($dataAppThread);
-
-            //AppDelay
-            $dataAppDelay = [
-                'PRO_UID' => $rowApplication['PRO_UID'],
-                'APP_UID' => $rowApplication['APP_UID'],
-                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
-                'APP_DELINDEX' => $delIndex,
-                'APP_TYPE' => 'UNCANCEL',
-                'APP_STATUS' => $rowApplication['APP_STATUS'],
-                'APP_NEXT_TASK' => 0,
-                'APP_DELEGATION_USER' => $userUID,
-                'APP_ENABLE_ACTION_USER' => $userUID,
-                'APP_ENABLE_ACTION_DATE' => date('Y-m-d H:i:s'),
-                'APP_DISABLE_ACTION_USER' => 0
-            ];
+            //Get the list of thread that close with the CancelCase
             $appDelay = new AppDelay();
-            $appDelay->create($dataAppDelay);
+            $threadsCanceled = $appDelay->getThreadByStatus($appUid, Application::APP_STATUS_CANCELLED);
 
-            //ListCanceled
-            $criteriaListCanceled = new Criteria("workflow");
-            $criteriaListCanceled->add(ListCanceledPeer::APP_UID, $appUID);
-            $resultSetListCanceled = ListCanceledPeer::doSelectRS($criteriaListCanceled);
-            $resultSetListCanceled->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultSetListCanceled->next();
-            $rowListCanceled = $resultSetListCanceled->getRow();
-            ListCanceledPeer::doDelete($criteriaListCanceled);
+            //Get all the threads in the AppDelay
+            foreach ($threadsCanceled as $row){
+                //Load the thread CLOSED
+                $appDelegation = new AppDelegation();
+                $delegationClosed = $appDelegation->Load($appUid, $row['APP_DEL_INDEX']);
+                //Create an appDelegation for each thread
+                $appDelegation = new AppDelegation();
+                $delIndex = $appDelegation->createAppDelegation(
+                    $delegationClosed['PRO_UID'],
+                    $delegationClosed['APP_UID'],
+                    $delegationClosed['TAS_UID'],
+                    $usrUid,
+                    $delegationClosed['DEL_THREAD'],
+                    3,
+                    false,
+                    $delegationClosed['DEL_PREVIOUS'],
+                    null,
+                    false,
+                    false,
+                    0,
+                    $delegationClosed['APP_NUMBER'],
+                    $delegationClosed['TAS_ID'],
+                    $userId,
+                    $delegationClosed['PRO_ID']
+                );
 
-            //ListInbox
-            $rowListCanceled['DEL_PREVIOUS_USR_USERNAME'] = $rowListCanceled['DEL_CURRENT_USR_USERNAME'];
-            $rowListCanceled['DEL_PREVIOUS_USR_FIRSTNAME'] = $rowListCanceled['DEL_CURRENT_USR_FIRSTNAME'];
-            $rowListCanceled['DEL_PREVIOUS_USR_LASTNAME'] = $rowListCanceled['DEL_CURRENT_USR_LASTNAME'];
-            $rowListCanceled['APP_STATUS'] = 'TO_DO';
-            $rowListCanceled['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            $rowListCanceled['DEL_RISK_DATE'] = date('Y-m-d H:i:s');
-            $rowListCanceled['DEL_INDEX'] = $delIndex;
-            unset($rowListCanceled['DEL_CURRENT_USR_USERNAME']);
-            unset($rowListCanceled['DEL_CURRENT_USR_FIRSTNAME']);
-            unset($rowListCanceled['DEL_CURRENT_USR_LASTNAME']);
-            unset($rowListCanceled['APP_CANCELED_DATE']);
+                //Update the appThread
+                $dataAppThread = [
+                    'APP_UID' => $row['APP_UID'],
+                    'APP_THREAD_INDEX' => $delegationClosed['DEL_THREAD'],
+                    'APP_THREAD_STATUS' => 'OPEN',
+                    'DEL_INDEX' => $delIndex
+                ];
+                $appThread = new AppThread();
+                $res = $appThread->update($dataAppThread);
 
-            $this->putCaseInInboxList($rowListCanceled, $userUID);
+                //New register in AppDelay
+                $newAppDelay = AppDelay::buildAppDelayRow(
+                    $row['PRO_UID'],
+                    $delegationClosed['PRO_ID'],
+                    $row['APP_UID'],
+                    $delegationClosed['APP_NUMBER'],
+                    $row['APP_THREAD_INDEX'],
+                    $delIndex,
+                    AppDelay::APP_TYPE_UNCANCEL,
+                    Application::APP_STATUS_TODO,
+                    $usrUid,
+                    $userId
+                );
+                $appDelay->create($newAppDelay);
 
-            //ListParticipatedLast
-            $criteriaListParticipatedLast = new Criteria("workflow");
-            $criteriaListParticipatedLast->add(ListParticipatedLastPeer::APP_UID, $appUID);
-            $resultSetListParticipatedLast = ListParticipatedLastPeer::doSelectRS($criteriaListParticipatedLast);
-            $resultSetListParticipatedLast->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultSetListParticipatedLast->next();
-            $rowListParticipatedLast = $resultSetListParticipatedLast->getRow();
-            $rowListParticipatedLast['APP_STATUS'] = 'TO_DO';
-            $rowListParticipatedLast['DEL_THREAD_STATUS'] = 'OPEN';
-            $rowListParticipatedLast['DEL_INIT_DATE'] = null;
-            $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->update($rowListParticipatedLast);
-        } catch (Exception $oException) {
-            throw $oException;
+                //New register in the listInbox
+                $newDelegation = array_merge($newAppDelay, $delegationClosed);
+                $newDelegation['USR_UID'] = $usrUid;
+                $newDelegation['DEL_INDEX'] = $delIndex;
+                $newDelegation['APP_STATUS'] = Application::APP_STATUS_TODO;
+                $inbox = new ListInbox();
+                //Get the previous user
+                //When the status of the case is DRAFT we does not have a previous thread
+                $previousUser = '';
+                if ($delegationClosed['DEL_PREVIOUS'] != 0){
+                    $appDelegation = new AppDelegation();
+                    $delegationPrevious = $appDelegation->Load($appUid, $delegationClosed['DEL_PREVIOUS']);
+                    $previousUser = $delegationPrevious['USR_UID'];
+                }
+
+                $inbox->newRow($newDelegation, $previousUser);
+            }
+
+            //Update the status of the case
+            $caseFields['APP_STATUS'] = Application::APP_STATUS_TODO;
+            $this->updateCase($appUid, $caseFields);
+
+            //Remove the case from the list Canceled
+            $listCanceled = new ListCanceled();
+            $listCanceled->removeAll($appUid);
+
+        } catch (Exception $exception) {
+            throw $exception;
         }
     }
 
