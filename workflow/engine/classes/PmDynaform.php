@@ -707,7 +707,8 @@ class PmDynaform
                 if ($value[0] === $json->variable) {
                     continue;
                 }
-                $jsonSearch = $this->jsonsf(G::json_decode($this->record["DYN_CONTENT"]), $value[0], $json->variable === "" ? "id" : "variable");
+                $jsonDecode = G::json_decode($this->record["DYN_CONTENT"]);
+                $jsonSearch = $this->jsonsf($jsonDecode, $value[0], $json->variable === "" ? "id" : "variable");
                 $a = $this->getValuesDependentFields($jsonSearch);
                 foreach ($a as $i => $v) {
                     $data[$i] = $v;

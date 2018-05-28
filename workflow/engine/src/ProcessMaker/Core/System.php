@@ -1,6 +1,7 @@
 <?php
 
 namespace ProcessMaker\Core;
+
 use Configurations;
 use DomDocument;
 use Exception;
@@ -59,7 +60,8 @@ class System
         'load_headers_ie' => 0,
         'redirect_to_mobile' => 0,
         'disable_php_upload_execution' => 0,
-        'disable_download_documents_session_validation' => 0
+        'disable_download_documents_session_validation' => 0,
+        'logs_max_files' => 60
     );
 
     /**
@@ -1129,18 +1131,26 @@ class System
         }
 
         if (empty($wsIniFile)) {
+
             if (defined('PATH_DB')) {
                 // if we're on a valid workspace env.
                 if (empty($wsName)) {
-                    $uriParts = explode('/', getenv("REQUEST_URI"));
-
-                    if (isset($uriParts[1])) {
-                        if (substr($uriParts[1], 0, 3) == 'sys') {
-                            $wsName = substr($uriParts[1], 3);
+                    try {
+                        if (function_exists('config')) {
+                            $wsName = config("system.workspace");
+                        }
+                    } catch (Exception $exception) {
+                        $wsName = '';
+                    }
+                    if (empty($wsName)) {
+                        $uriParts = explode('/', getenv("REQUEST_URI"));
+                        if (isset($uriParts[1])) {
+                            if (substr($uriParts[1], 0, 3) === 'sys') {
+                                $wsName = substr($uriParts[1], 3);
+                            }
                         }
                     }
                 }
-
                 $wsIniFile = PATH_DB . $wsName . PATH_SEP . 'env.ini';
             }
         }

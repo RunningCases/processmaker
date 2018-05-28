@@ -1,35 +1,9 @@
 <?php
-/**
- * class.g.php
- * @package gulliver.system
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
 
 use ProcessMaker\Core\System;
+use ProcessMaker\AuditLog\AuditLog;
 use ProcessMaker\Plugins\PluginRegistry;
-
-/**
- * @package gulliver.system
- */
+use ProcessMaker\Services\OAuth2\Server;
 
 class G
 {
@@ -37,6 +11,7 @@ class G
     const hash = 'hash';
     const hashFile = 'md5_file';
     const hashCrc = 'crc32';
+
     public $sessionVar = array(); //SESSION temporary array store.
     public static $sysSys;
     public static $sysSkin;
@@ -52,12 +27,12 @@ class G
      * @var string[] $adapters
      */
     private static $adapters = [
-        'ldap'                          => LDAP::class,
-        'ldapadvanced'                  => LdapAdvanced::class,
-        'dashletopenvscompleted'        => DashletOpenVsCompleted::class,
-        'dashletrssreader'              => DashletRssReader::class,
+        'ldap' => LDAP::class,
+        'ldapadvanced' => LdapAdvanced::class,
+        'dashletopenvscompleted' => DashletOpenVsCompleted::class,
+        'dashletrssreader' => DashletRssReader::class,
         'dashletprocessmakerenterprise' => DashletProcessMakerEnterprise::class,
-        'dashletprocessmakercommunity'  => DashletProcessMakerCommunity::class,
+        'dashletprocessmakercommunity' => DashletProcessMakerCommunity::class,
     ];
 
     /**
@@ -124,7 +99,7 @@ class G
         $baseDir = PATH_CORE . 'classes' . PATH_SEP . 'model';
         if ($handle = opendir($baseDir)) {
             while (false !== ($file = readdir($handle))) {
-                if (strpos($file, '.php', 1) && ! strpos($file, 'Peer.php', 1)) {
+                if (strpos($file, '.php', 1) && !strpos($file, 'Peer.php', 1)) {
                     require_once($baseDir . PATH_SEP . $file);
                 }
             }
@@ -138,7 +113,7 @@ class G
     public static function is_https()
     {
         $is_http = false;
-        if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on') ||
+        if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
             (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
             $is_http = true;
         }
@@ -486,13 +461,13 @@ class G
     {
         $folder_path = array($strPath);
         $oldumask = umask(0);
-        while (! @is_dir(dirname(end($folder_path))) && dirname(end($folder_path)) != '/' && dirname(end($folder_path)) != '.' && dirname(end($folder_path)) != '') {
+        while (!@is_dir(dirname(end($folder_path))) && dirname(end($folder_path)) != '/' && dirname(end($folder_path)) != '.' && dirname(end($folder_path)) != '') {
             array_push($folder_path, dirname(end($folder_path))); //var_dump($folder_path); die;
         }
 
         while ($parent_folder_path = array_pop($folder_path)) {
-            if (! @is_dir($parent_folder_path)) {
-                if (! @mkdir($parent_folder_path, $rights)) {
+            if (!@is_dir($parent_folder_path)) {
+                if (!@mkdir($parent_folder_path, $rights)) {
                     error_log("Can't create folder \"$parent_folder_path\"");
                     //umask( $oldumask );
                 }
@@ -510,7 +485,7 @@ class G
      */
     public static function rm_dir($dirName)
     {
-        if (! is_writable($dirName)) {
+        if (!is_writable($dirName)) {
             return false;
         }
 
@@ -634,7 +609,6 @@ class G
         return $res;
     }
 
-
     /**
      * Render Page
      *
@@ -714,7 +688,6 @@ class G
         }
     }
 
-
     /**
      * Include all model plugin files
      *
@@ -727,7 +700,7 @@ class G
     public static function LoadAllPluginModelClasses()
     {
         //Get the current Include path, where the plugins directories should be
-        if (! defined('PATH_SEPARATOR')) {
+        if (!defined('PATH_SEPARATOR')) {
             define('PATH_SEPARATOR', (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':');
         }
         $path = explode(PATH_SEPARATOR, get_include_path());
@@ -738,7 +711,7 @@ class G
                 if (file_exists($baseDir)) {
                     if ($handle = opendir($baseDir)) {
                         while (false !== ($file = readdir($handle))) {
-                            if (strpos($file, '.php', 1) && ! strpos($file, 'Peer.php', 1)) {
+                            if (strpos($file, '.php', 1) && !strpos($file, 'Peer.php', 1)) {
                                 require_once($baseDir . PATH_SEP . $file);
                             }
                         }
@@ -858,7 +831,7 @@ class G
 
         define('SYS_CURRENT_URI', $work[0]);
 
-        if (! defined('SYS_CURRENT_PARMS')) {
+        if (!defined('SYS_CURRENT_PARMS')) {
             define('SYS_CURRENT_PARMS', $work[1]);
         }
 
@@ -942,7 +915,7 @@ class G
      */
     public static function logTimeByPage()
     {
-        if (! defined(PATH_DATA)) {
+        if (!defined(PATH_DATA)) {
             return false;
         }
 
@@ -988,7 +961,7 @@ class G
         } else {
             $configurationFile = PATH_CUSTOM_SKINS . $skinName . PATH_SEP . 'config.xml';
 
-            if (! is_file($configurationFile)) {
+            if (!is_file($configurationFile)) {
                 $configurationFile = G::ExpandPath("skinEngine") . $skinName . PATH_SEP . 'config.xml';
             }
         }
@@ -1033,18 +1006,18 @@ class G
         $xmlConfiguration = file_get_contents($configurationFile);
         $xmlConfigurationObj = G::xmlParser($xmlConfiguration);
 
-        $skinFilesArray = $xmlConfigurationObj->result['skinConfiguration']['__CONTENT__']['cssFiles']['__CONTENT__'][$skinVariant]['__CONTENT__']['cssFile'] ;
+        $skinFilesArray = $xmlConfigurationObj->result['skinConfiguration']['__CONTENT__']['cssFiles']['__CONTENT__'][$skinVariant]['__CONTENT__']['cssFile'];
         foreach ($skinFilesArray as $keyFile => $cssFileInfo) {
-            $enabledBrowsers  = explode(",", $cssFileInfo['__ATTRIBUTES__']['enabledBrowsers']);
+            $enabledBrowsers = explode(",", $cssFileInfo['__ATTRIBUTES__']['enabledBrowsers']);
             $disabledBrowsers = explode(",", $cssFileInfo['__ATTRIBUTES__']['disabledBrowsers']);
 
-            if (((in_array($browserName, $enabledBrowsers)) || (in_array('ALL', $enabledBrowsers)))&&(!(in_array($browserName, $disabledBrowsers)))) {
+            if (((in_array($browserName, $enabledBrowsers)) || (in_array('ALL', $enabledBrowsers))) && (!(in_array($browserName, $disabledBrowsers)))) {
                 if ($cssFileInfo['__ATTRIBUTES__']['file'] == 'rtl.css') {
                     $oServerConf = ServerConf::getSingleton();
                     if (!(defined('SYS_LANG'))) {
                         if (isset($_SERVER['HTTP_REFERER'])) {
                             $syss = explode('://', $_SERVER['HTTP_REFERER']);
-                            $sysObjets =  explode('/', $syss['1']);
+                            $sysObjets = explode('/', $syss['1']);
                             $sysLang = $sysObjets['2'];
                         } else {
                             $sysLang = 'en';
@@ -1053,16 +1026,16 @@ class G
                         $sysLang = SYS_LANG;
                     }
                     if ($oServerConf->isRtl($sysLang)) {
-                        $output .= file_get_contents($baseSkinDirectory . PATH_SEP.'css'.PATH_SEP.$cssFileInfo['__ATTRIBUTES__']['file']);
+                        $output .= file_get_contents($baseSkinDirectory . PATH_SEP . 'css' . PATH_SEP . $cssFileInfo['__ATTRIBUTES__']['file']);
                     }
                 } else {
-                    $output .= file_get_contents($baseSkinDirectory . PATH_SEP.'css'.PATH_SEP.$cssFileInfo['__ATTRIBUTES__']['file']);
+                    $output .= file_get_contents($baseSkinDirectory . PATH_SEP . 'css' . PATH_SEP . $cssFileInfo['__ATTRIBUTES__']['file']);
                 }
             }
         }
 
         //Remove comments..
-        $regex = array("`^([\t\s]+)`ism" => '',"`^\/\*(.+?)\*\/`ism" => "","`([\n\A;]+)\/\*(.+?)\*\/`ism" => "$1","`([\n\A;\s]+)//(.+?)[\n\r]`ism" => "$1\n","`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism" => "\n" );
+        $regex = array("`^([\t\s]+)`ism" => '', "`^\/\*(.+?)\*\/`ism" => "", "`([\n\A;]+)\/\*(.+?)\*\/`ism" => "$1", "`([\n\A;\s]+)//(.+?)[\n\r]`ism" => "$1\n", "`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism" => "\n");
         $output = preg_replace(array_keys($regex), $regex, $output);
         $output = $outputHeader . $output;
 
@@ -1086,8 +1059,8 @@ class G
         $foreignTranslations = array();
 
         //if the default translations table doesn't exist we can't proceed
-        if (! is_file(PATH_LANGUAGECONT . 'translation.en')) {
-            return ;
+        if (!is_file(PATH_LANGUAGECONT . 'translation.en')) {
+            return;
         }
         //load the translations table
         require_once(PATH_LANGUAGECONT . 'translation.en');
@@ -1106,13 +1079,13 @@ class G
         }
 
         $calendarJs = '';
-        $calendarJsFile = PATH_GULLIVER_HOME . "js/widgets/js-calendar/lang/" . $locale .".js";
-        if (! file_exists($calendarJsFile)) {
+        $calendarJsFile = PATH_GULLIVER_HOME . "js/widgets/js-calendar/lang/" . $locale . ".js";
+        if (!file_exists($calendarJsFile)) {
             $calendarJsFile = PATH_GULLIVER_HOME . "js/widgets/js-calendar/lang/en.js";
         }
         $calendarJs = file_get_contents($calendarJsFile) . "\n";
 
-        return $calendarJs . 'var TRANSLATIONS = ' . G::json_encode($translation) . ';' ;
+        return $calendarJs . 'var TRANSLATIONS = ' . G::json_encode($translation) . ';';
     }
 
     /**
@@ -1326,8 +1299,8 @@ class G
         foreach ($convertionTable as $urlPattern => $localPath) {
             //      $urlPattern = addcslashes( $urlPattern , '/');
             $urlPattern = addcslashes($urlPattern, './');
-            $urlPattern = '/^' . str_replace(array('*','?'
-            ), array('.*','.?'
+            $urlPattern = '/^' . str_replace(array('*', '?'
+            ), array('.*', '.?'
             ), $urlPattern) . '$/';
             if (preg_match($urlPattern, $url, $match)) {
                 if ($localPath === false) {
@@ -1377,8 +1350,8 @@ class G
      */
     public static function getUIDName($uid, $scope = '')
     {
-        $e = str_replace(array('=','+','/'
-        ), array('___','__','_'
+        $e = str_replace(array('=', '+', '/'
+        ), array('___', '__', '_'
         ), $uid);
         $e = base64_decode($e);
         $e = G::decrypt($e, URL_KEY);
@@ -1386,7 +1359,8 @@ class G
         return $e;
     }
 
-    /* formatNumber
+    /** 
+     * formatNumber
      *
      * @author David Callizaya <calidavidx21@yahoo.com.ar>
      * @param  int/string $num
@@ -1401,7 +1375,8 @@ class G
         return $snum;
     }
 
-    /* Returns a date formatted according to the given format string
+    /** 
+     * Returns a date formatted according to the given format string
      * @author David Callizaya <calidavidx21@hotmail.com>
      * @param string $format     The format of the outputted date string
      * @param string $datetime   Date in the format YYYY-MM-DD HH:MM:SS
@@ -1421,18 +1396,14 @@ class G
         $time[1] = (int) ((isset($time[1])) ? $time[1] : '0');
         $time[2] = (int) ((isset($time[2])) ? $time[2] : '0');
         // Spanish months
-        $ARR_MONTHS['es'] = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
-        );
+        $ARR_MONTHS['es'] = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
         // English months
-        $ARR_MONTHS['en'] = array("January","February","March","April","May","June","July","August","September","October","November","December"
-        );
+        $ARR_MONTHS['en'] = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
         // Spanish days
-        $ARR_WEEKDAYS['es'] = array("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"
-        );
+        $ARR_WEEKDAYS['es'] = array("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado");
         // English days
-        $ARR_WEEKDAYS['en'] = array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
-        );
+        $ARR_WEEKDAYS['en'] = array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
 
         if ($lang == 'fa') {
             $number = 'persian';
@@ -1462,10 +1433,8 @@ class G
         $i = G::formatNumber(substr($i, strlen($i) - 2, 2), $number);
         $s = '0' . $time[2];
         $s = G::formatNumber(substr($s, strlen($s) - 2, 2), $number);
-        $names = array('d','j','F','m','n','y','Y','g','G','h','H','i','s'
-        );
-        $values = array($d,$j,$F,$m,$n,$y,$Y,$g,$G,$h,$H,$i,$s
-        );
+        $names = array('d', 'j', 'F', 'm', 'n', 'y', 'Y', 'g', 'G', 'h', 'H', 'i', 's');
+        $values = array($d, $j, $F, $m, $n, $y, $Y, $g, $G, $h, $H, $i, $s);
         $_formatedDate = str_replace($names, $values, $format);
         return $_formatedDate;
     }
@@ -1552,10 +1521,8 @@ class G
         $yy = substr($year, strlen($year) - 2, 2);
         $yyyy = $year;
 
-        $names = array('{day}','{DAY}','{month}','{YONTH}','{XONTH}','{year}','{YEAR}','{h}','{i}','{s}'
-        );
-        $values = array($d,$dd,$m,$mm,$M,$yy,$yyyy,$h,$i,$s
-        );
+        $names = array('{day}', '{DAY}', '{month}', '{YONTH}', '{XONTH}', '{year}', '{YEAR}', '{h}', '{i}', '{s}');
+        $values = array($d, $dd, $m, $mm, $M, $yy, $yyyy, $h, $i, $s);
 
         $ret = str_replace($names, $values, $format);
 
@@ -1577,11 +1544,11 @@ class G
      */
     public static function arrayDiff($array1, $array2)
     {
-        if (! is_array($array1)) {
+        if (!is_array($array1)) {
             $array1 = (array) $array1;
         }
 
-        if (! is_array($array2)) {
+        if (!is_array($array2)) {
             $array2 = (array) $array2;
         }
 
@@ -1666,7 +1633,8 @@ class G
         return $campo;
     }
 
-    /* Escapes special characters in a string for use in a SQL statement
+    /** 
+     * Escapes special characters in a string for use in a SQL statement
      * @param string $sqlString  The string to be escaped
      * @param string $DBEngine   Target DBMS
     */
@@ -1709,7 +1677,8 @@ class G
         }
     }
 
-    /* Returns a sql string with @@parameters replaced with its values defined
+    /** 
+     * Returns a sql string with @@parameters replaced with its values defined
      * in array $result using the next notation:
      * NOTATION:
      *     @@  Quoted parameter acording to the SYSTEM's Database
@@ -1723,7 +1692,7 @@ class G
      */
     public static function replaceDataField($sqlString, $result, $DBEngine = 'mysql')
     {
-        if (! is_array($result)) {
+        if (!is_array($result)) {
             $result = array();
         }
         $result = $result + G::getSystemConstants();
@@ -1732,10 +1701,10 @@ class G
         $count = preg_match_all('/\@(?:([\@\%\#\?\$\=\&Qq\!])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+|\-\>([a-zA-Z\_]\w*))?/', $sqlString, $match, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
         if ($count) {
             for ($r = 0; $r < $count; $r ++) {
-                if (! isset($result[$match[2][$r][0]])) {
+                if (!isset($result[$match[2][$r][0]])) {
                     $result[$match[2][$r][0]] = '';
                 }
-                if (! is_array($result[$match[2][$r][0]])) {
+                if (!is_array($result[$match[2][$r][0]])) {
                     $__textoEval .= substr($sqlString, $u, $match[0][$r][1] - $u);
                     $u = $match[0][$r][1] + strlen($match[0][$r][0]);
                     //Mysql quotes scape
@@ -1744,31 +1713,31 @@ class G
                         continue;
                     }
                     //URL encode
-                    if (($match[1][$r][0]=='%')&&(isset($result[$match[2][$r][0]]))) {
-                        $__textoEval.=urlencode($result[$match[2][$r][0]]);
+                    if (($match[1][$r][0] == '%') && (isset($result[$match[2][$r][0]]))) {
+                        $__textoEval .= urlencode($result[$match[2][$r][0]]);
                         continue;
                     }
                     //Double quoted parameter
-                    if (($match[1][$r][0]=='Q')&&(isset($result[$match[2][$r][0]]))) {
-                        $__textoEval.='"'.addcslashes($result[$match[2][$r][0]], '\\"').'"';
+                    if (($match[1][$r][0] == 'Q') && (isset($result[$match[2][$r][0]]))) {
+                        $__textoEval .= '"' . addcslashes($result[$match[2][$r][0]], '\\"') . '"';
                         continue;
                     }
                     //Single quoted parameter
-                    if (($match[1][$r][0]=='q')&&(isset($result[$match[2][$r][0]]))) {
-                        $__textoEval.="'".addcslashes($result[$match[2][$r][0]], '\\\'')."'";
+                    if (($match[1][$r][0] == 'q') && (isset($result[$match[2][$r][0]]))) {
+                        $__textoEval .= "'" . addcslashes($result[$match[2][$r][0]], '\\\'') . "'";
                         continue;
                     }
                     //Substring (Sub replaceDataField)
-                    if (($match[1][$r][0]=='!')&&(isset($result[$match[2][$r][0]]))) {
-                        $__textoEval.=G::replaceDataField($result[$match[2][$r][0]], $result);
+                    if (($match[1][$r][0] == '!') && (isset($result[$match[2][$r][0]]))) {
+                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
                         continue;
                     }
                     //Call function
-                    if (($match[1][$r][0]==='')&&($match[2][$r][0]==='')&&($match[3][$r][0]!=='')) {
+                    if (($match[1][$r][0] === '') && ($match[2][$r][0] === '') && ($match[3][$r][0] !== '')) {
                         eval('$strAux = ' . $match[3][$r][0] . '(\'' . addcslashes(G::replaceDataField(stripslashes($match[4][$r][0]), $result), '\\\'') . '\');');
 
                         if ($match[3][$r][0] == "G::LoadTranslation") {
-                            $arraySearch  = array("'");
+                            $arraySearch = array("'");
                             $arrayReplace = array("\\'");
                             $strAux = str_replace($arraySearch, $arrayReplace, $strAux);
                         }
@@ -1777,26 +1746,26 @@ class G
                         continue;
                     }
                     //Non-quoted
-                    if (($match[1][$r][0]=='#')&&(isset($result[$match[2][$r][0]]))) {
-                        $__textoEval.=G::replaceDataField($result[$match[2][$r][0]], $result);
+                    if (($match[1][$r][0] == '#') && (isset($result[$match[2][$r][0]]))) {
+                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
                         continue;
                     }
                     //Non-quoted =
-                    if (($match[1][$r][0]=='=')&&(isset($result[$match[2][$r][0]]))) {
-                        $__textoEval.=G::replaceDataField($result[$match[2][$r][0]], $result);
+                    if (($match[1][$r][0] == '=') && (isset($result[$match[2][$r][0]]))) {
+                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
                         continue;
                     }
                     //Objects attributes
-                    if (($match[1][$r][0]=='&')&&(isset($result[$match[2][$r][0]]))) {
+                    if (($match[1][$r][0] == '&') && (isset($result[$match[2][$r][0]]))) {
                         if (isset($result[$match[2][$r][0]]->{$match[6][$r][0]})) {
-                            $__textoEval.=$result[$match[2][$r][0]]->{$match[6][$r][0]};
+                            $__textoEval .= $result[$match[2][$r][0]]->{$match[6][$r][0]};
                         }
                         continue;
                     }
                 }
             }
         }
-        $__textoEval.=substr($sqlString, $u);
+        $__textoEval .= substr($sqlString, $u);
         return $__textoEval;
     }
 
@@ -1810,7 +1779,7 @@ class G
     */
     public static function replaceDataGridField($sContent, $aFields, $nl2brRecursive = true)
     {
-        $nrt     = array("\n",    "\r",    "\t");
+        $nrt = array("\n", "\r", "\t");
         $nrthtml = array("(n /)", "(r /)", "(t /)");
 
         $sContent = G::unhtmlentities($sContent);
@@ -1840,7 +1809,7 @@ class G
                     $grdName = $value;
 
                     $strContentAux1 = $strContentAux;
-                    $strContentAux  = null;
+                    $strContentAux = null;
 
                     $ereg = "/^(.*)@>" . $grdName . "(.*)@<" . $grdName . "(.*)$/";
 
@@ -1861,7 +1830,7 @@ class G
                         }
 
                         $strContentAux1 = $arrayMatch2[1];
-                        $strContentAux  = $strData . $arrayMatch2[3] . $strContentAux;
+                        $strContentAux = $strData . $arrayMatch2[3] . $strContentAux;
                     }
 
                     $strContentAux = $strContentAux1 . $strContentAux;
@@ -1886,7 +1855,8 @@ class G
         return $sContent;
     }
 
-    /* Load strings from a XMLFile.
+    /** 
+     * Load strings from a XMLFile.
      * @author David Callizaya <davidsantos@colosa.com>
      * @parameter $languageFile An xml language file.
      * @parameter $languageId   (es|en|...).
@@ -1900,10 +1870,10 @@ class G
         }
         $languageFile = basename($filename, '.xml');
         $cacheFile = substr($filename, 0, - 3) . $languageId;
-        if (($forceParse) || (! file_exists($cacheFile)) || (filemtime($filename) > filemtime($cacheFile))) {
+        if (($forceParse) || (!file_exists($cacheFile)) || (filemtime($filename) > filemtime($cacheFile))) {
             $languageDocument = new Xml_document();
             $languageDocument->parseXmlFile($filename);
-            if (! is_array($arrayXmlMessages)) {
+            if (!is_array($arrayXmlMessages)) {
                 $arrayXmlMessages = array();
             }
             $arrayXmlMessages[$languageFile] = array();
@@ -1924,8 +1894,9 @@ class G
         }
     }
 
-    /* Funcion auxiliar Temporal:
-     *   Registra en la base de datos los labels xml usados en el sistema
+    /** 
+     * Funcion auxiliar Temporal:
+     * Registra en la base de datos los labels xml usados en el sistema
      * @author David Callizaya <calidavidx21@hotmail.com>
      */
     public static function registerLabel($id, $label)
@@ -1952,7 +1923,7 @@ class G
     public static function LoadMenuXml($msgID)
     {
         global $arrayXmlMessages;
-        if (! isset($arrayXmlMessages['menus'])) {
+        if (!isset($arrayXmlMessages['menus'])) {
             G::loadLanguageFile(G::ExpandPath('content') . 'languages/menus.xml');
         }
         G::registerLabel($msgID, $arrayXmlMessages['menus'][$msgID]);
@@ -1972,7 +1943,7 @@ class G
     public static function SendMessageXml($msgID, $strType, $file = "labels")
     {
         global $arrayXmlMessages;
-        if (! isset($arrayXmlMessages[$file])) {
+        if (!isset($arrayXmlMessages[$file])) {
             G::loadLanguageFile(G::ExpandPath('content') . 'languages/' . $file . '.xml');
         }
         $_SESSION['G_MESSAGE_TYPE'] = $strType;
@@ -2065,7 +2036,7 @@ class G
         global $_SESSION;
         global $arrayXmlMessages;
 
-        if (! is_array($arrayXmlMessages)) {
+        if (!is_array($arrayXmlMessages)) {
             $arrayXmlMessages = G::LoadArrayFile(G::ExpandPath('content') . $file . "." . SYS_LANG);
         }
         $aux = $arrayXmlMessages[$msgID];
@@ -2107,7 +2078,7 @@ class G
     public function LoadMessageXml($msgID, $file = 'labels')
     {
         global $arrayXmlMessages;
-        if (! isset($arrayXmlMessages[$file])) {
+        if (!isset($arrayXmlMessages[$file])) {
             G::loadLanguageFile(G::ExpandPath('content') . 'languages/' . $file . '.xml');
         }
         if (isset($arrayXmlMessages[$file][$msgID])) {
@@ -2136,7 +2107,7 @@ class G
         $foreignTranslations = array();
 
         //if the default translations table doesn't exist we can't proceed
-        if (! is_file(PATH_LANGUAGECONT . 'translation.en')) {
+        if (!is_file(PATH_LANGUAGECONT . 'translation.en')) {
             return null;
         }
         //load the translations table
@@ -2244,7 +2215,7 @@ class G
      */
     public static function getTranslations($msgIDs, $lang = SYS_LANG)
     {
-        if (! is_array($msgIDs)) {
+        if (!is_array($msgIDs)) {
             return null;
         }
         $translations = array();
@@ -2291,7 +2262,7 @@ class G
         $uri = explode('/', getenv('REQUEST_URI'));
         $sw = 0;
         $newUri = '';
-        if (! defined('SYS_SKIN')) {
+        if (!defined('SYS_SKIN')) {
             for ($i = 0; $i < count($uri); $i ++) {
                 if ($sw == 0) {
                     $newUri .= $uri[$i] . PATH_SEP;
@@ -2330,7 +2301,7 @@ class G
 
         //the session is expired, go to login page,
         //the login page is login/login.html
-        if (! isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             header('location: ' . G::expandUri($urlLogin));
             die();
         }
@@ -2453,12 +2424,12 @@ class G
     {
         global $RBAC;
 
-        if (isset( $_SESSION['USER_LOGGED'] ) && $_SESSION['USER_LOGGED'] == '') {
+        if (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] == '') {
             $sys = (ENABLE_ENCRYPT == 'yes' ? config("system.workspace") : "sys" . config("system.workspace"));
-            $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
-            $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
-            $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login' ), URL_KEY ) : 'login');
-            $loginhtml = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login.html' ), URL_KEY ) : 'login.html');
+            $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode(SYS_LANG), URL_KEY) : SYS_LANG);
+            $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode(SYS_SKIN), URL_KEY) : SYS_SKIN);
+            $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode('login'), URL_KEY) : 'login');
+            $loginhtml = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode('login.html'), URL_KEY) : 'login.html');
             $direction = "/$sys/$lang/$skin/$login/$loginhtml";
             die();
         }
@@ -2473,10 +2444,10 @@ class G
         if (($sessionPc == "1") or ($sessionBrowser == "1")) {
             if ($row['LOG_STATUS'] == 'X') {
                 $sys = (ENABLE_ENCRYPT == 'yes' ? config("system.workspace") : "sys" . config("system.workspace"));
-                $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
-                $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
-                $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login' ), URL_KEY ) : 'login');
-                $loginhtml = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( 'login.html' ), URL_KEY ) : 'login.html');
+                $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode(SYS_LANG), URL_KEY) : SYS_LANG);
+                $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode(SYS_SKIN), URL_KEY) : SYS_SKIN);
+                $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode('login'), URL_KEY) : 'login');
+                $loginhtml = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode('login.html'), URL_KEY) : 'login.html');
                 $direction = "/$sys/$lang/$skin/$login/$loginhtml";
                 G::SendMessageXml('ID_CLOSE_SESSION', "warning");
                 header("location: $direction");
@@ -2507,12 +2478,12 @@ class G
         }
 
         if ($sw == 0 && $urlNoAccess != "") {
-            $aux = explode( '/', $urlNoAccess );
+            $aux = explode('/', $urlNoAccess);
             $sys = (ENABLE_ENCRYPT == 'yes' ? config("system.workspace") : "/sys" . SYS_LANG);
-            $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_LANG ), URL_KEY ) : SYS_LANG);
-            $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( SYS_SKIN ), URL_KEY ) : SYS_SKIN);
-            $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( $aux[0] ), URL_KEY ) : $aux[0]);
-            $loginhtml = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( $aux[1] ), URL_KEY ) : $aux[1]);
+            $lang = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode(SYS_LANG), URL_KEY) : SYS_LANG);
+            $skin = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode(SYS_SKIN), URL_KEY) : SYS_SKIN);
+            $login = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode($aux[0]), URL_KEY) : $aux[0]);
+            $loginhtml = (ENABLE_ENCRYPT == 'yes' ? G::encrypt(urldecode($aux[1]), URL_KEY) : $aux[1]);
 
             //header ("location: /$sys/$lang/$skin/$login/$loginhtml");
             header("location: /fluid/mNE/o9A/mNGm1aLiop3V4qU/dtij4J°gmaLPwKDU3qNn2qXanw");
@@ -2593,7 +2564,7 @@ class G
      */
     public static function getPathFromUID($uid, $splitSize = 3, $pieces = 3)
     {
-        if (! G::gotDirectoryStructureVer2()) {
+        if (!G::gotDirectoryStructureVer2()) {
             return $uid;
         }
         return G::getPathFromUIDPlain($uid, $splitSize, $pieces);
@@ -2650,7 +2621,7 @@ class G
      */
     public static function getPathFromFileUID($appUid, $fileUid, $splitSize = 3, $pieces = 3)
     {
-        if (! G::gotDirectoryStructureVer2()) {
+        if (!G::gotDirectoryStructureVer2()) {
             $response = array();
             $response[] = '';
             $response[] = $fileUid;
@@ -2709,7 +2680,7 @@ class G
                 throw new Exception('The size of upload file exceeds the allowed by the server!');
             }
             $oldumask = umask(0);
-            if (! is_dir($path)) {
+            if (!is_dir($path)) {
                 G::verifyPath($path, true);
             }
 
@@ -2720,7 +2691,7 @@ class G
                     $file = "";
                     foreach ($winPath as $k => $v) {
                         if ($v != "") {
-                            $file.= $v."\\";
+                            $file .= $v . "\\";
                         }
                     }
                     $file = substr($file, 0, -1);
@@ -2755,7 +2726,7 @@ class G
     {
         $imageInfo = @getimagesize($path);
 
-        if (! $imageInfo) {
+        if (!$imageInfo) {
             throw new Exception("Could not get image information");
         }
         list($width, $height) = $imageInfo;
@@ -2775,7 +2746,7 @@ class G
 
 
         //Assume 3 channels if we can't find that information
-        if (! array_key_exists("channels", $imageInfo)) {
+        if (!array_key_exists("channels", $imageInfo)) {
             $imageInfo["channels"] = 3;
         }
         $memoryNeeded = Round(($imageInfo[0] * $imageInfo[1] * $imageInfo['bits'] * $imageInfo['channels'] + Pow(2, 16)) * 1.95) / (1024 * 1024);
@@ -2784,10 +2755,10 @@ class G
         }
         ini_set('memory_limit', intval($memoryNeeded) . 'M');
 
-        $functions = array(IMAGETYPE_GIF => array('imagecreatefromgif','imagegif'
-        ),IMAGETYPE_JPEG => array('imagecreatefromjpeg','imagejpeg'),IMAGETYPE_PNG => array('imagecreatefrompng','imagepng'));
+        $functions = array(IMAGETYPE_GIF => array('imagecreatefromgif', 'imagegif'
+            ), IMAGETYPE_JPEG => array('imagecreatefromjpeg', 'imagejpeg'), IMAGETYPE_PNG => array('imagecreatefrompng', 'imagepng'));
 
-        if (! array_key_exists($imageInfo[2], $functions)) {
+        if (!array_key_exists($imageInfo[2], $functions)) {
             throw new Exception("Image format not supported");
         }
         list($inputFn, $outputFn) = $functions[$imageInfo[2]];
@@ -2836,7 +2807,7 @@ class G
     {
         foreach ($array_i as $k => $v) {
             if (is_array($v)) {
-                if (! isset($array[$k])) {
+                if (!isset($array[$k])) {
                     $array[$k] = array();
                 }
                 G::array_merge_2($array[$k], $v);
@@ -2844,7 +2815,7 @@ class G
                 if (isset($array[$k]) && is_array($array[$k])) {
                     $array[$k][0] = $v;
                 } else {
-                    if (isset($array) && ! is_array($array)) {
+                    if (isset($array) && !is_array($array)) {
                         $temp = $array;
                         $array = array();
                         $array[0] = $temp;
@@ -2886,8 +2857,7 @@ class G
         if (($sType != 'NUMERIC') && ($sType != 'ALPHA') && ($sType != 'ALPHANUMERIC')) {
             $sType = 'NUMERIC';
         }
-        $aValidCharacters = array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
-        );
+        $aValidCharacters = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         switch ($sType) {
             case 'NUMERIC':
                 $iMin = 0;
@@ -2957,8 +2927,7 @@ class G
      */
     public static function CurDate($sFormat = '')
     {
-        $sFormat = ($sFormat != '')? $sFormat : 'Y-m-d H:i:s';
-
+        $sFormat = ($sFormat != '') ? $sFormat : 'Y-m-d H:i:s';
         return date($sFormat);
     }
 
@@ -2984,12 +2953,12 @@ class G
             $sysCon["SYS_SYS"] = config("system.workspace");
         }
 
-        $sysCon["APPLICATION"]  = (isset($_SESSION["APPLICATION"]))?  $_SESSION["APPLICATION"]  : "";
-        $sysCon["PROCESS"]      = (isset($_SESSION["PROCESS"]))?      $_SESSION["PROCESS"]      : "";
-        $sysCon["TASK"]         = (isset($_SESSION["TASK"]))?         $_SESSION["TASK"]         : "";
-        $sysCon["INDEX"]        = (isset($_SESSION["INDEX"]))?        $_SESSION["INDEX"]        : "";
-        $sysCon["USER_LOGGED"]  = (isset($_SESSION["USER_LOGGED"]))?  $_SESSION["USER_LOGGED"]  : "";
-        $sysCon["USR_USERNAME"] = (isset($_SESSION["USR_USERNAME"]))? $_SESSION["USR_USERNAME"] : "";
+        $sysCon["APPLICATION"] = (isset($_SESSION["APPLICATION"])) ? $_SESSION["APPLICATION"] : "";
+        $sysCon["PROCESS"] = (isset($_SESSION["PROCESS"])) ? $_SESSION["PROCESS"] : "";
+        $sysCon["TASK"] = (isset($_SESSION["TASK"])) ? $_SESSION["TASK"] : "";
+        $sysCon["INDEX"] = (isset($_SESSION["INDEX"])) ? $_SESSION["INDEX"] : "";
+        $sysCon["USER_LOGGED"] = (isset($_SESSION["USER_LOGGED"])) ? $_SESSION["USER_LOGGED"] : "";
+        $sysCon["USR_USERNAME"] = (isset($_SESSION["USR_USERNAME"])) ? $_SESSION["USR_USERNAME"] : "";
 
         //###############################################################################################
         // Added for compatibility betweek aplication called from web Entry that uses just WS functions
@@ -3009,12 +2978,12 @@ class G
 
             if (isset($params->appData) && is_array($params->appData)) {
                 $sysCon["APPLICATION"] = $params->appData["APPLICATION"];
-                $sysCon["PROCESS"]     = $params->appData["PROCESS"];
-                $sysCon["TASK"]        = $params->appData["TASK"];
-                $sysCon["INDEX"]       = $params->appData["INDEX"];
+                $sysCon["PROCESS"] = $params->appData["PROCESS"];
+                $sysCon["TASK"] = $params->appData["TASK"];
+                $sysCon["INDEX"] = $params->appData["INDEX"];
 
                 if (empty($sysCon["USER_LOGGED"])) {
-                    $sysCon["USER_LOGGED"]  = $params->appData["USER_LOGGED"];
+                    $sysCon["USER_LOGGED"] = $params->appData["USER_LOGGED"];
                     $sysCon["USR_USERNAME"] = $params->appData["USR_USERNAME"];
                 }
             }
@@ -3074,7 +3043,7 @@ class G
                     if (isset($ary[$t][0])) {
                         $ary[$t][] = array();
                     } else {
-                        $ary[$t] = array($ary[$t],array() );
+                        $ary[$t] = array($ary[$t], array());
                     }
                     $cv = &$ary[$t][count($ary[$t]) - 1];
                 } else {
@@ -3100,7 +3069,7 @@ class G
                     if (isset($ary[$t][0])) {
                         $ary[$t][] = array();
                     } else {
-                        $ary[$t] = array($ary[$t],array());
+                        $ary[$t] = array($ary[$t], array());
                     }
                     $cv = &$ary[$t][count($ary[$t]) - 1];
                 } else {
@@ -3207,9 +3176,9 @@ class G
         $ary = array_merge($ar1, array_slice($ary, $pos));
     }
 
-    /*
-    * Xml parse collection functions
-    **/
+    /**
+     * Xml parse collection functions
+     */
 
     /**
      * evalJScript
@@ -3220,11 +3189,7 @@ class G
      */
     public static function evalJScript($c)
     {
-        /*
-
-        $filter = new InputFilter();
-        $c = $filter->xssFilterHard($c);*/
-        print('<script language="javascript">'.$c.'</script>') ;
+        print('<script language="javascript">' . $c . '</script>');
     }
 
     /**
@@ -3275,9 +3240,9 @@ class G
      */
     public static function pr($var)
     {
-        print("<pre>") ;
+        print("<pre>");
         print_r($var);
-        print("</pre>") ;
+        print("</pre>");
     }
 
     /**
@@ -3289,9 +3254,9 @@ class G
      */
     public function dump($var)
     {
-        print("<pre>") ;
+        print("<pre>");
         var_dump($var);
-        print("</pre>") ;
+        print("</pre>");
     }
 
     /**
@@ -3315,15 +3280,15 @@ class G
      */
     public static function sys_get_temp_dir()
     {
-        if (! function_exists('sys_get_temp_dir')) {
+        if (!function_exists('sys_get_temp_dir')) {
             // Based on http://www.phpit.net/
             // article/creating-zip-tar-archives-dynamically-php/2/
             // Try to get from environment variable
-            if (! empty($_ENV['TMP'])) {
+            if (!empty($_ENV['TMP'])) {
                 return realpath($_ENV['TMP']);
-            } elseif (! empty($_ENV['TMPDIR'])) {
+            } elseif (!empty($_ENV['TMPDIR'])) {
                 return realpath($_ENV['TMPDIR']);
-            } elseif (! empty($_ENV['TEMP'])) {
+            } elseif (!empty($_ENV['TEMP'])) {
                 return realpath($_ENV['TEMP']);
             } else {
                 // Detect by creating a temporary file
@@ -3364,7 +3329,7 @@ class G
             $result = true;
             if (is_array($aList)) {
                 foreach ($aList as $item) {
-                    if (! isset($item->guid)) {
+                    if (!isset($item->guid)) {
                         $result = false;
                         break;
                     }
@@ -3509,7 +3474,7 @@ class G
             return G::LoadTranslation('ID_EMAIL_ENGINE_IS_NOT_ENABLED');
         }
 
-        $passwd    = $setup['MESS_PASSWORD'];
+        $passwd = $setup['MESS_PASSWORD'];
         $passwdDec = G::decrypt($passwd, 'EMAILENCRYPT');
         $auxPass = explode('hash:', $passwdDec);
         if (count($auxPass) > 1) {
@@ -3634,31 +3599,31 @@ class G
     {
         switch ($var) {
             case is_null($var):
-                $type='NULL';
+                $type = 'NULL';
                 break;
             case is_bool($var):
-                $type='boolean';
+                $type = 'boolean';
                 break;
             case is_float($var):
-                $type='double';
+                $type = 'double';
                 break;
             case is_int($var):
-                $type='integer';
+                $type = 'integer';
                 break;
             case is_string($var):
-                $type='string';
+                $type = 'string';
                 break;
             case is_array($var):
-                $type='array';
+                $type = 'array';
                 break;
             case is_object($var):
-                $type='object';
+                $type = 'object';
                 break;
             case is_resource($var):
-                $type='resource';
+                $type = 'resource';
                 break;
             default:
-                $type='unknown type';
+                $type = 'unknown type';
                 break;
         }
         return $type;
@@ -3676,8 +3641,8 @@ class G
     public function getMemoryUsage()
     {
         $size = memory_get_usage(true);
-        $unit=array('B','Kb','Mb','Gb','Tb','Pb');
-        return @round($size/pow(1024, ($i=floor(log($size, 1024)))), 2).' '.$unit[$i];
+        $unit = array('B', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb');
+        return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
     }
 
     public static function getFormatUserList($format, $aUserInfo)
@@ -3720,12 +3685,6 @@ class G
         return $infoUser;
     }
 
-    //public function getModel($model)
-    //{
-
-    //    return new $model();
-    //}
-
     /**
      * Recursive Is writeable function
      *
@@ -3739,7 +3698,7 @@ class G
     {
         $files = G::rglob($pattern, 0, $path);
         foreach ($files as $file) {
-            if (! is_writable($file)) {
+            if (!is_writable($file)) {
                 return false;
             }
         }
@@ -3758,8 +3717,8 @@ class G
      */
     public static function rglob($pattern = '*', $flags = 0, $path = '')
     {
-        $paths = glob($path.'*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
-        $files = glob($path.$pattern, $flags);
+        $paths = glob($path . '*', GLOB_MARK | GLOB_ONLYDIR | GLOB_NOSORT);
+        $files = glob($path . $pattern, $flags);
         foreach ($paths as $path) {
             $files = array_merge($files, G::rglob($pattern, $flags, $path));
         }
@@ -3796,7 +3755,7 @@ class G
             $b_os_test = true;
             $b_mobile_test = true;
             $b_safe_browser = false;
-            $b_success = false;// boolean for if browser found in main test
+            $b_success = false; // boolean for if browser found in main test
             $browser_math_number = '';
             $browser_temp = '';
             $browser_working = '';
@@ -3812,7 +3771,7 @@ class G
             $os_type = '';
             $run_time = '';
             $true_ie_number = '';
-            $ua_type = 'bot';// default to bot since you never know with bots
+            $ua_type = 'bot'; // default to bot since you never know with bots
             $webkit_type = '';
             $webkit_type_number = '';
 
@@ -3850,73 +3809,71 @@ class G
 
             // known browsers, list will be updated routinely, check back now and then
             $a_browser_types = array(
-                array( 'opera', true, 'op', 'bro' ),
-                array( 'msie', true, 'ie', 'bro' ),
+                array('opera', true, 'op', 'bro'),
+                array('msie', true, 'ie', 'bro'),
                 // webkit before gecko because some webkit ua strings say: like gecko
-                array( 'webkit', true, 'webkit', 'bro' ),
+                array('webkit', true, 'webkit', 'bro'),
                 // konq will be using webkit soon
-                array( 'konqueror', true, 'konq', 'bro' ),
+                array('konqueror', true, 'konq', 'bro'),
                 // covers Netscape 6-7, K-Meleon, Most linux versions, uses moz array below
-                array( 'gecko', true, 'moz', 'bro' ),
-                array( 'netpositive', false, 'netp', 'bbro' ),// beos browser
-                array( 'lynx', false, 'lynx', 'bbro' ), // command line browser
-                array( 'elinks ', false, 'elinks', 'bbro' ), // new version of links
-                array( 'elinks', false, 'elinks', 'bbro' ), // alternate id for it
-                array( 'links2', false, 'links2', 'bbro' ), // alternate links version
-                array( 'links ', false, 'links', 'bbro' ), // old name for links
-                array( 'links', false, 'links', 'bbro' ), // alternate id for it
-                array( 'w3m', false, 'w3m', 'bbro' ), // open source browser, more features than lynx/links
-                array( 'webtv', false, 'webtv', 'bbro' ),// junk ms webtv
-                array( 'amaya', false, 'amaya', 'bbro' ),// w3c browser
-                array( 'dillo', false, 'dillo', 'bbro' ),// linux browser, basic table support
-                array( 'ibrowse', false, 'ibrowse', 'bbro' ),// amiga browser
-                array( 'icab', false, 'icab', 'bro' ),// mac browser
-                array( 'crazy browser', true, 'ie', 'bro' ),// uses ie rendering engine
-
+                array('gecko', true, 'moz', 'bro'),
+                array('netpositive', false, 'netp', 'bbro'), // beos browser
+                array('lynx', false, 'lynx', 'bbro'), // command line browser
+                array('elinks ', false, 'elinks', 'bbro'), // new version of links
+                array('elinks', false, 'elinks', 'bbro'), // alternate id for it
+                array('links2', false, 'links2', 'bbro'), // alternate links version
+                array('links ', false, 'links', 'bbro'), // old name for links
+                array('links', false, 'links', 'bbro'), // alternate id for it
+                array('w3m', false, 'w3m', 'bbro'), // open source browser, more features than lynx/links
+                array('webtv', false, 'webtv', 'bbro'), // junk ms webtv
+                array('amaya', false, 'amaya', 'bbro'), // w3c browser
+                array('dillo', false, 'dillo', 'bbro'), // linux browser, basic table support
+                array('ibrowse', false, 'ibrowse', 'bbro'), // amiga browser
+                array('icab', false, 'icab', 'bro'), // mac browser
+                array('crazy browser', true, 'ie', 'bro'), // uses ie rendering engine
                 // search engine spider bots:
-                array( 'bingbot', false, 'bing', 'bot' ),// bing
-                array( 'exabot', false, 'exabot', 'bot' ),// exabot
-                array( 'googlebot', false, 'google', 'bot' ),// google
-                array( 'google web preview', false, 'googlewp', 'bot' ),// google preview
-                array( 'mediapartners-google', false, 'adsense', 'bot' ),// google adsense
-                array( 'yahoo-verticalcrawler', false, 'yahoo', 'bot' ),// old yahoo bot
-                array( 'yahoo! slurp', false, 'yahoo', 'bot' ), // new yahoo bot
-                array( 'yahoo-mm', false, 'yahoomm', 'bot' ), // gets Yahoo-MMCrawler and Yahoo-MMAudVid bots
-                array( 'inktomi', false, 'inktomi', 'bot' ), // inktomi bot
-                array( 'slurp', false, 'inktomi', 'bot' ), // inktomi bot
-                array( 'fast-webcrawler', false, 'fast', 'bot' ),// Fast AllTheWeb
-                array( 'msnbot', false, 'msn', 'bot' ),// msn search
-                array( 'ask jeeves', false, 'ask', 'bot' ), //jeeves/teoma
-                array( 'teoma', false, 'ask', 'bot' ),//jeeves teoma
-                array( 'scooter', false, 'scooter', 'bot' ),// altavista
-                array( 'openbot', false, 'openbot', 'bot' ),// openbot, from taiwan
-                array( 'ia_archiver', false, 'ia_archiver', 'bot' ),// ia archiver
-                array( 'zyborg', false, 'looksmart', 'bot' ),// looksmart
-                array( 'almaden', false, 'ibm', 'bot' ),// ibm almaden web crawler
-                array( 'baiduspider', false, 'baidu', 'bot' ),// Baiduspider asian search spider
-                array( 'psbot', false, 'psbot', 'bot' ),// psbot image crawler
-                array( 'gigabot', false, 'gigabot', 'bot' ),// gigabot crawler
-                array( 'naverbot', false, 'naverbot', 'bot' ),// naverbot crawler, bad bot, block
-                array( 'surveybot', false, 'surveybot', 'bot' ),//
-                array( 'boitho.com-dc', false, 'boitho', 'bot' ),//norwegian search engine
-                array( 'objectssearch', false, 'objectsearch', 'bot' ),// open source search engine
-                array( 'answerbus', false, 'answerbus', 'bot' ),// http://www.answerbus.com/, web questions
-                array( 'sohu-search', false, 'sohu', 'bot' ),// chinese media company, search component
-                array( 'iltrovatore-setaccio', false, 'il-set', 'bot' ),
-
+                array('bingbot', false, 'bing', 'bot'), // bing
+                array('exabot', false, 'exabot', 'bot'), // exabot
+                array('googlebot', false, 'google', 'bot'), // google
+                array('google web preview', false, 'googlewp', 'bot'), // google preview
+                array('mediapartners-google', false, 'adsense', 'bot'), // google adsense
+                array('yahoo-verticalcrawler', false, 'yahoo', 'bot'), // old yahoo bot
+                array('yahoo! slurp', false, 'yahoo', 'bot'), // new yahoo bot
+                array('yahoo-mm', false, 'yahoomm', 'bot'), // gets Yahoo-MMCrawler and Yahoo-MMAudVid bots
+                array('inktomi', false, 'inktomi', 'bot'), // inktomi bot
+                array('slurp', false, 'inktomi', 'bot'), // inktomi bot
+                array('fast-webcrawler', false, 'fast', 'bot'), // Fast AllTheWeb
+                array('msnbot', false, 'msn', 'bot'), // msn search
+                array('ask jeeves', false, 'ask', 'bot'), //jeeves/teoma
+                array('teoma', false, 'ask', 'bot'), //jeeves teoma
+                array('scooter', false, 'scooter', 'bot'), // altavista
+                array('openbot', false, 'openbot', 'bot'), // openbot, from taiwan
+                array('ia_archiver', false, 'ia_archiver', 'bot'), // ia archiver
+                array('zyborg', false, 'looksmart', 'bot'), // looksmart
+                array('almaden', false, 'ibm', 'bot'), // ibm almaden web crawler
+                array('baiduspider', false, 'baidu', 'bot'), // Baiduspider asian search spider
+                array('psbot', false, 'psbot', 'bot'), // psbot image crawler
+                array('gigabot', false, 'gigabot', 'bot'), // gigabot crawler
+                array('naverbot', false, 'naverbot', 'bot'), // naverbot crawler, bad bot, block
+                array('surveybot', false, 'surveybot', 'bot'), //
+                array('boitho.com-dc', false, 'boitho', 'bot'), //norwegian search engine
+                array('objectssearch', false, 'objectsearch', 'bot'), // open source search engine
+                array('answerbus', false, 'answerbus', 'bot'), // http://www.answerbus.com/, web questions
+                array('sohu-search', false, 'sohu', 'bot'), // chinese media company, search component
+                array('iltrovatore-setaccio', false, 'il-set', 'bot'),
                 // various http utility libaries
-                array( 'w3c_validator', false, 'w3c', 'lib' ), // uses libperl, make first
-                array( 'wdg_validator', false, 'wdg', 'lib' ), //
-                array( 'libwww-perl', false, 'libwww-perl', 'lib' ),
-                array( 'jakarta commons-httpclient', false, 'jakarta', 'lib' ),
-                array( 'python-urllib', false, 'python-urllib', 'lib' ),
+                array('w3c_validator', false, 'w3c', 'lib'), // uses libperl, make first
+                array('wdg_validator', false, 'wdg', 'lib'), //
+                array('libwww-perl', false, 'libwww-perl', 'lib'),
+                array('jakarta commons-httpclient', false, 'jakarta', 'lib'),
+                array('python-urllib', false, 'python-urllib', 'lib'),
                 // download apps
-                array( 'getright', false, 'getright', 'dow' ),
-                array( 'wget', false, 'wget', 'dow' ),// open source downloader, obeys robots.txt
+                array('getright', false, 'getright', 'dow'),
+                array('wget', false, 'wget', 'dow'), // open source downloader, obeys robots.txt
                 // netscape 4 and earlier tests, put last so spiders don't get caught
-                array( 'mozilla/4.', false, 'ns', 'bbro' ),
-                array( 'mozilla/3.', false, 'ns', 'bbro' ),
-                array( 'mozilla/2.', false, 'ns', 'bbro' )
+                array('mozilla/4.', false, 'ns', 'bbro'),
+                array('mozilla/3.', false, 'ns', 'bbro'),
+                array('mozilla/2.', false, 'ns', 'bbro')
             );
 
             //array( '', false ); // browser array template
@@ -3927,7 +3884,7 @@ class G
             rv comes last in case it is plain old mozilla. firefox/netscape/seamonkey need to be later
             Thanks to: http://www.zytrax.com/tech/web/firefox-history.html
             */
-            $a_moz_types = array( 'bonecho', 'camino', 'epiphany', 'firebird', 'flock', 'galeon', 'iceape', 'icecat', 'k-meleon', 'minimo', 'multizilla', 'phoenix', 'songbird', 'swiftfox', 'seamonkey', 'shiretoko', 'iceweasel', 'firefox', 'minefield', 'netscape6', 'netscape', 'rv' );
+           $a_moz_types = array('bonecho', 'camino', 'epiphany', 'firebird', 'flock', 'galeon', 'iceape', 'icecat', 'k-meleon', 'minimo', 'multizilla', 'phoenix', 'songbird', 'swiftfox', 'seamonkey', 'shiretoko', 'iceweasel', 'firefox', 'minefield', 'netscape6', 'netscape', 'rv');
 
             /*
             webkit types, this is going to expand over time as webkit browsers spread
@@ -3935,7 +3892,7 @@ class G
             It will now default to khtml. gtklauncher is the temp id for epiphany, might
             change. Defaults to applewebkit, and will all show the webkit number.
             */
-            $a_webkit_types = array( 'arora', 'chrome', 'epiphany', 'gtklauncher', 'konqueror', 'midori', 'omniweb', 'safari', 'uzbl', 'applewebkit', 'webkit' );
+           $a_webkit_types = array('arora', 'chrome', 'epiphany', 'gtklauncher', 'konqueror', 'midori', 'omniweb', 'safari', 'uzbl', 'applewebkit', 'webkit');
 
             /*
             run through the browser_types array, break if you hit a match, if no match, assume old browser
@@ -3944,7 +3901,7 @@ class G
             $i_count = count($a_browser_types);
             for ($i = 0; $i < $i_count; $i++) {
                 //unpacks browser array, assigns to variables, need to not assign til found in string
-                $browser_temp = $a_browser_types[$i][0];// text string to id browser from array
+                $browser_temp = $a_browser_types[$i][0]; // text string to id browser from array
 
                 if (strstr($browser_user_agent, $browser_temp)) {
                     /*
@@ -3953,12 +3910,12 @@ class G
                     explicit false assignment will make it false.
                     */
                     $b_safe_browser = true;
-                    $browser_name = $browser_temp;// text string to id browser from array
+                    $browser_name = $browser_temp; // text string to id browser from array
 
                     // assign values based on match of user agent string
-                    $b_dom_browser = $a_browser_types[$i][1];// hardcoded dom support from array
-                    $browser_working = $a_browser_types[$i][2];// working name for browser
-                    $ua_type = $a_browser_types[$i][3];// sets whether bot or browser
+                    $b_dom_browser = $a_browser_types[$i][1]; // hardcoded dom support from array
+                    $browser_working = $a_browser_types[$i][2]; // working name for browser
+                    $ua_type = $a_browser_types[$i][3]; // sets whether bot or browser
 
                     switch ($browser_working) {
                         // this is modified quite a bit, now will return proper netscape version number
@@ -4128,8 +4085,8 @@ class G
             // get os data, mac os x test requires browser/version information, this is a change from older scripts
             if ($b_os_test) {
                 $a_os_data = G::get_os_data($browser_user_agent, $browser_working, $browser_number);
-                $os_type = $a_os_data[0];// os name, abbreviated
-                $os_number = $a_os_data[1];// os number or version if available
+                $os_type = $a_os_data[0]; // os name, abbreviated
+                $os_number = $a_os_data[1]; // os number or version if available
             }
             /*
             this ends the run through once if clause, set the boolean
@@ -4176,10 +4133,10 @@ class G
         Note that there's no need to keep repacking these every time the script is called
         */
         if (!$a_moz_data) {
-            $a_moz_data = array( $moz_type, $moz_number, $moz_rv, $moz_rv_full, $moz_release_date );
+            $a_moz_data = array($moz_type, $moz_number, $moz_rv, $moz_rv_full, $moz_release_date);
         }
         if (!$a_webkit_data) {
-            $a_webkit_data = array( $webkit_type, $webkit_type_number, $browser_number );
+            $a_webkit_data = array($webkit_type, $webkit_type_number, $browser_number);
         }
         $run_time = G::script_time();
 
@@ -4252,14 +4209,14 @@ class G
         packs the os array. Use this order since some navigator user agents will put 'macintosh'
         in the navigator user agent string which would make the nt test register true
         */
-        $a_mac = array( 'intel mac', 'ppc mac', 'mac68k' );// this is not used currently
+        $a_mac = array('intel mac', 'ppc mac', 'mac68k'); // this is not used currently
         // same logic, check in order to catch the os's in order, last is always default item
-        $a_unix_types = array( 'dragonfly', 'freebsd', 'openbsd', 'netbsd', 'bsd', 'unixware', 'solaris', 'sunos', 'sun4', 'sun5', 'suni86', 'sun', 'irix5', 'irix6', 'irix', 'hpux9', 'hpux10', 'hpux11', 'hpux', 'hp-ux', 'aix1', 'aix2', 'aix3', 'aix4', 'aix5', 'aix', 'sco', 'unixware', 'mpras', 'reliant', 'dec', 'sinix', 'unix' );
+        $a_unix_types = array('dragonfly', 'freebsd', 'openbsd', 'netbsd', 'bsd', 'unixware', 'solaris', 'sunos', 'sun4', 'sun5', 'suni86', 'sun', 'irix5', 'irix6', 'irix', 'hpux9', 'hpux10', 'hpux11', 'hpux', 'hp-ux', 'aix1', 'aix2', 'aix3', 'aix4', 'aix5', 'aix', 'sco', 'unixware', 'mpras', 'reliant', 'dec', 'sinix', 'unix');
         // only sometimes will you get a linux distro to id itself...
-        $a_linux_distros = array( 'ubuntu', 'kubuntu', 'xubuntu', 'mepis', 'xandros', 'linspire', 'winspire', 'jolicloud', 'sidux', 'kanotix', 'debian', 'opensuse', 'suse', 'fedora', 'redhat', 'slackware', 'slax', 'mandrake', 'mandriva', 'gentoo', 'sabayon', 'linux' );
-        $a_linux_process = array( 'i386', 'i586', 'i686' );// not use currently
+        $a_linux_distros = array('ubuntu', 'kubuntu', 'xubuntu', 'mepis', 'xandros', 'linspire', 'winspire', 'jolicloud', 'sidux', 'kanotix', 'debian', 'opensuse', 'suse', 'fedora', 'redhat', 'slackware', 'slax', 'mandrake', 'mandriva', 'gentoo', 'sabayon', 'linux');
+        $a_linux_process = array('i386', 'i586', 'i686'); // not use currently
         // note, order of os very important in os array, you will get failed ids if changed
-        $a_os_types = array( 'android', 'blackberry', 'iphone', 'palmos', 'palmsource', 'symbian', 'beos', 'os2', 'amiga', 'webtv', 'mac', 'nt', 'win', $a_unix_types, $a_linux_distros );
+        $a_os_types = array('android', 'blackberry', 'iphone', 'palmos', 'palmsource', 'symbian', 'beos', 'os2', 'amiga', 'webtv', 'mac', 'nt', 'win', $a_unix_types, $a_linux_distros);
 
         //os tester
         $i_count = count($a_os_types);
@@ -4283,7 +4240,7 @@ class G
                         } elseif (strstr($pv_browser_string, 'nt 5.2')) {
                             $os_working_number = 5.2;
                         } elseif (strstr($pv_browser_string, 'nt 5.1') || strstr($pv_browser_string, 'xp')) {
-                            $os_working_number = 5.1;//
+                            $os_working_number = 5.1; //
                         } elseif (strstr($pv_browser_string, 'nt 5') || strstr($pv_browser_string, '2000')) {
                             $os_working_number = 5.0;
                         } elseif (strstr($pv_browser_string, 'nt 4')) {
@@ -4341,7 +4298,7 @@ class G
                 for ($j = 0; $j < $j_count; $j++) {
                     if (strstr($pv_browser_string, $os_working_data[$j])) {
                         $os_working_type = 'unix'; //if the os is in the unix array, it's unix, obviously...
-                        $os_working_number = ($os_working_data[$j] != 'unix') ? $os_working_data[$j] : '';// assign sub unix version from the unix array
+                        $os_working_number = ($os_working_data[$j] != 'unix') ? $os_working_data[$j] : ''; // assign sub unix version from the unix array
                         break;
                     }
                 }
@@ -4360,7 +4317,7 @@ class G
         }
 
         // pack the os data array for return to main function
-        $a_os_data = array( $os_working_type, $os_working_number );
+        $a_os_data = array($os_working_type, $os_working_number);
 
         return $a_os_data;
     }
@@ -4418,9 +4375,9 @@ class G
             // devices - ipod before iphone or fails
             'benq', 'blackberry', 'danger hiptop', 'ddipocket', ' droid', 'ipad', 'ipod', 'iphone', 'kindle', 'lge-cx', 'lge-lx', 'lge-mx', 'lge vx', 'lge ', 'lge-', 'lg;lx', 'nintendo wii', 'nokia', 'palm', 'pdxgw', 'playstation', 'sagem', 'samsung', 'sec-sgh', 'sharp', 'sonyericsson', 'sprint', 'zune', 'j-phone', 'n410', 'mot 24', 'mot-', 'htc-', 'htc_', 'htc ', 'sec-', 'sie-m', 'sie-s', 'spv ', 'vodaphone', 'smartphone', 'armv', 'midp', 'mobilephone',
             // browsers
-            'avantgo', 'blazer', 'elaine', 'eudoraweb', 'iemobile',  'minimo', 'mobile safari', 'mobileexplorer', 'opera mobi', 'opera mini', 'netfront', 'opwv', 'polaris', 'semc-browser', 'up.browser', 'webpro', 'wms pie', 'xiino',
+            'avantgo', 'blazer', 'elaine', 'eudoraweb', 'iemobile', 'minimo', 'mobile safari', 'mobileexplorer', 'opera mobi', 'opera mini', 'netfront', 'opwv', 'polaris', 'semc-browser', 'up.browser', 'webpro', 'wms pie', 'xiino',
             // services - astel out of business
-            'astel',  'docomo',  'novarra-vision', 'portalmmm', 'reqwirelessweb', 'vodafone'
+            'astel', 'docomo', 'novarra-vision', 'portalmmm', 'reqwirelessweb', 'vodafone'
         );
 
         // then do basic mobile type search, this uses data from: get_mobile_data()
@@ -4445,10 +4402,10 @@ class G
         $mobile_server = '';
         $mobile_server_number = '';
 
-        $a_mobile_browser = array( 'avantgo', 'blazer', 'elaine', 'eudoraweb', 'iemobile',  'minimo', 'mobile safari', 'mobileexplorer', 'opera mobi', 'opera mini', 'netfront', 'opwv', 'polaris', 'semc-browser', 'up.browser', 'webpro', 'wms pie', 'xiino' );
-        $a_mobile_device = array( 'benq', 'blackberry', 'danger hiptop', 'ddipocket', ' droid', 'htc_dream', 'htc espresso', 'htc hero', 'htc halo', 'htc huangshan', 'htc legend', 'htc liberty', 'htc paradise', 'htc supersonic', 'htc tattoo', 'ipad', 'ipod', 'iphone', 'kindle', 'lge-cx', 'lge-lx', 'lge-mx', 'lge vx', 'lg;lx', 'nintendo wii', 'nokia', 'palm', 'pdxgw', 'playstation', 'sagem', 'samsung', 'sec-sgh', 'sharp', 'sonyericsson', 'sprint', 'zunehd', 'zune', 'j-phone', 'milestone', 'n410', 'mot 24', 'mot-', 'htc-', 'htc_',  'htc ', 'lge ', 'lge-', 'sec-', 'sie-m', 'sie-s', 'spv ', 'smartphone', 'armv', 'midp', 'mobilephone' );
-        $a_mobile_os = array( 'android', 'epoc', 'cpu os', 'iphone os', 'palmos', 'palmsource', 'windows phone os', 'windows ce', 'symbianos', 'symbian os', 'symbian', 'webos', 'linux armv'  );
-        $a_mobile_server = array( 'astel', 'docomo', 'novarra-vision', 'portalmmm', 'reqwirelessweb', 'vodafone' );
+        $a_mobile_browser = array('avantgo', 'blazer', 'elaine', 'eudoraweb', 'iemobile', 'minimo', 'mobile safari', 'mobileexplorer', 'opera mobi', 'opera mini', 'netfront', 'opwv', 'polaris', 'semc-browser', 'up.browser', 'webpro', 'wms pie', 'xiino');
+        $a_mobile_device = array('benq', 'blackberry', 'danger hiptop', 'ddipocket', ' droid', 'htc_dream', 'htc espresso', 'htc hero', 'htc halo', 'htc huangshan', 'htc legend', 'htc liberty', 'htc paradise', 'htc supersonic', 'htc tattoo', 'ipad', 'ipod', 'iphone', 'kindle', 'lge-cx', 'lge-lx', 'lge-mx', 'lge vx', 'lg;lx', 'nintendo wii', 'nokia', 'palm', 'pdxgw', 'playstation', 'sagem', 'samsung', 'sec-sgh', 'sharp', 'sonyericsson', 'sprint', 'zunehd', 'zune', 'j-phone', 'milestone', 'n410', 'mot 24', 'mot-', 'htc-', 'htc_', 'htc ', 'lge ', 'lge-', 'sec-', 'sie-m', 'sie-s', 'spv ', 'smartphone', 'armv', 'midp', 'mobilephone');
+        $a_mobile_os = array('android', 'epoc', 'cpu os', 'iphone os', 'palmos', 'palmsource', 'windows phone os', 'windows ce', 'symbianos', 'symbian os', 'symbian', 'webos', 'linux armv');
+        $a_mobile_server = array('astel', 'docomo', 'novarra-vision', 'portalmmm', 'reqwirelessweb', 'vodafone');
 
         $k_count = count($a_mobile_browser);
         for ($k = 0; $k < $k_count; $k++) {
@@ -4492,7 +4449,7 @@ class G
             $mobile_os_number = G::get_item_version($pv_browser_user_agent, 'linux');
         }
 
-        $a_mobile_data = array( $mobile_device, $mobile_browser, $mobile_browser_number, $mobile_os, $mobile_os_number, $mobile_server, $mobile_server_number, $mobile_device_number );
+        $a_mobile_data = array($mobile_device, $mobile_browser, $mobile_browser_number, $mobile_os, $mobile_os_number, $mobile_server, $mobile_server_number, $mobile_device_number);
         return $a_mobile_data;
     }
 
@@ -4514,7 +4471,7 @@ class G
         }
 
         // Next get the name of the useragent yes seperately and for good reason
-        if ((preg_match('~Trident/7.0; rv:11.0~', $u_agent) || preg_match('/MSIE/i', $u_agent)) && ! preg_match('/Opera/i', $u_agent)) {
+        if ((preg_match('~Trident/7.0; rv:11.0~', $u_agent) || preg_match('/MSIE/i', $u_agent)) && !preg_match('/Opera/i', $u_agent)) {
             $bname = 'Internet Explorer';
             $ub = "MSIE";
         } elseif (preg_match('/Firefox/i', $u_agent)) {
@@ -4538,7 +4495,7 @@ class G
         }
 
         // finally get the correct version number
-        $known = array('Version',$ub,'other');
+        $known = array('Version', $ub, 'other');
         $pattern = '#(?P<browser>' . join('|', $known) . ')[/ ]+(?P<version>[0-9.|a-zA-Z.]*)#';
         @preg_match_all($pattern, $u_agent, $matches);
 
@@ -4573,8 +4530,7 @@ class G
             }
         }
 
-        return array('userAgent' => $u_agent,'name' => strtolower($ub),'longName' => $bname,'version' => $version,'platform' => $platform,'pattern' => $pattern
-        );
+        return array('userAgent' => $u_agent, 'name' => strtolower($ub), 'longName' => $bname, 'version' => $version, 'platform' => $platform, 'pattern' => $pattern);
     }
 
     // track total script execution time
@@ -4607,7 +4563,7 @@ class G
         if ($handle = opendir($path)) {
             while (false !== ($file = readdir($handle))) {
                 $nextpath = $path . '/' . $file;
-                if ($file != '.' && $file != '..' && ! is_link($nextpath) && $file != '.svn') {
+                if ($file != '.' && $file != '..' && !is_link($nextpath) && $file != '.svn') {
                     if (is_dir($nextpath)) {
                         $dircount ++;
                         $result = G::getDirectorySize($nextpath, $maxmtime);
@@ -4648,7 +4604,7 @@ class G
         } else {
             $file[0] = '';
         }
-        return array('filename' => $file[0],'checksum' => (isset($match[0]) ? $match[0] : ''));
+        return array('filename' => $file[0], 'checksum' => (isset($match[0]) ? $match[0] : ''));
     }
 
     /**
@@ -4660,7 +4616,7 @@ class G
     {
         $key = System::getVersion();
 
-        if (! is_array($files)) {
+        if (!is_array($files)) {
             $tmp = $files;
             $files = array();
             $files[0] = $tmp;
@@ -4720,7 +4676,7 @@ class G
             $found = false;
             $buffer = null;
 
-            while (! feof($fp)) {
+            while (!feof($fp)) {
                 $config = G::parse_ini_string($line);
                 if (isset($config[$variable])) {
                     $enabled = $config[$variable];
@@ -4732,7 +4688,7 @@ class G
                 $line = fgets($fp);
             }
             fclose($fp);
-            if (! $found) {
+            if (!$found) {
                 $buffer .= sprintf("\n%s = 1 \n", $variable);
             }
             @file_put_contents($inifile, $buffer);
@@ -4752,7 +4708,7 @@ class G
             $found = false;
             $buffer = null;
 
-            while (! feof($fp)) {
+            while (!feof($fp)) {
                 $config = G::parse_ini_string($line);
                 if (isset($config[$variable])) {
                     $enabled = $config[$variable];
@@ -4764,7 +4720,7 @@ class G
                 $line = fgets($fp);
             }
             fclose($fp);
-            if (! $found) {
+            if (!$found) {
                 $buffer .= sprintf("\n%s = %s \n", $variable, $value);
             }
             file_put_contents($inifile, $buffer);
@@ -4800,7 +4756,7 @@ class G
     {
         $noWritable = array();
         foreach ($resources as $i => $resource) {
-            if (! is_writable($resource)) {
+            if (!is_writable($resource)) {
                 $noWritable[] = $resource;
             }
         }
@@ -4821,7 +4777,7 @@ class G
      */
     public static function renderTemplate($template, $data = array())
     {
-        if (! defined('PATH_THIRDPARTY')) {
+        if (!defined('PATH_THIRDPARTY')) {
             throw new Exception('System constant (PATH_THIRDPARTY) is not defined!');
         }
 
@@ -4839,7 +4795,7 @@ class G
             unset($fInfo['extension']);
         }
 
-        if (! isset($fInfo['extension'])) {
+        if (!isset($fInfo['extension'])) {
             if (file_exists($template . '.tpl')) {
                 $template .= '.tpl';
             } elseif (file_exists($template . '.html')) {
@@ -4848,12 +4804,12 @@ class G
                 $tplExists = false;
             }
         } else {
-            if (! file_exists($template)) {
+            if (!file_exists($template)) {
                 $tplExists = false;
             }
         }
 
-        if (! $tplExists) {
+        if (!$tplExists) {
             throw new Exception("Template: $template, doesn't exist!");
         }
 
@@ -4906,7 +4862,7 @@ class G
         $iniLines = array();
         $iniContent = array();
 
-        if (file_exists($file) && ! is_writable($file)) {
+        if (file_exists($file) && !is_writable($file)) {
             throw new Exception("File $file, is not writable.");
         }
 
@@ -4971,7 +4927,7 @@ class G
     public static function is_writable_r($path, &$noWritableFiles = array())
     {
         if (is_writable($path)) {
-            if (! is_dir($path)) {
+            if (!is_dir($path)) {
                 return true;
             }
             $list = glob(rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . '*');
@@ -4979,7 +4935,7 @@ class G
             $sw = true;
             if (is_array($list)) {
                 foreach ($list as $f) {
-                    if (! G::is_writable_r($f, $noWritableFiles)) {
+                    if (!G::is_writable_r($f, $noWritableFiles)) {
                         $sw = false;
                     }
                 }
@@ -4989,7 +4945,7 @@ class G
 
             return $sw;
         } else {
-            if (! in_array($path, $noWritableFiles)) {
+            if (!in_array($path, $noWritableFiles)) {
                 $noWritableFiles[] = $path;
             }
             return false;
@@ -5015,7 +4971,7 @@ class G
                 $restClasses[str_replace('.php', '', basename($classFile))] = $classFile;
             }
         }
-        if (! empty($apiClassesPath)) {
+        if (!empty($apiClassesPath)) {
             $pluginRestClasses = array();
             $restClassesList = G::rglob('*', 0, $apiClassesPath . 'services/');
             foreach ($restClassesList as $classFile) {
@@ -5032,7 +4988,7 @@ class G
             $restClasses = array_merge($restClasses, $pluginClasses);
         }
         foreach ($restClasses as $key => $classFile) {
-            if (! file_exists($classFile)) {
+            if (!file_exists($classFile)) {
                 unset($restClasses[$key]);
                 continue;
             }
@@ -5042,10 +4998,10 @@ class G
             $className = str_replace('.php', '', basename($classFile));
 
             // if the core class does not exists try resolve the for a plugin
-            if (! class_exists($namespace . $className)) {
+            if (!class_exists($namespace . $className)) {
                 $namespace = 'Plugin_Services_Rest_';
                 // Couldn't resolve the class name, just skipp it
-                if (! class_exists($namespace . $className)) {
+                if (!class_exists($namespace . $className)) {
                     unset($restClasses[$key]);
                     continue;
                 }
@@ -5084,10 +5040,10 @@ class G
             }
         }
         // to handle a request with "OPTIONS" method
-        if (! empty($namespace) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        if (!empty($namespace) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             $reflClass = new ReflectionClass($namespace . $requestedClass);
             // if the rest class has not a "options" method
-            if (! $reflClass->hasMethod('options')) {
+            if (!$reflClass->hasMethod('options')) {
                 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, HEADERS');
                 header('Access-Control-Allow-Headers: authorization, content-type');
                 header("Access-Control-Allow-Credentials", "false");
@@ -5124,12 +5080,12 @@ class G
     *                   nameWorkspace to specific workspace
     * return            true if the file exists, otherwise false.
     */
-    public static function isPMUnderUpdating($setFlag = 2, $content="true")
+    public static function isPMUnderUpdating($setFlag = 2, $content = "true")
     {
         if (!defined('PATH_DATA')) {
             return false;
         }
-        $fileCheck = PATH_DATA."UPDATE.dat";
+        $fileCheck = PATH_DATA . "UPDATE.dat";
         if ($setFlag == 0) {
             if (file_exists($fileCheck)) {
                 unlink($fileCheck);
@@ -5290,7 +5246,7 @@ class G
     {
         $sysConf = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
-        return (isset($sysConf["browser_cache_files_uid"]))? $sysConf["browser_cache_files_uid"] : null;
+        return (isset($sysConf["browser_cache_files_uid"])) ? $sysConf["browser_cache_files_uid"] : null;
     }
 
     public static function browserCacheFilesUrl($url)
@@ -5307,7 +5263,7 @@ class G
 
                 if (preg_match("/^(.*)\.js$/i", $name, $arrayMatch)) {
                     $index = $arrayMatch[1];
-                    $index = (preg_match("/^translation\..*$/", $index))? "translation" : $index;
+                    $index = (preg_match("/^translation\..*$/", $index)) ? "translation" : $index;
 
                     $arrayLibrary = G::browserCacheFilesGetLibraryJs();
 
@@ -5431,30 +5387,30 @@ class G
     */
     public static function auditLog($actionToLog, $valueToLog = "")
     {
-	    $workspace = !empty(config("system.workspace")) ? config("system.workspace") : 'Undefined Workspace';
         $conf = new Configurations();
-        $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
-        $sflagAudit = $sflag == 'true' ? true : false;
-        $ipClient = G::getIpAddress();
-        $userUid = 'Unknow User';
-        $fullName = '-';
-
+        $flag = $conf->getConfiguration('AUDIT_LOG', 'log');
+        $flagAudit = $flag == 'true' ? true : false;
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = PMLicensedFeatures::getSingleton();
-        if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
+        if ($flagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
+            $userUid = 'Unknow User';
+            $fullName = '-';
             if (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') {
                 $userUid = $_SESSION['USER_LOGGED'];
             } else {
-                //Get the usrUid related to the accessToken
-                $userUid = \ProcessMaker\Services\OAuth2\Server::getUserId();
+                $userUid = Server::getUserId();
                 if (!empty($userUid)) {
-                    $oUserLogged = new \Users();
-                    $user = $oUserLogged->loadDetails($userUid);
+                    $users = new Users();
+                    $user = $users->loadDetails($userUid);
                     $fullName = $user['USR_FULLNAME'];
                 }
             }
-            $fullName = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : $fullName;
-            G::log("|". $workspace ."|". $ipClient ."|". $userUid . "|" . $fullName ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+            $fullName = empty($_SESSION['USR_FULLNAME']) ? $fullName : $_SESSION['USR_FULLNAME'];
+
+            $auditLog = new AuditLog();
+            $auditLog->setUserLogged($userUid);
+            $auditLog->setUserFullname($fullName);
+            $auditLog->register($actionToLog, $valueToLog);
         }
         /*----------------------------------********---------------------------------*/
     }
@@ -5495,7 +5451,7 @@ class G
                 } elseif ($configuration['MESS_ENGINE'] == 'PHPMAILER' && preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
                     $from .= ' <' . $configuration['MESS_ACCOUNT'] . '>';
                 } else {
-                    $from .= ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '')? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
+                    $from .= ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
                 }
             }
         } else {
@@ -5504,15 +5460,15 @@ class G
             } elseif ($configuration['MESS_FROM_NAME'] != '' && $configuration['MESS_ENGINE'] == 'PHPMAILER' && preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
                 $from = $configuration['MESS_FROM_NAME'] . ' <' . $configuration['MESS_ACCOUNT'] . '>';
             } elseif ($configuration['MESS_FROM_NAME'] != '') {
-                $from = $configuration['MESS_FROM_NAME'] . ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '')? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
+                $from = $configuration['MESS_FROM_NAME'] . ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
             } elseif ($configuration['MESS_FROM_MAIL'] != '') {
                 $from = $configuration['MESS_FROM_MAIL'];
             } elseif ($configuration['MESS_ENGINE'] == 'PHPMAILER' && preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
                 $from = $configuration['MESS_ACCOUNT'];
             } elseif ($configuration['MESS_ENGINE'] == 'PHPMAILER' && $configuration['MESS_ACCOUNT'] != '' && !preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
-                $from = $configuration['MESS_ACCOUNT'] . ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '')? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
+                $from = $configuration['MESS_ACCOUNT'] . ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
             } else {
-                $from = 'info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '')? $_SERVER['HTTP_HOST'] : 'processmaker.com');
+                $from = 'info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com');
             }
         }
         return $from;
@@ -5737,10 +5693,11 @@ class G
                       "â€”", "â€“", ",", "<", ".", ">", "/", "?");
         $clean = trim(str_replace($strip, "", strip_tags($string)));
         $clean = preg_replace('/\s+/', "-", $clean);
-        $clean = ($alpha) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean ;
+        $clean = ($alpha) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean;
         $clean = ($lowercase) ? (function_exists('mb_strtolower')) ? mb_strtolower($clean, 'UTF-8') : strtolower($clean) : $clean;
         return $clean;
     }
+
     /**
      * Out the result
      *
@@ -5752,6 +5709,7 @@ class G
     {
         echo $sInfVar;
     }
+
     /**
      * encryptOld
      *
@@ -5764,6 +5722,7 @@ class G
         $consthashFx = self::hashFx;
         return $consthashFx($string);
     }
+
     /**
      * encryptSha
      *
@@ -5776,6 +5735,7 @@ class G
         $consthash = self::hash;
         return $consthash('sha256', $string);
     }
+
     /**
     * encryptFileOld
     *
@@ -5788,6 +5748,7 @@ class G
         $consthashFx = self::hashFile;
         return $consthashFx($string);
     }
+
     /**
     * crc32
     *
