@@ -49,7 +49,7 @@ if (!isset($_REQUEST["tab"])) {
 
 $authenticationSource = array("AUTH_SOURCE_UID" => $_REQUEST["authUid"], "CURRENT_TAB" => ($_REQUEST["tab"] == "synchronizeDepartments" ? 0 : 1));
 
-$oHeadPublisher =& headPublisher::getSingleton();
+$oHeadPublisher = headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript("authSources/authSourcesSynchronize", false);
 $oHeadPublisher->addContent("authSources/authSourcesSynchronize");
 $oHeadPublisher->assign("AUTHENTICATION_SOURCE", $authenticationSource);
@@ -58,4 +58,3 @@ global $G_PUBLISH;
 
 $G_PUBLISH = new Publisher();
 G::RenderPage("publish", "extJs");
-

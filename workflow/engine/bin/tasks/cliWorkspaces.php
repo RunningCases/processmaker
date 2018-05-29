@@ -209,7 +209,7 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_itee_to_dummytask");
 
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 CLI::taskName("check-workspace-disabled-code");
 CLI::taskDescription(<<<EOT
   Check disabled code for the specified workspace(s).
@@ -248,7 +248,7 @@ EOT
 );
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_list_unassigned");
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 
 CLI::taskName('migrate-indexing-acv');
 CLI::taskDescription(<<<EOT
@@ -344,15 +344,23 @@ CLI::taskRun("regenerate_pmtable_classes");
 
 /**
  * Function run_info
- * access public
+ * 
+ * @param array $args
+ * @param array $opts
  */
 function run_info($args, $opts)
 {
-    $workspaces = get_workspaces_from_args($args);
     WorkspaceTools::printSysInfo();
-    foreach ($workspaces as $workspace) {
-        echo "\n";
-        $workspace->printMetadata(false);
+
+    //Check if the command is executed by a specific workspace
+    $workspaces = get_workspaces_from_args($args);
+    if (count($args) === 1) {
+        $workspaces[0]->printMetadata(false);
+    } else {
+        foreach ($workspaces as $workspace) {
+            echo "\n";
+            passthru(PHP_BINARY . " processmaker info " . $workspace->name);
+        }
     }
 }
 
@@ -865,21 +873,31 @@ function run_workspace_restore($args, $opts)
     }
 }
 
+/**
+ * Migrating cases folders of the workspaces
+ * 
+ * @param array $command
+ * @param array $args
+ */
 function runStructureDirectories($command, $args)
 {
     $workspaces = get_workspaces_from_args($command);
-    $count = count($workspaces);
-    $errors = false;
-    $countWorkspace = 0;
-    foreach ($workspaces as $index => $workspace) {
+    if (count($command) === 1) {
         try {
-            $countWorkspace++;
-            CLI::logging("Updating workspaces ($countWorkspace/$count): " . CLI::info($workspace->name) . "\n");
+            $workspace = $workspaces[0];
+            CLI::logging(": " . CLI::info($workspace->name) . "\n");
             $workspace->updateStructureDirectories($workspace->name);
             $workspace->close();
         } catch (Exception $e) {
             CLI::logging("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
-            $errors = true;
+        }
+    } else {
+        $count = count($workspaces);
+        $countWorkspace = 0;
+        foreach ($workspaces as $index => $workspace) {
+            $countWorkspace++;
+            CLI::logging("Updating workspaces ($countWorkspace/$count)");
+            passthru(PHP_BINARY . " processmaker migrate-cases-folders " . $workspace->name);
         }
     }
 }
@@ -981,7 +999,7 @@ function run_migrate_itee_to_dummytask($args, $opts)
         }
     }
 }
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 
 /**
  * Check if we need to execute an external program for each workspace
@@ -1118,7 +1136,7 @@ function migrate_list_unassigned($command, $args, $opts)
         }
     }
 }
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 
 /**
  * Check if we need to execute an external program for each workspace

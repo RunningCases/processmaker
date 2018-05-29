@@ -10,7 +10,7 @@ class AppAssignSelfServiceValue extends BaseAppAssignSelfServiceValue
      *
      * return void
      */
-    public function create($applicationUid, $delIndex, array $arrayData, $dataVariable)
+    public function create($applicationUid, $delIndex, array $arrayData, $dataVariable = [])
     {
         try {
             $cnn = Propel::getConnection(AppAssignSelfServiceValuePeer::DATABASE_NAME);

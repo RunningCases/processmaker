@@ -63,7 +63,8 @@ class Cases
      *
      * @param bool $flag Value that set the format
      *
-     * return void
+     * @return void
+     * @throws Exception
      */
     public function setFormatFieldNameInUppercase($flag)
     {
@@ -79,7 +80,8 @@ class Cases
      *
      * @param string $fieldName Field name
      *
-     * return string Return the field name according the format
+     * @return string, the field name according the format
+     * @throws Exception
      */
     public function getFieldNameByFormatFieldName($fieldName)
     {
@@ -97,6 +99,7 @@ class Cases
      * @param string $fieldNameForException Field name for the exception
      *
      * @return void
+     * @throws Exception
      */
     private function throwExceptionCaseDoesNotExist($applicationUid, $fieldNameForException)
     {
@@ -112,7 +115,8 @@ class Cases
      * @param string $delIndex Delegation index
      * @param string $fieldNameForException Field name for the exception
      *
-     * return void Throw exception if does not exist the Case in table APPLICATION
+     * @return void
+     * @throws Exception, Throw exception if does not exist the Case in table APPLICATION
      */
     public function throwExceptionIfNotExistsCase($applicationUid, $delIndex, $fieldNameForException)
     {
@@ -143,7 +147,8 @@ class Cases
      * @param bool $throwException Flag to throw the exception if the main parameters are invalid or do not exist
      *                               (TRUE: throw the exception; FALSE: returns FALSE)
      *
-     * @return array Returns an array with Application record, ThrowTheException/FALSE otherwise
+     * @return array, an array with Application record
+     * @throws Exception, ThrowTheException/FALSE otherwise
      */
     public function getApplicationRecordByPk(
         $applicationUid,
@@ -179,7 +184,8 @@ class Cases
      * @param bool $throwException Flag to throw the exception if the main parameters are invalid or do not exist
      *                               (TRUE: throw the exception; FALSE: returns FALSE)
      *
-     * @return array Returns an array with AppDelegation record, ThrowTheException/FALSE otherwise
+     * @return array, an array with AppDelegation record
+     * @throws Exception, ThrowTheException/FALSE otherwise
      */
     public function getAppDelegationRecordByPk(
         $applicationUid,
@@ -219,7 +225,8 @@ class Cases
      * @param string $userUid Unique id of User
      * @param array $arrayType Type lists
      *
-     * @return array Return the list counters
+     * @return array, the list counters
+     * @throws Exception
      */
     public function getListCounters($userUid, array $arrayType)
     {
@@ -348,8 +355,10 @@ class Cases
      * Search cases and get list of cases
      *
      * @access public
-     * @param array $dataList , Data for list
-     * @return array $response
+     *
+     * @param array $dataList, Data for list
+     *
+     * @return array
      */
     public function getCasesSearch($dataList = array())
     {
@@ -413,7 +422,8 @@ class Cases
      * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      *
-     * return array Return an array with data of Case Info
+     * @return object
+     * @throws Exception
      */
     public function getCaseInfo($applicationUid, $userUid)
     {
@@ -652,7 +662,8 @@ class Cases
      * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      *
-     * return array Return an array with Task Case
+     * @return array, an array with Task Case
+     * @throws Exception
      */
     public function getTaskCase($applicationUid, $userUid)
     {
@@ -721,7 +732,8 @@ class Cases
      * @param string $userUid Unique id of Case
      * @param array $variables
      *
-     * return array Return an array with Task Case
+     * @return object
+     * @throws Exception
      */
     public function addCase($processUid, $taskUid, $userUid, $variables)
     {
@@ -766,7 +778,8 @@ class Cases
      * @param string $taskUid Unique id of Case
      * @param array $variables
      *
-     * return array Return an array with Task Case
+     * @return object
+     * @throws Exception
      */
     public function addCaseImpersonate($processUid, $userUid, $taskUid, $variables)
     {
@@ -819,7 +832,8 @@ class Cases
      * @param string $userUidSource Unique id of User Source
      * @param string $userUid $userUidTarget id of User Target
      *
-     * return array Return an array with Task Case
+     * @return void
+     * @throws Exception
      */
     public function updateReassignCase($applicationUid, $userUid, $delIndex, $userUidSource, $userUidTarget)
     {
@@ -851,13 +865,12 @@ class Cases
      * Put cancel case
      *
      * @access public
-     * @param string $app_uid , Uid for case
-     * @param string $usr_uid , Uid for user
-     * @param string $del_index , Index for case
-     * @return array
+     * @param string $app_uid, Uid for case
+     * @param string $usr_uid, Uid for user
+     * @param bool|string $del_index
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
+     * @throws Exception
      */
     public function putCancelCase($app_uid, $usr_uid, $del_index = false)
     {
@@ -905,12 +918,11 @@ class Cases
      * @access public
      * @param string $app_uid , Uid for case
      * @param string $usr_uid , Uid for user
-     * @param bool|string $del_index , Index for case
+     * @param bool|string $del_index
      * @param null|string $unpaused_date , Date for unpaused
-     * @return array
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
+     * @throws Exception
      */
     public function putPauseCase($app_uid, $usr_uid, $del_index = false, $unpaused_date = null)
     {
@@ -972,10 +984,10 @@ class Cases
      * @access public
      * @param string $app_uid , Uid for case
      * @param string $usr_uid , Uid for user
-     * @param bool|string $del_index , Index for case
+     * @param bool|string $del_index
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
+     * @throws Exception
      */
     public function putUnpauseCase($app_uid, $usr_uid, $del_index = false)
     {
@@ -1025,9 +1037,9 @@ class Cases
      * @param string $appUid , Uid for case
      * @param string $triUid , Uid for trigger
      * @param string $userUid , Uid for user
-     * @param bool|string $delIndex , Index for case
+     * @param bool|string $delIndex
      *
-     * @return array
+     * @return void
      * @throws Exception
      */
     public function putExecuteTriggerCase($appUid, $triUid, $userUid, $delIndex = false)
@@ -1068,12 +1080,11 @@ class Cases
      * Delete case
      *
      * @access public
-     * @param string $app_uid , Uid for case
-     * @param string $usr_uid , Uid user
-     * @return array
+     * @param string $app_uid, Uid for case
+     * @param string $usr_uid, Uid user
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
+     * @throws Exception
      */
     public function deleteCase($app_uid, $usr_uid)
     {
@@ -1108,7 +1119,8 @@ class Cases
      * @param string $delIndex
      * @param boolean $executeTriggersBeforeAssignment
      *
-     * return array Return an array with Task Case
+     * @return void
+     * @throws Exception
      */
     public function updateRouteCase($applicationUid, $userUid, $delIndex, $executeTriggersBeforeAssignment)
     {
@@ -1145,7 +1157,9 @@ class Cases
      * @param string $sApplicationUID Unique id of Case
      * @param string $sTasKUID Unique id of Activity
      * @param string $sUserUID Unique id of User
+     *
      * @return object
+     * @throws Exception
      */
     public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
     {
@@ -1439,7 +1453,7 @@ class Cases
         return $oCriteria;
     }
 
-    /*
+    /**
      * get all generate document
      *
      * @name getAllGeneratedDocumentsCriteria
@@ -1447,7 +1461,9 @@ class Cases
      * @param string $sApplicationUID
      * @param string $sTasKUID
      * @param string $sUserUID
+     *
      * @return object
+     * @throws Exception
      */
     public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
     {
@@ -1679,7 +1695,9 @@ class Cases
      * @param array $form
      * @param array $appData
      * @param array $caseVariable
+     *
      * @return array
+     * @throws Exception
      */
     private function __getFieldsAndValuesByDynaFormAndAppData(array $form, array $appData, array $caseVariable)
     {
@@ -1721,7 +1739,8 @@ class Cases
      *
      * @param type $field
      * @param type $value
-     * @return type
+     *
+     * @return string
      */
     private function getFieldValue($field, $value)
     {
@@ -1740,10 +1759,8 @@ class Cases
      * @param string $app_uid , Uid for case
      * @param string $usr_uid , Uid for user
      * @param string $dynaFormUid , Uid for dynaform
-     * @return array
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return array
      */
     public function getCaseVariables(
         $app_uid,
@@ -1821,8 +1838,8 @@ class Cases
      * @param string $del_index , Index for case
      * @param string $usr_uid , Uid for user
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
+     * @throws Exception
      */
     public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid, $del_index = 0)
     {
@@ -1909,10 +1926,9 @@ class Cases
      *
      * @access public
      * @param string $app_uid , Uid for case
-     * @return array
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return array
+     * @throws Exception
      */
     public function getCaseNotes($app_uid, $usr_uid, $data_get)
     {
@@ -2012,8 +2028,8 @@ class Cases
      * @param string $app_uid , Uid for case
      * @param array $app_data , Data for case variables
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return void
+     * @throws Exception
      */
     public function saveCaseNote($app_uid, $usr_uid, $note_content, $send_mail = false)
     {
@@ -2050,7 +2066,8 @@ class Cases
      *
      * @param array $record Record
      *
-     * return array Return an array with data Task
+     * @return array Return an array with data Task
+     * @throws Exception
      */
     public function getTaskDataFromRecord(array $record)
     {
@@ -2080,7 +2097,8 @@ class Cases
      *
      * @param string $applicationUid Unique id of Case
      *
-     * return array Return an array with all Tasks of Case
+     * @return array Return an array with all Tasks of Case
+     * @throws Exception
      */
     public function getTasks($applicationUid)
     {
@@ -2359,7 +2377,7 @@ class Cases
      * @param string $obj_type , Index for case
      * @param string $obj_uid , Index for case
      *
-     * @copyright Colosa - Bolivia
+     * @return void
      */
     public function putExecuteTriggers($app_uid, $del_index, $obj_type, $obj_uid)
     {
@@ -2381,9 +2399,8 @@ class Cases
      * @access public
      * @param string $app_uid , Uid for case
      * @param int $del_index , Index for case
-     * @return array
      *
-     * @copyright Colosa - Bolivia
+     * @return array
      */
     public function getSteps($app_uid, $del_index)
     {
@@ -2402,6 +2419,14 @@ class Cases
         return $aField;
     }
 
+    /**
+     * This function get the status information
+     *
+     * @param object $rsCriteria
+     *
+     * @return array
+     * @throws Exception
+    */
     private function __getStatusInfoDataByRsCriteria($rsCriteria)
     {
         try {
@@ -2439,6 +2464,7 @@ class Cases
      * @param string $userUid Unique id of User
      *
      * @return array Return an array with status info Case, array empty otherwise
+     * @throws Exception
      */
     public function getStatusInfo($applicationUid, $delIndex = 0, $userUid = "")
     {
@@ -2633,7 +2659,8 @@ class Cases
      * @param string $usrUid id of user
      * @param string $typeView type of view
      *
-     * return array Return an array with process list that the user can start.
+     * @return array Return an array with process list that the user can start.
+     * @throws Exception
      */
     public function getCasesListStarCase($usrUid, $typeView)
     {
@@ -2655,7 +2682,8 @@ class Cases
      * @param string $usrUid id of user
      * @param string $typeView type of view
      *
-     * return array Return an array with process list that the user can start.
+     * @return array Return an array with process list that the user can start.
+     * @throws Exception
      */
     public function getCasesListBookmarkStarCase($usrUid, $typeView)
     {
@@ -2743,6 +2771,7 @@ class Cases
      * @param int $limit Limit
      *
      * @return array Return Users to reassign
+     * @throws Exception
      */
     public function getUsersToReassign(
         $userUid,
@@ -2934,7 +2963,7 @@ class Cases
      *
      * @param array $data
      *
-     * return json Return an json with the result of the reassigned cases.
+     * @return json Return an json with the result of the reassigned cases.
      */
 
     public function doPostReassign($data)
@@ -2999,6 +3028,7 @@ class Cases
      * @param $value
      * @param $data
      * @param string $type
+     *
      * @return bool
      */
     private function validateReassignData($appDelegation, $value, $data, $type = 'DELEGATION_NOT_EXISTS')
@@ -3075,12 +3105,13 @@ class Cases
     }
 
     /**
-     * if case already routed
+     * If case already routed
      *
-     * @param type $app_uid
-     * @param type $del_index
-     * @param type $usr_uid
-     * @throws type
+     * @param string $app_uid
+     * @param string $del_index
+     * @param string $usr_uid
+     *
+     * @return boolean
      */
     public function caseAlreadyRouted($app_uid, $del_index, $usr_uid = '')
     {
@@ -3318,6 +3349,7 @@ class Cases
      * @param array $rolesPermissions, the roles that we need to review
      * @param array $objectPermissions, the permissions that we need to review
      * @param boolean $objectSupervisor, if we need to get all the objects supervisor
+     * @param string $tasUid
      * @return array
      */
     public function userAuthorization(
@@ -3326,7 +3358,8 @@ class Cases
         $appUid,
         $rolesPermissions = [],
         $objectPermissions = [],
-        $objectSupervisor = false
+        $objectSupervisor = false,
+        $tasUid = ''
     ) {
         $arrayAccess = [];
 
@@ -3358,7 +3391,7 @@ class Cases
         if (count($objectPermissions) > 0) {
             $case = new ClassesCases();
             foreach ($objectPermissions as $key => $value) {
-                $resPermission = $case->getAllObjectsFrom($proUid, $appUid, '', $usrUid, $value);
+                $resPermission = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, $value);
                 if (isset($resPermission[$key])) {
                     $arrayAccess['objectPermissions'][$key] = $resPermission[$key];
                 }
@@ -3373,8 +3406,8 @@ class Cases
      * Get Global System Variables
      * @param array $appData
      * @param array $dataVariable
+     *
      * @return array
-     * @throws Exception
      */
     public static function getGlobalVariables($appData = array(), $dataVariable = array())
     {
@@ -3435,6 +3468,7 @@ class Cases
      * @param string $appUid
      * @param string $userUid
      * @param string $threadStatus
+     *
      * @return integer delIndex
      */
     public function getLastParticipatedByUser($appUid, $userUid, $threadStatus = '')
@@ -3464,6 +3498,7 @@ class Cases
      * in parallel cases return the first thread to find
      * @param string $appUid
      * @param boolean $checkCaseIsPaused
+     *
      * @return integer delIndex
      */
     public function getOneLastThread($appUid, $checkCaseIsPaused = false)
@@ -3500,6 +3535,7 @@ class Cases
      * @param string $search , the parameter for search in the table
      * @param string $additionalClassName , name of the className of pmtable
      * @param array $additionalColumns , columns related to the custom cases list
+     *
      * @throws PropelException
      */
     public function getSearchCriteriaListCases(

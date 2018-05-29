@@ -45,35 +45,197 @@ use UsersRolesPeer;
 class User
 {
     private $arrayFieldDefinition = array(
-        "USR_UID" => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrUid"),
-        "USR_FIRSTNAME" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrFirstname"),
-        "USR_LASTNAME" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrLastname"),
-        "USR_USERNAME" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrUsername"),
-        "USR_EMAIL" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrEmail"),
-        "USR_ADDRESS" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrAddress"),
-        "USR_ZIP_CODE" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrZipCode"),
-        "USR_COUNTRY" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrCountry"),
-        "USR_CITY" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrCity"),
-        "USR_LOCATION" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrLocation"),
-        "USR_PHONE" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrPhone"),
-        "USR_POSITION" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrPosition"),
-        "USR_REPLACED_BY" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrReplacedBy"),
-        "USR_DUE_DATE" => array("type" => "date", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrDueDate"),
-        "USR_CALENDAR" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrCalendar"),
-        "USR_STATUS" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE", "VACATION"), "fieldNameAux" => "usrStatus"),
-        "USR_ROLE" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrRole"),
-        "USR_NEW_PASS" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "usrNewPass"),
-        "USR_UX" => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("NORMAL", "SIMPLIFIED", "SWITCHABLE", "SINGLE"), "fieldNameAux" => "usrUx"),
-        "DEP_UID" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "depUid"),
-        "USR_BIRTHDAY" => array("type" => "date", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrBirthday"),
-        "USR_FAX" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrFax"),
-        "USR_CELLULAR" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrCellular"),
+        "USR_UID" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrUid"
+        ),
+        "USR_FIRSTNAME" => array(
+            "type" => "string",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrFirstname"
+        ),
+        "USR_LASTNAME" => array(
+            "type" => "string",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrLastname"
+        ),
+        "USR_USERNAME" => array(
+            "type" => "string",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrUsername"
+        ),
+        "USR_EMAIL" => array(
+            "type" => "string",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrEmail"
+        ),
+        "USR_ADDRESS" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrAddress"
+        ),
+        "USR_ZIP_CODE" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrZipCode"
+        ),
+        "USR_COUNTRY" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrCountry"
+        ),
+        "USR_CITY" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrCity"
+        ),
+        "USR_LOCATION" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrLocation"
+        ),
+        "USR_PHONE" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrPhone"
+        ),
+        "USR_POSITION" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrPosition"
+        ),
+        "USR_REPLACED_BY" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrReplacedBy"
+        ),
+        "USR_DUE_DATE" => array(
+            "type" => "date",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrDueDate"
+        ),
+        "USR_CALENDAR" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrCalendar"
+        ),
+        "USR_STATUS" => array(
+            "type" => "string",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array("ACTIVE", "INACTIVE", "VACATION"),
+            "fieldNameAux" => "usrStatus"
+        ),
+        "USR_ROLE" => array(
+            "type" => "string",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrRole"
+        ),
+        "USR_NEW_PASS" => array(
+            "type" => "string",
+            "required" => true,
+            "empty" => false,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrNewPass"
+        ),
+        "USR_UX" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => false,
+            "defaultValues" => array("NORMAL", "SIMPLIFIED", "SWITCHABLE", "SINGLE"),
+            "fieldNameAux" => "usrUx"
+        ),
+        "DEP_UID" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "depUid"
+        ),
+        "USR_BIRTHDAY" => array(
+            "type" => "date",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrBirthday"
+        ),
+        "USR_FAX" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrFax"
+        ),
+        "USR_CELLULAR" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrCellular"
+        ),
         /*----------------------------------********---------------------------------*/
-        "USR_COST_BY_HOUR" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrCostByHour"),
-        "USR_UNIT_COST" => array("type" => "string", "required" => false, "empty" => true, "defaultValues" => array(), "fieldNameAux" => "usrUnitCost"),
+        "USR_COST_BY_HOUR" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrCostByHour"
+        ),
+        "USR_UNIT_COST" => array(
+            "type" => "string",
+            "required" => false,
+            "empty" => true,
+            "defaultValues" => array(),
+            "fieldNameAux" => "usrUnitCost"
+        ),
         /*----------------------------------********---------------------------------*/
-        'USR_LOGGED_NEXT_TIME' => ['type' => 'int', 'required' => false, 'empty' => false, 'defaultValues' => [0, 1], 'fieldNameAux' => 'usrLoggedNextTime'],
-        'USR_TIME_ZONE' => ['type' => 'string', 'required' => false, 'empty' => true, 'defaultValues' => [], 'fieldNameAux' => 'usrTimeZone']
+        'USR_LOGGED_NEXT_TIME' => [
+            'type' => 'int',
+            'required' => false,
+            'empty' => false,
+            'defaultValues' => [0, 1],
+            'fieldNameAux' => 'usrLoggedNextTime'
+        ],
+        'USR_TIME_ZONE' => [
+            'type' => 'string',
+            'required' => false,
+            'empty' => true,
+            'defaultValues' => [],
+            'fieldNameAux' => 'usrTimeZone'
+        ]
     );
 
     private $formatFieldNameInUppercase = true;
@@ -148,7 +310,9 @@ class User
 
     /**
      * Set the format of the fields name (uppercase, lowercase)
+     *
      * @param bool $flag Value that set the format
+     *
      * @throws Exception
      */
     public function setFormatFieldNameInUppercase($flag)
@@ -164,7 +328,9 @@ class User
 
     /**
      * Set exception users for fields
+     *
      * @param array $arrayData Data with the fields
+     *
      * @throws Exception
      */
     public function setArrayFieldNameForException(array $arrayData)
@@ -180,7 +346,9 @@ class User
 
     /**
      * Get the name of the field according to the format
+     *
      * @param string $fieldName Field name
+     *
      * @return string Return the field name according the format
      * @throws Exception
      */
@@ -195,8 +363,10 @@ class User
 
     /**
      * Verify if exists the Name of a User
-     * @param string $userName Name
+     *
+     * @param string $userName         Name
      * @param string $userUidToExclude Unique id of User to exclude
+     *
      * @return bool Return true if exists the Name of a User, false otherwise
      * @throws Exception
      */
@@ -223,16 +393,19 @@ class User
 
     /**
      * Verify if exists the Name of a User
-     * @param string $userName Name
+     *
+     * @param string $userName              Name
      * @param string $fieldNameForException Field name for the exception
-     * @param string $userUidToExclude Unique id of User to exclude
+     * @param string $userUidToExclude      Unique id of User to exclude
+     *
      * @throws Exception if exists the title of a User
      */
     public function throwExceptionIfExistsName($userName, $fieldNameForException, $userUidToExclude = "")
     {
         try {
             if ($this->existsName($userName, $userUidToExclude)) {
-                throw new Exception(G::LoadTranslation("ID_USER_NAME_ALREADY_EXISTS", array($fieldNameForException, $userName)));
+                throw new Exception(G::LoadTranslation("ID_USER_NAME_ALREADY_EXISTS",
+                    array($fieldNameForException, $userName)));
             }
         } catch (Exception $e) {
             throw $e;
@@ -241,8 +414,10 @@ class User
 
     /**
      * Verify password
-     * @param string $userPassword Password
+     *
+     * @param string $userPassword          Password
      * @param string $fieldNameForException Field name for the exception
+     *
      * @throws Exception if password is invalid
      */
     public function throwExceptionIfPasswordIsInvalid($userPassword, $fieldNameForException)
@@ -260,8 +435,10 @@ class User
 
     /**
      * Validate the data if they are invalid (INSERT and UPDATE)
-     * @param string $userUid Unique id of User
-     * @param array $arrayData Data
+     *
+     * @param string $userUid   Unique id of User
+     * @param array  $arrayData Data
+     *
      * @throws Exception if data has an invalid value
      */
     public function throwExceptionIfDataIsInvalid($userUid, array $arrayData)
@@ -276,11 +453,13 @@ class User
             //Verify data - Field definition.
             $process = new Process();
 
-            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, $flagInsert);
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition,
+                $this->arrayFieldNameForException, $flagInsert);
 
             //Verify data
             if (isset($arrayData["USR_USERNAME"])) {
-                $this->throwExceptionIfExistsName($arrayData["USR_USERNAME"], $this->arrayFieldNameForException["usrUsername"], $userUid);
+                $this->throwExceptionIfExistsName($arrayData["USR_USERNAME"],
+                    $this->arrayFieldNameForException["usrUsername"], $userUid);
             }
 
             if (isset($arrayData["USR_EMAIL"])) {
@@ -290,14 +469,16 @@ class User
             }
 
             if (isset($arrayData["USR_NEW_PASS"])) {
-                $this->throwExceptionIfPasswordIsInvalid($arrayData["USR_NEW_PASS"], $this->arrayFieldNameForException["usrNewPass"]);
+                $this->throwExceptionIfPasswordIsInvalid($arrayData["USR_NEW_PASS"],
+                    $this->arrayFieldNameForException["usrNewPass"]);
             }
 
             if (isset($arrayData["USR_REPLACED_BY"]) && $arrayData["USR_REPLACED_BY"] != "") {
                 $obj = UsersPeer::retrieveByPK($arrayData["USR_REPLACED_BY"]);
 
                 if (is_null($obj)) {
-                    throw new Exception(G::LoadTranslation("ID_USER_DOES_NOT_EXIST", array($this->arrayFieldNameForException["usrReplacedBy"], $arrayData["USR_REPLACED_BY"])));
+                    throw new Exception(G::LoadTranslation("ID_USER_DOES_NOT_EXIST",
+                        array($this->arrayFieldNameForException["usrReplacedBy"], $arrayData["USR_REPLACED_BY"])));
                 }
             }
 
@@ -322,7 +503,8 @@ class User
                 $rsCriteria = RolesPeer::doSelectRS($criteria);
 
                 if (!$rsCriteria->next()) {
-                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR", array($this->arrayFieldNameForException["usrRole"])));
+                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR",
+                        array($this->arrayFieldNameForException["usrRole"])));
                 }
             }
 
@@ -330,31 +512,36 @@ class User
                 $obj = IsoCountryPeer::retrieveByPK($arrayData["USR_COUNTRY"]);
 
                 if (is_null($obj)) {
-                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR", array($this->arrayFieldNameForException["usrCountry"])));
+                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR",
+                        array($this->arrayFieldNameForException["usrCountry"])));
                 }
             }
 
             if (isset($arrayData["USR_CITY"]) && $arrayData["USR_CITY"] != "") {
                 if (!isset($arrayFinalData["USR_COUNTRY"]) || $arrayFinalData["USR_COUNTRY"] == "") {
-                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR", array($this->arrayFieldNameForException["usrCountry"])));
+                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR",
+                        array($this->arrayFieldNameForException["usrCountry"])));
                 }
 
                 $obj = IsoSubdivisionPeer::retrieveByPK($arrayFinalData["USR_COUNTRY"], $arrayData["USR_CITY"]);
 
                 if (is_null($obj)) {
-                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR", array($this->arrayFieldNameForException["usrCity"])));
+                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR",
+                        array($this->arrayFieldNameForException["usrCity"])));
                 }
             }
 
             if (isset($arrayData["USR_LOCATION"]) && $arrayData["USR_LOCATION"] != "") {
                 if (!isset($arrayFinalData["USR_COUNTRY"]) || $arrayFinalData["USR_COUNTRY"] == "") {
-                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR", array($this->arrayFieldNameForException["usrCountry"])));
+                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR",
+                        array($this->arrayFieldNameForException["usrCountry"])));
                 }
 
                 $obj = IsoLocationPeer::retrieveByPK($arrayFinalData["USR_COUNTRY"], $arrayData["USR_LOCATION"]);
 
                 if (is_null($obj)) {
-                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR", array($this->arrayFieldNameForException["usrLocation"])));
+                    throw new Exception(G::LoadTranslation("ID_INVALID_VALUE_FOR",
+                        array($this->arrayFieldNameForException["usrLocation"])));
                 }
             }
 
@@ -362,7 +549,8 @@ class User
                 $obj = CalendarDefinitionPeer::retrieveByPK($arrayData["USR_CALENDAR"]);
 
                 if (is_null($obj)) {
-                    throw new Exception(G::LoadTranslation("ID_CALENDAR_DOES_NOT_EXIST", array($this->arrayFieldNameForException["usrCalendar"], $arrayData["USR_CALENDAR"])));
+                    throw new Exception(G::LoadTranslation("ID_CALENDAR_DOES_NOT_EXIST",
+                        array($this->arrayFieldNameForException["usrCalendar"], $arrayData["USR_CALENDAR"])));
                 }
             }
 
@@ -370,13 +558,15 @@ class User
                 $department = new Department();
 
                 if (!$department->existsDepartment($arrayData["DEP_UID"])) {
-                    throw new Exception(G::LoadTranslation("ID_DEPARTMENT_NOT_EXIST", array($this->arrayFieldNameForException["depUid"], $arrayData["DEP_UID"])));
+                    throw new Exception(G::LoadTranslation("ID_DEPARTMENT_NOT_EXIST",
+                        array($this->arrayFieldNameForException["depUid"], $arrayData["DEP_UID"])));
                 }
             }
 
             if (isset($arrayData['USR_TIME_ZONE']) && $arrayData['USR_TIME_ZONE'] != '') {
                 if (!in_array($arrayData['USR_TIME_ZONE'], DateTimeZone::listIdentifiers())) {
-                    throw new Exception(G::LoadTranslation('ID_TIME_ZONE_DOES_NOT_EXIST', [$this->arrayFieldNameForException['usrTimeZone'], $arrayData['USR_TIME_ZONE']]));
+                    throw new Exception(G::LoadTranslation('ID_TIME_ZONE_DOES_NOT_EXIST',
+                        [$this->arrayFieldNameForException['usrTimeZone'], $arrayData['USR_TIME_ZONE']]));
                 }
             }
         } catch (Exception $e) {
@@ -386,8 +576,10 @@ class User
 
     /**
      * Verify if does not exist the User in table USERS
-     * @param string $userUid Unique id of Email Server
+     *
+     * @param string $userUid               Unique id of Email Server
      * @param string $fieldNameForException Field name for the exception
+     *
      * @throws Exception if does not exist the User in table USERS
      */
     public function throwExceptionIfNotExistsUser($userUid, $fieldNameForException)
@@ -396,7 +588,8 @@ class User
             $obj = UsersPeer::retrieveByPK($userUid);
 
             if (is_null($obj) || $obj->getUsrUsername() == "") {
-                throw new Exception(G::LoadTranslation("ID_USER_DOES_NOT_EXIST", array($fieldNameForException, $userUid)));
+                throw new Exception(G::LoadTranslation("ID_USER_DOES_NOT_EXIST",
+                    array($fieldNameForException, $userUid)));
             }
         } catch (Exception $e) {
             throw $e;
@@ -405,10 +598,13 @@ class User
 
     /**
      * Get User record
-     * @param string $userUid Unique id of User
-     * @param array $arrayVariableNameForException Variable name for exception
-     * @param bool $throwException Flag to throw the exception if the main parameters are invalid or do not exist
-     *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
+     * @param string $userUid                       Unique id of User
+     * @param array  $arrayVariableNameForException Variable name for exception
+     * @param bool   $throwException                Flag to throw the exception if the main parameters are invalid or
+     *                                              do not exist
+     *                                              (TRUE: throw the exception; FALSE: returns FALSE)
+     *
      * @return array|bool Returns an array with User record, ThrowTheException/FALSE otherwise
      * @throws Exception
      */
@@ -437,7 +633,9 @@ class User
 
     /**
      * Get custom record
+     *
      * @param array $record Record
+     *
      * @return array Return an array with custom record
      * @throws Exception
      */
@@ -504,6 +702,7 @@ class User
 
     /**
      * Get criteria for User
+     *
      * @return object
      * @throws Exception
      */
@@ -553,7 +752,9 @@ class User
 
     /**
      * Create User
+     *
      * @param array $arrayData Data
+     *
      * @return array Return data of the new User created
      * @throws Exception
      */
@@ -617,7 +818,8 @@ class User
                 //User Properties
                 $userProperty = new UsersProperties();
 
-                $aUserProperty = $userProperty->loadOrCreateIfNotExists($arrayData["USR_UID"], array("USR_PASSWORD_HISTORY" => serialize(array(Bootstrap::hashPassword($arrayData["USR_PASSWORD"])))));
+                $aUserProperty = $userProperty->loadOrCreateIfNotExists($arrayData["USR_UID"],
+                    array("USR_PASSWORD_HISTORY" => serialize(array(Bootstrap::hashPassword($arrayData["USR_PASSWORD"])))));
                 $aUserProperty["USR_LOGGED_NEXT_TIME"] = $arrayData["USR_LOGGED_NEXT_TIME"];
 
                 $userProperty->update($aUserProperty);
@@ -644,9 +846,11 @@ class User
 
     /**
      * Update User
-     * @param string $userUid Unique id of User
-     * @param array $arrayData Data
+     *
+     * @param string $userUid       Unique id of User
+     * @param array  $arrayData     Data
      * @param string $userUidLogged Unique id of User logged
+     *
      * @return array data of the User updated
      * @throws Exception
      */
@@ -731,13 +935,13 @@ class User
 
                 if (isset($arrayData["USR_PASSWORD"])) {
                     if ($arrayData["USR_PASSWORD"] != "") {
-                        //require_once 'classes/model/UsersProperties.php';
 
                         $userProperty = new UsersProperties();
-                        $aUserProperty = $userProperty->loadOrCreateIfNotExists($userUid, array("USR_PASSWORD_HISTORY" => serialize(array(Bootstrap::hashPassword($arrayData["USR_PASSWORD"])))));
+                        $aUserProperty = $userProperty->loadOrCreateIfNotExists($userUid,
+                            array("USR_PASSWORD_HISTORY" => serialize(array(Bootstrap::hashPassword($arrayData["USR_PASSWORD"])))));
 
                         $memKey = "rbacSession" . session_id();
-                        $memcache = &PMmemcached::getSingleton(!empty(config("system.workspace")) ? config("system.workspace") : "");
+                        $memcache = PMmemcached::getSingleton(!empty(config("system.workspace")) ? config("system.workspace") : "");
 
                         if (($rbac->aUserInfo = $memcache->get($memKey)) == false) {
                             $rbac->loadUserRolePermission("PROCESSMAKER", $userUidLogged);
@@ -803,7 +1007,8 @@ class User
                     $oUser = new Users();
                     $aUser = $oUser->load($userUid);
                     $oUserProperty = new UsersProperties();
-                    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($userUid, array("USR_PASSWORD_HISTORY" => serialize(array($oUser->getUsrPassword()))));
+                    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($userUid,
+                        array("USR_PASSWORD_HISTORY" => serialize(array($oUser->getUsrPassword()))));
                     $aUserProperty["USR_LOGGED_NEXT_TIME"] = $arrayData["USR_LOGGED_NEXT_TIME"];
                     $oUserProperty->update($aUserProperty);
                 }
@@ -847,8 +1052,10 @@ class User
 
     /**
      * Get data of a User
-     * @param string $userUid Unique id of User
-     * @param bool $flagGetRecord Value that set the getting
+     *
+     * @param string $userUid       Unique id of User
+     * @param bool   $flagGetRecord Value that set the getting
+     *
      * @return array Return an array with data of a User
      * @throws Exception
      */
@@ -881,7 +1088,9 @@ class User
 
     /**
      * Create User Uid
+     *
      * @param array $userData Data
+     *
      * @return int
      * @throws Exception
      */
@@ -917,8 +1126,10 @@ class User
      * to put role an user
      *
      * @access public
+     *
      * @param string $sUserUID
      * @param string $sRolCode
+     *
      * @return void
      */
     public function assignRoleToUser($sUserUID = '', $sRolCode = '')
@@ -933,7 +1144,9 @@ class User
      * to test Password
      *
      * @access public
+     *
      * @param string $sPassword
+     *
      * @return array
      */
     public function testPassword($sPassword = '')
@@ -979,7 +1192,9 @@ class User
 
     /**
      * change status of an user
+     *
      * @access public
+     *
      * @param string $sUserUID
      * @param string $sStatus
      */
@@ -998,7 +1213,9 @@ class User
      * remove a role from an user
      *
      * @access public
+     *
      * @param string $sUserUID
+     *
      * @return void
      */
     public function removeRolesFromUser($sUserUID = '')
@@ -1012,8 +1229,10 @@ class User
      * updated an user
      *
      * @access public
-     * @param array $userData
+     *
+     * @param array  $userData
      * @param string $sRolCode
+     *
      * @return void
      */
     public function updateUser($userData = array(), $sRolCode = '')
@@ -1040,7 +1259,8 @@ class User
      * @access public
      *
      * @param string $sSystem the system
-     * @param string $sUser the user
+     * @param string $sUser   the user
+     *
      * @return $this->aUserInfo[ $sSystem ]
      */
     public function loadUserRolePermission($sSystem, $sUser)
@@ -1063,7 +1283,9 @@ class User
 
     /**
      * Authenticate User
+     *
      * @param array $arrayUserData Data
+     *
      * @throws Exception
      */
     public function authenticate($arrayUserData)
@@ -1076,7 +1298,9 @@ class User
 
     /**
      * Delete User
+     *
      * @param string $usrUid Unique id of User
+     *
      * @throws Exception
      */
     public function delete($usrUid)
@@ -1134,15 +1358,17 @@ class User
 
     /**
      * Get all Users
-     * @param array $arrayWhere Where (Condition and filters)
-     * @param string $sortField Field name to sort
-     * @param string $sortDir Direction of sorting (ASC, DESC)
-     * @param int $start Start
-     * @param int $limit Limit
-     * @param bool $flagRecord Flag that set the "getting" of record
-     * @param bool $throwException Flag to throw the exception (This only if the parameters are invalid)
+     *
+     * @param array  $arrayWhere     Where (Condition and filters)
+     * @param string $sortField      Field name to sort
+     * @param string $sortDir        Direction of sorting (ASC, DESC)
+     * @param int    $start          Start
+     * @param int    $limit          Limit
+     * @param bool   $flagRecord     Flag that set the "getting" of record
+     * @param bool   $throwException Flag to throw the exception (This only if the parameters are invalid)
      *                               (TRUE: throw the exception; FALSE: returns FALSE)
-     * @param string $status The user's status, which can be "ACTIVE", "INACTIVE" or "VACATION"
+     * @param string $status         The user's status, which can be "ACTIVE", "INACTIVE" or "VACATION"
+     *
      * @return array Return an array with all Users, ThrowTheException/FALSE otherwise
      * @throws Exception
      */
@@ -1299,7 +1525,9 @@ class User
 
     /**
      * Upload image User
+     *
      * @param string $userUid Unique id of User
+     *
      * @throws Exception
      */
     public function uploadImage($userUid)
@@ -1313,14 +1541,17 @@ class User
             }
 
             if (!isset($_FILES["USR_PHOTO"])) {
-                throw new Exception(G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->arrayFieldNameForException["usrPhoto"])));
+                throw new Exception(G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED",
+                    array($this->arrayFieldNameForException["usrPhoto"])));
             }
 
             if ($_FILES['USR_PHOTO']['error'] != 1) {
                 if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
                     $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
-                    G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $userUid . '.' . $aAux[1]);
-                    G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.gif');
+                    G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS,
+                        $userUid . '.' . $aAux[1]);
+                    G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.' . $aAux[1], 96, 96,
+                        PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.gif');
                 }
             } else {
                 throw new Exception(G::LoadTranslation('ID_ERROR') . ' ' . $_FILES['USR_PHOTO']['error']);
@@ -1334,9 +1565,11 @@ class User
      * change Bookmarks of an user
      *
      * @access public
+     *
      * @param $userUID
      * @param $tasUid
      * @param $type
+     *
      * @return void
      */
     public function updateBookmark($userUID, $tasUid, $type)
@@ -1356,8 +1589,9 @@ class User
     }
 
     /**
-     * @param $userUid
+     * @param       $userUid
      * @param array $arrayPermission
+     *
      * @return User
      * @throws Exception
      */
@@ -1378,6 +1612,7 @@ class User
 
     /**
      * @param $aFields
+     *
      * @return array
      * @throws Exception
      */
@@ -1395,7 +1630,8 @@ class User
                 return $resultPermissionsForUser;
             } else {
                 $lang = defined('SYS_LANG') ? SYS_LANG : 'en';
-                throw (new Exception(G::LoadTranslation("ID_USER_UID_DOESNT_EXIST", $lang, array("USR_UID" => $aFields['USR_UID']))));
+                throw (new Exception(G::LoadTranslation("ID_USER_UID_DOESNT_EXIST", $lang,
+                    array("USR_UID" => $aFields['USR_UID']))));
             }
         } catch (Exception $oError) {
             throw ($oError);
@@ -1404,8 +1640,10 @@ class User
 
     /**
      * Check permission
-     * @param string $userUid Unique uid of User
+     *
+     * @param string $userUid        Unique uid of User
      * @param string $permissionCode Permission code
+     *
      * @return bool
      * @throws Exception
      */
@@ -1432,6 +1670,7 @@ class User
 
     /**
      * Get User-Logged Time Zone
+     *
      * @return string Return the User-Logged Time Zone; Time Zone system settings otherwise
      * @throws Exception
      */
@@ -1455,9 +1694,11 @@ class User
 
     /**
      * Get the User's Manager
-     * @param string $userUid Unique id of User
-     * @param bool $throwException Flag to throw the exception if the main parameters are invalid or do not exist
+     *
+     * @param string $userUid        Unique id of User
+     * @param bool   $throwException Flag to throw the exception if the main parameters are invalid or do not exist
      *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
      * @return string Returns an string with Unique id of User (Manager), ThrowTheException/FALSE otherwise
      * @throws Exception
      */
@@ -1520,25 +1761,34 @@ class User
 
     /**
      * AuditLog
-     * @param string $option Option
-     * @param array $arrayData Data
+     *
+     * @param string $option    Option
+     * @param array  $arrayData Data
+     *
      * @throws Exception
      */
     public function auditLog($option, array $arrayData)
     {
         try {
-            $firstName = (array_key_exists('USR_FIRSTNAME', $arrayData)) ? ' - First Name: ' . $arrayData['USR_FIRSTNAME'] : '';
-            $lastName = (array_key_exists('USR_LASTNAME', $arrayData)) ? ' - Last Name: ' . $arrayData['USR_LASTNAME'] : '';
+            $firstName = (array_key_exists('USR_FIRSTNAME',
+                $arrayData)) ? ' - First Name: ' . $arrayData['USR_FIRSTNAME'] : '';
+            $lastName = (array_key_exists('USR_LASTNAME',
+                $arrayData)) ? ' - Last Name: ' . $arrayData['USR_LASTNAME'] : '';
             $email = (array_key_exists('USR_EMAIL', $arrayData)) ? ' - Email: ' . $arrayData['USR_EMAIL'] : '';
-            $dueDate = (array_key_exists('USR_DUE_DATE', $arrayData)) ? ' - Due Date: ' . $arrayData['USR_DUE_DATE'] : '';
+            $dueDate = (array_key_exists('USR_DUE_DATE',
+                $arrayData)) ? ' - Due Date: ' . $arrayData['USR_DUE_DATE'] : '';
             $status = (array_key_exists('USR_STATUS', $arrayData)) ? ' - Status: ' . $arrayData['USR_STATUS'] : '';
             $address = (array_key_exists('USR_ADDRESS', $arrayData)) ? ' - Address: ' . $arrayData['USR_ADDRESS'] : '';
             $phone = (array_key_exists('USR_PHONE', $arrayData)) ? ' - Phone: ' . $arrayData['USR_PHONE'] : '';
-            $zipCode = (array_key_exists('USR_ZIP_CODE', $arrayData)) ? ' - Zip Code: ' . $arrayData['USR_ZIP_CODE'] : '';
-            $position = (array_key_exists('USR_POSITION', $arrayData)) ? ' - Position: ' . $arrayData['USR_POSITION'] : '';
+            $zipCode = (array_key_exists('USR_ZIP_CODE',
+                $arrayData)) ? ' - Zip Code: ' . $arrayData['USR_ZIP_CODE'] : '';
+            $position = (array_key_exists('USR_POSITION',
+                $arrayData)) ? ' - Position: ' . $arrayData['USR_POSITION'] : '';
             $role = (array_key_exists('USR_ROLE', $arrayData)) ? ' - Role: ' . $arrayData['USR_ROLE'] : '';
-            $languageDef = (array_key_exists('USR_DEFAULT_LANG', $arrayData)) ? ' - Default Language: ' . $arrayData['USR_DEFAULT_LANG'] : '';
-            $timeZone = (array_key_exists('USR_TIME_ZONE', $arrayData)) ? ' - Time Zone: ' . $arrayData['USR_TIME_ZONE'] : '';
+            $languageDef = (array_key_exists('USR_DEFAULT_LANG',
+                $arrayData)) ? ' - Default Language: ' . $arrayData['USR_DEFAULT_LANG'] : '';
+            $timeZone = (array_key_exists('USR_TIME_ZONE',
+                $arrayData)) ? ' - Time Zone: ' . $arrayData['USR_TIME_ZONE'] : '';
 
             $str = 'User Name: ' . $arrayData['USR_USERNAME'] . ' - User ID: (' . $arrayData['USR_UID'] . ')' .
                 $firstName . $lastName . $email . $dueDate . $status . $address . $phone . $zipCode . $position . $role . $timeZone . $languageDef;
@@ -1551,12 +1801,14 @@ class User
 
     /**
      * This function get the list of users
+     *
      * @param string $authSource , authentication source
      * @param string $filter
      * @param string $sort
-     * @param int $start
-     * @param int $limit
-     * @param string $dir related to order the column
+     * @param int    $start
+     * @param int    $limit
+     * @param string $dir        related to order the column
+     *
      * @return array
      * @throws Exception
      */
@@ -1579,7 +1831,8 @@ class User
             $cc = $oCriteria->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $filter . '%', Criteria::LIKE)
                 ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $filter . '%', Criteria::LIKE)
                     ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $filter . '%', Criteria::LIKE)
-                        ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_EMAIL, '%' . $filter . '%', Criteria::LIKE))));
+                        ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_EMAIL, '%' . $filter . '%',
+                            Criteria::LIKE))));
             $oCriteria->add($cc);
         }
         $oCriteria->add(UsersPeer::USR_STATUS, array('CLOSED'), Criteria::NOT_IN);
@@ -1622,7 +1875,8 @@ class User
             $cc = $oCriteria->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $filter . '%', Criteria::LIKE)
                 ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $filter . '%', Criteria::LIKE)
                     ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $filter . '%', Criteria::LIKE)
-                        ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_EMAIL, '%' . $filter . '%', Criteria::LIKE))));
+                        ->addOr($oCriteria->getNewCriterion(UsersPeer::USR_EMAIL, '%' . $filter . '%',
+                            Criteria::LIKE))));
             $oCriteria->add($cc);
         }
         if (sizeof($aUsers) > 0) {
