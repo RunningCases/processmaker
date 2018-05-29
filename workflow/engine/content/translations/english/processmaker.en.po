@@ -9912,6 +9912,18 @@ msgid "INT"
 msgstr "INT"
 
 # TRANSLATION
+# LABEL/ID_INTERMEDIATE_CATCH_MESSAGE_EVENT
+#: LABEL/ID_INTERMEDIATE_CATCH_MESSAGE_EVENT
+msgid "Untitled - Intermediate Send Message Event"
+msgstr "Untitled - Intermediate Send Message Event"
+
+# TRANSLATION
+# LABEL/ID_INTERMEDIATE_CATCH_TIMER_EVENT
+#: LABEL/ID_INTERMEDIATE_CATCH_TIMER_EVENT
+msgid "Untitled - Intermediate Timer Event"
+msgstr "Untitled - Intermediate Timer Event"
+
+# TRANSLATION
 # LABEL/ID_INTERMEDIATE_MESSAGE_EVENT
 #: LABEL/ID_INTERMEDIATE_MESSAGE_EVENT
 msgid "Intermediate Message Events (Task Notifications)"
@@ -9934,6 +9946,18 @@ msgstr "Intermediate Timer Event (Multiple Event)"
 #: LABEL/ID_INTERMEDIATE_TIMER_EVENTS
 msgid "[LABEL/ID_INTERMEDIATE_TIMER_EVENTS] Intermediate Timer Event (Multiple Event)"
 msgstr "Intermediate Timer Event (Multiple Event)"
+
+# TRANSLATION
+# LABEL/ID_INTERMEDIATE_THROW_EMAIL_EVENT
+#: LABEL/ID_INTERMEDIATE_THROW_EMAIL_EVENT
+msgid "Untitled - Intermediate Email Event"
+msgstr "Untitled - Intermediate Email Event"
+
+# TRANSLATION
+# LABEL/ID_INTERMEDIATE_THROW_MESSAGE_EVENT
+#: LABEL/ID_INTERMEDIATE_THROW_MESSAGE_EVENT
+msgid "Untitled - Intermediate Receive Message Event"
+msgstr "Untitled - Intermediate Receive Message Event"
 
 # TRANSLATION
 # LABEL/ID_INTERNATIONAL

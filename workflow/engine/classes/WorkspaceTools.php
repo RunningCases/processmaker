@@ -3932,7 +3932,7 @@ class WorkspaceTools
                                    WHERE AM.TAS_ID = 0 AND AM.PRO_ID = 0 AND AM.APP_NUMBER != 0 AND AM.DEL_INDEX != 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.PRO_ID when does not exits DEL_INDEX
+        // Populating APP_MESSAGE.PRO_ID
         CLI::logging("->   Populating APP_MESSAGE.PRO_ID\n");
         $con->begin();
         $stmt = $con->createStatement();
@@ -3948,7 +3948,7 @@ class WorkspaceTools
                                    WHERE AM.PRO_ID = 0 AND AM.APP_NUMBER != 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.PRO_ID
+        // Populating APP_MESSAGE.APP_MSG_STATUS_ID
         CLI::logging("->   Populating APP_MESSAGE.APP_MSG_STATUS_ID \n");
         $con->begin();
         $rs = $stmt->executeQuery("UPDATE APP_MESSAGE
@@ -3961,8 +3961,8 @@ class WorkspaceTools
                                     APP_MSG_STATUS_ID = 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.PRO_ID
-        CLI::logging("->   Populating APP_MESSAGE.APP_MSG_STATUS_ID \n");
+        // Populating APP_MESSAGE.APP_MSG_TYPE_ID
+        CLI::logging("->   Populating APP_MESSAGE.APP_MSG_TYPE_ID \n");
         $con->begin();
         $rs = $stmt->executeQuery("UPDATE APP_MESSAGE
                                     SET APP_MSG_TYPE_ID = (case
@@ -3974,6 +3974,28 @@ class WorkspaceTools
                                     WHERE APP_MSG_TYPE in ('TEST', 'TRIGGER', 'DERIVATION', 'EXTERNAL_REGISTRATION') AND
                                     APP_MSG_TYPE_ID = 0");
         $con->commit();
+
+        // Populating TAS.TAS_TITLE with BPMN_EVENT.EVN_NAME
+        /*----------------------------------********---------------------------------*/
+        CLI::logging("->   Populating TASK.TAS_TITLE with BPMN_EVENT.EVN_NAME\n");
+        $con->begin();
+        $rs = $stmt->executeQuery("UPDATE TASK
+                                   INNER JOIN (
+                                       SELECT ELEMENT_TASK_RELATION.TAS_UID, BPMN_EVENT.EVN_NAME
+                                       FROM ELEMENT_TASK_RELATION
+                                       JOIN BPMN_EVENT ON (BPMN_EVENT.EVN_UID = ELEMENT_TASK_RELATION.ELEMENT_UID)
+                                   ) AS EVENT
+                                   ON (TASK.TAS_UID = EVENT.TAS_UID)
+                                   SET TASK.TAS_TITLE = EVENT.EVN_NAME
+                                   WHERE TASK.TAS_TITLE IN (
+                                   'INTERMEDIATE-THROW-MESSAGE-EVENT',
+                                   'INTERMEDIATE-THROW-EMAIL-EVENT',
+                                   'INTERMEDIATE-CATCH-TIMER-EVENT',
+                                   'INTERMEDIATE-CATCH-MESSAGE-EVENT'
+                                   )
+                                   AND EVENT.EVN_NAME != ''");
+        $con->commit();
+        /*----------------------------------********---------------------------------*/
 
         CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
 

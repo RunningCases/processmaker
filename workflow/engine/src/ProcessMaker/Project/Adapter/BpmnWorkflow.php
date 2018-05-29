@@ -2,9 +2,14 @@
 
 namespace ProcessMaker\Project\Adapter;
 
+use BpmnFlow;
+use BpmnFlowPeer;
+use Exception;
+use ProcessMaker\BusinessModel\ElementTaskRelation;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Project;
 use ProcessMaker\Util;
+use ProcessMaker\Util\Common;
 
 /**
  * Class BpmnWorkflow
@@ -777,39 +782,39 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
-    /*
-    public function updateEventStartObjects($eventUid, $taskUid)
-    {
-        $event = \BpmnEventPeer::retrieveByPK($eventUid);
-
-        //Case-Scheduler - Update
-        if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "TIMER") {
-            $caseScheduler = new \CaseScheduler();
-
-            if ($caseScheduler->Exists($eventUid)) {
-                $this->wp->updateCaseScheduler($eventUid, array("TAS_UID" => $taskUid));
-            }
-        }
-
-        //Update web entry
-        //if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "MESSAGE") {
-        //    $this->wp->updateWebEntry($eventUid, array("TAS_UID" => $taskUid));
-        //}
-    }
-    */
-
-    private function __createTaskByElement($elementUid, $elementType, $key)
+    /**
+     * This function get the TAS_UID
+     * Create or just return the value
+     *
+     * @param string $elementUid
+     * @param string $elementType
+     * @param string $key
+     * @param string $eventName
+     *
+     * @return string
+     * @throws Exception
+     */
+    private function __createTaskByElement($elementUid, $elementType, $key, $eventName = '')
     {
         try {
+            $taskTitle = $taskType = $this->arrayTaskAttribute[$key]["type"];
+            /*----------------------------------********---------------------------------*/
+            $taskTitle = empty($eventName) ? $taskType : $eventName;
+            /*----------------------------------********---------------------------------*/
+
             if (isset($this->arrayElementTaskRelation[$elementUid])) {
                 $taskUid = $this->arrayElementTaskRelation[$elementUid];
+                /*----------------------------------********---------------------------------*/
+                $dataTask = ["TAS_TITLE" => $taskTitle];
+                $this->wp->updateTask($taskUid, $dataTask);
+                /*----------------------------------********---------------------------------*/
             } else {
                 $taskPosX = 0;
                 $taskPosY = 0;
 
-                $flow = \BpmnFlow::findOneBy(array(
-                    \BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $elementUid,
-                    \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => $elementType
+                $flow = BpmnFlow::findOneBy(array(
+                    BpmnFlowPeer::FLO_ELEMENT_ORIGIN => $elementUid,
+                    BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => $elementType
                 ));
 
                 if (!is_null($flow)) {
@@ -818,9 +823,9 @@ class BpmnWorkflow extends Project\Bpmn
                     $taskPosX = (int)($arrayFlowData["FLO_X1"]);
                     $taskPosY = (int)($arrayFlowData["FLO_Y1"]);
                 } else {
-                    $flow = \BpmnFlow::findOneBy(array(
-                        \BpmnFlowPeer::FLO_ELEMENT_DEST => $elementUid,
-                        \BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE => $elementType
+                    $flow = BpmnFlow::findOneBy(array(
+                        BpmnFlowPeer::FLO_ELEMENT_DEST => $elementUid,
+                        BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE => $elementType
                     ));
 
                     if (!is_null($flow)) {
@@ -832,18 +837,16 @@ class BpmnWorkflow extends Project\Bpmn
                 }
 
                 $prefix = $this->arrayTaskAttribute[$key]["prefix"];
-                $taskType = $this->arrayTaskAttribute[$key]["type"];
-
-                $taskUid = $this->wp->addTask(array(
-                    "TAS_UID" => $prefix . substr(Util\Common::generateUID(), (32 - strlen($prefix)) * -1),
+                $taskUid = $this->wp->addTask([
+                    "TAS_UID" => $prefix . substr(Common::generateUID(), (32 - strlen($prefix)) * -1),
                     "TAS_TYPE" => $taskType,
-                    "TAS_TITLE" => $taskType,
+                    "TAS_TITLE" => $taskTitle,
                     "TAS_POSX" => $taskPosX,
                     "TAS_POSY" => $taskPosY
-                ));
+                ]);
 
                 //Element-Task-Relation - Create
-                $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
+                $elementTaskRelation = new ElementTaskRelation();
 
                 $arrayResult = $elementTaskRelation->create(
                     $this->wp->getUid(),
@@ -860,7 +863,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             //Return
             return $taskUid;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -1026,7 +1029,8 @@ class BpmnWorkflow extends Project\Bpmn
                     $taskUid = $this->__createTaskByElement(
                         $eventUid,
                         "bpmnEvent",
-                        $arrayKey[$arrayEventData["EVN_MARKER"]]
+                        $arrayKey[$arrayEventData["EVN_MARKER"]],
+                        isset($arrayEventData["EVN_NAME"]) ? $arrayEventData["EVN_NAME"] : ''
                     );
 
                     $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
