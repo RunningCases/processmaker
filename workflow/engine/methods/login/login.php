@@ -254,6 +254,11 @@ if ($timeZoneFailed) {
     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login' . PATH_SEP . 'TimeZoneAlert', '', $arrayData, SYS_URI . 'login/authentication.php');
 
     G::RenderPage('publish');
+
+    // Destroy a significant value in session
+    global $G_FORM;
+    unset($_SESSION[$G_FORM->id]['USR_PASSWORD']);
+
     exit(0);
 }
 /*----------------------------------********---------------------------------*/

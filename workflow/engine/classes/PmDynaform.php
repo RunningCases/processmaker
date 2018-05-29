@@ -252,6 +252,11 @@ class PmDynaform
                             $dtFields = $json->queryInputData;
                         } else {
                             $dtFields = $this->getValuesDependentFields($json);
+                            foreach ($dtFields as $keyF => $valueF) {
+                                if (isset($this->fields["APP_DATA"][$keyF])) {
+                                    $dtFields[$keyF] = $this->fields["APP_DATA"][$keyF];
+                                }
+                            }
                         }
                         $sql = G::replaceDataField($json->sql, $dtFields);
                         if ($value === "suggest") {
