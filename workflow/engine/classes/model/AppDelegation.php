@@ -999,5 +999,51 @@ class AppDelegation extends BaseAppDelegation
 
         return $proId;
     }
+    /**
+     * Get the last index by a specific status
+     *
+     * @param integer $appNumber
+     * @param string $status
+     *
+     * @return integer
+     */
+    public static function getLastIndexByStatus($appNumber, $status = 'OPEN')
+    {
+        $delIndex = 0;
+        $criteria = new Criteria();
+        $criteria->add(AppDelegationPeer::APP_NUMBER, $appNumber);
+        $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, $status);
+        $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
+        $dataset = AppDelegationPeer::doSelectOne($criteria);
+        if (!is_null($dataset)) {
+            $delIndex = $dataset->getDelIndex();
+        }
 
+        return $delIndex;
+    }
+
+    /**
+     * Get the last index assigned to the user by a specific status
+     *
+     * @param integer $appNumber
+     * @param integer $usrId
+     * @param string $status
+     *
+     * @return integer
+    */
+    public static function getLastIndexByUserAndStatus($appNumber, $usrId, $status = 'OPEN')
+    {
+        $delIndex = 0;
+        $criteria = new Criteria();
+        $criteria->add(AppDelegationPeer::APP_NUMBER, $appNumber);
+        $criteria->add(AppDelegationPeer::USR_ID, $usrId);
+        $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, $status);
+        $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
+        $dataset = AppDelegationPeer::doSelectOne($criteria);
+        if (!is_null($dataset)) {
+            $delIndex = $dataset->getDelIndex();
+        }
+
+        return $delIndex;
+    }
 }
