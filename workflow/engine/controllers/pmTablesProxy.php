@@ -910,108 +910,103 @@ class pmTablesProxy extends HttpProxyController
 
     /**
      * Export PM tables
-     *
-     * @author : Erik Amaru Ortiz <aortiz.erik@gmail.com>
+     * 
+     * @param object $httpData
+     * @return object
      */
-    public function export ($httpData)
+    public function export($httpData)
     {
-        require_once 'classes/model/AdditionalTables.php';
-        $at = new AdditionalTables();
-        $tablesToExport = G::json_decode( stripslashes( $httpData->rows ) );
+        $additionalTables = new AdditionalTables();
+        $tablesToExport = G::json_decode(stripslashes($httpData->rows));
 
         try {
             $result = new stdClass();
-            $net = new Net( G::getIpAddress() );
-
-            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . config("system.workspace") . "\n" . " @Export trace back:\n\n";
-
-            $EXPORT_TRACEBACK = Array ();
-            $c = 0;
+            $net = new Net(G::getIpAddress());
+            $metaInfo = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date("l jS \of F Y h:i:s A") . "\n" . " @Server address: " . getenv('SERVER_NAME') . " (" . getenv('SERVER_ADDR') . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . config("system.workspace") . "\n" . " @Export trace back:\n\n";
+            $exportTraceback = [];
+            
             foreach ($tablesToExport as $table) {
-                $tableRecord = $at->load( $table->ADD_TAB_UID );
-                $tableData = $at->getAllData( $table->ADD_TAB_UID, null, null, false );
-                $table->ADD_TAB_NAME = $tableRecord['ADD_TAB_NAME'];
-                $rows = $tableData['rows'];
-                $count = $tableData['count'];
+                if ($table->_DATA) {
+                    $tableRecord = $additionalTables->load($table->ADD_TAB_UID);
+                    $tableData = $additionalTables->getAllData($table->ADD_TAB_UID, null, null, false);
+                    $table->ADD_TAB_NAME = $tableRecord['ADD_TAB_NAME'];
 
-                array_push( $EXPORT_TRACEBACK, Array ('uid' => $table->ADD_TAB_UID,'name' => $table->ADD_TAB_NAME,'num_regs' => $tableData['count'],'schema' => $table->_SCHEMA ? 'yes' : 'no','data' => $table->_DATA ? 'yes' : 'no'
-                ) );
+                    array_push($exportTraceback, [
+                        'uid' => $table->ADD_TAB_UID,
+                        'name' => $table->ADD_TAB_NAME,
+                        'num_regs' => $tableData['count'],
+                        'schema' => $table->_SCHEMA ? 'yes' : 'no',
+                        'data' => $table->_DATA ? 'yes' : 'no'
+                    ]);
+                }
             }
 
-            $sTrace = "TABLE UID                        TABLE NAME\tREGS\tSCHEMA\tDATA\n";
-
-            foreach ($EXPORT_TRACEBACK as $row) {
-                $sTrace .= "{$row['uid']}\t{$row['name']}\t\t{$row['num_regs']}\t{$row['schema']}\t{$row['data']}\n";
+            $trace = "TABLE UID                        TABLE NAME\tREGS\tSCHEMA\tDATA\n";
+            foreach ($exportTraceback as $row) {
+                $trace .= "{$row['uid']}\t{$row['name']}\t\t{$row['num_regs']}\t{$row['schema']}\t{$row['data']}\n";
             }
+            $metaInfo .= $trace;
 
-            $META .= $sTrace;
-
-            ///////////////EXPORT PROCESS
-            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'public' . PATH_SEP;
-
-            $filenameOnly = strtolower( 'SYS-' . config("system.workspace") . "_" . date( "Y-m-d" ) . '_' . date( "Hi" ) . ".pmt" );
-
-            $filename = $PUBLIC_ROOT_PATH . $filenameOnly;
-            $fp = fopen( $filename, "wb" );
-
+            //Export table
+            $publicPath = PATH_DATA . 'sites' . PATH_SEP . config("system.workspace") . PATH_SEP . 'public' . PATH_SEP;
+            $filenameOnly = strtolower('SYS-' . config("system.workspace") . "_" . date("Y-m-d") . '_' . date("Hi") . ".pmt");
+            $filename = $publicPath . $filenameOnly;
+            $fp = fopen($filename, "wb");
             $bytesSaved = 0;
             $bufferType = '@META';
-            $fsData = sprintf( "%09d", strlen( $META ) );
-            $fsbufferType = sprintf( "%09d", strlen( $bufferType ) );
-            $bytesSaved += fwrite( $fp, $fsbufferType ); //writing the size of $oData
-            $bytesSaved += fwrite( $fp, $bufferType ); //writing the $oData
-            $bytesSaved += fwrite( $fp, $fsData ); //writing the size of $oData
-            $bytesSaved += fwrite( $fp, $META ); //writing the $oData
+            $fsData = sprintf("%09d", strlen($metaInfo));
+            $fsbufferType = sprintf("%09d", strlen($bufferType));
+            $bytesSaved += fwrite($fp, $fsbufferType); //writing the size of $oData
+            $bytesSaved += fwrite($fp, $bufferType); //writing the $oData
+            $bytesSaved += fwrite($fp, $fsData); //writing the size of $oData
+            $bytesSaved += fwrite($fp, $metaInfo); //writing the $oData
 
 
             foreach ($tablesToExport as $table) {
 
                 if ($table->_SCHEMA) {
-                    $oAdditionalTables = new AdditionalTables();
-                    $aData = $oAdditionalTables->load( $table->ADD_TAB_UID, true );
+                    //Export Schema
+                    $pmTables = new AdditionalTables();
+                    $aData = $pmTables->load($table->ADD_TAB_UID, true);
 
                     $bufferType = '@SCHEMA';
-                    $SDATA = serialize( $aData );
-                    $fsUid = sprintf( "%09d", strlen( $table->ADD_TAB_UID ) );
-                    $fsData = sprintf( "%09d", strlen( $SDATA ) );
-                    $fsbufferType = sprintf( "%09d", strlen( $bufferType ) );
-
-                    $bytesSaved += fwrite( $fp, $fsbufferType ); //writing the size of $oData
-                    $bytesSaved += fwrite( $fp, $bufferType ); //writing the $oData
-                    $bytesSaved += fwrite( $fp, $fsUid ); //writing the size of xml file
-                    $bytesSaved += fwrite( $fp, $table->ADD_TAB_UID ); //writing the xmlfile
-                    $bytesSaved += fwrite( $fp, $fsData ); //writing the size of xml file
-                    $bytesSaved += fwrite( $fp, $SDATA ); //writing the xmlfile
+                    $dataTable = serialize($aData);
+                    $fsUid = sprintf("%09d", strlen($table->ADD_TAB_UID));
+                    $fsData = sprintf("%09d", strlen($dataTable));
+                    $fsbufferType = sprintf("%09d", strlen($bufferType));
+                    $bytesSaved += fwrite($fp, $fsbufferType); //writing the size of $oData
+                    $bytesSaved += fwrite($fp, $bufferType); //writing the $oData
+                    $bytesSaved += fwrite($fp, $fsUid); //writing the size of xml file
+                    $bytesSaved += fwrite($fp, $table->ADD_TAB_UID); //writing the xmlfile
+                    $bytesSaved += fwrite($fp, $fsData); //writing the size of xml file
+                    $bytesSaved += fwrite($fp, $dataTable); //writing the xmlfile
                 }
 
                 if ($table->_DATA) {
-                    //export data
-                    $oAdditionalTables = new additionalTables();
-                    $tableData = $oAdditionalTables->getAllData( $table->ADD_TAB_UID, null, null, false );
+                    //Export data
+                    $pmTables = new additionalTables();
+                    $tableData = $pmTables->getAllData($table->ADD_TAB_UID, null, null, false);
 
-                    $SDATA = serialize( $tableData['rows'] );
+                    $dataTable = serialize($tableData['rows']);
                     $bufferType = '@DATA';
-
-                    $fsbufferType = sprintf( "%09d", strlen( $bufferType ) );
-                    $fsTableName = sprintf( "%09d", strlen( $table->ADD_TAB_NAME ) );
-                    $fsData = sprintf( "%09d", strlen( $SDATA ) );
-
-                    $bytesSaved += fwrite( $fp, $fsbufferType ); //writing type size
-                    $bytesSaved += fwrite( $fp, $bufferType ); //writing type
-                    $bytesSaved += fwrite( $fp, $fsTableName ); //writing the size of xml file
-                    $bytesSaved += fwrite( $fp, $table->ADD_TAB_NAME ); //writing the xmlfile
-                    $bytesSaved += fwrite( $fp, $fsData ); //writing the size of xml file
-                    $bytesSaved += fwrite( $fp, $SDATA ); //writing the xmlfile
+                    $fsbufferType = sprintf("%09d", strlen($bufferType));
+                    $fsTableName = sprintf("%09d", strlen($table->ADD_TAB_NAME));
+                    $fsData = sprintf("%09d", strlen($dataTable));
+                    $bytesSaved += fwrite($fp, $fsbufferType); //writing type size
+                    $bytesSaved += fwrite($fp, $bufferType); //writing type
+                    $bytesSaved += fwrite($fp, $fsTableName); //writing the size of xml file
+                    $bytesSaved += fwrite($fp, $table->ADD_TAB_NAME); //writing the xmlfile
+                    $bytesSaved += fwrite($fp, $fsData); //writing the size of xml file
+                    $bytesSaved += fwrite($fp, $dataTable); //writing the xmlfile
                 }
-                G::auditLog("ExportTable", $table->ADD_TAB_NAME." (".$table->ADD_TAB_UID.") ");
+
+                G::auditLog("ExportTable", $table->ADD_TAB_NAME . " (" . $table->ADD_TAB_UID . ") ");
             }
 
-            fclose( $fp );
+            fclose($fp);
 
             $filenameLink = "pmTables/streamExported?f=$filenameOnly";
-            $size = round( ($bytesSaved / 1024), 2 ) . " Kb";
-            $meta = "<pre>" . $META . "</pre>";
-            $filename = $filenameOnly;
+            $size = round(($bytesSaved / 1024), 2) . " Kb";
             $link = $filenameLink;
 
             $result->success = true;
