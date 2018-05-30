@@ -3,6 +3,7 @@
  * cases_Derivate.php
  *
  */
+
 if (!isset($_SESSION['USER_LOGGED'])) {
     G::SendTemporalMessage('ID_LOGIN_AGAIN', 'warning', 'labels');
     die('<script type="text/javascript">
@@ -62,6 +63,27 @@ try {
     $processUid = isset($_SESSION['PROCESS']) ? $_SESSION['PROCESS'] : '';
     //load data
     $oCase = new Cases();
+    // check if a task was already derivated
+    if (isset($_SESSION["APPLICATION"])
+        && isset($_SESSION["INDEX"])) {
+        $_SESSION['LAST_DERIVATED_APPLICATION'] = isset($_SESSION['LAST_DERIVATED_APPLICATION'])?$_SESSION['LAST_DERIVATED_APPLICATION']:'';
+        $_SESSION['LAST_DERIVATED_INDEX'] = isset($_SESSION['LAST_DERIVATED_INDEX'])?$_SESSION['LAST_DERIVATED_INDEX']:'';
+        if ($_SESSION["APPLICATION"] === $_SESSION['LAST_DERIVATED_APPLICATION']
+            && $_SESSION["INDEX"] === $_SESSION['LAST_DERIVATED_INDEX']) {
+            throw new Exception(G::LoadTranslation('ID_INVALID_APPLICATION_ID_MSG', [G::LoadTranslation('ID_REOPEN')]));
+        } else {
+            $appDel = new AppDelegation();
+            if ($appDel->alreadyRouted($_SESSION["APPLICATION"], $_SESSION['INDEX'])) {
+                throw new Exception(G::LoadTranslation('ID_INVALID_APPLICATION_ID_MSG', [G::LoadTranslation('ID_REOPEN')]));
+            } else {
+                $_SESSION['LAST_DERIVATED_APPLICATION'] = $_SESSION["APPLICATION"];
+                $_SESSION['LAST_DERIVATED_INDEX'] = $_SESSION["INDEX"];
+            }
+        }
+    } else {
+        throw new Exception(G::LoadTranslation('ID_INVALID_APPLICATION_ID_MSG', [G::LoadTranslation('ID_REOPEN')]));
+    }
+
     //warning: we are not using the result value of function thisIsTheCurrentUser, so I'm commenting to optimize speed.
     //$oCase->thisIsTheCurrentUser( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], 'REDIRECT', 'casesListExtJs');
     $appFields = $oCase->loadCase($_SESSION['APPLICATION']);
