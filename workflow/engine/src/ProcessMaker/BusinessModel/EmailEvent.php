@@ -107,12 +107,15 @@ class EmailEvent
             $row = $rsCriteria->getRow();
             $emailServer = new EmailServer();
             if ($row) {
-                $emailServerData = $emailServer->getEmailServer($row['EMAIL_SERVER_UID'], true);
-                $row['MESS_LABEL'] = EmailServer::getMessLabel(
-                    $emailServerData['MESS_ENGINE'],
-                    $emailServerData['MESS_ACCOUNT'],
-                    $emailServerData['MESS_FROM_MAIL']
-                );
+                $row['MESS_LABEL'] = "";
+                if (!empty($row['EMAIL_SERVER_UID'])) {
+                    $emailServerData = $emailServer->getEmailServer($row['EMAIL_SERVER_UID'], true);
+                    $row['MESS_LABEL'] = EmailServer::getMessLabel(
+                        $emailServerData['MESS_ENGINE'], 
+                        $emailServerData['MESS_ACCOUNT'], 
+                        $emailServerData['MESS_FROM_MAIL']
+                    );
+                }
                 $row = array_change_key_case($row, CASE_LOWER);
             }
             return $row;
