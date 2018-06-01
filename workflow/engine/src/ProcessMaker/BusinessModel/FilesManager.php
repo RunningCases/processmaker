@@ -478,9 +478,10 @@ class FilesManager
             } else {
                 $sMainDirectory = 'public';
             }
-            $extention = end(explode(".", $sFile));
-            if ($extention == 'docx' || $extention == 'doc' || $extention == 'html' || $extention == 'php' || $extention == 'jsp' ||
-                $extention == 'xlsx' || $extention == 'xls' || $extention == 'js' || $extention == 'css' || $extention == 'txt') {
+            $explode = explode(".", $sFile);
+            $extension = end($explode);
+            if ($extension == 'docx' || $extension == 'doc' || $extension == 'html' || $extension == 'php' || $extension == 'jsp' ||
+                $extension == 'xlsx' || $extension == 'xls' || $extension == 'js' || $extension == 'css' || $extension == 'txt') {
                 $sEditable = true;
             } else {
                 $sEditable = false;
