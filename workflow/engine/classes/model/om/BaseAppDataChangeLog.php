@@ -70,34 +70,40 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
     protected $usr_id = 0;
 
     /**
-     * The value for the dyn_id field.
+     * The value for the object_type field.
      * @var        int
      */
-    protected $dyn_id = 0;
+    protected $object_type = 0;
+
+    /**
+     * The value for the object_id field.
+     * @var        int
+     */
+    protected $object_id = 0;
+
+    /**
+     * The value for the object_uid field.
+     * @var        string
+     */
+    protected $object_uid = '';
+
+    /**
+     * The value for the executed_at field.
+     * @var        int
+     */
+    protected $executed_at = 0;
 
     /**
      * The value for the source_id field.
-     * @var        string
+     * @var        int
      */
-    protected $source_id = '';
-
-    /**
-     * The value for the st_type field.
-     * @var        string
-     */
-    protected $st_type = '';
+    protected $source_id = 0;
 
     /**
      * The value for the data field.
      * @var        string
      */
     protected $data;
-
-    /**
-     * The value for the source_to_save field.
-     * @var        string
-     */
-    protected $source_to_save = '';
 
     /**
      * The value for the skin field.
@@ -224,36 +230,58 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [dyn_id] column value.
+     * Get the [object_type] column value.
      * 
      * @return     int
      */
-    public function getDynId()
+    public function getObjectType()
     {
 
-        return $this->dyn_id;
+        return $this->object_type;
+    }
+
+    /**
+     * Get the [object_id] column value.
+     * 
+     * @return     int
+     */
+    public function getObjectId()
+    {
+
+        return $this->object_id;
+    }
+
+    /**
+     * Get the [object_uid] column value.
+     * 
+     * @return     string
+     */
+    public function getObjectUid()
+    {
+
+        return $this->object_uid;
+    }
+
+    /**
+     * Get the [executed_at] column value.
+     * 
+     * @return     int
+     */
+    public function getExecutedAt()
+    {
+
+        return $this->executed_at;
     }
 
     /**
      * Get the [source_id] column value.
      * 
-     * @return     string
+     * @return     int
      */
     public function getSourceId()
     {
 
         return $this->source_id;
-    }
-
-    /**
-     * Get the [st_type] column value.
-     * 
-     * @return     string
-     */
-    public function getStType()
-    {
-
-        return $this->st_type;
     }
 
     /**
@@ -265,17 +293,6 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
     {
 
         return $this->data;
-    }
-
-    /**
-     * Get the [source_to_save] column value.
-     * 
-     * @return     string
-     */
-    public function getSourceToSave()
-    {
-
-        return $this->source_to_save;
     }
 
     /**
@@ -462,12 +479,12 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
     } // setUsrId()
 
     /**
-     * Set the value of [dyn_id] column.
+     * Set the value of [object_type] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setDynId($v)
+    public function setObjectType($v)
     {
 
         // Since the native PHP type for this column is integer,
@@ -476,56 +493,100 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->dyn_id !== $v || $v === 0) {
-            $this->dyn_id = $v;
-            $this->modifiedColumns[] = AppDataChangeLogPeer::DYN_ID;
+        if ($this->object_type !== $v || $v === 0) {
+            $this->object_type = $v;
+            $this->modifiedColumns[] = AppDataChangeLogPeer::OBJECT_TYPE;
         }
 
-    } // setDynId()
+    } // setObjectType()
+
+    /**
+     * Set the value of [object_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setObjectId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->object_id !== $v || $v === 0) {
+            $this->object_id = $v;
+            $this->modifiedColumns[] = AppDataChangeLogPeer::OBJECT_ID;
+        }
+
+    } // setObjectId()
+
+    /**
+     * Set the value of [object_uid] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setObjectUid($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->object_uid !== $v || $v === '') {
+            $this->object_uid = $v;
+            $this->modifiedColumns[] = AppDataChangeLogPeer::OBJECT_UID;
+        }
+
+    } // setObjectUid()
+
+    /**
+     * Set the value of [executed_at] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setExecutedAt($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->executed_at !== $v || $v === 0) {
+            $this->executed_at = $v;
+            $this->modifiedColumns[] = AppDataChangeLogPeer::EXECUTED_AT;
+        }
+
+    } // setExecutedAt()
 
     /**
      * Set the value of [source_id] column.
      * 
-     * @param      string $v new value
+     * @param      int $v new value
      * @return     void
      */
     public function setSourceId($v)
     {
 
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
         }
 
-        if ($this->source_id !== $v || $v === '') {
+        if ($this->source_id !== $v || $v === 0) {
             $this->source_id = $v;
             $this->modifiedColumns[] = AppDataChangeLogPeer::SOURCE_ID;
         }
 
     } // setSourceId()
-
-    /**
-     * Set the value of [st_type] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setStType($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->st_type !== $v || $v === '') {
-            $this->st_type = $v;
-            $this->modifiedColumns[] = AppDataChangeLogPeer::ST_TYPE;
-        }
-
-    } // setStType()
 
     /**
      * Set the value of [data] column.
@@ -548,28 +609,6 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
         }
 
     } // setData()
-
-    /**
-     * Set the value of [source_to_save] column.
-     * 
-     * @param      string $v new value
-     * @return     void
-     */
-    public function setSourceToSave($v)
-    {
-
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
-        }
-
-        if ($this->source_to_save !== $v || $v === '') {
-            $this->source_to_save = $v;
-            $this->modifiedColumns[] = AppDataChangeLogPeer::SOURCE_TO_SAVE;
-        }
-
-    } // setSourceToSave()
 
     /**
      * Set the value of [skin] column.
@@ -646,26 +685,28 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
 
             $this->usr_id = $rs->getInt($startcol + 6);
 
-            $this->dyn_id = $rs->getInt($startcol + 7);
+            $this->object_type = $rs->getInt($startcol + 7);
 
-            $this->source_id = $rs->getString($startcol + 8);
+            $this->object_id = $rs->getInt($startcol + 8);
 
-            $this->st_type = $rs->getString($startcol + 9);
+            $this->object_uid = $rs->getString($startcol + 9);
 
-            $this->data = $rs->getString($startcol + 10);
+            $this->executed_at = $rs->getInt($startcol + 10);
 
-            $this->source_to_save = $rs->getString($startcol + 11);
+            $this->source_id = $rs->getInt($startcol + 11);
 
-            $this->skin = $rs->getString($startcol + 12);
+            $this->data = $rs->getString($startcol + 12);
 
-            $this->language = $rs->getString($startcol + 13);
+            $this->skin = $rs->getString($startcol + 13);
+
+            $this->language = $rs->getString($startcol + 14);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 14; // 14 = AppDataChangeLogPeer::NUM_COLUMNS - AppDataChangeLogPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 15; // 15 = AppDataChangeLogPeer::NUM_COLUMNS - AppDataChangeLogPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating AppDataChangeLog object", $e);
@@ -893,24 +934,27 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
                 return $this->getUsrId();
                 break;
             case 7:
-                return $this->getDynId();
+                return $this->getObjectType();
                 break;
             case 8:
-                return $this->getSourceId();
+                return $this->getObjectId();
                 break;
             case 9:
-                return $this->getStType();
+                return $this->getObjectUid();
                 break;
             case 10:
-                return $this->getData();
+                return $this->getExecutedAt();
                 break;
             case 11:
-                return $this->getSourceToSave();
+                return $this->getSourceId();
                 break;
             case 12:
-                return $this->getSkin();
+                return $this->getData();
                 break;
             case 13:
+                return $this->getSkin();
+                break;
+            case 14:
                 return $this->getLanguage();
                 break;
             default:
@@ -940,13 +984,14 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
             $keys[4] => $this->getProId(),
             $keys[5] => $this->getTasId(),
             $keys[6] => $this->getUsrId(),
-            $keys[7] => $this->getDynId(),
-            $keys[8] => $this->getSourceId(),
-            $keys[9] => $this->getStType(),
-            $keys[10] => $this->getData(),
-            $keys[11] => $this->getSourceToSave(),
-            $keys[12] => $this->getSkin(),
-            $keys[13] => $this->getLanguage(),
+            $keys[7] => $this->getObjectType(),
+            $keys[8] => $this->getObjectId(),
+            $keys[9] => $this->getObjectUid(),
+            $keys[10] => $this->getExecutedAt(),
+            $keys[11] => $this->getSourceId(),
+            $keys[12] => $this->getData(),
+            $keys[13] => $this->getSkin(),
+            $keys[14] => $this->getLanguage(),
         );
         return $result;
     }
@@ -1000,24 +1045,27 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
                 $this->setUsrId($value);
                 break;
             case 7:
-                $this->setDynId($value);
+                $this->setObjectType($value);
                 break;
             case 8:
-                $this->setSourceId($value);
+                $this->setObjectId($value);
                 break;
             case 9:
-                $this->setStType($value);
+                $this->setObjectUid($value);
                 break;
             case 10:
-                $this->setData($value);
+                $this->setExecutedAt($value);
                 break;
             case 11:
-                $this->setSourceToSave($value);
+                $this->setSourceId($value);
                 break;
             case 12:
-                $this->setSkin($value);
+                $this->setData($value);
                 break;
             case 13:
+                $this->setSkin($value);
+                break;
+            case 14:
                 $this->setLanguage($value);
                 break;
         } // switch()
@@ -1072,31 +1120,35 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setDynId($arr[$keys[7]]);
+            $this->setObjectType($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setSourceId($arr[$keys[8]]);
+            $this->setObjectId($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setStType($arr[$keys[9]]);
+            $this->setObjectUid($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setData($arr[$keys[10]]);
+            $this->setExecutedAt($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setSourceToSave($arr[$keys[11]]);
+            $this->setSourceId($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setSkin($arr[$keys[12]]);
+            $this->setData($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setLanguage($arr[$keys[13]]);
+            $this->setSkin($arr[$keys[13]]);
+        }
+
+        if (array_key_exists($keys[14], $arr)) {
+            $this->setLanguage($arr[$keys[14]]);
         }
 
     }
@@ -1138,24 +1190,28 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
             $criteria->add(AppDataChangeLogPeer::USR_ID, $this->usr_id);
         }
 
-        if ($this->isColumnModified(AppDataChangeLogPeer::DYN_ID)) {
-            $criteria->add(AppDataChangeLogPeer::DYN_ID, $this->dyn_id);
+        if ($this->isColumnModified(AppDataChangeLogPeer::OBJECT_TYPE)) {
+            $criteria->add(AppDataChangeLogPeer::OBJECT_TYPE, $this->object_type);
+        }
+
+        if ($this->isColumnModified(AppDataChangeLogPeer::OBJECT_ID)) {
+            $criteria->add(AppDataChangeLogPeer::OBJECT_ID, $this->object_id);
+        }
+
+        if ($this->isColumnModified(AppDataChangeLogPeer::OBJECT_UID)) {
+            $criteria->add(AppDataChangeLogPeer::OBJECT_UID, $this->object_uid);
+        }
+
+        if ($this->isColumnModified(AppDataChangeLogPeer::EXECUTED_AT)) {
+            $criteria->add(AppDataChangeLogPeer::EXECUTED_AT, $this->executed_at);
         }
 
         if ($this->isColumnModified(AppDataChangeLogPeer::SOURCE_ID)) {
             $criteria->add(AppDataChangeLogPeer::SOURCE_ID, $this->source_id);
         }
 
-        if ($this->isColumnModified(AppDataChangeLogPeer::ST_TYPE)) {
-            $criteria->add(AppDataChangeLogPeer::ST_TYPE, $this->st_type);
-        }
-
         if ($this->isColumnModified(AppDataChangeLogPeer::DATA)) {
             $criteria->add(AppDataChangeLogPeer::DATA, $this->data);
-        }
-
-        if ($this->isColumnModified(AppDataChangeLogPeer::SOURCE_TO_SAVE)) {
-            $criteria->add(AppDataChangeLogPeer::SOURCE_TO_SAVE, $this->source_to_save);
         }
 
         if ($this->isColumnModified(AppDataChangeLogPeer::SKIN)) {
@@ -1232,15 +1288,17 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
 
         $copyObj->setUsrId($this->usr_id);
 
-        $copyObj->setDynId($this->dyn_id);
+        $copyObj->setObjectType($this->object_type);
+
+        $copyObj->setObjectId($this->object_id);
+
+        $copyObj->setObjectUid($this->object_uid);
+
+        $copyObj->setExecutedAt($this->executed_at);
 
         $copyObj->setSourceId($this->source_id);
 
-        $copyObj->setStType($this->st_type);
-
         $copyObj->setData($this->data);
-
-        $copyObj->setSourceToSave($this->source_to_save);
 
         $copyObj->setSkin($this->skin);
 

@@ -1,18 +1,9 @@
 <?php
 
-//It works with the table CONFIGURATION in a WF dataBase
-use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\EmailServer;
+use ProcessMaker\ChangeLog\ChangeLog;
+use ProcessMaker\Core\System;
 
-/**
- * Copyright (C) 2009 COLOSA
- * License: LGPL, see LICENSE
- * Last Modify: 26.06.2008 10:05:00
- * Last modify by: Erik Amaru Ortiz <erik@colosa.com>
- * Last Modify comment(26.06.2008): the session expired verification was removed from here to soap class
- *
- * @package workflow.engine.classes
- */
 class WsBase
 {
     public $stored_system_variables; //boolean
@@ -2258,13 +2249,25 @@ class WsBase
                     unset($appFields['APP_PROC_STATUS']);
                     unset($appFields['APP_PROC_CODE']);
                     unset($appFields['APP_PIN']);
-                    $oCase->updateCase($caseId, $appFields);
+                    $fieldsUpdated = $oCase->updateCase($caseId, $appFields);
 
                     //We need to update the variable $appData for use the new variables in the next trigger
                     $appData = array_merge($appData, $appFields['APP_DATA']);
                 }
             }
         }
+
+        ChangeLog::getChangeLog()
+                ->setDate($fieldsUpdated['APP_UPDATE_DATE'])
+                ->setAppNumber($fieldsUpdated['APP_NUMBER'])
+                ->setDelIndex($fieldsUpdated['DEL_INDEX'])
+                ->getProIdByProUid($appData['PROCESS'])
+                ->getTasIdByTasUid($appData['TASK'])
+                ->setStepTypeObject($stepType)
+                ->setObjectUid($stepUidObj)
+                ->setData($fieldsUpdated['APP_DATA'])
+                ->getExecutedAtIdByTriggerType($triggerType);
+
         return $varTriggers;
     }
 
