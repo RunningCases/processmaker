@@ -23,6 +23,7 @@
  */
 
 use Illuminate\Foundation\Http\Kernel;
+use ProcessMaker\ChangeLog\ChangeLog;
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -1070,6 +1071,11 @@ if (!defined('EXECUTE_BY_CRON')) {
     } else {
         //NewRelic Snippet - By JHL
         transactionLog($phpFile);
+        ChangeLog::getChangeLog()
+                ->setSourceId(ChangeLog::FromWeb)
+                ->setSkin(SYS_SKIN)
+                ->setLanguage(SYS_LANG)
+                ->getUsrIdByUsrUid(empty($_SESSION['USER_LOGGED']) ? '' : $_SESSION['USER_LOGGED']);
         require_once $phpFile;
     }
 

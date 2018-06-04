@@ -554,7 +554,7 @@
             </vendor>
         </index>
     </table>
-    <table name="DYNAFORM">
+    <table name="DYNAFORM" idMethod="native">
         <vendor type="mysql">
             <parameter name="Name" value="DYNAFORM"/>
             <parameter name="Engine" value="InnoDB"/>
@@ -576,6 +576,7 @@
             <parameter name="Comment" value="Forms required"/>
         </vendor>
         <column name="DYN_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="DYN_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="DYN_TITLE" type="LONGVARCHAR" required="true"/>
         <column name="DYN_DESCRIPTION" type="LONGVARCHAR"/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="0"/>
@@ -585,6 +586,9 @@
         <column name="DYN_LABEL" type="LONGVARCHAR"/>
         <column name="DYN_VERSION" type="INTEGER" required="true"/>
         <column name="DYN_UPDATE_DATE" type="TIMESTAMP" required="false"/>
+        <unique name="INDEX_DYN_ID">
+            <unique-column name="DYN_ID"/>
+        </unique>
         <validator column="DYN_TYPE">
             <rule name="validValues" value="xmlform|grid" message="Please select a valid dynaform type."/>
         </validator>
@@ -680,7 +684,7 @@
         <column name="HLD_DATE" type="VARCHAR" size="10" required="true" default="0000-00-00"/>
         <column name="HLD_DESCRIPTION" type="VARCHAR" size="200" required="true" default=""/>
     </table>
-    <table name="INPUT_DOCUMENT">
+    <table name="INPUT_DOCUMENT" idMethod="native">
         <vendor type="mysql">
             <parameter name="Name" value="INPUT_DOCUMENT"/>
             <parameter name="Engine" value="InnoDB"/>
@@ -702,6 +706,7 @@
             <parameter name="Comment" value="Documentation required"/>
         </vendor>
         <column name="INP_DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="INP_DOC_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="0"/>
         <column name="INP_DOC_TITLE" type="LONGVARCHAR" required="true"/>
         <column name="INP_DOC_DESCRIPTION" type="LONGVARCHAR"/>
@@ -714,6 +719,9 @@
         <column name="INP_DOC_TYPE_FILE" type="VARCHAR" size="200" required="false" default="*.*"/>
         <column name="INP_DOC_MAX_FILESIZE" type="INTEGER" required="true" default="0"/>
         <column name="INP_DOC_MAX_FILESIZE_UNIT" type="VARCHAR" size="2" required="true" default="KB"/>
+        <unique name="INDEX_INP_DOC_ID">
+            <unique-column name="INP_DOC_ID"/>
+        </unique>
         <validator column="INP_DOC_UID">
             <rule name="maxLength" value="32" message="Input Document UID can be no larger than ${value} in size"/>
             <rule name="required" message="Input Document UID is required."/>
@@ -877,7 +885,7 @@
         <column name="LEX_VALUE" type="VARCHAR" size="128" required="true" default=""/>
         <column name="LEX_CAPTION" type="VARCHAR" size="128" required="true" default=""/>
     </table>
-    <table name="OUTPUT_DOCUMENT">
+    <table name="OUTPUT_DOCUMENT" idMethod="native">
         <vendor type="mysql">
             <parameter name="Name" value="OUTPUT_DOCUMENT"/>
             <parameter name="Engine" value="InnoDB"/>
@@ -899,6 +907,7 @@
             <parameter name="Comment" value=""/>
         </vendor>
         <column name="OUT_DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OUT_DOC_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="OUT_DOC_TITLE" type="LONGVARCHAR" required="true"/>
         <column name="OUT_DOC_DESCRIPTION" type="LONGVARCHAR"/>
         <column name="OUT_DOC_FILENAME" type="LONGVARCHAR"/>
@@ -923,6 +932,9 @@
         <column name="OUT_DOC_PDF_SECURITY_OWNER_PASSWORD" type="VARCHAR" size="32" required="false" default=""/>
         <column name="OUT_DOC_PDF_SECURITY_PERMISSIONS" type="VARCHAR" size="150" required="false" default=""/>
         <column name="OUT_DOC_OPEN_TYPE" type="INTEGER" default="1"/>
+        <unique name="INDEX_OUT_DOC_ID">
+            <unique-column name="OUT_DOC_ID"/>
+        </unique>
         <validator column="OUT_DOC_UID">
             <rule name="maxLength" value="32" message="Output Document UID can be no larger than ${value} in size"/>
             <rule name="required" message="Output Document UID is required."/>
@@ -5761,11 +5773,12 @@
         <column name="PRO_ID" type="INTEGER" default="0" required="false"/>
         <column name="TAS_ID" type="INTEGER" default="0" required="false"/>
         <column name="USR_ID" type="INTEGER" default="0" required="false"/>
-        <column name="DYN_ID" type="INTEGER" default="0" required="false"/>
-        <column name="SOURCE_ID" type="VARCHAR" size="32" default="" required="false"/>
-        <column name="ST_TYPE" type="VARCHAR" size="32" default="" required="false"/>
+        <column name="OBJECT_TYPE" type="INTEGER" default="0" required="false"/>
+        <column name="OBJECT_ID" type="INTEGER" default="0" required="false"/>
+        <column name="OBJECT_UID" type="VARCHAR" size="32" default="" required="false"/>
+        <column name="EXECUTED_AT" type="INTEGER" default="0" required="false"/>
+        <column name="SOURCE_ID" type="INTEGER" default="0" required="false"/>
         <column name="DATA" type="LONGVARCHAR" required="true"/>
-        <column name="SOURCE_TO_SAVE" type="VARCHAR" size="32" default="" required="false"/>
         <column name="SKIN" type="VARCHAR" size="32" default="" required="false"/>
         <column name="LANGUAGE" type="VARCHAR" size="32" default="" required="false"/>
         <index name="indexAppNumber">
@@ -5783,8 +5796,17 @@
         <index name="indexUsrId">
             <index-column name="USR_ID"/>
         </index>
-        <index name="indexDynId">
-            <index-column name="DYN_ID"/>
+        <index name="indexObjectType">
+            <index-column name="OBJECT_TYPE"/>
+        </index>
+        <index name="indexObjectId">
+            <index-column name="OBJECT_ID"/>
+        </index>
+        <index name="indexExecutedAt">
+            <index-column name="EXECUTED_AT"/>
+        </index>
+        <index name="indexSourceId">
+            <index-column name="SOURCE_ID"/>
         </index>
     </table>
 </database>

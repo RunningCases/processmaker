@@ -2,40 +2,41 @@
 
 namespace ProcessMaker\BusinessModel;
 
-use ProcessMaker\BusinessModel\Lists;
-use G;
-use Criteria;
-use UsersPeer;
-use AppDelegationPeer;
-use AppDelayPeer;
-use ProcessMaker\Core\System;
-use ProcessMaker\Util\DateTime;
-use PmLicenseManager;
-use Bootstrap;
-use ProcessPeer;
-use BpmnProjectPeer;
-use Propel;
-use ResultSet;
-use Process;
-use Cases;
-use ProcessMaker\BusinessModel\Task as BusinessModelTask;
-use ProcessMaker\Services\Api\Project\Activity\Step as ActivityStep;
-use Exception;
 use AppCacheView;
-use database;
-use TaskPeer;
-use StepPeer;
-use GulliverBasePeer;
+use AppDelayPeer;
+use AppDelegationPeer;
 use AppDocument;
-use Users;
-use ProcessMaker\BusinessModel\User as BusinessModelUser;
-use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
-use ProcessMaker\Core\RoutingScreen;
-use Configurations;
-use InputDocument;
 use AppFolder;
+use Bootstrap;
+use BpmnProjectPeer;
+use Cases;
+use Configurations;
+use Criteria;
+use database;
+use Exception;
+use G;
+use GulliverBasePeer;
+use InputDocument;
+use PmLicenseManager;
 use PMmemcached;
+use Process;
+use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
+use ProcessMaker\BusinessModel\Lists;
+use ProcessMaker\BusinessModel\Task as BusinessModelTask;
+use ProcessMaker\BusinessModel\User as BusinessModelUser;
+use ProcessMaker\ChangeLog\ChangeLog;
+use ProcessMaker\Core\RoutingScreen;
+use ProcessMaker\Core\System;
+use ProcessMaker\Services\Api\Project\Activity\Step as ActivityStep;
+use ProcessMaker\Util\DateTime;
+use ProcessPeer;
+use Propel;
 use RBAC;
+use ResultSet;
+use StepPeer;
+use TaskPeer;
+use Users;
+use UsersPeer;
 
 class Light
 {
@@ -598,6 +599,9 @@ class Light
                 $executeTriggersBeforeAssignment,
                 $tasks
             );
+
+            ChangeLog::getChangeLog()
+                    ->register();
 
             $array = json_decode(json_encode($fields), true);
             $array['message'] = trim(strip_tags($array['message']));

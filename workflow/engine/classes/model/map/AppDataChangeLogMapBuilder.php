@@ -79,15 +79,17 @@ class AppDataChangeLogMapBuilder
 
         $tMap->addColumn('USR_ID', 'UsrId', 'int', CreoleTypes::INTEGER, false, null);
 
-        $tMap->addColumn('DYN_ID', 'DynId', 'int', CreoleTypes::INTEGER, false, null);
+        $tMap->addColumn('OBJECT_TYPE', 'ObjectType', 'int', CreoleTypes::INTEGER, false, null);
 
-        $tMap->addColumn('SOURCE_ID', 'SourceId', 'string', CreoleTypes::VARCHAR, false, 32);
+        $tMap->addColumn('OBJECT_ID', 'ObjectId', 'int', CreoleTypes::INTEGER, false, null);
 
-        $tMap->addColumn('ST_TYPE', 'StType', 'string', CreoleTypes::VARCHAR, false, 32);
+        $tMap->addColumn('OBJECT_UID', 'ObjectUid', 'string', CreoleTypes::VARCHAR, false, 32);
+
+        $tMap->addColumn('EXECUTED_AT', 'ExecutedAt', 'int', CreoleTypes::INTEGER, false, null);
+
+        $tMap->addColumn('SOURCE_ID', 'SourceId', 'int', CreoleTypes::INTEGER, false, null);
 
         $tMap->addColumn('DATA', 'Data', 'string', CreoleTypes::LONGVARCHAR, true, null);
-
-        $tMap->addColumn('SOURCE_TO_SAVE', 'SourceToSave', 'string', CreoleTypes::VARCHAR, false, 32);
 
         $tMap->addColumn('SKIN', 'Skin', 'string', CreoleTypes::VARCHAR, false, 32);
 

@@ -1,6 +1,8 @@
 <?php
 
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\ChangeLog\ChangeLog;
+
 if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
     if (PMLicensedFeatures::getSingleton()->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
         // since all the request parameters using this script are encrypted
@@ -60,6 +62,13 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         } catch (Exception $e) {
                             throw $e;
                         }
+
+                        ChangeLog::getChangeLog()
+                                ->setSourceId(ChangeLog::FromABE);
+
+                        $caseFieldsABE['CURRENT_DYNAFORM'] = '';
+                        $caseFieldsABE['USER_UID'] = $caseFieldsABE['CURRENT_USER_UID'];
+                        $caseFieldsABE['OBJECT_TYPE'] = '';
 
                         $case->updateCase($_REQUEST['APP_UID'], $caseFieldsABE);
 
