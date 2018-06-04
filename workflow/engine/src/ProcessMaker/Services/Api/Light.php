@@ -1762,13 +1762,13 @@ class Light extends Api
      *
      * @url POST /cases/:app_uid/cancel
      * 
-     * @param string $cas_uid {@min 1}{@max 32}
+     * @param string $app_uid {@min 1}{@max 32}
      * 
      * @return array
      * @throws RestException 
      * 
      * @access protected
-     * @class AccessControl {@permission PM_CASES}
+     * @class AccessControl {@permission PM_CANCELCASE}
      */
     public function doPutCancelCase($app_uid)
     {
