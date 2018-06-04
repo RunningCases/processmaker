@@ -24,35 +24,38 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession") {
         print G::json_encode($response);
         die();
     } else {
+        //When the user has session we will to validate the permissions over other actions
         /** Action: Reassign from openCase */
         global $RBAC;
-        $proUid = $_SESSION['PROCESS'];
-        $appUid = $_SESSION['APPLICATION'];
-        $tasUid = $_SESSION['TASK'];
+        $proUid = isset($_SESSION['PROCESS']) ? $_SESSION['PROCESS'] : '';
+        $appUid = isset($_SESSION['APPLICATION']) ? $_SESSION['APPLICATION'] : '';
+        $tasUid = isset($_SESSION['TASK']) ? $_SESSION['TASK'] : '';
 
         $response = new stdclass();
-        $cases = new BmCases();
-        $userAuthorization = $cases->userAuthorization(
-            $RBAC->aUserInfo['USER_INFO']['USR_UID'],
-            $proUid,
-            $appUid,
-            ['PM_REASSIGNCASE', 'PM_REASSIGNCASE_SUPERVISOR'],
-            ['REASSIGN_MY_CASES' => ''],
-            true,
-            $tasUid
-        );
+        $userAuthorization = [];
+        if (!empty($proUid) && !empty($appUid)) {
+            $cases = new BmCases();
+            $userAuthorization = $cases->userAuthorization(
+                $RBAC->aUserInfo['USER_INFO']['USR_UID'],
+                $proUid,
+                $appUid,
+                ['PM_REASSIGNCASE', 'PM_REASSIGNCASE_SUPERVISOR'],
+                ['REASSIGN_MY_CASES' => ''],
+                true,
+                $tasUid
+            );
 
-        if (
-            $userAuthorization['rolesPermissions']['PM_REASSIGNCASE'] ||
-            ($userAuthorization['rolesPermissions']['PM_REASSIGNCASE_SUPERVISOR'] && $userAuthorization['supervisor']) ||
-            in_array($appUid, $userAuthorization['objectPermissions']['REASSIGN_MY_CASES'])
-        ) {
-            $response->reassigncase = true;
-            $response->message = '';
-        } else {
-            $response->reassigncase = false;
-            $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
+            if (
+                $userAuthorization['rolesPermissions']['PM_REASSIGNCASE'] ||
+                ($userAuthorization['rolesPermissions']['PM_REASSIGNCASE_SUPERVISOR'] && $userAuthorization['supervisor']) ||
+                in_array($appUid, $userAuthorization['objectPermissions']['REASSIGN_MY_CASES'])
+            ) {
+                $response->reassigncase = true;
+                $response->message = '';
+            }
         }
+        $response->reassigncase = false;
+        $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
 
         print G::json_encode($response);
         die();

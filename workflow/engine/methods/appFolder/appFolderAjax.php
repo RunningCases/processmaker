@@ -1438,88 +1438,96 @@ function checkTree($uidOriginFolder, $uidNewFolder)
     }
 }
 
+/**
+ * Upload documents
+ *
+ * @return void
+ */
 function uploadExternalDocument()
 {
-    $response['action']=$_POST['action']. " - ".$_POST['option'];
-    $response['error']="error";
-    $response['message']="error";
-    $response['success']=false;
+    $response = [];
+    $response['action'] = $_POST['action'] . " - " . $_POST['option'];
+    $response['error'] = "error";
+    $response['message'] = "error";
+    $response['success'] = false;
     $overwrite = (isset($_REQUEST['overwrite_files'])) ? $_REQUEST['overwrite_files'] : false;
     if (isset($_POST["confirm"]) && $_POST["confirm"] == "true") {
         if (isset($_FILES['uploadedFile'])) {
-            $uploadedInstances=count($_FILES['uploadedFile']['name']);
-            $sw_error=false;
-            $sw_error_exists=isset($_FILES['uploadedFile']['error']);
-            $emptyInstances=0;
-            $quequeUpload=array();
+            $uploadedInstances = count($_FILES['uploadedFile']['name']);
+            $sw_error = false;
+            $sw_error_exists = isset($_FILES['uploadedFile']['error']);
+            $emptyInstances = 0;
+            $quequeUpload = [];
             //overwrite files
             if ($overwrite) {
-                for ($i=0; $i<$uploadedInstances; $i++) {
+                for ($i = 0; $i < $uploadedInstances; $i++) {
                     overwriteFile($_REQUEST['dir'], stripslashes($_FILES['uploadedFile']['name'][$i]));
                 }
             }
             // upload files & check for errors
-            for ($i=0; $i<$uploadedInstances; $i++) {
+            $errors = [];
+            for ($i = 0; $i < $uploadedInstances; $i++) {
                 $errors[$i] = null;
                 $tmp = $_FILES['uploadedFile']['tmp_name'][$i];
                 $items[$i] = stripslashes($_FILES['uploadedFile']['name'][$i]);
                 if ($sw_error_exists) {
                     $up_err = $_FILES['uploadedFile']['error'][$i];
                 } else {
-                    $up_err=(file_exists($tmp)?0:4);
+                    $up_err = (file_exists($tmp) ? 0 : 4);
                 }
-                if ($items[$i]=="" || $up_err==4) {
+                if ($items[$i] == "" || $up_err == 4) {
                     $emptyInstances++;
                     continue;
                 }
-                if ($up_err==1 || $up_err==2) {
-                    $errors[$i]='miscfilesize';
+                if ($up_err == 1 || $up_err == 2) {
+                    $errors[$i] = 'miscfilesize';
                     $sw_error = true;
                     continue;
                 }
-                if ($up_err==3) {
-                    $errors[$i]='miscfilepart';
-                    $sw_error=true;
+                if ($up_err == 3) {
+                    $errors[$i] = 'miscfilepart';
+                    $sw_error = true;
                     continue;
                 }
                 if (!@is_uploaded_file($tmp)) {
-                    $errors[$i]='uploadfile';
-                    $sw_error=true;
+                    $errors[$i] = 'uploadfile';
+                    $sw_error = true;
                     continue;
                 }
                 //The uplaoded files seems to be correct and ready to be uploaded. Add to the Queque
-                $fileInfo=array("tempName"=>$tmp,"fileName"=>$items[$i]);
-                $quequeUpload[]=$fileInfo;
+                $fileInfo = ["tempName" => $tmp, "fileName" => $items[$i]];
+                $quequeUpload[] = $fileInfo;
             }
         } elseif (isset($_POST['selitems'])) {
-            $response="";
-            $response['msg']= "correct reload";
-            $response['success']=true;
+            $response['msg'] = "correct reload";
+            $response['success'] = true;
             if (isset($_REQUEST['option']) && isset($_REQUEST['copyMove'])) {
                 if ($_REQUEST['option'] == 'directory' && $_REQUEST['copyMove'] == 'all') {
-                    $response['action'] = $_POST['action']. " - ".$_POST['option'];
-                    $response['error']  = "Complete";
-                    $response['message']= str_replace("Execute", "", $_POST['action']). " ". "Complete";
-                    $response['success']= 'success';
-                    $response['node']   = '';
-                    $_POST ['node']     = "";
-                    $newFolderUid = checkTree($_REQUEST['dir'], ($_REQUEST['new_dir'] == 'root')? '/' : $_REQUEST['new_dir']);
+                    $response['action'] = $_POST['action'] . " - " . $_POST['option'];
+                    $response['error'] = "Complete";
+                    $response['message'] = str_replace("Execute", "", $_POST['action']) . " " . "Complete";
+                    $response['success'] = 'success';
+                    $response['node'] = '';
+                    $_POST ['node'] = "";
+                    $newFolderUid = checkTree(
+                        $_REQUEST['dir'],
+                        ($_REQUEST['new_dir'] == 'root') ? '/' : $_REQUEST['new_dir']
+                    );
                 }
-                $_POST['selitems'] = array();
+                $_POST['selitems'] = [];
             } else {
-                $oAppDocument = new AppDocument();
+                $appDocument = new AppDocument();
                 if (isset($_POST['selitems']) && is_array($_POST['selitems'])) {
                     foreach ($_POST['selitems'] as $docId) {
                         $arrayDocId = explode('_', $docId);
-                        $docInfo=$oAppDocument->load($arrayDocId[0]);
-                        $docInfo['FOLDER_UID'] =  $_POST['new_dir'];
+                        $docInfo = $appDocument->load($arrayDocId[0]);
+                        $docInfo['FOLDER_UID'] = $_POST['new_dir'];
                         $docInfo['APP_DOC_CREATE_DATE'] = date('Y-m-d H:i:s');
-                        $oAppDocument->update($docInfo);
+                        $appDocument->update($docInfo);
                     }
                 }
             }
         }
-        //G::pr($quequeUpload);
 
         //Read. Instance Document classes
         if (!empty($quequeUpload)) {
@@ -1535,148 +1543,144 @@ function uploadExternalDocument()
                     exit();
                 }
             }
-            $docUid=$_POST['docUid'];
-            $appDocUid=isset($_POST['APP_DOC_UID'])?$_POST['APP_DOC_UID']:"";
-            $docVersion=isset($_POST['docVersion'])?$_POST['docVersion']:"";
-            $actionType=isset($_POST['actionType'])?$_POST['actionType']:"";
-            $folderId=$_POST['dir']==""?"/":$_POST['dir'];
-            $appId=$_POST['appId'];
-            $docType=isset($_POST['docType'])?$_GET['docType']:"INPUT";
+            $docUid = $_POST['docUid'];
+            $appDocUid = isset($_POST['APP_DOC_UID']) ? $_POST['APP_DOC_UID'] : "";
+            $docVersion = isset($_POST['docVersion']) ? $_POST['docVersion'] : "";
+            $actionType = isset($_POST['actionType']) ? $_POST['actionType'] : "";
+            $folderId = $_POST['dir'] == "" ? "/" : $_POST['dir'];
+            $appId = $_POST['appId'];
+            $docType = isset($_POST['docType']) ? $_GET['docType'] : "INPUT";
             //save info
 
-            $oInputDocument = new InputDocument();
+            $inputDocument = new InputDocument();
             if ($docUid != -1) {
-                $aID = $oInputDocument->load($docUid);
+                $aID = $inputDocument->load($docUid);
             } else {
-                $oFolder=new AppFolder();
-                $folderStructure=$oFolder->getFolderStructure($folderId);
-                $aID=array('INP_DOC_DESTINATION_PATH'=>$folderStructure['PATH']);
+                $folder = new AppFolder();
+                $folderStructure = $folder->getFolderStructure($folderId);
+                $aID = ['INP_DOC_DESTINATION_PATH' => $folderStructure['PATH']];
             }
-
 
 
             //Get the Custom Folder ID (create if necessary)
-            $oFolder=new AppFolder();
-            if ($docUid!=-1) {
-                //krumo("jhl");
-                $folderId=$oFolder->createFromPath($aID['INP_DOC_DESTINATION_PATH'], $appId);
+            $folder = new AppFolder();
+            if ($docUid != -1) {
+                $folderId = $folder->createFromPath($aID['INP_DOC_DESTINATION_PATH'], $appId);
                 //Tags
-                $fileTags=$oFolder->parseTags($aID['INP_DOC_TAGS'], $appId);
+                $fileTags = $folder->parseTags($aID['INP_DOC_TAGS'], $appId);
             } else {
-                $folderId=$folderId;
-                $fileTags="EXTERNAL";
+                $folderId = $folderId;
+                $fileTags = "EXTERNAL";
             }
             foreach ($quequeUpload as $key => $fileObj) {
-                $oAppDocument = new AppDocument();
+                $appDocument = new AppDocument();
                 switch ($actionType) {
                     case "R":
                         //replace
-                        $aFields = array(
-                            'APP_DOC_UID'           => $appDocUid,
-                            'APP_UID'               => $appId,
-                            'DOC_VERSION'           => $docVersion,
-                            'DEL_INDEX'             => 1,
-                            'USR_UID'               => $_SESSION['USER_LOGGED'],
-                            'DOC_UID'               => $docUid,
-                            'APP_DOC_TYPE'          => $docType,
-                            'APP_DOC_CREATE_DATE'   => date('Y-m-d H:i:s'),
-                            'APP_DOC_COMMENT'       => isset($_POST['form']['APP_DOC_COMMENT']) ?
+                        $fields = [
+                            'APP_DOC_UID' => $appDocUid,
+                            'APP_UID' => $appId,
+                            'DOC_VERSION' => $docVersion,
+                            'DEL_INDEX' => 1,
+                            'USR_UID' => $_SESSION['USER_LOGGED'],
+                            'DOC_UID' => $docUid,
+                            'APP_DOC_TYPE' => $docType,
+                            'APP_DOC_CREATE_DATE' => date('Y-m-d H:i:s'),
+                            'APP_DOC_COMMENT' => isset($_POST['form']['APP_DOC_COMMENT']) ?
                                 $_POST['form']['APP_DOC_COMMENT'] : '',
-                            'APP_DOC_TITLE'         => '',
-                            'APP_DOC_FILENAME'      => $fileObj['fileName'],
-                            'FOLDER_UID'            => $folderId,
-                            'APP_DOC_TAGS'          => $fileTags
-                        );
-                        $oAppDocument->update($aFields);
+                            'APP_DOC_TITLE' => '',
+                            'APP_DOC_FILENAME' => $fileObj['fileName'],
+                            'FOLDER_UID' => $folderId,
+                            'APP_DOC_TAGS' => $fileTags
+                        ];
+                        $appDocument->update($fields);
                         break;
                     case "NV":
                         //New Version
-                        $aFields = array(
-                            'APP_DOC_UID'           => $appDocUid,
-                            'APP_UID'               => $appId,
-                            'DEL_INDEX'             => 1,
-                            'USR_UID'               => $_SESSION['USER_LOGGED'],
-                            'DOC_UID'               => $docUid,
-                            'APP_DOC_TYPE'          => $docType,
-                            'APP_DOC_CREATE_DATE'   => date('Y-m-d H:i:s'),
-                            'APP_DOC_COMMENT'       => isset($_POST['form']['APP_DOC_COMMENT']) ?
+                        $fields = [
+                            'APP_DOC_UID' => $appDocUid,
+                            'APP_UID' => $appId,
+                            'DEL_INDEX' => 1,
+                            'USR_UID' => $_SESSION['USER_LOGGED'],
+                            'DOC_UID' => $docUid,
+                            'APP_DOC_TYPE' => $docType,
+                            'APP_DOC_CREATE_DATE' => date('Y-m-d H:i:s'),
+                            'APP_DOC_COMMENT' => isset($_POST['form']['APP_DOC_COMMENT']) ?
                                 $_POST['form']['APP_DOC_COMMENT'] : '',
-                            'APP_DOC_TITLE'         => '',
-                            'APP_DOC_FILENAME'      => $fileObj['fileName'],
-                            'FOLDER_UID'            => $folderId,
-                            'APP_DOC_TAGS'          => $fileTags
-                        );
-                        $oAppDocument->create($aFields);
+                            'APP_DOC_TITLE' => '',
+                            'APP_DOC_FILENAME' => $fileObj['fileName'],
+                            'FOLDER_UID' => $folderId,
+                            'APP_DOC_TAGS' => $fileTags
+                        ];
+                        $appDocument->create($fields);
                         break;
                     default:
                         //New
-                        $aFields = array(
-                            'APP_UID'               => $appId,
-                            'DEL_INDEX'             => isset($_SESSION['INDEX'])?$_SESSION['INDEX']:1,
-                            'USR_UID'               => $_SESSION['USER_LOGGED'],
-                            'DOC_UID'               => $docUid,
-                            'APP_DOC_TYPE'          => $docType,
-                            'APP_DOC_CREATE_DATE'   => date('Y-m-d H:i:s'),
-                            'APP_DOC_COMMENT'       => isset($_POST['form']['APP_DOC_COMMENT']) ?
+                        $fields = [
+                            'APP_UID' => $appId,
+                            'DEL_INDEX' => isset($_SESSION['INDEX']) ? $_SESSION['INDEX'] : 1,
+                            'USR_UID' => $_SESSION['USER_LOGGED'],
+                            'DOC_UID' => $docUid,
+                            'APP_DOC_TYPE' => $docType,
+                            'APP_DOC_CREATE_DATE' => date('Y-m-d H:i:s'),
+                            'APP_DOC_COMMENT' => isset($_POST['form']['APP_DOC_COMMENT']) ?
                                 $_POST['form']['APP_DOC_COMMENT'] : '',
-                            'APP_DOC_TITLE'         => '',
-                            'APP_DOC_FILENAME'      => $fileObj['fileName'],
-                            'FOLDER_UID'            => $folderId,
-                            'APP_DOC_TAGS'          => $fileTags
-                        );
-                        $oAppDocument->create($aFields);
+                            'APP_DOC_TITLE' => '',
+                            'APP_DOC_FILENAME' => $fileObj['fileName'],
+                            'FOLDER_UID' => $folderId,
+                            'APP_DOC_TAGS' => $fileTags
+                        ];
+                        $appDocument->create($fields);
                         break;
                 }
-                $sAppDocUid = $oAppDocument->getAppDocUid();
-                $iDocVersion = $oAppDocument->getDocVersion();
+                $appDocUid = $appDocument->getAppDocUid();
+                $docVersion = $appDocument->getDocVersion();
 
-                $info = pathinfo($oAppDocument->getAppDocFilename());
+                $info = pathinfo($appDocument->getAppDocFilename());
                 $ext = (isset($info['extension']) ? $info['extension'] : '');
                 //save the file
                 //if (!empty($_FILES['form'])) {
                 //if ($_FILES['form']['error']['APP_DOC_FILENAME'] == 0) {
-                $sPathName = PATH_DOCUMENT . G::getPathFromUID($appId) . PATH_SEP;
-                $file = G::getPathFromFileUID($appId, $sAppDocUid);
-                $sPathName .= $file[0];
-                $sFileName = $file[1] . "_" . $iDocVersion . '.' . $ext;
+                $pathName = PATH_DOCUMENT . G::getPathFromUID($appId) . PATH_SEP;
+                $file = G::getPathFromFileUID($appId, $appDocUid);
+                $pathName .= $file[0];
+                $sFileName = $file[1] . "_" . $docVersion . '.' . $ext;
 
-                G::uploadFile($fileObj['tempName'], $sPathName, $sFileName); //upload
+                G::uploadFile($fileObj['tempName'], $pathName, $sFileName); //upload
 
                 //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-                $oPluginRegistry = PluginRegistry::loadSingleton();
-                if ($oPluginRegistry->existsTrigger(PM_UPLOAD_DOCUMENT) && class_exists('uploadDocumentData')) {
-                    $oData['APP_UID']   = $appId;
+                $pluginRegistry = PluginRegistry::loadSingleton();
+                if ($pluginRegistry->existsTrigger(PM_UPLOAD_DOCUMENT) && class_exists('uploadDocumentData')) {
+                    $oData['APP_UID'] = $appId;
                     $documentData = new uploadDocumentData(
                         $appId,
                         $_SESSION['USER_LOGGED'],
-                        $sPathName . $sFileName,
+                        $pathName . $sFileName,
                         $fileObj['fileName'],
-                        $sAppDocUid
+                        $appDocUid
                     );
-                    //$oPluginRegistry->executeTriggers (PM_UPLOAD_DOCUMENT , $documentData);
-                    //unlink ($sPathName . $sFileName);
                 }
                 //end plugin
                 if ($sw_error) {
                     // there were errors
-                    $err_msg="";
-                    for ($i=0; $i<$uploadedInstances; $i++) {
-                        if ($errors[$i]==null) {
+                    $err_msg = "";
+                    for ($i = 0; $i < $uploadedInstances; $i++) {
+                        if ($errors[$i] == null) {
                             continue;
                         }
-                        $err_msg .= $items[$i]." : ".$errors[$i]."\n";
+                        $err_msg .= $items[$i] . " : " . $errors[$i] . "\n";
                     }
-                    $response['error']=$err_msg;
-                    $response['message']=$err_msg;
-                    $response['success']=false;
-                } elseif ($emptyInstances==$uploadedInstances) {
-                    $response['error']= G::LoadTranslation('ID_UPLOAD_LEAST_FILE');
-                    $response['message']= G::LoadTranslation('ID_UPLOAD_LEAST_FILE');
-                    $response['success']=false;
+                    $response['error'] = $err_msg;
+                    $response['message'] = $err_msg;
+                    $response['success'] = false;
+                } elseif ($emptyInstances == $uploadedInstances) {
+                    $response['error'] = G::LoadTranslation('ID_UPLOAD_LEAST_FILE');
+                    $response['message'] = G::LoadTranslation('ID_UPLOAD_LEAST_FILE');
+                    $response['success'] = false;
                 } else {
-                    $response['error']= G::LoadTranslation('ID_UPLOAD_COMPLETE');
-                    $response['message']="Upload complete";
-                    $response['success']=true;
+                    $response['error'] = G::LoadTranslation('ID_UPLOAD_COMPLETE');
+                    $response['message'] = "Upload complete";
+                    $response['success'] = true;
                 }
             }
         }
