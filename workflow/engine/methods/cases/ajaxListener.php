@@ -1,6 +1,7 @@
 <?php
 
 use ProcessMaker\BusinessModel\Cases as BmCases;
+use ProcessMaker\ChangeLog\ChangeLogResult;
 use ProcessMaker\Plugins\PluginRegistry;
 
 if (!isset($_SESSION['USER_LOGGED'])) {
@@ -770,15 +771,19 @@ class Ajax
 
     public function changeLogAjax()
     {
-        $changeLog = new ProcessMaker\BusinessModel\Cases\ChangeLog();
         $idHistory = $_REQUEST["idHistory"];
         $idHistoryArray = explode("_", $idHistory);
         $proUid = $idHistoryArray[0];
         $appUid = $idHistoryArray[1];
         $tasUid = $idHistoryArray[2];
-        $start = isset($_REQUEST['start']) ? (int) $_REQUEST['start']: 0;
-        $limit = isset($_REQUEST['limit']) ? (int) $_REQUEST['limit']: 15;
-        echo G::json_encode($changeLog->getChangeLog($appUid, $proUid, $tasUid, $start, $limit));
+
+        $changeLog = new ChangeLogResult();
+        $result = $changeLog->setAppUid($appUid)
+                ->setUserLogged($_SESSION['USER_LOGGED'])
+                ->setProUid($proUid)
+                ->setTasUid($tasUid)
+                ->getLogs();
+        echo json_encode($result);
     }
 
     public function changeLogTab()
