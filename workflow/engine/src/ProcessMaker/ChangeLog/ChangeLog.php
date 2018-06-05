@@ -37,7 +37,7 @@ class ChangeLog
      * 
      * @var array 
      */
-    protected static $applications = ['unknow', 'web', 'ABE', 'mobile'];
+    protected static $applications = ['Unknow', 'Web', 'Actions by Email', 'Mobile'];
 
     /**
      * Identifier for unknow object.
@@ -195,7 +195,7 @@ class ChangeLog
      * 
      * @var string 
      */
-    protected $objectUid = '';
+    protected $objectUid = '0';
 
     /**
      * The value for the executedAt field.
@@ -233,13 +233,6 @@ class ChangeLog
     protected $language = '';
 
     /**
-     * The value for the stepTypeObject field.
-     * 
-     * @var string
-     */
-    protected $stepTypeObject = '';
-
-    /**
      * Constructor of de class.
      */
     function __construct()
@@ -252,7 +245,7 @@ class ChangeLog
      * 
      * @return datetime
      */
-    function getDate()
+    public function getDate()
     {
         return $this->date;
     }
@@ -262,7 +255,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getAppNumber()
+    public function getAppNumber()
     {
         return $this->appNumber;
     }
@@ -272,7 +265,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getDelIndex()
+    public function getDelIndex()
     {
         return $this->delIndex;
     }
@@ -282,7 +275,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getProId()
+    public function getProId()
     {
         return $this->proId;
     }
@@ -292,7 +285,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getTasId()
+    public function getTasId()
     {
         return $this->tasId;
     }
@@ -302,7 +295,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getUsrId()
+    public function getUsrId()
     {
         return $this->usrId;
     }
@@ -312,7 +305,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getObjectType()
+    public function getObjectType()
     {
         return $this->objectType;
     }
@@ -322,7 +315,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getObjectId()
+    public function getObjectId()
     {
         return $this->objectId;
     }
@@ -332,7 +325,7 @@ class ChangeLog
      * 
      * @return type
      */
-    function getObjectUid()
+    public function getObjectUid()
     {
         return $this->objectUid;
     }
@@ -342,7 +335,7 @@ class ChangeLog
      * 
      * @return int
      */
-    function getExecutedAt()
+    public function getExecutedAt()
     {
         return $this->executedAt;
     }
@@ -352,7 +345,7 @@ class ChangeLog
      * 
      * @return string
      */
-    function getSourceId()
+    public function getSourceId()
     {
         return $this->sourceId;
     }
@@ -362,7 +355,7 @@ class ChangeLog
      * 
      * @return array
      */
-    function getData()
+    public function getData()
     {
         return $this->data;
     }
@@ -372,7 +365,7 @@ class ChangeLog
      * 
      * @return string
      */
-    function getSkin()
+    public function getSkin()
     {
         return $this->skin;
     }
@@ -382,18 +375,9 @@ class ChangeLog
      * 
      * @return string
      */
-    function getLanguage()
+    public function getLanguage()
     {
         return $this->language;
-    }
-
-    /**
-     * Get stepTypeObject.
-     * @return string
-     */
-    function getStepTypeObject()
-    {
-        return $this->stepTypeObject;
     }
 
     /**
@@ -402,7 +386,7 @@ class ChangeLog
      * @param datetime $date
      * @return $this
      */
-    function setDate($date)
+    public function setDate($date)
     {
         $this->date = $date;
         return $this;
@@ -414,7 +398,7 @@ class ChangeLog
      * @param int $appNumber
      * @return $this
      */
-    function setAppNumber($appNumber)
+    public function setAppNumber($appNumber)
     {
         $this->appNumber = $appNumber;
         return $this;
@@ -426,7 +410,7 @@ class ChangeLog
      * @param int $delIndex
      * @return $this
      */
-    function setDelIndex($delIndex)
+    public function setDelIndex($delIndex)
     {
         $this->delIndex = $delIndex;
         return $this;
@@ -438,7 +422,7 @@ class ChangeLog
      * @param int $proId
      * @return $this
      */
-    function setProId($proId)
+    public function setProId($proId)
     {
         $this->proId = $proId;
         return $this;
@@ -450,7 +434,7 @@ class ChangeLog
      * @param int $tasId
      * @return $this
      */
-    function setTasId($tasId)
+    public function setTasId($tasId)
     {
         $this->tasId = $tasId;
         return $this;
@@ -462,7 +446,7 @@ class ChangeLog
      * @param int $usrId
      * @return $this
      */
-    function setUsrId($usrId)
+    public function setUsrId($usrId)
     {
         $this->usrId = $usrId;
         return $this;
@@ -474,7 +458,7 @@ class ChangeLog
      * @param int $objectType
      * @return $this
      */
-    function setObjectType($objectType)
+    public function setObjectType($objectType)
     {
         $this->objectType = $objectType;
         return $this;
@@ -486,7 +470,7 @@ class ChangeLog
      * @param int $objectId
      * @return $this
      */
-    function setObjectId($objectId)
+    public function setObjectId($objectId)
     {
         $this->objectId = $objectId;
         return $this;
@@ -498,7 +482,7 @@ class ChangeLog
      * @param string $objectUid
      * @return $this
      */
-    function setObjectUid($objectUid)
+    public function setObjectUid($objectUid)
     {
         $this->objectUid = $objectUid;
         return $this;
@@ -510,7 +494,7 @@ class ChangeLog
      * @param int $executedAt
      * @return $this
      */
-    function setExecutedAt($executedAt)
+    public function setExecutedAt($executedAt)
     {
         $this->executedAt = $executedAt;
         return $this;
@@ -522,7 +506,7 @@ class ChangeLog
      * @param string $sourceId
      * @return $this
      */
-    function setSourceId($sourceId)
+    public function setSourceId($sourceId)
     {
         $this->sourceId = $sourceId;
         return $this;
@@ -534,7 +518,7 @@ class ChangeLog
      * @param string $data
      * @return $this
      */
-    function setData($data)
+    public function setData($data)
     {
         $this->data = $data;
         return $this;
@@ -546,7 +530,7 @@ class ChangeLog
      * @param string $skin
      * @return $this
      */
-    function setSkin($skin)
+    public function setSkin($skin)
     {
         $this->skin = $skin;
         return $this;
@@ -558,21 +542,9 @@ class ChangeLog
      * @param string $language
      * @return $this
      */
-    function setLanguage($language)
+    public function setLanguage($language)
     {
         $this->language = $language;
-        return $this;
-    }
-
-    /**
-     * Set stepTypeObject.
-     * 
-     * @param string $stepTypeObject
-     * @return $this
-     */
-    function setStepTypeObject($stepTypeObject)
-    {
-        $this->stepTypeObject = $stepTypeObject;
         return $this;
     }
 
@@ -744,6 +716,9 @@ class ChangeLog
                 break;
         }
         switch ($uid) {
+            case "":
+                $this->setObjectUid(0);
+                break;
             case "-1":
                 $this->setObjectUid(0);
                 $this->setExecutedAt(self::BEFORE_ASSIGNMENT);

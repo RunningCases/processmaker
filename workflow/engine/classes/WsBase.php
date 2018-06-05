@@ -2249,7 +2249,7 @@ class WsBase
                     unset($appFields['APP_PROC_STATUS']);
                     unset($appFields['APP_PROC_CODE']);
                     unset($appFields['APP_PIN']);
-                    $fieldsUpdated = $oCase->updateCase($caseId, $appFields);
+                    $oCase->updateCase($caseId, $appFields);
 
                     //We need to update the variable $appData for use the new variables in the next trigger
                     $appData = array_merge($appData, $appFields['APP_DATA']);
@@ -2258,15 +2258,14 @@ class WsBase
         }
 
         ChangeLog::getChangeLog()
-                ->setDate($fieldsUpdated['APP_UPDATE_DATE'])
-                ->setAppNumber($fieldsUpdated['APP_NUMBER'])
-                ->setDelIndex($fieldsUpdated['DEL_INDEX'])
+                ->setDate('now')
+                ->setAppNumber($appData['APP_NUMBER'])
+                ->setDelIndex($appData['INDEX'])
                 ->getProIdByProUid($appData['PROCESS'])
                 ->getTasIdByTasUid($appData['TASK'])
-                ->setStepTypeObject($stepType)
-                ->setObjectUid($stepUidObj)
-                ->setData($fieldsUpdated['APP_DATA'])
-                ->getExecutedAtIdByTriggerType($triggerType);
+                ->setData(serialize($appData))
+                ->getExecutedAtIdByTriggerType($triggerType)
+                ->getObjectIdByUidAndObjType($stepUidObj, $stepType);
 
         return $varTriggers;
     }

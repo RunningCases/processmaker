@@ -3379,7 +3379,6 @@ class Cases
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
         ChangeLog::getChangeLog()
-                ->setStepTypeObject($sStepType)
                 ->setObjectUid($sStepUidObj)
                 ->getExecutedAtIdByTriggerType($sTriggerType);
 
