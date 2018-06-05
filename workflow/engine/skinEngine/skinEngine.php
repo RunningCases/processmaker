@@ -763,6 +763,7 @@ class SkinEngine
                     $smarty->assign('tracker',
                         (SYS_COLLECTION == 'tracker') ? (($G_PUBLISH->Parts[0]['File'] != 'tracker/login') ? true : '') : '');
                 }
+                $smarty->assign('timezone_status', (isset($_SESSION['__TIME_ZONE_FAILED__']) && $_SESSION['__TIME_ZONE_FAILED__']) ? 'failed' : 'ok');
                 $smarty->assign('switch_interface', $switch_interface);
                 $smarty->assign('switch_interface_label', G::LoadTranslation('ID_SWITCH_INTERFACE'));
                 $smarty->assign('rolename', isset($_SESSION['USR_ROLENAME']) ? $_SESSION['USR_ROLENAME'] . '' : '');
