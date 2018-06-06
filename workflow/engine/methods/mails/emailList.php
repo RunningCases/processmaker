@@ -36,7 +36,7 @@ $flagER = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
 
 $G_PUBLISH = new Publisher();
 
-$oHeadPublisher = &headPublisher::getSingleton();
+$oHeadPublisher = headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript('mails/emailList', false); //adding a javascript file .js
 $oHeadPublisher->addContent('mails/emailList'); //adding a html file  .html.
 //sending the columns to display in grid
@@ -45,4 +45,3 @@ $oHeadPublisher->assign('processValues', $processes);
 $oHeadPublisher->assign('flagER', $flagER);
 
 G::RenderPage( 'publish', 'extJs' );
-

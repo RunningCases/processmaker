@@ -144,8 +144,8 @@ class LdapAdvanced
     /**
      * Set User to this Authentication Source
      *
-     * @param string $userUid       UID of User
-     * @param array  $arrayUserLdap User LDAP data
+     * @param string $userUid UID of User
+     * @param array $arrayUserLdap User LDAP data
      *
      * return void
      */
@@ -296,8 +296,8 @@ class LdapAdvanced
     public function progressBar($total, $count)
     {
         try {
-            $p = (int) (($count * 100) / $total);
-            $n = (int) ($p / 2);
+            $p = (int)(($count * 100) / $total);
+            $n = (int)($p / 2);
 
             return "[" . str_repeat("|", $n) . str_repeat(" ", 50 - $n) . "] $p%";
         } catch (Exception $e) {
@@ -309,7 +309,7 @@ class LdapAdvanced
      * Show front end
      *
      * @param string $option Option
-     * @param string $data   Data string
+     * @param string $data Data string
      *
      * return void
      */
@@ -587,14 +587,14 @@ class LdapAdvanced
     /**
      * Get Users from Department (Search result identifier)
      *
-     * @param resource $ldapcnn           LDAP link identifier
-     * @param resource $searchResult      Search result identifier
-     * @param string   $option            Option (GET, SYNCHRONIZE)
-     * @param string   $dn                DN
-     * @param string   $uidUserIdentifier User identifier
-     * @param int      $totalUser         Total users
-     * @param int      $countUser         User counter
-     * @param array    $arrayData         Data
+     * @param resource $ldapcnn LDAP link identifier
+     * @param resource $searchResult Search result identifier
+     * @param string $option Option (GET, SYNCHRONIZE)
+     * @param string $dn DN
+     * @param string $uidUserIdentifier User identifier
+     * @param int $totalUser Total users
+     * @param int $countUser User counter
+     * @param array $arrayData Data
      *
      * return array Return an array data
      */
@@ -663,9 +663,9 @@ class LdapAdvanced
     /**
      * Get Users from Department
      *
-     * @param string $option    Option (GET, SYNCHRONIZE)
-     * @param string $dn        DN of Department
-     * @param array  $arrayData Data
+     * @param string $option Option (GET, SYNCHRONIZE)
+     * @param string $dn DN of Department
+     * @param array $arrayData Data
      *
      * return array Return an array with data Users or array data
      */
@@ -681,7 +681,7 @@ class LdapAdvanced
 
             //Set variables
             $dn = trim($dn);
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -792,12 +792,12 @@ class LdapAdvanced
     /**
      * Synchronize Group's members
      *
-     * @param resource $ldapcnn             LDAP link identifier
-     * @param array    $arrayAuthSourceData Authentication Source Data
-     * @param string   $groupUid            Unique id of Group
-     * @param array    $arrayGroupLdap      LDAP Group
-     * @param string   $memberAttribute     Member attribute
-     * @param array    $arrayData           Data
+     * @param resource $ldapcnn LDAP link identifier
+     * @param array $arrayAuthSourceData Authentication Source Data
+     * @param string $groupUid Unique id of Group
+     * @param array $arrayGroupLdap LDAP Group
+     * @param string $memberAttribute Member attribute
+     * @param array $arrayData Data
      *
      * @return array Return array data
      */
@@ -812,7 +812,7 @@ class LdapAdvanced
             }
 
             $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'])) ?
-                    $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
+                $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
 
             $filterUsers = trim($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_USERS_FILTER']);
 
@@ -843,18 +843,21 @@ class LdapAdvanced
 
                                 $username = (isset($arrayUserLdap[$uidUserIdentifier])) ? $arrayUserLdap[$uidUserIdentifier] : '';
 
-                                $arrayData['countUser'] ++;
+                                $arrayData['countUser']++;
 
                                 if ((is_array($username) && !empty($username)) || trim($username) != '') {
                                     $arrayData = $this->groupSynchronizeUser(
-                                            $groupUid, $this->getUserDataFromAttribute($username, $arrayUserLdap), $arrayData
+                                        $groupUid,
+                                        $this->getUserDataFromAttribute($username, $arrayUserLdap),
+                                        $arrayData
                                     );
                                 }
 
                                 //Progress bar
                                 $this->frontEndShow(
-                                        'BAR', 'Groups: ' . $arrayData['i'] . '/' . $arrayData['n'] . ' ' .
-                                        $this->progressBar($arrayData['totalUser'], $arrayData['countUser'])
+                                    'BAR',
+                                    'Groups: ' . $arrayData['i'] . '/' . $arrayData['n'] . ' ' .
+                                    $this->progressBar($arrayData['totalUser'], $arrayData['countUser'])
                                 );
                             }
                         }
@@ -872,9 +875,9 @@ class LdapAdvanced
     /**
      * Get Users from Group
      *
-     * @param string $option         Option (SYNCHRONIZE)
-     * @param array  $arrayGroupData Group data
-     * @param array  $arrayData      Data
+     * @param string $option Option (SYNCHRONIZE)
+     * @param array $arrayGroupData Group data
+     * @param array $arrayData Data
      *
      * return array Return array data
      */
@@ -889,7 +892,7 @@ class LdapAdvanced
 
             //Set variables
             $dn = trim($arrayGroupData["GRP_LDAP_DN"]);
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -944,7 +947,12 @@ class LdapAdvanced
                         }
 
                         $arrayData = $this->__ldapGroupSynchronizeMembers(
-                                $ldapcnn, $arrayAuthenticationSourceData, $arrayGroupData['GRP_UID'], $arrayGroupLdap, $memberAttribute2, array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
+                            $ldapcnn,
+                            $arrayAuthenticationSourceData,
+                            $arrayGroupData['GRP_UID'],
+                            $arrayGroupLdap,
+                            $memberAttribute2,
+                            array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
                         );
 
                         $totalUser = $arrayData['totalUser'];
@@ -977,7 +985,12 @@ class LdapAdvanced
                                             }
 
                                             $arrayData = $this->__ldapGroupSynchronizeMembers(
-                                                    $ldapcnn, $arrayAuthenticationSourceData, $arrayGroupData['GRP_UID'], $arrayGroupLdap, $memberAttribute2, array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
+                                                $ldapcnn,
+                                                $arrayAuthenticationSourceData,
+                                                $arrayGroupData['GRP_UID'],
+                                                $arrayGroupLdap,
+                                                $memberAttribute2,
+                                                array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
                                             );
 
                                             $totalUser = $arrayData['totalUser'];
@@ -1008,9 +1021,8 @@ class LdapAdvanced
      *
      *
      * @access public
-
-     * @param  string $strUser    UserId  (user login)
-     * @param  string $strPass    Password
+     * @param  string $strUser UserId  (user login)
+     * @param  string $strPass Password
      * @return
      *  -1: user doesn"t exists / no existe usuario
      *  -2: wrong password / password errado
@@ -1040,7 +1052,7 @@ class LdapAdvanced
         $validUserPass = 1;
 
         try {
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -1055,7 +1067,7 @@ class LdapAdvanced
             $setAttributes = 0;
 
             if (isset($arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID']) &&
-                    $arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID'] == 'on'
+                $arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID'] == 'on'
             ) {
                 $setAttributes = 1;
             }
@@ -1096,7 +1108,10 @@ class LdapAdvanced
                     $arrayUserData = $user->getUserRecordByPk($usrUid, [], false);
 
                     $result = $this->__ldapUserUpdateByDnAndData(
-                            $this->ldapcnn, $arrayAuthSource, $userDn, [$arrayUserData['USR_USERNAME'] => $arrayUserData]
+                        $this->ldapcnn,
+                        $arrayAuthSource,
+                        $userDn,
+                        [$arrayUserData['USR_USERNAME'] => $arrayUserData]
                     );
 
                     //Update DN
@@ -1125,15 +1140,17 @@ class LdapAdvanced
 
             $ldapcnn = $this->ldapConnection($arrayAuthSource);
             $flagUpdate = false;
-            switch (ldap_errno($ldapcnn)) {
-                case '0x00':
+            switch (hexdec(ldap_errno($ldapcnn))) {
+                case 0:
+                    //0x00
                     $flagUpdate = true;
                     $statusRbac = 1;
                     $statusUser = 'ACTIVE';
                     break;
-                case '0x34':
-                case '0x58':
-                case '0x5e':
+                case 52:
+                case 88:
+                case 94:
+                    //0x34, 0x58, 0x5e
                     //LDAP_UNAVAILABLE
                     //LDAP_USER_CANCELLED
                     //LDAP_NO_RESULTS_RETURNED
@@ -1192,7 +1209,7 @@ class LdapAdvanced
     /**
      * Get data of a User from attribute
      *
-     * @param mixed $username        Username
+     * @param mixed $username Username
      * @param array $arrayAttributes Attributes
      *
      * return array Return an array with data User
@@ -1231,7 +1248,7 @@ class LdapAdvanced
 
         $paged = !is_null($start) && !is_null($limit);
 
-        $rbac = &RBAC::getSingleton();
+        $rbac = RBAC::getSingleton();
 
         if (is_null($rbac->authSourcesObj)) {
             $rbac->authSourcesObj = new AuthenticationSource();
@@ -1392,7 +1409,7 @@ class LdapAdvanced
             $arrayUserData = array();
 
             //Set variables
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -1499,7 +1516,7 @@ class LdapAdvanced
 
     public function automaticRegister($aAuthSource, $strUser, $strPass)
     {
-        $rbac = &RBAC::getSingleton();
+        $rbac = RBAC::getSingleton();
 
         if ($rbac->userObj == null) {
             $rbac->userObj = new RbacUsers();
@@ -1593,7 +1610,7 @@ class LdapAdvanced
             $arrayDepartment = [];
 
             //Set variables
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -1698,7 +1715,7 @@ class LdapAdvanced
         $dFilter = "(&(" . $this->arrayObjectClassFilter["department"] . ")(ou=" . $departmentName . "))";
 
         $aUsers = array();
-        $rbac = &RBAC::getSingleton();
+        $rbac = RBAC::getSingleton();
 
         $rbac->authSourcesObj = new AuthenticationSource();
         $aAuthSource = $rbac->authSourcesObj->load($this->sAuthSource);
@@ -1805,6 +1822,7 @@ class LdapAdvanced
 
         return $terminated;
     }
+
     /* activate an user previously deactivated
       if user is now in another department, we need the second parameter, the depUid
 
@@ -1888,7 +1906,7 @@ class LdapAdvanced
     public function getTerminatedOu()
     {
         if (trim($this->sAuthSource) != '') {
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
             $aAuthSource = $rbac->authSourcesObj->load($this->sAuthSource);
             $attributes = $aAuthSource['AUTH_SOURCE_DATA'];
             $this->sTerminatedOu = isset($attributes['AUTH_SOURCE_RETIRED_OU']) ? $attributes['AUTH_SOURCE_RETIRED_OU'] : '';
@@ -1898,11 +1916,11 @@ class LdapAdvanced
     }
 
     /**
-      get all authsource for this plugin ( ldapAdvanced plugin, because other authsources are not needed )
-      this function is used only by cron
-      returns only AUTH_SOURCE_PROVIDER = ldapAdvanced
-
-      @return array with authsources with type = ldap
+     * get all authsource for this plugin ( ldapAdvanced plugin, because other authsources are not needed )
+     * this function is used only by cron
+     * returns only AUTH_SOURCE_PROVIDER = ldapAdvanced
+     *
+     * @return array with authsources with type = ldap
      */
     public function getAuthSources()
     {
@@ -1930,15 +1948,15 @@ class LdapAdvanced
     }
 
     /**
-      function to get departments from the array previously obtained from LDAP
-      we are calling registered departments
-      it is a recursive function, in the first call with an array with first top level departments from PM
-      then go thru all departments and obtain a list of departments already created in PM and pass that array
-      to next function to synchronize All users for each department
-      this function is used in cron only
-
-      @param array departments obtained from LDAP/Active Directory
-      @param array of departments, first call have only top level departments
+     * function to get departments from the array previously obtained from LDAP
+     * we are calling registered departments
+     * it is a recursive function, in the first call with an array with first top level departments from PM
+     * then go thru all departments and obtain a list of departments already created in PM and pass that array
+     * to next function to synchronize All users for each department
+     * this function is used in cron only
+     *
+     * @param array departments obtained from LDAP/Active Directory
+     * @param array of departments, first call have only top level departments
      */
     public function getRegisteredDepartments(array $arrayLdapDepartment, array $arrayDbDepartment)
     {
@@ -1961,8 +1979,8 @@ class LdapAdvanced
     }
 
     /**
-      select departments but it is not recursive, only returns departments in this level
-      @param string $DepParent the DEP_UID for parent department
+     * select departments but it is not recursive, only returns departments in this level
+     * @param string $DepParent the DEP_UID for parent department
      */
     public function getDepartments($DepParent)
     {
@@ -2009,11 +2027,11 @@ class LdapAdvanced
     }
 
     /**
-      function to get users from USERS table in wf_workflow and filter by department
-      this function is used in cron only
-
-      @param string department UID ( DEP_UID value )
-      @return array of users
+     * function to get users from USERS table in wf_workflow and filter by department
+     * this function is used in cron only
+     *
+     * @param string department UID ( DEP_UID value )
+     * @return array of users
      */
     public function getUserFromPM($username)
     {
@@ -2040,11 +2058,11 @@ class LdapAdvanced
     }
 
     /**
-      get all user (UID, USERNAME) moved to Removed OU
-      this function is used in cron only
-
-      @param array authSource row, in this fuction we are validating if Removed OU is defined or not
-      @return array of users
+     * get all user (UID, USERNAME) moved to Removed OU
+     * this function is used in cron only
+     *
+     * @param array authSource row, in this fuction we are validating if Removed OU is defined or not
+     * @return array of users
      */
     public function getUsersFromRemovedOu($aAuthSource)
     {
@@ -2060,12 +2078,12 @@ class LdapAdvanced
     }
 
     /**
-      set STATUS=0 for all users in the array $aUsers
-      this functin is used to deactivate an array of users ( usually used for Removed OU )
-      this function is used in cron only
-
-      @param array authSource row, in this fuction we are validating if Removed OU is defined or not
-      @return array of users
+     * set STATUS=0 for all users in the array $aUsers
+     * this functin is used to deactivate an array of users ( usually used for Removed OU )
+     * this function is used in cron only
+     *
+     * @param array authSource row, in this fuction we are validating if Removed OU is defined or not
+     * @return array of users
      */
     public function deactiveArrayOfUsers($aUsers)
     {
@@ -2108,17 +2126,17 @@ class LdapAdvanced
     }
 
     /**
-      creates an users using the data send in the array $aUsers
-      and then add the user to specific department
-      this function is used in cron only
-
-      @param array $aUser info taken from ldap
-      @param string $depUid the department UID
-      @return boolean
+     * creates an users using the data send in the array $aUsers
+     * and then add the user to specific department
+     * this function is used in cron only
+     *
+     * @param array $aUser info taken from ldap
+     * @param string $depUid the department UID
+     * @return boolean
      */
     public function createUserAndActivate($aUser, $depUid)
     {
-        $rbac = &RBAC::getSingleton();
+        $rbac = RBAC::getSingleton();
 
         if ($rbac->userObj == null) {
             $rbac->userObj = new RbacUsers();
@@ -2218,7 +2236,7 @@ class LdapAdvanced
             $arrayGroup = [];
 
             //Set variables
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -2354,7 +2372,7 @@ class LdapAdvanced
     }
 
     /**
-      select groups but it is not recursive, only returns groups in this level
+     * select groups but it is not recursive, only returns groups in this level
      */
     public function getGroups()
     {
@@ -2380,15 +2398,15 @@ class LdapAdvanced
     }
 
     /**
-      function to get groups from the array previously obtained from LDAP
-      we are calling registered groups
-      it is a recursive function, in the first call with an array with first top level groups from PM
-      then go thru all groups and obtain a list of groups already created in PM and pass that array
-      to next function to synchronize All users for each group
-      this function is used in cron only
-
-      @param array groups obtained from LDAP/Active Directory
-      @param array of groups, first call have only top level groups
+     * function to get groups from the array previously obtained from LDAP
+     * we are calling registered groups
+     * it is a recursive function, in the first call with an array with first top level groups from PM
+     * then go thru all groups and obtain a list of groups already created in PM and pass that array
+     * to next function to synchronize All users for each group
+     * this function is used in cron only
+     *
+     * @param array groups obtained from LDAP/Active Directory
+     * @param array of groups, first call have only top level groups
      */
     public function getRegisteredGroups(array $arrayLdapGroup, array $arrayDbGroup)
     {
@@ -2436,7 +2454,9 @@ class LdapAdvanced
             unset($result['count']);
 
             foreach ($result as $key => $value) {
-                $result[$key] = addcslashes(preg_replace("/\\\([0-9A-Fa-f]{2})/e", "''.chr(hexdec('\\1')).''", $value), '<>,"');
+                $result[$key] = addcslashes(preg_replace_callback("/\\\([0-9A-Fa-f]{2})/", function ($m)  {
+                    return chr(hexdec($m[1]));
+                }, $value), '<>,"');
             }
         }
 
@@ -2447,8 +2467,8 @@ class LdapAdvanced
      * Synchronize User for this Department
      *
      * @param string $departmentUid UID of Department
-     * @param array  $arrayUserLdap User LDAP data
-     * @param array  $arrayData     Data
+     * @param array $arrayUserLdap User LDAP data
+     * @param array $arrayData Data
      *
      * return array Return data
      */
@@ -2469,7 +2489,7 @@ class LdapAdvanced
                 $userUid = $arrayUserData["USR_UID"];
                 $found = true;
 
-                $arrayData["already"] ++;
+                $arrayData["already"]++;
                 $arrayData["alreadyUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
             }
 
@@ -2497,7 +2517,7 @@ class LdapAdvanced
 
                         $this->activateUser($arrayUserData["USR_UID"], $arrayNewUserData["sDN"], $departmentUid);
 
-                        $arrayData["moved"] ++;
+                        $arrayData["moved"]++;
                         $arrayData["movedUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
 
                         $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Update User
@@ -2509,14 +2529,14 @@ class LdapAdvanced
                             //Impossible
                             $userUid = $arrayUserData["USR_UID"];
 
-                            $arrayData["impossible"] ++;
+                            $arrayData["impossible"]++;
                             $arrayData["impossibleUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
                         } else {
                             //User not exists
                             //Create User
                             $userUid = $this->createUserAndActivate($arrayNewUserData, $departmentUid);
 
-                            $arrayData["created"] ++;
+                            $arrayData["created"]++;
                             $arrayData["createdUsers"] .= $arrayNewUserData["sUsername"] . " ";
 
                             $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Add User
@@ -2549,9 +2569,9 @@ class LdapAdvanced
     /**
      * Synchronize User for this Group
      *
-     * @param string $groupUid      UID of Group
-     * @param array  $arrayUserLdap User LDAP data
-     * @param array  $arrayData     Data
+     * @param string $groupUid UID of Group
+     * @param array $arrayUserLdap User LDAP data
+     * @param array $arrayData Data
      *
      * return array Return data
      */
@@ -2574,7 +2594,7 @@ class LdapAdvanced
                 $userUid = $arrayUserData["USR_UID"];
                 $found = true;
 
-                $arrayData["already"] ++;
+                $arrayData["already"]++;
                 $arrayData["alreadyUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
             }
 
@@ -2596,7 +2616,7 @@ class LdapAdvanced
 
                     $group->addUserToGroup($groupUid, $userUid);
 
-                    $arrayData["moved"] ++;
+                    $arrayData["moved"]++;
                     $arrayData["movedUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
 
                     $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Update User
@@ -2608,7 +2628,7 @@ class LdapAdvanced
                         //Impossible
                         $userUid = $arrayUserData["USR_UID"];
 
-                        $arrayData["impossible"] ++;
+                        $arrayData["impossible"]++;
                         $arrayData["impossibleUsers"] .= $arrayUserData["USR_USERNAME"] . " ";
                     } else {
                         //User not exists
@@ -2617,7 +2637,7 @@ class LdapAdvanced
 
                         $group->addUserToGroup($groupUid, $userUid);
 
-                        $arrayData["created"] ++;
+                        $arrayData["created"]++;
                         $arrayData["createdUsers"] .= $arrayNewUserData["sUsername"] . " ";
 
                         $this->setArrayAuthenticationSourceUser($userUid, $arrayNewUserData); //INITIALIZE DATA //Add User
@@ -2650,10 +2670,10 @@ class LdapAdvanced
     /**
      * Update User data based on the LDAP Server
      *
-     * @param resource $ldapcnn             LDAP link identifier
-     * @param array    $arrayAuthSourceData Authentication Source Data
-     * @param string   $userDn              User DN
-     * @param array    $arrayUser           Users
+     * @param resource $ldapcnn LDAP link identifier
+     * @param array $arrayAuthSourceData Authentication Source Data
+     * @param string $userDn User DN
+     * @param array $arrayUser Users
      *
      * @return bool
      */
@@ -2661,7 +2681,7 @@ class LdapAdvanced
     {
         try {
             //Set variables
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->userObj)) {
                 $rbac->userObj = new RbacUsers();
@@ -2679,7 +2699,7 @@ class LdapAdvanced
             ];
 
             if (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE']) &&
-                    !empty($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])
+                !empty($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])
             ) {
                 foreach ($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'] as $value) {
                     $arrayAttributesToSync[$value['attributeUser']] = $value['attributeLdap'];
@@ -2688,7 +2708,7 @@ class LdapAdvanced
 
             //Search User from LDAP Server
             $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'])) ?
-                    $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
+                $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
 
             $arrayAttribute = array_merge($this->arrayAttributesForUser, array_values($arrayAttributesToSync));
 
@@ -2750,7 +2770,8 @@ class LdapAdvanced
                                 }
                             } else {
                                 $this->log(
-                                        $ldapcnn, 'User is repeated: Username "' . $username . '", DN "' . $arrayUserLdap['dn'] . '"'
+                                    $ldapcnn,
+                                    'User is repeated: Username "' . $username . '", DN "' . $arrayUserLdap['dn'] . '"'
                                 );
                             }
 
@@ -2770,11 +2791,11 @@ class LdapAdvanced
     /**
      * Update Users data based on the LDAP Server
      *
-     * @param resource $ldapcnn             LDAP link identifier
-     * @param array    $arrayAuthSourceData Authentication Source Data
-     * @param string   $filterUsers         Filter
-     * @param array    $arrayUserUid        UID of Users
-     * @param array    $arrayData           Data
+     * @param resource $ldapcnn LDAP link identifier
+     * @param array $arrayAuthSourceData Authentication Source Data
+     * @param string $filterUsers Filter
+     * @param array $arrayUserUid UID of Users
+     * @param array $arrayData Data
      *
      * @return array
      */
@@ -2815,14 +2836,18 @@ class LdapAdvanced
 
                     do {
                         if ($this->__ldapUserUpdateByDnAndData(
-                                        $ldapcnn, $arrayAuthSourceData, ldap_get_dn($ldapcnn, $entry), $arrayUser
-                                )
+                            $ldapcnn,
+                            $arrayAuthSourceData,
+                            ldap_get_dn($ldapcnn, $entry),
+                            $arrayUser
+                        )
                         ) {
                             $countUser++;
 
                             //Progress bar
                             $this->frontEndShow(
-                                    'BAR', 'Update Users data: ' . $countUser . '/' . $totalUser . ' ' . $this->progressBar($totalUser, $countUser)
+                                'BAR',
+                                'Update Users data: ' . $countUser . '/' . $totalUser . ' ' . $this->progressBar($totalUser, $countUser)
                             );
                         }
                     } while ($entry = ldap_next_entry($ldapcnn, $entry));
@@ -2849,7 +2874,7 @@ class LdapAdvanced
             $countUser = 0;
 
             //Set variables
-            $rbac = &RBAC::getSingleton();
+            $rbac = RBAC::getSingleton();
 
             if (is_null($rbac->authSourcesObj)) {
                 $rbac->authSourcesObj = new AuthenticationSource();
@@ -2880,7 +2905,11 @@ class LdapAdvanced
 
                 if ($count == $limit) {
                     list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
-                            $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
+                        $ldapcnn,
+                        $arrayAuthenticationSourceData,
+                        $filterUsers,
+                        $arrayUserUid,
+                        ['totalUser' => $totalUser, 'countUser' => $countUser]
                     );
 
                     $count = 0;
@@ -2892,7 +2921,11 @@ class LdapAdvanced
 
             if ($count > 0) {
                 list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
-                        $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
+                    $ldapcnn,
+                    $arrayAuthenticationSourceData,
+                    $filterUsers,
+                    $arrayUserUid,
+                    ['totalUser' => $totalUser, 'countUser' => $countUser]
                 );
             }
         } catch (Exception $e) {
@@ -2920,7 +2953,7 @@ class LdapAdvanced
      * Get page size limit for a search result
      *
      * @param resource $ldapcnn LDAP link identifier
-     * @param string   $baseDn  The base DN for the directory
+     * @param string $baseDn The base DN for the directory
      *
      * @return int Returns the page size limit for a search result
      */

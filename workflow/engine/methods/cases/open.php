@@ -65,12 +65,12 @@ $tasUid = (isset($_GET['TAS_UID'])) ? $tasUid = htmlspecialchars($_GET['TAS_UID'
 $oCase = new Cases();
 $conf = new Configurations();
 
-$oHeadPublisher = &headPublisher::getSingleton();
+$oHeadPublisher = headPublisher::getSingleton();
 
 $urlToRedirectAfterPause = 'casesListExtJs';
 
 /*----------------------------------********---------------------------------*/
-$licensedFeatures = &PMLicensedFeatures::getSingleton();
+$licensedFeatures = PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
     $pmGoogle = new PmGoogleApi();
     if (array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus()) {
@@ -153,4 +153,3 @@ if (!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SE
 }
 $_SESSION['actionCaseOptions'] = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : '';
 G::RenderPage('publish', 'extJs');
-

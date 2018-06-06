@@ -45,6 +45,7 @@ class Light
      * Method get list start case
      *
      * @param $userId User id
+     *
      * @return array
      * @throws Exception
      */
@@ -106,8 +107,11 @@ class Light
                         $tempTreeChild['text'] = $keyChild; //ellipsis ( $keyChild, 50 );
                         $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
                         $tempTreeChild['taskId'] = $processInfoChild['uid'];
-                        list($tempTreeChild['offlineEnabled'], $tempTreeChild['autoRoot']) = $task->getColumnValues($processInfoChild['pro_uid'],
-                            $processInfoChild['uid'], array('TAS_OFFLINE', 'TAS_AUTO_ROOT'));
+                        list($tempTreeChild['offlineEnabled'], $tempTreeChild['autoRoot']) = $task->getColumnValues(
+                            $processInfoChild['pro_uid'],
+                            $processInfoChild['uid'],
+                            array('TAS_OFFLINE', 'TAS_AUTO_ROOT')
+                        );
                         //Add process category
                         $tempTreeChild['categoryName'] = $processInfoChild['catname'];
                         $tempTreeChild['categoryId'] = $processInfoChild['cat'];
@@ -128,8 +132,11 @@ class Light
                                 $newForm[$c]['stepMode'] = $form['step_mode'];
                                 $newForm[$c]['stepCondition'] = $form['step_condition'];
                                 $newForm[$c]['stepPosition'] = $form['step_position'];
-                                $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"],
-                                    $tempTreeChild['taskId'], $tempTreeChild['processId']));
+                                $trigger = $this->statusTriggers($step->doGetActivityStepTriggers(
+                                    $form["step_uid"],
+                                    $tempTreeChild['taskId'],
+                                    $tempTreeChild['processId']
+                                ));
                                 $newForm[$c]["triggers"] = $trigger;
                                 $c++;
                             }
@@ -151,7 +158,9 @@ class Light
 
     /**
      * Get status trigger case
+     *
      * @param $triggers
+     *
      * @return array
      */
     public function statusTriggers($triggers)
@@ -171,7 +180,9 @@ class Light
 
     /**
      * Get counters each type of list
+     *
      * @param $userId
+     *
      * @return array
      * @throws Exception
      */
@@ -181,7 +192,7 @@ class Light
             $userUid = (isset($userId) && $userId != '') ? $userId : null;
             $oAppCache = new AppCacheView();
 
-            $aTypes = Array();
+            $aTypes = array();
             $aTypes['to_do'] = 'toDo';
             $aTypes['draft'] = 'draft';
             $aTypes['cancelled'] = 'cancelled';
@@ -192,7 +203,7 @@ class Light
 
             $aCount = $oAppCache->getAllCounters(array_keys($aTypes), $userUid);
 
-            $response = Array();
+            $response = array();
             foreach ($aCount as $type => $count) {
                 $response[$aTypes[$type]] = $count;
             }
@@ -205,6 +216,7 @@ class Light
 
     /**
      * @param $sAppUid
+     *
      * @return Criteria
      */
     public function getTransferHistoryCriteria($sAppUid)
@@ -220,7 +232,6 @@ class Light
         ///-- $c->addAsColumn('USR_NAME', "CONCAT(USR_LASTNAME, ' ', USR_FIRSTNAME)");
         $sDataBase = 'database_' . strtolower(DB_ADAPTER);
         if (G::LoadSystemExist($sDataBase)) {
-
             $oDataBase = new database();
             $c->addAsColumn('USR_NAME', $oDataBase->concatString("USR_LASTNAME", "' '", "USR_FIRSTNAME"));
             $c->addAsColumn(
@@ -228,7 +239,8 @@ class Light
                 $oDataBase->getCaseWhen("DEL_FINISH_DATE IS NULL", "'-'", AppDelegationPeer::DEL_FINISH_DATE)
             );
             $c->addAsColumn(
-                'APP_TYPE', $oDataBase->getCaseWhen("DEL_FINISH_DATE IS NULL", "'IN_PROGRESS'", AppDelayPeer::APP_TYPE)
+                'APP_TYPE',
+                $oDataBase->getCaseWhen("DEL_FINISH_DATE IS NULL", "'IN_PROGRESS'", AppDelayPeer::APP_TYPE)
             );
         }
         $c->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
@@ -261,6 +273,7 @@ class Light
      * GET history of case
      *
      * @param $app_uid
+     *
      * @return array
      * @throws Exception
      */
@@ -269,7 +282,7 @@ class Light
 
         //global $G_PUBLISH;
         $c = $this->getTransferHistoryCriteria($app_uid);
-        $aProcesses = Array();
+        $aProcesses = array();
 
         $rs = GulliverBasePeer::doSelectRs($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -299,6 +312,7 @@ class Light
      * @param string $userId
      * @param string $proUid
      * @param string $taskUid
+     *
      * @return array
      * @throws Exception
      */
@@ -329,7 +343,8 @@ class Light
 
             //Log
             Bootstrap::registerMonolog('MobileCreateCase', 200, "Create case",
-                ['application_uid' => $aData['APPLICATION'], 'usr_uid' => $userId], config("system.workspace"), 'processmaker.log');
+                ['application_uid' => $aData['APPLICATION'], 'usr_uid' => $userId], config("system.workspace"),
+                'processmaker.log');
         } catch (Exception $e) {
             $response['status'] = 'failure';
             $response['message'] = $e->getMessage();
@@ -371,7 +386,6 @@ class Light
         }
 
         return 1;
-
     }
 
     /**
@@ -405,8 +419,13 @@ class Light
         $Fields['APP_DATA'] = array_merge($Fields['APP_DATA'], G::getSystemConstants());
         $triggers = $oCase->loadTriggers($act_uid, 'DYNAFORM', $step_uid_obj, strtoupper($type));
         if ($triggers) {
-            $Fields['APP_DATA'] = $oCase->ExecuteTriggers($act_uid, 'DYNAFORM', $step_uid_obj, strtoupper($type),
-                $Fields['APP_DATA']);
+            $Fields['APP_DATA'] = $oCase->ExecuteTriggers(
+                $act_uid,
+                'DYNAFORM',
+                $step_uid_obj,
+                strtoupper($type),
+                $Fields['APP_DATA']
+            );
         }
         $Fields['TAS_UID'] = $act_uid;
         $Fields['CURRENT_DYNAFORM'] = $step_uid_obj;
@@ -439,8 +458,13 @@ class Light
             $triggers = $oCase->loadTriggers($tas_uid, 'ASSIGN_TASK', '-1', 'BEFORE');
             if (isset($triggers)) {
                 $Fields['APP_DATA'] = array_merge($Fields['APP_DATA'], G::getSystemConstants());
-                $Fields['APP_DATA'] = $oCase->ExecuteTriggers($tas_uid, 'DYNAFORM', '-1', 'BEFORE',
-                    $Fields['APP_DATA']);
+                $Fields['APP_DATA'] = $oCase->ExecuteTriggers(
+                    $tas_uid,
+                    'DYNAFORM',
+                    '-1',
+                    'BEFORE',
+                    $Fields['APP_DATA']
+                );
                 $oCase->updateCase($app_uid, $Fields);
             }
             $oDerivation = new \Derivation();
@@ -455,10 +479,16 @@ class Light
                 $sPriority = ''; //set priority value
                 if ($derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] != '') {
                     //TO DO: review this type of assignment
-                    if (isset($aData['APP_DATA'][str_replace('@@', '',
-                            $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'])])) {
-                        $sPriority = $aData['APP_DATA'][str_replace('@@', '',
-                            $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'])];
+                    if (isset($aData['APP_DATA'][str_replace(
+                            '@@',
+                            '',
+                            $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE']
+                        )])) {
+                        $sPriority = $aData['APP_DATA'][str_replace(
+                            '@@',
+                            '',
+                            $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE']
+                        )];
                     }
                 } //set priority value
 
@@ -546,10 +576,10 @@ class Light
      * Route Case
      *
      * @param string $applicationUid Unique id of Case
-     * @param string $userUid Unique id of User
+     * @param string $userUid        Unique id of User
      * @param string $delIndex
-     * @param string $tasks
-     * @param boolean $executeTriggersBeforeAssignment
+     * @param array  $tasks
+     * @param string $bExecuteTriggersBeforeAssignment
      *
      * return array Return an array with Task Case
      */
@@ -582,7 +612,8 @@ class Light
 
             //Log
             Bootstrap::registerMonolog('MobileRouteCase', 200, 'Route case',
-                ['application_uid' => $applicationUid, 'usr_uid' => $userUid], config("system.workspace"), 'processmaker.log');
+                ['application_uid' => $applicationUid, 'usr_uid' => $userUid], config("system.workspace"),
+                'processmaker.log');
         } catch (Exception $e) {
             throw $e;
         }
@@ -594,7 +625,7 @@ class Light
      * Get user Data
      *
      * @param string $applicationUid Unique id of Case
-     * @param string $userUid Unique id of User
+     * @param string $userUid        Unique id of User
      * @param string $delIndex
      * @param string $bExecuteTriggersBeforeAssignment
      *
@@ -669,8 +700,12 @@ class Light
                         case 'gif':
                         case 'png':
                             $arrayFiles[$key]['fileId'] = $fileData['fileId'];
-                            $arrayFiles[$key]['fileContent'] = base64_encode($this->imagesThumbnails($realPath, $ext,
-                                $width, $height));
+                            $arrayFiles[$key]['fileContent'] = base64_encode($this->imagesThumbnails(
+                                $realPath,
+                                $ext,
+                                $width,
+                                $height
+                            ));
                             break;
                         default:
                             $fileTmp = fopen($realPath, "r");
@@ -687,8 +722,12 @@ class Light
                         case 'gif':
                         case 'png':
                             $arrayFiles[$key]['fileId'] = $fileData['fileId'];
-                            $arrayFiles[$key]['fileContent'] = $this->imagesThumbnails($realPath1, $ext, $width,
-                                $height);
+                            $arrayFiles[$key]['fileContent'] = $this->imagesThumbnails(
+                                $realPath1,
+                                $ext,
+                                $width,
+                                $height
+                            );
                             break;
                         default:
                             $fileTmp = fopen($realPath, "r");
@@ -710,10 +749,11 @@ class Light
     /**
      * resize image if send width or height
      *
-     * @param $path
-     * @param $extensions
+     * @param      $path
+     * @param      $extensions
      * @param null $newWidth
      * @param null $newHeight
+     *
      * @return string
      */
     public function imagesThumbnails($path, $extensions, $newWidth = null, $newHeight = null)
@@ -815,7 +855,8 @@ class Light
         session_start();
         session_regenerate_id();
 
-        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, false, true);
+        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, false,
+            true);
 
         if (strlen($msg) > 0) {
             $_SESSION['G_MESSAGE'] = $msg;
@@ -830,9 +871,11 @@ class Light
 
         /*----------------------------------********---------------------------------*/
 
-        $licenseManager =& PmLicenseManager::getSingleton();
-        if (in_array(md5($licenseManager->result),
-            array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
+        $licenseManager = PmLicenseManager::getSingleton();
+        if (in_array(
+            md5($licenseManager->result),
+            array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb')
+        )) {
             $G_PUBLISH = new \Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
             G::RenderPage('publish');
@@ -851,7 +894,6 @@ class Light
         }
 
         return $response;
-
     }
 
     /**
@@ -860,6 +902,7 @@ class Light
      * @param $userUid
      * @param $type
      * @param $app_uid
+     *
      * @throws Exception
      */
     public function getInformation($userUid, $type, $app_uid)
@@ -895,6 +938,7 @@ class Light
      * @param $userUid
      * @param $Fields
      * @param $type
+     *
      * @throws Exception
      */
     public function getInfoResume($userUid, $Fields, $type)
@@ -930,7 +974,8 @@ class Light
      *
      * @param string $userUid
      * @param string $appUid
-     * @param array $requestData
+     * @param array  $requestData
+     *
      * @return array $response
      * @throws Exception
      */
@@ -994,9 +1039,12 @@ class Light
                 $userInfo = '***';
                 if ($userUid !== '-1') {
                     $arrayUserData = $user->load($userUid);
-                    $userInfo = $config->usersNameFormatBySetParameters($confEnvSetting["format"],
-                        $arrayUserData["USR_USERNAME"], $arrayUserData["USR_FIRSTNAME"],
-                        $arrayUserData["USR_LASTNAME"]);
+                    $userInfo = $config->usersNameFormatBySetParameters(
+                        $confEnvSetting["format"],
+                        $arrayUserData["USR_USERNAME"],
+                        $arrayUserData["USR_FIRSTNAME"],
+                        $arrayUserData["USR_LASTNAME"]
+                    );
                 }
                 $response[$k]['appDocCreateUser'] = $userInfo;
             }
@@ -1012,6 +1060,7 @@ class Light
      * @param $userUid
      * @param $Fields
      * @param $type
+     *
      * @throws Exception
      */
     public function documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data)
@@ -1137,6 +1186,7 @@ class Light
      * @param $action
      * @param $categoryUid
      * @param $userUid
+     *
      * @return array
      * @throws PropelException
      */
@@ -1245,7 +1295,6 @@ class Light
      */
     public function getUsersToReassign($usr_uid, $task_uid)
     {
-
         $memcache = PMmemcached::getSingleton(config("system.workspace"));
         $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
         $RBAC->sSystem = 'PROCESSMAKER';
@@ -1329,6 +1378,7 @@ class Light
 
     /**
      * Get configuration
+     *
      * @return mixed
      */
     public function getConfiguration($params)
@@ -1337,15 +1387,18 @@ class Light
         $multiTimeZone = false;
         //Set Time Zone
         /*----------------------------------********---------------------------------*/
-        if (\PMLicensedFeatures::getSingleton()->verifyfeature
-        ('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
+        if (\PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
             $multiTimeZone = (int)($sysConf['system_utc_time_zone']) == 1;
         }
         /*----------------------------------********---------------------------------*/
         $tz = isset($_SESSION['USR_TIME_ZONE']) ? $_SESSION['USR_TIME_ZONE'] : $sysConf['time_zone'];
         $offset = timezone_offset_get(new \DateTimeZone($tz), new \DateTime());
-        $response['timeZone'] = sprintf("GMT%s%02d:%02d", ($offset >= 0) ? '+' : '-', abs($offset / 3600),
-            abs(($offset % 3600) / 60));
+        $response['timeZone'] = sprintf(
+            "GMT%s%02d:%02d",
+            ($offset >= 0) ? '+' : '-',
+            abs($offset / 3600),
+            abs(($offset % 3600) / 60)
+        );
         $response['multiTimeZone'] = $multiTimeZone;
         $fields = System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
@@ -1438,10 +1491,12 @@ class Light
 
     /**
      * This function check if the $data are in the corresponding cases list
+     *
      * @param string $userUid
-     * @param array $data
+     * @param array  $data
      * @param string $listName
      * @param string $action
+     *
      * @return array $response
      */
     public function getListCheck($userUid, $data, $listName = 'inbox', $action = 'todo')
@@ -1472,14 +1527,13 @@ class Light
         foreach ($data as $key => $val) {
             $flagRemoved = true;
             foreach ($response['data'] as $row) {
-                $row = array_change_key_case($row,CASE_UPPER);
+                $row = array_change_key_case($row, CASE_UPPER);
                 if (isset($row['APP_UID']) && isset($row['DEL_INDEX'])) {
-                    if ($val['caseId'] === $row['APP_UID'] && $val['delIndex'] === $row['DEL_INDEX'] ) {
+                    if ($val['caseId'] === $row['APP_UID'] && $val['delIndex'] === $row['DEL_INDEX']) {
                         $flagRemoved = false;
                         continue;
                     }
                 }
-
             }
             if ($flagRemoved) {
                 $result[] = [

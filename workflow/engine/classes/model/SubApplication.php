@@ -111,5 +111,22 @@ class SubApplication extends BaseSubApplication
         }
         return false;
     }
+
+    /**
+     * Verify if is a case related to the subProcess
+     *
+     * @param string $appUid
+     *
+     * @return boolean
+     */
+    public static function isCaseSubProcess($appUid)
+    {
+        $criteria = new Criteria('workflow');
+        $criteria->add(SubApplicationPeer::APP_UID, $appUid);
+        $criteria->add(SubApplicationPeer::SA_STATUS, 'ACTIVE');
+        $dataset = SubApplicationPeer::doSelectOne($criteria);
+
+        return !is_null($dataset);
+    }
 }
 
