@@ -1,27 +1,4 @@
 <?php
-/**
- * authentication.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
 
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -229,16 +206,6 @@ try {
         }
     }
 
-    /*----------------------------------********---------------------------------*/
-    if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
-        //Update User Time Zone
-        if (isset($_POST['form']['BROWSER_TIME_ZONE'])) {
-            $user = new Users();
-            $user->update(['USR_UID' => $_SESSION['USER_LOGGED'], 'USR_TIME_ZONE' => $_POST['form']['BROWSER_TIME_ZONE']]);
-        }
-    }
-    /*----------------------------------********---------------------------------*/
-
     //Set User Time Zone
     $user = UsersPeer::retrieveByPK($_SESSION['USER_LOGGED']);
 
@@ -263,20 +230,7 @@ try {
 
             if ($timeZoneOffset === false || $timeZoneOffset != (int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET'])) {
                 $_SESSION['__TIME_ZONE_FAILED__'] = true;
-                $_SESSION['USR_USERNAME'] = $usr;
-                $_SESSION['USR_PASSWORD'] = $pwd;
-
-                $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET']), false);
-                $_SESSION['URL'] = (isset($_POST['form']['URL']))? $_POST['form']['URL'] : ((isset($_REQUEST['u']))? $_REQUEST['u'] : '');
-                $_SESSION['USER_LANG'] = $lang;
-
-                if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {
-                    $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => '', 'timeZoneFailed' => 1, 'userTimeZone' => $_SESSION['USR_TIME_ZONE'], 'browserTimeZone' => $_SESSION['BROWSER_TIME_ZONE'],'USER_LANG' => $lang]);
-                    $urlLogin = $urlLogin . '?d=' . base64_encode($d);
-                }
-
-                G::header('Location: ' . $urlLogin);
-                exit(0);
+                $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)$_POST['form']['BROWSER_TIME_ZONE_OFFSET'], false);
             }
         }
     }

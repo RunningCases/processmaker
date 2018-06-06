@@ -30,12 +30,19 @@ class EmailServer extends Api
     }
 
     /**
+     * Get List of Emails Servers
+     *
      * @url GET
      *
      * @param string $filter
-     * @param int    $start
-     * @param int    $limit
+     * @param int $start
+     * @param int $limit
      *
+     * @return
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
      */
     public function index($filter = null, $start = null, $limit = null)
     {
@@ -67,11 +74,19 @@ class EmailServer extends Api
     }
 
     /**
+     * Get List of Emails Servers
+     *
      * @url GET /paged
      *
      * @param string $filter
-     * @param int    $start
-     * @param int    $limit
+     * @param int $start
+     * @param int $limit
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_SETUP_EMAIL}
      */
     public function doGetPaged($filter = null, $start = null, $limit = null)
     {
