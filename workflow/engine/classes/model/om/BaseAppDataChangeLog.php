@@ -118,6 +118,12 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
     protected $language = '';
 
     /**
+     * The value for the row_migration field.
+     * @var        int
+     */
+    protected $row_migration = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -315,6 +321,17 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
     {
 
         return $this->language;
+    }
+
+    /**
+     * Get the [row_migration] column value.
+     * 
+     * @return     int
+     */
+    public function getRowMigration()
+    {
+
+        return $this->row_migration;
     }
 
     /**
@@ -655,6 +672,28 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
     } // setLanguage()
 
     /**
+     * Set the value of [row_migration] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setRowMigration($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->row_migration !== $v || $v === 0) {
+            $this->row_migration = $v;
+            $this->modifiedColumns[] = AppDataChangeLogPeer::ROW_MIGRATION;
+        }
+
+    } // setRowMigration()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -701,12 +740,14 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
 
             $this->language = $rs->getString($startcol + 14);
 
+            $this->row_migration = $rs->getInt($startcol + 15);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 15; // 15 = AppDataChangeLogPeer::NUM_COLUMNS - AppDataChangeLogPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 16; // 16 = AppDataChangeLogPeer::NUM_COLUMNS - AppDataChangeLogPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating AppDataChangeLog object", $e);
@@ -957,6 +998,9 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
             case 14:
                 return $this->getLanguage();
                 break;
+            case 15:
+                return $this->getRowMigration();
+                break;
             default:
                 return null;
                 break;
@@ -992,6 +1036,7 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
             $keys[12] => $this->getData(),
             $keys[13] => $this->getSkin(),
             $keys[14] => $this->getLanguage(),
+            $keys[15] => $this->getRowMigration(),
         );
         return $result;
     }
@@ -1067,6 +1112,9 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
                 break;
             case 14:
                 $this->setLanguage($value);
+                break;
+            case 15:
+                $this->setRowMigration($value);
                 break;
         } // switch()
     }
@@ -1151,6 +1199,10 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
             $this->setLanguage($arr[$keys[14]]);
         }
 
+        if (array_key_exists($keys[15], $arr)) {
+            $this->setRowMigration($arr[$keys[15]]);
+        }
+
     }
 
     /**
@@ -1220,6 +1272,10 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
 
         if ($this->isColumnModified(AppDataChangeLogPeer::LANGUAGE)) {
             $criteria->add(AppDataChangeLogPeer::LANGUAGE, $this->language);
+        }
+
+        if ($this->isColumnModified(AppDataChangeLogPeer::ROW_MIGRATION)) {
+            $criteria->add(AppDataChangeLogPeer::ROW_MIGRATION, $this->row_migration);
         }
 
 
@@ -1303,6 +1359,8 @@ abstract class BaseAppDataChangeLog extends BaseObject implements Persistent
         $copyObj->setSkin($this->skin);
 
         $copyObj->setLanguage($this->language);
+
+        $copyObj->setRowMigration($this->row_migration);
 
 
         $copyObj->setNew(true);

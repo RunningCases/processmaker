@@ -5781,6 +5781,7 @@
         <column name="DATA" type="LONGVARCHAR" required="true"/>
         <column name="SKIN" type="VARCHAR" size="32" default="" required="false"/>
         <column name="LANGUAGE" type="VARCHAR" size="32" default="" required="false"/>
+        <column name="ROW_MIGRATION" type="INTEGER" default="0" required="false"/>
         <index name="indexAppNumber">
             <index-column name="APP_NUMBER"/>
         </index>

@@ -8,6 +8,7 @@ CLI::taskDescription("Upgrade workspaces.\n\n This command should be run after u
 
 CLI::taskOpt('buildACV', 'If this option is enabled, the Cache View is built.', 'ACV', 'buildACV');
 CLI::taskOpt('noxml', 'If this option is enabled, the XML files translation is not built.', 'NoXml', 'no-xml');
+CLI::taskOpt('include_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --include_dyn_content", 'i', 'include_dyn_content');
 CLI::taskRun("run_upgrade");
 /*----------------------------------********---------------------------------*/
 CLI::taskName('unify-database');
@@ -107,6 +108,9 @@ function run_upgrade($command, $args)
     $countWorkspace = 0;
     $buildCacheView = array_key_exists('buildACV', $args);
     $flagUpdateXml  = !array_key_exists('noxml', $args);
+    $optionMigrateHistoryData = [
+        'includeDynContent' => array_key_exists('include_dyn_content', $args)
+    ];
 
     foreach ($workspaces as $index => $workspace) {
         if (empty(config("system.workspace"))) {
@@ -125,7 +129,7 @@ function run_upgrade($command, $args)
         try {
             $countWorkspace++;
             CLI::logging("Upgrading workspaces ($countWorkspace/$count): " . CLI::info($workspace->name) . "\n");
-            $workspace->upgrade($buildCacheView, $workspace->name, false, 'en', ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]);
+            $workspace->upgrade($buildCacheView, $workspace->name, false, 'en', ['updateXml' => $flagUpdateXml, 'updateMafe' => $first], $optionMigrateHistoryData);
             $workspace->close();
             $first = false;
             $flagUpdateXml = false;

@@ -571,6 +571,7 @@ class ChangeLog
         $appDataChangeLog->setData($this->getData());
         $appDataChangeLog->setSkin($this->getSkin());
         $appDataChangeLog->setLanguage($this->getLanguage());
+        $appDataChangeLog->setRowMigration(0);
         $appDataChangeLog->save();
         return $this;
     }

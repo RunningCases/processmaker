@@ -25,7 +25,7 @@ abstract class BaseAppDataChangeLogPeer
     const CLASS_DEFAULT = 'classes.model.AppDataChangeLog';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 15;
+    const NUM_COLUMNS = 16;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -76,6 +76,9 @@ abstract class BaseAppDataChangeLogPeer
     /** the column name for the LANGUAGE field */
     const LANGUAGE = 'APP_DATA_CHANGE_LOG.LANGUAGE';
 
+    /** the column name for the ROW_MIGRATION field */
+    const ROW_MIGRATION = 'APP_DATA_CHANGE_LOG.ROW_MIGRATION';
+
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
 
@@ -87,10 +90,10 @@ abstract class BaseAppDataChangeLogPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('ChangeLogId', 'Date', 'AppNumber', 'DelIndex', 'ProId', 'TasId', 'UsrId', 'ObjectType', 'ObjectId', 'ObjectUid', 'ExecutedAt', 'SourceId', 'Data', 'Skin', 'Language', ),
-        BasePeer::TYPE_COLNAME => array (AppDataChangeLogPeer::CHANGE_LOG_ID, AppDataChangeLogPeer::DATE, AppDataChangeLogPeer::APP_NUMBER, AppDataChangeLogPeer::DEL_INDEX, AppDataChangeLogPeer::PRO_ID, AppDataChangeLogPeer::TAS_ID, AppDataChangeLogPeer::USR_ID, AppDataChangeLogPeer::OBJECT_TYPE, AppDataChangeLogPeer::OBJECT_ID, AppDataChangeLogPeer::OBJECT_UID, AppDataChangeLogPeer::EXECUTED_AT, AppDataChangeLogPeer::SOURCE_ID, AppDataChangeLogPeer::DATA, AppDataChangeLogPeer::SKIN, AppDataChangeLogPeer::LANGUAGE, ),
-        BasePeer::TYPE_FIELDNAME => array ('CHANGE_LOG_ID', 'DATE', 'APP_NUMBER', 'DEL_INDEX', 'PRO_ID', 'TAS_ID', 'USR_ID', 'OBJECT_TYPE', 'OBJECT_ID', 'OBJECT_UID', 'EXECUTED_AT', 'SOURCE_ID', 'DATA', 'SKIN', 'LANGUAGE', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
+        BasePeer::TYPE_PHPNAME => array ('ChangeLogId', 'Date', 'AppNumber', 'DelIndex', 'ProId', 'TasId', 'UsrId', 'ObjectType', 'ObjectId', 'ObjectUid', 'ExecutedAt', 'SourceId', 'Data', 'Skin', 'Language', 'RowMigration', ),
+        BasePeer::TYPE_COLNAME => array (AppDataChangeLogPeer::CHANGE_LOG_ID, AppDataChangeLogPeer::DATE, AppDataChangeLogPeer::APP_NUMBER, AppDataChangeLogPeer::DEL_INDEX, AppDataChangeLogPeer::PRO_ID, AppDataChangeLogPeer::TAS_ID, AppDataChangeLogPeer::USR_ID, AppDataChangeLogPeer::OBJECT_TYPE, AppDataChangeLogPeer::OBJECT_ID, AppDataChangeLogPeer::OBJECT_UID, AppDataChangeLogPeer::EXECUTED_AT, AppDataChangeLogPeer::SOURCE_ID, AppDataChangeLogPeer::DATA, AppDataChangeLogPeer::SKIN, AppDataChangeLogPeer::LANGUAGE, AppDataChangeLogPeer::ROW_MIGRATION, ),
+        BasePeer::TYPE_FIELDNAME => array ('CHANGE_LOG_ID', 'DATE', 'APP_NUMBER', 'DEL_INDEX', 'PRO_ID', 'TAS_ID', 'USR_ID', 'OBJECT_TYPE', 'OBJECT_ID', 'OBJECT_UID', 'EXECUTED_AT', 'SOURCE_ID', 'DATA', 'SKIN', 'LANGUAGE', 'ROW_MIGRATION', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
     );
 
     /**
@@ -100,10 +103,10 @@ abstract class BaseAppDataChangeLogPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('ChangeLogId' => 0, 'Date' => 1, 'AppNumber' => 2, 'DelIndex' => 3, 'ProId' => 4, 'TasId' => 5, 'UsrId' => 6, 'ObjectType' => 7, 'ObjectId' => 8, 'ObjectUid' => 9, 'ExecutedAt' => 10, 'SourceId' => 11, 'Data' => 12, 'Skin' => 13, 'Language' => 14, ),
-        BasePeer::TYPE_COLNAME => array (AppDataChangeLogPeer::CHANGE_LOG_ID => 0, AppDataChangeLogPeer::DATE => 1, AppDataChangeLogPeer::APP_NUMBER => 2, AppDataChangeLogPeer::DEL_INDEX => 3, AppDataChangeLogPeer::PRO_ID => 4, AppDataChangeLogPeer::TAS_ID => 5, AppDataChangeLogPeer::USR_ID => 6, AppDataChangeLogPeer::OBJECT_TYPE => 7, AppDataChangeLogPeer::OBJECT_ID => 8, AppDataChangeLogPeer::OBJECT_UID => 9, AppDataChangeLogPeer::EXECUTED_AT => 10, AppDataChangeLogPeer::SOURCE_ID => 11, AppDataChangeLogPeer::DATA => 12, AppDataChangeLogPeer::SKIN => 13, AppDataChangeLogPeer::LANGUAGE => 14, ),
-        BasePeer::TYPE_FIELDNAME => array ('CHANGE_LOG_ID' => 0, 'DATE' => 1, 'APP_NUMBER' => 2, 'DEL_INDEX' => 3, 'PRO_ID' => 4, 'TAS_ID' => 5, 'USR_ID' => 6, 'OBJECT_TYPE' => 7, 'OBJECT_ID' => 8, 'OBJECT_UID' => 9, 'EXECUTED_AT' => 10, 'SOURCE_ID' => 11, 'DATA' => 12, 'SKIN' => 13, 'LANGUAGE' => 14, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
+        BasePeer::TYPE_PHPNAME => array ('ChangeLogId' => 0, 'Date' => 1, 'AppNumber' => 2, 'DelIndex' => 3, 'ProId' => 4, 'TasId' => 5, 'UsrId' => 6, 'ObjectType' => 7, 'ObjectId' => 8, 'ObjectUid' => 9, 'ExecutedAt' => 10, 'SourceId' => 11, 'Data' => 12, 'Skin' => 13, 'Language' => 14, 'RowMigration' => 15, ),
+        BasePeer::TYPE_COLNAME => array (AppDataChangeLogPeer::CHANGE_LOG_ID => 0, AppDataChangeLogPeer::DATE => 1, AppDataChangeLogPeer::APP_NUMBER => 2, AppDataChangeLogPeer::DEL_INDEX => 3, AppDataChangeLogPeer::PRO_ID => 4, AppDataChangeLogPeer::TAS_ID => 5, AppDataChangeLogPeer::USR_ID => 6, AppDataChangeLogPeer::OBJECT_TYPE => 7, AppDataChangeLogPeer::OBJECT_ID => 8, AppDataChangeLogPeer::OBJECT_UID => 9, AppDataChangeLogPeer::EXECUTED_AT => 10, AppDataChangeLogPeer::SOURCE_ID => 11, AppDataChangeLogPeer::DATA => 12, AppDataChangeLogPeer::SKIN => 13, AppDataChangeLogPeer::LANGUAGE => 14, AppDataChangeLogPeer::ROW_MIGRATION => 15, ),
+        BasePeer::TYPE_FIELDNAME => array ('CHANGE_LOG_ID' => 0, 'DATE' => 1, 'APP_NUMBER' => 2, 'DEL_INDEX' => 3, 'PRO_ID' => 4, 'TAS_ID' => 5, 'USR_ID' => 6, 'OBJECT_TYPE' => 7, 'OBJECT_ID' => 8, 'OBJECT_UID' => 9, 'EXECUTED_AT' => 10, 'SOURCE_ID' => 11, 'DATA' => 12, 'SKIN' => 13, 'LANGUAGE' => 14, 'ROW_MIGRATION' => 15, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
     );
 
     /**
@@ -233,6 +236,8 @@ abstract class BaseAppDataChangeLogPeer
         $criteria->addSelectColumn(AppDataChangeLogPeer::SKIN);
 
         $criteria->addSelectColumn(AppDataChangeLogPeer::LANGUAGE);
+
+        $criteria->addSelectColumn(AppDataChangeLogPeer::ROW_MIGRATION);
 
     }
 

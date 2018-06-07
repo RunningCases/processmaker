@@ -61536,6 +61536,7 @@ INSERT INTO CONFIGURATION (CFG_UID,OBJ_UID,CFG_VALUE,PRO_UID,USR_UID,APP_UID) VA
 ('AUDIT_LOG','log','s:5:"false";','','',''),
 ('ENTERPRISE_SETTING_ENCRYPT','','a:2:{s:7:"current";s:6:"sha256";s:8:"previous";s:3:"md5";}','','',''),
 ('ENVIRONMENT_SETTINGS','','a:1:{s:18:"directoryStructure";i:2;}','','',''),
+('MIGRATED_APP_HISTORY', 'history', 'a:1:{s:7:\"updated\";b:1;}', '', '', ''),
 ('MIGRATED_CONTENT','content','a:12:{i:0;s:7:"Groupwf";i:1;s:7:"Process";i:2;s:10:"Department";i:3;s:4:"Task";i:4;s:13:"InputDocument";i:5;s:11:"Application";i:6;s:11:"AppDocument";i:7;s:8:"Dynaform";i:8;s:14:"OutputDocument";i:9;s:11:"ReportTable";i:10;s:8:"Triggers";i:11;s:41:"\\ProcessMaker\\BusinessModel\\WebEntryEvent";}','','',''),
 ('MIGRATED_LIST','list','true','list','list','list'),
 ('MIGRATED_LIST_UNASSIGNED','list','true','list','list','list'),
