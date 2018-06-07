@@ -95,6 +95,8 @@ class AppDataChangeLogMapBuilder
 
         $tMap->addColumn('LANGUAGE', 'Language', 'string', CreoleTypes::VARCHAR, false, 32);
 
+        $tMap->addColumn('ROW_MIGRATION', 'RowMigration', 'int', CreoleTypes::INTEGER, false, null);
+
     } // doBuild()
 
 } // AppDataChangeLogMapBuilder
