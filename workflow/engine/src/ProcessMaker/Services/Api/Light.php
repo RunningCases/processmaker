@@ -1490,12 +1490,12 @@ class Light extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function claimCaseUser($app_uid)
+    public function claimCaseUser($app_uid, $del_index = null)
     {
         try {
             $userUid = $this->getUserId();
-            $oMobile = new BusinessModelLight();
-            $response = $oMobile->claimCaseUser($userUid, $app_uid);
+            $mobile = new BusinessModelLight();
+            $response = $mobile->claimCaseUser($userUid, $app_uid, $del_index);
         } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -1762,13 +1762,13 @@ class Light extends Api
      *
      * @url POST /cases/:app_uid/cancel
      * 
-     * @param string $cas_uid {@min 1}{@max 32}
+     * @param string $app_uid {@min 1}{@max 32}
      * 
      * @return array
      * @throws RestException 
      * 
      * @access protected
-     * @class AccessControl {@permission PM_CASES}
+     * @class AccessControl {@permission PM_CANCELCASE}
      */
     public function doPutCancelCase($app_uid)
     {

@@ -865,51 +865,52 @@ class Cases
      * Put cancel case
      *
      * @access public
-     * @param string $app_uid, Uid for case
-     * @param string $usr_uid, Uid for user
-     * @param bool|string $del_index
+     * @param string $appUid, Uid for case
+     * @param string $usrUid, Uid for user
+     * @param bool|string $delIndex
      *
      * @return void
      * @throws Exception
      */
-    public function putCancelCase($app_uid, $usr_uid, $del_index = false)
+    public function putCancelCase($appUid, $usrUid, $delIndex = false)
     {
-        Validator::isString($app_uid, '$app_uid');
-        Validator::isString($usr_uid, '$usr_uid');
-
-        Validator::appUid($app_uid, '$app_uid');
-        Validator::usrUid($usr_uid, '$usr_uid');
-
-        if ($del_index === false) {
-            $del_index = AppDelegation::getCurrentIndex($app_uid);
-        }
-        Validator::isInteger($del_index, '$del_index');
+        Validator::isString($appUid, '$app_uid');
+        Validator::appUid($appUid, '$app_uid');
+        Validator::isString($usrUid, '$usr_uid');
+        Validator::usrUid($usrUid, '$usr_uid');
 
         $case = new ClassesCases();
-        $fields = $case->loadCase($app_uid);
-        if ($fields['APP_STATUS'] == 'CANCELLED') {
-            throw (new Exception(G::LoadTranslation("ID_CASE_ALREADY_CANCELED", array($app_uid))));
+        $fields = $case->loadCase($appUid);
+        $supervisor = new BmProcessSupervisor();
+        $isSupervisor = $supervisor->isUserProcessSupervisor($fields['PRO_UID'], $usrUid);
+
+        if ($delIndex === false) {
+            $u = new ModelUsers();
+            $usrId = $u->load($usrUid)['USR_ID'];
+
+            if ($isSupervisor) {
+                //Get the last index open
+                $delIndex = AppDelegation::getLastIndexByStatus($fields['APP_NUMBER']);
+            } else {
+                //Get the last index open related to the user
+                $delIndex = AppDelegation::getLastIndexByUserAndStatus($fields['APP_NUMBER'], $usrId);
+            }
+
+            //We will to validate when the case is TO_DO and the user does not have a index OPEN
+            //The scenarios with COMPLETED, CANCELLED and DRAFT is considered in the WsBase::cancelCase
+            if ($fields['APP_STATUS'] === 'TO_DO' && $delIndex === 0) {
+                throw (new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CANCEL_CASE", [$usrUid])));
+            }
         }
+        Validator::isInteger($delIndex, '$del_index');
 
-        $processUser = new ProcessUser();
-        $arrayProcess = $processUser->getProUidSupervisor($usr_uid);
-
-        $criteria = new Criteria("workflow");
-
-        $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
-        $criteria->add(AppDelegationPeer::APP_UID, $app_uid, Criteria::EQUAL);
-        $criteria->add(AppDelegationPeer::DEL_INDEX, $del_index, Criteria::EQUAL);
-        $criteria->add(
-            $criteria->getNewCriterion(AppDelegationPeer::USR_UID, $usr_uid, Criteria::EQUAL)->addOr(
-                $criteria->getNewCriterion(AppDelegationPeer::PRO_UID, $arrayProcess, Criteria::IN))
-        );
-        $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
-
-        if (!$rsCriteria->next()) {
-            throw (new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CANCEL_CASE", array($usr_uid))));
+        /** Cancel case */
+        $ws = new WsBase();
+        $result = $ws->cancelCase($appUid, $delIndex, $usrUid);
+        $result = (object)$result;
+        if ($result->status_code !== 0) {
+            throw new Exception($result->message);
         }
-
-        $case->cancelCase($app_uid, $del_index, $usr_uid);
     }
 
     /**
@@ -2551,7 +2552,6 @@ class Cases
 
             $arrayCondition = array();
             $arrayCondition[] = array(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::EQUAL);
-            $arrayCondition[] = array(ApplicationPeer::APP_UID, AppThreadPeer::APP_UID, Criteria::EQUAL);
             $arrayCondition[] = array(
                 ApplicationPeer::APP_UID,
                 $delimiter . $applicationUid . $delimiter,
@@ -2562,12 +2562,10 @@ class Cases
             $criteria->add(
                 $criteria->getNewCriterion(ApplicationPeer::APP_STATUS, "TO_DO", Criteria::EQUAL)->addAnd(
                     $criteria->getNewCriterion(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL))->addAnd(
-                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))->addAnd(
-                    $criteria->getNewCriterion(AppThreadPeer::APP_THREAD_STATUS, "OPEN"))
+                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))
             )->addOr(
                 $criteria->getNewCriterion(ApplicationPeer::APP_STATUS, "DRAFT", Criteria::EQUAL)->addAnd(
-                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))->addAnd(
-                    $criteria->getNewCriterion(AppThreadPeer::APP_THREAD_STATUS, "OPEN"))
+                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))
             );
 
             if ($delIndex != 0) {

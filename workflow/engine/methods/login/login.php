@@ -163,25 +163,6 @@ if (isset($_SESSION['USER_LOGGED'])) {
 }
 //end log
 
-/*----------------------------------********---------------------------------*/
-$timeZoneFailed = false;
-
-if (isset($_SESSION['__TIME_ZONE_FAILED__']) && $_SESSION['__TIME_ZONE_FAILED__']) {
-    $timeZoneFailed  = true;
-    $userUsername    = $_SESSION['USR_USERNAME'];
-    $userPassword    = $_SESSION['USR_PASSWORD'];
-    $userTimeZone    = $_SESSION['USR_TIME_ZONE'];
-    $browserTimeZone = $_SESSION['BROWSER_TIME_ZONE'];
-    $url             = $_SESSION['URL'];
-
-    if (isset($_SESSION['USER_LANG'])) {
-        $lang = $_SESSION['USER_LANG'];
-    } else {
-        $lang = SYS_LANG;
-    }
-}
-/*----------------------------------********---------------------------------*/
-
 //start new session
 @session_destroy();
 session_start();
@@ -223,39 +204,6 @@ if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc1
     die();
 }
 
-if ($timeZoneFailed) {
-    $dateTime = new \ProcessMaker\Util\DateTime();
-
-    $userTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($userTimeZone);
-    $browserTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($browserTimeZone);
-
-    $userUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($userTimeZoneOffset);
-    $browserUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($browserTimeZoneOffset);
-
-    $arrayTimeZoneId = $dateTime->getTimeZoneIdByTimeZoneOffset($browserTimeZoneOffset);
-
-    array_unshift($arrayTimeZoneId, 'false');
-    array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) {
-        $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC ' . $parameter . ') ' . $value];
-    }, $browserUtcOffset);
-
-    $_SESSION['_DBArray'] = ['TIME_ZONE' => $arrayTimeZoneId];
-
-    $arrayData = [
-        'USR_USERNAME'  => $userUsername,
-        'USR_PASSWORD'  => $userPassword,
-        'USR_TIME_ZONE' => '(UTC ' . $userUtcOffset . ') ' . $userTimeZone,
-        'BROWSER_TIME_ZONE' => $browserTimeZone,
-        'USER_LANG' => $lang,
-        'URL'       => $url
-    ];
-
-    $G_PUBLISH = new Publisher();
-    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login' . PATH_SEP . 'TimeZoneAlert', '', $arrayData, SYS_URI . 'login/authentication.php');
-
-    G::RenderPage('publish');
-    exit(0);
-}
 /*----------------------------------********---------------------------------*/
 
 //translation

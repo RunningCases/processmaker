@@ -133,7 +133,7 @@ if (!$sw_file_exists) {
         $res['message'] = $info['basename'] . $ver . '.' . $ext;
         print G::json_encode($res);
     } else {
-        $nameFile = $info['basename'] . $ver . '.' . $ext;
+        $nameFile = G::inflect($info['basename'] . $ver) . '.' . $ext;
         $licensedFeatures = PMLicensedFeatures::getSingleton();
         $downloadStatus = false;
         /*----------------------------------********---------------------------------*/
@@ -158,7 +158,7 @@ if (!$sw_file_exists) {
         }
         /*----------------------------------********---------------------------------*/
         if (!$downloadStatus) {
-            G::streamFile($realPath, $download, G::inflect($nameFile)); //download
+            G::streamFile($realPath, $download, $nameFile); //download
         }
     }
 }

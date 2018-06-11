@@ -4621,6 +4621,7 @@
             <parameter name="Comment" value="Canceled list"/>
         </vendor>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" primaryKey="true" default="0"/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -4629,7 +4630,6 @@
         <column name="APP_PRO_TITLE" type="LONGVARCHAR" required="false"/>
         <column name="APP_TAS_TITLE" type="LONGVARCHAR" required="false"/>
         <column name="APP_CANCELED_DATE" type="TIMESTAMP" required="false"/>
-        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
         <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
         <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>

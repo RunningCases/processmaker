@@ -1050,13 +1050,44 @@ if (!defined('EXECUTE_BY_CRON')) {
     }
     $_SESSION['phpLastFileFound'] = $_SERVER['REQUEST_URI'];
 
+    /*----------------------------------********---------------------------------*/
+    // Check if the timezone for the user is valid
+    if (!empty($_SESSION['USER_LOGGED']) && isset($_SESSION['__TIME_ZONE_FAILED__']) && $_SESSION['__TIME_ZONE_FAILED__'] &&
+        (SYS_COLLECTION != 'login' && SYS_TARGET != 'login')) {
+        $userTimeZone = $_SESSION['USR_TIME_ZONE'];
+        $browserTimeZone = $_SESSION['BROWSER_TIME_ZONE'];
+
+        $dateTime = new \ProcessMaker\Util\DateTime();
+
+        $userTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($userTimeZone);
+        $browserTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($browserTimeZone);
+
+        $userUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($userTimeZoneOffset);
+        $browserUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($browserTimeZoneOffset);
+
+        $arrayTimeZoneId = $dateTime->getTimeZoneIdByTimeZoneOffset($browserTimeZoneOffset);
+
+        array_unshift($arrayTimeZoneId, 'false');
+        array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) { $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC ' . $parameter . ') ' . $value]; }, $browserUtcOffset);
+
+        $_SESSION['_DBArray'] = ['TIME_ZONE' => $arrayTimeZoneId];
+
+        $arrayData = [
+            'USR_TIME_ZONE' => '(UTC ' . $userUtcOffset . ') ' . $userTimeZone,
+            'BROWSER_TIME_ZONE' => $browserTimeZone
+        ];
+
+        global $G_PUBLISH;
+        $G_PUBLISH = new Publisher();
+        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login' . PATH_SEP . 'TimeZoneAlert', '', $arrayData, SYS_URI . 'login/updateTimezone');
+        G::RenderPage('publish');
+        exit(0);
+    }
+    /*----------------------------------********---------------------------------*/
+
     // Initialization functions plugins
     $oPluginRegistry->init();
-    /**
-     * New feature for Gulliver framework to support Controllers & HttpProxyController classes handling
-     *
-     * @author <erik@colosa.com
-     */
+
     if ($isControllerCall) { //Instance the Controller object and call the request method
         $controller = new $controllerClass();
         $controller->setHttpRequestData($_REQUEST);//NewRelic Snippet - By JHL

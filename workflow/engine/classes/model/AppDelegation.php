@@ -331,16 +331,17 @@ class AppDelegation extends BaseAppDelegation
         }
     }
 
-    /* Load the Application Delegation row specified in [app_id] column value.
+    /**
+     * Load the Application Delegation row specified in [app_id] column value.
      *
-     * @param string $AppUid the uid of the application
-     * @param string $index the index of the delegation
+     * @param string $appUid the uid of the application
+     * @param integer $index the index of the delegation
+     *
      * @return array $Fields the fields
      */
-
-    public function LoadParallel($AppUid, $index = "")
+    public function LoadParallel($appUid, $index = 0)
     {
-        $aCases = array();
+        $cases = [];
 
         $c = new Criteria('workflow');
         $c->addSelectColumn(AppDelegationPeer::APP_UID);
@@ -348,41 +349,33 @@ class AppDelegation extends BaseAppDelegation
         $c->addSelectColumn(AppDelegationPeer::PRO_UID);
         $c->addSelectColumn(AppDelegationPeer::TAS_UID);
         $c->addSelectColumn(AppDelegationPeer::USR_UID);
+        $c->addSelectColumn(AppDelegationPeer::DEL_THREAD);
         $c->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
         $c->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
         $c->addSelectColumn(AppDelegationPeer::DEL_TASK_DUE_DATE);
         $c->addSelectColumn(AppDelegationPeer::DEL_FINISH_DATE);
         $c->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
-
         $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
-        $c->add(AppDelegationPeer::APP_UID, $AppUid);
-        if (!empty($index)) {
+        $c->add(AppDelegationPeer::APP_UID, $appUid);
+
+        if ($index > 0) {
             $c->add(AppDelegationPeer::DEL_INDEX, $index);
         }
+
         $c->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
         $rs = AppDelegationPeer::doSelectRS($c);
-        $row= $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $row = $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         $rs->next();
         $row = $rs->getRow();
 
         while (is_array($row)) {
-            $case = array();
-            $case['TAS_UID']   = $row['TAS_UID'];
-            $case['USR_UID']   = $row['USR_UID'];
-            $case['DEL_INDEX'] = $row['DEL_INDEX'];
-            $case['TAS_UID']   = $row['TAS_UID'];
-            $case['DEL_DELEGATE_DATE'] = $row['DEL_DELEGATE_DATE'];
-            $case['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
-            $case['DEL_TASK_DUE_DATE'] = $row['DEL_TASK_DUE_DATE'];
-            $case['DEL_FINISH_DATE']   = $row['DEL_FINISH_DATE'];
-            $case['DEL_PREVIOUS']      = $row['DEL_PREVIOUS'];
-            $aCases[] = $case;
+            $cases[] = $row;
             $rs->next();
             $row = $rs->getRow();
         }
 
-        return $aCases;
+        return $cases;
     }
 
     /**
@@ -1006,5 +999,51 @@ class AppDelegation extends BaseAppDelegation
 
         return $proId;
     }
+    /**
+     * Get the last index by a specific status
+     *
+     * @param integer $appNumber
+     * @param string $status
+     *
+     * @return integer
+     */
+    public static function getLastIndexByStatus($appNumber, $status = 'OPEN')
+    {
+        $delIndex = 0;
+        $criteria = new Criteria();
+        $criteria->add(AppDelegationPeer::APP_NUMBER, $appNumber);
+        $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, $status);
+        $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
+        $dataset = AppDelegationPeer::doSelectOne($criteria);
+        if (!is_null($dataset)) {
+            $delIndex = $dataset->getDelIndex();
+        }
 
+        return $delIndex;
+    }
+
+    /**
+     * Get the last index assigned to the user by a specific status
+     *
+     * @param integer $appNumber
+     * @param integer $usrId
+     * @param string $status
+     *
+     * @return integer
+    */
+    public static function getLastIndexByUserAndStatus($appNumber, $usrId, $status = 'OPEN')
+    {
+        $delIndex = 0;
+        $criteria = new Criteria();
+        $criteria->add(AppDelegationPeer::APP_NUMBER, $appNumber);
+        $criteria->add(AppDelegationPeer::USR_ID, $usrId);
+        $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, $status);
+        $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
+        $dataset = AppDelegationPeer::doSelectOne($criteria);
+        if (!is_null($dataset)) {
+            $delIndex = $dataset->getDelIndex();
+        }
+
+        return $delIndex;
+    }
 }

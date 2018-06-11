@@ -1271,22 +1271,6 @@ class EmailServer
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
-
-                $passwd = $row["MESS_PASSWORD"];
-                $passwdDec = G::decrypt($passwd, "EMAILENCRYPT");
-                $auxPass = explode("hash:", $passwdDec);
-
-                if (count($auxPass) > 1) {
-                    if (count($auxPass) == 2) {
-                        $passwd = $auxPass[1];
-                    } else {
-                        array_shift($auxPass);
-                        $passwd = implode("", $auxPass);
-                    }
-                }
-
-                $row["MESS_PASSWORD"] = $passwd;
-
                 $arrayEmailServer[] = $this->getEmailServerDataFromRecord($row);
             }
 

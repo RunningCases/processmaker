@@ -2766,7 +2766,8 @@ function PMFDeleteCase ($caseUid)
 function PMFCancelCase ($caseUid, $delIndex, $userUid)
 {
     $ws = new WsBase();
-    $result = $ws->cancelCase( $caseUid, $delIndex, $userUid );
+    $result = $ws->cancelCase($caseUid, $delIndex, $userUid);
+    $result = (object)$result;
 
     if ($result->status_code == 0) {
         if (isset($_SESSION['APPLICATION']) && isset($_SESSION['INDEX'])) {
@@ -2775,10 +2776,17 @@ function PMFCancelCase ($caseUid, $delIndex, $userUid)
                     G::header('Location: ../cases/casesListExtJsRedirector');
                     die();
                 } else {
-                    die(G::LoadTranslation('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFCancelCase', G::LoadTranslation('ID_CANCELLED'))));
+                    die(
+                        G::LoadTranslation(
+                        'ID_PM_FUNCTION_CHANGE_CASE',
+                        SYS_LANG,
+                            ['PMFCancelCase', G::LoadTranslation('ID_CANCELLED')]
+                        )
+                    );
                 }
             }
         }
+
         return 1;
     } else {
         return 0;
