@@ -2,7 +2,9 @@
 
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
@@ -341,12 +343,14 @@ class WorkspaceTools
         $stop = microtime(true);
         CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
         
+        /*----------------------------------********---------------------------------*/
         $includeDynContent = isset($optionMigrateHistoryData['includeDynContent']) && $optionMigrateHistoryData['includeDynContent'] === true;
         $start = microtime(true);
         CLI::logging("> Migrating history data...\n");
         $this->migrateAppHistoryToAppDataChangeLog(false, !$includeDynContent);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+        /*----------------------------------********---------------------------------*/
     }
 
     /**
@@ -2062,12 +2066,14 @@ class WorkspaceTools
             //Updating generated class files for PM Tables
             passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
+            /*----------------------------------********---------------------------------*/
             $includeDynContent = isset($optionMigrateHistoryData['includeDynContent']) && $optionMigrateHistoryData['includeDynContent'] === true;
             $start = microtime(true);
             CLI::logging("> Migrating history data...\n");
             $workspace->migrateAppHistoryToAppDataChangeLog(false, !$includeDynContent);
             $stop = microtime(true);
             CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+            /*----------------------------------********---------------------------------*/
         }
 
         CLI::logging("Removing temporary files\n");
@@ -4230,7 +4236,8 @@ class WorkspaceTools
             $this->setLastContentMigrateTable(true);
         }
     }
-    
+
+    /*----------------------------------********---------------------------------*/    
     /**
      * Migrate the contents of table APP_HISTORY to table APP_DATA_CHANGE_LOG.
      * 
@@ -4389,4 +4396,5 @@ class WorkspaceTools
         $conf->aConfig = ['updated' => true];
         $conf->saveConfig('MIGRATED_APP_HISTORY', 'history');
     }
+    /*----------------------------------********---------------------------------*/
 }

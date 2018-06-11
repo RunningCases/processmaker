@@ -1,7 +1,9 @@
 <?php
 
 use ProcessMaker\BusinessModel\EmailServer;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\System;
 
 class WsBase
@@ -2257,6 +2259,7 @@ class WsBase
             }
         }
 
+        /*----------------------------------********---------------------------------*/
         ChangeLog::getChangeLog()
                 ->setDate('now')
                 ->setAppNumber($appData['APP_NUMBER'])
@@ -2266,6 +2269,7 @@ class WsBase
                 ->setData(serialize($appData))
                 ->getExecutedAtIdByTriggerType($triggerType)
                 ->getObjectIdByUidAndObjType($stepUidObj, $stepType);
+        /*----------------------------------********---------------------------------*/
 
         return $varTriggers;
     }

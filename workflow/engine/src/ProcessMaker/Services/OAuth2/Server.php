@@ -3,7 +3,9 @@ namespace ProcessMaker\Services\OAuth2;
 
 use Luracast\Restler\iAuthenticate;
 use Luracast\Restler\RestException;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\System;
 
 class Server implements iAuthenticate
@@ -373,7 +375,8 @@ class Server implements iAuthenticate
 
             $_SESSION['USR_TIME_ZONE'] = $userTimeZone;
         }
-                
+
+        /*----------------------------------********---------------------------------*/
         ChangeLog::getChangeLog()
                 ->setUsrId(is_null($user) ? 0 : $user->getUsrId())
                 ->setSkin(SYS_SKIN)
@@ -386,6 +389,7 @@ class Server implements iAuthenticate
             ChangeLog::getChangeLog()
                     ->setSourceId(ChangeLog::FromWeb);
         }
+        /*----------------------------------********---------------------------------*/
 
         return $allowed;
     }

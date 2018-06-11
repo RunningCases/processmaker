@@ -2,7 +2,9 @@
 
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
 use ProcessMaker\BusinessModel\WebEntryEvent;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -900,7 +902,7 @@ class Cases
                     $aFieldsHistory['APP_DATA'] = serialize($FieldsDifference);
                     $appHistory->insertHistory($aFieldsHistory);
                     
-                    
+                    /*----------------------------------********---------------------------------*/
                     $type = isset($Fields['OBJECT_TYPE']) ?
                             $Fields['OBJECT_TYPE'] : ChangeLog::getChangeLog()->getObjectNameById(ChangeLog::DYNAFORM);
                     ChangeLog::getChangeLog()
@@ -912,6 +914,7 @@ class Cases
                             ->getTasIdByTasUid($Fields['TAS_UID'])
                             ->getObjectIdByUidAndObjType($Fields['CURRENT_DYNAFORM'], $type)
                             ->register();
+                    /*----------------------------------********---------------------------------*/
                 }
             }
             //End Save History
@@ -3431,9 +3434,11 @@ class Cases
      */
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
+        /*----------------------------------********---------------------------------*/
         ChangeLog::getChangeLog()
                 ->setObjectUid($sStepUidObj)
                 ->getExecutedAtIdByTriggerType($sTriggerType);
+        /*----------------------------------********---------------------------------*/
 
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
 
