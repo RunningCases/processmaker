@@ -50,7 +50,9 @@ CLI::taskOpt("workspace", "Specify which workspace to restore if multiple worksp
         Ex: -wworkflow.", "w:", "workspace=");
 CLI::taskOpt("lang", "Specify the language which will be used to rebuild the case cache list. If this option isn't included, then 'en' (English) will be used by default.", "l:", "lang=");
 CLI::taskOpt("port", "Specify the port number used by MySQL. If not specified, then the port 3306 will be used by default.", "p:");
+/*----------------------------------********---------------------------------*/
 CLI::taskOpt('include_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --include_dyn_content", 'd', 'include_dyn_content');
+/*----------------------------------********---------------------------------*/
 CLI::taskRun("run_workspace_restore");
 
 CLI::taskName('cacheview-repair');
@@ -343,6 +345,7 @@ EOT
 CLI::taskArg('workspace');
 CLI::taskRun("regenerate_pmtable_classes");
 
+/*----------------------------------********---------------------------------*/
 /**
  * Migrate the data from APP_HISTORY table to the new table APP_DATA_CHANGE_LOG.
  */
@@ -354,6 +357,7 @@ EOT
 CLI::taskArg('workspace');
 CLI::taskRun('migrate_history_data');
 CLI::taskOpt('include_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --include_dyn_content", 'i', 'include_dyn_content');
+/*----------------------------------********---------------------------------*/
 
 /**
  * Function run_info
@@ -854,7 +858,9 @@ function run_workspace_restore($args, $opts)
         $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
         $port = array_key_exists("port", $opts) ? $opts['port'] : '';
         $optionMigrateHistoryData = [
+            /*----------------------------------********---------------------------------*/
             'includeDynContent' => array_key_exists('include_dyn_content', $args)
+            /*----------------------------------********---------------------------------*/
         ];
         if ($info) {
             WorkspaceTools::getBackupInfo($filename);
@@ -1285,6 +1291,7 @@ function regenerate_pmtable_classes($args, $opts)
     }
 }
 
+/*----------------------------------********---------------------------------*/
 /**
  * This method migrates data from APP_HISTORY table to APP_DATA_CHANGE_LOG table.
  * 
@@ -1324,3 +1331,4 @@ function migrate_history_data($args, $opts)
         }
     }
 }
+/*----------------------------------********---------------------------------*/

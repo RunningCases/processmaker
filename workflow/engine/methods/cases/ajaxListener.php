@@ -1,7 +1,10 @@
 <?php
 
 use ProcessMaker\BusinessModel\Cases as BmCases;
+use ProcessMaker\BusinessModel\Cases\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLogResult;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Plugins\PluginRegistry;
 
 if (!isset($_SESSION['USER_LOGGED'])) {
@@ -780,13 +783,26 @@ class Ajax
         $appUid = $idHistoryArray[1];
         $tasUid = $idHistoryArray[2];
 
-        $changeLog = new ChangeLogResult();
-        $result = $changeLog->setAppUid($appUid)
-                ->setUserLogged($_SESSION['USER_LOGGED'])
-                ->setProUid($proUid)
-                ->setTasUid($tasUid)
-                ->getLogs();
-        echo json_encode($result);
+        /*----------------------------------********---------------------------------*/
+        if (true) {
+            //In enterprise version this snippet of code should be always be executed
+            //In community version this snippet of code is deleted and is executed the next snippet of code
+            $changeLog = new ChangeLogResult();
+            $result = $changeLog->setAppUid($appUid)
+                    ->setUserLogged($_SESSION['USER_LOGGED'])
+                    ->setProUid($proUid)
+                    ->setTasUid($tasUid)
+                    ->getLogs();
+            echo G::json_encode($result);
+        } else {
+        /*----------------------------------********---------------------------------*/
+            $start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
+            $limit = isset($_REQUEST['limit']) ? (int) $_REQUEST['limit'] : 15;
+            $changeLog = new ChangeLog();
+            echo G::json_encode($changeLog->getChangeLog($appUid, $proUid, $tasUid, $start, $limit));
+        /*----------------------------------********---------------------------------*/
+        }
+        /*----------------------------------********---------------------------------*/
     }
 
     public function changeLogTab()

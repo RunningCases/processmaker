@@ -25,7 +25,9 @@ use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
 use ProcessMaker\BusinessModel\Lists;
 use ProcessMaker\BusinessModel\Task as BusinessModelTask;
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\RoutingScreen;
 use ProcessMaker\Core\System;
 use ProcessMaker\Services\Api\Project\Activity\Step as ActivityStep;
@@ -601,8 +603,10 @@ class Light
                 $tasks
             );
 
+            /*----------------------------------********---------------------------------*/
             ChangeLog::getChangeLog()
                     ->register();
+            /*----------------------------------********---------------------------------*/
 
             $array = json_decode(json_encode($fields), true);
             $array['message'] = trim(strip_tags($array['message']));
