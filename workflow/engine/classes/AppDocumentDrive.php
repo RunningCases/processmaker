@@ -65,7 +65,10 @@ class AppDocumentDrive
     public  function loadApplication ($appUid)
     {
         $this->app = new Application();
-        $this->app->Load($appUid);
+        $sw = $this->app->exists($appUid);
+        if ($sw === true) {
+            $this->app->Load($appUid);
+        }
     }
 
     public function existAppFolderDrive ()
