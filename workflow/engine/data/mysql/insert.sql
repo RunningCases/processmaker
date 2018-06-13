@@ -60388,7 +60388,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_MYSQL','en','MySQL Support','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_OPENSSL','en','OpenSSL Version (*)','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_OPENSSL_OPTIONAL','en','Open SSL is optional','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_PHP','en','PHP recommended version 5.6 or higher','2017-11-29') ,
+( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_PHP','en','PHP recommended version 5.6 or higher, PHP 7.2 is not yet supported','2018-06-13') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_SOAP','en','Soap Support','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_SLOGAN1','en','This Business Process is Powered By ProcessMaker','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_SUCCESS_INSTALLED','en','ProcessMaker was successfully installed<br/>Workspace <b>" {0} " </b> was installed correctly.','2014-01-15') ,
