@@ -56,6 +56,7 @@ if (PMLicensedFeatures::getSingleton()
         $casesFields['USER_UID'] = $casesFields['CURRENT_USER_UID'];
 
         ChangeLog::getChangeLog()
+                ->getUsrIdByUsrUid($casesFields['USER_UID'], true)
                 ->setSourceId(ChangeLog::FromABE);
 
         //Update case info
