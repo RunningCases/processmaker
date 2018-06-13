@@ -4,6 +4,7 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
+use ProcessMaker\Core\System;
 
 class MonologProvider
 {
@@ -66,29 +67,27 @@ class MonologProvider
         'EMERGENCY' => 600
     ];
 
-    public function __construct($channel, $fileLog)
+    /**
+     * Construct of the class
+     *
+     * @param string $channel
+     * @param string $fileLog
+     * @param boolean $readLoggingLevel
+     *
+    */
+    public function __construct($channel, $fileLog, $readLoggingLevel = true)
     {
-        // getting configuration from env.ini
-        $sysConf = System::getSystemConfiguration();
-
-        //Set level debug
-        $levelDebug = 'DEBUG';
-
+        //Set the minimum levelDebug that will be saved
+        $levelDebug = $this->defineLevelDebug($readLoggingLevel);
         $this->setLevelDebug($levelDebug);
 
         //Set path where the file will be saved
-        $defaultPath = $path = PATH_DATA . 'sites' . PATH_SEP . config('system.workspace') . PATH_SEP . 'log' . PATH_SEP;
-        if (isset($sysConf['logs_location'])) {
-            $path = !empty($sysConf['logs_location']) ? $sysConf['logs_location'] : $path;
-        }
-        $this->setPathFile($path);
+        $pathFile = $this->definePathFile();
+        $this->setPathFile($pathFile);
 
         //Set maximal amount of files to keep (0 means unlimited)
-        $maxFilesToKeep = 60;
-        if (isset($sysConf['logs_max_files'])) {
-            $maxFilesToKeep = !empty($sysConf['logs_max_files']) ? $sysConf['logs_max_files'] : $maxFilesToKeep;
-        }
-        $this->setMaxFiles($maxFilesToKeep);
+        $maxFilesToRotation = $this->defineMaxFiles();
+        $this->setMaxFiles($maxFilesToRotation);
 
         /**
          * The permissions are normally set at the operating system level, and it's the IT administrator responsibility to set the correct file permissions
@@ -102,8 +101,74 @@ class MonologProvider
         $this->setConfig($channel, $fileLog);
 
         $this->testWriteLog($channel, $fileLog, [
-            $defaultPath
+            $pathFile
         ]);
+    }
+
+    /**
+     * This function defines the debug level
+     * We will to check if the logging_level exist in the env.ini
+     *
+     * @param boolean $readLoggingLevel
+     *
+     * @return string
+    */
+    private function defineLevelDebug($readLoggingLevel = true)
+    {
+        $levelDebug = 'INFO';
+
+        if ($readLoggingLevel) {
+            //In the parse_ini_file the word NONE are considered FALSE
+            if (defined('LOGGING_LEVEL')) {
+                $levelDebug = !empty(LOGGING_LEVEL) ? LOGGING_LEVEL : 'NONE';
+            } else {
+                //Getting configuration from env.ini
+                $sysConf = System::getSystemConfiguration();
+                $levelDebug = !empty($sysConf['logging_level']) ? $sysConf['logging_level'] : 'NONE';
+            }
+        }
+
+        return $levelDebug;
+    }
+
+    /**
+     * This function defines the path file
+     * We will to check if the logs_location exist in the env.ini
+     *
+     * @return string
+     */
+    private function definePathFile()
+    {
+        $path = PATH_DATA . 'sites' . PATH_SEP . config('system.workspace') . PATH_SEP . 'log' . PATH_SEP;
+
+        if (defined('LOGS_LOCATION')) {
+            $path = !empty(LOGS_LOCATION) ? LOGS_LOCATION : $path;
+        } else {
+            $sysConf = System::getSystemConfiguration();
+            $path = !empty($sysConf['logs_location']) ? $sysConf['logs_location'] : $path;
+        }
+
+        return $path;
+    }
+
+    /**
+     * This function defines the max number of files
+     * We will to check if the logs_max_files exist in the env.ini
+     *
+     * @return integer
+    */
+    private function defineMaxFiles()
+    {
+        $maxFilesToRotation = 60;
+
+        if (defined('LOGS_MAX_FILES')) {
+            $maxFilesToRotation = !empty(LOGS_MAX_FILES) ? LOGS_MAX_FILES : $maxFilesToRotation;
+        } else {
+            $sysConf = System::getSystemConfiguration();
+            $maxFilesToRotation = !empty($sysConf['logs_max_files']) ? $sysConf['logs_max_files'] : $maxFilesToRotation;
+        }
+
+        return $maxFilesToRotation;
     }
 
     /**
@@ -128,7 +193,10 @@ class MonologProvider
 
         if (!file_exists($this->getPathFile() . $timedFilename)) {
             try {
-                $this->getLogger()->addInfo('Start writing the log file');
+                $level = $this->getLevelDebug();
+                if (!empty($level)) {
+                    $this->getLogger()->addRecord($level, 'Start writing the log file');
+                }
             } catch (UnexpectedValueException $exception) {
                 //In case that the file can not be written, it will be written to the standard log file.
                 error_log($exception->getMessage());
@@ -356,23 +424,28 @@ class MonologProvider
      */
     public function setLevelDebug($levelDebug)
     {
-        $level = static::$levels['DEBUG'];
+        //If is a valid, we will to define the level
         if (isset(static::$levels[$levelDebug])) {
             $level = static::$levels[$levelDebug];
+            $this->levelDebug = $level;
         }
-        $this->levelDebug = $level;
     }
 
     /**
-     * to get singleton instance
+     * To get singleton instance
      *
      * @access public
+     *
+     * @param string $channel
+     * @param string $fileLog
+     * @param boolean $readLoggingLevel
+     *
      * @return object
      */
-    public static function getSingleton($channel, $fileLog)
+    public static function getSingleton($channel, $fileLog, $readLoggingLevel = true)
     {
         if (self::$instance === null) {
-            self::$instance = new MonologProvider($channel, $fileLog);
+            self::$instance = new MonologProvider($channel, $fileLog, $readLoggingLevel);
         } else {
             self::$instance->setConfig($channel, $fileLog);
         }
@@ -401,9 +474,13 @@ class MonologProvider
      * @param int $level The logging level
      * @param string $message The log message
      * @param array $context The log context
+     *
+     * @return void
      */
     public function addLog($level, $message, $context)
     {
-        $this->getLogger()->addRecord($level, $message, $context);
+        if (!empty($this->getLevelDebug())) {
+            $this->getLogger()->addRecord($level, $message, $context);
+        }
     }
 }

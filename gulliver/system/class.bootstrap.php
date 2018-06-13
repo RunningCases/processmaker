@@ -2660,11 +2660,21 @@ class Bootstrap
      * @param array $context The log context
      * @param string $workspace name workspace
      * @param string $file name file
-     * @param string $pathData path of file
+     * @param boolean $readLoggingLevel
+     *
+     * @return void
      */
-    public static function registerMonolog($channel, $level, $message, $context, $workspace, $file = 'cron.log', $pathData = PATH_DATA)
+    public static function registerMonolog(
+        $channel,
+        $level,
+        $message,
+        $context,
+        $workspace,
+        $file = 'cron.log',
+        $readLoggingLevel = true
+    )
     {
-        $registerLogger = MonologProvider::getSingleton($channel, $file);
+        $registerLogger = MonologProvider::getSingleton($channel, $file, $readLoggingLevel);
         $registerLogger->addLog($level, $message, $context);
     }
 
