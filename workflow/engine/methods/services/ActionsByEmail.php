@@ -64,6 +64,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         }
 
                         ChangeLog::getChangeLog()
+                                ->getUsrIdByUsrUid($caseFieldsABE['CURRENT_USER_UID'], true)
                                 ->setSourceId(ChangeLog::FromABE);
 
                         $caseFieldsABE['CURRENT_DYNAFORM'] = '';
