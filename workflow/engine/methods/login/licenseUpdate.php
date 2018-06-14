@@ -44,6 +44,8 @@ if ($aux['extension'] != 'dat') {
         foreach ($pluginRegistry->getAllPluginsDetails() as $plugin) {
             if ($plugin->isEnabled() && !in_array($plugin->getNamespace(), $licenseManager->features)) {
                 $pluginRegistry->disablePlugin($plugin->getNamespace());
+                // In order to keep the custom plugins state, it is required to set the attribute before saving the info
+                $plugin->setEnabled(true);
                 $pluginRegistry->savePlugin($plugin->getNamespace());
             }
         }
