@@ -155,7 +155,7 @@ class Applications
                     $sqlSearch .= " LIMIT " . $limit;
                 }
                 $dataset = $stmt->executeQuery($sqlSearch);
-                $appNumbers = array(-1);
+                $appNumbers = [-1];
                 while ($dataset->next()) {
                     $newRow = $dataset->getRow();
                     array_push($appNumbers, $newRow['APP_NUMBER']);
@@ -179,23 +179,21 @@ class Applications
         }
 
         //Add the additional filters
-        if (!empty($sort) && empty($search)) {
+        //Sorts the records in descending order by default
+        if (!empty($sort)) {
             switch ($sort) {
                 case 'APP_NUMBER':
                     //The order by APP_DELEGATION.APP_NUMBER is must be fast than APPLICATION.APP_NUMBER
-                    $sort = 'APP_DELEGATION.APP_NUMBER';
+                    $orderBy = 'APP_DELEGATION.APP_NUMBER ' . $dir;
                     break;
                 case 'APP_CURRENT_USER':
                     //The column APP_CURRENT_USER is result of concat those fields
-                    $sort = 'USR_LASTNAME, USR_FIRSTNAME';
+                    $orderBy = 'USR_LASTNAME ' . $dir . ' ,USR_FIRSTNAME ' . $dir;
                     break;
+                default:
+                    $orderBy = $sort ." ". $dir;
             }
-            $sqlData .= " ORDER BY " . $sort;
-        }
-
-        //Sorts the records in descending order by default
-        if (!empty($dir) && empty($search)) {
-            $sqlData .= "  " . $dir;
+            $sqlData .= " ORDER BY " . $orderBy;
         }
 
         //Define the number of records by return
@@ -208,30 +206,31 @@ class Applications
             $sqlData .= " LIMIT " . $limit;
         }
 
-        $oDataset = $stmt->executeQuery($sqlData);
-        $result = array ();
+        $dataset = $stmt->executeQuery($sqlData);
+        $result = [];
         //By performance enable always the pagination
         $result['totalCount'] = $start + $limit + 1;
-        $rows = array();
-        $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
-        while ($oDataset->next()) {
-            $aRow = $oDataset->getRow();
-            if (isset( $aRow['APP_STATUS'] )) {
-                $aRow['APP_STATUS_LABEL'] = G::LoadTranslation( "ID_{$aRow['APP_STATUS']}" );
+        $rows = [];
+        $priorities = ['1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH'];
+        while ($dataset->next()) {
+            $row = $dataset->getRow();
+            if (isset( $row['APP_STATUS'] )) {
+                $row['APP_STATUS_LABEL'] = G::LoadTranslation( "ID_{$row['APP_STATUS']}" );
             }
-            if (isset( $aRow['DEL_PRIORITY'] )) {
-                $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
+            if (isset( $row['DEL_PRIORITY'] )) {
+                $row['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$priorities[$row['DEL_PRIORITY']]}" );
             }
-            $aRow["APP_CURRENT_USER"] = $aRow["USR_LASTNAME"].' '.$aRow["USR_FIRSTNAME"];
-            $aRow["APPDELCR_APP_TAS_TITLE"] = '';
-            $aRow["USRCR_USR_UID"] = $aRow["USR_UID"];
-            $aRow["USRCR_USR_FIRSTNAME"] = $aRow["USR_FIRSTNAME"];
-            $aRow["USRCR_USR_LASTNAME"] = $aRow["USR_LASTNAME"];
-            $aRow["USRCR_USR_USERNAME"] = $aRow["USR_USERNAME"];
-            $aRow["APP_OVERDUE_PERCENTAGE"] = '';
-            $rows[] = $aRow;
+            $row["APP_CURRENT_USER"] = $row["USR_LASTNAME"].' '.$row["USR_FIRSTNAME"];
+            $row["APPDELCR_APP_TAS_TITLE"] = '';
+            $row["USRCR_USR_UID"] = $row["USR_UID"];
+            $row["USRCR_USR_FIRSTNAME"] = $row["USR_FIRSTNAME"];
+            $row["USRCR_USR_LASTNAME"] = $row["USR_LASTNAME"];
+            $row["USRCR_USR_USERNAME"] = $row["USR_USERNAME"];
+            $row["APP_OVERDUE_PERCENTAGE"] = '';
+            $rows[] = $row;
         }
         $result['data'] = $rows;
+
         return $result;
     }
 
