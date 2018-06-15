@@ -51,7 +51,7 @@ CLI::taskOpt("workspace", "Specify which workspace to restore if multiple worksp
 CLI::taskOpt("lang", "Specify the language which will be used to rebuild the case cache list. If this option isn't included, then 'en' (English) will be used by default.", "l:", "lang=");
 CLI::taskOpt("port", "Specify the port number used by MySQL. If not specified, then the port 3306 will be used by default.", "p:");
 /*----------------------------------********---------------------------------*/
-CLI::taskOpt('include_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --include_dyn_content", 'd', 'include_dyn_content');
+CLI::taskOpt('keep_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --keep_dyn_content", 'd', 'keep_dyn_content');
 /*----------------------------------********---------------------------------*/
 CLI::taskRun("run_workspace_restore");
 
@@ -356,7 +356,7 @@ EOT
 );
 CLI::taskArg('workspace');
 CLI::taskRun('migrate_history_data');
-CLI::taskOpt('include_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --include_dyn_content", 'i', 'include_dyn_content');
+CLI::taskOpt('keep_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --keep_dyn_content", 'i', 'keep_dyn_content');
 /*----------------------------------********---------------------------------*/
 
 /**
@@ -859,7 +859,7 @@ function run_workspace_restore($args, $opts)
         $port = array_key_exists("port", $opts) ? $opts['port'] : '';
         $optionMigrateHistoryData = [
             /*----------------------------------********---------------------------------*/
-            'includeDynContent' => array_key_exists('include_dyn_content', $args)
+            'keepDynContent' => array_key_exists('keep_dyn_content', $args)
             /*----------------------------------********---------------------------------*/
         ];
         if ($info) {
@@ -1301,17 +1301,17 @@ function regenerate_pmtable_classes($args, $opts)
 function migrate_history_data($args, $opts)
 {
     foreach ($args as $key => $value) {
-        if ($args[$key] === '--include_dyn_content' || $args[$key] === '-i') {
+        if ($args[$key] === '--keep_dyn_content' || $args[$key] === '-i') {
             unset($args[$key]);
-            $opts['include_dyn_content'] = '';
+            $opts['keep_dyn_content'] = '';
         }
     }
     $option = '';
     $removedDynContentHistory = true;
-    $exist = array_key_exists('include_dyn_content', $opts);
+    $exist = array_key_exists('keep_dyn_content', $opts);
     if ($exist) {
         $removedDynContentHistory = false;
-        $option = '--include_dyn_content';
+        $option = '--keep_dyn_content';
     }
     if (count($args) === 1) {
         $start = microtime(true);
