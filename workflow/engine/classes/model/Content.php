@@ -323,7 +323,7 @@ class Content extends BaseContent
 
         DB::connection($connection)->statement($query);
 
-        $languages = DB::table('CONTENT')->select('CON_LANG')->distinct()->get();
+        $languages = DB::connection($connection)->table('CONTENT')->select('CON_LANG')->distinct()->get();
 
         foreach ($languages as $value) {
             if (array_search($value->CON_LANG, $langs) === false) {
@@ -335,7 +335,7 @@ class Content extends BaseContent
         DB::connection($connection)->statement('SET FOREIGN_KEY_CHECKS=0');
         DB::connection($connection)->statement('SET SQL_BIG_SELECTS=1');
 
-        $result = DB::table('CONTENT')
+        $result = DB::connection($connection)->table('CONTENT')
             ->select('CON_ID', 'CON_CATEGORY', 'CON_LANG', 'CON_PARENT', 'CON_VALUE')
             ->orderBy('CON_ID', 'CON_CATEGORY', 'CON_LANG', 'CON_PARENT', 'CON_VALUE')
             ->get();
@@ -385,7 +385,7 @@ class Content extends BaseContent
         DB::connection($connection)->statement('DROP TABLE CONTENT_BACKUP');
 
         $result = DB::connection($connection)
-            ->select("SELECT * FROM information_schema.processlist WHERE command = 'Sleep' and user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id");
+            ->select("SELECT * FROM information_schema.processlist WHERE COMMAND = 'Sleep' AND USER = SUBSTRING_INDEX(USER(),'@',1) AND DB = DATABASE() AND TIME > 0 ORDER BY ID");
 
         foreach ($result as $value) {
             DB::connection($connection)->statement('kill ' . $value->ID);
