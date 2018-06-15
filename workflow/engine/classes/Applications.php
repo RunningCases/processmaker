@@ -2,7 +2,6 @@
 
 use ProcessMaker\Plugins\PluginRegistry;
 
-
 class Applications
 {
     /**
@@ -88,7 +87,7 @@ class Applications
         $sqlData .= " LEFT JOIN USERS ON (APP_DELEGATION.USR_ID = USERS.USR_ID)";
         $sqlData .= " LEFT JOIN PROCESS ON (APP_DELEGATION.PRO_ID = PROCESS.PRO_ID)";
 
-        $sqlData .= " WHERE TASK.TAS_TYPE NOT IN ('" . implode("','",$arrayTaskTypeToExclude) . "')";
+        $sqlData .= " WHERE TASK.TAS_TYPE NOT IN ('" . implode("','", $arrayTaskTypeToExclude) . "')";
         switch ($status) {
             case 1: //DRAFT
                 $sqlData .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
@@ -126,7 +125,7 @@ class Applications
         }
 
         if (!empty($category)) {
-            $category = mysql_real_escape_string($category);
+            $category = mysqli_real_escape_string($con->getResource(), $category);
             $sqlData .= " AND PROCESS.PRO_CATEGORY = '{$category}'";
         }
 
@@ -166,7 +165,6 @@ class Applications
             if ($columnSearch === 'TAS_TITLE') {
                 $sqlData .= " AND TASK.TAS_TITLE LIKE '%{$search}%' ";
             }
-
         }
 
         if (!empty($dateFrom)) {
@@ -197,7 +195,7 @@ class Applications
         }
 
         //Define the number of records by return
-        if(empty($limit)) {
+        if (empty($limit)) {
             $limit = 25;
         }
         if (!empty($start) && empty($search)) {
@@ -205,7 +203,7 @@ class Applications
         } else {
             $sqlData .= " LIMIT " . $limit;
         }
-
+        
         $dataset = $stmt->executeQuery($sqlData);
         $result = [];
         //By performance enable always the pagination
@@ -346,8 +344,8 @@ class Applications
                         $Criteria = $oAppCache->getCompletedListCriteria($userUid);
                         $CriteriaCount = $oAppCache->getCompletedCountCriteria($userUid);
 
-                        $Criteria->add (AppCacheViewPeer::DEL_LAST_INDEX,"1");
-                        $CriteriaCount->add (AppCacheViewPeer::DEL_LAST_INDEX,"1");
+                        $Criteria->add(AppCacheViewPeer::DEL_LAST_INDEX, "1");
+                        $CriteriaCount->add(AppCacheViewPeer::DEL_LAST_INDEX, "1");
                         break;
                     default:
                         //All status
@@ -365,8 +363,8 @@ class Applications
                 $CriteriaCount = $oAppCache->getToReviseCountCriteria($userUid);
                 break;
             case "to_reassign":
-                GLOBAL $RBAC;
-                if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
+                global $RBAC;
+                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
                     $Criteria = $oAppCache->getToReassignListCriteria($userUid);
                     $CriteriaCount = $oAppCache->getToReassignCountCriteria($userUid);
                 } else {
@@ -405,19 +403,19 @@ class Applications
         $CriteriaCount->addJoin(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
         $CriteriaCount->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
 
-        $Criteria->addAlias( 'CU', 'USERS' );
-        $Criteria->addJoin( AppCacheViewPeer::USR_UID, 'CU.USR_UID', Criteria::LEFT_JOIN );
-        $Criteria->addAsColumn( 'USR_UID', 'CU.USR_UID' );
-        $Criteria->addAsColumn( 'USR_FIRSTNAME', 'CU.USR_FIRSTNAME' );
-        $Criteria->addAsColumn( 'USR_LASTNAME', 'CU.USR_LASTNAME' );
-        $Criteria->addAsColumn( 'USR_USERNAME', 'CU.USR_USERNAME' );
+        $Criteria->addAlias('CU', 'USERS');
+        $Criteria->addJoin(AppCacheViewPeer::USR_UID, 'CU.USR_UID', Criteria::LEFT_JOIN);
+        $Criteria->addAsColumn('USR_UID', 'CU.USR_UID');
+        $Criteria->addAsColumn('USR_FIRSTNAME', 'CU.USR_FIRSTNAME');
+        $Criteria->addAsColumn('USR_LASTNAME', 'CU.USR_LASTNAME');
+        $Criteria->addAsColumn('USR_USERNAME', 'CU.USR_USERNAME');
 
-        $CriteriaCount->addAlias( 'CU', 'USERS' );
-        $CriteriaCount->addJoin( AppCacheViewPeer::USR_UID, 'CU.USR_UID', Criteria::LEFT_JOIN );
-        $CriteriaCount->addAsColumn( 'USR_UID', 'CU.USR_UID' );
-        $CriteriaCount->addAsColumn( 'USR_FIRSTNAME', 'CU.USR_FIRSTNAME' );
-        $CriteriaCount->addAsColumn( 'USR_LASTNAME', 'CU.USR_LASTNAME' );
-        $CriteriaCount->addAsColumn( 'USR_USERNAME', 'CU.USR_USERNAME' );
+        $CriteriaCount->addAlias('CU', 'USERS');
+        $CriteriaCount->addJoin(AppCacheViewPeer::USR_UID, 'CU.USR_UID', Criteria::LEFT_JOIN);
+        $CriteriaCount->addAsColumn('USR_UID', 'CU.USR_UID');
+        $CriteriaCount->addAsColumn('USR_FIRSTNAME', 'CU.USR_FIRSTNAME');
+        $CriteriaCount->addAsColumn('USR_LASTNAME', 'CU.USR_LASTNAME');
+        $CriteriaCount->addAsColumn('USR_USERNAME', 'CU.USR_USERNAME');
 
         //Current delegation
         $appdelcrTableName = AppCacheViewPeer::TABLE_NAME;
@@ -455,13 +453,13 @@ class Applications
         $CriteriaCount->addAlias("APPDELCR", $appdelcrTableName);
         $CriteriaCount->addAlias("USRCR", UsersPeer::TABLE_NAME);
 
-        $arrayCondition = array();
+        $arrayCondition = [];
         $arrayCondition[] = array(AppCacheViewPeer::APP_UID, "APPDELCR.APP_UID");
         $arrayCondition[] = array("APPDELCR.DEL_LAST_INDEX", 1);
         $Criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
         $CriteriaCount->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
 
-        $arrayCondition = array();
+        $arrayCondition = [];
         $arrayCondition[] = array("APPDELCR.USR_UID", "USRCR.USR_UID");
         $Criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
         $CriteriaCount->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
@@ -469,17 +467,17 @@ class Applications
         //Previous user
 
         if (($action == "todo" || $action == "selfservice" || $action == "unassigned" || $action == "paused" || $action == "to_revise" || $action == "sent") || ($status == "TO_DO" || $status == "DRAFT" || $status == "PAUSED" || $status == "CANCELLED" || $status == "COMPLETED")) {
-            $Criteria->addAlias( 'PU', 'USERS' );
-            $Criteria->addJoin( AppCacheViewPeer::PREVIOUS_USR_UID, 'PU.USR_UID', Criteria::LEFT_JOIN );
-            $Criteria->addAsColumn( 'PREVIOUS_USR_FIRSTNAME', 'PU.USR_FIRSTNAME' );
-            $Criteria->addAsColumn( 'PREVIOUS_USR_LASTNAME', 'PU.USR_LASTNAME' );
-            $Criteria->addAsColumn( 'PREVIOUS_USR_USERNAME', 'PU.USR_USERNAME' );
+            $Criteria->addAlias('PU', 'USERS');
+            $Criteria->addJoin(AppCacheViewPeer::PREVIOUS_USR_UID, 'PU.USR_UID', Criteria::LEFT_JOIN);
+            $Criteria->addAsColumn('PREVIOUS_USR_FIRSTNAME', 'PU.USR_FIRSTNAME');
+            $Criteria->addAsColumn('PREVIOUS_USR_LASTNAME', 'PU.USR_LASTNAME');
+            $Criteria->addAsColumn('PREVIOUS_USR_USERNAME', 'PU.USR_USERNAME');
 
-            $CriteriaCount->addAlias( 'PU', 'USERS' );
-            $CriteriaCount->addJoin( AppCacheViewPeer::PREVIOUS_USR_UID, 'PU.USR_UID', Criteria::LEFT_JOIN );
-            $CriteriaCount->addAsColumn( 'PREVIOUS_USR_FIRSTNAME', 'PU.USR_FIRSTNAME' );
-            $CriteriaCount->addAsColumn( 'PREVIOUS_USR_LASTNAME', 'PU.USR_LASTNAME' );
-            $CriteriaCount->addAsColumn( 'PREVIOUS_USR_USERNAME', 'PU.USR_USERNAME' );
+            $CriteriaCount->addAlias('PU', 'USERS');
+            $CriteriaCount->addJoin(AppCacheViewPeer::PREVIOUS_USR_UID, 'PU.USR_UID', Criteria::LEFT_JOIN);
+            $CriteriaCount->addAsColumn('PREVIOUS_USR_FIRSTNAME', 'PU.USR_FIRSTNAME');
+            $CriteriaCount->addAsColumn('PREVIOUS_USR_LASTNAME', 'PU.USR_LASTNAME');
+            $CriteriaCount->addAsColumn('PREVIOUS_USR_USERNAME', 'PU.USR_USERNAME');
         }
 
         /*
@@ -533,34 +531,36 @@ class Applications
                     $dateTo = $dateTo . " 23:59:59";
                 }
 
-                $Criteria->add( $Criteria->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->addAnd( $Criteria->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
-                $CriteriaCount->add( $CriteriaCount->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->addAnd( $CriteriaCount->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
+                $Criteria->add($Criteria->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL)->addAnd($Criteria->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL)));
+                $CriteriaCount->add($CriteriaCount->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL)->addAnd($CriteriaCount->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL)));
             } else {
                 $dateFrom = $dateFrom . " 00:00:00";
 
-                $Criteria->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL );
-                $CriteriaCount->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL );
+                $Criteria->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL);
+                $CriteriaCount->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL);
             }
         } elseif ($dateTo != "") {
             $dateTo = $dateTo . " 23:59:59";
 
-            $Criteria->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
-            $CriteriaCount->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
+            $Criteria->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL);
+            $CriteriaCount->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL);
         }
 
         if ($newerThan != '') {
             if ($oldestThan != '') {
                 $Criteria->add(
                     $Criteria->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN)->addAnd(
-                    $Criteria->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN))
+                    $Criteria->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN)
+                    )
                 );
                 $CriteriaCount->add(
                     $CriteriaCount->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN)->addAnd(
-                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN))
+                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN)
+                    )
                 );
             } else {
                 $Criteria->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN);
-                $CriteriaCount->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN);
+                $CriteriaCount->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN);
             }
         } else {
             if ($oldestThan != '') {
@@ -573,20 +573,20 @@ class Applications
         if ($filter != '') {
             switch ($filter) {
                 case 'read':
-                    $Criteria->add( AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
-                    $CriteriaCount->add( AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
+                    $Criteria->add(AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL);
+                    $CriteriaCount->add(AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL);
                     break;
                 case 'unread':
-                    $Criteria->add( AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
-                    $CriteriaCount->add( AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
+                    $Criteria->add(AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNULL);
+                    $CriteriaCount->add(AppCacheViewPeer::DEL_INIT_DATE, null, Criteria::ISNULL);
                     break;
                 case 'started':
-                    $Criteria->add( AppCacheViewPeer::DEL_INDEX, 1, Criteria::EQUAL );
-                    $CriteriaCount->add( AppCacheViewPeer::DEL_INDEX, 1, Criteria::EQUAL );
+                    $Criteria->add(AppCacheViewPeer::DEL_INDEX, 1, Criteria::EQUAL);
+                    $CriteriaCount->add(AppCacheViewPeer::DEL_INDEX, 1, Criteria::EQUAL);
                     break;
                 case 'completed':
-                    $Criteria->add( AppCacheViewPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL );
-                    $CriteriaCount->add( AppCacheViewPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL );
+                    $Criteria->add(AppCacheViewPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL);
+                    $CriteriaCount->add(AppCacheViewPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL);
                     break;
             }
         }
@@ -609,7 +609,7 @@ class Applications
                 $additionalTable = new AdditionalTables();
                 $tableData = $additionalTable->load($additionalTableUid, true);
 
-                $tableField = array();
+                $tableField = [];
 
                 foreach ($tableData["FIELDS"] as $arrayField) {
                     $tableField[] = $arrayField["FLD_NAME"];
@@ -645,14 +645,21 @@ class Applications
                     $Criteria->getNewCriterion(AppCacheViewPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
                     $Criteria->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::EQUAL)->addOr(
                     $oTmpCriteria
-                )))));
+                )
+                    )
+                    )
+                    )
+                );
             } else {
                 $Criteria->add(
                     $Criteria->getNewCriterion(AppCacheViewPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
                     $Criteria->getNewCriterion(AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
                     $Criteria->getNewCriterion(AppCacheViewPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
                     $Criteria->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::EQUAL)
-                ))));
+                )
+                    )
+                    )
+                );
             }
 
             // the count query needs to be the normal criteria query if there are defined PM Table Fields in the cases list
@@ -664,7 +671,10 @@ class Applications
                     $CriteriaCount->getNewCriterion(AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
                     $CriteriaCount->getNewCriterion(AppCacheViewPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
                     $CriteriaCount->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::EQUAL)
-                ))));
+                )
+                    )
+                    )
+                );
             }
         }
 
@@ -691,17 +701,17 @@ class Applications
 
             // first check if there is a PMTable defined within the list,
             // the issue that brokes the normal criteria query seems to be fixed
-            if (isset( $oAppCache->confCasesList['PMTable'] ) && ! empty( $oAppCache->confCasesList['PMTable'] )) {
+            if (isset($oAppCache->confCasesList['PMTable']) && ! empty($oAppCache->confCasesList['PMTable'])) {
                 // then
-                $oAdditionalTables = AdditionalTablesPeer::retrieveByPK( $oAppCache->confCasesList['PMTable'] );
+                $oAdditionalTables = AdditionalTablesPeer::retrieveByPK($oAppCache->confCasesList['PMTable']);
                 $tableName = $oAdditionalTables->getAddTabName();
                 $tableNameAux = $tableName;
-                $tableName = strtolower( $tableName );
-                $tableNameArray = explode( '_', $tableName );
+                $tableName = strtolower($tableName);
+                $tableNameArray = explode('_', $tableName);
                 foreach ($tableNameArray as $item) {
-                    $newTableName[] = ucfirst( $item );
+                    $newTableName[] = ucfirst($item);
                 }
-                $tableName = implode( '', $newTableName );
+                $tableName = implode('', $newTableName);
                 // so the pm table class can be invoqued from the pm table model clases
                 if (! class_exists( $tableName )) {
                     require_once (PATH_DB . config("system.workspace") . PATH_SEP . "classes" . PATH_SEP . $tableName . ".php");
@@ -728,7 +738,7 @@ class Applications
                 }
             }
 
-            if (isset( $oAppCache->confCasesList['PMTable'] ) && ! empty( $oAppCache->confCasesList['PMTable'] ) && $tableNameAux != '') {
+            if (isset($oAppCache->confCasesList['PMTable']) && ! empty($oAppCache->confCasesList['PMTable']) && $tableNameAux != '') {
                 $sortTable = explode(".", $sortBk);
 
                 $additionalTableUid = $oAppCache->confCasesList["PMTable"];
@@ -779,18 +789,18 @@ class Applications
         }
 
         //limit the results according the interface
-        $Criteria->setLimit( $limit );
-        $Criteria->setOffset( $start );
+        $Criteria->setLimit($limit);
+        $Criteria->setOffset($start);
 
         //execute the query
-        $oDataset = AppCacheViewPeer::doSelectRS( $Criteria, Propel::getDbConnection('workflow_ro') );
+        $oDataset = AppCacheViewPeer::doSelectRS($Criteria, Propel::getDbConnection('workflow_ro'));
 
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-        $result = array ();
+        $result = [];
         $result['totalCount'] = $totalCount;
-        $rows = array ();
-        $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
+        $rows = [];
+        $aPriorities = array('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         $index = $start;
 
         while ($oDataset->next()) {
@@ -812,18 +822,18 @@ class Applications
             }
 
             //Unassigned user
-            if (! isset( $aRow['APP_CURRENT_USER'] )) {
+            if (! isset($aRow['APP_CURRENT_USER'])) {
                 $aRow['APP_CURRENT_USER'] = "[" . strtoupper(G::LoadTranslation("ID_UNASSIGNED")) . "]";
             }
 
             // replacing the status data with their respective translation
-            if (isset( $aRow['APP_STATUS'] )) {
-                $aRow['APP_STATUS_LABEL'] = G::LoadTranslation( "ID_{$aRow['APP_STATUS']}" );
+            if (isset($aRow['APP_STATUS'])) {
+                $aRow['APP_STATUS_LABEL'] = G::LoadTranslation("ID_{$aRow['APP_STATUS']}");
             }
 
             // replacing the priority data with their respective translation
-            if (isset( $aRow['DEL_PRIORITY'] )) {
-                $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
+            if (isset($aRow['DEL_PRIORITY'])) {
+                $aRow['DEL_PRIORITY'] = G::LoadTranslation("ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}");
             }
 
             $rows[] = $aRow;
@@ -840,67 +850,66 @@ class Applications
      *
      * @return Array $fields
      */
-    public function setDefaultFields ()
+    public function setDefaultFields()
     {
-        $fields = array ();
-        $fields['APP_NUMBER'] = array ('name' => 'APP_NUMBER','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_NUMBER' ),'width' => 40,'align' => 'left'
+        $fields = [];
+        $fields['APP_NUMBER'] = array('name' => 'APP_NUMBER','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_NUMBER'),'width' => 40,'align' => 'left'
         );
-        $fields['APP_UID'] = array ('name' => 'APP_UID','fieldType' => 'key','label' => G::loadTranslation( 'ID_CASESLIST_APP_UID' ),'width' => 80,'align' => 'left'
+        $fields['APP_UID'] = array('name' => 'APP_UID','fieldType' => 'key','label' => G::loadTranslation('ID_CASESLIST_APP_UID'),'width' => 80,'align' => 'left'
         );
-        $fields['DEL_INDEX'] = array ('name' => 'DEL_INDEX','fieldType' => 'key','label' => G::loadTranslation( 'ID_CASESLIST_DEL_INDEX' ),'width' => 50,'align' => 'left'
+        $fields['DEL_INDEX'] = array('name' => 'DEL_INDEX','fieldType' => 'key','label' => G::loadTranslation('ID_CASESLIST_DEL_INDEX'),'width' => 50,'align' => 'left'
         );
-        $fields['TAS_UID'] = array ('name' => 'TAS_UID','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_TAS_UID' ),'width' => 80,'align' => 'left'
+        $fields['TAS_UID'] = array('name' => 'TAS_UID','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_TAS_UID'),'width' => 80,'align' => 'left'
         );
-        $fields['USR_UID'] = array ('name' => 'USR_UID','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_USR_UID' ),'width' => 80,'align' => 'left','hidden' => true
+        $fields['USR_UID'] = array('name' => 'USR_UID','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_USR_UID'),'width' => 80,'align' => 'left','hidden' => true
         );
-        $fields['PREVIOUS_USR_UID'] = array ('name' => 'PREVIOUS_USR_UID','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_PREVIOUS_USR_UID' ),'width' => 80,'align' => 'left','hidden' => true
+        $fields['PREVIOUS_USR_UID'] = array('name' => 'PREVIOUS_USR_UID','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_PREVIOUS_USR_UID'),'width' => 80,'align' => 'left','hidden' => true
         );
-        $fields['APP_TITLE'] = array ('name' => 'APP_TITLE','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_TITLE' ),'width' => 140,'align' => 'left'
+        $fields['APP_TITLE'] = array('name' => 'APP_TITLE','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_TITLE'),'width' => 140,'align' => 'left'
         );
-        $fields['APP_PRO_TITLE'] = array ('name' => 'APP_PRO_TITLE','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_PRO_TITLE' ),'width' => 140,'align' => 'left'
+        $fields['APP_PRO_TITLE'] = array('name' => 'APP_PRO_TITLE','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_PRO_TITLE'),'width' => 140,'align' => 'left'
         );
-        $fields['APP_TAS_TITLE'] = array ('name' => 'APP_TAS_TITLE','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_TAS_TITLE' ),'width' => 140,'align' => 'left'
+        $fields['APP_TAS_TITLE'] = array('name' => 'APP_TAS_TITLE','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_TAS_TITLE'),'width' => 140,'align' => 'left'
         );
-        $fields['APP_DEL_PREVIOUS_USER'] = array ('name' => 'APP_DEL_PREVIOUS_USER','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_DEL_PREVIOUS_USER' ),'width' => 120,'align' => 'left'
+        $fields['APP_DEL_PREVIOUS_USER'] = array('name' => 'APP_DEL_PREVIOUS_USER','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_DEL_PREVIOUS_USER'),'width' => 120,'align' => 'left'
         );
-        $fields['APP_CURRENT_USER'] = array ('name' => 'APP_CURRENT_USER','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_CURRENT_USER' ),'width' => 120,'align' => 'left'
+        $fields['APP_CURRENT_USER'] = array('name' => 'APP_CURRENT_USER','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_CURRENT_USER'),'width' => 120,'align' => 'left'
         );
-        $fields['USR_FIRSTNAME'] = array ('name' => 'USR_FIRSTNAME','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_CURRENT_USER' ),'width' => 120,'align' => 'left'
+        $fields['USR_FIRSTNAME'] = array('name' => 'USR_FIRSTNAME','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_CURRENT_USER'),'width' => 120,'align' => 'left'
         );
-        $fields['USR_LASTNAME'] = array ('name' => 'USR_LASTNAME','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_CURRENT_USER' ),'width' => 120,'align' => 'left'
+        $fields['USR_LASTNAME'] = array('name' => 'USR_LASTNAME','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_CURRENT_USER'),'width' => 120,'align' => 'left'
         );
-        $fields['DEL_TASK_DUE_DATE'] = array ('name' => 'DEL_TASK_DUE_DATE','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_DEL_TASK_DUE_DATE' ),'width' => 100,'align' => 'left'
+        $fields['DEL_TASK_DUE_DATE'] = array('name' => 'DEL_TASK_DUE_DATE','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_DEL_TASK_DUE_DATE'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_UPDATE_DATE'] = array ('name' => 'APP_UPDATE_DATE','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_UPDATE_DATE' ),'width' => 100,'align' => 'left'
+        $fields['APP_UPDATE_DATE'] = array('name' => 'APP_UPDATE_DATE','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_UPDATE_DATE'),'width' => 100,'align' => 'left'
         );
-        $fields['DEL_PRIORITY'] = array ('name' => 'DEL_PRIORITY','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_DEL_PRIORITY' ),'width' => 80,'align' => 'left'
+        $fields['DEL_PRIORITY'] = array('name' => 'DEL_PRIORITY','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_DEL_PRIORITY'),'width' => 80,'align' => 'left'
         );
-        $fields['APP_STATUS'] = array ('name' => 'APP_STATUS','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_STATUS' ),'width' => 80,'align' => 'left'
+        $fields['APP_STATUS'] = array('name' => 'APP_STATUS','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_STATUS'),'width' => 80,'align' => 'left'
         );
-        $fields['APP_FINISH_DATE'] = array ('name' => 'APP_FINISH_DATE','fieldType' => 'case field','label' => G::loadTranslation( 'ID_CASESLIST_APP_FINISH_DATE' ),'width' => 100,'align' => 'left'
+        $fields['APP_FINISH_DATE'] = array('name' => 'APP_FINISH_DATE','fieldType' => 'case field','label' => G::loadTranslation('ID_CASESLIST_APP_FINISH_DATE'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_DELAY_UID'] = array ('name' => 'APP_DELAY_UID','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_DELAY_UID' ),'width' => 100,'align' => 'left'
+        $fields['APP_DELAY_UID'] = array('name' => 'APP_DELAY_UID','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_DELAY_UID'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_THREAD_INDEX'] = array ('name' => 'APP_THREAD_INDEX','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_THREAD_INDEX' ),'width' => 100,'align' => 'left'
+        $fields['APP_THREAD_INDEX'] = array('name' => 'APP_THREAD_INDEX','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_THREAD_INDEX'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_DEL_INDEX'] = array ('name' => 'APP_DEL_INDEX','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_DEL_INDEX' ),'width' => 100,'align' => 'left'
+        $fields['APP_DEL_INDEX'] = array('name' => 'APP_DEL_INDEX','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_DEL_INDEX'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_TYPE'] = array ('name' => 'APP_TYPE','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_TYPE' ),'width' => 100,'align' => 'left'
+        $fields['APP_TYPE'] = array('name' => 'APP_TYPE','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_TYPE'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_DELEGATION_USER'] = array ('name' => 'APP_DELEGATION_USER','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_DELEGATION_USER' ),'width' => 100,'align' => 'left'
+        $fields['APP_DELEGATION_USER'] = array('name' => 'APP_DELEGATION_USER','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_DELEGATION_USER'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_ENABLE_ACTION_USER'] = array ('name' => 'APP_ENABLE_ACTION_USER','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_ENABLE_ACTION_USER' ),'width' => 100,'align' => 'left'
+        $fields['APP_ENABLE_ACTION_USER'] = array('name' => 'APP_ENABLE_ACTION_USER','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_ENABLE_ACTION_USER'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_ENABLE_ACTION_DATE'] = array ('name' => 'APP_ENABLE_ACTION_DATE','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_AAPP_ENABLE_ACTION_DATE' ),'width' => 100,'align' => 'left'
+        $fields['APP_ENABLE_ACTION_DATE'] = array('name' => 'APP_ENABLE_ACTION_DATE','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_AAPP_ENABLE_ACTION_DATE'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_DISABLE_ACTION_USER'] = array ('name' => 'APP_DISABLE_ACTION_USER','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_DISABLE_ACTION_USER' ),'width' => 100,'align' => 'left'
+        $fields['APP_DISABLE_ACTION_USER'] = array('name' => 'APP_DISABLE_ACTION_USER','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_DISABLE_ACTION_USER'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_DISABLE_ACTION_DATE'] = array ('name' => 'APP_DISABLE_ACTION_DATE','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_DISABLE_ACTION_DATE' ),'width' => 100,'align' => 'left'
+        $fields['APP_DISABLE_ACTION_DATE'] = array('name' => 'APP_DISABLE_ACTION_DATE','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_DISABLE_ACTION_DATE'),'width' => 100,'align' => 'left'
         );
-        $fields['APP_AUTOMATIC_DISABLED_DATE'] = array ('name' => 'APP_AUTOMATIC_DISABLED_DATE','fieldType' => 'delay field','label' => G::loadTranslation( 'ID_CASESLIST_APP_AUTOMATIC_DISABLED_DATE' ),'width' => 100,'align' => 'left'
+        $fields['APP_AUTOMATIC_DISABLED_DATE'] = array('name' => 'APP_AUTOMATIC_DISABLED_DATE','fieldType' => 'delay field','label' => G::loadTranslation('ID_CASESLIST_APP_AUTOMATIC_DISABLED_DATE'),'width' => 100,'align' => 'left'
         );
         return $fields;
-
     }
 
     /**
@@ -909,9 +918,9 @@ class Applications
      * @param $action
      * @return an array with the default fields for an specific case list (action)
      */
-    public function getDefaultFields ($action)
+    public function getDefaultFields($action)
     {
-        $rows = array ();
+        $rows = [];
         switch ($action) {
             case 'todo': // #, Case, task, process, sent by, due date, Last Modify, Priority
                 $fields = $this->setDefaultFields();
@@ -1089,34 +1098,34 @@ class Applications
      * @param array $second
      * @return $response a json string
      */
-    public function genericJsonResponse ($pmtable, $first, $second, $rowsperpage, $dateFormat)
+    public function genericJsonResponse($pmtable, $first, $second, $rowsperpage, $dateFormat)
     {
-        $firstGrid['totalCount'] = count( $first );
+        $firstGrid['totalCount'] = count($first);
         $firstGrid['data'] = $first;
-        $secondGrid['totalCount'] = count( $second );
+        $secondGrid['totalCount'] = count($second);
         $secondGrid['data'] = $second;
-        $result = array ();
+        $result = [];
         $result['first'] = $firstGrid;
         $result['second'] = $secondGrid;
-        $result['PMTable'] = isset( $pmtable ) ? $pmtable : '';
-        $result['rowsperpage'] = isset( $rowsperpage ) ? $rowsperpage : 20;
-        $result['dateformat'] = isset( $dateFormat ) && $dateFormat != '' ? $dateFormat : 'M d, Y';
+        $result['PMTable'] = isset($pmtable) ? $pmtable : '';
+        $result['rowsperpage'] = isset($rowsperpage) ? $rowsperpage : 20;
+        $result['dateformat'] = isset($dateFormat) && $dateFormat != '' ? $dateFormat : 'M d, Y';
         return $result;
     }
 
-    public function getSteps ($appUid, $index, $tasUid, $proUid)
+    public function getSteps($appUid, $index, $tasUid, $proUid)
     {
-        $steps = Array ();
+        $steps = [];
         $case = new Cases();
         $step = new Step();
         $appDocument = new AppDocument();
 
-        $caseSteps = $step->getAllCaseSteps( $proUid, $tasUid, $appUid );
+        $caseSteps = $step->getAllCaseSteps($proUid, $tasUid, $appUid);
 
         //getting externals steps
         $oPluginRegistry = PluginRegistry::loadSingleton();
         $eSteps = $oPluginRegistry->getSteps();
-        $externalSteps = array ();
+        $externalSteps = [];
         /** @var \ProcessMaker\Plugins\Interfaces\StepDetail $externalStep */
         foreach ($eSteps as $externalStep) {
             $externalSteps[$externalStep->getStepId()] = $externalStep;
@@ -1124,17 +1133,17 @@ class Applications
 
         //getting the case record
         if ($appUid) {
-            $caseData = $case->loadCase( $appUid );
+            $caseData = $case->loadCase($appUid);
             $pmScript = new PMScript();
-            $pmScript->setFields( $caseData['APP_DATA'] );
+            $pmScript->setFields($caseData['APP_DATA']);
         }
 
         $externalStepCount = 0;
 
         foreach ($caseSteps as $caseStep) {
             // if it has a condition
-            if (trim( $caseStep->getStepCondition() ) != '') {
-                $pmScript->setScript( $caseStep->getStepCondition() );
+            if (trim($caseStep->getStepCondition()) != '') {
+                $pmScript->setScript($caseStep->getStepCondition());
 
                 if (! $pmScript->evaluate()) {
                     //evaluated false, jump & continue with the others steps
@@ -1146,21 +1155,21 @@ class Applications
             $stepType = $caseStep->getStepTypeObj();
             $stepPosition = $caseStep->getStepPosition();
 
-            $stepItem = array ();
+            $stepItem = [];
             $stepItem['id'] = $stepUid;
             $stepItem['type'] = $stepType;
 
             switch ($stepType) {
                 case 'DYNAFORM':
-                    $oDocument = DynaformPeer::retrieveByPK( $stepUid );
+                    $oDocument = DynaformPeer::retrieveByPK($stepUid);
 
                     $stepItem['title'] = $oDocument->getDynTitle();
                     $stepItem['url'] = "cases/cases_Step?UID=$stepUid&TYPE=$stepType&POSITION=$stepPosition&ACTION=EDIT";
                     $stepItem['version'] = $oDocument->getDynVersion();
                     break;
                 case 'OUTPUT_DOCUMENT':
-                    $oDocument = OutputDocumentPeer::retrieveByPK( $caseStep->getStepUidObj() );
-                    $outputDoc = $appDocument->getObject( $appUid, $index, $caseStep->getStepUidObj(), 'OUTPUT' );
+                    $oDocument = OutputDocumentPeer::retrieveByPK($caseStep->getStepUidObj());
+                    $outputDoc = $appDocument->getObject($appUid, $index, $caseStep->getStepUidObj(), 'OUTPUT');
                     $stepItem['title'] = $oDocument->getOutDocTitle();
 
                     if ($outputDoc['APP_DOC_UID']) {
@@ -1170,7 +1179,7 @@ class Applications
                     }
                     break;
                 case 'INPUT_DOCUMENT':
-                    $oDocument = InputDocumentPeer::retrieveByPK( $stepUid );
+                    $oDocument = InputDocumentPeer::retrieveByPK($stepUid);
                     $stepItem['title'] = $oDocument->getInpDocTitle();
                     $stepItem['url'] = "cases/cases_Step?UID=$stepUid&TYPE=$stepType&POSITION=$stepPosition&ACTION=ATTACH";
                     break;
@@ -1188,10 +1197,10 @@ class Applications
         }
 
         //last, assign task
-        $stepItem = array ();
+        $stepItem = [];
         $stepItem['id'] = '-1';
         $stepItem['type'] = '';
-        $stepItem['title'] = G::LoadTranslation( 'ID_ASSIGN_TASK' );
+        $stepItem['title'] = G::LoadTranslation('ID_ASSIGN_TASK');
         $stepItem['url'] = "cases/cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN";
 
         $steps[] = $stepItem;

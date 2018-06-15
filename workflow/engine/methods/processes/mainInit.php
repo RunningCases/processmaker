@@ -25,34 +25,33 @@
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
-//$oHeadPublisher = & headPublisher::getSingleton();
 global $RBAC;
-$RBAC->requirePermissions( 'PM_FACTORY' );
+$RBAC->requirePermissions('PM_FACTORY');
 
 $conf = new Configurations();
 
-$pmVersion = (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
+$pmVersion = (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch)) ? $arrayMatch[1] : ""; //Otherwise: Branch master
 
 /*----------------------------------********---------------------------------*/
 if (true) {
     $arrayFlagImportFileExtension = array("pm", "pmx", "pmx2", "bpmn");
 } else {
-/*----------------------------------********---------------------------------*/
+    /*----------------------------------********---------------------------------*/
     $arrayFlagImportFileExtension = array("pm", "pmx", "bpmn");
-/*----------------------------------********---------------------------------*/
+    /*----------------------------------********---------------------------------*/
 }
 /*----------------------------------********---------------------------------*/
 
-$arrayFlagMenuNewOption       = array("pm" => true, "bpmn" => true);
+$arrayFlagMenuNewOption = array("pm" => true, "bpmn" => true);
 
 if ($pmVersion != "") {
-    $arrayFlagImportFileExtension = (version_compare($pmVersion . "", "3", ">="))? $arrayFlagImportFileExtension : array("pm");
-    $arrayFlagMenuNewOption       = (version_compare($pmVersion . "", "3", ">="))? array("bpmn" => true) : array("pm" => true);
+    $arrayFlagImportFileExtension = (version_compare($pmVersion . "", "3", ">=")) ? $arrayFlagImportFileExtension : array("pm");
+    $arrayFlagMenuNewOption = (version_compare($pmVersion . "", "3", ">=")) ? array("bpmn" => true) : array("pm" => true);
 }
 
 $oPluginRegistry = PluginRegistry::loadSingleton();
 
-$arrayMenuNewOptionPlugin     = array();
+$arrayMenuNewOptionPlugin = array();
 $arrayContextMenuOptionPlugin = array();
 
 foreach ($oPluginRegistry->getDesignerMenu() as $value) {
@@ -79,12 +78,12 @@ foreach ($oPluginRegistry->getDesignerMenu() as $value) {
     }
 }
 
-$oHeadPublisher->addExtJsScript( 'processes/main', true ); //adding a javascript file .js
-$oHeadPublisher->addContent( 'processes/main' ); //adding a html file  .html.
+$oHeadPublisher->addExtJsScript('processes/main', true); //adding a javascript file .js
+$oHeadPublisher->addContent('processes/main'); //adding a html file  .html.
 
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
-$oHeadPublisher->assign( 'PARTNER_FLAG', $partnerFlag );
-$oHeadPublisher->assign( 'pageSize', $conf->getEnvSetting( 'casesListRowNumber' ) );
+$oHeadPublisher->assign('PARTNER_FLAG', $partnerFlag);
+$oHeadPublisher->assign('pageSize', $conf->getEnvSetting('casesListRowNumber'));
 $oHeadPublisher->assign("arrayFlagImportFileExtension", $arrayFlagImportFileExtension);
 $oHeadPublisher->assign("arrayFlagMenuNewOption", $arrayFlagMenuNewOption);
 $oHeadPublisher->assign("arrayMenuNewOptionPlugin", $arrayMenuNewOptionPlugin);
@@ -100,27 +99,26 @@ $oHeadPublisher->assign('credentials', base64_encode(G::json_encode($designer->g
 
 $deleteCasesFlag = false;
 global $RBAC;
-if($RBAC->userCanAccess('PM_DELETE_PROCESS_CASES') === 1) {
+if ($RBAC->userCanAccess('PM_DELETE_PROCESS_CASES') === 1) {
     $deleteCasesFlag = true;
 }
 $oHeadPublisher->assign('deleteCasesFlag', $deleteCasesFlag);
 
 $oPluginRegistry = PluginRegistry::loadSingleton();
 $callBackFile = $oPluginRegistry->getImportProcessCallback();
-$file = false; 
-if(sizeof($callBackFile)) {
+$file = false;
+if (count($callBackFile)) {
     $file = $callBackFile[0]->getCallBackFile() != "" ? $callBackFile[0]->getCallBackFile() : false;
 }
 $oHeadPublisher->assign("importProcessCallbackFile", $file);
 
 $isGranularFeature = false;
 /*----------------------------------********---------------------------------*/
-$licensedFeatures = & PMLicensedFeatures::getSingleton();
+$licensedFeatures = PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('jXsSi94bkRUcVZyRStNVExlTXhEclVadGRRcG9xbjNvTWVFQUF3cklKQVBiVT0=')) {
     $isGranularFeature = true;
 }
 /*----------------------------------********---------------------------------*/
 $oHeadPublisher->assign("isGranularFeature", $isGranularFeature);
 
-G::RenderPage( 'publish', 'extJs' );
-
+G::RenderPage('publish', 'extJs');

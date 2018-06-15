@@ -34,7 +34,6 @@ class treeNode extends stdclass
 }
 
 try {
-
     $json = new Services_JSON();
     header("Content-Type: application/json;");
 
@@ -46,8 +45,8 @@ try {
             global $baseDN;
 
             $ldapAdvanced = getLDAPAdvanceInstance($_REQUEST["authUid"]);
-            $RBAC =& RBAC::getSingleton();
-            $authenticationSource  = $RBAC->authSourcesObj->load($_REQUEST["authUid"]);
+            $RBAC = RBAC::getSingleton();
+            $authenticationSource = $RBAC->authSourcesObj->load($_REQUEST["authUid"]);
             $baseDN = $authenticationSource["AUTH_SOURCE_BASE_DN"];
             $departments = $ldapAdvanced->searchDepartments();
             $terminatedOu = $ldapAdvanced->getTerminatedOu();
@@ -55,11 +54,11 @@ try {
             die($json->encode($nodes));
             break;
         case "saveDepartments":
-            $depsToCheck = ($_REQUEST['departmentsDN'] != '')? explode('|', $_REQUEST['departmentsDN']) : [];
+            $depsToCheck = ($_REQUEST['departmentsDN'] != '') ? explode('|', $_REQUEST['departmentsDN']) : [];
             $depsToCheck = array_map("urldecode", $depsToCheck);
             $depsToUncheck = getDepartmentsToUncheck($depsToCheck);
-            $RBAC =& RBAC::getSingleton();
-            $authenticationSource  = $RBAC->authSourcesObj->load($_REQUEST["authUid"]);
+            $RBAC = RBAC::getSingleton();
+            $authenticationSource = $RBAC->authSourcesObj->load($_REQUEST["authUid"]);
             $ldapAdvanced = getLDAPAdvanceInstance($_REQUEST["authUid"]);
 
             foreach ($depsToCheck as $departmentDn) {
@@ -82,9 +81,10 @@ try {
                             $parentUid == ''
                         ) {
                             $response = new stdClass();
-                            $response->status  = 'ERROR';
+                            $response->status = 'ERROR';
                             $response->message = G::LoadTranslation(
-                                'ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT', [$parentDn, $departmentTitle]
+                                'ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT',
+                                [$parentDn, $departmentTitle]
                             );
 
                             echo $json->encode($response);
@@ -95,15 +95,15 @@ try {
                     $department = new Department();
 
                     $departmentUid = $department->create([
-                        'DEP_TITLE'    => stripslashes($departmentTitle),
-                        'DEP_PARENT'   => $parentUid,
-                        'DEP_LDAP_DN'  => $departmentDn,
+                        'DEP_TITLE' => stripslashes($departmentTitle),
+                        'DEP_PARENT' => $parentUid,
+                        'DEP_LDAP_DN' => $departmentDn,
                         'DEP_REF_CODE' => ''
                     ]);
 
                     if ($departmentUid === false) {
                         $response = new stdClass();
-                        $response->status  = 'ERROR';
+                        $response->status = 'ERROR';
                         $response->message = G::LoadTranslation('ID_DEPARTMENT_ERROR_CREATE');
 
                         echo $json->encode($response);
@@ -159,8 +159,8 @@ try {
             $groupsToCheck = explode("|", $_REQUEST["groupsDN"]);
             $groupsToCheck = array_map("urldecode", $groupsToCheck);
             $groupsToUncheck = getGroupsToUncheck($groupsToCheck);
-            $RBAC =& RBAC::getSingleton();
-            $authenticationSource  = $RBAC->authSourcesObj->load($_REQUEST["authUid"]);
+            $RBAC = RBAC::getSingleton();
+            $authenticationSource = $RBAC->authSourcesObj->load($_REQUEST["authUid"]);
             $ldapAdvanced = getLDAPAdvanceInstance($_REQUEST["authUid"]);
 
             foreach ($groupsToCheck as $groupDN) {
@@ -185,7 +185,7 @@ try {
 
                 if ($groupUID == "") {
                     $group = new Groupwf();
-                    $row["GRP_TITLE"]   = stripslashes($groupTitle);
+                    $row["GRP_TITLE"] = stripslashes($groupTitle);
                     $row["GRP_LDAP_DN"] = $groupDN;
                     $groupUID = $group->create($row);
 
@@ -234,7 +234,7 @@ try {
 
 function getLDAPAdvanceInstance($authUid)
 {
-    $RBAC = &RBAC::getSingleton();
+    $RBAC = RBAC::getSingleton();
     $ldapAdvanced = new LdapAdvanced();
     $ldapAdvanced->sAuthSource = $authUid;
     $ldapAdvanced->sSystem = $RBAC->sSystem;
@@ -300,7 +300,7 @@ function lookForChildrenDeps($parent)
         $departmentUid = $ldapAdvanced->getDepUidIfExistsDN($department["DEP_DN"]);
 
         if ($departmentUid != "") {
-            $departmentObject->text .= " (" . ((isset($arrayDepartmentNumberOfUsersFromDb[$departmentUid]))? $arrayDepartmentNumberOfUsersFromDb[$departmentUid] : 0) . ")";
+            $departmentObject->text .= " (" . ((isset($arrayDepartmentNumberOfUsersFromDb[$departmentUid])) ? $arrayDepartmentNumberOfUsersFromDb[$departmentUid] : 0) . ")";
             $departmentObject->checked = true;
         } else {
             $departmentObject->checked = false;
@@ -394,7 +394,7 @@ function lookForChildrenGroups()
         $groupUid = $ldapAdvanced->getGrpUidIfExistsDN($group["GRP_DN"]);
 
         if ($groupUid != "") {
-            $groupObject->text .= " (" . ((isset($arrayGroupNumberOfUsersFromDb[$groupUid]))? $arrayGroupNumberOfUsersFromDb[$groupUid] : 0) . ")";
+            $groupObject->text .= " (" . ((isset($arrayGroupNumberOfUsersFromDb[$groupUid])) ? $arrayGroupNumberOfUsersFromDb[$groupUid] : 0) . ")";
             $groupObject->checked = true;
         } else {
             $groupObject->checked = false;
@@ -450,9 +450,10 @@ function custom_ldap_explode_dn($dn)
     unset($result["count"]);
 
     foreach ($result as $key => $value) {
-        $result[$key] = addcslashes(preg_replace("/\\\([0-9A-Fa-f]{2})/e", "''.chr(hexdec('\\1')).''", $value), '<>,"');
+        $result[$key] = addcslashes(preg_replace_callback("/\\\([0-9A-Fa-f]{2})/", function ($m) {
+            return chr(hexdec($m[1]));
+        }, $value), '<>,"');
     }
 
-    return($result);
+    return $result;
 }
-

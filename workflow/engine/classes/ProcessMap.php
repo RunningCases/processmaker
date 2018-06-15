@@ -433,7 +433,6 @@ class ProcessMap
             $oProcess = new Process();
 
             if (!is_null($oProcess)) {
-
                 $calendar = new Calendar();
                 $files = Processes::getProcessFiles($sProcessUID, 'mail');
 
@@ -820,7 +819,7 @@ class ProcessMap
             }
 
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : [];
             $_DBArray['steps'] = $aSteps;
             $_SESSION['_DBArray'] = $_DBArray;
             $oCriteria = new Criteria('dbarray');
@@ -910,7 +909,6 @@ class ProcessMap
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-
                 if (($aRow['INP_DOC_TITLE'] == null) || ($aRow['INP_DOC_TITLE'] == "")) {
                     // There is no transaltion for this Document name, try to get/regenerate the label
                     $oInputDocument = new InputDocument;
@@ -1191,7 +1189,8 @@ class ProcessMap
             $oCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
             $oCriteria->add(
                     $oCriteria->getNewCriterion(UsersPeer::USR_STATUS, "ACTIVE", Criteria::EQUAL)->addOr(
-                    $oCriteria->getNewCriterion(UsersPeer::USR_STATUS, "VACATION", Criteria::EQUAL))
+                    $oCriteria->getNewCriterion(UsersPeer::USR_STATUS, "VACATION", Criteria::EQUAL)
+                    )
             );
             $oCriteria->add(UsersPeer::USR_UID, $aUIDS2, Criteria::NOT_IN);
             $oDataset = UsersPeer::doSelectRS($oCriteria);
@@ -1398,7 +1397,6 @@ class ProcessMap
              * Task Notifications *
              */
             if ($iForm == 7 || $iForm == 1) {
-
                 $files = Processes::getProcessFiles($aFields['PRO_UID'], 'mail');
 
                 $templates = array();
@@ -1453,7 +1451,7 @@ class ProcessMap
             if ($iForm == 8) {
                 $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($_SESSION["cDhTajE2T2lxSkhqMzZUTXVacWYyNcKwV3A4eWYybDdyb1p3"]["TAS_UID"]);
                 if ((is_object($oCaseConsolidated)) && get_class($oCaseConsolidated) == "CaseConsolidatedCore") {
-                    require_once ("classes/model/ReportTable.php");
+                    require_once("classes/model/ReportTable.php");
 
                     $aFields["CON_STATUS"]  = $oCaseConsolidated->getConStatus();
                     $aFields["DYN_UID"]     = $oCaseConsolidated->getDynUid();
@@ -2005,7 +2003,7 @@ class ProcessMap
         $oDataset = InputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
-        $inputDocArray = "";
+        $inputDocArray = [];
         $inputDocArray[] = array('INP_DOC_UID' => 'char', 'PRO_UID' => 'char', 'INP_DOC_TITLE' => 'char', 'INP_DOC_DESCRIPTION' => 'char' );
         while ($aRow = $oDataset->getRow()) {
             if (($aRow['INP_DOC_TITLE'] == null) || ($aRow['INP_DOC_TITLE'] == "")) {
@@ -2073,12 +2071,11 @@ class ProcessMap
         $oDataset = TriggersPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
-        $triggersArray = "";
+        $triggersArray = [];
         $triggersArray[] = array('TRI_UID' => 'char', 'PRO_UID' => 'char', 'TRI_TITLE' => 'char', 'TRI_DESCRIPTION' => 'char');
         while ($aRow = $oDataset->getRow()) {
-
             if (($aRow['TRI_TITLE'] == null) || ($aRow['TRI_TITLE'] == "")) {
-                // There is no transaltion for this Trigger name, try to get/regenerate the label
+                // There is no translation for this Trigger name, try to get/regenerate the label
                 $triggerO = new Triggers();
                 $triggerObj = $triggerO->load($aRow['TRI_UID']);
                 $aRow['TRI_TITLE'] = $triggerObj['TRI_TITLE'];
@@ -2099,7 +2096,7 @@ class ProcessMap
 
     public function getTriggers($sProcessUID = '')
     {
-        $aTriggers = Array();
+        $aTriggers = array();
         $oCriteria = $this->getTriggersCriteria($sProcessUID);
 
         $oDataset = RoutePeer::doSelectRS($oCriteria);
@@ -2144,9 +2141,9 @@ class ProcessMap
             $oLogCaseScheduler = new LogCasesScheduler();
             $aRows = $oLogCaseScheduler->getAll();
 
-            $fieldNames = Array('PRO_UID' => 'char', 'TAS_UID' => 'char', 'USR_NAME' => 'char', 'EXEC_DATE' => 'char', 'EXEC_HOUR' => 'char', 'RESULT' => 'char', 'SCH_UID' => 'char', 'WS_CREATE_CASE_STATUS' => 'char', 'WS_ROUTE_CASE_STATUS' => 'char' );
+            $fieldNames = array('PRO_UID' => 'char', 'TAS_UID' => 'char', 'USR_NAME' => 'char', 'EXEC_DATE' => 'char', 'EXEC_HOUR' => 'char', 'RESULT' => 'char', 'SCH_UID' => 'char', 'WS_CREATE_CASE_STATUS' => 'char', 'WS_ROUTE_CASE_STATUS' => 'char' );
 
-            $aRows = array_merge(Array($fieldNames), $aRows);
+            $aRows = array_merge(array($fieldNames), $aRows);
 
             $_DBArray['log_cases_scheduler'] = $aRows;
             $_SESSION['_DBArray'] = $_DBArray;
@@ -2339,7 +2336,6 @@ class ProcessMap
                         throw new Exception(G::loadTranslation('ID_INVALID_ROU_TYPE_DEFINITION_ON_ROUTE_TABLE'));
                         break;
                 }
-
             } else {
                 throw new Exception(G::loadTranslation('ID_NO_DERIVATIONS_DEFINED'));
             }
@@ -2455,7 +2451,6 @@ class ProcessMap
                             break;
                     }
                 } else {
-
                 }
             }
             switch ($sType) {
@@ -3114,8 +3109,7 @@ class ProcessMap
      */
     public function listNoProcessesUser($sProcessUID)
     {
-
-        $memcache = & PMmemcached::getSingleton(config("system.workspace"));
+        $memcache = PMmemcached::getSingleton(config("system.workspace"));
 
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ProcessUserPeer::USR_UID);
@@ -3228,7 +3222,7 @@ class ProcessMap
      */
     public function assignProcessUser($sProcessUID, $sUsrUID, $sTypeUID)
     {
-        $oProcessUser = new ProcessUser ( );
+        $oProcessUser = new ProcessUser();
         $puType = 'SUPERVISOR';
         if ($sTypeUID == 'Group') {
             $puType = 'GROUP_SUPERVISOR';
@@ -3256,7 +3250,6 @@ class ProcessMap
      */
     public function getObjectsPermissionsCriteria($sProcessUID)
     {
-
         $aObjectsPermissions = array();
         $aObjectsPermissions[] = array('OP_UID' => 'char', 'TASK_TARGET' => 'char', 'GROUP_USER' => 'char', 'TASK_SOURCE' => 'char', 'OBJECT_TYPE' => 'char', 'OBJECT' => 'char', 'PARTICIPATED' => 'char', 'ACTION' => 'char', 'OP_CASE_STATUS' => 'char');
         $oCriteria = new Criteria('workflow');
@@ -3434,7 +3427,6 @@ class ProcessMap
 
     public function getExtObjectsPermissions($start, $limit, $sProcessUID)
     {
-
         $aObjectsPermissions = array();
         //$aObjectsPermissions [] = array('OP_UID' => 'char', 'TASK_TARGET' => 'char', 'GROUP_USER' => 'char', 'TASK_SOURCE' => 'char', 'OBJECT_TYPE' => 'char', 'OBJECT' => 'char', 'PARTICIPATED' => 'char', 'ACTION' => 'char', 'OP_CASE_STATUS' => 'char');
         $oCriteria = new Criteria('workflow');
@@ -3663,13 +3655,19 @@ class ProcessMap
         $_SESSION['_DBArray'] = $_DBArray;
         global $G_PUBLISH;
         $G_PUBLISH = new Publisher();
-        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'processes/processes_NewObjectPermission', '',
+        $G_PUBLISH->AddContent(
+            'xmlform',
+            'xmlform',
+            'processes/processes_NewObjectPermission',
+            '',
             array('GROUP_USER' => $usersGroups,
                   'LANG' => SYS_LANG,
                   'PRO_UID' => $sProcessUID,
                   'ID_DELETE' => G::LoadTranslation('ID_DELETE'),
                   'ID_RESEND' => G::LoadTranslation('ID_RESEND')
-            ), 'processes_SaveObjectPermission');
+            ),
+            'processes_SaveObjectPermission'
+        );
         G::RenderPage('publish', 'raw');
         return true;
     }
@@ -3683,7 +3681,6 @@ class ProcessMap
      */
     public function editObjectPermission($sOP_UID, $sProcessUID)
     {
-
         $user = '';
         $oCriteria = new Criteria();
         $oCriteria->add(ObjectPermissionPeer::OP_UID, $sOP_UID);
@@ -4111,7 +4108,6 @@ class ProcessMap
      */
     public function processFilesManager($sProcessUID)
     {
-
         global $_DBArray;
         global $G_PUBLISH;
 
@@ -4462,7 +4458,7 @@ class ProcessMap
         try {
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
-            $oHeadPublisher = & headPublisher::getSingleton();
+            $oHeadPublisher = headPublisher::getSingleton();
             $oHeadPublisher->addScriptFile('/jscore/events/events.js');
 
             switch ($type) {
@@ -4579,7 +4575,7 @@ class ProcessMap
     public function loadProcessCategory()
     {
         $aProcessCategory = '';
-        require_once ("classes/model/ProcessCategory.php");
+        require_once("classes/model/ProcessCategory.php");
         $Criteria = new Criteria('workflow');
         $Criteria->clearSelectColumns();
 
@@ -4679,7 +4675,6 @@ class ProcessMap
      */
     public function getAllProcesses()
     {
-
         $aProcesses = array();
         //$aProcesses [] = array ('PRO_UID' => 'char', 'PRO_TITLE' => 'char');
         $oCriteria = new Criteria('workflow');
@@ -5773,7 +5768,6 @@ class ProcessMap
      */
     public function listExtProcessesSupervisors($start, $limit, $sProcessUID)
     {
-
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ProcessUserPeer::PU_UID);
         $oCriteria->addSelectColumn(ProcessUserPeer::USR_UID);
@@ -5811,8 +5805,7 @@ class ProcessMap
      */
     public function listExtNoProcessesUser($sProcessUID)
     {
-
-        $memcache = & PMmemcached::getSingleton(config("system.workspace"));
+        $memcache = PMmemcached::getSingleton(config("system.workspace"));
 
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ProcessUserPeer::USR_UID);
@@ -6819,7 +6812,6 @@ class ProcessMap
         $triggersArray = "";
         $triggersArray[] = array('TRI_UID' => 'char', 'PRO_UID' => 'char', 'TRI_TITLE' => 'char', 'TRI_DESCRIPTION' => 'char' );
         while ($aRow = $oDataset->getRow()) {
-
             if (($aRow['TRI_TITLE'] == null) || ($aRow['TRI_TITLE'] == "")) {
                 // There is no translation for this Trigger name, try to get/regenerate the label
                 $triggerO = new Triggers();
@@ -6867,4 +6859,3 @@ class ProcessMap
         return (int) $row['MAX_X'];
     }
 }
-

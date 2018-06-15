@@ -1,8 +1,8 @@
 <?php
 
-$action = isset( $_GET['action'] ) ? G::sanitizeInput($_GET['action'])  : 'default';
+$action = isset($_GET['action']) ? G::sanitizeInput($_GET['action'])  : 'default';
 
-$userId = isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : '00000000000000000000000000000000';
+$userId = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '00000000000000000000000000000000';
 switch ($action) {
     case 'getAllCounters':
         getAllCounters();
@@ -17,22 +17,22 @@ switch ($action) {
         break;
 }
 
-function getLoadTreeMenuData ()
+function getLoadTreeMenuData()
 {
-    header( "content-type: text/xml" );
+    header("content-type: text/xml");
 
     global $G_TMP_MENU;
     $oMenu = new Menu();
-    $oMenu->load( 'cases' );
+    $oMenu->load('cases');
 
     $oCases = new Cases();
-    $aTypes = Array ('to_do','draft','cancelled','sent','paused','completed','selfservice');
+    $aTypes = array('to_do','draft','cancelled','sent','paused','completed','selfservice');
     //'to_revise',
     //'to_reassign'
-    $aTypesID = Array ('CASES_INBOX' => 'to_do','CASES_DRAFT' => 'draft','CASES_CANCELLED' => 'cancelled','CASES_SENT' => 'sent','CASES_PAUSED' => 'paused','CASES_COMPLETED' => 'completed','CASES_SELFSERVICE' => 'selfservice');
+    $aTypesID = array('CASES_INBOX' => 'to_do','CASES_DRAFT' => 'draft','CASES_CANCELLED' => 'cancelled','CASES_SENT' => 'sent','CASES_PAUSED' => 'paused','CASES_COMPLETED' => 'completed','CASES_SELFSERVICE' => 'selfservice');
 
     /*----------------------------------********---------------------------------*/
-    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+    $licensedFeatures = PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
         $aTypesID['CONSOLIDATED_CASES'] = 'batch_routing';
         $aTypes[] = 'batch_routing';
@@ -41,10 +41,10 @@ function getLoadTreeMenuData ()
 
     //'CASES_TO_REVISE'=>'to_revise',
     //'CASES_TO_REASSIGN'=>'to_reassign'
-        $list = array ();
+    $list = array();
     $list['count'] = ' ';
 
-    $empty = array ();
+    $empty = array();
     foreach ($aTypes as $key => $val) {
         $empty[$val] = $list;
     }
@@ -53,7 +53,7 @@ function getLoadTreeMenuData ()
     $processNameMaxSize = 20;
 
     //now drawing the treeview using the menu options from menu/cases.php
-    $menuCases = array ();
+    $menuCases = array();
     for ($i = 0; $i < count($oMenu->Options); $i++) {
         if ($oMenu->Types[$i] == 'blockHeader') {
             $CurrentBlockID = $oMenu->Id[$i];
@@ -72,7 +72,7 @@ function getLoadTreeMenuData ()
             $menuCases[$CurrentBlockID]['blockType'] = $oMenu->Types[$i];
             $menuCases[$CurrentBlockID]['link'] = $oMenu->Options[$i];
         } elseif ($oMenu->Types[$i] == 'rootNode') {
-            $menuCases[$CurrentBlockID]['blockItems'][$oMenu->Id[$i]] = array (
+            $menuCases[$CurrentBlockID]['blockItems'][$oMenu->Id[$i]] = array(
                 'label' => $oMenu->Labels[$i],
                 'link' => $oMenu->Options[$i],
                 'icon' => (isset($oMenu->Icons[$i]) && $oMenu->Icons[$i] != '') ? $oMenu->Icons[$i] : 'kcmdf.png'
@@ -85,13 +85,13 @@ function getLoadTreeMenuData ()
 
             $i = $index;
         } else {
-            $menuCases[$CurrentBlockID]['blockItems'][$oMenu->Id[$i]] = array (
+            $menuCases[$CurrentBlockID]['blockItems'][$oMenu->Id[$i]] = array(
                 'label' => $oMenu->Labels[$i],
                 'link' => $oMenu->Options[$i],
                 'icon' => (isset($oMenu->Icons[$i]) && $oMenu->Icons[$i] != '') ? $oMenu->Icons[$i] : 'kcmdf.png'
             );
 
-            if (isset( $aTypesID[$oMenu->Id[$i]] )) {
+            if (isset($aTypesID[$oMenu->Id[$i]])) {
                 $menuCases[$CurrentBlockID]['blockItems'][$oMenu->Id[$i]]['cases_count'] = $aCount[$aTypesID[$oMenu->Id[$i]]]['count'];
             }
         }
@@ -114,7 +114,7 @@ function getLoadTreeMenuData ()
             }
         }
 
-        //This function generates an xml, so it prevents the output of a badly formed xml 
+        //This function generates an xml, so it prevents the output of a badly formed xml
         //by cleaning any content prior to this function with ob_clean
         ob_clean();
         echo $xml->asXML();
@@ -135,8 +135,7 @@ function getLoadTreeMenuData ()
             }
 
             // adding "menu_block" childs nodes
-            foreach ($menuBlock['blockItems'] as $id => $menu)
-            {
+            foreach ($menuBlock['blockItems'] as $id => $menu) {
                 if (! empty($menu['childs'])) {
                     $rootNode = $menuBlockNode->addChild('menu_block');
                     $rootNode->addAttribute('id', $id);
@@ -178,7 +177,7 @@ function getLoadTreeMenuData ()
         }
     }
 
-    //This function generates an xml, so it prevents the output of a badly formed xml 
+    //This function generates an xml, so it prevents the output of a badly formed xml
     //by cleaning any content prior to this function with ob_clean
     ob_clean();
     echo $xml->asXML();
@@ -199,11 +198,11 @@ function getAllCountersEnterprise()
 }
 /*----------------------------------********---------------------------------*/
 
-function getAllCounters ()
+function getAllCounters()
 {
-    $userUid = (isset( $_SESSION['USER_LOGGED'] ) && $_SESSION['USER_LOGGED'] != '') ? $_SESSION['USER_LOGGED'] : null;
+    $userUid = (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') ? $_SESSION['USER_LOGGED'] : null;
 
-    $aTypes = Array ();
+    $aTypes = array();
     $aTypes['to_do'] = 'CASES_INBOX';
     $aTypes['draft'] = 'CASES_DRAFT';
     $aTypes['cancelled'] = 'CASES_CANCELLED';
@@ -217,7 +216,7 @@ function getAllCounters ()
     $case = new \ProcessMaker\BusinessModel\Cases();
     $aCount = $case->getListCounters($userUid, array_keys($aTypes));
 
-    $response = Array ();
+    $response = array();
     $i = 0;
     foreach ($aCount as $type => $count) {
         $response[$i] = new stdclass();
@@ -225,7 +224,7 @@ function getAllCounters ()
         $response[$i]->count = $count;
         $i ++;
     }
-    echo G::json_encode( $response );
+    echo G::json_encode($response);
 }
 
 function getChilds($menu, $index)
@@ -234,7 +233,6 @@ function getChilds($menu, $index)
 
     for ($i = $index; $i < count($menu->Options); $i++) {
         if ($menu->Types[$i] == 'childNode') {
-
             $childs[$menu->Id[$i]] = array(
                 'label' => $menu->Labels[$i],
                 'link' => $menu->Options[$i],
@@ -248,4 +246,3 @@ function getChilds($menu, $index)
 
     return array($childs, --$i);
 }
-

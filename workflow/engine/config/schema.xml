@@ -1998,7 +1998,7 @@
         <column name="OP_USER_RELATION" type="INTEGER" required="true" default="0"/>
         <column name="OP_TASK_SOURCE" type="VARCHAR" size="32" required="" default="0"/>
         <column name="OP_PARTICIPATE" type="INTEGER" required="true" default="0"/>
-        <column name="OP_OBJ_TYPE" type="VARCHAR" size="15" required="true" default="0"/>
+        <column name="OP_OBJ_TYPE" type="VARCHAR" size="20" required="true" default="0"/>
         <column name="OP_OBJ_UID" type="VARCHAR" size="32" required="true" default="0"/>
         <column name="OP_ACTION" type="VARCHAR" size="10" required="true" default="0"/>
         <column name="OP_CASE_STATUS" type="VARCHAR" size="10" required="false" default="0"/>
@@ -2031,7 +2031,7 @@
             <rule name="required" message="Participation is required."/>
         </validator>
         <validator column="OP_OBJ_TYPE">
-            <rule name="maxLength" value="15" message="Object type can be no larger than ${value} in size"/>
+            <rule name="maxLength" value="20" message="Object type can be no larger than ${value} in size"/>
             <rule name="required" message="Object type is required."/>
         </validator>
         <validator column="OP_OBJ_UID">
@@ -4180,7 +4180,7 @@
         <column name="ADDON_NICK" type="VARCHAR" size="255" required="true"/>
         <column name="ADDON_DOWNLOAD_FILENAME" type="VARCHAR" size="1024" required="false"/>
         <column name="ADDON_DESCRIPTION" type="VARCHAR" size="2048" required="false"/>
-        <column name="ADDON_STATE" type="VARCHAR" size="255" required="true"/>
+        <column name="ADDON_STATE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="ADDON_STATE_CHANGED" type="TIMESTAMP" required="false"/>
         <column name="ADDON_STATUS" type="VARCHAR" size="255" required="true"/>
         <column name="ADDON_VERSION" type="VARCHAR" size="255" required="true"/>
@@ -4624,6 +4624,7 @@
             <parameter name="Comment" value="Canceled list"/>
         </vendor>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" primaryKey="true" default="0"/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -4632,7 +4633,6 @@
         <column name="APP_PRO_TITLE" type="LONGVARCHAR" required="false"/>
         <column name="APP_TAS_TITLE" type="LONGVARCHAR" required="false"/>
         <column name="APP_CANCELED_DATE" type="TIMESTAMP" required="false"/>
-        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
         <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
         <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
