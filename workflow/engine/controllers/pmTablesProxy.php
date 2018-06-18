@@ -926,19 +926,20 @@ class pmTablesProxy extends HttpProxyController
             $exportTraceback = [];
             
             foreach ($tablesToExport as $table) {
+                $numberRecords = 0;
                 if ($table->_DATA) {
-                    $tableRecord = $additionalTables->load($table->ADD_TAB_UID);
                     $tableData = $additionalTables->getAllData($table->ADD_TAB_UID, null, null, false);
-                    $table->ADD_TAB_NAME = $tableRecord['ADD_TAB_NAME'];
-
-                    array_push($exportTraceback, [
-                        'uid' => $table->ADD_TAB_UID,
-                        'name' => $table->ADD_TAB_NAME,
-                        'num_regs' => $tableData['count'],
-                        'schema' => $table->_SCHEMA ? 'yes' : 'no',
-                        'data' => $table->_DATA ? 'yes' : 'no'
-                    ]);
+                    $numberRecords = $tableData['count'];
                 }
+                $tableRecord = $additionalTables->load($table->ADD_TAB_UID);
+                $table->ADD_TAB_NAME = $tableRecord['ADD_TAB_NAME'];
+                array_push($exportTraceback, [
+                    'uid' => $table->ADD_TAB_UID,
+                    'name' => $table->ADD_TAB_NAME,
+                    'num_regs' => $numberRecords,
+                    'schema' => $table->_SCHEMA ? 'yes' : 'no',
+                    'data' => $table->_DATA ? 'yes' : 'no'
+                ]);
             }
 
             $trace = "TABLE UID                        TABLE NAME\tREGS\tSCHEMA\tDATA\n";
