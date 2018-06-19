@@ -289,6 +289,12 @@ class WorkspaceTools
         $stop = microtime(true);
         CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
+        $start = microtime(true);
+        CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
+        $this->migratePopulateIndexingACV($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+
         /*----------------------------------********---------------------------------*/
         $start = microtime(true);
         CLI::logging("> Migrate new lists...\n");
@@ -315,12 +321,6 @@ class WorkspaceTools
         $this->migrateSelfServiceRecordsRun($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
-        $this->migratePopulateIndexingACV($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
         CLI::logging("> Updating rows in Web Entry table for classic processes...\n");
@@ -1249,6 +1249,7 @@ class WorkspaceTools
 
     public function upgradeData()
     {
+        $this->getSchema();
         if (file_exists(PATH_CORE . 'data' . PATH_SEP . 'check.data')) {
             $checkData = unserialize(file_get_contents(PATH_CORE . 'data' . PATH_SEP . 'check.data'));
             if (is_array($checkData)) {
@@ -2029,6 +2030,13 @@ class WorkspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
+            //Populate the new fields for replace string UID to Interger ID
+            $start = microtime(true);
+            CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+            $workspace->migratePopulateIndexingACV($workspace->name);
+            $stop = microtime(true);
+            CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+
             //Move the data of cases to the corresponding List
             /*----------------------------------********---------------------------------*/
             $start = microtime(true);
@@ -2043,13 +2051,6 @@ class WorkspaceTools
             $workspace->processFilesUpgrade();
             $stop = microtime(true);
             CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
-
-            //Populate the new fields for replace string UID to Interger ID
-            $start = microtime(true);
-            CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
-            $workspace->migratePopulateIndexingACV($workspace->name);
-            $stop = microtime(true);
-            CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
             //Updating generated class files for PM Tables
             passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
