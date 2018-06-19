@@ -344,10 +344,10 @@ class WorkspaceTools
         CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
         
         /*----------------------------------********---------------------------------*/
-        $includeDynContent = isset($optionMigrateHistoryData['includeDynContent']) && $optionMigrateHistoryData['includeDynContent'] === true;
+        $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
         $start = microtime(true);
         CLI::logging("> Migrating history data...\n");
-        $this->migrateAppHistoryToAppDataChangeLog(false, !$includeDynContent);
+        $this->migrateAppHistoryToAppDataChangeLog(false, !$keepDynContent);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
         /*----------------------------------********---------------------------------*/
@@ -2067,10 +2067,10 @@ class WorkspaceTools
             passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
             /*----------------------------------********---------------------------------*/
-            $includeDynContent = isset($optionMigrateHistoryData['includeDynContent']) && $optionMigrateHistoryData['includeDynContent'] === true;
+            $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
             $start = microtime(true);
             CLI::logging("> Migrating history data...\n");
-            $workspace->migrateAppHistoryToAppDataChangeLog(false, !$includeDynContent);
+            $workspace->migrateAppHistoryToAppDataChangeLog(false, !$keepDynContent);
             $stop = microtime(true);
             CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
             /*----------------------------------********---------------------------------*/
