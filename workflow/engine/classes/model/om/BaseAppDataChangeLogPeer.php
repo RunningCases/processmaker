@@ -2,76 +2,82 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by InputDocumentPeer::getOMClass()
-include_once 'classes/model/InputDocument.php';
+// actual class may be a subclass -- as returned by AppDataChangeLogPeer::getOMClass()
+include_once 'classes/model/AppDataChangeLog.php';
 
 /**
- * Base static class for performing query and update operations on the 'INPUT_DOCUMENT' table.
+ * Base static class for performing query and update operations on the 'APP_DATA_CHANGE_LOG' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseInputDocumentPeer
+abstract class BaseAppDataChangeLogPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'INPUT_DOCUMENT';
+    const TABLE_NAME = 'APP_DATA_CHANGE_LOG';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.InputDocument';
+    const CLASS_DEFAULT = 'classes.model.AppDataChangeLog';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 14;
+    const NUM_COLUMNS = 16;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the INP_DOC_UID field */
-    const INP_DOC_UID = 'INPUT_DOCUMENT.INP_DOC_UID';
+    /** the column name for the CHANGE_LOG_ID field */
+    const CHANGE_LOG_ID = 'APP_DATA_CHANGE_LOG.CHANGE_LOG_ID';
 
-    /** the column name for the INP_DOC_ID field */
-    const INP_DOC_ID = 'INPUT_DOCUMENT.INP_DOC_ID';
+    /** the column name for the DATE field */
+    const DATE = 'APP_DATA_CHANGE_LOG.DATE';
 
-    /** the column name for the PRO_UID field */
-    const PRO_UID = 'INPUT_DOCUMENT.PRO_UID';
+    /** the column name for the APP_NUMBER field */
+    const APP_NUMBER = 'APP_DATA_CHANGE_LOG.APP_NUMBER';
 
-    /** the column name for the INP_DOC_TITLE field */
-    const INP_DOC_TITLE = 'INPUT_DOCUMENT.INP_DOC_TITLE';
+    /** the column name for the DEL_INDEX field */
+    const DEL_INDEX = 'APP_DATA_CHANGE_LOG.DEL_INDEX';
 
-    /** the column name for the INP_DOC_DESCRIPTION field */
-    const INP_DOC_DESCRIPTION = 'INPUT_DOCUMENT.INP_DOC_DESCRIPTION';
+    /** the column name for the PRO_ID field */
+    const PRO_ID = 'APP_DATA_CHANGE_LOG.PRO_ID';
 
-    /** the column name for the INP_DOC_FORM_NEEDED field */
-    const INP_DOC_FORM_NEEDED = 'INPUT_DOCUMENT.INP_DOC_FORM_NEEDED';
+    /** the column name for the TAS_ID field */
+    const TAS_ID = 'APP_DATA_CHANGE_LOG.TAS_ID';
 
-    /** the column name for the INP_DOC_ORIGINAL field */
-    const INP_DOC_ORIGINAL = 'INPUT_DOCUMENT.INP_DOC_ORIGINAL';
+    /** the column name for the USR_ID field */
+    const USR_ID = 'APP_DATA_CHANGE_LOG.USR_ID';
 
-    /** the column name for the INP_DOC_PUBLISHED field */
-    const INP_DOC_PUBLISHED = 'INPUT_DOCUMENT.INP_DOC_PUBLISHED';
+    /** the column name for the OBJECT_TYPE field */
+    const OBJECT_TYPE = 'APP_DATA_CHANGE_LOG.OBJECT_TYPE';
 
-    /** the column name for the INP_DOC_VERSIONING field */
-    const INP_DOC_VERSIONING = 'INPUT_DOCUMENT.INP_DOC_VERSIONING';
+    /** the column name for the OBJECT_ID field */
+    const OBJECT_ID = 'APP_DATA_CHANGE_LOG.OBJECT_ID';
 
-    /** the column name for the INP_DOC_DESTINATION_PATH field */
-    const INP_DOC_DESTINATION_PATH = 'INPUT_DOCUMENT.INP_DOC_DESTINATION_PATH';
+    /** the column name for the OBJECT_UID field */
+    const OBJECT_UID = 'APP_DATA_CHANGE_LOG.OBJECT_UID';
 
-    /** the column name for the INP_DOC_TAGS field */
-    const INP_DOC_TAGS = 'INPUT_DOCUMENT.INP_DOC_TAGS';
+    /** the column name for the EXECUTED_AT field */
+    const EXECUTED_AT = 'APP_DATA_CHANGE_LOG.EXECUTED_AT';
 
-    /** the column name for the INP_DOC_TYPE_FILE field */
-    const INP_DOC_TYPE_FILE = 'INPUT_DOCUMENT.INP_DOC_TYPE_FILE';
+    /** the column name for the SOURCE_ID field */
+    const SOURCE_ID = 'APP_DATA_CHANGE_LOG.SOURCE_ID';
 
-    /** the column name for the INP_DOC_MAX_FILESIZE field */
-    const INP_DOC_MAX_FILESIZE = 'INPUT_DOCUMENT.INP_DOC_MAX_FILESIZE';
+    /** the column name for the DATA field */
+    const DATA = 'APP_DATA_CHANGE_LOG.DATA';
 
-    /** the column name for the INP_DOC_MAX_FILESIZE_UNIT field */
-    const INP_DOC_MAX_FILESIZE_UNIT = 'INPUT_DOCUMENT.INP_DOC_MAX_FILESIZE_UNIT';
+    /** the column name for the SKIN field */
+    const SKIN = 'APP_DATA_CHANGE_LOG.SKIN';
+
+    /** the column name for the LANGUAGE field */
+    const LANGUAGE = 'APP_DATA_CHANGE_LOG.LANGUAGE';
+
+    /** the column name for the ROW_MIGRATION field */
+    const ROW_MIGRATION = 'APP_DATA_CHANGE_LOG.ROW_MIGRATION';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -84,10 +90,10 @@ abstract class BaseInputDocumentPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('InpDocUid', 'InpDocId', 'ProUid', 'InpDocTitle', 'InpDocDescription', 'InpDocFormNeeded', 'InpDocOriginal', 'InpDocPublished', 'InpDocVersioning', 'InpDocDestinationPath', 'InpDocTags', 'InpDocTypeFile', 'InpDocMaxFilesize', 'InpDocMaxFilesizeUnit', ),
-        BasePeer::TYPE_COLNAME => array (InputDocumentPeer::INP_DOC_UID, InputDocumentPeer::INP_DOC_ID, InputDocumentPeer::PRO_UID, InputDocumentPeer::INP_DOC_TITLE, InputDocumentPeer::INP_DOC_DESCRIPTION, InputDocumentPeer::INP_DOC_FORM_NEEDED, InputDocumentPeer::INP_DOC_ORIGINAL, InputDocumentPeer::INP_DOC_PUBLISHED, InputDocumentPeer::INP_DOC_VERSIONING, InputDocumentPeer::INP_DOC_DESTINATION_PATH, InputDocumentPeer::INP_DOC_TAGS, InputDocumentPeer::INP_DOC_TYPE_FILE, InputDocumentPeer::INP_DOC_MAX_FILESIZE, InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT, ),
-        BasePeer::TYPE_FIELDNAME => array ('INP_DOC_UID', 'INP_DOC_ID', 'PRO_UID', 'INP_DOC_TITLE', 'INP_DOC_DESCRIPTION', 'INP_DOC_FORM_NEEDED', 'INP_DOC_ORIGINAL', 'INP_DOC_PUBLISHED', 'INP_DOC_VERSIONING', 'INP_DOC_DESTINATION_PATH', 'INP_DOC_TAGS', 'INP_DOC_TYPE_FILE', 'INP_DOC_MAX_FILESIZE', 'INP_DOC_MAX_FILESIZE_UNIT', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        BasePeer::TYPE_PHPNAME => array ('ChangeLogId', 'Date', 'AppNumber', 'DelIndex', 'ProId', 'TasId', 'UsrId', 'ObjectType', 'ObjectId', 'ObjectUid', 'ExecutedAt', 'SourceId', 'Data', 'Skin', 'Language', 'RowMigration', ),
+        BasePeer::TYPE_COLNAME => array (AppDataChangeLogPeer::CHANGE_LOG_ID, AppDataChangeLogPeer::DATE, AppDataChangeLogPeer::APP_NUMBER, AppDataChangeLogPeer::DEL_INDEX, AppDataChangeLogPeer::PRO_ID, AppDataChangeLogPeer::TAS_ID, AppDataChangeLogPeer::USR_ID, AppDataChangeLogPeer::OBJECT_TYPE, AppDataChangeLogPeer::OBJECT_ID, AppDataChangeLogPeer::OBJECT_UID, AppDataChangeLogPeer::EXECUTED_AT, AppDataChangeLogPeer::SOURCE_ID, AppDataChangeLogPeer::DATA, AppDataChangeLogPeer::SKIN, AppDataChangeLogPeer::LANGUAGE, AppDataChangeLogPeer::ROW_MIGRATION, ),
+        BasePeer::TYPE_FIELDNAME => array ('CHANGE_LOG_ID', 'DATE', 'APP_NUMBER', 'DEL_INDEX', 'PRO_ID', 'TAS_ID', 'USR_ID', 'OBJECT_TYPE', 'OBJECT_ID', 'OBJECT_UID', 'EXECUTED_AT', 'SOURCE_ID', 'DATA', 'SKIN', 'LANGUAGE', 'ROW_MIGRATION', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
     );
 
     /**
@@ -97,10 +103,10 @@ abstract class BaseInputDocumentPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('InpDocUid' => 0, 'InpDocId' => 1, 'ProUid' => 2, 'InpDocTitle' => 3, 'InpDocDescription' => 4, 'InpDocFormNeeded' => 5, 'InpDocOriginal' => 6, 'InpDocPublished' => 7, 'InpDocVersioning' => 8, 'InpDocDestinationPath' => 9, 'InpDocTags' => 10, 'InpDocTypeFile' => 11, 'InpDocMaxFilesize' => 12, 'InpDocMaxFilesizeUnit' => 13, ),
-        BasePeer::TYPE_COLNAME => array (InputDocumentPeer::INP_DOC_UID => 0, InputDocumentPeer::INP_DOC_ID => 1, InputDocumentPeer::PRO_UID => 2, InputDocumentPeer::INP_DOC_TITLE => 3, InputDocumentPeer::INP_DOC_DESCRIPTION => 4, InputDocumentPeer::INP_DOC_FORM_NEEDED => 5, InputDocumentPeer::INP_DOC_ORIGINAL => 6, InputDocumentPeer::INP_DOC_PUBLISHED => 7, InputDocumentPeer::INP_DOC_VERSIONING => 8, InputDocumentPeer::INP_DOC_DESTINATION_PATH => 9, InputDocumentPeer::INP_DOC_TAGS => 10, InputDocumentPeer::INP_DOC_TYPE_FILE => 11, InputDocumentPeer::INP_DOC_MAX_FILESIZE => 12, InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT => 13, ),
-        BasePeer::TYPE_FIELDNAME => array ('INP_DOC_UID' => 0, 'INP_DOC_ID' => 1, 'PRO_UID' => 2, 'INP_DOC_TITLE' => 3, 'INP_DOC_DESCRIPTION' => 4, 'INP_DOC_FORM_NEEDED' => 5, 'INP_DOC_ORIGINAL' => 6, 'INP_DOC_PUBLISHED' => 7, 'INP_DOC_VERSIONING' => 8, 'INP_DOC_DESTINATION_PATH' => 9, 'INP_DOC_TAGS' => 10, 'INP_DOC_TYPE_FILE' => 11, 'INP_DOC_MAX_FILESIZE' => 12, 'INP_DOC_MAX_FILESIZE_UNIT' => 13, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        BasePeer::TYPE_PHPNAME => array ('ChangeLogId' => 0, 'Date' => 1, 'AppNumber' => 2, 'DelIndex' => 3, 'ProId' => 4, 'TasId' => 5, 'UsrId' => 6, 'ObjectType' => 7, 'ObjectId' => 8, 'ObjectUid' => 9, 'ExecutedAt' => 10, 'SourceId' => 11, 'Data' => 12, 'Skin' => 13, 'Language' => 14, 'RowMigration' => 15, ),
+        BasePeer::TYPE_COLNAME => array (AppDataChangeLogPeer::CHANGE_LOG_ID => 0, AppDataChangeLogPeer::DATE => 1, AppDataChangeLogPeer::APP_NUMBER => 2, AppDataChangeLogPeer::DEL_INDEX => 3, AppDataChangeLogPeer::PRO_ID => 4, AppDataChangeLogPeer::TAS_ID => 5, AppDataChangeLogPeer::USR_ID => 6, AppDataChangeLogPeer::OBJECT_TYPE => 7, AppDataChangeLogPeer::OBJECT_ID => 8, AppDataChangeLogPeer::OBJECT_UID => 9, AppDataChangeLogPeer::EXECUTED_AT => 10, AppDataChangeLogPeer::SOURCE_ID => 11, AppDataChangeLogPeer::DATA => 12, AppDataChangeLogPeer::SKIN => 13, AppDataChangeLogPeer::LANGUAGE => 14, AppDataChangeLogPeer::ROW_MIGRATION => 15, ),
+        BasePeer::TYPE_FIELDNAME => array ('CHANGE_LOG_ID' => 0, 'DATE' => 1, 'APP_NUMBER' => 2, 'DEL_INDEX' => 3, 'PRO_ID' => 4, 'TAS_ID' => 5, 'USR_ID' => 6, 'OBJECT_TYPE' => 7, 'OBJECT_ID' => 8, 'OBJECT_UID' => 9, 'EXECUTED_AT' => 10, 'SOURCE_ID' => 11, 'DATA' => 12, 'SKIN' => 13, 'LANGUAGE' => 14, 'ROW_MIGRATION' => 15, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
     );
 
     /**
@@ -110,8 +116,8 @@ abstract class BaseInputDocumentPeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/InputDocumentMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.InputDocumentMapBuilder');
+        include_once 'classes/model/map/AppDataChangeLogMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.AppDataChangeLogMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -124,7 +130,7 @@ abstract class BaseInputDocumentPeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = InputDocumentPeer::getTableMap();
+            $map = AppDataChangeLogPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -179,12 +185,12 @@ abstract class BaseInputDocumentPeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. InputDocumentPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. AppDataChangeLogPeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(InputDocumentPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(AppDataChangeLogPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -201,38 +207,42 @@ abstract class BaseInputDocumentPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::CHANGE_LOG_ID);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_ID);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::DATE);
 
-        $criteria->addSelectColumn(InputDocumentPeer::PRO_UID);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::APP_NUMBER);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::DEL_INDEX);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_DESCRIPTION);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::PRO_ID);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_FORM_NEEDED);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::TAS_ID);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_ORIGINAL);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::USR_ID);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_PUBLISHED);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::OBJECT_TYPE);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_VERSIONING);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::OBJECT_ID);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_DESTINATION_PATH);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::OBJECT_UID);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_TAGS);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::EXECUTED_AT);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_TYPE_FILE);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::SOURCE_ID);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_MAX_FILESIZE);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::DATA);
 
-        $criteria->addSelectColumn(InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT);
+        $criteria->addSelectColumn(AppDataChangeLogPeer::SKIN);
+
+        $criteria->addSelectColumn(AppDataChangeLogPeer::LANGUAGE);
+
+        $criteria->addSelectColumn(AppDataChangeLogPeer::ROW_MIGRATION);
 
     }
 
-    const COUNT = 'COUNT(INPUT_DOCUMENT.INP_DOC_UID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT INPUT_DOCUMENT.INP_DOC_UID)';
+    const COUNT = 'COUNT(APP_DATA_CHANGE_LOG.CHANGE_LOG_ID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT APP_DATA_CHANGE_LOG.CHANGE_LOG_ID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -250,9 +260,9 @@ abstract class BaseInputDocumentPeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(InputDocumentPeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(AppDataChangeLogPeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(InputDocumentPeer::COUNT);
+            $criteria->addSelectColumn(AppDataChangeLogPeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -260,7 +270,7 @@ abstract class BaseInputDocumentPeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = InputDocumentPeer::doSelectRS($criteria, $con);
+        $rs = AppDataChangeLogPeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -273,7 +283,7 @@ abstract class BaseInputDocumentPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     InputDocument
+     * @return     AppDataChangeLog
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -281,7 +291,7 @@ abstract class BaseInputDocumentPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = InputDocumentPeer::doSelect($critcopy, $con);
+        $objects = AppDataChangeLogPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -298,7 +308,7 @@ abstract class BaseInputDocumentPeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return InputDocumentPeer::populateObjects(InputDocumentPeer::doSelectRS($criteria, $con));
+        return AppDataChangeLogPeer::populateObjects(AppDataChangeLogPeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -322,7 +332,7 @@ abstract class BaseInputDocumentPeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            InputDocumentPeer::addSelectColumns($criteria);
+            AppDataChangeLogPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -344,7 +354,7 @@ abstract class BaseInputDocumentPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = InputDocumentPeer::getOMClass();
+        $cls = AppDataChangeLogPeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -379,13 +389,13 @@ abstract class BaseInputDocumentPeer
      */
     public static function getOMClass()
     {
-        return InputDocumentPeer::CLASS_DEFAULT;
+        return AppDataChangeLogPeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a InputDocument or Criteria object.
+     * Method perform an INSERT on the database, given a AppDataChangeLog or Criteria object.
      *
-     * @param      mixed $values Criteria or InputDocument object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or AppDataChangeLog object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -400,9 +410,11 @@ abstract class BaseInputDocumentPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from InputDocument object
+            $criteria = $values->buildCriteria(); // build Criteria from AppDataChangeLog object
         }
 
+                //$criteria->remove(AppDataChangeLogPeer::CHANGE_LOG_ID); // remove pkey col since this table uses auto-increment
+                
 
         // Set the correct dbName
         $criteria->setDbName(self::DATABASE_NAME);
@@ -422,9 +434,9 @@ abstract class BaseInputDocumentPeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a InputDocument or Criteria object.
+     * Method perform an UPDATE on the database, given a AppDataChangeLog or Criteria object.
      *
-     * @param      mixed $values Criteria or InputDocument object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or AppDataChangeLog object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -441,8 +453,8 @@ abstract class BaseInputDocumentPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(InputDocumentPeer::INP_DOC_UID);
-            $selectCriteria->add(InputDocumentPeer::INP_DOC_UID, $criteria->remove(InputDocumentPeer::INP_DOC_UID), $comparison);
+            $comparison = $criteria->getComparison(AppDataChangeLogPeer::CHANGE_LOG_ID);
+            $selectCriteria->add(AppDataChangeLogPeer::CHANGE_LOG_ID, $criteria->remove(AppDataChangeLogPeer::CHANGE_LOG_ID), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -456,7 +468,7 @@ abstract class BaseInputDocumentPeer
     }
 
     /**
-     * Method to DELETE all rows from the INPUT_DOCUMENT table.
+     * Method to DELETE all rows from the APP_DATA_CHANGE_LOG table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -470,7 +482,7 @@ abstract class BaseInputDocumentPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(InputDocumentPeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(AppDataChangeLogPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -480,9 +492,9 @@ abstract class BaseInputDocumentPeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a InputDocument or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a AppDataChangeLog or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or InputDocument object or primary key or array of primary keys
+     * @param      mixed $values Criteria or AppDataChangeLog object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -494,18 +506,18 @@ abstract class BaseInputDocumentPeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(InputDocumentPeer::DATABASE_NAME);
+            $con = Propel::getConnection(AppDataChangeLogPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof InputDocument) {
+        } elseif ($values instanceof AppDataChangeLog) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(InputDocumentPeer::INP_DOC_UID, (array) $values, Criteria::IN);
+            $criteria->add(AppDataChangeLogPeer::CHANGE_LOG_ID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -528,24 +540,24 @@ abstract class BaseInputDocumentPeer
     }
 
     /**
-     * Validates all modified columns of given InputDocument object.
+     * Validates all modified columns of given AppDataChangeLog object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      InputDocument $obj The object to validate.
+     * @param      AppDataChangeLog $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(InputDocument $obj, $cols = null)
+    public static function doValidate(AppDataChangeLog $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(InputDocumentPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(InputDocumentPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(AppDataChangeLogPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(AppDataChangeLogPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -559,24 +571,9 @@ abstract class BaseInputDocumentPeer
             }
         } else {
 
-        if ($obj->isNew() || $obj->isColumnModified(InputDocumentPeer::INP_DOC_UID))
-            $columns[InputDocumentPeer::INP_DOC_UID] = $obj->getInpDocUid();
-
-        if ($obj->isNew() || $obj->isColumnModified(InputDocumentPeer::PRO_UID))
-            $columns[InputDocumentPeer::PRO_UID] = $obj->getProUid();
-
-        if ($obj->isNew() || $obj->isColumnModified(InputDocumentPeer::INP_DOC_FORM_NEEDED))
-            $columns[InputDocumentPeer::INP_DOC_FORM_NEEDED] = $obj->getInpDocFormNeeded();
-
-        if ($obj->isNew() || $obj->isColumnModified(InputDocumentPeer::INP_DOC_ORIGINAL))
-            $columns[InputDocumentPeer::INP_DOC_ORIGINAL] = $obj->getInpDocOriginal();
-
-        if ($obj->isNew() || $obj->isColumnModified(InputDocumentPeer::INP_DOC_PUBLISHED))
-            $columns[InputDocumentPeer::INP_DOC_PUBLISHED] = $obj->getInpDocPublished();
-
         }
 
-        return BasePeer::doValidate(InputDocumentPeer::DATABASE_NAME, InputDocumentPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(AppDataChangeLogPeer::DATABASE_NAME, AppDataChangeLogPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -584,7 +581,7 @@ abstract class BaseInputDocumentPeer
      *
      * @param      mixed $pk the primary key.
      * @param      Connection $con the connection to use
-     * @return     InputDocument
+     * @return     AppDataChangeLog
      */
     public static function retrieveByPK($pk, $con = null)
     {
@@ -592,12 +589,12 @@ abstract class BaseInputDocumentPeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(InputDocumentPeer::DATABASE_NAME);
+        $criteria = new Criteria(AppDataChangeLogPeer::DATABASE_NAME);
 
-        $criteria->add(InputDocumentPeer::INP_DOC_UID, $pk);
+        $criteria->add(AppDataChangeLogPeer::CHANGE_LOG_ID, $pk);
 
 
-        $v = InputDocumentPeer::doSelect($criteria, $con);
+        $v = AppDataChangeLogPeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -621,8 +618,8 @@ abstract class BaseInputDocumentPeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(InputDocumentPeer::INP_DOC_UID, $pks, Criteria::IN);
-            $objs = InputDocumentPeer::doSelect($criteria, $con);
+            $criteria->add(AppDataChangeLogPeer::CHANGE_LOG_ID, $pks, Criteria::IN);
+            $objs = AppDataChangeLogPeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -634,14 +631,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseInputDocumentPeer::getMapBuilder();
+        BaseAppDataChangeLogPeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/InputDocumentMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.InputDocumentMapBuilder');
+    require_once 'classes/model/map/AppDataChangeLogMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.AppDataChangeLogMapBuilder');
 }
 

@@ -1186,6 +1186,9 @@ class Applications
                 case 'EXTERNAL':
                     $stepTitle = 'unknown ' . $caseStep->getStepUidObj();
                     $oPluginRegistry = PluginRegistry::loadSingleton();
+                    if (empty($externalSteps[$caseStep->getStepUidObj()])) {
+                        throw new Exception(G::LoadTranslation('ID_EXTERNAL_STEP_MISSING', SYS_LANG, ['plugin' => $stepTitle]));
+                    }
                     $externalStep = $externalSteps[$caseStep->getStepUidObj()];
                     $stepItem['id'] = $externalStep->getStepId();
                     $stepItem['title'] = $externalStep->getStepTitle();

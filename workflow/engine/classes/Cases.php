@@ -2,6 +2,9 @@
 
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
 use ProcessMaker\BusinessModel\WebEntryEvent;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -894,9 +897,24 @@ class Cases
                     $Fields['APP_STATUS'] = (isset($Fields['APP_STATUS'])) ? $Fields['APP_STATUS'] : $FieldsBefore['APP_STATUS'];
                     $appHistory = new AppHistory();
                     $aFieldsHistory = $Fields;
+                    $appDataWithoutDynContentHistory = serialize($FieldsDifference);
                     $FieldsDifference['DYN_CONTENT_HISTORY'] = base64_encode($currentDynaform["DYN_CONTENT"]);
                     $aFieldsHistory['APP_DATA'] = serialize($FieldsDifference);
                     $appHistory->insertHistory($aFieldsHistory);
+                    
+                    /*----------------------------------********---------------------------------*/
+                    $type = isset($Fields['OBJECT_TYPE']) ?
+                            $Fields['OBJECT_TYPE'] : ChangeLog::getChangeLog()->getObjectNameById(ChangeLog::DYNAFORM);
+                    ChangeLog::getChangeLog()
+                            ->setDate($Fields['APP_UPDATE_DATE'])
+                            ->setAppNumber($Fields['APP_NUMBER'])
+                            ->setDelIndex($Fields['DEL_INDEX'])
+                            ->setData($appDataWithoutDynContentHistory)
+                            ->getProIdByProUid($Fields['PRO_UID'])
+                            ->getTasIdByTasUid($Fields['TAS_UID'])
+                            ->getObjectIdByUidAndObjType($Fields['CURRENT_DYNAFORM'], $type)
+                            ->register();
+                    /*----------------------------------********---------------------------------*/
                 }
             }
             //End Save History
@@ -3416,6 +3434,12 @@ class Cases
      */
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
+        /*----------------------------------********---------------------------------*/
+        ChangeLog::getChangeLog()
+                ->setObjectUid($sStepUidObj)
+                ->getExecutedAtIdByTriggerType($sTriggerType);
+        /*----------------------------------********---------------------------------*/
+
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
 
         if (count($aTriggers) > 0) {

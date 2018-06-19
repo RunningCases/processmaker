@@ -1015,6 +1015,7 @@ class Processes
             $newGuid = $this->getUnusedDynaformGUID();
             $map[$val['DYN_UID']] = $newGuid;
             $oData->dynaforms[$key]['DYN_UID'] = $newGuid;
+            unset($oData->dynaforms[$key]['DYN_ID']);
         }
 
         $oData->uid["DYNAFORM"] = $map;
@@ -1980,6 +1981,7 @@ class Processes
             $map[$val['INP_DOC_UID']] = $newGuid;
             $oData->inputFiles[$oData->inputs[$key]['INP_DOC_UID']] = $newGuid;
             $oData->inputs[$key]['INP_DOC_UID'] = $newGuid;
+            unset($oData->inputs[$key]['INP_DOC_ID']);
         }
 
         $oData->uid["INPUT_DOCUMENT"] = $map;
@@ -2112,6 +2114,7 @@ class Processes
             $newGuid = $this->getUnusedOutputGUID();
             $map[$val['OUT_DOC_UID']] = $newGuid;
             $oData->outputs[$key]['OUT_DOC_UID'] = $newGuid;
+            unset($oData->outputs[$key]['OUT_DOC_ID']);
         }
 
         $oData->uid["OUTPUT_DOCUMENT"] = $map;

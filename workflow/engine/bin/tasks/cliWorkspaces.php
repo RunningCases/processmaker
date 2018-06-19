@@ -50,6 +50,9 @@ CLI::taskOpt("workspace", "Specify which workspace to restore if multiple worksp
         Ex: -wworkflow.", "w:", "workspace=");
 CLI::taskOpt("lang", "Specify the language which will be used to rebuild the case cache list. If this option isn't included, then 'en' (English) will be used by default.", "l:", "lang=");
 CLI::taskOpt("port", "Specify the port number used by MySQL. If not specified, then the port 3306 will be used by default.", "p:");
+/*----------------------------------********---------------------------------*/
+CLI::taskOpt('keep_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --keep_dyn_content", 'd', 'keep_dyn_content');
+/*----------------------------------********---------------------------------*/
 CLI::taskRun("run_workspace_restore");
 
 CLI::taskName('cacheview-repair');
@@ -341,6 +344,20 @@ EOT
 );
 CLI::taskArg('workspace');
 CLI::taskRun("regenerate_pmtable_classes");
+
+/*----------------------------------********---------------------------------*/
+/**
+ * Migrate the data from APP_HISTORY table to the new table APP_DATA_CHANGE_LOG.
+ */
+CLI::taskName('migrate-history-data');
+CLI::taskDescription(<<<EOT
+    Migrate the content of the APP_HISTORY table to the APP_DATA_CHANGE_LOG table.
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun('migrate_history_data');
+CLI::taskOpt('keep_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --keep_dyn_content", 'i', 'keep_dyn_content');
+/*----------------------------------********---------------------------------*/
 
 /**
  * Function run_info
@@ -840,6 +857,11 @@ function run_workspace_restore($args, $opts)
         $info = array_key_exists("info", $opts);
         $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
         $port = array_key_exists("port", $opts) ? $opts['port'] : '';
+        $optionMigrateHistoryData = [
+            /*----------------------------------********---------------------------------*/
+            'keepDynContent' => array_key_exists('keep_dyn_content', $args)
+            /*----------------------------------********---------------------------------*/
+        ];
         if ($info) {
             WorkspaceTools::getBackupInfo($filename);
         } else {
@@ -865,7 +887,7 @@ function run_workspace_restore($args, $opts)
                     CLI::error("Please, you should use -m parameter to restore them.\n");
                     return;
                 }
-                WorkspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port);
+                WorkspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port, $optionMigrateHistoryData);
             }
         }
     } else {
@@ -1268,3 +1290,45 @@ function regenerate_pmtable_classes($args, $opts)
         throw new Exception("No workspace specified for updating generated class files.");
     }
 }
+
+/*----------------------------------********---------------------------------*/
+/**
+ * This method migrates data from APP_HISTORY table to APP_DATA_CHANGE_LOG table.
+ * 
+ * @param array $args
+ * @param string $opts
+ */
+function migrate_history_data($args, $opts)
+{
+    foreach ($args as $key => $value) {
+        if ($args[$key] === '--keep_dyn_content' || $args[$key] === '-i') {
+            unset($args[$key]);
+            $opts['keep_dyn_content'] = '';
+        }
+    }
+    $option = '';
+    $removedDynContentHistory = true;
+    $exist = array_key_exists('keep_dyn_content', $opts);
+    if ($exist) {
+        $removedDynContentHistory = false;
+        $option = '--keep_dyn_content';
+    }
+    if (count($args) === 1) {
+        $start = microtime(true);
+        CLI::logging("> Migrating history data...\n");
+
+        Bootstrap::setConstantsRelatedWs($args[0]);
+
+        $workspaceTools = new WorkspaceTools($args[0]);
+        $workspaceTools->migrateAppHistoryToAppDataChangeLog(true, $removedDynContentHistory);
+
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru(PHP_BINARY . ' processmaker migrate-history-data ' . $workspace->name . ' ' . $option);
+        }
+    }
+}
+/*----------------------------------********---------------------------------*/

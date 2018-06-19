@@ -262,7 +262,7 @@ class ChangeLog
             return false;
         }
         foreach ($this->permissions as $type => $ids) {
-            if (array_search($uid, $ids) !== false) {
+            if (is_array($ids) && array_search($uid, $ids) !== false) {
                 return true;
             }
         }

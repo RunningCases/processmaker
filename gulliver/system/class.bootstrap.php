@@ -2047,7 +2047,7 @@ class Bootstrap
     public function array_merges()
     {
         $array = array();
-        $arrays = & func_get_args();
+        $arrays = func_get_args();
         foreach ($arrays as $array_i) {
             if (is_array($array_i)) {
                 Bootstrap::array_merge_2($array, $array_i);

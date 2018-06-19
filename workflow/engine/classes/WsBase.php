@@ -1,18 +1,11 @@
 <?php
 
-//It works with the table CONFIGURATION in a WF dataBase
-use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\EmailServer;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\Core\System;
 
-/**
- * Copyright (C) 2009 COLOSA
- * License: LGPL, see LICENSE
- * Last Modify: 26.06.2008 10:05:00
- * Last modify by: Erik Amaru Ortiz <erik@colosa.com>
- * Last Modify comment(26.06.2008): the session expired verification was removed from here to soap class
- *
- * @package workflow.engine.classes
- */
 class WsBase
 {
     public $stored_system_variables; //boolean
@@ -2265,6 +2258,19 @@ class WsBase
                 }
             }
         }
+
+        /*----------------------------------********---------------------------------*/
+        ChangeLog::getChangeLog()
+                ->setDate('now')
+                ->setAppNumber($appData['APP_NUMBER'])
+                ->setDelIndex($appData['INDEX'])
+                ->getProIdByProUid($appData['PROCESS'])
+                ->getTasIdByTasUid($appData['TASK'])
+                ->setData(serialize($appData))
+                ->getExecutedAtIdByTriggerType($triggerType)
+                ->getObjectIdByUidAndObjType($stepUidObj, $stepType);
+        /*----------------------------------********---------------------------------*/
+
         return $varTriggers;
     }
 

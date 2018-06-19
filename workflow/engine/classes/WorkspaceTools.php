@@ -2,10 +2,13 @@
 
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\System;
-use ProcessMaker\Util\FixReferencePath;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
+use ProcessMaker\Util\FixReferencePath;
 
 /**
  * class workspaceTools.
@@ -221,7 +224,7 @@ class WorkspaceTools
      *
      * @return void
      */
-    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
+    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null, $optionMigrateHistoryData = [])
     {
         if ($workSpace === null) {
             $workSpace = config("system.workspace");
@@ -339,6 +342,15 @@ class WorkspaceTools
         $this->migrateSingleton($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
+        
+        /*----------------------------------********---------------------------------*/
+        $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
+        $start = microtime(true);
+        CLI::logging("> Migrating history data...\n");
+        $this->migrateAppHistoryToAppDataChangeLog(false, !$keepDynContent);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+        /*----------------------------------********---------------------------------*/
     }
 
     /**
@@ -1807,7 +1819,7 @@ class WorkspaceTools
      * @param string $lang for define the language
      * @param string $port of database if is empty take 3306
      */
-    public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
+    public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '', $optionMigrateHistoryData = [])
     {
         $backup = new Archive_Tar($filename);
         //Get a temporary directory in the upgrade directory
@@ -2055,6 +2067,14 @@ class WorkspaceTools
             //Updating generated class files for PM Tables
             passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
+            /*----------------------------------********---------------------------------*/
+            $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
+            $start = microtime(true);
+            CLI::logging("> Migrating history data...\n");
+            $workspace->migrateAppHistoryToAppDataChangeLog(false, !$keepDynContent);
+            $stop = microtime(true);
+            CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+            /*----------------------------------********---------------------------------*/
         }
 
         CLI::logging("Removing temporary files\n");
@@ -2132,7 +2152,8 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
-        if (empty($pmRestClient)) {
+        $pmMobileRestClient = OauthClientsPeer::retrieveByPK(config('oauthClients.mobile.clientId'));
+        if (empty($pmRestClient) || empty($pmMobileRestClient)) {
             if (!is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
                 $_CSERVER = $_SERVER;
                 unset($_CSERVER['REQUEST_TIME']);
@@ -2160,14 +2181,27 @@ class WorkspaceTools
                     $skin
                 );
 
-                $oauthClients = new OauthClients();
-                $oauthClients->setClientId('x-pm-local-client');
-                $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
-                $oauthClients->setClientName('PM Web Designer');
-                $oauthClients->setClientDescription('ProcessMaker Web Designer App');
-                $oauthClients->setClientWebsite('www.processmaker.com');
-                $oauthClients->setRedirectUri($endpoint);
-                $oauthClients->save();
+                if (empty($pmRestClient)) {
+                    $oauthClients = new OauthClients();
+                    $oauthClients->setClientId('x-pm-local-client');
+                    $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
+                    $oauthClients->setClientName('PM Web Designer');
+                    $oauthClients->setClientDescription('ProcessMaker Web Designer App');
+                    $oauthClients->setClientWebsite('www.processmaker.com');
+                    $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->save();
+                }
+
+                if (empty($pmMobileRestClient) && !empty(config('oauthClients.mobile.clientId'))) {
+                    $oauthClients = new OauthClients();
+                    $oauthClients->setClientId(config('oauthClients.mobile.clientId'));
+                    $oauthClients->setClientSecret(config('oauthClients.mobile.clientSecret'));
+                    $oauthClients->setClientName(config('oauthClients.mobile.clientName'));
+                    $oauthClients->setClientDescription(config('oauthClients.mobile.clientDescription'));
+                    $oauthClients->setClientWebsite(config('oauthClients.mobile.clientWebsite'));
+                    $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->save();
+                }
             } else {
                 eprintln("WARNING! No server info found!", 'red');
             }
@@ -4203,4 +4237,165 @@ class WorkspaceTools
             $this->setLastContentMigrateTable(true);
         }
     }
+
+    /*----------------------------------********---------------------------------*/    
+    /**
+     * Migrate the contents of table APP_HISTORY to table APP_DATA_CHANGE_LOG.
+     * 
+     * @param boolean $force
+     * @param boolean $removedDynContentHistory
+     * @return void
+     */
+    public function migrateAppHistoryToAppDataChangeLog($force = false, $removedDynContentHistory = false)
+    {
+        $this->initPropel(true);
+
+        $conf = new Configurations();
+        $exist = $conf->exists('MIGRATED_APP_HISTORY', 'history');
+        if ($exist === true && $force === false) {
+            $config = (object) $conf->load('MIGRATED_APP_HISTORY', 'history');
+            if ($config->updated) {
+                CLI::logging("> This was previously updated.\n");
+                return;
+            }
+        }
+
+        $remove = ""
+                . "CONCAT( "
+                . "    SUBSTRING_INDEX(A.HISTORY_DATA, ':', 1), "
+                . "    ':', "
+                . "    CAST( "
+                . "        SUBSTRING( "
+                . "            SUBSTRING_INDEX(A.HISTORY_DATA, ':{', 1), "
+                . "             LOCATE(':', A.HISTORY_DATA)+1 "
+                . "        ) AS SIGNED "
+                . "    )-1, "
+                . "    SUBSTRING( "
+                . "        CONCAT( "
+                . "            SUBSTRING_INDEX(A.HISTORY_DATA, 's:19:\"DYN_CONTENT_HISTORY\";s:', 1), "
+                . "            SUBSTRING( "
+                . "                SUBSTRING( "
+                . "                    A.HISTORY_DATA, "
+                . "                    LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', A.HISTORY_DATA)+29 "
+                . "                ), "
+                . "                LOCATE( "
+                . "                    '\";', "
+                . "                    SUBSTRING( "
+                . "                        A.HISTORY_DATA, "
+                . "                        LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', A.HISTORY_DATA)+29 "
+                . "                    ) "
+                . "                )+2 "
+                . "            ) "
+                . "        ), "
+                . "        LOCATE(':{', A.HISTORY_DATA) "
+                . "    ) "
+                . ") ";
+
+        $select = ""
+                . "SELECT  "
+                . "A.HISTORY_DATE AS 'DATE', "
+                . "B.APP_NUMBER AS 'APP_NUMBER', "
+                . "A.DEL_INDEX AS 'DEL_INDEX', "
+                . "C.PRO_ID AS 'PRO_ID', "
+                . "D.TAS_ID AS 'TAS_ID', "
+                . "E.USR_ID AS 'USR_ID', "
+                . "IF( "
+                . "    A.OBJ_TYPE='DYNAFORM', "
+                . "    " . ChangeLog::DYNAFORM . ", "
+                . "    IF( "
+                . "        A.OBJ_TYPE='OUTPUT_DOCUMENT', "
+                . "        " . ChangeLog::OUTPUT_DOCUMENT . ", "
+                . "        IF( "
+                . "            A.OBJ_TYPE='INPUT_DOCUMENT', "
+                . "            " . ChangeLog::INPUT_DOCUMENT . ", "
+                . "            IF( "
+                . "                A.OBJ_TYPE='ASSIGN_TASK', "
+                . "                " . ChangeLog::TRIGGER . ", "
+                . "                IF( "
+                . "                    A.OBJ_TYPE='EXTERNAL', "
+                . "                    " . ChangeLog::EXTERNAL_STEP . ", "
+                . "                    0 "
+                . "                ) "
+                . "            ) "
+                . "        ) "
+                . "    ) "
+                . ") AS 'OBJECT_TYPE', "
+                . "IF( "
+                . "    F.DYN_ID IS NOT NULL, "
+                . "    F.DYN_ID, "
+                . "    IF( "
+                . "        G.OUT_DOC_ID IS NOT NULL, "
+                . "        G.OUT_DOC_ID, "
+                . "        IF( "
+                . "            H.INP_DOC_ID IS NOT NULL, "
+                . "            H.INP_DOC_ID, "
+                . "            0 "
+                . "        ) "
+                . "    ) "
+                . ") AS 'OBJECT_ID', "
+                . "IF( "
+                . "    A.DYN_UID='-1' OR A.DYN_UID='-2', "
+                . "    0,"
+                . "    A.DYN_UID "
+                . ") AS 'OBJECT_UID', "
+                . "IF( "
+                . "    A.DYN_UID='-1', "
+                . "    " . ChangeLog::BEFORE_ASSIGNMENT . ", "
+                . "    IF( "
+                . "        A.DYN_UID='-2', "
+                . "        " . ChangeLog::UNKNOW_STEP . ", "
+                . "        " . ChangeLog::UNKNOW_STEP . " "
+                . "    ) "
+                . ") AS 'EXECUTED_AT', "
+                . "" . ChangeLog::FromWeb . " AS 'SOURCE_ID', "
+                . "IF(LOCATE('DYN_CONTENT_HISTORY',A.HISTORY_DATA)>0 AND " . ($removedDynContentHistory ? 'true' : 'false') . "=true, " . $remove . ", A.HISTORY_DATA) AS 'DATA', "
+                . "IF(LOCATE('SYS_SKIN',B.APP_DATA)>0, SUBSTRING_INDEX(SUBSTRING(B.APP_DATA, LOCATE('SYS_SKIN',B.APP_DATA)+16),'\"',1), '') AS 'SKIN', "
+                . "IF(LOCATE('SYS_LANG',B.APP_DATA)>0, SUBSTRING(B.APP_DATA, LOCATE('SYS_LANG',B.APP_DATA)+15,2), '') AS 'LANGUAGE', "
+                . "1 AS ROW_MIGRATION "
+                . "FROM " . $this->dbName . ".APP_HISTORY AS A "
+                . "LEFT JOIN " . $this->dbName . ".APPLICATION AS B ON (B.APP_UID=A.APP_UID) "
+                . "LEFT JOIN " . $this->dbName . ".PROCESS AS C ON (C.PRO_UID=A.PRO_UID) "
+                . "LEFT JOIN " . $this->dbName . ".TASK AS D ON (D.TAS_UID=A.TAS_UID) "
+                . "LEFT JOIN " . $this->dbName . ".USERS AS E ON (E.USR_UID=A.USR_UID) "
+                . "LEFT JOIN " . $this->dbName . ".DYNAFORM AS F ON (F.DYN_UID=A.DYN_UID) "
+                . "LEFT JOIN " . $this->dbName . ".OUTPUT_DOCUMENT AS G ON (G.OUT_DOC_UID=A.DYN_UID) "
+                . "LEFT JOIN " . $this->dbName . ".INPUT_DOCUMENT AS H ON (H.INP_DOC_UID=A.DYN_UID) ";
+
+        $delete = ""
+                . "DELETE FROM " . $this->dbName . ".APP_DATA_CHANGE_LOG "
+                . "WHERE "
+                . "ROW_MIGRATION=1";
+
+        $insert = ""
+                . "INSERT INTO " . $this->dbName . ".APP_DATA_CHANGE_LOG ( "
+                . "    DATE, "
+                . "    APP_NUMBER, "
+                . "    DEL_INDEX, "
+                . "    PRO_ID, "
+                . "    TAS_ID, "
+                . "    USR_ID, "
+                . "    OBJECT_TYPE, "
+                . "    OBJECT_ID, "
+                . "    OBJECT_UID, "
+                . "    EXECUTED_AT, "
+                . "    SOURCE_ID, "
+                . "    DATA, "
+                . "    SKIN, "
+                . "    LANGUAGE, "
+                . "    ROW_MIGRATION "
+                . ") "
+                . $select;
+
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($delete);
+        CLI::logging("-> Table cleaning finished for " . $this->dbName . ".APP_DATA_CHANGE_LOG\n");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($insert);
+        CLI::logging("-> Completed migration in table " . $this->dbName . ".APP_DATA_CHANGE_LOG\n");
+
+        $conf->aConfig = ['updated' => true];
+        $conf->saveConfig('MIGRATED_APP_HISTORY', 'history');
+    }
+    /*----------------------------------********---------------------------------*/
 }
