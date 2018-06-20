@@ -322,6 +322,9 @@ define('LEAVE_CASE_WARNING', $config['leave_case_warning']);
 define('REDIRECT_TO_MOBILE', $config['redirect_to_mobile']);
 define('DISABLE_PHP_UPLOAD_EXECUTION', $config['disable_php_upload_execution']);
 define('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION', $config['disable_download_documents_session_validation']);
+define('LOGS_MAX_FILES', $config['logs_max_files']);
+define('LOGS_LOCATION', $config['logs_location']);
+define('LOGGING_LEVEL', $config['logging_level']);
 
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];

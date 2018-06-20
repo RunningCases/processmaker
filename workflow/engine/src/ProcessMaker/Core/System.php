@@ -61,7 +61,9 @@ class System
         'redirect_to_mobile' => 0,
         'disable_php_upload_execution' => 0,
         'disable_download_documents_session_validation' => 0,
-        'logs_max_files' => 60
+        'logs_max_files' => 60,
+        'logs_location' => '',
+        'logging_level' => 'INFO'
     );
 
     /**

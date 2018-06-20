@@ -11,6 +11,7 @@ use Symfony\Component\Finder\Finder;
 
 class AuditLog
 {
+    const READ_LOGGING_LEVEL = false;
     private $actions = [];
     private $columns;
     private $pageSizeDefault = 20;
@@ -293,7 +294,15 @@ class AuditLog
         $context['usrName'] = $this->userFullname;
         $context['action'] = $action;
         $context['description'] = $value;
-        Bootstrap::registerMonolog($action, 200, $action, $context, $context['workspace'], 'audit.log');
+        Bootstrap::registerMonolog(
+            $action,
+            200,
+            $action,
+            $context,
+            $context['workspace'],
+            'audit.log',
+            self::READ_LOGGING_LEVEL
+        );
     }
 
     /**
