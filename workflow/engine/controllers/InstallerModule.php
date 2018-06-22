@@ -13,6 +13,8 @@ include PATH_LANGUAGECONT . "translation." . SYS_LANG;
 
 class InstallerModule extends Controller
 {
+    const PHP_VERSION_MINIMUM_SUPPORTED = '5.6';
+    const PHP_VERSION_NOT_SUPPORTED = '7.2';
     public $path_config;
     public $path_languages;
     public $path_plugins;
@@ -206,7 +208,9 @@ class InstallerModule extends Controller
         $info->memory = new stdclass();
 
         $info->php->version = $phpVer;
-        $info->php->result = version_compare(phpversion(), '5.6', '>=');
+        $info->php->result = (
+            version_compare(phpversion(), self::PHP_VERSION_MINIMUM_SUPPORTED, '>=') &&
+            version_compare(phpversion(), self::PHP_VERSION_NOT_SUPPORTED, '<')) ? true : false;
 
         // MYSQL info and verification
         $info->mysql->result = false;
