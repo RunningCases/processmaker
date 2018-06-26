@@ -61,6 +61,7 @@ class EmailEvent
             $criteria->clearSelectColumns();
             $criteria->addSelectColumn(EmailServerPeer::MESS_UID);
             $criteria->addSelectColumn(EmailServerPeer::MESS_FROM_MAIL);
+            $criteria->addSelectColumn(EmailServerPeer::MESS_FROM_NAME);
             $criteria->addSelectColumn(EmailServerPeer::MESS_ACCOUNT);
             $criteria->addSelectColumn(EmailServerPeer::MESS_ENGINE);
             $criteria->addAsColumn('UID', 'MESS_UID');
@@ -71,11 +72,6 @@ class EmailEvent
                 $row = $result->getRow();
                 if (!empty($row['MESS_UID'])) {
                     $row['EMAIL'] = $row['MESS_ACCOUNT'];
-                    $row['MESS_LABEL'] = EmailServer::getMessLabel(
-                        $row['MESS_ENGINE'],
-                        $row['MESS_ACCOUNT'],
-                        $row['MESS_FROM_MAIL']
-                    );
                     $accounts[] = array_change_key_case($row, CASE_LOWER);
                 }
             }
@@ -107,14 +103,13 @@ class EmailEvent
             $row = $rsCriteria->getRow();
             $emailServer = new EmailServer();
             if ($row) {
-                $row['MESS_LABEL'] = "";
+                // We need to initialize these values in empty, in order to return always the same structure
+                $row['MESS_ENGINE'] = $row['MESS_ACCOUNT'] = $row['MESS_FROM_MAIL'] = '';
                 if (!empty($row['EMAIL_SERVER_UID'])) {
                     $emailServerData = $emailServer->getEmailServer($row['EMAIL_SERVER_UID'], true);
-                    $row['MESS_LABEL'] = EmailServer::getMessLabel(
-                        $emailServerData['MESS_ENGINE'], 
-                        $emailServerData['MESS_ACCOUNT'], 
-                        $emailServerData['MESS_FROM_MAIL']
-                    );
+                    $row['MESS_ENGINE'] = $emailServerData['MESS_ENGINE'];
+                    $row['MESS_ACCOUNT'] = $emailServerData['MESS_ACCOUNT'];
+                    $row['MESS_FROM_MAIL'] = $emailServerData['MESS_FROM_MAIL'];
                 }
                 $row = array_change_key_case($row, CASE_LOWER);
             }

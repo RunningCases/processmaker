@@ -1375,26 +1375,5 @@ class EmailServer
         }
     }
 
-    /**
-     * Define the value for MESS_LABEL
-     *
-     * @param string $engine, can be PHPMAILER|MAIL
-     * @param string $senderAccount, related to the MESS_ACCOUNT
-     * @param string $senderEmail, related to the MESS_FROM_MAIL
-     *
-     * @return string
-    */
-    public static function getMessLabel($engine = 'PHPMAILER', $senderAccount = '', $senderEmail = '')
-    {
-        $messLabel = $senderEmail;
-        if (empty($senderAccount) && $engine === 'MAIL') {
-            $senderAccount = 'Mail (PHP)';
-        }
-        if (empty($senderEmail)) {
-            $messLabel = $senderAccount;
-        }
-
-        return $messLabel;
-    }
 }
 
