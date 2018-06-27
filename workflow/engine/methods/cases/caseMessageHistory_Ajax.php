@@ -163,6 +163,7 @@ switch ($actionAjax) {
             $spool->create([
                 'msg_uid' => $data['MSG_UID'],
                 'app_uid' => $data['APP_UID'],
+                'app_number' => $data['APP_NUMBER'],
                 'del_index' => $data['DEL_INDEX'],
                 'app_msg_type' => $data['APP_MSG_TYPE'],
                 'app_msg_subject' => $data['APP_MSG_SUBJECT'],
