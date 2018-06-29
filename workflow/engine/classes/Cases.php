@@ -1356,7 +1356,7 @@ class Cases
      * @param array $previousTasks, optional array that serves to trace the task routes and avoid infinite loops.
      * @return array, information about the threads in the case
      */
-    public function searchOpenPreviousTasks($taskUid, $appUid, $previousTasks = array())
+    public function searchOpenPreviousTasks($taskUid, $appUid, &$previousTasks = array())
     {
         //In this array we are storing all open delegation rows.
         $threads = array();
@@ -1388,7 +1388,7 @@ class Cases
      * @param array $previousTasks
      * @return array $taskReviewed
      */
-    public function getReviewedTasksRecursive($taskUid, $appUid, $previousTasks)
+    public function getReviewedTasksRecursive($taskUid, $appUid, &$previousTasks)
     {
         $taskReviewed = array();
         $oCriteria = new Criteria('workflow');
