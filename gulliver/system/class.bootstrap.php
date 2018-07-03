@@ -2557,7 +2557,7 @@ class Bootstrap
         return $passwordHashConfig['current'];
     }
 
-    public function hashPassword($pass, $hashType = '', $includeHashType = false)
+    public static function hashPassword($pass, $hashType = '', $includeHashType = false)
     {
         if ($hashType == '') {
             $hashType = Bootstrap::getPasswordHashType();
