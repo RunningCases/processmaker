@@ -206,6 +206,7 @@ class AddonsManager extends BaseAddonsManager
 
         $url = $aux[0];
         $var = explode("&", $aux[1]);
+        $var[] = "pmVersion=" . System::getVersion();
 
         ///////
         $boundary = "---------------------" . substr(G::encryptOld(rand(0, 32000)), 0, 10);
