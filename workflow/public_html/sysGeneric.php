@@ -19,6 +19,11 @@ function transactionLog($transactionName)
         //Application base name
         newrelic_set_appname($baseName);
 
+        //Initialize Laravel app if is not booted
+        if (!app()->isBooted()) {
+            app()->make(Kernel::class)->bootstrap();
+            restore_error_handler();
+        }
 
         //Custom parameters
         if (!empty(config("system.workspace"))) {
