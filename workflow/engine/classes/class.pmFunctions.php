@@ -2763,7 +2763,7 @@ function PMFDeleteCase ($caseUid)
  * @return int | $result | Result of the cancelation | Returns 1 if the case is cancel successfully; otherwise, returns 0 if an error occurred.
  *
  */
-function PMFCancelCase ($caseUid, $delIndex, $userUid)
+function PMFCancelCase ($caseUid, $delIndex = null, $userUid = null)
 {
     $ws = new WsBase();
     $result = $ws->cancelCase($caseUid, $delIndex, $userUid);
