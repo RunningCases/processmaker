@@ -984,8 +984,6 @@ class Cases extends Api
      * @class AccessControl {@permission PM_CASES}
      * @param string $cas_uid {@min 1}{@max 32}
      * @throws Exception
-     *
-     * @param string $cas_uid {@min 1}{@max 32}
      */
     public function doDeleteCase($cas_uid)
     {
