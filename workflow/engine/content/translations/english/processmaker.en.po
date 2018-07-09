@@ -17934,6 +17934,18 @@ msgid "Every"
 msgstr "Every"
 
 # TRANSLATION
+# LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+#: LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+msgid "Mafe Translation Directory"
+msgstr "Mafe Translation Directory"
+
+# TRANSLATION
+# LABEL/ID_MAFE_TRANSLATION_NOT_WRITEABLE
+#: LABEL/ID_MAFE_TRANSLATION_NOT_WRITEABLE
+msgid "The mafe translation file is not writable. <br/>Please give write permission to file:"
+msgstr "The mafe translation file is not writable. <br/>Please give write permission to file:"
+
+# TRANSLATION
 # LABEL/ID_MAIL_SENT_SUCCESSFULLY
 #: LABEL/ID_MAIL_SENT_SUCCESSFULLY
 msgid "Your message has been sent successfully"

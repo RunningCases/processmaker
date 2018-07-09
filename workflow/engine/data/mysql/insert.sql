@@ -59826,6 +59826,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_ff4a008470319a22d9cf3d14af485977','en','grid', NOW()) ,
 ( 'LABEL','ID_MAFE_ffc1dca70df11105d22d9f427a9e260b','en','Edit Label', NOW()) ,
 ( 'LABEL','ID_MAFE_ffcf70e892b8ac3facbac0f88602396b','en','Every', NOW()) ,
+( 'LABEL','ID_MAFE_TRANSLATION_DIRECTORY','en','Mafe Translation Directory','2018-07-09') ,
+( 'LABEL','ID_MAFE_TRANSLATION_NOT_WRITEABLE','en','The mafe translation file is not writable. <br/>Please give write permission to file:','2018-07-09') ,
 ( 'LABEL','ID_MAIL_SENT_SUCCESSFULLY','en','Your message has been sent successfully','2014-01-15') ,
 ( 'LABEL','ID_MAIL_TEST_SUCCESS','en','Test message sent successfully','2014-01-15') ,
 ( 'LABEL','ID_MAIL_TO_NOT_VALID_ADDRESS','en','"Mail to" does not contain a valid email address format','2014-01-15') ,
