@@ -20,8 +20,8 @@ $callback = isset($_REQUEST["callback"]) ? $_REQUEST["callback"] : "stcCallback1
 $dir = isset($_REQUEST["dir"]) ? $_REQUEST["dir"] : "DESC";
 //This default value was defined in casesList.js
 $sort = isset($_REQUEST["sort"]) ? $_REQUEST["sort"] : "APP_NUMBER";
-$start = isset($_REQUEST["start"]) ? $_REQUEST["start"] : "0";
-$limit = isset($_REQUEST["limit"]) ? $_REQUEST["limit"] : "25";
+$start = !empty($_REQUEST["start"]) ? $_REQUEST["start"] : 0;
+$limit = !empty($_REQUEST["limit"]) ? $_REQUEST["limit"] : 25;
 $filter = isset($_REQUEST["filter"]) ? $_REQUEST["filter"] : "";
 $process = isset($_REQUEST["process"]) ? $_REQUEST["process"] : "";
 $category = isset($_REQUEST["category"]) ? $_REQUEST["category"] : "";

@@ -374,8 +374,8 @@ class Cases
         if ($sort === 'APP_CACHE_VIEW.APP_NUMBER') {
             $sort = "APPLICATION.APP_NUMBER";
         }
-        $start = isset($dataList["start"]) ? $dataList["start"] : "0";
-        $limit = isset($dataList["limit"]) ? $dataList["limit"] : "";
+        $start = !empty($dataList["start"]) ? $dataList["start"] : 0;
+        $limit = !empty($dataList["limit"]) ? $dataList["limit"] : 15;
         $process = isset($dataList["process"]) ? $dataList["process"] : "";
         $category = isset($dataList["category"]) ? $dataList["category"] : "";
         $status = isset($dataList["status"]) ? strtoupper($dataList["status"]) : "";
