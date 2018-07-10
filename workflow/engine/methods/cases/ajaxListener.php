@@ -36,6 +36,9 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession") {
         $tasUid = isset($_SESSION['TASK']) ? $_SESSION['TASK'] : '';
 
         $response = new stdclass();
+        $response->reassigncase = false;
+        $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
+
         $userAuthorization = [];
         if (!empty($proUid) && !empty($appUid)) {
             $cases = new BmCases();
@@ -58,8 +61,6 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession") {
                 $response->message = '';
             }
         }
-        $response->reassigncase = false;
-        $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
 
         print G::json_encode($response);
         die();
