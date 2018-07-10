@@ -4666,32 +4666,27 @@ class ProcessMap
     }
 
     /**
-     * get all the Active process
+     * Get all the active processes
      *
-     * SELECT PROCESS.PRO_UID AS UID, CONTENT.CON_VALUE AS VALUE FROM PROCESS, CONTENT
-     * WHERE (PROCESS.PRO_UID=CONTENT.CON_ID AND PROCESS.PRO_STATUS!='DISABLED' AND CONTENT.CON_CATEGORY='PRO_TITLE' AND CONTENT.CON_LANG='en')
-     * ORDER BY CONTENT.CON_VALUE
-     * ]]>
      */
     public function getAllProcesses()
     {
-        $aProcesses = array();
-        //$aProcesses [] = array ('PRO_UID' => 'char', 'PRO_TITLE' => 'char');
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->addSelectColumn(ProcessPeer::PRO_UID);
-        $oCriteria->add(ProcessPeer::PRO_STATUS, 'DISABLED', Criteria::NOT_EQUAL);
-        $oDataset = ProcessPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $processes = [];
 
-        $oDataset->next();
-        $oProcess = new Process();
-        while ($aRow = $oDataset->getRow()) {
-            $aProcess = $oProcess->load($aRow['PRO_UID']);
-            $aProcesses[] = array('value' => $aProcess['PRO_UID'], 'name' => $aProcess['PRO_TITLE'] );
-            $oDataset->next();
+        $criteria = new Criteria('workflow');
+        $criteria->addSelectColumn(ProcessPeer::PRO_UID);
+        $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $criteria->add(ProcessPeer::PRO_STATUS, 'DISABLED', Criteria::NOT_EQUAL);
+        $dataset = ProcessPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+
+        while ($row = $dataset->getRow()) {
+            $processes[] = ['value' => $row['PRO_UID'], 'name' => $row['PRO_TITLE']];
+            $dataset->next();
         }
-        //$oJSON = new Services_JSON();
-        return Bootstrap::json_encode($aProcesses); //$oJSON->encode( $aProcesses );
+
+        return Bootstrap::json_encode($processes);
     }
 
     /*
