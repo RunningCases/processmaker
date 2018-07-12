@@ -889,7 +889,7 @@ class WsBase
                 $cc,
                 $bcc,
                 '',
-                '',
+                $attachment,
                 'pending',
                 ($showMessage) ? 1 : 0,
                 $msgError,
