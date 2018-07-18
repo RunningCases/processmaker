@@ -125,7 +125,6 @@ class FixReferencePath
                     $pmTable->prepare();
                     $pmTable->preparePropelIniFile();
                     $pmTable->buildSchema();
-                    $pmTable->phingbuildModel();
                     $this->outVerboseln("* Regenerate classes for table: " . $row["ADD_TAB_NAME"]);
                 } catch (Exception $e) {
                     CLI::logging(CLI::error("Error:" . "Error in regenerate classes for table: " . $row["ADD_TAB_NAME"] . ". " . $e));
