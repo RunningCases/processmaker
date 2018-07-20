@@ -44,6 +44,23 @@ class Applications
 
         //Start the connection to database
         $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
+
+        //Sanitize input variables
+        $inputFilter = new InputFilter();
+        $userUid = $inputFilter->validateInput($userUid, 'int');
+        $start = $inputFilter->validateInput($start, 'int');
+        $limit = $inputFilter->validateInput($limit, 'int');
+        $search = $inputFilter->escapeUsingConnection($search, $con);
+        $process = $inputFilter->validateInput($process, 'int');
+        //$status doesn't require sanitization
+        $dir = in_array($dir, ['ASC', 'DESC']) ? $dir :'DESC';
+        $sort = $inputFilter->escapeUsingConnection($sort, $con);
+        $category = $inputFilter->escapeUsingConnection($category, $con);
+        $dateFrom = $inputFilter->escapeUsingConnection($dateFrom, $con);
+        $dateTo = $inputFilter->escapeUsingConnection($dateTo, $con);
+        $columnSearch = $inputFilter->escapeUsingConnection($columnSearch, $con);
+
+        //Start the transaction
         $con->begin();
         $stmt = $con->createStatement();
 
