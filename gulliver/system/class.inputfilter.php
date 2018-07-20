@@ -356,10 +356,24 @@ class InputFilter
      * @param String $source
      * @param Resource $connection - An open MySQL connection
      * @return String $source
+     * @todo We need to review this method, because the sended string is unescaped
      */
     public function escapeString($string, &$connection)
     {
         return mysqli_real_escape_string($connection, $string);
+    }
+
+    /**
+     * Escapes a string using a Propel connection
+     *
+     * @param string $string The string to escapes
+     * @param object $connection The connection object
+     *
+     * @return string
+     */
+    public function escapeUsingConnection($string, $connection)
+    {
+        return mysqli_real_escape_string($connection->getResource(), $string);
     }
 
     /**

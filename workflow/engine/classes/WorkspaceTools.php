@@ -342,12 +342,19 @@ class WorkspaceTools
         $this->migrateSingleton($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
-        
-        /*----------------------------------********---------------------------------*/
+
         $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
+        //Review if we need to remove the 'History of use' from APP_HISTORY
+        $start = microtime(true);
+        CLI::logging("> Clearing History of Use from APP_HISTORY table...\n");
+        $this->clearDynContentHistoryData(false, $keepDynContent);
+        $stop = microtime(true);
+        CLI::logging("<*>   Clearing History of Use from APP_HISTORY table took " . ($stop - $start) . " seconds.\n");
+
+        /*----------------------------------********---------------------------------*/
         $start = microtime(true);
         CLI::logging("> Migrating history data...\n");
-        $this->migrateAppHistoryToAppDataChangeLog(false, !$keepDynContent);
+        $this->migrateAppHistoryToAppDataChangeLog(false);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
         /*----------------------------------********---------------------------------*/
@@ -2067,11 +2074,18 @@ class WorkspaceTools
             //Updating generated class files for PM Tables
             passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
-            /*----------------------------------********---------------------------------*/
             $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
+            //Review if we need to remove the 'History of use' from APP_HISTORY
+            $start = microtime(true);
+            CLI::logging("> Clearing History of Use from APP_HISTORY table...\n");
+            $workspace->clearDynContentHistoryData(false, $keepDynContent);
+            $stop = microtime(true);
+            CLI::logging("<*>   Clearing History of Use from APP_HISTORY table took " . ($stop - $start) . " seconds.\n");
+
+            /*----------------------------------********---------------------------------*/
             $start = microtime(true);
             CLI::logging("> Migrating history data...\n");
-            $workspace->migrateAppHistoryToAppDataChangeLog(false, !$keepDynContent);
+            $workspace->migrateAppHistoryToAppDataChangeLog(false);
             $stop = microtime(true);
             CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
             /*----------------------------------********---------------------------------*/
@@ -4237,137 +4251,173 @@ class WorkspaceTools
             $this->setLastContentMigrateTable(true);
         }
     }
+    /**
+     * Remove the DYN_CONTENT_HISTORY from APP_HISTORY
+     *
+     * @param boolean $force
+     * @param boolean $keepDynContent
+     *
+     * @return void
+    */
+    public function clearDynContentHistoryData($force = false, $keepDynContent = false)
+    {
+        $this->initPropel(true);
+        $conf = new Configurations();
+        $exist = $conf->exists('CLEAN_DYN_CONTENT_HISTORY', 'history');
 
-    /*----------------------------------********---------------------------------*/    
+        if ($force === false && $exist === true) {
+            $config = (object)$conf->load('CLEAN_DYN_CONTENT_HISTORY', 'history');
+            if ($config->updated) {
+                CLI::logging("-> This was previously updated.\n");
+
+                return;
+            }
+        }
+        if ($force === false && $keepDynContent) {
+            CLI::logging("-> Keep DYN_CONTENT_HISTORY.\n");
+
+            return;
+        }
+        //We will to proceed to clean DYN_CONTENT_HISTORY
+        $query = "UPDATE APP_HISTORY SET HISTORY_DATA = IF(LOCATE('DYN_CONTENT_HISTORY',HISTORY_DATA)>0, CONCAT( "
+            . "    SUBSTRING_INDEX(HISTORY_DATA, ':', 1), "
+            . "    ':', "
+            . "    CAST( "
+            . "        SUBSTRING( "
+            . "            SUBSTRING_INDEX(HISTORY_DATA, ':{', 1), "
+            . "             LOCATE(':', HISTORY_DATA)+1 "
+            . "        ) AS SIGNED "
+            . "    )-1, "
+            . "    SUBSTRING( "
+            . "        CONCAT( "
+            . "            SUBSTRING_INDEX(HISTORY_DATA, 's:19:\"DYN_CONTENT_HISTORY\";s:', 1), "
+            . "            SUBSTRING( "
+            . "                SUBSTRING( "
+            . "                    HISTORY_DATA, "
+            . "                    LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', HISTORY_DATA)+29 "
+            . "                ), "
+            . "                LOCATE( "
+            . "                    '\";', "
+            . "                    SUBSTRING( "
+            . "                        HISTORY_DATA, "
+            . "                        LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', HISTORY_DATA)+29 "
+            . "                    ) "
+            . "                )+2 "
+            . "            ) "
+            . "        ), "
+            . "        LOCATE(':{', HISTORY_DATA) "
+            . "    ) "
+            . "),   HISTORY_DATA)";
+
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
+        CLI::logging("-> Table fixed for " . $this->dbName . ".APP_HISTORY\n");
+        $stmt = $con->createStatement();
+
+        $conf->aConfig = ['updated' => true];
+        $conf->saveConfig('CLEAN_DYN_CONTENT_HISTORY', 'history');
+
+    }
+
+    /*----------------------------------********---------------------------------*/
     /**
      * Migrate the contents of table APP_HISTORY to table APP_DATA_CHANGE_LOG.
      * 
      * @param boolean $force
-     * @param boolean $removedDynContentHistory
+     *
      * @return void
      */
-    public function migrateAppHistoryToAppDataChangeLog($force = false, $removedDynContentHistory = false)
+    public function migrateAppHistoryToAppDataChangeLog($force = false)
     {
         $this->initPropel(true);
 
         $conf = new Configurations();
         $exist = $conf->exists('MIGRATED_APP_HISTORY', 'history');
         if ($exist === true && $force === false) {
-            $config = (object) $conf->load('MIGRATED_APP_HISTORY', 'history');
+            $config = (object)$conf->load('MIGRATED_APP_HISTORY', 'history');
             if ($config->updated) {
-                CLI::logging("> This was previously updated.\n");
+                CLI::logging("-> This was previously updated.\n");
+
                 return;
             }
         }
 
-        $remove = ""
-                . "CONCAT( "
-                . "    SUBSTRING_INDEX(A.HISTORY_DATA, ':', 1), "
-                . "    ':', "
-                . "    CAST( "
-                . "        SUBSTRING( "
-                . "            SUBSTRING_INDEX(A.HISTORY_DATA, ':{', 1), "
-                . "             LOCATE(':', A.HISTORY_DATA)+1 "
-                . "        ) AS SIGNED "
-                . "    )-1, "
-                . "    SUBSTRING( "
-                . "        CONCAT( "
-                . "            SUBSTRING_INDEX(A.HISTORY_DATA, 's:19:\"DYN_CONTENT_HISTORY\";s:', 1), "
-                . "            SUBSTRING( "
-                . "                SUBSTRING( "
-                . "                    A.HISTORY_DATA, "
-                . "                    LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', A.HISTORY_DATA)+29 "
-                . "                ), "
-                . "                LOCATE( "
-                . "                    '\";', "
-                . "                    SUBSTRING( "
-                . "                        A.HISTORY_DATA, "
-                . "                        LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', A.HISTORY_DATA)+29 "
-                . "                    ) "
-                . "                )+2 "
-                . "            ) "
-                . "        ), "
-                . "        LOCATE(':{', A.HISTORY_DATA) "
-                . "    ) "
-                . ") ";
-
         $select = ""
-                . "SELECT  "
-                . "A.HISTORY_DATE AS 'DATE', "
-                . "B.APP_NUMBER AS 'APP_NUMBER', "
-                . "A.DEL_INDEX AS 'DEL_INDEX', "
-                . "C.PRO_ID AS 'PRO_ID', "
-                . "D.TAS_ID AS 'TAS_ID', "
-                . "E.USR_ID AS 'USR_ID', "
-                . "IF( "
-                . "    A.OBJ_TYPE='DYNAFORM', "
-                . "    " . ChangeLog::DYNAFORM . ", "
-                . "    IF( "
-                . "        A.OBJ_TYPE='OUTPUT_DOCUMENT', "
-                . "        " . ChangeLog::OUTPUT_DOCUMENT . ", "
-                . "        IF( "
-                . "            A.OBJ_TYPE='INPUT_DOCUMENT', "
-                . "            " . ChangeLog::INPUT_DOCUMENT . ", "
-                . "            IF( "
-                . "                A.OBJ_TYPE='ASSIGN_TASK', "
-                . "                " . ChangeLog::TRIGGER . ", "
-                . "                IF( "
-                . "                    A.OBJ_TYPE='EXTERNAL', "
-                . "                    " . ChangeLog::EXTERNAL_STEP . ", "
-                . "                    0 "
-                . "                ) "
-                . "            ) "
-                . "        ) "
-                . "    ) "
-                . ") AS 'OBJECT_TYPE', "
-                . "IF( "
-                . "    F.DYN_ID IS NOT NULL, "
-                . "    F.DYN_ID, "
-                . "    IF( "
-                . "        G.OUT_DOC_ID IS NOT NULL, "
-                . "        G.OUT_DOC_ID, "
-                . "        IF( "
-                . "            H.INP_DOC_ID IS NOT NULL, "
-                . "            H.INP_DOC_ID, "
-                . "            0 "
-                . "        ) "
-                . "    ) "
-                . ") AS 'OBJECT_ID', "
-                . "IF( "
-                . "    A.DYN_UID='-1' OR A.DYN_UID='-2', "
-                . "    0,"
-                . "    A.DYN_UID "
-                . ") AS 'OBJECT_UID', "
-                . "IF( "
-                . "    A.DYN_UID='-1', "
-                . "    " . ChangeLog::BEFORE_ASSIGNMENT . ", "
-                . "    IF( "
-                . "        A.DYN_UID='-2', "
-                . "        " . ChangeLog::UNKNOW_STEP . ", "
-                . "        " . ChangeLog::UNKNOW_STEP . " "
-                . "    ) "
-                . ") AS 'EXECUTED_AT', "
-                . "" . ChangeLog::FromWeb . " AS 'SOURCE_ID', "
-                . "IF(LOCATE('DYN_CONTENT_HISTORY',A.HISTORY_DATA)>0 AND " . ($removedDynContentHistory ? 'true' : 'false') . "=true, " . $remove . ", A.HISTORY_DATA) AS 'DATA', "
-                . "IF(LOCATE('SYS_SKIN',B.APP_DATA)>0, SUBSTRING_INDEX(SUBSTRING(B.APP_DATA, LOCATE('SYS_SKIN',B.APP_DATA)+16),'\"',1), '') AS 'SKIN', "
-                . "IF(LOCATE('SYS_LANG',B.APP_DATA)>0, SUBSTRING(B.APP_DATA, LOCATE('SYS_LANG',B.APP_DATA)+15,2), '') AS 'LANGUAGE', "
-                . "1 AS ROW_MIGRATION "
-                . "FROM " . $this->dbName . ".APP_HISTORY AS A "
-                . "LEFT JOIN " . $this->dbName . ".APPLICATION AS B ON (B.APP_UID=A.APP_UID) "
-                . "LEFT JOIN " . $this->dbName . ".PROCESS AS C ON (C.PRO_UID=A.PRO_UID) "
-                . "LEFT JOIN " . $this->dbName . ".TASK AS D ON (D.TAS_UID=A.TAS_UID) "
-                . "LEFT JOIN " . $this->dbName . ".USERS AS E ON (E.USR_UID=A.USR_UID) "
-                . "LEFT JOIN " . $this->dbName . ".DYNAFORM AS F ON (F.DYN_UID=A.DYN_UID) "
-                . "LEFT JOIN " . $this->dbName . ".OUTPUT_DOCUMENT AS G ON (G.OUT_DOC_UID=A.DYN_UID) "
-                . "LEFT JOIN " . $this->dbName . ".INPUT_DOCUMENT AS H ON (H.INP_DOC_UID=A.DYN_UID) ";
+            . "SELECT  "
+            . "A.HISTORY_DATE AS 'DATE', "
+            . "B.APP_NUMBER AS 'APP_NUMBER', "
+            . "A.DEL_INDEX AS 'DEL_INDEX', "
+            . "C.PRO_ID AS 'PRO_ID', "
+            . "D.TAS_ID AS 'TAS_ID', "
+            . "E.USR_ID AS 'USR_ID', "
+            . "IF( "
+            . "    A.OBJ_TYPE='DYNAFORM', "
+            . "    " . ChangeLog::DYNAFORM . ", "
+            . "    IF( "
+            . "        A.OBJ_TYPE='OUTPUT_DOCUMENT', "
+            . "        " . ChangeLog::OUTPUT_DOCUMENT . ", "
+            . "        IF( "
+            . "            A.OBJ_TYPE='INPUT_DOCUMENT', "
+            . "            " . ChangeLog::INPUT_DOCUMENT . ", "
+            . "            IF( "
+            . "                A.OBJ_TYPE='ASSIGN_TASK', "
+            . "                " . ChangeLog::TRIGGER . ", "
+            . "                IF( "
+            . "                    A.OBJ_TYPE='EXTERNAL', "
+            . "                    " . ChangeLog::EXTERNAL_STEP . ", "
+            . "                    0 "
+            . "                ) "
+            . "            ) "
+            . "        ) "
+            . "    ) "
+            . ") AS 'OBJECT_TYPE', "
+            . "IF( "
+            . "    F.DYN_ID IS NOT NULL, "
+            . "    F.DYN_ID, "
+            . "    IF( "
+            . "        G.OUT_DOC_ID IS NOT NULL, "
+            . "        G.OUT_DOC_ID, "
+            . "        IF( "
+            . "            H.INP_DOC_ID IS NOT NULL, "
+            . "            H.INP_DOC_ID, "
+            . "            0 "
+            . "        ) "
+            . "    ) "
+            . ") AS 'OBJECT_ID', "
+            . "IF( "
+            . "    A.DYN_UID='-1' OR A.DYN_UID='-2', "
+            . "    0,"
+            . "    A.DYN_UID "
+            . ") AS 'OBJECT_UID', "
+            . "IF( "
+            . "    A.DYN_UID='-1', "
+            . "    " . ChangeLog::BEFORE_ASSIGNMENT . ", "
+            . "    IF( "
+            . "        A.DYN_UID='-2', "
+            . "        " . ChangeLog::UNKNOW_STEP . ", "
+            . "        " . ChangeLog::UNKNOW_STEP . " "
+            . "    ) "
+            . ") AS 'EXECUTED_AT', "
+            . "" . ChangeLog::FromWeb . " AS 'SOURCE_ID', "
+            . "A.HISTORY_DATA AS 'DATA', "
+            . "IF(LOCATE('SYS_SKIN',B.APP_DATA)>0, SUBSTRING_INDEX(SUBSTRING(B.APP_DATA, LOCATE('SYS_SKIN',B.APP_DATA)+16),'\"',1), '') AS 'SKIN', "
+            . "IF(LOCATE('SYS_LANG',B.APP_DATA)>0, SUBSTRING(B.APP_DATA, LOCATE('SYS_LANG',B.APP_DATA)+15,2), '') AS 'LANGUAGE', "
+            . "1 AS ROW_MIGRATION "
+            . "FROM " . $this->dbName . ".APP_HISTORY AS A "
+            . "LEFT JOIN " . $this->dbName . ".APPLICATION AS B ON (B.APP_UID=A.APP_UID) "
+            . "LEFT JOIN " . $this->dbName . ".PROCESS AS C ON (C.PRO_UID=A.PRO_UID) "
+            . "LEFT JOIN " . $this->dbName . ".TASK AS D ON (D.TAS_UID=A.TAS_UID) "
+            . "LEFT JOIN " . $this->dbName . ".USERS AS E ON (E.USR_UID=A.USR_UID) "
+            . "LEFT JOIN " . $this->dbName . ".DYNAFORM AS F ON (F.DYN_UID=A.DYN_UID) "
+            . "LEFT JOIN " . $this->dbName . ".OUTPUT_DOCUMENT AS G ON (G.OUT_DOC_UID=A.DYN_UID) "
+            . "LEFT JOIN " . $this->dbName . ".INPUT_DOCUMENT AS H ON (H.INP_DOC_UID=A.DYN_UID) ";
 
-        $delete = ""
-                . "DELETE FROM " . $this->dbName . ".APP_DATA_CHANGE_LOG "
+        $delete = "DELETE FROM " . $this->dbName . ".APP_DATA_CHANGE_LOG "
                 . "WHERE "
                 . "ROW_MIGRATION=1";
 
-        $insert = ""
-                . "INSERT INTO " . $this->dbName . ".APP_DATA_CHANGE_LOG ( "
+        $insert = "INSERT INTO " . $this->dbName . ".APP_DATA_CHANGE_LOG ( "
                 . "    DATE, "
                 . "    APP_NUMBER, "
                 . "    DEL_INDEX, "
