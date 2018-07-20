@@ -51,12 +51,6 @@ class PmDynaform
         if (is_array($this->fields) && !isset($this->fields["APP_UID"])) {
             $this->fields["APP_UID"] = null;
         }
-        if (isset($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"])) {
-            $decode = base64_decode($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"], true);
-            if ($decode !== false) {
-                $this->record["DYN_CONTENT"] = $decode;
-            }
-        }
 
         //todo: compatibility checkbox
         if ($this->record !== null && isset($this->record["DYN_CONTENT"]) && $this->record["DYN_CONTENT"] !== "") {

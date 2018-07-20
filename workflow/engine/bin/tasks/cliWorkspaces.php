@@ -50,9 +50,6 @@ CLI::taskOpt("workspace", "Specify which workspace to restore if multiple worksp
         Ex: -wworkflow.", "w:", "workspace=");
 CLI::taskOpt("lang", "Specify the language which will be used to rebuild the case cache list. If this option isn't included, then 'en' (English) will be used by default.", "l:", "lang=");
 CLI::taskOpt("port", "Specify the port number used by MySQL. If not specified, then the port 3306 will be used by default.", "p:");
-/*----------------------------------********---------------------------------*/
-CLI::taskOpt('keep_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --keep_dyn_content", 'd', 'keep_dyn_content');
-/*----------------------------------********---------------------------------*/
 CLI::taskRun("run_workspace_restore");
 
 CLI::taskName('cacheview-repair');
@@ -356,8 +353,18 @@ EOT
 );
 CLI::taskArg('workspace');
 CLI::taskRun('migrate_history_data');
-CLI::taskOpt('keep_dyn_content', "Include the DYN_CONTENT_HISTORY value. Ex: --keep_dyn_content", 'i', 'keep_dyn_content');
 /*----------------------------------********---------------------------------*/
+
+/**
+ * Remove the DYN_CONTENT_HISTORY
+ */
+CLI::taskName('clear-dyn-content-history-data');
+CLI::taskDescription(<<<EOT
+    Clear History of Use data from APP_HISTORY table
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun("run_clear_dyn_content_history_data");
 
 /**
  * Function run_info
@@ -1300,19 +1307,6 @@ function regenerate_pmtable_classes($args, $opts)
  */
 function migrate_history_data($args, $opts)
 {
-    foreach ($args as $key => $value) {
-        if ($args[$key] === '--keep_dyn_content' || $args[$key] === '-i') {
-            unset($args[$key]);
-            $opts['keep_dyn_content'] = '';
-        }
-    }
-    $option = '';
-    $removedDynContentHistory = true;
-    $exist = array_key_exists('keep_dyn_content', $opts);
-    if ($exist) {
-        $removedDynContentHistory = false;
-        $option = '--keep_dyn_content';
-    }
     if (count($args) === 1) {
         $start = microtime(true);
         CLI::logging("> Migrating history data...\n");
@@ -1320,15 +1314,37 @@ function migrate_history_data($args, $opts)
         Bootstrap::setConstantsRelatedWs($args[0]);
 
         $workspaceTools = new WorkspaceTools($args[0]);
-        $workspaceTools->migrateAppHistoryToAppDataChangeLog(true, $removedDynContentHistory);
+        $workspaceTools->migrateAppHistoryToAppDataChangeLog(true);
 
         $stop = microtime(true);
         CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru(PHP_BINARY . ' processmaker migrate-history-data ' . $workspace->name . ' ' . $option);
+            passthru(PHP_BINARY . ' processmaker migrate-history-data ' . $workspace->name);
         }
     }
 }
 /*----------------------------------********---------------------------------*/
+
+/**
+ * Will be clean the History of use from the table
+ * Will be remove the DYN_CONTENT_HISTORY from APP_HISTORY
+ *
+ * @param array $args
+ * @param array $opts
+ *
+ * @return void
+*/
+function run_clear_dyn_content_history_data($args, $opts)
+{
+    $workspaces = get_workspaces_from_args($args);
+    $start = microtime(true);
+    CLI::logging("> Cleaning history data from APP_HISTORY...\n");
+    foreach ($workspaces as $workspace) {
+        CLI::logging('Remove history of use: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        $workspace->clearDynContentHistoryData(true);
+    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Cleaning history data from APP_HISTORY process took " . ($stop - $start) . " seconds.\n");
+}

@@ -898,7 +898,6 @@ class Cases
                     $appHistory = new AppHistory();
                     $aFieldsHistory = $Fields;
                     $appDataWithoutDynContentHistory = serialize($FieldsDifference);
-                    $FieldsDifference['DYN_CONTENT_HISTORY'] = base64_encode($currentDynaform["DYN_CONTENT"]);
                     $aFieldsHistory['APP_DATA'] = serialize($FieldsDifference);
                     $appHistory->insertHistory($aFieldsHistory);
                     
