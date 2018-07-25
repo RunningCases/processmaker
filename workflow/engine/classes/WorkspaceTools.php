@@ -1,9 +1,14 @@
 <?php
 
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\System;
-use ProcessMaker\Util\FixReferencePath;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
+use ProcessMaker\Util\FixReferencePath;
 
 /**
  * class workspaceTools.
@@ -211,15 +216,15 @@ class WorkspaceTools
     /**
      * Upgrade this workspace to the latest system version
      *
-     * @param bool   $buildCacheView
+     * @param bool $buildCacheView
      * @param string $workSpace
-     * @param bool   $onedb
+     * @param bool $onedb
      * @param string $lang
-     * @param array  $arrayOptTranslation
+     * @param array $arrayOptTranslation
      *
      * @return void
      */
-    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
+    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null, $optionMigrateHistoryData = [])
     {
         if ($workSpace === null) {
             $workSpace = config("system.workspace");
@@ -287,6 +292,12 @@ class WorkspaceTools
         $stop = microtime(true);
         CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
+        $start = microtime(true);
+        CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
+        $this->migratePopulateIndexingACV($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+
         /*----------------------------------********---------------------------------*/
         $start = microtime(true);
         CLI::logging("> Migrate new lists...\n");
@@ -315,12 +326,6 @@ class WorkspaceTools
         CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
-        CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
-        $this->migratePopulateIndexingACV($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
-        
-        $start = microtime(true);
         CLI::logging("> Updating rows in Web Entry table for classic processes...\n");
         $this->updatingWebEntryClassicModel($workSpace);
         $stop = microtime(true);
@@ -337,6 +342,28 @@ class WorkspaceTools
         $this->migrateSingleton($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
+
+        $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
+        //Review if we need to remove the 'History of use' from APP_HISTORY
+        $start = microtime(true);
+        CLI::logging("> Clearing History of Use from APP_HISTORY table...\n");
+        $this->clearDynContentHistoryData(false, $keepDynContent);
+        $stop = microtime(true);
+        CLI::logging("<*>   Clearing History of Use from APP_HISTORY table took " . ($stop - $start) . " seconds.\n");
+
+        /*----------------------------------********---------------------------------*/
+        $start = microtime(true);
+        CLI::logging("> Migrating history data...\n");
+        $this->migrateAppHistoryToAppDataChangeLog(false);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+        /*----------------------------------********---------------------------------*/
+
+        $start = microtime(true);
+        CLI::logging("> Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
+        $this->upgradeSelfServiceData();
+        $stop = microtime(true);
+        CLI::logging("<*>   Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -392,7 +419,7 @@ class WorkspaceTools
          * ((define('(<key>)2', ')1 (<value>)3 (');)4 )0
          */
         preg_match_all($this->dbInfoRegExp, $sDbFile, $matches, PREG_SET_ORDER);
-        $values = array();
+        $values = [];
         foreach ($matches as $match) {
             $values[$match['key']] = $match['value'];
         }
@@ -487,7 +514,7 @@ class WorkspaceTools
         }
         $this->newHost = $newHost;
         $this->resetDBNames = $resetDBNames;
-        $this->resetDBDiff = array();
+        $this->resetDBDiff = [];
         $this->onedb = $onedb;
         $this->unify = $unify;
         if ($resetDBNames) {
@@ -645,13 +672,12 @@ class WorkspaceTools
             $regenerateContent = new Content();
             $regenerateContent->regenerateContent($arrayLang, $workspace);
         }
-
     }
 
     /**
      * Upgrade this workspace translations from all avaliable languages.
      *
-     * @param bool $flagXml  Update XML
+     * @param bool $flagXml Update XML
      * @param bool $flagMafe Update MAFE
      *
      * @return void
@@ -693,7 +719,9 @@ class WorkspaceTools
         $criteriaSelect = new Criteria("workflow");
         $criteriaSelect->add(
             $criteriaSelect->getNewCriterion(ContentPeer::CON_ID, '%' . "'" . '%', Criteria::LIKE)->addOr(
-                $criteriaSelect->getNewCriterion(ContentPeer::CON_ID, '%' . '"' . '%', Criteria::LIKE)));
+                $criteriaSelect->getNewCriterion(ContentPeer::CON_ID, '%' . '"' . '%', Criteria::LIKE)
+            )
+        );
 
         BasePeer::doDelete($criteriaSelect, Propel::getConnection("workflow"));
     }
@@ -750,55 +778,51 @@ class WorkspaceTools
      */
     public function getSchema($rbac = false)
     {
-        $oDataBase = $this->getDatabase($rbac);
+        $database = $this->getDatabase($rbac);
 
-        $aOldSchema = array();
+        $oldSchema = [];
 
         try {
-            $oDataBase->iFetchType = MYSQL_NUM;
-            $oDataset1 = $oDataBase->executeQuery($oDataBase->generateShowTablesSQL());
+            $database->iFetchType = MYSQLI_NUM;
+            $result = $database->executeQuery($database->generateShowTablesSQL());
         } catch (Exception $e) {
-            $oDataBase->logQuery($e->getmessage());
+            $database->logQuery($e->getmessage());
             return null;
         }
 
         //going thru all tables in current WF_ database
-        while ($aRow1 = $oDataBase->getRegistry($oDataset1)) {
-            $aPrimaryKeys = array();
-            $sTable = strtoupper($aRow1[0]);
+        foreach ($result as $table) {
+            $table = strtoupper($table);
 
             //get description of each table, ( column and primary keys )
-            //$oDataset2 = $oDataBase->executeQuery( $oDataBase->generateDescTableSQL($aRow1[0]) );
-            $oDataset2 = $oDataBase->executeQuery($oDataBase->generateDescTableSQL($sTable));
-            $aOldSchema[$sTable] = array();
-            $oDataBase->iFetchType = MYSQL_ASSOC;
-            while ($aRow2 = $oDataBase->getRegistry($oDataset2)) {
-                $aOldSchema[$sTable][$aRow2['Field']]['Field'] = $aRow2['Field'];
-                $aOldSchema[$sTable][$aRow2['Field']]['Type'] = $aRow2['Type'];
-                $aOldSchema[$sTable][$aRow2['Field']]['Null'] = $aRow2['Null'];
-                $aOldSchema[$sTable][$aRow2['Field']]['Default'] = $aRow2['Default'];
+            $database->iFetchType = MYSQLI_ASSOC;
+            $description = $database->executeQuery($database->generateDescTableSQL($table));
+            $oldSchema[$table] = [];
+            foreach ($description as $field) {
+                $oldSchema[$table][$field['Field']]['Field'] = $field['Field'];
+                $oldSchema[$table][$field['Field']]['Type'] = $field['Type'];
+                $oldSchema[$table][$field['Field']]['Null'] = $field['Null'];
+                $oldSchema[$table][$field['Field']]['Default'] = $field['Default'];
             }
 
             //get indexes of each table  SHOW INDEX FROM `ADDITIONAL_TABLES`;   -- WHERE Key_name <> 'PRIMARY'
-            $oDataset2 = $oDataBase->executeQuery($oDataBase->generateTableIndexSQL($aRow1[0]));
-            $oDataBase->iFetchType = MYSQL_ASSOC;
-            while ($aRow2 = $oDataBase->getRegistry($oDataset2)) {
-                if (!isset($aOldSchema[$sTable]['INDEXES'])) {
-                    $aOldSchema[$sTable]['INDEXES'] = array();
+            $description = $database->executeQuery($database->generateTableIndexSQL($table));
+            foreach ($description as $field) {
+                if (!isset($oldSchema[$table]['INDEXES'])) {
+                    $oldSchema[$table]['INDEXES'] = [];
                 }
-                if (!isset($aOldSchema[$sTable]['INDEXES'][$aRow2['Key_name']])) {
-                    $aOldSchema[$sTable]['INDEXES'][$aRow2['Key_name']] = array();
+                if (!isset($oldSchema[$table]['INDEXES'][$field['Key_name']])) {
+                    $oldSchema[$table]['INDEXES'][$field['Key_name']] = [];
                 }
-                $aOldSchema[$sTable]['INDEXES'][$aRow2['Key_name']][] = $aRow2['Column_name'];
+                $oldSchema[$table]['INDEXES'][$field['Key_name']][] = $field['Column_name'];
             }
 
-            $oDataBase->iFetchType = MYSQL_NUM; //this line is neccesary because the next fetch needs to be with MYSQL_NUM
         }
         //finally return the array with old schema obtained from the Database
-        if (count($aOldSchema) == 0) {
-            $aOldSchema = null;
+        if (count($oldSchema) === 0) {
+            $oldSchema = null;
         }
-        return $aOldSchema;
+        return $oldSchema;
     }
 
     /**
@@ -868,7 +892,6 @@ class WorkspaceTools
         $res = $appCache->updateAppDelegationDelLastIndex($lang, $flagRecreate);
 
 
-
         CLI::logging("-> Creating triggers\n");
 
         //now check if we have the triggers installed
@@ -929,10 +952,10 @@ class WorkspaceTools
             return;
         }
 
-        $directory = array();
+        $directory = [];
         $blackHoleDir = G::getBlackHoleDir();
         $directory = glob(PATH_DOCUMENT . "*", GLOB_ONLYDIR);
-        $dirslength = sizeof($directory);
+        $dirslength = count($directory);
 
         if (!@chdir(PATH_DOCUMENT)) {
             CLI::logging(CLI::error("Cannot use Document directory. The upgrade must be done as root.\n"));
@@ -942,7 +965,7 @@ class WorkspaceTools
         //Start migration
         for ($index = 0; $index < $dirslength; $index++) {
             $depthdirlevel = explode(DIRECTORY_SEPARATOR, $directory[$index]);
-            $lastlength = sizeof($depthdirlevel);
+            $lastlength = count($depthdirlevel);
             $UIdDir = $depthdirlevel[$lastlength - 1];
             $lenDir = strlen($UIdDir);
 
@@ -972,13 +995,13 @@ class WorkspaceTools
         //Start '0' directory migration
         $black = PATH_DOCUMENT . $blackHoleDir . DIRECTORY_SEPARATOR;
         if (is_dir($black)) {
-            $newpattern = array();
+            $newpattern = [];
             $file = glob($black . '*.*'); //files only
             $dirlen = count($file);
 
             for ($index = 0; $index < $dirlen; $index++) {
                 $levelfile = explode(DIRECTORY_SEPARATOR, $file[$index]);
-                $lastlevel = sizeof($levelfile);
+                $lastlevel = count($levelfile);
                 $goalFile = $levelfile[$lastlevel - 1];
                 $newpattern = G::getPathFromFileUIDPlain($blackHoleDir, $goalFile);
                 CLI::logging("Migrating $blackHoleDir file: $goalFile\n");
@@ -1059,7 +1082,7 @@ class WorkspaceTools
 
         if (!$rsCriteria->next()) {
             //Insert the first record
-            $arrayData = array();
+            $arrayData = [];
 
             $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
 
@@ -1070,38 +1093,38 @@ class WorkspaceTools
 
                 switch ($emailConfiguration["MESS_ENGINE"]) {
                     case "PHPMAILER":
-                        $arrayData["MESS_SERVER"]              = $emailConfiguration["MESS_SERVER"];
-                        $arrayData["MESS_PORT"]                = (int)($emailConfiguration["MESS_PORT"]);
-                        $arrayData["MESS_RAUTH"]               = (is_numeric($emailConfiguration["MESS_RAUTH"]))? (int)($emailConfiguration["MESS_RAUTH"]) : (($emailConfiguration["MESS_RAUTH"] . "" == "true")? 1 : 0);
-                        $arrayData["MESS_ACCOUNT"]             = $emailConfiguration["MESS_ACCOUNT"];
-                        $arrayData["MESS_PASSWORD"]            = $emailConfiguration["MESS_PASSWORD"];
-                        $arrayData["MESS_FROM_MAIL"]           = (isset($emailConfiguration["MESS_FROM_MAIL"]))? $emailConfiguration["MESS_FROM_MAIL"] : "";
-                        $arrayData["MESS_FROM_NAME"]           = (isset($emailConfiguration["MESS_FROM_NAME"]))? $emailConfiguration["MESS_FROM_NAME"] : "";
-                        $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
-                        $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (isset($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]) && ($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "true" || $emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "1"))? 1 : 0;
-                        $arrayData["MAIL_TO"]                  = isset($emailConfiguration["MAIL_TO"]) ? $emailConfiguration["MAIL_TO"] : '';
-                        $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
+                        $arrayData["MESS_SERVER"] = $emailConfiguration["MESS_SERVER"];
+                        $arrayData["MESS_PORT"] = (int)($emailConfiguration["MESS_PORT"]);
+                        $arrayData["MESS_RAUTH"] = (is_numeric($emailConfiguration["MESS_RAUTH"])) ? (int)($emailConfiguration["MESS_RAUTH"]) : (($emailConfiguration["MESS_RAUTH"] . "" == "true") ? 1 : 0);
+                        $arrayData["MESS_ACCOUNT"] = $emailConfiguration["MESS_ACCOUNT"];
+                        $arrayData["MESS_PASSWORD"] = $emailConfiguration["MESS_PASSWORD"];
+                        $arrayData["MESS_FROM_MAIL"] = (isset($emailConfiguration["MESS_FROM_MAIL"])) ? $emailConfiguration["MESS_FROM_MAIL"] : "";
+                        $arrayData["MESS_FROM_NAME"] = (isset($emailConfiguration["MESS_FROM_NAME"])) ? $emailConfiguration["MESS_FROM_NAME"] : "";
+                        $arrayData["SMTPSECURE"] = $emailConfiguration["SMTPSecure"];
+                        $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (isset($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]) && ($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "true" || $emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "1")) ? 1 : 0;
+                        $arrayData["MAIL_TO"] = isset($emailConfiguration["MAIL_TO"]) ? $emailConfiguration["MAIL_TO"] : '';
+                        $arrayData["MESS_DEFAULT"] = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1") ? 1 : 0;
                         break;
                     case "MAIL":
-                        $arrayData["MESS_SERVER"]              = "";
-                        $arrayData["MESS_FROM_MAIL"]           = (isset($emailConfiguration["MESS_FROM_MAIL"]))? $emailConfiguration["MESS_FROM_MAIL"] : "";
-                        $arrayData["MESS_FROM_NAME"]           = (isset($emailConfiguration["MESS_FROM_NAME"]))? $emailConfiguration["MESS_FROM_NAME"] : "";
-                        $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (isset($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]) && ($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "true" || $emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "1"))? 1 : 0;
-                        $arrayData["MESS_ACCOUNT"]             = "";
-                        $arrayData["MESS_PASSWORD"]            = "";
-                        $arrayData["MAIL_TO"]                  = (isset($emailConfiguration["MAIL_TO"]))? $emailConfiguration["MAIL_TO"] : "";
-                        $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
+                        $arrayData["MESS_SERVER"] = "";
+                        $arrayData["MESS_FROM_MAIL"] = (isset($emailConfiguration["MESS_FROM_MAIL"])) ? $emailConfiguration["MESS_FROM_MAIL"] : "";
+                        $arrayData["MESS_FROM_NAME"] = (isset($emailConfiguration["MESS_FROM_NAME"])) ? $emailConfiguration["MESS_FROM_NAME"] : "";
+                        $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (isset($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]) && ($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "true" || $emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "1")) ? 1 : 0;
+                        $arrayData["MESS_ACCOUNT"] = "";
+                        $arrayData["MESS_PASSWORD"] = "";
+                        $arrayData["MAIL_TO"] = (isset($emailConfiguration["MAIL_TO"])) ? $emailConfiguration["MAIL_TO"] : "";
+                        $arrayData["MESS_DEFAULT"] = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1") ? 1 : 0;
                         break;
                 }
 
                 $arrayData = $emailSever->create($arrayData);
             } else {
-                $arrayData["MESS_ENGINE"]   = "MAIL";
-                $arrayData["MESS_SERVER"]   = "";
-                $arrayData["MESS_ACCOUNT"]  = "";
+                $arrayData["MESS_ENGINE"] = "MAIL";
+                $arrayData["MESS_SERVER"] = "";
+                $arrayData["MESS_ACCOUNT"] = "";
                 $arrayData["MESS_PASSWORD"] = "";
-                $arrayData["MAIL_TO"]       = "";
-                $arrayData["MESS_DEFAULT"]  = 1;
+                $arrayData["MAIL_TO"] = "";
+                $arrayData["MESS_DEFAULT"] = 1;
 
                 $arrayData = $emailSever->create2($arrayData);
             }
@@ -1116,8 +1139,8 @@ class WorkspaceTools
     {
         switch ($this->dbAdapter) {
             case 'mysql':
-                $this->assoc = MYSQL_ASSOC;
-                $this->num = MYSQL_NUM;
+                $this->assoc = MYSQLI_ASSOC;
+                $this->num = MYSQLI_NUM;
                 break;
             case 'sqlsrv':
                 $this->assoc = SQLSRV_FETCH_ASSOC;
@@ -1154,14 +1177,14 @@ class WorkspaceTools
         $this->setFormatRows();
 
         $workspaceSchema = $this->getSchema($rbac);
-        $oDataBase = $this->getDatabase($rbac);
+        $database = $this->getDatabase($rbac);
 
         if (!$onedb) {
             if ($rbac) {
                 $rename = System::verifyRbacSchema($workspaceSchema);
                 if (count($rename) > 0) {
                     foreach ($rename as $tableName) {
-                        $oDataBase->executeQuery($oDataBase->generateRenameTableSQL($tableName));
+                        $database->executeQuery($database->generateRenameTableSQL($tableName));
                     }
                 }
             }
@@ -1179,24 +1202,24 @@ class WorkspaceTools
             if ($changed) {
                 return $changes;
             } else {
-                CLI::logging("-> Nothing to change in the data base structure of " . (($rbac == true)?"RBAC":"WORKFLOW") . "\n");
+                CLI::logging("-> Nothing to change in the data base structure of " . (($rbac == true) ? "RBAC" : "WORKFLOW") . "\n");
                 return $changed;
             }
         }
 
-        $oDataBase->iFetchType = $this->num;
+        $database->iFetchType = $this->num;
 
-        $oDataBase->logQuery(count($changes));
+        $database->logQuery(count($changes));
 
         if (!empty($changes['tablesToAdd'])) {
             CLI::logging("-> " . count($changes['tablesToAdd']) . " tables to add\n");
         }
 
         foreach ($changes['tablesToAdd'] as $sTable => $aColumns) {
-            $oDataBase->executeQuery($oDataBase->generateCreateTableSQL($sTable, $aColumns));
+            $database->executeQuery($database->generateCreateTableSQL($sTable, $aColumns));
             if (isset($changes['tablesToAdd'][$sTable]['INDEXES'])) {
                 foreach ($changes['tablesToAdd'][$sTable]['INDEXES'] as $indexName => $aIndex) {
-                    $oDataBase->executeQuery($oDataBase->generateAddKeysSQL($sTable, $indexName, $aIndex));
+                    $database->executeQuery($database->generateAddKeysSQL($sTable, $indexName, $aIndex));
                 }
             }
         }
@@ -1210,17 +1233,17 @@ class WorkspaceTools
                 foreach ($aAction as $sColumn => $vData) {
                     switch ($sAction) {
                         case 'DROP':
-                            $oDataBase->executeQuery($oDataBase->generateDropColumnSQL($sTable, $vData));
+                            $database->executeQuery($database->generateDropColumnSQL($sTable, $vData));
                             break;
                         case 'ADD':
-                            if ($oDataBase->checkPatchHor1787($sTable, $sColumn, $vData)) {
-                                $oDataBase->executeQuery($oDataBase->generateCheckAddColumnSQL($sTable, $sColumn, $vData));
-                                $oDataBase->executeQuery($oDataBase->deleteAllIndexesIntable($sTable, $sColumn, $vData));
+                            if ($database->checkPatchHor1787($sTable, $sColumn, $vData)) {
+                                $database->executeQuery($database->generateCheckAddColumnSQL($sTable, $sColumn, $vData));
+                                $database->executeQuery($database->deleteAllIndexesIntable($sTable, $sColumn, $vData));
                             }
-                            $oDataBase->executeQuery($oDataBase->generateAddColumnSQL($sTable, $sColumn, $vData));
+                            $database->executeQuery($database->generateAddColumnSQL($sTable, $sColumn, $vData));
                             break;
                         case 'CHANGE':
-                            $oDataBase->executeQuery($oDataBase->generateChangeColumnSQL($sTable, $sColumn, $vData));
+                            $database->executeQuery($database->generateChangeColumnSQL($sTable, $sColumn, $vData));
                             break;
                     }
                 }
@@ -1232,7 +1255,7 @@ class WorkspaceTools
         }
         foreach ($changes['tablesWithNewIndex'] as $sTable => $aIndexes) {
             foreach ($aIndexes as $sIndexName => $aIndexFields) {
-                $oDataBase->executeQuery($oDataBase->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
+                $database->executeQuery($database->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
             }
         }
 
@@ -1241,8 +1264,8 @@ class WorkspaceTools
         }
         foreach ($changes['tablesToAlterIndex'] as $sTable => $aIndexes) {
             foreach ($aIndexes as $sIndexName => $aIndexFields) {
-                $oDataBase->executeQuery($oDataBase->generateDropKeySQL($sTable, $sIndexName));
-                $oDataBase->executeQuery($oDataBase->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
+                $database->executeQuery($database->generateDropKeySQL($sTable, $sIndexName));
+                $database->executeQuery($database->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
             }
         }
         $this->closeDatabase();
@@ -1251,11 +1274,12 @@ class WorkspaceTools
 
     public function upgradeData()
     {
+        $this->getSchema();
         if (file_exists(PATH_CORE . 'data' . PATH_SEP . 'check.data')) {
             $checkData = unserialize(file_get_contents(PATH_CORE . 'data' . PATH_SEP . 'check.data'));
             if (is_array($checkData)) {
                 /*----------------------------------********---------------------------------*/
-                $licensedFeatures = & PMLicensedFeatures::getSingleton();
+                $licensedFeatures = PMLicensedFeatures::getSingleton();
                 $checkData = $licensedFeatures->addNewFeatures($checkData);
 
                 $catalog = new Catalog();
@@ -1288,7 +1312,7 @@ class WorkspaceTools
             case 4:
                 $sql = $dataBase->generateSelectSQL($data['table'], $data['keys'], $data['data']);
                 $dataset = $dataBase->executeQuery($sql);
-                if ($dataBase->getRegistry($dataset)) {
+                if ($dataset) {
                     $sql = $dataBase->generateDeleteSQL($data['table'], $data['keys'], $data['data']);
                     $dataBase->executeQuery($sql);
                 }
@@ -1383,9 +1407,9 @@ class WorkspaceTools
             $info = array('Workspace Name' => $fields['WORKSPACE_NAME'], 'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'MySql Version' => $fields['DATABASE']);
         } else {
             $info = array('Workspace Name' => $fields['WORKSPACE_NAME'],
-            //'Available Databases'  => $fields['AVAILABLE_DB'],
-            'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'RBAC Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_RBAC_USER'], $fields['DB_RBAC_PASS'], $fields['DB_RBAC_HOST'], $fields['DB_RBAC_NAME']), 'Report Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_REPORT_USER'], $fields['DB_REPORT_PASS'], $fields['DB_REPORT_HOST'], $fields['DB_REPORT_NAME']), 'MySql Version' => $fields['DATABASE']
-        );
+                //'Available Databases'  => $fields['AVAILABLE_DB'],
+                'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'RBAC Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_RBAC_USER'], $fields['DB_RBAC_PASS'], $fields['DB_RBAC_HOST'], $fields['DB_RBAC_NAME']), 'Report Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_REPORT_USER'], $fields['DB_REPORT_PASS'], $fields['DB_REPORT_HOST'], $fields['DB_REPORT_NAME']), 'MySql Version' => $fields['DATABASE']
+            );
         }
 
         foreach ($info as $k => $v) {
@@ -1414,31 +1438,31 @@ class WorkspaceTools
     /**
      * exports this workspace database to the specified path
      *
-     * This function is used mainly for backup purposes.
-     *
      * @param string $path the directory where to create the sql files
+     * @param boolean $onedb
+     *
+     * @return array
+     * @throws Exception
      */
     public function exportDatabase($path, $onedb = false)
     {
         $dbInfo = $this->getDBInfo();
 
+        $databases = ['wf', 'rp', 'rb'];
         if ($onedb) {
-            $databases = array("rb", "rp");
-        } elseif ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
-            $databases = array("wf");
-        } else {
-            $databases = array("wf", "rp", "rb");
+            $databases = ['rb', 'rp'];
+        } else if ($dbInfo['DB_NAME'] === $dbInfo['DB_RBAC_NAME']) {
+            $databases = ['wf'];
         }
 
-        $dbNames = array();
-
+        $dbNames = [];
         foreach ($databases as $db) {
             $dbInfo = $this->getDBCredentials($db);
-            $oDbMaintainer = new DataBaseMaintenance($dbInfo["host"], $dbInfo["user"], $dbInfo["pass"]);
-            CLI::logging("Saving database {$dbInfo["name"]}\n");
-            $oDbMaintainer->connect($dbInfo["name"]);
-            $oDbMaintainer->setTempDir($path . "/");
-            $oDbMaintainer->backupDataBase($oDbMaintainer->getTempDir() . $dbInfo["name"] . ".sql");
+            $oDbMaintainer = new DataBaseMaintenance($dbInfo['host'], $dbInfo['user'], $dbInfo['pass']);
+            CLI::logging("Saving database {$dbInfo['name']}\n");
+            $oDbMaintainer->connect($dbInfo['name']);
+            $oDbMaintainer->setTempDir($path . '/');
+            $oDbMaintainer->backupDataBase($oDbMaintainer->getTempDir() . $dbInfo['name'] . '.sql');
             $dbNames[] = $dbInfo;
         }
         return $dbNames;
@@ -1508,7 +1532,7 @@ class WorkspaceTools
         if (!file_exists(PATH_DATA . "upgrade/")) {
             mkdir(PATH_DATA . "upgrade/");
         }
-        $tempDirectory = PATH_DATA . "upgrade/" . basename(tempnam(__FILE__, ''));
+        $tempDirectory = PATH_DATA . "upgrade/" . basename(uniqid(__FILE__, ''));
         mkdir($tempDirectory);
         $metadata = $this->getMetadata();
         CLI::logging("Backing up database...\n");
@@ -1521,8 +1545,8 @@ class WorkspaceTools
          * a JSON codified array.
          */
         if (!file_put_contents($metaFilename, str_replace(array(",", "{", "}"
-                                ), array(",\n  ", "{\n  ", "\n}\n"
-                                ), G::json_encode($metadata)))) {
+        ), array(",\n  ", "{\n  ", "\n}\n"
+        ), G::json_encode($metadata)))) {
             throw new Exception("Could not create backup metadata");
         }
         CLI::logging("Copying database to backup...\n");
@@ -1535,6 +1559,7 @@ class WorkspaceTools
     }
 
     //TODO: Move to class.dbMaintenance.php
+
     /**
      * create a user in the database
      *
@@ -1547,27 +1572,29 @@ class WorkspaceTools
      * @param string $password password
      * @param string $hostname the hostname the user will be connecting from
      * @param string $database the database to grant permissions
+     * @param string $connection name
+     *
+     * @throws Exception
      */
-    public function createDBUser($username, $password, $hostname, $database)
+    public function createDBUser($username, $password, $hostname, $database, $connection)
     {
-        mysql_select_db("mysql");
-        $hostname = array_shift(explode(":", $hostname));
-        $sqlstmt = "SELECT * FROM user WHERE user = '$username' AND host = '$hostname'";
-        $result = mysql_query($sqlstmt);
-        if ($result === false) {
-            throw new Exception("Unable to retrieve users: " . mysql_error());
-        }
-        $users = mysql_num_rows($result);
-        if ($users === 0) {
-            CLI::logging("Creating user $username for $hostname\n");
-            $result = mysql_query("CREATE USER '$username'@'$hostname' IDENTIFIED BY '$password'");
-            if ($result === false) {
-                throw new Exception("Unable to create user $username: " . mysql_error());
+        try {
+            $message = 'Unable to retrieve users: ';
+            $hosts = explode(':', $hostname);
+            $hostname = array_shift($hosts);
+
+            $result = DB::connection($connection)->select(DB::raw("SELECT * FROM mysql.user WHERE user = '$username' AND host = '$hostname'"));
+
+            if (count($result) === 0) {
+                $message = "Unable to create user $username: ";
+                CLI::logging("Creating user $username for $hostname\n");
+
+                DB::connection($connection)->statement("CREATE USER '$username'@'$hostname' IDENTIFIED BY '$password'");
             }
-        }
-        $result = mysql_query("GRANT ALL ON $database.* TO '$username'@'$hostname'");
-        if ($result === false) {
-            throw new Exception("Unable to grant priviledges to user $username: " . mysql_error());
+            $message = "Unable to grant priviledges to user $username: ";
+            DB::connection($connection)->statement("GRANT ALL ON $database.* TO '$username'@'$hostname'");
+        } catch (QueryException $exception) {
+            throw new Exception($message . $exception->getMessage());
         }
     }
 
@@ -1582,17 +1609,31 @@ class WorkspaceTools
      * @param string $filename the script filename
      * @param string $database the database to execute this script into
      */
-    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1)
+    /**
+     * executes a mysql script
+     *
+     * This function supports scripts with -- comments in the beginning of a line
+     * and multi-line statements.
+     * It does not support other forms of comments (such as /*... or {{...}}).
+     *
+     * @param string $filename the script filename
+     * @param string $database the database to execute this script into
+     * @param $parameters
+     * @param int $versionBackupEngine
+     * @param string $connection
+     */
+    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1, $connection)
     {
-        mysql_query("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($database));
+        DB::connection($connection)
+            ->statement('CREATE DATABASE IF NOT EXISTS ' . $database);
 
         //check function shell_exec
         $disabled_functions = ini_get('disable_functions');
         $flag = false;
-        if ($disabled_functions != '') {
+        if (!empty($disabled_functions)) {
             $arr = explode(',', $disabled_functions);
             sort($arr);
-            if (in_array("shell_exec", $arr)) {
+            if (in_array('shell_exec', $arr)) {
                 $flag = true;
             }
         }
@@ -1603,21 +1644,21 @@ class WorkspaceTools
             $flagFunction = shell_exec('mysql --version');
         }
 
-        $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i","/SET\s*FOREIGN_KEY_CHECKS\s*=\s*0\s*;/");
-        $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1","SET FOREIGN_KEY_CHECKS=0;\nSET unique_checks=0;\nSET AUTOCOMMIT=0;");
+        $arrayRegExpEngineSearch = ["/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i", "/SET\s*FOREIGN_KEY_CHECKS\s*=\s*0\s*;/"];
+        $arrayRegExpEngineReplace = [") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1", "SET FOREIGN_KEY_CHECKS=0;\nSET unique_checks=0;\nSET AUTOCOMMIT=0;"];
 
         //replace DEFINER
         $script = preg_replace('/DEFINER=[^*]*/', '', file_get_contents($filename));
         file_put_contents($filename, $script);
-        
+
         if (!$flag && !is_null($flagFunction)) {
             //Replace TYPE by ENGINE
             if ($versionBackupEngine == 1) {
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
-                file_put_contents($filename, $script."\nCOMMIT;");
+                file_put_contents($filename, $script . "\nCOMMIT;");
             } else {
-                $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i");
-                $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1");
+                $arrayRegExpEngineSearch = ["/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i"];
+                $arrayRegExpEngineReplace = [") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1"];
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
                 file_put_contents($filename, $script);
             }
@@ -1631,7 +1672,7 @@ class WorkspaceTools
                     . ' --port=' . $dbPort
                     . ' --user=' . $parameters['dbUser']
                     . ' --password=' . escapeshellarg($parameters['dbPass'])
-                    . ' --database=' . mysql_real_escape_string($database)
+                    . ' --database=' . $database
                     . ' --default_character_set utf8'
                     . ' --execute="SOURCE ' . $filename . '"';
             } else {
@@ -1639,7 +1680,7 @@ class WorkspaceTools
                     . ' --host=' . $dbHost
                     . ' --user=' . $parameters['dbUser']
                     . ' --password=' . escapeshellarg($parameters['dbPass'])
-                    . ' --database=' . mysql_real_escape_string($database)
+                    . ' --database=' . $database
                     . ' --default_character_set utf8'
                     . ' --execute="SOURCE ' . $filename . '"';
             }
@@ -1647,12 +1688,13 @@ class WorkspaceTools
         } else {
             //If the safe mode of the server is actived
             try {
-                mysql_select_db($database);
+                $connection = 'RESTORE_' . $database;
+                InstallerModule::setNewConnection($connection, $parameters['dbHost'], $parameters['dbUser'], $parameters['dbPass'], $database, '');
 
                 //Replace TYPE by ENGINE
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
                 if ($versionBackupEngine == 1) {
-                    $script = $script."\nCOMMIT;";
+                    $script = $script . "\nCOMMIT;";
                 }
 
                 $lines = explode("\n", $script);
@@ -1661,58 +1703,62 @@ class WorkspaceTools
                 foreach ($lines as $j => $line) {
                     // Remove comments from the script
                     $line = trim($line);
-                    if (strpos($line, "--") === 0) {
-                        $line = substr($line, 0, strpos($line, "--"));
+                    if (strpos($line, '--') === 0) {
+                        $line = substr($line, 0, strpos($line, '--'));
                     }
                     if (empty($line)) {
                         continue;
                     }
                     // Concatenate the previous line, if any, with the current
                     if ($previous) {
-                        $line = $previous . " " . $line;
+                        $line = $previous . ' ' . $line;
                     }
                     $previous = null;
 
                     // If the current line doesnt end with ; then put this line together
                     // with the next one, thus supporting multi-line statements.
-                    if (strrpos($line, ";") != strlen($line) - 1) {
+                    if (strrpos($line, ';') !== strlen($line) - 1) {
                         $previous = $line;
                         continue;
                     }
-                    $line = substr($line, 0, strrpos($line, ";"));
+                    $line = substr($line, 0, strrpos($line, ';'));
 
-                    if (strrpos($line, "INSERT INTO") !== false) {
+                    if (strrpos($line, 'INSERT INTO') !== false) {
                         $insert = true;
                         if ($insert) {
-                            $result = mysql_query("START TRANSACTION");
+                            DB::connection($connection)->beginTransaction();
                             $insert = false;
                         }
-                        $result = mysql_query($line);
+                        $result = DB::connection($connection)->statement($line);
                         continue;
                     } else {
                         if (!$insert) {
-                            $result = mysql_query("COMMIT");
+                            DB::connection($connection)->commitTransaction();
                             $insert = true;
                         }
                     }
 
-                    $result = mysql_query($line);
+                    $result = DB::connection($connection)->statement($line);
                     if ($result === false) {
-                        throw new Exception("Error when running script '$filename', line $j, query '$line': " . mysql_error());
+                        DB::connection($connection)->rollbackTransaction();
+                        throw new Exception("Error when running script '$filename', line $j, query '$line' ");
                     }
                 }
                 if (!$insert) {
-                    $result = mysql_query("COMMIT");
+                    DB::connection($connection)->commitTransaction();
                 }
             } catch (Exception $e) {
                 CLI::logging(CLI::error("Error:" . "There are problems running script '$filename': " . $e));
+            } catch (QueryException $exception) {
+                DB::connection($connection)->rollbackTransaction();
+                throw new Exception("Error when running script '$filename', line $j, query '$line': " . $exception->getMessage());
             }
         }
     }
 
-    public function executeScript($database, $filename, $parameters)
+    public function executeScript($database, $filename, $parameters, $connection = null)
     {
-        $this->executeSQLScript($database, $filename, $parameters);
+        $this->executeSQLScript($database, $filename, $parameters, 1, $connection);
         return true;
     }
 
@@ -1725,9 +1771,9 @@ class WorkspaceTools
     {
         $backup = new Archive_Tar($filename);
         //Get a temporary directory in the upgrade directory
-        $tempDirectory = PATH_DATA . "upgrade/" . basename(tempnam(__FILE__, ''));
+        $tempDirectory = PATH_DATA . "upgrade/" . basename(uniqid(__FILE__, ''));
         mkdir($tempDirectory);
-        $metafiles = array();
+        $metafiles = [];
         foreach ($backup->listContent() as $backupFile) {
             $filename = $backupFile["filename"];
             if (strpos($filename, "/") === false && substr_compare($filename, ".meta", -5, 5, true) === 0) {
@@ -1786,11 +1832,11 @@ class WorkspaceTools
      * @param string $lang for define the language
      * @param string $port of database if is empty take 3306
      */
-    public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
+    public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '', $optionMigrateHistoryData = [])
     {
         $backup = new Archive_Tar($filename);
         //Get a temporary directory in the upgrade directory
-        $tempDirectory = PATH_DATA . "upgrade/" . basename(tempnam(__FILE__, ''));
+        $tempDirectory = PATH_DATA . "upgrade/" . basename(uniqid(__FILE__, ''));
         $parentDirectory = PATH_DATA . "upgrade";
         if (is_writable($parentDirectory)) {
             mkdir($tempDirectory);
@@ -1903,28 +1949,31 @@ class WorkspaceTools
             if ($port != '') {
                 $dbHost = $dbHost . $port; //127.0.0.1:3306
             }
-            $aParameters = array('dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass);
+            $aParameters = ['dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass];
 
             //Restore
-            if (empty(config("system.workspace"))) {
-                define("SYS_SYS", $workspaceName);
-                config(["system.workspace" => $workspaceName]);
+            if (empty(config('system.workspace'))) {
+                define('SYS_SYS', $workspaceName);
+                config(['system.workspace' => $workspaceName]);
             }
 
-            if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP);
+            if (!defined('PATH_DATA_SITE')) {
+                define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . config('system.workspace') . PATH_SEP);
             }
 
-            $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch)) ? $arrayMatch[1] : "";
+            $pmVersionWorkspaceToRestore = preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch) ? $arrayMatch[1] : '';
 
             CLI::logging("> Connecting to system database in '$dbHost'\n");
-            $link = mysql_connect($dbHost, $dbUser, $dbPass);
-            @mysql_query("SET NAMES 'utf8';");
-            @mysql_query("SET FOREIGN_KEY_CHECKS=0;");
-            @mysql_query("SET GLOBAL log_bin_trust_routine_creators = 1;");
 
-            if (!$link) {
-                throw new Exception('Could not connect to system database: ' . mysql_error());
+            try {
+                $connection = 'RESTORE';
+                InstallerModule::setNewConnection('RESTORE', $dbHost, $dbUser, $dbPass, '', '');
+                DB::connection($connection)
+                    ->statement("SET NAMES 'utf8'");
+                DB::connection($connection)
+                    ->statement('SET FOREIGN_KEY_CHECKS=0');
+            } catch (Exception $exception) {
+                throw new Exception('Could not connect to system database: ' . $exception->getMessage());
             }
 
             $dbName = '';
@@ -1936,22 +1985,24 @@ class WorkspaceTools
                     if (isset($newDBNames['DB_USER'])) {
                         $dbUser = $newDBNames['DB_USER'];
                     }
-                    if (mysql_select_db($dbName, $link)) {
-                        if (!$overwrite) {
-                            throw new Exception("Destination Database already exist (use -o to overwrite)");
-                        }
+                    $result = DB::connection($connection)->select("show databases like '$dbName'");
+                    if (count($result) > 0 && !$overwrite) {
+                        throw new Exception("Destination Database already exist (use -o to overwrite)");
                     }
 
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
                     $versionBackupEngine = (isset($metadata->backupEngineVersion)) ? $metadata->backupEngineVersion : 1;
-                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine);
-                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "localhost", $dbName);
-                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "%", $dbName);
+                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine, $connection);
+                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "localhost", $dbName, $connection);
+                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "%", $dbName, $connection);
                 }
             }
 
-            if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "",
-                        $pmVersion . "", "<") || $pmVersion == "")
+            if (($pmVersionWorkspaceToRestore != '') && (version_compare(
+                        $pmVersionWorkspaceToRestore . "",
+                        $pmVersion . "",
+                        "<"
+                    ) || $pmVersion == "")
             ) {
                 $start = microtime(true);
                 CLI::logging("> Updating database...\n");
@@ -1978,8 +2029,11 @@ class WorkspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Check Mafe Requirements Process took " . ($stop - $start) . " seconds.\n");
 
-            if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "",
-                        $pmVersion . "", "<") || $pmVersion == "")
+            if (($pmVersionWorkspaceToRestore != '') && (version_compare(
+                        $pmVersionWorkspaceToRestore . "",
+                        $pmVersion . "",
+                        "<"
+                    ) || $pmVersion == "")
             ) {
                 $start = microtime(true);
                 CLI::logging("> Updating cache view...\n");
@@ -2001,6 +2055,13 @@ class WorkspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
+            //Populate the new fields for replace string UID to Interger ID
+            $start = microtime(true);
+            CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+            $workspace->migratePopulateIndexingACV($workspace->name);
+            $stop = microtime(true);
+            CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+
             //Move the data of cases to the corresponding List
             /*----------------------------------********---------------------------------*/
             $start = microtime(true);
@@ -2016,17 +2077,24 @@ class WorkspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
 
-            //Populate the new fields for replace string UID to Interger ID
-            $start = microtime(true);
-            CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
-            $workspace->migratePopulateIndexingACV($workspace->name);
-            $stop = microtime(true);
-            CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
-
             //Updating generated class files for PM Tables
             passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
 
-            mysql_close($link);
+            $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
+            //Review if we need to remove the 'History of use' from APP_HISTORY
+            $start = microtime(true);
+            CLI::logging("> Clearing History of Use from APP_HISTORY table...\n");
+            $workspace->clearDynContentHistoryData(false, $keepDynContent);
+            $stop = microtime(true);
+            CLI::logging("<*>   Clearing History of Use from APP_HISTORY table took " . ($stop - $start) . " seconds.\n");
+
+            /*----------------------------------********---------------------------------*/
+            $start = microtime(true);
+            CLI::logging("> Migrating history data...\n");
+            $workspace->migrateAppHistoryToAppDataChangeLog(false);
+            $stop = microtime(true);
+            CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+            /*----------------------------------********---------------------------------*/
         }
 
         CLI::logging("Removing temporary files\n");
@@ -2038,7 +2106,7 @@ class WorkspaceTools
 
     public static function hotfixInstall($file)
     {
-        $result = array();
+        $result = [];
 
         $dirHotfix = PATH_DATA . "hotfixes";
 
@@ -2104,7 +2172,8 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
-        if (empty($pmRestClient)) {
+        $pmMobileRestClient = OauthClientsPeer::retrieveByPK(config('oauthClients.mobile.clientId'));
+        if (empty($pmRestClient) || empty($pmMobileRestClient)) {
             if (!is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
                 $_CSERVER = $_SERVER;
                 unset($_CSERVER['REQUEST_TIME']);
@@ -2113,11 +2182,11 @@ class WorkspaceTools
                 file_put_contents(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info', $cput);
             }
             if (is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
-                $SERVER_INFO = file_get_contents(PATH_DATA . 'sites/' . $workspace . '/'.'.server_info');
+                $SERVER_INFO = file_get_contents(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info');
                 $SERVER_INFO = unserialize($SERVER_INFO);
 
                 $envFile = PATH_CONFIG . 'env.ini';
-                $skin ='neoclassic';
+                $skin = 'neoclassic';
                 if (file_exists($envFile)) {
                     $sysConf = System::getSystemConfiguration($envFile);
                     $lang = $sysConf['default_lang'];
@@ -2132,14 +2201,27 @@ class WorkspaceTools
                     $skin
                 );
 
-                $oauthClients = new OauthClients();
-                $oauthClients->setClientId('x-pm-local-client');
-                $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
-                $oauthClients->setClientName('PM Web Designer');
-                $oauthClients->setClientDescription('ProcessMaker Web Designer App');
-                $oauthClients->setClientWebsite('www.processmaker.com');
-                $oauthClients->setRedirectUri($endpoint);
-                $oauthClients->save();
+                if (empty($pmRestClient)) {
+                    $oauthClients = new OauthClients();
+                    $oauthClients->setClientId('x-pm-local-client');
+                    $oauthClients->setClientSecret('179ad45c6ce2cb97cf1029e212046e81');
+                    $oauthClients->setClientName('PM Web Designer');
+                    $oauthClients->setClientDescription('ProcessMaker Web Designer App');
+                    $oauthClients->setClientWebsite('www.processmaker.com');
+                    $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->save();
+                }
+
+                if (empty($pmMobileRestClient) && !empty(config('oauthClients.mobile.clientId'))) {
+                    $oauthClients = new OauthClients();
+                    $oauthClients->setClientId(config('oauthClients.mobile.clientId'));
+                    $oauthClients->setClientSecret(config('oauthClients.mobile.clientSecret'));
+                    $oauthClients->setClientName(config('oauthClients.mobile.clientName'));
+                    $oauthClients->setClientDescription(config('oauthClients.mobile.clientDescription'));
+                    $oauthClients->setClientWebsite(config('oauthClients.mobile.clientWebsite'));
+                    $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->save();
+                }
             } else {
                 eprintln("WARNING! No server info found!", 'red');
             }
@@ -2149,7 +2231,7 @@ class WorkspaceTools
     public function changeHashPassword($workspace, $response)
     {
         $this->initPropel(true);
-        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         /*----------------------------------********---------------------------------*/
         if ($licensedFeatures->verifyfeature('95OY24wcXpEMzIyRmlNSnF0STNFSHJzMG9wYTJKekpLNmY2ZmRCeGtuZk5oUDloaUNhUGVjTDJBPT0=')) {
             EnterpriseClass::setHashPassword($response);
@@ -2189,7 +2271,7 @@ class WorkspaceTools
             } else {
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
-            if (G::recursive_copy($pathDirectoryEnterprise, $pathNewFile . PATH_SEP. 'enterprise')) {
+            if (G::recursive_copy($pathDirectoryEnterprise, $pathNewFile . PATH_SEP . 'enterprise')) {
                 CLI::logging("    Removing $pathDirectoryEnterprise...\n");
                 G::rm_dir($pathDirectoryEnterprise);
             } else {
@@ -2207,7 +2289,7 @@ class WorkspaceTools
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
             CLI::logging("    Removing $pathFileEnterprise...\n");
-            copy($pathFileEnterprise, $pathNewFile. PATH_SEP . 'enterprise.php');
+            copy($pathFileEnterprise, $pathNewFile . PATH_SEP . 'enterprise.php');
             G::rm_dir($pathFileEnterprise);
             if (file_exists($pathFileEnterprise)) {
                 CLI::logging(CLI::info("    Remove manually $pathFileEnterprise...\n"));
@@ -2273,16 +2355,16 @@ class WorkspaceTools
     /**
      * Migrate all cases to New list
      *
-     * @param string $workSpace    Workspace
-     * @param bool   $flagReinsert Flag that specifies the re-insertion
+     * @param string $workSpace Workspace
+     * @param bool $flagReinsert Flag that specifies the re-insertion
      *
      * @return void
      */
-    public function migrateList($workSpace, $flagReinsert = false, $lang='en')
+    public function migrateList($workSpace, $flagReinsert = false, $lang = 'en')
     {
         $this->initPropel(true);
 
-        $flagListAll        = $this->listFirstExecution('check');
+        $flagListAll = $this->listFirstExecution('check');
         $flagListUnassigned = $this->listFirstExecution('check', 'unassigned');
 
         if (!$flagReinsert && $flagListAll && $flagListUnassigned) {
@@ -2335,7 +2417,7 @@ class WorkspaceTools
     public function regenerateListCanceled($lang = 'en')
     {
         $this->initPropel(true);
-        $query = 'INSERT INTO '.$this->dbName.'.LIST_CANCELED
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_CANCELED
                     (APP_UID,
                     USR_UID,
                     TAS_UID,
@@ -2374,23 +2456,23 @@ class WorkspaceTools
                         AD.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
                         ACV.DEL_PRIORITY
                     FROM
-                        ('.$this->dbName.'.APP_CACHE_VIEW ACV
-                        LEFT JOIN '.$this->dbName.'.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
+                        (' . $this->dbName . '.APP_CACHE_VIEW ACV
+                        LEFT JOIN ' . $this->dbName . '.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
                             AND C_APP.CON_CATEGORY = \'APP_TITLE\'
-                            AND C_APP.CON_LANG = \''.$lang.'\'
-                        LEFT JOIN '.$this->dbName.'.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
+                            AND C_APP.CON_LANG = \'' . $lang . '\'
+                        LEFT JOIN ' . $this->dbName . '.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
                             AND C_PRO.CON_CATEGORY = \'PRO_TITLE\'
-                            AND C_PRO.CON_LANG = \''.$lang.'\'
-                        LEFT JOIN '.$this->dbName.'.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
+                            AND C_PRO.CON_LANG = \'' . $lang . '\'
+                        LEFT JOIN ' . $this->dbName . '.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
                             AND C_TAS.CON_CATEGORY = \'TAS_TITLE\'
-                            AND C_TAS.CON_LANG = \''.$lang.'\')
+                            AND C_TAS.CON_LANG = \'' . $lang . '\')
                             LEFT JOIN
-                        ('.$this->dbName.'.APP_DELEGATION AD
-                        INNER JOIN '.$this->dbName.'.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
+                        (' . $this->dbName . '.APP_DELEGATION AD
+                        INNER JOIN ' . $this->dbName . '.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
                             AND AD.DEL_PREVIOUS = PREV_AD.DEL_INDEX) ON ACV.APP_UID = AD.APP_UID
                             AND ACV.DEL_INDEX = AD.DEL_INDEX
                             LEFT JOIN
-                        '.$this->dbName.'.USERS USR ON ACV.USR_UID = USR.USR_UID
+                        ' . $this->dbName . '.USERS USR ON ACV.USR_UID = USR.USR_UID
                     WHERE
                         ACV.APP_STATUS = \'CANCELLED\'
                             AND ACV.DEL_LAST_INDEX = 1';
@@ -2403,7 +2485,7 @@ class WorkspaceTools
     public function regenerateListCompleted($lang = 'en')
     {
         $this->initPropel(true);
-        $query = 'INSERT INTO '.$this->dbName.'.LIST_COMPLETED
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_COMPLETED
                     (APP_UID,
                     USR_UID,
                     TAS_UID,
@@ -2437,23 +2519,23 @@ class WorkspaceTools
                         USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
                         USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME
                     FROM
-                        ('.$this->dbName.'.APP_CACHE_VIEW ACV
-                        LEFT JOIN '.$this->dbName.'.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
+                        (' . $this->dbName . '.APP_CACHE_VIEW ACV
+                        LEFT JOIN ' . $this->dbName . '.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
                             AND C_APP.CON_CATEGORY = \'APP_TITLE\'
-                            AND C_APP.CON_LANG = \''.$lang.'\'
-                        LEFT JOIN '.$this->dbName.'.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
+                            AND C_APP.CON_LANG = \'' . $lang . '\'
+                        LEFT JOIN ' . $this->dbName . '.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
                             AND C_PRO.CON_CATEGORY = \'PRO_TITLE\'
-                            AND C_PRO.CON_LANG = \''.$lang.'\'
-                        LEFT JOIN '.$this->dbName.'.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
+                            AND C_PRO.CON_LANG = \'' . $lang . '\'
+                        LEFT JOIN ' . $this->dbName . '.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
                             AND C_TAS.CON_CATEGORY = \'TAS_TITLE\'
-                            AND C_TAS.CON_LANG = \''.$lang.'\')
+                            AND C_TAS.CON_LANG = \'' . $lang . '\')
                             LEFT JOIN
-                        ('.$this->dbName.'.APP_DELEGATION AD
-                        INNER JOIN '.$this->dbName.'.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
+                        (' . $this->dbName . '.APP_DELEGATION AD
+                        INNER JOIN ' . $this->dbName . '.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
                             AND AD.DEL_PREVIOUS = PREV_AD.DEL_INDEX) ON ACV.APP_UID = AD.APP_UID
                             AND ACV.DEL_INDEX = AD.DEL_INDEX
                             LEFT JOIN
-                        '.$this->dbName.'.USERS USR ON ACV.USR_UID = USR.USR_UID
+                        ' . $this->dbName . '.USERS USR ON ACV.USR_UID = USR.USR_UID
                     WHERE
                         ACV.APP_STATUS = \'COMPLETED\'
                             AND ACV.DEL_LAST_INDEX = 1';
@@ -2466,7 +2548,7 @@ class WorkspaceTools
     public function regenerateListMyInbox()
     {
         $this->initPropel(true);
-        $query = 'INSERT INTO '.$this->dbName.'.LIST_MY_INBOX
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_MY_INBOX
                     (APP_UID,
                     USR_UID,
                     TAS_UID,
@@ -2520,11 +2602,11 @@ class WorkspaceTools
                         ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
                         ACV.DEL_PRIORITY
                     FROM
-                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                        ' . $this->dbName . '.APP_CACHE_VIEW ACV
                             LEFT JOIN
-                        '.$this->dbName.'.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
+                        ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
                             LEFT JOIN
-                        '.$this->dbName.'.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                        ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
                     WHERE ACV.DEL_INDEX=1';
 
         $con = Propel::getConnection("workflow");
@@ -2536,7 +2618,7 @@ class WorkspaceTools
     public function regenerateListInbox()
     {
         $this->initPropel(true);
-        $query = 'INSERT INTO '.$this->dbName.'.LIST_INBOX
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_INBOX
                     (APP_UID,
                     DEL_INDEX,
                     USR_UID,
@@ -2580,9 +2662,9 @@ class WorkspaceTools
                         ACV.DEL_RISK_DATE AS DEL_RISK_DATE,
                         ACV.DEL_PRIORITY
                     FROM
-                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                        ' . $this->dbName . '.APP_CACHE_VIEW ACV
                             LEFT JOIN
-                        '.$this->dbName.'.USERS USR ON ACV.PREVIOUS_USR_UID = USR.USR_UID
+                        ' . $this->dbName . '.USERS USR ON ACV.PREVIOUS_USR_UID = USR.USR_UID
                     WHERE
                         ACV.DEL_THREAD_STATUS = \'OPEN\'';
         $con = Propel::getConnection("workflow");
@@ -2594,7 +2676,7 @@ class WorkspaceTools
     public function regenerateListParticipatedHistory()
     {
         $this->initPropel(true);
-        $query = 'INSERT INTO '.$this->dbName.'.LIST_PARTICIPATED_HISTORY
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_PARTICIPATED_HISTORY
                     (APP_UID,
                     DEL_INDEX,
                     USR_UID,
@@ -2638,11 +2720,11 @@ class WorkspaceTools
                         ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
                         ACV.DEL_PRIORITY
                     FROM
-                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                        ' . $this->dbName . '.APP_CACHE_VIEW ACV
                             LEFT JOIN
-                        '.$this->dbName.'.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
+                        ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
                             LEFT JOIN
-                        '.$this->dbName.'.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID';
+                        ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID';
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
         $stmt->executeQuery($query);
@@ -2769,7 +2851,7 @@ class WorkspaceTools
     public function regenerateListPaused()
     {
         $this->initPropel(true);
-        $query =  'INSERT INTO '.$this->dbName.'.LIST_PAUSED
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_PAUSED
                   (
                   APP_UID,
                   DEL_INDEX,
@@ -2824,21 +2906,21 @@ class WorkspaceTools
                       USERS.USR_ID,
                       TASK.TAS_ID
                   FROM
-                        '.$this->dbName.'.APP_DELAY
+                        ' . $this->dbName . '.APP_DELAY
                   LEFT JOIN
-                        '.$this->dbName.'.APP_DELEGATION AS AD1 ON (APP_DELAY.APP_NUMBER = AD1.APP_NUMBER AND AD1.DEL_INDEX = APP_DELAY.APP_DEL_INDEX)
+                        ' . $this->dbName . '.APP_DELEGATION AS AD1 ON (APP_DELAY.APP_NUMBER = AD1.APP_NUMBER AND AD1.DEL_INDEX = APP_DELAY.APP_DEL_INDEX)
                   LEFT JOIN
-                        '.$this->dbName.'.APP_DELEGATION AS AD2 ON (AD1.APP_NUMBER = AD2.APP_NUMBER AND AD1.DEL_PREVIOUS = AD2.DEL_INDEX)
+                        ' . $this->dbName . '.APP_DELEGATION AS AD2 ON (AD1.APP_NUMBER = AD2.APP_NUMBER AND AD1.DEL_PREVIOUS = AD2.DEL_INDEX)
                   LEFT JOIN
-                        '.$this->dbName.'.USERS ON (APP_DELAY.APP_DELEGATION_USER_ID = USERS.USR_ID)
+                        ' . $this->dbName . '.USERS ON (APP_DELAY.APP_DELEGATION_USER_ID = USERS.USR_ID)
                   LEFT JOIN
-                        '.$this->dbName.'.USERS PREVIOUS ON (AD2.USR_ID = PREVIOUS.USR_ID)
+                        ' . $this->dbName . '.USERS PREVIOUS ON (AD2.USR_ID = PREVIOUS.USR_ID)
                   LEFT JOIN
-                        '.$this->dbName.'.APPLICATION ON (AD1.APP_NUMBER = APPLICATION.APP_NUMBER)
+                        ' . $this->dbName . '.APPLICATION ON (AD1.APP_NUMBER = APPLICATION.APP_NUMBER)
                   LEFT JOIN
-                        '.$this->dbName.'.PROCESS ON (AD1.PRO_ID = PROCESS.PRO_ID)
+                        ' . $this->dbName . '.PROCESS ON (AD1.PRO_ID = PROCESS.PRO_ID)
                   LEFT JOIN
-                        '.$this->dbName.'.TASK ON (AD1.TAS_ID = TASK.TAS_ID)
+                        ' . $this->dbName . '.TASK ON (AD1.TAS_ID = TASK.TAS_ID)
                   WHERE
                        APP_DELAY.APP_DISABLE_ACTION_USER = "0" AND
                        APP_DELAY.APP_TYPE = "PAUSE"
@@ -2853,9 +2935,9 @@ class WorkspaceTools
     public function regenerateListUnassigned()
     {
         $this->initPropel(true);
-        $truncate = 'TRUNCATE '.$this->dbName.'.LIST_UNASSIGNED';
+        $truncate = 'TRUNCATE ' . $this->dbName . '.LIST_UNASSIGNED';
         //This executeQuery is very fast than Propel
-        $query = 'INSERT INTO '.$this->dbName.'.LIST_UNASSIGNED
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_UNASSIGNED
                     (APP_UID,
                     DEL_INDEX,
                     TAS_UID,
@@ -2891,9 +2973,9 @@ class WorkspaceTools
                         ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
                         ACV.DEL_PRIORITY
                     FROM
-                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                        ' . $this->dbName . '.APP_CACHE_VIEW ACV
                             LEFT JOIN
-                        '.$this->dbName.'.USERS USR ON ACV.PREVIOUS_USR_UID = USR.USR_UID
+                        ' . $this->dbName . '.USERS USR ON ACV.PREVIOUS_USR_UID = USR.USR_UID
                     WHERE
                         ACV.DEL_THREAD_STATUS = \'OPEN\'
                         AND ACV.USR_UID = \'\' ';
@@ -2910,31 +2992,31 @@ class WorkspaceTools
      *
      * return boolean value
      */
-    public function listFirstExecution($action, $list='all')
+    public function listFirstExecution($action, $list = 'all')
     {
         $this->initPropel(true);
         switch ($action) {
             case 'insert':
-                $conf  = new Configuration();
-                if ($list==='all') {
+                $conf = new Configuration();
+                if ($list === 'all') {
                     if (!($conf->exists('MIGRATED_LIST', 'list', 'list', 'list', 'list'))) {
-                        $data["CFG_UID"]  ='MIGRATED_LIST';
-                        $data["OBJ_UID"]  ='list';
-                        $data["CFG_VALUE"]='true';
-                        $data["PRO_UID"]  ='list';
-                        $data["USR_UID"]  ='list';
-                        $data["APP_UID"]  ='list';
+                        $data["CFG_UID"] = 'MIGRATED_LIST';
+                        $data["OBJ_UID"] = 'list';
+                        $data["CFG_VALUE"] = 'true';
+                        $data["PRO_UID"] = 'list';
+                        $data["USR_UID"] = 'list';
+                        $data["APP_UID"] = 'list';
                         $conf->create($data);
                     }
                 }
-                if ($list==='unassigned') {
+                if ($list === 'unassigned') {
                     if (!($conf->exists('MIGRATED_LIST_UNASSIGNED', 'list', 'list', 'list', 'list'))) {
-                        $data["CFG_UID"]  ='MIGRATED_LIST_UNASSIGNED';
-                        $data["OBJ_UID"]  ='list';
-                        $data["CFG_VALUE"]='true';
-                        $data["PRO_UID"]  ='list';
-                        $data["USR_UID"]  ='list';
-                        $data["APP_UID"]  ='list';
+                        $data["CFG_UID"] = 'MIGRATED_LIST_UNASSIGNED';
+                        $data["OBJ_UID"] = 'list';
+                        $data["CFG_VALUE"] = 'true';
+                        $data["PRO_UID"] = 'list';
+                        $data["USR_UID"] = 'list';
+                        $data["APP_UID"] = 'list';
                         $conf->create($data);
                     }
                 }
@@ -2943,15 +3025,15 @@ class WorkspaceTools
             case 'check':
                 $criteria = new Criteria("workflow");
                 $criteria->addSelectColumn(ConfigurationPeer::CFG_UID);
-                if ($list==='all') {
+                if ($list === 'all') {
                     $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST", CRITERIA::EQUAL);
                 }
-                if ($list==='unassigned') {
+                if ($list === 'unassigned') {
                     $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST_UNASSIGNED", CRITERIA::EQUAL);
                 }
                 $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
                 $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $aRows = array();
+                $aRows = [];
                 while ($rsCriteria->next()) {
                     $aRows[] = $rsCriteria->getRow();
                 }
@@ -3025,10 +3107,10 @@ class WorkspaceTools
         //Register all tables
         $sListTables = '';
         foreach ($aSquema as $key => $value) {
-            $sListTables .= $key .'|';
+            $sListTables .= $key . '|';
         }
 
-        $sysTablesIniFile= PATH_CONFIG . 'system-tables.ini';
+        $sysTablesIniFile = PATH_CONFIG . 'system-tables.ini';
         $contents = file_put_contents($sysTablesIniFile, sprintf("%s '%s'\n", "tables = ", $sListTables));
         if ($contents === null) {
             throw (new Exception(G::LoadTranslation('ID_FILE_NOT_WRITEABLE', SYS_LANG, array($sysTablesIniFile))));
@@ -3042,7 +3124,7 @@ class WorkspaceTools
     {
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
-        $RBAC = &RBAC::getSingleton();
+        $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
         $result = $RBAC->verifyPermissions();
         if (count($result) > 1) {
@@ -3077,7 +3159,7 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/missing-users-".$this->name.".txt",
+            PATH_DATA . "/missing-users-" . $this->name . ".txt",
             "Missing Processes List.\n"
         );
 
@@ -3085,8 +3167,10 @@ class WorkspaceTools
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
         $criteria->addSelectColumn(AppCacheViewPeer::USR_UID);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::USR_UID, UsersPeer::USR_UID)),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::USR_UID, UsersPeer::USR_UID)
+            ),
             Criteria::LEFT_JOIN
         );
         $criteria->add(UsersPeer::USR_UID, null, Criteria::ISNULL);
@@ -3097,10 +3181,10 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/missing-users-".$this->name.".txt",
-                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
-                "with invalid or non-existent user user with ".
-                "id [".$item['USR_UID']."]"
+                PATH_DATA . "/missing-users-" . $this->name . ".txt",
+                "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
+                "with invalid or non-existent user user with " .
+                "id [" . $item['USR_UID'] . "]"
             );
         }
         CLI::logging("> Number of user related inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -3111,7 +3195,7 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/missing-tasks-".$this->name.".txt",
+            PATH_DATA . "/missing-tasks-" . $this->name . ".txt",
             "Missing Processes List\n"
         );
 
@@ -3119,8 +3203,10 @@ class WorkspaceTools
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
         $criteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::USR_UID, TaskPeer::TAS_UID)),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::USR_UID, TaskPeer::TAS_UID)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3131,10 +3217,10 @@ class WorkspaceTools
         while ($rsCriteria->next()) {
             $item = $rsCriteria->getRow();
             file_put_contents(
-                PATH_DATA."/missing-tasks-".$this->name.".txt",
-                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
-                "with invalid or non-existent task with ".
-                "id [".$item['TAS_UID']."]"
+                PATH_DATA . "/missing-tasks-" . $this->name . ".txt",
+                "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
+                "with invalid or non-existent task with " .
+                "id [" . $item['TAS_UID'] . "]"
             );
         }
 
@@ -3146,7 +3232,7 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/missing-processes-".$this->name.".txt",
+            PATH_DATA . "/missing-processes-" . $this->name . ".txt",
             "Missing Processes List\n"
         );
 
@@ -3154,8 +3240,10 @@ class WorkspaceTools
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
         $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::USR_UID, ProcessPeer::PRO_UID)),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::USR_UID, ProcessPeer::PRO_UID)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3166,10 +3254,10 @@ class WorkspaceTools
         while ($rsCriteria->next()) {
             $item = $rsCriteria->getRow();
             file_put_contents(
-                PATH_DATA."/missing-processes-".$this->name.".txt",
-                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
-                "with invalid or non-existent process with ".
-                "id [".$item['PRO_UID']."]"
+                PATH_DATA . "/missing-processes-" . $this->name . ".txt",
+                "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
+                "with invalid or non-existent process with " .
+                "id [" . $item['PRO_UID'] . "]"
             );
         }
         CLI::logging("> Number of processes related data inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -3180,16 +3268,18 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/missing-app-delegation-".$this->name.".txt",
+            PATH_DATA . "/missing-app-delegation-" . $this->name . ".txt",
             "Missing AppDelegation List.\n"
         );
 
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, AppCacheViewPeer::DEL_INDEX),
-            array(AppDelegationPeer::APP_UID, AppDelegationPeer::DEL_INDEX)),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, AppCacheViewPeer::DEL_INDEX),
+                array(AppDelegationPeer::APP_UID, AppDelegationPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
         $criteria->add(AppDelegationPeer::APP_UID, null, Criteria::ISNULL);
@@ -3200,10 +3290,10 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/missing-app-delegation-".$this->name.".txt",
-                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
-                "with invalid or non-existent process with ".
-                "id [".$item['PRO_UID']."]"
+                PATH_DATA . "/missing-app-delegation-" . $this->name . ".txt",
+                "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
+                "with invalid or non-existent process with " .
+                "id [" . $item['PRO_UID'] . "]"
             );
         }
         CLI::logging("> Number of delegations related data inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -3215,15 +3305,17 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/post-missing-cancelled-".$this->name.".txt",
+            PATH_DATA . "/post-missing-cancelled-" . $this->name . ".txt",
             "Missing Cancelled List.\n"
         );
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, ListCanceledPeer::APP_UID),
-            array(AppCacheViewPeer::DEL_INDEX, ListCanceledPeer::DEL_INDEX)),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, ListCanceledPeer::APP_UID),
+                array(AppCacheViewPeer::DEL_INDEX, ListCanceledPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3239,8 +3331,8 @@ class WorkspaceTools
             $counter++;
 
             file_put_contents(
-                PATH_DATA."/post-missing-cancelled-".$this->name.".txt",
-                "[".$item['APP_UID']."] has not been found"
+                PATH_DATA . "/post-missing-cancelled-" . $this->name . ".txt",
+                "[" . $item['APP_UID'] . "] has not been found"
             );
         }
 
@@ -3251,15 +3343,17 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/post-missing-completed-".$this->name.".txt",
+            PATH_DATA . "/post-missing-completed-" . $this->name . ".txt",
             "Missing Completed List.\n"
         );
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, ListCompletedPeer::APP_UID),
-            array(AppCacheViewPeer::DEL_INDEX, ListCompletedPeer::DEL_INDEX)),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, ListCompletedPeer::APP_UID),
+                array(AppCacheViewPeer::DEL_INDEX, ListCompletedPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3274,8 +3368,8 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/post-missing-completed-".$this->name.".txt",
-                "[".$item['APP_UID']."] has not been found"
+                PATH_DATA . "/post-missing-completed-" . $this->name . ".txt",
+                "[" . $item['APP_UID'] . "] has not been found"
             );
         }
 
@@ -3286,15 +3380,17 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/post-missing-inbox-".$this->name.".txt",
+            PATH_DATA . "/post-missing-inbox-" . $this->name . ".txt",
             "Missing Inbox List.\n"
         );
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, ListInboxPeer::APP_UID),
-            array(AppCacheViewPeer::DEL_INDEX, ListInboxPeer::DEL_INDEX)),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, ListInboxPeer::APP_UID),
+                array(AppCacheViewPeer::DEL_INDEX, ListInboxPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3308,8 +3404,8 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/post-missing-inbox-".$this->name.".txt",
-                "[".$item['APP_UID']."] has not been found"
+                PATH_DATA . "/post-missing-inbox-" . $this->name . ".txt",
+                "[" . $item['APP_UID'] . "] has not been found"
             );
         }
 
@@ -3320,16 +3416,17 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/post-missing-participated-history-".$this->name.".txt",
+            PATH_DATA . "/post-missing-participated-history-" . $this->name . ".txt",
             "Missing ParticipatedHistory List.\n"
         );
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, ListParticipatedHistoryPeer::APP_UID),
-            array(AppCacheViewPeer::DEL_INDEX, ListParticipatedHistoryPeer::DEL_INDEX)
-        ),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, ListParticipatedHistoryPeer::APP_UID),
+                array(AppCacheViewPeer::DEL_INDEX, ListParticipatedHistoryPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3343,8 +3440,8 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/post-missing-participated-history-".$this->name.".txt",
-                "[".$item['APP_UID']."] has not been found"
+                PATH_DATA . "/post-missing-participated-history-" . $this->name . ".txt",
+                "[" . $item['APP_UID'] . "] has not been found"
             );
         }
 
@@ -3355,16 +3452,17 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/post-missing-participated-last-".$this->name.".txt",
+            PATH_DATA . "/post-missing-participated-last-" . $this->name . ".txt",
             "Missing ParticipatedLast List.\n"
         );
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, ListParticipatedLastPeer::APP_UID),
-            array(AppCacheViewPeer::DEL_INDEX, ListParticipatedLastPeer::DEL_INDEX)
-        ),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, ListParticipatedLastPeer::APP_UID),
+                array(AppCacheViewPeer::DEL_INDEX, ListParticipatedLastPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3378,8 +3476,8 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/post-missing-participated-last-".$this->name.".txt",
-                "[".$item['APP_UID']."] has not been found"
+                PATH_DATA . "/post-missing-participated-last-" . $this->name . ".txt",
+                "[" . $item['APP_UID'] . "] has not been found"
             );
         }
 
@@ -3390,16 +3488,17 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/post-missing-my-inbox-".$this->name.".txt",
+            PATH_DATA . "/post-missing-my-inbox-" . $this->name . ".txt",
             "Missing MyInbox List.\n"
         );
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, ListMyInboxPeer::APP_UID),
-            array(AppCacheViewPeer::DEL_INDEX, ListMyInboxPeer::DEL_INDEX)
-        ),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, ListMyInboxPeer::APP_UID),
+                array(AppCacheViewPeer::DEL_INDEX, ListMyInboxPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3413,8 +3512,8 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/post-missing-my-inbox-".$this->name.".txt",
-                "[".$item['APP_UID']."] has not been found"
+                PATH_DATA . "/post-missing-my-inbox-" . $this->name . ".txt",
+                "[" . $item['APP_UID'] . "] has not been found"
             );
         }
 
@@ -3425,16 +3524,17 @@ class WorkspaceTools
     {
         $this->initPropel(true);
         file_put_contents(
-            PATH_DATA."/post-missing-unassigned-".$this->name.".txt",
+            PATH_DATA . "/post-missing-unassigned-" . $this->name . ".txt",
             "Missing MissingUnassigned List.\n"
         );
         $criteria = new Criteria("workflow");
         $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addJoinMC(array(
-            array(AppCacheViewPeer::APP_UID, ListUnassignedPeer::APP_UID),
-            array(AppCacheViewPeer::DEL_INDEX, ListUnassignedPeer::DEL_INDEX)
-        ),
+        $criteria->addJoinMC(
+            array(
+                array(AppCacheViewPeer::APP_UID, ListUnassignedPeer::APP_UID),
+                array(AppCacheViewPeer::DEL_INDEX, ListUnassignedPeer::DEL_INDEX)
+            ),
             Criteria::LEFT_JOIN
         );
 
@@ -3448,8 +3548,8 @@ class WorkspaceTools
             $item = $rsCriteria->getRow();
             $counter++;
             file_put_contents(
-                PATH_DATA."/post-missing-unassigned-".$this->name.".txt",
-                "[".$item['APP_UID']."] has not been found"
+                PATH_DATA . "/post-missing-unassigned-" . $this->name . ".txt",
+                "[" . $item['APP_UID'] . "] has not been found"
             );
         }
         CLI::logging("> Number of unassigned cases for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -3504,8 +3604,8 @@ class WorkspaceTools
             define('MEMCACHED_ENABLED', false);
         }
         $this->initPropel(true);
-        $conf  = new Configuration();
-        $blackList = array();
+        $conf = new Configuration();
+        $blackList = [];
         if ($bExist = $conf->exists('MIGRATED_CONTENT', 'content')) {
             $oConfig = $conf->load('MIGRATED_CONTENT', 'content');
             $blackList = $oConfig['CFG_VALUE'] == 'true' ? array('Groupwf', 'Process', 'Department', 'Task', 'InputDocument', 'Application') : unserialize($oConfig['CFG_VALUE']);
@@ -3606,11 +3706,11 @@ class WorkspaceTools
         $oCriteria = new Criteria();
         $oCriteria->add(OauthAccessTokensPeer::ACCESS_TOKEN, 0, Criteria::NOT_EQUAL);
         $accessToken = OauthAccessTokensPeer::doDelete($oCriteria);
-        CLI::logging("|--> Clean data in table " . OauthAccessTokensPeer::TABLE_NAME . " rows ".$accessToken."\n");
+        CLI::logging("|--> Clean data in table " . OauthAccessTokensPeer::TABLE_NAME . " rows " . $accessToken . "\n");
         $oCriteria = new Criteria();
         $oCriteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, 0, Criteria::NOT_EQUAL);
         $refreshToken = OauthRefreshTokensPeer::doDelete($oCriteria);
-        CLI::logging("|--> Clean data in table " . OauthRefreshTokensPeer::TABLE_NAME . " rows ".$refreshToken."\n");
+        CLI::logging("|--> Clean data in table " . OauthRefreshTokensPeer::TABLE_NAME . " rows " . $refreshToken . "\n");
     }
 
     public function migrateIteeToDummytask($workspaceName)
@@ -3659,7 +3759,7 @@ class WorkspaceTools
                 if ($oProcess->processExists($prj_uid)) {
                     $oProcess->update($aProcess);
                 }
-                $message = "    Process updated ".$bpmnProcess->getProTitle(). "\n";
+                $message = "    Process updated " . $bpmnProcess->getProTitle() . "\n";
                 CLI::logging($message);
             }
         }
@@ -3679,7 +3779,7 @@ class WorkspaceTools
         $conf = new Configurations();
         if (!$conf->exists('AUDIT_LOG', 'log')) {
             CLI::logging("> Updating Auditlog Config \n");
-            $oServerConf = &ServerConf::getSingleton();
+            $oServerConf = ServerConf::getSingleton();
             $sAudit = $oServerConf->getAuditLogProperty('AL_OPTION', $workspace);
             $conf->aConfig = ($sAudit == 1) ? 'true' : 'false';
             $conf->saveConfig('AUDIT_LOG', 'log');
@@ -3721,7 +3821,7 @@ class WorkspaceTools
                     $appAssignSelfServiceValueGroup->save();
                 }
             }
-            CLI::logging("    Migrating Record ".$row['ID']. "\n");
+            CLI::logging("    Migrating Record " . $row['ID'] . "\n");
         }
 
         // Updating processed records to empty
@@ -3887,7 +3987,7 @@ class WorkspaceTools
                                    WHERE AM.TAS_ID = 0 AND AM.PRO_ID = 0 AND AM.APP_NUMBER != 0 AND AM.DEL_INDEX != 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.PRO_ID when does not exits DEL_INDEX
+        // Populating APP_MESSAGE.PRO_ID
         CLI::logging("->   Populating APP_MESSAGE.PRO_ID\n");
         $con->begin();
         $stmt = $con->createStatement();
@@ -3903,7 +4003,7 @@ class WorkspaceTools
                                    WHERE AM.PRO_ID = 0 AND AM.APP_NUMBER != 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.PRO_ID
+        // Populating APP_MESSAGE.APP_MSG_STATUS_ID
         CLI::logging("->   Populating APP_MESSAGE.APP_MSG_STATUS_ID \n");
         $con->begin();
         $rs = $stmt->executeQuery("UPDATE APP_MESSAGE
@@ -3916,8 +4016,8 @@ class WorkspaceTools
                                     APP_MSG_STATUS_ID = 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.PRO_ID
-        CLI::logging("->   Populating APP_MESSAGE.APP_MSG_STATUS_ID \n");
+        // Populating APP_MESSAGE.APP_MSG_TYPE_ID
+        CLI::logging("->   Populating APP_MESSAGE.APP_MSG_TYPE_ID \n");
         $con->begin();
         $rs = $stmt->executeQuery("UPDATE APP_MESSAGE
                                     SET APP_MSG_TYPE_ID = (case
@@ -3929,6 +4029,28 @@ class WorkspaceTools
                                     WHERE APP_MSG_TYPE in ('TEST', 'TRIGGER', 'DERIVATION', 'EXTERNAL_REGISTRATION') AND
                                     APP_MSG_TYPE_ID = 0");
         $con->commit();
+
+        // Populating TAS.TAS_TITLE with BPMN_EVENT.EVN_NAME
+        /*----------------------------------********---------------------------------*/
+        CLI::logging("->   Populating TASK.TAS_TITLE with BPMN_EVENT.EVN_NAME\n");
+        $con->begin();
+        $rs = $stmt->executeQuery("UPDATE TASK
+                                   INNER JOIN (
+                                       SELECT ELEMENT_TASK_RELATION.TAS_UID, BPMN_EVENT.EVN_NAME
+                                       FROM ELEMENT_TASK_RELATION
+                                       JOIN BPMN_EVENT ON (BPMN_EVENT.EVN_UID = ELEMENT_TASK_RELATION.ELEMENT_UID)
+                                   ) AS EVENT
+                                   ON (TASK.TAS_UID = EVENT.TAS_UID)
+                                   SET TASK.TAS_TITLE = EVENT.EVN_NAME
+                                   WHERE TASK.TAS_TITLE IN (
+                                   'INTERMEDIATE-THROW-MESSAGE-EVENT',
+                                   'INTERMEDIATE-THROW-EMAIL-EVENT',
+                                   'INTERMEDIATE-CATCH-TIMER-EVENT',
+                                   'INTERMEDIATE-CATCH-MESSAGE-EVENT'
+                                   )
+                                   AND EVENT.EVN_NAME != ''");
+        $con->commit();
+        /*----------------------------------********---------------------------------*/
 
         CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
 
@@ -3943,7 +4065,7 @@ class WorkspaceTools
 
         CLI::logging("-> Populating PRO_ID, USR_ID at LIST_*  Done \n");
     }
-    
+
     /**
      * It populates the WEB_ENTRY table for the classic processes, this procedure
      * is done to verify the execution of php files generated when the WebEntry
@@ -4064,7 +4186,7 @@ class WorkspaceTools
             define('MEMCACHED_ENABLED', false);
         }
         $this->initPropel(true);
-        $conf  = new Configuration();
+        $conf = new Configuration();
         $pathSingleton = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . 'plugin.singleton';
         if ((!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')) && file_exists($pathSingleton)) {
             $oPluginRegistry = unserialize(file_get_contents($pathSingleton));
@@ -4110,8 +4232,8 @@ class WorkspaceTools
             $workSpace = config("system.workspace");
         }
         $paths = [
-            PATH_DATA.'framework' => 0770,
-            PATH_DATA.'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,
+            PATH_DATA . 'framework' => 0770,
+            PATH_DATA . 'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,
         ];
         foreach ($paths as $path => $permission) {
             if (!file_exists($path)) {
@@ -4123,14 +4245,278 @@ class WorkspaceTools
 
     /**
      * This function get the last table migrated for the labels
-     * @param array $workspaceSchema, the current schema in the database
+     * @param array $workspaceSchema , the current schema in the database
      * @return void
-    */
-    private function checkLastContentMigrate(array $workspaceSchema){
-        $content = end($this->getListContentMigrateTable());
+     */
+    private function checkLastContentMigrate(array $workspaceSchema)
+    {
+        $listContent = $this->getListContentMigrateTable();
+        $content = end($listContent);
         $lastContent = isset($content['peer']) ? $content['peer'] : null;
         if (!is_null($lastContent) && isset($workspaceSchema[$lastContent::TABLE_NAME][$content['fields'][0]])) {
             $this->setLastContentMigrateTable(true);
         }
+    }
+
+    /**
+     * Remove the DYN_CONTENT_HISTORY from APP_HISTORY
+     *
+     * @param boolean $force
+     * @param boolean $keepDynContent
+     *
+     * @return void
+    */
+    public function clearDynContentHistoryData($force = false, $keepDynContent = false)
+    {
+        $this->initPropel(true);
+        $conf = new Configurations();
+        $exist = $conf->exists('CLEAN_DYN_CONTENT_HISTORY', 'history');
+
+        if ($force === false && $exist === true) {
+            $config = (object)$conf->load('CLEAN_DYN_CONTENT_HISTORY', 'history');
+            if ($config->updated) {
+                CLI::logging("-> This was previously updated.\n");
+
+                return;
+            }
+        }
+        if ($force === false && $keepDynContent) {
+            CLI::logging("-> Keep DYN_CONTENT_HISTORY.\n");
+
+            return;
+        }
+        //We will to proceed to clean DYN_CONTENT_HISTORY
+        $query = "UPDATE APP_HISTORY SET HISTORY_DATA = IF(LOCATE('DYN_CONTENT_HISTORY',HISTORY_DATA)>0, CONCAT( "
+            . "    SUBSTRING_INDEX(HISTORY_DATA, ':', 1), "
+            . "    ':', "
+            . "    CAST( "
+            . "        SUBSTRING( "
+            . "            SUBSTRING_INDEX(HISTORY_DATA, ':{', 1), "
+            . "             LOCATE(':', HISTORY_DATA)+1 "
+            . "        ) AS SIGNED "
+            . "    )-1, "
+            . "    SUBSTRING( "
+            . "        CONCAT( "
+            . "            SUBSTRING_INDEX(HISTORY_DATA, 's:19:\"DYN_CONTENT_HISTORY\";s:', 1), "
+            . "            SUBSTRING( "
+            . "                SUBSTRING( "
+            . "                    HISTORY_DATA, "
+            . "                    LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', HISTORY_DATA)+29 "
+            . "                ), "
+            . "                LOCATE( "
+            . "                    '\";', "
+            . "                    SUBSTRING( "
+            . "                        HISTORY_DATA, "
+            . "                        LOCATE('s:19:\"DYN_CONTENT_HISTORY\";s:', HISTORY_DATA)+29 "
+            . "                    ) "
+            . "                )+2 "
+            . "            ) "
+            . "        ), "
+            . "        LOCATE(':{', HISTORY_DATA) "
+            . "    ) "
+            . "),   HISTORY_DATA)";
+
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
+        CLI::logging("-> Table fixed for " . $this->dbName . ".APP_HISTORY\n");
+        $stmt = $con->createStatement();
+
+        $conf->aConfig = ['updated' => true];
+        $conf->saveConfig('CLEAN_DYN_CONTENT_HISTORY', 'history');
+
+    }
+
+    /*----------------------------------********---------------------------------*/
+    /**
+     * Migrate the contents of table APP_HISTORY to table APP_DATA_CHANGE_LOG.
+     * 
+     * @param boolean $force
+     *
+     * @return void
+     */
+    public function migrateAppHistoryToAppDataChangeLog($force = false)
+    {
+        $this->initPropel(true);
+
+        $conf = new Configurations();
+        $exist = $conf->exists('MIGRATED_APP_HISTORY', 'history');
+        if ($exist === true && $force === false) {
+            $config = (object)$conf->load('MIGRATED_APP_HISTORY', 'history');
+            if ($config->updated) {
+                CLI::logging("-> This was previously updated.\n");
+
+                return;
+            }
+        }
+
+        $select = ""
+            . "SELECT  "
+            . "A.HISTORY_DATE AS 'DATE', "
+            . "B.APP_NUMBER AS 'APP_NUMBER', "
+            . "A.DEL_INDEX AS 'DEL_INDEX', "
+            . "C.PRO_ID AS 'PRO_ID', "
+            . "D.TAS_ID AS 'TAS_ID', "
+            . "E.USR_ID AS 'USR_ID', "
+            . "IF( "
+            . "    A.OBJ_TYPE='DYNAFORM', "
+            . "    " . ChangeLog::DYNAFORM . ", "
+            . "    IF( "
+            . "        A.OBJ_TYPE='OUTPUT_DOCUMENT', "
+            . "        " . ChangeLog::OUTPUT_DOCUMENT . ", "
+            . "        IF( "
+            . "            A.OBJ_TYPE='INPUT_DOCUMENT', "
+            . "            " . ChangeLog::INPUT_DOCUMENT . ", "
+            . "            IF( "
+            . "                A.OBJ_TYPE='ASSIGN_TASK', "
+            . "                " . ChangeLog::TRIGGER . ", "
+            . "                IF( "
+            . "                    A.OBJ_TYPE='EXTERNAL', "
+            . "                    " . ChangeLog::EXTERNAL_STEP . ", "
+            . "                    0 "
+            . "                ) "
+            . "            ) "
+            . "        ) "
+            . "    ) "
+            . ") AS 'OBJECT_TYPE', "
+            . "IF( "
+            . "    F.DYN_ID IS NOT NULL, "
+            . "    F.DYN_ID, "
+            . "    IF( "
+            . "        G.OUT_DOC_ID IS NOT NULL, "
+            . "        G.OUT_DOC_ID, "
+            . "        IF( "
+            . "            H.INP_DOC_ID IS NOT NULL, "
+            . "            H.INP_DOC_ID, "
+            . "            0 "
+            . "        ) "
+            . "    ) "
+            . ") AS 'OBJECT_ID', "
+            . "IF( "
+            . "    A.DYN_UID='-1' OR A.DYN_UID='-2', "
+            . "    0,"
+            . "    A.DYN_UID "
+            . ") AS 'OBJECT_UID', "
+            . "IF( "
+            . "    A.DYN_UID='-1', "
+            . "    " . ChangeLog::BEFORE_ASSIGNMENT . ", "
+            . "    IF( "
+            . "        A.DYN_UID='-2', "
+            . "        " . ChangeLog::UNKNOW_STEP . ", "
+            . "        " . ChangeLog::UNKNOW_STEP . " "
+            . "    ) "
+            . ") AS 'EXECUTED_AT', "
+            . "" . ChangeLog::FromWeb . " AS 'SOURCE_ID', "
+            . "A.HISTORY_DATA AS 'DATA', "
+            . "IF(LOCATE('SYS_SKIN',B.APP_DATA)>0, SUBSTRING_INDEX(SUBSTRING(B.APP_DATA, LOCATE('SYS_SKIN',B.APP_DATA)+16),'\"',1), '') AS 'SKIN', "
+            . "IF(LOCATE('SYS_LANG',B.APP_DATA)>0, SUBSTRING(B.APP_DATA, LOCATE('SYS_LANG',B.APP_DATA)+15,2), '') AS 'LANGUAGE', "
+            . "1 AS ROW_MIGRATION "
+            . "FROM " . $this->dbName . ".APP_HISTORY AS A "
+            . "LEFT JOIN " . $this->dbName . ".APPLICATION AS B ON (B.APP_UID=A.APP_UID) "
+            . "LEFT JOIN " . $this->dbName . ".PROCESS AS C ON (C.PRO_UID=A.PRO_UID) "
+            . "LEFT JOIN " . $this->dbName . ".TASK AS D ON (D.TAS_UID=A.TAS_UID) "
+            . "LEFT JOIN " . $this->dbName . ".USERS AS E ON (E.USR_UID=A.USR_UID) "
+            . "LEFT JOIN " . $this->dbName . ".DYNAFORM AS F ON (F.DYN_UID=A.DYN_UID) "
+            . "LEFT JOIN " . $this->dbName . ".OUTPUT_DOCUMENT AS G ON (G.OUT_DOC_UID=A.DYN_UID) "
+            . "LEFT JOIN " . $this->dbName . ".INPUT_DOCUMENT AS H ON (H.INP_DOC_UID=A.DYN_UID) ";
+
+        $delete = "DELETE FROM " . $this->dbName . ".APP_DATA_CHANGE_LOG "
+                . "WHERE "
+                . "ROW_MIGRATION=1";
+
+        $insert = "INSERT INTO " . $this->dbName . ".APP_DATA_CHANGE_LOG ( "
+                . "    DATE, "
+                . "    APP_NUMBER, "
+                . "    DEL_INDEX, "
+                . "    PRO_ID, "
+                . "    TAS_ID, "
+                . "    USR_ID, "
+                . "    OBJECT_TYPE, "
+                . "    OBJECT_ID, "
+                . "    OBJECT_UID, "
+                . "    EXECUTED_AT, "
+                . "    SOURCE_ID, "
+                . "    DATA, "
+                . "    SKIN, "
+                . "    LANGUAGE, "
+                . "    ROW_MIGRATION "
+                . ") "
+                . $select;
+
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($delete);
+        CLI::logging("-> Table cleaning finished for " . $this->dbName . ".APP_DATA_CHANGE_LOG\n");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($insert);
+        CLI::logging("-> Completed migration in table " . $this->dbName . ".APP_DATA_CHANGE_LOG\n");
+
+        $conf->aConfig = ['updated' => true];
+        $conf->saveConfig('MIGRATED_APP_HISTORY', 'history');
+    }
+    /*----------------------------------********---------------------------------*/
+
+    /**
+     * Upgrade APP_ASSIGN_SELF_SERVICE_VALUE_GROUP and GROUP_USER tables.
+     * Before only the identification value of 32 characters was used, now the 
+     * numerical value plus the type is used, 1 for the user and 2 for the group, 
+     * if it is not found, it is updated with -1.
+     * 
+     * @param object $con
+     * 
+     * @return void
+     */
+    public function upgradeSelfServiceData($con = null)
+    {
+        if ($con === null) {
+            $this->initPropel(true);
+            $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
+        }
+
+        CLI::logging("->    Update table GROUP_USER\n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE GROUPWF AS GW "
+                . "INNER JOIN GROUP_USER AS GU ON "
+                . "    GW.GRP_UID=GU.GRP_UID "
+                . "SET GU.GRP_ID=GW.GRP_ID "
+                . "WHERE GU.GRP_ID = 0");
+        $con->commit();
+
+        CLI::logging("->    Update table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP\n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE GROUPWF AS GW "
+                . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
+                . "    GW.GRP_UID=GU.GRP_UID "
+                . "SET "
+                . "GU.ASSIGNEE_ID=GW.GRP_ID, "
+                . "GU.ASSIGNEE_TYPE=2 "
+                . "WHERE GU.ASSIGNEE_ID = 0");
+        $con->commit();
+
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE USERS AS U "
+                . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
+                . "    U.USR_UID=GU.GRP_UID "
+                . "SET "
+                . "GU.ASSIGNEE_ID=U.USR_ID, "
+                . "GU.ASSIGNEE_TYPE=1 "
+                . "WHERE GU.ASSIGNEE_ID = 0");
+        $con->commit();
+
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE APP_ASSIGN_SELF_SERVICE_VALUE_GROUP "
+                . "SET "
+                . "ASSIGNEE_ID=-1, "
+                . "ASSIGNEE_TYPE=-1 "
+                . "WHERE ASSIGNEE_ID = 0");
+        $con->commit();
     }
 }

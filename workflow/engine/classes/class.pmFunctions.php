@@ -303,13 +303,12 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
             switch (true) {
                 case preg_match( "/^(SELECT|EXECUTE|EXEC|SHOW|DESCRIBE|EXPLAIN|BEGIN)\s/i", $statement ):
                     $rs = $con->executeQuery( $SqlStatement );
-                    $con->commit();
-
                     $result = Array ();
                     $i = 1;
                     while ($rs->next()) {
                         $result[$i ++] = $rs->getRow();
                     }
+                    $con->commit();
                     break;
                 case preg_match( "/^INSERT\s/i", $statement ):
                     $rs = $con->executeUpdate( $SqlStatement );
@@ -2764,10 +2763,11 @@ function PMFDeleteCase ($caseUid)
  * @return int | $result | Result of the cancelation | Returns 1 if the case is cancel successfully; otherwise, returns 0 if an error occurred.
  *
  */
-function PMFCancelCase ($caseUid, $delIndex, $userUid)
+function PMFCancelCase ($caseUid, $delIndex = null, $userUid = null)
 {
     $ws = new WsBase();
-    $result = $ws->cancelCase( $caseUid, $delIndex, $userUid );
+    $result = $ws->cancelCase($caseUid, $delIndex, $userUid);
+    $result = (object)$result;
 
     if ($result->status_code == 0) {
         if (isset($_SESSION['APPLICATION']) && isset($_SESSION['INDEX'])) {
@@ -2776,10 +2776,17 @@ function PMFCancelCase ($caseUid, $delIndex, $userUid)
                     G::header('Location: ../cases/casesListExtJsRedirector');
                     die();
                 } else {
-                    die(G::LoadTranslation('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFCancelCase', G::LoadTranslation('ID_CANCELLED'))));
+                    die(
+                        G::LoadTranslation(
+                        'ID_PM_FUNCTION_CHANGE_CASE',
+                        SYS_LANG,
+                            ['PMFCancelCase', G::LoadTranslation('ID_CANCELLED')]
+                        )
+                    );
                 }
             }
         }
+
         return 1;
     } else {
         return 0;

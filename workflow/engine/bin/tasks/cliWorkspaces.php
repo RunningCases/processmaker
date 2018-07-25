@@ -209,7 +209,7 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_itee_to_dummytask");
 
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 CLI::taskName("check-workspace-disabled-code");
 CLI::taskDescription(<<<EOT
   Check disabled code for the specified workspace(s).
@@ -248,7 +248,7 @@ EOT
 );
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_list_unassigned");
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 
 CLI::taskName('migrate-indexing-acv');
 CLI::taskDescription(<<<EOT
@@ -342,17 +342,49 @@ EOT
 CLI::taskArg('workspace');
 CLI::taskRun("regenerate_pmtable_classes");
 
+/*----------------------------------********---------------------------------*/
+/**
+ * Migrate the data from APP_HISTORY table to the new table APP_DATA_CHANGE_LOG.
+ */
+CLI::taskName('migrate-history-data');
+CLI::taskDescription(<<<EOT
+    Migrate the content of the APP_HISTORY table to the APP_DATA_CHANGE_LOG table.
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun('migrate_history_data');
+/*----------------------------------********---------------------------------*/
+
+/**
+ * Remove the DYN_CONTENT_HISTORY
+ */
+CLI::taskName('clear-dyn-content-history-data');
+CLI::taskDescription(<<<EOT
+    Clear History of Use data from APP_HISTORY table
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun("run_clear_dyn_content_history_data");
+
 /**
  * Function run_info
- * access public
+ * 
+ * @param array $args
+ * @param array $opts
  */
 function run_info($args, $opts)
 {
-    $workspaces = get_workspaces_from_args($args);
     WorkspaceTools::printSysInfo();
-    foreach ($workspaces as $workspace) {
-        echo "\n";
-        $workspace->printMetadata(false);
+
+    //Check if the command is executed by a specific workspace
+    $workspaces = get_workspaces_from_args($args);
+    if (count($args) === 1) {
+        $workspaces[0]->printMetadata(false);
+    } else {
+        foreach ($workspaces as $workspace) {
+            echo "\n";
+            passthru(PHP_BINARY . " processmaker info " . $workspace->name);
+        }
     }
 }
 
@@ -832,6 +864,11 @@ function run_workspace_restore($args, $opts)
         $info = array_key_exists("info", $opts);
         $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
         $port = array_key_exists("port", $opts) ? $opts['port'] : '';
+        $optionMigrateHistoryData = [
+            /*----------------------------------********---------------------------------*/
+            'keepDynContent' => array_key_exists('keep_dyn_content', $args)
+            /*----------------------------------********---------------------------------*/
+        ];
         if ($info) {
             WorkspaceTools::getBackupInfo($filename);
         } else {
@@ -857,7 +894,7 @@ function run_workspace_restore($args, $opts)
                     CLI::error("Please, you should use -m parameter to restore them.\n");
                     return;
                 }
-                WorkspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port);
+                WorkspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port, $optionMigrateHistoryData);
             }
         }
     } else {
@@ -865,21 +902,31 @@ function run_workspace_restore($args, $opts)
     }
 }
 
+/**
+ * Migrating cases folders of the workspaces
+ * 
+ * @param array $command
+ * @param array $args
+ */
 function runStructureDirectories($command, $args)
 {
     $workspaces = get_workspaces_from_args($command);
-    $count = count($workspaces);
-    $errors = false;
-    $countWorkspace = 0;
-    foreach ($workspaces as $index => $workspace) {
+    if (count($command) === 1) {
         try {
-            $countWorkspace++;
-            CLI::logging("Updating workspaces ($countWorkspace/$count): " . CLI::info($workspace->name) . "\n");
+            $workspace = $workspaces[0];
+            CLI::logging(": " . CLI::info($workspace->name) . "\n");
             $workspace->updateStructureDirectories($workspace->name);
             $workspace->close();
         } catch (Exception $e) {
             CLI::logging("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
-            $errors = true;
+        }
+    } else {
+        $count = count($workspaces);
+        $countWorkspace = 0;
+        foreach ($workspaces as $index => $workspace) {
+            $countWorkspace++;
+            CLI::logging("Updating workspaces ($countWorkspace/$count)");
+            passthru(PHP_BINARY . " processmaker migrate-cases-folders " . $workspace->name);
         }
     }
 }
@@ -981,7 +1028,7 @@ function run_migrate_itee_to_dummytask($args, $opts)
         }
     }
 }
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 
 /**
  * Check if we need to execute an external program for each workspace
@@ -1118,7 +1165,7 @@ function migrate_list_unassigned($command, $args, $opts)
         }
     }
 }
-/* ----------------------------------********--------------------------------- */
+/*----------------------------------********---------------------------------*/
 
 /**
  * Check if we need to execute an external program for each workspace
@@ -1249,4 +1296,55 @@ function regenerate_pmtable_classes($args, $opts)
     } else {
         throw new Exception("No workspace specified for updating generated class files.");
     }
+}
+
+/*----------------------------------********---------------------------------*/
+/**
+ * This method migrates data from APP_HISTORY table to APP_DATA_CHANGE_LOG table.
+ * 
+ * @param array $args
+ * @param string $opts
+ */
+function migrate_history_data($args, $opts)
+{
+    if (count($args) === 1) {
+        $start = microtime(true);
+        CLI::logging("> Migrating history data...\n");
+
+        Bootstrap::setConstantsRelatedWs($args[0]);
+
+        $workspaceTools = new WorkspaceTools($args[0]);
+        $workspaceTools->migrateAppHistoryToAppDataChangeLog(true);
+
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru(PHP_BINARY . ' processmaker migrate-history-data ' . $workspace->name);
+        }
+    }
+}
+/*----------------------------------********---------------------------------*/
+
+/**
+ * Will be clean the History of use from the table
+ * Will be remove the DYN_CONTENT_HISTORY from APP_HISTORY
+ *
+ * @param array $args
+ * @param array $opts
+ *
+ * @return void
+*/
+function run_clear_dyn_content_history_data($args, $opts)
+{
+    $workspaces = get_workspaces_from_args($args);
+    $start = microtime(true);
+    CLI::logging("> Cleaning history data from APP_HISTORY...\n");
+    foreach ($workspaces as $workspace) {
+        CLI::logging('Remove history of use: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        $workspace->clearDynContentHistoryData(true);
+    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Cleaning history data from APP_HISTORY process took " . ($stop - $start) . " seconds.\n");
 }

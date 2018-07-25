@@ -21,7 +21,6 @@ class Designer extends Controller
 
     public function __construct()
     {
-
     }
 
     /**
@@ -43,7 +42,7 @@ class Designer extends Controller
         $distribution = 0;
 
         /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
             $consolidated = 1;
         }

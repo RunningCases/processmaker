@@ -1704,7 +1704,9 @@ class AppSolr
             $UnSerializedCaseData = unserialize($documentData ['APP_DATA']);
 
             if ($UnSerializedCaseData === false) {
-                $UnSerializedCaseData = preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $documentData ['APP_DATA']); // utf8_encode
+                $UnSerializedCaseData = preg_replace_callback('!s:(\d+):"(.*?)";!', function ($m) {
+                    return 's:' . strlen($m[2]) . ':"' . $m[2] . '";';
+                }, $documentData ['APP_DATA']); // utf8_encode
                 $UnSerializedCaseData = unserialize($UnSerializedCaseData);
             }
 

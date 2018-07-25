@@ -1,7 +1,8 @@
 <?php
 
-if (PMLicensedFeatures
-                ::getSingleton()
+use ProcessMaker\ChangeLog\ChangeLog;
+
+if (PMLicensedFeatures::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
     $G_PUBLISH = new Publisher();
     try {
@@ -29,6 +30,7 @@ if (PMLicensedFeatures
         $appUid = G::decrypt($_GET['APP_UID'], URL_KEY);
         $delIndex = G::decrypt($_REQUEST['DEL_INDEX'], URL_KEY);
         $aber = G::decrypt($_REQUEST['ABER'], URL_KEY);
+        $dynUid = G::decrypt($_REQUEST['DYN_UID'], URL_KEY);
         $forms = isset($_REQUEST['form']) ? $_REQUEST['form'] : [];
 
         //Load data related to the case
@@ -50,15 +52,19 @@ if (PMLicensedFeatures
             $_SESSION[$index] = $value;
         }
 
+        $casesFields['CURRENT_DYNAFORM'] = $dynUid;
+        $casesFields['USER_UID'] = $casesFields['CURRENT_USER_UID'];
+
+        ChangeLog::getChangeLog()
+                ->getUsrIdByUsrUid($casesFields['USER_UID'], true)
+                ->setSourceId(ChangeLog::FromABE);
+
         //Update case info
         $case->updateCase($appUid, $casesFields);
 
         $wsBaseInstance = new WsBase();
         $result = $wsBaseInstance->derivateCase(
-            $casesFields['CURRENT_USER_UID'],
-            $appUid,
-            $delIndex,
-            true
+                $casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true
         );
         $code = (is_array($result) ? $result['status_code'] : $result->status_code);
 

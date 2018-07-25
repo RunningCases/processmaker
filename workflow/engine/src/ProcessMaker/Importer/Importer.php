@@ -300,6 +300,8 @@ abstract class Importer
                             $this->preserveEmailEventConfiguration($emailEvent);
                         }
                     }
+                    
+                    $this->preserveCurrentId($this->importData["tables"]["workflow"]);
 
                     $objectList = $granularObj->loadObjectsListSelected($this->importData, $newObjectArray);
                     if (sizeof($objectList) > 0 && $processGranulate) {
@@ -602,6 +604,8 @@ abstract class Importer
             foreach ($arrayWorkflowTables["emailEvent"] as &$emailEvent) {
                 $this->preserveEmailEventConfiguration($emailEvent);
             }
+            
+            $this->preserveCurrentId($arrayWorkflowTables);
 
             $this->importWfTables($arrayWorkflowTables);
 
@@ -873,6 +877,9 @@ abstract class Importer
         $result->tasks = $processes->getTaskRows($proUid);
         $result->abeConfigurations = $processes->getActionsByEmail($proUid);
         $result->emailEvents = $processes->getEmailEvent($proUid);
+        $result->dynaforms = $processes->getDynaformRows($proUid);
+        $result->inputs = $processes->getInputRows($proUid);
+        $result->outputs = $processes->getOutputRows($proUid);
 
         $this->setCurrentProcess($result);
     }
@@ -940,6 +947,73 @@ abstract class Importer
                         $data["__EMAIL_SERVER_UID_PRESERVED__"] = true;
                         break;
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Restore id values for the dynaforms, input documents and output documents.
+     * 
+     * @param type $arrayWorkflowTables
+     */
+    private function preserveCurrentId(&$arrayWorkflowTables)
+    {
+        $currentProcess = $this->getCurrentProcess();
+
+        //dynaforms
+        foreach ($arrayWorkflowTables["dynaforms"] as &$data) {
+            if (!is_object($currentProcess)) {
+                unset($data['DYN_ID']);
+                continue;
+            }
+            $currentElements = $currentProcess->dynaforms;
+            if (!is_array($currentElements)) {
+                unset($data['DYN_ID']);
+                continue;
+            }
+            foreach ($currentElements as $currentElement) {
+                if ($currentElement["PRO_UID"] === $data["PRO_UID"] &&
+                        $currentElement["DYN_UID"] === $data["DYN_UID"]) {
+                    $data['DYN_ID'] = $currentElement["DYN_ID"];
+                }
+            }
+        }
+
+        //input documents
+        foreach ($arrayWorkflowTables["inputs"] as &$data) {
+            if (!is_object($currentProcess)) {
+                unset($data['INP_DOC_ID']);
+                continue;
+            }
+            $currentElements = $currentProcess->inputs;
+            if (!is_array($currentElements)) {
+                unset($data['INP_DOC_ID']);
+                continue;
+            }
+            foreach ($currentElements as $currentElement) {
+                if ($currentElement["PRO_UID"] === $data["PRO_UID"] &&
+                        $currentElement["INP_DOC_UID"] === $data["INP_DOC_UID"]) {
+                    $data['INP_DOC_ID'] = $currentElement['INP_DOC_ID'];
+                }
+            }
+        }
+
+        //output documents
+        foreach ($arrayWorkflowTables["outputs"] as &$data) {
+            if (!is_object($currentProcess)) {
+                unset($data['OUT_DOC_ID']);
+                continue;
+            }
+            $currentElements = $currentProcess->outputs;
+            if (!is_array($currentElements)) {
+                unset($data['OUT_DOC_ID']);
+                continue;
+            }
+            foreach ($currentElements as $currentElement) {
+                if ($currentElement["PRO_UID"] === $data["PRO_UID"] &&
+                        $currentElement["OUT_DOC_UID"] === $data["OUT_DOC_UID"]) {
+                    $data['OUT_DOC_ID'] = $currentElement['OUT_DOC_ID'];
                 }
             }
         }

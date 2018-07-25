@@ -1,18 +1,11 @@
 <?php
 
-//It works with the table CONFIGURATION in a WF dataBase
-use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\EmailServer;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\ChangeLog\ChangeLog;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\Core\System;
 
-/**
- * Copyright (C) 2009 COLOSA
- * License: LGPL, see LICENSE
- * Last Modify: 26.06.2008 10:05:00
- * Last modify by: Erik Amaru Ortiz <erik@colosa.com>
- * Last Modify comment(26.06.2008): the session expired verification was removed from here to soap class
- *
- * @package workflow.engine.classes
- */
 class WsBase
 {
     public $stored_system_variables; //boolean
@@ -34,6 +27,7 @@ class WsBase
      *
      * @param string $userid
      * @param string $password
+     *
      * @return $wsResponse will return an object
      */
     public function login($userid, $password)
@@ -51,16 +45,16 @@ class WsBase
 
             switch ($uid) {
                 case '':
-                case - 1: //The user doesn't exist
+                case -1: //The user doesn't exist
                     $wsResponse = new WsResponse(3, G::loadTranslation('ID_USER_NOT_REGISTERED'));
                     break;
-                case - 2: //The password is incorrect
+                case -2: //The password is incorrect
                     $wsResponse = new WsResponse(4, G::loadTranslation('ID_WRONG_PASS'));
                     break;
-                case - 3: //The user is inactive
+                case -3: //The user is inactive
                     $wsResponse = new WsResponse(5, G::loadTranslation('ID_USER_INACTIVE'));
                     break;
-                case - 4: //The Due date is finished
+                case -4: //The Due date is finished
                     $wsResponse = new WsResponse(5, G::loadTranslation('ID_USER_INACTIVE'));
                     break;
             }
@@ -87,7 +81,10 @@ class WsBase
             $session->setUsrUid($uid);
             $session->setSesRemoteIp($_SERVER['REMOTE_ADDR']);
             $session->setSesInitDate(date('Y-m-d H:i:s'));
-            $session->setSesDueDate(date('Y-m-d H:i:s', mktime(date('H'), date('i') + 15, date('s'), date('m'), date('d'), date('Y'))));
+            $session->setSesDueDate(date(
+                'Y-m-d H:i:s',
+                mktime(date('H'), date('i') + 15, date('s'), date('m'), date('d'), date('Y'))
+            ));
             $session->setSesEndDate('');
             $session->Save();
 
@@ -105,6 +102,7 @@ class WsBase
      * get all groups
      *
      * @param none
+     *
      * @return $result will return an object
      */
     public function processList()
@@ -120,14 +118,18 @@ class WsBase
             while ($aRow = $oDataset->getRow()) {
                 $oProcess = new Process();
                 $arrayProcess = $oProcess->load($aRow['PRO_UID']);
-                $result[] = array('guid' => $aRow['PRO_UID'], 'name' => $arrayProcess['PRO_TITLE']
+                $result[] = array(
+                    'guid' => $aRow['PRO_UID'],
+                    'name' => $arrayProcess['PRO_TITLE']
                 );
                 $oDataset->next();
             }
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage(),
+                'name' => $e->getMessage()
             );
 
             return $result;
@@ -138,6 +140,7 @@ class WsBase
      * get all roles, to see all roles
      *
      * @param none
+     *
      * @return $result will return an object
      */
     public function roleList()
@@ -145,7 +148,7 @@ class WsBase
         try {
             $result = [];
 
-            $RBAC = & RBAC::getSingleton();
+            $RBAC = RBAC::getSingleton();
             $RBAC->initRBAC();
             $oCriteria = $RBAC->listAllRoles();
             $oDataset = GulliverBasePeer::doSelectRs($oCriteria);
@@ -153,14 +156,18 @@ class WsBase
             $oDataset->next();
 
             while ($aRow = $oDataset->getRow()) {
-                $result[] = array('guid' => $aRow['ROL_UID'], 'name' => $aRow['ROL_CODE']
+                $result[] = array(
+                    'guid' => $aRow['ROL_UID'],
+                    'name' => $aRow['ROL_CODE']
                 );
                 $oDataset->next();
             }
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage(),
+                'name' => $e->getMessage()
             );
 
             return $result;
@@ -174,6 +181,7 @@ class WsBase
      * @param null $regex
      * @param null $start
      * @param null $limit
+     *
      * @return array|stdClass
      */
     public function groupList($regex = null, $start = null, $limit = null)
@@ -212,6 +220,7 @@ class WsBase
      * get all department
      *
      * @param none
+     *
      * @return $result will return an object
      */
     public function departmentList()
@@ -249,7 +258,9 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage(),
+                'name' => $e->getMessage()
             );
 
             return $result;
@@ -260,6 +271,7 @@ class WsBase
      * Get case list
      *
      * @param string $userId
+     *
      * @return $result will return an object
      */
     public function caseList($userUid)
@@ -269,9 +281,9 @@ class WsBase
 
             if (($solrEnv = System::solrEnv()) !== false) {
                 $appSolr = new AppSolr(
-                        $solrEnv["solr_enabled"], 
-                        $solrEnv["solr_host"], 
-                        $solrEnv["solr_instance"]
+                    $solrEnv["solr_enabled"],
+                    $solrEnv["solr_host"],
+                    $solrEnv["solr_instance"]
                 );
 
                 if ($appSolr->isSolrEnabled() && $solrEnv["solr_enabled"] == true) {
@@ -304,17 +316,17 @@ class WsBase
                     $columsToIncludeFinal = array_merge($columsToInclude, $delegationIndexes);
 
                     $solrRequestData = EntitySolrRequestData::createForRequestPagination(
-                                    array(
-                                        "workspace" => $solrEnv["solr_instance"],
-                                        "startAfter" => 0,
-                                        "pageSize" => 1000,
-                                        "searchText" => $solrSearchText,
-                                        "numSortingCols" => 1,
-                                        "sortCols" => array("APP_NUMBER"),
-                                        "sortDir" => array(strtolower("DESC")),
-                                        "includeCols" => $columsToIncludeFinal,
-                                        "resultFormat" => "json"
-                                    )
+                        array(
+                            "workspace" => $solrEnv["solr_instance"],
+                            "startAfter" => 0,
+                            "pageSize" => 1000,
+                            "searchText" => $solrSearchText,
+                            "numSortingCols" => 1,
+                            "sortCols" => array("APP_NUMBER"),
+                            "sortDir" => array(strtolower("DESC")),
+                            "includeCols" => $columsToIncludeFinal,
+                            "resultFormat" => "json"
+                        )
                     );
 
                     //Use search index to return list of cases
@@ -421,16 +433,21 @@ class WsBase
                 $criteria->add(AppCacheViewPeer::USR_UID, $userUid);
 
                 $criteria->add(
-                        //ToDo - getToDo()
-                        $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "TO_DO", CRITERIA::EQUAL)->addAnd(
-                                $criteria->getNewCriterion(AppCacheViewPeer::DEL_FINISH_DATE, null, Criteria::ISNULL))->addAnd(
-                                $criteria->getNewCriterion(AppCacheViewPeer::APP_THREAD_STATUS, "OPEN"))->addAnd(
-                                $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN"))
+                //ToDo - getToDo()
+                    $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "TO_DO", CRITERIA::EQUAL)->addAnd(
+                        $criteria->getNewCriterion(AppCacheViewPeer::DEL_FINISH_DATE, null, Criteria::ISNULL)
+                    )->addAnd(
+                        $criteria->getNewCriterion(AppCacheViewPeer::APP_THREAD_STATUS, "OPEN")
+                    )->addAnd(
+                        $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN")
+                    )
                 )->addOr(
-                        //Draft - getDraft()
-                        $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "DRAFT", CRITERIA::EQUAL)->addAnd(
-                                $criteria->getNewCriterion(AppCacheViewPeer::APP_THREAD_STATUS, "OPEN"))->addAnd(
-                                $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN"))
+                //Draft - getDraft()
+                    $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "DRAFT", CRITERIA::EQUAL)->addAnd(
+                        $criteria->getNewCriterion(AppCacheViewPeer::APP_THREAD_STATUS, "OPEN")
+                    )->addAnd(
+                        $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN")
+                    )
                 );
 
                 $criteria->addDescendingOrderByColumn(AppCacheViewPeer::APP_NUMBER);
@@ -471,6 +488,7 @@ class WsBase
      * Get unassigned case list
      *
      * @param string $userId
+     *
      * @return $result will return an object
      */
     public function unassignedCaseList($userId)
@@ -484,21 +502,25 @@ class WsBase
             $oDataset->next();
 
             while ($aRow = $oDataset->getRow()) {
-                $result[] = array('guid' => $aRow['APP_UID'],
+                $result[] = array(
+                    'guid' => $aRow['APP_UID'],
                     'name' => $aRow['APP_NUMBER'],
                     'delIndex' => $aRow['DEL_INDEX'],
-                    'processId' => $aRow['PRO_UID']);
+                    'processId' => $aRow['PRO_UID']
+                );
 
                 $oDataset->next();
             }
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(),
+            $result[] = array(
+                'guid' => $e->getMessage(),
                 'name' => $e->getMessage(),
                 'status' => $e->getMessage(),
                 'status' => $e->getMessage(),
-                'processId' => $e->getMessage());
+                'processId' => $e->getMessage()
+            );
 
             return $result;
         }
@@ -542,6 +564,7 @@ class WsBase
      * get list of all the available triggers in a workspace
      *
      * @param none
+     *
      * @return $result will return an object
      */
     public function triggerList()
@@ -557,7 +580,10 @@ class WsBase
             $oDataset->next();
 
             while ($aRow = $oDataset->getRow()) {
-                $result[] = array('guid' => $aRow['TRI_UID'], 'name' => $aRow['TITLE'], 'processId' => $aRow['PRO_UID']
+                $result[] = array(
+                    'guid' => $aRow['TRI_UID'],
+                    'name' => $aRow['TITLE'],
+                    'processId' => $aRow['PRO_UID']
                 );
 
                 $oDataset->next();
@@ -565,7 +591,9 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage(),
+                'name' => $e->getMessage()
             );
 
             return $result;
@@ -577,6 +605,7 @@ class WsBase
      *
      * @param string $sApplicationUID
      * @param string $sUserUID
+     *
      * @return $result
      */
     public function inputDocumentList($sApplicationUID, $sUserUID)
@@ -609,7 +638,8 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage()
             );
 
             return $result;
@@ -620,6 +650,7 @@ class WsBase
      * input document process list
      *
      * @param string $sProcessUID
+     *
      * @return $result will return an object
      */
     public function inputDocumentProcessList($sProcessUID)
@@ -656,7 +687,8 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage()
             );
 
             return $result;
@@ -668,6 +700,7 @@ class WsBase
      *
      * @param string $sApplicationUID
      * @param string $sUserUID
+     *
      * @return $result will return an object
      */
     public function outputDocumentList($sApplicationUID, $sUserUID)
@@ -701,7 +734,8 @@ class WsBase
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage()
             );
 
             return $result;
@@ -712,6 +746,7 @@ class WsBase
      * remove document
      *
      * @param string $appDocUid
+     *
      * @return $result will return an object
      */
     public function removeDocument($appDocUid)
@@ -733,6 +768,7 @@ class WsBase
      * get task list
      *
      * @param string $userId
+     *
      * @return $result will return an object
      */
     public function taskList($userId)
@@ -758,16 +794,20 @@ class WsBase
             $oDataset->next();
 
             while ($aRow = $oDataset->getRow()) {
-                $result[] = array('guid' => $aRow['TAS_UID'],
+                $result[] = array(
+                    'guid' => $aRow['TAS_UID'],
                     'name' => $aRow['TAS_TITLE'],
                     'processId' => $aRow['PRO_UID'],
-                    'initialTask' => $aRow['TAS_START'] == 'TRUE' ? '1' : '0');
+                    'initialTask' => $aRow['TAS_START'] == 'TRUE' ? '1' : '0'
+                );
                 $oDataset->next();
             }
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage(),
+                'name' => $e->getMessage()
             );
 
             return $result;
@@ -788,7 +828,8 @@ class WsBase
      * @param $attachment = null
      * @param boolean $showMessage = true
      * @param int $delIndex = 0
-     * @param $config = array
+     * @param array $config
+     *
      * @return $result will return an object
      */
     public function sendMessage(
@@ -805,7 +846,8 @@ class WsBase
         $delIndex = 0,
         $config = [],
         $gmail = 0
-    ) {
+    )
+    {
         try {
 
             /*----------------------------------********---------------------------------*/
@@ -922,7 +964,7 @@ class WsBase
      *
      * @param string $caseId
      * @param string $iDelIndex
-     * @param bool   $flagUseDelIndex
+     * @param bool $flagUseDelIndex
      *
      * @return $result will return an object
      */
@@ -1059,13 +1101,22 @@ class WsBase
      * @param string email : The user's email address.
      * @param string role : The user's role, such as "PROCESSMAKER_ADMIN" or "PROCESSMAKER_OPERATOR".
      * @param string password : The user's password such as "Be@gle2" (It will be automatically encrypted
-     * with an MD5 hash).
+     *               with an MD5 hash).
      * @param string dueDate : Optional parameter. The expiration date must be a string in the format "yyyy-mm-dd".
      * @param string status : Optional parameter. The user's status, such as "ACTIVE", "INACTIVE" or "VACATION".
      *
      * @return object|array
      */
-    public function createUser($userName, $firstName, $lastName, $email, $role, $password, $dueDate = null, $status = null)
+    public function createUser(
+        $userName,
+        $firstName,
+        $lastName,
+        $email,
+        $role,
+        $password,
+        $dueDate = null,
+        $status = null
+    )
     {
         try {
             global $RBAC;
@@ -1093,11 +1144,18 @@ class WsBase
             $mktimeDueDate = 0;
             if (!empty($dueDate) && $dueDate != 'null' && $dueDate) {
                 if (!preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $dueDate, $arrayMatch)) {
-                    $result = new WsCreateUserResponse(- 1, G::loadTranslation("ID_INVALID_DATA") . " $dueDate", null);
+                    $result = new WsCreateUserResponse(-1, G::loadTranslation("ID_INVALID_DATA") . " $dueDate", null);
 
                     return $result;
                 } else {
-                    $mktimeDueDate = mktime(0, 0, 0, intval($arrayMatch[2]), intval($arrayMatch[3]), intval($arrayMatch[1]));
+                    $mktimeDueDate = mktime(
+                        0,
+                        0,
+                        0,
+                        intval($arrayMatch[2]),
+                        intval($arrayMatch[3]),
+                        intval($arrayMatch[1])
+                    );
                 }
             } else {
                 $mktimeDueDate = mktime(0, 0, 0, date("m"), date("d"), date("Y") + 1);
@@ -1105,7 +1163,7 @@ class WsBase
 
             if (!empty($status) && $status != 'null' && $status) {
                 if ($status != "ACTIVE" && $status != "INACTIVE" && $status != "VACATION") {
-                    $result = new WsCreateUserResponse(- 1, G::loadTranslation("ID_INVALID_DATA") . " $status", null);
+                    $result = new WsCreateUserResponse(-1, G::loadTranslation("ID_INVALID_DATA") . " $status", null);
 
                     return $result;
                 }
@@ -1123,7 +1181,7 @@ class WsBase
             }
 
             if (strlen($password) > 20) {
-                $result = new WsCreateUserResponse(- 1, G::loadTranslation("ID_PASSWORD_SURPRASES"), null);
+                $result = new WsCreateUserResponse(-1, G::loadTranslation("ID_PASSWORD_SURPRASES"), null);
 
                 return $result;
             }
@@ -1132,7 +1190,11 @@ class WsBase
                 $data = [];
                 $data["USER_ID"] = $userName;
 
-                $result = new WsCreateUserResponse(7, G::loadTranslation("ID_USERNAME_ALREADY_EXISTS", SYS_LANG, $data), null);
+                $result = new WsCreateUserResponse(
+                    7,
+                    G::loadTranslation("ID_USERNAME_ALREADY_EXISTS", SYS_LANG, $data),
+                    null
+                );
 
                 return $result;
             }
@@ -1212,7 +1274,17 @@ class WsBase
      *
      * @return object|array
      */
-    public function updateUser($userUid, $userName, $firstName = null, $lastName = null, $email = null, $dueDate = null, $status = null, $role = null, $password = null)
+    public function updateUser(
+        $userUid,
+        $userName,
+        $firstName = null,
+        $lastName = null,
+        $email = null,
+        $dueDate = null,
+        $status = null,
+        $role = null,
+        $password = null
+    )
     {
         try {
             global $RBAC;
@@ -1241,17 +1313,24 @@ class WsBase
 
             if (!empty($dueDate)) {
                 if (!preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $dueDate, $arrayMatch)) {
-                    $result = new WsResponse(- 1, G::LoadTranslation("ID_INVALID_DATA") . " $dueDate");
+                    $result = new WsResponse(-1, G::LoadTranslation("ID_INVALID_DATA") . " $dueDate");
 
                     return $result;
                 } else {
-                    $mktimeDueDate = mktime(0, 0, 0, intval($arrayMatch[2]), intval($arrayMatch[3]), intval($arrayMatch[1]));
+                    $mktimeDueDate = mktime(
+                        0,
+                        0,
+                        0,
+                        intval($arrayMatch[2]),
+                        intval($arrayMatch[3]),
+                        intval($arrayMatch[1])
+                    );
                 }
             }
 
             if (!empty($status)) {
                 if ($status != "ACTIVE" && $status != "INACTIVE" && $status != "VACATION") {
-                    $result = new WsResponse(- 1, G::LoadTranslation("ID_INVALID_DATA") . " $status");
+                    $result = new WsResponse(-1, G::LoadTranslation("ID_INVALID_DATA") . " $status");
 
                     return $result;
                 }
@@ -1267,7 +1346,7 @@ class WsBase
             }
 
             if (!empty($password) && strlen($password) > 20) {
-                $result = new WsResponse(- 1, G::LoadTranslation("ID_PASSWORD_SURPRASES"));
+                $result = new WsResponse(-1, G::LoadTranslation("ID_PASSWORD_SURPRASES"));
 
                 return $result;
             }
@@ -1336,6 +1415,7 @@ class WsBase
             //Response
             $res = new WsResponse(0, G::LoadTranslation("ID_UPDATED_SUCCESSFULLY"));
 
+
             $result = [
                 "status_code" => $res->status_code,
                 "message" => $res->message,
@@ -1352,7 +1432,9 @@ class WsBase
 
     /**
      * Information User
+     *
      * @param string userUid : The user UID.
+     *
      * @return $result will return an object
      */
     public function informationUser($userUid)
@@ -1388,6 +1470,7 @@ class WsBase
      * create Group
      *
      * @param string $groupName
+     *
      * @return $result will return an object
      */
     public function createGroup($groupName)
@@ -1404,7 +1487,11 @@ class WsBase
 
             $data['GROUP_NAME'] = $groupName;
 
-            $result = new WsCreateGroupResponse(0, G::loadTranslation('ID_GROUP_CREATED_SUCCESSFULLY', SYS_LANG, $data), $groupId);
+            $result = new WsCreateGroupResponse(
+                0,
+                G::loadTranslation('ID_GROUP_CREATED_SUCCESSFULLY', SYS_LANG, $data),
+                $groupId
+            );
 
             return $result;
         } catch (Exception $e) {
@@ -1419,6 +1506,7 @@ class WsBase
      *
      * @param string $departmentName
      * @param string $parentUID
+     *
      * @return $result will return an object
      */
     public function createDepartment($departmentName, $parentUID)
@@ -1433,7 +1521,11 @@ class WsBase
             $department = new Department();
 
             if (($parentUID != '') && !($department->existsDepartment($parentUID))) {
-                $result = new WsCreateDepartmentResponse(26, G::loadTranslation('ID_PARENT_DEPARTMENT_NOT_EXIST'), $parentUID);
+                $result = new WsCreateDepartmentResponse(
+                    26,
+                    G::loadTranslation('ID_PARENT_DEPARTMENT_NOT_EXIST'),
+                    $parentUID
+                );
 
                 return $result;
             }
@@ -1453,7 +1545,11 @@ class WsBase
             $data['PARENT_UID'] = $parentUID;
             $data['DEPARTMENT_NAME'] = $departmentName;
 
-            $result = new WsCreateDepartmentResponse(0, G::loadTranslation('ID_DEPARTMENT_CREATED_SUCCESSFULLY', SYS_LANG, $data), $departmentId);
+            $result = new WsCreateDepartmentResponse(
+                0,
+                G::loadTranslation('ID_DEPARTMENT_CREATED_SUCCESSFULLY', SYS_LANG, $data),
+                $departmentId
+            );
 
             return $result;
         } catch (Exception $e) {
@@ -1467,6 +1563,7 @@ class WsBase
      * remove user from group
      *
      * @param string $appDocUid
+     *
      * @return $result will return an object
      */
     public function removeUserFromGroup($userId, $groupId)
@@ -1517,6 +1614,7 @@ class WsBase
      *
      * @param string $userId
      * @param string $groupId
+     *
      * @return $result will return an object
      */
     public function assignUserToGroup($userId, $groupId)
@@ -1565,6 +1663,7 @@ class WsBase
      * @param string $userId
      * @param string $depId
      * @param string $manager
+     *
      * @return $result will return an object
      */
     public function assignUserToDepartment($userId, $depId, $manager)
@@ -1585,7 +1684,10 @@ class WsBase
             if (!$deps->existsDepartment($depId)) {
                 $data['DEP_ID'] = $depId;
 
-                $result = new WsResponse(100, G::loadTranslation('ID_DEPARTMENT_NOT_REGISTERED_SYSTEM', SYS_LANG, $data));
+                $result = new WsResponse(
+                    100,
+                    G::loadTranslation('ID_DEPARTMENT_NOT_REGISTERED_SYSTEM', SYS_LANG, $data)
+                );
 
                 return $result;
             }
@@ -1609,6 +1711,7 @@ class WsBase
      *
      * @param string $caseId
      * @param string $variables
+     *
      * @return $result will return an object
      */
     public function sendVariables($caseId, $variables)
@@ -1629,7 +1732,7 @@ class WsBase
 
             while ($oDataset->next()) {
                 $aRow = $oDataset->getRow();
-                $cnt ++;
+                $cnt++;
             }
 
             if ($cnt == 0) {
@@ -1651,7 +1754,14 @@ class WsBase
                     ob_end_clean();
                     $up_case = $oCase->updateCase($caseId, $oldFields);
 
-                    $result = new WsResponse(0, $cant . " " . G::loadTranslation('ID_VARIABLES_RECEIVED') . ": \n" . trim(str_replace('Array', '', $cdata)));
+                    $result = new WsResponse(
+                        0,
+                        $cant . " " . G::loadTranslation('ID_VARIABLES_RECEIVED') . ": \n" . trim(str_replace(
+                            'Array',
+                            '',
+                            $cdata
+                        ))
+                    );
 
                     return $result;
                 } else {
@@ -1676,6 +1786,7 @@ class WsBase
      *
      * @param string $caseId
      * @param string $variables
+     *
      * @return $result will return an object
      */
     public function getVariables($caseId, $variables)
@@ -1723,7 +1834,11 @@ class WsBase
                         }
                     }
 
-                    $result = new WsGetVariableResponse(0, count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'), $resFields);
+                    $result = new WsGetVariableResponse(
+                        0,
+                        count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'),
+                        $resFields
+                    );
 
                     return $result;
                 } else {
@@ -1765,7 +1880,11 @@ class WsBase
                 $resFields[] = $node;
             }
 
-            $result = new WsGetVariableResponse(0, count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'), $resFields);
+            $result = new WsGetVariableResponse(
+                0,
+                count($resFields) . G::loadTranslation('ID_VARIABLES_SENT'),
+                $resFields
+            );
 
             return $result;
         } catch (Exception $e) {
@@ -1782,8 +1901,10 @@ class WsBase
      * @param string $userId
      * @param string $taskId
      * @param string $variables
-     * @param int $executeTriggers : Optional parameter. The execution all triggers of the task, according to your steps, 1 yes 0 no.
+     * @param int $executeTriggers : Optional parameter. The execution all triggers of the task, according to your
+     *                                steps, 1 yes 0 no.
      * @param string $status
+     *
      * @return $result will return an object
      */
     public function newCase($processId, $userId, $taskId, $variables, $executeTriggers = 0, $status = 'DRAFT')
@@ -1825,7 +1946,7 @@ class WsBase
 
             foreach ($startingTasks as $key => $val) {
                 if ($val['pro_uid'] == $processId) {
-                    $tasksInThisProcess ++;
+                    $tasksInThisProcess++;
                     $validTaskId = $val['uid'];
                 }
 
@@ -1896,8 +2017,20 @@ class WsBase
                 foreach ($arrayStep as $step) {
                     $arrayField = $oCase->loadCase($caseId);
 
-                    $arrayField["APP_DATA"] = $oCase->executeTriggers($taskId, $step["STEP_TYPE_OBJ"], $step["STEP_UID_OBJ"], "BEFORE", $arrayField["APP_DATA"]);
-                    $arrayField["APP_DATA"] = $oCase->executeTriggers($taskId, $step["STEP_TYPE_OBJ"], $step["STEP_UID_OBJ"], "AFTER", $arrayField["APP_DATA"]);
+                    $arrayField["APP_DATA"] = $oCase->executeTriggers(
+                        $taskId,
+                        $step["STEP_TYPE_OBJ"],
+                        $step["STEP_UID_OBJ"],
+                        "BEFORE",
+                        $arrayField["APP_DATA"]
+                    );
+                    $arrayField["APP_DATA"] = $oCase->executeTriggers(
+                        $taskId,
+                        $step["STEP_TYPE_OBJ"],
+                        $step["STEP_UID_OBJ"],
+                        "AFTER",
+                        $arrayField["APP_DATA"]
+                    );
 
                     unset($arrayField['APP_STATUS']);
                     unset($arrayField['APP_PROC_STATUS']);
@@ -1930,7 +2063,8 @@ class WsBase
      * @param string $processId
      * @param string $userId
      * @param string $variables
-     * @param string $taskId, must be in the starting group.
+     * @param string $taskId , must be in the starting group.
+     *
      * @return $result will return an object
      */
     public function newCaseImpersonate($processId, $userId, $variables, $taskId = '')
@@ -2026,13 +2160,13 @@ class WsBase
      * Execute the trigger defined in the steps
      * This function is used when the case is derived from abe, Soap, PMFDerivateCase
      *
-     * @param string $caseId, Uid related to the case
-     * @param array $appData, contain all the information about the case related to the index [APP_DATA]
-     * @param string $tasUid, Uid related to the task
-     * @param string $stepType, before or after step
-     * @param string $stepUidObj, can be -1, -2
-     * @param string $triggerType, can be BEFORE, AFTER
-     * @param string $labelAssignment, label related to the triggerType
+     * @param string $caseId , Uid related to the case
+     * @param array $appData , contain all the information about the case related to the index [APP_DATA]
+     * @param string $tasUid , Uid related to the task
+     * @param string $stepType , before or after step
+     * @param string $stepUidObj , can be -1, -2
+     * @param string $triggerType , can be BEFORE, AFTER
+     * @param string $labelAssignment , label related to the triggerType
      *
      * @return string $varTriggers updated
      */
@@ -2044,7 +2178,8 @@ class WsBase
         $stepUidObj,
         $triggerType,
         $labelAssignment = ''
-    ) {
+    )
+    {
         $varTriggers = "";
         $oCase = new Cases();
 
@@ -2084,7 +2219,10 @@ class WsBase
                     $oPMScript->execute();
 
                     $trigger = TriggersPeer::retrieveByPk($aTrigger["TRI_UID"]);
-                    $varTriggers = $varTriggers . "&nbsp;- " . nl2br(htmlentities($trigger->getTriTitle(), ENT_QUOTES)) . "<br />";
+                    $varTriggers = $varTriggers . "&nbsp;- " . nl2br(htmlentities(
+                            $trigger->getTriTitle(),
+                            ENT_QUOTES
+                        )) . "<br />";
 
                     $appFields['APP_DATA'] = $oPMScript->aFields;
                     unset($appFields['APP_STATUS']);
@@ -2098,17 +2236,31 @@ class WsBase
                 }
             }
         }
+
+        /*----------------------------------********---------------------------------*/
+        ChangeLog::getChangeLog()
+                ->setDate('now')
+                ->setAppNumber($appData['APP_NUMBER'])
+                ->setDelIndex($appData['INDEX'])
+                ->getProIdByProUid($appData['PROCESS'])
+                ->getTasIdByTasUid($appData['TASK'])
+                ->setData(serialize($appData))
+                ->getExecutedAtIdByTriggerType($triggerType)
+                ->getObjectIdByUidAndObjType($stepUidObj, $stepType);
+        /*----------------------------------********---------------------------------*/
+
         return $varTriggers;
     }
 
     /**
      * Derivate Case moves the case to the next task in the process according to the routing rules
      * This function is used from: action by email, web entry, PMFDerivateCase, Mobile
+     *
      * @param string $userId
      * @param string $caseId
      * @param string $delIndex
      * @param array $tasks
-     * @param bool   $bExecuteTriggersBeforeAssignment
+     * @param bool $bExecuteTriggersBeforeAssignment
      * @return $result will return an object
      */
     public function derivateCase($userId, $caseId, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks = [])
@@ -2201,11 +2353,27 @@ class WsBase
             $varTriggers = "\n";
             //Execute triggers before assignment
             if ($bExecuteTriggersBeforeAssignment) {
-                $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -1, 'BEFORE', "-= Before Assignment =-");
+                $varTriggers .= $this->executeTriggerFromDerivate(
+                    $caseId,
+                    $appFields["APP_DATA"],
+                    $appdel['TAS_UID'],
+                    'ASSIGN_TASK',
+                    -1,
+                    'BEFORE',
+                    "-= Before Assignment =-"
+                );
             }
 
             //Execute triggers before routing
-            $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'BEFORE', "-= Before Derivation =-");
+            $varTriggers .= $this->executeTriggerFromDerivate(
+                $caseId,
+                $appFields["APP_DATA"],
+                $appdel['TAS_UID'],
+                'ASSIGN_TASK',
+                -2,
+                'BEFORE',
+                "-= Before Derivation =-"
+            );
 
             $oDerivation = new Derivation();
             if (!empty($tasks)) {
@@ -2286,12 +2454,23 @@ class WsBase
             //We define some parameters in the before the derivation
             //Then this function will be route the case
             $oDerivation->beforeDerivate(
-                    $aData, $nextDelegations, $nextRouteType, $aCurrentDerivation
+                $aData,
+                $nextDelegations,
+                $nextRouteType,
+                $aCurrentDerivation
             );
 
             //Execute triggers after routing
             $appFields = $oCase->loadCase($caseId);
-            $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
+            $varTriggers .= $this->executeTriggerFromDerivate(
+                $caseId,
+                $appFields["APP_DATA"],
+                $appdel['TAS_UID'],
+                'ASSIGN_TASK',
+                -2,
+                'AFTER',
+                "-= After Derivation =-"
+            );
 
             $sFromName = "";
 
@@ -2414,6 +2593,7 @@ class WsBase
      * @param string $userId
      * @param string $caseId
      * @param string $delIndex
+     *
      * @return $result will return an object
      */
     public function executeTrigger($userId, $caseId, $triggerIndex, $delIndex)
@@ -2453,7 +2633,10 @@ class WsBase
             $oCriteria->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_USER);
             $oCriteria->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
             $oCriteria->add(AppDelayPeer::APP_UID, $caseId);
-            $oCriteria->add($oCriteria->getNewCriterion(AppDelayPeer::APP_TYPE, 'PAUSE')->addOr($oCriteria->getNewCriterion(AppDelayPeer::APP_TYPE, 'CANCEL')));
+            $oCriteria->add($oCriteria->getNewCriterion(
+                AppDelayPeer::APP_TYPE,
+                'PAUSE'
+            )->addOr($oCriteria->getNewCriterion(AppDelayPeer::APP_TYPE, 'CANCEL')));
             $oCriteria->addAscendingOrderByColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
             $oDataset = AppDelayPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -2538,6 +2721,7 @@ class WsBase
      *
      * @param string sessionId : The session ID which is obtained when logging in
      * @param string caseId : The case ID. The caseList() function can be used to find the ID number for cases
+     *
      * @return $result returns the current task for a given case. Note that the logged-in user must have privileges
      * to access the task
      */
@@ -2579,6 +2763,7 @@ class WsBase
      *
      * @param string sessionId : The session ID which is obtained when logging in
      * @param string userId :
+     *
      * @return $result will return an object
      */
     public function processListVerified($userId)
@@ -2590,14 +2775,18 @@ class WsBase
 
             foreach ($rows as $key => $val) {
                 if ($key != 0) {
-                    $result[] = array('guid' => $val['pro_uid'], 'name' => $val['value']
+                    $result[] = array(
+                        'guid' => $val['pro_uid'],
+                        'name' => $val['value']
                     );
                 }
             }
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage(),
+                'name' => $e->getMessage()
             );
 
             return $result;
@@ -2610,9 +2799,10 @@ class WsBase
      * @param string sessionId : The session ID (which was obtained during login)
      * @param string caseId : The case ID (which can be obtained with the caseList() function)
      * @param string delIndex : The delegation index number of the case (which can be obtained with the caseList()
-     * function).
+     *               function).
      * @param string userIdSource : The user who is currently assigned the case.
      * @param string userIdTarget : The target user who will be newly assigned to the case.
+     *
      * @return $result will return an object
      */
     public function reassignCase($sessionId, $caseId, $delIndex, $userIdSource, $userIdTarget)
@@ -2734,12 +2924,13 @@ class WsBase
             }
 
             $result = new WsResponse(0, G::loadTranslation('ID_COMMAND_EXECUTED_SUCCESSFULLY'));
-
             $g->sessionVarRestore();
 
             return $result;
         } catch (Exception $e) {
-            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage()
+            $result[] = array(
+                'guid' => $e->getMessage(),
+                'name' => $e->getMessage()
             );
 
             $g->sessionVarRestore();
@@ -2752,6 +2943,7 @@ class WsBase
      * get system information
      *
      * @param string sessionId : The session ID (which was obtained at login)
+     *
      * @return $eturns information about the WAMP/LAMP stack, the workspace database, the IP number and version
      * of ProcessMaker, and the IP number and version of web browser of the user
      */
@@ -2795,12 +2987,17 @@ class WsBase
      * @param string importOption :
      * @param string usernameLibrary : The username to obtain access to the ProcessMaker library.
      * @param string passwordLibrary : The password to obtain access to the ProcessMaker library.
+     *
      * @return $eturns will return an object
      */
     public function getCaseNotes($applicationID, $userUid = '')
     {
         try {
-            $result = new WsGetCaseNotesResponse(0, G::loadTranslation('ID_SUCCESS'), Cases::getCaseNotes($applicationID, 'array', $userUid));
+            $result = new WsGetCaseNotesResponse(
+                0,
+                G::loadTranslation('ID_SUCCESS'),
+                Cases::getCaseNotes($applicationID, 'array', $userUid)
+            );
 
             $var = [];
 
@@ -2829,6 +3026,7 @@ class WsBase
      * Delete case
      *
      * @param string caseUid : ID of the case.
+     *
      * @return $result will return an object
      */
     public function deleteCase($caseUid)
@@ -2852,11 +3050,7 @@ class WsBase
             $case->removeCase($caseUid);
 
             //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
-
-            $result = array("status_code" => $res->status_code, "message" => $res->message, "timestamp" => $res->timestamp
-            );
-
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
 
             return $result;
@@ -2873,9 +3067,10 @@ class WsBase
      * Cancel case
      *
      * @param string caseUid : ID of the case.
-     * @param int delIndex : Delegation index of the case.
+     * @param int    delIndex : Delegation index of the case.
      * @param string userUid : The unique ID of the user who will cancel the case.
-     * @return $result will return an object
+     *
+     * @return array | object
      */
     public function cancelCase($caseUid, $delIndex, $userUid)
     {
@@ -2889,59 +3084,68 @@ class WsBase
             $_SESSION["USER_LOGGED"] = $userUid;
 
             if (empty($caseUid)) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " caseUid");
-
                 $g->sessionVarRestore();
 
-                return $result;
-            }
-
-            if (empty($delIndex)) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " delIndex");
-
-                $g->sessionVarRestore();
-
-                return $result;
-            }
-
-            if (empty($userUid)) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " userUid");
-
-                $g->sessionVarRestore();
-
-                return $result;
-            }
-
-            $oApplication = new Application();
-            $aFields = $oApplication->load($caseUid);
-            if ($aFields['APP_STATUS'] == 'DRAFT') {
-                $result = new WsResponse(100, G::LoadTranslation("ID_CASE_IN_STATUS") . " DRAFT");
-                $g->sessionVarRestore();
-                return $result;
-            }
-            $oAppThread = new AppThread();
-            $cant = $oAppThread->countStatus($caseUid, 'OPEN');
-            if ($cant > 1) {
-                $result = new WsResponse(100, G::LoadTranslation("ID_CASE_CANCELLED_PARALLEL"));
-                $g->sessionVarRestore();
-                return $result;
+                return self::messageRequiredField('caseUid');
             }
 
             $case = new Cases();
-            $case->cancelCase($caseUid, $delIndex, $userUid);
+            $statusCase = $case->loadCase($caseUid)['APP_STATUS'];
+            if ($statusCase !== 'TO_DO') {
+                $g->sessionVarRestore();
 
-            //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
+                return self::messageIllegalValues('ID_CASE_IN_STATUS', ' ' . $statusCase);
+            }
 
-            $result = array("status_code" => $res->status_code, "message" => $res->message, "timestamp" => $res->timestamp
-            );
+            /** If those parameters are null we will to force the cancelCase */
+            if (is_null($delIndex) && is_null($userUid)) {
+                /*----------------------------------********---------------------------------*/
+                $case->cancelCase($caseUid, null, null);
+                $result = self::messageExecuteSuccessfully();
+                $g->sessionVarRestore();
 
+                return $result;
+                /*----------------------------------********---------------------------------*/
+            }
+
+            /** We will to continue with review the threads */
+            if (empty($delIndex)) {
+                $g->sessionVarRestore();
+
+                return self::messageRequiredField('delIndex');
+            }
+
+            $delegation = new AppDelegation();
+            $indexOpen = $delegation->LoadParallel($caseUid, $delIndex);
+            if (empty($indexOpen)) {
+                $g->sessionVarRestore();
+
+                return self::messageIllegalValues('ID_CASE_DELEGATION_ALREADY_CLOSED');
+            }
+
+            if (empty($userUid)) {
+                $g->sessionVarRestore();
+
+                return self::messageRequiredField('userUid');
+            }
+
+            if (AppThread::countStatus($caseUid, 'OPEN') > 1) {
+                $g->sessionVarRestore();
+
+                return self::messageIllegalValues("ID_CASE_CANCELLED_PARALLEL");
+            }
+
+
+            /** Cancel case */
+            $case->cancelCase($caseUid, (int)$delIndex, $userUid);
+
+            //Define the result of the cancelCase
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
 
             return $result;
         } catch (Exception $e) {
             $result = new WsResponse(100, $e->getMessage());
-
             $g->sessionVarRestore();
 
             return $result;
@@ -2952,10 +3156,11 @@ class WsBase
      * Pause case
      *
      * @param string caseUid : ID of the case.
-     * @param int delIndex : Delegation index of the case.
+     * @param int    delIndex : Delegation index of the case.
      * @param string userUid : The unique ID of the user who will pause the case.
      * @param string unpauseDate : Optional parameter. The date in the format "yyyy-mm-dd" indicating when to unpause
-     * the case.
+     *               the case.
+     *
      * @return $result will return an object
      */
     public function pauseCase($caseUid, $delIndex, $userUid, $unpauseDate = null)
@@ -3006,12 +3211,9 @@ class WsBase
             $case->pauseCase($caseUid, $delIndex, $userUid, $unpauseDate);
 
             //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
-
-            $result = array("status_code" => $res->status_code, "message" => $res->message, "timestamp" => $res->timestamp
-            );
-
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
+
             return $result;
         } catch (Exception $e) {
             $result = new WsResponse(100, $e->getMessage());
@@ -3026,8 +3228,9 @@ class WsBase
      * Unpause case
      *
      * @param string caseUid : ID of the case.
-     * @param int delIndex : Delegation index of the case.
+     * @param int    delIndex : Delegation index of the case.
      * @param string userUid : The unique ID of the user who will unpause the case.
+     *
      * @return $result will return an object
      */
     public function unpauseCase($caseUid, $delIndex, $userUid)
@@ -3069,11 +3272,7 @@ class WsBase
             $case->unpauseCase($caseUid, $delIndex, $userUid);
 
             //Response
-            $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
-
-            $result = array("status_code" => $res->status_code, "message" => $res->message, "timestamp" => $res->timestamp
-            );
-
+            $result = self::messageExecuteSuccessfully();
             $g->sessionVarRestore();
 
             return $result;
@@ -3094,7 +3293,8 @@ class WsBase
      * @param string taskUid : ID of the task.
      * @param string userUid : The unique ID of the user who will add note case.
      * @param string note : Note of the case.
-     * @param int sendMail : Optional parameter. If set to 1, will send an email to all participants in the case.
+     * @param int    sendMail : Optional parameter. If set to 1, will send an email to all participants in the case.
+     *
      * @return $result will return an object
      */
     public function addCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail = 1)
@@ -3162,6 +3362,7 @@ class WsBase
      * @param string $userId
      * @param string $guid
      * @param string $delIndex
+     *
      * @return $result will return an object
      */
     public function claimCase($userId, $guid, $delIndex)
@@ -3177,5 +3378,53 @@ class WsBase
             $result = new WsResponse(100, $e->getMessage());
             return $result;
         }
+    }
+
+    /**
+     * Define the message for the required fields
+     *
+     * @param string $field
+     * @param integer code
+     *
+     * @return object
+    */
+    private function messageRequiredField($field, $code = 100)
+    {
+        $result = new WsResponse($code, G::LoadTranslation("ID_REQUIRED_FIELD") . ' ' . $field);
+
+        return $result;
+    }
+
+    /**
+     * Define the message for the required fields
+     *
+     * @param string $translationId
+     * @param string $field
+     * @param integer code
+     *
+     * @return object
+     */
+    private function messageIllegalValues($translationId, $field = '', $code = 100)
+    {
+        $result = new WsResponse($code, G::LoadTranslation($translationId) . $field);
+
+        return $result;
+    }
+
+    /**
+     * Define the result when it's execute successfully
+     *
+     * @return object
+     */
+    private function messageExecuteSuccessfully()
+    {
+        $res = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
+        $result = [
+            "status_code" => $res->status_code,
+            "message" => $res->message,
+            "timestamp" => $res->timestamp
+        ];
+
+        return $result;
     }
 }

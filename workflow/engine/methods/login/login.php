@@ -29,10 +29,10 @@ use ProcessMaker\Plugins\PluginRegistry;
 /*----------------------------------********---------------------------------*/
 //Browser Compatibility
 $browserSupported = G::checkBrowserCompatibility();
-if ($browserSupported==false){
-	if(!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == ""){
-		G::SendTemporalMessage ('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
-	}
+if ($browserSupported==false) {
+    if (!isset($_SESSION['G_MESSAGE']) || $_SESSION['G_MESSAGE'] == "") {
+        G::SendTemporalMessage('ID_CURRENT_BROWSER_NOT_SUPPORTED', 'warning');
+    }
 }
 /*----------------------------------********---------------------------------*/
 $aFields = array();
@@ -83,7 +83,7 @@ $pass1 = (isset($_SESSION['NW_PASSWORD2'])) ? $_SESSION['NW_PASSWORD2'] : '';
 $aFields['LOGIN_VERIFY_MSG'] = G::loadTranslation('LOGIN_VERIFY_MSG');
 //$aFields['LOGIN_VERIFY_MSG'] = Bootstrap::loadTranslation('LOGIN_VERIFY_MSG');
 
-if (isset ($_SESSION['USER_LOGGED'])) {
+if (isset($_SESSION['USER_LOGGED'])) {
     require_once 'classes/model/LoginLog.php';
     //close the session, if the current session_id was used in PM.
     $oCriteria = new Criteria('workflow');
@@ -129,12 +129,12 @@ if (isset ($_SESSION['USER_LOGGED'])) {
     $pluginRegistry = PluginRegistry::loadSingleton();
     if (defined('PM_SINGLE_SIGN_ON')) {
         /*----------------------------------********---------------------------------*/
-        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
             //Check in SSO class
             $oSso = new PmSsoClass();
             $res = $oSso->ssocVerifyUser();
-            if($res){
+            if ($res) {
                 // Start new session
                 @session_destroy();
                 session_start();
@@ -190,14 +190,14 @@ $_SESSION['NW_PASSWORD2'] = $pass1;
 
 /*----------------------------------********---------------------------------*/
 
-$licenseManager =& PmLicenseManager::getSingleton();
+$licenseManager = PmLicenseManager::getSingleton();
 if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
     $G_PUBLISH = new Publisher();
     $version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
     $version = isset($version[0]) ? intval($version[0]) : 0;
     if ($version >= 3) {
         $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpiredpm3', '', array(), 'licenseUpdate');
-    }else{
+    } else {
         $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
     }
     G::RenderPage('publish');
@@ -212,12 +212,12 @@ if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc1
 $Translations = new Translation();
 $translationsTable = $Translations->getTranslationEnvironments();
 
-$availableLangArray = array ();
-$availableLangArray [] = array ('LANG_ID' => 'char', 'LANG_NAME' => 'char' );
+$availableLangArray = array();
+$availableLangArray [] = array('LANG_ID' => 'char', 'LANG_NAME' => 'char' );
 /*----------------------------------********---------------------------------*/
-$licensedFeatures = & PMLicensedFeatures::getSingleton();
+$licensedFeatures = PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkdKR3ROS0VzWGdoLzNQYz0=')) {
-    $availableLangArray []  = array ('LANG_ID' => 'default', 'LANG_NAME' => G::LoadTranslation("ID_DEFAULT_LANGUAGE") );
+    $availableLangArray []  = array('LANG_ID' => 'default', 'LANG_NAME' => G::LoadTranslation("ID_DEFAULT_LANGUAGE") );
 }
 /*----------------------------------********---------------------------------*/
 foreach ($translationsTable as $locale) {
@@ -241,7 +241,7 @@ $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
 if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
     $aFields["USER_LANG"] = $oConf->aConfig["login_defaultLanguage"];
     /*----------------------------------********---------------------------------*/
-    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+    $licensedFeatures = PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkdKR3ROS0VzWGdoLzNQYz0=')) {
         $aFields["USER_LANG"] = "default";
     }
@@ -258,12 +258,12 @@ $version = isset($version[0]) ? intval($version[0]) : 0;
 $aFields["FAILED_LOGINS"] = $sFailedLogins;
 if ($version >= 3) {
     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/loginpm3', '', $aFields, SYS_URI . 'login/authentication.php');
-}else{
+} else {
     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/login', '', $aFields, SYS_URI . 'login/authentication.php');
 }
 
 //get the serverconf singleton, and check if we can send the heartbeat
-$oServerConf = & ServerConf::getSingleton();
+$oServerConf = ServerConf::getSingleton();
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 if (!$partnerFlag) {
     $sflag = $oServerConf->getHeartbeatProperty('HB_OPTION', 'HEART_BEAT_CONF');
@@ -274,7 +274,7 @@ if (!$partnerFlag) {
 
     //if flag to send heartbeat is enabled, and it is time to send heartbeat, sent it using asynchronous beat.
     if (($sflag == "1") && ((strtotime("now") > $nextBeatDate) || is_null($nextBeatDate))) {
-        $oHeadPublisher =& headPublisher::getSingleton();
+        $oHeadPublisher = headPublisher::getSingleton();
         //To do: we need to change to ExtJs
         $oHeadPublisher->addScriptCode('var flagHeartBeat = 1;');
     } else {
@@ -287,8 +287,8 @@ if (!$partnerFlag) {
 //check if we show the panel with the getting started info
 
 require_once 'classes/model/Configuration.php';
-$oConfiguration = new Configuration ( );
-$oCriteria = new Criteria ( 'workflow' );
+$oConfiguration = new Configuration();
+$oCriteria = new Criteria('workflow');
 $oCriteria->add(ConfigurationPeer::CFG_UID, 'getStarted');
 $oCriteria->add(ConfigurationPeer::OBJ_UID, '');
 $oCriteria->add(ConfigurationPeer::CFG_VALUE, '1');
@@ -325,4 +325,3 @@ $oHeadPublisher->addScriptFile('/jscore/src/Sessions.js');
 $oHeadPublisher->addScriptFile('/jscore/src/Register.js');
 
 G::RenderPage('publish');
-
