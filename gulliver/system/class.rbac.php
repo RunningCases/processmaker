@@ -1317,6 +1317,33 @@ class RBAC
     }
 
     /**
+     * Get Role code
+     *
+     * @access public
+     *
+     * @param string $role
+     *
+     * @return string
+     */
+    public function getRoleCodeValid($role)
+    {
+        $roleCode = '';
+
+        if (!empty($role)) {
+            if ($this->verifyByCode($role)) {
+                //If is a valid ROL_CODE
+                $roleCode = $role;
+            } else {
+                //We will to check by ROL_UID
+                $roleInfo = $this->loadById($role);
+                $roleCode = !empty($roleInfo['ROL_CODE']) ? $roleInfo['ROL_CODE'] : '';
+            }
+        }
+
+        return $roleCode;
+    }
+
+    /**
      * this function gets the user's roles
      *
      *
