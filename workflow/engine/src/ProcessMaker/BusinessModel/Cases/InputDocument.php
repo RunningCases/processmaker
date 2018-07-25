@@ -386,11 +386,12 @@ class InputDocument
      *
      * @param string $applicationUid
      * @param string $userUid
+     * @param array $documentsCanAccess
      *
      * @return array Return an array with data of an InputDocument
      * @throws Exception
      */
-    public function getCasesInputDocuments($applicationUid, $userUid)
+    public function getCasesInputDocuments($applicationUid, $userUid, $documentsCanAccess = [])
     {
         try {
             //Verify data inbox
@@ -415,7 +416,10 @@ class InputDocument
             $criteria = $this->getAppDocumentCriteriaByData($applicationUid);
 
             if (!$flagInbox) {
-                $criteria->add(AppDocumentPeer::USR_UID, $userUid, Criteria::EQUAL);
+                $criteria->add(
+                $criteria->getNewCriterion(AppDocumentPeer::USR_UID, $userUid, Criteria::EQUAL)->addOr(
+                    $criteria->getNewCriterion(AppDocumentPeer::APP_DOC_UID, $documentsCanAccess, Criteria::IN))
+                );
             }
 
             $rsCriteria = AppDocumentPeer::doSelectRS($criteria);
