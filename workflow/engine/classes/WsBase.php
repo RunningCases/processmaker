@@ -1062,7 +1062,8 @@ class WsBase
      * with an MD5 hash).
      * @param string dueDate : Optional parameter. The expiration date must be a string in the format "yyyy-mm-dd".
      * @param string status : Optional parameter. The user's status, such as "ACTIVE", "INACTIVE" or "VACATION".
-     * @return $result will return an object
+     *
+     * @return object|array
      */
     public function createUser($userName, $firstName, $lastName, $email, $role, $password, $dueDate = null, $status = null)
     {
@@ -1090,7 +1091,6 @@ class WsBase
             }
 
             $mktimeDueDate = 0;
-
             if (!empty($dueDate) && $dueDate != 'null' && $dueDate) {
                 if (!preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $dueDate, $arrayMatch)) {
                     $result = new WsCreateUserResponse(- 1, G::loadTranslation("ID_INVALID_DATA") . " $dueDate", null);
@@ -1113,22 +1113,13 @@ class WsBase
                 $status = "ACTIVE";
             }
 
-            $arrayRole = $RBAC->loadById($role);
-            $strRole = null;
+            $strRole = $RBAC->getRoleCodeValid($role);
+            if (empty($strRole)) {
+                $data = [];
+                $data["ROLE"] = $role;
+                $result = new WsCreateUserResponse(6, G::loadTranslation("ID_INVALID_ROLE", SYS_LANG, $data), null);
 
-            if (is_array($arrayRole)) {
-                $strRole = $arrayRole["ROL_CODE"];
-            } else {
-                $strRole = $role;
-
-                if ($RBAC->verifyByCode($role) == 0) {
-                    $data = [];
-                    $data["ROLE"] = $role;
-
-                    $result = new WsCreateUserResponse(6, G::loadTranslation("ID_INVALID_ROLE", SYS_LANG, $data), null);
-
-                    return $result;
-                }
+                return $result;
             }
 
             if (strlen($password) > 20) {
@@ -1190,8 +1181,12 @@ class WsBase
 
             $res = new WsResponse(0, G::loadTranslation("ID_USER_CREATED_SUCCESSFULLY", SYS_LANG, $data));
 
-            $result = array("status_code" => $res->status_code, "message" => $res->message, "userUID" => $userUid, "timestamp" => $res->timestamp
-            );
+            $result = [
+                "status_code" => $res->status_code,
+                "message" => $res->message,
+                "userUID" => $userUid,
+                "timestamp" => $res->timestamp
+            ];
 
             return $result;
         } catch (Exception $e) {
@@ -1211,11 +1206,11 @@ class WsBase
      * @param string email : Optional parameter. The user's email address.
      * @param string dueDate : Optional parameter. The expiration date must be a string in the format "yyyy-mm-dd".
      * @param string status : Optional parameter. The user's status, such as "ACTIVE", "INACTIVE" or "VACATION".
-     * @param string role : Optional parameter. The user's role, such
-     * as "PROCESSMAKER_ADMIN" or "PROCESSMAKER_OPERATOR".
+     * @param string role : Optional parameter. The user's role, such as "PROCESSMAKER_ADMIN" or "PROCESSMAKER_OPERATOR".
      * @param string password : Optional parameter. The user's password such as "Be@gle2" (It will be automatically
      * encrypted with an MD5 hash).
-     * @return $result will return an object
+     *
+     * @return object|array
      */
     public function updateUser($userUid, $userName, $firstName = null, $lastName = null, $email = null, $dueDate = null, $status = null, $role = null, $password = null)
     {
@@ -1262,25 +1257,13 @@ class WsBase
                 }
             }
 
-            $strRole = null;
+            $strRole = $RBAC->getRoleCodeValid($role);
+            if (empty($strRole)) {
+                $data = [];
+                $data["ROLE"] = $role;
+                $result = new WsCreateUserResponse(6, G::loadTranslation("ID_INVALID_ROLE", SYS_LANG, $data), null);
 
-            if (!empty($role)) {
-                $arrayRole = $RBAC->loadById($role);
-
-                if (is_array($arrayRole)) {
-                    $strRole = $arrayRole["ROL_CODE"];
-                } else {
-                    $strRole = $role;
-
-                    if ($RBAC->verifyByCode($role) == 0) {
-                        $data = [];
-                        $data["ROLE"] = $role;
-
-                        $result = new WsResponse(6, G::LoadTranslation("ID_INVALID_ROLE", SYS_LANG, $data));
-
-                        return $result;
-                    }
-                }
+                return $result;
             }
 
             if (!empty($password) && strlen($password) > 20) {
@@ -1353,8 +1336,11 @@ class WsBase
             //Response
             $res = new WsResponse(0, G::LoadTranslation("ID_UPDATED_SUCCESSFULLY"));
 
-            $result = array("status_code" => $res->status_code, "message" => $res->message, "timestamp" => $res->timestamp
-            );
+            $result = [
+                "status_code" => $res->status_code,
+                "message" => $res->message,
+                "timestamp" => $res->timestamp
+            ];
 
             return $result;
         } catch (Exception $e) {
