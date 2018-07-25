@@ -358,6 +358,12 @@ class WorkspaceTools
         $stop = microtime(true);
         CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
         /*----------------------------------********---------------------------------*/
+
+        $start = microtime(true);
+        CLI::logging("> Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
+        $this->upgradeSelfServiceData();
+        $stop = microtime(true);
+        CLI::logging("<*>   Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -4251,6 +4257,7 @@ class WorkspaceTools
             $this->setLastContentMigrateTable(true);
         }
     }
+
     /**
      * Remove the DYN_CONTENT_HISTORY from APP_HISTORY
      *
@@ -4448,4 +4455,68 @@ class WorkspaceTools
         $conf->saveConfig('MIGRATED_APP_HISTORY', 'history');
     }
     /*----------------------------------********---------------------------------*/
+
+    /**
+     * Upgrade APP_ASSIGN_SELF_SERVICE_VALUE_GROUP and GROUP_USER tables.
+     * Before only the identification value of 32 characters was used, now the 
+     * numerical value plus the type is used, 1 for the user and 2 for the group, 
+     * if it is not found, it is updated with -1.
+     * 
+     * @param object $con
+     * 
+     * @return void
+     */
+    public function upgradeSelfServiceData($con = null)
+    {
+        if ($con === null) {
+            $this->initPropel(true);
+            $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
+        }
+
+        CLI::logging("->    Update table GROUP_USER\n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE GROUPWF AS GW "
+                . "INNER JOIN GROUP_USER AS GU ON "
+                . "    GW.GRP_UID=GU.GRP_UID "
+                . "SET GU.GRP_ID=GW.GRP_ID "
+                . "WHERE GU.GRP_ID = 0");
+        $con->commit();
+
+        CLI::logging("->    Update table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP\n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE GROUPWF AS GW "
+                . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
+                . "    GW.GRP_UID=GU.GRP_UID "
+                . "SET "
+                . "GU.ASSIGNEE_ID=GW.GRP_ID, "
+                . "GU.ASSIGNEE_TYPE=2 "
+                . "WHERE GU.ASSIGNEE_ID = 0");
+        $con->commit();
+
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE USERS AS U "
+                . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
+                . "    U.USR_UID=GU.GRP_UID "
+                . "SET "
+                . "GU.ASSIGNEE_ID=U.USR_ID, "
+                . "GU.ASSIGNEE_TYPE=1 "
+                . "WHERE GU.ASSIGNEE_ID = 0");
+        $con->commit();
+
+        $con->begin();
+        $stmt = $con->createStatement();
+        $stmt->executeQuery(""
+                . "UPDATE APP_ASSIGN_SELF_SERVICE_VALUE_GROUP "
+                . "SET "
+                . "ASSIGNEE_ID=-1, "
+                . "ASSIGNEE_TYPE=-1 "
+                . "WHERE ASSIGNEE_ID = 0");
+        $con->commit();
+    }
 }

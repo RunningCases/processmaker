@@ -46,11 +46,11 @@ class Applications
 
         //Sanitize input variables
         $inputFilter = new InputFilter();
-        $userUid = $inputFilter->validateInput($userUid, 'int');
-        $start = $inputFilter->validateInput($start, 'int');
-        $limit = $inputFilter->validateInput($limit, 'int');
+        $userUid = (int)$inputFilter->validateInput($userUid, 'int');
+        $start = (int)$inputFilter->validateInput($start, 'int');
+        $limit = (int)$inputFilter->validateInput($limit, 'int');
         $search = $inputFilter->escapeUsingConnection($search, $con);
-        $process = $inputFilter->validateInput($process, 'int');
+        $process = (int)$inputFilter->validateInput($process, 'int');
         //$status doesn't require sanitization
         $dir = in_array($dir, ['ASC', 'DESC']) ? $dir :'DESC';
         $sort = $inputFilter->escapeUsingConnection($sort, $con);

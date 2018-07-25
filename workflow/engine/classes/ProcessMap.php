@@ -1954,7 +1954,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['outputDocArray'] = $outputDocArray;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -3903,7 +3903,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['objects'] = $aObjects;
         $_SESSION['_DBArray'] = $_DBArray;
 

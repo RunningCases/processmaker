@@ -644,7 +644,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jean-Marc Trémeaux",
+                    "name": "Jean-Marc TrÃ©meaux",
                     "homepage": "http://naku.dohcrew.com/",
                     "role": "Developer"
                 },
@@ -3456,7 +3456,7 @@
             ],
             "authors": [
                 {
-                    "name": "François Zaninotto"
+                    "name": "FranÃ§ois Zaninotto"
                 }
             ],
             "description": "Faker is a PHP library that generates fake data for you.",
@@ -3500,7 +3500,7 @@
             ],
             "authors": [
                 {
-                    "name": "Christian Lück",
+                    "name": "Christian LÃ¼ck",
                     "email": "christian@lueck.tv"
                 }
             ],
@@ -4099,7 +4099,7 @@
             ],
             "authors": [
                 {
-                    "name": "Ondřej Machulda",
+                    "name": "OndÅ™ej Machulda",
                     "email": "ondrej.machulda@gmail.com"
                 }
             ],

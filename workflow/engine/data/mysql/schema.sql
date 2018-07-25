@@ -281,11 +281,13 @@ DROP TABLE IF EXISTS `GROUPWF`;
 CREATE TABLE `GROUPWF`
 (
 	`GRP_UID` VARCHAR(32)  NOT NULL,
+        `GRP_ID` INTEGER  NOT NULL AUTO_INCREMENT,
 	`GRP_TITLE` MEDIUMTEXT  NOT NULL,
 	`GRP_STATUS` CHAR(8) default 'ACTIVE' NOT NULL,
 	`GRP_LDAP_DN` VARCHAR(255) default '' NOT NULL,
 	`GRP_UX` VARCHAR(128) default 'NORMAL',
-	PRIMARY KEY (`GRP_UID`)
+	PRIMARY KEY (`GRP_UID`),
+        UNIQUE KEY `GRP_ID` (`GRP_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- GROUP_USER
@@ -297,9 +299,11 @@ DROP TABLE IF EXISTS `GROUP_USER`;
 CREATE TABLE `GROUP_USER`
 (
 	`GRP_UID` VARCHAR(32) default '0' NOT NULL,
+	`GRP_ID` INTEGER default 0,
 	`USR_UID` VARCHAR(32) default '0' NOT NULL,
 	PRIMARY KEY (`GRP_UID`,`USR_UID`),
-	KEY `indexForUsrUid`(`USR_UID`)
+	KEY `indexForUsrUid`(`USR_UID`),
+	KEY `INDEX_GRP_ID`(`GRP_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- HOLIDAY
@@ -2367,7 +2371,10 @@ CREATE TABLE `APP_ASSIGN_SELF_SERVICE_VALUE_GROUP`
 (
 	`ID` INTEGER default 0 NOT NULL,
 	`GRP_UID` VARCHAR(32)  NOT NULL,
-	KEY `indexId`(`ID`)
+	`ASSIGNEE_ID` INTEGER default 0,
+        `ASSIGNEE_TYPE` INTEGER default 0 NOT NULL,
+	KEY `indexId`(`ID`),
+	KEY `INDEX_ASSIGNEE_ID`(`ASSIGNEE_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- LIST_INBOX
