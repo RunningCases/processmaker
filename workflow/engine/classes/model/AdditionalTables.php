@@ -707,85 +707,84 @@ class AdditionalTables extends BaseAdditionalTables
      */
     public function populateReportTable($tableName, $sConnection = 'rp', $type = 'NORMAL', $processUid = '', $gridKey = '', $addTabUid = '')
     {
-        require_once "classes/model/Application.php";
-
         $this->className = $this->getPHPName($tableName);
         $this->classPeerName = $this->className . 'Peer';
 
         if (!file_exists(PATH_WORKSPACE . 'classes/' . $this->className . '.php')) {
-            throw new Exception("ERROR: " . PATH_WORKSPACE . 'classes/' . $this->className . '.php'
-                . " class file doesn't exit!");
+            throw new Exception("ERROR: " . PATH_WORKSPACE . 'classes/' . $this->className . '.php' . " class file doesn't exit!");
         }
 
         require_once PATH_WORKSPACE . 'classes/' . $this->className . '.php';
 
+        //get fields
+        $fieldTypes = [];
+        if ($addTabUid != '') {
+            $criteria = new Criteria('workflow');
+            $criteria->add(FieldsPeer::ADD_TAB_UID, $addTabUid);
+            $dataset = FieldsPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            while ($dataset->next()) {
+                $row = $dataset->getRow();
+                switch ($row['FLD_TYPE']) {
+                    case 'FLOAT':
+                    case 'DOUBLE':
+                    case 'INTEGER':
+                        $fieldTypes[] = array($row['FLD_NAME'] => $row['FLD_TYPE']);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //remove old applications references
+        $connection = Propel::getConnection($sConnection);
+        $statement = $connection->createStatement();
+        $sql = "TRUNCATE " . $tableName;
+        $statement->executeQuery($sql);
+
+        $case = new Cases();
+        $context = Bootstrap::getDefaultContextLog();
+
         //select cases for this Process, ordered by APP_NUMBER
-        $con = Propel::getConnection($sConnection);
-        $stmt = $con->createStatement();
         $criteria = new Criteria('workflow');
         $criteria->add(ApplicationPeer::PRO_UID, $processUid);
         $criteria->addAscendingOrderByColumn(ApplicationPeer::APP_NUMBER);
         $dataset = ApplicationPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
         while ($dataset->next()) {
             $row = $dataset->getRow();
-            //remove old applications references
-            $deleteSql = "DELETE FROM $tableName WHERE APP_UID = '" . $row['APP_UID'] . "'";
-            $rs = $stmt->executeQuery($deleteSql);
-            // getting the case data
-            $caseData = unserialize($row['APP_DATA']);
 
-            $fieldTypes = array();
+            //getting the case data
+            $appData = $case->unserializeData($row['APP_DATA']);
 
-            if ($addTabUid != '') {
-                require_once 'classes/model/Fields.php';
-                $criteriaField = new Criteria('workflow');
-                $criteriaField->add(FieldsPeer::ADD_TAB_UID, $addTabUid);
-                $datasetField = FieldsPeer::doSelectRS($criteriaField);
-                $datasetField->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                while ($datasetField->next()) {
-                    $rowfield = $datasetField->getRow();
-                    switch ($rowfield['FLD_TYPE']) {
-                        case 'FLOAT':
-                        case 'DOUBLE':
-                        case 'INTEGER':
-                            $fieldTypes[] = array($rowfield['FLD_NAME'] => $rowfield['FLD_TYPE']);
-                            break;
-                        default:
-                            break;
-                    }
+            //quick fix, map all empty values as NULL for Database
+            foreach ($appData as $appDataKey => $appDataValue) {
+                if (is_array($appDataValue) && count($appDataValue)) {
+                    $j = key($appDataValue);
+                    $appDataValue = is_array($appDataValue[$j]) ? $appDataValue : $appDataValue[$j];
                 }
-            }
-
-            // quick fix
-            // map all empty values as NULL for Database
-            foreach ($caseData as $dKey => $dValue) {
-                if (is_array($dValue) && count($dValue)) {
-                    $j = key($dValue);
-                    $dValue = (is_array($dValue[$j])) ? $dValue : $dValue[$j];
-                }
-                if (is_string($dValue)) {
+                if (is_string($appDataValue)) {
                     foreach ($fieldTypes as $key => $fieldType) {
-                        foreach ($fieldType as $name => $theType) {
-                            if (strtoupper($dKey) == $name) {
-                                $caseData[$dKey] = validateType($dValue, $theType);
-                                unset($name);
+                        foreach ($fieldType as $fieldTypeKey => $fieldTypeValue) {
+                            if (strtoupper($appDataKey) == $fieldTypeKey) {
+                                $appData[$appDataKey] = validateType($appDataValue, $fieldTypeValue);
+                                unset($fieldTypeKey);
                             }
                         }
                     }
                     // normal fields
-                    if (trim($dValue) === '') {
-                        $caseData[$dKey] = null;
+                    if (trim($appDataValue) === '') {
+                        $appData[$appDataKey] = null;
                     }
                 } else {
                     // grids
-                    if (is_array($caseData[$dKey])) {
-                        foreach ($caseData[$dKey] as $dIndex => $dRow) {
+                    if (is_array($appData[$appDataKey])) {
+                        foreach ($appData[$appDataKey] as $dIndex => $dRow) {
                             if (is_array($dRow)) {
                                 foreach ($dRow as $k => $v) {
                                     if (is_string($v) && trim($v) === '') {
-                                        $caseData[$dKey][$dIndex][$k] = null;
+                                        $appData[$appDataKey][$dIndex][$k] = null;
                                     }
                                 }
                             }
@@ -794,33 +793,48 @@ class AdditionalTables extends BaseAdditionalTables
                 }
             }
 
+            //populate data
+            $className = $this->className;
             if ($type === 'GRID') {
                 list($gridName, $gridUid) = explode('-', $gridKey);
-                $gridData = isset($caseData[$gridName]) ? $caseData[$gridName] : array();
-
+                $gridData = isset($appData[$gridName]) ? $appData[$gridName] : [];
                 foreach ($gridData as $i => $gridRow) {
-                    eval('$obj = new ' . $this->className . '();');
-                    $obj->fromArray($caseData, BasePeer::TYPE_FIELDNAME);
+                    try {
+                        $obj = new $className();
+                        $obj->fromArray($appData, BasePeer::TYPE_FIELDNAME);
+                        $obj->setAppUid($row['APP_UID']);
+                        $obj->setAppNumber($row['APP_NUMBER']);
+                        if (method_exists($obj, 'setAppStatus')) {
+                            $obj->setAppStatus($row['APP_STATUS']);
+                        }
+                        $obj->fromArray(array_change_key_case($gridRow, CASE_UPPER), BasePeer::TYPE_FIELDNAME);
+                        $obj->setRow($i);
+                        $obj->save();
+                    } catch (Exception $e) {
+                        $context["message"] = $e->getMessage();
+                        $context["tableName"] = $tableName;
+                        $context["appUid"] = $row['APP_UID'];
+                        Bootstrap::registerMonolog("sqlExecution", 500, "Sql Execution", $context, $context["workspace"], "processmaker.log");
+                    }
+                    unset($obj);
+                }
+            } else {
+                try {
+                    $obj = new $className();
+                    $obj->fromArray(array_change_key_case($appData, CASE_UPPER), BasePeer::TYPE_FIELDNAME);
                     $obj->setAppUid($row['APP_UID']);
                     $obj->setAppNumber($row['APP_NUMBER']);
                     if (method_exists($obj, 'setAppStatus')) {
                         $obj->setAppStatus($row['APP_STATUS']);
                     }
-                    $obj->fromArray(array_change_key_case($gridRow, CASE_UPPER), BasePeer::TYPE_FIELDNAME);
-                    $obj->setRow($i);
                     $obj->save();
-                    eval('$obj = new ' . $this->className . '();');
+                } catch (Exception $e) {
+                    $context["message"] = $e->getMessage();
+                    $context["tableName"] = $tableName;
+                    $context["appUid"] = $row['APP_UID'];
+                    Bootstrap::registerMonolog("sqlExecution", 500, "Sql Execution", $context, $context["workspace"], "processmaker.log");
                 }
-            } else {
-                eval('$obj = new ' . $this->className . '();');
-                $obj->fromArray(array_change_key_case($caseData, CASE_UPPER), BasePeer::TYPE_FIELDNAME);
-                $obj->setAppUid($row['APP_UID']);
-                $obj->setAppNumber($row['APP_NUMBER']);
-                if (method_exists($obj, 'setAppStatus')) {
-                    $obj->setAppStatus($row['APP_STATUS']);
-                }
-                $obj->save();
-                $obj = null;
+                unset($obj);
             }
         }
     }
