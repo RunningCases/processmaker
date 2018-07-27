@@ -349,15 +349,15 @@ class InputFilter
         return $source;
     }
 
-    /**
-     * @author Chris Tobin
-     * @author Daniel Morris
-     * @access protected
-     * @param String $source
-     * @param Resource $connection - An open MySQL connection
-     * @return String $source
-     * @todo We need to review this method, because the sended string is unescaped
-     */
+    /** 
+      * @author Chris Tobin
+      * @author Daniel Morris
+      * @access protected
+      * @param String $source
+      * @param Resource $connection - An open MySQL connection
+      * @return String $source
+      * @todo We need to review this method, because the sended string is unescaped
+      */
     public function escapeString($string, &$connection)
     {
         return mysqli_real_escape_string($connection, $string);

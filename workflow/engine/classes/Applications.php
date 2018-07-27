@@ -51,6 +51,7 @@ class Applications
         $limit = (int)$inputFilter->validateInput($limit, 'int');
         $search = $inputFilter->escapeUsingConnection($search, $con);
         $process = (int)$inputFilter->validateInput($process, 'int');
+
         //$status doesn't require sanitization
         $dir = in_array($dir, ['ASC', 'DESC']) ? $dir :'DESC';
         $sort = $inputFilter->escapeUsingConnection($sort, $con);
