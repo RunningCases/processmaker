@@ -151,21 +151,6 @@ EOT
 CLI::taskOpt("workspace", "Select the workspace whose case folders will be migrated, if multiple workspaces are present in the server.\n        Ex: -wworkflow.        Ex: --workspace=workflow", "w:", "workspace=");
 CLI::taskRun("runStructureDirectories");
 
-CLI::taskName("database-generate-self-service-by-value");
-CLI::taskDescription(<<<EOT
-  Generate or upgrade the table "self-service by value".
-
-  This command populates the table "self-service by value" for cases whose
-  task is defined with "Self Service Value Based Assignment" in "Assignment
-  Rules".
-
-  If no workspace is specified, the command will be run in all workspaces. More
-  than one workspace can be specified.
-EOT
-);
-CLI::taskArg("workspace-name", true, true);
-CLI::taskRun("run_database_generate_self_service_by_value");
-
 CLI::taskName('database-verify-consistency');
 CLI::taskDescription(<<<EOT
   Verify that the database data is consistent so any database-upgrade operation will be executed flawlessly.
@@ -928,33 +913,6 @@ function runStructureDirectories($command, $args)
             CLI::logging("Updating workspaces ($countWorkspace/$count)");
             passthru(PHP_BINARY . " processmaker migrate-cases-folders " . $workspace->name);
         }
-    }
-}
-
-function run_database_generate_self_service_by_value($args, $opts)
-{
-    $filter = new InputFilter();
-    $opts = $filter->xssFilterHard($opts);
-    $args = $filter->xssFilterHard($args);
-    try {
-        $arrayWorkspace = get_workspaces_from_args($args);
-
-        foreach ($arrayWorkspace as $value) {
-            $workspace = $value;
-
-            try {
-                G::outRes("Generating the table \"self-service by value\" for " . pakeColor::colorize($workspace->name, "INFO") . "\n");
-                $workspace->appAssignSelfServiceValueTableGenerateData();
-            } catch (Exception $e) {
-                G::outRes("Errors generating the table \"self-service by value\" of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
-            }
-
-            echo "\n";
-        }
-
-        echo "Done!\n";
-    } catch (Exception $e) {
-        G::outRes(CLI::error($e->getMessage()) . "\n");
     }
 }
 

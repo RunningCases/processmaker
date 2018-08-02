@@ -2319,7 +2319,10 @@ class WorkspaceTools
     /**
      * Generate data for table APP_ASSIGN_SELF_SERVICE_VALUE
      *
-     * return void
+     * @return void
+     * @throws Exception
+     *
+     * @deprecated Method deprecated in Release 3.3.0
      */
     public function appAssignSelfServiceValueTableGenerateData()
     {
