@@ -94,7 +94,10 @@ class AppAssignSelfServiceValue extends BaseAppAssignSelfServiceValue
     /**
      * Generate data
      *
-     * return void
+     * @return void
+     * @throws Exception
+     *
+     * @deprecated Method deprecated in Release 3.3.0
      */
     public function generateData()
     {
@@ -133,7 +136,15 @@ class AppAssignSelfServiceValue extends BaseAppAssignSelfServiceValue
                     $dataVariable = (is_array($dataVariable))? $dataVariable : trim($dataVariable);
 
                     if (!empty($dataVariable)) {
-                        $this->create($row["APP_UID"], $row["DEL_INDEX"], array("PRO_UID" => $row["PRO_UID"], "TAS_UID" => $row["TAS_UID"], "GRP_UID" => serialize($dataVariable)));
+                        $this->create(
+                            $row["APP_UID"],
+                            $row["DEL_INDEX"],
+                            [
+                                "PRO_UID" => $row["PRO_UID"],
+                                "TAS_UID" => $row["TAS_UID"],
+                                "GRP_UID" => serialize($dataVariable)
+                            ]
+                        );
                     }
                 }
             }
