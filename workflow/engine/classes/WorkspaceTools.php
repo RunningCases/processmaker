@@ -4055,9 +4055,7 @@ class WorkspaceTools
         $con->commit();
         /*----------------------------------********---------------------------------*/
 
-        CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
-
-        // Populating PRO_ID, USR_ID
+        // Populating PRO_ID, USR_ID IN LIST TABLES
         CLI::logging("->   Populating PRO_ID, USR_ID at LIST_* \n");
         $con->begin();
         $stmt = $con->createStatement();
@@ -4066,7 +4064,37 @@ class WorkspaceTools
         }
         $con->commit();
 
-        CLI::logging("-> Populating PRO_ID, USR_ID at LIST_*  Done \n");
+        // Populating APP_ASSIGN_SELF_SERVICE_VALUE.APP_NUMBER
+        CLI::logging("->   Populating APP_ASSIGN_SELF_SERVICE_VALUE.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_ASSIGN_SELF_SERVICE_VALUE AS APP_SELF
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (APP_SELF.APP_UID = APP.APP_UID)
+                                   SET APP_SELF.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE APP_SELF.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID
+        CLI::logging("->   Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_ASSIGN_SELF_SERVICE_VALUE AS APP_SELF
+                                   INNER JOIN (
+                                       SELECT TASK.TAS_UID, TASK.TAS_ID
+                                       FROM TASK
+                                   ) AS TASK
+                                   ON (APP_SELF.TAS_UID = TASK.TAS_UID)
+                                   SET APP_SELF.TAS_ID = TASK.TAS_ID
+                                   WHERE APP_SELF.TAS_ID = 0");
+        $con->commit();
+        CLI::logging("-> Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID  Done \n");
+
+        //Complete all migrations
+        CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
     }
 
     /**

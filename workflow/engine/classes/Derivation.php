@@ -1071,7 +1071,8 @@ class Derivation
                                 $taskNextDel,
                                 $iNewDelIndex,
                                 $nextDel["TAS_UID"],
-                                $appFields
+                                $appFields,
+                                $taskNextDel->getTasId()
                             );
                         }
 
@@ -2081,13 +2082,16 @@ class Derivation
 
     /**
      * When we route a case we will to create a record in the table APP_ASSIGN_SELF_SERVICE_VALUE if the task is SELF_SERVICE
+     *
      * @param object $taskNextDel
      * @param integer $iNewDelIndex
      * @param string $nextTasUid
      * @param array $appFields
+     * @param integer $nextTasId
+     *
      * @return void
      */
-    public function createRecordAppSelfServiceValue($taskNextDel, $iNewDelIndex, $nextTasUid, $appFields)
+    public function createRecordAppSelfServiceValue($taskNextDel, $iNewDelIndex, $nextTasUid, $appFields, $nextTasId = 0)
     {
         if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
             $nextTaskGroupVariable = trim($taskNextDel->getTasGroupVariable(), " @#");
@@ -2101,11 +2105,13 @@ class Derivation
                     $appAssignSelfServiceValue->create(
                         $appFields["APP_UID"],
                         $iNewDelIndex,
-                        array(
+                        [
                             "PRO_UID" => $appFields["PRO_UID"],
                             "TAS_UID" => $nextTasUid,
-                            "GRP_UID" => ""
-                        ),
+                            "GRP_UID" => "",
+                            "APP_NUMBER" => !empty($appFields["APP_NUMBER"]) ? $appFields["APP_NUMBER"] : 0,
+                            "TAS_ID" => $nextTasId
+                        ],
                         $dataVariable
                     );
                 }

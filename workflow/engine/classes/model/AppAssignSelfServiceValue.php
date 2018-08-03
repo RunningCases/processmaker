@@ -5,10 +5,11 @@ class AppAssignSelfServiceValue extends BaseAppAssignSelfServiceValue
      * Create record
      *
      * @param string $applicationUid Unique id of Case
-     * @param int    $delIndex       Delegation index
-     * @param array  $arrayData      Data
+     * @param int $delIndex Delegation index
+     * @param array $arrayData Data
      *
-     * return void
+     * @return void
+     * @throws Exception
      */
     public function create($applicationUid, $delIndex, array $arrayData, $dataVariable = [])
     {
@@ -59,9 +60,10 @@ class AppAssignSelfServiceValue extends BaseAppAssignSelfServiceValue
      * Remove record
      *
      * @param string $applicationUid Unique id of Case
-     * @param int    $delIndex       Delegation index
+     * @param int $delIndex Delegation index
      *
-     * return void
+     * @return void
+     * @throws Exception
      */
     public function remove($applicationUid, $delIndex = 0)
     {
@@ -93,6 +95,7 @@ class AppAssignSelfServiceValue extends BaseAppAssignSelfServiceValue
 
     /**
      * Generate data
+     * This method is used from the command database-generate-self-service-by-value
      *
      * @return void
      * @throws Exception
@@ -136,6 +139,7 @@ class AppAssignSelfServiceValue extends BaseAppAssignSelfServiceValue
                     $dataVariable = (is_array($dataVariable))? $dataVariable : trim($dataVariable);
 
                     if (!empty($dataVariable)) {
+                        //@todo, will be deprecate the command database-generate-self-service-by-value
                         $this->create(
                             $row["APP_UID"],
                             $row["DEL_INDEX"],
