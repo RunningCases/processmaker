@@ -56,8 +56,41 @@ function validateType($value, $type)
 
 class AdditionalTables extends BaseAdditionalTables
 {
-    public $fields = array();
-    public $primaryKeys = array();
+    const FLD_TYPE_VALUES = [
+        'BIGINT',
+        'BOOLEAN',
+        'CHAR',
+        'DATE',
+        'DATETIME',
+        'DECIMAL',
+        'DOUBLE',
+        'FLOAT',
+        'INTEGER',
+        'LONGVARCHAR',
+        'REAL',
+        'SMALLINT',
+        'TIME',
+        'TIMESTAMP',
+        'TINYINT',
+        'VARCHAR'
+    ];
+    const FLD_TYPE_WITH_AUTOINCREMENT = [
+        'BIGINT',
+        'INTEGER',
+        'SMALLINT',
+        'TINYINT'
+    ];
+    const FLD_TYPE_WITH_SIZE = [
+        'BIGINT',
+        'CHAR',
+        'DECIMAL',
+        'FLOAT',
+        'INTEGER',
+        'LONGVARCHAR',
+        'VARCHAR'
+    ];
+    public $fields = [];
+    public $primaryKeys = [];
 
     /**
      * Function load
@@ -1124,6 +1157,70 @@ class AdditionalTables extends BaseAdditionalTables
         }
 
         return array('rows' => $addTables, 'count' => $count);
+    }
+
+    /**
+     * Get the table properties
+     *
+     * @param string $tabUid
+     * @param array $tabData
+     * @param boolean $isReportTable
+     *
+     * @return array
+     * @throws Exception
+    */
+    public static function getTableProperties($tabUid, $tabData = [], $isReportTable = false)
+    {
+        $criteria = new Criteria('workflow');
+        $criteria->add(AdditionalTablesPeer::ADD_TAB_UID, $tabUid, Criteria::EQUAL);
+        $dataset = AdditionalTablesPeer::doSelectOne($criteria);
+
+        $dataValidate = [];
+        if (!is_null($dataset)) {
+            $dataValidate['rep_tab_uid'] = $tabUid;
+
+            $tableName = $dataset->getAddTabName();
+            if (substr($tableName, 0, 4) === 'PMT_') {
+                $tableNameWithoutPrefixPmt = substr($tableName, 4);
+            } else {
+                $tableNameWithoutPrefixPmt = $tableName;
+            }
+
+            $dataValidate['rep_tab_name'] = $tableNameWithoutPrefixPmt;
+            $dataValidate['rep_tab_name_old_name'] = $tableName;
+            $dataValidate['pro_uid'] = $dataset->getProUid();
+            $dataValidate['rep_tab_dsc'] = $dataset->getAddTabDescription();
+            $dataValidate['rep_tab_connection'] = $dataset->getDbsUid();
+            $dataValidate['rep_tab_type'] = $dataset->getAddTabType();
+            $dataValidate['rep_tab_grid'] = '';
+
+            if ($isReportTable) {
+                if (!empty($tabData['pro_uid']) && $dataValidate['pro_uid'] !== $tabData['pro_uid']) {
+                    throw (new Exception("The property pro_uid: '". $tabData['pro_uid'] . "' is incorrect."));
+                }
+                if (!empty($tabData['rep_tab_name']) && $tableName !== $tabData['rep_tab_name']) {
+                    throw (new Exception("The property rep_tab_name: '". $tabData['rep_tab_name'] . "' is incorrect."));
+                }
+                if (!empty($dataValidate['rep_tab_dsc'])) {
+                    $dataValidate['rep_tab_dsc'] = $tabData['rep_tab_dsc'];
+                }
+                $tabGrid = $dataset->getAddTabGrid();
+                if (strpos($tabGrid, '-')) {
+                    list($gridName, $gridId) = explode('-', $tabGrid);
+                    $dataValidate['rep_tab_grid'] = $gridId;
+                }
+            } else {
+                if (!empty($tabData['rep_tab_name']) && $tableName !== $tabData['pmt_tab_name']) {
+                    throw (new Exception("The property pmt_tab_name: '". $tabData['pmt_tab_name'] . "' is incorrect."));
+                }
+                if (!empty($dataValidate['pmt_tab_dsc'])) {
+                    $dataValidate['rep_tab_dsc'] = $tabData['pmt_tab_dsc'];
+                }
+            }
+            $dataValidate['fields'] = $tabData['fields'];
+        }
+
+        return $dataValidate;
     }
 
     /**
