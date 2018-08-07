@@ -1828,9 +1828,11 @@ class WorkspaceTools
      * @param string $filename the backup filename
      * @param string $srcWorkspace name of the source workspace
      * @param string $dstWorkspace name of the destination workspace
-     * @param string $overwrite if you need overwrite the database
+     * @param boolean $overwrite if you need overwrite the database
      * @param string $lang for define the language
      * @param string $port of database if is empty take 3306
+     *
+     * @throws Exception
      */
     public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '', $optionMigrateHistoryData = [])
     {
@@ -2095,6 +2097,12 @@ class WorkspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
             /*----------------------------------********---------------------------------*/
+
+            $start = microtime(true);
+            CLI::logging("> Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
+            $workspace->upgradeSelfServiceData();
+            $stop = microtime(true);
+            CLI::logging("<*>   Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP took " . ($stop - $start) . " seconds.\n");
         }
 
         CLI::logging("Removing temporary files\n");
