@@ -2240,6 +2240,10 @@ function PMFUpdateUser ($userUid, $userName, $firstName = null, $lastName = null
     $ws = new WsBase();
     $result = $ws->updateUser( $userUid, $userName, $firstName, $lastName, $email, $dueDate, $status, $role, $password );
 
+    //When the user is created the $result parameter is an array, in other case is a object exception
+    if (!is_object($result)) {
+        $result = (object)$result;
+    }
     if ($result->status_code == 0) {
         return 1;
     } else {

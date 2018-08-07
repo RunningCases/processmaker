@@ -1336,13 +1336,21 @@ class WsBase
                 }
             }
 
-            $strRole = $RBAC->getRoleCodeValid($role);
-            if (empty($strRole)) {
-                $data = [];
-                $data["ROLE"] = $role;
-                $result = new WsCreateUserResponse(6, G::loadTranslation("ID_INVALID_ROLE", SYS_LANG, $data), null);
+            if (!empty($role)) {
+                if ($userUid === $RBAC::ADMIN_USER_UID) {
+                    $result = new WsResponse(15, G::LoadTranslation("ID_ADMINISTRATOR_ROLE_CANT_CHANGED"));
 
-                return $result;
+                    return $result;
+                }
+
+                $strRole = $RBAC->getRoleCodeValid($role);
+                if (empty($strRole)) {
+                    $data = [];
+                    $data["ROLE"] = $role;
+                    $result = new WsCreateUserResponse(6, G::loadTranslation("ID_INVALID_ROLE", SYS_LANG, $data), null);
+
+                    return $result;
+                }
             }
 
             if (!empty($password) && strlen($password) > 20) {
