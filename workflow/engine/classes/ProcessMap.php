@@ -946,7 +946,7 @@ class ProcessMap
                 }
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['availableBB'] = $aBB;
             $_SESSION['_DBArray'] = $_DBArray;
             $oCriteria = new Criteria('dbarray');
@@ -1125,7 +1125,7 @@ class ProcessMap
                 $oDataset->next();
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['taskUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
 
@@ -1201,7 +1201,7 @@ class ProcessMap
                 $oDataset->next();
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['availableUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
 
@@ -2017,7 +2017,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
 
         $_DBArray['inputDocArrayMain'] = $inputDocArray;
         $_SESSION['_DBArray'] = $_DBArray;
@@ -2681,7 +2681,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['processes'] = $aProcesses;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -2788,7 +2788,7 @@ class ProcessMap
                 }
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['reports'] = $row;
             $_SESSION['_DBArray'] = $_DBArray;
 
@@ -3399,7 +3399,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['objectsPermissions'] = $aObjectsPermissions;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -3647,7 +3647,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['allObjects'] = $aAllObjects;
         $_DBArray['allDynaforms'] = $aAllDynaforms;
         $_DBArray['allInputs'] = $aAllInputs;
@@ -3805,7 +3805,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['allObjects'] = $aAllObjects;
         $_DBArray['allDynaforms'] = $aAllDynaforms;
         $_DBArray['allInputs'] = $aAllInputs;
@@ -4000,7 +4000,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['availableObjects'] = $aAvailableObjects;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -4119,7 +4119,7 @@ class ProcessMap
         $aDirectories[] = array('DIRECTORY' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'mailTemplates\', \'\');return false;" class="pagedTableHeader">' . G::loadTranslation('ID_TEMPLATES') . '</a>' );
         $aDirectories[] = array('DIRECTORY' => '<a href="#" onclick="goToDirectory(\'' . $sProcessUID . '\', \'public\', \'\');return false;" class="pagedTableHeader">' . G::loadTranslation('ID_PUBLIC') . '</a>' );
 
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['directories'] = $aDirectories;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -4184,7 +4184,7 @@ class ProcessMap
             $aTheFiles[] = array('PATH' => $aFile['FILE'], 'EDIT' => ($sMainDirectory == 'mailTemplates' ? 'Edit' : ''), 'EDIT_JS' => "editFile('{$sProcessUID}', @@PATH);return false;", 'DOWNLOAD_TEXT' => G::LoadTranslation('ID_DOWNLOAD'), 'DOWNLOAD_JS' => 'downloadFile(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aFile['FILE'] . '\');return false;', 'DELETE_TEXT' => G::LoadTranslation('ID_DELETE'), 'DELETE_JS' => 'deleteFile(\'' . $sProcessUID . '\', \'' . $sMainDirectory . '\', \'' . $sCurrentDirectory . '\', \'' . $aFile['FILE'] . '\');return false;' );
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['objects'] = $aTheFiles;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -4347,7 +4347,7 @@ class ProcessMap
 
             /* Prepare page before to show */
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['NewCase'] = $this->subProcess_TaskIni($sProcessUID);
             unset($_DBArray['TheProcesses']);
             $_DBArray['TheProcesses'][] = array('pro_uid' => 'char', 'value' => 'char');
@@ -4947,7 +4947,7 @@ class ProcessMap
                 $oDataset->next();
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['taskUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
 
@@ -5018,7 +5018,7 @@ class ProcessMap
                 $oDataset->next();
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['availableUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
 
@@ -5144,7 +5144,7 @@ class ProcessMap
             }
 
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['availableBB'] = $aBB;
             $_SESSION['_DBArray'] = $_DBArray;
 
@@ -5262,7 +5262,7 @@ class ProcessMap
             }
 
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['steps'] = $aSteps;
             $_SESSION['_DBArray'] = $_DBArray;
 
@@ -5637,7 +5637,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['outputDocArray'] = $outputDocArray;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -5664,7 +5664,7 @@ class ProcessMap
 
             /* Prepare page before to show */
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['NewCase'] = $this->subProcess_TaskIni($sProcessUID);
             unset($_DBArray['TheProcesses']);
             $_DBArray['TheProcesses'][] = array('pro_uid' => 'char', 'value' => 'char' );
@@ -6203,7 +6203,7 @@ class ProcessMap
             $oDataset->next();
         }
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
 
         switch ($sAction) {
             case 'tasks':
@@ -6311,7 +6311,7 @@ class ProcessMap
         }
         // return $aObjects;
         global $_DBArray;
-        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+        $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
         $_DBArray['objects'] = $aObjects;
         $_SESSION['_DBArray'] = $_DBArray;
 
@@ -6494,7 +6494,7 @@ class ProcessMap
                 $oDataset->next();
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['availableUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
             return $_SESSION['_DBArray']['availableUsers'];
@@ -6573,7 +6573,7 @@ class ProcessMap
                 $oDataset->next();
             }
             global $_DBArray;
-            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
+            $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : []);
             $_DBArray['taskUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
             $oCriteria = new Criteria('dbarray');
