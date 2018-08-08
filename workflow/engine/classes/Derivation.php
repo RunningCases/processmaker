@@ -1136,7 +1136,9 @@ class Derivation
             //Close case
             $appFields["APP_STATUS"] = "COMPLETED";
             $appFields["APP_FINISH_DATE"] = "now";
-            $this->verifyIsCaseChild($currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"]);
+            if (SubApplication::isCaseSubProcess($currentDelegation["APP_UID"])) {
+                $this->verifyIsCaseChild($currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"]);
+            }
             $flagUpdateCase = true;
 
         }
@@ -1490,51 +1492,18 @@ class Derivation
     function verifyIsCaseChild($applicationUid, $delIndex = 0)
     {
         //Obtain the related row in the table SUB_APPLICATION
-        $criteria = new Criteria('workflow');
-        $criteria->add(SubApplicationPeer::APP_UID, $applicationUid);
-        $dataSet = SubApplicationPeer::doSelectRS($criteria);
-        $dataSet->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        if ($dataSet->next()) {
-            $subApplication = $dataSet->getRow();
+        $subApplication = SubApplication::getSubProcessInfo($applicationUid);
+        if (!empty($subApplication)) {
             //Obtain the related row in the table SUB_PROCESS
             $case = new Cases();
             $parentCase = $case->loadCase($subApplication['APP_PARENT'], $subApplication['DEL_INDEX_PARENT']);
-            $criteria = new Criteria('workflow');
-            $criteria->add(SubProcessPeer::PRO_PARENT, $parentCase['PRO_UID']);
-            $criteria->add(SubProcessPeer::TAS_PARENT, $parentCase['TAS_UID']);
-            $dataSet = SubProcessPeer::doSelectRS($criteria);
-            $dataSet->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $dataSet->next();
-            $subApplicationParent = $dataSet->getRow();
-            if ($subApplicationParent['SP_SYNCHRONOUS'] == 1 || $subApplication['SA_STATUS'] == 'ACTIVE') {
+
+            $subProcessParent = SubProcess::getSubProcessConfiguration($parentCase['PRO_UID'], $parentCase['TAS_UID']);
+            if ($subProcessParent['SP_SYNCHRONOUS'] == 1 || $subApplication['SA_STATUS'] == 'ACTIVE') {
                 $appFields = $case->loadCase($applicationUid, $delIndex);
                 //Copy case variables to parent case
-                $fields = unserialize($subApplicationParent['SP_VARIABLES_IN']);
-                $newFields = [];
-                foreach ($fields as $originField => $targetField) {
-                    $originField = str_replace('@', '', $originField);
-                    $originField = str_replace('#', '', $originField);
-                    $originField = str_replace('%', '', $originField);
-                    $originField = str_replace('?', '', $originField);
-                    $originField = str_replace('$', '', $originField);
-                    $originField = str_replace('=', '', $originField);
-                    $targetField = str_replace('@', '', $targetField);
-                    $targetField = str_replace('#', '', $targetField);
-                    $targetField = str_replace('%', '', $targetField);
-                    $targetField = str_replace('?', '', $targetField);
-                    $targetField = str_replace('$', '', $targetField);
-                    $targetField = str_replace('=', '', $targetField);
-                    $newFields[$targetField] = isset($appFields['APP_DATA'][$originField]) ? $appFields['APP_DATA'][$originField] : '';
-
-                    if (array_key_exists($originField . '_label', $appFields['APP_DATA'])) {
-                        $newFields[$targetField . '_label'] = $appFields['APP_DATA'][$originField . '_label'];
-                    } else {
-                        if (array_key_exists($targetField . '_label', $parentCase['APP_DATA'])) {
-                            $newFields[$targetField . '_label'] = '';
-                        }
-                    }
-                }
+                $fields = unserialize($subProcessParent['SP_VARIABLES_IN']);
+                $newFields = $this->getSubProcessVariables($fields, $appFields['APP_DATA'], $parentCase['APP_DATA']);
                 $parentCase['APP_DATA'] = array_merge($parentCase['APP_DATA'], $newFields);
                 $case->updateCase($subApplication['APP_PARENT'], $parentCase);
 
@@ -1651,7 +1620,45 @@ class Derivation
         }
     }
 
-    /*  getDerivatedCases
+    /**
+     * Will be get sub process variables
+     * Get variables-in and variables-out
+     *
+     * @param array $fields
+     * @param array $childCaseData
+     * @param array $parentCaseData
+     *
+     * @return array
+    */
+    public function getSubProcessVariables($fields, $childCaseData, $parentCaseData)
+    {
+        $newFields = [];
+        foreach ($fields as $originField => $targetField) {
+            $originField = str_replace('@', '', $originField);
+            $originField = str_replace('#', '', $originField);
+            $originField = str_replace('%', '', $originField);
+            $originField = str_replace('?', '', $originField);
+            $originField = str_replace('$', '', $originField);
+            $originField = str_replace('=', '', $originField);
+            $targetField = str_replace('@', '', $targetField);
+            $targetField = str_replace('#', '', $targetField);
+            $targetField = str_replace('%', '', $targetField);
+            $targetField = str_replace('?', '', $targetField);
+            $targetField = str_replace('$', '', $targetField);
+            $targetField = str_replace('=', '', $targetField);
+            $newFields[$targetField] = isset($childCaseData[$originField]) ? $childCaseData[$originField] : '';
+
+            if (array_key_exists($originField . '_label', $childCaseData)) {
+                $newFields[$targetField . '_label'] = $childCaseData[$originField . '_label'];
+            } elseif (array_key_exists($targetField . '_label', $parentCaseData)) {
+                $newFields[$targetField . '_label'] = '';
+            }
+        }
+
+        return $newFields;
+    }
+
+    /**  getDerivatedCases
      *  get all derivated cases and subcases from any task,
      *  this function is useful to know who users have been assigned and what task they do.
      *
