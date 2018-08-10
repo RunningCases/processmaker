@@ -3083,32 +3083,37 @@ class Processes
     /**
      * Get Groupwf Rows for a Process form an array
      *
-     * @param array $aGroups
-     * @return array $aGroupwf
+     * @param array $groups
+     *
+     * @return array $groupList
+     * @throws Exception
      */
-    public function getGroupwfRows($aGroups)
+    public function getGroupwfRows($groups)
     {
         try {
-            $aInGroups = array();
-            foreach ($aGroups as $key => $val) {
-                $aInGroups[] = $val['USR_UID'];
+            $inGroups = [];
+            foreach ($groups as $key => $val) {
+                $inGroups[] = $val['USR_UID'];
             }
 
-            $aGroupwf = array();
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(GroupwfPeer::GRP_UID, $aInGroups, Criteria::IN);
-            $oDataset = GroupwfPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $oGroupwf = new Groupwf();
-                $aGroupwf[] = $oGroupwf->Load($aRow['GRP_UID']);
-                $oDataset->next();
+            $groupList = [];
+            $criteria = new Criteria('workflow');
+            $criteria->add(GroupwfPeer::GRP_UID, $inGroups, Criteria::IN);
+            $dataset = GroupwfPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            while ($row = $dataset->getRow()) {
+                $groupWf = new Groupwf();
+                $infoGroup = $groupWf->Load($row['GRP_UID']);
+                unset($infoGroup['GRP_ID']);
+                $groupList[] = $infoGroup;
+
+                $dataset->next();
             }
 
-            return $aGroupwf;
-        } catch (Exception $oError) {
-            throw ($oError);
+            return $groupList;
+        } catch (Exception $error) {
+            throw ($error);
         }
     }
 
@@ -3783,19 +3788,24 @@ class Processes
     }
 
     /**
-     * Get Task User Rows from an array of data
+     * Get Task User rows from an array of data
      *
-     * @param array $aTaskUser
+     * @param array $group
      * @return array $aStepTrigger
      */
-    public function createGroupRow($aGroupwf)
+    public function createGroupRow($group)
     {
-        foreach ($aGroupwf as $key => $row) {
-            $oGroupwf = new Groupwf();
-            if ($oGroupwf->GroupwfExists($row['GRP_UID'])) {
-                $oGroupwf->remove($row['GRP_UID']);
+        foreach ($group as $key => $row) {
+            $groupWf = new Groupwf();
+            if ($groupWf->GroupwfExists($row['GRP_UID'])) {
+                $groupInfo = $groupWf->Load($row['GRP_UID']);
+                $groupWf->remove($row['GRP_UID']);
             }
-            $res = $oGroupwf->create($row);
+            //We will to keep the GRP_ID
+            if (!empty($groupInfo['GRP_ID'])) {
+                $row['GRP_ID'] = $groupInfo['GRP_ID'];
+            }
+            $res = $groupWf->create($row);
         }
     }
 

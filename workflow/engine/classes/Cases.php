@@ -1974,12 +1974,6 @@ class Cases
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refresh($data);
                 /*----------------------------------********---------------------------------*/
-
-                /** This case is subProcess? */
-                if (SubApplication::isCaseSubProcess($appUid)) {
-                    $route = new Derivation();
-                    $route->verifyIsCaseChild($appUid, $delIndex);
-                }
             }
 
             /** Update search index */
@@ -1993,6 +1987,7 @@ class Cases
 
     /**
      * With this we can change the status to CLOSED in APP_DELEGATION
+     * We close a thread in the action: paused reassign cancel
      *
      * @param string $appUid
      * @param string $delIndex
@@ -2034,12 +2029,6 @@ class Cases
             $listParticipatedLast = new ListParticipatedLast();
             $listParticipatedLast->refresh($data);
             /*----------------------------------********---------------------------------*/
-
-            /** This case is subProcess? */
-            if (SubApplication::isCaseSubProcess($appUid)) {
-                $route = new Derivation();
-                $route->verifyIsCaseChild($appUid, $delIndex);
-            }
 
             /** Update searchindex */
             if ($this->appSolr != null) {
@@ -4260,7 +4249,7 @@ class Cases
     }
 
     /**
-     * This function will be close the one or all threads
+     * This function will be close the one or all threads for cancel the case
      *
      * @param string $appUid
      * @param integer $delIndex, if is null we will to close all threads
@@ -4286,6 +4275,14 @@ class Cases
             $resultDelegation = $delegation->Load($appUid, $delIndex);
             $this->closeAppThread($appUid, $resultDelegation['DEL_THREAD']);
             $result[] = $resultDelegation;
+        }
+
+        /** This case is subProcess? */
+        if (SubApplication::isCaseSubProcess($appUid)) {
+            foreach ($result as $value){
+                $route = new Derivation();
+                $route->verifyIsCaseChild($appUid, $value['DEL_INDEX']);
+            }
         }
 
         return $result;

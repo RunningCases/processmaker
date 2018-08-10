@@ -1828,9 +1828,11 @@ class WorkspaceTools
      * @param string $filename the backup filename
      * @param string $srcWorkspace name of the source workspace
      * @param string $dstWorkspace name of the destination workspace
-     * @param string $overwrite if you need overwrite the database
+     * @param boolean $overwrite if you need overwrite the database
      * @param string $lang for define the language
      * @param string $port of database if is empty take 3306
+     *
+     * @throws Exception
      */
     public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '', $optionMigrateHistoryData = [])
     {
@@ -2095,6 +2097,12 @@ class WorkspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
             /*----------------------------------********---------------------------------*/
+
+            $start = microtime(true);
+            CLI::logging("> Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
+            $workspace->upgradeSelfServiceData();
+            $stop = microtime(true);
+            CLI::logging("<*>   Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP took " . ($stop - $start) . " seconds.\n");
         }
 
         CLI::logging("Removing temporary files\n");
@@ -2209,6 +2217,7 @@ class WorkspaceTools
                     $oauthClients->setClientDescription('ProcessMaker Web Designer App');
                     $oauthClients->setClientWebsite('www.processmaker.com');
                     $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->setUsrUid('00000000000000000000000000000001');
                     $oauthClients->save();
                 }
 
@@ -2220,6 +2229,7 @@ class WorkspaceTools
                     $oauthClients->setClientDescription(config('oauthClients.mobile.clientDescription'));
                     $oauthClients->setClientWebsite(config('oauthClients.mobile.clientWebsite'));
                     $oauthClients->setRedirectUri($endpoint);
+                    $oauthClients->setUsrUid('00000000000000000000000000000001');
                     $oauthClients->save();
                 }
             } else {
@@ -2319,7 +2329,10 @@ class WorkspaceTools
     /**
      * Generate data for table APP_ASSIGN_SELF_SERVICE_VALUE
      *
-     * return void
+     * @return void
+     * @throws Exception
+     *
+     * @deprecated Method deprecated in Release 3.3.0
      */
     public function appAssignSelfServiceValueTableGenerateData()
     {
@@ -4052,9 +4065,7 @@ class WorkspaceTools
         $con->commit();
         /*----------------------------------********---------------------------------*/
 
-        CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
-
-        // Populating PRO_ID, USR_ID
+        // Populating PRO_ID, USR_ID IN LIST TABLES
         CLI::logging("->   Populating PRO_ID, USR_ID at LIST_* \n");
         $con->begin();
         $stmt = $con->createStatement();
@@ -4063,7 +4074,37 @@ class WorkspaceTools
         }
         $con->commit();
 
-        CLI::logging("-> Populating PRO_ID, USR_ID at LIST_*  Done \n");
+        // Populating APP_ASSIGN_SELF_SERVICE_VALUE.APP_NUMBER
+        CLI::logging("->   Populating APP_ASSIGN_SELF_SERVICE_VALUE.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_ASSIGN_SELF_SERVICE_VALUE AS APP_SELF
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (APP_SELF.APP_UID = APP.APP_UID)
+                                   SET APP_SELF.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE APP_SELF.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID
+        CLI::logging("->   Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_ASSIGN_SELF_SERVICE_VALUE AS APP_SELF
+                                   INNER JOIN (
+                                       SELECT TASK.TAS_UID, TASK.TAS_ID
+                                       FROM TASK
+                                   ) AS TASK
+                                   ON (APP_SELF.TAS_UID = TASK.TAS_UID)
+                                   SET APP_SELF.TAS_ID = TASK.TAS_ID
+                                   WHERE APP_SELF.TAS_ID = 0");
+        $con->commit();
+        CLI::logging("-> Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID  Done \n");
+
+        //Complete all migrations
+        CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
     }
 
     /**

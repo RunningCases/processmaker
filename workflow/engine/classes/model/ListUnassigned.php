@@ -325,13 +325,14 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
      * Get SelfService Value Based
      *
      * @param string $userUid
+     *
      * @return array $arrayAppAssignSelfServiceValueData
      * @throws Exception
      */
     public function getSelfServiceCasesByEvaluate($userUid)
     {
         try {
-            $arrayAppAssignSelfServiceValueData = array();
+            $arrayAppAssignSelfServiceValueData = [];
 
             $criteria = new Criteria("workflow");
 
@@ -347,8 +348,10 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
 
             $criteria->setDistinct();
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::APP_UID);
+            $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::APP_NUMBER);
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::DEL_INDEX);
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::TAS_UID);
+            $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::TAS_ID);
             $criteria->addJoin(AppAssignSelfServiceValuePeer::ID, AppAssignSelfServiceValueGroupPeer::ID, Criteria::INNER_JOIN);
             $criteria->add(AppAssignSelfServiceValueGroupPeer::GRP_UID, $userUid, Criteria::EQUAL);
             $criteria->addOr(AppAssignSelfServiceValueGroupPeer::GRP_UID, $sql, Criteria::CUSTOM);
@@ -359,11 +362,11 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayAppAssignSelfServiceValueData[] = array(
-                    "APP_UID" => $row["APP_UID"],
+                $arrayAppAssignSelfServiceValueData[] = [
+                    "APP_NUMBER" => $row["APP_NUMBER"],
                     "DEL_INDEX" => $row["DEL_INDEX"],
-                    "TAS_UID" => $row["TAS_UID"]
-                );
+                    "TAS_ID" => $row["TAS_ID"]
+                ];
             }
 
             return $arrayAppAssignSelfServiceValueData;
@@ -389,8 +392,11 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TaskPeer::TAS_UID);
+        $c->addSelectColumn(TaskPeer::TAS_ID);
         $c->addSelectColumn(TaskPeer::PRO_UID);
+        //@todo we need to use the PRO_ID for the left join
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+        //@todo we need to use the TAS_ID for the left join
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
@@ -407,7 +413,7 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         $row = $rs->getRow();
 
         while (is_array($row)) {
-            $tasks[] = $row['TAS_UID'];
+            $tasks[] = $row['TAS_ID'];
             $rs->next();
             $row = $rs->getRow();
         }
@@ -418,8 +424,11 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TaskPeer::TAS_UID);
+        $c->addSelectColumn(TaskPeer::TAS_ID);
         $c->addSelectColumn(TaskPeer::PRO_UID);
+        //@todo we need to use the PRO_ID for the left join
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+        //@todo we need to use the TAS_ID for the left join
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
@@ -436,7 +445,7 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
         $row = $rs->getRow();
 
         while (is_array($row)) {
-            $tasks[] = $row['TAS_UID'];
+            $tasks[] = $row['TAS_ID'];
             $rs->next();
             $row = $rs->getRow();
         }
@@ -446,8 +455,10 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
 
     /**
      * Returns the number of cases of a user
+     *
      * @param string $userUid
      * @param array $filters
+     *
      * @return int $total
      */
     public function getCountList($userUid, $filters = array())
@@ -463,6 +474,7 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
      *
      * @param criteria $criteria
      * @param string $userUid
+     *
      * @return criteria $criteria
      */
     public function getCriteriaWhereSelfService($criteria, $userUid)
@@ -478,36 +490,36 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
             $firstRow = current($aSelfServiceValueBased);
             $criterionAux = sprintf(
                 "((
-                    LIST_UNASSIGNED.APP_UID='%s' AND 
+                    LIST_UNASSIGNED.APP_NUMBER='%s' AND 
                     LIST_UNASSIGNED.DEL_INDEX=%d AND 
-                    LIST_UNASSIGNED.TAS_UID='%s'
+                    LIST_UNASSIGNED.TAS_ID='%s'
                 ) ",
-                $firstRow["APP_UID"],
+                $firstRow["APP_NUMBER"],
                 $firstRow["DEL_INDEX"],
-                $firstRow["TAS_UID"]
+                $firstRow["TAS_ID"]
             );
             foreach (array_slice($aSelfServiceValueBased, 1) as $value) {
                 $criterionAux .= sprintf(
                     " OR (
-                        LIST_UNASSIGNED.APP_UID='%s' AND 
+                        LIST_UNASSIGNED.APP_NUMBER='%s' AND 
                         LIST_UNASSIGNED.DEL_INDEX=%d AND 
-                        LIST_UNASSIGNED.TAS_UID='%s'
+                        LIST_UNASSIGNED.TAS_ID='%s'
                     ) ",
-                    $value["APP_UID"],
+                    $value["APP_NUMBER"],
                     $value["DEL_INDEX"],
-                    $value["TAS_UID"]
+                    $value["TAS_ID"]
                 );
             }
             $criterionAux .= ")";
             //And Load SelfService
             $criteria->add(
                 $criteria->getNewCriterion(
-                    ListUnassignedPeer::TAS_UID,
+                    ListUnassignedPeer::TAS_ID,
                     $tasks,
                     Criteria::IN
                 )->addOr(
                     $criteria->getNewCriterion(
-                        ListUnassignedPeer::TAS_UID,
+                        ListUnassignedPeer::TAS_ID,
                         $criterionAux,
                         Criteria::CUSTOM
                     )
@@ -515,7 +527,7 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
             );
         } else {
             //Self Service
-            $criteria->add(ListUnassignedPeer::TAS_UID, $tasks, Criteria::IN);
+            $criteria->add(ListUnassignedPeer::TAS_ID, $tasks, Criteria::IN);
         }
 
         return $criteria;

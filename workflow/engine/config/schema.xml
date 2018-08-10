@@ -4230,9 +4230,11 @@
         </vendor>
         <column name="ID" type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
         <column name="APP_UID" type="VARCHAR" size="32" required="true"/>
+        <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true"/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true"/>
+        <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
         <column name="GRP_UID" type="LONGVARCHAR" required="true"/>
     </table>
 
