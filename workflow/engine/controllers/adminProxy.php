@@ -1395,6 +1395,7 @@ class adminProxy extends HttpProxyController
             $oauthClients->setClientDescription('ProcessMaker Web Designer App');
             $oauthClients->setClientWebsite('www.processmaker.com');
             $oauthClients->setRedirectUri($endpoint);
+            $oauthClients->setUsrUid('00000000000000000000000000000001');
             $oauthClients->save();
             
             if (!empty(config('oauthClients.mobile.clientId'))) {
@@ -1405,6 +1406,7 @@ class adminProxy extends HttpProxyController
                 $oauthClients->setClientDescription(config('oauthClients.mobile.clientDescription'));
                 $oauthClients->setClientWebsite(config('oauthClients.mobile.clientWebsite'));
                 $oauthClients->setRedirectUri($endpoint);
+                $oauthClients->setUsrUid('00000000000000000000000000000001');
                 $oauthClients->save();
             }
 
