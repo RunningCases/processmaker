@@ -3791,11 +3791,13 @@ class Processes
      * Get Task User rows from an array of data
      *
      * @param array $group
-     * @return array $aStepTrigger
+     *
+     * @return void
      */
     public function createGroupRow($group)
     {
         foreach ($group as $key => $row) {
+            $groupInfo = [];
             $groupWf = new Groupwf();
             if ($groupWf->GroupwfExists($row['GRP_UID'])) {
                 $groupInfo = $groupWf->Load($row['GRP_UID']);
