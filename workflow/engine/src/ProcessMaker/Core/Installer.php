@@ -550,7 +550,7 @@ class Installer
      */
     private function runTrigger($query, $description = '', $connection = self::CONNECTION_INSTALL)
     {
-        $this->run_query($query, $description, $connection, 'RAW');
+        $this->run_query($query, $description, $connection, 'UNPREPARED');
     }
 
     /**
@@ -572,6 +572,9 @@ class Installer
                     break;
                 case 'RAW':
                     DB::connection($connection)->raw($query);
+                    break;
+                case 'UNPREPARED':
+                    DB::connection($connection)->unprepared($query);
                     break;
             }
 

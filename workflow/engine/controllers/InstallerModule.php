@@ -900,13 +900,14 @@ class InstallerModule extends Controller
                 file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationUpdate.sql') &&
                 file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationUpdate.sql') &&
                 file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationDelete.sql') &&
+                file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerSubApplicationInsert.sql') &&
                 file_exists(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerContentUpdate.sql')) {
-                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationInsert.sql'));
-                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationUpdate.sql'));
-                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationUpdate.sql'));
-                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationDelete.sql'));
-                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerSubApplicationInsert.sql'));
-                DB::connection(self::CONNECTION_INSTALL)->raw(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerContentUpdate.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->unprepared(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationInsert.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->unprepared(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerAppDelegationUpdate.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->unprepared(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationUpdate.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->unprepared(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerApplicationDelete.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->unprepared(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerSubApplicationInsert.sql'));
+                DB::connection(self::CONNECTION_INSTALL)->unprepared(file_get_contents(PATH_HOME . 'engine/methods/setup/setupSchemas/triggerContentUpdate.sql'));
 
                 DB::connection(self::CONNECTION_INSTALL)
                     ->table('CONFIGURATION')
@@ -954,71 +955,7 @@ class InstallerModule extends Controller
                 file_put_contents(FILE_PATHS_INSTALLED, $dbText);
             }
 
-            /**
-             * AppCacheView Build
-             */
-            define('HASH_INSTALLATION', $h);
-            define('SYSTEM_HASH', $sh);
-            define('PATH_DB', $pathShared . 'sites' . PATH_SEP);
-            define('SYS_SYS', $workspace);
-            config(['system.workspace' => $workspace]);
-
-            System::setConnectionConfig(
-                'mysql',
-                $db_host,
-                $wf_workspace,
-                $wfGrantUser,
-                $wfPass,
-                $db_host,
-                $wf_workspace,
-                $wfGrantUser,
-                $wfPass,
-                $db_host,
-                $wf_workspace,
-                $wfGrantUser,
-                $wfPass);
-
-            require_once('propel/Propel.php');
-
-            Propel::init(PATH_CORE . 'config/databases.php');
-            $con = Propel::getConnection('workflow');
-
-            require_once('classes/model/AppCacheView.php');
-            $lang = 'en';
-
-            //setup the appcacheview object, and the path for the sql files
-            $appCache = new AppCacheView();
-
-            $appCache->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
-
-            //Update APP_DELEGATION.DEL_LAST_INDEX data
-            $res = $appCache->updateAppDelegationDelLastIndex($lang, true);
-
-            //APP_DELEGATION INSERT
-            $res = $appCache->triggerAppDelegationInsert($lang, true);
-
-            //APP_DELEGATION Update
-            $res = $appCache->triggerAppDelegationUpdate($lang, true);
-
-            //APPLICATION UPDATE
-            $res = $appCache->triggerApplicationUpdate($lang, true);
-
-            //APPLICATION DELETE
-            $res = $appCache->triggerApplicationDelete($lang, true);
-
-            //SUB_APPLICATION INSERT
-            $res = $appCache->triggerSubApplicationInsert($lang, false);
-
-            //CONTENT UPDATE
-            $res = $appCache->triggerContentUpdate($lang, true);
-
-            //build using the method in AppCacheView Class
-            $res = $appCache->fillAppCacheView($lang);
-
-            //end AppCacheView Build
-
-
-            //erik: for new env conf handling
+            // for new env conf handling
             $envFile = PATH_CONFIG . 'env.ini';
 
             // getting configuration from env.ini
