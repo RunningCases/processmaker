@@ -3216,7 +3216,7 @@ function PMFGetGroupName($grpUid, $lang = SYS_LANG) {
  * @param string | $text | Text
  * @param string | $category | Category
  * @param string | $proUid | ProcessUid
- * @param string | $lang | Languaje
+ * @param string | $lang | Language
  * @return array
  */
 function PMFGetUidFromText($text, $category, $proUid = null, $lang = SYS_LANG)
