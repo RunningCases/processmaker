@@ -9,16 +9,12 @@ require_once __DIR__ . '/../../../bootstrap/app.php';
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
-register_shutdown_function(
-    create_function(
-        '',
-        '
-        if (class_exists("Propel")) {
-            Propel::close();
-        }
-        '
-    )
-);
+$fn = '
+    if (class_exists("Propel")) {
+        Propel::close();
+    }
+    ';
+register_shutdown_function(create_function('', $fn));
 
 ini_set('memory_limit', '512M');
 
@@ -45,8 +41,7 @@ try {
     $cronName = $argv[4];
     $workspace = $argv[5];
     $dateSystem = $argv[6];
-    $sNow = $argv[7]; //$date
-
+    $sNow = $argv[7]; //date
     //Defines constants
     define('PATH_SEP', ($osIsLinux) ? '/' : '\\');
 
@@ -68,10 +63,7 @@ try {
     $classLoader->add(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'src' . PATH_SEP);
 
     //Add vendors to autoloader
-    //$classLoader->add(PATH_TRUNK . 'vendor' . PATH_SEP . 'luracast' . PATH_SEP . 'restler' . PATH_SEP . 'vendor', 'Luracast');
-    //$classLoader->add(PATH_TRUNK . 'vendor' . PATH_SEP . 'bshaffer' . PATH_SEP . 'oauth2-server-php' . PATH_SEP . 'src' . PATH_SEP, 'OAuth2');
-    $classLoader->addClass('Bootstrap',
-        PATH_TRUNK . 'gulliver' . PATH_SEP . 'system' . PATH_SEP . 'class.bootstrap.php');
+    $classLoader->addClass('Bootstrap', PATH_TRUNK . 'gulliver' . PATH_SEP . 'system' . PATH_SEP . 'class.bootstrap.php');
 
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
 
@@ -89,7 +81,6 @@ try {
     ini_set('error_reporting', $e_all);
     ini_set('short_open_tag', 'On');
     ini_set('default_charset', 'UTF-8');
-    //ini_set('memory_limit',    $arraySystemConfiguration['memory_limit']);
     ini_set('soap.wsdl_cache_enabled', $arraySystemConfiguration['wsdl_cache']);
     ini_set('date.timezone', $arraySystemConfiguration['time_zone']);
 
@@ -98,9 +89,6 @@ try {
     define('DEBUG_CALENDAR_LOG', $arraySystemConfiguration['debug_calendar']);
     define('MEMCACHED_ENABLED', $arraySystemConfiguration['memcached']);
     define('MEMCACHED_SERVER', $arraySystemConfiguration['memcached_server']);
-
-    //require_once(PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php');
-    //define('PATH_GULLIVER_HOME', PATH_TRUNK . 'gulliver' . PATH_SEP);
 
     spl_autoload_register(['Bootstrap', 'autoloadClass']);
 
@@ -168,8 +156,7 @@ try {
             while (!feof($fileDb)) {
                 $buffer = fgets($fileDb, 4096); //Read a line
 
-                $phpCode .= preg_replace('/define\s*\(\s*[\x22\x27](.*)[\x22\x27]\s*,\s*(\x22.*\x22|\x27.*\x27)\s*\)\s*;/i',
-                    '$$1 = $2;', $buffer);
+                $phpCode .= preg_replace('/define\s*\(\s*[\x22\x27](.*)[\x22\x27]\s*,\s*(\x22.*\x22|\x27.*\x27)\s*\)\s*;/i', '$$1 = $2;', $buffer);
             }
 
             fclose($fileDb);
@@ -189,8 +176,6 @@ try {
                 $dsnRbac .= '?encoding=utf8';
                 break;
             case 'mssql':
-                //$dsn .= '?sendStringAsUnicode=false';
-                //$dsnRbac .= '?sendStringAsUnicode=false';
                 break;
             default:
                 break;
@@ -203,15 +188,12 @@ try {
         $pro['datasources']['rbac']['adapter'] = $DB_ADAPTER;
         $pro['datasources']['rp']['connection'] = $dsnRp;
         $pro['datasources']['rp']['adapter'] = $DB_ADAPTER;
-        //$pro['datasources']['dbarray']['connection'] = 'dbarray://user:pass@localhost/pm_os';
-        //$pro['datasources']['dbarray']['adapter']    = 'dbarray';
 
         $oFile = fopen(PATH_CORE . 'config' . PATH_SEP . '_databases_.php', 'w');
         fwrite($oFile, '<?php global $pro; return $pro; ?>');
         fclose($oFile);
 
         Propel::init(PATH_CORE . 'config' . PATH_SEP . '_databases_.php');
-        //Creole::registerDriver('dbarray', 'creole.contrib.DBArrayConnection');
 
         //Enable RBAC
         $rbac = RBAC::getSingleton(PATH_DATA, session_id());
@@ -226,13 +208,19 @@ try {
 
         /*----------------------------------********---------------------------------*/
         if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
-            $systemUtcTimeZone = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
+            $systemUtcTimeZone = (int) ($arraySystemConfiguration['system_utc_time_zone']) == 1;
         }
         /*----------------------------------********---------------------------------*/
 
         ini_set('date.timezone', ($systemUtcTimeZone) ? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
 
         define('TIME_ZONE', ini_get('date.timezone'));
+
+        //UTC time zone
+        if ($systemUtcTimeZone) {
+            $sNow = convertToSystemUtcTimeZone($sNow);
+            $dateSystem = convertToSystemUtcTimeZone($dateSystem);
+        }
 
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
@@ -261,7 +249,7 @@ try {
                 case 'timereventcron':
                     $timerEvent = new \ProcessMaker\BusinessModel\TimerEvent();
 
-                    $timerEvent->startContinueCaseByTimerEvent(date('Y-m-d H:i:s'), true);
+                    $timerEvent->startContinueCaseByTimerEvent($sNow, true);
                     break;
                 case 'sendnotificationscron':
                     sendNotifications();
@@ -434,7 +422,6 @@ function executePlugins()
     }
 
     // Executing registered cron files
-
     // -> Get registered cron files
     $oPluginRegistry = PluginRegistry::loadSingleton();
     $cronFiles = $oPluginRegistry->getCronFiles();
@@ -445,7 +432,7 @@ function executePlugins()
         /**
          * @var \ProcessMaker\Plugins\Interfaces\CronFile $cronFile
          */
-        foreach($cronFiles as $cronFile) {
+        foreach ($cronFiles as $cronFile) {
             $path = PATH_PLUGINS . $cronFile->getNamespace() . PATH_SEP . 'bin' . PATH_SEP . $cronFile->getCronFile() . '.php';
             if (file_exists($path)) {
                 executeCustomCronFunction($path, $cronFile->getCronFile());
@@ -503,8 +490,8 @@ function calculateDuration()
         saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
     }
 }
-
 /*----------------------------------********---------------------------------*/
+
 function calculateAppDuration()
 {
     global $argvx;
@@ -527,7 +514,6 @@ function calculateAppDuration()
         saveLog('calculateDurationByApp', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
     }
 }
-
 /*----------------------------------********---------------------------------*/
 
 function executeEvents($sLastExecution, $sNow = null)
@@ -559,7 +545,6 @@ function executeEvents($sLastExecution, $sNow = null)
 
         setExecutionMessage("|- End Execution events");
         setExecutionResultMessage("Processed $n");
-        //saveLog('executeEvents', 'action', $res );
     } catch (Exception $oError) {
         setExecutionResultMessage('WITH ERRORS', 'error');
         eprintln("  '-" . $oError->getMessage(), 'red');
@@ -581,10 +566,8 @@ function executeScheduledCases($sNow = null)
         setExecutionMessage("Executing the scheduled starting cases");
         setExecutionResultMessage('PROCESSING');
 
-        $runDate = runDateForScheduledCases($sNow);
-
         $oCaseScheduler = new CaseScheduler();
-        $oCaseScheduler->caseSchedulerCron($runDate, $log, 1);
+        $oCaseScheduler->caseSchedulerCron($sNow, $log, 1);
 
         foreach ($log as $value) {
             $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
@@ -601,7 +584,7 @@ function executeScheduledCases($sNow = null)
     }
 }
 
-function runDateForScheduledCases($sNow)
+function convertToSystemUtcTimeZone($sNow)
 {
     global $arraySystemConfiguration;
 
@@ -610,7 +593,7 @@ function runDateForScheduledCases($sNow)
     $systemUtcTimeZone = false;
     /*----------------------------------********---------------------------------*/
     if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
-        $systemUtcTimeZone = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
+        $systemUtcTimeZone = (int) ($arraySystemConfiguration['system_utc_time_zone']) == 1;
     }
     /*----------------------------------********---------------------------------*/
 
@@ -766,7 +749,7 @@ function executeCaseSelfService()
                 $appcacheDelDelegateDate,
                 $taskSelfServiceTime,
                 $taskSelfServiceTimeUnit //HOURS|DAYS|MINUTES
-            //1
+                //1
             );
 
             if (time() > $dueDate["DUE_DATE_SECONDS"] && $flag == false) {
@@ -898,8 +881,8 @@ function setExecutionResultMessage($m, $t = '')
 
     eprintln("[$m]", $c);
 }
-
 /*----------------------------------********---------------------------------*/
+
 function fillReportByUser()
 {
     try {
@@ -1017,7 +1000,6 @@ function synchronizeGmailLabels()
         saveLog("synchronizeGmailLabels", "error", "Error when synchronizing Gmail labels: " . $e->getMessage());
     }
 }
-
 /*----------------------------------********---------------------------------*/
 
 function sendNotifications()
