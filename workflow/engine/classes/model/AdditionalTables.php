@@ -1069,94 +1069,117 @@ class AdditionalTables extends BaseAdditionalTables
         return $reportTables;
     }
 
+    /**
+     * Get all data of AdditionalTables.
+     * 
+     * @param int $start
+     * @param int $limit
+     * @param string $filter
+     * @param array $process
+     * @return array
+     */
     public function getAll($start = 0, $limit = 20, $filter = '', $process = null)
     {
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_UID);
-        $oCriteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_NAME);
-        $oCriteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_DESCRIPTION);
-        $oCriteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_TYPE);
-        $oCriteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_TAG);
-        $oCriteria->addSelectColumn(AdditionalTablesPeer::PRO_UID);
-        $oCriteria->addSelectColumn(AdditionalTablesPeer::DBS_UID);
+        $criteria = new Criteria('workflow');
+        $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_UID);
+        $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_NAME);
+        $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_DESCRIPTION);
+        $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_TYPE);
+        $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_TAG);
+        $criteria->addSelectColumn(AdditionalTablesPeer::PRO_UID);
+        $criteria->addSelectColumn(AdditionalTablesPeer::DBS_UID);
 
         if (isset($process)) {
             foreach ($process as $key => $pro_uid) {
                 if ($key == 'equal') {
-                    $oCriteria->add(AdditionalTablesPeer::PRO_UID, $pro_uid, Criteria::EQUAL);
+                    $criteria->add(AdditionalTablesPeer::PRO_UID, $pro_uid, Criteria::EQUAL);
                 } else {
-                    $oCriteria->add(AdditionalTablesPeer::PRO_UID, $pro_uid, Criteria::NOT_EQUAL);
+                    $criteria->add(AdditionalTablesPeer::PRO_UID, $pro_uid, Criteria::NOT_EQUAL);
                 }
             }
         }
 
         if ($filter != '' && is_string($filter)) {
-            $oCriteria->add(
-                $oCriteria->getNewCriterion(AdditionalTablesPeer::ADD_TAB_NAME, '%' . $filter . '%', Criteria::LIKE)->addOr(
-                    $oCriteria->getNewCriterion(AdditionalTablesPeer::ADD_TAB_DESCRIPTION, '%' . $filter . '%', Criteria::LIKE)
-                )
-            );
+            $subCriteria2 = $criteria->getNewCriterion(AdditionalTablesPeer::ADD_TAB_DESCRIPTION, '%'
+                    . $filter
+                    . '%', Criteria::LIKE);
+            $subCriteria1 = $criteria->getNewCriterion(AdditionalTablesPeer::ADD_TAB_NAME, '%'
+                            . $filter
+                            . '%', Criteria::LIKE)
+                    ->addOr($subCriteria2);
+            $criteria->add($subCriteria1);
         }
 
-        if (isset($_POST['sort'])) {
-            if ($_POST['dir'] == 'ASC') {
-                eval('$oCriteria->addAscendingOrderByColumn(AdditionalTablesPeer::' . $_POST['sort'] . ');');
-            } else {
-                eval('$oCriteria->addDescendingOrderByColumn(AdditionalTablesPeer::' . $_POST['sort'] . ');');
+        $criteria->addAsColumn("PRO_TITLE", ProcessPeer::PRO_TITLE);
+        $criteria->addAsColumn("PRO_DESCRIPTION", ProcessPeer::PRO_DESCRIPTION);
+        $criteria->addJoin(AdditionalTablesPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+
+        $stringBuild = '';
+        $stringSql = "ADDITIONAL_TABLES.ADD_TAB_NAME IN ("
+                . "SELECT TABLE_NAME "
+                . "FROM information_schema.tables "
+                . "WHERE table_schema = DATABASE()"
+                . ")";
+        $buildNumberRows = clone $criteria;
+        $buildNumberRows->clear();
+        $buildNumberRows->addSelectColumn(AdditionalTablesPeer::ADD_TAB_NAME);
+        $buildNumberRows->addAsColumn("EXISTS_TABLE", $stringSql);
+        $dataset1 = AdditionalTablesPeer::doSelectRS($buildNumberRows);
+        $dataset1->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        while ($dataset1->next()) {
+            $row = $dataset1->getRow();
+            $stringCount = "'" . G::LoadTranslation('ID_TABLE_NOT_FOUND') . "'";
+            if ($row["EXISTS_TABLE"] === "1") {
+                $stringCount = "(SELECT COUNT(*) FROM " . $row["ADD_TAB_NAME"] . ")";
             }
+            $stringBuild = $stringBuild
+                    . "WHEN '" . $row["ADD_TAB_NAME"]
+                    . "' THEN " . $stringCount
+                    . " \n";
+        }
+        $clauseRows = empty($stringBuild) ? "''" : "(CASE "
+                . AdditionalTablesPeer::ADD_TAB_NAME
+                . " "
+                . $stringBuild
+                . " END)";
+        $criteria->addAsColumn("NUM_ROWS", $clauseRows);
+
+        if (empty($_POST['sort'])) {
+            $criteria->addAscendingOrderByColumn(AdditionalTablesPeer::ADD_TAB_NAME);
         } else {
-            $oCriteria->addAscendingOrderByColumn(AdditionalTablesPeer::ADD_TAB_NAME);
+            $column = $_POST["sort"];
+            if (defined('AdditionalTablesPeer::' . $column)) {
+                $column = constant('AdditionalTablesPeer::' . $column);
+            }
+            if ($column === "NUM_ROWS") {
+                $column = "IF(" . $column . "='" . G::LoadTranslation('ID_TABLE_NOT_FOUND') . "',-1," . $column . ")";
+            }
+            if ($_POST['dir'] == 'ASC') {
+                $criteria->addAscendingOrderByColumn($column);
+            } else {
+                $criteria->addDescendingOrderByColumn($column);
+            }
         }
 
-        $criteriaCount = clone $oCriteria;
+        $criteriaCount = clone $criteria;
         $count = AdditionalTablesPeer::doCount($criteriaCount);
 
-        $oCriteria->setLimit($limit);
-        $oCriteria->setOffset($start);
+        $criteria->setLimit($limit);
+        $criteria->setOffset($start);
 
-        $oDataset = AdditionalTablesPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset = AdditionalTablesPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-        $addTables = array();
-        $proUids = array();
-
-        while ($oDataset->next()) {
-            $row = $oDataset->getRow();
-            $row['PRO_TITLE'] = $row['PRO_DESCRIPTION'] = '';
+        $addTables = [];
+        while ($dataset->next()) {
+            $row = $dataset->getRow();
             $addTables[] = $row;
-            if ($row['PRO_UID'] != '') {
-                $proUids[] = $row['PRO_UID'];
-            }
         }
 
-        //process details will have the info about the processes
-        $procDetails = array();
-
-        if (count($proUids) > 0) {
-            //now get the labels for all process, using an array of Uids,
-            $c = new Criteria('workflow');
-            $c->add(ProcessPeer::PRO_UID, $proUids, Criteria::IN);
-            $dt = ProcessPeer::doSelectRS($c);
-            $dt->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            while ($dt->next()) {
-                $row = $dt->getRow();
-                $procDetails[$row['PRO_UID']]['PRO_TITLE'] = $row['PRO_TITLE'];
-                $procDetails[$row['PRO_UID']]['PRO_DESCRIPTION'] = $row['PRO_DESCRIPTION'];
-            }
-
-            foreach ($addTables as $i => $addTable) {
-                if (isset($procDetails[$addTable['PRO_UID']]['PRO_TITLE'])) {
-                    $addTables[$i]['PRO_TITLE'] = $procDetails[$addTable['PRO_UID']]['PRO_TITLE'];
-                }
-
-                if (isset($procDetails[$addTable['PRO_UID']]['PRO_DESCRIPTION'])) {
-                    $addTables[$i]['PRO_DESCRIPTION'] = $procDetails[$addTable['PRO_UID']]['PRO_DESCRIPTION'];
-                }
-            }
-        }
-
-        return array('rows' => $addTables, 'count' => $count);
+        return [
+            'rows' => $addTables,
+            'count' => $count
+        ];
     }
 
     /**
