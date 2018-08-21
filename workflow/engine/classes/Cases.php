@@ -4531,10 +4531,13 @@ class Cases
         $appDelay = new AppDelay();
         $appDelay->create($newData);
 
-        //update searchindex
+        //Update searchindex
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($appUid);
         }
+
+        //Execute trigger
+        $this->getExecuteTriggerProcess($appUid, 'REASSIGNED');
 
         /*----------------------------------********---------------------------------*/
         $participated = new ListParticipatedLast();
@@ -4555,9 +4558,7 @@ class Cases
         $criteriaSet = new Criteria("workflow");
         $criteriaSet->add(ListInboxPeer::DEL_INDEX, $newData['DEL_INDEX']);
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
-
         /*----------------------------------********---------------------------------*/
-        $this->getExecuteTriggerProcess($appUid, 'REASSIGNED');
 
         //Delete record of the table LIST_UNASSIGNED
         $unassigned = new ListUnassigned();
