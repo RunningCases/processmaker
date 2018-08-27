@@ -4194,7 +4194,7 @@ class Processes
             foreach ($arrayData as $value) {
                 if (isset($value['__EMAIL_SERVER_UID_PRESERVED__']) && $value['__EMAIL_SERVER_UID_PRESERVED__'] === true) {
                     unset($value['__EMAIL_SERVER_UID_PRESERVED__']);
-                } else {
+                } elseif(!EmailServer::exists($value['EMAIL_SERVER_UID'])) {
                     unset($value['EMAIL_EVENT_FROM']);
                     unset($value['EMAIL_SERVER_UID']);
                 }
