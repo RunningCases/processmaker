@@ -466,8 +466,17 @@ class EmailEvent
         }
         $arrayData = $this->existsEvent($prj_uid, $eventUid);
         if (sizeof($arrayData)) {
-            $oEmailServer = new EmailServer();
-            $configEmailData = $oEmailServer->getEmailServer($arrayData[7]);
+            $emailServer = new EmailServer();
+            if (empty($arrayData[7])){
+                $configEmailData = $emailServer->getEmailServerDefault();
+                //We will to show a message, if is not defined the email server default
+                if(empty($configEmailData)){
+                    $emailServer->throwExceptionIfNotExistsEmailServer('', 'MESS_UID');
+                }
+            } else {
+                $configEmailData = $emailServer->getEmailServer($arrayData[7]);
+            }
+
             $emailGroupTo = [];
             $emailTo = '';
             $prfUid = $arrayData[6];

@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\BusinessModel\EmailEvent;
 use ProcessMaker\Core\System;
 
 class Processes
@@ -4183,26 +4184,19 @@ class Processes
      * @param string $processUid Unique id of Process
      * @param array $arrayData Data
      *
-     * return void
+     * @return void
+     * @throws Exception
      */
     public function createEmailEvent($processUid, array $arrayData)
     {
         try {
-            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
-
-            $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
-            $arrayEmailServerDefault = $emailServer->getEmailServerDefault();
-
+            $emailEvent = new EmailEvent();
             foreach ($arrayData as $value) {
                 if (isset($value['__EMAIL_SERVER_UID_PRESERVED__']) && $value['__EMAIL_SERVER_UID_PRESERVED__'] === true) {
                     unset($value['__EMAIL_SERVER_UID_PRESERVED__']);
-                } else {
+                } elseif(!EmailServer::exists($value['EMAIL_SERVER_UID'])) {
                     unset($value['EMAIL_EVENT_FROM']);
                     unset($value['EMAIL_SERVER_UID']);
-                    if (!empty($arrayEmailServerDefault)) {
-                        $value['EMAIL_EVENT_FROM'] = $arrayEmailServerDefault['MESS_ACCOUNT'];
-                        $value['EMAIL_SERVER_UID'] = $arrayEmailServerDefault['MESS_UID'];
-                    }
                 }
 
                 $emailEventData = $emailEvent->save($processUid, $value);
