@@ -66,7 +66,9 @@ class System
         'logging_level' => 'INFO',
         'smtp_timeout' => 20,
         'google_map_api_key' => '',
-        'google_map_signature' => ''
+        'google_map_signature' => '',
+        'logging_level' => 'INFO', 
+        'upload_attempts_limit_per_user' => '60,1'
     );
 
     /**

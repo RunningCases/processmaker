@@ -6,6 +6,7 @@ use ProcessMaker\Core\AppEvent;
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Validation\ValidationUploadedFiles;
 
 /**
  * bootstrap - ProcessMaker Bootstrap
@@ -818,7 +819,7 @@ if (substr(SYS_COLLECTION, 0, 8) === 'gulliver') {
 
         $isWebEntry = \ProcessMaker\BusinessModel\WebEntry::isWebEntry(SYS_COLLECTION, $phpFile);
         if (\Bootstrap::getDisablePhpUploadExecution() === 1 && !$isWebEntry) {
-            $message = \G::LoadTranslation('THE_PHP_FILES_EXECUTION_WAS_DISABLED');
+            $message = \G::LoadTranslation('ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED');
             \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 550, $message, $phpFile);
             echo $message;
             die();
@@ -1085,6 +1086,8 @@ if (!defined('EXECUTE_BY_CRON')) {
     $oPluginRegistry->init();
 
     if ($isControllerCall) { //Instance the Controller object and call the request method
+        ValidationUploadedFiles::getValidationUploadedFiles()
+                ->runRulesToAllUploadedFiles();
         $controller = new $controllerClass();
         $controller->setHttpRequestData($_REQUEST);//NewRelic Snippet - By JHL
         transactionLog($controllerAction);
@@ -1105,6 +1108,8 @@ if (!defined('EXECUTE_BY_CRON')) {
                 ->setLanguage(SYS_LANG)
                 ->getUsrIdByUsrUid(empty($_SESSION['USER_LOGGED']) ? '' : $_SESSION['USER_LOGGED']);
         /*----------------------------------********---------------------------------*/
+        ValidationUploadedFiles::getValidationUploadedFiles()
+                ->runRulesToAllUploadedFiles();
         require_once $phpFile;
     }
 

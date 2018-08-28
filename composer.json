@@ -87,7 +87,8 @@
             "thirdparty/pake/pakeFunction.php",
             "thirdparty/HTMLPurifier/HTMLPurifier.auto.php",
             "workflow/engine/classes/class.pmFunctions.php",
-            "workflow/engine/src/ProcessMaker/Util/helpers.php"
+            "workflow/engine/src/ProcessMaker/Util/helpers.php",
+            "framework/src/Maveriks/Extension/Restler/UploadFormat.php"
         ]
     },
     "autoload-dev": {

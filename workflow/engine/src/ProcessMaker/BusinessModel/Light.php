@@ -995,16 +995,6 @@ class Light
             $confEnvSetting = $config->getFormats();
             $user = new Users();
             foreach ($requestData as $k => $file) {
-                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-                if (Bootstrap::getDisablePhpUploadExecution() === 1 && $ext === 'php') {
-                    $message = G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
-                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, $file['name']);
-                    $response[$k]['error'] = array(
-                        "code" => "400",
-                        "message" => $message
-                    );
-                    continue;
-                }
                 $cases = new Cases();
                 $delIndex = $cases->getCurrentDelegation($appUid, $userUid);
                 $docUid = !empty($file['docUid']) ? $file['docUid'] : -1;

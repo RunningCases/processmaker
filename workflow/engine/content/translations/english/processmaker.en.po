@@ -24852,10 +24852,22 @@ msgid "The change might cause data loss in the PM table. Do you want to continue
 msgstr "The change might cause data loss in the PM table. Do you want to continue?"
 
 # TRANSLATION
+# LABEL/ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED
+#: LABEL/ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED
+msgid "The PHP files execution was disabled please contact the system administrator."
+msgstr "The PHP files execution was disabled please contact the system administrator."
+
+# TRANSLATION
 # LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
 #: LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
 msgid "Please complete the reassign reason."
 msgstr "Please complete the reassign reason."
+
+# TRANSLATION
+# LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
+#: LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
+msgid "The upload of PHP files was disabled please contact the system administrator."
+msgstr "The upload of PHP files was disabled please contact the system administrator."
 
 # TRANSLATION
 # LABEL/ID_THE_USERNAME_EMAIL_IS_INCORRECT
@@ -25180,6 +25192,12 @@ msgstr "Today"
 #: LABEL/ID_TOOLS
 msgid "Tools"
 msgstr "Tools"
+
+# TRANSLATION
+# LABEL/ID_TOO_MANY_REQUESTS
+#: LABEL/ID_TOO_MANY_REQUESTS
+msgid "Too many requests"
+msgstr "Too many requests"
 
 # TRANSLATION
 # LABEL/ID_TOP_MARGIN
