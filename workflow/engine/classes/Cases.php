@@ -900,7 +900,7 @@ class Cases
                     $appDataWithoutDynContentHistory = serialize($FieldsDifference);
                     $aFieldsHistory['APP_DATA'] = serialize($FieldsDifference);
                     $appHistory->insertHistory($aFieldsHistory);
-                    
+
                     /*----------------------------------********---------------------------------*/
                     $type = isset($Fields['OBJECT_TYPE']) ?
                             $Fields['OBJECT_TYPE'] : ChangeLog::getChangeLog()->getObjectNameById(ChangeLog::DYNAFORM);
@@ -1140,12 +1140,13 @@ class Cases
                     $nameFiles .= $node['file'] . ":" . $node['function'] . "(" . $node['line'] . ")\n";
                 }
             }
-            $dataLog = \Bootstrap::getDefaultContextLog();
-            $dataLog['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : G::LoadTranslation('UID_UNDEFINED_USER');
-            $dataLog['appUid'] = $sAppUid;
-            $dataLog['request'] = $nameFiles;
-            $dataLog['action'] = 'DeleteCases';
-            Bootstrap::registerMonolog('DeleteCases', 200, 'Delete Case', $dataLog, $dataLog['workspace'], 'processmaker.log');
+
+            /** ProcessMaker log*/
+            $context = Bootstrap::getDefaultContextLog();
+            $context['appUid'] = $sAppUid;
+            $context['request'] = $nameFiles;
+            Bootstrap::registerMonolog('DeleteCases', 200, 'Delete Case', $context);
+
             return $result;
         } catch (exception $e) {
             throw ($e);
@@ -7128,57 +7129,38 @@ class Cases
         return false;
     }
 
+    /**
+     * When the case is deleted will be removed the case from the report tables related
+     *
+     * @param string $applicationUid
+     *
+     * @return void
+     * @throws Exception
+    */
     public function reportTableDeleteRecord($applicationUid)
     {
-        $criteria1 = new Criteria("workflow");
-
-        //SELECT
-        $criteria1->addSelectColumn(ApplicationPeer::PRO_UID);
-
-        //FROM
-        //WHERE
-        $criteria1->add(ApplicationPeer::APP_UID, $applicationUid);
-
-        //QUERY
-        $rsCriteria1 = ApplicationPeer::doSelectRS($criteria1);
-        $rsCriteria1->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        $rsCriteria1->next();
-        $row1 = $rsCriteria1->getRow();
-
-        $processUid = $row1["PRO_UID"];
-
-        $criteria2 = new Criteria("workflow");
-
-        //SELECT
-        $criteria2->addSelectColumn(AdditionalTablesPeer::ADD_TAB_NAME);
-
-        //FROM
-        //WHERE
-
-        $criteria2->add(AdditionalTablesPeer::PRO_UID, $processUid);
-
-        //QUERY
-        $rsCriteria2 = AdditionalTablesPeer::doSelectRS($criteria2);
-        $rsCriteria2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        $pmTable = new PmTable();
-
-        while ($rsCriteria2->next()) {
-            try {
-                $row2 = $rsCriteria2->getRow();
-                $tableName = $row2["ADD_TAB_NAME"];
-                $pmTableName = $pmTable->toCamelCase($tableName);
-
-                //DELETE
-                require_once(PATH_WORKSPACE . "classes" . PATH_SEP . "$pmTableName.php");
-
-                $criteria3 = new Criteria("workflow");
-
-                eval("\$criteria3->add(" . $pmTableName . "Peer::APP_UID, \$applicationUid);");
-                eval($pmTableName . "Peer::doDelete(\$criteria3);");
-            } catch (Exception $e) {
-                throw $e;
+        $app = new Application();
+        $applicationFields = $app->Load($applicationUid);
+        if (!empty($applicationFields["PRO_UID"])) {
+            $additionalTables = new AdditionalTables();
+            $listTables = $additionalTables->getReportTables($applicationFields["PRO_UID"]);
+            $pmTable = new PmTable();
+            foreach ($listTables as $row) {
+                try {
+                    $tableName = $row["ADD_TAB_NAME"];
+                    $pmTableName = $pmTable->toCamelCase($tableName);
+                    require_once(PATH_WORKSPACE . 'classes' . PATH_SEP . $pmTableName . '.php');
+                    $criteria = new Criteria("workflow");
+                    $pmTablePeer = $pmTableName . 'Peer';
+                    $criteria->add($pmTablePeer::APP_UID, $applicationUid);
+                    $pmTablePeer::doDelete($criteria);
+                } catch (Exception $e) {
+                    $context = Bootstrap::getDefaultContextLog();
+                    $context['appUid'] = $applicationUid;
+                    $context['proUid'] = $applicationFields["PRO_UID"];
+                    $context['reportTable'] = $tableName;
+                    Bootstrap::registerMonolog('DeleteCases', 400, $e->getMessage(), $context);
+                }
             }
         }
     }
