@@ -380,44 +380,56 @@ class Cases
         return $rows;
     }
 
-    public function isSelfService($USR_UID, $TAS_UID, $APP_UID = '')
+    /**
+     * Checks if at least one of the user’s tasks is self-service
+     *
+     * @param string $usrUid
+     * @param string $tasUid
+     * @param string $appUid
+     *
+     * @return boolean
+     */
+    public function isSelfService($usrUid, $tasUid, $appUid = '')
     {
-        $tasks = $this->getSelfServiceTasks($USR_UID);
-
-        foreach ($tasks as $key => $val) {
-            if ($TAS_UID === $val['uid']) {
-                return true;
-            }
-        }
-
-        if (!empty($APP_UID)) {
-            $task = new Task();
-            $arrayTaskData = $task->load($TAS_UID);
-
-            $taskGroupVariable = trim($arrayTaskData['TAS_GROUP_VARIABLE'], ' @#');
-
-            $caseData = $this->loadCase($APP_UID);
-
-            if (isset($caseData['APP_DATA'][$taskGroupVariable])) {
-                $dataVariable = $caseData['APP_DATA'][$taskGroupVariable];
-
-                if (empty($dataVariable)) {
-                    return false;
-                }
-
-                $dataVariable = is_array($dataVariable)? $dataVariable : (array)trim($dataVariable);
-
-                if (in_array($USR_UID, $dataVariable, true)) {
-                    return true;
-                }
-
-                $groups = new Groups();
-                foreach ($groups->getActiveGroupsForAnUser($USR_UID) as $key => $group) {
-                    if (in_array($group, $dataVariable, true)) {
+        $selfServiceVariable = Task::getVariableUsedInSelfService($tasUid);
+        switch ($selfServiceVariable){
+            case Task::TASK_ASSIGN_TYPE_NO_SELF_SERVICE:
+                return false;
+                break;
+            case Task::SELF_SERVICE_WITHOUT_VARIABLE:
+                $tasks = $this->getSelfServiceTasks($usrUid);
+                foreach ($tasks as $key => $val) {
+                    if ($tasUid === $val['uid']) {
                         return true;
                     }
                 }
-            }
+
+                return false;
+                break;
+            default://When is "Self Service Value Based Assignment"
+                if (!empty($appUid)) {
+                    //If is Self service Value Based we will be get the value of variable defined in $selfServiceType
+                    $selfServiceType = trim($selfServiceVariable, ' @#');
+                    $caseData = $this->loadCase($appUid);
+                    if (isset($caseData['APP_DATA'][$selfServiceType])) {
+                        $dataVariable = $caseData['APP_DATA'][$selfServiceType];
+                        if (empty($dataVariable)) {
+                            return false;
+                        }
+
+                        $dataVariable = is_array($dataVariable) ? $dataVariable : (array)trim($dataVariable);
+                        if (in_array($usrUid, $dataVariable, true)) {
+                            return true;
+                        }
+
+                        $groups = new Groups();
+                        foreach ($groups->getActiveGroupsForAnUser($usrUid) as $key => $group) {
+                            if (in_array($group, $dataVariable, true)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
         }
 
         return false;
