@@ -1274,7 +1274,7 @@ class Light extends Api
 
             $url = "http://maps.googleapis.com/maps/api/staticmap?center=" . $latitude . ',' . $longitude . "&format=jpg&size=600x600&zoom=15&markers=color:blue%7Clabel:S%7C" . $latitude . ',' . $longitude;
             $imageLocation = imagecreatefromjpeg($url);
-            $tmpfname = tempnam("php://temp", "pmm");
+            $tmpfname = tempnam(sys_get_temp_dir(), "pmm");
             imagejpeg($imageLocation, $tmpfname);
 
             $_FILES["form"]["type"] = "image/jpeg";
