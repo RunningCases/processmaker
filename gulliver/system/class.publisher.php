@@ -225,8 +225,10 @@ class Publisher
                 //Asegurese de que no entre cuando $Part['Template']=="grid"
                 //de hecho soo deberia usarse cuando $Part['Template']=="xmlform"
                 if ((($this->publishType == 'dynaform') && $Part['Template'] == "xmlform") || ($Part['Template'] == "xmlform")) {
-                    $G_FORM->values = G::array_merges( array ('__DYNAFORM_OPTIONS' => isset( $Part['Data']['__DYNAFORM_OPTIONS'] ) ? $Part['Data']['__DYNAFORM_OPTIONS'] : ''
-                    ), $G_FORM->values );
+                    $G_FORM->values = G::array_merges(
+                        ['__DYNAFORM_OPTIONS' => isset($Part['Data']['__DYNAFORM_OPTIONS']) ? $Part['Data']['__DYNAFORM_OPTIONS'] : []],
+                        $G_FORM->values
+                    );
                     if (isset( $G_FORM->nextstepsave )) {
                         switch ($G_FORM->nextstepsave) {
                             // this condition validates if the next step link is configured to Save and Go the next step or show a prompt
