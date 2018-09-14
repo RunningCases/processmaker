@@ -8586,6 +8586,12 @@ msgid "@function() It evaluates the value, then executes a PHP function"
 msgstr "@function() It evaluates the value, then executes a PHP function"
 
 # TRANSLATION
+# LABEL/ID_G_SUITE_CONFIGURATION_SAVED
+#: LABEL/ID_G_SUITE_CONFIGURATION_SAVED
+msgid "G Suite Configuration Saved"
+msgstr "G Suite Configuration Saved"
+
+# TRANSLATION
 # LABEL/ID_GENERAL
 #: LABEL/ID_GENERAL
 msgid "General"
