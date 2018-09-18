@@ -16,6 +16,10 @@
  */
 class Task extends BaseTask
 {
+    const TASK_ASSIGN_TYPE_NO_SELF_SERVICE = null;
+    const TASK_ASSIGN_TYPE_SELF_SERVICE = 'SELF_SERVICE';
+    const SELF_SERVICE_WITHOUT_VARIABLE = 'YES';
+
     const tas_type_events = [
         'INTERMEDIATE-THROW-MESSAGE-EVENT',
         'INTERMEDIATE-THROW-EMAIL-EVENT',
@@ -843,6 +847,38 @@ class Task extends BaseTask
             }
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Review if the task is "Self Service"
+     * If the task is not self service, the function returns null
+     * If the task is self service, the function returns the self service variable
+     *
+     * @param string $tasUid
+     *
+     * @return string|null
+    */
+    public static function getVariableUsedInSelfService($tasUid)
+    {
+        $criteria = new Criteria();
+        $criteria->add(TaskPeer::TAS_UID, $tasUid);
+        $task = TaskPeer::doSelectOne($criteria);
+        if (!is_null($task)) {
+            //Review if is "Self Service"
+            if ($task->getTasAssignType() === self::TASK_ASSIGN_TYPE_SELF_SERVICE) {
+                $variableInSelfService = $task->getTasGroupVariable();
+                //Review if is "Self Service Value Based Assignment"
+                if (empty($variableInSelfService)) {
+                    return self::SELF_SERVICE_WITHOUT_VARIABLE;
+                } else {
+                    return $variableInSelfService;
+                }
+            } else {
+                self::TASK_ASSIGN_TYPE_NO_SELF_SERVICE;
+            }
+        } else {
+            self::TASK_ASSIGN_TYPE_NO_SELF_SERVICE;
         }
     }
 }

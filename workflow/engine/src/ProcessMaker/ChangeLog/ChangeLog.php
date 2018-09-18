@@ -37,7 +37,7 @@ class ChangeLog
      * 
      * @var array 
      */
-    protected static $applications = ['Unknow', 'Web', 'Actions by Email', 'Mobile'];
+    protected static $applications = ['Unknow', 'Web Application', 'Action by Email', 'Mobile Application'];
 
     /**
      * Identifier for unknow object.

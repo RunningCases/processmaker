@@ -58256,6 +58256,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_FULL_NAME','en','Full Name','2014-01-15') ,
 ( 'LABEL','ID_FULL_TEXT_SEARCH','en','Full Text Search','2014-01-15') ,
 ( 'LABEL','ID_FUNCTION','en','@function() It evaluates the value, then executes a PHP function','2014-01-15') ,
+( 'LABEL','ID_G_SUITE_CONFIGURATION_SAVED','en','G Suite Configuration Saved','2018-09-14') ,
 ( 'LABEL','ID_GENERAL','en','General','2014-01-15') ,
 ( 'LABEL','ID_GENERAL_PROCESS_NUMBERS','en','General Process Numbers','2014-01-15') ,
 ( 'LABEL','ID_GENERATE','en','Generate','2014-01-15') ,
