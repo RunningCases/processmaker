@@ -17,7 +17,10 @@ return [
         FilesystemServiceProvider::class,
         CacheServiceProvider::class,
         ViewServiceProvider::class,
-        \Illuminate\Database\DatabaseServiceProvider::class,
+        Illuminate\Database\DatabaseServiceProvider::class,
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        Illuminate\Queue\QueueServiceProvider::class,
+        Illuminate\Translation\TranslationServiceProvider::class,
 
     ],
 
