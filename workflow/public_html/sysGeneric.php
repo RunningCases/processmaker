@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Http\Kernel;
+use ProcessMaker\Core\AppEvent;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
@@ -976,6 +977,11 @@ if (!defined('EXECUTE_BY_CRON')) {
         $noLoginFolders[] = 'services';
         $noLoginFolders[] = 'tracker';
         $noLoginFolders[] = 'InstallerModule';
+        
+        $data = new stdClass();
+        $data->noLoginFiles = &$noLoginFiles;
+        $data->noLoginFolders = &$noLoginFolders;
+        AppEvent::getAppEvent()->dispatch(AppEvent::SCRIPTS_WITH_NO_LOGIN, $data);
 
         // This sentence is used when you lost the Session
         if (!in_array(SYS_TARGET, $noLoginFiles) && !in_array(SYS_COLLECTION,
@@ -1024,7 +1030,9 @@ if (!defined('EXECUTE_BY_CRON')) {
                 }
 
                 if (empty($_POST)) {
-                    header('location: ' . SYS_URI . $loginUrl . '?u=' . urlencode($_SERVER['REQUEST_URI']));
+                    $headerString = 'location: ' . SYS_URI . $loginUrl . '?u=' . urlencode($_SERVER['REQUEST_URI']);
+                    AppEvent::getAppEvent()->dispatch(AppEvent::LOGIN, $headerString);
+                    header($headerString);
                 } else {
                     if ($isControllerCall) {
                         header("HTTP/1.0 302 session lost in controller");

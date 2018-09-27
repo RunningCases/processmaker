@@ -885,6 +885,10 @@ class RBAC
         foreach ($this->aRbacPlugins as $className) {
             if (strtolower($className) === strtolower($authType)) {
                 $plugin = new $className();
+                $reflectionClass = new ReflectionClass($plugin);
+                if ($reflectionClass->hasConstant('AUTH_TYPE')) {
+                    return $plugin->VerifyLogin($userFields['USR_USERNAME'], $strPass);
+                }
                 $plugin->sAuthSource = $userFields['UID_AUTH_SOURCE'];
                 $plugin->sSystem = $this->sSystem;
 

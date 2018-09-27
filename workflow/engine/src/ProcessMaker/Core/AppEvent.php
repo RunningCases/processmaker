@@ -10,6 +10,16 @@ class AppEvent
     const XMLFORM_RENDER = 0;
 
     /**
+     * Identify login action
+     */
+    const LOGIN = 1;
+
+    /**
+     * Identify scripts with no login
+     */
+    const SCRIPTS_WITH_NO_LOGIN = 2;
+
+    /**
      * Represents the AppEvent object.
      * 
      * @var object 
@@ -50,7 +60,7 @@ class AppEvent
      * @param object $object
      * @return $this
      */
-    public function dispatch($type, $object)
+    public function dispatch($type, &$object)
     {
         foreach ($this->callbacks as $callback) {
             $callback($type, $object, $this);
