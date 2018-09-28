@@ -63,7 +63,8 @@ class System
         'disable_download_documents_session_validation' => 0,
         'logs_max_files' => 60,
         'logs_location' => '',
-        'logging_level' => 'INFO'
+        'logging_level' => 'INFO',
+        'smtp_timeout' => 20
     );
 
     /**
