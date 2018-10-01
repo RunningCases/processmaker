@@ -152,6 +152,7 @@ class Applications
             if ($columnSearch === 'APP_NUMBER' || $columnSearch === 'APP_TITLE') {
                 $sqlSearch = "SELECT APPLICATION.APP_NUMBER FROM APPLICATION";
                 $sqlSearch .= " WHERE APPLICATION.{$columnSearch} LIKE '%{$search}%'";
+                $orderByColumnSearch = " ORDER BY APPLICATION.{$columnSearch} " . $dir;
                 switch ($columnSearch) {
                     case 'APP_TITLE':
                         break;
@@ -166,6 +167,7 @@ class Applications
                         }
                         break;
                 }
+                $sqlSearch .= $orderByColumnSearch;
                 if (!empty($start)) {
                     $sqlSearch .= " LIMIT $start, " . $limit;
                 } else {
