@@ -59830,6 +59830,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_TRANSLATION_DIRECTORY','en','Mafe Translation Directory','2018-07-09') ,
 ( 'LABEL','ID_MAFE_TRANSLATION_NOT_WRITEABLE','en','The mafe translation file is not writable. <br/>Please give write permission to file:','2018-07-09') ,
 ( 'LABEL','ID_MAIL_SENT_SUCCESSFULLY','en','Your message has been sent successfully','2014-01-15') ,
+( 'LABEL','ID_MAIL_STATUS_ERROR','en','Error','2018-10-02') ,
+( 'LABEL','ID_MAIL_STATUS_PENDING','en','Pending','2018-10-02') ,
+( 'LABEL','ID_MAIL_STATUS_SENT','en','Sent','2018-10-02') ,
 ( 'LABEL','ID_MAIL_TEST_SUCCESS','en','Test message sent successfully','2014-01-15') ,
 ( 'LABEL','ID_MAIL_TO_NOT_VALID_ADDRESS','en','"Mail to" does not contain a valid email address format','2014-01-15') ,
 ( 'LABEL','ID_MAINTENANCE','en','Maintenance','2014-01-15') ;

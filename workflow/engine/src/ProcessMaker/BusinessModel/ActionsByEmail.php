@@ -9,6 +9,7 @@ use AbeRequests;
 use AbeRequestsPeer;
 use AbeResponsesPeer;
 use ApplicationPeer;
+use AppDelegation;
 use AppDelegationPeer;
 use Criteria;
 use EmailServerPeer;
@@ -23,6 +24,7 @@ use PMLicensedFeatures;
 use ProcessPeer;
 use ResultSet;
 use SpoolRun;
+use Users as ClassUsers;
 use stdClass;
 use UsersPeer;
 use TaskPeer;
@@ -266,11 +268,18 @@ class ActionsByEmail
         return $response;
     }
 
+    /**
+     * Get the information for the log
+     *
+     * @param array $arrayData
+     *
+     * @return array
+    */
     public function loadActionByEmail(array $arrayData)
     {
+        //Get the total
         $criteria = new Criteria();
         $criteria->addSelectColumn('COUNT(*)');
-
         $criteria->addJoin(AbeConfigurationPeer::ABE_UID, AbeRequestsPeer::ABE_UID);
         $criteria->addJoin(AppDelegationPeer::APP_UID, AbeRequestsPeer::APP_UID);
         $criteria->addJoin(AppDelegationPeer::DEL_INDEX, AbeRequestsPeer::DEL_INDEX);
@@ -288,7 +297,6 @@ class ActionsByEmail
         $criteria->addSelectColumn(AbeConfigurationPeer::ABE_TEMPLATE);
         $criteria->addSelectColumn(AbeConfigurationPeer::ABE_ACTION_FIELD);
         $criteria->addSelectColumn(AbeConfigurationPeer::DYN_UID);
-
         $criteria->addSelectColumn(AbeRequestsPeer::ABE_REQ_UID);
         $criteria->addSelectColumn(AbeRequestsPeer::APP_UID);
         $criteria->addSelectColumn(AbeRequestsPeer::DEL_INDEX);
@@ -298,14 +306,10 @@ class ActionsByEmail
         $criteria->addSelectColumn(AbeRequestsPeer::ABE_REQ_ANSWERED);
         $criteria->addSelectColumn(AbeRequestsPeer::ABE_REQ_BODY);
         $criteria->addSelectColumn(AbeRequestsPeer::ABE_REQ_DATE);
-
-        $criteria->addSelectColumn(ApplicationPeer::APP_NUMBER);
-
+        $criteria->addSelectColumn(AppDelegationPeer::APP_NUMBER);
         $criteria->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
-
+        $criteria->addSelectColumn(AppDelegationPeer::USR_UID);
         $criteria->addJoin(AbeConfigurationPeer::ABE_UID, AbeRequestsPeer::ABE_UID);
-        $criteria->addJoin(ApplicationPeer::APP_UID, AbeRequestsPeer::APP_UID);
-
         $criteria->addJoin(AppDelegationPeer::APP_UID, AbeRequestsPeer::APP_UID);
         $criteria->addJoin(AppDelegationPeer::DEL_INDEX, AbeRequestsPeer::DEL_INDEX);
         $criteria->addDescendingOrderByColumn(AbeRequestsPeer::ABE_REQ_DATE);
@@ -313,66 +317,37 @@ class ActionsByEmail
         $criteria->setOffset($arrayData['start']);
         $result = AbeConfigurationPeer::doSelectRS($criteria);
         $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $data = Array();
-        $arrayPro = Array();
-        $arrayTAS = Array();
+        $data = [];
         $index = 0;
-
         while ($result->next()) {
-            $data[] = $result->getRow();
-            $criteriaRes = new Criteria();
+            $row = $result->getRow();
+            $row['ABE_REQ_STATUS'] = G::LoadTranslation('ID_MAIL_STATUS_' . $row['ABE_REQ_STATUS']);
+            $data[] = $row;
+            //Get the response
+            $abe = new AbeRequests();
+            $dataRes = $abe->load($data[$index]['ABE_REQ_UID']);
+            $data[$index]['ABE_RES_UID'] = !empty($dataRes['ABE_RES_UID']) ? $dataRes['ABE_RES_UID'] : '';
+            $data[$index]['ABE_RES_CLIENT_IP'] = !empty($dataRes['ABE_RES_CLIENT_IP']) ? $dataRes['ABE_RES_CLIENT_IP'] : '';
+            $data[$index]['ABE_RES_DATA'] = !empty($dataRes['ABE_RES_DATA']) ? $dataRes['ABE_RES_DATA'] : '';
+            $data[$index]['ABE_RES_STATUS'] = !empty($dataRes['ABE_RES_STATUS']) ? $dataRes['ABE_RES_STATUS'] : '';
+            $data[$index]['ABE_RES_MESSAGE'] = !empty($dataRes['ABE_RES_UID']) ? $dataRes['ABE_RES_MESSAGE'] : '';
 
-            $criteriaRes->addSelectColumn(AbeResponsesPeer::ABE_RES_UID);
-            $criteriaRes->addSelectColumn(AbeResponsesPeer::ABE_RES_CLIENT_IP);
-            $criteriaRes->addSelectColumn(AbeResponsesPeer::ABE_RES_DATA);
-            $criteriaRes->addSelectColumn(AbeResponsesPeer::ABE_RES_STATUS);
-            $criteriaRes->addSelectColumn(AbeResponsesPeer::ABE_RES_MESSAGE);
-
-            $criteriaRes->add(AbeResponsesPeer::ABE_REQ_UID, $data[$index]['ABE_REQ_UID']);
-
-            $resultRes = AbeResponsesPeer::doSelectRS($criteriaRes);
-            $resultRes->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultRes->next();
-            $dataRes = Array();
-
-            if ($dataRes = $resultRes->getRow()) {
-                $data[$index]['ABE_RES_UID'] = $dataRes['ABE_RES_UID'];
-                $data[$index]['ABE_RES_CLIENT_IP'] = $dataRes['ABE_RES_CLIENT_IP'];
-                $data[$index]['ABE_RES_DATA'] = $dataRes['ABE_RES_DATA'];
-                $data[$index]['ABE_RES_STATUS'] = $dataRes['ABE_RES_STATUS'];
-                $data[$index]['ABE_RES_MESSAGE'] = $dataRes['ABE_RES_MESSAGE'];
-            } else {
-                $data[$index]['ABE_RES_UID'] = '';
-                $data[$index]['ABE_RES_CLIENT_IP'] = '';
-                $data[$index]['ABE_RES_DATA'] = '';
-                $data[$index]['ABE_RES_STATUS'] = '';
-                $data[$index]['ABE_RES_MESSAGE'] = '';
-            }
-
-            $criteriaRes = new Criteria();
-
-            $criteriaRes->addSelectColumn(AppDelegationPeer::USR_UID);
-            $criteriaRes->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-            $criteriaRes->addSelectColumn(UsersPeer::USR_LASTNAME);
-
-            $criteria->addJoin(AppDelegationPeer::APP_UID, $data[$index]['APP_UID']);
-            $criteria->addJoin(AppDelegationPeer::DEL_INDEX, $data[$index]['DEL_PREVIOUS']);
-            $criteria->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID);
-            $resultRes = AppDelegationPeer::doSelectRS($criteriaRes);
-            $resultRes->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $resultRes->next();
-
-            if ($dataRes = $resultRes->getRow()) {
+            //Get the previous user
+            $appDelegation = new AppDelegation();
+            $usrUid = $appDelegation->getUserAssignedInThread($data[$index]['APP_UID'], $data[$index]['DEL_PREVIOUS']);
+            $users = new ClassUsers();
+            $dataRes = $users->load($usrUid);
+            if (!empty($dataRes)) {
                 $data[$index]['USER'] = $dataRes['USR_FIRSTNAME'] . ' ' . $dataRes['USR_LASTNAME'];
             } else {
                 $data[$index]['USER'] = '';
             }
 
-            $data[$index]['ABE_REQ_ANSWERED'] = ($data[$index]['ABE_REQ_ANSWERED'] == 1) ? 'YES' : 'NO';
+            $data[$index]['ABE_REQ_ANSWERED'] = ($data[$index]['ABE_REQ_ANSWERED'] == 1) ? G::LoadTranslation('ID_YES') : G::LoadTranslation('ID_NO');
             $index++;
         }
 
-        $response = array();
+        $response = [];
         $response['totalCount'] = $totalCount;
         $response['data'] = $data;
 

@@ -17958,6 +17958,24 @@ msgid "Your message has been sent successfully"
 msgstr "Your message has been sent successfully"
 
 # TRANSLATION
+# LABEL/ID_MAIL_STATUS_ERROR
+#: LABEL/ID_MAIL_STATUS_ERROR
+msgid "Error"
+msgstr "Error"
+
+# TRANSLATION
+# LABEL/ID_MAIL_STATUS_PENDING
+#: LABEL/ID_MAIL_STATUS_PENDING
+msgid "Pending"
+msgstr "Pending"
+
+# TRANSLATION
+# LABEL/ID_MAIL_STATUS_SENT
+#: LABEL/ID_MAIL_STATUS_SENT
+msgid "Sent"
+msgstr "Sent"
+
+# TRANSLATION
 # LABEL/ID_MAIL_TEST_SUCCESS
 #: LABEL/ID_MAIL_TEST_SUCCESS
 msgid "[LABEL/ID_MAIL_TEST_SUCCESS] Test message sent successfully"
