@@ -337,9 +337,7 @@ class WebApplication
                 'path' => $target['tmp_name']
             ]);
             if ($validator->fails()) {
-                if ($validator->getStatus() === 429) {
-                    throw new RestException($validator->getStatus());
-                }
+                throw new RestException($validator->getStatus(), $validator->getMessage());
             }
             return true;
         };

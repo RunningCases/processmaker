@@ -24846,6 +24846,12 @@ msgid "The default configuration was not defined"
 msgstr "The default configuration was not defined"
 
 # TRANSLATION
+# LABEL/ID_THE_MIMETYPE_EXTENSION_ERROR
+#: LABEL/ID_THE_MIMETYPE_EXTENSION_ERROR
+msgid "The mime type does not correspond to the permitted extension, please verify your file."
+msgstr "The mime type does not correspond to the permitted extension, please verify your file."
+
+# TRANSLATION
 # LABEL/ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS
 #: LABEL/ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS
 msgid "The change might cause data loss in the PM table. Do you want to continue?"

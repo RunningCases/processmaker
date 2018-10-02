@@ -68,7 +68,8 @@ class System
         'google_map_api_key' => '',
         'google_map_signature' => '',
         'logging_level' => 'INFO', 
-        'upload_attempts_limit_per_user' => '60,1'
+        'upload_attempts_limit_per_user' => '60,1',
+        'files_white_list' => ''
     );
 
     /**

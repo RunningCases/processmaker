@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
 use ProcessMaker\Core\System;
 use ProcessMaker\Services\OAuth2\Server;
-use ProcessMaker\Validation\Validator;
+use Symfony\Component\HttpFoundation\File\File;
 
 class ValidationUploadedFiles
 {
@@ -87,6 +87,66 @@ class ValidationUploadedFiles
                 })
                 ->status(429)
                 ->message(G::LoadTranslation('ID_TOO_MANY_REQUESTS'))
+                ->log(function($rule) {
+                    /**
+                     * Levels supported by MonologProvider is:
+                     * 100 "DEBUG"
+                     * 200 "INFO"
+                     * 250 "NOTICE"
+                     * 300 "WARNING"
+                     * 400 "ERROR"
+                     * 500 "CRITICAL"
+                     * 550 "ALERT"
+                     * 600 "EMERGENCY"
+                     */
+                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', 250, $rule->getMessage(), $rule->getData()->filename);
+                });
+
+        //rule: mimeType
+        $validator->addRule()
+                ->validate($file, function($file) {
+                    $path = isset($file->path) ? $file->path : "";
+                    $filesystem = new Filesystem();
+                    if (!$filesystem->exists($path)) {
+                        return false;
+                    }
+
+                    $extension = $filesystem->extension($file->filename);
+                    $mimeType = $filesystem->mimeType($path);
+
+                    $file = new File($path);
+                    $guessExtension = $file->guessExtension();
+                    $mimeTypeFile = $file->getMimeType();
+
+                    //mimeType known
+                    if ($extension === $guessExtension && $mimeType === $mimeTypeFile) {
+                        return false;
+                    }
+                    //mimeType custom
+                    $customMimeTypes = config("customMimeTypes");
+                    $customMimeType = isset($customMimeTypes[$extension]) ? $customMimeTypes[$extension] : null;
+                    if (is_string($customMimeType)) {
+                        if ($customMimeType === $mimeType) {
+                            return false;
+                        }
+                    }
+                    if (is_array($customMimeType)) {
+                        foreach ($customMimeType as $value) {
+                            if ($value === $mimeType) {
+                                return false;
+                            }
+                        }
+                    }
+                    //files_white_list
+                    $systemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
+                    $filesWhiteList = explode(',', $systemConfiguration['files_white_list']);
+                    if (in_array($extension, $filesWhiteList)) {
+                        return false;
+                    }
+                    return true;
+                })
+                ->status(415)
+                ->message(G::LoadTranslation('ID_THE_MIMETYPE_EXTENSION_ERROR'))
                 ->log(function($rule) {
                     /**
                      * Levels supported by MonologProvider is:
