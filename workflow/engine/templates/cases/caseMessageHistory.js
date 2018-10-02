@@ -301,7 +301,7 @@ var ActionTabFrameGlobal = '';
 
 function caseMessageHistory_RSP (response, id) {
     messageHistoryGridListMask.hide();
-    PMExt.notify( _('ID_SUCSESS'), response === "" ? _('ID_MAIL_SENT_SUCCESSFULLY') : response);
+    PMExt.notify( _('ID_SUCCESS'), response === "" ? _('ID_MAIL_SENT_SUCCESSFULLY') : response);
     Ext.getCmp('processesGrid').store.reload();
     Ext.getCmp('processesGrid').getView().refresh();
 }
