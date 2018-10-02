@@ -141,6 +141,7 @@ def generateEnviromentVariables()
     file = File.read('./config/enviromentvariables.json')
     dataUser = JSON.parse(file)
     content = content + "__env.USER_GUEST = " + JSON.generate(dataUser['constants']['userguest'])
+    content = content + "; __env.pmVariable = " + JSON.generate(dataUser['validation']['pmVariable'])
     dir = "vendor/colosa/MichelangeloFE/src/enviroment/"
     # create a directory enviroment
     FileUtils.mkdir_p(dir)
