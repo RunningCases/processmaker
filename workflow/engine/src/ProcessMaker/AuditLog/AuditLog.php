@@ -167,7 +167,12 @@ class AuditLog
             "DeleteUserTask" => G::LoadTranslation("ID_DELETE_USER_TASK"),
             "DeleteGroupTask" => G::LoadTranslation("ID_DELETE_GROUP_TASK"),
             "ImportProcess" => G::LoadTranslation("ID_IMPORT_PROCESS"),
-            "DeleteProcess" => G::LoadTranslation("ID_DELETE_PROCESS")
+            "DeleteProcess" => G::LoadTranslation("ID_DELETE_PROCESS"),
+            "GSuiteConfigurationSaved" => G::LoadTranslation("ID_G_SUITE_CONFIGURATION_SAVED"),
+            "GSuiteConnect" => G::LoadTranslation("ID_G_SUITE_CONNECT"),
+            "GSuiteDisconnect" => G::LoadTranslation("ID_G_SUITE_DISCONNECT"),
+            "GSuiteLoadGroups" => G::LoadTranslation("ID_G_SUITE_LOAD_GROUPS"),
+            "GSuiteSyncUsers" => G::LoadTranslation("ID_G_SUITE_SYNC_USERS")
         ];
     }
 
