@@ -411,6 +411,8 @@ class SpoolRun
                                 }
                                 break;
                         }
+                        $systemConfiguration = System::getSystemConfiguration();
+                        $oPHPMailer->Timeout = is_numeric($systemConfiguration['smtp_timeout']) ? $systemConfiguration['smtp_timeout'] : 20;
                         $oPHPMailer->CharSet = "UTF-8";
                         $oPHPMailer->Encoding = "8bit";
                         $oPHPMailer->Host = $this->config['MESS_SERVER'];

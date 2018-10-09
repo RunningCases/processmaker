@@ -8592,6 +8592,30 @@ msgid "G Suite Configuration Saved"
 msgstr "G Suite Configuration Saved"
 
 # TRANSLATION
+# LABEL/ID_G_SUITE_CONNECT
+#: LABEL/ID_G_SUITE_CONNECT
+msgid "Request G Suite connection"
+msgstr "Request G Suite connection"
+
+# TRANSLATION
+# LABEL/ID_G_SUITE_DISCONNECT
+#: LABEL/ID_G_SUITE_DISCONNECT
+msgid "Disconnect G Suite"
+msgstr "Disconnect G Suite"
+
+# TRANSLATION
+# LABEL/ID_G_SUITE_LOAD_GROUPS
+#: LABEL/ID_G_SUITE_LOAD_GROUPS
+msgid "Update G Suite groups"
+msgstr "Update G Suite groups"
+
+# TRANSLATION
+# LABEL/ID_G_SUITE_SYNC_USERS
+#: LABEL/ID_G_SUITE_SYNC_USERS
+msgid "Syncing Users"
+msgstr "Syncing Users"
+
+# TRANSLATION
 # LABEL/ID_GENERAL
 #: LABEL/ID_GENERAL
 msgid "General"
