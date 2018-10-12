@@ -77,10 +77,6 @@ class MonologProvider
     */
     public function __construct($channel, $fileLog, $readLoggingLevel = true)
     {
-        //Set the minimum levelDebug that will be saved
-        $levelDebug = $this->defineLevelDebug($readLoggingLevel);
-        $this->setLevelDebug($levelDebug);
-
         //Set path where the file will be saved
         $pathFile = $this->definePathFile();
         $this->setPathFile($pathFile);
@@ -98,7 +94,8 @@ class MonologProvider
         $this->setFilePermission($permissionFile);
 
         $this->setFormatter();
-        $this->setConfig($channel, $fileLog);
+        //Set the config: channel, fileLog and  levelDebug that will be saved
+        $this->setConfig($channel, $fileLog, $readLoggingLevel);
 
         $this->testWriteLog($channel, $fileLog, [
             $pathFile
@@ -447,7 +444,7 @@ class MonologProvider
         if (self::$instance === null) {
             self::$instance = new MonologProvider($channel, $fileLog, $readLoggingLevel);
         } else {
-            self::$instance->setConfig($channel, $fileLog);
+            self::$instance->setConfig($channel, $fileLog, $readLoggingLevel);
         }
         return self::$instance;
     }
@@ -459,11 +456,14 @@ class MonologProvider
      *
      * @param string $channel The logging channel
      * @param string $fileLog name file
+     * @param boolean $readLoggingLevel
      */
-    public function setConfig($channel, $fileLog)
+    public function setConfig($channel, $fileLog, $readLoggingLevel = true)
     {
         $this->setStream($fileLog);
         $this->setLogger($channel);
+        $levelDebug = $this->defineLevelDebug($readLoggingLevel);
+        $this->setLevelDebug($levelDebug);
     }
 
     /**
