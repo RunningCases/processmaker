@@ -1085,6 +1085,7 @@ class PmDynaform
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
+                $this->getTheStringVariableForGoogleMaps() . "\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
                 "    window.dynaform = new PMDynaform.core.Project({\n" .
@@ -1167,6 +1168,7 @@ class PmDynaform
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
+                $this->getTheStringVariableForGoogleMaps() . "\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
@@ -1224,6 +1226,7 @@ class PmDynaform
             var pathRTLCss = \"" . $this->pathRTLCss . "\";
             var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";
             var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";
+            " . $this->getTheStringVariableForGoogleMaps() . "
         </script>
 
         <script type=\"text/javascript\" src=\"/jscore/cases/core/pmDynaform.js\"></script>
@@ -1268,6 +1271,7 @@ class PmDynaform
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
+                $this->getTheStringVariableForGoogleMaps() . "\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -1310,6 +1314,7 @@ class PmDynaform
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? G::decrypt($this->fields["DEL_INDEX"], URL_KEY) : "0") . ";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
+                $this->getTheStringVariableForGoogleMaps() . "\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -1337,6 +1342,7 @@ class PmDynaform
                 "var jsonData = " . $this->json_encode($json) . ";\n" .
                 "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
+                $this->getTheStringVariableForGoogleMaps() . "\n" .
                 $js .
                 "</script>";
 
@@ -1373,6 +1379,7 @@ class PmDynaform
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
+                $this->getTheStringVariableForGoogleMaps() . "\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -2186,6 +2193,21 @@ class PmDynaform
             $result['userInfo'] = $e->getUserInfo();
         }
 
+        return $result;
+    }
+
+    /**
+     * Get the string variable for google maps
+     * 
+     * @return string
+     */
+    private function getTheStringVariableForGoogleMaps()
+    {
+        $config = Bootstrap::getSystemConfiguration();
+        $googleMaps = new stdClass();
+        $googleMaps->key = $config['google_map_api_key'];
+        $googleMaps->signature = $config['google_map_signature'];
+        $result = 'var googleMaps = ' . G::json_encode($googleMaps) . ';';
         return $result;
     }
 }
