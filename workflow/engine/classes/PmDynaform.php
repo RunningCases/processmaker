@@ -1037,7 +1037,8 @@ class PmDynaform
                             workspace: workspace
                         },
                         token: credentials,
-                        submitRest: false
+                        submitRest: false,
+                        googleMaps: googleMaps,
                     });
                     $(document).find(\"form\").submit(function (e) {
                         e.preventDefault();
@@ -1097,7 +1098,8 @@ class PmDynaform
                 "            workspace: workspace\n" .
                 "        },\n" .
                 "        token: credentials,\n" .
-                "        submitRest: false\n" .
+                "        submitRest: false,\n" .
+                "        googleMaps: googleMaps\n" .
                 "    });\n" .
                 "    $(document).find('form').find('button').on('click', function (e) {\n" .
                 "        e.preventDefault();\n" .
