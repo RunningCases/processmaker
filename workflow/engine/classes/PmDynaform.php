@@ -1038,7 +1038,7 @@ class PmDynaform
                         },
                         token: credentials,
                         submitRest: false,
-                        googleMaps: googleMaps,
+                        googleMaps: googleMaps
                     });
                     $(document).find(\"form\").submit(function (e) {
                         e.preventDefault();
