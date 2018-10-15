@@ -1023,6 +1023,7 @@ class PmDynaform
                 var isRTL = \"" . $this->isRTL . "\";
                 var pathRTLCss = \"" . $this->pathRTLCss . "\";
                 var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";
+                " . $this->getTheStringVariableForGoogleMaps() . "\n
                 $(window).load(function ()
                 {
                     var data = jsondata;
@@ -1037,7 +1038,8 @@ class PmDynaform
                             workspace: workspace
                         },
                         token: credentials,
-                        submitRest: false
+                        submitRest: false,
+                        googleMaps: googleMaps
                     });
                     $(document).find(\"form\").submit(function (e) {
                         e.preventDefault();
@@ -1098,7 +1100,8 @@ class PmDynaform
                 "            workspace: workspace\n" .
                 "        },\n" .
                 "        token: credentials,\n" .
-                "        submitRest: false\n" .
+                "        submitRest: false,\n" .
+                "        googleMaps: googleMaps\n" .
                 "    });\n" .
                 "    $(document).find('form').find('button').on('click', function (e) {\n" .
                 "        e.preventDefault();\n" .
