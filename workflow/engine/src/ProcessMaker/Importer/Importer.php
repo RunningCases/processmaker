@@ -195,7 +195,7 @@ abstract class Importer
                     } catch (\Exception $e) {
                         throw $e;
                     }
-                    $this->removeProject(true);
+                    $this->removeProject(false);
                 /*----------------------------------********---------------------------------*/
                 } else {
                     $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
