@@ -64,7 +64,9 @@ class System
         'logs_max_files' => 60,
         'logs_location' => '',
         'logging_level' => 'INFO',
-        'smtp_timeout' => 20
+        'smtp_timeout' => 20,
+        'google_map_api_key' => '',
+        'google_map_signature' => ''
     );
 
     /**

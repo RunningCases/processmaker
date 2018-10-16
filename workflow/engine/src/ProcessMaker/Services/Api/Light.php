@@ -3,6 +3,7 @@
 namespace ProcessMaker\Services\Api;
 
 use AppDelegation;
+use Bootstrap;
 use Cases as ClassesCases;
 use Criteria;
 use Exception;
@@ -1292,6 +1293,17 @@ class Light extends Api
             $oMobile = new BusinessModelLight();
 
             $url = "http://maps.googleapis.com/maps/api/staticmap?center=" . $latitude . ',' . $longitude . "&format=jpg&size=600x600&zoom=15&markers=color:blue%7Clabel:S%7C" . $latitude . ',' . $longitude;
+            
+            $config = Bootstrap::getSystemConfiguration();
+            $googleMapApiKey = $config['google_map_api_key'];
+            $googleMapSignature = $config['google_map_signature'];
+            if(!empty($googleMapApiKey)){
+                $url .= "&key=" . $googleMapApiKey;
+            }
+            if(!empty($googleMapSignature)){
+                $url .= "&signature=" . $googleMapSignature;
+            }
+            
             $imageLocation = imagecreatefromjpeg($url);
             $tmpfname = tempnam(sys_get_temp_dir(), "pmm");
             imagejpeg($imageLocation, $tmpfname);
