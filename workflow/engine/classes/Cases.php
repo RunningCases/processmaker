@@ -4627,10 +4627,16 @@ class Cases
     }
 
     /**
-     * get all upload document that they have send it
+     * Get all upload document that they have send it
+     * @todo we need to improve the code in this function
      *
      * @name getAllUploadedDocumentsCriteria
-     * @param string $APP_UID
+     * @param string $sProcessUID
+     * @param string $sApplicationUID
+     * @param string $sTasKUID
+     * @param string $sUserUID
+     * @param integer $delIndex
+     *
      * @return object
      */
     public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
@@ -4649,6 +4655,11 @@ class Cases
         }
 
         $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
+        //The logic of the code that continues is based on the fact that INPUT_DOCUMENTS contains the uid of ATTACHMENTS
+        $aObjectPermissions['INPUT_DOCUMENTS'] = array_merge(
+            $aObjectPermissions['INPUT_DOCUMENTS'],
+            $aObjectPermissions['ATTACHMENTS']
+        );
 
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
@@ -5809,11 +5820,15 @@ class Cases
         );
         //Summary form it means does not show in the list
         $resultObjects['SUMMARY_FORM'] = isset($mainObjects['VIEW']['SUMMARY_FORM']) ? $mainObjects['VIEW']['SUMMARY_FORM'] : 0;
-
+        //Attachments BLOCK it means does not show in the list
+        $resultObjects['ATTACHMENTS'] = G::arrayDiff(
+            $mainObjects['VIEW']['ATTACHMENTS'], $mainObjects['BLOCK']['ATTACHMENTS']
+        );
         array_push($resultObjects["DYNAFORMS"], -1, -2);
         array_push($resultObjects['INPUT_DOCUMENTS'], -1);
         array_push($resultObjects['OUTPUT_DOCUMENTS'], -1);
         array_push($resultObjects['CASES_NOTES'], -1);
+        array_push($resultObjects['ATTACHMENTS'], -1);
 
         return $resultObjects;
     }
