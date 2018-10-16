@@ -3215,7 +3215,7 @@ function PMFGetGroupName($grpUid, $lang = SYS_LANG) {
  * @param string | $text | Text
  * @param string | $category | Category
  * @param string | $proUid | ProcessUid
- * @param string | $lang | Languaje
+ * @param string | $lang | Language
  * @return array
  */
 function PMFGetUidFromText($text, $category, $proUid = null, $lang = SYS_LANG)
@@ -3467,14 +3467,28 @@ function PMFCaseLink($caseUid, $workspace = null, $language = null, $skin = null
         if ($arrayApplicationData === false) {
             return false;
         }
+        $conf = new Configurations();
+        $envSkin = defined("SYS_SKIN") ? SYS_SKIN : $conf->getConfiguration('SKIN_CRON', '');
         $workspace = (!empty($workspace)) ? $workspace : config("system.workspace");
         $language = (!empty($language)) ? $language : SYS_LANG;
-        $skin = (!empty($skin)) ? $skin : SYS_SKIN;
+        $skin = (!empty($skin)) ? $skin : $envSkin;
 
         $uri = '/sys' . $workspace . '/' . $language . '/' . $skin . '/cases/opencase/' . $caseUid;
 
-        //Return
-        return ((G::is_https()) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $uri;
+        $envHost = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : SERVER_NAME;
+        $envProtocol = defined("REQUEST_SCHEME") && REQUEST_SCHEME === "https";
+        if (isset($_SERVER['SERVER_PORT'])) {
+            $envPort = ($_SERVER['SERVER_PORT'] != "80") ? ":" . $_SERVER['SERVER_PORT'] : "";
+        } else if (defined('SERVER_PORT')) {
+            $envPort = (SERVER_PORT . "" != "80") ? ":" . SERVER_PORT : "";
+        } else {
+            $envPort = "";
+        }
+        if (!empty($envPort) && strpos($envHost, $envPort) === false) {
+            $envHost = $envHost . $envPort;
+        }
+        $link = (G::is_https() || $envProtocol ? 'https://' : 'http://') . $envHost . $uri;
+        return $link;
     } catch (Exception $e) {
         throw $e;
     }

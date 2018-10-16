@@ -405,6 +405,7 @@ class Variable
             if (isset($aData["VAR_NAME"])) {
                 Validator::isString($aData['VAR_NAME'], '$var_name');
                 Validator::isNotEmpty($aData['VAR_NAME'], '$var_name');
+                Validator::isValidVariableName($aData['VAR_NAME']);
             }
             if (isset($aData["VAR_FIELD_TYPE"])) {
                 Validator::isString($aData['VAR_FIELD_TYPE'], '$var_field_type');
@@ -462,7 +463,7 @@ class Variable
                 if ($variableName === $row["VAR_NAME"]) {
                     throw new Exception(G::LoadTranslation("DYNAFIELD_ALREADY_EXIST"));
                 }
-                if (AdditionalTables::getPHPName($variableName) === AdditionalTables::getPHPName($row["VAR_NAME"])) {
+                if (strtolower(AdditionalTables::getPHPName($variableName)) === strtolower(AdditionalTables::getPHPName($row["VAR_NAME"]))) {
                     throw new Exception(G::LoadTranslation("DYNAFIELD_PHPNAME_ALREADY_EXIST", array($row["VAR_NAME"])));
                 }
             }
