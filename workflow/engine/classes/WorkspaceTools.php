@@ -234,6 +234,12 @@ class WorkspaceTools
         }
 
         $start = microtime(true);
+        CLI::logging("> Remove deprecated files...\n");
+        $this->removeDeprecatedFiles();
+        $stop = microtime(true);
+        CLI::logging("<*>   Remove deprecated files took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
         CLI::logging("> Updating database...\n");
         $this->upgradeDatabase($onedb);
         $stop = microtime(true);
@@ -1999,6 +2005,12 @@ class WorkspaceTools
                     $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "%", $dbName, $connection);
                 }
             }
+
+            $start = microtime(true);
+            CLI::logging("> Remove deprecated files...\n");
+            $workspace->removeDeprecatedFiles();
+            $stop = microtime(true);
+            CLI::logging("<*>   Remove deprecated files took " . ($stop - $start) . " seconds.\n");
 
             if (($pmVersionWorkspaceToRestore != '') && (version_compare(
                         $pmVersionWorkspaceToRestore . "",
@@ -4559,5 +4571,29 @@ class WorkspaceTools
                 . "ASSIGNEE_TYPE=-1 "
                 . "WHERE ASSIGNEE_ID = 0");
         $con->commit();
+    }
+    
+    /**
+     * Remove deprecated files and directory.
+     */
+    public function removeDeprecatedFiles()
+    {
+        $deprecatedFiles = PATH_TRUNK . PATH_SEP . 'config' . PATH_SEP . 'deprecatedFiles.lst';
+        if (file_exists($deprecatedFiles)) {
+            $handle = fopen($deprecatedFiles, 'r');
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $line = trim($line, "\n");
+                    CLI::logging("> Remove file/folder " . $line . " ");
+                    if (file_exists($line)) {
+                        G::rm_dir($line);
+                        CLI::logging("[OK]\n");
+                    } else {
+                        CLI::logging("[Already removed]\n");
+                    }
+                }
+                fclose($handle);
+            }
+        }
     }
 }
