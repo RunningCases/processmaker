@@ -3,13 +3,6 @@
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
-/**
- * Main Controller for processMaker v2.1
- * @date Jul 17, 2011
- *
- * @author Erik Amaru Ortiz <erik@colosa.com>
- */
-
 class Main extends Controller
 {
     private $memcache;
