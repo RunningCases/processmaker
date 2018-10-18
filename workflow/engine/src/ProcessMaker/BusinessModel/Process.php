@@ -2,9 +2,10 @@
 
 namespace ProcessMaker\BusinessModel;
 
-use G;
 use Criteria;
 use DynaformHandler;
+use G;
+use PMmemcached;
 use ProcessPeer;
 use ResultSet;
 
@@ -1221,7 +1222,7 @@ class Process
 
                 if (($proData = $memcache->get($memkey)) === false) {
                     $proData = $process->getAllProcesses($start, $limit, null, $arrayFilterData["processName"]);
-                    $memcache->set($memkey, $proData, \PMmemcached::ONE_HOUR);
+                    $memcache->set($memkey, $proData, PMmemcached::ONE_HOUR);
                     $memcacheUsed = "no";
                 }
             } else {
@@ -1232,8 +1233,8 @@ class Process
                 if (($proData = $memcache->get($memkey)) === false || ($totalCount = $memcache->get($memkeyTotal)) === false) {
                     $proData = $process->getAllProcesses($start, $limit);
                     $totalCount = $process->getAllProcessesCount();
-                    $memcache->set($memkey, $proData, \PMmemcached::ONE_HOUR);
-                    $memcache->set($memkeyTotal, $totalCount, \PMmemcached::ONE_HOUR);
+                    $memcache->set($memkey, $proData, PMmemcached::ONE_HOUR);
+                    $memcache->set($memkeyTotal, $totalCount, PMmemcached::ONE_HOUR);
                     $memcacheUsed = "no";
                 }
             }
