@@ -882,6 +882,9 @@ class Derivation
         //We close the current derivation, then we'll try to derivate to each defined route
         $this->case->CloseCurrentDelegation( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
 
+        //Set THE APP_STATUS
+        $appFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
+
         //Get data for current delegation (current Task)
         $task = TaskPeer::retrieveByPK($currentDelegation["TAS_UID"]);
         $bpmnActivity = BpmnActivityPeer::retrieveByPK($currentDelegation["TAS_UID"]);
@@ -1114,17 +1117,12 @@ class Derivation
             unset($aSP);
         }
 
-        /* Start Block : UPDATES APPLICATION */
 
-        //Set THE APP_STATUS
-        $appFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
         /* Start Block : Count the open threads of $currentDelegation['APP_UID'] */
         $openThreads = $this->case->GetOpenThreads( $currentDelegation['APP_UID'] );
-
         $flagUpdateCase = false;
 
-        //check if there is any paused thread
-
+        //Check if there is any paused thread
         $existThreadPaused = false;
         if (isset($arraySiblings['pause'])) {
             if (!empty($arraySiblings['pause'])) {
