@@ -267,7 +267,7 @@ try {
     $aLog['LOG_SID']            = session_id();
     $aLog['LOG_INIT_DATE']      = date('Y-m-d H:i:s');
     //$aLog['LOG_END_DATE']       = '0000-00-00 00:00:00';
-    $aLog['LOG_CLIENT_HOSTNAME']= $_SERVER['HTTP_HOST'];
+    $aLog['LOG_CLIENT_HOSTNAME']= System::getServerHost();
     $aLog['USR_UID']            = $_SESSION['USER_LOGGED'];
     $weblog->create($aLog);
     /**end log**/

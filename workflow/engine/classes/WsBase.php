@@ -2487,7 +2487,7 @@ class WsBase
                 $arrayUserData = $user->load($userId);
 
                 if (trim($arrayUserData["USR_EMAIL"]) == "") {
-                    $arrayUserData["USR_EMAIL"] = "info@" . $_SERVER["HTTP_HOST"];
+                    $arrayUserData["USR_EMAIL"] = "info@" . System::getDefaultMailDomain();
                 }
 
                 $sFromName = "\"" . $arrayUserData["USR_FIRSTNAME"] . " " . $arrayUserData["USR_LASTNAME"] . "\" <" . $arrayUserData["USR_EMAIL"] . ">";

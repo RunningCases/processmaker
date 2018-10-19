@@ -5451,7 +5451,7 @@ class G
                 } elseif ($configuration['MESS_ENGINE'] == 'PHPMAILER' && preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
                     $from .= ' <' . $configuration['MESS_ACCOUNT'] . '>';
                 } else {
-                    $from .= ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
+                    $from .= ' <info@' . System::getDefaultMailDomain() . '>';
                 }
             }
         } else {
@@ -5460,15 +5460,15 @@ class G
             } elseif ($configuration['MESS_FROM_NAME'] != '' && $configuration['MESS_ENGINE'] == 'PHPMAILER' && preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
                 $from = $configuration['MESS_FROM_NAME'] . ' <' . $configuration['MESS_ACCOUNT'] . '>';
             } elseif ($configuration['MESS_FROM_NAME'] != '') {
-                $from = $configuration['MESS_FROM_NAME'] . ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
+                $from = $configuration['MESS_FROM_NAME'] . ' <info@' . System::getDefaultMailDomain() . '>';
             } elseif ($configuration['MESS_FROM_MAIL'] != '') {
                 $from = $configuration['MESS_FROM_MAIL'];
             } elseif ($configuration['MESS_ENGINE'] == 'PHPMAILER' && preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
                 $from = $configuration['MESS_ACCOUNT'];
             } elseif ($configuration['MESS_ENGINE'] == 'PHPMAILER' && $configuration['MESS_ACCOUNT'] != '' && !preg_match('/(.+)@(.+)\.(.+)/', $configuration['MESS_ACCOUNT'], $match)) {
-                $from = $configuration['MESS_ACCOUNT'] . ' <info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com') . '>';
+                $from = $configuration['MESS_ACCOUNT'] . ' <info@' . System::getDefaultMailDomain() . '>';
             } else {
-                $from = 'info@' . ((isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] != '') ? $_SERVER['HTTP_HOST'] : 'processmaker.com');
+                $from = 'info@' . System::getDefaultMailDomain();
             }
         }
         return $from;
