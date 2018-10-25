@@ -1321,7 +1321,7 @@ class System
             $serverProtocol = ($serverProtocol != '') ? $serverProtocol : ((G::is_https()) ? 'https' : 'http');
 
             $serverHostname = $arraySystemConfiguration['server_hostname_requests_frontend'];
-            $serverHostname = ($serverHostname != '') ? $serverHostname : $_SERVER['HTTP_HOST'];
+            $serverHostname = ($serverHostname != '') ? $serverHostname : System::getServerHost();
 
             //Return
             return $serverProtocol . '://' . $serverHostname;
@@ -1522,6 +1522,94 @@ class System
         config(['connections.report.database' => $dbReportName]);
         config(['connections.report.username' => $dbReportUser]);
         config(['connections.report.password' => $dbReportPass]);
+    }
+
+    /**
+     * Get current server protocol.
+     * 
+     * @return string
+     */
+    public static function getServerProtocol()
+    {
+        return G::is_https() ? "https://" : "http://";
+    }
+
+    /**
+     * Get current server host
+     * 
+     * @return string
+     */
+    public static function getServerHostname()
+    {
+        $host = "";
+        if (!empty($_SERVER['SERVER_NAME'])) {
+            $host = $_SERVER['SERVER_NAME'];
+        } else if (defined('SERVER_NAME')) {
+            $host = SERVER_NAME;
+        }
+        return $host;
+    }
+
+    /**
+     * Get current server port.
+     * 
+     * @return string
+     */
+    public static function getServerPort()
+    {
+        $port = "";
+        if (isset($_SERVER['SERVER_PORT'])) {
+            $port = $_SERVER['SERVER_PORT'];
+        } else if (defined('SERVER_PORT')) {
+            $port = SERVER_PORT;
+        }
+        return $port;
+    }
+
+    /**
+     * Get current host (hostname + port).
+     * 
+     * @return string
+     */
+    public static function getServerHost()
+    {
+        $port = self::getServerPort();
+        if (!empty($port) && $port != '80') {
+            $port = ':' . $port;
+        }
+        return self::getServerHostname() . $port;
+    }
+
+    /**
+     * Get current server protocol and host.
+     * 
+     * @return string
+     */
+    public static function getServerProtocolHost()
+    {
+        return self::getServerProtocol() . self::getServerHost();
+    }
+
+    /**
+     * Get server main path (protocol + host + port + workspace + lang + skin).
+     * 
+     * @return string
+     */
+    public static function getServerMainPath()
+    {
+        $conf = new Configurations();
+        $skin = defined("SYS_SKIN") ? SYS_SKIN : $conf->getConfiguration('SKIN_CRON', '');
+        return self::getServerProtocolHost() . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . $skin;
+    }
+
+    /**
+     * Get default domain mail.
+     * 
+     * @return string
+     */
+    public static function getDefaultMailDomain()
+    {
+        return !empty(self::getServerHostname()) ? self::getServerHostname() : 'processmaker.com';
     }
 }
 // end System class
