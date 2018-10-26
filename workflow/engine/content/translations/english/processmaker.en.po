@@ -20924,8 +20924,14 @@ msgstr "PM Table"
 # TRANSLATION
 # LABEL/ID_POLICY_ALERT
 #: LABEL/ID_POLICY_ALERT
-msgid "Your password does not meet the following password policies"
-msgstr "Your password does not meet the following password policies"
+msgid "Your password does not meet the following password policies:"
+msgstr "Your password does not meet the following password policies:"
+
+# TRANSLATION
+# LABEL/ID_POLICY_ALERT_INFO
+#: LABEL/ID_POLICY_ALERT_INFO
+msgid "Your password must meet the following policies:"
+msgstr "Your password must meet the following policies:"
 
 # TRANSLATION
 # LABEL/ID_PORT
@@ -20960,8 +20966,8 @@ msgstr "The posted data is empty!"
 # TRANSLATION
 # LABEL/ID_PPP_CHANGE_PASSWORD_AFTER_NEXT_LOGIN
 #: LABEL/ID_PPP_CHANGE_PASSWORD_AFTER_NEXT_LOGIN
-msgid "User must change his/her password after next login"
-msgstr "User must change his/her password after next login"
+msgid "Your previous password has expired, please enter a new password"
+msgstr "Your previous password has expired, please enter a new password"
 
 # TRANSLATION
 # LABEL/ID_PPP_EXPIRATION_IN
