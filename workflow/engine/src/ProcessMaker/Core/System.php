@@ -1575,9 +1575,9 @@ class System
     {
         $port = self::getServerPort();
         if (!empty($port) && $port != '80') {
-            $port = ':' . $port;
+            return self::getServerHostname() . ':' . $port;
         }
-        return self::getServerHostname() . $port;
+        return self::getServerHostname();
     }
 
     /**
