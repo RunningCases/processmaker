@@ -638,6 +638,7 @@ class ScriptTask
                         $oPMScript->setDataTrigger($trigger->toArray(BasePeer::TYPE_FIELDNAME));
                         $oPMScript->setFields($arrayApplicationData["APP_DATA"]);
                         $oPMScript->setScript($trigger->getTriWebbot());
+                        $oPMScript->setExecutedOn(PMScript::SCRIPT_TASK);
                         $oPMScript->execute();
 
                         if (isset($oPMScript->aFields["__ERROR__"])) {

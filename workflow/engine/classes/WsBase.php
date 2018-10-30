@@ -1719,34 +1719,35 @@ class WsBase
      *
      * @param string $caseId
      * @param string $variables
+     * @param bool $forceToSave
      *
      * @return $result will return an object
      */
-    public function sendVariables($caseId, $variables)
+    public function sendVariables($caseId, $variables, $forceToSave = false)
     {
-        //delegation where app uid (caseId) y usruid(session) ordenar delindes descendente y agaarr el primero
-        //delfinishdate != null error
         try {
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->addSelectColumn(AppDelegationPeer::DEL_FINISH_DATE);
-            $oCriteria->add(AppDelegationPeer::APP_UID, $caseId);
-            $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
+            if (!$forceToSave) {
+                $criteria = new Criteria('workflow');
+                $criteria->addSelectColumn(AppDelegationPeer::DEL_FINISH_DATE);
+                $criteria->add(AppDelegationPeer::APP_UID, $caseId);
+                $criteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
 
-            $oCriteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
-            $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
+                $dataset = AppDelegationPeer::doSelectRS($criteria);
+                $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $cnt = 0;
+                $cnt = 0;
 
-            while ($oDataset->next()) {
-                $aRow = $oDataset->getRow();
-                $cnt++;
-            }
+                while ($dataset->next()) {
+                    $row = $dataset->getRow();
+                    $cnt++;
+                }
 
-            if ($cnt == 0) {
-                $result = new WsResponse(18, G::loadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'));
+                if ($cnt == 0) {
+                    $result = new WsResponse(18, G::loadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'));
 
-                return $result;
+                    return $result;
+                }
             }
 
             if (is_array($variables)) {
@@ -2197,7 +2198,11 @@ class WsBase
         if (count($aTriggers) > 0) {
             $varTriggers = $varTriggers . "<br /><b>" . $labelAssignment . "</b><br />";
 
-            $oPMScript = new PMScript();
+            global $oPMScript;
+
+            if (!isset($oPMScript)) {
+                $oPMScript = new PMScript();
+            }
 
             foreach ($aTriggers as $aTrigger) {
                 //Set variables
@@ -2218,12 +2223,15 @@ class WsBase
 
                 if ($aTrigger['ST_CONDITION'] !== '') {
                     $oPMScript->setScript($aTrigger['ST_CONDITION']);
+                    $oPMScript->setExecutedOn(PMScript::CONDITION);
                     $bExecute = $oPMScript->evaluate();
                 }
 
                 if ($bExecute) {
                     $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
+                    $executedOn = $oPMScript->getExecutionOriginForAStep($stepType, $stepUidObj, $triggerType);
+                    $oPMScript->setExecutedOn($executedOn);
                     $oPMScript->execute();
 
                     $trigger = TriggersPeer::retrieveByPk($aTrigger["TRI_UID"]);
@@ -2687,6 +2695,7 @@ class WsBase
                 $oPMScript->setDataTrigger($row);
                 $oPMScript->setFields($appFields['APP_DATA']);
                 $oPMScript->setScript($row['TRI_WEBBOT']);
+                $oPMScript->setExecutedOn(PMScript::ISOLATED_TRIGGER);
                 $oPMScript->execute();
 
                 if (isset($oPMScript->aFields["__ERROR__"]) && trim($oPMScript->aFields["__ERROR__"]) != "" && $oPMScript->aFields["__ERROR__"] != "none") {

@@ -792,6 +792,7 @@ function executeCaseSelfService()
                         $oPMScript->setDataTrigger($row);
                         $oPMScript->setFields($appFields["APP_DATA"]);
                         $oPMScript->setScript($row["TRI_WEBBOT"]);
+                        $oPMScript->setExecutedOn(PMScript::SELF_SERVICE_TIMEOUT);
                         $oPMScript->execute();
 
                         /*----------------------------------********---------------------------------*/

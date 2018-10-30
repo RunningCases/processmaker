@@ -179,6 +179,7 @@ class Derivation
                     $pmScript = new PMScript();
                     $pmScript->setFields($arrayApplicationData["APP_DATA"]);
                     $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
+                    $pmScript->setExecutedOn(PMScript::CONDITION);
                     $flagAddDelegation = $pmScript->evaluate();
                 }
 

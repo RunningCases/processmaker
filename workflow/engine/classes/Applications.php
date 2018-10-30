@@ -1138,6 +1138,7 @@ class Applications
             // if it has a condition
             if (trim($caseStep->getStepCondition()) != '') {
                 $pmScript->setScript($caseStep->getStepCondition());
+                $pmScript->setExecutedOn(PMScript::CONDITION);
 
                 if (! $pmScript->evaluate()) {
                     //evaluated false, jump & continue with the others steps
