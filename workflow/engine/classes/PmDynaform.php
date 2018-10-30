@@ -1039,7 +1039,7 @@ class PmDynaform
                         },
                         token: credentials,
                         submitRest: false,
-                        googleMaps: googleMaps
+                        googleMaps: typeof googleMaps !== 'undefined' ? googleMaps : null
                     });
                     $(document).find(\"form\").submit(function (e) {
                         e.preventDefault();
@@ -1101,7 +1101,7 @@ class PmDynaform
                 "        },\n" .
                 "        token: credentials,\n" .
                 "        submitRest: false,\n" .
-                "        googleMaps: googleMaps\n" .
+                "        googleMaps: typeof googleMaps !== 'undefined' ? googleMaps : null\n" .
                 "    });\n" .
                 "    $(document).find('form').find('button').on('click', function (e) {\n" .
                 "        e.preventDefault();\n" .
