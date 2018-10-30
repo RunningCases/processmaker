@@ -36,7 +36,7 @@
         "colosa/pmdynaform": "release/3.2.4-dev",
         "google/apiclient": "1.1.6",
         "dapphp/securimage": "^3.6",
-        "psr/log":"1.0.0",
+        "psr/log": "1.0.0",
         "monolog/monolog": "1.19.0",
         "geshi/geshi": "dev-master",
         "libchart/libchart": "1.4.0",
@@ -46,8 +46,8 @@
         "TYPO3/class-alias-loader": "^1.0",
         "ralouphie/getallheaders": "^2.0",
         "smarty/smarty": "2.6.30",
-        "pdepend/pdepend" : "@stable",
-        "chumper/zipper" : "^1.0"
+        "pdepend/pdepend": "@stable",
+        "chumper/zipper": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.7",
@@ -64,8 +64,9 @@
             "ProcessMaker\\": "workflow/engine/src"
         },
         "psr-4": {
-          "Maveriks\\": "framework/src/Maveriks/",
-          "Tests\\": "tests/"
+            "App\\": "app/",
+            "Maveriks\\": "framework/src/Maveriks/",
+            "Tests\\": "tests/"
         },
         "classmap": [
             "gulliver/system/",
@@ -97,7 +98,7 @@
     },
     "scripts": {
         "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wimg/php-compatibility",
-        "post-update-cmd" : "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wimg/php-compatibility"
+        "post-update-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wimg/php-compatibility"
     },
     "extra": {
         "typo3/class-alias-loader": {
