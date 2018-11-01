@@ -5,7 +5,7 @@ use Exception;
 use Luracast\Restler\RestException;
 use ProcessMaker\BusinessModel\FilesManager as FilesManagerBusinessModel;
 use ProcessMaker\Services\Api;
-use ProcessMaker\Validation\Exception429;
+use ProcessMaker\Validation\ExceptionRestApi;
 
 /**
  * Project\ProjectUsers Api Controller
@@ -64,8 +64,8 @@ class FilesManager extends Api
             $arrayData = $filesManager->addProcessFilesManager($prj_uid, $userUid, $request_data);
             //Response
             $response = $arrayData;
-        } catch (Exception429 $e) {
-            throw new RestException($e->getStatus());
+        } catch (ExceptionRestApi $e) {
+            throw new RestException($e->getCode(), $e->getMessage());
         } catch (Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -94,8 +94,8 @@ class FilesManager extends Api
             $sData = $filesManager->uploadProcessFilesManager($prj_uid, $prf_uid);
             //Response
             $response = $sData;
-        } catch (Exception429 $e) {
-            throw new RestException($e->getStatus());
+        } catch (ExceptionRestApi $e) {
+            throw new RestException($e->getCode(), $e->getMessage());
         } catch (Exception $e) {
             //response
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());

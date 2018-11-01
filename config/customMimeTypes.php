@@ -22,6 +22,7 @@ return [
     'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     'pm' => 'text/plain',
     'pmt' => 'text/plain',
+    'pmx' => 'application/xml',
     'po' => 'text/x-po',
     'pdf' => 'application/pdf',
     'png' => 'image/png',

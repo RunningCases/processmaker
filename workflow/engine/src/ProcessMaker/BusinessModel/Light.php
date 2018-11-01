@@ -32,6 +32,8 @@ use ProcessMaker\Core\RoutingScreen;
 use ProcessMaker\Core\System;
 use ProcessMaker\Services\Api\Project\Activity\Step as ActivityStep;
 use ProcessMaker\Util\DateTime;
+use ProcessMaker\Validation\ExceptionRestApi;
+use ProcessMaker\Validation\Validator;
 use ProcessPeer;
 use Propel;
 use RBAC;
@@ -1061,7 +1063,7 @@ class Light
      *
      * @throws Exception
      */
-    public function documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data)
+    public function documentUploadFiles($userUid, $app_uid, $app_doc_uid)
     {
         $response = array("status" => "fail");
         if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
@@ -1097,6 +1099,58 @@ class Light
                 }
             }
             if (count($arrayField) > 0) {
+                //rule validation
+                $appDocument = new AppDocument();
+                $appDocument->load($app_doc_uid);
+                $inputDocument = new InputDocument();
+                $ifInputExist = $inputDocument->InputExists($appDocument->getDocUid());
+                if ($ifInputExist) {
+                    $inputProperties = $inputDocument->load($appDocument->getDocUid());
+                    $inpDocTypeFile = $inputProperties['INP_DOC_TYPE_FILE'];
+                    $inpDocMaxFilesize = (int) $inputProperties["INP_DOC_MAX_FILESIZE"];
+                    $inpDocMaxFilesizeUnit = $inputProperties["INP_DOC_MAX_FILESIZE_UNIT"];
+                }
+
+                for ($i = 0; $ifInputExist && $i < count($arrayField); $i++) {
+                    $file = [
+                        'filename' => $arrayFileName[$i],
+                        'path' => $arrayFileTmpName[$i]
+                    ];
+                    $validator = new Validator();
+                    //rule: extension
+                    $validator->addRule()
+                            ->validate($file, function($file) use($inpDocTypeFile) {
+                                $result = G::verifyInputDocExtension($inpDocTypeFile, $file->filename, $file->path);
+                                return $result->status === false;
+                            })
+                            ->status(415)
+                            ->message(G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION'))
+                            ->log(function($rule) {
+                                Bootstrap::registerMonologPhpUploadExecution('phpUpload', 250, $rule->getMessage(), $rule->getData()->filename);
+                            });
+
+                    //rule: maximum file size
+                    $validator->addRule()
+                            ->validate($file, function($file) use($inpDocMaxFilesize, $inpDocMaxFilesizeUnit) {
+                                if ($inpDocMaxFilesize > 0) {
+                                    $totalMaxFileSize = $inpDocMaxFilesize * ($inpDocMaxFilesizeUnit == "MB" ? 1024 * 1024 : 1024);
+                                    $fileSize = filesize($file->path);
+                                    if ($fileSize > $totalMaxFileSize) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            })
+                            ->status(413)
+                            ->message(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"))
+                            ->log(function($rule) {
+                                Bootstrap::registerMonologPhpUploadExecution('phpUpload', 250, $rule->getMessage(), $rule->getData()->filename);
+                            });
+                    $validator->validate();
+                    if ($validator->fails()) {
+                        throw new ExceptionRestApi($validator->getMessage(), $validator->getStatus());
+                    }
+                }
                 for ($i = 0; $i <= count($arrayField) - 1; $i++) {
                     if ($arrayFileError[$i] == 0) {
                         $indocUid = null;
