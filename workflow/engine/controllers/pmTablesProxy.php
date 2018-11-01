@@ -8,7 +8,7 @@
  */
 
 use ProcessMaker\Core\System;
-use ProcessMaker\Validation\Exception429;
+use ProcessMaker\Validation\ExceptionRestApi;
 use ProcessMaker\Validation\ValidationUploadedFiles;
 
 header("Content-type: text/html;charset=utf-8");
@@ -726,7 +726,7 @@ class pmTablesProxy extends HttpProxyController
 
         try {
             ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
-                throw new Exception429($validator->getMessage());
+                throw new ExceptionRestApi($validator->getMessage());
             });
             $result = new stdClass();
             $errors = '';
@@ -896,7 +896,7 @@ class pmTablesProxy extends HttpProxyController
             }
 
             $result->message = $msg;
-        } catch (Exception429 $e) {
+        } catch (ExceptionRestApi $e) {
             $result = new stdClass();
             $result->success = false;
             $result->errorType = 'notice';
