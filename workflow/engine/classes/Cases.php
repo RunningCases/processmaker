@@ -3428,40 +3428,40 @@ class Cases
     /**
      * Execute trigger in task
      * @name executeTriggers
-     * @param string $sTasUid
-     * @param string $sStepType
-     * @param array $sStepUidObj
-     * @param string $sTriggerType
-     * @param array $aFields
+     * @param string $tasUid
+     * @param string $stepType
+     * @param array $stepUidObj
+     * @param string $triggerType
+     * @param array $fieldsCase
+     *
      * @return integer
      */
-    public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
+    public function executeTriggers($tasUid, $stepType, $stepUidObj, $triggerType, $fieldsCase = [])
     {
         /*----------------------------------********---------------------------------*/
         ChangeLog::getChangeLog()
-                ->setObjectUid($sStepUidObj)
-                ->getExecutedAtIdByTriggerType($sTriggerType);
+            ->setObjectUid($stepUidObj)
+            ->getExecutedAtIdByTriggerType($triggerType);
         /*----------------------------------********---------------------------------*/
 
-        $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
+        $listTriggers = $this->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
 
-        if (count($aTriggers) > 0) {
+        if (count($listTriggers) > 0) {
             global $oPMScript;
 
             $oPMScript = new PMScript();
-            $oPMScript->setFields($aFields);
+            $oPMScript->setFields($fieldsCase);
 
             /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner(config("system.workspace"));
-
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
 
-            foreach ($aTriggers as $aTrigger) {
+            foreach ($listTriggers as $trigger) {
                 /*----------------------------------********---------------------------------*/
                 if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
                     //Check disabled code
-                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
+                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $trigger["TRI_WEBBOT"]);
 
                     if (!empty($arrayFoundDisabledCode)) {
                         $strCodeAndLine = "";
@@ -3470,30 +3470,40 @@ class Cases
                             $strCodeAndLine .= (($strCodeAndLine != "") ? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
                         }
 
-                        $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
+                        $strFoundDisabledCode .= "<br />- " . $trigger["TRI_TITLE"] . ": " . $strCodeAndLine;
                         continue;
                     }
                 }
                 /*----------------------------------********---------------------------------*/
 
                 //Execute
-                $bExecute = true;
+                $execute = true;
 
-                if ($aTrigger['ST_CONDITION'] !== '') {
-                    $oPMScript->setDataTrigger($aTrigger);
-                    $oPMScript->setScript($aTrigger['ST_CONDITION']);
+                if ($trigger['ST_CONDITION'] !== '') {
+                    $oPMScript->setDataTrigger($trigger);
+                    $oPMScript->setScript($trigger['ST_CONDITION']);
                     $oPMScript->setExecutedOn(PMScript::CONDITION);
-                    $bExecute = $oPMScript->evaluate();
+                    $execute = $oPMScript->evaluate();
                 }
 
-                if ($bExecute) {
-                    $oPMScript->setDataTrigger($aTrigger);
-                    $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
-                    $executedOn = $oPMScript->getExecutionOriginForAStep($sStepType, $sStepUidObj, $sTriggerType);
+                if ($execute) {
+                    $oPMScript->setDataTrigger($trigger);
+                    $oPMScript->setScript($trigger['TRI_WEBBOT']);
+                    $executedOn = $oPMScript->getExecutionOriginForAStep($stepType, $stepUidObj, $triggerType);
                     $oPMScript->setExecutedOn($executedOn);
                     $oPMScript->execute();
+                    $fieldsTrigger = $oPMScript->aFields;
 
-                    $this->arrayTriggerExecutionTime[$aTrigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
+                    //We will be load the last appData
+                    if ($oPMScript->executedOn() === $oPMScript::AFTER_ROUTING) {
+                        $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
+                        if (!empty($appUid)) {
+                            $lastAppFields = $this->loadCase($appUid)['APP_DATA'];
+                            $fieldsTrigger = array_merge($lastAppFields, $fieldsTrigger);
+                        }
+                    }
+
+                    $this->arrayTriggerExecutionTime[$trigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
                 }
             }
             /*----------------------------------********---------------------------------*/
@@ -3502,9 +3512,9 @@ class Cases
             }
             /*----------------------------------********---------------------------------*/
 
-            return $oPMScript->aFields;
+            return $fieldsTrigger;
         } else {
-            return $aFields;
+            return $fieldsCase;
         }
     }
 
