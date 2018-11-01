@@ -2344,6 +2344,7 @@ class Cases
                     if ($oStep) {
                         if (trim($oStep->getStepCondition()) !== '') {
                             $oPMScript->setScript($oStep->getStepCondition());
+                            $oPMScript->setExecutedOn(PMScript::CONDITION);
                             $bAccessStep = $oPMScript->evaluate();
                         } else {
                             $bAccessStep = true;
@@ -2474,6 +2475,7 @@ class Cases
                     if ($oStep) {
                         if (trim($oStep->getStepCondition()) !== '') {
                             $oPMScript->setScript($oStep->getStepCondition());
+                            $oPMScript->setExecutedOn(PMScript::CONDITION);
                             $bAccessStep = $oPMScript->evaluate();
                         } else {
                             $bAccessStep = true;
@@ -3480,12 +3482,15 @@ class Cases
                 if ($aTrigger['ST_CONDITION'] !== '') {
                     $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript($aTrigger['ST_CONDITION']);
+                    $oPMScript->setExecutedOn(PMScript::CONDITION);
                     $bExecute = $oPMScript->evaluate();
                 }
 
                 if ($bExecute) {
                     $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
+                    $executedOn = $oPMScript->getExecutionOriginForAStep($sStepType, $sStepUidObj, $sTriggerType);
+                    $oPMScript->setExecutedOn($executedOn);
                     $oPMScript->execute();
 
                     $this->arrayTriggerExecutionTime[$aTrigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
@@ -7142,6 +7147,7 @@ class Cases
             $oPMScript->setDataTrigger($arrayWebBotTrigger);
             $oPMScript->setFields($aFields['APP_DATA']);
             $oPMScript->setScript($arrayWebBotTrigger['TRI_WEBBOT']);
+            $oPMScript->setExecutedOn(PMScript::PROCESS_ACTION);
             $oPMScript->execute();
 
             $aFields['APP_DATA'] = array_merge($aFields['APP_DATA'], $oPMScript->aFields);
