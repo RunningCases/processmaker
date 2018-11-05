@@ -1124,7 +1124,7 @@ class Light
                                 return $result->status === false;
                             })
                             ->status(415)
-                            ->message(G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION'))
+                            ->message(G::LoadTranslation('ID_UPLOAD_INVALID_DOC_TYPE_FILE', [$inpDocTypeFile]))
                             ->log(function($rule) {
                                 Bootstrap::registerMonologPhpUploadExecution('phpUpload', 250, $rule->getMessage(), $rule->getData()->filename);
                             });

@@ -25932,6 +25932,12 @@ msgid "The file has not been attached because the extension is not allowed or be
 msgstr "The file has not been attached because the extension is not allowed or because the content doesn't correspond."
 
 # TRANSLATION
+# LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
+#: LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
+msgid "Invalid file format, please upload a file with one of the following formats {0}"
+msgstr "Invalid file format, please upload a file with one of the following formats {0}"
+
+# TRANSLATION
 # LABEL/ID_UPLOAD_ERR_NO_FILE
 #: LABEL/ID_UPLOAD_ERR_NO_FILE
 msgid "No file was uploaded"
