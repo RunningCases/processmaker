@@ -61219,6 +61219,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UPLOAD_ERR_FORM_SIZE','en','The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form','2014-01-15') ,
 ( 'LABEL','ID_UPLOAD_ERR_INI_SIZE','en','The uploaded file exceeds the upload_max_filesize directive in php.ini','2014-01-15') ,
 ( 'LABEL','ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION','en','The file has not been attached because the extension is not allowed or because the content doesn''t correspond.','2014-10-21') ,
+( 'LABEL','ID_UPLOAD_INVALID_DOC_MAX_FILESIZE','en','File size exceeds the allowable limit of {0}','2018-11-06') ,
 ( 'LABEL','ID_UPLOAD_INVALID_DOC_TYPE_FILE','en','Invalid file format, please upload a file with one of the following formats {0}','2018-11-05') ,
 ( 'LABEL','ID_UPLOAD_ERR_NO_FILE','en','No file was uploaded','2014-01-15') ,
 ( 'LABEL','ID_UPLOAD_ERR_NO_TMP_DIR','en','Missing a temporary folder','2014-01-15') ,

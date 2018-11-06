@@ -1142,7 +1142,7 @@ class Light
                                 return false;
                             })
                             ->status(413)
-                            ->message(G::LoadTranslation("ID_SIZE_VERY_LARGE_PERMITTED"))
+                            ->message(G::LoadTranslation("ID_UPLOAD_INVALID_DOC_MAX_FILESIZE", [$inpDocMaxFilesize . $inpDocMaxFilesizeUnit]))
                             ->log(function($rule) {
                                 Bootstrap::registerMonologPhpUploadExecution('phpUpload', 250, $rule->getMessage(), $rule->getData()->filename);
                             });
