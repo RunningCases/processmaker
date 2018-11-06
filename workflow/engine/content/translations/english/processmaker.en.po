@@ -25932,6 +25932,12 @@ msgid "The file has not been attached because the extension is not allowed or be
 msgstr "The file has not been attached because the extension is not allowed or because the content doesn't correspond."
 
 # TRANSLATION
+# LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
+#: LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
+msgid "File size exceeds the allowable limit of {0}"
+msgstr "File size exceeds the allowable limit of {0}"
+
+# TRANSLATION
 # LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
 #: LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
 msgid "Invalid file format, please upload a file with one of the following formats {0}"
