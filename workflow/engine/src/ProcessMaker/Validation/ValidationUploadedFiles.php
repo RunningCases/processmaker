@@ -187,6 +187,20 @@ class ValidationUploadedFiles
                 if (empty($value)) {
                     continue;
                 }
+                if (is_array($value)) {
+                    foreach ($value as $rowKey => $rowValue) {
+                        foreach ($rowValue as $cellKey => $cellValue) {
+                            if (empty($cellValue)) {
+                                continue;
+                            }
+                            $validator = $this->runRules(['filename' => $cellValue, 'path' => $data->tmp_name[$key][$rowKey][$cellKey]]);
+                            if ($validator->fails()) {
+                                $this->fails[] = $validator;
+                            }
+                        }
+                    }
+                    continue;
+                }
                 $validator = $this->runRules(['filename' => $value, 'path' => $data->tmp_name[$key]]);
                 if ($validator->fails()) {
                     $this->fails[] = $validator;
