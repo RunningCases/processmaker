@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\Process as BmProcess;
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
@@ -4593,6 +4594,28 @@ class WorkspaceTools
                     }
                 }
                 fclose($handle);
+            }
+        }
+    }
+
+    /**
+     * Sync JSON definition of the Forms with Input Documents information
+     */
+    public function syncFormsWithInputDocumentInfo() {
+        // Initialize Propel and instance the required classes
+        $this->initPropel(true);
+        $processInstance = new Process();
+        $bmProcessInstance = new BmProcess();
+        $pmDynaform = new PmDynaform();
+
+        // Get all active processes
+        $processes = $processInstance->getAllProcesses(0, '');
+        foreach ($processes as $process) {
+            // Get all Input Documents from a process
+            $inputDocuments = $bmProcessInstance->getInputDocuments($process['PRO_UID']);
+            foreach ($inputDocuments as $inputDocument) {
+                // Sync JSON definition of the Forms
+                $pmDynaform->synchronizeInputDocument($process['PRO_UID'], $inputDocument);
             }
         }
     }
