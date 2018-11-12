@@ -23,6 +23,7 @@ use ProcessMaker\Project\Adapter;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Services\Api\Project\Activity\Step;
 use ProcessMaker\Util\DateTime;
+use ProcessMaker\Validation\ExceptionRestApi;
 use RBAC;
 use stdclass;
 use StepPeer;
@@ -1466,10 +1467,11 @@ class Light extends Api
             $userUid = $this->getUserId();
             $oMobile = new BusinessModelLight();
             $filesUids = $oMobile->postUidUploadFiles($userUid, $app_uid, $request_data);
+        } catch (ExceptionRestApi $e) {
+            throw new RestException($e->getCode(), $e->getMessage());
         } catch (Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
-
         return $filesUids;
     }
 
@@ -1500,11 +1502,12 @@ class Light extends Api
         try {
             $userUid = $this->getUserId();
             $oMobile = new BusinessModelLight();
-            $response = $oMobile->documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data);
+            $response = $oMobile->documentUploadFiles($userUid, $app_uid, $app_doc_uid);
+        } catch (ExceptionRestApi $e) {
+            throw new RestException($e->getCode(), $e->getMessage());
         } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
-
         return $response;
     }
 

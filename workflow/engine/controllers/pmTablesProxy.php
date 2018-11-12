@@ -8,6 +8,8 @@
  */
 
 use ProcessMaker\Core\System;
+use ProcessMaker\Validation\ExceptionRestApi;
+use ProcessMaker\Validation\ValidationUploadedFiles;
 
 header("Content-type: text/html;charset=utf-8");
 require_once 'classes/model/AdditionalTables.php';
@@ -723,6 +725,9 @@ class pmTablesProxy extends HttpProxyController
         }
 
         try {
+            ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+                throw new ExceptionRestApi($validator->getMessage());
+            });
             $result = new stdClass();
             $errors = '';
             $fromConfirm = false;
@@ -891,6 +896,11 @@ class pmTablesProxy extends HttpProxyController
             }
 
             $result->message = $msg;
+        } catch (ExceptionRestApi $e) {
+            $result = new stdClass();
+            $result->success = false;
+            $result->errorType = 'notice';
+            $result->message = $e->getMessage();
         } catch (Exception $e) {
             $result = new stdClass();
             $result->fromAdmin = $fromAdmin;

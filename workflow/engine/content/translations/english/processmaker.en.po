@@ -24852,16 +24852,34 @@ msgid "The default configuration was not defined"
 msgstr "The default configuration was not defined"
 
 # TRANSLATION
+# LABEL/ID_THE_MIMETYPE_EXTENSION_ERROR
+#: LABEL/ID_THE_MIMETYPE_EXTENSION_ERROR
+msgid "The mime type does not correspond to the permitted extension, please verify your file."
+msgstr "The mime type does not correspond to the permitted extension, please verify your file."
+
+# TRANSLATION
 # LABEL/ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS
 #: LABEL/ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS
 msgid "The change might cause data loss in the PM table. Do you want to continue?"
 msgstr "The change might cause data loss in the PM table. Do you want to continue?"
 
 # TRANSLATION
+# LABEL/ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED
+#: LABEL/ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED
+msgid "The PHP files execution was disabled please contact the system administrator."
+msgstr "The PHP files execution was disabled please contact the system administrator."
+
+# TRANSLATION
 # LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
 #: LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
 msgid "Please complete the reassign reason."
 msgstr "Please complete the reassign reason."
+
+# TRANSLATION
+# LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
+#: LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
+msgid "The upload of PHP files was disabled please contact the system administrator."
+msgstr "The upload of PHP files was disabled please contact the system administrator."
 
 # TRANSLATION
 # LABEL/ID_THE_USERNAME_EMAIL_IS_INCORRECT
@@ -25186,6 +25204,12 @@ msgstr "Today"
 #: LABEL/ID_TOOLS
 msgid "Tools"
 msgstr "Tools"
+
+# TRANSLATION
+# LABEL/ID_TOO_MANY_REQUESTS
+#: LABEL/ID_TOO_MANY_REQUESTS
+msgid "Too many requests"
+msgstr "Too many requests"
 
 # TRANSLATION
 # LABEL/ID_TOP_MARGIN
@@ -25912,6 +25936,18 @@ msgstr "The uploaded file exceeds the upload_max_filesize directive in php.ini"
 #: LABEL/ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION
 msgid "The file has not been attached because the extension is not allowed or because the content doesn't correspond."
 msgstr "The file has not been attached because the extension is not allowed or because the content doesn't correspond."
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
+#: LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
+msgid "File size exceeds the allowable limit of {0}"
+msgstr "File size exceeds the allowable limit of {0}"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
+#: LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
+msgid "Invalid file format, please upload a file with one of the following formats {0}"
+msgstr "Invalid file format, please upload a file with one of the following formats {0}"
 
 # TRANSLATION
 # LABEL/ID_UPLOAD_ERR_NO_FILE

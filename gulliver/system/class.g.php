@@ -4,6 +4,7 @@ use ProcessMaker\Core\System;
 use ProcessMaker\AuditLog\AuditLog;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
+use ProcessMaker\Validation\ValidationUploadedFiles;
 
 class G
 {
@@ -1183,7 +1184,7 @@ class G
                             \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 200, 'Php Execution', $filename);
                             require_once($filename);
                         } else {
-                            $message = G::LoadTranslation('THE_PHP_FILES_EXECUTION_WAS_DISABLED');
+                            $message = G::LoadTranslation('ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED');
                             \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 550, $message, $filename);
                             echo $message;
                         }
@@ -5488,6 +5489,16 @@ class G
      */
     public static function verifyInputDocExtension($InpDocAllowedFiles, $fileName, $filesTmpName)
     {
+        $error = null;
+        ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) use(&$error) {
+            $error = new stdclass();
+            $error->status = false;
+            $error->message = $validator->getMessage();
+        });
+        if (!is_null($error)) {
+            return $error;
+        }
+
         // Initialize variables
         $res = new stdclass();
         $res->status = false;
@@ -5496,14 +5507,6 @@ class G
         // Get the file extension
         $aux = pathinfo($fileName);
         $fileExtension = isset($aux['extension']) ? strtolower($aux['extension']) : '';
-
-        if (\Bootstrap::getDisablePhpUploadExecution() === 1 && $fileExtension === 'php') {
-            $message = \G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
-            \Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, $fileName);
-            $res->status = false;
-            $res->message = $message;
-            return $res;
-        }
 
         // If required extension is *.* don't validate
         if (in_array('*', $allowedTypes)) {
