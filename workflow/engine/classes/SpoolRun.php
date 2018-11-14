@@ -51,6 +51,26 @@ class SpoolRun
     }
 
     /**
+     * Set the $spool_id
+     *
+     * @param string
+     */
+    public function setSpoolId($v)
+    {
+        $this->spool_id = $v;
+    }
+
+    /**
+     * Get the $spool_id
+     *
+     * @return string
+     */
+    public function getSpoolId()
+    {
+        return $this->spool_id;
+    }
+
+    /**
      * get all files into spool in a list
      *
      * @param none

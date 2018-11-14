@@ -1700,6 +1700,12 @@ msgid "The answer has been submitted. Thank you."
 msgstr "The answer has been submitted. Thank you."
 
 # TRANSLATION
+# LABEL/ID_ABE_EMAIL_RESPONSE_BODY_NOTE
+#: LABEL/ID_ABE_EMAIL_RESPONSE_BODY_NOTE
+msgid "Please add your comments above this section. Don't modify or delete this section."
+msgstr "Please add your comments above this section. Don't modify or delete this section."
+
+# TRANSLATION
 # LABEL/ID_ABE_FORM_ALREADY_FILLED
 #: LABEL/ID_ABE_FORM_ALREADY_FILLED
 msgid "The form has already been filled and sent."
@@ -4234,6 +4240,12 @@ msgstr "Close Editor"
 #: LABEL/ID_CODE
 msgid "[LABEL/ID_CODE] Code"
 msgstr "Code"
+
+# TRANSLATION
+# LABEL/ID_CODE_CRYPT
+#: LABEL/ID_CODE_CRYPT
+msgid "Code:"
+msgstr "Code:"
 
 # TRANSLATION
 # LABEL/ID_COLLAPSE_ALL
