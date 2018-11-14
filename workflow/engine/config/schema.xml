@@ -5094,6 +5094,16 @@
                 <parameter name="Extra" value=""/>
             </vendor>
         </column>
+        <column name="ABE_ACTION_BODY_FIELD" type="VARCHAR" size="255" required="false" default="">
+            <vendor type="mysql">
+                <parameter name="Field" value="ABE_ACTION_BODY_FIELD"/>
+                <parameter name="Type" value="varchar(255)"/>
+                <parameter name="Null" value="YES"/>
+                <parameter name="Key" value=""/>
+                <parameter name="Default" value=""/>
+                <parameter name="Extra" value=""/>
+            </vendor>
+        </column>
         <column name="ABE_CASE_NOTE_IN_RESPONSE" type="INTEGER" default="0"/>
         <column name="ABE_FORCE_LOGIN" type="INTEGER" default="0"/>
         <column name="ABE_CREATE_DATE" type="TIMESTAMP" required="true">
@@ -5141,6 +5151,7 @@
             </vendor>
         </column>
         <column name="ABE_EMAIL_SERVER_UID" type="VARCHAR" size="32" required="false" default=""/>
+        <column name="ABE_EMAIL_SERVER_RECEIVER_UID" type="VARCHAR" size="32" required="false" default=""/>
         <index name="indexAbeProcess">
             <index-column name="PRO_UID"/>
         </index>
@@ -5769,7 +5780,7 @@
         <column name="PLUGIN_TASK_EXTENDED_PROPERTIES" type="LONGVARCHAR"/>
         <column name="PLUGIN_ATTRIBUTES" type="LONGVARCHAR"/>
     </table>
-    
+
     <table name="APP_DATA_CHANGE_LOG" idMethod="native">
         <vendor type="mysql">
             <parameter name="Name" value="APP_DATA_CHANGE_LOG"/>
