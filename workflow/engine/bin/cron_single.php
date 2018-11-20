@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Http\Kernel;
+use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
 
 require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
@@ -146,7 +147,8 @@ try {
         } else {
             eprintln('WARNING! No server info found!', 'red');
         }
-
+        //load Processmaker translations
+        Bootstrap::LoadTranslationObject(SYS_LANG);
         //DB
         $phpCode = '';
 
@@ -253,6 +255,9 @@ try {
                     break;
                 case 'sendnotificationscron':
                     sendNotifications();
+                    break;
+                case 'actionsByEmailEmailResponse':
+                    (new ResponseReader)->actionsByEmailEmailResponse();
                     break;
             }
         } catch (Exception $e) {

@@ -47,7 +47,8 @@
         "ralouphie/getallheaders": "^2.0",
         "smarty/smarty": "2.6.30",
         "pdepend/pdepend": "@stable",
-        "chumper/zipper": "^1.0"
+        "chumper/zipper": "^1.0",
+        "php-imap/php-imap": "^3.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.7",
