@@ -2169,7 +2169,7 @@ class WsBase
      * Execute the trigger defined in the steps
      * This function is used when the case is derived from abe, Soap, PMFDerivateCase
      *
-     * @param string $caseId , Uid related to the case
+     * @param string $appUid , Uid related to the case
      * @param array $appData , contain all the information about the case related to the index [APP_DATA]
      * @param string $tasUid , Uid related to the task
      * @param string $stepType , before or after step
@@ -2180,7 +2180,7 @@ class WsBase
      * @return string $varTriggers updated
      */
     public function executeTriggerFromDerivate(
-        $caseId,
+        $appUid,
         &$appData,
         $tasUid,
         $stepType,
@@ -2189,80 +2189,49 @@ class WsBase
         $labelAssignment = ''
     )
     {
-        $varTriggers = "";
-        $oCase = new Cases();
+        $caseInstance = new Cases();
 
-        //Load the triggers assigned in the $triggerType
-        $aTriggers = $oCase->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
-
-        if (count($aTriggers) > 0) {
-            $varTriggers = $varTriggers . "<br /><b>" . $labelAssignment . "</b><br />";
-
-            global $oPMScript;
-
-            if (!isset($oPMScript)) {
-                $oPMScript = new PMScript();
-            }
-
-            foreach ($aTriggers as $aTrigger) {
-                //Set variables
-                $params = new stdClass();
-                $params->appData = $appData;
-
-                if ($this->stored_system_variables) {
-                    $params->option = "STORED SESSION";
-                    $params->SID = $this->wsSessionId;
-                }
-
-                //We can set the index APP_DATA
-                $appFields["APP_DATA"] = array_merge($appData, G::getSystemConstants($params));
-
-                //PMScript
-                $oPMScript->setFields($appFields['APP_DATA']);
-                $bExecute = true;
-
-                if ($aTrigger['ST_CONDITION'] !== '') {
-                    $oPMScript->setScript($aTrigger['ST_CONDITION']);
-                    $oPMScript->setExecutedOn(PMScript::CONDITION);
-                    $bExecute = $oPMScript->evaluate();
-                }
-
-                if ($bExecute) {
-                    $oPMScript->setDataTrigger($aTrigger);
-                    $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
-                    $executedOn = $oPMScript->getExecutionOriginForAStep($stepType, $stepUidObj, $triggerType);
-                    $oPMScript->setExecutedOn($executedOn);
-                    $oPMScript->execute();
-
-                    $trigger = TriggersPeer::retrieveByPk($aTrigger["TRI_UID"]);
-                    $varTriggers = $varTriggers . "&nbsp;- " . nl2br(htmlentities(
-                            $trigger->getTriTitle(),
-                            ENT_QUOTES
-                        )) . "<br />";
-
-                    $appFields['APP_DATA'] = $oPMScript->aFields;
-                    unset($appFields['APP_STATUS']);
-                    unset($appFields['APP_PROC_STATUS']);
-                    unset($appFields['APP_PROC_CODE']);
-                    unset($appFields['APP_PIN']);
-                    $oCase->updateCase($caseId, $appFields);
-
-                    //We need to update the variable $appData for use the new variables in the next trigger
-                    $appData = array_merge($appData, $appFields['APP_DATA']);
-                }
-            }
+        //Set new variables in the APP_DATA
+        $params = new stdClass();
+        $params->appData = $appData;
+        if ($this->stored_system_variables) {
+            $params->option = "STORED SESSION";
+            $params->SID = $this->wsSessionId;
         }
+        $appFields["APP_DATA"] = array_merge($appData, G::getSystemConstants($params));
+
+        //Load the triggers assigned in the step
+        $triggersList = $caseInstance->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
+
+        //Execute the trigger defined in the step
+        $lastFields = $caseInstance->executeTriggerFromList($triggersList, $appFields["APP_DATA"], $stepType, $stepUidObj, $triggerType, $labelAssignment);
+
+        //Get message of the execution
+        $varTriggers = $caseInstance->getTriggerMessageExecution();
+
+        //Define the new APP_DATA
+        $appFields['APP_DATA'] = $lastFields;
+        unset($appFields['APP_STATUS']);
+        unset($appFields['APP_PROC_STATUS']);
+        unset($appFields['APP_PROC_CODE']);
+        unset($appFields['APP_PIN']);
+
+        //Update the APP_DATA
+        $caseInstance->updateCase($appUid, $appFields);
+
+        //We need to update the variable $appData for use the new variables in the next trigger
+        $appData = array_merge($appData, $appFields['APP_DATA']);
 
         /*----------------------------------********---------------------------------*/
         ChangeLog::getChangeLog()
-                ->setDate('now')
-                ->setAppNumber($appData['APP_NUMBER'])
-                ->setDelIndex($appData['INDEX'])
-                ->getProIdByProUid($appData['PROCESS'])
-                ->getTasIdByTasUid($appData['TASK'])
-                ->setData(serialize($appData))
-                ->getExecutedAtIdByTriggerType($triggerType)
-                ->getObjectIdByUidAndObjType($stepUidObj, $stepType);
+            ->setDate('now')
+            ->setAppNumber($appData['APP_NUMBER'])
+            ->setDelIndex($appData['INDEX'])
+            ->getProIdByProUid($appData['PROCESS'])
+            ->getTasIdByTasUid($appData['TASK'])
+            ->setData(serialize($appData))
+            ->getExecutedAtIdByTriggerType($triggerType)
+            ->getObjectIdByUidAndObjType($stepUidObj, $stepType);
         /*----------------------------------********---------------------------------*/
 
         return $varTriggers;
