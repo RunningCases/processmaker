@@ -8,7 +8,6 @@ use ProcessMaker\ChangeLog\ChangeLog;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
-
 /**
  * A Cases object where you can do start, load, update, refresh about cases
  * This object is applied to Task
@@ -20,6 +19,7 @@ class Cases
     public $dir = 'ASC';
     public $sort = 'APP_MSG_DATE';
     public $arrayTriggerExecutionTime = [];
+    private $triggerMessageExecution = '';
 
     public function __construct()
     {
@@ -27,6 +27,28 @@ class Cases
         if (($solrConf = System::solrEnv()) !== false) {
             $this->appSolr = new AppSolr($solrConf['solr_enabled'], $solrConf['solr_host'], $solrConf['solr_instance']);
         }
+    }
+
+    /**
+     * Get the triggerMessageExecution
+     *
+     * @return string
+     */
+    public function getTriggerMessageExecution()
+    {
+        return $this->triggerMessageExecution;
+    }
+
+    /**
+     * Add messages related to the trigger execution
+     *
+     * @param string $v
+     *
+     * @return void
+     */
+    public function addTriggerMessageExecution($v)
+    {
+        $this->triggerMessageExecution .= $v;
     }
 
     /**
@@ -3438,61 +3460,86 @@ class Cases
      */
     public function executeTriggers($tasUid, $stepType, $stepUidObj, $triggerType, $fieldsCase = [])
     {
+        //Load the triggers assigned in the step
+        $triggersList = $this->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
+
+        //Execute the trigger defined in the step
+        $lastFields = $this->executeTriggerFromList($triggersList, $fieldsCase, $stepType, $stepUidObj, $triggerType);
+
         /*----------------------------------********---------------------------------*/
         ChangeLog::getChangeLog()
             ->setObjectUid($stepUidObj)
             ->getExecutedAtIdByTriggerType($triggerType);
         /*----------------------------------********---------------------------------*/
 
-        $listTriggers = $this->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
+        return $lastFields;
+    }
 
-        if (count($listTriggers) > 0) {
+    /**
+     * This method executes the triggers send in an array
+     *
+     * @param array $triggersList
+     * @param array $fieldsCase
+     * @param string $stepType
+     * @param string $stepUidObj
+     * @param string $triggerType
+     * @param string $labelAssignment
+     *
+     * @return array
+    */
+    public function executeTriggerFromList(
+        array $triggersList,
+        array $fieldsCase,
+        $stepType,
+        $stepUidObj,
+        $triggerType,
+        $labelAssignment = ''
+    )
+    {
+        if (count($triggersList) > 0) {
             global $oPMScript;
 
-            $oPMScript = new PMScript();
+            $this->addTriggerMessageExecution("<br /><b>" . $labelAssignment . "</b><br />");
+            if (!isset($oPMScript)) {
+                $oPMScript = new PMScript();
+            }
             $oPMScript->setFields($fieldsCase);
 
             /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner(config("system.workspace"));
-            $strFoundDisabledCode = "";
+            $foundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
 
-            foreach ($listTriggers as $trigger) {
-                /*----------------------------------********---------------------------------*/
-                if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
-                    //Check disabled code
-                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $trigger["TRI_WEBBOT"]);
-
-                    if (!empty($arrayFoundDisabledCode)) {
-                        $strCodeAndLine = "";
-
-                        foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
-                            $strCodeAndLine .= (($strCodeAndLine != "") ? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
-                        }
-
-                        $strFoundDisabledCode .= "<br />- " . $trigger["TRI_TITLE"] . ": " . $strCodeAndLine;
-                        continue;
-                    }
+            $fieldsTrigger = [];
+            foreach ($triggersList as $trigger) {
+                //Scan the code
+                $disabledCode = $this->codeScannerReview($cs, $trigger["TRI_WEBBOT"], $trigger["TRI_TITLE"]);
+                if (!empty($disabledCode)) {
+                    $foundDisabledCode .= $disabledCode;
+                    continue;
                 }
-                /*----------------------------------********---------------------------------*/
 
-                //Execute
                 $execute = true;
-
-                if ($trigger['ST_CONDITION'] !== '') {
+                //Check if the trigger has conditions for the execution
+                if (!empty($trigger['ST_CONDITION'])) {
                     $oPMScript->setDataTrigger($trigger);
                     $oPMScript->setScript($trigger['ST_CONDITION']);
                     $oPMScript->setExecutedOn(PMScript::CONDITION);
                     $execute = $oPMScript->evaluate();
                 }
 
+                //Execute the trigger
                 if ($execute) {
                     $oPMScript->setDataTrigger($trigger);
                     $oPMScript->setScript($trigger['TRI_WEBBOT']);
                     $executedOn = $oPMScript->getExecutionOriginForAStep($stepType, $stepUidObj, $triggerType);
                     $oPMScript->setExecutedOn($executedOn);
                     $oPMScript->execute();
-                    $fieldsTrigger = $oPMScript->aFields;
+                    $varsChanged = $oPMScript->getVarsChanged();
+                    $appDataAfterTrigger = $oPMScript->aFields;
+
+                    //Get the key and values changed
+                    $fieldsTrigger = $this->findKeysAndValues($appDataAfterTrigger, $varsChanged);
 
                     //We will be load the last appData
                     if ($oPMScript->executedOn() === $oPMScript::AFTER_ROUTING) {
@@ -3503,19 +3550,83 @@ class Cases
                         }
                     }
 
+                    //Register the time execution
                     $this->arrayTriggerExecutionTime[$trigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
+                    //Register the message of execution
+                    $varTriggers = "&nbsp;- " . nl2br(htmlentities($trigger["TRI_TITLE"], ENT_QUOTES)) . "<br/>";
+                    $this->addTriggerMessageExecution($varTriggers);
                 }
             }
+
             /*----------------------------------********---------------------------------*/
-            if ($strFoundDisabledCode != "") {
-                G::SendTemporalMessage(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER_TO_EXECUTE", array($strFoundDisabledCode)), "", "string");
+            if (!empty($foundDisabledCode)) {
+                G::SendTemporalMessage(
+                    G::LoadTranslation("ID_DISABLED_CODE_TRIGGER_TO_EXECUTE", [$foundDisabledCode]),
+                    "",
+                    "string"
+                );
             }
             /*----------------------------------********---------------------------------*/
+
+            //The Code Scanner can be interrupt the execution
+            if (empty($fieldsTrigger)) {
+                return $fieldsCase;
+            }
 
             return $fieldsTrigger;
         } else {
             return $fieldsCase;
         }
+    }
+
+    /**
+     * Find keys and values into the appData
+     *
+     * @param array $appData
+     * @param array $keyToSearch
+     *
+     * @return array
+    */
+    private function findKeysAndValues(array $appData, array $keyToSearch)
+    {
+        $keysAndValues = [];
+        foreach ($keyToSearch as $key) {
+            $keysAndValues[$key] = $appData[$key];
+        }
+
+        return $keysAndValues;
+    }
+
+    /**
+     * Review the code in the trigger if the feature is enable
+     *
+     * @param CodeScanner $cs
+     * @param string $code
+     * @param string $triTitle
+     *
+     * @return string
+     *
+    */
+    private function codeScannerReview(CodeScanner $cs, $code, $triTitle)
+    {
+        $foundDisabledCode = "";
+        /*----------------------------------********---------------------------------*/
+        if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+            //Check disabled code
+            $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $code);
+
+            if (!empty($arrayFoundDisabledCode)) {
+                $codeAndLine = "";
+                foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
+                    $codeAndLine .= (($codeAndLine != "") ? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE",
+                            [$key, implode(", ", $value)]);
+                }
+                $foundDisabledCode .= "<br />- " . $triTitle . ": " . $codeAndLine;
+            }
+        }
+        /*----------------------------------********---------------------------------*/
+
+        return $foundDisabledCode;
     }
 
     /**

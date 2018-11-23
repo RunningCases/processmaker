@@ -118,6 +118,11 @@ class PMScript
     protected $executedOn = self::UNDEFINED_ORIGIN;
 
     /**
+     * Variables changed in the trigger execution
+    */
+    private $varsChanged = [];
+
+    /**
      * Constructor of the class PMScript
      *
      * @return void
@@ -125,6 +130,28 @@ class PMScript
     public function __construct()
     {
         $this->aFields['__ERROR__'] = 'none';
+    }
+
+    /**
+     * Set the fields changed in the trigger execution
+     *
+     * @param array $v
+     *
+     * @return void
+     */
+    public function setVarsChanged(array $v)
+    {
+        $this->varsChanged = $v;
+    }
+
+    /**
+     * Get the fields changed in the trigger execution
+     *
+     * @return array
+     */
+    public function getVarsChanged()
+    {
+        return $this->varsChanged;
     }
 
     /**
@@ -437,7 +464,7 @@ class PMScript
         $sScript = "try {\n" . $sScript . "\n} catch (Exception \$oException) {\n " . " \$this->aFields['__ERROR__'] = utf8_encode(\$oException->getMessage());\n}";
 
         $this->executeAndCatchErrors($sScript, $this->sScript);
-
+        $this->setVarsChanged($this->affected_fields);
         $this->aFields["__VAR_CHANGED__"] = implode(",", $this->affected_fields);
         for ($i = 0; $i < count($this->affected_fields); $i ++) {
             $_SESSION['TRIGGER_DEBUG']['DATA'][] = Array('key' => $this->affected_fields[$i], 'value' => isset($this->aFields[$this->affected_fields[$i]]) ? $this->aFields[$this->affected_fields[$i]] : ''
