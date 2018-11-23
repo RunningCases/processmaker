@@ -4866,6 +4866,8 @@
         <column name="MESS_ENGINE" type="VARCHAR" size="256" required="true" default=""/>
         <column name="MESS_SERVER" type="VARCHAR" size="256" required="true" default=""/>
         <column name="MESS_PORT" type="INTEGER" required="true" default="0"/>
+        <column name="MESS_INCOMING_SERVER" type="VARCHAR" size="256" required="true" default=""/>
+        <column name="MESS_INCOMING_PORT" type="INTEGER" required="true" default="0"/>
         <column name="MESS_RAUTH" type="INTEGER" required="true" default="0"/>
         <column name="MESS_ACCOUNT" type="VARCHAR" size="256" required="true" default=""/>
         <column name="MESS_PASSWORD" type="VARCHAR" size="256" required="true" default=""/>
