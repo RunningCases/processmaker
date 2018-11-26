@@ -23478,6 +23478,18 @@ msgid "[LABEL/ID_SERVER] Server"
 msgstr "Server"
 
 # TRANSLATION
+# LABEL/ID_OUTGOING_SERVER
+#: LABEL/ID_OUTGOING_SERVER
+msgid "Outgoing Server"
+msgstr "Outgoing Server"
+
+# TRANSLATION
+# LABEL/ID_INCOMING_SERVER
+#: LABEL/ID_INCOMING_SERVER
+msgid "Incoming Server"
+msgstr "Incoming Server"
+
+# TRANSLATION
 # LABEL/ID_SERVER_ADDRESS
 #: LABEL/ID_SERVER_ADDRESS
 msgid "Server Address"
@@ -27928,6 +27940,18 @@ msgstr "Photo gallery"
 #: LABEL/PORT_DEFAULT
 msgid "Port (default 25)"
 msgstr "Port (default 25)"
+
+# TRANSLATION
+# LABEL/INCOMING_PORT_DEFAULT
+#: LABEL/INCOMING_PORT_DEFAULT
+msgid "Incoming Port (default 143)"
+msgstr "Incoming Port (default 143)"
+
+# TRANSLATION
+# LABEL/OUTGOING_PORT_DEFAULT
+#: LABEL/OUTGOING_PORT_DEFAULT
+msgid "Outgoing Port (default 25)"
+msgstr "Outgoing Port (default 25)"
 
 # TRANSLATION
 # LABEL/REQUIRE_AUTHENTICATION
