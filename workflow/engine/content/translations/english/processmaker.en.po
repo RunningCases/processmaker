@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.3.1)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-10-23 16:48:05\n"
+"PO-Revision-Date: 2018-11-23 20:16:26\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -1706,6 +1706,24 @@ msgid "Please add your comments above this section. Don't modify or delete this 
 msgstr "Please add your comments above this section. Don't modify or delete this section."
 
 # TRANSLATION
+# LABEL/ID_ABE_CASE_NOTE_ANSWER
+#: LABEL/ID_ABE_CASE_NOTE_ANSWER
+msgid "Answer: {optionLabel}"
+msgstr "Answer: {optionLabel}"
+
+# TRANSLATION
+# LABEL/ID_ABE_CASE_NOTE_COMMENT
+#: LABEL/ID_ABE_CASE_NOTE_COMMENT
+msgid "Comment: {emailBody}"
+msgstr "Comment: {emailBody}"
+
+# TRANSLATION
+# LABEL/ID_ABE_CASE_NOTE_HEADER
+#: LABEL/ID_ABE_CASE_NOTE_HEADER
+msgid "{emailAccount} has completed a task from Actions by Email."
+msgstr "{emailAccount} has completed a task from Actions by Email."
+
+# TRANSLATION
 # LABEL/ID_ABE_FORM_ALREADY_FILLED
 #: LABEL/ID_ABE_FORM_ALREADY_FILLED
 msgid "The form has already been filled and sent."
@@ -1716,6 +1734,54 @@ msgstr "The form has already been filled and sent."
 #: LABEL/ID_ABE_INFORMATION_SUBMITTED
 msgid "The information was submitted. Thank you."
 msgstr "The information was submitted. Thank you."
+
+# TRANSLATION
+# LABEL/ID_ABE_LOG_ALREADY_ROUTED
+#: LABEL/ID_ABE_LOG_ALREADY_ROUTED
+msgid "The case was identified correctly but it was already routed."
+msgstr "The case was identified correctly but it was already routed."
+
+# TRANSLATION
+# LABEL/ID_ABE_LOG_CANNOT_BE_IDENTIFIED
+#: LABEL/ID_ABE_LOG_CANNOT_BE_IDENTIFIED
+msgid "The case cannot be identified."
+msgstr "The case cannot be identified."
+
+# TRANSLATION
+# LABEL/ID_ABE_LOG_CANNOT_READ
+#: LABEL/ID_ABE_LOG_CANNOT_READ
+msgid "The application cannot read the email receiver account."
+msgstr "The application cannot read the email receiver account."
+
+# TRANSLATION
+# LABEL/ID_ABE_LOG_PROCESSED_OK
+#: LABEL/ID_ABE_LOG_PROCESSED_OK
+msgid "The answer was processed correctly."
+msgstr "The answer was processed correctly."
+
+# TRANSLATION
+# LABEL/ID_ABE_LOG_ROUTING_FAILED
+#: LABEL/ID_ABE_LOG_ROUTING_FAILED
+msgid "The case was identified correctly but the routing process has failed."
+msgstr "The case was identified correctly but the routing process has failed."
+
+# TRANSLATION
+# LABEL/ID_ABE_RESPONSE_ALREADY_ROUTED
+#: LABEL/ID_ABE_RESPONSE_ALREADY_ROUTED
+msgid "Your answer cannot be processed because the case was already routed or is no longer assigned to you."
+msgstr "Your answer cannot be processed because the case was already routed or is no longer assigned to you."
+
+# TRANSLATION
+# LABEL/ID_ABE_RESPONSE_CANNOT_BE_IDENTIFIED
+#: LABEL/ID_ABE_RESPONSE_CANNOT_BE_IDENTIFIED
+msgid "Your answer cannot be processed, please try again and make sure to keep the subject code untouched."
+msgstr "Your answer cannot be processed, please try again and make sure to keep the subject code untouched."
+
+# TRANSLATION
+# LABEL/ID_ABE_RESPONSE_ROUTING_FAILED
+#: LABEL/ID_ABE_RESPONSE_ROUTING_FAILED
+msgid "Your answer cannot be processed because there is an error in the flow definition, please notify to this issue to the system administrator."
+msgstr "Your answer cannot be processed because there is an error in the flow definition, please notify to this issue to the system administrator."
 
 # TRANSLATION
 # LABEL/ID_ABE_RESPONSE_SENT
@@ -13626,6 +13692,12 @@ msgid "Please press the \"Generate Link\" button."
 msgstr "Please press the \"Generate Link\" button."
 
 # TRANSLATION
+# LABEL/ID_MAFE_660cfca112471f69246e9942f5e8afd1
+#: LABEL/ID_MAFE_660cfca112471f69246e9942f5e8afd1
+msgid "Store email body in"
+msgstr "Store email body in"
+
+# TRANSLATION
 # LABEL/ID_MAFE_66285b36f894a5439af5a98e3e1a36d2
 #: LABEL/ID_MAFE_66285b36f894a5439af5a98e3e1a36d2
 msgid "Process Objects"
@@ -14556,6 +14628,12 @@ msgid "[LABEL/ID_MAFE_86fd9a7abc9f357e7fa206b2d42ec5ba] Destination Path"
 msgstr "Destination Path"
 
 # TRANSLATION
+# LABEL/ID_MAFE_8738321e65db027ee6476c0ab12d8cd5
+#: LABEL/ID_MAFE_8738321e65db027ee6476c0ab12d8cd5
+msgid "Store option in"
+msgstr "Store option in"
+
+# TRANSLATION
 # LABEL/ID_MAFE_87557f11575c0ad78e4e28abedc13b6e
 #: LABEL/ID_MAFE_87557f11575c0ad78e4e28abedc13b6e
 msgid "End"
@@ -15364,6 +15442,12 @@ msgstr "Properties"
 #: LABEL/ID_MAFE_9fced129522f128b2445a41fb0b6ef9f
 msgid "[LABEL/ID_MAFE_9fced129522f128b2445a41fb0b6ef9f] checkbox"
 msgstr "checkbox"
+
+# TRANSLATION
+# LABEL/ID_MAFE_a036226d97d1d0d725d494a1431f322c
+#: LABEL/ID_MAFE_a036226d97d1d0d725d494a1431f322c
+msgid "Receiver account"
+msgstr "Receiver account"
 
 # TRANSLATION
 # LABEL/ID_MAFE_a05ac4341235111bd2cba5c3c105ba81
@@ -17914,6 +17998,12 @@ msgstr "Users"
 #: LABEL/ID_MAFE_f9ab05454998236921a6b0e281fae632
 msgid "validate"
 msgstr "validate"
+
+# TRANSLATION
+# LABEL/ID_MAFE_fa2b5b7c9bccd35e42cb74042690a091
+#: LABEL/ID_MAFE_fa2b5b7c9bccd35e42cb74042690a091
+msgid "Email response"
+msgstr "Email response"
 
 # TRANSLATION
 # LABEL/ID_MAFE_fa3c608c8fc755543f0d37afd6a42651
@@ -25962,18 +26052,6 @@ msgid "The file has not been attached because the extension is not allowed or be
 msgstr "The file has not been attached because the extension is not allowed or because the content doesn't correspond."
 
 # TRANSLATION
-# LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
-#: LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
-msgid "File size exceeds the allowable limit of {0}"
-msgstr "File size exceeds the allowable limit of {0}"
-
-# TRANSLATION
-# LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
-#: LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
-msgid "Invalid file format, please upload a file with one of the following formats {0}"
-msgstr "Invalid file format, please upload a file with one of the following formats {0}"
-
-# TRANSLATION
 # LABEL/ID_UPLOAD_ERR_NO_FILE
 #: LABEL/ID_UPLOAD_ERR_NO_FILE
 msgid "No file was uploaded"
@@ -26020,6 +26098,18 @@ msgstr "Upload from file"
 #: LABEL/ID_UPLOAD_IMAGE
 msgid "Upload image"
 msgstr "Upload image"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
+#: LABEL/ID_UPLOAD_INVALID_DOC_MAX_FILESIZE
+msgid "File size exceeds the allowable limit of {0}"
+msgstr "File size exceeds the allowable limit of {0}"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
+#: LABEL/ID_UPLOAD_INVALID_DOC_TYPE_FILE
+msgid "Invalid file format, please upload a file with one of the following formats {0}"
+msgstr "Invalid file format, please upload a file with one of the following formats {0}"
 
 # TRANSLATION
 # LABEL/ID_UPLOAD_LANGUAGE
