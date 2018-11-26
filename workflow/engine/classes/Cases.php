@@ -3545,10 +3545,12 @@ class Cases
                     if ($oPMScript->executedOn() === $oPMScript::AFTER_ROUTING) {
                         $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
                         if (!empty($appUid)) {
-                            $lastAppFields = $this->loadCase($appUid)['APP_DATA'];
-                            $fieldsTrigger = array_merge($lastAppFields, $fieldsTrigger);
+                            //Update $fieldsCase with the last appData
+                            $fieldsCase = $this->loadCase($appUid)['APP_DATA'];
                         }
                     }
+                    //Merge the current appData with variables changed
+                    $fieldsCase = array_merge($fieldsCase, $fieldsTrigger);
 
                     //Register the time execution
                     $this->arrayTriggerExecutionTime[$trigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
@@ -3567,16 +3569,9 @@ class Cases
                 );
             }
             /*----------------------------------********---------------------------------*/
-
-            //The Code Scanner can be interrupt the execution
-            if (empty($fieldsTrigger)) {
-                return $fieldsCase;
-            }
-
-            return $fieldsTrigger;
-        } else {
-            return $fieldsCase;
         }
+
+        return $fieldsCase;
     }
 
     /**
