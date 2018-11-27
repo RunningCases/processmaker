@@ -1115,6 +1115,7 @@ CREATE TABLE `USERS_PROPERTIES`
 	`USR_LOGGED_NEXT_TIME` INTEGER default 0,
 	`USR_PASSWORD_HISTORY` MEDIUMTEXT,
 	`USR_SETTING_DESIGNER` MEDIUMTEXT,
+	`PMDYNAFORM_FIRST_TIME` CHAR(1) default '0',
 	PRIMARY KEY (`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------

@@ -30,6 +30,7 @@ class Designer extends Controller
      */
     public function index($httpData)
     {
+        global $RBAC;
         $proUid = isset($httpData->prj_uid) ? $httpData->prj_uid : '';
         $appUid = isset($httpData->app_uid) ? $httpData->app_uid : '';
         $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
@@ -40,6 +41,9 @@ class Designer extends Controller
         $consolidated = 0;
         $enterprise = 0;
         $distribution = 0;
+
+        $usrUid = $RBAC->userObj->getUsrUid();
+        $userProperties = UsersPropertiesPeer::retrieveByPk($usrUid);
 
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = PMLicensedFeatures::getSingleton();
@@ -65,6 +69,7 @@ class Designer extends Controller
         $this->setVar("SYS_LANG", SYS_LANG);
         $this->setVar("SYS_SKIN", SYS_SKIN);
         $this->setVar('HTTP_SERVER_HOSTNAME', System::getHttpServerHostnameRequestsFrontEnd());
+        $this->setVar('PMDYNAFORM_FIRST_TIME', $userProperties->getPmdynaformFirstTime());
 
         if ($debug) {
             if (!file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
