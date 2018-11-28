@@ -222,8 +222,6 @@ emailServer.application = {
 
                     Ext.getCmp("txtServer").allowBlank = false;
                     Ext.getCmp("txtPort").allowBlank = false;
-                    Ext.getCmp("txtIncomingServer").allowBlank = false;
-                    Ext.getCmp("txtIncomingPort").allowBlank = false;
                     Ext.getCmp("txtAccountFrom").allowBlank = false;
                     break;
                 case "UPD":
@@ -302,6 +300,8 @@ emailServer.application = {
 
                 Ext.getCmp("txtServer").allowBlank = false;
                 Ext.getCmp("txtPort").allowBlank = false;
+                Ext.getCmp("txtIncomingServer").allowBlank = true;
+                Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
             } else if (cboEmailEngine === "IMAP") {
                 Ext.getCmp("txtServer").setVisible(true);
@@ -327,6 +327,8 @@ emailServer.application = {
 
                 Ext.getCmp("txtServer").allowBlank = false;
                 Ext.getCmp("txtPort").allowBlank = false;
+                Ext.getCmp("txtIncomingServer").allowBlank = false;
+                Ext.getCmp("txtIncomingPort").allowBlank = false;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
             } else {
                 //MAIL
@@ -345,6 +347,8 @@ emailServer.application = {
 
                 Ext.getCmp("txtServer").allowBlank = true;
                 Ext.getCmp("txtPort").allowBlank = true;
+                Ext.getCmp("txtIncomingServer").allowBlank = true;
+                Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = true;
                 Ext.getCmp("txtPassword").allowBlank = true;
             }
