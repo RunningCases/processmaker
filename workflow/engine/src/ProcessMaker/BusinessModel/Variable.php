@@ -799,9 +799,9 @@ class Variable
             $field->queryField = true;
             $field->queryInputData = $params;
             $field->queryFilter = $filter;
+            $field->querySearch = $query;
             $field->queryStart = $start;
             $field->queryLimit = $limit;
-            $field->querySearch = $query;
             //Grids only access the global variables of 'ProcessMaker', other variables are removed.
             //The property 'columnWidth' is only present in the controls of a grid,
             //in the current change there is no specific property that indicates
