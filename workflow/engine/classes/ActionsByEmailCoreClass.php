@@ -731,11 +731,13 @@ class ActionsByEmailCoreClass extends PMPlugin
      */
     private function getBodyByResponse($fieldValue)
     {
+        $abeRequest = $this->getAbeRequest();
         $bodyToCrypt = [
             'workspace' => $this->getWorkspace(),
             'appUid' => $this->getAppUid(),
             'delIndex' => $this->getIndex(),
             'fieldValue' => $fieldValue,
+            'ABE_REQ_UID' => $abeRequest['ABE_REQ_UID']
         ];
         $bodyToCrypt = G::json_encode($bodyToCrypt);
 
