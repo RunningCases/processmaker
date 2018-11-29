@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\ActionsByEmail;
 
 use AbeConfigurationPeer;
+use AbeResponses;
 use ActionsByEmailCoreClass;
 use AppDelegation;
 use AppNotes;
@@ -220,6 +221,27 @@ class ResponseReader
             $dataField[$actionBodyField] = $textPlain;
             $caseFieldsABE['APP_DATA'] = array_merge($caseFieldsABE['APP_DATA'], $dataField);
 
+            $dataResponses = [];
+            $dataResponses['ABE_REQ_UID'] = $caseInfo['ABE_REQ_UID'];
+            $dataResponses['ABE_RES_CLIENT_IP'] = 'localhost';
+            $dataResponses['ABE_RES_DATA'] = serialize($dataField);
+            $dataResponses['ABE_RES_STATUS'] = 'PENDING';
+            $dataResponses['ABE_RES_MESSAGE'] = '';
+
+            try {
+                $abeAbeResponsesInstance = new AbeResponses();
+                $dataResponses['ABE_RES_UID'] = $abeAbeResponsesInstance->createOrUpdate($dataResponses);
+            } catch (Exception $e) {
+                Bootstrap::registerMonolog(
+                    $this->channel,
+                    300,
+                    $e->getMessage(),
+                    $this->case,
+                    config("system.workspace"),
+                    'processmaker.log'
+                );
+            }
+
             ChangeLog::getChangeLog()
                 ->getUsrIdByUsrUid($caseFieldsABE['CURRENT_USER_UID'], true)
                 ->setSourceId(ChangeLog::FromABE);
@@ -250,6 +272,24 @@ class ResponseReader
                 throw (new Exception(G::LoadTranslation('ID_ABE_LOG_ROUTING_FAILED'), 400));
             }
 
+            //Update AbeResponses
+            $dataResponses['ABE_RES_STATUS'] = ($code == 0)? 'SENT' : 'ERROR';
+            $dataResponses['ABE_RES_MESSAGE'] = ($code == 0)? '-' : $result->message;
+
+            try {
+                $abeAbeResponsesInstance = new AbeResponses();
+                $abeAbeResponsesInstance->createOrUpdate($dataResponses);
+            } catch (Exception $e) {
+                Bootstrap::registerMonolog(
+                    $this->channel,
+                    300,
+                    $e->getMessage(),
+                    $this->case,
+                    config("system.workspace"),
+                    'processmaker.log'
+                );
+            }
+            $dataAbeRequests = loadAbeRequest($caseInfo['ABE_REQ_UID']);
             //Save Cases Notes
             if ($dataAbe['ABE_CASE_NOTE_IN_RESPONSE'] == 1) {
                 $customGrid = unserialize($dataAbe['ABE_CUSTOM_GRID']);
@@ -267,6 +307,8 @@ class ResponseReader
                 $noteContent = addslashes($noteText);
                 $appNotes->postNewNote($caseInfo['appUid'], $caseFieldsABE['APP_DATA']['USER_LOGGED'], $noteContent, false);
             }
+            $dataAbeRequests['ABE_REQ_ANSWERED'] = 1;
+            $code == 0 ? uploadAbeRequest($dataAbeRequests) : '';
         } catch (Exception $e) {
             if ($e->getCode() == 400) {
                 throw (new Exception($e->getMessage(), $e->getCode()));
