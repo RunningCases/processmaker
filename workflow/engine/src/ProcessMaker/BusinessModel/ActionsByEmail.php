@@ -4,30 +4,26 @@ namespace ProcessMaker\BusinessModel;
 
 use AbeConfiguration;
 use AbeConfigurationPeer;
-use AppMessage;
 use AbeRequests;
 use AbeRequestsPeer;
 use AbeResponsesPeer;
-use ApplicationPeer;
 use AppDelegation;
 use AppDelegationPeer;
+use AppMessage;
 use Criteria;
+use DynaformPeer;
 use EmailServerPeer;
 use Exception;
 use G;
-use Publisher;
-use ProcessMaker\BusinessModel\EmailServer;
-use ProcessMaker\Core\System;
-use ProcessMaker\Plugins\PluginRegistry;
 use PmDynaform;
 use PMLicensedFeatures;
-use ProcessPeer;
+use ProcessMaker\Core\System;
+use ProcessMaker\Plugins\PluginRegistry;
+use Publisher;
 use ResultSet;
 use SpoolRun;
-use Users as ClassUsers;
 use stdClass;
-use UsersPeer;
-use TaskPeer;
+use Users as ClassUsers;
 
 /**
  * Description of ActionsByEmailService
@@ -543,48 +539,54 @@ class ActionsByEmail
 
     /**
      * Get the decision from Actions By Email by BPMN dynaform
-     * @param array $arrayData
+     *
+     * @param array $dataRes
      *
      * @return string $message
      */
     public function viewFormBpmn(array $dataRes)
     {
-        $_SESSION['CURRENT_DYN_UID']       = trim($dataRes['DYN_UID']);
-        $configuration['DYN_UID']          = trim($dataRes['DYN_UID']);
+        $_SESSION['CURRENT_DYN_UID'] = trim($dataRes['DYN_UID']);
+        $configuration['DYN_UID'] = trim($dataRes['DYN_UID']);
         $configuration['CURRENT_DYNAFORM'] = trim($dataRes['DYN_UID']);
-        $configuration['PRO_UID']          = trim($dataRes['PRO_UID']);
+        $configuration['PRO_UID'] = trim($dataRes['PRO_UID']);
 
         $criteriaD = new Criteria();
-        $criteriaD->addSelectColumn(\DynaformPeer::DYN_CONTENT);
-        $criteriaD->addSelectColumn(\DynaformPeer::PRO_UID);
-        $criteriaD->add(\DynaformPeer::DYN_UID, trim($dataRes['DYN_UID']));
-        $resultD = \DynaformPeer::doSelectRS($criteriaD);
+        $criteriaD->addSelectColumn(DynaformPeer::DYN_CONTENT);
+        $criteriaD->addSelectColumn(DynaformPeer::PRO_UID);
+        $criteriaD->add(DynaformPeer::DYN_UID, trim($dataRes['DYN_UID']));
+        $resultD = DynaformPeer::doSelectRS($criteriaD);
         $resultD->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $resultD->next();
         $configuration = $resultD->getRow();
 
-        $field = new \stdClass();
+        $field = new stdClass();
+        $field->type = '';
+        $field->label = '';
+        $field->options = [];
+
         $obj = new PmDynaform($configuration);
 
+        $message = G::LoadTranslation('ID_CASE_RESPONSE_NOT_AVAILABLE');
         if ($dataRes['ABE_RES_DATA'] !== '') {
-            $value       = unserialize($dataRes['ABE_RES_DATA']);
-            $actionField = str_replace(array('@@','@#','@=','@%','@?','@$'), '', $dataRes['ABE_ACTION_FIELD']);
-            $variables   = G::json_decode($configuration['DYN_CONTENT'], true);
+            $value = unserialize($dataRes['ABE_RES_DATA']);
+            $actionField = str_replace(['@@', '@#', '@=', '@%', '@?', '@$'], '', $dataRes['ABE_ACTION_FIELD']);
+            $variables = G::json_decode($configuration['DYN_CONTENT'], true);
             if (is_array($value)) {
-                if(isset($variables['items'][0]['items'])) {
+                if (isset($variables['items'][0]['items'])) {
                     $fields = $variables['items'][0]['items'];
                 }
             } else {
-                if(isset($variables['items'][0]['items'])) {
+                if (isset($variables['items'][0]['items'])) {
                     $fields = $variables['items'][0]['items'];
                     foreach ($fields as $key => $row) {
-                        foreach($row as $var) {
-                            if(isset($var['variable'])) {
+                        foreach ($row as $var) {
+                            if (isset($var['variable'])) {
                                 if ($var['variable'] === $actionField) {
                                     $field->label = isset($var['label']) ? $var['label'] : '';
-                                    $field->type  = isset($var['type']) ? $var['type'] : '';
+                                    $field->type = isset($var['type']) ? $var['type'] : '';
                                     $values = $var['options'];
-                                    foreach ($values as $val){
+                                    foreach ($values as $val) {
                                         $field->options[$val['value']] = $val['value'];
                                     }
                                 }
@@ -592,22 +594,22 @@ class ActionsByEmail
                         }
                     }
                 }
-                $message = '';
+
                 switch ($field->type) {
                     case 'dropdown':
                     case 'radiogroup':
                     case 'radio':
-                        $message .= $field->label . ': ';
+                        $message = $field->label . ': ';
                         $message .= $field->options[$value];
                         break;
                     case 'yesno':
-                        $message .= $field->label . ': ';
-                        $message .= ($value == 1) ? G::loadTranslation('ID_YES') : G::loadTranslation('ID_NO');
+                        $message = $field->label . ': ';
+                        $message .= $value == 1 ? G::LoadTranslation('ID_YES') : G::LoadTranslation('ID_NO');
                         break;
                     case 'checkgroup':
                     case 'checkbox':
-                        $message .= $field->label . ': ';
-                        $message .= ($value == 'On') ? G::loadTranslation('ID_CHECK') : G::loadTranslation('ID_UNCHECK');
+                        $message = $field->label . ': ';
+                        $message .= $value == 'On' ? G::LoadTranslation('ID_CHECK') : G::LoadTranslation('ID_UNCHECK');
                         break;
                 }
             }

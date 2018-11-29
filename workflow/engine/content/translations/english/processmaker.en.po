@@ -3864,6 +3864,12 @@ msgid "The case {APP_NUMBER} was reactivated successfully!"
 msgstr "The case {APP_NUMBER} was reactivated successfully!"
 
 # TRANSLATION
+# LABEL/ID_CASE_RESPONSE_NOT_AVAILABLE
+#: LABEL/ID_CASE_RESPONSE_NOT_AVAILABLE
+msgid "No response available, please review the case information"
+msgstr "No response available, please review the case information"
+
+# TRANSLATION
 # LABEL/ID_CASE_ROUTED_TO
 #: LABEL/ID_CASE_ROUTED_TO
 msgid "Case routed to"
