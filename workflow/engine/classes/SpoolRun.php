@@ -406,13 +406,14 @@ class SpoolRun
                 switch ($this->config['MESS_ENGINE']) {
                     case 'MAIL':
                     case 'PHPMAILER':
-
+                    case 'IMAP':
 
                         switch ($this->config['MESS_ENGINE']) {
                             case 'MAIL':
                                 $oPHPMailer = new PHPMailer();
                                 $oPHPMailer->Mailer = 'mail';
                                 break;
+                            case 'IMAP':
                             case 'PHPMAILER':
                                 $oPHPMailer = new PHPMailer(true);
                                 $oPHPMailer->Mailer = 'smtp';
@@ -424,6 +425,7 @@ class SpoolRun
                         switch ($this->config['MESS_ENGINE']) {
                             case 'MAIL':
                                 break;
+                            case 'IMAP':
                             case 'PHPMAILER':
                                 //Posible Options for SMTPSecure are: "", "ssl" or "tls"
                                 if (isset($this->config['SMTPSecure']) && preg_match('/^(ssl|tls)$/', $this->config['SMTPSecure'])) {
