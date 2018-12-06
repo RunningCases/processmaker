@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This is a partial list of the known types, add the type you want to be recognized, 
+ * This is a partial list of the known types, add the type you want to be recognized,
  * this affects the whole application globally.
- * 
+ *
  * https://www.iana.org/assignments/media-types/media-types.xml
  */
 return [
@@ -22,7 +22,8 @@ return [
     'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     'pm' => 'text/plain',
     'pmt' => 'text/plain',
-    'pmx' => 'application/xml',
+    'pmx' => ['application/xml', 'text/xml', 'text/html'],
+    'pmx2' => ['application/xml', 'text/xml', 'text/html'],
     'po' => 'text/x-po',
     'pdf' => 'application/pdf',
     'png' => 'image/png',
