@@ -36,7 +36,7 @@ $response = array();
 $status = 1;
 
 try {
-    ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+    ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
         throw new Exception($validator->getMessage());
     });
 
