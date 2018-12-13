@@ -200,7 +200,7 @@ function newSkin ($baseSkin = 'classic')
 function importSkin ()
 {
     try {
-        ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+        ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
             throw new Exception($validator->getMessage());
         });
         if (! isset( $_FILES['uploadedFile'] )) {

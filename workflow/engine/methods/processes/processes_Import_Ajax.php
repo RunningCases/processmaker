@@ -25,7 +25,7 @@
 use \ProcessMaker\Importer\XmlImporter;
 use ProcessMaker\Validation\ValidationUploadedFiles;
 
-ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
     echo G::json_encode([
         'status' => 'ERROR',
         'success' => true,
