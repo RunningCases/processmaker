@@ -6421,7 +6421,7 @@ class Processes
         //Prepare to delete labels related in CONTENT
         $criteria = new Criteria(ContentPeer::DATABASE_NAME);
         $criteria->addSelectColumn('*');
-        $criteria->add(ContentPeer::CON_CATEGORY, $conCategories, Criteria::IN);
+        $criteria->add(ContentPeer::CON_CATEGORY, array_keys($conCategories), Criteria::IN);
         $criteria->add(ContentPeer::CON_ID, $conId);
         $criteria->add(ContentPeer::CON_LANG, $conLang);
         $criteria->add(ContentPeer::CON_PARENT, $conParent);
