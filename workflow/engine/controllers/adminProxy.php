@@ -1026,7 +1026,7 @@ class adminProxy extends HttpProxyController
      */
     public function uploadImage()
     {
-        ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+        ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
             echo G::json_encode([
                 'success' => true,
                 'failed' => true,

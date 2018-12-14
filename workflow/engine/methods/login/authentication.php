@@ -317,12 +317,14 @@ try {
     }
 
     $userPropertyInfo = $userProperty->loadOrCreateIfNotExists($_SESSION['USER_LOGGED'], array('USR_PASSWORD_HISTORY' => serialize(array(G::encryptOld($pwd)))));
+    //Get the errors in the password
     $errorInPassword = $userProperty->validatePassword(
         $_POST['form']['USR_PASSWORD'],
         $userPropertyInfo['USR_LAST_UPDATE_DATE'],
         $userPropertyInfo['USR_LOGGED_NEXT_TIME']
     );
-
+    //Get the policies enabled
+    $policiesInPassword = $userProperty->validatePassword('', date('Y-m-d'), $userPropertyInfo['USR_LOGGED_NEXT_TIME'], true);
     //Enable change password from GAP
     if (!isset($enableChangePasswordAfterNextLogin)) {
         $enableChangePasswordAfterNextLogin = true;
@@ -333,14 +335,13 @@ try {
             define('NO_DISPLAY_USERNAME', 1);
         }
         //We will to get the message for the login
-        $messPassword = [];
-        $policySection = $userProperty->getMessageValidatePassword($errorInPassword, false);
+        $messPassword = $policySection = $userProperty->getMessageValidatePassword($policiesInPassword, false);
         $changePassword = '<span style="font-weight:normal;">';
         if (array_search('ID_PPP_CHANGE_PASSWORD_AFTER_NEXT_LOGIN', $errorInPassword)) {
             $changePassword .= G::LoadTranslation('ID_PPP_CHANGE_PASSWORD_AFTER_NEXT_LOGIN') . '<br/><br/>';
         }
-        $messPassword['DESCRIPTION'] = $changePassword . $policySection['DESCRIPTION'] . '</span>';
 
+        $messPassword['DESCRIPTION'] = $changePassword . $policySection['DESCRIPTION'] . '</span>';
         $G_PUBLISH = new Publisher;
         $version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
         $version = isset($version[0]) ? intval($version[0]) : 0;

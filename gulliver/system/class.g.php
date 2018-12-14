@@ -5490,7 +5490,7 @@ class G
     public static function verifyInputDocExtension($InpDocAllowedFiles, $fileName, $filesTmpName)
     {
         $error = null;
-        ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) use(&$error) {
+        ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) use(&$error) {
             $error = new stdclass();
             $error->status = false;
             $error->message = $validator->getMessage();

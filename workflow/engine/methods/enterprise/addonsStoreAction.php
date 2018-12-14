@@ -18,7 +18,7 @@ function runBgProcessmaker($task, $log)
 }
 
 try {
-    ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+    ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
         throw new ExceptionRestApi($validator->getMessage());
     });
     if (isset($_REQUEST["action"])) {

@@ -1029,7 +1029,7 @@ class Processes
             $oData->process['PRO_DYNAFORMS']['PROCESS'] = '';
         }
 
-        if ($oData->process['PRO_DYNAFORMS']['PROCESS'] != '') {
+        if (!empty($oData->process['PRO_DYNAFORMS']['PROCESS']) && !empty($map[$oData->process['PRO_DYNAFORMS']['PROCESS']])) {
             $oData->process['PRO_DYNAFORMS']['PROCESS'] = $map[$oData->process['PRO_DYNAFORMS']['PROCESS']];
         }
 
@@ -1994,6 +1994,13 @@ class Processes
                 $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE, $row['INP_DOC_MAX_FILESIZE']);
                 $criteria->add(InputDocumentPeer::INP_DOC_MAX_FILESIZE_UNIT, $row['INP_DOC_MAX_FILESIZE_UNIT']);
                 BasePeer::doInsert($criteria, $con);
+
+                //Insert in CONTENT
+                $labels = [
+                    'INP_DOC_TITLE' => $row['INP_DOC_TITLE'],
+                    'INP_DOC_DESCRIPTION' => !empty($row['INP_DOC_DESCRIPTION']) ? $row['INP_DOC_DESCRIPTION'] : ''
+                ];
+                $this->insertToContentTable($con, $labels, $row['INP_DOC_UID'], SYS_LANG);
             }
             $con->commit();
         } catch (Exception $e) {
@@ -2178,6 +2185,13 @@ class Processes
                 $criteria->add(OutputDocumentPeer::OUT_DOC_PDF_SECURITY_PERMISSIONS, $row['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
                 $criteria->add(OutputDocumentPeer::OUT_DOC_OPEN_TYPE, $row['OUT_DOC_OPEN_TYPE']);
                 BasePeer::doInsert($criteria, $con);
+
+                //Insert in CONTENT
+                $labels = ['OUT_DOC_TITLE' => $row['OUT_DOC_TITLE'],
+                    'OUT_DOC_DESCRIPTION' => !empty($row['OUT_DOC_DESCRIPTION']) ? $row['OUT_DOC_DESCRIPTION'] : '',
+                    'OUT_DOC_FILENAME' => $row['OUT_DOC_FILENAME'],
+                    'OUT_DOC_TEMPLATE' => $row['OUT_DOC_TEMPLATE']];
+                $this->insertToContentTable($con, $labels, $row['OUT_DOC_UID'], SYS_LANG);
             }
             $con->commit();
         } catch (Exception $e) {
@@ -3104,6 +3118,13 @@ class Processes
                 $criteria->add(DynaformPeer::DYN_VERSION, $row['DYN_VERSION']);
                 $criteria->add(DynaformPeer::DYN_UPDATE_DATE, $row['DYN_UPDATE_DATE']);
                 BasePeer::doInsert($criteria, $con);
+
+                //Insert in CONTENT
+                $labels = [
+                    'DYN_TITLE' => $row['DYN_TITLE'],
+                    'DYN_DESCRIPTION' => !empty($row['DYN_DESCRIPTION']) ? $row['DYN_DESCRIPTION'] : ''
+                ];
+                $this->insertToContentTable($con, $labels, $row['DYN_UID'], SYS_LANG);
             }
             $con->commit();
         } catch (Exception $e) {
@@ -3249,6 +3270,13 @@ class Processes
                 $criteria->add(TriggersPeer::TRI_WEBBOT, $row['TRI_WEBBOT']);
                 $criteria->add(TriggersPeer::TRI_PARAM, $row['TRI_PARAM']);
                 BasePeer::doInsert($criteria, $con);
+
+                //Insert in CONTENT
+                $labels = [
+                    'TRI_TITLE' => $row['TRI_TITLE'],
+                    'TRI_DESCRIPTION' => !empty($row['TRI_DESCRIPTION']) ? $row['TRI_DESCRIPTION'] : ''
+                ];
+                $this->insertToContentTable($con, $labels, $row['TRI_UID'], SYS_LANG);
             }
             $con->commit();
         } catch (Exception $e) {
@@ -4050,6 +4078,10 @@ class Processes
                 $criteria->add(GroupwfPeer::GRP_LDAP_DN, $row['GRP_LDAP_DN']);
                 $criteria->add(GroupwfPeer::GRP_UX, $row['GRP_UX']);
                 BasePeer::doInsert($criteria, $con);
+
+                //Insert in CONTENT
+                $labels = ['GRP_TITLE' => $row['GRP_TITLE']];
+                $this->insertToContentTable($con, $labels, $row['GRP_UID'], SYS_LANG);
             }
             $con->commit();
         } catch (Exception $e) {
@@ -6374,5 +6406,39 @@ class Processes
         $excess = strlen($proTitle) - $limit;
         $proTitle = substr($proTitle, 0, strlen($proTitle) - $excess);
         return $proTitle;
+    }
+
+    /**
+     * Delete, insert and update labels in CONTENT related to a process element
+     *
+     * @param object $connection
+     * @param array $conCategories
+     * @param string $conId
+     * @param string $conLang
+     * @param string $conParent
+     */
+    private function insertToContentTable($connection, array $conCategories, $conId, $conLang, $conParent = '') {
+        //Prepare to delete labels related in CONTENT
+        $criteria = new Criteria(ContentPeer::DATABASE_NAME);
+        $criteria->addSelectColumn('*');
+        $criteria->add(ContentPeer::CON_CATEGORY, $conCategories, Criteria::IN);
+        $criteria->add(ContentPeer::CON_ID, $conId);
+        $criteria->add(ContentPeer::CON_LANG, $conLang);
+        $criteria->add(ContentPeer::CON_PARENT, $conParent);
+        BasePeer::doDelete($criteria, $connection);
+
+        foreach ($conCategories as $conCategory => $conValue) {
+            //Prepare the insert label in CONTENT
+            $criteria = new Criteria(ContentPeer::DATABASE_NAME);
+            $criteria->add(ContentPeer::CON_CATEGORY, $conCategory);
+            $criteria->add(ContentPeer::CON_ID, $conId);
+            $criteria->add(ContentPeer::CON_LANG, $conLang);
+            $criteria->add(ContentPeer::CON_VALUE, $conValue);
+            $criteria->add(ContentPeer::CON_PARENT, $conParent);
+            BasePeer::doInsert($criteria, $connection);
+
+            //Updating all related labels in CONTENT
+            Content::updateEqualValue($conCategory, $conParent, $conId, $conValue);
+        }
     }
 }

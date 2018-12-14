@@ -57451,6 +57451,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_CASE_REACTIVATED_SUCCESSFULLY','en','The case {APP_NUMBER} was reactivated successfully!','2014-01-15') ,
+( 'LABEL','ID_CASE_RESPONSE_NOT_AVAILABLE','en','No response available, please review the case information','2018-03-02') ,
 ( 'LABEL','ID_CASE_ROUTED_TO','en','Case routed to','2017-06-02') ,
 ( 'LABEL','ID_CASE_SCHEDULER','en','Case Scheduler','2014-01-15') ,
 ( 'LABEL','ID_CASE_SCHEDULER_CLASSIC','en','Case Scheduler (classic processes)','2017-10-13') ,
