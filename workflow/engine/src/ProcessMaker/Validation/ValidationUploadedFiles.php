@@ -216,7 +216,7 @@ class ValidationUploadedFiles
      * @param function $callback
      * @return $this
      */
-    public function dispach($callback)
+    public function dispatch($callback)
     {
         if (!empty($this->fails[0])) {
             if (!empty($callback) && is_callable($callback)) {

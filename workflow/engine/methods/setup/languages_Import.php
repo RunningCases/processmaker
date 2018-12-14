@@ -26,7 +26,7 @@ if ($access != 1) {
 $result = new stdClass();
 
 try {
-    ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+    ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
         throw new Exception($validator->getMessage());
     });
     //if the xmlform path is writeable
