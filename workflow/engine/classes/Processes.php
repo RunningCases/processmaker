@@ -1029,7 +1029,7 @@ class Processes
             $oData->process['PRO_DYNAFORMS']['PROCESS'] = '';
         }
 
-        if ($oData->process['PRO_DYNAFORMS']['PROCESS'] != '') {
+        if (!empty($oData->process['PRO_DYNAFORMS']['PROCESS']) && !empty($map[$oData->process['PRO_DYNAFORMS']['PROCESS']])) {
             $oData->process['PRO_DYNAFORMS']['PROCESS'] = $map[$oData->process['PRO_DYNAFORMS']['PROCESS']];
         }
 
@@ -1996,7 +1996,10 @@ class Processes
                 BasePeer::doInsert($criteria, $con);
 
                 //Insert in CONTENT
-                $labels = ['INP_DOC_TITLE' => $row['INP_DOC_TITLE'], 'INP_DOC_DESCRIPTION' => $row['INP_DOC_DESCRIPTION']];
+                $labels = [
+                    'INP_DOC_TITLE' => $row['INP_DOC_TITLE'],
+                    'INP_DOC_DESCRIPTION' => !empty($row['INP_DOC_DESCRIPTION']) ? $row['INP_DOC_DESCRIPTION'] : ''
+                ];
                 $this->insertToContentTable($con, $labels, $row['INP_DOC_UID'], SYS_LANG);
             }
             $con->commit();
@@ -2185,7 +2188,7 @@ class Processes
 
                 //Insert in CONTENT
                 $labels = ['OUT_DOC_TITLE' => $row['OUT_DOC_TITLE'],
-                    'OUT_DOC_DESCRIPTION' => $row['OUT_DOC_DESCRIPTION'],
+                    'OUT_DOC_DESCRIPTION' => !empty($row['OUT_DOC_DESCRIPTION']) ? $row['OUT_DOC_DESCRIPTION'] : '',
                     'OUT_DOC_FILENAME' => $row['OUT_DOC_FILENAME'],
                     'OUT_DOC_TEMPLATE' => $row['OUT_DOC_TEMPLATE']];
                 $this->insertToContentTable($con, $labels, $row['OUT_DOC_UID'], SYS_LANG);
@@ -3117,7 +3120,10 @@ class Processes
                 BasePeer::doInsert($criteria, $con);
 
                 //Insert in CONTENT
-                $labels = ['DYN_TITLE' => $row['DYN_TITLE'], 'DYN_DESCRIPTION' => $row['DYN_DESCRIPTION']];
+                $labels = [
+                    'DYN_TITLE' => $row['DYN_TITLE'],
+                    'DYN_DESCRIPTION' => !empty($row['DYN_DESCRIPTION']) ? $row['DYN_DESCRIPTION'] : ''
+                ];
                 $this->insertToContentTable($con, $labels, $row['DYN_UID'], SYS_LANG);
             }
             $con->commit();
@@ -3266,7 +3272,10 @@ class Processes
                 BasePeer::doInsert($criteria, $con);
 
                 //Insert in CONTENT
-                $labels = ['TRI_TITLE' => $row['TRI_TITLE'], 'TRI_DESCRIPTION' => $row['TRI_DESCRIPTION']];
+                $labels = [
+                    'TRI_TITLE' => $row['TRI_TITLE'],
+                    'TRI_DESCRIPTION' => !empty($row['TRI_DESCRIPTION']) ? $row['TRI_DESCRIPTION'] : ''
+                ];
                 $this->insertToContentTable($con, $labels, $row['TRI_UID'], SYS_LANG);
             }
             $con->commit();
