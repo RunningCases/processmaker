@@ -25328,8 +25328,8 @@ msgstr "Tools"
 # TRANSLATION
 # LABEL/ID_TOO_MANY_REQUESTS
 #: LABEL/ID_TOO_MANY_REQUESTS
-msgid "Too many requests"
-msgstr "Too many requests"
+msgid "Upon configurations, you have reached the maximum number of files to upload."
+msgstr "Upon configurations, you have reached the maximum number of files to upload."
 
 # TRANSLATION
 # LABEL/ID_TOP_MARGIN

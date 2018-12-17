@@ -61112,7 +61112,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TO','en','To','2014-01-15') ,
 ( 'LABEL','ID_TODAY','en','Today','2014-01-15') ,
 ( 'LABEL','ID_TOOLS','en','Tools','2014-01-15') ,
-( 'LABEL','ID_TOO_MANY_REQUESTS','en','Too many requests','2018-04-25') ,
+( 'LABEL','ID_TOO_MANY_REQUESTS','en','Upon configurations, you have reached the maximum number of files to upload.','2018-12-17') ,
 ( 'LABEL','ID_TOP_MARGIN','en','Top Margin','2014-01-15') ,
 ( 'LABEL','ID_TOTAL_CASES','en','Total Cases','2014-01-15') ,
 ( 'LABEL','ID_TOTAL_CASES_REASSIGNED','en','Total Cases Reassigned','2014-01-15') ,
