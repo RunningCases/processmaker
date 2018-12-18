@@ -221,6 +221,8 @@ return [
     'jpm' => 'video/jpm',
     'jps' => 'image/x-jps',
     'js' => 'text/ecmascript',
+    'json' => ['text/plain', 'text/json', 'text/javascript'],
+    'jsonp' => 'application/javascript',
     'jut' => 'image/jutvision',
     'kar' => ['audio/midi', 'music/x-karaoke'],
     'kne' => 'application/vnd.kinar',
