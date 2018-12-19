@@ -1393,4 +1393,38 @@ class Cases extends Api
         }
     }
 
+    /**
+     * Upload attachment related to the case, it does not need docUid
+     * Upload document related to the case, it does need docUid
+     *
+     * @url POST /:app_uid/upload/:var_name
+     * @url POST /:app_uid/upload/:var_name/:doc_uid
+     * @url POST /:app_uid/upload/:var_name/:doc_uid/:app_doc_uid
+     *
+     * @param string $app_uid
+     * @param string $var_name
+     * @param string $doc_uid
+     * @param string $app_doc_uid
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function uploadDocumentToCase($app_uid, $var_name, $doc_uid = '-1', $app_doc_uid = null)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $case = new BmCases();
+            $response = $case->uploadFiles($userUid, $app_uid, $var_name, $doc_uid, $app_doc_uid);
+        } catch (ExceptionRestApi $e) {
+            throw new RestException($e->getCode(), $e->getMessage());
+        } catch (Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+
+        return $response;
+    }
+
 }

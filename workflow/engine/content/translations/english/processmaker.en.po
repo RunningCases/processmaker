@@ -3936,6 +3936,12 @@ msgid "The case {APP_NUMBER} was reactivated successfully!"
 msgstr "The case {APP_NUMBER} was reactivated successfully!"
 
 # TRANSLATION
+# LABEL/ID_CASE_RESPONSE_NOT_AVAILABLE
+#: LABEL/ID_CASE_RESPONSE_NOT_AVAILABLE
+msgid "No response available, please review the case information"
+msgstr "No response available, please review the case information"
+
+# TRANSLATION
 # LABEL/ID_CASE_ROUTED_TO
 #: LABEL/ID_CASE_ROUTED_TO
 msgid "Case routed to"
@@ -25322,8 +25328,8 @@ msgstr "Tools"
 # TRANSLATION
 # LABEL/ID_TOO_MANY_REQUESTS
 #: LABEL/ID_TOO_MANY_REQUESTS
-msgid "Too many requests"
-msgstr "Too many requests"
+msgid "Upon configurations, you have reached the maximum number of files to upload."
+msgstr "Upon configurations, you have reached the maximum number of files to upload."
 
 # TRANSLATION
 # LABEL/ID_TOP_MARGIN

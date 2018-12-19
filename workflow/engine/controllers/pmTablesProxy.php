@@ -725,7 +725,7 @@ class pmTablesProxy extends HttpProxyController
         }
 
         try {
-            ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+            ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
                 throw new ExceptionRestApi($validator->getMessage());
             });
             $result = new stdClass();
