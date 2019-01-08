@@ -30,6 +30,7 @@ use WsBase;
  */
 class ResponseReader
 {
+    /*----------------------------------********---------------------------------*/
     private $channel = "ActionsByEmail";
     private $case = [];
     private $messageResponseError = null;
@@ -347,4 +348,5 @@ class ResponseReader
         );
         return $result;
     }
+    /*----------------------------------********---------------------------------*/
 }
