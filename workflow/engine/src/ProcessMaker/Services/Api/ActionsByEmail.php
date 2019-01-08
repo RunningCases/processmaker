@@ -154,11 +154,13 @@ class ActionsByEmail extends Api
                 $arrayData = $filesManager->addProcessFilesManager($proId, $userUid, $data);
                 @copy(PATH_TPL . 'actionsByEmail' . PATH_SEP . 'actionsByEmail.html', $path . 'actionsByEmail.html');
             }
+            /*----------------------------------********---------------------------------*/
             if (!file_exists($path . 'actionsByEmailErrorReply.html')) {
                 $data = array('prf_content' => '', 'prf_filename' => 'actionsByEmailErrorReply.html', 'prf_path' => 'templates');
                 $arrayData = $filesManager->addProcessFilesManager($proId, $userUid, $data);
                 @copy(PATH_TPL . 'actionsByEmail' . PATH_SEP . 'actionsByEmailErrorReply.html', $path . 'actionsByEmailErrorReply.html');
             }
+            /*----------------------------------********---------------------------------*/
         }
 
         $directory = dir($path);
