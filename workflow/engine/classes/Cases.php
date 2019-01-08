@@ -3512,12 +3512,13 @@ class Cases
 
             $fieldsTrigger = [];
             foreach ($triggersList as $trigger) {
-                //Scan the code
+                /*----------------------------------********---------------------------------*/
                 $disabledCode = $this->codeScannerReview($cs, $trigger["TRI_WEBBOT"], $trigger["TRI_TITLE"]);
                 if (!empty($disabledCode)) {
                     $foundDisabledCode .= $disabledCode;
                     continue;
                 }
+                /*----------------------------------********---------------------------------*/
 
                 $execute = true;
                 //Check if the trigger has conditions for the execution
