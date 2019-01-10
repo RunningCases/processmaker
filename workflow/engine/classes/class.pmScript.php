@@ -304,7 +304,7 @@ class PMScript
     public function executeAndCatchErrors($sScript, $sCode)
     {
         ob_start('handleFatalErrors');
-        set_error_handler('handleErrors');
+        set_error_handler('handleErrors', ini_get('error_reporting'));
         $_SESSION['_CODE_'] = $sCode;
         $_SESSION['_DATA_TRIGGER_'] = $this->dataTrigger;
         $_SESSION['_DATA_TRIGGER_']['_EXECUTION_TIME_'] = microtime(true);
