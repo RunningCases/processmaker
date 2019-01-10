@@ -841,15 +841,18 @@ class RBAC
      */
     public static function destroySessionUser($usrUid)
     {
+        //remove all register of tables related to the token
+        (new OauthAccessTokens())->removeByUser($usrUid);
+        (new OauthRefreshTokens())->removeByUser($usrUid);
+        (new PmoauthUserAccessTokens())->removeByUser($usrUid);
+        (new OauthAuthorizationCodes())->removeByUser($usrUid);
+
         $loginLog = new LoginLog();
         $sessionId = $loginLog->getSessionsIdByUser($usrUid);
         if ($sessionId) {
             //remove all login log row's of LOGIN_LOG table
             $loginLog->removeByUser($usrUid);
             //remove all register of tables
-            (new OauthAccessTokens())->removeByUser($usrUid);
-            (new OauthRefreshTokens())->removeByUser($usrUid);
-            (new OauthAuthorizationCodes())->removeByUser($usrUid);
             (new Session())->removeByUser($usrUid);
 
             // 1. commit session if it's started.
