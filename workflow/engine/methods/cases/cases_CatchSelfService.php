@@ -1,5 +1,7 @@
 <?php
-/** Permissions */
+
+use ProcessMaker\Util\DateTime;
+
 switch ($RBAC->userCanAccess('PM_CASES')) {
     case -2:
         G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels');
@@ -104,7 +106,7 @@ if (
     $fieldsCase['isIE'] = Bootstrap::isIE();
 
     $G_PUBLISH = new Publisher();
+    $fieldsCase = DateTime::convertUtcToTimeZone($fieldsCase);
     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'cases/cases_CatchSelfService.xml', '', $fieldsCase, 'cases_CatchExecute');
     G::RenderPage('publish', 'blank');
 }
-
