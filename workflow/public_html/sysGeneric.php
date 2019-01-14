@@ -937,6 +937,7 @@ if (!defined('EXECUTE_BY_CRON')) {
         $memKey = 'rbacSession' . session_id();
         if (($RBAC->aUserInfo = $memcache->get($memKey)) === false) {
             $RBAC->loadUserRolePermission($RBAC->sSystem, $_SESSION['USER_LOGGED']);
+            $RBAC->verifyDueDateUserLogged();
             $memcache->set($memKey, $RBAC->aUserInfo, PMmemcached::EIGHT_HOURS);
         }
     } else {
