@@ -3539,17 +3539,19 @@ class Cases
                     $varsChanged = $oPMScript->getVarsChanged();
                     $appDataAfterTrigger = $oPMScript->aFields;
 
-                    //Get the key and values changed
+                    //Get the key and values changed only if the variable has the prefix
+                    //@see https://wiki.processmaker.com/3.2/Triggers#Typing_rules_for_Case_Variables
                     $fieldsTrigger = $this->findKeysAndValues($appDataAfterTrigger, $varsChanged);
 
-                    //We will be load the last appData
-                    if ($oPMScript->executedOn() === $oPMScript::AFTER_ROUTING) {
-                        $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
-                        if (!empty($appUid)) {
-                            //Update $fieldsCase with the last appData
-                            $fieldsCase = $this->loadCase($appUid)['APP_DATA'];
-                        }
+
+                    //We will be load the last appData because:
+                    //Other execution can be changed the variables or Plugin or PMFunction
+                    $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
+                    if (!empty($appUid)) {
+                        //Update $fieldsCase with the last appData
+                        $fieldsCase = $this->loadCase($appUid)['APP_DATA'];
                     }
+
                     //Merge the current appData with variables changed
                     $fieldsCase = array_merge($fieldsCase, $fieldsTrigger);
 
