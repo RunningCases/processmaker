@@ -978,7 +978,7 @@ class Bootstrap
         // if userAgent (BROWSER) is MSIE we need special headers to avoid MSIE
         // behaivor.
         $userAgent = strtolower($_SERVER ['HTTP_USER_AGENT']);
-        if (preg_match("/msie/i", $userAgent)) {
+        if (preg_match("/msie|trident/i", $userAgent)) {
             // if ( ereg("msie", $userAgent)) {
             header('Pragma: cache');
 
@@ -2638,14 +2638,14 @@ class Bootstrap
     }
 
     /**
-     * Set Language
+     * Verify if the browser is Internet Explorer
      */
     public static function isIE()
     {
         $isIE = false;
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
-            if (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0; rv:11.0') !== false)) {
+            if (preg_match('/MSIE|Internet Explorer|Trident\d+rv:11.0/i', $ua) || (strpos($ua, 'Trident/7.0; Touch; rv:11.0') !== false)) {
                 $isIE = true;
             }
         }
