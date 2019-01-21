@@ -126,15 +126,14 @@ class ResponseReader
             );
 
             // Read all messages into an array
-            $mailsIds = $mailbox->searchMailbox('ALL');
+            $mailsIds = $mailbox->searchMailbox('UNSEEN');
             if ($mailsIds) {
-                $mailsInfo = $mailbox->getMailsInfo($mailsIds);
                 // Get the first message and save its attachment(s) to disk:
                 foreach ($mailsIds as $key => $mailsId) {
                     /** @var IncomingMail $mail */
                     $mail = $mailbox->getMail($mailsId);
                     preg_match("/{(.*)}/", $mail->textPlain, $matches);
-                    if ($matches && $mailsInfo[$key]->seen === 0) {
+                    if ($matches) {
                         $dataEmail = G::json_decode(Crypt::decryptString($matches[1]), true);
                         if (config("system.workspace") === $dataEmail['workspace']) {
                             $this->case = $dataEmail;
