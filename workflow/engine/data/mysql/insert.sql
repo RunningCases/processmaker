@@ -57451,6 +57451,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_CASE_REACTIVATED_SUCCESSFULLY','en','The case {APP_NUMBER} was reactivated successfully!','2014-01-15') ,
+( 'LABEL','ID_CASE_RESPONSE_NOT_AVAILABLE','en','No response available, please review the case information','2018-03-02') ,
 ( 'LABEL','ID_CASE_ROUTED_TO','en','Case routed to','2017-06-02') ,
 ( 'LABEL','ID_CASE_SCHEDULER','en','Case Scheduler','2014-01-15') ,
 ( 'LABEL','ID_CASE_SCHEDULER_CLASSIC','en','Case Scheduler (classic processes)','2017-10-13') ,
@@ -61096,7 +61097,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TO','en','To','2014-01-15') ,
 ( 'LABEL','ID_TODAY','en','Today','2014-01-15') ,
 ( 'LABEL','ID_TOOLS','en','Tools','2014-01-15') ,
-( 'LABEL','ID_TOO_MANY_REQUESTS','en','Too many requests','2018-04-25') ,
+( 'LABEL','ID_TOO_MANY_REQUESTS','en','Upon configurations, you have reached the maximum number of files to upload.','2018-12-17') ,
 ( 'LABEL','ID_TOP_MARGIN','en','Top Margin','2014-01-15') ,
 ( 'LABEL','ID_TOTAL_CASES','en','Total Cases','2014-01-15') ,
 ( 'LABEL','ID_TOTAL_CASES_REASSIGNED','en','Total Cases Reassigned','2014-01-15') ,

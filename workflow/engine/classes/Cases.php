@@ -3512,12 +3512,13 @@ class Cases
 
             $fieldsTrigger = [];
             foreach ($triggersList as $trigger) {
-                //Scan the code
+                /*----------------------------------********---------------------------------*/
                 $disabledCode = $this->codeScannerReview($cs, $trigger["TRI_WEBBOT"], $trigger["TRI_TITLE"]);
                 if (!empty($disabledCode)) {
                     $foundDisabledCode .= $disabledCode;
                     continue;
                 }
+                /*----------------------------------********---------------------------------*/
 
                 $execute = true;
                 //Check if the trigger has conditions for the execution
@@ -3538,17 +3539,21 @@ class Cases
                     $varsChanged = $oPMScript->getVarsChanged();
                     $appDataAfterTrigger = $oPMScript->aFields;
 
-                    //Get the key and values changed
+                    //Get the key and values changed only if the variable has the prefix
+                    //@see https://wiki.processmaker.com/3.2/Triggers#Typing_rules_for_Case_Variables
                     $fieldsTrigger = $this->findKeysAndValues($appDataAfterTrigger, $varsChanged);
 
-                    //We will be load the last appData
-                    if ($oPMScript->executedOn() === $oPMScript::AFTER_ROUTING) {
-                        $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
-                        if (!empty($appUid)) {
-                            $lastAppFields = $this->loadCase($appUid)['APP_DATA'];
-                            $fieldsTrigger = array_merge($lastAppFields, $fieldsTrigger);
-                        }
+
+                    //We will be load the last appData because:
+                    //Other execution can be changed the variables or Plugin or PMFunction
+                    $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
+                    if (!empty($appUid)) {
+                        //Update $fieldsCase with the last appData
+                        $fieldsCase = $this->loadCase($appUid)['APP_DATA'];
                     }
+
+                    //Merge the current appData with variables changed
+                    $fieldsCase = array_merge($fieldsCase, $fieldsTrigger);
 
                     //Register the time execution
                     $this->arrayTriggerExecutionTime[$trigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
@@ -3567,16 +3572,9 @@ class Cases
                 );
             }
             /*----------------------------------********---------------------------------*/
-
-            //The Code Scanner can be interrupt the execution
-            if (empty($fieldsTrigger)) {
-                return $fieldsCase;
-            }
-
-            return $fieldsTrigger;
-        } else {
-            return $fieldsCase;
         }
+
+        return $fieldsCase;
     }
 
     /**

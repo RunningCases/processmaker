@@ -937,7 +937,7 @@ class InputDocument
      */
     public function uploadFileCase($files, $caseInstance, $aData, $userUid, $appUid, $delIndex)
     {
-        ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+        ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
             G::SendMessageText($validator->getMessage(), "ERROR");
             $url = explode("sys" . config("system.workspace"), $_SERVER['HTTP_REFERER']);
             G::header("location: " . "/sys" . config("system.workspace") . $url[1]);

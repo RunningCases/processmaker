@@ -27,7 +27,7 @@ if ($RBAC->userCanAccess('PM_FACTORY') == 1) {
         }
     }
 
-    ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+    ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
         $response = [
             'result' => 0,
             'msg' => $validator->getMessage()
