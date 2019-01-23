@@ -3536,24 +3536,28 @@ class Cases
                     $executedOn = $oPMScript->getExecutionOriginForAStep($stepType, $stepUidObj, $triggerType);
                     $oPMScript->setExecutedOn($executedOn);
                     $oPMScript->execute();
-                    $varsChanged = $oPMScript->getVarsChanged();
                     $appDataAfterTrigger = $oPMScript->aFields;
 
-                    //Get the key and values changed only if the variable has the prefix
-                    //@see https://wiki.processmaker.com/3.2/Triggers#Typing_rules_for_Case_Variables
-                    $fieldsTrigger = $this->findKeysAndValues($appDataAfterTrigger, $varsChanged);
+                    /**
+                     * This section of code its related to the route the case with parallel task in the same time
+                     * @link https://processmaker.atlassian.net/browse/PMC-2
+                    */
+                    if ($oPMScript->executedOn() === $oPMScript::AFTER_ROUTING) {
+                        //Get the variables changed with the trigger
+                        $fieldsTrigger = arrayDiffRecursive($appDataAfterTrigger, $fieldsCase);
 
-
-                    //We will be load the last appData because:
-                    //Other execution can be changed the variables or Plugin or PMFunction
-                    $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
-                    if (!empty($appUid)) {
-                        //Update $fieldsCase with the last appData
-                        $fieldsCase = $this->loadCase($appUid)['APP_DATA'];
+                        //We will be load the last appData because:
+                        //Other thread execution can be changed the variables
+                        $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
+                        if (!empty($appUid)) {
+                            //Update $fieldsCase with the last appData
+                            $fieldsCase = $this->loadCase($appUid)['APP_DATA'];
+                        }
+                        //Merge the appData with variables changed
+                        $fieldsCase = array_merge($fieldsCase, $fieldsTrigger);
+                    } else {
+                        $fieldsCase = $appDataAfterTrigger;
                     }
-
-                    //Merge the current appData with variables changed
-                    $fieldsCase = array_merge($fieldsCase, $fieldsTrigger);
 
                     //Register the time execution
                     $this->arrayTriggerExecutionTime[$trigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
