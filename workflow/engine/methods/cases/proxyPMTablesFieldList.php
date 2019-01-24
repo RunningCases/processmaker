@@ -462,30 +462,56 @@ function setCasesListFields($arrayCasesListField, $arrayField)
     return $arrayFieldResult;
 }
 
+/**
+ * Get the Custom Case List configuration data.
+ * 
+ * @global string $action
+ * @global array $confCasesList
+ * @global string $tabUid
+ */
 function fieldSet()
 {
-    global $conf;
-    global $confCasesList;
     global $action;
+    global $confCasesList;
+    global $tabUid;
 
-    if (is_array($confCasesList)) {
-        $validConfig = isset($confCasesList["first"]) && isset($confCasesList["second"]);
+    $confCasesList = (array) $confCasesList;
+
+    $result = [];
+    $sw1 = !empty($confCasesList);
+    $sw2 = $tabUid === "" || (!empty($tabUid) && !empty($confCasesList['PMTable']) && $confCasesList['PMTable'] === $tabUid);
+
+    if ($sw1 && $sw2) {
+        $result = $confCasesList;
+        //remove used elements
+        $data = $result['second']['data'];
+        $fields = getFieldsByTabUid($result['PMTable']);
+        foreach ($data as $value1) {
+            foreach ($fields as $key => $value2) {
+                $swName = $value1['name'] === $value2['name'];
+                $swFieldType = $value1['fieldType'] === $value2['fieldType'];
+                if ($swName && $swFieldType) {
+                    unset($fields[$key]);
+                    break;
+                }
+            }
+        }
+        $result['first']['data'] = array_values($fields);
     } else {
-        $validConfig = false;
-    }
-
-    if (!$validConfig) {
-        $arrayField  = getDefaultFields($action, 0);
+        $fields = getFieldsByTabUid($tabUid);
+        $arrayField = getDefaultFields($action, 0);
         $arrayConfig = getDefaultConfig($action, 0);
-
-        $result = genericJsonResponse("", array(), $arrayField, $arrayConfig["rowsperpage"], $arrayConfig["dateformat"]);
-
-        $conf->saveObject($result, "casesList", $action, "", "", "");
-
-        echo G::json_encode($result);
-    } else {
-        echo G::json_encode($confCasesList);
+        $generic = genericJsonResponse($tabUid, [], $arrayField, $arrayConfig["rowsperpage"], $arrayConfig["dateformat"]);
+        $result = $generic;
+        $result['first']['data'] = $fields;
     }
+
+    if (is_array($result) && isset($result['second']['data'])) {
+        foreach ($result['second']['data'] as $key => $value) {
+            $result['second']['data'][$key]['align_label'] = $result['second']['data'][$key]['align'];
+        }
+    }
+    echo G::json_encode($result);
 }
 
 function fieldReset($translation)
@@ -690,11 +716,6 @@ try {
 
     switch ($xaction) {
         case "FIELD_SET":
-            if (is_array($confCasesList) && isset($confCasesList['second']['data'])) {
-                foreach ($confCasesList['second']['data'] as $key => $value) {
-                    $confCasesList['second']['data'][$key]['align_label'] = $confCasesList['second']['data'][$key]['align'];
-                }
-            }
             fieldSet();
             break;
         case "FIELD_RESET":
@@ -744,44 +765,53 @@ function genericJsonResponse($pmtable, $first, $second, $rowsperpage, $dateForma
     return $result;
 }
 
+/**
+ * Get row from PM Table.
+ * 
+ * @param string $tabUid
+ */
 function xgetFieldsFromPMTable($tabUid)
 {
-    $rows = array();
-    $result = array();
-    //    $rows[] = array ( 'name' => 'val 1', 'gridIndex' => '21', 'fieldType' => 'PM Table' );
-    //    $rows[] = array ( 'name' => 'val 2', 'gridIndex' => '22', 'fieldType' => 'PM Table' );
-    //    $rows[] = array ( 'name' => 'val 3', 'gridIndex' => '23', 'fieldType' => 'PM Table' );
-    //$result['success']    = true;
-    //$result['totalCount']  =  count($rows);
-    $oCriteria = new Criteria('workflow');
-    $oCriteria->clearSelectColumns ( );
-    $oCriteria->setDistinct();
-    $oCriteria->addSelectColumn ( FieldsPeer::FLD_NAME );
-    $oCriteria->addSelectColumn ( FieldsPeer::FLD_UID );
-    $oCriteria->addSelectColumn ( FieldsPeer::FLD_INDEX );
-    $oCriteria->add (FieldsPeer::ADD_TAB_UID, $tabUid , CRITERIA::EQUAL );
-    $oCriteria->add (FieldsPeer::FLD_NAME, 'APP_UID' , CRITERIA::NOT_EQUAL );
-    $oCriteria->addAnd (FieldsPeer::FLD_NAME, 'APP_NUMBER' , CRITERIA::NOT_EQUAL );
-    $oCriteria->addDescendingOrderByColumn('FLD_INDEX');
-    $oDataset = FieldsPeer::doSelectRS($oCriteria);
-    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-    $oDataset->next();
-    $index =  count($rows);
-
-    while ($aRow = $oDataset->getRow()) {
-        $aRow['index'] = ++$index;
-        $aTempRow['name'] = $aRow['FLD_NAME'];
-        $aTempRow['gridIndex'] = $aRow['index'];
-        $aTempRow['fieldType'] = 'PM Table';
-        $rows[] = $aTempRow;
-        $oDataset->next();
-    }
-
-    $result['data']    = $rows;
-    print G::json_encode( $result ) ;
+    $result = [];
+    $result['data'] = getFieldsByTabUid($tabUid);
+    print G::json_encode($result);
 }
 
- /**
+/**
+ * Get rows from Fields table.
+ * 
+ * @param string $tabUid
+ * @return array
+ */
+function getFieldsByTabUid($tabUid)
+{
+    $rows = [];
+    $criteria = new Criteria('workflow');
+    $criteria->clearSelectColumns();
+    $criteria->setDistinct();
+    $criteria->addSelectColumn(FieldsPeer::FLD_NAME);
+    $criteria->addSelectColumn(FieldsPeer::FLD_UID);
+    $criteria->addSelectColumn(FieldsPeer::FLD_INDEX);
+    $criteria->add(FieldsPeer::ADD_TAB_UID, $tabUid, CRITERIA::EQUAL);
+    $criteria->add(FieldsPeer::FLD_NAME, 'APP_UID', CRITERIA::NOT_EQUAL);
+    $criteria->addAnd(FieldsPeer::FLD_NAME, 'APP_NUMBER', CRITERIA::NOT_EQUAL);
+    $criteria->addDescendingOrderByColumn('FLD_INDEX');
+    $dataSet = FieldsPeer::doSelectRS($criteria);
+    $dataSet->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $dataSet->next();
+    $index = 0;
+    while ($row = $dataSet->getRow()) {
+        $row['index'] = ++$index;
+        $tempRow['name'] = $row['FLD_NAME'];
+        $tempRow['gridIndex'] = $row['index'];
+        $tempRow['fieldType'] = 'PM Table';
+        $rows[] = $tempRow;
+        $dataSet->next();
+    }
+    return $rows;
+}
+
+/**
   *
   * @param Array $fields
   * @return Array
