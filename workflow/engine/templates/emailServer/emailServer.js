@@ -71,6 +71,7 @@ emailServer.application = {
                     emailServerDefault: emailDefault
                 };
             } else if (typeEmailEngine === "IMAP") {
+                /*----------------------------------********---------------------------------*/
                 var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
                 var smtpSecure = rdoGrpOption.getGroupValue();
 
@@ -92,6 +93,7 @@ emailServer.application = {
                     mailTo: Ext.getCmp("txtMailTo").getValue(),
                     emailServerDefault: emailDefault
                 };
+                /*----------------------------------********---------------------------------*/
             } else {
                 //MAIL
                 p = {
@@ -304,6 +306,7 @@ emailServer.application = {
                 Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
             } else if (cboEmailEngine === "IMAP") {
+                /*----------------------------------********---------------------------------*/
                 Ext.getCmp("txtServer").setVisible(true);
                 Ext.getCmp("txtPort").setVisible(true);
 
@@ -330,6 +333,7 @@ emailServer.application = {
                 Ext.getCmp("txtIncomingServer").allowBlank = false;
                 Ext.getCmp("txtIncomingPort").allowBlank = false;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
+                /*----------------------------------********---------------------------------*/
             } else {
                 //MAIL
                 Ext.getCmp("txtServer").setVisible(false);
@@ -548,7 +552,9 @@ emailServer.application = {
 
             data: [
                 ["PHPMAILER", "SMTP (PHPMailer)"],
+                /*----------------------------------********---------------------------------*/
                 ["IMAP", "SMTP - IMAP (PHPMailer)"],
+                /*----------------------------------********---------------------------------*/
                 ["MAIL", "Mail (PHP)"]
             ]
         });
