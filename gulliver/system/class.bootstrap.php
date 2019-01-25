@@ -2644,8 +2644,8 @@ class Bootstrap
     {
         $isIE = false;
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
-            if (preg_match('/MSIE|Internet Explorer|Trident\d+rv:11.0/i', $ua) || (strpos($ua, 'Trident/7.0; Touch; rv:11.0') !== false)) {
+            $userAgent = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
+            if (preg_match("/(Trident\/(\d{2,}|7|8|9)(.*)rv:(\d{2,}))|(MSIE\ (\d{2,}|8|9)(.*)Tablet\ PC)|(Trident\/(\d{2,}|7|8|9))/", $userAgent)) {
                 $isIE = true;
             }
         }

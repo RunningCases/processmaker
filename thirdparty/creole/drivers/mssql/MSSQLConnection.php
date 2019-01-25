@@ -218,7 +218,7 @@ class MSSQLConnection extends ConnectionCommon implements Connection
             if (!$result) {
                 throw new SQLException('Could not execute update', print_r(sqlsrv_errors(), true), $sql);
             }
-            return (int) sqlsrv_rows_affected($this->dblink);
+            return (int) sqlsrv_rows_affected($result);
         } else {
             if (!mssql_select_db($this->database, $this->dblink)) {
                 throw new SQLException('No database selected');
