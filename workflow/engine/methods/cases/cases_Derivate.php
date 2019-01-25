@@ -318,8 +318,8 @@ try {
                        try {
                            if(top.opener) {
                                top.opener.location.reload();
-                               top.close();
                            }
+                           top.close();
                        } catch(e) {
                        }
                    </script>";
