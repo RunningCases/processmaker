@@ -21,6 +21,7 @@ use IsoCountryPeer;
 use IsoLocationPeer;
 use IsoSubdivisionPeer;
 use ListParticipatedLast;
+use OauthClients;
 use PMmemcached;
 use ProcessMaker\BusinessModel\ProcessSupervisor as BmProcessSupervisor;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -1023,6 +1024,9 @@ class User
 
                 //Update in workflow
                 $result = $user->update($arrayData);
+                if (isset($arrayData['USR_STATUS'])) {
+                    $arrayData['USR_STATUS'] == 'INACTIVE' ? RBAC::destroySessionUser($userUid) : null;
+                }
 
                 //Save Calendar assigment
                 if (isset($arrayData["USR_CALENDAR"])) {
@@ -1330,6 +1334,9 @@ class User
                 $criteria->add(DashletInstancePeer::DAS_INS_OWNER_UID, $UID);
                 $criteria->add(DashletInstancePeer::DAS_INS_OWNER_TYPE, 'USER');
                 DashletInstancePeer::doDelete($criteria);
+                //Destroy session after delete user
+                RBAC::destroySessionUser($usrUid);
+                (new OauthClients())->removeByUser($usrUid);
             }
         } catch (Exception $e) {
             throw $e;
