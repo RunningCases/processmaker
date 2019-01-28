@@ -64,7 +64,7 @@ Ext.onReady(function () {
 
             success: function (response, opts)
             {
-                var dataResponse = eval("(" + response.responseText + ")"); //json
+                var dataResponse = Ext.util.JSON.decode(response.responseText);
 
                 switch (option) {
                     case "FIELD_SET":
@@ -85,8 +85,11 @@ Ext.onReady(function () {
                         break;
                     case "FIELD_SAVE":
                         configDefaultResponseText = response.responseText;
-                        Ext.Msg.alert(_("ID_INFO"), _("ID_SAVED"));
-                        location.reload(true);
+                        var windowAlert = Ext.Msg.alert(_("ID_INFO"), _("ID_SAVED"));
+                        fieldSet(dataResponse);
+                        setTimeout(function () {
+                            windowAlert.getDialog().close();
+                        }, 500);
                         break;
                 }
             },
@@ -166,59 +169,34 @@ Ext.onReady(function () {
      }}
   });
 
-  // create the Data Store to list PMTables in the dropdown
-  var pmTablesDropdown = new Ext.form.ComboBox ({
-    width        : '180',
-    xtype        : 'combo',
-    emptyText: _("ID_EMPTY_PMTABLE"),
-    displayField : 'ADD_TAB_NAME',
-    valueField   : 'ADD_TAB_UID',
-    triggerAction: 'all',
-    store        : PmTableStore,
-    listeners: {
-      'select': function() {
-        var tableUid  =  this.value;
-        Ext.Ajax.request({
-          url: 'proxyPMTablesFieldList',
-          success: function(response) {
-            var dataResponse = Ext.util.JSON.decode(response.responseText);
-            var rec = Ext.data.Record.create(pmFields);
-            //alert(firstGrid.store);
-            var index;
-            var record;
-            var count = firstGrid.store.getTotalCount();
-
-            // removing all the PM Table fields from the first grid
-            do {
-              index = firstGrid.store.find('fieldType','PM Table');
-              record = firstGrid.store.getAt(index);
-              if (index>=0) {
-                firstGrid.store.remove(record);
-              }
-            } while (index>=0);
-
-            // removing all the PM Table fields from the second grid
-            do {
-              index = secondGrid.store.find('fieldType','PM Table');
-              record = secondGrid.store.getAt(index);
-              if (index>=0) {
-                secondGrid.store.remove(record);
-              }
-            } while (index>=0);
-
-            for (var i = 0; i <= dataResponse.data.length-1; i++) {
-              var d = new rec( dataResponse.data[i] );
-              firstGrid.store.add(d);
+    // create the Data Store to list PMTables in the dropdown
+    var pmTablesDropdown = new Ext.form.ComboBox({
+        width: '180',
+        xtype: 'combo',
+        emptyText: _("ID_EMPTY_PMTABLE"),
+        displayField: 'ADD_TAB_NAME',
+        valueField: 'ADD_TAB_UID',
+        triggerAction: 'all',
+        store: PmTableStore,
+        listeners: {
+            'select': function () {
+                var tableUid = this.value;
+                Ext.Ajax.request({
+                    url: 'proxyPMTablesFieldList',
+                    params: {
+                        xaction: 'FIELD_SET',
+                        action: currentAction,
+                        table: tableUid
+                    },
+                    success: function (response) {
+                        var dataResponse = Ext.util.JSON.decode(response.responseText);
+                        fieldSet(dataResponse);
+                    },
+                    failure: function () {}
+                });
             }
-            firstGrid.store.commitChanges();
-          },
-          failure: function(){},
-          params: {xaction: 'getFieldsFromPMTable', table: tableUid }
-        });
-
-      }
-    }
-  });
+        }
+    });
 
   // COMPONENT DEPRECATED remove it in the next revision of the enterprise plugin
   // create the Dropdown for rows per page
@@ -573,7 +551,7 @@ Ext.onReady(function () {
             text: _("ID_RESET"),
             handler: function ()
             {
-                var dataResponse = eval("(" + configDefaultResponseText + ")"); //json
+                var dataResponse = Ext.util.JSON.decode(configDefaultResponseText);
 
                 fieldSet(dataResponse);
             }
