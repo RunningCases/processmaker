@@ -290,6 +290,12 @@ class PMScript
                     $executedOn = self::UNDEFINED_ORIGIN;
                 }
                 break;
+            case 'PROCESS_ACTION':
+                $executedOn = self::PROCESS_ACTION;
+                break;
+            case 'SCRIPT_TASK':
+                $executedOn = self::SCRIPT_TASK;
+                break;
             default:
                 $executedOn = self::UNDEFINED_ORIGIN;
                 break;
