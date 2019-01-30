@@ -4,6 +4,7 @@ namespace ProcessMaker\BusinessModel;
 
 use AdditionalTables;
 use AdditionalTablesPeer;
+use Configurations;
 use G;
 use Exception;
 
@@ -578,9 +579,58 @@ class ReportTable
 
             $result->trace = $e->getTraceAsString();
         }
-
+        $this->updateCaseListFieldsConfiguration($columns);
         //Return
         return $result;
+    }
+
+    /**
+     * Update the Custom Case List fields configuration.
+     * 
+     * @param array $columns
+     */
+    public function updateCaseListFieldsConfiguration($columns)
+    {
+        $actions = [
+            "todo", "draft", "sent", "unassigned", "paused", "completed", "cancelled"
+        ];
+        $conf = new Configurations();
+        foreach ($actions as $action) {
+            $confCasesList = $conf->loadObject("casesList", $action, "", "", "");
+            if (is_array($confCasesList) && !empty($confCasesList)) {
+                $this->removeNonExistentElementsCustomCaseList($confCasesList['first']['data'], $columns);
+                $this->removeNonExistentElementsCustomCaseList($confCasesList['second']['data'], $columns);
+                $conf->saveObject($confCasesList, "casesList", $action);
+            }
+        }
+    }
+
+    /**
+     * Remove non existent elements in Custom Case List.
+     * 
+     * @param array $data
+     * @param array $columns
+     */
+    public function removeNonExistentElementsCustomCaseList(&$data, $columns)
+    {
+        $n = count($data);
+        for ($key = 0; $key < $n; $key++) {
+            if ($data[$key]['fieldType'] === 'PM Table') {
+                $remove = true;
+                foreach ($columns as $column) {
+                    if ($data[$key]['name'] === $column->field_name) {
+                        $remove = false;
+                        break;
+                    }
+                }
+                if ($remove === true) {
+                    unset($data[$key]);
+                    $data = array_values($data);
+                    $key = 0;
+                    $n = count($data);
+                }
+            }
+        }
     }
 
     /**

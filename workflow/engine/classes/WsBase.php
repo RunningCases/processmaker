@@ -2069,57 +2069,72 @@ class WsBase
     }
 
     /**
-     * creates a new case impersonating a user who has the proper privileges to create new cases
+     * Creates a new case impersonating a user who has the proper privileges to create new cases
      *
      * @param string $processId
      * @param string $userId
-     * @param string $variables
-     * @param string $taskId , must be in the starting group.
+     * @param array $variables, that are set in the new case
+     * @param string $taskId, must be in the starting group.
      *
-     * @return $result will return an object
+     * @return object
+     *
+     * @see PMFNewCaseImpersonate/class.pmFunctions.php on
+     * @link https://wiki.processmaker.com/3.1/ProcessMaker_Functions#PMFNewCaseImpersonate.28.29
+     *
+     * @see doPostCaseImpersonate/Api/Cases on
+     * @link https://wiki.processmaker.com/3.2/REST_API_Cases/Cases#New_Case_Impersonate_User:_POST_.2Fcases.2Fimpersonate
+     *
+     * @see NewCaseImpersonate/soap2.php on
+     * @link https://wiki.processmaker.com/3.0/ProcessMaker_WSDL_Web_Services#newCaseImpersonate.28.29
      */
     public function newCaseImpersonate($processId, $userId, $variables, $taskId = '')
     {
         try {
-            if (is_array($variables)) {
-                if (count($variables) > 0) {
-                    $c = count($variables);
-                    $Fields = $variables;
-                } else {
-                    if ($c == 0) {
-                        $result = new WsResponse(10, G::loadTranslation('ID_ARRAY_VARIABLES_EMPTY'));
+            $g = new G();
+            $g->sessionVarSave();
 
-                        return $result;
-                    }
+            $c = count($variables);
+            if (is_array($variables)) {
+                if ($c > 0) {
+                    $fieldsVariables = $variables;
+                } elseif ($c === 0) {
+                    $result = new WsResponse(10, G::loadTranslation('ID_ARRAY_VARIABLES_EMPTY'));
+                    $g->sessionVarRestore();
+
+                    return $result;
                 }
             } else {
                 $result = new WsResponse(10, G::loadTranslation('ID_VARIABLES_PARAM_NOT_ARRAY'));
+                $g->sessionVarRestore();
 
                 return $result;
             }
 
             $processes = new Processes();
-
             if (!$processes->processExists($processId)) {
                 $result = new WsResponse(11, G::loadTranslation('ID_INVALID_PROCESS') . " " . $processId . "!!");
+                $g->sessionVarRestore();
 
                 return $result;
             }
 
             $user = new Users();
-
             if (!$user->userExists($userId)) {
                 $result = new WsResponse(11, G::loadTranslation('ID_USER_NOT_REGISTERED') . " " . $userId . "!!");
+                $g->sessionVarRestore();
 
                 return $result;
+            } else {
+                $user->load($userId);
+                $userName = $user->getUsrUsername();
             }
 
-            $oCase = new Cases();
+            $caseInstance = new Cases();
 
             $numTasks = 0;
-            if ($taskId != '') {
-                $aTasks = $processes->getStartingTaskForUser($processId, null);
-                foreach ($aTasks as $task) {
+            if (!empty($taskId)) {
+                $startTasks = $processes->getStartingTaskForUser($processId, null);
+                foreach ($startTasks as $task) {
                     if ($task['TAS_UID'] == $taskId) {
                         $arrayTask[0]['TAS_UID'] = $taskId;
                         $numTasks = 1;
@@ -2130,38 +2145,47 @@ class WsBase
                 $numTasks = count($arrayTask);
             }
 
-            if ($numTasks == 1) {
-                $case = $oCase->startCase($arrayTask[0]['TAS_UID'], $userId);
-                $caseId = $case['APPLICATION'];
-                $caseNumber = $case['CASE_NUMBER'];
+            if ($numTasks === 1) {
+                //@todo Find a better way to define session variables
+                $_SESSION["PROCESS"] = $processId;
+                $_SESSION["TASK"] = $arrayTask[0]['TAS_UID'];
+                $_SESSION["USER_LOGGED"] = $userId;
+                $_SESSION["INDEX"] = 1;
+                $_SESSION["USR_USERNAME"] = $userName;
 
-                $oldFields = $oCase->loadCase($caseId);
+                //Create a newCase
+                $infoCase = $caseInstance->startCase($arrayTask[0]['TAS_UID'], $userId);
+                $_SESSION["APPLICATION"] = $caseId = $infoCase['APPLICATION'];
+                $oldFields = $caseInstance->loadCase($caseId);
+                //Merge the data with the $fieldsVariables that are set in the new case
+                $oldFields['APP_DATA'] = array_merge($oldFields['APP_DATA'], $fieldsVariables);
 
-                $oldFields['APP_DATA'] = array_merge($oldFields['APP_DATA'], $Fields);
-
-                $up_case = $oCase->updateCase($caseId, $oldFields);
-
+                //Update the case
+                $res = $caseInstance->updateCase($caseId, $oldFields);
                 $result = new WsResponse(0, G::loadTranslation('ID_COMMAND_EXECUTED_SUCCESSFULLY'));
-
                 $result->caseId = $caseId;
-                $result->caseNumber = $caseNumber;
+                $result->caseNumber = $infoCase['CASE_NUMBER'];
+                $g->sessionVarRestore();
 
                 return $result;
             } else {
-                if ($numTasks == 0) {
+                if ($numTasks === 0) {
                     $result = new WsResponse(12, G::loadTranslation('ID_NO_STARTING_TASK'));
+                    $g->sessionVarRestore();
 
                     return $result;
                 }
 
                 if ($numTasks > 1) {
                     $result = new WsResponse(13, G::loadTranslation('ID_MULTIPLE_STARTING_TASKS'));
+                    $g->sessionVarRestore();
 
                     return $result;
                 }
             }
         } catch (Exception $e) {
             $result = new WsResponse(100, $e->getMessage());
+            $g->sessionVarRestore();
 
             return $result;
         }

@@ -415,6 +415,7 @@ class Light
 
         $oCase = new Cases();
         $Fields = $oCase->loadCase($cas_uid);
+        //@todo Find a better way to define session variables
         $_SESSION["APPLICATION"] = $cas_uid;
         $_SESSION["PROCESS"] = $prj_uid;
         $_SESSION["TASK"] = $act_uid;
@@ -453,6 +454,7 @@ class Light
         try {
             $oCase = new Cases();
             $Fields = $oCase->loadCase($app_uid);
+            //@todo Find a better way to define session variables
             $_SESSION["APPLICATION"] = $app_uid;
             $_SESSION["PROCESS"] = $Fields['PRO_UID'];
             $_SESSION["TASK"] = $tas_uid;
