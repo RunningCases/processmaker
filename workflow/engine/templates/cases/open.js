@@ -1470,6 +1470,7 @@ Ext.onReady(function(){
 
   Actions.pauseCase = function()
   {
+	  Ext.getCmp('submitPauseCase').setDisabled(true);
 	  Ext.Ajax.request({
         url : 'ajaxListener' ,
         params : {action : 'verifySession'},
@@ -1501,6 +1502,7 @@ Ext.onReady(function(){
               var paramsNote = '&NOTE_REASON=' + noteReasonTxt + '&NOTIFY_PAUSE=' + notifyReasonVal;
               var unpauseDate = Ext.getCmp('unpauseDate').getValue();
               if( unpauseDate == '') {
+                Ext.getCmp('submitPauseCase').setDisabled(false);
                 return;
               } else {
                 unpauseDate = unpauseDate.format('Y-m-d');
@@ -1531,6 +1533,7 @@ Ext.onReady(function(){
                 },
                 failure: function ( res, req) {
                   PMExt.error(_('ID_ERROR'), req.result.msg);
+                  Ext.getCmp('submitPauseCase').setDisabled(false);
                 }
               });
             }
@@ -1539,6 +1542,7 @@ Ext.onReady(function(){
             if (typeof(result.responseText) != 'undefined') {
               Ext.MessageBox.alert( _('ID_FAILED'), result.responseText);
             }
+            Ext.getCmp('submitPauseCase').setDisabled(false);
         }
     });
   }
