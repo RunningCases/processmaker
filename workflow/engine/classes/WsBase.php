@@ -10,6 +10,7 @@ class WsBase
 {
     public $stored_system_variables; //boolean
     public $wsSessionId; //web service session id, if the wsbase function is used from a WS request
+    private $flagSameCase = true;
 
     public function __construct($params = null)
     {
@@ -20,6 +21,28 @@ class WsBase
 
             $this->wsSessionId = isset($params->wsSessionId) ? $params->wsSessionId : '';
         }
+    }
+
+    /**
+     * Get the flagSameCase
+     *
+     * @return boolean
+     */
+    public function getFlagSameCase()
+    {
+        return $this->flagSameCase;
+    }
+
+    /**
+     * Set the flagSameCase
+     *
+     * @param boolean $var
+     *
+     * @return void
+     */
+    public function setFlagSameCase($var)
+    {
+        $this->flagSameCase = $var;
     }
 
     /**
@@ -2204,6 +2227,8 @@ class WsBase
      * @param string $labelAssignment , label related to the triggerType
      *
      * @return string $varTriggers updated
+     *
+     * @see WsBase::derivateCase()
      */
     public function executeTriggerFromDerivate(
         $appUid,
@@ -2269,10 +2294,14 @@ class WsBase
      *
      * @param string $userId
      * @param string $caseId
-     * @param string $delIndex
-     * @param array $tasks
+     * @param integer $delIndex
      * @param bool $bExecuteTriggersBeforeAssignment
+     * @param array $tasks
+     *
      * @return $result will return an object
+     *
+     * @see PMFDerivateCase()/class.pmFunctions.php on
+     * @link https://wiki.processmaker.com/3.2/ProcessMaker_Functions/Case_Routing_Functions#PMFDerivateCase.28.29
      */
     public function derivateCase($userId, $caseId, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks = [])
     {
@@ -3087,6 +3116,10 @@ class WsBase
     public function cancelCase($caseUid, $delIndex, $userUid)
     {
         $g = new G();
+        //We will to review if the current case in execution will be execute the same
+        if (isset($_SESSION["APPLICATION"]) && $_SESSION["APPLICATION"] !== $caseUid){
+            $this->setFlagSameCase(false);
+        }
 
         try {
             $g->sessionVarSave();
@@ -3112,7 +3145,7 @@ class WsBase
             /** If those parameters are null we will to force the cancelCase */
             if (is_null($delIndex) && is_null($userUid)) {
                 /*----------------------------------********---------------------------------*/
-                $case->cancelCase($caseUid, null, null);
+                $case->cancelCase($caseUid, null, null, $this->getFlagSameCase());
                 $result = self::messageExecuteSuccessfully();
                 $g->sessionVarRestore();
 
@@ -3149,7 +3182,7 @@ class WsBase
 
 
             /** Cancel case */
-            $case->cancelCase($caseUid, (int)$delIndex, $userUid);
+            $case->cancelCase($caseUid, (int)$delIndex, $userUid, $this->getFlagSameCase());
 
             //Define the result of the cancelCase
             $result = self::messageExecuteSuccessfully();
