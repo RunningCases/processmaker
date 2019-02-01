@@ -3205,7 +3205,12 @@ class WsBase
      * @param string userUid : The unique ID of the user who will pause the case.
      * @param string unpauseDate : Optional parameter. The date in the format "yyyy-mm-dd" indicating when to unpause
      *               the case.
-     *
+     * 
+     * @see workflow/engine/classes/class.pmFunctions.php::PMFPauseCase()
+     * @see workflow/engine/methods/services/soap2.php::pauseCase()
+     * 
+     * @link https://wiki.processmaker.com/3.3/ProcessMaker_Functions/Case_Functions#PMFPauseCase.28.29
+     * 
      * @return $result will return an object
      */
     public function pauseCase($caseUid, $delIndex, $userUid, $unpauseDate = null)
@@ -3239,6 +3244,22 @@ class WsBase
 
                 $g->sessionVarRestore();
 
+                return $result;
+            }
+            //Validate if status is closed
+            $appDelegation = new AppDelegation();
+            $rows = $appDelegation->LoadParallel($caseUid, $delIndex);
+            if (empty($rows)) {
+                $result = new WsResponse(100, G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'));
+                $g->sessionVarRestore();
+                return $result;
+            }
+            //Validate if the case is paused
+            $appDelay = new AppDelay();
+            $sw = $appDelay->isPaused($caseUid, $delIndex);
+            if ($sw === true) {
+                $result = new WsResponse(19, G::LoadTranslation('ID_CASE_IN_STATUS') . " " . AppDelay::APP_TYPE_PAUSE);
+                $g->sessionVarRestore();
                 return $result;
             }
             if (strlen($unpauseDate) >= 10) {
