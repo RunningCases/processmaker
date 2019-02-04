@@ -3522,8 +3522,6 @@ class Cases
                 $oPMScript = new PMScript();
             }
 
-            $oPMScript->setFields($fieldsCase);
-
             /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner(config("system.workspace"));
             $foundDisabledCode = "";
@@ -3539,6 +3537,7 @@ class Cases
                 }
                 /*----------------------------------********---------------------------------*/
 
+                $oPMScript->setFields($fieldsCase);
                 $execute = true;
                 //Check if the trigger has conditions for the execution
                 if (!empty($trigger['ST_CONDITION'])) {
@@ -3569,9 +3568,19 @@ class Cases
                         //Other thread execution can be changed the variables
                         $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
                         if (!empty($appUid)) {
+                            $lastFieldsCase = $this->loadCase($appUid)['APP_DATA'];
                             //Update $fieldsCase with the last appData
-                            $fieldsCase = $this->loadCase($appUid)['APP_DATA'];
+                            $fieldsCase = array_merge($fieldsCase, $lastFieldsCase);
                         }
+
+                        //Update the case with the fields changed in the trigger
+                        if (!empty($fieldsTrigger)) {
+                            $appFieldsTrigger = [];
+                            $appFieldsTrigger['APP_DATA'] = $fieldsTrigger;
+                            //Update the case
+                            $this->updateCase($appUid, $appFieldsTrigger);
+                        }
+
                         //Merge the appData with variables changed
                         $fieldsCase = array_merge($fieldsCase, $fieldsTrigger);
                     } else {
