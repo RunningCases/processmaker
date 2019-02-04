@@ -468,6 +468,8 @@ function setCasesListFields($arrayCasesListField, $arrayField)
  * @global string $action
  * @global array $confCasesList
  * @global string $tabUid
+ * @see workflow/engine/methods/cases/proxyPMTablesFieldList.php
+ * @link https://wiki.processmaker.com/3.2/Cases_List_Builder#Installation_and_Configuration
  */
 function fieldSet()
 {
@@ -483,20 +485,6 @@ function fieldSet()
 
     if ($sw1 && $sw2) {
         $result = $confCasesList;
-        //remove used elements
-        $data = $result['second']['data'];
-        $fields = getFieldsByTabUid($result['PMTable']);
-        foreach ($data as $value1) {
-            foreach ($fields as $key => $value2) {
-                $swName = $value1['name'] === $value2['name'];
-                $swFieldType = $value1['fieldType'] === $value2['fieldType'];
-                if ($swName && $swFieldType) {
-                    unset($fields[$key]);
-                    break;
-                }
-            }
-        }
-        $result['first']['data'] = array_values($fields);
     } else {
         $fields = getFieldsByTabUid($tabUid);
         $arrayField = getDefaultFields($action, 0);
