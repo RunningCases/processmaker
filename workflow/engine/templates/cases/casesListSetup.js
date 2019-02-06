@@ -153,21 +153,23 @@ Ext.onReady(function () {
     {name: 'align', mapping : 'align'}
   ];
 
-  //Dropdown to select the PMTable
-  var PmTableStore = new Ext.data.JsonStore({
-     root            : 'data',
-     url             : 'proxyPMTablesList',
-     totalProperty   : 'totalCount',
-     idProperty      : 'gridIndex',
-     remoteSort      : false, //true,
-     autoLoad        : false,
-     fields          : [
-       'ADD_TAB_UID', 'ADD_TAB_NAME'
-     ],
-     listeners       : {load: function() {
-         tabs.setActiveTab(tabIndex);
-     }}
-  });
+    //Dropdown to select the PMTable
+    var PmTableStore = new Ext.data.JsonStore({
+        root: 'data',
+        url: 'proxyPMTablesList',
+        totalProperty: 'totalCount',
+        idProperty: 'gridIndex',
+        remoteSort: false, //true,
+        autoLoad: false,
+        fields: [
+            'ADD_TAB_UID', 'ADD_TAB_NAME'
+        ],
+        listeners: {
+            load: function () {
+                tabs.setActiveTab(tabIndex);
+            }
+        }
+    });
 
     // create the Data Store to list PMTables in the dropdown
     var pmTablesDropdown = new Ext.form.ComboBox({
@@ -179,6 +181,9 @@ Ext.onReady(function () {
         triggerAction: 'all',
         store: PmTableStore,
         listeners: {
+            focus: function(){
+                PmTableStore.load();
+            },
             'select': function () {
                 var tableUid = this.value;
                 Ext.Ajax.request({
@@ -479,6 +484,20 @@ Ext.onReady(function () {
     height       : screen.height-245,
     layout       : 'hbox',
     layoutConfig : {align : 'stretch'},
+    listeners: {
+        render: function (target) {
+            var el;
+            if (target.container && target.container.dom) {
+                el = target.container.dom;
+                el.style.cssText = 'overflow:hidden;position:absolute;top:28px;bottom:0px;left:0px;right:0px;';
+                target.setHeight(el.clientHeight);
+                Ext.EventManager.onWindowResize(function () {
+                    mainPanel.setHeight(el.clientHeight);
+                    mainPanel.doLayout();
+                });
+            }
+        }
+    },
     tbar         : new Ext.Toolbar({
       items: [
           _("ID_PM_TABLE"),
