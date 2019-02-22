@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @see workflow/engine/methods/services/ActionsByEmailDataForm.php
+ * @link https://wiki.processmaker.com/3.3/Actions_by_Email#Link_to_Fill_a_Form
+ */
+
 use ProcessMaker\ChangeLog\ChangeLog;
 
 if (PMLicensedFeatures::getSingleton()
@@ -103,6 +108,11 @@ if (PMLicensedFeatures::getSingleton()
 
             if (isset($_FILES ['form'])) {
                 if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
+                    //It is very important to obtain APP_DATA values because they may have changed in the derivation.
+                    $case = new Cases();
+                    $appFields = $case->loadCase($appUid);
+                    $casesFields["APP_DATA"] = array_merge($casesFields["APP_DATA"], $appFields["APP_DATA"]);
+
                     $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
                     $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $currentUsrUid, $appUid, $delIndex);
                 }
