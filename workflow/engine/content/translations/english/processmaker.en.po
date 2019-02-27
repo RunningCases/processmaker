@@ -24858,6 +24858,18 @@ msgid "The default configuration was not defined"
 msgstr "The default configuration was not defined"
 
 # TRANSLATION
+# LABEL/ID_THE_FILE_SIZE_IS_BIGGER_THAN_THE_MAXIMUM_ALLOWED
+#: LABEL/ID_THE_FILE_SIZE_IS_BIGGER_THAN_THE_MAXIMUM_ALLOWED
+msgid "The file size is bigger than the maximum allowed, the maximum size allowed is {0} Mbytes."
+msgstr "The file size is bigger than the maximum allowed, the maximum size allowed is {0} Mbytes."
+
+# TRANSLATION
+# LABEL/ID_THE_MAXIMUM_VALUE_OF_THIS_FIELD_IS
+#: LABEL/ID_THE_MAXIMUM_VALUE_OF_THIS_FIELD_IS
+msgid "The maximum value of this field is {0}."
+msgstr "The maximum value of this field is {0}."
+
+# TRANSLATION
 # LABEL/ID_THE_MIMETYPE_EXTENSION_ERROR
 #: LABEL/ID_THE_MIMETYPE_EXTENSION_ERROR
 msgid "The mime type does not correspond to the permitted extension, please verify your file."
