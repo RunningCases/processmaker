@@ -61041,6 +61041,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_THERE_PROBLEM_SENDING_EMAIL','en','There was a problem sending the email to','2016-04-08') ,
 ( 'LABEL','ID_THE_APPLICATION_IS_NOT_CANCELED','en','Error: The application {0} is not canceled.','2016-06-15') ,
 ( 'LABEL','ID_THE_DEFAULT_CONFIGURATION','en','The default configuration was not defined','2016-11-16') ,
+( 'LABEL','ID_THE_FILE_SIZE_IS_BIGGER_THAN_THE_MAXIMUM_ALLOWED','en','The file size is bigger than the maximum allowed, the maximum size allowed is {0} Mbytes.','2019-02-26') ,
+( 'LABEL','ID_THE_MAXIMUM_VALUE_OF_THIS_FIELD_IS','en','The maximum value of this field is {0}.','2019-02-26') ,
 ( 'LABEL','ID_THE_MIMETYPE_EXTENSION_ERROR','en','The mime type does not correspond to the permitted extension, please verify your file.','2018-10-2') ,
 ( 'LABEL','ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS','en','The change might cause data loss in the PM table. Do you want to continue?','2017-03-30') ,
 ( 'LABEL','ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED','en','The PHP files execution was disabled please contact the system administrator.','2018-04-20') ,
