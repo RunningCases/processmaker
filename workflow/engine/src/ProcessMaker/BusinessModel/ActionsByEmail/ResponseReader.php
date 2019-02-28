@@ -20,7 +20,6 @@ use PMLicensedFeatures;
 use ProcessMaker\BusinessModel\ActionsByEmail;
 use ProcessMaker\BusinessModel\EmailServer;
 use ProcessMaker\ChangeLog\ChangeLog;
-use ProcessMaker\Core\System;
 use ResultSet;
 use WsBase;
 
@@ -57,13 +56,13 @@ class ResponseReader
     public function actionsByEmailEmailResponse()
     {
         try {
+            if (!extension_loaded('imap')) {
+                G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", ['php_imap']) . "\n");
+                exit;
+            }
             if (PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                require_once(PATH_DB . config("system.workspace") . PATH_SEP . "/db.php");
-                $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
-                define('SYS_SKIN', $arraySystemConfiguration['default_skin']);
-
                 $criteriaAbe = new Criteria();
                 $criteriaAbe->add(AbeConfigurationPeer::ABE_TYPE, "RESPONSE");
                 $resultAbe = AbeConfigurationPeer::doSelectRS($criteriaAbe);
@@ -76,7 +75,7 @@ class ResponseReader
         } catch (Exception $e) {
             Bootstrap::registerMonolog(
                 $this->channel,
-                $e->getCode(),
+                $e->getCode() != 0 ? $e->getCode() : 300,
                 $e->getMessage(),
                 $this->case,
                 config("system.workspace"),
@@ -117,7 +116,7 @@ class ResponseReader
             $emailSetup = (!is_null(EmailServerPeer::retrieveByPK($dataAbe['ABE_EMAIL_SERVER_RECEIVER_UID']))) ?
                 $emailServer->getEmailServer($dataAbe['ABE_EMAIL_SERVER_RECEIVER_UID'], true) :
                 $emailServer->getEmailServerDefault();
-            if (empty($emailSetup)) {
+            if (empty($emailSetup) || (empty($emailSetup['MESS_INCOMING_SERVER']) && $emailSetup['MESS_INCOMING_PORT'] == 0)) {
                 throw (new Exception(G::LoadTranslation('ID_ABE_LOG_CANNOT_READ'), 500));
             }
             $mailbox = new Mailbox(
@@ -130,13 +129,15 @@ class ResponseReader
             $mailsIds = $mailbox->searchMailbox('UNSEEN');
             if ($mailsIds) {
                 // Get the first message and save its attachment(s) to disk:
-                foreach ($mailsIds as $key => $mailsId) {
+                foreach ($mailsIds as $key => $mailId) {
                     /** @var IncomingMail $mail */
-                    $mail = $mailbox->getMail($mailsId);
+                    $mail = $mailbox->getMail($mailId, false);
                     preg_match("/{(.*)}/", $mail->textPlain, $matches);
                     if ($matches) {
                         $dataEmail = G::json_decode(Crypt::decryptString($matches[1]), true);
-                        if (config("system.workspace") === $dataEmail['workspace']) {
+                        $dataAbeReq = loadAbeRequest($dataEmail['ABE_REQ_UID']);
+                        if (config("system.workspace") === $dataEmail['workspace']
+                            && (array_key_exists('ABE_UID', $dataAbeReq) && $dataAbeReq['ABE_UID'] == $dataAbe['ABE_UID'])) {
                             $this->case = $dataEmail;
                             try {
                                 $appDelegate = new AppDelegation();
@@ -147,6 +148,7 @@ class ResponseReader
                                     throw (new Exception(G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'), 400));
                                 }
                                 $this->processABE($this->case, $mail, $dataAbe);
+                                $mailbox->markMailAsRead($mailId);
                                 Bootstrap::registerMonolog(
                                     $this->channel,
                                     100, // DEBUG
@@ -164,7 +166,7 @@ class ResponseReader
                                 );
                                 Bootstrap::registerMonolog(
                                     $this->channel,
-                                    $e->getCode(),
+                                    $e->getCode() != 0 ? $e->getCode() : 400,
                                     $e->getMessage(),
                                     $this->case,
                                     config("system.workspace"),
@@ -178,7 +180,7 @@ class ResponseReader
         } catch (Exception $e) {
             Bootstrap::registerMonolog(
                 $this->channel,
-                $e->getCode(),
+                $e->getCode() != 0 ? $e->getCode() : 500,
                 $e->getMessage(),
                 $this->case,
                 config("system.workspace"),
