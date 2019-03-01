@@ -466,8 +466,6 @@ class ActionsByEmailCoreClass extends PMPlugin
                 $from = ($userDetails["USR_FULLNAME"] . ' <' . $userDetails["USR_EMAIL"] . '>');
             } else {
                 global $RBAC;
-                $currentUser = $RBAC->aUserInfo['USER_INFO'];
-                $from = ($currentUser["USR_FIRSTNAME"] . ' ' . $currentUser["USR_LASTNAME"] . ' <' . $currentUser["USR_EMAIL"] . '>');
 
                 if ($RBAC != null && is_array($RBAC->aUserInfo['USER_INFO'])) {
                     $currentUser = $RBAC->aUserInfo['USER_INFO'];
