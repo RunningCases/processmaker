@@ -468,6 +468,16 @@ class ActionsByEmailCoreClass extends PMPlugin
                 global $RBAC;
                 $currentUser = $RBAC->aUserInfo['USER_INFO'];
                 $from = ($currentUser["USR_FIRSTNAME"] . ' ' . $currentUser["USR_LASTNAME"] . ' <' . $currentUser["USR_EMAIL"] . '>');
+
+                if ($RBAC != null && is_array($RBAC->aUserInfo['USER_INFO'])) {
+                    $currentUser = $RBAC->aUserInfo['USER_INFO'];
+                    $from = ($currentUser["USR_FIRSTNAME"] . ' ' . $currentUser["USR_LASTNAME"] . ' <' . $currentUser["USR_EMAIL"] . '>');
+                } else {
+                    $usersPeer = UsersPeer::retrieveByPK($this->getUser());
+                    if (!empty($usersPeer)) {
+                        $from = ($usersPeer->getUsrFirstname() . ' ' . $usersPeer->getUsrLastname() . ' <' . $usersPeer->getUsrEmail() . '>');
+                    }
+                }
             }
         }
         //Define the email from
@@ -584,13 +594,16 @@ class ActionsByEmailCoreClass extends PMPlugin
     }
 
     /**
-     * Send the action by email
+     * Send Actions By Email.
      *
+     * @global object $RBAC
      * @param object $data
      * @param array $dataAbe
-     *
-     * @return void
+     * @return type
      * @throws Exception
+     *
+     * @see AppDelegation->createAppDelegation()
+     * @link https://wiki.processmaker.com/3.3/Actions_by_Email
      */
     public function sendActionsByEmail($data, array $dataAbe)
     {
