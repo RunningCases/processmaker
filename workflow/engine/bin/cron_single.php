@@ -233,8 +233,8 @@ try {
             define('DB_PASS', $DB_PASS);
         }
         if (!defined('SYS_SKIN')) {
-            $conf = new Configurations();
-            define('SYS_SKIN', $conf->getConfiguration('SKIN_CRON', ''));
+            $config = System::getSystemConfiguration();
+            define('SYS_SKIN', $config['default_skin']);
         }
 
         $dateSystem = date('Y-m-d H:i:s');
