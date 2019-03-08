@@ -78,7 +78,7 @@ if (defined('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION') && DISABLE_DOWNLOAD
 }
 
 
-$info = pathinfo($oAppDocument->getAppDocFilename());
+$info = pathinfo(G::inflect($oAppDocument->getAppDocFilename()));
 if (!isset($_GET['ext'])) {
     $ext = $info['extension'];
 } else {
