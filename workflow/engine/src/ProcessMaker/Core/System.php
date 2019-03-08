@@ -1597,11 +1597,25 @@ class System
      * Get server main path (protocol + host + port + workspace + lang + skin).
      * 
      * @return string
+     * @see ProcessMaker\BusinessModel\ProjectUser->projectWsUserCanStartTask()
+     * @see ProcessMaker\BusinessModel\ProjectUser->userLogin()
+     * @see ProcessMaker\BusinessModel\WebEntry->getWebEntryDataFromRecord()
+     * @see ProcessMaker\BusinessModel\WebEntryEvent->getGeneratedLink()
+     * @see ProcessMaker\Core\System\ActionsByEmailCoreClass->sendActionsByEmail()
+     * @see ProcessMaker\Core\System\webEntryProxy->checkCredentials()
+     * @see ProcessMaker\Core\System\webEntryProxy->save()
+     * @see workflow/engine/classes/ProcessMap.php ProcessMap->listNewWebEntry()
+     * @see workflow/engine/classes/ProcessMap.php ProcessMap->webEntry()
+     * @see workflow/engine/controllers/caseSchedulerProxy.php caseSchedulerProxy->checkCredentials()
+     * @see workflow/engine/methods/cases/cases_SchedulerValidateUser.php 
+     * @see workflow/engine/methods/processes/processes_webEntryGenerate.php 
+     * @see workflow/engine/methods/processes/processes_webEntryValidate.php
+     * @see workflow/engine/methods/processes/webEntry_Val_Assig.php
      */
     public static function getServerMainPath()
     {
-        $conf = new Configurations();
-        $skin = defined("SYS_SKIN") ? SYS_SKIN : $conf->getConfiguration('SKIN_CRON', '');
+        $config = self::getSystemConfiguration();
+        $skin = defined("SYS_SKIN") ? SYS_SKIN : $config['default_skin'];
         return self::getServerProtocolHost() . '/sys' . config("system.workspace") . '/' . SYS_LANG . '/' . $skin;
     }
 
