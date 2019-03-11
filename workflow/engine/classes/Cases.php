@@ -7,6 +7,7 @@ use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Util\DateTime;
 
 /**
  * A Cases object where you can do start, load, update, refresh about cases
@@ -7213,6 +7214,7 @@ class Cases
      * @param string $type
      * @param string $userUid
      * @return array|stdclass|string
+     *
      */
     public function getCaseNotes($applicationID, $type = 'array', $userUid = '')
     {
@@ -7225,13 +7227,16 @@ class Cases
         if (is_array($appNotes)) {
             switch ($type) {
                 case 'array':
-                    $response = array();
+                    $response = [];
                     foreach ($appNotes['array']['notes'] as $key => $value) {
                         $list = array();
                         $list['FULL_NAME'] = $value['USR_FIRSTNAME'] . " " . $value['USR_LASTNAME'];
                         foreach ($value as $keys => $value) {
                             if ($keys != 'USR_FIRSTNAME' && $keys != 'USR_LASTNAME' && $keys != 'USR_EMAIL') {
                                 $list[$keys] = $value;
+                            }
+                            if ($keys == 'NOTE_DATE') {
+                                $list[$keys] = DateTime::convertUtcToTimeZone($value);
                             }
                         }
                         $response[$key + 1] = $list;
@@ -7245,6 +7250,9 @@ class Cases
                             if ($keys != 'USR_FIRSTNAME' && $keys != 'USR_LASTNAME' && $keys != 'USR_EMAIL') {
                                 $response->$key->$keys = $value;
                             }
+                            if ($keys == 'NOTE_DATE') {
+                                $response->$key->$keys = DateTime::convertUtcToTimeZone($value);
+                            }
                         }
                     }
                     break;
@@ -7254,7 +7262,7 @@ class Cases
                         $response .= $value['USR_FIRSTNAME'] . " " .
                             $value['USR_LASTNAME'] . " " .
                             "(" . $value['USR_USERNAME'] . ")" .
-                            " " . $value['NOTE_CONTENT'] . " " . " (" . $value['NOTE_DATE'] . " ) " .
+                            " " . $value['NOTE_CONTENT'] . " " . " (" . DateTime::convertUtcToTimeZone($value['NOTE_DATE']) . " ) " .
                             " \n";
                     }
                     break;
