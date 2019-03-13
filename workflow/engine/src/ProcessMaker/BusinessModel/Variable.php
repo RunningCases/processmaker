@@ -749,6 +749,8 @@ class Variable
      *
      * @return array
      * @throws Exception
+     * @see ProcessMaker\BusinessModel\Variable->executeSql()
+     * @see ProcessMaker\BusinessModel\Variable->executeSqlSuggest()
      */
     public function executeSqlControl($proUid, array $params = [])
     {
@@ -809,7 +811,12 @@ class Variable
             }
 
             //Populate control data
+            $pmDynaform->clearLastQueryError();
             $pmDynaform->jsonr($field);
+            $error = $pmDynaform->getLastQueryError();
+            if (!empty($error) && is_object($error)) {
+                throw new Exception(G::LoadTranslation("ID_ERROR_IN_THE_QUERY"));
+            }
             $result = [];
             if (isset($field->queryOutputData) && is_array($field->queryOutputData)) {
                 foreach ($field->queryOutputData as $item) {
