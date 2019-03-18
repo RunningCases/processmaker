@@ -4544,4 +4544,25 @@ class WorkspaceTools
             }
         }
     }
+
+    /**
+     * Delete the triggers MySQL that causes performance issues in the upgrade process
+     */
+    public function deleteTriggersMySql($triggersToDelete)
+    {
+        // Initialize Propel
+        $this->initPropel(true);
+        $con = Propel::getConnection('workflow');
+
+        // Get statement instance
+        $stmt = $con->createStatement();
+
+        // Get MySQL DB instance class
+        $dbInstance = $this->getDatabase();
+
+        // Remove triggers MySQL
+        foreach ($triggersToDelete as $triggerName) {
+            $stmt->executeQuery($dbInstance->getDropTrigger($triggerName));
+        }
+    }
 }
