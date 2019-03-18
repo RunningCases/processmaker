@@ -494,7 +494,7 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 						fillSpecialIndicatorFirstView(viewModel);
 						break;
 					case "1050":
-						//fillStatusIndicatorFirstView(viewModel);
+						fillStatusIndicatorFirstView(viewModel);
 						break;
 					default:
 						fillGeneralIndicatorFirstView(viewModel);
