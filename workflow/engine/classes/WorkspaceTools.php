@@ -218,160 +218,115 @@ class WorkspaceTools
     /**
      * Upgrade this workspace to the latest system version
      *
-     * @param bool $buildCacheView
-     * @param string $workSpace
+     * @param string $workspace
      * @param bool $onedb
      * @param string $lang
      * @param array $arrayOptTranslation
+     * @param array $optionMigrateHistoryData
      *
      * @return void
      */
-    public function upgrade($buildCacheView = false, $workSpace = null, $onedb = false, $lang = 'en', array $arrayOptTranslation = null, $optionMigrateHistoryData = [])
+    public function upgrade($workspace, $onedb = false, $lang = 'en', array $arrayOptTranslation = null, $optionMigrateHistoryData = [])
     {
-        if ($workSpace === null) {
-            $workSpace = config("system.workspace");
-        }
         if (is_null($arrayOptTranslation)) {
             $arrayOptTranslation = ['updateXml' => true, 'updateMafe' => true];
         }
 
+        CLI::logging("* Start updating database schema...\n");
         $start = microtime(true);
-        CLI::logging("> Remove deprecated files...\n");
-        $this->removeDeprecatedFiles();
-        $stop = microtime(true);
-        CLI::logging("<*>   Remove deprecated files took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Updating database...\n");
         $this->upgradeDatabase($onedb);
-        $stop = microtime(true);
-        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
+        CLI::logging("* End updating database schema...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start updating translations...\n");
         $start = microtime(true);
-        CLI::logging("> Check Intermediate Email Event...\n");
-        $this->checkIntermediateEmailEvent();
-        $stop = microtime(true);
-        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Verify enterprise old...\n");
-        $this->verifyFilesOldEnterprise($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Updating translations...\n");
         $this->upgradeTranslation($arrayOptTranslation['updateXml'], $arrayOptTranslation['updateMafe']);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Updating Translations Process took $final seconds.\n");
+        CLI::logging("* End updating translations...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start checking MAFE requirements...\n");
+        $start = microtime(true);
+        $this->checkMafeRequirements($workspace, $lang);
+        CLI::logging("* End checking MAFE requirements...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start to update CONTENT table...\n");
+        $start = microtime(true);
+        $this->upgradeContent($workspace);
+        CLI::logging("* End to update CONTENT table... (Completed on  " . (microtime(true) - $start) . " seconds)\n");
 
         $start = microtime(true);
-        CLI::logging("> Updating Content...\n");
-        $this->upgradeContent($workSpace);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Updating Content Process took $final seconds.\n");
+        CLI::logging("* Start to migrate texts/values from 'CONTENT' table to the corresponding object tables...\n");
+        $this->migrateContent($lang);
+        CLI::logging("* End to migrate texts/values from 'CONTENT' table to the corresponding object tables... (Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start updating rows in Web Entry table for classic processes...\n");
         $start = microtime(true);
-        CLI::logging("> Check Mafe Requirements...\n");
-        $this->checkMafeRequirements($workSpace, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+        $this->updatingWebEntryClassicModel(true);
+        CLI::logging("* End updating rows in Web Entry table for classic processes...(Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start to update Files Manager...\n");
         $start = microtime(true);
-        CLI::logging("> Updating Triggers...\n");
-        $this->updateTriggers(true, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Updating Triggers Process took $final seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Backup log files...\n");
-        $this->backupLogFiles();
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Backup log files Process took $final seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Optimizing content data...\n");
-        $this->migrateContent($workSpace, $lang);
-        $stop = microtime(true);
-        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
-        $this->migratePopulateIndexingACV($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+        $this->processFilesUpgrade($workspace);
+        CLI::logging("* End to update Files Manager... (Completed on " . (microtime(true) - $start) . " seconds)\n");
 
         /*----------------------------------********---------------------------------*/
+        CLI::logging("* Start migrating to new list tables...\n");
         $start = microtime(true);
-        CLI::logging("> Migrate new lists...\n");
-        $this->migrateList($workSpace, false, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Migrate new lists Process took $final seconds.\n");
+        $this->migrateList(true, $lang);
+        CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
         /*----------------------------------********---------------------------------*/
 
+        CLI::logging("* Start migrating and populating plugin singleton data...\n");
         $start = microtime(true);
-        CLI::logging("> Updating Files Manager...\n");
-        $this->processFilesUpgrade();
-        $stop = microtime(true);
-        CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
+        $this->migrateSingleton($workspace);
+        CLI::logging("* End migrating and populating plugin singleton data...(Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start cleaning expired tokens...\n");
         $start = microtime(true);
-        CLI::logging("> Clean access and refresh tokens...\n");
-        $this->cleanTokens($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Clean access and refresh tokens took " . ($stop - $start) . " seconds.\n");
+        $this->cleanTokens();
+        CLI::logging("* End cleaning expired tokens...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start to check Intermediate Email Event...\n");
         $start = microtime(true);
-        CLI::logging("> Optimizing Self-Service data...\n");
-        $this->migrateSelfServiceRecordsRun($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
+        $this->checkIntermediateEmailEvent();
+        CLI::logging("* End to check Intermediate Email Event... (Completed on " . (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start cleaning DYN_CONTENT in APP_HISTORY...\n");
         $start = microtime(true);
-        CLI::logging("> Updating rows in Web Entry table for classic processes...\n");
-        $this->updatingWebEntryClassicModel($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Updating rows in Web Entry table for classic processes took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Update framework paths...\n");
-        $this->updateFrameworkPaths($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Update framework paths took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Migrating and populating plugin singleton data...\n");
-        $this->migrateSingleton($workSpace);
-        $stop = microtime(true);
-        CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
-
         $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
-        //Review if we need to remove the 'History of use' from APP_HISTORY
-        $start = microtime(true);
-        CLI::logging("> Clearing History of Use from APP_HISTORY table...\n");
         $this->clearDynContentHistoryData(false, $keepDynContent);
-        $stop = microtime(true);
-        CLI::logging("<*>   Clearing History of Use from APP_HISTORY table took " . ($stop - $start) . " seconds.\n");
+        CLI::logging("* End cleaning DYN_CONTENT in APP_HISTORY...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
         /*----------------------------------********---------------------------------*/
+        CLI::logging("* Start migrating history data...\n");
         $start = microtime(true);
-        CLI::logging("> Migrating history data...\n");
-        $this->migrateAppHistoryToAppDataChangeLog(false);
-        $stop = microtime(true);
-        CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
+        $this->migrateAppHistoryToAppDataChangeLog(true);
+        CLI::logging("* End migrating history data...(Completed on " . (microtime(true) - $start) . " seconds)\n");
         /*----------------------------------********---------------------------------*/
 
+        CLI::logging("* Start migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
         $start = microtime(true);
-        CLI::logging("> Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
+        $this->migratePopulateIndexingACV();
+        CLI::logging("* End migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...(Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
+        $start = microtime(true);
+        $this->migrateSelfServiceRecordsRun();
+        CLI::logging("* End optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....(Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start adding new fields and populating values in tables related to feature self service by value...\n");
+        $start = microtime(true);
         $this->upgradeSelfServiceData();
-        $stop = microtime(true);
-        CLI::logging("<*>   Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP took " . ($stop - $start) . " seconds.\n");
+        CLI::logging("* End adding new fields and populating values in tables related to feature self service by value...(Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start updating MySQL triggers...\n");
+        $start = microtime(true);
+        $this->updateTriggers(true, $lang);
+        CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
     }
 
     /**
@@ -391,6 +346,9 @@ class WorkspaceTools
         CLI::logging("<*>   Database Upgrade Structure Process took $final seconds.\n");
     }
 
+    /**
+     * Update the email events with the current email server
+     */
     public function checkIntermediateEmailEvent()
     {
         $oEmailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
@@ -629,9 +587,11 @@ class WorkspaceTools
     }
 
     /**
-     * Upgrade this workspace Content.
+     * Upgrade this workspace Content
+     *
      * @param string $workspace
      * @param boolean $executeRegenerateContent
+     *
      * @return void
      */
     public function upgradeContent($workspace = null, $executeRegenerateContent = false)
@@ -683,7 +643,7 @@ class WorkspaceTools
     }
 
     /**
-     * Upgrade this workspace translations from all avaliable languages.
+     * Upgrade the workspace translations from all available languages
      *
      * @param bool $flagXml Update XML
      * @param bool $flagMafe Update MAFE
@@ -1055,10 +1015,12 @@ class WorkspaceTools
     }
 
     /**
-     * Upgrade this workspace database to the latest system schema
+     * Upgrade the workspace database to the latest system schema
      *
-     * @param bool $checkOnly only check if the upgrade is needed if true
-     * @return array bool upgradeSchema for more information
+     * @param bool $onedb Was installed in one DB or not
+     * @param bool $checkOnly Only check if the upgrade is needed if true
+     *
+     * @return bool upgradeSchema
      */
     public function upgradeDatabase($onedb = false, $checkOnly = false)
     {
@@ -2173,6 +2135,9 @@ class WorkspaceTools
         return $result;
     }
 
+    /**
+     * Backup the log files
+     */
     public function backupLogFiles()
     {
         $config = System::getSystemConfiguration();
@@ -2189,6 +2154,12 @@ class WorkspaceTools
         }
     }
 
+    /**
+     * Check if the workspace have the clients used by MAFE registered
+     *
+     * @param string  $workspace
+     * @param string $lang
+     */
     public function checkMafeRequirements($workspace, $lang)
     {
         $this->initPropel(true);
@@ -2265,9 +2236,8 @@ class WorkspaceTools
         return true;
     }
 
-    public function verifyFilesOldEnterprise($workspace)
+    public function verifyFilesOldEnterprise()
     {
-        $this->initPropel(true);
         $pathBackup = PATH_DATA . 'backups';
         if (!file_exists($pathBackup)) {
             G::mk_dir($pathBackup, 0777);
@@ -2381,12 +2351,12 @@ class WorkspaceTools
     /**
      * Migrate all cases to New list
      *
-     * @param string $workSpace Workspace
      * @param bool $flagReinsert Flag that specifies the re-insertion
+     * @param string $lang
      *
      * @return void
      */
-    public function migrateList($workSpace, $flagReinsert = false, $lang = 'en')
+    public function migrateList($flagReinsert = false, $lang = 'en')
     {
         $this->initPropel(true);
 
@@ -3034,19 +3004,21 @@ class WorkspaceTools
     }
 
     /**
-     * Process-Files upgrade
+     * Process files upgrade, store the information in the DB
+     *
+     * @param string $workspace
      *
      * return void
      */
-    public function processFilesUpgrade()
+    public function processFilesUpgrade($workspace)
     {
         try {
             if (!defined("PATH_DATA_MAILTEMPLATES")) {
-                define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates" . PATH_SEP);
+                define("PATH_DATA_MAILTEMPLATES", PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . "mailTemplates" . PATH_SEP);
             }
 
             if (!defined("PATH_DATA_PUBLIC")) {
-                define("PATH_DATA_PUBLIC", PATH_DATA_SITE . "public" . PATH_SEP);
+                define("PATH_DATA_PUBLIC", PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . "public" . PATH_SEP);
             }
 
             $this->initPropel(true);
@@ -3559,8 +3531,12 @@ class WorkspaceTools
         return $response;
     }
 
-
-    public function migrateContent($workspace, $lang = SYS_LANG)
+    /**
+     * Migrate texts/values from "CONTENT" table to the corresponding object tables
+     *
+     * @param string $lang
+     */
+    public function migrateContent($lang = SYS_LANG)
     {
         if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
             define('MEMCACHED_ENABLED', false);
@@ -3573,7 +3549,7 @@ class WorkspaceTools
             $blackList = $oConfig['CFG_VALUE'] == 'true' ? array('Groupwf', 'Process', 'Department', 'Task', 'InputDocument', 'Application') : unserialize($oConfig['CFG_VALUE']);
         }
 
-        $blackList = $this->migrateContentRun($workspace, $lang, $blackList);
+        $blackList = $this->migrateContentRun($lang, $blackList);
         $data["CFG_UID"] = 'MIGRATED_CONTENT';
         $data["OBJ_UID"] = 'content';
         $data["CFG_VALUE"] = serialize($blackList);
@@ -3640,13 +3616,14 @@ class WorkspaceTools
     }
 
     /**
-     * Migration
+     * Migrate from "CONTENT" table to the corresponding object tables
      *
-     * @param $workspace
-     * @param mixed|string $lang
+     * @param string $lang
+     * @param array $blackList
+     *
      * @return array
      */
-    public function migrateContentRun($workspace, $lang = SYS_LANG, $blackList = array())
+    public function migrateContentRun($lang = SYS_LANG, $blackList = [])
     {
         if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
             define('MEMCACHED_ENABLED', false);
@@ -3662,7 +3639,10 @@ class WorkspaceTools
         return $blackList;
     }
 
-    public function cleanTokens($workspace, $lang = SYS_LANG)
+    /**
+     * Clean the expired access and refresh tokens
+     */
+    public function cleanTokens()
     {
         $this->initPropel(true);
         $oCriteria = new Criteria();
@@ -3750,7 +3730,10 @@ class WorkspaceTools
         }
     }
 
-    public function migrateSelfServiceRecordsRun($workspace)
+    /**
+     * Migrate the concatenated strings with UIDs from groups to the table "APP_ASSIGN_SELF_SERVICE_VALUE_GROUP"
+     */
+    public function migrateSelfServiceRecordsRun()
     {
         // Initializing
         $this->initPropel(true);
@@ -3797,7 +3780,10 @@ class WorkspaceTools
         CLI::logging("   Migrating Self-Service by Value Cases Done \n");
     }
 
-    public function migratePopulateIndexingACV($workspace)
+    /**
+     * Populate new fields used for avoiding the use of the "APP_CACHE_VIEW" table
+     */
+    public function migratePopulateIndexingACV()
     {
         // Migrating and populating new indexes
         CLI::logging("-> Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW Start \n");
@@ -4062,9 +4048,10 @@ class WorkspaceTools
      * It populates the WEB_ENTRY table for the classic processes, this procedure
      * is done to verify the execution of php files generated when the WebEntry
      * is configured.
-     * @param type $workSpace
+     *
+     * @param bool $force
      */
-    public function updatingWebEntryClassicModel($workSpace, $force = false)
+    public function updatingWebEntryClassicModel($force = false)
     {
         //We obtain from the configuration the list of proUids obtained so that
         //we do not go through again.
@@ -4160,8 +4147,9 @@ class WorkspaceTools
 
     /**
      * Updating triggers
-     * @param $flagRecreate
-     * @param $lang
+     *
+     * @param bool $flagRecreate
+     * @param string $lang
      */
     public function updateTriggers($flagRecreate, $lang)
     {
@@ -4170,6 +4158,8 @@ class WorkspaceTools
     }
 
     /**
+     * Migrate the data of the "plugin.singleton" file to the "PLUGIN_REGISTRY" table
+     *
      * @param $workspace
      */
     public function migrateSingleton($workspace)
@@ -4215,14 +4205,11 @@ class WorkspaceTools
     }
 
     /**
-     * Updating framework directory structure
+     * Check/Create framework's directories
      *
      */
-    private function updateFrameworkPaths($workSpace = null)
+    public function checkFrameworkPaths()
     {
-        if ($workSpace === null) {
-            $workSpace = config("system.workspace");
-        }
         $paths = [
             PATH_DATA . 'framework' => 0770,
             PATH_DATA . 'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,
