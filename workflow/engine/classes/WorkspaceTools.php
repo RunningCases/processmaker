@@ -264,7 +264,7 @@ class WorkspaceTools
         $start = microtime(true);
         $this->checkMafeRequirements($workspace, $lang);
         CLI::logging("* End checking MAFE requirements...(Completed on " . (microtime(true) - $start) . " seconds)\n");
-
+        
         CLI::logging("* Start deleting MySQL triggers: " . implode(', ', self::$triggers) . "...\n");
         $start = microtime(true);
         $this->deleteTriggersMySQL(self::$triggers);
@@ -1050,14 +1050,6 @@ class WorkspaceTools
 
     /**
      * Upgrade the workspace database to the latest system schema
-<<<<<<< HEAD
-=======
-     *
-     * @param bool $onedb Was installed in one DB or not
-     * @param bool $checkOnly Only check if the upgrade is needed if true
-     *
-     * @return bool upgradeSchema
->>>>>>> PMC-565
      */
     public function upgradeDatabase()
     {
