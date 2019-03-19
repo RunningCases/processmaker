@@ -4565,4 +4565,30 @@ class WorkspaceTools
             $stmt->executeQuery($dbInstance->getDropTrigger($triggerName));
         }
     }
+
+    /**
+     * Delete indexes of specific tables
+     *
+     * @param array $tables
+     */
+    public function deleteIndexes($tables)
+    {
+        // Get MySQL DB instance class
+        $database = $this->getDatabase();
+
+        foreach ($tables as $table) {
+            // Get all indexes of the table
+            $indexes = $database->executeQuery($database->generateTableIndexSQL($table));
+            $indexesDeleted = [];
+            foreach ($indexes as $index) {
+                if ($index['Key_name'] != 'PRIMARY') {
+                    if (!in_array($index['Key_name'], $indexesDeleted)) {
+                        // Remove index
+                        $database->executeQuery($database->generateDropKeySQL($table, $index['Key_name']));
+                        $indexesDeleted[] = $index['Key_name'];
+                    }
+                }
+            }
+        }
+    }
 }
