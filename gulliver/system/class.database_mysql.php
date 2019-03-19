@@ -1012,4 +1012,16 @@ class database extends database_base
         }
         return $flag;
     }
+
+    /**
+     * Generate drop trigger SQL
+     *
+     * @param string $triggerName
+     *
+     * @return string
+     */
+    public function getDropTrigger($triggerName)
+    {
+        return "DROP TRIGGER IF EXISTS `{$triggerName}`;";
+    }
 }
