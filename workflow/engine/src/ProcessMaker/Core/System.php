@@ -1534,7 +1534,8 @@ class System
      */
     public static function getServerProtocol()
     {
-        return G::is_https() ? "https://" : "http://";
+        $envProtocol = defined("REQUEST_SCHEME") && REQUEST_SCHEME === "https";
+        return G::is_https() || $envProtocol ? "https://" : "http://";
     }
 
     /**
