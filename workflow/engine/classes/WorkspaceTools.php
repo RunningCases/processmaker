@@ -247,6 +247,20 @@ class WorkspaceTools
         $this->checkMafeRequirements($workspace, $lang);
         CLI::logging("* End checking MAFE requirements...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start deleting MySQL triggers: APP_DELEGATION_UPDATE, APPLICATION_UPDATE, CONTENT_UPDATE...\n");
+        $start = microtime(true);
+        $this->deleteTriggersMySQL(['APP_DELEGATION_UPDATE', 'APPLICATION_UPDATE', 'CONTENT_UPDATE']);
+        CLI::logging("* End deleting MySQL triggers: APP_DELEGATION_UPDATE, APPLICATION_UPDATE, CONTENT_UPDATE... (Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
+
+        $bigTables = ['APPLICATION', 'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP', 'APP_CACHE_VIEW', 'APP_DELEGATION', 'APP_DELAY',
+            'APP_DOCUMENT', 'APP_HISTORY', 'APP_MESSAGE', 'GROUP_USER', 'LOGIN_LOG'];
+        CLI::logging("* Start deleting indexes from big tables: " . implode(', ', $bigTables) . "...\n");
+        $start = microtime(true);
+        $this->deleteIndexes($bigTables);
+        CLI::logging("* End deleting indexes from big tables: " . implode(', ', $bigTables) . "... (Completed on " .
+            (microtime(true) - $start) . " seconds)\n");
+
         CLI::logging("* Start to update CONTENT table...\n");
         $start = microtime(true);
         $this->upgradeContent($workspace);
