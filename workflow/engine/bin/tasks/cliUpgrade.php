@@ -160,7 +160,7 @@ function run_upgrade($parameters, $args)
             ];
 
             // Upgrade database and files from a specific workspace
-            $workspace->upgrade($workspace->name, true, SYS_LANG, $arrayOptTranslation, $optionMigrateHistoryData);
+            $workspace->upgrade($workspace->name, SYS_LANG, $arrayOptTranslation, $optionMigrateHistoryData);
             $workspace->close();
         } else {
             // Build arguments
