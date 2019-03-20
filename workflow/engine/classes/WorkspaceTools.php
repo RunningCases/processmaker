@@ -226,7 +226,7 @@ class WorkspaceTools
      *
      * @return void
      */
-    public function upgrade($workspace, $onedb = false, $lang = 'en', array $arrayOptTranslation = null, $optionMigrateHistoryData = [])
+    public function upgrade($workspace, $lang = 'en', array $arrayOptTranslation = null, $optionMigrateHistoryData = [])
     {
         if (is_null($arrayOptTranslation)) {
             $arrayOptTranslation = ['updateXml' => true, 'updateMafe' => true];
@@ -234,7 +234,7 @@ class WorkspaceTools
 
         CLI::logging("* Start updating database schema...\n");
         $start = microtime(true);
-        $this->upgradeDatabase($onedb);
+        $this->upgradeDatabase();
         CLI::logging("* End updating database schema...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
         CLI::logging("* Start updating translations...\n");
@@ -283,13 +283,6 @@ class WorkspaceTools
         $this->processFilesUpgrade($workspace);
         CLI::logging("* End to update Files Manager... (Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-        /*----------------------------------********---------------------------------*/
-        CLI::logging("* Start migrating to new list tables...\n");
-        $start = microtime(true);
-        $this->migrateList(true, $lang);
-        CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
-        /*----------------------------------********---------------------------------*/
-
         CLI::logging("* Start migrating and populating plugin singleton data...\n");
         $start = microtime(true);
         $this->migrateSingleton($workspace);
@@ -336,6 +329,19 @@ class WorkspaceTools
         $this->upgradeSelfServiceData();
         CLI::logging("* End adding new fields and populating values in tables related to feature self service by value...(Completed on " .
             (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start adding/replenishing all indexes...\n");
+        $start = microtime(true);
+        $systemSchema = System::getSystemSchema($this->dbAdapter);
+        $this->upgradeSchema($systemSchema);
+        CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+        /*----------------------------------********---------------------------------*/
+        CLI::logging("* Start migrating to new list tables...\n");
+        $start = microtime(true);
+        $this->migrateList(true, $lang);
+        CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+        /*----------------------------------********---------------------------------*/
 
         CLI::logging("* Start updating MySQL triggers...\n");
         $start = microtime(true);
@@ -1030,22 +1036,17 @@ class WorkspaceTools
 
     /**
      * Upgrade the workspace database to the latest system schema
-     *
-     * @param bool $onedb Was installed in one DB or not
-     * @param bool $checkOnly Only check if the upgrade is needed if true
-     *
-     * @return bool upgradeSchema
      */
-    public function upgradeDatabase($onedb = false, $checkOnly = false)
+    public function upgradeDatabase()
     {
         $this->initPropel(true);
         P11835::$dbAdapter = $this->dbAdapter;
         P11835::isApplicable();
         $systemSchema = System::getSystemSchema($this->dbAdapter);
-        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
+        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// Get the RBAC Schema
         $this->registerSystemTables(array_merge($systemSchema, $systemSchemaRbac));
-        $this->upgradeSchema($systemSchema);
-        $this->upgradeSchema($systemSchemaRbac, false, true, $onedb); // perform Upgrade to Rbac
+        $this->upgradeSchema($systemSchema, false, false, false); // Without add indexes
+        $this->upgradeSchema($systemSchemaRbac, false, true); // Perform upgrade to RBAC
         $this->upgradeData();
         $this->checkRbacPermissions();//check or add new permissions
         $this->checkSequenceNumber();
@@ -1112,10 +1113,7 @@ class WorkspaceTools
                 $arrayData = $emailSever->create2($arrayData);
             }
         }
-
         P11835::execute();
-
-        return true;
     }
 
     private function setFormatRows()
@@ -1136,14 +1134,18 @@ class WorkspaceTools
     }
 
     /**
-     * Upgrade this workspace database from a schema
+     * Upgrade the workspace database according to the schema
      *
-     * @param array $schema the schema information, such as returned from getSystemSchema
-     * @param bool $checkOnly only check if the upgrade is needed if true
-     * @return array bool the changes if checkOnly is true, else return
-     * true on success
+     * @param array $schema The schema information, such as returned from getSystemSchema
+     * @param bool $checkOnly Only return the diff between current database and the schema
+     * @param bool $rbac Is RBAC database?
+     * @param bool $includeIndexes Include or no indexes in new tables
+     *
+     * @return bool|array
+     *
+     * @throws Exception
      */
-    public function upgradeSchema($schema, $checkOnly = false, $rbac = false, $onedb = false)
+    public function upgradeSchema($schema, $checkOnly = false, $rbac = false, $includeIndexes = true)
     {
         $dbInfo = $this->getDBInfo();
 
@@ -1198,11 +1200,11 @@ class WorkspaceTools
             CLI::logging("-> " . count($changes['tablesToAdd']) . " tables to add\n");
         }
 
-        foreach ($changes['tablesToAdd'] as $sTable => $aColumns) {
-            $database->executeQuery($database->generateCreateTableSQL($sTable, $aColumns));
-            if (isset($changes['tablesToAdd'][$sTable]['INDEXES'])) {
-                foreach ($changes['tablesToAdd'][$sTable]['INDEXES'] as $indexName => $aIndex) {
-                    $database->executeQuery($database->generateAddKeysSQL($sTable, $indexName, $aIndex));
+        foreach ($changes['tablesToAdd'] as $tableName => $columns) {
+            $database->executeQuery($database->generateCreateTableSQL($tableName, $columns));
+            if (isset($changes['tablesToAdd'][$tableName]['INDEXES']) && $includeIndexes) {
+                foreach ($changes['tablesToAdd'][$tableName]['INDEXES'] as $indexName => $keys) {
+                    $database->executeQuery($database->generateAddKeysSQL($tableName, $indexName, $keys));
                 }
             }
         }
@@ -1211,46 +1213,62 @@ class WorkspaceTools
             CLI::logging("-> " . count($changes['tablesToAlter']) . " tables to alter\n");
         }
 
-        foreach ($changes['tablesToAlter'] as $sTable => $aActions) {
-            foreach ($aActions as $sAction => $aAction) {
-                foreach ($aAction as $sColumn => $vData) {
-                    switch ($sAction) {
-                        case 'DROP':
-                            $database->executeQuery($database->generateDropColumnSQL($sTable, $vData));
-                            break;
-                        case 'ADD':
-                            if ($database->checkPatchHor1787($sTable, $sColumn, $vData)) {
-                                $database->executeQuery($database->generateCheckAddColumnSQL($sTable, $sColumn, $vData));
-                                $database->executeQuery($database->deleteAllIndexesIntable($sTable, $sColumn, $vData));
-                            }
-                            $database->executeQuery($database->generateAddColumnSQL($sTable, $sColumn, $vData));
-                            break;
-                        case 'CHANGE':
-                            $database->executeQuery($database->generateChangeColumnSQL($sTable, $sColumn, $vData));
-                            break;
+        $tablesToAddColumns = [];
+
+        foreach ($changes['tablesToAlter'] as $tableName => $actions) {
+            foreach ($actions as $action => $actionData) {
+                if ($action == 'ADD') {
+                    $tablesToAddColumns[$tableName] = $actionData;
+
+                    // In a very old schema the primary key for table "LOGIN_LOG" was changed and we need to delete the
+                    // primary index to avoid errors in the database upgrade
+                    // TO DO: The change of a Primary Key in a table should be generic
+                    if ($tableName == 'LOGIN_LOG' && array_key_exists('LOG_ID', $actionData)) {
+                        $database->executeQuery('DROP INDEX `PRIMARY` ON LOGIN_LOG;');
+                    }
+                } else {
+                    foreach ($actionData as $columnName => $meta) {
+                        switch ($action) {
+                            case 'DROP':
+                                $database->executeQuery($database->generateDropColumnSQL($tableName, $meta));
+                                break;
+                            case 'CHANGE':
+                                $database->executeQuery($database->generateChangeColumnSQL($tableName, $columnName, $meta));
+                                break;
+                        }
                     }
                 }
             }
         }
 
-        if (!empty($changes['tablesWithNewIndex'])) {
-            CLI::logging("-> " . count($changes['tablesWithNewIndex']) . " indexes to add\n");
-        }
-        foreach ($changes['tablesWithNewIndex'] as $sTable => $aIndexes) {
-            foreach ($aIndexes as $sIndexName => $aIndexFields) {
-                $database->executeQuery($database->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
+        if (!empty($tablesToAddColumns)) {
+            foreach ($tablesToAddColumns as $tableName => $tableColumn) {
+                $indexes = [];
+                if (!empty($changes['tablesWithNewIndex'][$tableName]) && $includeIndexes) {
+                    $indexes = $changes['tablesWithNewIndex'][$tableName];
+                    unset($changes['tablesWithNewIndex'][$tableName]);
+                }
+                $database->executeQuery($database->generateAddColumnsSql($tableName, $tableColumn, $indexes));
             }
         }
 
-        if (!empty($changes['tablesToAlterIndex'])) {
-            CLI::logging("-> " . count($changes['tablesToAlterIndex']) . " indexes to alter\n");
-        }
-        foreach ($changes['tablesToAlterIndex'] as $sTable => $aIndexes) {
-            foreach ($aIndexes as $sIndexName => $aIndexFields) {
-                $database->executeQuery($database->generateDropKeySQL($sTable, $sIndexName));
-                $database->executeQuery($database->generateAddKeysSQL($sTable, $sIndexName, $aIndexFields));
+        if (!empty($changes['tablesWithNewIndex']) && $includeIndexes) {
+            CLI::logging("-> " . count($changes['tablesWithNewIndex']) . " tables with indexes to add\n");
+            foreach ($changes['tablesWithNewIndex'] as $tableName => $indexes) {
+                $database->executeQuery($database->generateAddColumnsSql($tableName, [], $indexes));
             }
         }
+
+        if (!empty($changes['tablesToAlterIndex']) && $includeIndexes) {
+            CLI::logging("-> " . count($changes['tablesToAlterIndex']) . " tables with indexes to alter\n");
+            foreach ($changes['tablesToAlterIndex'] as $tableName => $indexes) {
+                foreach ($indexes as $indexName => $indexFields) {
+                    $database->executeQuery($database->generateDropKeySQL($tableName, $indexName));
+                    $database->executeQuery($database->generateAddKeysSQL($tableName, $indexName, $indexFields));
+                }
+            }
+        }
+
         $this->closeDatabase();
         return true;
     }
