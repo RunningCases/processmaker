@@ -1545,7 +1545,7 @@ class System
     public static function getServerHost()
     {
         $port = self::getServerPort();
-        if (!empty($port) && $port != '80') {
+        if (!empty($port) && $port != '80' && $port != '443') {
             return self::getServerHostname() . ':' . $port;
         }
         return self::getServerHostname();
