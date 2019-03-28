@@ -3225,7 +3225,6 @@ class G
             '/Ö/' => 'Oe',
             '/ß/' => 'ss',
             '/[\.|\,|\+|\"|\:|\;|\-|\\|\/]/' => " ",
-            '/\\\\/' => $replacement,
             '/\\s+/' => $replacement);
 
         $map = array_merge($default, $map);
