@@ -369,16 +369,17 @@ class SpoolRun
     }
 
     /**
-     * handle all recipients to compose the mail
+     * Handle all recipients to compose the mail
      *
-     * @param none
-     * @return boolean true or exception
+     * @return void
+     *
+     * @see SpoolRun::sendMail()
      */
     private function handleEnvelopeTo()
     {
-        $hold = array();
-        $holdcc = array();
-        $holdbcc = array();
+        $hold = [];
+        $holdcc = [];
+        $holdbcc = [];
         $text = trim($this->fileData['to']);
 
         $textcc = '';
@@ -399,10 +400,15 @@ class SpoolRun
                     $this->fileData['envelope_to'][] = "$val";
                 }
             }
+
         } elseif ($text != '') {
             $this->fileData['envelope_to'][] = "$text";
         } else {
-            $this->fileData['envelope_to'] = Array();
+            $this->fileData['envelope_to'] = [];
+        }
+
+        if (empty($this->fileData['envelope_to'])){
+            $this->updateSpoolError('Invalid address: ' . $text);
         }
 
         //CC
@@ -417,7 +423,7 @@ class SpoolRun
         } elseif ($textcc != '') {
             $this->fileData['envelope_cc'][] = "$textcc";
         } else {
-            $this->fileData['envelope_cc'] = Array();
+            $this->fileData['envelope_cc'] = [];
         }
 
         //BCC
@@ -432,7 +438,7 @@ class SpoolRun
         } elseif ($textbcc != '') {
             $this->fileData['envelope_bcc'][] = "$textbcc";
         } else {
-            $this->fileData['envelope_bcc'] = Array();
+            $this->fileData['envelope_bcc'] = [];
         }
 
     }
@@ -520,36 +526,66 @@ class SpoolRun
                                 }
                             }
                             //To
-                            foreach ($this->fileData['envelope_to'] as $sEmail) {
-                                if (strpos($sEmail, '<') !== false) {
-                                    preg_match($this->longMailEreg, $sEmail, $matches);
-                                    $sTo = trim($matches[3]);
-                                    $sToName = trim($matches[1]);
-                                    $phpMailer->AddAddress($sTo, $sToName);
+                            foreach ($this->fileData['envelope_to'] as $email) {
+                                if (strpos($email, '<') !== false) {
+                                    preg_match($this->longMailEreg, $email, $matches);
+                                    $toAddress = '';
+                                    if (!empty($matches[3])) {
+                                        $toAddress = trim($matches[3]);
+                                    }
+                                    $toName = '';
+                                    if (!empty($matches[1])) {
+                                        $toName = trim($matches[1]);
+                                    }
+                                    if (!empty($toAddress)) {
+                                        $phpMailer->AddAddress($toAddress, $toName);
+                                    } else {
+                                        throw new Exception('Invalid address: ' . $email);
+                                    }
                                 } else {
-                                    $phpMailer->AddAddress($sEmail);
+                                    $phpMailer->AddAddress($email);
                                 }
                             }
                             //CC
-                            foreach ($this->fileData['envelope_cc'] as $sEmail) {
-                                if (strpos($sEmail, '<') !== false) {
-                                    preg_match($this->longMailEreg, $sEmail, $matches);
-                                    $sTo = trim($matches[3]);
-                                    $sToName = trim($matches[1]);
-                                    $phpMailer->AddCC($sTo, $sToName);
+                            foreach ($this->fileData['envelope_cc'] as $email) {
+                                if (strpos($email, '<') !== false) {
+                                    preg_match($this->longMailEreg, $email, $matches);
+                                    $ccAddress = '';
+                                    if (!empty($matches[3])) {
+                                        $ccAddress = trim($matches[3]);
+                                    }
+                                    $ccName = '';
+                                    if (!empty($matches[1])) {
+                                        $ccName = trim($matches[1]);
+                                    }
+                                    if (!empty($ccAddress)) {
+                                        $phpMailer->AddCC($ccAddress, $ccName);
+                                    } else {
+                                        throw new Exception('Invalid address: ' . $email);
+                                    }
                                 } else {
-                                    $phpMailer->AddCC($sEmail);
+                                    $phpMailer->AddCC($email);
                                 }
                             }
                             //BCC
-                            foreach ($this->fileData['envelope_bcc'] as $sEmail) {
-                                if (strpos($sEmail, '<') !== false) {
-                                    preg_match($this->longMailEreg, $sEmail, $matches);
-                                    $sTo = trim($matches[3]);
-                                    $sToName = trim($matches[1]);
-                                    $phpMailer->AddBCC($sTo, $sToName);
+                            foreach ($this->fileData['envelope_bcc'] as $email) {
+                                if (strpos($email, '<') !== false) {
+                                    preg_match($this->longMailEreg, $email, $matches);
+                                    $bccAddress = '';
+                                    if (!empty($matches[3])) {
+                                        $bccAddress = trim($matches[3]);
+                                    }
+                                    $bccName = '';
+                                    if (!empty($matches[1])) {
+                                        $bccName = trim($matches[1]);
+                                    }
+                                    if (!empty($bccAddress)) {
+                                        $phpMailer->AddBCC($bccAddress, $bccName);
+                                    } else {
+                                        throw new Exception('Invalid address: ' . $email);
+                                    }
                                 } else {
-                                    $phpMailer->AddBCC($sEmail);
+                                    $phpMailer->AddBCC($email);
                                 }
                             }
                             //IsHtml

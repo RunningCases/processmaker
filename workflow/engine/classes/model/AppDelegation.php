@@ -223,7 +223,6 @@ class AppDelegation extends BaseAppDelegation
             try {
                 $res = $this->save();
             } catch (PropelException $e) {
-                error_log($e->getMessage());
                 return;
             }
         } else {
