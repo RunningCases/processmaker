@@ -6,6 +6,7 @@
  */
 
 use ProcessMaker\ChangeLog\ChangeLog;
+use ProcessMaker\BusinessModel\Cases\InputDocument;
 
 if (PMLicensedFeatures::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
@@ -66,7 +67,12 @@ if (PMLicensedFeatures::getSingleton()
 
         //Update case info
         $case->updateCase($appUid, $casesFields);
-
+        if (isset($_FILES ['form'])) {
+            if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
+                $oInputDocument = new InputDocument();
+                $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $currentUsrUid, $appUid, $delIndex);
+            }
+        }
         $wsBaseInstance = new WsBase();
         $result = $wsBaseInstance->derivateCase(
                 $casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true
@@ -105,18 +111,6 @@ if (PMLicensedFeatures::getSingleton()
 
             $dataAbeRequests['ABE_REQ_ANSWERED'] = 1;
             $code == 0 ? uploadAbeRequest($dataAbeRequests) : '';
-
-            if (isset($_FILES ['form'])) {
-                if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
-                    //It is very important to obtain APP_DATA values because they may have changed in the derivation.
-                    $case = new Cases();
-                    $appFields = $case->loadCase($appUid);
-                    $casesFields["APP_DATA"] = array_merge($casesFields["APP_DATA"], $appFields["APP_DATA"]);
-
-                    $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
-                    $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $currentUsrUid, $appUid, $delIndex);
-                }
-            }
 
             $assign = $result['message'];
             $aMessage['MESSAGE'] = '<strong>' . G::loadTranslation('ID_ABE_INFORMATION_SUBMITTED') . '</strong>';
