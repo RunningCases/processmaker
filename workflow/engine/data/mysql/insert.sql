@@ -58066,6 +58066,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ERROR_INSERT_LINE','en','Error trying to insert the line','2014-01-15') ,
 ( 'LABEL','ID_ERROR_INSTALLING_ADDON','en','There was a problem installing this add-on.','2014-10-21') ,
 ( 'LABEL','ID_ERROR_IN_SERVER','en','Error in server','2015-09-15') ,
+( 'LABEL','ID_ERROR_IN_THE_QUERY','en','Error in the query','2019-03-12') ,
 ( 'LABEL','ID_ERROR_JS_NOT_AVAILABLE','en','Your browser doesn''t support JavaScript or it may be disabled. Please use a different browser or enable JavaScript. Dynaforms won''t entirely work because JavaScript is required.','2014-10-21') ,
 ( 'LABEL','ID_ERROR_MESSAGE','en','Error Message','2017-02-22') ,
 ( 'LABEL','ID_ERROR_OBJECT_NOT_EXISTS','en','Error: Object does not exist.','2014-01-15') ,
