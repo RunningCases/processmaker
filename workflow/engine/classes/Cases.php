@@ -5615,9 +5615,14 @@ class Cases
     }
 
     /**
+     * This function send an email for each task in $arrayTask if $to is definded
+     *
      * @param $dataLastEmail
      * @param $arrayData
      * @param $arrayTask
+     * @return void
+     *
+     * @see \Cases->sendNotifications()
      */
     public function sendMessage($dataLastEmail, $arrayData, $arrayTask)
     {
@@ -5701,7 +5706,7 @@ class Cases
                     '',
                     $dataLastEmail['applicationUid'],
                     $dataLastEmail['delIndex'],
-                    'DERIVATION',
+                    WsBase::MESSAGE_TYPE_TASK_NOTIFICATION,
                     $dataLastEmail['subject'],
                     $dataLastEmail['from'],
                     $to,
