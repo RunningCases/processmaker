@@ -519,13 +519,15 @@ class database extends database_base
     }
 
     /**
-     * execute a sql query
+     * Execute a sql query
      *
      * @param string $query
+     * @param bool $throwError
+     *
      * @return array
      * @throws Exception
      */
-    public function executeQuery($query)
+    public function executeQuery($query, $throwError = false)
     {
         $this->logQuery($query);
 
@@ -545,7 +547,11 @@ class database extends database_base
             return $result;
         } catch (Exception $exception) {
             $this->logQuery($exception->getMessage());
-            return [];
+            if ($throwError) {
+                throw $exception;
+            } else {
+                return [];
+            }
         }
     }
 
