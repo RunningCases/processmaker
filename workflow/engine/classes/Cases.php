@@ -963,10 +963,9 @@ class Cases
                 if (isset($Fields['CURRENT_USER_UID'])) {
                     $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
                 }
-                /*----------------------------------********---------------------------------*/
-                $completed = new ListCompleted();
-                $completed->create(array_merge($Fields, $newTitleOrDescription));
-                /*----------------------------------********---------------------------------*/
+                //Will be update the status in the list Participated
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->refreshStatus($Fields['APP_UID'], 'COMPLETED');
             }
 
             /** Update case*/
@@ -1137,9 +1136,6 @@ class Cases
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListParticipatedHistoryPeer::APP_UID, $sAppUid);
             ListParticipatedHistoryPeer::doDelete($oCriteria);
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(ListCompletedPeer::APP_UID, $sAppUid);
-            ListCompletedPeer::doDelete($oCriteria);
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListUnassignedPeer::APP_UID, $sAppUid);
             ListUnassignedPeer::doDelete($oCriteria);
