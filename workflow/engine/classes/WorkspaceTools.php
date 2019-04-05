@@ -4695,4 +4695,16 @@ class WorkspaceTools
             }
         }
     }
+
+    /**
+     * Execute a query, used internally for the upgrade process
+     *
+     * @param string $query
+     * @param bool $rbac
+     */
+    public function upgradeQuery($query, $rbac)
+    {
+        $database = $this->getDatabase($rbac);
+        $database->executeQuery($query, true);
+    }
 }

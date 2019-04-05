@@ -36,6 +36,8 @@ CLI::taskArg('workspace');
 /*----------------------------------********---------------------------------*/
 CLI::taskRun("run_unify_database");
 /*----------------------------------********---------------------------------*/
+CLI::taskName('upgrade-query');
+CLI::taskRun('runUpgradeQuery');
 
 /**
  * Execute the upgrade
@@ -299,3 +301,25 @@ function run_unify_database($args)
     $flag = G::isPMUnderUpdating(0);
 }
 /*----------------------------------********---------------------------------*/
+
+/**
+ * Execute a query, used internally for upgrade process
+ *
+ * @param array $options
+ */
+function runUpgradeQuery($options)
+{
+    // Initializing variables
+    $workspaceName = $options[0];
+    $query = base64_decode($options[1]);
+    $isRbac = (bool)$options[2];
+
+    // Creating a new instance of the extended class
+    $workspace = new WorkspaceTools($workspaceName);
+
+    // Execute the query
+    $workspace->upgradeQuery($query, $isRbac);
+
+    // Terminate without error
+    exit('success');
+}
