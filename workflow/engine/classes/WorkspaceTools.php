@@ -2420,6 +2420,13 @@ class WorkspaceTools
      * @param string $lang
      *
      * @return void
+     *
+     * @throws Exception
+     *
+     * @see \WorkspaceTools->upgrade
+     * @see \WorkspaceTools->restore
+     * @see workflow/engine/bin/tasks/cliWorkspaces.php:migrate_new_cases_lists()
+     * @link https://wiki.processmaker.com/3.3/processmaker_command#migrate-new-cases-lists
      */
     public function migrateList($flagReinsert = false, $lang = 'en')
     {
@@ -2432,7 +2439,7 @@ class WorkspaceTools
             return;
         }
 
-        $arrayTable1 = ['ListInbox', 'ListMyInbox', 'ListCanceled', 'ListParticipatedLast', 'ListParticipatedHistory', 'ListPaused'];
+        $arrayTable1 = ['ListCanceled', 'ListMyInbox', 'ListInbox', 'ListParticipatedHistory', 'ListPaused', 'ListParticipatedLast'];
         $arrayTable2 = ['ListUnassigned', 'ListUnassignedGroup'];
         $arrayTable = array_merge($arrayTable1, $arrayTable2);
 
@@ -2457,23 +2464,57 @@ class WorkspaceTools
             }
         }
 
+        $listQueries = [];
+
         if ($flagReinsert || !$flagListAll) {
-            $this->regenerateListCanceled($lang);
-            $this->regenerateListMyInbox(); //This list require no translation
-            $this->regenerateListInbox();   //This list require no translation
-            $this->regenerateListParticipatedHistory(); //This list require no translation
-            $this->regenerateListParticipatedLast();    //This list require no translation
-            $this->regenerateListPaused(); //This list require no translation
+            // Regenerate lists
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListCanceled($lang));
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListMyInbox());
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListInbox());
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListParticipatedHistory());
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListPaused());
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListParticipatedLast());
         }
 
         if ($flagReinsert || !$flagListUnassigned) {
-            $this->regenerateListUnassigned(); //This list require no translation
+            // This list always is truncated
+            $con = Propel::getConnection("workflow");
+            $stmt = $con->createStatement();
+            $stmt->executeQuery('TRUNCATE ' . $this->dbName . '.LIST_UNASSIGNED');
+
+            // Regenerate list
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListUnassigned());
         }
+
+        // Run queries in multiple threads
+        $processesManager = new ProcessesManager($listQueries);
+        $processesManager->run();
+
+        // If exists an error throw an exception
+        if (!empty($processesManager->getErrors())) {
+            $errorMessage = '';
+            foreach ($processesManager->getErrors() as $error) {
+                $errorMessage .= $error['rawAnswer'] . PHP_EOL;
+            }
+            throw new Exception($errorMessage);
+        }
+
+        // This query cannot be launched in parallel, requires that the table already was populated
+        $this->updateListParticipatedLast();
 
         $this->listFirstExecution('insert');
         $this->listFirstExecution('insert', 'unassigned');
     }
 
+    /**
+     * Return query to populate canceled list
+     *
+     * @param string $lang
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
     public function regenerateListCanceled($lang = 'en')
     {
         $this->initPropel(true);
@@ -2536,12 +2577,17 @@ class WorkspaceTools
                     WHERE
                         ACV.APP_STATUS = \'CANCELLED\'
                             AND ACV.DEL_LAST_INDEX = 1';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_CANCELED\n");
+
+        return $query;
     }
 
+    /**
+     * Return query to populate my inbox list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
     public function regenerateListMyInbox()
     {
         $this->initPropel(true);
@@ -2606,12 +2652,16 @@ class WorkspaceTools
                         ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
                     WHERE ACV.DEL_INDEX=1';
 
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_MY_INBOX\n");
+        return $query;
     }
 
+    /**
+     * Return query to populate inbox list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
     public function regenerateListInbox()
     {
         $this->initPropel(true);
@@ -2664,12 +2714,17 @@ class WorkspaceTools
                         ' . $this->dbName . '.USERS USR ON ACV.PREVIOUS_USR_UID = USR.USR_UID
                     WHERE
                         ACV.DEL_THREAD_STATUS = \'OPEN\'';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_INBOX\n");
+
+        return $query;
     }
 
+    /**
+     * Return query to populate participated history list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
     public function regenerateListParticipatedHistory()
     {
         $this->initPropel(true);
@@ -2722,12 +2777,17 @@ class WorkspaceTools
                         ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
                             LEFT JOIN
                         ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_PARTICIPATED_HISTORY\n");
+
+        return $query;
     }
 
+    /**
+     * Return query to populate participated last list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
     public function regenerateListParticipatedLast()
     {
         $this->initPropel(true);
@@ -2803,10 +2863,18 @@ class WorkspaceTools
                         ) ACV
                         LEFT JOIN ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
                         LEFT JOIN ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        CLI::logging(">  Inserted data into table LIST_PARTICIPATED_LAST\n");
+
+        return $query;
+    }
+
+    /**
+     * Update participated last list
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
+    public function updateListParticipatedLast()
+    {
+        $this->initPropel(true);
         $query = 'UPDATE ' . $this->dbName . '.LIST_PARTICIPATED_LAST LPL, (
                        SELECT
                          TASK.TAS_TITLE,
@@ -2832,18 +2900,19 @@ class WorkspaceTools
                       LPL.DEL_CURRENT_USR_LASTNAME  = IFNULL(USERS_VALUES.USR_LASTNAME, \'\'),
                       LPL.DEL_CURRENT_TAS_TITLE     = IFNULL(USERS_VALUES.TAS_TITLE, \'\')
                     WHERE LPL.APP_UID = USERS_VALUES.APP_UID';
+
+        CLI::logging("> Updating the current users data on table LIST_PARTICIPATED_LAST\n");
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
-        CLI::logging("> Updating the current users data on table LIST_PARTICIPATED_LAST\n");
         $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_PARTICIPATED_LAST\n");
     }
 
     /**
-     * This function overwrite the table LIST_PAUSED
-     * Get the principal information in the tables appDelay, appDelegation
-     * For the labels we use the tables user, process, task and application
-     * @return void
+     * Return query to populate paused list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
      */
     public function regenerateListPaused()
     {
@@ -2922,17 +2991,22 @@ class WorkspaceTools
                        APP_DELAY.APP_DISABLE_ACTION_USER = "0" AND
                        APP_DELAY.APP_TYPE = "PAUSE"
                ';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_PAUSED\n");
+
+        return $query;
     }
 
     /*----------------------------------********---------------------------------*/
+    /**
+     * Return query to populate unassigned list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
     public function regenerateListUnassigned()
     {
         $this->initPropel(true);
-        $truncate = 'TRUNCATE ' . $this->dbName . '.LIST_UNASSIGNED';
+
         //This executeQuery is very fast than Propel
         $query = 'INSERT INTO ' . $this->dbName . '.LIST_UNASSIGNED
                     (APP_UID,
@@ -2976,11 +3050,8 @@ class WorkspaceTools
                     WHERE
                         ACV.DEL_THREAD_STATUS = \'OPEN\'
                         AND ACV.USR_UID = \'\' ';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($truncate);
-        $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_UNASSIGNED\n");
+
+        return $query;
     }
     /*----------------------------------********---------------------------------*/
 
