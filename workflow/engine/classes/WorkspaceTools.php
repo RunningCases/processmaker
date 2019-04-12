@@ -3626,59 +3626,36 @@ class WorkspaceTools
     }
 
     /**
-     * Migrate this workspace table Content.
+     * Generate update rows from Content sentence
      *
-     * @param $className
-     * @param $fields
-     * @param mixed|string $lang
-     * @throws Exception
+     * @param string $tableName
+     * @param array $fields
+     * @param string $lang
+     *
+     * @return string
      */
-    public function migrateContentWorkspace($className, $fields, $lang = SYS_LANG)
+    public function generateUpdateFromContent($tableName, array $fields, $lang = SYS_LANG)
     {
-        try {
-            $this->initPropel(true);
-            $fieldUidName = $fields['uid'];
-            $oCriteria = new Criteria();
-            $oCriteria->clearSelectColumns();
-            $oCriteria->addAsColumn($fieldUidName, ContentPeer::CON_ID);
-            $oCriteria->addSelectColumn(ContentPeer::CON_PARENT);
-            $oCriteria->addSelectColumn(ContentPeer::CON_CATEGORY);
-            $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-            $oCriteria->add(ContentPeer::CON_CATEGORY, $fields['fields'], Criteria::IN);
-            $oCriteria->add(ContentPeer::CON_LANG, $lang);
-            $oDataset = ContentPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $methods = $fields['methods'];
-            while ($oDataset->next()) {
-                $row = $oDataset->getRow();
-                $fieldName = $row['CON_CATEGORY'];
-                $fieldName = isset($fields['alias']) && isset($fields['alias'][$fieldName]) ? $fields['alias'][$fieldName] : $fieldName;
-                unset($row['CON_CATEGORY']);
-                $row[$fieldName] = $row['CON_VALUE'];
-                unset($row['CON_VALUE']);
-                $oTable = new $className();
-                $that = array($oTable, $methods['exists']);
-                $params = array($row[$fieldUidName]);
-                if (isset($row['CON_PARENT']) && $row['CON_PARENT'] != '') {
-                    array_push($params, $row['CON_PARENT']);
-                    $fieldName = isset($fields['alias']) && isset($fields['alias']['CON_PARENT']) ? $fields['alias']['CON_PARENT'] : 'CON_PARENT';
-                    $row[$fieldName] = $row['CON_PARENT'];
-                }
-                unset($row['CON_PARENT']);
-                if (call_user_func_array($that, $params)) {
-                    if (isset($methods['update'])) {
-                        $fn = $methods['update'];
-                        $fn($row);
-                    } else {
-                        $oTable->update($row);
-                    }
-                }
-            }
-            $classNamePeer = class_exists($className . 'Peer') ? $className . 'Peer' : $fields['peer'];
-            CLI::logging("|--> Add content data in table " . $classNamePeer::TABLE_NAME . "\n");
-        } catch (Exception $e) {
-            throw ($e);
+        $sql = "UPDATE " . $tableName . " AS T";
+        $i = 0;
+        foreach ($fields['fields'] as $field) {
+            $i++;
+            $tableAlias = "C" . $i;
+            $sql .= " LEFT JOIN CONTENT " . $tableAlias . " ON (";
+            $sql .= $tableAlias . ".CON_CATEGORY = '" . $field . "' AND ";
+            $sql .= $tableAlias . ".CON_ID = T." . $fields['uid'] . " AND ";
+            $sql .= $tableAlias . ".CON_LANG = '" . $lang . "')";
         }
+        $sql .= ' SET ';
+        $i = 0;
+        foreach ($fields['fields'] as $field) {
+            $i++;
+            $tableAlias = "C" . $i;
+            $fieldName = !empty($fields['alias'][$field]) ? $fields['alias'][$field] : $field;
+            $sql .= $fieldName . " = " . $tableAlias . ".CON_VALUE, ";
+        }
+        $sql = rtrim($sql, ', ');
+        return $sql;
     }
 
     /**
@@ -3688,6 +3665,8 @@ class WorkspaceTools
      * @param array $blackList
      *
      * @return array
+     *
+     * @throws Exception
      */
     public function migrateContentRun($lang = SYS_LANG, $blackList = [])
     {
@@ -3695,13 +3674,40 @@ class WorkspaceTools
             define('MEMCACHED_ENABLED', false);
         }
         $content = $this->getListContentMigrateTable();
+        $contentQueries = [];
 
         foreach ($content as $className => $fields) {
             if (!in_array($className, $blackList)) {
-                $this->migrateContentWorkspace($className, $fields, $lang);
+                // Build class peer name
+                if (class_exists($className . 'Peer')) {
+                    $classNamePeer = $className . 'Peer';
+                } else {
+                    $classNamePeer = $fields['peer'];
+                }
+
+                // Build the query
+                $query = $this->generateUpdateFromContent($classNamePeer::TABLE_NAME, $fields, $lang);
+
+                // Instantiate the class to execute the query in background
+                $contentQueries[] = new RunProcessUpgradeQuery($this->name, $query);
+
+                // Add class to the control array
                 $blackList[] = $className;
             }
         }
+        // Run queries in multiple threads
+        $processesManager = new ProcessesManager($contentQueries);
+        $processesManager->run();
+
+        // If exists an error throw an exception
+        if (!empty($processesManager->getErrors())) {
+            $errorMessage = '';
+            foreach ($processesManager->getErrors() as $error) {
+                $errorMessage .= $error['rawAnswer'] . PHP_EOL;
+            }
+            throw new Exception($errorMessage);
+        }
+
         return $blackList;
     }
 
