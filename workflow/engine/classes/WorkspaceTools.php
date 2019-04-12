@@ -7,9 +7,11 @@ use ProcessMaker\BusinessModel\Process as BmProcess;
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\Installer;
+use ProcessMaker\Core\ProcessesManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
 use ProcessMaker\Project\Adapter\BpmnWorkflow;
+use ProcessMaker\Upgrade\RunProcessUpgradeQuery;
 use ProcessMaker\Util\FixReferencePath;
 
 /**
@@ -1242,20 +1244,51 @@ class WorkspaceTools
         }
 
         if (!empty($tablesToAddColumns)) {
+            $upgradeQueries = [];
             foreach ($tablesToAddColumns as $tableName => $tableColumn) {
                 $indexes = [];
                 if (!empty($changes['tablesWithNewIndex'][$tableName]) && $includeIndexes) {
                     $indexes = $changes['tablesWithNewIndex'][$tableName];
                     unset($changes['tablesWithNewIndex'][$tableName]);
                 }
-                $database->executeQuery($database->generateAddColumnsSql($tableName, $tableColumn, $indexes));
+
+                // Instantiate the class to execute the query in background
+                $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql($tableName, $tableColumn, $indexes), $rbac);
+            }
+
+            // Run queries in multiple threads
+            $processesManager = new ProcessesManager($upgradeQueries);
+            $processesManager->run();
+
+            // If exists an error throw an exception
+            if (!empty($processesManager->getErrors())) {
+                $errorMessage = '';
+                foreach ($processesManager->getErrors() as $error) {
+                    $errorMessage .= $error['rawAnswer'] . PHP_EOL;
+                }
+                throw new Exception($errorMessage);
             }
         }
 
         if (!empty($changes['tablesWithNewIndex']) && $includeIndexes) {
             CLI::logging("-> " . count($changes['tablesWithNewIndex']) . " tables with indexes to add\n");
+            $upgradeQueries = [];
             foreach ($changes['tablesWithNewIndex'] as $tableName => $indexes) {
-                $database->executeQuery($database->generateAddColumnsSql($tableName, [], $indexes));
+                // Instantiate the class to execute the query in background
+                $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql($tableName, [], $indexes), $rbac);
+            }
+
+            // Run queries in multiple threads
+            $processesManager = new ProcessesManager($upgradeQueries);
+            $processesManager->run();
+
+            // If exists an error throw an exception
+            if (!empty($processesManager->getErrors())) {
+                $errorMessage = '';
+                foreach ($processesManager->getErrors() as $error) {
+                    $errorMessage .= $error['rawAnswer'] . PHP_EOL;
+                }
+                throw new Exception($errorMessage);
             }
         }
 
