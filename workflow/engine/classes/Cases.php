@@ -5712,7 +5712,7 @@ class Cases
                     '',
                     '',
                     'pending',
-                    '',
+                    1,
                     $dataLastEmail['msgError'],
                     true,
                     isset($arrayData['APP_NUMBER']) ? $arrayData['APP_NUMBER'] : 0,
