@@ -3534,6 +3534,8 @@ class Cases
                     /**
                      * This section of code its related to the route the case with parallel task in the same time
                      * @link https://processmaker.atlassian.net/browse/PMC-2
+                     *
+                     * @todo: The solution for ticket HOR-4602 should be restated in another ticket, for now this change was reverted
                     */
                     if ($oPMScript->executedOn() === $oPMScript::AFTER_ROUTING) {
                         //Get the variables changed with the trigger
@@ -3542,11 +3544,6 @@ class Cases
                         //We will be load the last appData because:
                         //Other thread execution can be changed the variables
                         $appUid = !empty($fieldsCase['APPLICATION']) ? $fieldsCase['APPLICATION'] : '';
-                        if (!empty($appUid)) {
-                            $lastFieldsCase = $this->loadCase($appUid)['APP_DATA'];
-                            //Update $fieldsCase with the last appData
-                            $fieldsCase = array_merge($fieldsCase, $lastFieldsCase);
-                        }
 
                         //Save the fields changed in the trigger
                         if (!$varInAfterRouting && !empty($fieldsTrigger)) {
