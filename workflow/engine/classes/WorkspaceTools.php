@@ -66,6 +66,23 @@ class WorkspaceTools
         'UPDATE LIST_UNASSIGNED_GROUP SET
             USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID)',
     );
+    public static $triggers = [
+        'APP_DELEGATION_UPDATE',
+        'APPLICATION_UPDATE',
+        'CONTENT_UPDATE'
+    ];
+    public static $bigTables = [
+        'APPLICATION',
+        'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP',
+        'APP_CACHE_VIEW',
+        'APP_DELEGATION',
+        'APP_DELAY',
+        'APP_DOCUMENT',
+        'APP_HISTORY',
+        'APP_MESSAGE',
+        'GROUP_USER',
+        'LOGIN_LOG'
+    ];
     private $lastContentMigrateTable = false;
     private $listContentMigrateTable = [];
 
@@ -249,18 +266,16 @@ class WorkspaceTools
         $this->checkMafeRequirements($workspace, $lang);
         CLI::logging("* End checking MAFE requirements...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-        CLI::logging("* Start deleting MySQL triggers: APP_DELEGATION_UPDATE, APPLICATION_UPDATE, CONTENT_UPDATE...\n");
+        CLI::logging("* Start deleting MySQL triggers: " . implode(', ', self::$triggers) . "...\n");
         $start = microtime(true);
-        $this->deleteTriggersMySQL(['APP_DELEGATION_UPDATE', 'APPLICATION_UPDATE', 'CONTENT_UPDATE']);
-        CLI::logging("* End deleting MySQL triggers: APP_DELEGATION_UPDATE, APPLICATION_UPDATE, CONTENT_UPDATE... (Completed on " .
+        $this->deleteTriggersMySQL(self::$triggers);
+        CLI::logging("* End deleting MySQL triggers: " . implode(', ', self::$triggers) . "... (Completed on " .
             (microtime(true) - $start) . " seconds)\n");
 
-        $bigTables = ['APPLICATION', 'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP', 'APP_CACHE_VIEW', 'APP_DELEGATION', 'APP_DELAY',
-            'APP_DOCUMENT', 'APP_HISTORY', 'APP_MESSAGE', 'GROUP_USER', 'LOGIN_LOG'];
-        CLI::logging("* Start deleting indexes from big tables: " . implode(', ', $bigTables) . "...\n");
+        CLI::logging("* Start deleting indexes from big tables: " . implode(', ', self::$bigTables) . "...\n");
         $start = microtime(true);
-        $this->deleteIndexes($bigTables);
-        CLI::logging("* End deleting indexes from big tables: " . implode(', ', $bigTables) . "... (Completed on " .
+        $this->deleteIndexes(self::$bigTables);
+        CLI::logging("* End deleting indexes from big tables: " . implode(', ', self::$bigTables) . "... (Completed on " .
             (microtime(true) - $start) . " seconds)\n");
 
         CLI::logging("* Start to update CONTENT table...\n");
@@ -1855,7 +1870,7 @@ class WorkspaceTools
     }
 
     /**
-     * restore an archive into a workspace
+     * Restore a workspace
      *
      * Restores any database and files included in the backup, either as a new
      * workspace, or overwriting a previous one
@@ -1866,8 +1881,13 @@ class WorkspaceTools
      * @param boolean $overwrite if you need overwrite the database
      * @param string $lang for define the language
      * @param string $port of database if is empty take 3306
+     * @param array $optionMigrateHistoryData
      *
      * @throws Exception
+     *
+     * @see workflow/engine/bin/tasks/cliWorkspaces.php::run_workspace_restore()
+     *
+     * @link https://wiki.processmaker.com/3.0/Backing_up_and_Restoring_ProcessMaker#RestoringWorkspaces
      */
     public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '', $optionMigrateHistoryData = [])
     {
@@ -2035,115 +2055,124 @@ class WorkspaceTools
                 }
             }
 
-            $start = microtime(true);
-            CLI::logging("> Remove deprecated files...\n");
-            $workspace->removeDeprecatedFiles();
-            $stop = microtime(true);
-            CLI::logging("<*>   Remove deprecated files took " . ($stop - $start) . " seconds.\n");
-
-            if (($pmVersionWorkspaceToRestore != '') && (version_compare(
-                        $pmVersionWorkspaceToRestore . "",
-                        $pmVersion . "",
-                        "<"
-                    ) || $pmVersion == "")
-            ) {
-                $start = microtime(true);
-                CLI::logging("> Updating database...\n");
-                $workspace->upgradeDatabase($onedb);
-                $stop = microtime(true);
-                CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
-            }
-
-            $start = microtime(true);
-            CLI::logging("> Verify files enterprise old...\n");
-            $workspace->verifyFilesOldEnterprise($workspaceName);
-            $stop = microtime(true);
-            CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
-
-            $start = microtime(true);
-            CLI::logging("> Verify License Enterprise...\n");
-            $workspace->verifyLicenseEnterprise($workspaceName);
-            $stop = microtime(true);
-            CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
-
-            $start = microtime(true);
-            CLI::logging("> Check Mafe Requirements...\n");
-            $workspace->checkMafeRequirements($workspaceName, $lang);
-            $stop = microtime(true);
-            CLI::logging("<*>   Check Mafe Requirements Process took " . ($stop - $start) . " seconds.\n");
-
-            if (($pmVersionWorkspaceToRestore != '') && (version_compare(
-                        $pmVersionWorkspaceToRestore . "",
-                        $pmVersion . "",
-                        "<"
-                    ) || $pmVersion == "")
-            ) {
-                $start = microtime(true);
-                CLI::logging("> Updating cache view...\n");
-                $workspace->upgradeCacheView(true, true, $lang);
-                $stop = microtime(true);
-                CLI::logging("<*>   Updating cache view Process took " . ($stop - $start) . " seconds.\n");
-            } else {
-                $workspace->upgradeTriggersOfTables(true, $lang);
-            }
-
-            if ($pmVersion == '' && strpos(strtoupper($version), 'BRANCH')) {
+            if (empty($pmVersion) && strpos(strtoupper($version), 'BRANCH')) {
                 $pmVersion = 'dev-version-backup';
             }
 
-            //Move the labels of content to the corresponding table
-            $start = microtime(true);
-            CLI::logging("> Optimizing content data...\n");
-            $workspace->migrateContent($workspace->name, $lang);
-            $stop = microtime(true);
-            CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
+            if (!empty($pmVersionWorkspaceToRestore) && (version_compare(
+                        $pmVersionWorkspaceToRestore . "",
+                        $pmVersion . "",
+                        "<"
+                    ) || empty($pmVersion)) || $pmVersion == "dev-version-backup"
+            ) {
+                // Upgrade the database schema and data
+                CLI::logging("* Start updating database schema...\n");
+                $start = microtime(true);
+                $workspace->upgradeDatabase();
+                CLI::logging("* End updating database schema...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-            //Populate the new fields for replace string UID to Interger ID
-            $start = microtime(true);
-            CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
-            $workspace->migratePopulateIndexingACV($workspace->name);
-            $stop = microtime(true);
-            CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+                CLI::logging("* Start checking MAFE requirements...\n");
+                $start = microtime(true);
+                $workspace->checkMafeRequirements($workspaceName, $lang);
+                CLI::logging("* End checking MAFE requirements...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-            //Move the data of cases to the corresponding List
-            /*----------------------------------********---------------------------------*/
-            $start = microtime(true);
-            CLI::logging("> Updating List tables...\n");
-            $workspace->migrateList($workspace->name, false, $lang);
-            $stop = microtime(true);
-            CLI::logging("<*>   Updating List Process took " . ($stop - $start) . " seconds.\n");
-            /*----------------------------------********---------------------------------*/
+                CLI::logging("* Start deleting MySQL triggers: " . implode(', ', self::$triggers) . "...\n");
+                $start = microtime(true);
+                $workspace->deleteTriggersMySQL(self::$triggers);
+                CLI::logging("* End deleting MySQL triggers: " . implode(', ', self::$triggers) . "... (Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
 
-            $start = microtime(true);
-            CLI::logging("> Updating Files Manager...\n");
-            $workspace->processFilesUpgrade();
-            $stop = microtime(true);
-            CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
+                CLI::logging("* Start deleting indexes from big tables: " . implode(', ', self::$bigTables) . "...\n");
+                $start = microtime(true);
+                $workspace->deleteIndexes(self::$bigTables);
+                CLI::logging("* End deleting indexes from big tables: " . implode(', ', self::$bigTables) . "... (Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
 
-            //Updating generated class files for PM Tables
-            passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspace->name);
+                $start = microtime(true);
+                CLI::logging("* Start to migrate texts/values from 'CONTENT' table to the corresponding object tables...\n");
+                $workspace->migrateContent($lang);
+                CLI::logging("* End to migrate texts/values from 'CONTENT' table to the corresponding object tables... (Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
 
-            $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
-            //Review if we need to remove the 'History of use' from APP_HISTORY
-            $start = microtime(true);
-            CLI::logging("> Clearing History of Use from APP_HISTORY table...\n");
-            $workspace->clearDynContentHistoryData(false, $keepDynContent);
-            $stop = microtime(true);
-            CLI::logging("<*>   Clearing History of Use from APP_HISTORY table took " . ($stop - $start) . " seconds.\n");
+                CLI::logging("* Start updating rows in Web Entry table for classic processes...\n");
+                $start = microtime(true);
+                $workspace->updatingWebEntryClassicModel(true);
+                CLI::logging("* End updating rows in Web Entry table for classic processes...(Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
 
-            /*----------------------------------********---------------------------------*/
-            $start = microtime(true);
-            CLI::logging("> Migrating history data...\n");
-            $workspace->migrateAppHistoryToAppDataChangeLog(false);
-            $stop = microtime(true);
-            CLI::logging("<*>   Migrating history data took " . ($stop - $start) . " seconds.\n");
-            /*----------------------------------********---------------------------------*/
+                CLI::logging("* Start to update Files Manager...\n");
+                $start = microtime(true);
+                $workspace->processFilesUpgrade($workspaceName);
+                CLI::logging("* End to update Files Manager... (Completed on " . (microtime(true) - $start) . " seconds)\n");
 
+                CLI::logging("* Start migrating and populating plugin singleton data...\n");
+                $start = microtime(true);
+                $workspace->migrateSingleton($workspaceName);
+                CLI::logging("* End migrating and populating plugin singleton data...(Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start to check Intermediate Email Event...\n");
+                $start = microtime(true);
+                $workspace->checkIntermediateEmailEvent();
+                CLI::logging("* End to check Intermediate Email Event... (Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start cleaning DYN_CONTENT in APP_HISTORY...\n");
+                $start = microtime(true);
+                $keepDynContent = isset($optionMigrateHistoryData['keepDynContent']) && $optionMigrateHistoryData['keepDynContent'] === true;
+                $workspace->clearDynContentHistoryData(false, $keepDynContent);
+                CLI::logging("* End cleaning DYN_CONTENT in APP_HISTORY...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+                /*----------------------------------********---------------------------------*/
+                CLI::logging("* Start migrating history data...\n");
+                $start = microtime(true);
+                $workspace->migrateAppHistoryToAppDataChangeLog(false);
+                CLI::logging("* End migrating history data...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+                /*----------------------------------********---------------------------------*/
+
+                CLI::logging("* Start migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
+                $start = microtime(true);
+                $workspace->migratePopulateIndexingACV();
+                CLI::logging("* End migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...(Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
+                $start = microtime(true);
+                $workspace->migrateSelfServiceRecordsRun();
+                CLI::logging("* End optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....(Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start adding new fields and populating values in tables related to feature self service by value...\n");
+                $start = microtime(true);
+                $workspace->upgradeSelfServiceData();
+                CLI::logging("* End adding new fields and populating values in tables related to feature self service by value...(Completed on " .
+                    (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start adding/replenishing all indexes...\n");
+                $start = microtime(true);
+                $systemSchema = System::getSystemSchema($workspace->dbAdapter);
+                $workspace->upgradeSchema($systemSchema);
+                CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+                /*----------------------------------********---------------------------------*/
+                CLI::logging("* Start migrating to new list tables...\n");
+                $start = microtime(true);
+                $workspace->migrateList(true, $lang);
+                CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+                /*----------------------------------********---------------------------------*/
+
+                CLI::logging("* Start updating MySQL triggers...\n");
+                $start = microtime(true);
+                $workspace->updateTriggers(true, $lang);
+                CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
+            }
+
+            CLI::logging("> Start To Verify License Enterprise...\n");
             $start = microtime(true);
-            CLI::logging("> Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP....\n");
-            $workspace->upgradeSelfServiceData();
-            $stop = microtime(true);
-            CLI::logging("<*>   Optimizing Self-Service data in table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP took " . ($stop - $start) . " seconds.\n");
+            $workspace->verifyLicenseEnterprise($workspaceName);
+            CLI::logging("* End To Verify License Enterprise...(" . (microtime(true) - $start) . " seconds)\n");
+
+            // Updating generated class files for PM Tables
+            passthru(PHP_BINARY . ' processmaker regenerate-pmtable-classes ' . $workspaceName);
         }
 
         CLI::logging("Removing temporary files\n");
@@ -2319,7 +2348,7 @@ class WorkspaceTools
         CLI::logging("    Migrating Enterprise Core version...\n");
         if (!file_exists($pathNewFile)) {
             CLI::logging("    Creating folder in $pathNewFile\n");
-            G::mk_dir($newDiretory, 0777);
+            G::mk_dir($pathNewFile, 0777);
         }
         $shared_stat = stat(PATH_DATA);
         if (file_exists($pathDirectoryEnterprise)) {
