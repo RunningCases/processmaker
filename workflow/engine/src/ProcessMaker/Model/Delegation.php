@@ -81,6 +81,8 @@ class Delegation extends Model
         $filterBy = 'APP_TITLE'
     )
     {
+        $search = trim($search);
+
         // Default pagination values
         $start = $start ? $start : 0;
         $limit = $limit ? $limit : 25;
@@ -104,13 +106,26 @@ class Delegation extends Model
         });
 
         // Add join for application, but only for certain scenarios of app title search or sorting by app title 
-        if($filterBy == 'APP_TITLE' || $sort == 'APP_TITLE') {
+        if(($filterBy == 'APP_TITLE' && $search) || $sort == 'APP_TITLE') {
             $query->join('APPLICATION', function($join) use($filterBy, $search) {
                 $join->on('APP_DELEGATION.APP_UID', '=', 'APPLICATION.APP_UID');
                 if($filterBy == 'APP_TITLE') {
                     $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
                 }
             });
+        }
+
+        if($filterBy == 'APP_NUMBER') {
+            $query->where('APP_DELEGATION.APP_NUMBER', 'LIKE', "%${search}%");
+        }
+
+        // Add any sort if needed
+        if($sort) {
+            // Clean up any specific sort parameters
+            if($sort == 'APP_NUMBER') {
+                $sort = 'APP_DELEGATION.APP_NUMBER';
+            }
+            $query->orderBy($sort, $dir);
         }
 
         // Add pagination to the query
@@ -195,6 +210,7 @@ class Delegation extends Model
         $response = [
             // Fake totalCount to show pagination
             'totalCount' => $start + $limit + 1,
+            'sql' => $query->toSql(),
             'data' => $results->toArray()
         ];
 
