@@ -88,6 +88,31 @@ class Delegation extends Model
         // Start the query builder
         $query = self::query();
 
+        // Add join for task, filtering for task title if needed
+        // It doesn't make sense for us to search for any delegations that match tasks that are events or web entry
+        $query->join('TASK', function($join) use($filterBy, $search) {
+            $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
+                ->whereNotIn('TASK.TAS_TYPE', [
+                    'WEBENTRYEVENT',
+                    'END-MESSAGE-EVENT',
+                    'START-MESSAGE-EVENT',
+                    'INTERMEDIATE-THROW'
+                ]);
+            if($filterBy == 'TAS_TITLE') {
+                $join->where('TASK.TAS_TITLE', 'LIKE', "%${search}%");
+            }
+        });
+
+        // Add join for application, but only for certain scenarios of app title search or sorting by app title 
+        if($filterBy == 'APP_TITLE' || $sort == 'APP_TITLE') {
+            $query->join('APPLICATION', function($join) use($filterBy, $search) {
+                $join->on('APP_DELEGATION.APP_UID', '=', 'APPLICATION.APP_UID');
+                if($filterBy == 'APP_TITLE') {
+                    $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
+                }
+            });
+        }
+
         // Add pagination to the query
         $query = $query->offset($start)
             ->limit($limit);
@@ -99,7 +124,7 @@ class Delegation extends Model
         $priorities = ['1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH'];
         $results->transform(function($item, $key) use($priorities) {
             // Grab related records
-            $application = Application::where('APP_UID', $item['APP_UID'])->first();
+            $application = Application::where('APP_NUMBER', $item['APP_NUMBER'])->first();
             if(!$application) {
                 // Application wasn't found, return null
                 return null;

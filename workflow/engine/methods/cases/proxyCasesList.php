@@ -100,8 +100,6 @@ try {
             break;
     }
 
-    //$apps = new Applications();
-
     if ($action == 'search') {
         $data = Delegation::search(
             $userUid,
