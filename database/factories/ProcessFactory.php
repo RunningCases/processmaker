@@ -31,6 +31,7 @@ $factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
             'TAS_TITLE' => 'Task B'
         ]);
 
+    //routes
     factory(\ProcessMaker\Model\Route::class)
         ->create([
             'PRO_UID' => $process['PRO_UID'],
@@ -43,6 +44,19 @@ $factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
             'PRO_UID' => $process['PRO_UID'],
             'TAS_UID' => $task1['TAS_UID'],
             'ROU_NEXT_TASK' => $task2['TAS_UID']
+        ]);
+
+    //User assignments
+    factory(\ProcessMaker\Model\TaskUser::class)
+        ->create([
+            'TAS_UID' => $task1['TAS_UID'],
+            'USR_UID' => \ProcessMaker\Model\User::all()->random()->USR_UID
+        ]);
+
+    factory(\ProcessMaker\Model\TaskUser::class)
+        ->create([
+            'TAS_UID' => $task2['TAS_UID'],
+            'USR_UID' => \ProcessMaker\Model\User::all()->random()->USR_UID
         ]);
 
     return $process;

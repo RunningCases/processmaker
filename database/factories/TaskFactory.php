@@ -24,7 +24,7 @@ $factory->define(\ProcessMaker\Model\Task::class, function(Faker $faker) {
         'TAS_ASSIGN_LOCATION_ADHOC' => 'FALSE',
         'TAS_TRANSFER_FLY' => 'FALSE',
         'TAS_LAST_ASSIGNED' => 0,
-        'TAS_USER' => 'FALSE',
+        'TAS_USER' => 0,
         'TAS_CAN_UPLOAD' => 'FALSE',
         'TAS_CAN_CANCEL' => 'FALSE',
         'TAS_OWNER_APP' => 'FALSE',
