@@ -100,32 +100,83 @@ class Delegation extends Model
                     'START-MESSAGE-EVENT',
                     'INTERMEDIATE-THROW'
                 ]);
-            if($filterBy == 'TAS_TITLE') {
+            if($filterBy == 'TAS_TITLE' && $search) {
                 $join->where('TASK.TAS_TITLE', 'LIKE', "%${search}%");
             }
         });
 
-        // Add join for application, but only for certain scenarios of app title search or sorting by app title 
-        if(($filterBy == 'APP_TITLE' && $search) || $sort == 'APP_TITLE') {
+        // Add join for application, but only for certain scenarios of app title search or sorting by app title, update_date or status
+        if(($filterBy == 'APP_TITLE' && $search) || $sort == 'APP_TITLE' || $sort == 'APP_UPDATE_DATE' || $sort == 'APP_STATUS') {
             $query->join('APPLICATION', function($join) use($filterBy, $search) {
                 $join->on('APP_DELEGATION.APP_UID', '=', 'APPLICATION.APP_UID');
-                if($filterBy == 'APP_TITLE') {
+                if($filterBy == 'APP_TITLE' && $search) {
                     $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
                 }
             });
         }
 
-        if($filterBy == 'APP_NUMBER') {
+        // Add join for process, but only for certain scenarios such as category or process
+        if(($category && !$process) || $sort == 'APP_PRO_TITLE') {
+            $query->join('PROCESS', function($join) use ($category) {
+                $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
+                if($category) {
+                    $join->where('PROCESS.PRO_CATEGORY', $category);
+                }
+            });
+        }
+
+        // Add join for user, but only for certain scenarios as sorting
+        if($sort == 'APP_CURRENT_USER') {
+            $query->join('USERS', function($join) use ($userUid) {
+                $join->on('APP_DELEGATION.USR_ID', '=', 'USERS.USR_ID');
+            });
+        }
+
+        // Search for specified user
+        if($userUid) {
+            $query->where('APP_DELEGATION.USR_ID', $userUid);
+        }
+
+        // Search for specified process
+        if($process) {
+            $query->where('APP_DELEGATION.PRO_ID', $process);
+        }
+
+        // Search for an app/case number
+        if($filterBy == 'APP_NUMBER' && $search) {
             $query->where('APP_DELEGATION.APP_NUMBER', 'LIKE', "%${search}%");
         }
 
+        // Date range filter
+        if (!empty($dateFrom)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);
+        }
+        if (!empty($dateTo)) {
+            $dateTo = $dateTo . " 23:59:59";
+            // This is inclusive
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
+        }
+
+
         // Add any sort if needed
-        if($sort) {
-            // Clean up any specific sort parameters
-            if($sort == 'APP_NUMBER') {
-                $sort = 'APP_DELEGATION.APP_NUMBER';
-            }
-            $query->orderBy($sort, $dir);
+        switch($sort) {
+            case 'APP_NUMBER':
+                $query->orderBy('APP_DELEGATION.APP_NUMBER', $dir);
+                break;
+            case 'APP_PRO_TITLE':
+                // We can do this because we joined the process table if sorting by it
+                $query->orderBy('PROCESS.PRO_TITLE', $dir);
+                break;
+            case 'APP_TAS_TITLE':
+                $query->orderBy('TASK.TAS_TITLE', $dir);
+                break;
+            case 'APP_CURRENT_USER':
+                // We can do this because we joined the user table if sorting by it
+                $query->orderBy('USERS.USR_LASTNAME', $dir);
+                $query->orderBy('USERS.USR_FIRSTNAME', $dir);
+                break;
+            default:
+                $query->orderBy($sort, $dir);
         }
 
         // Add pagination to the query
@@ -211,6 +262,7 @@ class Delegation extends Model
             // Fake totalCount to show pagination
             'totalCount' => $start + $limit + 1,
             'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
             'data' => $results->toArray()
         ];
 

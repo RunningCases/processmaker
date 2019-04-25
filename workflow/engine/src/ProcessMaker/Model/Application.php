@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Application extends Model
 {
     protected $table = "APPLICATION";
-    // Our custom timestamp columns
-    const CREATED_AT = 'APP_CREATE_DATE';
-    const UPDATED_AT = 'APP_UPDATE_DATE';
+    // No timestamps
+    public $timestamps = false;
 
     public function delegations()
     {
