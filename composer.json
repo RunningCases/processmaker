@@ -47,7 +47,9 @@
         "ralouphie/getallheaders": "^2.0",
         "smarty/smarty": "2.6.30",
         "pdepend/pdepend": "@stable",
-        "chumper/zipper": "^1.0"
+        "chumper/zipper": "^1.0",
+        "nikic/php-parser": "3.1.5",
+        "laravel/tinker": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.7",

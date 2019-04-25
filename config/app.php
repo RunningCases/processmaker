@@ -22,6 +22,8 @@ return [
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
 
+        Laravel\Tinker\TinkerServiceProvider::class,
+
     ],
 
     'aliases' => [
