@@ -8,7 +8,7 @@ class Task extends Model
 {
     protected $table = 'TASK';
     // We do not have create/update timestamps for this table
-    protected $timestamps = false;
+    public $timestamps = false;
 
     public function process()
     {
