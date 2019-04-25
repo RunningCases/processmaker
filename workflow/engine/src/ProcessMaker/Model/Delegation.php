@@ -8,6 +8,9 @@ class Delegation extends Model
 {
     protected $table = "APP_DELEGATION";
 
+    // We don't have our standard timestamp columns
+    protected $timestamps = false;
+
     /**
      * Returns the application this delegation belongs to
      */
