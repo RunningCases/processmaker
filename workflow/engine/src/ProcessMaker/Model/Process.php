@@ -17,5 +17,13 @@ class Process extends Model
     // We do have a created at, but we don't store an updated at
     const CREATED_AT = 'PRO_CREATE_DATE';
     const UPDATED_AT = null;
+    
+    /**
+     * Retrieve all applications that belong to this process
+     */
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'PRO_ID', 'PRO_ID');
 
+    }
 }
