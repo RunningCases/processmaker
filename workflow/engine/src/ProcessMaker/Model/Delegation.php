@@ -4,6 +4,7 @@ namespace ProcessMaker\Model;
 
 use G;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Delegation extends Model
 {
@@ -86,8 +87,41 @@ class Delegation extends Model
         $start = $start ? $start : 0;
         $limit = $limit ? $limit : 25;
 
-        // Start the query builder
-        $query = self::query();
+        // Start the query builder, selecting our base attributes
+        $selectColumns = [
+            'APPLICATION.APP_NUMBER',
+            'APPLICATION.APP_UID',
+            'APPLICATION.APP_STATUS',
+            'APPLICATION.APP_STATUS AS APP_STATUS_LABEL',
+            'APPLICATION.PRO_UID',
+            'APPLICATION.APP_CREATE_DATE',
+            'APPLICATION.APP_FINISH_DATE',
+            'APPLICATION.APP_UPDATE_DATE',
+            'APPLICATION.APP_TITLE',
+            'APP_DELEGATION.USR_UID',
+            'APP_DELEGATION.TAS_UID',
+            'APP_DELEGATION.USR_ID',
+            'APP_DELEGATION.PRO_ID',
+            'APP_DELEGATION.DEL_INDEX',
+            'APP_DELEGATION.DEL_LAST_INDEX',
+            'APP_DELEGATION.DEL_DELEGATE_DATE',
+            'APP_DELEGATION.DEL_INIT_DATE',
+            'APP_DELEGATION.DEL_FINISH_DATE',
+            'APP_DELEGATION.DEL_TASK_DUE_DATE',
+            'APP_DELEGATION.DEL_RISK_DATE',
+            'APP_DELEGATION.DEL_THREAD_STATUS',
+            'APP_DELEGATION.DEL_PRIORITY',
+            'APP_DELEGATION.DEL_DURATION',
+            'APP_DELEGATION.DEL_QUEUE_DURATION',
+            'APP_DELEGATION.DEL_STARTED',
+            'APP_DELEGATION.DEL_DELAY_DURATION',
+            'APP_DELEGATION.DEL_FINISHED',
+            'APP_DELEGATION.DEL_DELAYED',
+            'APP_DELEGATION.DEL_DELAY_DURATION',
+            'TASK.TAS_TITLE AS APP_TAS_TITLE',
+            'TASK.TAS_TYPE AS APP_TAS_TYPE',
+        ];
+        $query = DB::table('APP_DELEGATION')->select(DB::raw(implode(',', $selectColumns)));
 
         // Add join for task, filtering for task title if needed
         // It doesn't make sense for us to search for any delegations that match tasks that are events or web entry
@@ -232,22 +266,13 @@ class Delegation extends Model
             ->limit($limit);
 
         // Fetch results and transform to a laravel collection
-        $results = collect($query->get());
+        $results = $query->get();
 
         // Transform with additional data
         $priorities = ['1' => 'VL', '2' => 'L', '3' => 'N', '4' => 'H', '5' => 'VH'];
         $results->transform(function ($item, $key) use ($priorities) {
-            // Grab related records
-            $application = Application::where('APP_NUMBER', $item['APP_NUMBER'])->first();
-            if (!$application) {
-                // Application wasn't found, return null
-                return null;
-            }
-            $task = Task::where('TAS_ID', $item['TAS_ID'])->first();
-            if (!$task) {
-                // Task not found, return null
-                return null;
-            }
+            // Convert to an array as our results must be an array
+            $item = json_decode(json_encode($item), true);
             $user = User::where('USR_ID', $item['USR_ID'])->first();
             if (!$user) {
                 // User not found, return null
@@ -265,23 +290,14 @@ class Delegation extends Model
             }
 
             // Merge in desired application data
-            $item['APP_STATUS'] = $application->APP_STATUS;
             if ($item['APP_STATUS']) {
                 $item['APP_STATUS_LABEL'] = G::LoadTranslation("ID_${item['APP_STATUS']}");
             } else {
                 $item['APP_STATUS_LABEL'] = $application->APP_STATUS;
             }
-            $item['APP_CREATE_DATE'] = $application->APP_CREATE_DATE;
-            $item['APP_FINISH_DATE'] = $application->APP_FINISH_DATE;
-            $item['APP_UPDATE_DATE'] = $application->APP_UPDATE_DATE;
-            $item['APP_TITLE'] = $application->APP_TITLE;
 
             // Merge in desired process data
             $item['APP_PRO_TITLE'] = $process->PRO_TITLE;
-
-            // Merge in desired task data
-            $item['APP_TAS_TITLE'] = $task->TAS_TITLE;
-            $item['APP_TAS_TYPE'] = $task->TAS_TYPE;
 
             // Merge in desired user data
             $item['USR_LASTNAME'] = $user->USR_LASTNAME;
