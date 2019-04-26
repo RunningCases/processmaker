@@ -140,7 +140,7 @@ class Delegation extends Model
 
         // Add join for application, taking care of status and filtering if necessary
         $query->join('APPLICATION', function ($join) use ($filterBy, $search, $status, $query) {
-            $join->on('APP_DELEGATION.APP_UID', '=', 'APPLICATION.APP_UID');
+            $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
             if ($filterBy == 'APP_TITLE' && $search) {
                 $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
             }
