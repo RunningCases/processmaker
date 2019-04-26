@@ -27,6 +27,13 @@ class Process extends Model
 
     }
 
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'PRO_UID', 'PRO_UID');
+
+    }
+
     public function creator()
     {
         return $this->hasOne(User::class, 'PRO_CREATE_USER', 'USR_UID');

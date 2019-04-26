@@ -28,5 +28,7 @@ $factory->define(\ProcessMaker\Model\Task::class, function(Faker $faker) {
         'TAS_CAN_UPLOAD' => 'FALSE',
         'TAS_CAN_CANCEL' => 'FALSE',
         'TAS_OWNER_APP' => 'FALSE',
+        'TAS_CAN_SEND_MESSAGE' => 'FALSE',
+        'TAS_SEND_LAST_EMAIL' => 'FALSE',
     ];
 });
