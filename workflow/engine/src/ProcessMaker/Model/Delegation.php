@@ -2,8 +2,8 @@
 
 namespace ProcessMaker\Model;
 
-use Illuminate\Database\Eloquent\Model;
 use G;
+use Illuminate\Database\Eloquent\Model;
 
 class Delegation extends Model
 {
@@ -79,8 +79,7 @@ class Delegation extends Model
         $dateFrom = null,
         $dateTo = null,
         $filterBy = 'APP_TITLE'
-    )
-    {
+    ) {
         $search = trim($search);
 
         // Default pagination values
@@ -92,58 +91,76 @@ class Delegation extends Model
 
         // Add join for task, filtering for task title if needed
         // It doesn't make sense for us to search for any delegations that match tasks that are events or web entry
-        $query->join('TASK', function($join) use($filterBy, $search) {
+        $query->join('TASK', function ($join) use ($filterBy, $search) {
             $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
                 ->whereNotIn('TASK.TAS_TYPE', [
                     'WEBENTRYEVENT',
                     'END-MESSAGE-EVENT',
                     'START-MESSAGE-EVENT',
-                    'INTERMEDIATE-THROW'
+                    'INTERMEDIATE-THROW',
                 ]);
-            if($filterBy == 'TAS_TITLE' && $search) {
+            if ($filterBy == 'TAS_TITLE' && $search) {
                 $join->where('TASK.TAS_TITLE', 'LIKE', "%${search}%");
             }
         });
 
-        // Add join for application, but only for certain scenarios of app title search or sorting by app title, update_date or status
-        if(($filterBy == 'APP_TITLE' && $search) || $sort == 'APP_TITLE' || $sort == 'APP_UPDATE_DATE' || $sort == 'APP_STATUS') {
-            $query->join('APPLICATION', function($join) use($filterBy, $search) {
-                $join->on('APP_DELEGATION.APP_UID', '=', 'APPLICATION.APP_UID');
-                if($filterBy == 'APP_TITLE' && $search) {
-                    $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
-                }
-            });
-        }
+        // Add join for application, taking care of status and filtering if necessary
+        $query->join('APPLICATION', function ($join) use ($filterBy, $search, $status, $query) {
+            $join->on('APP_DELEGATION.APP_UID', '=', 'APPLICATION.APP_UID');
+            if ($filterBy == 'APP_TITLE' && $search) {
+                $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
+            }
+            // Based on the below, we can further limit the join so that we have a smaller data set based on join criteria
+            switch ($status) {
+                case 1: //DRAFT
+                    $join->where('APPLICATION.APP_STATUS_ID', 1);
+                    break;
+                case 2: //TO_DO
+                    $join->where('APPLICATION.APP_STATUS_ID', 2);
+                    break;
+                case 3: //COMPLETED
+                    $join->where('APPLICATION.APP_STATUS_ID', 3);
+                    break;
+                case 4: //CANCELLED
+                    $join->where('APPLICATION.APP_STATUS_ID', 4);
+                    break;
+                case "PAUSED":
+                    $join->where('APPLICATION.APP_STATUS', 'TO_DO');
+                    break;
+                default: //All status
+                    // Don't do anything here, we'll need to do the more advanced where below
+            }
+        });
 
         // Add join for process, but only for certain scenarios such as category or process
-        if(($category && !$process) || $sort == 'APP_PRO_TITLE') {
-            $query->join('PROCESS', function($join) use ($category) {
+        if (($category && !$process) || $sort == 'APP_PRO_TITLE') {
+            $query->join('PROCESS', function ($join) use ($category) {
                 $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
-                if($category) {
+                if ($category) {
                     $join->where('PROCESS.PRO_CATEGORY', $category);
                 }
             });
         }
 
         // Add join for user, but only for certain scenarios as sorting
-        if($sort == 'APP_CURRENT_USER') {
-            $query->join('USERS', function($join) use ($userUid) {
+        if ($sort == 'APP_CURRENT_USER') {
+            $query->join('USERS', function ($join) use ($userUid) {
                 $join->on('APP_DELEGATION.USR_ID', '=', 'USERS.USR_ID');
             });
         }
 
         // Search for specified user
-        if($userUid) {
+        if ($userUid) {
             $query->where('APP_DELEGATION.USR_ID', $userUid);
         }
 
         // Search for specified process
-        if($process) {
+        if ($process) {
             $query->where('APP_DELEGATION.PRO_ID', $process);
         }
 
         // Search for an app/case number
-        if($filterBy == 'APP_NUMBER' && $search) {
+        if ($filterBy == 'APP_NUMBER' && $search) {
             $query->where('APP_DELEGATION.APP_NUMBER', 'LIKE', "%${search}%");
         }
 
@@ -157,9 +174,40 @@ class Delegation extends Model
             $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
         }
 
+        // Status Filter
+        // This is tricky, the below behavior is combined with the application join behavior above
+        switch ($status) {
+            case 1: //DRAFT
+                $query->where('APP_DELEGATION.DEL_THREAD_STATUS', 'OPEN');
+                break;
+            case 2: //TO_DO
+                $query->where('APP_DELEGATION.DEL_THREAD_STATUS', 'OPEN');
+                break;
+            case 3: //COMPLETED
+                $query->where('APP_DELEGATION.DEL_LAST_INDEX', 1);
+                break;
+            case 4: //CANCELLED
+                $query->where('APP_DELEGATION.DEL_LAST_INDEX', 1);
+                break;
+            case "PAUSED":
+                // Do nothing, as the app status check for TO_DO is performed in the join above
+                break;
+            default: //All statuses.
+                $query->where(function ($query) {
+                    // Check to see if thread status is open
+                    $query->where('APP_DELEGATION.DEL_THREAD_STATUS', 'OPEN')
+                        ->orWhere(function ($query) {
+                            // Or, we make sure if the thread is closed, and it's the last delegation, and if the app is completed or cancelled
+                            $query->where('APP_DELEGATION.DEL_THREAD_STATUS', 'CLOSED')
+                                ->where('APP_DELEGATION.DEL_LAST_INDEX', 1)
+                                ->whereIn('APPLICATION.APP_STATUS_ID', [3, 4]);
+                        });
+                });
+                break;
+        }
 
         // Add any sort if needed
-        switch($sort) {
+        switch ($sort) {
             case 'APP_NUMBER':
                 $query->orderBy('APP_DELEGATION.APP_NUMBER', $dir);
                 break;
@@ -187,39 +235,39 @@ class Delegation extends Model
         $results = collect($query->get());
 
         // Transform with additional data
-        $priorities = ['1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH'];
-        $results->transform(function($item, $key) use($priorities) {
+        $priorities = ['1' => 'VL', '2' => 'L', '3' => 'N', '4' => 'H', '5' => 'VH'];
+        $results->transform(function ($item, $key) use ($priorities) {
             // Grab related records
             $application = Application::where('APP_NUMBER', $item['APP_NUMBER'])->first();
-            if(!$application) {
+            if (!$application) {
                 // Application wasn't found, return null
                 return null;
             }
             $task = Task::where('TAS_ID', $item['TAS_ID'])->first();
-            if(!$task) {
+            if (!$task) {
                 // Task not found, return null
                 return null;
             }
             $user = User::where('USR_ID', $item['USR_ID'])->first();
-            if(!$user) {
+            if (!$user) {
                 // User not found, return null
                 return null;
             }
             $process = Process::where('PRO_ID', $item['PRO_ID'])->first();;
-            if(!$process) {
+            if (!$process) {
                 // Process not found, return null
                 return null;
             }
-            
+
             // Rewrite priority string
-            if($item['DEL_PRIORITY']) {
-                $item['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$priorities[$item['DEL_PRIORITY']]}" );
+            if ($item['DEL_PRIORITY']) {
+                $item['DEL_PRIORITY'] = G::LoadTranslation("ID_PRIORITY_{$priorities[$item['DEL_PRIORITY']]}");
             }
 
             // Merge in desired application data
             $item['APP_STATUS'] = $application->APP_STATUS;
-            if($item['APP_STATUS']) {
-                $item['APP_STATUS_LABEL'] = G::LoadTranslation( "ID_${item['APP_STATUS']}");
+            if ($item['APP_STATUS']) {
+                $item['APP_STATUS_LABEL'] = G::LoadTranslation("ID_${item['APP_STATUS']}");
             } else {
                 $item['APP_STATUS_LABEL'] = $application->APP_STATUS;
             }
@@ -234,14 +282,14 @@ class Delegation extends Model
             // Merge in desired task data
             $item['APP_TAS_TITLE'] = $task->TAS_TITLE;
             $item['APP_TAS_TYPE'] = $task->TAS_TYPE;
-            
+
             // Merge in desired user data
             $item['USR_LASTNAME'] = $user->USR_LASTNAME;
             $item['USR_FIRSTNAME'] = $user->USR_FIRSTNAME;
             $item['USR_USERNAME'] = $user->USR_USERNAME;
 
             //@todo: this section needs to use 'User Name Display Format', currently in the extJs is defined this
-            $item["APP_CURRENT_USER"] = $item["USR_LASTNAME"].' '.$item["USR_FIRSTNAME"];
+            $item["APP_CURRENT_USER"] = $item["USR_LASTNAME"] . ' ' . $item["USR_FIRSTNAME"];
 
             $item["APPDELCR_APP_TAS_TITLE"] = '';
 
@@ -263,7 +311,7 @@ class Delegation extends Model
             'totalCount' => $start + $limit + 1,
             'sql' => $query->toSql(),
             'bindings' => $query->getBindings(),
-            'data' => $results->toArray()
+            'data' => $results->toArray(),
         ];
 
         return $response;
