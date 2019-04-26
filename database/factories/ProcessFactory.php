@@ -21,14 +21,12 @@ $factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
     $task1 = factory(\ProcessMaker\Model\Task::class)
         ->create([
             'PRO_UID' => $process['PRO_UID'],
-            'TAS_START'=>'TRUE',
-            'TAS_TITLE'=>'Task A'
+            'TAS_START'=>'TRUE'
         ]);
 
     $task2 = factory(\ProcessMaker\Model\Task::class)
         ->create([
             'PRO_UID' => $process['PRO_UID'],
-            'TAS_TITLE' => 'Task B'
         ]);
 
     //routes
