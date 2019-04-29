@@ -154,6 +154,46 @@ class ArrayDiffRecursiveTest extends TestCase
     }
 
     /**
+     * Test to make sure it provides a diff that can be used with replace_recursive to modify an array in place 
+     * @test
+     */
+    public function it_should_provide_diff_with_merge_that_supports_modifying_rows_in_array()
+    {
+        $change = [
+            'var1' => 'A', 
+            'var2' => 'X', 
+            'grid1' => [
+                1 => ['field1' => 'A', 'field2' => 'B'], 
+                2 => ['field1' => 'AA', 'field2' => 'CC'],
+                3 => ['field1' => 'AAA', 'field2' => 'BBB']
+            ]
+        ];
+        $source = [
+            'var1' => 'A', 
+            'var2' => 'B', 
+            'grid1' => [
+                1 => ['field1' => 'A', 'field2' => 'B'],
+                2 => ['field1' => 'AA', 'field2' => 'BB'],
+                3 => ['field1' => 'AAA', 'field2' => 'BBB']
+            ]
+        ];
+        // Now, let's make sure that when we array replace recursive, it properly has all rows and changes 
+        $expected = [
+            'var1' => 'A',
+            'var2' => 'X', 
+            'grid1' => [
+                1 => ['field1' => 'A', 'field2' => 'B'],
+                // Note the changed record at 2
+                2 => ['field1' => 'AA', 'field2' => 'CC'],
+                3 => ['field1' => 'AAA', 'field2' => 'BBB']
+            ]
+        ];
+        $diff = arrayDiffRecursive($change, $source);
+        $merged = array_replace_recursive($source, $diff);
+        $this->assertEquals($expected, $merged);
+    }
+
+    /**
      * Ensure that the diff can be applied to source to REMOVE records from the array
      * @note This will absolutely fail, because you can't apply the diff to remove something, it's not possible in this way
      * @test
