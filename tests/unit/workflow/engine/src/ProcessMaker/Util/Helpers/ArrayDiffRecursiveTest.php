@@ -226,8 +226,63 @@ class ArrayDiffRecursiveTest extends TestCase
         $diff = arrayDiffRecursive($change, $source);
         $merged = array_replace_recursive($source, $diff);
         $this->assertEquals($expected, $merged);
-
     }
+
+    /**
+     * Utilize new behavior using laravel collections to map and filter to create the desired merged array
+     * @test
+     */
+    public function it_should_utilize_laravel_collections_to_map_and_filter_for_desired_final_array()
+    {
+        $change = [
+            'var1' => 'A', 
+            // Note the changed var 2
+            'var2' => 'X', 
+            // Note the missing var3 element
+            'grid1' => [
+                1 => ['field1' => 'A', 'field2' => 'B'], 
+                // Note the missing record at index 2
+            ]
+        ];
+        $source = [
+            'var1' => 'A', 
+            'var2' => 'B', 
+            'var3' => 'C',
+            'grid1' => [
+                1 => ['field1' => 'A', 'field2' => 'B'],
+                2 => ['field1' => 'AA', 'field2' => 'BB']
+            ]
+        ];
+        // Now, let's make sure that when we array replace recursive, it properly has all rows and changes 
+        $expected = [
+            'var1' => 'A',
+            'var2' => 'X', 
+            // Note we don't have var3
+            'grid1' => [
+                1 => ['field1' => 'A', 'field2' => 'B']
+                // And we should not have index 2
+            ]
+        ];
+        $diff = arrayDiffRecursive($change, $source);
+        $merged = array_replace_recursive($source, $diff);
+        // Now collect and map
+        $final = collect($merged)->filter(function ($value, $key) use ($change) {
+            // Only accept properties that exist in the change
+            return array_key_exists($key, $change);
+        })->map(function ($item, $key) use($change) {
+            // We aren't recursively calling, but that's not needed for our situation, so we'll 
+            // Check if it's an array, if so, create a collection, filter, then return the array
+            if(is_array($item)) {
+                return collect($item)->filter(function ($value, $subkey) use ($change, $key) {
+                    return array_key_exists($subkey, $change[$key]);
+                })->all();
+            }
+            // Otherwise, just return item
+            return $item;
+        })->all();
+        $this->assertEquals($expected, $final);
+    }
+
 
 }
 
