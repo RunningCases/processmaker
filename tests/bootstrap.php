@@ -27,7 +27,6 @@ define('SYS_LANG', 'en');
 $app = require __DIR__ . '/../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 
-/*
 // Setup our testexternal database
 config(['database.connections.testexternal' => [
         'driver' => 'mysql',
@@ -73,7 +72,6 @@ if (env('RUN_MSSQL_TESTS')) {
         'value' => 'testvalue'
     ]);
 }
-*/
 
 
 // THIS IS FOR STANDARD PROCESSMAKER TABLES
