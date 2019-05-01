@@ -51,7 +51,7 @@ class Delegation extends Model
      * The query is related to advanced search with different filters
      * We can search by process, status of case, category of process, users, delegate date from and to
      *
-     * @param string $userUid
+     * @param integer $userId The USR_ID to search for (Note, this is no longer the USR_UID)
      * @param integer $start for the pagination
      * @param integer $limit for the pagination
      * @param string $search
@@ -68,9 +68,10 @@ class Delegation extends Model
      */
 
     public static function search(
-        $userUid,
-        $start = null,
-        $limit = null,
+        $userId = null,
+        // Default pagination values
+        $start = 0,
+        $limit = 25,
         $search = null,
         $process = null,
         $status = null,
@@ -82,10 +83,6 @@ class Delegation extends Model
         $filterBy = 'APP_TITLE'
     ) {
         $search = trim($search);
-
-        // Default pagination values
-        $start = $start ? $start : 0;
-        $limit = $limit ? $limit : 25;
 
         // Start the query builder, selecting our base attributes
         $selectColumns = [
@@ -178,14 +175,14 @@ class Delegation extends Model
 
         // Add join for user, but only for certain scenarios as sorting
         if ($sort == 'APP_CURRENT_USER') {
-            $query->join('USERS', function ($join) use ($userUid) {
+            $query->join('USERS', function ($join) use ($userId) {
                 $join->on('APP_DELEGATION.USR_ID', '=', 'USERS.USR_ID');
             });
         }
 
         // Search for specified user
-        if ($userUid) {
-            $query->where('APP_DELEGATION.USR_ID', $userUid);
+        if ($userId) {
+            $query->where('APP_DELEGATION.USR_ID', $userId);
         }
 
         // Search for specified process
@@ -241,24 +238,26 @@ class Delegation extends Model
         }
 
         // Add any sort if needed
-        switch ($sort) {
-            case 'APP_NUMBER':
-                $query->orderBy('APP_DELEGATION.APP_NUMBER', $dir);
-                break;
-            case 'APP_PRO_TITLE':
-                // We can do this because we joined the process table if sorting by it
-                $query->orderBy('PROCESS.PRO_TITLE', $dir);
-                break;
-            case 'APP_TAS_TITLE':
-                $query->orderBy('TASK.TAS_TITLE', $dir);
-                break;
-            case 'APP_CURRENT_USER':
-                // We can do this because we joined the user table if sorting by it
-                $query->orderBy('USERS.USR_LASTNAME', $dir);
-                $query->orderBy('USERS.USR_FIRSTNAME', $dir);
-                break;
-            default:
-                $query->orderBy($sort, $dir);
+        if($sort) {
+            switch ($sort) {
+                case 'APP_NUMBER':
+                    $query->orderBy('APP_DELEGATION.APP_NUMBER', $dir);
+                    break;
+                case 'APP_PRO_TITLE':
+                    // We can do this because we joined the process table if sorting by it
+                    $query->orderBy('PROCESS.PRO_TITLE', $dir);
+                    break;
+                case 'APP_TAS_TITLE':
+                    $query->orderBy('TASK.TAS_TITLE', $dir);
+                    break;
+                case 'APP_CURRENT_USER':
+                    // We can do this because we joined the user table if sorting by it
+                    $query->orderBy('USERS.USR_LASTNAME', $dir);
+                    $query->orderBy('USERS.USR_FIRSTNAME', $dir);
+                    break;
+                default:
+                    $query->orderBy($sort, $dir);
+            }
         }
 
         // Add pagination to the query

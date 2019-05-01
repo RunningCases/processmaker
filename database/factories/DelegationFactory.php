@@ -7,7 +7,14 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
     $app = factory(\ProcessMaker\Model\Application::class)->create();
     $process = \ProcessMaker\Model\Process::where('PRO_UID', $app->PRO_UID)->first();
     $task = $process->tasks->first();
-    $user = \ProcessMaker\Model\User::all()->random();
+
+    // Grab a user if random
+    $users = \ProcessMaker\Model\User::all();
+    if(!count($users)) {
+        $user = factory(\ProcessMaker\Model\User::class)->create();
+    } else{
+        $user = $users->random();
+    }
     return [
         'APP_UID' => $app->APP_UID,
         'DEL_INDEX' => 1,
