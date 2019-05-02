@@ -2,9 +2,10 @@
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use ProcessMaker\Model\User;
-use ProcessMaker\Model\Process;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Process;
+use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 class DelegationTest extends TestCase
@@ -17,8 +18,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_pages_of_data()
     {
-        factory(\ProcessMaker\Model\User::class,100)->create();
-        factory(\ProcessMaker\Model\Process::class,10)->create();
+        factory(User::class,100)->create();
+        factory(Process::class,10)->create();
         factory(Delegation::class, 51)->create();
         // Get first page, which is 25
         $results = Delegation::search(null, 0, 25);
@@ -32,91 +33,141 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This checks to make sure pagination is working properly with search by caseTitle
+     * This checks to make sure filter by process is working properly
      * @test
      */
-    public function it_should_return_pages_of_data_filter_default_case_title()
+    public function it_should_return_process_of_data()
     {
-        factory(\ProcessMaker\Model\User::class,100)->create();
-        factory(\ProcessMaker\Model\Process::class,10)->create();
-        factory(\ProcessMaker\Model\Application::class,100)->create();
-        factory(Delegation::class, 51)->create();
-        $search = '#';
+        factory(User::class,100)->create();
+        $process = factory(Process::class, 1)->create([
+            'PRO_ID' => 1
+        ]);
+        factory(Delegation::class, 51)->create([
+            'PRO_ID' => $process[0]->id
+        ]);
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, $search);
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 0, 25, null, $process[0]->id);
+        $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25, $search);
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 25, 25,null, $process[0]->id);
+        $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25, $search);
+        $results = Delegation::search(null, 50, 25,null, $process[0]->id);
         $this->assertCount(1, $results['data']);
     }
 
     /**
-     * This checks to make sure pagination is working properly with search by case title
+     * This checks to make sure filter by status is working properly
+     * Review status filter by a specific status, such as Draft
      * @test
      */
-    public function it_should_return_pages_of_data_filter_case_title()
+    public function it_should_return_status_draft_of_data()
     {
-        factory(\ProcessMaker\Model\User::class,100)->create();
-        factory(\ProcessMaker\Model\Process::class,10)->create();
-        factory(\ProcessMaker\Model\Application::class,51)->create();
-        factory(Delegation::class, 51)->create();
-        $search = '#';
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001,
+            'APP_STATUS_ID' => 1
+        ]);//DRAFT
+        factory(Delegation::class, 51)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Review the filter by status DRAFT
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, $search, null, null, null, null, null, null, null, 'APP_TITLE');
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 0, 25, $search, null, null, null, null, null, null, null, 'APP_TITLE');
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 0, 25, $search, null, null, null, null, null, null, null, 'APP_TITLE');
+        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
     /**
-     * This checks to make sure pagination is working properly with search by case number
+     * This checks to make sure filter by status is working properly
+     * Review status filter by a specific status, such as To Do
      * @test
      */
-    public function it_should_return_pages_of_data_filter_case_number()
+    public function it_should_return_status_todo_of_data()
     {
-        factory(\ProcessMaker\Model\User::class,100)->create();
-        factory(\ProcessMaker\Model\Process::class,10)->create();
-        factory(\ProcessMaker\Model\Application::class,101)->create();
-        factory(Delegation::class, 101)->create();
-        $search = '1';
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001,
+            'APP_STATUS_ID' => 2
+        ]);//DRAFT
+
+        factory(Delegation::class, 51)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Review the filter by status TO_DO
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 10, $search, null, null, null, null, null, null, null, 'APP_NUMBER');
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 10, 10, $search, null, null, null, null, null, null, null, 'APP_NUMBER');
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 20, 10, $search, null, null, null, null, null, null, null, 'APP_NUMBER');
+        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
     /**
-     * This checks to make sure pagination is working properly with search by case title
+     * This checks to make sure filter by status is working properly
+     * Review status filter by a specific status, such as Completed
      * @test
      */
-    public function it_should_return_pages_of_data_filter_task_title()
+    public function it_should_return_status_completed_of_data()
     {
-        factory(\ProcessMaker\Model\User::class,100)->create();
-        factory(\ProcessMaker\Model\Process::class,10)->create();
-        factory(\ProcessMaker\Model\Task::class,200)->create();
-        factory(Delegation::class, 51)->create();
-        //I need to check the Faker names
-        $search = 'task';
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001,
+            'APP_STATUS_ID' => 3
+        ]);//DRAFT
+
+        factory(Delegation::class, 51)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Review the filter by status DRAFT
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 10, $search, null, null, null, null, null, null, null, 'TAS_TITLE');
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 10, 10, $search, null, null, null, null, null, null, null, 'TAS_TITLE');
-        $this->assertCount(10, $results['data']);
+        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 20, 10, $search, null, null, null, null, null, null, null, 'TAS_TITLE');
+        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(1, $results['data']);
+    }
+
+    /**
+     * This checks to make sure filter by status is working properly
+     * Review status filter by a specific status, such as Cancelled
+     * @test
+     */
+    public function it_should_return_status_cancelled_of_data()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001,
+            'APP_STATUS_ID' => 4
+        ]);//DRAFT
+
+        factory(Delegation::class, 51)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Review the filter by status DRAFT
+        // Get first page, which is 25
+        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
+        // Get second page, which is 25 results
+        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $this->assertCount(25, $results['data']);
+        // Get third page, which is only 1 result
+        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -126,10 +177,10 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_one_result_for_specified_user()
     {
-        factory(\ProcessMaker\Model\User::class,100)->create();
-        factory(\ProcessMaker\Model\Process::class,10)->create();
+        factory(User::class,100)->create();
+        factory(Process::class,10)->create();
         // Create our unique user, with a unique username
-        $user = factory(\ProcessMaker\Model\User::class)->create([
+        $user = factory(User::class)->create([
             'USR_USERNAME' => 'testcaseuser'
         ]);
         // Create a new delegation, but for this specific user

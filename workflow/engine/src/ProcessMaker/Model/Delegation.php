@@ -326,7 +326,7 @@ class Delegation extends Model
             'totalCount' => $start + $limit + 1,
             'sql' => $query->toSql(),
             'bindings' => $query->getBindings(),
-            'data' => $results->toArray(),
+            'data' => $results->values()->toArray(),
         ];
 
         return $response;
