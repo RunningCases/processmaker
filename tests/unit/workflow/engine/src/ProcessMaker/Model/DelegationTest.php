@@ -225,6 +225,148 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This ensures searching by case number and review the page
+     * @test
+     */
+    public function it_should_search_by_case_id_and_pages_of_data()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2010
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2011
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2012
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2013
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2014
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2015
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Get first page, the major case id
+        $results = Delegation::search(null, 0, 10, 1, null, null, 'DESC',
+            'APP_NUMBER', null, null, null,'APP_NUMBER');
+        $this->assertCount(7, $results['data']);
+        $this->assertEquals(2015, $results['data'][0]['APP_NUMBER']);
+        // Get first page, the minor case id
+        $results = Delegation::search(null, 0, 10, 1, null, null, 'ASC',
+            'APP_NUMBER', null, null, null, 'APP_NUMBER');
+        $this->assertCount(7, $results['data']);
+        $this->assertEquals(2001, $results['data'][0]['APP_NUMBER']);
+        //Check the pagination
+        $results = Delegation::search(null, 0, 5, 1, null, null, 'DESC',
+            'APP_NUMBER', null, null, null, 'APP_NUMBER');
+        $this->assertCount(5, $results['data']);
+        $results = Delegation::search(null, 5, 2, 1, null, null, 'DESC',
+            'APP_NUMBER', null, null, null, 'APP_NUMBER');
+        $this->assertCount(2, $results['data']);
+    }
+
+    /**
+     * This ensures searching by case title and review the page
+     * case title contain the case number, ex: APP_TITLE = 'Request # @=APP_NUMBER'
+     * @test
+     */
+    public function it_should_search_by_case_title_and_pages_of_data_app_number_matches_case_title()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 3001,
+            'APP_TITLE' => 'Request # 3001'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 3010,
+            'APP_TITLE' => 'Request # 3010'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 3011,
+            'APP_TITLE' => 'Request # 3011'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 3012,
+            'APP_TITLE' => 'Request # 3012'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 3013,
+            'APP_TITLE' => 'Request # 3013'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_TITLE' => 3014,
+            'APP_TITLE' => 'Request # 3014'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+
+        // Get first page, the major case id
+        $results = Delegation::search(null, 0, 10, '1', null, null, 'DESC',
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
+        $this->assertCount(6, $results['data']);
+        $this->assertEquals('Request # 3014', $results['data'][0]['APP_TITLE']);
+
+        // Get first page, the minor case id
+        $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
+            'APP_NUMBER', null, null, null,'APP_TITLE');
+        $this->assertCount(6, $results['data']);
+        $this->assertEquals(3001, $results['data'][0]['APP_NUMBER']);
+        $this->assertEquals('Request # 3001', $results['data'][0]['APP_TITLE']);
+        //Check the pagination
+        $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
+            'APP_NUMBER', null, null, null,'APP_TITLE');
+        $this->assertCount(5, $results['data']);
+        $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
+            'APP_NUMBER', null, null, null,'APP_TITLE');
+        $this->assertCount(1, $results['data']);
+    }
+
+    /**
      * This ensures ordering ascending works by case number
      * @test
      */
