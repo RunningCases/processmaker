@@ -272,16 +272,13 @@ class Delegation extends Model
         $results->transform(function ($item, $key) use ($priorities) {
             // Convert to an array as our results must be an array
             $item = json_decode(json_encode($item), true);
-            $user = User::where('USR_ID', $item['USR_ID'])->first();
-            if (!$user) {
-                // User not found, return null
-                return null;
+            // If it's assigned, fetch the user
+            if($item['USR_ID']) {
+                $user = User::where('USR_ID', $item['USR_ID'])->first();
+            } else  {
+                $user = null;
             }
-            $process = Process::where('PRO_ID', $item['PRO_ID'])->first();;
-            if (!$process) {
-                // Process not found, return null
-                return null;
-            }
+            $process = Process::where('PRO_ID', $item['PRO_ID'])->first();
 
             // Rewrite priority string
             if ($item['DEL_PRIORITY']) {
@@ -296,12 +293,13 @@ class Delegation extends Model
             }
 
             // Merge in desired process data
-            $item['APP_PRO_TITLE'] = $process->PRO_TITLE;
+            // Handle situation where the process might not be in the system anymore
+            $item['APP_PRO_TITLE'] = $process ? $process->PRO_TITLE : '';
 
             // Merge in desired user data
-            $item['USR_LASTNAME'] = $user->USR_LASTNAME;
-            $item['USR_FIRSTNAME'] = $user->USR_FIRSTNAME;
-            $item['USR_USERNAME'] = $user->USR_USERNAME;
+            $item['USR_LASTNAME'] = $user ? $user->USR_LASTNAME : '';
+            $item['USR_FIRSTNAME'] = $user ? $user->USR_FIRSTNAME : '';
+            $item['USR_USERNAME'] = $user ? $user->USR_USERNAME : '';
 
             //@todo: this section needs to use 'User Name Display Format', currently in the extJs is defined this
             $item["APP_CURRENT_USER"] = $item["USR_LASTNAME"] . ' ' . $item["USR_FIRSTNAME"];

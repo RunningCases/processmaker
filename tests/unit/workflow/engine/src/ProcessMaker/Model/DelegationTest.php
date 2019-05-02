@@ -41,6 +41,7 @@ class DelegationTest extends TestCase
     {
         factory(User::class,100)->create();
         factory(Process::class,10)->create();
+
         factory(Delegation::class, 50)->create();
         factory(Delegation::class, 1)->create([
             'USR_ID' => 0 // A self service delegation
