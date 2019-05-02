@@ -273,4 +273,28 @@ class DelegationTest extends TestCase
         $this->assertCount(2, $results['data']);
         $this->assertEquals('Paul Griffis', $results['data'][0]['APP_CURRENT_USER']);
     }
+
+    /**
+     * This checks to make sure filter by category is working properly
+     * @test
+     */
+    public function it_should_return_categories_of_data()
+    {
+        /*factory(User::class,100)->create();
+        $process = factory(Process::class, 1)->create([
+            'PRO_ID' => 1
+        ]);
+        factory(Delegation::class, 51)->create([
+            'PRO_ID' => $process[0]->id
+        ]);
+        // Get first page, which is 25
+        $results = Delegation::search(null, 0, 25, null, $process[0]->id);
+        $this->assertCount(25, $results['data']);
+        // Get second page, which is 25 results
+        $results = Delegation::search(null, 25, 25,null, $process[0]->id);
+        $this->assertCount(25, $results['data']);
+        // Get third page, which is only 1 result
+        $results = Delegation::search(null, 50, 25,null, $process[0]->id);
+        $this->assertCount(1, $results['data']);*/
+    }
 }
