@@ -22,7 +22,10 @@ class DelegationTest extends TestCase
     {
         factory(User::class,100)->create();
         factory(Process::class,10)->create();
-        factory(Delegation::class, 51)->create();
+        factory(Delegation::class, 50)->create();
+        factory(Delegation::class, 1)->create([
+            'USR_ID' => 0 // A self service delegation
+        ]);
         // Get first page, which is 25
         $results = Delegation::search(null, 0, 25);
         $this->assertCount(25, $results['data']);
