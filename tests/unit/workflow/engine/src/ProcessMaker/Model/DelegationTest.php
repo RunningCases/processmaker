@@ -382,7 +382,7 @@ class DelegationTest extends TestCase
      * This checks to make sure filter by category is working properly
      * @test
      */
-    public function it_should_return_categories_of_data()
+    public function it_should_return_data_filtered_by_process_category()
     {
         factory(User::class, 100)->create();
         // Dummy Processes
