@@ -367,6 +367,73 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This ensures searching by case title and review the page
+     * case title does not match with case number (hertland use case)
+     * @test
+     */
+    public function it_should_search_by_case_title_and_pages_of_data_app_number_no_matches_case_title()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001,
+            'APP_TITLE' => 'Request from Abigail check nro 25001'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2010,
+            'APP_TITLE' => 'Request from Abigail check nro 12'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2011,
+            'APP_TITLE' => 'Request from Abigail check nro 1000'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2012,
+            'APP_TITLE' => 'Request from Abigail check nro 11000'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2013,
+            'APP_TITLE' => 'Request from Abigail check nro 12000'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_TITLE' => 2014,
+            'APP_TITLE' => 'Request from Abigail check nro 111'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Get first page, the major case title
+        $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
+        $this->assertCount(6, $results['data']);
+        $this->assertEquals(2001, $results['data'][0]['APP_NUMBER']);
+        $this->assertEquals('Request from Abigail check nro 25001', $results['data'][0]['APP_TITLE']);
+
+        //Check the pagination
+        $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
+            'APP_NUMBER', null, null, null,'APP_TITLE');
+        $this->assertCount(5, $results['data']);
+        $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
+            'APP_NUMBER', null, null, null,'APP_TITLE');
+        $this->assertCount(1, $results['data']);
+    }
+
+    /**
      * This ensures ordering ascending works by case number
      * @test
      */
