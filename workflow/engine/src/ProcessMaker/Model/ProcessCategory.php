@@ -14,4 +14,6 @@ class ProcessCategory extends Model
 {
     // Set our table name
     protected $table = 'PROCESS_CATEGORY';
+
+    public $timestamps = false;
 }

@@ -8,7 +8,7 @@ $factory->define(\ProcessMaker\Model\ProcessCategory::class, function (Faker $fa
     return [
         'CATEGORY_UID' => G::generateUniqueID(),
         'CATEGORY_PARENT' => '',
-        'CATEGORY_NAME' => $faker->paragraph(3),
+        'CATEGORY_NAME' => $faker->sentence(5),
         'CATEGORY_ICON' => '',
     ];
 });

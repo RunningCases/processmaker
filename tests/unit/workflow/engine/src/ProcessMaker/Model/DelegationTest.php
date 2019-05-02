@@ -5,6 +5,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
@@ -315,15 +316,6 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This checks to make sure filter by category is working properly
-     * @test
-     */
-    public function it_should_return_categories_of_data()
-    {
-
-    }
-
-    /**
      * This checks to make sure filter by process is working properly
      * @test
      */
@@ -384,5 +376,44 @@ class DelegationTest extends TestCase
         // Get first page, which is 25 of 26
         $results = Delegation::search(null, 0, 10, null, $process[0]->id, null, 'ASC', 'APP_NUMBER');
         $this->assertCount(10, $results['data']);
+    }
+
+    /**
+     * This checks to make sure filter by category is working properly
+     * @test
+     */
+    public function it_should_return_categories_of_data()
+    {
+        factory(User::class, 100)->create();
+        // Dummy Processes
+        factory(ProcessCategory::class, 4)->create();
+        factory(Process::class, 4)->create([
+            'PRO_CATEGORY' => \ProcessMaker\Model\ProcessCategory::all()->random()->CATEGORY_UID
+        ]);
+        // Dummy Delegations
+        factory(Delegation::class, 100)->create([
+            'PRO_ID' => \ProcessMaker\Model\Process::all()->random()->PRO_ID
+        ]);
+        // Process with the category to search
+        $processCategorySearch = factory(ProcessCategory::class, 1)->create();
+        $categoryUid = $processCategorySearch[0]->CATEGORY_UID;
+        $processSearch = factory(Process::class, 1)->create([
+            'PRO_ID' => 5,
+            'PRO_CATEGORY' => $categoryUid
+        ]);
+        // Delegations to found
+        factory(Delegation::class, 51)->create([
+            'PRO_ID' => $processSearch[0]->id
+        ]);
+
+        // Get first page, which is 25
+        $results = Delegation::search(null, 0, 25, null, null, null, null, null, $categoryUid);
+        $this->assertCount(25, $results['data']);
+        // Get second page, which is 25 results
+        $results = Delegation::search(null, 25, 25, null, null, null, null, null, $categoryUid);
+        $this->assertCount(25, $results['data']);
+        // Get third page, which is only 1 result
+        $results = Delegation::search(null, 50, 25, null, null, null, null, null, $categoryUid);
+        $this->assertCount(1, $results['data']);
     }
 }
