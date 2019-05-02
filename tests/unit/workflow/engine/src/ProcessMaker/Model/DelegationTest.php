@@ -203,18 +203,74 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This ensures ordering ascending works by case number
      * @test
      */
     public function it_should_sort_by_case_id()
     {
-        $this->markTestIncomplete();
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 30002
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Get first page, the minor case id
+        $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_NUMBER');
+        $this->assertCount(2, $results['data']);
+        $this->assertEquals(2001, $results['data'][0]['APP_NUMBER']);
+        $this->assertEquals(30002, $results['data'][1]['APP_NUMBER']);
+        // Get first page, the major case id
+        $results = Delegation::search(null, 0, 25, null, null, null, 'DESC', 'APP_NUMBER');
+        $this->assertCount(2, $results['data']);
+        $this->assertEquals(30002, $results['data'][0]['APP_NUMBER']);
+        $this->assertEquals(2001, $results['data'][1]['APP_NUMBER']);
     }
 
     /**
+     * This ensures ordering ascending and descending works by user
      * @test
      */
     public function it_should_sort_by_user()
     {
-        $this->markTestIncomplete();
+        factory(User::class,100)->create();
+        factory(Process::class,10)->create();
+        // Create our unique user, with a unique username
+        $user = factory(User::class)->create([
+            'USR_USERNAME' => 'gary',
+            'USR_LASTNAME' => 'Gary',
+            'USR_FIRSTNAME' => 'Bailey',
+        ]);
+        // Create a new delegation, but for this specific user
+        factory(Delegation::class)->create([
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->id
+        ]);
+        $user = factory(User::class)->create([
+            'USR_USERNAME' => 'paul',
+            'USR_LASTNAME' => 'Paul',
+            'USR_FIRSTNAME' => 'Griffis',
+        ]);
+        // Create a new delegation, but for this specific user
+        factory(Delegation::class)->create([
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->id
+        ]);
+        // Now fetch results, and assume delegation count is 2 and the ordering ascending return Gary
+        $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_CURRENT_USER');
+        $this->assertCount(2, $results['data']);
+        $this->assertEquals('Gary Bailey', $results['data'][0]['APP_CURRENT_USER']);
+
+        // Now fetch results, and assume delegation count is 2 and the ordering descending return Gary
+        $results = Delegation::search(null, 0, 25, null, null, null, 'DESC', 'APP_CURRENT_USER');
+        $this->assertCount(2, $results['data']);
+        $this->assertEquals('Paul Griffis', $results['data'][0]['APP_CURRENT_USER']);
     }
 }
