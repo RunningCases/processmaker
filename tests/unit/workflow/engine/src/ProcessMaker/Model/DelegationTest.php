@@ -22,6 +22,25 @@ class DelegationTest extends TestCase
     {
         factory(User::class,100)->create();
         factory(Process::class,10)->create();
+        factory(Delegation::class, 51)->create();
+        // Get first page, which is 25
+        $results = Delegation::search(null, 0, 25);
+        $this->assertCount(25, $results['data']);
+        // Get second page, which is 25 results
+        $results = Delegation::search(null, 25, 25);
+        $this->assertCount(25, $results['data']);
+        // Get third page, which is only 1 result
+        $results = Delegation::search(null, 50, 25);
+        $this->assertCount(1, $results['data']);
+    }
+    /**
+     * This checks to make sure pagination is working properly
+     * @test
+     */
+    public function it_should_return_pages_of_data_unassigned()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,10)->create();
         factory(Delegation::class, 50)->create();
         factory(Delegation::class, 1)->create([
             'USR_ID' => 0 // A self service delegation
@@ -205,14 +224,6 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * @test
-     */
-    public function it_should_have_data_match_certain_schema()
-    {
-        $this->markTestIncomplete();
-    }
-
-    /**
      * This ensures ordering ascending works by case number
      * @test
      */
@@ -391,11 +402,11 @@ class DelegationTest extends TestCase
         // Dummy Processes
         factory(ProcessCategory::class, 4)->create();
         factory(Process::class, 4)->create([
-            'PRO_CATEGORY' => \ProcessMaker\Model\ProcessCategory::all()->random()->CATEGORY_UID
+            'PRO_CATEGORY' => ProcessCategory::all()->random()->CATEGORY_UID
         ]);
         // Dummy Delegations
         factory(Delegation::class, 100)->create([
-            'PRO_ID' => \ProcessMaker\Model\Process::all()->random()->PRO_ID
+            'PRO_ID' => Process::all()->random()->PRO_ID
         ]);
         // Process with the category to search
         $processCategorySearch = factory(ProcessCategory::class, 1)->create();
@@ -418,5 +429,69 @@ class DelegationTest extends TestCase
         // Get third page, which is only 1 result
         $results = Delegation::search(null, 50, 25, null, null, null, null, null, $categoryUid);
         $this->assertCount(1, $results['data']);
+    }
+
+    /**
+     * This ensure the result is right when you search between two given dates
+     * @test
+     */
+    public function it_should_return_right_data_between_two_dates()
+    {
+        factory(User::class, 10)->create();
+        factory(Process::class, 10)->create();
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-02 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-03 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-04 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-05 00:00:00']);
+        $results = Delegation::search(null, 0, 25, null, null, null, null, null, null, '2019-01-02 00:00:00',
+            '2019-01-03 00:00:00');
+        $this->assertCount(20, $results['data']);
+        foreach ($results['data'] as $value) {
+            $this->assertGreaterThanOrEqual('2019-01-02 00:00:00', $value['DEL_DELEGATE_DATE']);
+            $this->assertLessThanOrEqual('2019-01-03 00:00:00', $value['DEL_DELEGATE_DATE']);
+            $this->assertRegExp('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
+        }
+    }
+
+    /**
+     * This ensure the result is right when you search from a given date
+     * @test
+     */
+    public function it_should_return_right_data_when_you_send_only_dateFrom_parameter()
+    {
+        factory(User::class, 10)->create();
+        factory(Process::class, 10)->create();
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-02 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-03 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-04 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-05 00:00:00']);
+        $results = Delegation::search(null, 0, 50, null, null, null, null, null, null, '2019-01-02 00:00:00',
+            null);
+        $this->assertCount(40, $results['data']);
+        foreach ($results['data'] as $value) {
+            $this->assertGreaterThanOrEqual('2019-01-02 00:00:00', $value['DEL_DELEGATE_DATE']);
+            $this->assertRegExp('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
+        }
+    }
+
+    /**
+     * This ensure the result is right when you search to a given date
+     * @test
+     */
+    public function it_should_return_right_data_when_you_send_only_dateTo_parameter()
+    {
+        factory(User::class, 10)->create();
+        factory(Process::class, 10)->create();
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-02 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-03 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-04 00:00:00']);
+        factory(Delegation::class, 10)->create(['DEL_DELEGATE_DATE' => '2019-01-05 00:00:00']);
+        $results = Delegation::search(null, 0, 50, null, null, null, null, null, null, null,
+            '2019-01-04 00:00:00');
+        $this->assertCount(30, $results['data']);
+        foreach ($results['data'] as $value) {
+            $this->assertLessThanOrEqual('2019-01-04 00:00:00', $value['DEL_DELEGATE_DATE']);
+            $this->assertRegExp('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
+        }
     }
 }
