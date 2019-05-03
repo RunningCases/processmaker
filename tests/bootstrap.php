@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Test harness bootstrap that sets up initial defines and builds up the initial database schema
  */
@@ -20,6 +21,7 @@ define('PATH_DB', 'shared/sites/');
 define('PATH_DATA', 'shared/rbac/');
 define('PATH_SEP', '/');
 define('PATH_METHODS', 'workflow/engine/methods/');
+define('SYS_LANG', 'en');
 
 // Setup basic app services
 $app = require __DIR__ . '/../bootstrap/app.php';
@@ -27,17 +29,17 @@ $app->make(Kernel::class)->bootstrap();
 
 // Setup our testexternal database
 config(['database.connections.testexternal' => [
-    'driver' => 'mysql',
-    'host' => env('DB_HOST', '127.0.0.1'),
-    'database' => env('DB_TESTEXTERNAL_DB', 'testexternal'),
-    'username' => env('DB_USERNAME', 'root'),
-    'password' => env('DB_PASSWORD', ''),
-    'unix_socket' => env('DB_SOCKET', ''),
-    'charset' => 'utf8mb4',
-    'collation' => 'utf8mb4_unicode_ci',
-    'prefix' => '',
-    'strict' => true,
-    'engine' => null,
+        'driver' => 'mysql',
+        'host' => env('DB_HOST', '127.0.0.1'),
+        'database' => env('DB_DATABASE', 'testexternal'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', 'password'),
+        'unix_socket' => env('DB_SOCKET', ''),
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+        'prefix' => '',
+        'strict' => true,
+        'engine' => null,
 ]]);
 
 // Now, drop all test tables and repopulate with schema
@@ -52,13 +54,13 @@ DB::connection('testexternal')->table('test')->insert([
 ]);
 
 // Only do if we are supporting MSSql tests
-if(env('RUN_MSSQL_TESTS')) {
+if (env('RUN_MSSQL_TESTS')) {
     config(['database.connections.mssql' => [
-        'driver' => 'sqlsrv',
-        'host' => env('MSSQL_HOST', '127.0.0.1'),
-        'database' => env('MSSQL_DATABASE', 'testexternal'),
-        'username' => env('MSSQL_USERNAME', 'root'),
-        'password' => env('MSSQL_PASSWORD', ''),
+            'driver' => 'sqlsrv',
+            'host' => env('MSSQL_HOST', '127.0.0.1'),
+            'database' => env('MSSQL_DATABASE', 'testexternal'),
+            'username' => env('MSSQL_USERNAME', 'root'),
+            'password' => env('MSSQL_PASSWORD', 'password'),
     ]]);
 
     Schema::connection('mssql')->dropIfExists('test');
@@ -73,26 +75,25 @@ if(env('RUN_MSSQL_TESTS')) {
 
 
 // THIS IS FOR STANDARD PROCESSMAKER TABLES
-
 // Now, drop all test tables and repopulate with schema
 DB::unprepared('SET FOREIGN_KEY_CHECKS = 0');
 $colname = 'Tables_in_' . env('DB_DATABASE');
 $tables = DB::select('SHOW TABLES');
 $drop = [];
-foreach($tables as $table) {
+foreach ($tables as $table) {
     $drop[] = $table->$colname;
 }
-if(count($drop)) {
+if (count($drop)) {
     $drop = implode(',', $drop);
     DB::statement("DROP TABLE $drop");
     DB::unprepared('SET FOREIGN_KEY_CHECKS = 1');
 }
 
 // Repopulate with schema and standard inserts
-DB::unprepared(file_get_contents(PATH_CORE.'data/mysql/schema.sql'));
-DB::unprepared(file_get_contents(PATH_RBAC_CORE.'data/mysql/schema.sql'));
-DB::unprepared(file_get_contents(PATH_CORE.'data/mysql/insert.sql'));
-DB::unprepared(file_get_contents(PATH_RBAC_CORE.'data/mysql/insert.sql'));
+DB::unprepared(file_get_contents(PATH_CORE . 'data/mysql/schema.sql'));
+DB::unprepared(file_get_contents(PATH_RBAC_CORE . 'data/mysql/schema.sql'));
+DB::unprepared(file_get_contents(PATH_CORE . 'data/mysql/insert.sql'));
+DB::unprepared(file_get_contents(PATH_RBAC_CORE . 'data/mysql/insert.sql'));
 
 // Set our APP_SEQUENCE val
 DB::table('APP_SEQUENCE')->insert([
@@ -106,7 +107,7 @@ DB::table('OAUTH_CLIENTS')->insert([
     'CLIENT_NAME' => 'PM Web Designer',
     'CLIENT_DESCRIPTION' => 'ProcessMaker Web Designer App',
     'CLIENT_WEBSITE' => 'www.processmaker.com',
-    'REDIRECT_URI' => config('app.url') . '/sys' . config('system.workspace').'/en/neoclassic/oauth2/grant',
+    'REDIRECT_URI' => config('app.url') . '/sys' . config('system.workspace') . '/en/neoclassic/oauth2/grant',
     'USR_UID' => '00000000000000000000000000000001'
 ]);
 DB::table('OAUTH_ACCESS_TOKENS')->insert([

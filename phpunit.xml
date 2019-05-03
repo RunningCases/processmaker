@@ -15,9 +15,9 @@
             <directory>./tests/workflow/engine/src/</directory>
         </testsuite>
         <testsuite name="Unit">
-          <directory suffix="Test.php">./tests/Unit</directory>
+            <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
-  </testsuites>
+    </testsuites>
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
@@ -33,31 +33,32 @@
     </filter>
 
     <php>
-      <var name="APP_ENV" value="testing" />
-      <var name="SYS_SYS" value="test" />
-      <var name="SYS_LANG" value="en" />
-      <var name="SYS_SKIN" value="neoclassic" />
-      <var name="DB_ADAPTER" value="mysql" />
-      <var name="DB_HOST" value="processmaker3" />
-      <var name="DB_NAME" value="wf_test" />
-      <var name="DB_USER" value="root" />
-      <var name="DB_PASS" value="" />
-      <var name="PATH_DB" value="./shared/sites/" />
-      <var name="PATH_DATA" value="./shared/" />
-      <var name="APP_HOST" value="processmaker3.local" />
-      <var name="HTTPS" value="off" />
-      <var name="SERVER_PORT" value="8080" />
-
-
-      <env name="DB_DATABASE" value="test" />
-      <env name="DB_USERNAME" value="root" />
-      <env name="DB_PASSWORD" value="" />
-
-      <env name="RUN_MSSQL_TESTS" value="true" />
-      <env name="MSSQL_HOST" value="172.16.3.1" />
-      <env name="MSSQL_PORT" value="1433" />
-      <env name="MSSQL_DATABASE" value="testexternal" />
-      <env name="MSSQL_USERNAME" value="test" />
-      <env name="MSSQL_PASSWORD" value="test" />
+        <!--Connection to database-->
+        <env name="DB_HOST" value="127.0.0.1" />
+        <env name="DB_DATABASE" value="test" />
+        <env name="DB_USERNAME" value="root" />
+        <env name="DB_PASSWORD" value="password" />
+        <!--Connection to database SQLServer-->
+        <env name="RUN_MSSQL_TESTS" value="false" />
+        <env name="MSSQL_HOST" value="172.16.3.1" />
+        <env name="MSSQL_PORT" value="1433" />
+        <env name="MSSQL_DATABASE" value="testexternal" />
+        <env name="MSSQL_USERNAME" value="test" />
+        <env name="MSSQL_PASSWORD" value="test" />
+        <!--Php variables-->
+        <var name="APP_ENV" value="testing" />
+        <var name="SYS_SYS" value="test" />
+        <var name="SYS_LANG" value="en" />
+        <var name="SYS_SKIN" value="neoclassic" />
+        <var name="DB_ADAPTER" value="mysql" />
+        <var name="DB_HOST" value="processmaker3" />
+        <var name="DB_NAME" value="wf_test" />
+        <var name="DB_USER" value="root" />
+        <var name="DB_PASS" value="" />
+        <var name="PATH_DB" value="./shared/sites/" />
+        <var name="PATH_DATA" value="./shared/" />
+        <var name="APP_HOST" value="processmaker3.local" />
+        <var name="HTTPS" value="off" />
+        <var name="SERVER_PORT" value="8080" />
     </php>
 </phpunit>
