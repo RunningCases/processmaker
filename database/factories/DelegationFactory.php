@@ -3,7 +3,6 @@ use Faker\Generator as Faker;
 use ProcessMaker\BusinessModel\Cases as BmCases;
 
 $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
-
     $app = factory(\ProcessMaker\Model\Application::class)->create();
     $process = \ProcessMaker\Model\Process::where('PRO_UID', $app->PRO_UID)->first();
     $task = $process->tasks->first();

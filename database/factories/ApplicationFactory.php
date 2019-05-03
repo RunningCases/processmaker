@@ -3,7 +3,6 @@ use Faker\Generator as Faker;
 use ProcessMaker\BusinessModel\Cases as BmCases;
 
 $factory->define(\ProcessMaker\Model\Application::class, function(Faker $faker) {
-
     $process = \ProcessMaker\Model\Process::all()->random();
     $statuses = ['DRAFT', 'TO_DO'];
     $status = $faker->randomElement($statuses);

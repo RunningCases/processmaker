@@ -24,5 +24,4 @@ class Application extends Model
     {
         return $this->hasOne(User::class, 'APP_CUR_USER', 'USR_UID');
     }
-
 }

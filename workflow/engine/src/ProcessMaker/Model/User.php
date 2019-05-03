@@ -17,6 +17,5 @@ class User extends Model
     public function delegations()
     {
         return $this->hasMany(Delegation::class, 'USR_ID', 'USR_ID');
-
     }
 }

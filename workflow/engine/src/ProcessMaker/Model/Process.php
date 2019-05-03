@@ -17,7 +17,6 @@ class Process extends Model
     // Our custom timestamp columns
     const CREATED_AT = 'PRO_CREATE_DATE';
     const UPDATED_AT = 'PRO_UPDATE_DATE';
-    
     /**
      * Retrieve all applications that belong to this process
      */
@@ -25,7 +24,6 @@ class Process extends Model
     {
         return $this->hasMany(Application::class, 'PRO_ID', 'PRO_ID');
     }
-
 
     public function tasks()
     {

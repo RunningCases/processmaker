@@ -5,7 +5,6 @@
 use Faker\Generator as Faker;
 
 $factory->define(\ProcessMaker\Model\TaskUser::class, function(Faker $faker) {
-
     return [
         'TAS_UID' => function() {
             $task = factory(\ProcessMaker\Model\Task::class)->create();

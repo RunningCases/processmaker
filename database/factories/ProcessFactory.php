@@ -5,7 +5,6 @@
 use Faker\Generator as Faker;
 
 $factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
-
     /**
      * @todo Determine if we need more base columns populated
      */

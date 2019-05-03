@@ -2,7 +2,6 @@
 use Faker\Generator as Faker;
 
 $factory->define(\ProcessMaker\Model\User::class, function(Faker $faker) {
-
     return [
         'USR_UID' => G::generateUniqueID(),
         'USR_USERNAME' => $faker->unique()->userName,

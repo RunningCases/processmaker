@@ -50,7 +50,7 @@ $filterStatus = isset($_REQUEST["filterStatus"]) ? strtoupper($_REQUEST["filterS
 // What user
 $user = isset($_REQUEST["user"]) ? $_REQUEST["user"] : "";
 
-// What search???
+// What keywords to search
 $search = isset($_REQUEST["search"]) ? $_REQUEST["search"] : "";
 
 // What kind of action

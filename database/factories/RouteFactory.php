@@ -5,7 +5,6 @@
 use Faker\Generator as Faker;
 
 $factory->define(\ProcessMaker\Model\Route::class, function(Faker $faker) {
-
     return [
         'PRO_UID' => function() {
             $process = factory(\ProcessMaker\Model\Process::class)->create();

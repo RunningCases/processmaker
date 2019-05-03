@@ -20,8 +20,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_pages_of_data()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,10)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 10)->create();
         factory(Delegation::class, 51)->create();
         // Get first page, which is 25
         $results = Delegation::search(null, 0, 25);
@@ -33,14 +33,15 @@ class DelegationTest extends TestCase
         $results = Delegation::search(null, 50, 25);
         $this->assertCount(1, $results['data']);
     }
+
     /**
      * This checks to make sure pagination is working properly
      * @test
      */
     public function it_should_return_pages_of_data_unassigned()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,10)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 10)->create();
 
         factory(Delegation::class, 50)->create();
         factory(Delegation::class, 1)->create([
@@ -63,7 +64,7 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_process_of_data()
     {
-        factory(User::class,100)->create();
+        factory(User::class, 100)->create();
         $process = factory(Process::class, 1)->create([
             'PRO_ID' => 1
         ]);
@@ -74,10 +75,10 @@ class DelegationTest extends TestCase
         $results = Delegation::search(null, 0, 25, null, $process[0]->id);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25,null, $process[0]->id);
+        $results = Delegation::search(null, 25, 25, null, $process[0]->id);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25,null, $process[0]->id);
+        $results = Delegation::search(null, 50, 25, null, $process[0]->id);
         $this->assertCount(1, $results['data']);
     }
 
@@ -88,8 +89,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_draft_of_data()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 1,
@@ -103,10 +104,10 @@ class DelegationTest extends TestCase
         $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -117,8 +118,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_todo_of_data()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 2,
@@ -132,10 +133,10 @@ class DelegationTest extends TestCase
         $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -146,8 +147,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_completed_of_data()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 3,
@@ -163,10 +164,10 @@ class DelegationTest extends TestCase
         $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -177,8 +178,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_status_cancelled_of_data()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 4,
@@ -194,10 +195,10 @@ class DelegationTest extends TestCase
         $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25,null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -207,8 +208,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_one_result_for_specified_user()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,10)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 10)->create();
         // Create our unique user, with a unique username
         $user = factory(User::class)->create([
             'USR_USERNAME' => 'testcaseuser'
@@ -230,8 +231,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_by_case_id_and_pages_of_data()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001
         ]);
@@ -276,7 +277,7 @@ class DelegationTest extends TestCase
         ]);
         // Get first page, the major case id
         $results = Delegation::search(null, 0, 10, 1, null, null, 'DESC',
-            'APP_NUMBER', null, null, null,'APP_NUMBER');
+            'APP_NUMBER', null, null, null, 'APP_NUMBER');
         $this->assertCount(7, $results['data']);
         $this->assertEquals(2015, $results['data'][0]['APP_NUMBER']);
         // Get first page, the minor case id
@@ -300,8 +301,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_matches_case_title()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 3001,
             'APP_TITLE' => 'Request # 3001'
@@ -353,17 +354,65 @@ class DelegationTest extends TestCase
 
         // Get first page, the minor case id
         $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
-            'APP_NUMBER', null, null, null,'APP_TITLE');
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(6, $results['data']);
         $this->assertEquals(3001, $results['data'][0]['APP_NUMBER']);
         $this->assertEquals('Request # 3001', $results['data'][0]['APP_TITLE']);
         //Check the pagination
         $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
-            'APP_NUMBER', null, null, null,'APP_TITLE');
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(5, $results['data']);
         $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
-            'APP_NUMBER', null, null, null,'APP_TITLE');
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
+    }
+
+    /**
+     * This ensures searching by task title and review the page
+     * @test
+     */
+    public function it_should_search_by_task_title_and_pages_of_data()
+    {
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
+        $task = factory(Task::class, 1)->create([
+            'TAS_ID' => 1,
+            'TAS_TITLE' => 'Request task'
+        ]);
+        factory(Delegation::class, 5)->create([
+            'TAS_ID' => $task[0]->TAS_ID
+        ]);
+        $task = factory(Task::class, 1)->create([
+            'TAS_ID' => 2,
+            'TAS_TITLE' => 'Account task'
+        ]);
+        factory(Delegation::class, 5)->create([
+            'TAS_ID' => $task[0]->TAS_ID
+        ]);
+        // Get first page, the order taskTitle
+        $results = Delegation::search(null, 0, 6, 'task', null, null, 'ASC',
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $this->assertCount(6, $results['data']);
+        $this->assertEquals('Account task', $results['data'][0]['APP_TAS_TITLE']);
+        $results = Delegation::search(null, 6, 6, 'task', null, null, 'ASC',
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $this->assertEquals('Request task', $results['data'][0]['APP_TAS_TITLE']);
+
+        // Get first page, the order taskTitle
+        $results = Delegation::search(null, 0, 6, 'task', null, null, 'DESC',
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $this->assertCount(6, $results['data']);
+        $this->assertEquals('Request task', $results['data'][0]['APP_TAS_TITLE']);
+        $results = Delegation::search(null, 6, 6, 'task', null, null, 'DESC',
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $this->assertEquals('Account task', $results['data'][0]['APP_TAS_TITLE']);
+        //Check the pagination
+        $results = Delegation::search(null, 0, 6, 'task', null, null, 'DESC',
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $this->assertCount(6, $results['data']);
+        $results = Delegation::search(null, 6, 6, 'task', null, null, 'DESC',
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $this->assertCount(4, $results['data']);
     }
 
     /**
@@ -373,8 +422,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_no_matches_case_title()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001,
             'APP_TITLE' => 'Request from Abigail check nro 25001'
@@ -426,21 +475,21 @@ class DelegationTest extends TestCase
 
         //Check the pagination
         $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
-            'APP_NUMBER', null, null, null,'APP_TITLE');
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(5, $results['data']);
         $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
-            'APP_NUMBER', null, null, null,'APP_TITLE');
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
     }
 
     /**
-     * This ensures ordering ascending works by case number
+     * This ensures ordering ascending and descending works by case number APP_NUMBER
      * @test
      */
     public function it_should_sort_by_case_id()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001
         ]);
@@ -466,13 +515,13 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This ensures ordering ascending works by case title
+     * This ensures ordering ascending and descending works by case title APP_TITLE
      * @test
      */
     public function it_should_sort_by_case_title()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2001,
             'APP_TITLE' => 'Request by Thomas'
@@ -500,13 +549,91 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This ensures ordering ascending and descending works by case title APP_PRO_TITLE
+     * @test
+     */
+    public function it_should_sort_by_process()
+    {
+        factory(User::class, 100)->create();
+        $process = factory(Process::class, 1)->create([
+            'PRO_ID' => 2,
+            'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
+        ]);
+        factory(Delegation::class, 1)->create([
+            'PRO_ID' => $process[0]->id
+        ]);
+        $process = factory(Process::class, 1)->create([
+            'PRO_ID' => 1,
+            'PRO_TITLE' => 'China Supplier Payment Proposal'
+        ]);
+        factory(Delegation::class, 1)->create([
+            'PRO_ID' => $process[0]->id
+        ]);
+        $process = factory(Process::class, 1)->create([
+            'PRO_ID' => 3,
+            'PRO_TITLE' => 'Russia Supplier Payment Proposal'
+        ]);
+        factory(Delegation::class, 1)->create([
+            'PRO_ID' => $process[0]->id
+        ]);
+        // Get first page, all process ordering ascending
+        $results = Delegation::search(null, 0, 3, null, null, null, 'ASC', 'APP_PRO_TITLE');
+        $this->assertCount(3, $results['data']);
+        $this->assertEquals('China Supplier Payment Proposal', $results['data'][0]['APP_PRO_TITLE']);
+        $this->assertEquals('Egypt Supplier Payment Proposal', $results['data'][1]['APP_PRO_TITLE']);
+        $this->assertEquals('Russia Supplier Payment Proposal', $results['data'][2]['APP_PRO_TITLE']);
+        // Get first page, all process ordering descending
+        $results = Delegation::search(null, 0, 3, null, null, null, 'DESC', 'APP_PRO_TITLE');
+        $this->assertCount(3, $results['data']);
+        $this->assertEquals('Russia Supplier Payment Proposal', $results['data'][0]['APP_PRO_TITLE']);
+        $this->assertEquals('Egypt Supplier Payment Proposal', $results['data'][1]['APP_PRO_TITLE']);
+        $this->assertEquals('China Supplier Payment Proposal', $results['data'][2]['APP_PRO_TITLE']);
+    }
+
+    /**
+     * This ensures ordering ascending and descending works by task title APP_TAS_TITLE
+     * @test
+     */
+    public function it_should_sort_by_task_title()
+    {
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
+
+        $task = factory(Task::class, 1)->create([
+            'TAS_ID' => 1000,
+            'TAS_TITLE' => 'Initiate Request'
+        ]);
+        factory(Delegation::class, 1)->create([
+            'TAS_ID' => $task[0]->TAS_ID
+        ]);
+
+        $task = factory(Task::class, 1)->create([
+            'TAS_ID' => 4000,
+            'TAS_TITLE' => 'Waiting for AP Manager Validation'
+        ]);
+        factory(Delegation::class, 1)->create([
+            'TAS_ID' => $task[0]->TAS_ID
+        ]);
+
+        $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_TAS_TITLE');
+        $this->assertCount(2, $results['data']);
+        $this->assertEquals('Initiate Request', $results['data'][0]['APP_TAS_TITLE']);
+        $this->assertEquals('Waiting for AP Manager Validation', $results['data'][1]['APP_TAS_TITLE']);
+
+        $results = Delegation::search(null, 0, 25, null, null, null, 'DESC', 'APP_TAS_TITLE');
+        $this->assertCount(2, $results['data']);
+        $this->assertEquals('Waiting for AP Manager Validation', $results['data'][0]['APP_TAS_TITLE']);
+        $this->assertEquals('Initiate Request', $results['data'][1]['APP_TAS_TITLE']);
+    }
+
+    /**
      * This ensures ordering ascending and descending works by current user
      * @test
      */
     public function it_should_sort_by_user()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,10)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 10)->create();
         // Create our unique user, with a unique username
         $user = factory(User::class)->create([
             'USR_USERNAME' => 'gary',
@@ -540,66 +667,151 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This checks to make sure filter by process is working properly
+     * This ensures ordering ordering ascending and descending works by last modified APP_UPDATE_DATE
      * @test
      */
-    public function it_should_return_data_issue()
+    public function it_should_sort_by_last_modified()
     {
         factory(User::class,100)->create();
-        // Create a threads over the process
-        $process = factory(Process::class, 1)->create([
-            'PRO_ID' => 1
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_UPDATE_DATE' => '2019-01-02 00:00:00'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
         ]);
         $application = factory(Application::class, 1)->create([
-            'APP_NUMBER' => 1,
-            'APP_TITLE' => 'Request by Thomas',
-            'APP_STATUS_ID' => 2,
+            'APP_UPDATE_DATE' => '2019-01-03 00:00:00'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_UPDATE_DATE' => '2019-01-04 00:00:00'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Get first page, the minor last modified
+        $results = Delegation::search(null, 0, 1, null, null, null, 'ASC', 'APP_UPDATE_DATE');
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals('2019-01-02 00:00:00', $results['data'][0]['APP_UPDATE_DATE']);
+
+        $results = Delegation::search(null, 1, 1, null, null, null, 'ASC', 'APP_UPDATE_DATE');
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals('2019-01-03 00:00:00', $results['data'][0]['APP_UPDATE_DATE']);
+
+        $results = Delegation::search(null, 2, 1, null, null, null, 'ASC', 'APP_UPDATE_DATE');
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals('2019-01-04 00:00:00', $results['data'][0]['APP_UPDATE_DATE']);
+
+        $results = Delegation::search(null, 0, 1, null, null, null, 'DESC', 'APP_UPDATE_DATE');
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals('2019-01-04 00:00:00', $results['data'][0]['APP_UPDATE_DATE']);
+
+        $results = Delegation::search(null, 1, 1, null, null, null, 'DESC', 'APP_UPDATE_DATE');
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals('2019-01-03 00:00:00', $results['data'][0]['APP_UPDATE_DATE']);
+
+        $results = Delegation::search(null, 2, 1, null, null, null, 'DESC', 'APP_UPDATE_DATE');
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals('2019-01-02 00:00:00', $results['data'][0]['APP_UPDATE_DATE']);
+    }
+
+    /**
+     * This ensures ordering ascending and descending works by due date DEL_TASK_DUE_DATE
+     * @test
+     */
+    public function it_should_sort_by_due_date()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        factory(Delegation::class, 10)->create([
+            'DEL_TASK_DUE_DATE' => '2019-01-02 00:00:00'
+        ]);
+        factory(Delegation::class, 10)->create([
+            'DEL_TASK_DUE_DATE' => '2019-01-03 00:00:00'
+        ]);
+        factory(Delegation::class, 9)->create([
+            'DEL_TASK_DUE_DATE' => '2019-01-04 00:00:00'
+        ]);
+        // Get first page, the minor last modified
+        $results = Delegation::search(null, 0, 10, null, null, null, 'ASC', 'DEL_TASK_DUE_DATE');
+        $this->assertCount(10, $results['data']);
+        $this->assertEquals('2019-01-02 00:00:00', $results['data'][0]['DEL_TASK_DUE_DATE']);
+
+        $results = Delegation::search(null, 10, 10, null, null, null, 'ASC', 'DEL_TASK_DUE_DATE');
+        $this->assertCount(10, $results['data']);
+        $this->assertEquals('2019-01-03 00:00:00', $results['data'][0]['DEL_TASK_DUE_DATE']);
+
+        $results = Delegation::search(null, 20, 10, null, null, null, 'ASC', 'DEL_TASK_DUE_DATE');
+        $this->assertCount(9, $results['data']);
+        $this->assertEquals('2019-01-04 00:00:00', $results['data'][0]['DEL_TASK_DUE_DATE']);
+
+        $results = Delegation::search(null, 0, 10, null, null, null, 'DESC', 'DEL_TASK_DUE_DATE');
+        $this->assertCount(10, $results['data']);
+        $this->assertEquals('2019-01-04 00:00:00', $results['data'][0]['DEL_TASK_DUE_DATE']);
+
+        $results = Delegation::search(null, 10, 10, null, null, null, 'DESC', 'DEL_TASK_DUE_DATE');
+        $this->assertCount(10, $results['data']);
+        $this->assertEquals('2019-01-03 00:00:00', $results['data'][0]['DEL_TASK_DUE_DATE']);
+
+        $results = Delegation::search(null, 20, 10, null, null, null, 'DESC', 'DEL_TASK_DUE_DATE');
+        $this->assertCount(9, $results['data']);
+        $this->assertEquals('2019-01-02 00:00:00', $results['data'][0]['DEL_TASK_DUE_DATE']);
+    }
+
+    /**
+     * This ensures ordering ascending and descending works by status APP_STATUS
+     * @test
+     */
+    public function it_should_sort_by_status()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_STATUS' => 'DRAFT'
+        ]);
+        factory(Delegation::class, 25)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
             'APP_STATUS' => 'TO_DO'
         ]);
-        // Create a user Gary in a thread
-        $user = factory(User::class)->create([
-            'USR_USERNAME' => 'gary',
-            'USR_LASTNAME' => 'Gary',
-            'USR_FIRSTNAME' => 'Bailey',
+        factory(Delegation::class, 25)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
         ]);
-        // Create a thread with the user Gary
-        factory(Delegation::class, 1)->create([
-            'PRO_ID' => $process[0]->id,
-            'USR_ID' => $user->id,
+        $application = factory(Application::class, 1)->create([
+            'APP_STATUS' => 'COMPLETED'
+        ]);
+        factory(Delegation::class, 25)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_STATUS' => 'CANCELLED'
+        ]);
+        factory(Delegation::class, 25)->create([
             'APP_NUMBER' => $application[0]->APP_NUMBER
         ]);
 
-        // Define a dummy task
-        $task = factory(Task::class, 1)->create([
-            'TAS_ID' => 1,
-            'TAS_TYPE' => 'INTERMEDIATE-THROW'
-        ]);
-        // Create a thread with the dummy task this does not need a user
-        factory(Delegation::class, 1)->create([
-            'PRO_ID' => $process[0]->id,
-            'USR_ID' => 0,
-            'TAS_ID' => $task[0]->id,
-            'APP_NUMBER' => $application[0]->APP_NUMBER
-        ]);
-        // Create a user Paul in a thread
-        $user = factory(User::class)->create([
-            'USR_USERNAME' => 'Paul',
-            'USR_LASTNAME' => 'Griffis',
-            'USR_FIRSTNAME' => 'paul',
-        ]);
-        // Create a thread with the user Paul
-        factory(Delegation::class, 1)->create([
-            'PRO_ID' => $process[0]->id,
-            'USR_ID' => $user->id,
-            'APP_NUMBER' => $application[0]->APP_NUMBER
-        ]);
-        // Create others delegations
-        factory(Delegation::class, 24)->create([
-            'PRO_ID' => $process[0]->id
-        ]);
-        // Get first page, which is 25 of 26
-        $results = Delegation::search(null, 0, 10, null, $process[0]->id, null, 'ASC', 'APP_NUMBER');
-        $this->assertCount(10, $results['data']);
+        // Get first page, the minor status label
+        $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_STATUS');
+        $this->assertEquals('CANCELLED', $results['data'][0]['APP_STATUS']);
+        $results = Delegation::search(null, 25, 25, null, null, null, 'ASC', 'APP_STATUS');
+        $this->assertEquals('COMPLETED', $results['data'][0]['APP_STATUS']);
+        $results = Delegation::search(null, 50, 25, null, null, null, 'ASC', 'APP_STATUS');
+        $this->assertEquals('DRAFT', $results['data'][0]['APP_STATUS']);
+        $results = Delegation::search(null, 75, 25, null, null, null, 'ASC', 'APP_STATUS');
+        $this->assertEquals('TO_DO', $results['data'][0]['APP_STATUS']);
+        // Get first page, the major status label
+        $results = Delegation::search(null, 0, 25, null, null, null, 'DESC', 'APP_STATUS');
+        $this->assertEquals('TO_DO', $results['data'][0]['APP_STATUS']);
+        $results = Delegation::search(null, 25, 25, null, null, null, 'DESC', 'APP_STATUS');
+        $this->assertEquals('DRAFT', $results['data'][0]['APP_STATUS']);
+        $results = Delegation::search(null, 50, 25, null, null, null, 'DESC', 'APP_STATUS');
+        $this->assertEquals('COMPLETED', $results['data'][0]['APP_STATUS']);
+        $results = Delegation::search(null, 75, 25, null, null, null, 'DESC', 'APP_STATUS');
+        $this->assertEquals('CANCELLED', $results['data'][0]['APP_STATUS']);
     }
 
     /**
@@ -703,5 +915,117 @@ class DelegationTest extends TestCase
             $this->assertLessThanOrEqual('2019-01-04 00:00:00', $value['DEL_DELEGATE_DATE']);
             $this->assertRegExp('(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ', $value['DEL_DELEGATE_DATE']);
         }
+    }
+
+    /**
+     * This ensures return the correct data by sequential
+     * @test
+     */
+    public function it_should_return_by_sequential_tasks_pages_of_data()
+    {
+        factory(User::class, 100)->create();
+        // Create a threads over the process
+        $process = factory(Process::class, 1)->create([
+            'PRO_ID' => 1
+        ]);
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 1,
+            'APP_TITLE' => 'Request by Thomas',
+        ]);
+        // Create a user Gary in a thread
+        $user = factory(User::class)->create([
+            'USR_USERNAME' => 'gary',
+            'USR_LASTNAME' => 'Bailey',
+            'USR_FIRSTNAME' => 'Gary',
+        ]);
+        // Create a thread with the user Gary
+        factory(Delegation::class, 1)->create([
+            'PRO_ID' => $process[0]->id,
+            'USR_ID' => $user->id,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED'
+        ]);
+
+        // Define a dummy task
+        $task = factory(Task::class, 1)->create([
+            'TAS_TYPE' => 'INTERMEDIATE-THROW'
+        ]);
+        // Create a thread with the dummy task this does not need a user
+        factory(Delegation::class, 1)->create([
+            'PRO_ID' => $process[0]->id,
+            'USR_ID' => 0,
+            'TAS_ID' => $task[0]->id,
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Create a user Paul in a thread
+        $user = factory(User::class)->create([
+            'USR_USERNAME' => 'paul',
+            'USR_LASTNAME' => 'Griffis',
+            'USR_FIRSTNAME' => 'Paul',
+        ]);
+        // Create a thread with the user Paul
+        factory(Delegation::class, 1)->create([
+            'PRO_ID' => $process[0]->id,
+            'USR_ID' => $user->id,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+        // Get first page, which is 25 of 26
+        $results = Delegation::search(null, 0, 10, null, $process[0]->id, null, 'ASC', 'APP_NUMBER');
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals('Griffis Paul', $results['data'][0]['APP_CURRENT_USER']);
+    }
+
+    /**
+     * This ensures return the correct data by parallel task all threads CLOSED
+     * @test
+     */
+    public function it_should_return_by_parallel_tasks_threads_closed()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        $task = factory(Task::class,1)->create([
+            'TAS_TITLE' => 'Parallel task 1'
+        ]);
+        factory(Delegation::class, 5)->create([
+            'TAS_ID' => $task[0]->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED'
+        ]);
+        $task = factory(Task::class,1)->create([
+            'TAS_TITLE' => 'Parallel task 2'
+        ]);
+        factory(Delegation::class, 5)->create([
+            'TAS_ID' => $task[0]->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED'
+        ]);
+        // Get first page, the order taskTitle
+        $results = Delegation::search(null, 0, 2, null, null, null, 'ASC',
+            'TAS_TITLE', null, null, null,'TAS_TITLE');
+        $this->assertCount(0, $results['data']);
+
+        // Get first page, the order taskTitle
+        $results = Delegation::search(null, 0, 2, null, null, null, 'DESC',
+            'TAS_TITLE', null, null, null,'TAS_TITLE');
+        $this->assertCount(0, $results['data']);
+    }
+
+    /**
+     * This ensures return the correct data by parallel task all threads OPEN
+     * @test
+     */
+    public function it_should_return_by_parallel_tasks_threads_open()
+    {
+        factory(User::class,100)->create();
+        factory(Process::class,1)->create();
+        //Create the threads
+        factory(Delegation::class, 5)->create([
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+        // Get first page, all the open status
+        $results = Delegation::search(null, 0, 5, null, null, null);
+        $this->assertCount(5, $results['data']);
+        $this->assertEquals('OPEN', $results['data'][0]['DEL_THREAD_STATUS']);
+        $this->assertEquals('OPEN', $results['data'][4]['DEL_THREAD_STATUS']);
+
     }
 }
