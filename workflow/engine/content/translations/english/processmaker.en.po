@@ -23160,6 +23160,36 @@ msgid "Search XML metadata"
 msgstr "Search XML metadata"
 
 # TRANSLATION
+# LABEL/ID_SEARCHING
+#: LABEL/ID_SEARCHING
+msgid "Searching..."
+msgstr "Searching..."
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_CANCEL_MESSAGE
+#: LABEL/ID_SEARCHING_CANCEL_MESSAGE
+msgid "We are still gathering your search results. This may take a while based on your search criteria. You may cancel this search at any time"
+msgstr "We are still gathering your search results. This may take a while based on your search criteria. You may cancel this search at any time"
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_TIME_OUT
+#: LABEL/ID_SEARCHING_TIME_OUT
+msgid "Your search timed out"
+msgstr "Your search timed out"
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_UNEXPECTED_ERROR
+#: LABEL/ID_SEARCHING_UNEXPECTED_ERROR
+msgid "An unexpected error occurred while searching for your results. Error Code {0} and Please contact your administrator."
+msgstr "An unexpected error occurred while searching for your results. Error Code {0} and Please contact your administrator."
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_UNEXPECTED_ERROR_DEFAULT
+#: LABEL/ID_SEARCHING_UNEXPECTED_ERROR_DEFAULT
+msgid "An unexpected error occurred while searching for your results. Please contact your administrator."
+msgstr "An unexpected error occurred while searching for your results. Please contact your administrator."
+
+# TRANSLATION
 # LABEL/ID_SECOND
 #: LABEL/ID_SECOND
 msgid "[LABEL/ID_SECOND] Second"
