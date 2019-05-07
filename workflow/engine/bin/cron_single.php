@@ -121,7 +121,7 @@ try {
 
     $argvx = '';
 
-    for ($i = 8; $i <= count($argv) - 1; $i++) {
+    for ($i = 7; $i <= count($argv) - 1; $i++) {
         /*----------------------------------********---------------------------------*/
         if (strpos($argv[$i], '+init-date') !== false) {
             $dateInit = substr($argv[$i], 10);

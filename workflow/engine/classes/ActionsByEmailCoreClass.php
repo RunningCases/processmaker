@@ -987,7 +987,8 @@ class ActionsByEmailCoreClass extends PMPlugin
                 true,
                 $this->getIndex(),
                 $configEmail,
-                0
+                0,
+                WsBase::MESSAGE_TYPE_ACTIONS_BY_EMAIL
             );
 
             return $result;
