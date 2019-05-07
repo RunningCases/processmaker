@@ -14,6 +14,7 @@ return [
     'cache_lifetime' => env('APP_CACHE_LIFETIME', 60),
     'key' => env('APP_KEY', 'base64:rU28h/tElUn/eiLY0qC24jJq1rakvAFRoRl1DWxj/kM='),
     'cipher' => 'AES-256-CBC',
+    'timezone' => 'UTC',
     'providers' => [
         CacheServiceProvider::class,
         FilesystemServiceProvider::class,
