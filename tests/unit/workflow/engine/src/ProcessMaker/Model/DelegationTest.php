@@ -924,24 +924,22 @@ class DelegationTest extends TestCase
     public function it_should_return_by_sequential_tasks_pages_of_data()
     {
         factory(User::class, 100)->create();
-        // Create a threads over the process
+        // Create a process
         $process = factory(Process::class, 1)->create([
-            'PRO_ID' => 1
+            'PRO_ID' => 1000
         ]);
         $application = factory(Application::class, 1)->create([
-            'APP_NUMBER' => 1,
+            'APP_NUMBER' => 5000,
             'APP_TITLE' => 'Request by Thomas',
         ]);
-        // Create a user Gary in a thread
-        $user = factory(User::class)->create([
-            'USR_USERNAME' => 'gary',
-            'USR_LASTNAME' => 'Bailey',
-            'USR_FIRSTNAME' => 'Gary',
+        // Create task
+        $task = factory(Task::class, 1)->create([
+            'TAS_TYPE' => 'NORMAL'
         ]);
-        // Create a thread with the user Gary
-        factory(Delegation::class, 1)->create([
+        // Create a thread with the user, process and application defined before
+        factory(Delegation::class)->create([
             'PRO_ID' => $process[0]->id,
-            'USR_ID' => $user->id,
+            'TAS_ID' => $task[0]->id,
             'APP_NUMBER' => $application[0]->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
@@ -951,29 +949,27 @@ class DelegationTest extends TestCase
             'TAS_TYPE' => 'INTERMEDIATE-THROW'
         ]);
         // Create a thread with the dummy task this does not need a user
-        factory(Delegation::class, 1)->create([
+        factory(Delegation::class)->create([
             'PRO_ID' => $process[0]->id,
             'USR_ID' => 0,
             'TAS_ID' => $task[0]->id,
             'APP_NUMBER' => $application[0]->APP_NUMBER
         ]);
-        // Create a user Paul in a thread
-        $user = factory(User::class)->create([
-            'USR_USERNAME' => 'paul',
-            'USR_LASTNAME' => 'Griffis',
-            'USR_FIRSTNAME' => 'Paul',
+        // Create task
+        $task = factory(Task::class, 1)->create([
+            'TAS_TYPE' => 'NORMAL'
         ]);
-        // Create a thread with the user Paul
-        factory(Delegation::class, 1)->create([
+        // Create a thread with the user, process and application defined before
+        factory(Delegation::class)->create([
             'PRO_ID' => $process[0]->id,
-            'USR_ID' => $user->id,
+            'TAS_ID' => $task[0]->id,
             'APP_NUMBER' => $application[0]->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'OPEN'
         ]);
-        // Get first page, which is 25 of 26
-        $results = Delegation::search(null, 0, 10, null, $process[0]->id, null, 'ASC', 'APP_NUMBER');
+        // Review if the thread OPEN is showed
+        $results = Delegation::search(null, 0, 10, null);
         $this->assertCount(1, $results['data']);
-        $this->assertEquals('Griffis Paul', $results['data'][0]['APP_CURRENT_USER']);
+        $this->assertEquals('OPEN', $results['data'][0]['DEL_THREAD_STATUS']);
     }
 
     /**
@@ -982,16 +978,16 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_by_parallel_tasks_threads_closed()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
-        $task = factory(Task::class,1)->create([
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
+        $task = factory(Task::class, 1)->create([
             'TAS_TITLE' => 'Parallel task 1'
         ]);
         factory(Delegation::class, 5)->create([
             'TAS_ID' => $task[0]->TAS_ID,
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
-        $task = factory(Task::class,1)->create([
+        $task = factory(Task::class, 1)->create([
             'TAS_TITLE' => 'Parallel task 2'
         ]);
         factory(Delegation::class, 5)->create([
@@ -1000,12 +996,12 @@ class DelegationTest extends TestCase
         ]);
         // Get first page, the order taskTitle
         $results = Delegation::search(null, 0, 2, null, null, null, 'ASC',
-            'TAS_TITLE', null, null, null,'TAS_TITLE');
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
         $this->assertCount(0, $results['data']);
 
         // Get first page, the order taskTitle
         $results = Delegation::search(null, 0, 2, null, null, null, 'DESC',
-            'TAS_TITLE', null, null, null,'TAS_TITLE');
+            'TAS_TITLE', null, null, null, 'TAS_TITLE');
         $this->assertCount(0, $results['data']);
     }
 
@@ -1015,8 +1011,8 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_by_parallel_tasks_threads_open()
     {
-        factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
         //Create the threads
         factory(Delegation::class, 5)->create([
             'DEL_THREAD_STATUS' => 'OPEN'
@@ -1026,6 +1022,25 @@ class DelegationTest extends TestCase
         $this->assertCount(5, $results['data']);
         $this->assertEquals('OPEN', $results['data'][0]['DEL_THREAD_STATUS']);
         $this->assertEquals('OPEN', $results['data'][4]['DEL_THREAD_STATUS']);
+    }
 
+    /**
+     * Review when the status is empty
+     * @test
+     */
+    public function it_should_return_status_empty()
+    {
+        factory(User::class, 100)->create();
+        factory(Process::class, 1)->create();
+        $application = factory(Application::class, 1)->create([
+            'APP_NUMBER' => 2001,
+            'APP_STATUS' => ''
+        ]);
+        factory(Delegation::class, 1)->create([
+            'APP_NUMBER' => $application[0]->APP_NUMBER
+        ]);
+        // Review the filter by status empty
+        $results = Delegation::search(null, 0, 25);
+        $this->assertEquals('', $results['data'][0]['APP_STATUS']);
     }
 }

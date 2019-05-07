@@ -282,14 +282,14 @@ class Delegation extends Model
 
             // Rewrite priority string
             if ($item['DEL_PRIORITY']) {
-                $item['DEL_PRIORITY'] = G::LoadTranslation("ID_PRIORITY_{$priorities[$item['DEL_PRIORITY']]}", 'en');
+                $item['DEL_PRIORITY'] = G::LoadTranslation("ID_PRIORITY_{$priorities[$item['DEL_PRIORITY']]}");
             }
 
             // Merge in desired application data
             if ($item['APP_STATUS']) {
-                $item['APP_STATUS_LABEL'] = G::LoadTranslation("ID_${item['APP_STATUS']}", 'en');
+                $item['APP_STATUS_LABEL'] = G::LoadTranslation("ID_${item['APP_STATUS']}");
             } else {
-                $item['APP_STATUS_LABEL'] = $application->APP_STATUS;
+                $item['APP_STATUS_LABEL'] = $item['APP_STATUS'];
             }
 
             // Merge in desired process data
