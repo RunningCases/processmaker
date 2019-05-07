@@ -5,11 +5,26 @@
  * @link https://wiki.processmaker.com/3.3/Actions_by_Email#Link_to_Fill_a_Form
  */
 
-use ProcessMaker\ChangeLog\ChangeLog;
 use ProcessMaker\BusinessModel\Cases\InputDocument;
+use ProcessMaker\ChangeLog\ChangeLog;
+use ProcessMaker\Validation\ValidationUploadedFiles;
 
 if (PMLicensedFeatures::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+    
+    /**
+     * To do: The following evaluation must be moved after saving the data (so as not to lose the data entered in the form).
+     * It only remains because it is an old behavior, which must be defined by "Product Owner".
+     * @see workflow/engine/methods/cases/cases_SaveData.php
+     */
+    $validator = ValidationUploadedFiles::getValidationUploadedFiles()->runRulesForFileEmpty();
+    if ($validator->fails()) {
+        G::SendMessageText($validator->getMessage(), "ERROR");
+        $url = explode("sys" . config("system.workspace"), $_SERVER['HTTP_REFERER']);
+        G::header("location: " . "/sys" . config("system.workspace") . $url[1]);
+        die();
+    }
+
     $G_PUBLISH = new Publisher();
     try {
 
