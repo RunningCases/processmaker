@@ -121,7 +121,7 @@ try {
 
     $argvx = '';
 
-    for ($i = 8; $i <= count($argv) - 1; $i++) {
+    for ($i = 7; $i <= count($argv) - 1; $i++) {
         /*----------------------------------********---------------------------------*/
         if (strpos($argv[$i], '+init-date') !== false) {
             $dateInit = substr($argv[$i], 10);
@@ -163,7 +163,13 @@ try {
 
             define('SERVER_NAME', $SERVER_INFO['SERVER_NAME']);
             define('SERVER_PORT', $SERVER_INFO['SERVER_PORT']);
-            define('REQUEST_SCHEME', $SERVER_INFO['REQUEST_SCHEME']);
+            //to do improvement G::is_https()
+            if ((isset($SERVER_INFO['HTTPS']) && $SERVER_INFO['HTTPS'] == 'on') ||
+                    (isset($SERVER_INFO['HTTP_X_FORWARDED_PROTO']) && $SERVER_INFO['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+                define('REQUEST_SCHEME', 'https');
+            } else {
+                define('REQUEST_SCHEME', $SERVER_INFO['REQUEST_SCHEME']);
+            }
         } else {
             eprintln('WARNING! No server info found!', 'red');
         }
@@ -237,8 +243,8 @@ try {
             define('DB_PASS', $DB_PASS);
         }
         if (!defined('SYS_SKIN')) {
-            $conf = new Configurations();
-            define('SYS_SKIN', $conf->getConfiguration('SKIN_CRON', ''));
+            $config = System::getSystemConfiguration();
+            define('SYS_SKIN', $config['default_skin']);
         }
 
         $dateSystem = date('Y-m-d H:i:s');
@@ -321,6 +327,7 @@ function processWorkspace()
         executeScheduledCases();
         executeUpdateAppTitle();
         executeCaseSelfService();
+        cleanSelfServiceTables();
         executePlugins();
         /*----------------------------------********---------------------------------*/
         fillReportByUser();
@@ -1048,5 +1055,48 @@ function sendNotifications()
         setExecutionResultMessage("WITH ERRORS", "error");
         eprintln("  '-" . $e->getMessage(), "red");
         saveLog("ExecuteSendNotifications", "error", "Error when sending notifications " . $e->getMessage());
+    }
+}
+
+/**
+ * Clean unused records in tables related to the Self-Service Value Based feature
+ *
+ * @see processWorkspace()
+ *
+ * @link https://wiki.processmaker.com/3.2/Executing_cron.php#Syntax_of_cron.php_Options
+ */
+function cleanSelfServiceTables()
+{
+    try {
+        global $argvx;
+
+        // Check if the action can be executed
+        if ($argvx !== "" && strpos($argvx, "clean-self-service-tables") === false) {
+            return false;
+        }
+
+        // Start message
+        setExecutionMessage("Clean unused records for Self-Service Value Based feature");
+
+        // Get Propel connection
+        $cnn = Propel::getConnection(AppAssignSelfServiceValueGroupPeer::DATABASE_NAME);
+
+        // Delete related rows and missing relations, criteria don't execute delete with joins
+        $cnn->begin();
+        $stmt = $cnn->createStatement();
+        $stmt->executeQuery("DELETE " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . "
+                             FROM " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . "
+                             LEFT JOIN " . AppAssignSelfServiceValuePeer::TABLE_NAME . "
+                             ON (" . AppAssignSelfServiceValueGroupPeer::ID . " = " . AppAssignSelfServiceValuePeer::ID . ")
+                             WHERE " . AppAssignSelfServiceValuePeer::ID . " IS NULL");
+        $cnn->commit();
+
+        // Success message
+        setExecutionResultMessage("DONE");
+    } catch (Exception $e) {
+        $cnn->rollback();
+        setExecutionResultMessage("WITH ERRORS", "error");
+        eprintln("  '-" . $e->getMessage(), "red");
+        saveLog("ExecuteCleanSelfServiceTables", "error", "Error when try to clean self-service tables " . $e->getMessage());
     }
 }

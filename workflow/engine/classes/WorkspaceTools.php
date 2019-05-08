@@ -2,13 +2,14 @@
 
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use ProcessMaker\BusinessModel\Process as BmProcess;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
-use ProcessMaker\BusinessModel\Process as BmProcess;
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
+use ProcessMaker\Project\Adapter\BpmnWorkflow;
 use ProcessMaker\Util\FixReferencePath;
 
 /**
@@ -2397,7 +2398,7 @@ class WorkspaceTools
             return;
         }
 
-        $arrayTable1 = ['ListInbox', 'ListMyInbox', 'ListCanceled', 'ListParticipatedLast', 'ListParticipatedHistory', 'ListPaused', 'ListCompleted'];
+        $arrayTable1 = ['ListInbox', 'ListMyInbox', 'ListCanceled', 'ListParticipatedLast', 'ListParticipatedHistory', 'ListPaused'];
         $arrayTable2 = ['ListUnassigned', 'ListUnassignedGroup'];
         $arrayTable = array_merge($arrayTable1, $arrayTable2);
 
@@ -2423,7 +2424,6 @@ class WorkspaceTools
         }
 
         if ($flagReinsert || !$flagListAll) {
-            $this->regenerateListCompleted($lang);
             $this->regenerateListCanceled($lang);
             $this->regenerateListMyInbox(); //This list require no translation
             $this->regenerateListInbox();   //This list require no translation
@@ -2506,69 +2506,6 @@ class WorkspaceTools
         $stmt = $con->createStatement();
         $stmt->executeQuery($query);
         CLI::logging("> Completed table LIST_CANCELED\n");
-    }
-
-    public function regenerateListCompleted($lang = 'en')
-    {
-        $this->initPropel(true);
-        $query = 'INSERT INTO ' . $this->dbName . '.LIST_COMPLETED
-                    (APP_UID,
-                    USR_UID,
-                    TAS_UID,
-                    PRO_UID,
-                    APP_NUMBER,
-                    APP_TITLE,
-                    APP_PRO_TITLE,
-                    APP_TAS_TITLE,
-                    APP_CREATE_DATE,
-                    APP_FINISH_DATE,
-                    DEL_INDEX,
-                    DEL_PREVIOUS_USR_UID,
-                    DEL_CURRENT_USR_USERNAME,
-                    DEL_CURRENT_USR_FIRSTNAME,
-                    DEL_CURRENT_USR_LASTNAME)
-
-                    SELECT
-                        ACV.APP_UID,
-                        ACV.USR_UID,
-                        ACV.TAS_UID,
-                        ACV.PRO_UID,
-                        ACV.APP_NUMBER,
-                        C_APP.CON_VALUE AS APP_TITLE,
-                        C_PRO.CON_VALUE AS APP_PRO_TITLE,
-                        C_TAS.CON_VALUE AS APP_TAS_TITLE,
-                        ACV.APP_CREATE_DATE,
-                        ACV.APP_FINISH_DATE,
-                        ACV.DEL_INDEX,
-                        PREV_AD.USR_UID AS DEL_PREVIOUS_USR_UID,
-                        USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
-                        USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
-                        USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME
-                    FROM
-                        (' . $this->dbName . '.APP_CACHE_VIEW ACV
-                        LEFT JOIN ' . $this->dbName . '.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
-                            AND C_APP.CON_CATEGORY = \'APP_TITLE\'
-                            AND C_APP.CON_LANG = \'' . $lang . '\'
-                        LEFT JOIN ' . $this->dbName . '.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
-                            AND C_PRO.CON_CATEGORY = \'PRO_TITLE\'
-                            AND C_PRO.CON_LANG = \'' . $lang . '\'
-                        LEFT JOIN ' . $this->dbName . '.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
-                            AND C_TAS.CON_CATEGORY = \'TAS_TITLE\'
-                            AND C_TAS.CON_LANG = \'' . $lang . '\')
-                            LEFT JOIN
-                        (' . $this->dbName . '.APP_DELEGATION AD
-                        INNER JOIN ' . $this->dbName . '.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
-                            AND AD.DEL_PREVIOUS = PREV_AD.DEL_INDEX) ON ACV.APP_UID = AD.APP_UID
-                            AND ACV.DEL_INDEX = AD.DEL_INDEX
-                            LEFT JOIN
-                        ' . $this->dbName . '.USERS USR ON ACV.USR_UID = USR.USR_UID
-                    WHERE
-                        ACV.APP_STATUS = \'COMPLETED\'
-                            AND ACV.DEL_LAST_INDEX = 1';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        CLI::logging("> Completed table LIST_COMPLETED\n");
     }
 
     public function regenerateListMyInbox()
@@ -3739,53 +3676,62 @@ class WorkspaceTools
         CLI::logging("|--> Clean data in table " . OauthRefreshTokensPeer::TABLE_NAME . " rows " . $refreshToken . "\n");
     }
 
+    /**
+     * Migrate the Intermediate throw Email Event to Dummy task, specify the workspaces. 
+     * The processes in this workspace will be updated.
+     * 
+     * @param string $workspaceName
+     * @see workflow/engine/bin/tasks/cliWorkspaces.php::run_migrate_itee_to_dummytask()
+     * @see workflow/engine/classes/WorkspaceTools.php->upgradeDatabase()
+     * @link https://wiki.processmaker.com/3.3/processmaker_command#migrate-itee-to-dummytask
+     */
     public function migrateIteeToDummytask($workspaceName)
     {
         $this->initPropel(true);
-        $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspaceName);
-        $conf = new Configurations();
-        \G::$sysSys = $workspaceName;
-        \G::$pathDataSite = PATH_DATA . "sites" . PATH_SEP . \G::$sysSys . PATH_SEP;
-        \G::$pathDocument = PATH_DATA . 'sites' . DIRECTORY_SEPARATOR . $workspaceName . DIRECTORY_SEPARATOR . 'files';
-        \G::$memcachedEnabled = $arraySystemConfiguration['memcached'];
-        \G::$pathDataPublic = \G::$pathDataSite . "public" . PATH_SEP;
-        \G::$sysSkin = $conf->getConfiguration('SKIN_CRON', '');
-        if (is_file(\G::$pathDataSite . PATH_SEP . ".server_info")) {
-            $serverInfo = file_get_contents(\G::$pathDataSite . PATH_SEP . ".server_info");
+        $config = System::getSystemConfiguration('', '', $workspaceName);
+        G::$sysSys = $workspaceName;
+        G::$pathDataSite = PATH_DATA . "sites" . PATH_SEP . G::$sysSys . PATH_SEP;
+        G::$pathDocument = PATH_DATA . 'sites' . DIRECTORY_SEPARATOR . $workspaceName . DIRECTORY_SEPARATOR . 'files';
+        G::$memcachedEnabled = $config['memcached'];
+        G::$pathDataPublic = G::$pathDataSite . "public" . PATH_SEP;
+        G::$sysSkin = $config['default_skin'];
+        if (is_file(G::$pathDataSite . PATH_SEP . ".server_info")) {
+            $serverInfo = file_get_contents(G::$pathDataSite . PATH_SEP . ".server_info");
             $serverInfo = unserialize($serverInfo);
             $envHost = $serverInfo["SERVER_NAME"];
             $envPort = ($serverInfo["SERVER_PORT"] . "" != "80") ? ":" . $serverInfo["SERVER_PORT"] : "";
             if (!empty($envPort) && strpos($envHost, $envPort) === false) {
                 $envHost = $envHost . $envPort;
             }
-            \G::$httpHost = $envHost;
+            G::$httpHost = $envHost;
         }
 
         //Search All process
-        $oCriteria = new Criteria("workflow");
-        $oCriteria->addSelectColumn(ProcessPeer::PRO_UID);
-        $oCriteria->addSelectColumn(ProcessPeer::PRO_ITEE);
-        $oCriteria->add(ProcessPeer::PRO_ITEE, '0', Criteria::EQUAL);
-        $rsCriteria = ProcessPeer::doSelectRS($oCriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(ProcessPeer::PRO_UID);
+        $criteria->addSelectColumn(ProcessPeer::PRO_ITEE);
+        $criteria->add(ProcessPeer::PRO_ITEE, '0', Criteria::EQUAL);
+        $resultSet = ProcessPeer::doSelectRS($criteria);
+        $resultSet->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $message = "-> Migrating the Intermediate Email Event \n";
         CLI::logging($message);
-        while ($rsCriteria->next()) {
-            $row = $rsCriteria->getRow();
-            $prj_uid = $row['PRO_UID'];
-            $bpmnProcess = new Process();
-            if ($bpmnProcess->isBpmnProcess($prj_uid)) {
-                $project = new \ProcessMaker\Project\Adapter\BpmnWorkflow();
-                $diagram = $project->getStruct($prj_uid);
-                $res = $project->updateFromStruct($prj_uid, $diagram);
-                $bpmnProcess->setProUid($prj_uid);
-                $oProcess = new Process();
-                $aProcess['PRO_UID'] = $prj_uid;
-                $aProcess['PRO_ITEE'] = '1';
-                if ($oProcess->processExists($prj_uid)) {
-                    $oProcess->update($aProcess);
+        while ($resultSet->next()) {
+            $row = $resultSet->getRow();
+            $prjUid = $row['PRO_UID'];
+            $process = new Process();
+            if ($process->isBpmnProcess($prjUid)) {
+                $project = new BpmnWorkflow();
+                $diagram = $project->getStruct($prjUid);
+                $project->updateFromStruct($prjUid, $diagram);
+                $process->setProUid($prjUid);
+                $updateProcess = new Process();
+                $updateProcessData = [];
+                $updateProcessData['PRO_UID'] = $prjUid;
+                $updateProcessData['PRO_ITEE'] = '1';
+                if ($updateProcess->processExists($prjUid)) {
+                    $updateProcess->update($updateProcessData);
                 }
-                $message = "    Process updated " . $bpmnProcess->getProTitle() . "\n";
+                $message = "    Process updated " . $process->getProTitle() . "\n";
                 CLI::logging($message);
             }
         }

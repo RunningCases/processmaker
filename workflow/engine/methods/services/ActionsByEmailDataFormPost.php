@@ -5,10 +5,26 @@
  * @link https://wiki.processmaker.com/3.3/Actions_by_Email#Link_to_Fill_a_Form
  */
 
+use ProcessMaker\BusinessModel\Cases\InputDocument;
 use ProcessMaker\ChangeLog\ChangeLog;
+use ProcessMaker\Validation\ValidationUploadedFiles;
 
 if (PMLicensedFeatures::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+    
+    /**
+     * To do: The following evaluation must be moved after saving the data (so as not to lose the data entered in the form).
+     * It only remains because it is an old behavior, which must be defined by "Product Owner".
+     * @see workflow/engine/methods/cases/cases_SaveData.php
+     */
+    $validator = ValidationUploadedFiles::getValidationUploadedFiles()->runRulesForFileEmpty();
+    if ($validator->fails()) {
+        G::SendMessageText($validator->getMessage(), "ERROR");
+        $url = explode("sys" . config("system.workspace"), $_SERVER['HTTP_REFERER']);
+        G::header("location: " . "/sys" . config("system.workspace") . $url[1]);
+        die();
+    }
+
     $G_PUBLISH = new Publisher();
     try {
 
@@ -66,7 +82,12 @@ if (PMLicensedFeatures::getSingleton()
 
         //Update case info
         $case->updateCase($appUid, $casesFields);
-
+        if (isset($_FILES ['form'])) {
+            if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
+                $oInputDocument = new InputDocument();
+                $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $currentUsrUid, $appUid, $delIndex);
+            }
+        }
         $wsBaseInstance = new WsBase();
         $result = $wsBaseInstance->derivateCase(
                 $casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true
@@ -105,18 +126,6 @@ if (PMLicensedFeatures::getSingleton()
 
             $dataAbeRequests['ABE_REQ_ANSWERED'] = 1;
             $code == 0 ? uploadAbeRequest($dataAbeRequests) : '';
-
-            if (isset($_FILES ['form'])) {
-                if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
-                    //It is very important to obtain APP_DATA values because they may have changed in the derivation.
-                    $case = new Cases();
-                    $appFields = $case->loadCase($appUid);
-                    $casesFields["APP_DATA"] = array_merge($casesFields["APP_DATA"], $appFields["APP_DATA"]);
-
-                    $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
-                    $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $currentUsrUid, $appUid, $delIndex);
-                }
-            }
 
             $assign = $result['message'];
             $aMessage['MESSAGE'] = '<strong>' . G::loadTranslation('ID_ABE_INFORMATION_SUBMITTED') . '</strong>';
