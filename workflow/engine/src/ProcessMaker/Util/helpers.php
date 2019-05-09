@@ -485,6 +485,33 @@ function csrfToken()
     return isset($_SESSION['USR_CSRF_TOKEN']) ? $_SESSION['USR_CSRF_TOKEN'] : '';
 }
 
+/**
+ * Check if a string is a valid HTML code
+ *
+ * @param string $string
+ *
+ * @return bool
+ *
+ * @see G::replaceDataField()
+ */
+function stringIsValidHtml($string)
+{
+    // To validate we use the DOMDocument class
+    $doc = new DOMDocument('1.0', 'UTF-8');
+
+    // Clean previous errors
+    libxml_clear_errors();
+
+    // This line have to be silenced because if the string is not an HTML a Warning is displayed
+    @$doc->loadHTML($string);
+
+    // Get last error parsing the HTML
+    $libXmlError = libxml_get_last_error();
+
+    // If the attribute "textContent" is empty or exists libxml errors, is not a valid HTML
+    return $doc->textContent !== '' && empty($libXmlError);
+}
+
 // Methods deleted in PHP 7.x, added in this file in order to keep compatibility with old libraries included/used in ProcessMaker
 if (!function_exists('set_magic_quotes_runtime')) {
     function set_magic_quotes_runtime($value) {
