@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     protected $table = 'TASK';
+    protected $primaryKey = 'TAS_ID';
     // We do not have create/update timestamps for this table
     public $timestamps = false;
 
