@@ -20,4 +20,16 @@ class Task extends Model
     {
         return $this->hasMany(Delegation::class, 'TAS_ID', 'TAS_ID');
     }
+
+    /**
+     * Scope a query to only include self-service
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeIsSelfService($query)
+    {
+        return $query->where('TAS_ASSIGN_TYPE', '=', 'SELF_SERVICE')
+            ->where('TAS_GROUP_VARIABLE', '=', '');
+    }
 }
