@@ -1636,13 +1636,16 @@ class G
 
     /**
      * Escapes special characters in a string for use in a SQL statement
-     * @param string $sqlString  The string to be escaped
-     * @param string $DBEngine   Target DBMS
-    */
-    public function sqlEscape($sqlString, $DBEngine = DB_ADAPTER)
+     * @param string $sqlString The string to be escaped
+     * @param string $dbEngine Target DBMS
+     *
+     * @return string
+     */
+    public static function sqlEscape($sqlString, $dbEngine = DB_ADAPTER)
     {
-        $DBEngine = DB_ADAPTER;
-        switch ($DBEngine) {
+        // @todo: Research why always this value is set with the same constant?
+        $dbEngine = DB_ADAPTER;
+        switch ($dbEngine) {
             case 'mysql':
                 $con = Propel::getConnection('workflow');
                 return mysqli_real_escape_string($con->getResource(), stripslashes($sqlString));
@@ -1689,9 +1692,15 @@ class G
      *     @#  Non-quoted parameter
      *     @!  Evaluate string : Replace the parameters in value and then in the sql string
      *     @fn()  Evaluate string with the function "fn"
-     * @author David Callizaya <calidavidx21@hotmail.com>
+     *
+     * @param string $sqlString
+     * @param array $result
+     * @param string $dbEngine
+     * @param bool $applyHtmlEntities
+     *
+     * @return string
      */
-    public static function replaceDataField($sqlString, $result, $DBEngine = 'mysql')
+    public static function replaceDataField($sqlString, $result, $dbEngine = 'mysql', $applyHtmlEntities = false)
     {
         if (!is_array($result)) {
             $result = array();
@@ -1710,7 +1719,12 @@ class G
                     $u = $match[0][$r][1] + strlen($match[0][$r][0]);
                     //Mysql quotes scape
                     if (($match[1][$r][0] == '@') && (isset($result[$match[2][$r][0]]))) {
-                        $__textoEval .= "\"" . G::sqlEscape($result[$match[2][$r][0]], $DBEngine) . "\"";
+                        $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]])) ?
+                            htmlentities(G::unhtmlentities($result[$match[2][$r][0]]), ENT_COMPAT, 'UTF-8') :
+                            $result[$match[2][$r][0]];
+                        // Replenish the tag <br /> because is valid
+                        $text = str_replace('&lt;br /&gt;', '<br />', $text);
+                        $__textoEval .= "\"" . G::sqlEscape($text, $dbEngine) . "\"";
                         continue;
                     }
                     //URL encode
@@ -1730,7 +1744,7 @@ class G
                     }
                     //Substring (Sub replaceDataField)
                     if (($match[1][$r][0] == '!') && (isset($result[$match[2][$r][0]]))) {
-                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
+                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result, $dbEngine, $applyHtmlEntities);
                         continue;
                     }
                     //Call function
@@ -1748,18 +1762,33 @@ class G
                     }
                     //Non-quoted
                     if (($match[1][$r][0] == '#') && (isset($result[$match[2][$r][0]]))) {
-                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
+                        $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]])) ?
+                            htmlentities(G::unhtmlentities($result[$match[2][$r][0]]), ENT_COMPAT, 'UTF-8') :
+                            $result[$match[2][$r][0]];
+                        // Replenish the tag <br /> because is valid
+                        $text = str_replace('&lt;br /&gt;', '<br />', $text);
+                        $__textoEval .= G::replaceDataField($text, $result);
                         continue;
                     }
                     //Non-quoted =
                     if (($match[1][$r][0] == '=') && (isset($result[$match[2][$r][0]]))) {
-                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
+                        $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]])) ?
+                            htmlentities(G::unhtmlentities($result[$match[2][$r][0]]), ENT_COMPAT, 'UTF-8') :
+                            $result[$match[2][$r][0]];
+                        // Replenish the tag <br /> because is valid
+                        $text = str_replace('&lt;br /&gt;', '<br />', $text);
+                        $__textoEval .= G::replaceDataField($text, $result);
                         continue;
                     }
                     //Objects attributes
                     if (($match[1][$r][0] == '&') && (isset($result[$match[2][$r][0]]))) {
                         if (isset($result[$match[2][$r][0]]->{$match[6][$r][0]})) {
-                            $__textoEval .= $result[$match[2][$r][0]]->{$match[6][$r][0]};
+                            $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]]->{$match[6][$r][0]})) ?
+                                htmlentities(G::unhtmlentities($result[$match[2][$r][0]]->{$match[6][$r][0]}), ENT_COMPAT, 'UTF-8') :
+                                $result[$match[2][$r][0]]->{$match[6][$r][0]};
+                            // Replenish the tag <br /> because is valid
+                            $text = str_replace('&lt;br /&gt;', '<br />', $text);
+                            $__textoEval .= $text;
                         }
                         continue;
                     }
@@ -1771,27 +1800,36 @@ class G
     }
 
     /**
-    * Replace Grid Values
-    * The tag @>GRID-NAME to open the grid and @<GRID-NAME to close the grid,
-    *
-    * @param type String $sContent
-    * @param type Array $aFields
-    * @return type String
-    */
-    public static function replaceDataGridField($sContent, $aFields, $nl2brRecursive = true)
+     * Replace Grid Values in a string.
+     * The tag @>GRID-NAME to open the grid and @<GRID-NAME to close the grid,
+     *
+     * @param string $content
+     * @param array $fields
+     * @param bool $nl2brRecursive
+     * @param bool $applyHtmlEntities
+     *
+     * @return string
+     *
+     * @see \Cases->sendMessage()
+     * @see \WsBase->sendMessage()
+     * @see \OutputDocument->generate()
+     * @see \ProcessMaker\BusinessModel\Cases\OutputDocument->generate()
+     */
+    public static function replaceDataGridField($content, $fields, $nl2brRecursive = true, $applyHtmlEntities = false)
     {
         $nrt = array("\n", "\r", "\t");
         $nrthtml = array("(n /)", "(r /)", "(t /)");
 
-        $sContent = G::unhtmlentities($sContent);
-        $strContentAux = str_replace($nrt, $nrthtml, $sContent);
+        $content = G::unhtmlentities($content);
+        $strContentAux = str_replace($nrt, $nrthtml, $content);
 
-        $iOcurrences = preg_match_all('/\@(?:([\>])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+)?/', $strContentAux, $arrayMatch1, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
+        $occurrences = preg_match_all('/\@(?:([\>])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+)?/',
+            $strContentAux, $arrayMatch1, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
 
-        if ($iOcurrences) {
+        if ($occurrences) {
             $arrayGrid = array();
 
-            for ($i = 0; $i <= $iOcurrences - 1; $i++) {
+            for ($i = 0; $i <= $occurrences - 1; $i++) {
                 $arrayGrid[] = $arrayMatch1[2][$i][0];
             }
 
@@ -1817,16 +1855,16 @@ class G
                     while (preg_match($ereg, $strContentAux1, $arrayMatch2)) {
                         $strData = null;
 
-                        if (isset($aFields[$grdName]) && is_array($aFields[$grdName])) {
-                            foreach ($aFields[$grdName] as $aRow) {
+                        if (isset($fields[$grdName]) && is_array($fields[$grdName])) {
+                            foreach ($fields[$grdName] as $aRow) {
                                 if ($nl2brRecursive) {
-                                    foreach ($aRow as $sKey => $vValue) {
-                                        if (!is_array($vValue)) {
-                                            $aRow[$sKey] = str_replace($nrt, $nrthtml, nl2br($aRow[$sKey]));
+                                    foreach ($aRow as $key => $item) {
+                                        if (!is_array($item)) {
+                                            $aRow[$key] = str_replace($nrt, $nrthtml, nl2br($aRow[$key]));
                                         }
                                     }
                                 }
-                                $strData = $strData . G::replaceDataField($arrayMatch2[2], $aRow);
+                                $strData = $strData . G::replaceDataField($arrayMatch2[2], $aRow, 'mysql', $applyHtmlEntities);
                             }
                         }
 
@@ -1841,19 +1879,19 @@ class G
 
         $strContentAux = str_replace($nrthtml, $nrt, $strContentAux);
 
-        $sContent = $strContentAux;
+        $content = $strContentAux;
 
         if ($nl2brRecursive) {
-            foreach ($aFields as $sKey => $vValue) {
-                if (!is_array($vValue) && !is_object($vValue)) {
-                    $aFields[$sKey] = nl2br($aFields[$sKey]);
+            foreach ($fields as $key => $item) {
+                if (!is_array($item) && !is_object($item)) {
+                    $fields[$key] = nl2br($fields[$key]);
                 }
             }
         }
 
-        $sContent = G::replaceDataField($sContent, $aFields);
+        $content = G::replaceDataField($content, $fields, 'mysql', $applyHtmlEntities);
 
-        return $sContent;
+        return $content;
     }
 
     /**

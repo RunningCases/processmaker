@@ -5612,30 +5612,30 @@ class Cases
     /**
      * This function send an email for each task in $arrayTask if $to is definded
      *
-     * @param $dataLastEmail
-     * @param $arrayData
-     * @param $arrayTask
+     * @param array $dataLastEmail
+     * @param array $arrayData
+     * @param array $arrayTask
      * @return void
      *
      * @see \Cases->sendNotifications()
      */
     public function sendMessage($dataLastEmail, $arrayData, $arrayTask)
     {
-        foreach ($arrayTask as $aTask) {
+        foreach ($arrayTask as $theTask) {
             //Check and fix if Task Id is complex
-            if (strpos($aTask['TAS_UID'], "/") !== false) {
-                $aux = explode("/", $aTask['TAS_UID']);
+            if (strpos($theTask['TAS_UID'], "/") !== false) {
+                $aux = explode("/", $theTask['TAS_UID']);
                 if (isset($aux[1])) {
-                    $aTask['TAS_UID'] = $aux[1];
+                    $theTask['TAS_UID'] = $aux[1];
                 }
             }
             //if the next is EOP dont send notification and continue with the next
-            if ($aTask['TAS_UID'] === '-1') {
+            if ($theTask['TAS_UID'] === '-1') {
                 continue;
             }
-            if (isset($aTask['DEL_INDEX'])) {
+            if (isset($theTask['DEL_INDEX'])) {
                 $arrayData2 = $arrayData;
-                $appDelegation = AppDelegationPeer::retrieveByPK($dataLastEmail['applicationUid'], $aTask['DEL_INDEX']);
+                $appDelegation = AppDelegationPeer::retrieveByPK($dataLastEmail['applicationUid'], $theTask['DEL_INDEX']);
                 if (!is_null($appDelegation)) {
                     $oTaskUpd = new Task();
                     $aTaskUpdate = $oTaskUpd->load($appDelegation->getTasUid());
@@ -5646,25 +5646,25 @@ class Cases
                 $arrayData2 = $arrayData;
             }
 
-            if (isset($aTask['USR_UID']) && !empty($aTask['USR_UID'])) {
+            if (isset($theTask['USR_UID']) && !empty($theTask['USR_UID'])) {
                 $user = new \ProcessMaker\BusinessModel\User();
-                $arrayUserData = $user->getUser($aTask['USR_UID'], true);
+                $arrayUserData = $user->getUser($theTask['USR_UID'], true);
                 $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2,
                     (trim($arrayUserData['USR_TIME_ZONE']) != '') ? trim($arrayUserData['USR_TIME_ZONE']) :
                                 \ProcessMaker\Util\System::getTimeZone());
             } else {
                 $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2);
             }
-            $body2 = G::replaceDataGridField($dataLastEmail['body'], $arrayData2, false);
+            $body2 = G::replaceDataGridField($dataLastEmail['body'], $arrayData2, false, true);
             $to = null;
             $cc = '';
-            if ($aTask['TAS_UID'] != '-1') {
-                $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
+            if ($theTask['TAS_UID'] != '-1') {
+                $respTo = $this->getTo($theTask['TAS_UID'], $theTask['USR_UID'], $arrayData);
                 $to = $respTo['to'];
                 $cc = $respTo['cc'];
             }
 
-            if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
+            if ($theTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
                 if ($dataLastEmail['swtplDefault'] == 1) {
                     G::verifyPath($dataLastEmail['pathEmail'], true); // Create if it does not exist
                     $fileTemplate = $dataLastEmail['pathEmail'] . G::LoadTranslation('ID_UNASSIGNED_MESSAGE');
