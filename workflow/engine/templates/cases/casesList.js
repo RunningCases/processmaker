@@ -25,6 +25,9 @@ var textJump;
 var ids = '';
 var winReassignInCasesList;
 var casesNewTab;
+var mask;
+var loadingMessage;
+var timeoutMark = false;
 
 function formatAMPM(date, initVal, calendarDate) {
 
@@ -855,25 +858,30 @@ Ext.onReady ( function() {
                 this.setBaseParam(
                     "openApplicationUid", (__OPEN_APPLICATION_UID__ !== null)? __OPEN_APPLICATION_UID__ : ""
                 );
+                timeoutMark = false;
             },
             load: function(response){
-
-                if (response.reader.jsonData.result === false) {
-                    PMExt.notify('ERROR', response.reader.jsonData.message);
-                    //PMExt.error
+                if (action === "search" && loadingMessage) {
+                    loadingMessage.hide();
+                    timeoutMark = true;
                 }
             },
-            exception: function(dp, type, action, options, response, arg)  {
-                responseObject = Ext.util.JSON.decode(response.responseText);
-                if (typeof(responseObject.error) != 'undefined') {
-                    Ext.Msg.show({
-                        title: _('ID_ERROR'),
-                        msg: responseObject.error,
-                        fn: function(){parent.parent.location = '../login/login';},
-                        animEl: 'elId',
-                        icon: Ext.MessageBox.ERROR,
-                        buttons: Ext.MessageBox.OK
-                    });
+            exception: function(dp, type, action, options, response, arg) {
+                if (response && typeof (response.status) !== 'undefined') {
+                    showErrorMessage(response.status);
+                    timeoutMark = true;
+                } else {
+                    responseObject = Ext.util.JSON.decode(response.responseText);
+                    if (typeof(responseObject.error) !== 'undefined') {
+                        Ext.Msg.show({
+                            title: _('ID_ERROR'),
+                            msg: responseObject.error,
+                            fn: function(){parent.parent.location = '../login/login';},
+                            animEl: 'elId',
+                            icon: Ext.MessageBox.ERROR,
+                            buttons: Ext.MessageBox.OK
+                        });
+                    }
                 }
             }
         }
@@ -1064,7 +1072,6 @@ Ext.onReady ( function() {
         handler: function(){
             storeCases.setBaseParam('process', '');
             suggestProcess.setValue('');
-            doSearch();
         }
     };
 
@@ -1323,7 +1330,6 @@ Ext.onReady ( function() {
                 storeCases.setBaseParam( 'user', filterUser);
                 storeCases.setBaseParam( 'start', 0);
                 storeCases.setBaseParam( 'limit', pageSize);
-                doSearch();
             }
         }
     });
@@ -1348,6 +1354,72 @@ Ext.onReady ( function() {
         //cls: 'x-form-toolbar-standardButton',
         handler: doSearch
     });
+  
+    /**
+     * Show loading Dialog
+     */
+    function showLoadingDialog() {
+        mask.hide();
+        var commonSettings = {
+                title: _('ID_SEARCHING'),
+                width: 700,
+                wait: true,
+                waitConfig: {interval:200}
+            };
+
+        loadingMessage = Ext.Msg.show(commonSettings);
+        setTimeout(
+            function() {
+                if (!timeoutMark) {
+                    loadingMessage.hide();
+                    commonSettings['msg'] = _('ID_SEARCHING_CANCEL_MESSAGE'),
+                    commonSettings['buttons'] = Ext.Msg.CANCEL,
+                    commonSettings['fn'] = function (btn, text) {
+                        if (btn === 'cancel') {
+                            proxyCasesList.getConnection().abort();
+                        };
+                    }
+                    loadingMessage = Ext.Msg.show(commonSettings);
+                    timeoutMark = false;
+                } 
+            }, 2000);
+    };
+    /**
+     * Show the error code.
+     * @param {*} errorCode 
+     */
+    function showErrorMessage(errorCode) {
+        var message;
+        switch (errorCode) {
+            case 408:
+            case 504:
+                message = _('ID_SEARCHING_TIME_OUT');
+                break;
+            case 0:
+            case -1:
+                message = _('ID_SEARCHING_UNEXPECTED_ERROR_DEFAULT');
+                break;
+            default:
+                message = _('ID_SEARCHING_UNEXPECTED_ERROR', [errorCode]);
+        }
+
+        Ext.Msg.show({
+            title:_('ID_ERROR'),
+            msg: message,
+            animEl: 'elId',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+    };
+    function showTimeoutMessage() {
+        Ext.Msg.show({
+            title:_('ID_ERROR'),
+            msg:  _('ID_SEARCHING_TIME_OUT'),
+            animEl: 'elId',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+    };
 
     function doSearch(){
         //var viewText = Ext.getCmp('casesGrid').getView();
@@ -1359,14 +1431,16 @@ Ext.onReady ( function() {
         storeCases.setBaseParam('dateTo', dateTo.getValue());
         storeCases.setBaseParam( 'search', searchText);
         storeCases.load({params:{ start : 0 , limit : pageSize }});
-    }
+        if ( action === 'search' ){
+            showLoadingDialog();
+        }
+    };
 
     var resetSearchButton = {
         text:'X',
         ctCls:"pm_search_x_button_des",
         handler: function(){
             textSearch.setValue('');
-            doSearch();
         }
     }
 
@@ -1376,7 +1450,6 @@ Ext.onReady ( function() {
         handler: function(){
             suggestUser.setValue('');
             storeCases.setBaseParam('user', '');
-            doSearch();
         }
     }
 
@@ -2219,7 +2292,7 @@ Ext.onReady ( function() {
             emptyMsg: _('ID_DISPLAY_EMPTY')
         })
     }
-    var mask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_LOADING')});
+    mask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_LOADING')});
     // create the editor grid
     grid = new Ext.grid.GridPanel({
         region: 'center',
@@ -2227,7 +2300,6 @@ Ext.onReady ( function() {
         store: storeCases,
         cm: cm,
         loadMask: mask,
-
         sm: new Ext.grid.RowSelectionModel({
             selectSingle: false,
             listeners:{
