@@ -11,6 +11,7 @@ $factory->define(\ProcessMaker\Model\Task::class, function(Faker $faker) {
             return $process->PRO_UID;
         },
         'TAS_UID' => G::generateUniqueID(),
+        'TAS_ID' => $faker->unique()->numberBetween(1, 2000),
         'TAS_TITLE' => $faker->sentence(2),
         'TAS_TYPE' => 'NORMAL',
         'TAS_TYPE_DAY' => 1,
