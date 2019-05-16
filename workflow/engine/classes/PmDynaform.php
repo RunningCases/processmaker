@@ -682,6 +682,8 @@ class PmDynaform
                         }
                         $json->rows = count($rows);
                         $json->data = $rows;
+
+                        $this->setDataSchema($json, $this->fields["APP_DATA"][$json->name]);
                     }
                 }
                 //languages
@@ -2308,5 +2310,33 @@ class PmDynaform
     public function clearLastQueryError()
     {
         $this->lastQueryError = null;
+    }
+
+    /**
+     * This adds a new definition on the json dynaform
+     * @param json $json
+     *
+     * @link https://wiki.processmaker.com/3.0/Grid_Control
+     * @see workflow/engine/classes/PmDynaform->jsonr
+     */
+    public function setDataSchema($json, $appDataVariables)
+    {
+        foreach ($json->data as $key => $value) {
+            $columnsData = [];
+            foreach ($json->columns as $keyData => $valueData) {
+                foreach ($appDataVariables as $keyAppData => $valueAppData) {
+                    if (array_key_exists($valueData->id, $valueAppData) || array_key_exists($valueData->id . "_label",
+                            $valueAppData) || array_key_exists($valueData->name,
+                            $valueAppData) || array_key_exists($valueData->name . "_label", $valueAppData)) {
+                        array_push($columnsData, ["defined" => true]);
+                        break;
+                    } else {
+                        array_push($columnsData, ["defined" => false]);
+                        break;
+                    }
+                }
+            }
+            $json->dataSchema[$key] = $columnsData;
+        }
     }
 }
