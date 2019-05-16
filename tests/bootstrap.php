@@ -23,6 +23,7 @@ define('PATH_SEP', '/');
 define('PATH_METHODS', 'workflow/engine/methods/');
 define('SYS_LANG', 'en');
 define('DB_ADAPTER', 'mysql');
+define('SYS_SKIN', 'neoclassic');
 
 // Setup basic app services
 $app = require __DIR__ . '/../bootstrap/app.php';
