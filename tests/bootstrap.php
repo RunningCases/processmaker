@@ -25,6 +25,7 @@ define('PATH_SEP', '/');
 define('PATH_METHODS', dirname(__DIR__).'/workflow/engine/methods/');
 define('SYS_LANG', 'en');
 define('DB_ADAPTER', 'mysql');
+define('SYS_SKIN', 'neoclassic');
 define('SYS_SYS', 'workflow');
 define('PATH_WORKSPACE',PATH_TRUNK.'/shared/sites/' . SYS_SYS . '/');
 define('PMTABLE_KEY','pmtable');
@@ -32,6 +33,7 @@ define('PMTABLE_KEY','pmtable');
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 //This path includes pmTable model classes
 set_include_path(get_include_path() . PATH_SEPARATOR .dirname(__DIR__). "/shared/sites/".SYS_SYS."/");
+
 
 // Setup basic app services
 $app = require __DIR__ . '/../bootstrap/app.php';
