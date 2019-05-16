@@ -14,15 +14,24 @@ use Illuminate\Support\Facades\Schema;
 /**
  * @todo Migrate to configuration parameters
  */
-define('PATH_CORE', 'workflow/engine/');
+
+define('PATH_TRUNK', dirname(__DIR__));
+define('PATH_CORE', PATH_TRUNK.'/workflow/engine/');
 define('PATH_CONFIG', PATH_CORE . 'config/');
-define('PATH_RBAC_CORE', 'rbac/engine/');
-define('PATH_DB', 'shared/sites/');
-define('PATH_DATA', 'shared/rbac/');
+define('PATH_RBAC_CORE',dirname(__DIR__).'/rbac/engine/');
+define('PATH_DB', dirname(__DIR__).'/shared/sites/');
+define('PATH_DATA', dirname(__DIR__).'/shared/rbac/');
 define('PATH_SEP', '/');
-define('PATH_METHODS', 'workflow/engine/methods/');
+define('PATH_METHODS', dirname(__DIR__).'/workflow/engine/methods/');
 define('SYS_LANG', 'en');
 define('DB_ADAPTER', 'mysql');
+define('SYS_SYS', 'workflow');
+define('PATH_WORKSPACE',PATH_TRUNK.'/shared/sites/' . SYS_SYS . '/');
+define('PMTABLE_KEY','pmtable');
+
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+//This path includes pmTable model classes
+set_include_path(get_include_path() . PATH_SEPARATOR .dirname(__DIR__). "/shared/sites/".SYS_SYS."/");
 
 // Setup basic app services
 $app = require __DIR__ . '/../bootstrap/app.php';
@@ -40,7 +49,7 @@ config(['database.connections.testexternal' => [
         'collation' => 'utf8mb4_unicode_ci',
         'prefix' => '',
         'strict' => true,
-        'engine' => null,
+        'engine' => null
 ]]);
 
 // Now, drop all test tables and repopulate with schema
