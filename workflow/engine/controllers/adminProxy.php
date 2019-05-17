@@ -574,8 +574,10 @@ class adminProxy extends HttpProxyController
     }
 
     /**
-     * for send email configuration
-     * @autor Alvaro  <alvaro@colosa.com>
+     * For test email configuration
+     * @return stdClass()
+     *
+     * @see adminProxy->testConnection()
      */
     public function sendTestMail()
     {
@@ -624,7 +626,7 @@ class adminProxy extends HttpProxyController
             '',
             '',
             '',
-            'TEST',
+            WsBase::MESSAGE_TYPE_TEST_EMAIL,
             $subject,
             $from,
             $_POST['TO'],
@@ -1026,7 +1028,7 @@ class adminProxy extends HttpProxyController
      */
     public function uploadImage()
     {
-        ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+        ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
             echo G::json_encode([
                 'success' => true,
                 'failed' => true,

@@ -1446,7 +1446,7 @@ function checkTree($uidOriginFolder, $uidNewFolder)
  */
 function uploadExternalDocument()
 {
-    ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+    ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
         $response = [
             'error' => $validator->getMessage(),
             'message' => $validator->getMessage(),

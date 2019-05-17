@@ -32,7 +32,7 @@ global $RBAC;
 $RBAC->requirePermissions('PM_SETUP_ADVANCE');
 
 try {
-    ValidationUploadedFiles::getValidationUploadedFiles()->dispach(function($validator) {
+    ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
         throw new Exception($validator->getMessage());
     });
     //load the variables

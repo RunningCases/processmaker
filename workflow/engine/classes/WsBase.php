@@ -8,8 +8,19 @@ use ProcessMaker\Core\System;
 
 class WsBase
 {
+    const MESSAGE_TYPE_ACTIONS_BY_EMAIL = 'ACTIONS_BY_EMAIL';
+    const MESSAGE_TYPE_CASE_NOTE = 'CASE_NOTE';
+    const MESSAGE_TYPE_EMAIL_EVENT = 'EVENT';
+    const MESSAGE_TYPE_EXTERNAL_REGISTRATION = 'EXTERNAL_REGISTRATION';
+    const MESSAGE_TYPE_PM_FUNCTION = 'PM_FUNCTION';
+    const MESSAGE_TYPE_RETRIEVE_PASSWORD = 'RETRIEVE_PASSWORD';
+    const MESSAGE_TYPE_SOAP = 'SOAP';
+    const MESSAGE_TYPE_TASK_NOTIFICATION = 'ROUTING';
+    const MESSAGE_TYPE_TEST_EMAIL = 'TEST';
     public $stored_system_variables; //boolean
     public $wsSessionId; //web service session id, if the wsbase function is used from a WS request
+    private $taskId;
+    private $flagSameCase = true;
 
     public function __construct($params = null)
     {
@@ -20,6 +31,50 @@ class WsBase
 
             $this->wsSessionId = isset($params->wsSessionId) ? $params->wsSessionId : '';
         }
+    }
+
+    /**
+     * Get the flagSameCase
+     *
+     * @return boolean
+     */
+    public function getFlagSameCase()
+    {
+        return $this->flagSameCase;
+    }
+
+    /**
+     * Set the flagSameCase
+     *
+     * @param boolean $var
+     *
+     * @return void
+     */
+    public function setFlagSameCase($var)
+    {
+        $this->flagSameCase = $var;
+    }
+
+    /**
+     * Get the taskId
+     *
+     * @return int
+     */
+    public function getTaskId()
+    {
+        return $this->taskId;
+    }
+
+    /**
+     * Set the taskId
+     *
+     * @param int $taskId
+     *
+     * @return void
+     */
+    public function setTaskId($taskId)
+    {
+        $this->taskId = $taskId;
     }
 
     /**
@@ -831,6 +886,13 @@ class WsBase
      * @param array $config
      *
      * @return $result will return an object
+     *
+     * @see ActionsByEmailCoreClass->sendActionsByEmail()
+     * @see workflow\engine\classes\class.pmFunctions::PMFSendMessage()
+     * @see workflow\engine\methods\services\soap2::sendMessage()
+     * @see \ProcessMaker\BusinessModel\EmailEvent->sendEmail()
+     * @see \ProcessMaker\BusinessModel\Pmgmail->sendEmailWithApplicationData()
+     *
      */
     public function sendMessage(
         $appUid,
@@ -845,7 +907,8 @@ class WsBase
         $showMessage = true,
         $delIndex = 0,
         $config = [],
-        $gmail = 0
+        $gmail = 0,
+        $appMsgType = WsBase::MESSAGE_TYPE_PM_FUNCTION
     )
     {
         try {
@@ -897,7 +960,7 @@ class WsBase
             $spool->setConfig($setup);
 
             $case = new Cases();
-            $oldFields = $case->loadCase($appUid);
+            $oldFields = $case->loadCase($appUid, $delIndex);
             if ($gmail == 1) {
                 $pathEmail = PATH_DATA_SITE . 'mailTemplates' . PATH_SEP;
             } else {
@@ -923,11 +986,11 @@ class WsBase
                 '',
                 $appUid,
                 $delIndex,
-                'TRIGGER',
+                $appMsgType,
                 $subject,
                 G::buildFrom($setup, $from),
                 $to,
-                G::replaceDataGridField(file_get_contents($fileTemplate), $fieldsCase, false),
+                G::replaceDataGridField(file_get_contents($fileTemplate), $fieldsCase, false, true),
                 $cc,
                 $bcc,
                 '',
@@ -938,7 +1001,7 @@ class WsBase
                 (preg_match("/^.+\.html?$/i", $fileTemplate)) ? true : false,
                 isset($fieldsCase['APP_NUMBER']) ? $fieldsCase['APP_NUMBER'] : 0,
                 isset($fieldsCase['PRO_ID']) ? $fieldsCase['PRO_ID'] : 0,
-                isset($fieldsCase['TAS_ID']) ? $fieldsCase['TAS_ID'] : 0
+                $this->getTaskId() ?$this->getTaskId():(isset($oldFields['TAS_ID'])? $oldFields['TAS_ID'] : 0)
             );
             $spool->create($messageArray);
 
@@ -1333,6 +1396,8 @@ class WsBase
                     $result = new WsResponse(-1, G::LoadTranslation("ID_INVALID_DATA") . " $status");
 
                     return $result;
+                } else {
+                    $status == 'INACTIVE' ? $RBAC->destroySessionUser($userUid) : null;
                 }
             }
 
@@ -2067,57 +2132,72 @@ class WsBase
     }
 
     /**
-     * creates a new case impersonating a user who has the proper privileges to create new cases
+     * Creates a new case impersonating a user who has the proper privileges to create new cases
      *
      * @param string $processId
      * @param string $userId
-     * @param string $variables
-     * @param string $taskId , must be in the starting group.
+     * @param array $variables, that are set in the new case
+     * @param string $taskId, must be in the starting group.
      *
-     * @return $result will return an object
+     * @return object
+     *
+     * @see PMFNewCaseImpersonate/class.pmFunctions.php on
+     * @link https://wiki.processmaker.com/3.1/ProcessMaker_Functions#PMFNewCaseImpersonate.28.29
+     *
+     * @see doPostCaseImpersonate/Api/Cases on
+     * @link https://wiki.processmaker.com/3.2/REST_API_Cases/Cases#New_Case_Impersonate_User:_POST_.2Fcases.2Fimpersonate
+     *
+     * @see NewCaseImpersonate/soap2.php on
+     * @link https://wiki.processmaker.com/3.0/ProcessMaker_WSDL_Web_Services#newCaseImpersonate.28.29
      */
     public function newCaseImpersonate($processId, $userId, $variables, $taskId = '')
     {
         try {
-            if (is_array($variables)) {
-                if (count($variables) > 0) {
-                    $c = count($variables);
-                    $Fields = $variables;
-                } else {
-                    if ($c == 0) {
-                        $result = new WsResponse(10, G::loadTranslation('ID_ARRAY_VARIABLES_EMPTY'));
+            $g = new G();
+            $g->sessionVarSave();
 
-                        return $result;
-                    }
+            $c = count($variables);
+            if (is_array($variables)) {
+                if ($c > 0) {
+                    $fieldsVariables = $variables;
+                } elseif ($c === 0) {
+                    $result = new WsResponse(10, G::loadTranslation('ID_ARRAY_VARIABLES_EMPTY'));
+                    $g->sessionVarRestore();
+
+                    return $result;
                 }
             } else {
                 $result = new WsResponse(10, G::loadTranslation('ID_VARIABLES_PARAM_NOT_ARRAY'));
+                $g->sessionVarRestore();
 
                 return $result;
             }
 
             $processes = new Processes();
-
             if (!$processes->processExists($processId)) {
                 $result = new WsResponse(11, G::loadTranslation('ID_INVALID_PROCESS') . " " . $processId . "!!");
+                $g->sessionVarRestore();
 
                 return $result;
             }
 
             $user = new Users();
-
             if (!$user->userExists($userId)) {
                 $result = new WsResponse(11, G::loadTranslation('ID_USER_NOT_REGISTERED') . " " . $userId . "!!");
+                $g->sessionVarRestore();
 
                 return $result;
+            } else {
+                $user->load($userId);
+                $userName = $user->getUsrUsername();
             }
 
-            $oCase = new Cases();
+            $caseInstance = new Cases();
 
             $numTasks = 0;
-            if ($taskId != '') {
-                $aTasks = $processes->getStartingTaskForUser($processId, null);
-                foreach ($aTasks as $task) {
+            if (!empty($taskId)) {
+                $startTasks = $processes->getStartingTaskForUser($processId, null);
+                foreach ($startTasks as $task) {
                     if ($task['TAS_UID'] == $taskId) {
                         $arrayTask[0]['TAS_UID'] = $taskId;
                         $numTasks = 1;
@@ -2128,38 +2208,47 @@ class WsBase
                 $numTasks = count($arrayTask);
             }
 
-            if ($numTasks == 1) {
-                $case = $oCase->startCase($arrayTask[0]['TAS_UID'], $userId);
-                $caseId = $case['APPLICATION'];
-                $caseNumber = $case['CASE_NUMBER'];
+            if ($numTasks === 1) {
+                //@todo Find a better way to define session variables
+                $_SESSION["PROCESS"] = $processId;
+                $_SESSION["TASK"] = $arrayTask[0]['TAS_UID'];
+                $_SESSION["USER_LOGGED"] = $userId;
+                $_SESSION["INDEX"] = 1;
+                $_SESSION["USR_USERNAME"] = $userName;
 
-                $oldFields = $oCase->loadCase($caseId);
+                //Create a newCase
+                $infoCase = $caseInstance->startCase($arrayTask[0]['TAS_UID'], $userId);
+                $_SESSION["APPLICATION"] = $caseId = $infoCase['APPLICATION'];
+                $oldFields = $caseInstance->loadCase($caseId);
+                //Merge the data with the $fieldsVariables that are set in the new case
+                $oldFields['APP_DATA'] = array_merge($oldFields['APP_DATA'], $fieldsVariables);
 
-                $oldFields['APP_DATA'] = array_merge($oldFields['APP_DATA'], $Fields);
-
-                $up_case = $oCase->updateCase($caseId, $oldFields);
-
+                //Update the case
+                $res = $caseInstance->updateCase($caseId, $oldFields);
                 $result = new WsResponse(0, G::loadTranslation('ID_COMMAND_EXECUTED_SUCCESSFULLY'));
-
                 $result->caseId = $caseId;
-                $result->caseNumber = $caseNumber;
+                $result->caseNumber = $infoCase['CASE_NUMBER'];
+                $g->sessionVarRestore();
 
                 return $result;
             } else {
-                if ($numTasks == 0) {
+                if ($numTasks === 0) {
                     $result = new WsResponse(12, G::loadTranslation('ID_NO_STARTING_TASK'));
+                    $g->sessionVarRestore();
 
                     return $result;
                 }
 
                 if ($numTasks > 1) {
                     $result = new WsResponse(13, G::loadTranslation('ID_MULTIPLE_STARTING_TASKS'));
+                    $g->sessionVarRestore();
 
                     return $result;
                 }
             }
         } catch (Exception $e) {
             $result = new WsResponse(100, $e->getMessage());
+            $g->sessionVarRestore();
 
             return $result;
         }
@@ -2178,6 +2267,8 @@ class WsBase
      * @param string $labelAssignment , label related to the triggerType
      *
      * @return string $varTriggers updated
+     *
+     * @see WsBase::derivateCase()
      */
     public function executeTriggerFromDerivate(
         $appUid,
@@ -2243,10 +2334,14 @@ class WsBase
      *
      * @param string $userId
      * @param string $caseId
-     * @param string $delIndex
-     * @param array $tasks
+     * @param integer $delIndex
      * @param bool $bExecuteTriggersBeforeAssignment
+     * @param array $tasks
+     *
      * @return $result will return an object
+     *
+     * @see PMFDerivateCase()/class.pmFunctions.php on
+     * @link https://wiki.processmaker.com/3.2/ProcessMaker_Functions/Case_Routing_Functions#PMFDerivateCase.28.29
      */
     public function derivateCase($userId, $caseId, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks = [])
     {
@@ -3061,6 +3156,10 @@ class WsBase
     public function cancelCase($caseUid, $delIndex, $userUid)
     {
         $g = new G();
+        //We will to review if the current case in execution will be execute the same
+        if (isset($_SESSION["APPLICATION"]) && $_SESSION["APPLICATION"] !== $caseUid){
+            $this->setFlagSameCase(false);
+        }
 
         try {
             $g->sessionVarSave();
@@ -3086,7 +3185,7 @@ class WsBase
             /** If those parameters are null we will to force the cancelCase */
             if (is_null($delIndex) && is_null($userUid)) {
                 /*----------------------------------********---------------------------------*/
-                $case->cancelCase($caseUid, null, null);
+                $case->cancelCase($caseUid, null, null, $this->getFlagSameCase());
                 $result = self::messageExecuteSuccessfully();
                 $g->sessionVarRestore();
 
@@ -3123,7 +3222,7 @@ class WsBase
 
 
             /** Cancel case */
-            $case->cancelCase($caseUid, (int)$delIndex, $userUid);
+            $case->cancelCase($caseUid, (int)$delIndex, $userUid, $this->getFlagSameCase());
 
             //Define the result of the cancelCase
             $result = self::messageExecuteSuccessfully();
@@ -3146,7 +3245,12 @@ class WsBase
      * @param string userUid : The unique ID of the user who will pause the case.
      * @param string unpauseDate : Optional parameter. The date in the format "yyyy-mm-dd" indicating when to unpause
      *               the case.
-     *
+     * 
+     * @see workflow/engine/classes/class.pmFunctions.php::PMFPauseCase()
+     * @see workflow/engine/methods/services/soap2.php::pauseCase()
+     * 
+     * @link https://wiki.processmaker.com/3.3/ProcessMaker_Functions/Case_Functions#PMFPauseCase.28.29
+     * 
      * @return $result will return an object
      */
     public function pauseCase($caseUid, $delIndex, $userUid, $unpauseDate = null)
@@ -3180,6 +3284,22 @@ class WsBase
 
                 $g->sessionVarRestore();
 
+                return $result;
+            }
+            //Validate if status is closed
+            $appDelegation = new AppDelegation();
+            $rows = $appDelegation->LoadParallel($caseUid, $delIndex);
+            if (empty($rows)) {
+                $result = new WsResponse(100, G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'));
+                $g->sessionVarRestore();
+                return $result;
+            }
+            //Validate if the case is paused
+            $appDelay = new AppDelay();
+            $sw = $appDelay->isPaused($caseUid, $delIndex);
+            if ($sw === true) {
+                $result = new WsResponse(19, G::LoadTranslation('ID_CASE_IN_STATUS') . " " . AppDelay::APP_TYPE_PAUSE);
+                $g->sessionVarRestore();
                 return $result;
             }
             if (strlen($unpauseDate) >= 10) {

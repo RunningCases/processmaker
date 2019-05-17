@@ -444,7 +444,8 @@ try {
                     }
                     //END: If there is a Break Step registered from Plugin
 
-                    $sFilenameOriginal = $sFilename = preg_replace('[^A-Za-z0-9_]', '_', G::replaceDataField($aOD['OUT_DOC_FILENAME'], $Fields['APP_DATA']));
+                    $outDocFile = replacePrefixes($aOD['OUT_DOC_FILENAME']);
+                    $sFilenameOriginal = $sFilename = preg_replace('[^A-Za-z0-9_]', '_', G::replaceDataField($outDocFile, $Fields['APP_DATA']));
 
                     //Get the Custom Folder ID (create if necessary)
                     $oFolder = new AppFolder();
@@ -1009,7 +1010,7 @@ try {
                         $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TYPE'] = '<input type="hidden" name="' . $hiddenName . '[ROU_PREVIOUS_TYPE]"        id="' . $hiddenName . '[ROU_PREVIOUS_TYPE]"        value="' . $aValues['NEXT_TASK']['ROU_PREVIOUS_TYPE'] . '">';
                     }
                     if (isset($aValues['ROU_CONDITION'])) {
-                        $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_CONDITION'] = '<input type="hidden" name="' . $hiddenName . '[ROU_CONDITION]"        id="' . $hiddenName . '[ROU_CONDITION]"        value="' . $aValues['ROU_CONDITION'] . '">';
+                        $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_CONDITION'] = '<input type="hidden" name="' . $hiddenName . '[ROU_CONDITION]"        id="' . $hiddenName . '[ROU_CONDITION]"        value="' . htmlentities($aValues['ROU_CONDITION'], ENT_QUOTES, 'UTF-8') . '">';
                     }
                     if (isset($aValues['SOURCE_UID'])) {
                         $aFields['TASK'][$sKey]['NEXT_TASK']['SOURCE_UID'] = '<input type="hidden" name="' . $hiddenName . '[SOURCE_UID]"        id="' . $hiddenName . '[SOURCE_UID]"        value="' . $aValues['SOURCE_UID'] . '">';

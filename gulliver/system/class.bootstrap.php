@@ -207,7 +207,7 @@ class Bootstrap
      *        	= local path
      * @return boolean
      */
-    public function virtualURI($url, $convertionTable, &$realPath)
+    public static function virtualURI($url, $convertionTable, &$realPath)
     {
         foreach ($convertionTable as $urlPattern => $localPath) {
             //      $urlPattern = addcslashes( $urlPattern , '/');
@@ -240,7 +240,7 @@ class Bootstrap
      * @param string $downloadFileName
      * @return string
      */
-    public function streamFile($file, $download = false, $downloadFileName = '', $forceLoad = false)
+    public static function streamFile($file, $download = false, $downloadFileName = '', $forceLoad = false)
     {
         $filter = new InputFilter();
         $file = $filter->xssFilterHard($file);
@@ -399,7 +399,7 @@ class Bootstrap
      * nameWorkspace to specific workspace
      * return true if the file exists, otherwise false.
      */
-    public function isPMUnderUpdating($setFlag = 2, $content="true")
+    public static function isPMUnderUpdating($setFlag = 2, $content="true")
     {
         if (!defined('PATH_DATA')) {
             return false;
@@ -438,7 +438,7 @@ class Bootstrap
      *        	array containig the template data
      * @return $content string containing the parsed template content
      */
-    public function parseTemplate($template, $data = array())
+    public static function parseTemplate($template, $data = array())
     {
         $content = '';
 
@@ -556,7 +556,7 @@ class Bootstrap
      * @param string $strSkin
      * @return void
      */
-    public function RenderPage($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
+    public static function RenderPage($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
     {
         global $G_CONTENT;
         global $G_TEMPLATE;
@@ -617,7 +617,7 @@ class Bootstrap
      *
      * @return void
      */
-    public function SendTemporalMessage($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
+    public static function SendTemporalMessage($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
     {
         if (isset($width)) {
             $_SESSION ['G_MESSAGE_WIDTH'] = $width;
@@ -653,7 +653,7 @@ class Bootstrap
      * @param string $parameter
      * @return string
      */
-    public function header($parameter)
+    public static function header($parameter)
     {
         if (defined('ENABLE_ENCRYPT') && (ENABLE_ENCRYPT == 'yes') && (substr($parameter, 0, 9) == 'location:')) {
             $url = Bootstrap::encrypt(substr($parameter, 10), URL_KEY);
@@ -673,7 +673,7 @@ class Bootstrap
      * @access public
      * @return void
      */
-    public function LoadAllPluginModelClasses()
+    public static function LoadAllPluginModelClasses()
     {
         // Get the current Include path, where the plugins directories should be
         if (!defined('PATH_SEPARATOR')) {
@@ -723,7 +723,7 @@ class Bootstrap
     /**
      * function to calculate the time used to render a page
      */
-    public function logTimeByPage()
+    public static function logTimeByPage()
     {
         if (!defined(PATH_DATA)) {
             return false;
@@ -748,7 +748,7 @@ class Bootstrap
      * @param string $downloadFileName
      * @return string
      */
-    public function streamJSTranslationFile($filename, $locale = 'en')
+    public static function streamJSTranslationFile($filename, $locale = 'en')
     {
         $typearray = explode('.', basename($filename));
         $typeCount = count($typearray);
@@ -808,7 +808,7 @@ class Bootstrap
      * @param string $file
      * @return string
      */
-    public function streamCSSBigFile($filename)
+    public static function streamCSSBigFile($filename)
     {
         header('Content-Type: text/css');
 
@@ -964,7 +964,7 @@ class Bootstrap
      *
      * @return void
      */
-    public function sendHeaders($filename, $contentType = '', $download = false, $downloadFileName = '')
+    public static function sendHeaders($filename, $contentType = '', $download = false, $downloadFileName = '')
     {
         if ($download) {
             if ($downloadFileName == '') {
@@ -978,7 +978,7 @@ class Bootstrap
         // if userAgent (BROWSER) is MSIE we need special headers to avoid MSIE
         // behaivor.
         $userAgent = strtolower($_SERVER ['HTTP_USER_AGENT']);
-        if (preg_match("/msie/i", $userAgent)) {
+        if (preg_match("/msie|trident/i", $userAgent)) {
             // if ( ereg("msie", $userAgent)) {
             header('Pragma: cache');
 
@@ -1115,7 +1115,7 @@ class Bootstrap
      * strip_slashes
      * @param  vVar
      */
-    public function strip_slashes($vVar)
+    public static function strip_slashes($vVar)
     {
         if (is_array($vVar)) {
             foreach ($vVar as $sKey => $vValue) {
@@ -1142,7 +1142,7 @@ class Bootstrap
      * @param eter array data // erik: associative array within data input to replace for formatted string i.e "any messsage {replaced_label} that contains a replace label"
      * @return string
      */
-    public function LoadTranslation($msgID, $lang = SYS_LANG, $data = null)
+    public static function LoadTranslation($msgID, $lang = SYS_LANG, $data = null)
     {
         global $translation;
 
@@ -1182,7 +1182,7 @@ class Bootstrap
      * @param $pattern pattern to filter some specified files
      * @return <array> array containing the recursive glob results
      */
-    public function rglob($pattern = '*', $flags = 0, $path = '')
+    public static function rglob($pattern = '*', $flags = 0, $path = '')
     {
         $paths = glob($path . '*', GLOB_MARK | GLOB_ONLYDIR | GLOB_NOSORT);
         $files = glob($path . $pattern, $flags);
@@ -1197,7 +1197,7 @@ class Bootstrap
      *
      * @author Erik A.O. <erik@gmail.com, aortiz.erik@gmail.com>
      */
-    public function json_encode($Json)
+    public static function json_encode($Json)
     {
         if (function_exists('json_encode')) {
             return json_encode($Json);
@@ -1229,7 +1229,7 @@ class Bootstrap
      *
      * @author Erik Amaru Ortiz <erik@colosa.com>
      */
-    public function xmlParser(&$string)
+    public static function xmlParser(&$string)
     {
         $parser = xml_parser_create();
         xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
@@ -1304,7 +1304,7 @@ class Bootstrap
      * @param unknown_type $maxmtime
      * @return Ambigous <number, unknown>
      */
-    public function getDirectorySize($path, $maxmtime = 0)
+    public static function getDirectorySize($path, $maxmtime = 0)
     {
         $totalsize = 0;
         $totalcount = 0;
@@ -1348,8 +1348,7 @@ class Bootstrap
      *
      * @return void
      */
-    // _Internal: Remove recursion in result array
-    public function _del_p(&$ary)
+    public static function _del_p(&$ary)
     {
         foreach ($ary as $k => $v) {
             if ($k === '_p') {
@@ -1365,7 +1364,7 @@ class Bootstrap
      * @author Ralph A.
      * @return multitype:array containing browser name and type
      */
-    public function get_current_browser()
+    public static function get_current_browser()
     {
         static $a_full_assoc_data, $a_mobile_data, $browser_user_agent;
         static $browser_working, $moz_type, $webkit_type;
@@ -1563,7 +1562,7 @@ class Bootstrap
      * @param unknown_type $pv_extra_search
      * @return string
      */
-    public function get_item_version($pv_browser_user_agent, $pv_search_string, $pv_b_break_last = '', $pv_extra_search = '')
+    public static function get_item_version($pv_browser_user_agent, $pv_search_string, $pv_b_break_last = '', $pv_extra_search = '')
     {
         $substring_length = 15;
         $start_pos = 0; // set $start_pos to 0 for first iteration
@@ -1594,7 +1593,7 @@ class Bootstrap
      * @param unknown_type $pv_type
      * @param unknown_type $pv_value
      */
-    public function get_set_count($pv_type, $pv_value = '')
+    public static function get_set_count($pv_type, $pv_value = '')
     {
         static $slice_increment;
         $return_value = '';
@@ -1743,7 +1742,7 @@ class Bootstrap
      * @param unknown_type $pv_browser_user_agent
      * @return string
      */
-    public function check_is_mobile($pv_browser_user_agent)
+    public static function check_is_mobile($pv_browser_user_agent)
     {
         $mobile_working_test = '';
         $a_mobile_search = array(
@@ -1771,7 +1770,7 @@ class Bootstrap
      *
      * @param unknown_type $pv_browser_user_agent
      */
-    public function get_mobile_data($pv_browser_user_agent)
+    public static function get_mobile_data($pv_browser_user_agent)
     {
         $mobile_browser = '';
         $mobile_browser_number = '';
@@ -1943,7 +1942,7 @@ class Bootstrap
      * @param string $key
      * @return string
      */
-    public function encrypt($string, $key)
+    public static function encrypt($string, $key)
     {
         //print $string;
         //    if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
@@ -1973,7 +1972,7 @@ class Bootstrap
      * @param string $key
      * @return string
      */
-    public function decrypt($string, $key)
+    public static function decrypt($string, $key)
     {
         //   if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
         //if (strpos($string, '|', 0) !== false) return $string;
@@ -2066,7 +2065,7 @@ class Bootstrap
      * @param string $array_i
      * @return array
      */
-    public function array_merge_2(&$array, &$array_i)
+    public static function array_merge_2(&$array, &$array_i)
     {
         foreach ($array_i as $k => $v) {
             if (is_array($v)) {
@@ -2095,7 +2094,7 @@ class Bootstrap
      * @return array_sum(explode(' ',microtime()))
      */
     /* public static */
-    public function microtime_float()
+    public static function microtime_float()
     {
         return array_sum(explode(' ', microtime()));
     }
@@ -2344,7 +2343,7 @@ class Bootstrap
      * @author Erik Amaru Ortiz <erik@colosa.com>
      * @name complete_field($string, $lenght, $type={1:number/2:string/3:float})
      */
-    public function complete_field($campo, $long, $tipo)
+    public static function complete_field($campo, $long, $tipo)
     {
         $campo = trim($campo);
         switch ($tipo) {
@@ -2580,7 +2579,7 @@ class Bootstrap
      * @param string $userPass hash of password
      * @return bool true or false
      */
-    public function verifyHashPassword($pass, $userPass)
+    public static function verifyHashPassword($pass, $userPass)
     {
         global $RBAC;
         $passwordHashConfig = Bootstrap::getPasswordHashConfig();
@@ -2610,7 +2609,7 @@ class Bootstrap
      * @param $string
      * @return mixed
      */
-    public function encryptOld($string)
+    public static function encryptOld($string)
     {
         $consthashFx = self::hashFx;
         return $consthashFx($string);
@@ -2638,14 +2637,14 @@ class Bootstrap
     }
 
     /**
-     * Set Language
+     * Verify if the browser is Internet Explorer
      */
     public static function isIE()
     {
         $isIE = false;
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
-            if (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0; rv:11.0') !== false)) {
+            $userAgent = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
+            if (preg_match("/(Trident\/(\d{2,}|7|8|9)(.*)rv:(\d{2,}))|(MSIE\ (\d{2,}|8|9)(.*)Tablet\ PC)|(Trident\/(\d{2,}|7|8|9))/", $userAgent)) {
                 $isIE = true;
             }
         }
@@ -2683,30 +2682,54 @@ class Bootstrap
      * Get the default information from the context
      *
      * @return array
+     *      
+     * @see AdditionalTables->populateReportTable
+     * @see AppAssignSelfServiceValueGroup->createRow
+     * @see Bootstrap->registerMonologPhpUploadExecution()
+     * @see Cases->loadDataSendEmail()
+     * @see Cases->removeCase()
+     * @see Cases->reportTableDeleteRecord()
+     * @see Derivation->derivate
+     * @see G->logTriggerExecution()
+     * @see LdapAdvanced->VerifyLogin
+     * @see ldapadvancedClassCron->executeCron
+     * @see PmDynaform->__construct
+     * @see pmTablesProxy->genDataReport
+     * @see Processes->createFiles
+     * @see ProcessMaker\AuditLog\AuditLog->register
+     * @see ProcessMaker\Util\ParseSoapVariableName->buildVariableName
+     * @see RBAC->checkAutomaticRegister()
+     * @see workflow/engine/classes/class.pmFunctions.php::executeQuery
+
+     * @link https://wiki.processmaker.com/3.3/Actions_by_Email
+     * @link https://wiki.processmaker.com/3.2/ProcessMaker_Functions
+     * @link https://wiki.processmaker.com/3.1/Report_Tables
+     * @link https://wiki.processmaker.com/3.2/Cases/Running_Cases
+     * @link https://wiki.processmaker.com/3.3/login
+     * @link https://wiki.processmaker.com/3.2/Executing_cron.php
+     * @link https://wiki.processmaker.com/3.2/HTML5_Responsive_DynaForm_Designer
+     * @link https://wiki.processmaker.com/3.2/Audit_Log
+     * @link https://wiki.processmaker.com/3.0/ProcessMaker_WSDL_Web_Services
      */
     public static function getDefaultContextLog()
     {
-
-        global $RBAC;
         $info = [
             'ip' => G::getIpAddress(),
             'workspace' => !empty(config('system.workspace')) ? config('system.workspace') : 'Undefined Workspace',
-            'timeZone' => DateTime::convertUtcToTimeZone(date('Y-m-d H:m:s'))
+            'timeZone' => DateTime::convertUtcToTimeZone(date('Y-m-d H:m:s')),
+            'usrUid' => G::LoadTranslation('UID_UNDEFINED_USER')
         ];
 
-        if ($RBAC !== null) {
-            $userInfo = [
-                'usrUid' => $RBAC->aUserInfo['USER_INFO']['USR_UID']
-            ];
-            $info = array_merge($info, $userInfo);
+        global $RBAC;
+        if (!empty($RBAC) && !empty($RBAC->aUserInfo['USER_INFO']) && !empty($RBAC->aUserInfo['USER_INFO']['USR_UID'])) {
+            $info['usrUid'] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+            return $info;
         }
-        //Some endpoints can defined the USER_LOGGED
-        if (empty($info['usrUid'])) {
-            $user = !empty($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : G::LoadTranslation('UID_UNDEFINED_USER');
-            $userInfo = [
-                'usrUid' => $user
-            ];
-            $info = array_merge($info, $userInfo);
+
+        //if default session exists
+        if (!empty($_SESSION['USER_LOGGED'])) {
+            $info['usrUid'] = $_SESSION['USER_LOGGED'];
+            return $info;
         }
 
         return $info;

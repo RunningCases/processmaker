@@ -415,6 +415,7 @@ class Light
 
         $oCase = new Cases();
         $Fields = $oCase->loadCase($cas_uid);
+        //@todo Find a better way to define session variables
         $_SESSION["APPLICATION"] = $cas_uid;
         $_SESSION["PROCESS"] = $prj_uid;
         $_SESSION["TASK"] = $act_uid;
@@ -453,6 +454,7 @@ class Light
         try {
             $oCase = new Cases();
             $Fields = $oCase->loadCase($app_uid);
+            //@todo Find a better way to define session variables
             $_SESSION["APPLICATION"] = $app_uid;
             $_SESSION["PROCESS"] = $Fields['PRO_UID'];
             $_SESSION["TASK"] = $tas_uid;
@@ -1488,6 +1490,7 @@ class Light
         }
         $response['listLanguage'] = $languagesList;
         if (isset($params['fileLimit']) && $params['fileLimit']) {
+            //to do: ProcessMaker\BusinessModel\InputDocument->getMaxFileSize()
             $postMaxSize = $this->return_bytes(ini_get('post_max_size'));
             $uploadMaxFileSize = $this->return_bytes(ini_get('upload_max_filesize'));
             if ($postMaxSize < $uploadMaxFileSize) {

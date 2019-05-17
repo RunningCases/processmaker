@@ -4,6 +4,7 @@ use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\DynaForm\SuggestTrait;
 use ProcessMaker\BusinessModel\Cases;
 use ProcessMaker\BusinessModel\DynaForm\ValidatorFactory;
+use ProcessMaker\Model\Dynaform as ModelDynaform;
 
 /**
  * Implementing pmDynaform library in the running case.
@@ -64,6 +65,9 @@ class PmDynaform
                 $this->jsonReplace($json, $field->id, "id", $field);
             }
             $this->record["DYN_CONTENT"] = G::json_encode($json);
+
+            //to do, this line should be removed. Related to PMC-196.
+            $this->record['DYN_CONTENT'] = G::fixStringCorrupted($this->record['DYN_CONTENT']);
         }
     }
 
@@ -75,6 +79,14 @@ class PmDynaform
         return $titleDynaform;
     }
 
+    /**
+     * Get a dynaform.
+     * @return array|null
+     * @see ConsolidatedCases->processConsolidated()
+     * @see workflow/engine/methods/cases/caseConsolidated.php
+     * @see ProcessMaker\BusinessModel\Cases->getCaseVariables()
+     * @see PmDynaform->__construct()
+     */
     public function getDynaform()
     {
         if (!isset($this->fields["CURRENT_DYNAFORM"])) {
@@ -83,22 +95,21 @@ class PmDynaform
         if ($this->record != null) {
             return $this->record;
         }
-        $a = new Criteria("workflow");
-        $a->addSelectColumn(DynaformPeer::DYN_VERSION);
-        $a->addSelectColumn(DynaformPeer::DYN_LABEL);
-        $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
-        $a->addSelectColumn(DynaformPeer::PRO_UID);
-        $a->addSelectColumn(DynaformPeer::DYN_UID);
-        $a->add(DynaformPeer::DYN_UID, $this->fields["CURRENT_DYNAFORM"], Criteria::EQUAL);
-        $ds = DynaformPeer::doSelectRS($a);
-        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $ds->next();
-        $row = $ds->getRow();
-        $this->record = isset($row) ? $row : null;
-        $this->langs = ($this->record["DYN_LABEL"] !== "" && $this->record["DYN_LABEL"] !== null) ? G::json_decode($this->record["DYN_LABEL"]) : null;
+        $dynaform = ModelDynaform::getByDynUid($this->fields["CURRENT_DYNAFORM"]);
+        if (empty($dynaform)) {
+            $this->langs = null;
+            return null;
+        }
+        $this->langs = empty($dynaform->DYN_LABEL) ? null : G::json_decode($dynaform->DYN_LABEL);
+        $this->record = (array) $dynaform;
         return $this->record;
     }
 
+    /**
+     * Get all dynaforms except this dynaform, related to process.
+     * @return array
+     * @see PmDynaform->__construct()
+     */
     public function getDynaforms()
     {
         if ($this->record === null) {
@@ -107,21 +118,11 @@ class PmDynaform
         if ($this->records != null) {
             return $this->records;
         }
-        $a = new Criteria("workflow");
-        $a->addSelectColumn(DynaformPeer::DYN_UPDATE_DATE);
-        $a->addSelectColumn(DynaformPeer::DYN_VERSION);
-        $a->addSelectColumn(DynaformPeer::DYN_LABEL);
-        $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
-        $a->addSelectColumn(DynaformPeer::PRO_UID);
-        $a->addSelectColumn(DynaformPeer::DYN_UID);
-        $a->add(DynaformPeer::PRO_UID, $this->record["PRO_UID"], Criteria::EQUAL);
-        $a->add(DynaformPeer::DYN_UID, $this->record["DYN_UID"], Criteria::NOT_EQUAL);
-        $ds = DynaformPeer::doSelectRS($a);
-        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $this->records = array();
-        while ($ds->next()) {
-            array_push($this->records, $ds->getRow());
-        }
+        $result = ModelDynaform::getByProUidExceptDynUid($this->record["PRO_UID"], $this->record["DYN_UID"]);
+        $result->transform(function($item) {
+            return (array) $item;
+        });
+        $this->records = $result->toArray();
         return $this->records;
     }
 
@@ -1129,23 +1130,7 @@ class PmDynaform
         if (!isset($this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"])) {
             $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"] = "";
         }
-        $msg = "";
-        if (isset($_SESSION['G_MESSAGE_TYPE']) && isset($_SESSION['G_MESSAGE'])) {
-            $color = "green";
-            if ($_SESSION['G_MESSAGE_TYPE'] === "ERROR") {
-                $color = "red";
-            }
-            if ($_SESSION['G_MESSAGE_TYPE'] === "WARNING") {
-                $color = "#C3C380";
-            }
-            if ($_SESSION['G_MESSAGE_TYPE'] === "INFO") {
-                $color = "green";
-            }
-            $msg = "<div style='background-color:" . $color . ";color: white;padding: 1px 2px 1px 5px;' class='userGroupTitle'>" . $_SESSION['G_MESSAGE_TYPE'] . ": " . $_SESSION['G_MESSAGE'] . "</div>";
-            unset($_SESSION['G_MESSAGE_TYPE']);
-            unset($_SESSION['G_MESSAGE']);
-        }
-        $title = $msg .
+        $title = $this->getSessionMessage() .
                 "<table width='100%' align='center'>\n" .
                 "    <tr class='userGroupTitle'>\n" .
                 "        <td width='100%' align='center'>" . G::LoadTranslation('ID_CASE') . " #: " . $this->fields["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . G::LoadTranslation('ID_TITLE') . ": " . $this->fields["APP_TITLE"] . "</td>\n" .
@@ -1196,19 +1181,8 @@ class PmDynaform
     public function printEditSupervisor()
     {
         ob_clean();
-
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
-
-        $msg = "";
-
-        if (isset($_SESSION["G_MESSAGE_TYPE"]) && isset($_SESSION["G_MESSAGE"])) {
-            $msg = "<div style=\"margin: 1.2em; border: 1px solid #3C763D; padding: 0.5em; background: #B2D3B3;\"><strong>" . G::LoadTranslation("ID_INFO") . "</strong>: " . $_SESSION["G_MESSAGE"] . "</div>";
-
-            unset($_SESSION["G_MESSAGE_TYPE"]);
-            unset($_SESSION["G_MESSAGE"]);
-        }
-
         $javascrip = "
         <script type=\"text/javascript\">
             var jsondata = " . G::json_encode($json) . ";
@@ -1231,11 +1205,9 @@ class PmDynaform
             var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";
             " . $this->getTheStringVariableForGoogleMaps() . "
         </script>
-
         <script type=\"text/javascript\" src=\"/jscore/cases/core/pmDynaform.js\"></script>
-
         <div>
-            $msg
+            " . $this->getSessionMessageForSupervisor() . "
             <div style=\"display: none;\">
                 <a id=\"dyn_forward\" href=\"javascript:;\"></a>
             </div>
@@ -1320,6 +1292,7 @@ class PmDynaform
                 $this->getTheStringVariableForGoogleMaps() . "\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
+                $this->getSessionMessage() .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
                 "    <a id='dyn_forward' href='' style='float:right;font-size:12px;line-height:1;margin:0px 5px 1px 0px;'>\n" .
                 "    </a>\n" .
@@ -1356,9 +1329,20 @@ class PmDynaform
         exit();
     }
 
+    /**
+     * Print PmDynaform for Action by Email.
+     * 
+     * @param array $record
+     * @return string
+     * 
+     * @see ActionsByEmailCoreClass->sendActionsByEmail()
+     * @link https://wiki.processmaker.com/3.3/Actions_by_Email
+     */
     public function printPmDynaformAbe($record)
     {
-        ob_clean();
+        if (ob_get_length() > 0) {
+            ob_clean();
+        }
         $this->record = $record;
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
@@ -1576,19 +1560,27 @@ class PmDynaform
         }
     }
 
+    /**
+     * Verify the use of the variable in all the forms of the process.
+     * 
+     * @param string $processUid
+     * @param string $variable
+     * @return boolean | string
+     * 
+     * @see ProcessMaker\BusinessModel\Variable->delete()
+     * @link https://wiki.processmaker.com/3.2/Variables#Managing_Variables
+     */
     public function isUsed($processUid, $variable)
     {
-        $criteria = new Criteria("workflow");
-        $criteria->addSelectColumn(DynaformPeer::DYN_UID);
-        $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
-        $criteria->add(DynaformPeer::PRO_UID, $processUid, Criteria::EQUAL);
-        $rsCriteria = DynaformPeer::doSelectRS($criteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        while ($rsCriteria->next()) {
-            $aRow = $rsCriteria->getRow();
-            $json = G::json_decode($aRow['DYN_CONTENT']);
+        $result = ModelDynaform::getByProUid($processUid);
+        if (empty($result)) {
+            return false;
+        }
+        foreach ($result as $row) {
+            $dynaform = new PmDynaform(["CURRENT_DYNAFORM" => $row->DYN_UID]);
+            $json = G::json_decode($dynaform->record["DYN_CONTENT"]);
             if ($this->jsoni($json, $variable)) {
-                return $aRow['DYN_UID'];
+                return $row->DYN_UID;
             }
         }
         return false;
@@ -2223,5 +2215,54 @@ class PmDynaform
         $googleMaps->signature = $config['google_map_signature'];
         $result = 'var googleMaps = ' . G::json_encode($googleMaps) . ';';
         return $result;
+    }
+
+    /**
+     * Get session message.
+     * 
+     * @return string
+     * 
+     * @see PmDynaform->printEdit()
+     * @see PmDynaform->printABE()
+     * @link https://wiki.processmaker.com/3.1/Multiple_File_Uploader#File_Extensions
+     */
+    public function getSessionMessage()
+    {
+        $message = "";
+        if (isset($_SESSION['G_MESSAGE_TYPE']) && isset($_SESSION['G_MESSAGE'])) {
+            $color = "green";
+            if ($_SESSION['G_MESSAGE_TYPE'] === "ERROR") {
+                $color = "red";
+            }
+            if ($_SESSION['G_MESSAGE_TYPE'] === "WARNING") {
+                $color = "#C3C380";
+            }
+            if ($_SESSION['G_MESSAGE_TYPE'] === "INFO") {
+                $color = "green";
+            }
+            $message = "<div style='background-color:" . $color . ";color: white;padding: 1px 2px 1px 5px;' class='userGroupTitle'>" . $_SESSION['G_MESSAGE_TYPE'] . ": " . $_SESSION['G_MESSAGE'] . "</div>";
+            unset($_SESSION['G_MESSAGE_TYPE']);
+            unset($_SESSION['G_MESSAGE']);
+        }
+        return $message;
+    }
+
+    /**
+     * Get session message for supervisor.
+     * 
+     * @return string
+     * 
+     * @see PmDynaform->printEditSupervisor();
+     * @link https://wiki.processmaker.com/3.1/Multiple_File_Uploader#File_Extensions
+     */
+    public function getSessionMessageForSupervisor()
+    {
+        $message = "";
+        if (isset($_SESSION["G_MESSAGE_TYPE"]) && isset($_SESSION["G_MESSAGE"])) {
+            $message = "<div style=\"margin: 1.2em; border: 1px solid #3C763D; padding: 0.5em; background: #B2D3B3;\"><strong>" . G::LoadTranslation("ID_INFO") . "</strong>: " . $_SESSION["G_MESSAGE"] . "</div>";
+            unset($_SESSION["G_MESSAGE_TYPE"]);
+            unset($_SESSION["G_MESSAGE"]);
+        }
+        return $message;
     }
 }
