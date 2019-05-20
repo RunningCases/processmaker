@@ -1,6 +1,8 @@
 <?php
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
+use G;
+use Faker;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
@@ -1042,5 +1044,52 @@ class DelegationTest extends TestCase
         // Review the filter by status empty
         $results = Delegation::search(null, 0, 25);
         $this->assertEquals('', $results['data'][0]['APP_STATUS']);
+    }
+
+    /**
+     * Check if return participation information
+     * @test
+     */
+    public function it_should_return_participation_info()
+    {
+        // Initializing Faker instance
+        $faker = Faker\Factory::create();
+
+        // Creating one application with two delegations
+        factory(User::class, 100)->create();
+        $process = factory(Process::class)->create();
+        $application = factory(Application::class)->create([
+            'APP_UID' => G::generateUniqueID()
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_FINISH_DATE' => $faker->dateTime()
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 2,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_FINISH_DATE' => $faker->dateTime()
+        ]);
+
+        // Check the information returned
+        $results = Delegation::getParticipatedInfo($application->APP_UID);
+        $this->assertEquals('PARTICIPATED', $results['APP_STATUS']);
+        $this->assertCount(2, $results['DEL_INDEX']);
+        $this->assertEquals($process->PRO_UID, $results['PRO_UID']);
+    }
+
+    /**
+     * Check if return an empty participation information
+     * @test
+     */
+    public function it_should_return_empty_participation_info()
+    {
+        // Try to get the participation information from a case that not exists
+        $results = Delegation::getParticipatedInfo(G::generateUniqueID());
+
+        // Check the information returned
+        $this->assertEmpty($results);
     }
 }
