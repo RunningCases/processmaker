@@ -60708,6 +60708,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_RT_RENAME_NAME_TABLE','en','All references to the previous table name are going to be invalid. Do you really want to change the table name?','2016-06-29') ,
 ( 'LABEL','ID_RULES_AND_USER_GROUPS','en','Rules and user groups','2014-01-15') ,
 ( 'LABEL','ID_SALES_DEPARTMENT_REQUEST','en','It sends a request to Sales Department, do you want to continue?','2014-10-21') ,
+( 'LABEL','ID_SAML_ENABLE','en','SAML Authentication Enable','2019-05-20') ,
+( 'LABEL','ID_SAML_PROVIDER','en','SAML Authentication Provider','2019-05-20') ,
 ( 'LABEL','ID_SAMPLES','en','Samples','2014-01-15') ,
 ( 'LABEL','ID_SAT','en','Sat','2014-01-15') ,
 ( 'LABEL','ID_SAVE','en','Save','2014-01-15') ,
