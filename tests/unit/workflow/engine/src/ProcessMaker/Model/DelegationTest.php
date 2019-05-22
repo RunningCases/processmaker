@@ -42,9 +42,8 @@ class DelegationTest extends TestCase
     {
         factory(User::class, 100)->create();
         factory(Process::class, 10)->create();
-
         factory(Delegation::class, 50)->create();
-        factory(Delegation::class, 1)->create([
+        factory(Delegation::class)->create([
             'USR_ID' => 0 // A self service delegation
         ]);
         // Get first page, which is 25
@@ -65,20 +64,18 @@ class DelegationTest extends TestCase
     public function it_should_return_process_of_data()
     {
         factory(User::class, 100)->create();
-        $process = factory(Process::class, 1)->create([
-            'PRO_ID' => 1
-        ]);
+        $process = factory(Process::class)->create();
         factory(Delegation::class, 51)->create([
-            'PRO_ID' => $process[0]->id
+            'PRO_ID' => $process->id
         ]);
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, null, $process[0]->id);
+        $results = Delegation::search(null, 0, 25, null, $process->id);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25, null, $process[0]->id);
+        $results = Delegation::search(null, 25, 25, null, $process->id);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25, null, $process[0]->id);
+        $results = Delegation::search(null, 50, 25, null, $process->id);
         $this->assertCount(1, $results['data']);
     }
 
@@ -90,24 +87,24 @@ class DelegationTest extends TestCase
     public function it_should_return_status_draft_of_data()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 1,
             'APP_STATUS' => 'DRAFT'
         ]);
         factory(Delegation::class, 51)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Review the filter by status DRAFT
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 0, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -119,24 +116,24 @@ class DelegationTest extends TestCase
     public function it_should_return_status_todo_of_data()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
         factory(Delegation::class, 51)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Review the filter by status TO_DO
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 0, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -148,26 +145,26 @@ class DelegationTest extends TestCase
     public function it_should_return_status_completed_of_data()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 3,
             'APP_STATUS' => 'COMPLETED',
         ]);
 
         factory(Delegation::class, 51)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_LAST_INDEX' => 1
         ]);
         // Review the filter by status COMPLETED
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 0, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -179,26 +176,26 @@ class DelegationTest extends TestCase
     public function it_should_return_status_cancelled_of_data()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 4,
             'APP_STATUS' => 'CANCELLED'
         ]);
 
         factory(Delegation::class, 51)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_LAST_INDEX' => 1
         ]);
         // Review the filter by status CANCELLED
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 0, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 25, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25, null, null, $application[0]->APP_STATUS_ID);
+        $results = Delegation::search(null, 50, 25, null, null, $application->APP_STATUS_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -232,48 +229,48 @@ class DelegationTest extends TestCase
     public function it_should_search_by_case_id_and_pages_of_data()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2010
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2011
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2012
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2013
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2014
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2015
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Get first page, the major case id
         $results = Delegation::search(null, 0, 10, 1, null, null, 'DESC',
@@ -302,48 +299,48 @@ class DelegationTest extends TestCase
     public function it_should_search_by_case_title_and_pages_of_data_app_number_matches_case_title()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 3001,
             'APP_TITLE' => 'Request # 3001'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 3010,
             'APP_TITLE' => 'Request # 3010'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 3011,
             'APP_TITLE' => 'Request # 3011'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 3012,
             'APP_TITLE' => 'Request # 3012'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 3013,
             'APP_TITLE' => 'Request # 3013'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_TITLE' => 3014,
             'APP_TITLE' => 'Request # 3014'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
 
         // Get first page, the major case id
@@ -374,20 +371,20 @@ class DelegationTest extends TestCase
     public function it_should_search_by_task_title_and_pages_of_data()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $task = factory(Task::class, 1)->create([
+        factory(Process::class)->create();
+        $task = factory(Task::class)->create([
             'TAS_ID' => 1,
             'TAS_TITLE' => 'Request task'
         ]);
         factory(Delegation::class, 5)->create([
-            'TAS_ID' => $task[0]->TAS_ID
+            'TAS_ID' => $task->TAS_ID
         ]);
-        $task = factory(Task::class, 1)->create([
+        $task = factory(Task::class)->create([
             'TAS_ID' => 2,
             'TAS_TITLE' => 'Account task'
         ]);
         factory(Delegation::class, 5)->create([
-            'TAS_ID' => $task[0]->TAS_ID
+            'TAS_ID' => $task->TAS_ID
         ]);
         // Get first page, the order taskTitle
         $results = Delegation::search(null, 0, 6, 'task', null, null, 'ASC',
@@ -423,34 +420,34 @@ class DelegationTest extends TestCase
     public function it_should_search_by_case_title_and_pages_of_data_app_number_no_matches_case_title()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001,
             'APP_TITLE' => 'Request from Abigail check nro 25001'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2010,
             'APP_TITLE' => 'Request from Abigail check nro 12'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2011,
             'APP_TITLE' => 'Request from Abigail check nro 1000'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2012,
             'APP_TITLE' => 'Request from Abigail check nro 11000'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class, 1)->create([
             'APP_NUMBER' => 2013,
@@ -459,12 +456,12 @@ class DelegationTest extends TestCase
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application[0]->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_TITLE' => 2014,
             'APP_TITLE' => 'Request from Abigail check nro 111'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Get first page, the major case title
         $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
@@ -489,18 +486,18 @@ class DelegationTest extends TestCase
     public function it_should_sort_by_case_id()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 30002
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Get first page, the minor case id
         $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_NUMBER');
@@ -521,20 +518,20 @@ class DelegationTest extends TestCase
     public function it_should_sort_by_case_title()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 2001,
             'APP_TITLE' => 'Request by Thomas'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_NUMBER' => 30002,
             'APP_TITLE' => 'Request by Ariel'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Get first page, the minor case id
         $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_TITLE');
@@ -555,26 +552,26 @@ class DelegationTest extends TestCase
     public function it_should_sort_by_process()
     {
         factory(User::class, 100)->create();
-        $process = factory(Process::class, 1)->create([
+        $process = factory(Process::class)->create([
             'PRO_ID' => 2,
             'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
         ]);
-        factory(Delegation::class, 1)->create([
-            'PRO_ID' => $process[0]->id
+        factory(Delegation::class)->create([
+            'PRO_ID' => $process->id
         ]);
-        $process = factory(Process::class, 1)->create([
+        $process = factory(Process::class)->create([
             'PRO_ID' => 1,
             'PRO_TITLE' => 'China Supplier Payment Proposal'
         ]);
-        factory(Delegation::class, 1)->create([
-            'PRO_ID' => $process[0]->id
+        factory(Delegation::class)->create([
+            'PRO_ID' => $process->id
         ]);
-        $process = factory(Process::class, 1)->create([
+        $process = factory(Process::class)->create([
             'PRO_ID' => 3,
             'PRO_TITLE' => 'Russia Supplier Payment Proposal'
         ]);
-        factory(Delegation::class, 1)->create([
-            'PRO_ID' => $process[0]->id
+        factory(Delegation::class)->create([
+            'PRO_ID' => $process->id
         ]);
         // Get first page, all process ordering ascending
         $results = Delegation::search(null, 0, 3, null, null, null, 'ASC', 'APP_PRO_TITLE');
@@ -597,22 +594,20 @@ class DelegationTest extends TestCase
     public function it_should_sort_by_task_title()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-
-        $task = factory(Task::class, 1)->create([
+        factory(Process::class)->create();
+        $task = factory(Task::class)->create([
             'TAS_ID' => 1000,
             'TAS_TITLE' => 'Initiate Request'
         ]);
-        factory(Delegation::class, 1)->create([
-            'TAS_ID' => $task[0]->TAS_ID
+        factory(Delegation::class)->create([
+            'TAS_ID' => $task->TAS_ID
         ]);
-
-        $task = factory(Task::class, 1)->create([
+        $task = factory(Task::class)->create([
             'TAS_ID' => 4000,
             'TAS_TITLE' => 'Waiting for AP Manager Validation'
         ]);
-        factory(Delegation::class, 1)->create([
-            'TAS_ID' => $task[0]->TAS_ID
+        factory(Delegation::class)->create([
+            'TAS_ID' => $task->TAS_ID
         ]);
 
         $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_TAS_TITLE');
@@ -673,24 +668,24 @@ class DelegationTest extends TestCase
     public function it_should_sort_by_last_modified()
     {
         factory(User::class,100)->create();
-        factory(Process::class,1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_UPDATE_DATE' => '2019-01-02 00:00:00'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_UPDATE_DATE' => '2019-01-03 00:00:00'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_UPDATE_DATE' => '2019-01-04 00:00:00'
         ]);
         factory(Delegation::class)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Get first page, the minor last modified
         $results = Delegation::search(null, 0, 1, null, null, null, 'ASC', 'APP_UPDATE_DATE');
@@ -725,7 +720,7 @@ class DelegationTest extends TestCase
     public function it_should_sort_by_due_date()
     {
         factory(User::class,100)->create();
-        factory(Process::class,1)->create();
+        factory(Process::class)->create();
         factory(Delegation::class, 10)->create([
             'DEL_TASK_DUE_DATE' => '2019-01-02 00:00:00'
         ]);
@@ -768,30 +763,30 @@ class DelegationTest extends TestCase
     public function it_should_sort_by_status()
     {
         factory(User::class,100)->create();
-        factory(Process::class,1)->create();
-        $application = factory(Application::class, 1)->create([
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_STATUS' => 'DRAFT'
         ]);
         factory(Delegation::class, 25)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_STATUS' => 'TO_DO'
         ]);
         factory(Delegation::class, 25)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_STATUS' => 'COMPLETED'
         ]);
         factory(Delegation::class, 25)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        $application = factory(Application::class, 1)->create([
+        $application = factory(Application::class)->create([
             'APP_STATUS' => 'CANCELLED'
         ]);
         factory(Delegation::class, 25)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
 
         // Get first page, the minor status label
@@ -923,51 +918,44 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_by_sequential_tasks_pages_of_data()
     {
-        factory(User::class, 100)->create();
+        factory(User::class)->create();
         // Create a process
-        $process = factory(Process::class, 1)->create([
-            'PRO_ID' => 1000
-        ]);
-        $application = factory(Application::class, 1)->create([
-            'APP_NUMBER' => 5000,
-            'APP_TITLE' => 'Request by Thomas',
-        ]);
+        $process = factory(Process::class)->create();
+        $application = factory(Application::class)->create();
         // Create task
-        $task = factory(Task::class, 1)->create([
+        $taskNormal = factory(Task::class)->create([
             'TAS_TYPE' => 'NORMAL'
         ]);
         // Create a thread with the user, process and application defined before
         factory(Delegation::class)->create([
-            'PRO_ID' => $process[0]->id,
-            'TAS_ID' => $task[0]->id,
-            'APP_NUMBER' => $application[0]->APP_NUMBER,
-            'DEL_THREAD_STATUS' => 'CLOSED'
+            'PRO_ID' => $process->id,
+            'TAS_ID' => $taskNormal->TAS_ID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1
         ]);
-
         // Define a dummy task
-        $task = factory(Task::class, 1)->create([
+        $taskDummy = factory(Task::class)->create([
             'TAS_TYPE' => 'INTERMEDIATE-THROW'
         ]);
         // Create a thread with the dummy task this does not need a user
         factory(Delegation::class)->create([
-            'PRO_ID' => $process[0]->id,
+            'PRO_ID' => $process->id,
             'USR_ID' => 0,
-            'TAS_ID' => $task[0]->id,
-            'APP_NUMBER' => $application[0]->APP_NUMBER
-        ]);
-        // Create task
-        $task = factory(Task::class, 1)->create([
-            'TAS_TYPE' => 'NORMAL'
+            'TAS_ID' => $taskDummy->TAS_ID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_INDEX' => 2
         ]);
         // Create a thread with the user, process and application defined before
-        factory(Delegation::class)->create([
-            'PRO_ID' => $process[0]->id,
-            'TAS_ID' => $task[0]->id,
-            'APP_NUMBER' => $application[0]->APP_NUMBER,
-            'DEL_THREAD_STATUS' => 'OPEN'
+        $res = factory(Delegation::class)->create([
+            'PRO_ID' => $process->id,
+            'TAS_ID' => $taskNormal->TAS_ID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 3
         ]);
         // Review if the thread OPEN is showed
-        $results = Delegation::search(null, 0, 10, null);
+        $results = Delegation::search(null, 0, 10);
         $this->assertCount(1, $results['data']);
         $this->assertEquals('OPEN', $results['data'][0]['DEL_THREAD_STATUS']);
     }
@@ -979,19 +967,19 @@ class DelegationTest extends TestCase
     public function it_should_return_by_parallel_tasks_threads_closed()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $task = factory(Task::class, 1)->create([
+        factory(Process::class)->create();
+        $task = factory(Task::class)->create([
             'TAS_TITLE' => 'Parallel task 1'
         ]);
         factory(Delegation::class, 5)->create([
-            'TAS_ID' => $task[0]->TAS_ID,
+            'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
-        $task = factory(Task::class, 1)->create([
+        $task = factory(Task::class)->create([
             'TAS_TITLE' => 'Parallel task 2'
         ]);
         factory(Delegation::class, 5)->create([
-            'TAS_ID' => $task[0]->TAS_ID,
+            'TAS_ID' => $task->TAS_ID,
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
         // Get first page, the order taskTitle
@@ -1031,16 +1019,79 @@ class DelegationTest extends TestCase
     public function it_should_return_status_empty()
     {
         factory(User::class, 100)->create();
-        factory(Process::class, 1)->create();
-        $application = factory(Application::class, 1)->create([
-            'APP_NUMBER' => 2001,
+        factory(Process::class)->create();
+        $application = factory(Application::class)->create([
             'APP_STATUS' => ''
         ]);
-        factory(Delegation::class, 1)->create([
-            'APP_NUMBER' => $application[0]->APP_NUMBER
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER
         ]);
         // Review the filter by status empty
         $results = Delegation::search(null, 0, 25);
-        $this->assertEquals('', $results['data'][0]['APP_STATUS']);
+        $this->assertEmpty($results['data'][0]['APP_STATUS']);
+    }
+
+    /**
+     * Review when filter when the process and category does not have a relation
+     * @test
+     */
+    public function it_should_return_process_and_category_does_not_have_a_relation()
+    {
+        //Create a category
+        $category = factory(ProcessCategory::class, 2)->create();
+        //Define a process with category
+        $processWithCat = factory(Process::class)->create([
+            'PRO_CATEGORY' => $category[0]->CATEGORY_UID
+        ]);
+        //Define a process without category
+        $processNoCategory = factory(Process::class)->create([
+            'PRO_CATEGORY' => ''
+        ]);
+        //Create a delegation related with the process with category
+        factory(Delegation::class)->create([
+            'PRO_ID' => $processWithCat->id
+        ]);
+        //Create a delegation related with the process without category
+        factory(Delegation::class)->create([
+            'PRO_ID' => $processNoCategory->id
+        ]);
+        //Search the cases related to the category and process does not have relation
+        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null, $category[1]->CATEGORY_UID);
+        $this->assertCount(0, $results['data']);
+        //Search the cases related to the category and process does not have relation
+        $results = Delegation::search(null, 0, 25, null, $processNoCategory->id, null, null, null, $category[0]->CATEGORY_UID);
+        $this->assertCount(0, $results['data']);
+    }
+
+    /**
+     * Review when filter when the process and category does have a relation
+     * @test
+     */
+    public function it_should_return_process_and_category_does_have_a_relation()
+    {
+        //Create a category
+        $category = factory(ProcessCategory::class)->create();
+        //Define a process related with he previous category
+        $processWithCat = factory(Process::class)->create([
+            'PRO_CATEGORY' => $category->CATEGORY_UID
+        ]);
+        //Create a delegation related to this process
+        factory(Delegation::class)->create([
+            'PRO_ID' => $processWithCat->id
+        ]);
+        //Define a process related with he previous category
+        $process = factory(Process::class)->create([
+            'PRO_CATEGORY' => ''
+        ]);
+        //Create a delegation related to other process
+        factory(Delegation::class, 5)->create([
+            'PRO_ID' => $process->id,
+        ]);
+        //Search the cases when the category and process does have relation with a category
+        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null, $category->CATEGORY_UID);
+        $this->assertCount(1, $results['data']);
+        //Search the cases when the category and process does have relation with category empty
+        $results = Delegation::search(null, 0, 25, null, $process->id, null, null, null, '');
+        $this->assertCount(5, $results['data']);
     }
 }
