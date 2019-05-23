@@ -62,6 +62,9 @@ $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) (env('MAIN_SYSTEM_UTC_TIME_ZONE', 
 ini_set('date.timezone', $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] ? 'UTC' : env('MAIN_TIME_ZONE', 'America/New_York'));
 define('TIME_ZONE', ini_get('date.timezone'));
 
+//This path includes PM tables model classes
+set_include_path(get_include_path() . PATH_SEPARATOR . PATH_DB . SYS_SYS . "/");
+
 // Overwrite with the ProcessMaker env.ini configuration used in production environments
 //@todo: move env.ini configuration to .env
 ini_set('date.timezone', TIME_ZONE); //Set Time Zone
