@@ -7,6 +7,7 @@ class ReplaceDataFieldTest extends TestCase
     /**
      * This checks that strings with HTML reserved characters are replaced with entities
      * @test
+     * @covers G::replaceDataField
      */
     public function it_should_replace_entities()
     {
@@ -90,6 +91,7 @@ class ReplaceDataFieldTest extends TestCase
     /**
      * This checks that strings with HTML reserved characters are NOT replaced with entities
      * @test
+     * @covers G::replaceDataField
      */
     public function it_should_no_replace_entities()
     {
@@ -175,6 +177,7 @@ class ReplaceDataFieldTest extends TestCase
      * PS team sometimes build a HTML string to insert in templates (output documents or emails), Ex.- A table to list
      * users or results from a query
      * @test
+     * @covers G::replaceDataField
      */
     public function it_should_no_replace_entities_if_exists_valid_html()
     {
@@ -221,6 +224,7 @@ class ReplaceDataFieldTest extends TestCase
     /**
      * This checks that strings with tag <br /> should not be replaced, because is a valid tag
      * @test
+     * @covers G::replaceDataField
      */
     public function it_should_no_replace_tag_br()
     {
@@ -241,12 +245,36 @@ test
 test");
         $valuesToReplace = [];
         $dbEngine = 'mysql'; // This only affects the way to escape the variables with "@@" prefix
-        $applyEntities = true; // Is true because the string will b used in a output document or a email template
+        $applyEntities = true; // Is true because the string will be used in a output document or a email template
 
         // Replace variables in the string
         $stringToCheck = G::replaceDataField($stringWithTagBr, $valuesToReplace, $dbEngine, $applyEntities);
 
         // Assertions
         $this->assertRegExp("/<br \/>/", $stringToCheck);
+    }
+
+    /**
+     * Check that the value for the System variable "__ABE__" should not be replaced never
+     * @test
+     * @covers G::replaceDataField
+     */
+    public function it_should_no_replace_entities_for_var_abe()
+    {
+        // Initializing variables to use
+        $string = "bla @#__ABE__ bla @#anotherVar bla";
+        $valuesToReplace = [// Add a value for reserved system variable "__ABE__" used in Actions By Email feature
+            '__ABE__' => 'Java < PHP', // The value for System variable "__ABE__" shouldn't be changed never
+            'anotherVar' => '.NET < Java' // The value for another variables should be validated/replaced normally
+        ];
+        $dbEngine = 'mysql'; // This only affects the way to escape the variables with "@@" prefix
+        $applyEntities = true; // Is true because the string will be used in a output document or a email template
+
+        // Replace variables in the string
+        $stringToCheck = G::replaceDataField($string, $valuesToReplace, $dbEngine, $applyEntities);
+
+        // Assertions
+        $this->assertRegExp("/Java < PHP/", $stringToCheck);
+        $this->assertRegExp("/.NET &lt; Java/", $stringToCheck);
     }
 }
