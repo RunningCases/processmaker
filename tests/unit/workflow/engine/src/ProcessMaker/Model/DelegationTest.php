@@ -1052,25 +1052,18 @@ class DelegationTest extends TestCase
      */
     public function it_should_return_participation_info()
     {
-        // Initializing Faker instance
-        $faker = Faker\Factory::create();
-
         // Creating one application with two delegations
         factory(User::class, 100)->create();
         $process = factory(Process::class)->create();
         $application = factory(Application::class)->create([
             'APP_UID' => G::generateUniqueID()
         ]);
-        factory(Delegation::class)->create([
-            'APP_UID' => $application->APP_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'DEL_FINISH_DATE' => $faker->dateTime()
+        factory(Delegation::class)->states('closed')->create([
+            'APP_UID' => $application->APP_UID
         ]);
-        factory(Delegation::class)->create([
+        factory(Delegation::class)->states('open')->create([
             'APP_UID' => $application->APP_UID,
-            'DEL_INDEX' => 2,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'DEL_FINISH_DATE' => $faker->dateTime()
+            'DEL_INDEX' => 2
         ]);
 
         // Check the information returned
