@@ -46,6 +46,19 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to get the delegations from a case by APP_UID
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $appUid
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAppUid($query, $appUid)
+    {
+        return $query->where('APP_UID', '=', $appUid);
+    }
+
+    /**
      * Searches for delegations which match certain criteria
      *
      * The query is related to advanced search with different filters
@@ -328,6 +341,52 @@ class Delegation extends Model
         ];
 
         return $response;
+    }
+
+    /**
+     * Get participation information for a case
+     *
+     * @param string $appUid
+     * @return array
+     *
+     * @see ProcessMaker\BusinessModel\Cases:getStatusInfo()
+     */
+    public static function getParticipatedInfo($appUid)
+    {
+        // Build the query
+        $query = Delegation::query()->select([
+            'APP_UID',
+            'DEL_INDEX',
+            'PRO_UID'
+        ]);
+        $query->appUid($appUid);
+        $query->orderBy('DEL_INDEX', 'ASC');
+
+        // Fetch results
+        $results = $query->get();
+
+        // Initialize the array to return
+        $arrayData = [];
+
+        // If the collection have at least one item, build the main array to return
+        if ($results->count() > 0) {
+            // Get the first item
+            $first = $results->first();
+
+            // Build the main array to return
+            $arrayData = [
+                'APP_STATUS' => 'PARTICIPATED', // Value hardcoded because we need to return the same structure previously sent
+                'DEL_INDEX' => [], // Initialize this item like an array
+                'PRO_UID' => $first->PRO_UID
+            ];
+
+            // Populate the DEL_INDEX key with the values of the items collected
+            $results->each(function ($item) use (&$arrayData) {
+                $arrayData['DEL_INDEX'][] = $item->DEL_INDEX;
+            });
+        }
+
+        return $arrayData;
     }
 
 }
