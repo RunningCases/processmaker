@@ -28,6 +28,9 @@ var casesNewTab;
 var mask;
 var loadingMessage;
 var timeoutMark = false;
+var processProxy;
+var processStore;
+var comboCategory;
 
 function formatAMPM(date, initVal, calendarDate) {
 
@@ -994,11 +997,13 @@ Ext.onReady ( function() {
         }
     });
 
-    var processStore =  new Ext.data.Store( {
-        proxy : new Ext.data.HttpProxy( {
-            url : 'casesList_Ajax?actionAjax=processListExtJs&action='+action,
-            method : 'POST'
-        }),
+    processProxy =  new Ext.data.HttpProxy( {
+        url : 'casesList_Ajax?actionAjax=processListExtJs&action='+action,
+        method : 'POST'
+    });
+
+    processStore =  new Ext.data.Store( {
+        proxy : processProxy,
         reader : new Ext.data.JsonReader( {
             fields : [ {
                 name : 'PRO_UID'
@@ -1075,7 +1080,7 @@ Ext.onReady ( function() {
         }
     };
 
-    var comboCategory = new Ext.form.ComboBox({
+    comboCategory = new Ext.form.ComboBox({
         width           : 180,
         boxMaxWidth     : 200,
         editable        : false,
@@ -1108,12 +1113,28 @@ Ext.onReady ( function() {
                         action: action,
                         CATEGORY_UID: filterCategory},
                     success: function ( result, request ) {
-                        var data = Ext.util.JSON.decode(result.responseText);
+                        var data = Ext.util.JSON.decode(result.responseText),
+                            url = "";
                         suggestProcess.getStore().removeAll();
                         suggestProcess.getStore().loadData( data );
                         suggestProcess.setValue('');
+                        // processStore proxy url must be updated every time when the category was changed
+                        url = 'casesList_Ajax?actionAjax=processListExtJs&action=' + action;
+                        url = comboCategory.value ? url + '&CATEGORY_UID=' + comboCategory.value : url;
+                        processProxy =  new Ext.data.HttpProxy( {
+                            url : url,
+                            method : 'POST'
+                        });
+                        processStore.proxy = processProxy;
                     },
                     failure: function ( result, request) {
+                        // processStore will be restored to default value if something failed.
+                        var url = 'casesList_Ajax?actionAjax=processListExtJs&action=' + action;
+                        processProxy =  new Ext.data.HttpProxy( {
+                            url : url,
+                            method : 'POST'
+                        });
+                        processStore.proxy = processProxy;
                         if (typeof(result.responseText) != 'undefined') {
                             Ext.MessageBox.alert(_('ID_FAILED'), result.responseText);
                         }
