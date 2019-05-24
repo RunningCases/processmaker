@@ -1762,7 +1762,7 @@ class G
                     }
                     //Non-quoted
                     if (($match[1][$r][0] == '#') && (isset($result[$match[2][$r][0]]))) {
-                        $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]])) ?
+                        $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]]) && $match[2][$r][0] !== '__ABE__') ?
                             htmlentities(G::unhtmlentities($result[$match[2][$r][0]]), ENT_COMPAT, 'UTF-8') :
                             $result[$match[2][$r][0]];
                         // Replenish the tag <br /> because is valid
@@ -1772,7 +1772,7 @@ class G
                     }
                     //Non-quoted =
                     if (($match[1][$r][0] == '=') && (isset($result[$match[2][$r][0]]))) {
-                        $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]])) ?
+                        $text = ($applyHtmlEntities && !stringIsValidHtml($result[$match[2][$r][0]]) && $match[2][$r][0] !== '__ABE__') ?
                             htmlentities(G::unhtmlentities($result[$match[2][$r][0]]), ENT_COMPAT, 'UTF-8') :
                             $result[$match[2][$r][0]];
                         // Replenish the tag <br /> because is valid
@@ -1820,7 +1820,6 @@ class G
         $nrt = array("\n", "\r", "\t");
         $nrthtml = array("(n /)", "(r /)", "(t /)");
 
-        $content = G::unhtmlentities($content);
         $strContentAux = str_replace($nrt, $nrthtml, $content);
 
         $occurrences = preg_match_all('/\@(?:([\>])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+)?/',
