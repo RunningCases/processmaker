@@ -177,7 +177,7 @@ class Delegation extends Model
         });
 
         // Add join for process, but only for certain scenarios such as category or process
-        if (($category && !$process) || $sort == 'APP_PRO_TITLE') {
+        if ($category || $process || $sort == 'APP_PRO_TITLE') {
             $query->join('PROCESS', function ($join) use ($category) {
                 $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
                 if ($category) {
