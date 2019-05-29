@@ -11,8 +11,8 @@ jobs:
     steps:
       # - run: yum -y install ssh
       - run: 
-        name: Install dependecies and checkout
-        command: | 
+          name: Install dependecies and checkout
+          command: | 
           yum install -y git
           checkout
           cd /processmaker
