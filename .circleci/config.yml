@@ -14,7 +14,7 @@ jobs:
           name: Install dependecies and checkout
           command: | 
              yum install -y git
-      - run: checkout
+      - checkout:
       - run: 
           name: swich folder
           command: |
