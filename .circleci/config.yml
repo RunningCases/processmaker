@@ -15,6 +15,7 @@ jobs:
           command: | 
           yum install -y git
           checkout
+      - run:
           cd /processmaker
           pwd
      
