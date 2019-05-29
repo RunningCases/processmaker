@@ -14,8 +14,10 @@ jobs:
           name: Install dependecies and checkout
           command: | 
              yum install -y git
-             checkout
-      - run:
-          cd /processmaker
-          pwd
+      - run: checkout
+      - run: 
+          name: swich folder
+          command: |
+             cd /processmaker
+             pwd
      
