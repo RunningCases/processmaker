@@ -8,7 +8,7 @@ jobs:
      only:
        # Only executed circleci for this branch
        - /KR.*/
-    steps:
+     steps:
       # - run: yum -y install ssh
       - run: yum install -y git
       - checkout:
