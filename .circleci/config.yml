@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: phpunit/phpunit:5.7.12
+      - image: devopsstacks/pm:n225-phpunit
     working_directory: ~/processmaker
     branches:
      only:
