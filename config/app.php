@@ -23,7 +23,9 @@ return [
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
-        ViewServiceProvider::class
+        Laravel\Tinker\TinkerServiceProvider::class,
+        ViewServiceProvider::class,
+
     ],
     'aliases' => [
         'Crypt' => Illuminate\Support\Facades\Crypt::class

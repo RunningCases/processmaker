@@ -508,20 +508,29 @@ class OutputDocument extends BaseOutputDocument
         }
     }
 
-    /*
+    /**
      * Generate the output document
-     * @param string $sUID
-     * @param array $aFields
-     * @param string $sPath
-     * @return variant
+     *
+     * @param string $outDocUid
+     * @param array $caseFields
+     * @param string $path
+     * @param string $filename
+     * @param string $content
+     * @param bool $landscape
+     * @param string $typeDocsToGen
+     * @param array $properties
+     *
+     * @return mixed
+     *
+     * @see workflow/engine/methods/cases/cases_Step.php
+     * @see workflow/engine/classes/class.pmFunctions.php:PMFGenerateOutputDocument()
      */
-
-    public function generate($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape = false, $sTypeDocToGener = 'BOTH', $aProperties = array())
+    public function generate($outDocUid, $caseFields, $path, $filename, $content, $landscape = false, $typeDocsToGen = 'BOTH', $properties = [])
     {
-        if (($sUID != '') && is_array($aFields) && ($sPath != '')) {
-            $sContent = G::replaceDataGridField($sContent, $aFields);
+        if (($outDocUid != '') && is_array($caseFields) && ($path != '')) {
+            $content = G::replaceDataGridField($content, $caseFields, true, true);
 
-            if (strpos($sContent, '<!---{') !== false) {
+            if (strpos($content, '<!---{') !== false) {
                 $template = new Smarty();
                 $template->compile_dir = PATH_SMARTY_C;
                 $template->cache_dir = PATH_SMARTY_CACHE;
@@ -529,20 +538,20 @@ class OutputDocument extends BaseOutputDocument
                 $template->caching = false;
                 $template->left_delimiter = '<!---{';
                 $template->right_delimiter = '}--->';
-                $oFile = fopen($sPath . $sFilename . '_smarty.html', 'wb');
-                fwrite($oFile, $sContent);
-                fclose($oFile);
-                $template->templateFile = $sPath . $sFilename . '_smarty.html';
+                $fp = fopen($path . $filename . '_smarty.html', 'wb');
+                fwrite($fp, $content);
+                fclose($fp);
+                $template->templateFile = $path . $filename . '_smarty.html';
                 //assign the variables and use the template $template
-                $template->assign($aFields);
-                $sContent = $template->fetch($template->templateFile);
+                $template->assign($caseFields);
+                $content = $template->fetch($template->templateFile);
                 unlink($template->templateFile);
             }
 
-            G::verifyPath($sPath, true);
+            G::verifyPath($path, true);
 
             //Start - Create .doc
-            $oFile = fopen($sPath . $sFilename . '.doc', 'wb');
+            $fp = fopen($path . $filename . '.doc', 'wb');
 
             $size = [];
             $size["Letter"] = "216mm  279mm";
@@ -566,6 +575,7 @@ class OutputDocument extends BaseOutputDocument
             $size["Screenshot800"] = "800mm  600mm";
             $size["Screenshot1024"] = "1024mm 768mm";
 
+            $sizeLandscape = [];
             $sizeLandscape["Letter"] = "279mm  216mm";
             $sizeLandscape["Legal"] = "357mm  216mm";
             $sizeLandscape["Executive"] = "267mm  184mm";
@@ -587,41 +597,41 @@ class OutputDocument extends BaseOutputDocument
             $sizeLandscape["Screenshot800"] = "600mm  800mm";
             $sizeLandscape["Screenshot1024"] = "768mm  1024mm";
 
-            if (!isset($aProperties['media'])) {
-                $aProperties['media'] = 'Letter';
+            if (!isset($properties['media'])) {
+                $properties['media'] = 'Letter';
             }
 
-            if ($sLandscape) {
-                $media = $sizeLandscape[$aProperties['media']];
+            if ($landscape) {
+                $media = $sizeLandscape[$properties['media']];
             } else {
-                $media = $size[$aProperties['media']];
+                $media = $size[$properties['media']];
             }
 
             $marginLeft = '15';
 
-            if (isset($aProperties['margins']['left'])) {
-                $marginLeft = $aProperties['margins']['left'];
+            if (isset($properties['margins']['left'])) {
+                $marginLeft = $properties['margins']['left'];
             }
 
             $marginRight = '15';
 
-            if (isset($aProperties['margins']['right'])) {
-                $marginRight = $aProperties['margins']['right'];
+            if (isset($properties['margins']['right'])) {
+                $marginRight = $properties['margins']['right'];
             }
 
             $marginTop = '15';
 
-            if (isset($aProperties['margins']['top'])) {
-                $marginTop = $aProperties['margins']['top'];
+            if (isset($properties['margins']['top'])) {
+                $marginTop = $properties['margins']['top'];
             }
 
             $marginBottom = '15';
 
-            if (isset($aProperties['margins']['bottom'])) {
-                $marginBottom = $aProperties['margins']['bottom'];
+            if (isset($properties['margins']['bottom'])) {
+                $marginBottom = $properties['margins']['bottom'];
             }
 
-            fwrite($oFile, '<html xmlns:v="urn:schemas-microsoft-com:vml"
+            fwrite($fp, '<html xmlns:v="urn:schemas-microsoft-com:vml"
             xmlns:o="urn:schemas-microsoft-com:office:office"
             xmlns:w="urn:schemas-microsoft-com:office:word"
             xmlns="http://www.w3.org/TR/REC-html40">
@@ -667,31 +677,31 @@ class OutputDocument extends BaseOutputDocument
             <body>
             <div class=WordSection1>');
 
-            fwrite($oFile, $sContent);
-            fwrite($oFile, "\n</div></body></html>\n\n");
-            fclose($oFile);
+            fwrite($fp, $content);
+            fwrite($fp, "\n</div></body></html>\n\n");
+            fclose($fp);
             /* End - Create .doc */
 
-            if ($sTypeDocToGener == 'BOTH' || $sTypeDocToGener == 'PDF') {
-                $oFile = fopen($sPath . $sFilename . '.html', 'wb');
-                fwrite($oFile, $sContent);
-                fclose($oFile);
+            if ($typeDocsToGen == 'BOTH' || $typeDocsToGen == 'PDF') {
+                $fp = fopen($path . $filename . '.html', 'wb');
+                fwrite($fp, $content);
+                fclose($fp);
                 /* Start - Create .pdf */
-                if (isset($aProperties['report_generator'])) {
-                    switch ($aProperties['report_generator']) {
+                if (isset($properties['report_generator'])) {
+                    switch ($properties['report_generator']) {
                         case 'TCPDF':
-                            $this->generateTcpdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties);
+                            $this->generateTcpdf($outDocUid, $caseFields, $path, $filename, $content, $landscape, $properties);
                             break;
                         case 'HTML2PDF':
                         default:
-                            $this->generateHtml2ps_pdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties);
+                            $this->generateHtml2ps_pdf($outDocUid, $caseFields, $path, $filename, $content, $landscape, $properties);
                             break;
                     }
                 } else {
-                    $this->generateHtml2ps_pdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties);
+                    $this->generateHtml2ps_pdf($outDocUid, $caseFields, $path, $filename, $content, $landscape, $properties);
                 }
             }
-            //end if $sTypeDocToGener
+            //end if $typeDocsToGen
             /* End - Create .pdf */
         } else {
             return PEAR::raiseError(

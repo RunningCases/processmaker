@@ -41,3 +41,4 @@ node_modules
 test_shared/
 **/cache/
 storage/
+phpunit.xml
