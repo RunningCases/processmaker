@@ -1,0 +1,13 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: phpunit/phpunit:5.7.12
+    working_directory: ~/processmaker
+    branches:
+     only:
+       # Only executed circleci for this branch
+       - /KR.*/
+    steps:
+      - checkout
+     
