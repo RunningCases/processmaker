@@ -10,10 +10,7 @@ jobs:
        - /KR.*/
     steps:
       # - run: yum -y install ssh
-      - run: 
-          name: Install dependecies and checkout
-          command: | 
-             yum install -y git
+      - run: yum install -y git
       - checkout:
       - run: 
           name: swich folder
