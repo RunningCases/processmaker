@@ -10,6 +10,6 @@ jobs:
        - /KR.*/
     steps:
       # - run: yum -y install ssh
-      # - run: yum -y install git
+      - run: yum -y install git
       - checkout
      
