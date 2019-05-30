@@ -6976,7 +6976,7 @@ class Cases
         return isset($row['DEL_INDEX']) ? $row['DEL_INDEX'] : 0;
     }
 
-    public function clearCaseSessionData()
+    public static function clearCaseSessionData()
     {
         if (isset($_SESSION['APPLICATION'])) {
             unset($_SESSION['APPLICATION']);
