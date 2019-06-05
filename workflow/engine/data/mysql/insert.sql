@@ -57259,6 +57259,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_BARS','en','Bars','2015-03-09') ,
 ( 'LABEL','ID_BASE_DN','en','Base DN','2014-01-15') ,
 ( 'LABEL','ID_BATCH_ROUTING','en','Batch Routing','2016-02-29') ,
+( 'LABEL','ID_BATCH_ROUTING_APPLY_CHANGES','en','The modification will be applied to all rows','2019-06-03') ,
 ( 'LABEL','ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS','en','The specified batch routing table already exists. The existing table will be used to store the batch routing information. Please be sure that the table has the correct batch routing configuration.','2017-03-27') ,
 ( 'LABEL','ID_BEFORE','en','Before','2014-01-15') ,
 ( 'LABEL','ID_BEFORE_ASSIGNMENT','en','Before Assignment','2014-01-15') ,
