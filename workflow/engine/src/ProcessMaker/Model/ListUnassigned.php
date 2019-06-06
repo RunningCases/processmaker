@@ -36,6 +36,14 @@ class ListUnassigned extends Model
     }
 
     /**
+     * Return the user this belongs to
+     */
+    public function previousUser()
+    {
+        return $this->belongsTo(User::class, 'DEL_PREVIOUS_USR_UID', 'USR_UID');
+    }
+
+    /**
      * Scope a query to only include specific tasks
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -93,7 +101,7 @@ class ListUnassigned extends Model
      * @param array $filters
      *
      * @return array
-    */
+     */
     public static function doCount($userUid, $filters = [])
     {
         $list = new PropelListUnassigned();
@@ -155,4 +163,3 @@ class ListUnassigned extends Model
         return $result;
     }
 }
-
