@@ -438,6 +438,7 @@ class Ajax
         $oHeadPublisher->addExtJsScript('cases/caseHistory', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/caseHistory'); //adding a html file  .html.
         $oHeadPublisher->assign('pageSize', $conf->getEnvSetting('casesListRowNumber'));
+        $oHeadPublisher->assign('FORMATS', $conf->getFormats());
         G::RenderPage('publish', 'extJs');
     }
 
