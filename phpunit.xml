@@ -36,6 +36,10 @@
     </filter>
 
     <php>
+        <!--Main environment-->
+        <env name="MAIN_SYS_SYS" value="workflow" />
+        <env name="MAIN_TIME_ZONE" value="America/New_York" />
+        <env name="MAIN_SYSTEM_UTC_TIME_ZONE" value="1" />
         <!--Connection to database-->
         <env name="DB_HOST" value="127.0.0.1" />
         <env name="DB_DATABASE" value="test" />
