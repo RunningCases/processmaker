@@ -5,10 +5,10 @@ jobs:
       - image: devopsstacks/pm:n225-phpunit
     working_directory: ~/processmaker
     branches:
-     only:
+      only:
        # Only executed circleci for this branch
-       - /KR.*/
-     steps:
+        - /KR.*/
+    steps:
       # - run: yum -y install ssh
       - run: yum install -y git
       - checkout:
