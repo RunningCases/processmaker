@@ -10,8 +10,7 @@ jobs:
        - /KR.*/
    steps:
      #- run: yum install -y git
-     - checkout
-     - run: yum install -y git
+     - run: yum install -y git     
      - checkout
      - run: 
         name: swich folder
