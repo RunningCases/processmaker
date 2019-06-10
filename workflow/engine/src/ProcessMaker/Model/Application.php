@@ -12,6 +12,11 @@ class Application extends Model
     public $incrementing = false;
     // No timestamps
     public $timestamps = false;
+    // Status id
+    const STATUS_DRAFT = 1;
+    const STATUS_TODO = 2;
+    const STATUS_COMPLETED = 3;
+    const STATUS_CANCELED = 4;
 
     public function delegations()
     {

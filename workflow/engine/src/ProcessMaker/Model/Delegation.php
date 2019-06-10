@@ -10,6 +10,9 @@ use ProcessMaker\Core\System;
 
 class Delegation extends Model
 {
+    // Class constants
+    const PRIORITIES_MAP = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
+
     protected $table = "APP_DELEGATION";
 
     // We don't have our standard timestamp columns
@@ -52,70 +55,21 @@ class Delegation extends Model
     }
 
     /**
-     * Scope a query to get the delegations from a case by APP_UID
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param string $appUid
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeAppUid($query, $appUid)
-    {
-        return $query->where('APP_UID', '=', $appUid);
-    }
-
-    /**
      * Scope a query to only include open threads
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeIsThreadOpen($query)
+    public function scopeThreadOpen($query)
     {
         return $query->where('DEL_THREAD_STATUS', '=', 'OPEN');
-    }
-
-    /**
-     * Scope a query to only include threads without user
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeNoUserInThread($query)
-    {
-        return $query->where('USR_ID', '=', 0);
-    }
-
-    /**
-     * Scope a query to only include specific tasks
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  array $tasks
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeTasksIn($query, array $tasks)
-    {
-        return $query->whereIn('APP_DELEGATION.TAS_ID', $tasks);
-    }
-
-    /**
-     * Scope a query to only include a specific case
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  integer $appNumber
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeCase($query, $appNumber)
-    {
-        return $query->where('APP_NUMBER', '=', $appNumber);
     }
 
     /**
      * Scope a query to only include a specific index
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  integer $index
+     * @param  int $index
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -125,16 +79,311 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include a specific delegate date
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $from
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDelegateDateFrom($query, $from)
+    {
+        return $query->where('DEL_DELEGATE_DATE', '>=', $from);
+    }
+
+    /**
+     * Scope a query to only include a specific delegate date
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $to
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDelegateDateTo($query, $to)
+    {
+        return $query->where('DEL_DELEGATE_DATE', '<=', $to);
+    }
+
+    /**
+     * Scope a query to get only the date on time
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOnTime($query)
+    {
+        return $query->whereRaw('TIMEDIFF(DEL_RISK_DATE, NOW()) > 0');
+    }
+
+    /**
+     * Scope a query to get only the date at risk
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAtRisk($query)
+    {
+        return $query->whereRaw('TIMEDIFF(DEL_RISK_DATE, NOW()) < 0 AND TIMEDIFF(DEL_TASK_DUE_DATE, NOW()) > 0');
+    }
+
+    /**
+     * Scope a query to get only the date overdue
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOverdue($query)
+    {
+        return $query->whereRaw('TIMEDIFF(DEL_TASK_DUE_DATE, NOW()) < 0');
+    }
+
+    /**
+     * Scope a query to only include a specific case
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  int $appNumber
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCase($query, $appNumber)
+    {
+        return $query->where('APP_DELEGATION.APP_NUMBER', '=', $appNumber);
+    }
+
+    /**
+     * Scope a query to only include specific cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $cases
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSpecificCases($query, array $cases)
+    {
+        return $query->whereIn('APP_DELEGATION.APP_NUMBER', $cases);
+    }
+
+    /**
+     * Scope a query to get the delegations from a case by APP_UID
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $appUid
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAppUid($query, $appUid)
+    {
+        return $query->where('APP_DELEGATION.APP_UID', '=', $appUid);
+    }
+
+    /**
+     * Scope a query to only include specific cases by APP_UID
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $cases
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSpecificCasesByUid($query, array $cases)
+    {
+        return $query->whereIn('APP_DELEGATION.APP_UID', $cases);
+    }
+
+    /**
+     * Scope a query to only include specific user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $user
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUserId($query, $user)
+    {
+        return $query->where('APP_DELEGATION.USR_ID', '=', $user);
+    }
+
+    /**
+     * Scope a query to only include threads without user
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithoutUserId($query)
+    {
+        return $query->where('APP_DELEGATION.USR_ID', '=', 0);
+    }
+
+    /**
+     * Scope a query to only include specific process
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $process
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeProcessId($query, $process)
+    {
+        return $query->where('APP_DELEGATION.PRO_ID', $process);
+    }
+
+    /**
      * Scope a query to only include a specific task
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  integer $task
+     * @param  int $task
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeTask($query, $task)
     {
         return $query->where('APP_DELEGATION.TAS_ID', '=', $task);
+    }
+
+    /**
+     * Scope a query to only include specific tasks
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $tasks
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSpecificTasks($query, array $tasks)
+    {
+        return $query->whereIn('APP_DELEGATION.TAS_ID', $tasks);
+    }
+
+    /**
+     * Scope a join with task and include a specific task assign type:
+     * BALANCED|MANUAL|EVALUATE|REPORT_TO|SELF_SERVICE|STATIC_MI|CANCEL_MI|MULTIPLE_INSTANCE|MULTIPLE_INSTANCE_VALUE_BASED
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $taskType
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTaskAssignType($query, $taskType = 'SELF_SERVICE')
+    {
+        $query->join('TASK', function ($join) use ($taskType) {
+            $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
+                ->where('TASK.TAS_ASSIGN_TYPE', '=', $taskType);
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope a join with task and include a specific task assign type:
+     * NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|
+     * INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|
+     * INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT|SERVICE-TASK
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $taskTypes
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSpecificTaskTypes($query, array $taskTypes)
+    {
+        $query->join('TASK', function ($join) use ($taskTypes) {
+            $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
+                ->whereNotIn('TASK.TAS_TYPE', '=', $taskTypes);
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope a join with APPLICATION with specific app status
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param integer $statusId
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAppStatusId($query, $statusId = 2)
+    {
+        $query->join('APPLICATION', function ($join) use ($statusId) {
+            $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER')
+                ->where('APPLICATION.APP_STATUS_ID', $statusId);
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope a join with APPLICATION with specific app status
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $category
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategoryProcess($query, $category = '')
+    {
+        $query->join('PROCESS', function ($join) use ($category) {
+            $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
+            if ($category) {
+                $join->where('PROCESS.PRO_CATEGORY', $category);
+            }
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope a self service cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSelfService($query, $user)
+    {
+        // Add Join with task filtering only the type self-service
+        $query->taskAssignType('SELF_SERVICE');
+        // Filtering the open threads and without users
+        $query->threadOpen()->withoutUserId();
+        // Filtering the cases unassigned that the user can view
+        $this->casesUnassigned($query, $user);
+
+        return $query;
+    }
+
+    /**
+     * Get specific cases unassigned that the user can view
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $usrUid
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function casesUnassigned(&$query, $usrUid)
+    {
+        //Get the task self services related to the user
+        $taskSelfService = TaskUser::getSelfServicePerUser($usrUid);
+        //Get the task self services value based related to the user
+        $selfServiceValueBased = AppAssignSelfServiceValue::getSelfServiceCasesByEvaluatePerUser($usrUid);
+
+        //Get the cases unassigned
+        if (!empty($selfServiceValueBased)) {
+            $query->where(function ($query) use ($selfServiceValueBased, $taskSelfService) {
+                //Get the cases related to the task self service
+                $query->specificTasks($taskSelfService);
+                foreach ($selfServiceValueBased as $case) {
+                    //Get the cases related to the task self service value based
+                    $query->orWhere(function ($query) use ($case) {
+                        $query->case($case['APP_NUMBER'])->index($case['DEL_INDEX'])->task($case['TAS_ID']);
+                    });
+                }
+            });
+        } else {
+            //Get the cases related to the task self service
+            $query->specificTasks($taskSelfService);
+        }
+
+        return $query;
     }
 
     /**
@@ -442,7 +691,7 @@ class Delegation extends Model
      * @param string $appUid
      * @return array
      *
-     * @see ProcessMaker\BusinessModel\Cases:getStatusInfo()
+     * @see \ProcessMaker\BusinessModel\Cases:getStatusInfo()
      */
     public static function getParticipatedInfo($appUid)
     {
@@ -615,7 +864,6 @@ class Delegation extends Model
             $result = DB::selectOne($query);
             $count = $result->aggregate;
         }
-
         // Return data
         return $count;
     }
@@ -736,5 +984,38 @@ class Delegation extends Model
         });
 
         return $thread;
+    }
+
+    /**
+     * Helper to get the priority code from a given value
+     *
+     * @param int $priorityValue
+     *
+     * @return string
+     *
+     * @throws Exception
+     */
+    public static function getPriorityCode($priorityValue)
+    {
+        if (!empty(self::PRIORITIES_MAP[$priorityValue])) {
+            $priorityCode = self::PRIORITIES_MAP[$priorityValue];
+        } else {
+            throw new Exception("Priority value {$priorityValue} is not valid.");
+        }
+        return $priorityCode;
+    }
+
+    /**
+     * Helper to get the priority label from a given value
+     *
+     * @param int $priorityValue
+     *
+     * @return string
+     */
+    public static function getPriorityLabel($priorityValue)
+    {
+        $priorityCode = self::getPriorityCode($priorityValue);
+
+        return G::LoadTranslation("ID_PRIORITY_{$priorityCode}");
     }
 }
