@@ -17,5 +17,5 @@ jobs:
         command: |
             pwd
             git branch
-            cd /processmaker
-            pwd
+            ./vendor/bin/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
+            ls -la
