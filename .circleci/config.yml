@@ -1,20 +1,20 @@
 version: 2
 jobs:
-  build:
-    docker:
-      - image: devopsstacks/pm:n225-phpunit
-    working_directory: ~/processmaker
-    branches:
-      only:
+ build:
+   working_directory: ~/processmaker
+   docker:
+     - image: devopsstacks/pm:n225-phpunit
+   branches:
+     only:
        # Only executed circleci for this branch
-        - /KR.*/
-    steps:
-      # - run: yum -y install ssh
-      - run: yum install -y git
-      - checkout:
-      - run: 
-          name: swich folder
-          command: |
-             cd /processmaker
-             pwd
-     
+       - /KR.*/
+   steps:
+     #- run: yum install -y git
+     - checkout
+     - run: yum install -y git
+     - checkout
+     - run: 
+        name: swich folder
+        command: |
+            cd /processmaker
+            pwd
