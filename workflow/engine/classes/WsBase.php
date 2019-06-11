@@ -990,7 +990,7 @@ class WsBase
                 $subject,
                 G::buildFrom($setup, $from),
                 $to,
-                G::replaceDataGridField(file_get_contents($fileTemplate), $fieldsCase, false, true),
+                G::replaceDataGridField(file_get_contents($fileTemplate), $fieldsCase, false),
                 $cc,
                 $bcc,
                 '',

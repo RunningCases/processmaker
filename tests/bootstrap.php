@@ -28,7 +28,6 @@ define('PATH_DB', dirname(__DIR__) . '/shared/sites/');
 define('PATH_SEP', '/');
 define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
 define('SYS_LANG', 'en');
-define('DB_ADAPTER', 'mysql');
 define('SYS_SKIN', 'neoclassic');
 define('SYS_SYS', env('MAIN_SYS_SYS', 'workflow'));
 define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
