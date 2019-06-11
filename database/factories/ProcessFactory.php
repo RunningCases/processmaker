@@ -28,6 +28,7 @@ $factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
 // Create a process with the foreign keys
 $factory->state(\ProcessMaker\Model\Process::class, 'foreign_keys', function (Faker $faker) {
     $user = factory(\ProcessMaker\Model\User::class)->create();
+
     return [
         'PRO_UID' => G::generateUniqueID(),
         'PRO_TITLE' => $faker->sentence(3),

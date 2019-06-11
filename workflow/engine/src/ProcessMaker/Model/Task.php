@@ -23,6 +23,17 @@ class Task extends Model
         "INTERMEDIATE-CATCH-TIMER-EVENT"
     ];
 
+    const DUMMY_TASKS = [
+        'END-EMAIL-EVENT',
+        'INTERMEDIATE-CATCH-TIMER-EVENT',
+        'INTERMEDIATE-THROW-EMAIL-EVENT',
+        'START-TIMER-EVENT',
+        'SCRIPT-TASK',
+        'WEBENTRYEVENT',
+        'END-MESSAGE-EVENT',
+        'GATEWAYTOGATEWAY'
+    ];
+
     public function process()
     {
         return $this->belongsTo(Process::class, 'PRO_UID', 'PRO_UID');

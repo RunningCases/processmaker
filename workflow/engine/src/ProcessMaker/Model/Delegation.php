@@ -273,7 +273,7 @@ class Delegation extends Model
     }
 
     /**
-     * Scope a join with task and include a specific task assign type:
+     * Scope a join with task and exclude a specific task assign type:
      * NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|
      * INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|
      * INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT|SERVICE-TASK
@@ -283,11 +283,11 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSpecificTaskTypes($query, array $taskTypes)
+    public function scopeExcludeTaskTypes($query, array $taskTypes)
     {
         $query->join('TASK', function ($join) use ($taskTypes) {
             $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
-                ->whereNotIn('TASK.TAS_TYPE', '=', $taskTypes);
+                ->whereNotIn('TASK.TAS_TYPE', $taskTypes);
         });
 
         return $query;
@@ -327,6 +327,31 @@ class Delegation extends Model
                 $join->where('PROCESS.PRO_CATEGORY', $category);
             }
         });
+
+        return $query;
+    }
+
+    /**
+     * Scope the Inbox cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $userId
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInbox($query, $userId)
+    {
+        // This scope is for the join with the APP_DELEGATION table
+        $query->appStatusId(2);
+
+        // Scope for the restriction of the task that must not be searched for
+        $query->excludeTaskTypes(Task::DUMMY_TASKS);
+
+        // Scope that establish that the DEL_THREAD_STATUS must be OPEN
+        $query->threadOpen();
+
+        // Scope that return the results for an specific user
+        $query->userId($userId);
 
         return $query;
     }
@@ -593,7 +618,7 @@ class Delegation extends Model
         }
 
         // Add any sort if needed
-        if($sort) {
+        if ($sort) {
             switch ($sort) {
                 case 'APP_NUMBER':
                     $query->orderBy('APP_DELEGATION.APP_NUMBER', $dir);
@@ -628,9 +653,9 @@ class Delegation extends Model
             // Convert to an array as our results must be an array
             $item = json_decode(json_encode($item), true);
             // If it's assigned, fetch the user
-            if($item['USR_ID']) {
+            if ($item['USR_ID']) {
                 $user = User::where('USR_ID', $item['USR_ID'])->first();
-            } else  {
+            } else {
                 $user = null;
             }
             $process = Process::where('PRO_ID', $item['PRO_ID'])->first();
@@ -717,8 +742,10 @@ class Delegation extends Model
 
             // Build the main array to return
             $arrayData = [
-                'APP_STATUS' => 'PARTICIPATED', // Value hardcoded because we need to return the same structure previously sent
-                'DEL_INDEX' => [], // Initialize this item like an array
+                'APP_STATUS' => 'PARTICIPATED',
+                // Value hardcoded because we need to return the same structure previously sent
+                'DEL_INDEX' => [],
+                // Initialize this item like an array
                 'PRO_UID' => $first->PRO_UID
             ];
 
