@@ -10,13 +10,8 @@ jobs:
        - /KR.*/
    steps:
      #- run: yum install -y git
-     - run: yum install -y git     
      - checkout
-     - run: 
-        name: switch folder
-        command: |
-            pwd
-            git branch
-            mysql -u root -psample -e "create database test;"
-            vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
-            ls -la
+     - run: mysql -u root -ppassword -e "create database test;"
+     - run: vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
+     - run: ls -la
+        
