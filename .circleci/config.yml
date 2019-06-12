@@ -17,5 +17,6 @@ jobs:
         command: |
             pwd
             git branch
-            ./vendor/bin/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
+            mysql -u root -psample -e "create database test;"
+            vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
             ls -la
