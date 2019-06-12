@@ -14,6 +14,7 @@ jobs:
      - run: service mysqld status
      - checkout
      - run: mysql -u root -ppassword -e "create database test;"
+     - run: composer install
      - run: vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
      - run: ls -la coverage
         
