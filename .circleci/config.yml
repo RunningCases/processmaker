@@ -10,6 +10,7 @@ jobs:
        - /KR.*/
    steps:    
      - run: ls -la /etc/init.d/
+     - run: service mysqld restart
      - run: service mysqld status
      - checkout
      - run: mysql -u root -ppassword -e "create database test;"
