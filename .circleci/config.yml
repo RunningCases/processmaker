@@ -10,9 +10,10 @@ jobs:
        - /KR.*/
    steps:
      #- run: yum install -y git
+     
+     - run: servide mysql status
+     - run: servide mysqld status
      - checkout
-     - run: sudo servide mysql status
-     - run: sudo servide mysqld status
      - run: mysql -u root -ppassword -e "create database test;"
      - run: vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
      - run: ls -la
