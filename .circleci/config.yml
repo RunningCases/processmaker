@@ -15,7 +15,15 @@ jobs:
      - run: service mysqld restart
      - run: mysql -u root -ppassword -e "create database test;"    
      - run: composer install
-     - run: vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
+     - run:
+        name: Run Test Units
+        command: |
+          find tests/unit/ -type f -name "*.php" > tests.list
+          input="tests.list"
+          while IFS= read -r line
+          do
+            vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  $line
+          done < "$input" 
      - run: ls -la coverage
      - run: mysql -u root -ppassword -e "use test; show tables;"
      - store_artifacts:
