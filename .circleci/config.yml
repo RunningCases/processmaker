@@ -11,8 +11,8 @@ jobs:
    steps:
      #- run: yum install -y git
      
-     - run: servide mysql status
-     - run: servide mysqld status
+     - run: service mysql status
+     - run: service mysqld status
      - checkout
      - run: mysql -u root -ppassword -e "create database test;"
      - run: vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
