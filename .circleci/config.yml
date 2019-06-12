@@ -13,10 +13,11 @@ jobs:
      - checkout
      - run: ls -la /tmp/
      - run: service mysqld restart
-     - run: mysql -u root -ppassword -e "create database test;"
+     - run: mysql -u root -ppassword -e "create database test;"    
      - run: composer install
      - run: vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
      - run: ls -la coverage
+     - run: mysql -u root -ppassword -e "use test; show tables;"
      - store_artifacts:
           path: coverage
           destination: coverage
