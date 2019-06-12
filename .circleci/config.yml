@@ -18,6 +18,7 @@ jobs:
      - run:
         name: Run Test Units
         command: |
+          set -e
           find tests/unit/ -type f -name "*.php" > tests.list
           input="tests.list"
           while IFS= read -r line
