@@ -4,17 +4,20 @@ jobs:
    working_directory: ~/processmaker
    docker:
      - image: devopsstacks/pm:n225-phpunit
+   resource_class: large
    branches:
      only:
        # Only executed circleci for this branch
        - /KR.*/
-   steps:    
-     - run: ls -la /etc/init.d/
-     - run: service mysqld restart
-     - run: service mysqld status
+   steps:         
      - checkout
+     - run: ls -la /tmp/
+     - run: service mysqld restart
      - run: mysql -u root -ppassword -e "create database test;"
      - run: composer install
      - run: vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
      - run: ls -la coverage
+     - store_artifacts:
+          path: coverage
+          destination: coverage
         
