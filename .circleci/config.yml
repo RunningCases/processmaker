@@ -21,13 +21,13 @@ jobs:
           set -e
           find tests/ -name "*Test.php" > tests.list
           input="tests.list"
-          while IFS= read -r line
-          do
-            if [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/SkinsTest.php" ] && [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/LanguageTest.php" ];
-            then
-              vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  $line
-            fi            
-          done < "$input" 
+          #while IFS= read -r line
+          #do
+            #if [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/SkinsTest.php" ] && [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/LanguageTest.php" ];
+            #then
+              vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/
+            #fi            
+          #done < "$input" 
      - run: ls -la coverage
      - run: mysql -u root -ppassword -e "use test; show tables;"
      - store_artifacts:
