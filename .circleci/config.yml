@@ -23,7 +23,7 @@ jobs:
           input="tests.list"
           while IFS= read -r line
           do
-            if [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/SkinsTest.php" ];
+            if [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/SkinsTest.php" ] && [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/LanguageTest.php" ];
             then
               vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  $line
             fi            
