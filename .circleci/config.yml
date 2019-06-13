@@ -23,7 +23,10 @@ jobs:
           input="tests.list"
           while IFS= read -r line
           do
-            vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  $line
+            if [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/SkinsTest.php" ];
+            then
+              vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  $line
+            fi            
           done < "$input" 
      - run: ls -la coverage
      - run: mysql -u root -ppassword -e "use test; show tables;"
