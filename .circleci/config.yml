@@ -25,7 +25,7 @@ jobs:
           #do
             #if [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/SkinsTest.php" ] && [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/LanguageTest.php" ];
             #then
-              vendor/phpunit/phpunit/phpunit --coverage-html ./coverage  tests/unit/
+              vendor/phpunit/phpunit/phpunit --coverage-xml ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
             #fi            
           #done < "$input" 
      - run: ls -la coverage
