@@ -294,6 +294,27 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a join with task and include a specific task assign type:
+     * NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|
+     * INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|
+     * INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT|SERVICE-TASK
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $taskTypes
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSpecificTaskTypes($query, array $taskTypes)
+    {
+        $query->join('TASK', function ($join) use ($taskTypes) {
+            $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
+                ->whereIn('TASK.TAS_TYPE', $taskTypes);
+        });
+
+        return $query;
+    }
+
+    /**
      * Scope a join with APPLICATION with specific app status
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -372,6 +393,24 @@ class Delegation extends Model
         $query->threadOpen()->withoutUserId();
         // Filtering the cases unassigned that the user can view
         $this->casesUnassigned($query, $user);
+
+        return $query;
+    }
+
+    /**
+     * Scope a draft cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDraft($query, $user)
+    {
+        // Add join for application, for get the case title when the case status is DRAFT
+        $query->appStatusId(Application::STATUS_DRAFT);
+        // Case assigned to the user
+        $query->userId($user);
 
         return $query;
     }

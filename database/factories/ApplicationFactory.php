@@ -60,3 +60,41 @@ $factory->state(\ProcessMaker\Model\Application::class, 'foreign_keys', function
         'APP_DATA' => serialize(['APP_NUMBER' => $appNumber])
     ];
 });
+
+$factory->state(\ProcessMaker\Model\Application::class, 'todo', function (Faker $faker) {
+    return [
+        'APP_NUMBER' => $faker->unique()->numberBetween(1000),
+        'APP_STATUS_ID' => 2,
+        'APP_STATUS' => 'TO_DO'
+    ];
+});
+
+$factory->state(\ProcessMaker\Model\Application::class, 'draft', function (Faker $faker) {
+    return [
+        'APP_NUMBER' => $faker->unique()->numberBetween(1000),
+        'APP_STATUS_ID' => 1,
+        'APP_STATUS' => 'DRAFT'
+    ];
+});
+
+$factory->state(\ProcessMaker\Model\Application::class, 'draft_minor_case', function (Faker $faker) {
+    $caseNumber = $faker->unique()->numberBetween(1, 1000);
+    return [
+        'APP_NUMBER' => $caseNumber,
+        'APP_TITLE' => 'Case # ' . $caseNumber,
+        'APP_STATUS_ID' => 1,
+        'APP_STATUS' => 'DRAFT',
+        'APP_UPDATE_DATE' => $faker->dateTimeBetween('-2 year', '-1 year')
+    ];
+});
+
+$factory->state(\ProcessMaker\Model\Application::class, 'draft_major_case', function (Faker $faker) {
+    $caseNumber = $faker->unique()->numberBetween(2000, 3000);
+    return [
+        'APP_NUMBER' => $caseNumber,
+        'APP_TITLE' => 'Case # ' . $caseNumber,
+        'APP_STATUS_ID' => 1,
+        'APP_STATUS' => 'DRAFT',
+        'APP_UPDATE_DATE' => $faker->dateTimeBetween('now', '+1 year')
+    ];
+});
