@@ -19,7 +19,7 @@ jobs:
         command: |
           set -e                  
           mkdir coverage
-          vendor/phpunit/phpunit/phpunit --coverage-text=coverage/result.txt --coverage-html coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php     
+          vendor/phpunit/phpunit/phpunit --testdox-html coverage/result.html --coverage-html coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php     
      - store_artifacts:
           path: coverage
           destination: coverage
