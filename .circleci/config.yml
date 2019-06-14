@@ -19,9 +19,7 @@ jobs:
         command: |
           set -e                  
           mkdir coverage
-          vendor/phpunit/phpunit/phpunit --coverage-text=coverage/result.txt  tests/unit/     
-     - run: ls -la coverage
-     - run: mysql -u root -ppassword -e "use test; show tables;"
+          vendor/phpunit/phpunit/phpunit --coverage-text=coverage/result.txt --coverage-html coverage  tests/unit/     
      - store_artifacts:
           path: coverage
           destination: coverage
