@@ -11,23 +11,15 @@ jobs:
        - /KR.*/
    steps:         
      - checkout
-     - run: ls -la /tmp/
      - run: service mysqld restart
      - run: mysql -u root -ppassword -e "create database test;"    
      - run: composer install
      - run:
         name: Run Test Units
         command: |
-          set -e
-          find tests/ -name "*Test.php" > tests.list
-          input="tests.list"
-          #while IFS= read -r line
-          #do
-            #if [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/SkinsTest.php" ] && [ $line != "tests/unit/workflow/engine/src/ProcessMaker/BusinessModel/LanguageTest.php" ];
-            #then
-              vendor/phpunit/phpunit/phpunit --coverage-xml ./coverage  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php
-            #fi            
-          #done < "$input" 
+          set -e                  
+          mkdir coverage
+          vendor/phpunit/phpunit/phpunit --coverage-php coverage/result.php  tests/unit/workflow/engine/src/ProcessMaker/Model/DelegationTest.php        
      - run: ls -la coverage
      - run: mysql -u root -ppassword -e "use test; show tables;"
      - store_artifacts:
