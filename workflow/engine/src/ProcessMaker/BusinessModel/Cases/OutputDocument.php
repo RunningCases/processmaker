@@ -1,9 +1,6 @@
 <?php
 namespace ProcessMaker\BusinessModel\Cases;
 
-use G;
-use OutputDocument as ClassesOutputDocument;
-use PEAR;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -595,31 +592,21 @@ class OutputDocument
         }
     }
 
-    /**
+    /*
      * Generate the output document
-     *
-     * @param string $outDocUid
-     * @param array $caseFields
-     * @param string $path
-     * @param string $filename
-     * @param string $content
-     * @param bool $landscape
-     * @param string $typeDocsToGen
-     * @param array $properties
-     * @param string $application
-     *
-     * @return mixed
-     *
-     * @see this->addCasesOutputDocument()
+     * @param string $sUID
+     * @param array $aFields
+     * @param string $sPath
+     * @return variant
      */
-    public function generate($outDocUid, $caseFields, $path, $filename, $content, $landscape = false, $typeDocsToGen = 'BOTH', $properties = [], $application = '')
+    public function generate($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape = false, $sTypeDocToGener = 'BOTH', $aProperties = array(), $sApplication)
     {
-        if (($outDocUid != '') && is_array($caseFields) && ($path != '')) {
-            $content = G::replaceDataGridField($content, $caseFields, true, true);
-            G::verifyPath($path, true);
+        if (($sUID != '') && is_array($aFields) && ($sPath != '')) {
+            $sContent = \G::replaceDataGridField($sContent, $aFields);
+            \G::verifyPath($sPath, true);
             //Start - Create .doc
-            $fp = fopen($path . $filename . '.doc', 'wb');
-            $size = [];
+            $oFile = fopen($sPath . $sFilename . '.doc', 'wb');
+            $size = array();
             $size["Letter"] = "216mm  279mm";
             $size["Legal"] = "216mm  357mm";
             $size["Executive"] = "184mm  267mm";
@@ -640,7 +627,6 @@ class OutputDocument
             $size["Screenshot640"] = "640mm  480mm";
             $size["Screenshot800"] = "800mm  600mm";
             $size["Screenshot1024"] = "1024mm 768mm";
-            $sizeLandscape = [];
             $sizeLandscape["Letter"] = "279mm  216mm";
             $sizeLandscape["Legal"] = "357mm  216mm";
             $sizeLandscape["Executive"] = "267mm  184mm";
@@ -661,31 +647,31 @@ class OutputDocument
             $sizeLandscape["Screenshot640"] = "480mm  640mm";
             $sizeLandscape["Screenshot800"] = "600mm  800mm";
             $sizeLandscape["Screenshot1024"] = "768mm  1024mm";
-            if (!isset($properties['media'])) {
-                $properties['media'] = 'Letter';
+            if (!isset($aProperties['media'])) {
+                $aProperties['media'] = 'Letter';
             }
-            if ($landscape) {
-                $media = $sizeLandscape[$properties['media']];
+            if ($sLandscape) {
+                $media = $sizeLandscape[$aProperties['media']];
             } else {
-                $media = $size[$properties['media']];
+                $media = $size[$aProperties['media']];
             }
             $marginLeft = '15';
-            if (isset($properties['margins']['left'])) {
-                $marginLeft = $properties['margins']['left'];
+            if (isset($aProperties['margins']['left'])) {
+                $marginLeft = $aProperties['margins']['left'];
             }
             $marginRight = '15';
-            if (isset($properties['margins']['right'])) {
-                $marginRight = $properties['margins']['right'];
+            if (isset($aProperties['margins']['right'])) {
+                $marginRight = $aProperties['margins']['right'];
             }
             $marginTop = '15';
-            if (isset($properties['margins']['top'])) {
-                $marginTop = $properties['margins']['top'];
+            if (isset($aProperties['margins']['top'])) {
+                $marginTop = $aProperties['margins']['top'];
             }
             $marginBottom = '15';
-            if (isset($properties['margins']['bottom'])) {
-                $marginBottom = $properties['margins']['bottom'];
+            if (isset($aProperties['margins']['bottom'])) {
+                $marginBottom = $aProperties['margins']['bottom'];
             }
-            fwrite($fp, '<html xmlns:v="urn:schemas-microsoft-com:vml"
+            fwrite($oFile, '<html xmlns:v="urn:schemas-microsoft-com:vml"
             xmlns:o="urn:schemas-microsoft-com:office:office"
             xmlns:w="urn:schemas-microsoft-com:office:word"
             xmlns="http://www.w3.org/TR/REC-html40">
@@ -730,40 +716,40 @@ class OutputDocument
             </head>
             <body>
             <div class=WordSection1>');
-            fwrite($fp, $content);
-            fwrite($fp, "\n</div></body></html>\n\n");
-            fclose($fp);
+            fwrite($oFile, $sContent);
+            fwrite($oFile, "\n</div></body></html>\n\n");
+            fclose($oFile);
             /* End - Create .doc */
-            if ($typeDocsToGen == 'BOTH' || $typeDocsToGen == 'PDF') {
-                $fp = fopen($path . $filename . '.html', 'wb');
-                fwrite($fp, $content);
-                fclose($fp);
+            if ($sTypeDocToGener == 'BOTH' || $sTypeDocToGener == 'PDF') {
+                $oFile = fopen($sPath . $sFilename . '.html', 'wb');
+                fwrite($oFile, $sContent);
+                fclose($oFile);
                 /* Start - Create .pdf */
-                if (isset($properties['report_generator'])) {
-                    switch ($properties['report_generator']) {
+                if (isset($aProperties['report_generator'])) {
+                    switch ($aProperties['report_generator']) {
                         case 'TCPDF':
-                            $o = new ClassesOutputDocument();
-                            if (strlen($content) == 0) {
+                            $o = new \OutputDocument();
+                            if (strlen($sContent) == 0) {
                                 libxml_use_internal_errors(true);
-                                $o->generateTcpdf($outDocUid, $caseFields, $path, $filename, ' ', $landscape, $properties);
+                                $o->generateTcpdf($sUID, $aFields, $sPath, $sFilename, ' ', $sLandscape, $aProperties);
                                 libxml_use_internal_errors(false);
                             } else {
-                                $o->generateTcpdf($outDocUid, $caseFields, $path, $filename, $content, $landscape, $properties);
+                                $o->generateTcpdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties);
                             }
                             break;
                         case 'HTML2PDF':
                         default:
-                            $this->generateHtml2ps_pdf($outDocUid, $caseFields, $path, $filename, $content, $landscape, $properties, $application);
+                            $this->generateHtml2ps_pdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties, $sApplication);
                             break;
                     }
                 } else {
-                    $this->generateHtml2ps_pdf($outDocUid, $caseFields, $path, $filename, $content, $landscape, $properties);
+                    $this->generateHtml2ps_pdf($sUID, $aFields, $sPath, $sFilename, $sContent, $sLandscape, $aProperties);
                 }
             }
-            //end if $typeDocsToGen
+            //end if $sTypeDocToGener
             /* End - Create .pdf */
         } else {
-            return PEAR::raiseError(
+            return \PEAR::raiseError(
                 null,
                 G_ERROR_USER_UID,
                 null,
