@@ -1074,7 +1074,6 @@ class WorkspaceTools
         $this->checkRbacPermissions();//check or add new permissions
         $this->checkSequenceNumber();
         $this->migrateIteeToDummytask($this->name);
-        $this->upgradeConfiguration();
         /*----------------------------------********---------------------------------*/
         $this->upgradeAuditLog($this->name);
         /*----------------------------------********---------------------------------*/
@@ -3737,13 +3736,6 @@ class WorkspaceTools
         }
         $message = "   Migrating Itee Done \n";
         CLI::logging($message);
-    }
-
-    public function upgradeConfiguration()
-    {
-        $conf = new Configurations();
-        $conf->aConfig = 'neoclassic';
-        $conf->saveConfig('SKIN_CRON', '');
     }
 
     public function upgradeAuditLog($workspace)
