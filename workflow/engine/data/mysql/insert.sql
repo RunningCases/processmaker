@@ -60832,7 +60832,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SETTINGS_HEARTBEAT_TITLE','en','Display Setting','2014-01-15') ,
 ( 'LABEL','ID_SETTING_MESSAGE','en','The Settings tool was clicked','2014-01-15') ,
 ( 'LABEL','ID_SETTING_SUPER','en','Setting SUPER privilege','2014-01-28') ,
-( 'LABEL','ID_SETUP','en','ADMIN','2014-01-15') ,
+( 'LABEL','ID_SETUP','en','Admin','2014-01-15') ,
 ( 'LABEL','ID_SETUP_MAILCONF_TITLE','en','Test SMTP Connection','2014-01-15') ,
 ( 'LABEL','ID_SETUP_WEBSERVICES','en','Setup','2014-01-15') ,
 ( 'LABEL','ID_SET_A_TABLE_NAME','en','Set a Table Name','2014-01-15') ,

@@ -1639,7 +1639,7 @@ class G
      * @param string $sqlString  The string to be escaped
      * @param string $DBEngine   Target DBMS
     */
-    public function sqlEscape($sqlString, $DBEngine = DB_ADAPTER)
+    public static function sqlEscape($sqlString, $DBEngine = DB_ADAPTER)
     {
         $DBEngine = DB_ADAPTER;
         switch ($DBEngine) {
@@ -1748,12 +1748,12 @@ class G
                     }
                     //Non-quoted
                     if (($match[1][$r][0] == '#') && (isset($result[$match[2][$r][0]]))) {
-                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
+                        $__textoEval .= $result[$match[2][$r][0]];
                         continue;
                     }
                     //Non-quoted =
                     if (($match[1][$r][0] == '=') && (isset($result[$match[2][$r][0]]))) {
-                        $__textoEval .= G::replaceDataField($result[$match[2][$r][0]], $result);
+                        $__textoEval .= $result[$match[2][$r][0]];
                         continue;
                     }
                     //Objects attributes
