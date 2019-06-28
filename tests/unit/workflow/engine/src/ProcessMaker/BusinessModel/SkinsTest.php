@@ -2,10 +2,13 @@
 
 namespace ProcessMaker\BusinessModel;
 
+use G;
+use Tests\TestCase;
+
 /**
  * Skins Tests
  */
-class SkinsTest extends \WorkflowTestCase
+class SkinsTest extends TestCase
 {
     /**
      * @var Skins
@@ -17,9 +20,7 @@ class SkinsTest extends \WorkflowTestCase
      */
     protected function setUp()
     {
-        $this->cleanShared();
-        $this->setupDB();
-        $this->object = new Skins;
+        $this->object = new Skins();
     }
 
     /**
@@ -27,8 +28,8 @@ class SkinsTest extends \WorkflowTestCase
      */
     protected function tearDown()
     {
-        $this->cleanShared();
-        $this->dropDB();
+        G::rm_dir(PATH_DATA . 'skins');
+        mkdir(PATH_DATA . 'skins');
     }
 
     /**
@@ -61,12 +62,7 @@ class SkinsTest extends \WorkflowTestCase
     {
         $this->object->createSkin('test', 'test');
         $this->object->createSkin(
-            'test2',
-            'test2',
-            'Second skin',
-            'ProcessMaker Team',
-            'current',
-            'neoclassic'
+                'test2', 'test2', 'Second skin', 'ProcessMaker Team', 'current', 'neoclassic'
         );
         $skins = $this->object->getSkins();
         $this->assertCount(4, $skins);
