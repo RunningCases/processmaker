@@ -37,13 +37,6 @@ class GroupTest extends TestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
-        //Move section
-        global $RBAC;
-        $RBAC->initRBAC();
-        $RBAC->loadUserRolePermission($RBAC->sSystem, '00000000000000000000000000000001');
-
         $this->setInstanceGroup(new Group());
     }
 
