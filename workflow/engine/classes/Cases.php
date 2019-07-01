@@ -628,7 +628,7 @@ class Cases
             $task = TaskPeer::retrieveByPk($currentDelegations[$r]->getTasUid());
             $caseLabel = $task->$getTasDef();
             if ($caseLabel != '') {
-                $appLabel = G::replaceDataField($caseLabel, $aAppData);
+                $appLabel = G::replaceDataField($caseLabel, $aAppData, 'mysql', false);
                 break;
             }
         }
@@ -686,7 +686,7 @@ class Cases
                 //Get the case title
                 $tasDefTitle = trim($row['TAS_DEF_TITLE']);
                 if (!empty($tasDefTitle) && !$flagTitle) {
-                    $newAppProperty = G::replaceDataField($tasDefTitle, $lastFieldsCase);
+                    $newAppProperty = G::replaceDataField($tasDefTitle, $lastFieldsCase, 'mysql', false);
                     $res['APP_TITLE'] = $newAppProperty;
                     if (!(isset($currentValue) && ($currentValue == $tasDefTitle))) {
                         $newValues['APP_TITLE'] = $newAppProperty;
@@ -696,7 +696,7 @@ class Cases
                 //Get the case description
                 $tasDefDescription = trim($row['TAS_DEF_DESCRIPTION']);
                 if (!empty($tasDefDescription) && !$flagDescription) {
-                    $newAppProperty = G::replaceDataField($tasDefDescription, $lastFieldsCase);
+                    $newAppProperty = G::replaceDataField($tasDefDescription, $lastFieldsCase, 'mysql', false);
                     $res['APP_DESCRIPTION'] = $newAppProperty;
                     if (!(isset($currentValue) && ($currentValue == $tasDefDescription))) {
                         $newValues['APP_DESCRIPTION'] = $newAppProperty;
@@ -5441,7 +5441,7 @@ class Cases
         switch ($typeSend) {
             case 'LAST':
                 if (isset($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE']) && $aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'] != '') {
-                    $sSubject = G::replaceDataField($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'], $arrayData);
+                    $sSubject = G::replaceDataField($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'], $arrayData, 'mysql', false);
                 } else {
                     $sSubject = G::LoadTranslation('ID_MESSAGE_SUBJECT_DERIVATION');
                 }
@@ -5526,7 +5526,7 @@ class Cases
                 break;
             case 'RECEIVE':
                 if (isset($aTaskInfo['TAS_RECEIVE_SUBJECT_MESSAGE']) && $aTaskInfo['TAS_RECEIVE_SUBJECT_MESSAGE'] != '') {
-                    $sSubject = G::replaceDataField($aTaskInfo['TAS_RECEIVE_SUBJECT_MESSAGE'], $arrayData);
+                    $sSubject = G::replaceDataField($aTaskInfo['TAS_RECEIVE_SUBJECT_MESSAGE'], $arrayData, 'mysql', false);
                 } else {
                     $sSubject = G::LoadTranslation('ID_MESSAGE_SUBJECT_DERIVATION');
                 }
@@ -5674,7 +5674,7 @@ class Cases
                     ) {
                         @copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'), $fileTemplate);
                     }
-                    $body2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
+                    $body2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2, 'mysql', false);
                 }
             }
 
