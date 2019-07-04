@@ -238,7 +238,6 @@ class WorkspaceTools
      * Upgrade this workspace to the latest system version
      *
      * @param string $workspace
-     * @param bool $onedb
      * @param string $lang
      * @param array $arrayOptTranslation
      * @param array $optionMigrateHistoryData
@@ -283,8 +282,8 @@ class WorkspaceTools
         $this->upgradeContent($workspace);
         CLI::logging("* End to update CONTENT table... (Completed on  " . (microtime(true) - $start) . " seconds)\n");
 
-        $start = microtime(true);
         CLI::logging("* Start to migrate texts/values from 'CONTENT' table to the corresponding object tables...\n");
+        $start = microtime(true);
         $this->migrateContent($lang);
         CLI::logging("* End to migrate texts/values from 'CONTENT' table to the corresponding object tables... (Completed on " .
             (microtime(true) - $start) . " seconds)\n");
@@ -353,12 +352,10 @@ class WorkspaceTools
         $this->upgradeSchema($systemSchema);
         CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-        /*----------------------------------********---------------------------------*/
         CLI::logging("* Start migrating to new list tables...\n");
         $start = microtime(true);
         $this->migrateList(true, $lang);
         CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
-        /*----------------------------------********---------------------------------*/
 
         CLI::logging("* Start updating MySQL triggers...\n");
         $start = microtime(true);
@@ -1053,6 +1050,14 @@ class WorkspaceTools
 
     /**
      * Upgrade the workspace database to the latest system schema
+<<<<<<< HEAD
+=======
+     *
+     * @param bool $onedb Was installed in one DB or not
+     * @param bool $checkOnly Only check if the upgrade is needed if true
+     *
+     * @return bool upgradeSchema
+>>>>>>> PMC-565
      */
     public function upgradeDatabase()
     {
