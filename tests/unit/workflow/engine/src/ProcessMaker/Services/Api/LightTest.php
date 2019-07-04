@@ -16,6 +16,12 @@ use ProcessMaker\Model\User;
 use ProcessMaker\Util\DateTime;
 use Tests\TestCase;
 
+/**
+ * To do: This only works if the test database is the same where ProcessMaker is 
+ * installed, improvements must be made so that the method "Installer::create_site()" 
+ * can create the connection file (/processmaker/shared/sites/{workspace}/db.php) 
+ * to different instances of MySql.
+ */
 class LightTest extends TestCase
 {
     private $http;
