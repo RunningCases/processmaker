@@ -283,9 +283,8 @@ class WorkspaceTools
         $this->upgradeContent($workspace);
         CLI::logging("* End to update CONTENT table... (Completed on  " . (microtime(true) - $start) . " seconds)\n");
 
-        CLI::logging("* Start to update CONTENT table...\n");
-        $start = microtime(true);
         CLI::logging("* Start to migrate texts/values from 'CONTENT' table to the corresponding object tables...\n");
+        $start = microtime(true);
         $this->migrateContent($lang);
         CLI::logging("* End to migrate texts/values from 'CONTENT' table to the corresponding object tables... (Completed on " .
             (microtime(true) - $start) . " seconds)\n");
@@ -354,12 +353,10 @@ class WorkspaceTools
         $this->upgradeSchema($systemSchema);
         CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-        /*----------------------------------********---------------------------------*/
         CLI::logging("* Start migrating to new list tables...\n");
         $start = microtime(true);
         $this->migrateList(true, $lang);
         CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
-        /*----------------------------------********---------------------------------*/
 
         CLI::logging("* Start updating MySQL triggers...\n");
         $start = microtime(true);
@@ -2088,8 +2085,8 @@ class WorkspaceTools
                 CLI::logging("* End deleting indexes from big tables: " . implode(', ', self::$bigTables) . "... (Completed on " .
                     (microtime(true) - $start) . " seconds)\n");
 
-                $start = microtime(true);
                 CLI::logging("* Start to migrate texts/values from 'CONTENT' table to the corresponding object tables...\n");
+                $start = microtime(true);
                 $workspace->migrateContent($lang);
                 CLI::logging("* End to migrate texts/values from 'CONTENT' table to the corresponding object tables... (Completed on " .
                     (microtime(true) - $start) . " seconds)\n");
@@ -2157,7 +2154,6 @@ class WorkspaceTools
                 $start = microtime(true);
                 $workspace->migrateList(true, $lang);
                 CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
-                /*----------------------------------********---------------------------------*/
 
                 CLI::logging("* Start updating MySQL triggers...\n");
                 $start = microtime(true);
