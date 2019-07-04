@@ -264,7 +264,7 @@ class WorkspaceTools
         $start = microtime(true);
         $this->checkMafeRequirements($workspace, $lang);
         CLI::logging("* End checking MAFE requirements...(Completed on " . (microtime(true) - $start) . " seconds)\n");
-        
+
         CLI::logging("* Start deleting MySQL triggers: " . implode(', ', self::$triggers) . "...\n");
         $start = microtime(true);
         $this->deleteTriggersMySQL(self::$triggers);
@@ -2149,7 +2149,6 @@ class WorkspaceTools
                 $workspace->upgradeSchema($systemSchema);
                 CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-                /*----------------------------------********---------------------------------*/
                 CLI::logging("* Start migrating to new list tables...\n");
                 $start = microtime(true);
                 $workspace->migrateList(true, $lang);
