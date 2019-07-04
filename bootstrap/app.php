@@ -50,17 +50,6 @@ $app->singleton(
     Handler::class
 );
 
-$app->configureMonologUsing(function ($monolog) use ($app) {
-    $monolog->pushHandler(
-        (new RotatingFileHandler(
-        // Set the log path
-            $app->storagePath() . '/logs/processmaker.log',
-            // Set the number of daily files you want to keep
-            $app->make('config')->get('app.log_max_files', 5)
-        ))->setFormatter(new LineFormatter(null, null, true, true))
-    );
-});
-
 /*
 |--------------------------------------------------------------------------
 | Return The Application
