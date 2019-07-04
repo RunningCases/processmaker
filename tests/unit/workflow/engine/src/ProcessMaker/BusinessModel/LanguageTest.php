@@ -62,9 +62,11 @@ class LanguageTest extends TestCase
     public function testGetLanguageList()
     {
         $list = $this->object->getLanguageList();
-        $this->assertCount(1, $list);
-        $this->assertEquals('en', $list[0]['LANG_ID']);
-        $this->assertEquals('English', $list[0]['LANG_NAME']);
+        $expected = [
+            'LANG_ID' => 'en',
+            'LANG_NAME' => 'English',
+        ];
+        $this->assertContains($expected, $list);
     }
 
     /**
@@ -77,14 +79,21 @@ class LanguageTest extends TestCase
     {
         $this->installLanguage('es', __DIR__ . '/processmaker.es.po');
         $list = $this->object->getLanguageList();
-        $this->assertCount(2, $list);
-        $this->assertEquals('en', $list[0]['LANG_ID']);
-        $this->assertEquals('English', $list[0]['LANG_NAME']);
-        $this->assertEquals('es-ES', $list[1]['LANG_ID']);
-        $this->assertEquals('Spanish (Spain)', $list[1]['LANG_NAME']);
+        $english = [
+            'LANG_ID' => 'en',
+            'LANG_NAME' => 'English',
+        ];
+        $this->assertContains($english, $list);
+
+        $spanish = [
+            'LANG_ID' => 'es-ES',
+            'LANG_NAME' => 'Spanish (Spain)',
+        ];
+        $this->assertContains($spanish, $list);
+
         $this->uninstallLanguage('es', __DIR__ . '/processmaker.es.po');
         $list2 = $this->object->getLanguageList();
-        $this->assertCount(1, $list2);
+        $this->assertContains($english, $list2);
     }
 
     /**
