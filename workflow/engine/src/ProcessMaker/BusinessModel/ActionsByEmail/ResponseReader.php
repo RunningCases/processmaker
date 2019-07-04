@@ -132,46 +132,48 @@ class ResponseReader
                 foreach ($mailsIds as $key => $mailId) {
                     /** @var IncomingMail $mail */
                     $mail = $mailbox->getMail($mailId, false);
-                    preg_match("/{(.*)}/", $mail->textPlain, $matches);
-                    if ($matches) {
-                        $dataEmail = G::json_decode(Crypt::decryptString($matches[1]), true);
-                        $dataAbeReq = loadAbeRequest($dataEmail['ABE_REQ_UID']);
-                        if (config("system.workspace") === $dataEmail['workspace']
-                            && (array_key_exists('ABE_UID', $dataAbeReq) && $dataAbeReq['ABE_UID'] == $dataAbe['ABE_UID'])) {
-                            $this->case = $dataEmail;
-                            try {
-                                $appDelegate = new AppDelegation();
-                                $alreadyRouted = $appDelegate->alreadyRouted($this->case["appUid"], $this->case["delIndex"]);
-                                //Verify if the current case is already routed.
-                                if ($alreadyRouted) {
-                                    $this->setMessageResponseError(G::LoadTranslation('ID_ABE_RESPONSE_ALREADY_ROUTED'));
-                                    throw (new Exception(G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'), 400));
+                    if (!empty($mail->textPlain)) {
+                        preg_match("/{(.*)}/", $mail->textPlain, $matches);
+                        if ($matches) {
+                            $dataEmail = G::json_decode(Crypt::decryptString($matches[1]), true);
+                            $dataAbeReq = loadAbeRequest($dataEmail['ABE_REQ_UID']);
+                            if (config("system.workspace") === $dataEmail['workspace']
+                                && (array_key_exists('ABE_UID', $dataAbeReq) && $dataAbeReq['ABE_UID'] == $dataAbe['ABE_UID'])) {
+                                $this->case = $dataEmail;
+                                try {
+                                    $appDelegate = new AppDelegation();
+                                    $alreadyRouted = $appDelegate->alreadyRouted($this->case["appUid"], $this->case["delIndex"]);
+                                    //Verify if the current case is already routed.
+                                    if ($alreadyRouted) {
+                                        $this->setMessageResponseError(G::LoadTranslation('ID_ABE_RESPONSE_ALREADY_ROUTED'));
+                                        throw (new Exception(G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'), 400));
+                                    }
+                                    $this->processABE($this->case, $mail, $dataAbe);
+                                    $mailbox->markMailAsRead($mailId);
+                                    Bootstrap::registerMonolog(
+                                        $this->channel,
+                                        100, // DEBUG
+                                        G::LoadTranslation('ID_ABE_LOG_PROCESSED_OK'),
+                                        $this->case,
+                                        config("system.workspace"),
+                                        'processmaker.log'
+                                    );
+                                } catch (Exception $e) {
+                                    $this->sendMessageError(
+                                        $this->getMessageResponseError() ? $this->getMessageResponseError() : $e->getMessage(),
+                                        $this->case,
+                                        $mail,
+                                        $emailSetup
+                                    );
+                                    Bootstrap::registerMonolog(
+                                        $this->channel,
+                                        $e->getCode() != 0 ? $e->getCode() : 400,
+                                        $e->getMessage(),
+                                        $this->case,
+                                        config("system.workspace"),
+                                        'processmaker.log'
+                                    );
                                 }
-                                $this->processABE($this->case, $mail, $dataAbe);
-                                $mailbox->markMailAsRead($mailId);
-                                Bootstrap::registerMonolog(
-                                    $this->channel,
-                                    100, // DEBUG
-                                    G::LoadTranslation('ID_ABE_LOG_PROCESSED_OK'),
-                                    $this->case,
-                                    config("system.workspace"),
-                                    'processmaker.log'
-                                );
-                            } catch (Exception $e) {
-                                $this->sendMessageError(
-                                    $this->getMessageResponseError() ? $this->getMessageResponseError() : $e->getMessage(),
-                                    $this->case,
-                                    $mail,
-                                    $emailSetup
-                                );
-                                Bootstrap::registerMonolog(
-                                    $this->channel,
-                                    $e->getCode() != 0 ? $e->getCode() : 400,
-                                    $e->getMessage(),
-                                    $this->case,
-                                    config("system.workspace"),
-                                    'processmaker.log'
-                                );
                             }
                         }
                     }
