@@ -283,6 +283,7 @@ class WorkspaceTools
         $this->upgradeContent($workspace);
         CLI::logging("* End to update CONTENT table... (Completed on  " . (microtime(true) - $start) . " seconds)\n");
 
+        CLI::logging("* Start to update CONTENT table...\n");
         $start = microtime(true);
         CLI::logging("* Start to migrate texts/values from 'CONTENT' table to the corresponding object tables...\n");
         $this->migrateContent($lang);
@@ -2152,7 +2153,6 @@ class WorkspaceTools
                 $workspace->upgradeSchema($systemSchema);
                 CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-                /*----------------------------------********---------------------------------*/
                 CLI::logging("* Start migrating to new list tables...\n");
                 $start = microtime(true);
                 $workspace->migrateList(true, $lang);
