@@ -760,6 +760,7 @@ class Variable
             $dynUid = $params["dyn_uid"];
             $fieldId = $params["field_id"];
             $filter = isset($params["filter"]) ? $params["filter"] : "";
+            $query = isset($params["query"]) ? $params["query"] : [];
             $start = isset($params["start"]) ? $params["start"] : 0;
             $limit = isset($params["limit"]) ? $params["limit"] : 10;
             $appUid = empty($params["app_uid"]) ? null : $params["app_uid"];
@@ -769,6 +770,7 @@ class Variable
             unset($params["app_uid"]);
             unset($params["del_index"]);
             unset($params["filter"]);
+            unset($params["query"]);
             unset($params["start"]);
             unset($params["limit"]);
 
@@ -799,6 +801,7 @@ class Variable
             $field->queryField = true;
             $field->queryInputData = $params;
             $field->queryFilter = $filter;
+            $field->querySearch = $query;
             $field->queryStart = $start;
             $field->queryLimit = $limit;
             //Grids only access the global variables of 'ProcessMaker', other variables are removed.

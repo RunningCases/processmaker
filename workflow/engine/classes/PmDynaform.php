@@ -318,16 +318,7 @@ class PmDynaform
                             }
                         }
                         if ($value === "suggest" && isset($json->queryField) && $json->queryField == true) {
-                            $json->queryOutputData = array();
-                            foreach ($json->optionsSql as $option) {
-                                if ($json->queryFilter !== '') {
-                                    if (stripos($option->label, $json->queryFilter) !== false) {
-                                        $json->queryOutputData[] = $option;
-                                    }
-                                } else {
-                                    $json->queryOutputData[] = $option;
-                                }
-                            }
+                            $this->searchResultInDataSource($json);
                         }
                     }
                 }
@@ -720,6 +711,59 @@ class PmDynaform
                             $this->jsonr($json);
                         }
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * This function will be search in the dataSource and will be add the new row in the queryOutputData property
+     *
+     * @param object $json
+     *
+     * @return void
+    */
+    private function searchResultInDataSource($json)
+    {
+        $json->queryOutputData = [];
+        foreach ($json->optionsSql as $option) {
+            //We will to check the limit parameter
+            if (count($json->queryOutputData) < $json->queryLimit) {
+                //Searching by filter parameter
+                if ($json->queryFilter !== '') {
+                    if (stripos($option->label, $json->queryFilter) !== false) {
+                        $json->queryOutputData[] = $option;
+                    }
+                } elseif (isset($json->querySearch) && is_array($json->querySearch) && !empty($json->querySearch)) {
+                    //Searching by query parameter
+                    $dataSearch = $json->querySearch;
+                    $valueAdded = false;
+                    //The match has priority
+                    //We will to search match in the dataSource
+                    if (isset($dataSearch['match'])) {
+                        $value = isset($dataSearch['match']['value']) ? $dataSearch['match']['value'] : '';
+                        $label = isset($dataSearch['match']['text']) ? $dataSearch['match']['text'] : '';
+                        if (!empty($value) && $option->value === $value) {
+                            $valueAdded = true;
+                            $json->queryOutputData[] = $option;
+                        }
+                        if (!empty($label) && $option->label === $label && !$valueAdded) {
+                            $json->queryOutputData[] = $option;
+                        }
+                    } elseif (isset($dataSearch['term'])) {
+                        //We will to search term in the dataSource
+                        $value = isset($dataSearch['term']['value']) ? $dataSearch['term']['value'] : '';
+                        $label = isset($dataSearch['term']['text']) ? $dataSearch['term']['text'] : '';
+                        if (!empty($value) && stripos($option->value, $value) !== false) {
+                            $valueAdded = true;
+                            $json->queryOutputData[] = $option;
+                        }
+                        if (!empty($label) && stripos($option->label, $label) !== false && !$valueAdded) {
+                            $json->queryOutputData[] = $option;
+                        }
+                    }
+                } else {
+                    $json->queryOutputData[] = $option;
                 }
             }
         }
