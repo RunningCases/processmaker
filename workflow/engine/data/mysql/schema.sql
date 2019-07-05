@@ -3257,7 +3257,7 @@ CREATE TABLE `JOBS_PENDING`
 	`queue` VARCHAR(255)  NOT NULL,
 	`payload` MEDIUMTEXT  NOT NULL,
 	`attempts` TINYINT(3)  NOT NULL,
-	`reserved_at` TINYINT(10) default NULL,
+	`reserved_at` TINYINT(10),
 	`available_at` TINYINT(10)  NOT NULL,
 	`created_at` TINYINT(10)  NOT NULL,
 	PRIMARY KEY (`id`),
@@ -3277,7 +3277,7 @@ CREATE TABLE `JOBS_FAILED`
 	`queue` MEDIUMTEXT  NOT NULL,
 	`payload` MEDIUMTEXT  NOT NULL,
 	`exception` MEDIUMTEXT  NOT NULL,
-	`failed_at` DATETIME default 'CURRENT_TIMESTAMP' NOT NULL,
+	`failed_at` DATETIME  NOT NULL,
 	PRIMARY KEY (`id`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
