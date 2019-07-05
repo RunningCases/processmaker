@@ -3244,5 +3244,41 @@ CREATE TABLE `APP_DATA_CHANGE_LOG`
 	KEY `indexExecutedAt`(`EXECUTED_AT`),
 	KEY `indexSourceId`(`SOURCE_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Change log';
+#-----------------------------------------------------------------------------
+#-- JOBS_PENDING
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `JOBS_PENDING`;
+
+
+CREATE TABLE `JOBS_PENDING`
+(
+	`id` BIGINT(20)  NOT NULL AUTO_INCREMENT,
+	`queue` VARCHAR(255)  NOT NULL,
+	`payload` MEDIUMTEXT  NOT NULL,
+	`attempts` TINYINT(3)  NOT NULL,
+	`reserved_at` TINYINT(10) default NULL,
+	`available_at` TINYINT(10)  NOT NULL,
+	`created_at` TINYINT(10)  NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `jobs_queue_index`(`queue`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- JOBS_FAILED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `JOBS_FAILED`;
+
+
+CREATE TABLE `JOBS_FAILED`
+(
+	`id` BIGINT(20)  NOT NULL AUTO_INCREMENT,
+	`connection` MEDIUMTEXT  NOT NULL,
+	`queue` MEDIUMTEXT  NOT NULL,
+	`payload` MEDIUMTEXT  NOT NULL,
+	`exception` MEDIUMTEXT  NOT NULL,
+	`failed_at` DATETIME default 'CURRENT_TIMESTAMP' NOT NULL,
+	PRIMARY KEY (`id`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
