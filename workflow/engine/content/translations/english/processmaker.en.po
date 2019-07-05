@@ -7476,6 +7476,12 @@ msgid "Error in server"
 msgstr "Error in server"
 
 # TRANSLATION
+# LABEL/ID_ERROR_IN_THE_QUERY
+#: LABEL/ID_ERROR_IN_THE_QUERY
+msgid "Error in the query"
+msgstr "Error in the query"
+
+# TRANSLATION
 # LABEL/ID_ERROR_JS_NOT_AVAILABLE
 #: LABEL/ID_ERROR_JS_NOT_AVAILABLE
 msgid "Your browser doesn't support JavaScript or it may be disabled. Please use a different browser or enable JavaScript. Dynaforms won't entirely work because JavaScript is required."

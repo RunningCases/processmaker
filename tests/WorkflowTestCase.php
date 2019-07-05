@@ -1,26 +1,37 @@
 <?php
 
+namespace Tests;
+
+use PDO;
+use PHPUnit\Framework\TestCase as TestCaseFramework;
 use ProcessMaker\Importer\XmlImporter;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Test case that could instance a workspace DB
  *
  */
-class WorkflowTestCase extends TestCase
+class WorkflowTestCase extends TestCaseFramework
 {
+    private $host;
+    private $user;
+    private $password;
+    private $database;
 
     /**
      * Create and install the database.
      */
     protected function setupDB()
     {
+        $this->host = env("DB_HOST");
+        $this->user = env("DB_USERNAME");
+        $this->password = env("DB_PASSWORD");
+        $this->database = env("DB_DATABASE");
         //Install Database
-        $pdo0 = new PDO("mysql:host=".DB_HOST, DB_USER, DB_PASS);
-        $pdo0->query('DROP DATABASE IF EXISTS '.DB_NAME);
-        $pdo0->query('CREATE DATABASE '.DB_NAME);
-        $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER,
-                       DB_PASS);
+        $pdo0 = new PDO("mysql:host=".$this->host, $this->user, $this->password);
+        $pdo0->query('DROP DATABASE IF EXISTS '.$this->database);
+        $pdo0->query('CREATE DATABASE '.$this->database);
+        $pdo = new PDO("mysql:host=".$this->host.";dbname=".$this->database, $this->user,
+                       $this->password);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
         $pdo->exec(file_get_contents(PATH_CORE.'data/mysql/schema.sql'));
         $pdo->exec(file_get_contents(PATH_RBAC_CORE.'data/mysql/schema.sql'));
@@ -39,8 +50,8 @@ class WorkflowTestCase extends TestCase
     protected function dropDB()
     {
         //Install Database
-        $pdo0 = new PDO("mysql:host=".DB_HOST, DB_USER, DB_PASS);
-        $pdo0->query('DROP DATABASE IF EXISTS '.DB_NAME);
+        $pdo0 = new PDO("mysql:host=".$this->host, $this->user, $this->password);
+        $pdo0->query('DROP DATABASE IF EXISTS '.$this->database);
     }
 
     /**

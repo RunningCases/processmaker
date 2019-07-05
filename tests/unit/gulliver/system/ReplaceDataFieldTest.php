@@ -27,9 +27,10 @@ class ReplaceDataFieldTest extends TestCase
         ];
 
         $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($string, $result, $dbEngine);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qq is not being set as an empty value
         $this->assertRegExp("/asa@qq.fds/", $stringToCheck);
@@ -41,9 +42,10 @@ class ReplaceDataFieldTest extends TestCase
         ];
 
         $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($string, $result, $dbEngine);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qstring is not being set as an empty value
         $this->assertRegExp("/@qstring/", $stringToCheck);
@@ -72,9 +74,10 @@ class ReplaceDataFieldTest extends TestCase
         ];
 
         $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($string, $result, $dbEngine);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qq is not being set as an empty value
         $this->assertRegExp("/asa@qq.fds/", $stringToCheck);
@@ -86,11 +89,80 @@ class ReplaceDataFieldTest extends TestCase
         ];
 
         $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($string, $result, $dbEngine);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
         // Assert the @qstring is not being set as an empty value
         $this->assertRegExp("/@qstring/", $stringToCheck);
+    }
+
+    /**
+     * Check that the variable using "@#" will be replaced recursively or not according to the parameters sent
+     *
+     * @test
+     * @covers G::replaceDataField
+     */
+    public function it_should_replace_recursively_a_variable_inside_another_variable_with_hashtag_symbol()
+    {
+        // Initialize variables
+        $string = '@#upload_New';
+        $variables = ['upload_New' => "javascript:uploadInputDocument('@#DOC_UID');",
+            'DOC_UID' => '1988828025cc89aba0cd2b8079038028'];
+
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = false;
+
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
+
+        // The variable @#DOC_UID inside in the variable "@#upload_New" shouldn't be replaced
+        $this->assertRegExp("/@#DOC_UID/", $stringToCheck);
+
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = true;
+
+        // Replace variables in the string, $recursive is true because is required replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
+
+        // The variable @#DOC_UID inside in the variable "@#upload_New" should be replaced correctly
+        $this->assertRegExp("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
+    }
+
+    /**
+     * Check that the variable using "@=" will be replaced recursively or not according to the parameters sent
+     *
+     * @test
+     * @covers G::replaceDataField
+     */
+    public function it_should_replace_recursively_a_variable_inside_another_variable_with_equals_symbol()
+    {
+        // Initialize variables
+        $string = '@=upload_New';
+        $variables = ['upload_New' => "javascript:uploadInputDocument('@=DOC_UID');",
+            'DOC_UID' => '1988828025cc89aba0cd2b8079038028'];
+
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = false;
+
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
+
+        // The variable @=DOC_UID inside in the variable "@=upload_New" shouldn't be replaced
+        $this->assertRegExp("/@=DOC_UID/", $stringToCheck);
+
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = true;
+
+        // Replace variables in the string, $recursive is true because is required replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
+
+        // The variable @=DOC_UID inside in the variable "@=upload_New" should be replaced correctly
+        $this->assertRegExp("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
     }
 }
