@@ -21,6 +21,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         Illuminate\Notifications\NotificationServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
     ],
 
     'aliases' => [
