@@ -2463,8 +2463,8 @@ class WorkspaceTools
             return;
         }
 
-        $arrayTable1 = ['ListCanceled', 'ListMyInbox', 'ListInbox', 'ListParticipatedHistory', 'ListPaused', 'ListParticipatedLast'];
-        $arrayTable2 = ['ListUnassigned', 'ListUnassignedGroup'];
+        $arrayTable1 = ['ListCanceled', 'ListInbox', 'ListParticipatedLast', 'ListPaused'];
+        $arrayTable2 = ['ListUnassigned'];
         $arrayTable = array_merge($arrayTable1, $arrayTable2);
 
         if ($flagReinsert) {
@@ -2488,16 +2488,15 @@ class WorkspaceTools
             }
         }
 
+        // Initialize queries array
         $listQueries = [];
 
         if ($flagReinsert || !$flagListAll) {
             // Regenerate lists
             $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListCanceled($lang));
-            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListMyInbox());
             $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListInbox());
-            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListParticipatedHistory());
-            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListPaused());
             $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListParticipatedLast());
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListPaused());
         }
 
         if ($flagReinsert || !$flagListUnassigned) {
@@ -2510,7 +2509,7 @@ class WorkspaceTools
             $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->regenerateListUnassigned());
         }
 
-        // Run queries in multiple threads
+        // Run queries in multiple threads for populate the list tables
         $processesManager = new ProcessesManager($listQueries);
         $processesManager->run();
 
@@ -2523,8 +2522,39 @@ class WorkspaceTools
             throw new Exception($errorMessage);
         }
 
-        // This query cannot be launched in parallel, requires that the table already was populated
-        $this->updateListParticipatedLast();
+        // Clean the queries array
+        $listQueries = [];
+        // Canceled List
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_CANCELED'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListUsrId('LIST_CANCELED'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_CANCELED'));
+        // Inbox List
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_INBOX'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListUsrId('LIST_INBOX'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_INBOX'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListAppStatusId('LIST_INBOX'));
+        // Participated List
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_PARTICIPATED_LAST'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListUsrId('LIST_PARTICIPATED_LAST'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_PARTICIPATED_LAST'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListAppStatusId('LIST_PARTICIPATED_LAST'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListParticipatedLastCurrentUser());
+        // Unassigned List
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_UNASSIGNED'));
+        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_UNASSIGNED'));
+
+        // Run queries in multiple threads for update the list tables
+        $processesManager = new ProcessesManager($listQueries);
+        $processesManager->run();
+
+        // If exists an error throw an exception
+        if (!empty($processesManager->getErrors())) {
+            $errorMessage = '';
+            foreach ($processesManager->getErrors() as $error) {
+                $errorMessage .= $error['rawAnswer'] . PHP_EOL;
+            }
+            throw new Exception($errorMessage);
+        }
 
         $this->listFirstExecution('insert');
         $this->listFirstExecution('insert', 'unassigned');
@@ -2541,7 +2571,6 @@ class WorkspaceTools
      */
     public function regenerateListCanceled($lang = 'en')
     {
-        $this->initPropel(true);
         $query = 'INSERT INTO ' . $this->dbName . '.LIST_CANCELED
                     (APP_UID,
                     USR_UID,
@@ -2606,80 +2635,6 @@ class WorkspaceTools
     }
 
     /**
-     * Return query to populate my inbox list
-     *
-     * @return string
-     *
-     * @see \WorkspaceTools->migrateList()
-     */
-    public function regenerateListMyInbox()
-    {
-        $this->initPropel(true);
-        $query = 'INSERT INTO ' . $this->dbName . '.LIST_MY_INBOX
-                    (APP_UID,
-                    USR_UID,
-                    TAS_UID,
-                    PRO_UID,
-                    APP_NUMBER,
-                    APP_TITLE,
-                    APP_PRO_TITLE,
-                    APP_TAS_TITLE,
-                    APP_CREATE_DATE,
-                    APP_UPDATE_DATE,
-                    APP_FINISH_DATE,
-                    APP_STATUS,
-                    DEL_INDEX,
-                    DEL_PREVIOUS_USR_UID,
-                    DEL_PREVIOUS_USR_USERNAME,
-                    DEL_PREVIOUS_USR_FIRSTNAME,
-                    DEL_PREVIOUS_USR_LASTNAME,
-                    DEL_CURRENT_USR_UID,
-                    DEL_CURRENT_USR_USERNAME,
-                    DEL_CURRENT_USR_FIRSTNAME,
-                    DEL_CURRENT_USR_LASTNAME,
-                    DEL_DELEGATE_DATE,
-                    DEL_INIT_DATE,
-                    DEL_DUE_DATE,
-                    DEL_PRIORITY)
-
-                    SELECT
-                        ACV.APP_UID,
-                        ACV.USR_UID,
-                        ACV.TAS_UID,
-                        ACV.PRO_UID,
-                        ACV.APP_NUMBER,
-                        ACV.APP_TITLE,
-                        ACV.APP_PRO_TITLE,
-                        ACV.APP_TAS_TITLE,
-                        ACV.APP_CREATE_DATE,
-                        ACV.APP_UPDATE_DATE,
-                        ACV.APP_FINISH_DATE,
-                        ACV.APP_STATUS,
-                        ACV.DEL_INDEX,
-                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
-                        PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
-                        PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
-                        PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
-                        ACV.USR_UID AS DEL_CURRENT_USR_UID,
-                        CUR_USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
-                        CUR_USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
-                        CUR_USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
-                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
-                        ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
-                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
-                        ACV.DEL_PRIORITY
-                    FROM
-                        ' . $this->dbName . '.APP_CACHE_VIEW ACV
-                            LEFT JOIN
-                        ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
-                            LEFT JOIN
-                        ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
-                    WHERE ACV.DEL_INDEX=1';
-
-        return $query;
-    }
-
-    /**
      * Return query to populate inbox list
      *
      * @return string
@@ -2688,7 +2643,6 @@ class WorkspaceTools
      */
     public function regenerateListInbox()
     {
-        $this->initPropel(true);
         $query = 'INSERT INTO ' . $this->dbName . '.LIST_INBOX
                     (APP_UID,
                     DEL_INDEX,
@@ -2743,195 +2697,6 @@ class WorkspaceTools
     }
 
     /**
-     * Return query to populate participated history list
-     *
-     * @return string
-     *
-     * @see \WorkspaceTools->migrateList()
-     */
-    public function regenerateListParticipatedHistory()
-    {
-        $this->initPropel(true);
-        $query = 'INSERT INTO ' . $this->dbName . '.LIST_PARTICIPATED_HISTORY
-                    (APP_UID,
-                    DEL_INDEX,
-                    USR_UID,
-                    TAS_UID,
-                    PRO_UID,
-                    APP_NUMBER,
-                    APP_TITLE,
-                    APP_PRO_TITLE,
-                    APP_TAS_TITLE,
-                    DEL_PREVIOUS_USR_UID,
-                    DEL_PREVIOUS_USR_USERNAME,
-                    DEL_PREVIOUS_USR_FIRSTNAME,
-                    DEL_PREVIOUS_USR_LASTNAME,
-                    DEL_CURRENT_USR_USERNAME,
-                    DEL_CURRENT_USR_FIRSTNAME,
-                    DEL_CURRENT_USR_LASTNAME,
-                    DEL_DELEGATE_DATE,
-                    DEL_INIT_DATE,
-                    DEL_DUE_DATE,
-                    DEL_PRIORITY)
-
-                    SELECT
-                        ACV.APP_UID,
-                        ACV.DEL_INDEX,
-                        ACV.USR_UID,
-                        ACV.TAS_UID,
-                        ACV.PRO_UID,
-                        ACV.APP_NUMBER,
-                        ACV.APP_TITLE,
-                        ACV.APP_PRO_TITLE,
-                        ACV.APP_TAS_TITLE,
-                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
-                        PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
-                        PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
-                        PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
-                        CUR_USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
-                        CUR_USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
-                        CUR_USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
-                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
-                        ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
-                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
-                        ACV.DEL_PRIORITY
-                    FROM
-                        ' . $this->dbName . '.APP_CACHE_VIEW ACV
-                            LEFT JOIN
-                        ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
-                            LEFT JOIN
-                        ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID';
-
-        return $query;
-    }
-
-    /**
-     * Return query to populate participated last list
-     *
-     * @return string
-     *
-     * @see \WorkspaceTools->migrateList()
-     */
-    public function regenerateListParticipatedLast()
-    {
-        $this->initPropel(true);
-        $query = 'INSERT INTO ' . $this->dbName . '.LIST_PARTICIPATED_LAST
-                    (
-                      APP_UID,
-                      USR_UID,
-                      DEL_INDEX,
-                      TAS_UID,
-                      PRO_UID,
-                      APP_NUMBER,
-                      APP_TITLE,
-                      APP_PRO_TITLE,
-                      APP_TAS_TITLE,
-                      APP_STATUS,
-                      DEL_PREVIOUS_USR_UID,
-                      DEL_PREVIOUS_USR_USERNAME,
-                      DEL_PREVIOUS_USR_FIRSTNAME,
-                      DEL_PREVIOUS_USR_LASTNAME,
-                      DEL_CURRENT_USR_USERNAME,
-                      DEL_CURRENT_USR_FIRSTNAME,
-                      DEL_CURRENT_USR_LASTNAME,
-                      DEL_DELEGATE_DATE,
-                      DEL_INIT_DATE,
-                      DEL_DUE_DATE,
-                      DEL_CURRENT_TAS_TITLE,
-                      DEL_PRIORITY,
-                      DEL_THREAD_STATUS)
-                    
-                      SELECT
-                        ACV.APP_UID,
-                        IF(ACV.USR_UID=\'\', \'SELF_SERVICES\', ACV.USR_UID),
-                        ACV.DEL_INDEX,
-                        ACV.TAS_UID,
-                        ACV.PRO_UID,
-                        ACV.APP_NUMBER,
-                        ACV.APP_TITLE,
-                        ACV.APP_PRO_TITLE,
-                        ACV.APP_TAS_TITLE,
-                        ACV.APP_STATUS,
-                        DEL_PREVIOUS_USR_UID,
-                        IFNULL(PRE_USR.USR_USERNAME, CUR_USR.USR_USERNAME)   AS DEL_PREVIOUS_USR_USERNAME,
-                        IFNULL(PRE_USR.USR_FIRSTNAME, CUR_USR.USR_FIRSTNAME) AS DEL_PREVIOUS_USR_USERNAME,
-                        IFNULL(PRE_USR.USR_LASTNAME, CUR_USR.USR_LASTNAME)   AS DEL_PREVIOUS_USR_USERNAME,
-                        CUR_USR.USR_USERNAME                                 AS DEL_CURRENT_USR_USERNAME,
-                        CUR_USR.USR_FIRSTNAME                                AS DEL_CURRENT_USR_FIRSTNAME,
-                        CUR_USR.USR_LASTNAME                                 AS DEL_CURRENT_USR_LASTNAME,
-                        ACV.DEL_DELEGATE_DATE                                AS DEL_DELEGATE_DATE,
-                        ACV.DEL_INIT_DATE                                    AS DEL_INIT_DATE,
-                        ACV.DEL_TASK_DUE_DATE                                AS DEL_DUE_DATE,
-                        ACV.APP_TAS_TITLE                                    AS DEL_CURRENT_TAS_TITLE,
-                        ACV.DEL_PRIORITY,
-                        ACV.DEL_THREAD_STATUS
-                      FROM
-                        (
-                          SELECT
-                            CASE WHEN ACV1.PREVIOUS_USR_UID = \'\' AND ACV1.DEL_INDEX = 1
-                              THEN ACV1.USR_UID
-                            ELSE ACV1.PREVIOUS_USR_UID END AS DEL_PREVIOUS_USR_UID,
-                            ACV1.*
-                          FROM ' . $this->dbName . '.APP_CACHE_VIEW ACV1
-                            JOIN
-                            (SELECT
-                               ACV_INT.APP_UID,
-                               MAX(ACV_INT.DEL_INDEX) MAX_DEL_INDEX
-                             FROM
-                               ' . $this->dbName . '.APP_CACHE_VIEW ACV_INT
-                             GROUP BY
-                               ACV_INT.USR_UID,
-                               ACV_INT.APP_UID
-                            ) ACV2
-                              ON ACV2.APP_UID = ACV1.APP_UID AND ACV2.MAX_DEL_INDEX = ACV1.DEL_INDEX
-                        ) ACV
-                        LEFT JOIN ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
-                        LEFT JOIN ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID';
-
-        return $query;
-    }
-
-    /**
-     * Update participated last list
-     *
-     * @see \WorkspaceTools->migrateList()
-     */
-    public function updateListParticipatedLast()
-    {
-        $this->initPropel(true);
-        $query = 'UPDATE ' . $this->dbName . '.LIST_PARTICIPATED_LAST LPL, (
-                       SELECT
-                         TASK.TAS_TITLE,
-                         CUR_USER.APP_UID,
-                         USERS.USR_UID,
-                         USERS.USR_USERNAME,
-                         USERS.USR_FIRSTNAME,
-                         USERS.USR_LASTNAME
-                       FROM (
-                              SELECT
-                                APP_UID,
-                                TAS_UID,
-                                DEL_INDEX,
-                                USR_UID
-                              FROM ' . $this->dbName . '.APP_DELEGATION
-                              WHERE DEL_LAST_INDEX = 1
-                            ) CUR_USER
-                         LEFT JOIN ' . $this->dbName . '.USERS ON CUR_USER.USR_UID = USERS.USR_UID
-                         LEFT JOIN ' . $this->dbName . '.TASK ON CUR_USER.TAS_UID = TASK.TAS_UID) USERS_VALUES
-                    SET
-                      LPL.DEL_CURRENT_USR_USERNAME  = IFNULL(USERS_VALUES.USR_USERNAME, \'\'),
-                      LPL.DEL_CURRENT_USR_FIRSTNAME = IFNULL(USERS_VALUES.USR_FIRSTNAME, \'\'),
-                      LPL.DEL_CURRENT_USR_LASTNAME  = IFNULL(USERS_VALUES.USR_LASTNAME, \'\'),
-                      LPL.DEL_CURRENT_TAS_TITLE     = IFNULL(USERS_VALUES.TAS_TITLE, \'\')
-                    WHERE LPL.APP_UID = USERS_VALUES.APP_UID';
-
-        CLI::logging("> Updating the current users data on table LIST_PARTICIPATED_LAST\n");
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-    }
-
-    /**
      * Return query to populate paused list
      *
      * @return string
@@ -2940,7 +2705,6 @@ class WorkspaceTools
      */
     public function regenerateListPaused()
     {
-        $this->initPropel(true);
         $query = 'INSERT INTO ' . $this->dbName . '.LIST_PAUSED
                   (
                   APP_UID,
@@ -3019,7 +2783,91 @@ class WorkspaceTools
         return $query;
     }
 
-    /*----------------------------------********---------------------------------*/
+    /**
+     * Return query to populate participated last list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
+    public function regenerateListParticipatedLast()
+    {
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_PARTICIPATED_LAST
+                    (
+                      APP_UID,
+                      USR_UID,
+                      DEL_INDEX,
+                      TAS_UID,
+                      PRO_UID,
+                      APP_NUMBER,
+                      APP_TITLE,
+                      APP_PRO_TITLE,
+                      APP_TAS_TITLE,
+                      APP_STATUS,
+                      DEL_PREVIOUS_USR_UID,
+                      DEL_PREVIOUS_USR_USERNAME,
+                      DEL_PREVIOUS_USR_FIRSTNAME,
+                      DEL_PREVIOUS_USR_LASTNAME,
+                      DEL_CURRENT_USR_USERNAME,
+                      DEL_CURRENT_USR_FIRSTNAME,
+                      DEL_CURRENT_USR_LASTNAME,
+                      DEL_DELEGATE_DATE,
+                      DEL_INIT_DATE,
+                      DEL_DUE_DATE,
+                      DEL_CURRENT_TAS_TITLE,
+                      DEL_PRIORITY,
+                      DEL_THREAD_STATUS)
+                    
+                      SELECT
+                        ACV.APP_UID,
+                        IF(ACV.USR_UID=\'\', \'SELF_SERVICES\', ACV.USR_UID),
+                        ACV.DEL_INDEX,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        ACV.APP_TITLE,
+                        ACV.APP_PRO_TITLE,
+                        ACV.APP_TAS_TITLE,
+                        ACV.APP_STATUS,
+                        DEL_PREVIOUS_USR_UID,
+                        IFNULL(PRE_USR.USR_USERNAME, CUR_USR.USR_USERNAME)   AS DEL_PREVIOUS_USR_USERNAME,
+                        IFNULL(PRE_USR.USR_FIRSTNAME, CUR_USR.USR_FIRSTNAME) AS DEL_PREVIOUS_USR_USERNAME,
+                        IFNULL(PRE_USR.USR_LASTNAME, CUR_USR.USR_LASTNAME)   AS DEL_PREVIOUS_USR_USERNAME,
+                        CUR_USR.USR_USERNAME                                 AS DEL_CURRENT_USR_USERNAME,
+                        CUR_USR.USR_FIRSTNAME                                AS DEL_CURRENT_USR_FIRSTNAME,
+                        CUR_USR.USR_LASTNAME                                 AS DEL_CURRENT_USR_LASTNAME,
+                        ACV.DEL_DELEGATE_DATE                                AS DEL_DELEGATE_DATE,
+                        ACV.DEL_INIT_DATE                                    AS DEL_INIT_DATE,
+                        ACV.DEL_TASK_DUE_DATE                                AS DEL_DUE_DATE,
+                        ACV.APP_TAS_TITLE                                    AS DEL_CURRENT_TAS_TITLE,
+                        ACV.DEL_PRIORITY,
+                        ACV.DEL_THREAD_STATUS
+                      FROM
+                        (
+                          SELECT
+                            CASE WHEN ACV1.PREVIOUS_USR_UID = \'\' AND ACV1.DEL_INDEX = 1
+                              THEN ACV1.USR_UID
+                            ELSE ACV1.PREVIOUS_USR_UID END AS DEL_PREVIOUS_USR_UID,
+                            ACV1.*
+                          FROM ' . $this->dbName . '.APP_CACHE_VIEW ACV1
+                            JOIN
+                            (SELECT
+                               ACV_INT.APP_UID,
+                               MAX(ACV_INT.DEL_INDEX) MAX_DEL_INDEX
+                             FROM
+                               ' . $this->dbName . '.APP_CACHE_VIEW ACV_INT
+                             GROUP BY
+                               ACV_INT.USR_UID,
+                               ACV_INT.APP_UID
+                            ) ACV2
+                              ON ACV2.APP_UID = ACV1.APP_UID AND ACV2.MAX_DEL_INDEX = ACV1.DEL_INDEX
+                        ) ACV
+                        LEFT JOIN ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                        LEFT JOIN ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID';
+
+        return $query;
+    }
+
     /**
      * Return query to populate unassigned list
      *
@@ -3029,9 +2877,6 @@ class WorkspaceTools
      */
     public function regenerateListUnassigned()
     {
-        $this->initPropel(true);
-
-        //This executeQuery is very fast than Propel
         $query = 'INSERT INTO ' . $this->dbName . '.LIST_UNASSIGNED
                     (APP_UID,
                     DEL_INDEX,
@@ -3077,7 +2922,128 @@ class WorkspaceTools
 
         return $query;
     }
-    /*----------------------------------********---------------------------------*/
+
+    /**
+     * Return query to update PRO_ID in list table
+     *
+     * @param string $list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
+    public function updateListProId($list) {
+        $query = 'UPDATE ' . $list . ' AS LT
+                  INNER JOIN (
+                      SELECT PROCESS.PRO_UID, PROCESS.PRO_ID
+                      FROM PROCESS
+                  ) AS PRO
+                  ON (LT.PRO_UID = PRO.PRO_UID)
+                  SET LT.PRO_ID = PRO.PRO_ID
+                  WHERE LT.PRO_ID = 0';
+        return $query;
+    }
+
+    /**
+     * Return query to update USR_ID in list table
+     *
+     * @param string $list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
+    public function updateListUsrId($list) {
+        $query = 'UPDATE ' . $list . ' AS LT
+                  INNER JOIN (
+                      SELECT USERS.USR_UID, USERS.USR_ID
+                      FROM USERS
+                  ) AS USR
+                  ON (LT.USR_UID = USR.USR_UID)
+                  SET LT.USR_ID = USR.USR_ID
+                  WHERE LT.USR_ID = 0';
+        return $query;
+    }
+
+    /**
+     * Return query to update TAS_ID in list table
+     *
+     * @param string $list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
+    public function updateListTasId($list) {
+        $query = 'UPDATE ' . $list . ' AS LT
+                  INNER JOIN (
+                      SELECT TASK.TAS_UID, TASK.TAS_ID
+                      FROM TASK
+                  ) AS TAS
+                  ON (LT.TAS_UID = TAS.TAS_UID)
+                  SET LT.TAS_ID = TAS.TAS_ID
+                  WHERE LT.TAS_ID = 0';
+        return $query;
+    }
+
+    /**
+     * Return query to update APP_STATUS_ID in list table
+     *
+     * @para string $list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
+    public function updateListAppStatusId($list) {
+        $query = "UPDATE " . $list . "
+                  SET APP_STATUS_ID = (case
+                      when APP_STATUS = 'DRAFT' then 1
+                      when APP_STATUS = 'TO_DO' then 2
+                      when APP_STATUS = 'COMPLETED' then 3
+                      when APP_STATUS = 'CANCELLED' then 4
+                  end)
+                  WHERE APP_STATUS in ('DRAFT', 'TO_DO', 'COMPLETED', 'CANCELLED') AND APP_STATUS_ID = 0";
+        return $query;
+    }
+
+    /**
+     * Return query to update participated last list
+     *
+     * @return string
+     *
+     * @see \WorkspaceTools->migrateList()
+     */
+    public function updateListParticipatedLastCurrentUser()
+    {
+        $query = 'UPDATE ' . $this->dbName . '.LIST_PARTICIPATED_LAST LPL, (
+                       SELECT
+                         TASK.TAS_TITLE,
+                         CUR_USER.APP_UID,
+                         USERS.USR_UID,
+                         USERS.USR_USERNAME,
+                         USERS.USR_FIRSTNAME,
+                         USERS.USR_LASTNAME
+                       FROM (
+                              SELECT
+                                APP_UID,
+                                TAS_UID,
+                                DEL_INDEX,
+                                USR_UID
+                              FROM ' . $this->dbName . '.APP_DELEGATION
+                              WHERE DEL_LAST_INDEX = 1
+                            ) CUR_USER
+                         LEFT JOIN ' . $this->dbName . '.USERS ON CUR_USER.USR_UID = USERS.USR_UID
+                         LEFT JOIN ' . $this->dbName . '.TASK ON CUR_USER.TAS_UID = TASK.TAS_UID) USERS_VALUES
+                    SET
+                      LPL.DEL_CURRENT_USR_USERNAME  = IFNULL(USERS_VALUES.USR_USERNAME, \'\'),
+                      LPL.DEL_CURRENT_USR_FIRSTNAME = IFNULL(USERS_VALUES.USR_FIRSTNAME, \'\'),
+                      LPL.DEL_CURRENT_USR_LASTNAME  = IFNULL(USERS_VALUES.USR_LASTNAME, \'\'),
+                      LPL.DEL_CURRENT_TAS_TITLE     = IFNULL(USERS_VALUES.TAS_TITLE, \'\')
+                    WHERE LPL.APP_UID = USERS_VALUES.APP_UID';
+
+        return $query;
+    }
 
     /**
      * This function checks if List tables are going to migrated
