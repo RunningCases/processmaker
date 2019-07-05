@@ -5828,4 +5828,32 @@
             <index-column name="SOURCE_ID"/>
         </index>
     </table>
+    <table name="JOBS_PENDING" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Collation" value="utf8"/>
+        </vendor>
+        <column name="id" type="BIGINT" size="20" required="true" autoIncrement="true" primaryKey="true"/>
+        <column name="queue" type="VARCHAR" size="255" required="true"/>
+        <column name="payload" type="LONGVARCHAR" required="true"/>
+        <column name="attempts" type="TINYINT" size="3" required="true"/>
+        <column name="reserved_at" type="TINYINT" size="10" default="NULL"/>
+        <column name="available_at" type="TINYINT" size="10" required="true"/>
+        <column name="created_at" type="TINYINT" size="10"  required="true"/>
+        <index name="jobs_queue_index">
+            <index-column name="queue"/>
+        </index>
+    </table>
+    <table name="JOBS_FAILED" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Collation" value="utf8"/>
+        </vendor>
+        <column name="id" type="BIGINT" size="20" required="true" autoIncrement="true" primaryKey="true"/>
+        <column name="connection" type="LONGVARCHAR" required="true"/>
+        <column name="queue" type="LONGVARCHAR" required="true"/>
+        <column name="payload" type="LONGVARCHAR" required="true"/>
+        <column name="exception" type="LONGVARCHAR" required="true"/>
+        <column name="failed_at" type="TIMESTAMP" required="true" default="CURRENT_TIMESTAMP"/>
+    </table>
 </database>
