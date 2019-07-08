@@ -2924,6 +2924,29 @@ class WorkspaceTools
     }
 
     /**
+     * Re-populate only the unassigned list
+     */
+    public function runRegenerateListUnassigned()
+    {
+        // Init Propel
+        $this->initPropel(true);
+
+        // Initialize Propel objects
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+
+        // Clean table
+        $stmt->executeQuery('TRUNCATE ' . $this->dbName . '.LIST_UNASSIGNED;');
+
+        // Populate table
+        $stmt->executeQuery($this->regenerateListUnassigned());
+
+        // Update some fields
+        $stmt->executeQuery($this->updateListProId('LIST_UNASSIGNED'));
+        $stmt->executeQuery($this->updateListTasId('LIST_UNASSIGNED'));
+    }
+
+    /**
      * Return query to update PRO_ID in list table
      *
      * @param string $list
