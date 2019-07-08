@@ -244,39 +244,6 @@ class System
     }
 
     /**
-     * Review the checksum.txt
-     *
-     * @return array $result
-     */
-    public static function verifyChecksum()
-    {
-        if (!file_exists(PATH_TRUNK . "checksum.txt")) {
-            return false;
-        }
-        $lines = explode("\n", file_get_contents(PATH_TRUNK . "checksum.txt"));
-        $result = array("diff" => array(), "missing" => array()
-        );
-        foreach ($lines as $line) {
-            if (empty($line)) {
-                continue;
-            }
-            list ($checksum, $empty, $filename) = explode(" ", $line);
-            //Skip xmlform because these files always change.
-            if (strpos($filename, "/xmlform/") !== false) {
-                continue;
-            }
-            if (file_exists(realpath($filename))) {
-                if (strcmp($checksum, G::encryptFileOld(realpath($filename))) != 0) {
-                    $result['diff'][] = $filename;
-                }
-            } else {
-                $result['missing'][] = $filename;
-            }
-        }
-        return $result;
-    }
-
-    /**
      * This function checks files to do updated to pm
      *
      * @name verifyFileForUpgrade
