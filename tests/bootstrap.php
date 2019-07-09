@@ -35,6 +35,10 @@ define('PMTABLE_KEY', 'pmtable');
 define('PATH_WORKFLOW_MYSQL_DATA', PATH_TRUNK . '/workflow/engine/data/mysql/');
 define('PATH_RBAC_MYSQL_DATA', PATH_TRUNK . '/rbac/engine/data/mysql/');
 define('PATH_LANGUAGECONT', PATH_DATA . '/META-INF/');
+define('PM_NEW_PROCESS_SAVE', 1006);
+define('PATH_DATA_SITE', PATH_DATA . 'sites/' . SYS_SYS . '/');
+define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
+define('PATH_DATA_PUBLIC', PATH_DATA_SITE . 'public/');
 
 //timezone
 $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) (env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;
