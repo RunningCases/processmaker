@@ -451,6 +451,29 @@ function replacePrefixes($outDocFilename, $prefix = '@=')
 }
 
 /**
+ * Change the abbreviation of directives used in the php.ini configuration
+ *
+ * @param string $size
+ *
+ * @return string
+ */
+function changeAbbreviationOfDirectives($size)
+{
+    $sizeValue = (int)$size;
+
+    switch (substr($size, -1)) {
+        case 'K':
+            return $sizeValue . 'KB';
+        case 'M':
+            return $sizeValue . 'MB';
+        case 'G':
+            return $sizeValue . 'GB';
+        default:
+            return $sizeValue . 'Bytes';
+    }
+}
+
+/**
  * Encoding header filename used in Content-Disposition
  *
  * @param string $fileName
