@@ -14,31 +14,66 @@ use Illuminate\Support\Facades\Schema;
 /**
  * @todo Migrate to configuration parameters
  */
-
 define('PATH_TRUNK', dirname(__DIR__));
-define('PATH_CORE', PATH_TRUNK.'/workflow/engine/');
+define('PATH_CORE', PATH_TRUNK . '/workflow/engine/');
 define('PATH_CONFIG', PATH_CORE . 'config/');
-define('PATH_RBAC_CORE',dirname(__DIR__).'/rbac/engine/');
-define('PATH_DB', dirname(__DIR__).'/shared/sites/');
-define('PATH_DATA', dirname(__DIR__).'/shared/rbac/');
+$pathData = PATH_CONFIG . 'paths_installed.php';
+if (file_exists($pathData)) {
+    require_once $pathData;
+} else {
+    define('PATH_DATA', dirname(__DIR__) . '/shared/rbac/');
+}
+define('PATH_RBAC_CORE', dirname(__DIR__) . '/rbac/engine/');
+define('PATH_DB', dirname(__DIR__) . '/shared/sites/');
 define('PATH_SEP', '/');
-define('PATH_METHODS', dirname(__DIR__).'/workflow/engine/methods/');
+define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
 define('SYS_LANG', 'en');
-define('DB_ADAPTER', 'mysql');
 define('SYS_SKIN', 'neoclassic');
-define('SYS_SYS', 'workflow');
-define('PATH_WORKSPACE',PATH_TRUNK.'/shared/sites/' . SYS_SYS . '/');
-define('PMTABLE_KEY','pmtable');
+define('SYS_SYS', env('MAIN_SYS_SYS', 'workflow'));
+define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
+define('PMTABLE_KEY', 'pmtable');
+define('PATH_WORKFLOW_MYSQL_DATA', PATH_TRUNK . '/workflow/engine/data/mysql/');
+define('PATH_RBAC_MYSQL_DATA', PATH_TRUNK . '/rbac/engine/data/mysql/');
+define('PATH_LANGUAGECONT', PATH_DATA . '/META-INF/');
+define('DB_ADAPTER', 'mysql');
+define('PATH_RBAC_HOME', PATH_TRUNK . '/rbac/');
+define('PATH_RBAC', PATH_RBAC_HOME . 'engine/classes/');
+define("PATH_CUSTOM_SKINS", PATH_DATA . "skins/");
+define("PATH_TPL", PATH_CORE . "templates/");
+
+//timezone
+$_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) (env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;
+
+//Set Time Zone
+ini_set('date.timezone', $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] ? 'UTC' : env('MAIN_TIME_ZONE', 'America/New_York'));
+define('TIME_ZONE', ini_get('date.timezone'));
 
 // Setup basic app services
 $app = require __DIR__ . '/../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 
+//Overwrite with the Processmaker env.ini configuration used in production environments
+//@todo: move env.ini configuration to .env
+ini_set('date.timezone', TIME_ZONE); //Set Time Zone
+date_default_timezone_set(TIME_ZONE);
+config(['app.timezone' => TIME_ZONE]);
+
+//configuration values
+config([
+    "system.workspace" => SYS_SYS
+]);
+define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("system.workspace") . "/");
+define("PATH_DYNAFORM", PATH_DATA_SITE . "xmlForms/");
+define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
+define("PATH_DATA_PUBLIC", PATH_DATA_SITE . "public/");
+
+G::defineConstants();
+
 // Setup our testexternal database
 config(['database.connections.testexternal' => [
         'driver' => 'mysql',
         'host' => env('DB_HOST', '127.0.0.1'),
-        'database' => env('DB_DATABASE', 'testexternal'),
+        'database' => 'testexternal',
         'username' => env('DB_USERNAME', 'root'),
         'password' => env('DB_PASSWORD', 'password'),
         'unix_socket' => env('DB_SOCKET', ''),

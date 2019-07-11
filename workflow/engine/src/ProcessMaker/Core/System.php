@@ -9,6 +9,7 @@ use Faker;
 use G;
 use GzipFile;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Facades\DB;
 use InputFilter;
 use InstallerModule;
@@ -1023,7 +1024,7 @@ class System
      *
      * @return array $skinListArray
      */
-    public function getSkingList()
+    public static function getSkingList()
     {
         //Create Skins custom folder if it doesn't exists
         if (!is_dir(PATH_CUSTOM_SKINS)) {
@@ -1628,6 +1629,22 @@ class System
     public static function getDefaultMailDomain()
     {
         return !empty(self::getServerHostname()) ? self::getServerHostname() : 'processmaker.com';
+    }
+
+    /**
+     * Initialize laravel database configuration
+     * @see workflow/engine/bin/tasks/cliWorkspaces.php->check_queries_incompatibilities()
+     */
+    public static function initLaravel()
+    {
+        config(['database.connections.workflow.host' => DB_HOST]);
+        config(['database.connections.workflow.database' => DB_NAME]);
+        config(['database.connections.workflow.username' => DB_USER]);
+        config(['database.connections.workflow.password' => DB_PASS]);
+
+        app()->useStoragePath(realpath(PATH_DATA));
+        app()->make(Kernel::class)->bootstrap();
+        restore_error_handler();
     }
 }
 // end System class

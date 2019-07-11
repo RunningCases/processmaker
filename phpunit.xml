@@ -15,7 +15,10 @@
             <directory>./tests/workflow/engine/src/</directory>
         </testsuite>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
+            <directory suffix="Test.php">./tests/unit</directory>
+        </testsuite>
+        <testsuite name="Performance">
+            <directory>./tests/Performance/</directory>
         </testsuite>
     </testsuites>
 
@@ -33,6 +36,10 @@
     </filter>
 
     <php>
+        <!--Main environment-->
+        <env name="MAIN_SYS_SYS" value="workflow" />
+        <env name="MAIN_TIME_ZONE" value="America/New_York" />
+        <env name="MAIN_SYSTEM_UTC_TIME_ZONE" value="1" />
         <!--Connection to database-->
         <env name="DB_HOST" value="127.0.0.1" />
         <env name="DB_DATABASE" value="test" />
@@ -45,6 +52,8 @@
         <env name="MSSQL_DATABASE" value="testexternal" />
         <env name="MSSQL_USERNAME" value="test" />
         <env name="MSSQL_PASSWORD" value="test" />
+        <!--Performance Mysql test-->
+        <env name="RUN_MYSQL_PERFORMANCE_TESTS" value="false" />
         <!--Php variables-->
         <var name="APP_ENV" value="testing" />
         <var name="SYS_SYS" value="test" />

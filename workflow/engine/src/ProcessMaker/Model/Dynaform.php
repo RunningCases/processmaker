@@ -14,8 +14,13 @@ use Illuminate\Support\Facades\DB;
 class Dynaform extends Model
 {
     protected $table = 'DYNAFORM';
+    protected $primaryKey = "DYN_ID";
     public $timestamps = false;
 
+    /**
+     * Return relation process.
+     * @return object
+     */
     public function process()
     {
         return $this->belongsTo(Process::class, 'PRO_UID', 'PRO_UID');
@@ -60,5 +65,17 @@ class Dynaform extends Model
                         ->where('DYNAFORM.PRO_UID', '=', $proUid)
                         ->where('DYNAFORM.DYN_UID', '!=', $dynUid)
                         ->get();
+    }
+
+    /**
+     * Scope a query to filter an specific process
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string $columns
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeProcess($query, string $proUID)
+    {
+        return $query->where('PRO_UID', $proUID);
     }
 }

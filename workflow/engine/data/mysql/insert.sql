@@ -57271,6 +57271,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_BARS','en','Bars','2015-03-09') ,
 ( 'LABEL','ID_BASE_DN','en','Base DN','2014-01-15') ,
 ( 'LABEL','ID_BATCH_ROUTING','en','Batch Routing','2016-02-29') ,
+( 'LABEL','ID_BATCH_ROUTING_APPLY_CHANGES','en','The modification will be applied to all rows','2019-06-03') ,
 ( 'LABEL','ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS','en','The specified batch routing table already exists. The existing table will be used to store the batch routing information. Please be sure that the table has the correct batch routing configuration.','2017-03-27') ,
 ( 'LABEL','ID_BEFORE','en','Before','2014-01-15') ,
 ( 'LABEL','ID_BEFORE_ASSIGNMENT','en','Before Assignment','2014-01-15') ,
@@ -60846,7 +60847,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SETTINGS_HEARTBEAT_TITLE','en','Display Setting','2014-01-15') ,
 ( 'LABEL','ID_SETTING_MESSAGE','en','The Settings tool was clicked','2014-01-15') ,
 ( 'LABEL','ID_SETTING_SUPER','en','Setting SUPER privilege','2014-01-28') ,
-( 'LABEL','ID_SETUP','en','ADMIN','2014-01-15') ,
+( 'LABEL','ID_SETUP','en','Admin','2014-01-15') ,
 ( 'LABEL','ID_SETUP_MAILCONF_TITLE','en','Test SMTP Connection','2014-01-15') ,
 ( 'LABEL','ID_SETUP_WEBSERVICES','en','Setup','2014-01-15') ,
 ( 'LABEL','ID_SET_A_TABLE_NAME','en','Set a Table Name','2014-01-15') ,
@@ -61632,8 +61633,7 @@ INSERT INTO CONFIGURATION (CFG_UID,OBJ_UID,CFG_VALUE,PRO_UID,USR_UID,APP_UID) VA
 ('MIGRATED_APP_HISTORY', 'history', 'a:1:{s:7:\"updated\";b:1;}', '', '', ''),
 ('MIGRATED_CONTENT','content','a:12:{i:0;s:7:"Groupwf";i:1;s:7:"Process";i:2;s:10:"Department";i:3;s:4:"Task";i:4;s:13:"InputDocument";i:5;s:11:"Application";i:6;s:11:"AppDocument";i:7;s:8:"Dynaform";i:8;s:14:"OutputDocument";i:9;s:11:"ReportTable";i:10;s:8:"Triggers";i:11;s:41:"\\ProcessMaker\\BusinessModel\\WebEntryEvent";}','','',''),
 ('MIGRATED_LIST','list','true','list','list','list'),
-('MIGRATED_LIST_UNASSIGNED','list','true','list','list','list'),
-('SKIN_CRON','','s:10:\"neoclassic\";','','','');
+('MIGRATED_LIST_UNASSIGNED','list','true','list','list','list');
 
 INSERT INTO CATALOG (CAT_UID,CAT_LABEL_ID,CAT_TYPE,CAT_FLAG,CAT_OBSERVATION,CAT_CREATE_DATE,CAT_UPDATE_DATE) VALUES 
 ('10','ID_BARS','GRAPHIC','','','2015-03-04 00:00:00','2015-03-04 00:00:00'),

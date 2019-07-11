@@ -1,5 +1,8 @@
 <?php
 
+use ProcessMaker\Model\Process;
+use ProcessMaker\Validation\MySQL57;
+
 CLI::taskName('info');
 CLI::taskDescription(<<<EOT
 Print information about the current system and any specified workspaces.
@@ -363,6 +366,31 @@ CLI::taskArg('workspace');
 CLI::taskRun("run_sync_forms_with_info_from_input_documents");
 
 /**
+ * Remove the deprecated files
+ */
+CLI::taskName('remove-unused-files');
+CLI::taskDescription(<<<EOT
+    Remove the deprecated files.
+EOT
+);
+CLI::taskRun("remove_deprecated_files");
+
+/*********************************************************************/
+CLI::taskName("check-queries-incompatibilities");
+CLI::taskDescription(<<<EOT
+  Check queries incompatibilities (MySQL 5.7) for the specified workspace(s).
+
+  This command checks the queries incompatibilities (MySQL 5.7) in the specified workspace(s).
+
+  If no workspace is specified, the command will be run in all workspaces.
+  More than one workspace can be specified.
+EOT
+);
+CLI::taskArg("workspace-name", true, true);
+CLI::taskRun("run_check_queries_incompatibilities");
+/*********************************************************************/
+
+/**
  * Function run_info
  * 
  * @param array $args
@@ -467,6 +495,7 @@ function run_upgrade_content($args, $opts)
         }
     }
 }
+
 /**
  * This function will upgrade the CONTENT table for a workspace
  * This function is executed only for one workspace
@@ -1346,5 +1375,91 @@ function run_sync_forms_with_info_from_input_documents($args, $opts) {
             passthru(PHP_BINARY . ' processmaker sync-forms-with-info-from-input-documents ' .
                 $workspace->name);
         }
+    }
+}
+
+/**
+ * Remove the deprecated files
+ *
+ * @return void
+ * @see workflow/engine/bin/tasks/cliWorkspaces.php CLI::taskRun()
+ * @link https://wiki.processmaker.com/3.3/processmaker_command
+ */
+function remove_deprecated_files()
+{
+    //The constructor requires an argument, so we send an empty value in order to use the class.
+    $workspaceTools = new WorkspaceTools('');
+    $workspaceTools->removeDeprecatedFiles();
+    CLI::logging("<*> The deprecated files has been removed. \n");
+}
+
+/**
+ * This function review the queries for each workspace or for an specific workspace
+ *
+ * @param array $args
+ *
+ * @return void
+ */
+function run_check_queries_incompatibilities($args)
+{
+    try {
+        $workspaces = get_workspaces_from_args($args);
+        if (count($args) === 1) {
+            CLI::logging("> Workspace: " . $workspaces[0]->name . PHP_EOL);
+            check_queries_incompatibilities($workspaces[0]->name);
+        } else {
+            foreach ($workspaces as $workspace) {
+                passthru(PHP_BINARY . " processmaker check-queries-incompatibilities " . $workspace->name);
+            }
+        }
+        echo "Done!\n\n";
+    } catch (Exception $e) {
+        G::outRes(CLI::error($e->getMessage()) . "\n");
+    }
+}
+
+/**
+ * Check for the incompatibilities in the queries for the specific workspace
+ *
+ * @param string $wsName
+ */
+function check_queries_incompatibilities($wsName)
+{
+    Bootstrap::setConstantsRelatedWs($wsName);
+    require_once(PATH_DB . $wsName . '/db.php');
+    System::initLaravel();
+
+    $query = Process::query()->select('PRO_UID', 'PRO_TITLE');
+    $processesToCheck = $query->get()->values()->toArray();
+
+    $obj = new MySQL57();
+    $resTriggers = $obj->checkIncompatibilityTriggers($processesToCheck);
+
+    if (!empty($resTriggers)) {
+        foreach ($resTriggers as $trigger) {
+            echo ">> The \"" . $trigger['PRO_TITLE'] . "\" process has a trigger called: \"" . $trigger['TRI_TITLE'] . "\" that contains UNION queries. Review the code to discard incompatibilities with MySQL5.7." . PHP_EOL;
+        }
+    } else {
+        echo ">> No MySQL 5.7 incompatibilities in triggers found for this workspace." . PHP_EOL;
+    }
+
+    $resDynaforms = $obj->checkIncompatibilityDynaforms($processesToCheck);
+
+    if (!empty($resDynaforms)) {
+        foreach ($resDynaforms as $dynaform) {
+            echo ">> The \"" . $dynaform['PRO_TITLE'] . "\" process has a dynaform called: \"" . $dynaform['DYN_TITLE'] . "\" that contains UNION queries. Review the code to discard incompatibilities with MySQL5.7." . PHP_EOL;
+        }
+    } else {
+        echo ">> No MySQL 5.7 incompatibilities in dynaforms found for this workspace." . PHP_EOL;
+    }
+
+    $resVariables = $obj->checkIncompatibilityVariables($processesToCheck);
+
+    if (!empty($resVariables)) {
+        foreach ($resVariables as $variable) {
+            echo ">> The \"" . $variable['PRO_TITLE'] . "\" process has a variable called: \"" . $variable['VAR_NAME'] . "\" that contains UNION queries. Review the code to discard incompatibilities with MySQL5.7." . PHP_EOL;
+        }
+    } else {
+        echo ">> No MySQL 5.7 incompatibilities in variables found for this workspace." . PHP_EOL;
     }
 }
