@@ -529,7 +529,7 @@ class ActionsByEmailCoreClass extends PMPlugin
      */
     private function defineSubject($subjectField, array $caseData)
     {
-        $subject = G::replaceDataField($subjectField, $caseData);
+        $subject = G::replaceDataField($subjectField, $caseData, 'mysql', false);
         if (empty($subject)) {
             $subject = $this->getCasePropertiesKey('APP_TITLE');
         }
