@@ -48,128 +48,75 @@ emailServer.application = {
             }
             /*----------------------------------********---------------------------------*/
 
+            var typeEmailEngine = Ext.getCmp("cboEmailEngine").getValue();
+
+            if (typeEmailEngine === "PHPMAILER") {
+                var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
+                var smtpSecure = rdoGrpOption.getGroupValue();
+
+                p = {
+                    option: option,
+
+                    cboEmailEngine: typeEmailEngine,
+                    server: Ext.getCmp("txtServer").getValue(),
+                    port: Ext.getCmp("txtPort").getValue(),
+                    reqAuthentication: (Ext.getCmp("chkReqAuthentication").checked) ? 1 : 0,
+                    accountFrom: Ext.getCmp("txtAccountFrom").getValue(),
+                    password: Ext.getCmp("txtPassword").getValue(),
+                    fromMail: Ext.getCmp("txtFromMail").getValue(),
+                    fromName: Ext.getCmp("txtFromName").getValue(),
+                    smtpSecure: smtpSecure,
+                    sendTestMail: (Ext.getCmp("chkSendTestMail").checked) ? 1 : 0,
+                    mailTo: Ext.getCmp("txtMailTo").getValue(),
+                    emailServerDefault: emailDefault
+                };
+            } else if (typeEmailEngine === "IMAP") {
+                /*----------------------------------********---------------------------------*/
+                var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
+                var smtpSecure = rdoGrpOption.getGroupValue();
+
+                p = {
+                    option: option,
+
+                    cboEmailEngine: typeEmailEngine,
+                    server: Ext.getCmp("txtServer").getValue(),
+                    port: Ext.getCmp("txtPort").getValue(),
+                    incomingServer: Ext.getCmp("txtIncomingServer").getValue(),
+                    incomingPort: Ext.getCmp("txtIncomingPort").getValue(),
+                    reqAuthentication: (Ext.getCmp("chkReqAuthentication").checked) ? 1 : 0,
+                    accountFrom: Ext.getCmp("txtAccountFrom").getValue(),
+                    password: Ext.getCmp("txtPassword").getValue(),
+                    fromMail: Ext.getCmp("txtFromMail").getValue(),
+                    fromName: Ext.getCmp("txtFromName").getValue(),
+                    smtpSecure: smtpSecure,
+                    sendTestMail: (Ext.getCmp("chkSendTestMail").checked) ? 1 : 0,
+                    mailTo: Ext.getCmp("txtMailTo").getValue(),
+                    emailServerDefault: emailDefault
+                };
+                /*----------------------------------********---------------------------------*/
+            } else {
+                //MAIL
+                p = {
+                    option: option,
+
+                    cboEmailEngine: typeEmailEngine,
+                    fromMail: Ext.getCmp("txtFromMail").getValue(),
+                    fromName: Ext.getCmp("txtFromName").getValue(),
+                    sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
+                    mailTo: Ext.getCmp("txtMailTo").getValue(),
+                    emailServerDefault: emailDefault
+                };
+            }
+
             switch (option) {
-                case "INS":
-                    var typeEmailEngine = Ext.getCmp("cboEmailEngine").getValue();
-
-
-                    if (typeEmailEngine == "PHPMAILER") {
-                        var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
-                        var smtpSecure = rdoGrpOption.getGroupValue();
-
-                        p = {
-                            option: option,
-
-                            cboEmailEngine: typeEmailEngine,
-                            server: Ext.getCmp("txtServer").getValue(),
-                            port: Ext.getCmp("txtPort").getValue(),
-                            reqAuthentication: (Ext.getCmp("chkReqAuthentication").checked)? 1 : 0,
-                            accountFrom: Ext.getCmp("txtAccountFrom").getValue(),
-                            password: Ext.getCmp("txtPassword").getValue(),
-                            fromMail: Ext.getCmp("txtFromMail").getValue(),
-                            fromName: Ext.getCmp("txtFromName").getValue(),
-                            smtpSecure: smtpSecure,
-                            sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
-                            mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: emailDefault
-                        };
-                    } else {
-                        //MAIL
-                        p = {
-                            option: option,
-
-                            cboEmailEngine: typeEmailEngine,
-                            fromMail: Ext.getCmp("txtFromMail").getValue(),
-                            fromName: Ext.getCmp("txtFromName").getValue(),
-                            sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
-                            mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: emailDefault
-                        };
-                    }
-                    break;
                 case "UPD":
-                    var typeEmailEngine = Ext.getCmp("cboEmailEngine").getValue();
-
-                    if (typeEmailEngine == "PHPMAILER") {
-                        var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
-                        var smtpSecure = rdoGrpOption.getGroupValue();
-
-                        p = {
-                            option: option,
-                            emailServerUid: emailServerUid,
-
-                            cboEmailEngine: typeEmailEngine,
-                            server: Ext.getCmp("txtServer").getValue(),
-                            port: Ext.getCmp("txtPort").getValue(),
-                            reqAuthentication: (Ext.getCmp("chkReqAuthentication").checked)? 1 : 0,
-                            accountFrom: Ext.getCmp("txtAccountFrom").getValue(),
-                            password: Ext.getCmp("txtPassword").getValue(),
-                            fromMail: Ext.getCmp("txtFromMail").getValue(),
-                            fromName: Ext.getCmp("txtFromName").getValue(),
-                            smtpSecure: smtpSecure,
-                            sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
-                            mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: emailDefault
-                        };
-                    } else {
-                        //MAIL
-                        p = {
-                            option: option,
-                            emailServerUid: emailServerUid,
-
-                            cboEmailEngine: typeEmailEngine,
-                            fromMail: Ext.getCmp("txtFromMail").getValue(),
-                            fromName: Ext.getCmp("txtFromName").getValue(),
-                            sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
-                            mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: emailDefault
-                        };
-                    }
+                    p.emailServerUid = emailServerUid;
                     break;
                 case "DEL":
                     p = {
                         option: option,
                         emailServerUid: emailServerUid
                     };
-                    break;
-                //case "LST":
-                //    break;
-                case "TEST":
-                    var typeEmailEngine = Ext.getCmp("cboEmailEngine").getValue();
-
-                    if (typeEmailEngine == "PHPMAILER") {
-                        var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
-                        var smtpSecure = rdoGrpOption.getGroupValue();
-
-                        p = {
-                            option: option,
-
-                            cboEmailEngine: typeEmailEngine,
-                            server: Ext.getCmp("txtServer").getValue(),
-                            port: Ext.getCmp("txtPort").getValue(),
-                            reqAuthentication: (Ext.getCmp("chkReqAuthentication").checked)? 1 : 0,
-                            accountFrom: Ext.getCmp("txtAccountFrom").getValue(),
-                            password: Ext.getCmp("txtPassword").getValue(),
-                            fromMail: Ext.getCmp("txtFromMail").getValue(),
-                            fromName: Ext.getCmp("txtFromName").getValue(),
-                            smtpSecure: smtpSecure,
-                            sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
-                            mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: emailDefault
-                        };
-                    } else {
-                        //MAIL
-                        p = {
-                            option: option,
-
-                            cboEmailEngine: typeEmailEngine,
-                            fromMail: Ext.getCmp("txtFromMail").getValue(),
-                            fromName: Ext.getCmp("txtFromName").getValue(),
-                            sendTestMail: (Ext.getCmp("chkSendTestMail").checked)? 1 : 0,
-                            mailTo: Ext.getCmp("txtMailTo").getValue(),
-                            emailServerDefault: emailDefault
-                        };
-                    }
                     break;
             }
 
@@ -240,10 +187,15 @@ emailServer.application = {
 
                     Ext.getCmp("txtServer").allowBlank = true;
                     Ext.getCmp("txtPort").allowBlank = true;
+                    Ext.getCmp("txtIncomingServer").allowBlank = true;
+                    Ext.getCmp("txtIncomingPort").allowBlank = true;
                     Ext.getCmp("txtAccountFrom").allowBlank = true;
 
                     Ext.getCmp("txtServer").setValue("");
                     Ext.getCmp("txtPort").setValue("");
+
+                    Ext.getCmp("txtIncomingServer").setValue("");
+                    Ext.getCmp("txtIncomingPort").setValue("");
 
                     Ext.getCmp("chkReqAuthentication").setValue(false);
 
@@ -286,6 +238,9 @@ emailServer.application = {
                         Ext.getCmp("txtServer").setValue(record.get("MESS_SERVER"));
                         Ext.getCmp("txtPort").setValue((record.get("MESS_PORT") != 0)? record.get("MESS_PORT") : "");
 
+                        Ext.getCmp("txtIncomingServer").setValue(record.get("MESS_INCOMING_SERVER"));
+                        Ext.getCmp("txtIncomingPort").setValue((record.get("MESS_INCOMING_PORT") !== 0)? record.get("MESS_INCOMING_PORT") : "");
+
                         Ext.getCmp("chkReqAuthentication").setValue((parseInt(record.get("MESS_RAUTH")) == 1)? true : false);
 
                         emailServerSetPassword(Ext.getCmp("chkReqAuthentication").checked);
@@ -323,9 +278,20 @@ emailServer.application = {
         {
             Ext.getCmp("frmEmailServer").getForm().clearInvalid();
 
-            if (cboEmailEngine == "PHPMAILER") {
+            if (cboEmailEngine === "PHPMAILER") {
                 Ext.getCmp("txtServer").setVisible(true);
                 Ext.getCmp("txtPort").setVisible(true);
+
+                try {
+                    Ext.getCmp("txtServer").label.update(_("ID_SERVER"));
+                    Ext.getCmp("txtPort").label.update(_("PORT_DEFAULT"));
+                } catch (err) {
+                    Ext.getCmp("txtServer").fieldLabel = _("ID_SERVER");
+                    Ext.getCmp("txtPort").fieldLabel = _("PORT_DEFAULT");
+                }
+
+                Ext.getCmp("txtIncomingServer").setVisible(false);
+                Ext.getCmp("txtIncomingPort").setVisible(false);
 
                 Ext.getCmp("chkReqAuthentication").setVisible(true);
 
@@ -336,11 +302,45 @@ emailServer.application = {
 
                 Ext.getCmp("txtServer").allowBlank = false;
                 Ext.getCmp("txtPort").allowBlank = false;
+                Ext.getCmp("txtIncomingServer").allowBlank = true;
+                Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
+            } else if (cboEmailEngine === "IMAP") {
+                /*----------------------------------********---------------------------------*/
+                Ext.getCmp("txtServer").setVisible(true);
+                Ext.getCmp("txtPort").setVisible(true);
+
+                try {
+                    Ext.getCmp("txtServer").label.update(_("ID_OUTGOING_SERVER"));
+                    Ext.getCmp("txtPort").label.update(_("OUTGOING_PORT_DEFAULT"));
+                } catch (err) {
+                    Ext.getCmp("txtServer").fieldLabel = _("ID_OUTGOING_SERVER");
+                    Ext.getCmp("txtPort").fieldLabel = _("OUTGOING_PORT_DEFAULT");
+                }
+
+                Ext.getCmp("txtIncomingServer").setVisible(true);
+                Ext.getCmp("txtIncomingPort").setVisible(true);
+
+                Ext.getCmp("chkReqAuthentication").setVisible(true);
+
+                emailServerSetPassword(Ext.getCmp("chkReqAuthentication").checked);
+
+                Ext.getCmp("txtAccountFrom").setVisible(true);
+                Ext.getCmp("rdoGrpSmtpSecure").setVisible(true);
+
+                Ext.getCmp("txtServer").allowBlank = false;
+                Ext.getCmp("txtPort").allowBlank = false;
+                Ext.getCmp("txtIncomingServer").allowBlank = false;
+                Ext.getCmp("txtIncomingPort").allowBlank = false;
+                Ext.getCmp("txtAccountFrom").allowBlank = false;
+                /*----------------------------------********---------------------------------*/
             } else {
                 //MAIL
                 Ext.getCmp("txtServer").setVisible(false);
                 Ext.getCmp("txtPort").setVisible(false);
+
+                Ext.getCmp("txtIncomingServer").setVisible(false);
+                Ext.getCmp("txtIncomingPort").setVisible(false);
 
                 Ext.getCmp("chkReqAuthentication").setVisible(false);
 
@@ -351,6 +351,8 @@ emailServer.application = {
 
                 Ext.getCmp("txtServer").allowBlank = true;
                 Ext.getCmp("txtPort").allowBlank = true;
+                Ext.getCmp("txtIncomingServer").allowBlank = true;
+                Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = true;
                 Ext.getCmp("txtPassword").allowBlank = true;
             }
@@ -384,7 +386,7 @@ emailServer.application = {
 
             FLAGTEST = 1;
 
-            if (option == "PHPMAILER") {
+            if (option === "PHPMAILER" || option === "IMAP") {
                 if (typeof(testData.resolving_name) != "undefined") {
                     if (testData.resolving_name.result) {
                         msg =  msg + "<img src = \"/images/select-icon.png\" width=\"17\" height=\"17\" style=\"margin-right: 0.9em; color: #0000FF;\" />" + testData.resolving_name.title + "<br />";
@@ -492,6 +494,8 @@ emailServer.application = {
                     {name: "MESS_ENGINE", type: "string"},
                     {name: "MESS_SERVER", type: "string"},
                     {name: "MESS_PORT", type: "int"},
+                    {name: "MESS_INCOMING_SERVER", type: "string"},
+                    {name: "MESS_INCOMING_PORT", type: "int"},
                     {name: "MESS_RAUTH", type: "int"},
                     {name: "MESS_ACCOUNT", type: "string"},
                     {name: "MESS_PASSWORD", type: "string"},
@@ -548,6 +552,9 @@ emailServer.application = {
 
             data: [
                 ["PHPMAILER", "SMTP (PHPMailer)"],
+                /*----------------------------------********---------------------------------*/
+                ["IMAP", "SMTP - IMAP (PHPMailer)"],
+                /*----------------------------------********---------------------------------*/
                 ["MAIL", "Mail (PHP)"]
             ]
         });
@@ -591,6 +598,24 @@ emailServer.application = {
             name: "txtPort",
 
             fieldLabel: _("PORT_DEFAULT"),  //Port (default 25)
+
+            anchor: "36%",
+            maxLength: 3,
+            emptyText: null
+        });
+
+        var txtIncomingServer = new Ext.form.TextField({
+            id: "txtIncomingServer",
+            name: "txtIncomingServer",
+
+            fieldLabel: _("ID_INCOMING_SERVER") //Server
+        });
+
+        var txtIncomingPort = new Ext.form.NumberField({
+            id: "txtIncomingPort",
+            name: "txtIncomingPort",
+
+            fieldLabel: _("INCOMING_PORT_DEFAULT"),  //Port (default 993)
 
             anchor: "36%",
             maxLength: 3,
@@ -745,7 +770,7 @@ emailServer.application = {
         var winData = new Ext.Window({
             layout: "fit",
             width: 550,
-            height: 388,
+            height: 450,
             //title: "",
             modal: true,
             resizable: false,
@@ -772,6 +797,8 @@ emailServer.application = {
                         cboEmailEngine,
                         txtServer,
                         txtPort,
+                        txtIncomingServer,
+                        txtIncomingPort,
                         chkReqAuthentication,
                         txtAccountFrom,
                         txtPassword,
@@ -997,6 +1024,16 @@ emailServer.application = {
             return (value != 0)? value : "-";
         };
 
+        var rendererMessIncomingServer = function (value)
+        {
+            return (value !== "")? value : "-";
+        };
+
+        var rendererMessIncomingPort = function (value)
+        {
+            return (value !== 0)? value : "-";
+        };
+
         var rendererMessSmtpSecure = function (value)
         {
             return (value != "")? value : "-";
@@ -1017,6 +1054,8 @@ emailServer.application = {
                 {id: "MESS_ENGINE", dataIndex: "MESS_ENGINE", hidden: false, header: _("EMAIL_ENGINE"), width: 80, hideable: true, align: "left"},
                 {id: "MESS_SERVER", dataIndex: "MESS_SERVER", hidden: false, header: _("ID_SERVER"), width: 150, hideable: true, align: "center", renderer: rendererMessServer},
                 {id: "MESS_PORT", dataIndex: "MESS_PORT", hidden: false, header: _("ID_EMAIL_SERVER_PORT"), width: 50,  hideable: true, align: "center", renderer: rendererMessPort},
+                {id: "MESS_INCOMING_SERVER", dataIndex: "MESS_INCOMING_SERVER", hidden: true, header: _("ID_INCOMING_SERVER"), width: 150, hideable: true, align: "center", renderer: rendererMessIncomingServer},
+                {id: "MESS_INCOMING_PORT", dataIndex: "MESS_INCOMING_PORT", hidden: true, header: _("ID_EMAIL_SERVER_PORT"), width: 50,  hideable: true, align: "center", renderer: rendererMessIncomingPort},
                 {id: "MESS_RAUTH", dataIndex: "MESS_RAUTH", hidden: true,  header: _("REQUIRE_AUTHENTICATION"), width: 50,  hideable: false, align: "left"},
                 {id: "MESS_ACCOUNT", dataIndex: "MESS_ACCOUNT", hidden: false, header: _("ID_EMAIL_SERVER_ACCOUNT_FROM"), width: 130, hideable: true,  align: "left"},
                 {id: "MESS_PASSWORD", dataIndex: "MESS_PASSWORD", hidden: true,  header: _("ID_PASSWORD"), width: 130, hideable: false, align: "left"},
