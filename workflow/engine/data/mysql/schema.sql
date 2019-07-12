@@ -3257,9 +3257,9 @@ CREATE TABLE `JOBS_PENDING`
 	`queue` VARCHAR(255)  NOT NULL,
 	`payload` MEDIUMTEXT  NOT NULL,
 	`attempts` TINYINT(3)  NOT NULL,
-	`reserved_at` TINYINT(10),
-	`available_at` TINYINT(10)  NOT NULL,
-	`created_at` TINYINT(10)  NOT NULL,
+	`reserved_at` BIGINT(10),
+	`available_at` BIGINT(10)  NOT NULL,
+	`created_at` BIGINT(10)  NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `jobs_queue_index`(`queue`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';

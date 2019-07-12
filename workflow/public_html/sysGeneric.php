@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Http\Kernel;
 use ProcessMaker\Core\AppEvent;
+use ProcessMaker\Core\JobsManager;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
@@ -703,6 +704,11 @@ if (defined('DEBUG_SQL_LOG') && DEBUG_SQL_LOG) {
 } else {
     Propel::init(PATH_CORE . "config/databases.php");
 }
+
+/**
+ * JobsManager
+ */
+JobsManager::getSingleton()->init();
 
 //here we are loading all plugins registered
 //the singleton has a list of enabled plugins

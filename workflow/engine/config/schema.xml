@@ -5837,9 +5837,9 @@
         <column name="queue" type="VARCHAR" size="255" required="true"/>
         <column name="payload" type="LONGVARCHAR" required="true"/>
         <column name="attempts" type="TINYINT" size="3" required="true"/>
-        <column name="reserved_at" type="TINYINT" size="10" required="false"/>
-        <column name="available_at" type="TINYINT" size="10" required="true"/>
-        <column name="created_at" type="TINYINT" size="10" required="true"/>
+        <column name="reserved_at" type="BIGINT" size="10" required="false"/>
+        <column name="available_at" type="BIGINT" size="10" required="true"/>
+        <column name="created_at" type="BIGINT" size="10" required="true"/>
         <index name="jobs_queue_index">
             <index-column name="queue"/>
         </index>
