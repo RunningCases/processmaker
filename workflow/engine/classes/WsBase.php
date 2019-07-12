@@ -4,6 +4,7 @@ use ProcessMaker\BusinessModel\EmailServer;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 
 class WsBase
@@ -956,9 +957,6 @@ class WsBase
                 $msgError = "The default configuration wasn't defined";
             }
 
-            $spool = new SpoolRun();
-            $spool->setConfig($setup);
-
             $case = new Cases();
             $oldFields = $case->loadCase($appUid, $delIndex);
             if ($gmail == 1) {
@@ -1003,19 +1001,27 @@ class WsBase
                 isset($fieldsCase['PRO_ID']) ? $fieldsCase['PRO_ID'] : 0,
                 $this->getTaskId() ?$this->getTaskId():(isset($oldFields['TAS_ID'])? $oldFields['TAS_ID'] : 0)
             );
-            $spool->create($messageArray);
 
             $result = "";
             if ($gmail != 1) {
-                $spool->sendMail();
-
-                if ($spool->status == 'sent') {
-                    $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
-                } else {
-                    $result = new WsResponse(29, $spool->status . ' ' . $spool->error . print_r($setup, 1));
+                $closure = function() use ($setup, $messageArray, $gmail, $to) {
+                    $spool = new SpoolRun();
+                    $spool->setConfig($setup);
+                    $spool->create($messageArray);
+                    $spool->sendMail();
+                    return $spool;
+                };
+                $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
+                switch ($appMsgType) {
+                    case WsBase::MESSAGE_TYPE_EMAIL_EVENT:
+                    case WsBase::MESSAGE_TYPE_PM_FUNCTION:
+                        JobsManager::getSingleton()->dispatch('EmailEvent', $closure);
+                        break;
+                    default :
+                        JobsManager::getSingleton()->dispatch('Email', $closure);
+                        break;
                 }
             }
-
             return $result;
         } catch (Exception $e) {
             return new WsResponse(100, $e->getMessage());
