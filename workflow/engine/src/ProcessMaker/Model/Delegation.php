@@ -278,7 +278,7 @@ class Delegation extends Model
 
         // Search for an app/case number
         if ($filterBy == 'APP_NUMBER' && $search) {
-            $query->where('APP_DELEGATION.APP_NUMBER', 'LIKE', "%${search}%");
+            $query->where('APP_DELEGATION.APP_NUMBER', '=', $search);
         }
 
         // Date range filter
