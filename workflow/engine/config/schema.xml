@@ -2399,6 +2399,7 @@
         <column name="USR_LOGGED_NEXT_TIME" type="INTEGER" default="0"/>
         <column name="USR_PASSWORD_HISTORY" type="LONGVARCHAR" required="false"/>
         <column name="USR_SETTING_DESIGNER" type="LONGVARCHAR"/>
+        <column name="PMDYNAFORM_FIRST_TIME" type="CHAR" size="1" default="0"/>
     </table>
     <table name="ADDITIONAL_TABLES">
         <vendor type="mysql">
