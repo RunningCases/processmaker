@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Validation\MySQL57;
 
@@ -389,6 +390,21 @@ EOT
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_check_queries_incompatibilities");
 /*********************************************************************/
+
+/**
+ * This command executes "artisan" loading the workspace connection parameters
+ */
+CLI::taskName('artisan');
+CLI::taskDescription(<<<EOT
+    This command executes "artisan" loading the workspace parameters.
+Example:
+    ./processmaker artisan queue:work --workspace=workflow
+
+To see other command options please refer to the artisan help. 
+    php artisan --help
+EOT
+);
+CLI::taskRun("run_artisan");
 
 /**
  * Function run_info
@@ -1461,5 +1477,36 @@ function check_queries_incompatibilities($wsName)
         }
     } else {
         echo ">> No MySQL 5.7 incompatibilities in variables found for this workspace." . PHP_EOL;
+    }
+}
+
+/**
+ * This function obtains the connection parameters and passes them to the artisan. 
+ * All artisan options can be applied. For more information on artisan options use 
+ * php artisan --help
+ * @param array $args
+ */
+function run_artisan($args)
+{
+    $jobsManager = JobsManager::getSingleton()->init();
+    $workspace = $jobsManager->getOptionValueFromArguments($args, "--workspace");
+    if ($workspace !== false) {
+        config(['system.workspace' => $workspace]);
+
+        $tries = $jobsManager->getOptionValueFromArguments($args, "--tries");
+        if ($tries === false) {
+            $tries = $jobsManager->getTries();
+        }
+
+        $processmakerPath = PROCESSMAKER_PATH;
+        $otherOptions = "--processmakerPath={$processmakerPath} ";
+
+        $options = implode(" ", $args)
+                . " --tries={$tries}";
+        CLI::logging("> artisan {$options}\n");
+
+        passthru(PHP_BINARY . " artisan {$otherOptions} {$options}");
+    } else {
+        CLI::logging("> The --workspace option is undefined.\n");
     }
 }
