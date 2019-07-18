@@ -56,6 +56,33 @@ class JobsManager
     ];
 
     /**
+     * Get delay property.
+     * @return int
+     */
+    public function getDelay()
+    {
+        return $this->delay;
+    }
+
+    /**
+     * Get tries property.
+     * @return int
+     */
+    public function getTries()
+    {
+        return $this->tries;
+    }
+
+    /**
+     * Get retryAfter property.
+     * @return int
+     */
+    public function getRetryAfter()
+    {
+        return $this->retryAfter;
+    }
+
+    /**
      * It obtains a single object to be used as a record of the whole environment.
      * 
      * @return object
@@ -70,6 +97,7 @@ class JobsManager
 
     /**
      * This initialize environment configuration values.
+     * @return JobsManager
      */
     public function init()
     {
@@ -79,6 +107,7 @@ class JobsManager
         $this->retryAfter = $envs['retry_after'];
 
         config(['queue.connections.database.retry_after' => $this->retryAfter]);
+        return $this;
     }
 
     /**
@@ -166,5 +195,25 @@ class JobsManager
         $instance->delay($this->delay);
 
         return $instance;
+    }
+
+    /**
+     * This gets the value of the option specified in the second parameter from an 
+     * array that represents the arguments.
+     * If the option is not found, it returns false.
+     * @param array $arguments
+     * @param string $option
+     * @return string|boolean
+     */
+    public function getOptionValueFromArguments($arguments, $option, $allocationSeparator = "=")
+    {
+        $option = $option . $allocationSeparator;
+        $result = preg_grep("/{$option}/", $arguments);
+        if (empty($result)) {
+            return false;
+        }
+        $string = array_pop($result);
+        $value = str_replace($option, "", $string);
+        return trim($value);
     }
 }
