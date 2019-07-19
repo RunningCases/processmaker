@@ -1493,19 +1493,17 @@ function run_artisan($args)
     if ($workspace !== false) {
         config(['system.workspace' => $workspace]);
 
+        $sw = in_array($args[0], ['queue:work', 'queue:listen']);
         $tries = $jobsManager->getOptionValueFromArguments($args, "--tries");
-        if ($tries === false) {
+        if ($sw === true && $tries === false) {
             $tries = $jobsManager->getTries();
+            array_push($args, "--tries={$tries}");
         }
+        array_push($args, "--processmakerPath=" . PROCESSMAKER_PATH);
 
-        $processmakerPath = PROCESSMAKER_PATH;
-        $otherOptions = "--processmakerPath={$processmakerPath} ";
-
-        $options = implode(" ", $args)
-                . " --tries={$tries}";
-        CLI::logging("> artisan {$options}\n");
-
-        passthru(PHP_BINARY . " artisan {$otherOptions} {$options}");
+        $command = "artisan " . implode(" ", $args);
+        CLI::logging("> {$command}\n");
+        passthru(PHP_BINARY . " {$command}");
     } else {
         CLI::logging("> The --workspace option is undefined.\n");
     }
