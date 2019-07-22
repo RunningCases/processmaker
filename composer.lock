@@ -2275,6 +2275,58 @@
             "time": "2016-01-26T13:27:02+00:00"
         },
         {
+            "name": "php-imap/php-imap",
+            "version": "3.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/barbushin/php-imap.git",
+                "reference": "d4f8ef4504dfb555857241aa7d1e414a1c229079"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/barbushin/php-imap/zipball/d4f8ef4504dfb555857241aa7d1e414a1c229079",
+                "reference": "d4f8ef4504dfb555857241aa7d1e414a1c229079",
+                "shasum": ""
+            },
+            "require": {
+                "ext-imap": "*",
+                "php": ">=5.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpImap\\": "src/PhpImap"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sergey Barbushin",
+                    "email": "barbushin@gmail.com",
+                    "homepage": "http://linkedin.com/in/barbushin"
+                }
+            ],
+            "description": "Manage mailboxes, filter/get/delete emails in PHP (supports IMAP/POP3/NNTP)",
+            "homepage": "https://github.com/barbushin/php-imap",
+            "keywords": [
+                "imap",
+                "mail",
+                "mailbox",
+                "php",
+                "pop3",
+                "receive emails"
+            ],
+            "time": "2017-12-22T12:53:34+00:00"
+        },
+        {
             "name": "phpmailer/phpmailer",
             "version": "v5.2.27",
             "source": {

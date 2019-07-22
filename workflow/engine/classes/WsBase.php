@@ -6,6 +6,7 @@ use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
+use ProcessMaker\Util\WsMessageResponse;
 
 class WsBase
 {
@@ -1011,14 +1012,20 @@ class WsBase
                     $spool->sendMail();
                     return $spool;
                 };
-                $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
+                $result = new WsMessageResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
                 switch ($appMsgType) {
                     case WsBase::MESSAGE_TYPE_EMAIL_EVENT:
                     case WsBase::MESSAGE_TYPE_PM_FUNCTION:
                         JobsManager::getSingleton()->dispatch('EmailEvent', $closure);
                         break;
                     default :
-                        JobsManager::getSingleton()->dispatch('Email', $closure);
+                        $spool = $closure();
+                        if ($spool->status == 'sent') {
+                            $result = new WsMessageResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
+                            $result->setAppMessUid($spool->getSpoolId());
+                        } else {
+                            $result = new WsResponse(29, $spool->status . ' ' . $spool->error . PHP_EOL . print_r($setup, 1));
+                        }
                         break;
                 }
             }
