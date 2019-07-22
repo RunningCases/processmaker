@@ -220,10 +220,10 @@ class DelegationTest extends TestCase
         // Create a new delegation, but for this specific user
         factory(Delegation::class)->create([
             'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->id
+            'USR_ID' => $user->USR_ID
         ]);
         // Now fetch results, and assume delegation count is 1 and the user points to our user
-        $results = Delegation::search($user->id);
+        $results = Delegation::search($user->USR_ID);
         $this->assertCount(1, $results['data']);
         $this->assertEquals('testcaseuser', $results['data'][0]['USRCR_USR_USERNAME']);
     }
@@ -644,7 +644,7 @@ class DelegationTest extends TestCase
         // Create a new delegation, but for this specific user
         factory(Delegation::class)->create([
             'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->id
+            'USR_ID' => $user->USR_ID
         ]);
         $user = factory(User::class)->create([
             'USR_USERNAME' => 'paul',
@@ -654,7 +654,7 @@ class DelegationTest extends TestCase
         // Create a new delegation, but for this specific user
         factory(Delegation::class)->create([
             'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->id
+            'USR_ID' => $user->USR_ID
         ]);
         // Now fetch results, and assume delegation count is 2 and the ordering ascending return Gary
         $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_CURRENT_USER');

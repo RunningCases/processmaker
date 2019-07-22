@@ -5,6 +5,7 @@ use ProcessMaker\BusinessModel\EmailServer;
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\System;
+use ProcessMaker\Util\WsMessageResponse;
 
 class WsBase
 {
@@ -1010,7 +1011,8 @@ class WsBase
                 $spool->sendMail();
 
                 if ($spool->status == 'sent') {
-                    $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
+                    $result = new WsMessageResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
+                    $result->setAppMessUid($spool->getSpoolId());
                 } else {
                     $result = new WsResponse(29, $spool->status . ' ' . $spool->error . print_r($setup, 1));
                 }
