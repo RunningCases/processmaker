@@ -67,7 +67,7 @@
             "ProcessMaker\\": "workflow/engine/src"
         },
         "psr-4": {
-            "App\\": "app/",
+                "App\\": "app/",
             "Maveriks\\": "framework/src/Maveriks/",
             "Tests\\": "tests/"
         },
