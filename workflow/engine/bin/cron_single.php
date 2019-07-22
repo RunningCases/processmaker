@@ -20,6 +20,7 @@ require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
 require_once __DIR__ . '/../../../bootstrap/app.php';
 
+use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -254,6 +255,11 @@ try {
 
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
+        
+        /**
+         * JobsManager
+         */
+        JobsManager::getSingleton()->init();
 
         // We load plugins' pmFunctions
         $oPluginRegistry = PluginRegistry::loadSingleton();

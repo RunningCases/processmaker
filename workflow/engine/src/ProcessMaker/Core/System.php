@@ -30,7 +30,7 @@ class System
     private static $config = null;
     private static $debug = null;
     private static $instance;
-    private static $defaultConfig = array(
+    private static $defaultConfig = [
         'debug' => 0,
         'debug_sql' => 0,
         'debug_time' => 0,
@@ -70,8 +70,11 @@ class System
         'google_map_signature' => '',
         'logging_level' => 'INFO', 
         'upload_attempts_limit_per_user' => '60,1',
-        'files_white_list' => ''
-    );
+        'files_white_list' => '',
+        'delay' => '0',
+        'tries' => '10',
+        'retry_after' => '90'
+    ];
 
     /**
      * List currently installed plugins
