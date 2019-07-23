@@ -60681,6 +60681,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_RESTORING_CASE','en','Restoring case','2015-09-15') ,
 ( 'LABEL','ID_RESULT','en','Result','2014-01-15') ,
 ( 'LABEL','ID_RESUME','en','Resume','2014-01-15') ,
+( 'LABEL','ID_RETURN_ADVANCED_SEARCH','en','Return','2019-07-17') ,
 ( 'LABEL','ID_RIGHT','en','right','2014-09-18') ,
 ( 'LABEL','ID_RIGHT_MARGIN','en','Right Margin','2014-01-15') ,
 ( 'LABEL','ID_ROLE','en','Role','2014-01-15') ,

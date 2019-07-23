@@ -22788,6 +22788,12 @@ msgid "[LABEL/ID_RESUME] Resume"
 msgstr "Resume"
 
 # TRANSLATION
+# LABEL/ID_RETURN_ADVANCED_SEARCH
+#: LABEL/ID_RETURN_ADVANCED_SEARCH
+msgid "Return"
+msgstr "Return"
+
+# TRANSLATION
 # LABEL/ID_RIGHT
 #: LABEL/ID_RIGHT
 msgid "right"
