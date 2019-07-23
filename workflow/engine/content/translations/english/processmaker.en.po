@@ -23868,6 +23868,12 @@ msgid "Show or hide the Cases Steps"
 msgstr "Show or hide the Cases Steps"
 
 # TRANSLATION
+# LABEL/ID_SHOW_RETURN_ADVANCED_SEARCH
+#: LABEL/ID_SHOW_RETURN_ADVANCED_SEARCH
+msgid "Return to Advanced Search"
+msgstr "Return to Advanced Search"
+
+# TRANSLATION
 # LABEL/ID_SIGN_IN
 #: LABEL/ID_SIGN_IN
 msgid "Sign In"
