@@ -52,6 +52,8 @@
         <env name="MSSQL_DATABASE" value="testexternal" />
         <env name="MSSQL_USERNAME" value="test" />
         <env name="MSSQL_PASSWORD" value="test" />
+        <!--Define if we use a populated database-->
+        <env name="POPULATE_DATABASE" value="false" />
         <!--Performance Mysql test-->
         <env name="RUN_MYSQL_PERFORMANCE_TESTS" value="false" />
         <!--Php variables-->
