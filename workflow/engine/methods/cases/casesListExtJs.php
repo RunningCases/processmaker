@@ -134,7 +134,8 @@ if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "
     }
 }
 
-//get values for the comboBoxes
+//Get values for the comboBoxes
+$processes = [];
 $processes[] = ['', G::LoadTranslation('ID_ALL_PROCESS')];
 $status = getStatusArray($action);
 $category = getCategoryArray();
@@ -223,6 +224,7 @@ G::RenderPage('publish', 'extJs');
 */
 function getCategoryArray()
 {
+    $category = [];
     $category[] = ["", G::LoadTranslation("ID_ALL_CATEGORIES")];
 
     $criteria = new Criteria('workflow');
