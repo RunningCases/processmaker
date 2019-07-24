@@ -22788,6 +22788,12 @@ msgid "[LABEL/ID_RESUME] Resume"
 msgstr "Resume"
 
 # TRANSLATION
+# LABEL/ID_RETURN_ADVANCED_SEARCH
+#: LABEL/ID_RETURN_ADVANCED_SEARCH
+msgid "Return"
+msgstr "Return"
+
+# TRANSLATION
 # LABEL/ID_RIGHT
 #: LABEL/ID_RIGHT
 msgid "right"
@@ -23866,6 +23872,12 @@ msgstr "Show Dirs"
 #: LABEL/ID_SHOW_HIDE_CASES_STEPS
 msgid "Show or hide the Cases Steps"
 msgstr "Show or hide the Cases Steps"
+
+# TRANSLATION
+# LABEL/ID_SHOW_RETURN_ADVANCED_SEARCH
+#: LABEL/ID_SHOW_RETURN_ADVANCED_SEARCH
+msgid "Return to Advanced Search"
+msgstr "Return to Advanced Search"
 
 # TRANSLATION
 # LABEL/ID_SIGN_IN
