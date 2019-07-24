@@ -60864,6 +60864,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SHOW_CASES_NOTES','en','Show Case Notes','2014-01-15') ,
 ( 'LABEL','ID_SHOW_DIRS','en','Show Dirs','2014-01-15') ,
 ( 'LABEL','ID_SHOW_HIDE_CASES_STEPS','en','Show or hide the Cases Steps','2014-01-15') ,
+( 'LABEL','ID_SHOW_RETURN_ADVANCED_SEARCH','en','Return to Advanced Search','2017-07-23') ,
 ( 'LABEL','ID_SIGN_IN','en','Sign In','2014-01-15') ,
 ( 'LABEL','ID_SIGN_OUT','en','Sign out','2014-01-15') ,
 ( 'LABEL','ID_SIMPLE_REPORT','en','Simple Report','2014-01-15') ,
