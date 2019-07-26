@@ -505,4 +505,55 @@ class Delegation extends Model
 
         return $query->count();
     }
+
+    /**
+     * This function get the current user related to the specific case and index
+     *
+     * @param integer $appNumber, Case number
+     * @param integer $index, Index to review
+     * @param string $status, The status of the thread
+     *
+     * @return string
+     */
+    public static function getCurrentUser($appNumber, $index, $status = 'OPEN')
+    {
+        $query = Delegation::query()->select('USR_UID');
+        $query->where('APP_NUMBER', $appNumber);
+        $query->where('DEL_INDEX', $index);
+        $query->where('DEL_THREAD_STATUS', $status);
+        $query->first();
+        $results = $query->get();
+
+        $userUid = '';
+        $results->each(function ($item, $key) use (&$userUid) {
+            $userUid = $item->USR_UID;
+        });
+
+        return $userUid;
+    }
+
+    /**
+     * Return the open thread related to the task
+     *
+     * @param integer $appNumber, Case number
+     * @param string $tasUid, The task uid
+     *
+     * @return array
+     */
+    public static function getOpenThreads($appNumber, $tasUid)
+    {
+        $query = Delegation::query()->select();
+        $query->where('DEL_THREAD_STATUS', 'OPEN');
+        $query->where('DEL_FINISH_DATE', null);
+        $query->where('APP_NUMBER', $appNumber);
+        $query->where('TAS_UID', $tasUid);
+        $results = $query->get();
+
+        $arrayOpenThreads = [];
+        $results->each(function ($item, $key) use (&$arrayOpenThreads) {
+            $arrayOpenThreads = $item->toArray();
+        });
+
+        return $arrayOpenThreads;
+    }
 }

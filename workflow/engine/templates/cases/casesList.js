@@ -722,39 +722,6 @@ Ext.onReady ( function() {
         }
     });
 
-    var btnExecReassign = new Ext.Button ({
-        text: _('ID_REASSIGN_ALL'),
-        // text: 'Reassign All',
-        //    text: TRANSLATIONS.LABEL_SELECT_ALL,
-        handler: function(){
-
-            var rs = storeReassignCases.getModifiedRecords();
-            var sv = [];
-            for(var i = 0; i <= rs.length-1; i++){
-                //sv[i]= rs[i].data['name'];
-                sv[i]= rs[i].data;
-            }
-            var gridData = storeReassignCases.getModifiedRecords();
-
-            Ext.Ajax.request({
-                url: 'proxySaveReassignCasesList',
-                success: function(response) {
-                    newPopUp.hide();
-                    storeCases.reload();
-                },
-                params: { APP_UIDS:ids, data:Ext.util.JSON.encode(sv), selected:false }
-            });
-
-            /*
-             storeReassignCases.setBaseParam('selected', false);
-             var result = storeReassignCases.save();
-             newPopUp.hide();
-             storeCases.reload();
-             */
-            //storeReassignCases.reload();
-        }
-    });
-
     var ExecReassign = function () {
         newPopUp.hide();
         var rs = storeReassignCases.getModifiedRecords();
@@ -2554,7 +2521,6 @@ Ext.onReady ( function() {
     //newPopUp.add(reassignGrid);
     newPopUp.add(gridForm);
     newPopUp.addButton(btnExecReassignSelected);
-    //newPopUp.addButton(btnExecReassign);
     newPopUp.addButton(btnCloseReassign);
 
     function onItemToggle(item, pressed){

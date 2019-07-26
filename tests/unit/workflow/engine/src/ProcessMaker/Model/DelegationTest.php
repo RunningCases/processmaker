@@ -1553,4 +1553,183 @@ class DelegationTest extends TestCase
         $result = Delegation::countSelfService($user->USR_UID);
         $this->assertEquals(25, $result);
     }
+
+    /**
+     * This check if return the USR_UID assigned in the thread OPEN
+     *
+     * @covers Delegation::getCurrentUser
+     * @test
+     */
+    public function it_should_return_current_user_for_thread_open()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $user->USR_UID,
+        ]);
+
+        //Get the current user assigned in the open thread
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 2, 'OPEN');
+        $this->assertEquals($user->USR_UID, $result);
+    }
+
+    /**
+     * This check if return the USR_UID assigned in the thread CLOSED
+     *
+     * @covers Delegation::getCurrentUser
+     * @test
+     */
+    public function it_should_return_current_user_for_thread_closed()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+        ]);
+
+        //Get the current user assigned in the open thread
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 1, 'CLOSED');
+        $this->assertEquals($user->USR_UID, $result);
+    }
+
+    /**
+     * This check if return empty when the data does not exits
+     *
+     * @covers Delegation::getCurrentUser
+     * @test
+     */
+    public function it_should_return_empty_when_row_does_not_exist()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+        ]);
+
+        //Get the current user assigned in the open thread
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 3, 'CLOSED');
+        $this->assertEmpty($result);
+
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 3, 'OPEN');
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * This checks if return the open thread
+     *
+     * @covers Delegation::getOpenThreads
+     * @test
+     */
+    public function it_should_return_thread_open()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create task
+        $task = factory(Task::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_FINISH_DATE' => null,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $this->assertEquals($application->APP_NUMBER, $result['APP_NUMBER']);
+    }
+
+    /**
+     * This checks if return empty when the thread is CLOSED
+     *
+     * @covers Delegation::getOpenThreads
+     * @test
+     */
+    public function it_should_return_empty_when_thread_is_closed()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create task
+        $task = factory(Task::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * This checks if return empty when the data is not null
+     *
+     * @covers Delegation::getOpenThreads
+     * @test
+     */
+    public function it_should_return_empty_when_thread_finish_date_is_not_null()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create task
+        $task = factory(Task::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $this->assertEmpty($result);
+    }
 }
