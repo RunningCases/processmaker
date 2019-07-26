@@ -94,6 +94,15 @@
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
         </index>
+        <fulltext name="indexAppTitle">
+            <index-column name="APP_TITLE"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="APPLICATION"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexAppTitle"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </fulltext>
         <unique name="INDEX_APP_NUMBER">
             <unique-column name="APP_NUMBER"/>
         </unique>

@@ -252,7 +252,7 @@ class WorkspaceTools
 
         CLI::logging("* Start updating database schema...\n");
         $start = microtime(true);
-        $this->upgradeDatabase();
+        $this->upgradeDatabase(false);
         CLI::logging("* End updating database schema...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
         CLI::logging("* Start updating translations...\n");
@@ -807,16 +807,17 @@ class WorkspaceTools
                 $oldSchema[$table][$field['Field']]['Default'] = $field['Default'];
             }
 
-            //get indexes of each table  SHOW INDEX FROM `ADDITIONAL_TABLES`;   -- WHERE Key_name <> 'PRIMARY'
+            // Get indexes of each table  SHOW INDEX FROM `ADDITIONAL_TABLES`;
             $description = $database->executeQuery($database->generateTableIndexSQL($table));
             foreach ($description as $field) {
-                if (!isset($oldSchema[$table]['INDEXES'])) {
-                    $oldSchema[$table]['INDEXES'] = [];
+                $type = $field['Index_type'] != 'FULLTEXT' ? 'INDEXES' : 'FULLTEXT';
+                if (!isset($oldSchema[$table][$type])) {
+                    $oldSchema[$table][$type] = [];
                 }
-                if (!isset($oldSchema[$table]['INDEXES'][$field['Key_name']])) {
-                    $oldSchema[$table]['INDEXES'][$field['Key_name']] = [];
+                if (!isset($oldSchema[$table][$type][$field['Key_name']])) {
+                    $oldSchema[$table][$type][$field['Key_name']] = [];
                 }
-                $oldSchema[$table]['INDEXES'][$field['Key_name']][] = $field['Column_name'];
+                $oldSchema[$table][$type][$field['Key_name']][] = $field['Column_name'];
             }
 
         }
@@ -1050,8 +1051,10 @@ class WorkspaceTools
 
     /**
      * Upgrade the workspace database to the latest system schema
+     *
+     * @param bool $includeIndexes
      */
-    public function upgradeDatabase()
+    public function upgradeDatabase($includeIndexes = true)
     {
         $this->initPropel(true);
         P11835::$dbAdapter = $this->dbAdapter;
@@ -1059,7 +1062,7 @@ class WorkspaceTools
         $systemSchema = System::getSystemSchema($this->dbAdapter);
         $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// Get the RBAC Schema
         $this->registerSystemTables(array_merge($systemSchema, $systemSchemaRbac));
-        $this->upgradeSchema($systemSchema, false, false, false); // Without add indexes
+        $this->upgradeSchema($systemSchema, false, false, $includeIndexes);
         $this->upgradeSchema($systemSchemaRbac, false, true); // Perform upgrade to RBAC
         $this->upgradeData();
         $this->checkRbacPermissions();//check or add new permissions
@@ -1195,7 +1198,9 @@ class WorkspaceTools
 
         $changes = System::compareSchema($workspaceSchema, $schema);
 
-        $changed = (count($changes['tablesToAdd']) > 0 || count($changes['tablesToAlter']) > 0 || count($changes['tablesWithNewIndex']) > 0 || count($changes['tablesToAlterIndex']) > 0);
+        $changed = (count($changes['tablesToAdd']) > 0 || count($changes['tablesToAlter']) > 0 ||
+                    count($changes['tablesWithNewIndex']) > 0 || count($changes['tablesToAlterIndex']) > 0 ||
+                    count($changes['tablesWithNewFulltext']) > 0 || count($changes['tablesToAlterFulltext']) > 0);
 
         if ($checkOnly || (!$changed)) {
             if ($changed) {
@@ -1229,6 +1234,7 @@ class WorkspaceTools
 
         $tablesToAddColumns = [];
 
+        // Drop or change columns
         foreach ($changes['tablesToAlter'] as $tableName => $actions) {
             foreach ($actions as $action => $actionData) {
                 if ($action == 'ADD') {
@@ -1255,17 +1261,27 @@ class WorkspaceTools
             }
         }
 
+        // Add columns
         if (!empty($tablesToAddColumns)) {
             $upgradeQueries = [];
             foreach ($tablesToAddColumns as $tableName => $tableColumn) {
+                // Normal indexes to add
                 $indexes = [];
                 if (!empty($changes['tablesWithNewIndex'][$tableName]) && $includeIndexes) {
                     $indexes = $changes['tablesWithNewIndex'][$tableName];
                     unset($changes['tablesWithNewIndex'][$tableName]);
                 }
 
+                // "fulltext" indexes to add
+                $fulltextIndexes = [];
+                if (!empty($changes['tablesWithNewFulltext'][$tableName]) && $includeIndexes) {
+                    $fulltextIndexes = $changes['tablesWithNewFulltext'][$tableName];
+                    unset($changes['tablesWithNewFulltext'][$tableName]);
+                }
+
                 // Instantiate the class to execute the query in background
-                $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql($tableName, $tableColumn, $indexes), $rbac);
+                $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql($tableName,
+                    $tableColumn, $indexes, $fulltextIndexes), $rbac);
             }
 
             // Run queries in multiple threads
@@ -1282,14 +1298,24 @@ class WorkspaceTools
             }
         }
 
-        if (!empty($changes['tablesWithNewIndex']) && $includeIndexes) {
-            CLI::logging("-> " . count($changes['tablesWithNewIndex']) . " tables with indexes to add\n");
+        // Add indexes
+        if ((!empty($changes['tablesWithNewIndex']) || !empty($changes['tablesWithNewFulltext'])) && $includeIndexes) {
+            CLI::logging("-> " . (count($changes['tablesWithNewIndex']) + count($changes['tablesWithNewFulltext'])) .
+                " tables with indexes to add\n");
             $upgradeQueries = [];
+
+            // Add normal indexes
             foreach ($changes['tablesWithNewIndex'] as $tableName => $indexes) {
                 // Instantiate the class to execute the query in background
                 $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql($tableName, [], $indexes), $rbac);
             }
 
+            // Add "fulltext" indexes
+            foreach ($changes['tablesWithNewFulltext'] as $tableName => $fulltextIndexes) {
+                // Instantiate the class to execute the query in background
+                $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql($tableName, [], [], $fulltextIndexes), $rbac);
+            }
+
             // Run queries in multiple threads
             $processesManager = new ProcessesManager($upgradeQueries);
             $processesManager->run();
@@ -1304,16 +1330,30 @@ class WorkspaceTools
             }
         }
 
-        if (!empty($changes['tablesToAlterIndex']) && $includeIndexes) {
-            CLI::logging("-> " . count($changes['tablesToAlterIndex']) . " tables with indexes to alter\n");
+        // Change indexes
+        if ((!empty($changes['tablesToAlterIndex']) || !empty($changes['tablesToAlterFulltext'])) && $includeIndexes) {
+            CLI::logging("-> " . (count($changes['tablesToAlterIndex']) + count($changes['tablesToAlterFulltext'])) .
+                " tables with indexes to alter\n");
+
+            // Change normal indexes
             foreach ($changes['tablesToAlterIndex'] as $tableName => $indexes) {
                 foreach ($indexes as $indexName => $indexFields) {
                     $database->executeQuery($database->generateDropKeySQL($tableName, $indexName));
                     $database->executeQuery($database->generateAddKeysSQL($tableName, $indexName, $indexFields));
                 }
             }
+
+            // Change "fulltext" indexes
+            foreach ($changes['tablesToAlterFulltext'] as $tableName => $fulltextIndexes) {
+                foreach ($fulltextIndexes as $indexName => $indexFields) {
+                    $database->executeQuery($database->generateDropKeySQL($tableName, $indexName));
+                    $database->executeQuery($database->generateAddKeysSQL($tableName, $indexName, $indexFields, 'FULLTEXT'));
+                }
+            }
         }
 
+        // Ending the schema update
+        CLI::logging("-> Schema Updated\n");
         $this->closeDatabase();
         return true;
     }
@@ -2064,7 +2104,7 @@ class WorkspaceTools
                 // Upgrade the database schema and data
                 CLI::logging("* Start updating database schema...\n");
                 $start = microtime(true);
-                $workspace->upgradeDatabase();
+                $workspace->upgradeDatabase(false);
                 CLI::logging("* End updating database schema...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
                 CLI::logging("* Start checking MAFE requirements...\n");

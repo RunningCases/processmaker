@@ -225,7 +225,14 @@ class Delegation extends Model
         $query->join('APPLICATION', function ($join) use ($filterBy, $search, $status, $query) {
             $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
             if ($filterBy == 'APP_TITLE' && $search) {
-                $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
+                // Cleaning "fulltext" operators in order to avoid unexpected results
+                $search = str_replace(['-', '+', '<', '>', '(', ')', '~', '*', '"'], ['', '', '', '', '', '', '', '', ''], $search);
+
+                // Build the "fulltext" expression
+                $search = '+"' . preg_replace('/\s+/', '" +"', addslashes($search)) . '"';
+
+                // Searching using "fulltext" index
+                $join->whereRaw("MATCH(APPLICATION.APP_TITLE) AGAINST('{$search}' IN BOOLEAN MODE)");
             }
             // Based on the below, we can further limit the join so that we have a smaller data set based on join criteria
             switch ($status) {

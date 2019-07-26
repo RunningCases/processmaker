@@ -393,19 +393,20 @@ class database extends database_base
     }
 
     /**
-     * generate a sentence to add indexes or primary keys
+     * Generate a sentence to add indexes or primary keys
      *
      * @param string $table table name
      * @param string $indexName index name
      * @param array $keys array of keys
+     * @param string $indexType the index type
+     *
      * @return string sql sentence
      * @throws Exception
      */
 
-    public function generateAddKeysSQL($table, $indexName, $keys)
+    public function generateAddKeysSQL($table, $indexName, $keys, $indexType = 'INDEX')
     {
         try {
-            $indexType = 'INDEX';
             if ($indexName === 'primaryKey' || $indexName === 'PRIMARY') {
                 $indexType = 'PRIMARY';
                 $indexName = 'KEY';
@@ -1037,10 +1038,11 @@ class database extends database_base
      * @param string $tableName
      * @param array $columns
      * @param array $indexes
+     * @param array $fulltextIndexes
      *
      * @return string
      */
-    public function generateAddColumnsSql($tableName, $columns, $indexes = [])
+    public function generateAddColumnsSql($tableName, $columns, $indexes = [], $fulltextIndexes = [])
     {
         $indexesAlreadyAdded = [];
         $sql = 'ALTER TABLE ' . $this->sQuoteCharacter . $tableName . $this->sQuoteCharacter . ' ';
@@ -1080,6 +1082,7 @@ class database extends database_base
             }
             $sql .= ', ';
         }
+        // Add the normal indexes if are not "primaryKeys" already added
         foreach ($indexes as $indexName => $indexColumns) {
             $indexType = 'INDEX';
             if ($indexName === 'primaryKey' || $indexName === 'PRIMARY') {
@@ -1091,6 +1094,15 @@ class database extends database_base
                 }
             }
             $sql .= 'ADD ' . $indexType . ' ' . $indexName . ' (';
+            foreach ($indexColumns as $column) {
+                $sql .= $this->sQuoteCharacter . $column . $this->sQuoteCharacter . ', ';
+            }
+            $sql = substr($sql, 0, -2);
+            $sql .= '), ';
+        }
+        // Add the "fulltext" indexes always
+        foreach ($fulltextIndexes as $indexName => $indexColumns) {
+            $sql .= 'ADD FULLTEXT ' . $indexName . ' (';
             foreach ($indexColumns as $column) {
                 $sql .= $this->sQuoteCharacter . $column . $this->sQuoteCharacter . ', ';
             }
