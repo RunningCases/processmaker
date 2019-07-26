@@ -40,7 +40,8 @@ CREATE TABLE `APPLICATION`
 	KEY `indexApp`(`PRO_UID`, `APP_STATUS`, `APP_UID`),
 	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `indexAppStatus`(`APP_STATUS`),
-	KEY `indexAppCreateDate`(`APP_CREATE_DATE`)
+	KEY `indexAppCreateDate`(`APP_CREATE_DATE`),
+	FULLTEXT `indexAppTitle`(`APP_TITLE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The application';
 #-----------------------------------------------------------------------------
 #-- APP_SEQUENCE

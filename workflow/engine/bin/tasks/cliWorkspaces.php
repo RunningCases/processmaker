@@ -566,26 +566,20 @@ function run_database_import($args, $opts)
  * Check if we need to execute an external program for each workspace
  * If we apply the command for all workspaces we will need to execute one by one by redefining the constants
  * @param string $args, workspaceName that we need to apply the database-upgrade
- * @param string $opts
  *
  * @return void
  */
-function run_database_upgrade($args, $opts)
+function run_database_upgrade($args)
 {
     //Check if the command is executed by a specific workspace
     if (count($args) === 1) {
-        database_upgrade('upgrade', $args);
+        database_upgrade($args);
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
             passthru(PHP_BINARY . ' processmaker database-upgrade ' . $workspace->name);
         }
     }
-}
-
-function run_database_check($args, $opts)
-{
-    database_upgrade("check", $args);
 }
 
 function run_migrate_new_cases_lists($args, $opts)
@@ -605,44 +599,32 @@ function run_migrate_list_unassigned($args, $opts)
 
 /**
  * This function is executed only by one workspace
- * @param string $command, the specific actions must be: upgrade|check
  * @param array $args, workspaceName for to apply the database-upgrade
  *
  * @return void
  */
-function database_upgrade($command, $args)
+function database_upgrade($args)
 {
+    // Sanitize parameters sent
     $filter = new InputFilter();
-    $command = $filter->xssFilterHard($command);
     $args = $filter->xssFilterHard($args);
-    //Load the attributes for the workspace
-    $workspaces = get_workspaces_from_args($args);
-    $checkOnly = (strcmp($command, "check") == 0);
-    //Loop, read all the attributes related to the one workspace
-    $wsName = $workspaces[key($workspaces)]->name;
-    Bootstrap::setConstantsRelatedWs($wsName);
-    if ($checkOnly) {
-        print_r("Checking database in " . pakeColor::colorize($wsName, "INFO") . "\n");
-    } else {
-        print_r("Upgrading database in " . pakeColor::colorize($wsName, "INFO") . "\n");
-    }
 
+    // Load the attributes for the workspace
+    $workspaces = get_workspaces_from_args($args);
+
+    // Get the name of the first workspace
+    $wsName = $workspaces[key($workspaces)]->name;
+
+    // Initialize workspace values
+    Bootstrap::setConstantsRelatedWs($wsName);
+
+    // Print a informative message
+    print_r("Upgrading database in " . pakeColor::colorize($wsName, "INFO") . "\n");
+
+    // Loop to update the databases of all workspaces
     foreach ($workspaces as $workspace) {
         try {
-            $changes = $workspace->upgradeDatabase($checkOnly);
-            if ($changes != false) {
-                if ($checkOnly) {
-                    echo "> " . pakeColor::colorize("Run upgrade", "INFO") . "\n";
-                    echo "  Tables (add = " . count($changes['tablesToAdd']);
-                    echo ", alter = " . count($changes['tablesToAlter']) . ") ";
-                    echo "- Indexes (add = " . count($changes['tablesWithNewIndex']) . "";
-                    echo ", alter = " . count($changes['tablesToAlterIndex']) . ")\n";
-                } else {
-                    echo "-> Schema fixed\n";
-                }
-            } else {
-                echo "> OK\n";
-            }
+            $workspace->upgradeDatabase();
         } catch (Exception $e) {
             G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
         }

@@ -147,11 +147,13 @@ function run_upgrade($parameters, $args)
 
             // The previous actions should be executed only the first time
             $mainThread = false;
+
+            if ($numberOfWorkspaces === 1) {
+                // Displaying information of the unique workspace to upgrade
+                CLI::logging("UPGRADING DATABASE AND FILES OF WORKSPACE '{$workspace->name}' (1/1)\n");
+            }
         }
         if ($numberOfWorkspaces === 1) {
-            // Displaying information of the current workspace to upgrade
-            CLI::logging("UPGRADING DATABASE AND FILES OF WORKSPACE '{$workspace->name}' ($countWorkspace/$numberOfWorkspaces)\n");
-
             // Build parameters
             $arrayOptTranslation = [
                 'updateXml' => $updateXmlForms,
@@ -165,6 +167,9 @@ function run_upgrade($parameters, $args)
             $workspace->upgrade($workspace->name, SYS_LANG, $arrayOptTranslation, $optionMigrateHistoryData);
             $workspace->close();
         } else {
+            // Displaying information of the current workspace to upgrade
+            CLI::logging("UPGRADING DATABASE AND FILES OF WORKSPACE '{$workspace->name}' ($countWorkspace/$numberOfWorkspaces)\n");
+
             // Build arguments
             $args = '--child';
             $args .= $updateXmlForms ? '' : ' --no-xml';
