@@ -621,6 +621,7 @@
         <column name="GRP_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="GRP_TITLE" type="LONGVARCHAR" required="true"/>
         <column name="GRP_STATUS" type="CHAR" size="8" required="true" default="ACTIVE"/>
+        <column name="GRP_STATUS_ID" type="INTEGER" required="false" default="0"/>
         <column name="GRP_LDAP_DN" type="VARCHAR" size="255" required="true" default=""/>
         <column name="GRP_UX" type="VARCHAR" size="128" default="NORMAL"/>
         <validator column="GRP_STATUS">
@@ -655,6 +656,7 @@
         <column name="GRP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default="0"/>
         <column name="GRP_ID" type="INTEGER" required="false" default="0"/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
         <validator column="GRP_UID">
             <rule name="maxLength" value="32" message="Group UID can be no larger than ${value} in size"/>
             <rule name="required" message="Group UID is required."/>
@@ -991,6 +993,7 @@
         <column name="PRO_TIME" type="DOUBLE" required="true" default="1"/>
         <column name="PRO_TIMEUNIT" type="VARCHAR" size="20" required="true" null="yes" default="DAYS"/>
         <column name="PRO_STATUS" type="VARCHAR" size="20" required="true" default="ACTIVE"/>
+        <column name="PRO_STATUS_ID" type="INTEGER" required="false" default="0"/>
         <column name="PRO_TYPE_DAY" type="CHAR" size="1" required="true" default="0"/>
         <column name="PRO_TYPE" type="VARCHAR" size="256" required="true" default="NORMAL"/>
         <column name="PRO_ASSIGNMENT" type="VARCHAR" size="20" required="true" default="FALSE"/>
@@ -1024,6 +1027,7 @@
         <column name="PRO_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
         <column name="PRO_ITEE" type="INTEGER" required="true" default="0"/>
         <column name="PRO_ACTION_DONE" type="LONGVARCHAR"/>
+        <column name="CATEGORY_ID" type="INTEGER" required="false" default="0"/>
         <unique name="INDEX_PRO_ID">
             <unique-column name="PRO_ID"/>
         </unique>
@@ -1376,6 +1380,7 @@
             <parameter name="Comment" value="Task of workflow"/>
         </vendor>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="TAS_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="TAS_TITLE" type="LONGVARCHAR" required="true"/>
@@ -1541,9 +1546,11 @@
             <parameter name="Comment" value=""/>
         </vendor>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="TU_TYPE" type="INTEGER" required="true" primaryKey="true" default="1"/>
         <column name="TU_RELATION" type="INTEGER" required="true" primaryKey="true" default="0"/>
+        <column name="ASSIGNED_ID" type="INTEGER" required="false" default="0"/>
         <validator column="TAS_UID">
             <rule name="maxLength" value="32" message="Task UID can be no larger than ${value} in size"/>
             <rule name="required" message="Task UID is required."/>
@@ -3156,7 +3163,7 @@
         <column name="CALENDAR_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="OBJECT_TYPE" type="VARCHAR" size="100" required="true" default=""/>
     </table>
-    <table name="PROCESS_CATEGORY">
+    <table name="PROCESS_CATEGORY" idMethod="native">
         <vendor type="mysql">
             <parameter name="Name" value="PROCESS_CATEGORY"/>
             <parameter name="Engine" value="InnoDB"/>
@@ -3178,6 +3185,7 @@
             <parameter name="Comment" value="Calendar Holidays"/>
         </vendor>
         <column name="CATEGORY_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="CATEGORY_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="CATEGORY_PARENT" type="VARCHAR" size="32" required="true" default="0"/>
         <column name="CATEGORY_NAME" type="VARCHAR" size="100" required="true" default=""/>
         <column name="CATEGORY_ICON" type="VARCHAR" size="100" default=""/>
