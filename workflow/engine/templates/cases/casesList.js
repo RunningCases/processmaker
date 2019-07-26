@@ -908,21 +908,6 @@ Ext.onReady ( function() {
     /*----------------------------------********---------------------------------*/
     storeCases.on('load',function(){var viewport = Ext.getCmp("viewportcases");viewport.doLayout();})
 
-    // create the Data Store for processes
-    var storeProcesses = new Ext.data.JsonStore({
-        root: 'data',
-        totalProperty: 'totalCount',
-        idProperty: 'index',
-        remoteSort: true,
-        fields: [
-            'PRO_UID', 'APP_PRO_TITLE'
-        ],
-        proxy: new Ext.data.HttpProxy({
-            url: 'proxyProcessList?t=new'
-        })
-    });
-    storeProcesses.setDefaultSort('APP_PRO_TITLE', 'asc');
-
     // creating the button for filters
     var btnRead = new Ext.Button ({
         id: 'read',
@@ -1356,7 +1341,7 @@ Ext.onReady ( function() {
         //cls: 'x-form-toolbar-standardButton',
         handler: doSearch
     });
-  
+
     /**
      * Show loading Dialog
      */
@@ -1383,12 +1368,12 @@ Ext.onReady ( function() {
                     }
                     loadingMessage = Ext.Msg.show(commonSettings);
                     timeoutMark = false;
-                } 
+                }
             }, 2000);
     };
     /**
      * Show the error code.
-     * @param {*} errorCode 
+     * @param {*} errorCode
      */
     function showErrorMessage(errorCode) {
         var message;
@@ -1432,7 +1417,7 @@ Ext.onReady ( function() {
         storeCases.setBaseParam('dateFrom', dateFrom.getValue());
         storeCases.setBaseParam('dateTo', dateTo.getValue());
         storeCases.setBaseParam('search', searchText);
-        if ( action === 'search' ) { 
+        if ( action === 'search' ) {
             storeCases.setBaseParam('doSearch', true);
             storeCases.setBaseParam('process_label', suggestProcess.getRawValue());
             storeCases.setBaseParam('user_label', suggestUser.getRawValue());
@@ -1817,7 +1802,7 @@ Ext.onReady ( function() {
                             var smodelUsersToReassign = new Ext.grid.RowSelectionModel({
                                 singleSelect: true
                             });
-                            
+
                             var textareaReason = new Ext.form.TextArea({
                                 id: 'idTextareaReasonCasesList',
                                 disabled: true,
@@ -2496,11 +2481,11 @@ Ext.onReady ( function() {
                 typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.category ?
                 filtersValues.advanced.category : ""
             );
-            storeCases.setBaseParam("process", 
+            storeCases.setBaseParam("process",
                 typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process ?
                 filtersValues.advanced.process : ""
             );
-            storeCases.setBaseParam("filterStatus", 
+            storeCases.setBaseParam("filterStatus",
                 typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.filterStatus ?
                 filtersValues.advanced.filterStatus : ""
             );
@@ -2572,8 +2557,6 @@ Ext.onReady ( function() {
     //newPopUp.addButton(btnExecReassign);
     newPopUp.addButton(btnCloseReassign);
 
-    //storeProcesses.load();
-
     function onItemToggle(item, pressed){
         switch ( item.id ) {
             case 'read' :
@@ -2607,7 +2590,6 @@ Ext.onReady ( function() {
         storeCases.setBaseParam( 'start',  0 );
         storeCases.setBaseParam( 'limit',  pageSize );
         storeCases.load();
-        //storeProcesses.load();
     }
 
 
@@ -2677,7 +2659,7 @@ Ext.onReady ( function() {
         );
         // Loading process suggest
         suggestProcess.getStore().loadData([{
-            "PRO_UID": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process ? 
+            "PRO_UID": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process ?
                 filtersValues.advanced.process : "",
             "PRO_TITLE": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process_label ?
                 filtersValues.advanced.process_label : ""
@@ -2712,7 +2694,7 @@ Ext.onReady ( function() {
         );
         // Loading user suggest
         suggestUser.getStore().loadData([{
-            "USR_UID": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.user ? 
+            "USR_UID": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.user ?
                 filtersValues.advanced.user : "",
             "USR_FULLNAME": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.user_label ?
                 filtersValues.advanced.user_label : ""
