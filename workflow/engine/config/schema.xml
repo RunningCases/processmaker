@@ -3198,6 +3198,9 @@
         <column name="CATEGORY_PARENT" type="VARCHAR" size="32" required="true" default="0"/>
         <column name="CATEGORY_NAME" type="VARCHAR" size="100" required="true" default=""/>
         <column name="CATEGORY_ICON" type="VARCHAR" size="100" default=""/>
+        <unique name="INDEX_CATEGORY_ID">
+            <unique-column name="CATEGORY_ID"/>
+        </unique>
     </table>
     <table name="APP_NOTES">
         <vendor type="mysql">

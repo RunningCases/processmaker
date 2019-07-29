@@ -1553,7 +1553,8 @@ CREATE TABLE `PROCESS_CATEGORY`
 	`CATEGORY_PARENT` VARCHAR(32) default '0' NOT NULL,
 	`CATEGORY_NAME` VARCHAR(100) default '' NOT NULL,
 	`CATEGORY_ICON` VARCHAR(100) default '',
-	PRIMARY KEY (`CATEGORY_UID`)
+	PRIMARY KEY (`CATEGORY_UID`),
+	UNIQUE KEY `INDEX_CATEGORY_ID` (`CATEGORY_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Calendar Holidays';
 #-----------------------------------------------------------------------------
 #-- APP_NOTES
