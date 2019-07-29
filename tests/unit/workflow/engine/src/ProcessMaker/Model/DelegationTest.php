@@ -3,6 +3,7 @@ namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\AppAssignSelfServiceValue;
 use ProcessMaker\Model\AppAssignSelfServiceValueGroup;
 use ProcessMaker\Model\Application;
@@ -19,7 +20,6 @@ use Tests\TestCase;
 class DelegationTest extends TestCase
 {
     use DatabaseTransactions;
-
     /**
      * This checks to make sure pagination is working properly
      * @test
@@ -229,77 +229,82 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This ensures searching by case number and review the page
+     * This ensures searching by case number and review the order
      * @test
      */
-    public function it_should_search_by_case_id_and_pages_of_data()
+    public function it_should_search_by_case_id_and_order_of_data()
     {
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001
+            'APP_NUMBER' => 11
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2010
+            'APP_NUMBER' => 111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2011
+            'APP_NUMBER' => 1111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2012
+            'APP_NUMBER' => 11111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2013
+            'APP_NUMBER' => 111111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2014
+            'APP_NUMBER' => 1111111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2015
+            'APP_NUMBER' => 11111111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        // Get first page, the major case id
-        $results = Delegation::search(null, 0, 10, 1, null, null, 'DESC',
+        // Searching by a existent case number, result ordered in DESC mode
+        $results = Delegation::search(null, 0, 10, 11, null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(7, $results['data']);
-        $this->assertEquals(2015, $results['data'][0]['APP_NUMBER']);
-        // Get first page, the minor case id
-        $results = Delegation::search(null, 0, 10, 1, null, null, 'ASC',
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals(11, $results['data'][0]['APP_NUMBER']);
+        // Searching by another existent case number, result ordered in ASC mode
+        $results = Delegation::search(null, 0, 10, 11111, null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(7, $results['data']);
-        $this->assertEquals(2001, $results['data'][0]['APP_NUMBER']);
-        //Check the pagination
-        $results = Delegation::search(null, 0, 5, 1, null, null, 'DESC',
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals(11111, $results['data'][0]['APP_NUMBER']);
+        // Searching by another existent case number, result ordered in DESC mode
+        $results = Delegation::search(null, 0, 10, 1111111, null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(5, $results['data']);
-        $results = Delegation::search(null, 5, 2, 1, null, null, 'DESC',
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals(1111111, $results['data'][0]['APP_NUMBER']);
+        // Searching by a not existent case number, result ordered in DESC mode
+        $results = Delegation::search(null, 0, 10, 1000, null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(2, $results['data']);
+        $this->assertCount(0, $results['data']);
+        // Searching by a not existent case number, result ordered in ASC mode
+        $results = Delegation::search(null, 0, 10, 99999, null, null, 'ASC',
+            'APP_NUMBER', null, null, null, 'APP_NUMBER');
+        $this->assertCount(0, $results['data']);
     }
 
     /**
      * This ensures searching by case title and review the page
-     * case title contain the case number, ex: APP_TITLE = 'Request # @=APP_NUMBER'
      * @test
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_matches_case_title()
@@ -342,32 +347,42 @@ class DelegationTest extends TestCase
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_TITLE' => 3014,
+            'APP_NUMBER' => 3014,
             'APP_TITLE' => 'Request # 3014'
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
 
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
+
         // Get first page, the major case id
-        $results = Delegation::search(null, 0, 10, '1', null, null, 'DESC',
+        $results = Delegation::search(null, 0, 10, 'Request', null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(6, $results['data']);
+        $this->assertEquals(3014, $results['data'][0]['APP_NUMBER']);
         $this->assertEquals('Request # 3014', $results['data'][0]['APP_TITLE']);
 
         // Get first page, the minor case id
-        $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 0, 10, 'Request', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(6, $results['data']);
         $this->assertEquals(3001, $results['data'][0]['APP_NUMBER']);
         $this->assertEquals('Request # 3001', $results['data'][0]['APP_TITLE']);
-        //Check the pagination
-        $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
+
+        // Check the pagination
+        $results = Delegation::search(null, 0, 5, 'Request', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(5, $results['data']);
-        $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 5, 2, 'Request', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
+
+        // We need to clean the tables manually
+        // @todo: The "Delegation" factory should be improved, the create method always is creating a record in application table
+        DB::unprepared("TRUNCATE APPLICATION;");
+        DB::unprepared("TRUNCATE APP_DELEGATION;");
     }
 
     /**
@@ -420,7 +435,6 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures searching by case title and review the page
-     * case title does not match with case number (hertland use case)
      * @test
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_no_matches_case_title()
@@ -469,20 +483,29 @@ class DelegationTest extends TestCase
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
+
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
+
         // Get first page, the major case title
-        $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 0, 10, 'Abigail', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(6, $results['data']);
         $this->assertEquals(2001, $results['data'][0]['APP_NUMBER']);
         $this->assertEquals('Request from Abigail check nro 25001', $results['data'][0]['APP_TITLE']);
 
-        //Check the pagination
-        $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
+        // Check the pagination
+        $results = Delegation::search(null, 0, 5, 'Abigail', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(5, $results['data']);
-        $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 5, 2, 'Abigail', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
+
+        // We need to clean the tables manually
+        // @todo: The "Delegation" factory should be improved, the create method always is creating a record in application table
+        DB::unprepared("TRUNCATE APPLICATION;");
+        DB::unprepared("TRUNCATE APP_DELEGATION;");
     }
 
     /**
