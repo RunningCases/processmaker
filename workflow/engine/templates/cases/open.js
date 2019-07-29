@@ -512,9 +512,8 @@ Ext.onReady(function(){
                 text: _('ID_SHOW_RETURN_ADVANCED_SEARCH') 
             },
             toggleHandler: function (btn, pressed) {
-                if (history) {
-                    history.go(-1);
-                }
+                //Force to redirect to advanced search list from any side
+                location.href = 'casesListExtJs?action=search';
             }
         },
         {
