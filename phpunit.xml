@@ -11,11 +11,14 @@
          bootstrap="tests/bootstrap.php"
 >
     <testsuites>
-        <testsuite name="workflow">
-            <directory>./tests/workflow/engine/src/</directory>
+        <testsuite name="LegacyClasses">
+            <directory>./tests/unit/workflow/engine/classes/</directory>
+        </testsuite>
+        <testsuite name="Classes">
+            <directory>./tests/unit/workflow/engine/src/</directory>
         </testsuite>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/unit</directory>
+            <directory>./tests/unit/</directory>
         </testsuite>
         <testsuite name="Performance">
             <directory>./tests/Performance/</directory>
