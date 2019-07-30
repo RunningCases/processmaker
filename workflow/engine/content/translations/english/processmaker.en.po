@@ -12012,6 +12012,12 @@ msgid "Assigned User"
 msgstr "Assigned User"
 
 # TRANSLATION
+# LABEL/ID_MAFE_2928f47504bd55cbdcef8fdda552fc2b
+#: LABEL/ID_MAFE_2928f47504bd55cbdcef8fdda552fc2b
+msgid "is invalid"
+msgstr "is invalid"
+
+# TRANSLATION
 # LABEL/ID_MAFE_297b1df0a54c69676de34dc99824d08d
 #: LABEL/ID_MAFE_297b1df0a54c69676de34dc99824d08d
 msgid "<p>See <a href='http://momentjs.com/docs/#/displaying/format/' target='_blank'>http://momentjs.com/docs/#/displaying/format/</a>"
@@ -13738,6 +13744,12 @@ msgstr "Select Dynaform use in case."
 #: LABEL/ID_MAFE_671aa2e8cc2c2435cf509fa4a3baf26c
 msgid "Executive"
 msgstr "Executive"
+
+# TRANSLATION
+# LABEL/ID_MAFE_674d23008510332bf1d0952317f36db3
+#: LABEL/ID_MAFE_674d23008510332bf1d0952317f36db3
+msgid "The value provided for the Results limit property on the field"
+msgstr "The value provided for the Results limit property on the field"
 
 # TRANSLATION
 # LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5
