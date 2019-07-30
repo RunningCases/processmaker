@@ -13746,10 +13746,10 @@ msgid "Executive"
 msgstr "Executive"
 
 # TRANSLATION
-# LABEL/ID_MAFE_674d23008510332bf1d0952317f36db3
-#: LABEL/ID_MAFE_674d23008510332bf1d0952317f36db3
-msgid "The value provided for the Results limit property on the field"
-msgstr "The value provided for the Results limit property on the field"
+# LABEL/ID_MAFE_dca93bce65f782477fb0ae42abbc3af8
+#: LABEL/ID_MAFE_dca93bce65f782477fb0ae42abbc3af8
+msgid "The value provided for the Results limit property of the field"
+msgstr "The value provided for the Results limit property of the field"
 
 # TRANSLATION
 # LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5
