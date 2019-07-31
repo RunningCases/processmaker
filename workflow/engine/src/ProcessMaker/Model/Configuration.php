@@ -12,4 +12,6 @@ class Configuration extends Model
     protected $primaryKey = ['CFG_UID', 'OBJ_UID', 'PRO_UID', 'USR_UID', 'APP_UID'];
     // No timestamps
     public $timestamps = false;
+    
+    public $incrementing = false;
 }
