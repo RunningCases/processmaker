@@ -4,51 +4,26 @@ namespace Tests\unit\workflow\engine\classes;
 
 use Configurations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use ProcessMaker\Model\User;
+use ProcessMaker\Model\Configuration;
 use Tests\TestCase;
 
 class ConfigurationsTest extends TestCase
 {
     use DatabaseTransactions;
-    private $filters = [];
-
-    /**
-     * Define values of some parameters of the test
-     */
-    protected function setUp()
-    {
-        //Define filters
-        $filters = [];
-        $filters['category'] = ''; //Dropdown: Category id
-        $filters['columnSearch'] = 'APP_TITLE'; //Dropdown: filter by value
-        $filters['dateFrom'] = '2019-07-01'; //Date picker
-        $filters['dateTo'] = '2020-07-01'; //Date picker
-        $filters['dir'] = 'DESC';
-        $filters['limit'] = 15;
-        $filters['filterStatus'] = 3; //Dropdown: Status id
-        $filters['process'] = ''; //Suggest: Process id
-        $filters['process_label'] = ''; //Suggest: Process label
-        $filters['search'] = ''; //Text search
-        $filters['sort'] = 'APP_NUMBER';
-        $filters['start'] = 0;
-        $filters['user'] = ''; //Suggest: User id
-        $filters['user_label'] = ''; //Suggest: User label
-
-        $this->filters['advanced'] = $filters;
-    }
 
     /**
      * Review the user preferences when the user does not save filters
      * @covers Configurations::getUserPreferences
      * @test
      */
-    public function it_should_return_default_filters()
+    public function it_should_return_empty_preferences()
     {
-        $user = factory(User::class)->create();
-        $configuration = new Configurations();
+        //Define a user preferences empty
+        $configuration = factory(Configuration::class)->states('userPreferencesEmpty')->create();
 
         //Get the user preferences
-        $response = $configuration->getUserPreferences('FILTERS', $user->USR_UID);
+        $conf = new Configurations();
+        $response = $conf->getUserPreferences('FILTERS', $configuration->USR_UID);
 
         //Compare filters
         $this->assertEquals($response, ['advanced' => []]);
@@ -61,19 +36,32 @@ class ConfigurationsTest extends TestCase
      */
     public function it_should_return_filters_saved()
     {
-        //Define a user
-        $user = factory(User::class)->create();
+        //Define a user preferences related to the advanced search
+        $conf = new Configurations();
+        $filter = [];
+        $filter['category'] = ''; //Dropdown: Category id
+        $filter['columnSearch'] = 'APP_TITLE'; //Dropdown: filter by value
+        $filter['dateFrom'] = '2019-07-01'; //Date picker
+        $filter['dateTo'] = '2020-07-01'; //Date picker
+        $filter['dir'] = 'DESC';
+        $filter['limit'] = 15;
+        $filter['filterStatus'] = 3; //Dropdown: Status id
+        $filter['process'] = ''; //Suggest: Process id
+        $filter['process_label'] = ''; //Suggest: Process label
+        $filter['search'] = ''; //Text search
+        $filter['sort'] = 'APP_NUMBER';
+        $filter['start'] = 0;
+        $filter['user'] = ''; //Suggest: User id
+        $filter['user_label'] = ''; //Suggest: User label
+        $filters['advanced'] = $filter;
 
-        //Save the configuration defined
-        $configuration = new Configurations();
-        $configuration->aConfig['FILTERS'] = $this->filters;
-        $configuration->saveConfig('USER_PREFERENCES', '', '', $user->USR_UID);
-
-        //Get the user preferences
-        $response = $configuration->getUserPreferences('FILTERS', $user->USR_UID);
+        //Save the user preferences
+        $conf->aConfig['FILTERS']['advanced'] = $filter;
+        $conf->saveConfig('USER_PREFERENCES', '', '', '00000000000000000000000000000001');
+        $response = $conf->getUserPreferences('FILTERS', '00000000000000000000000000000001');
 
         //Compare filters
-        $this->assertEquals($response, $this->filters);
+        $this->assertEquals($response, $filters);
         //Review if some keys exist
         $this->assertArrayHasKey('category', $response['advanced']);
         $this->assertArrayHasKey('columnSearch', $response['advanced']);
