@@ -174,7 +174,7 @@ class Padl
      *
      * @access private
      * */
-    public function padl()
+    public function __construct()
     {
         # check to see if the class has been secured
         $this->_check_secure();
