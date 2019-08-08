@@ -37,6 +37,7 @@ class GroupTest extends TestCase
      */
     protected function setUp()
     {
+        parent::setUp();
         $this->setInstanceGroup(new Group());
     }
 
@@ -92,8 +93,16 @@ class GroupTest extends TestCase
      */
     public function testGetUsersAvailable($groupUid)
     {
+        $result = \ProcessMaker\Model\User::where('USERS.USR_STATUS', '<>', 'CLOSED')
+                ->whereNotIn('USERS.USR_UID', function($query) {
+                    $query->select('GROUP_USER.USR_UID')
+                    ->from('GROUP_USER');
+                })
+                ->whereNotIn('USERS.USR_UID', ['00000000000000000000000000000002'])
+                ->get()
+                ->toArray();
         $response = $this->getInstanceGroup()->getUsers('AVAILABLE-USERS', $groupUid);
-        $this->assertCount(1, $response);
+        $this->assertCount(count($result), $response);
     }
 
     /**

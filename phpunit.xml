@@ -59,6 +59,13 @@
         <env name="POPULATE_DATABASE" value="false" />
         <!--Performance Mysql test-->
         <env name="RUN_MYSQL_PERFORMANCE_TESTS" value="false" />
+        <!--email account-->
+        <env name="emailEngine" value="PHPMAILER" />
+        <env name="emailServer" value="smtp.gmail.com" />
+        <env name="emailPort" value="465" />
+        <env name="emailAccount" value="admin@processmaker.com" />
+        <env name="emailAccountPassword" value="" />
+        <env name="emailSecure" value="ssl" />
         <!--Php variables-->
         <var name="APP_ENV" value="testing" />
         <var name="SYS_SYS" value="test" />

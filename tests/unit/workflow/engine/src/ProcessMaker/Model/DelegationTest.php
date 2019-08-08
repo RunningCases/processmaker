@@ -1,6 +1,7 @@
 <?php
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
+use Faker\Factory;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -580,23 +581,24 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_process()
     {
+        $faker = Factory::create();
         factory(User::class, 100)->create();
         $process = factory(Process::class)->create([
-            'PRO_ID' => 2,
+            'PRO_ID' => $faker->unique()->numberBetween(1, 10000000),
             'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
         ]);
         factory(Delegation::class)->create([
             'PRO_ID' => $process->id
         ]);
         $process = factory(Process::class)->create([
-            'PRO_ID' => 1,
+            'PRO_ID' => $faker->unique()->numberBetween(1, 10000000),
             'PRO_TITLE' => 'China Supplier Payment Proposal'
         ]);
         factory(Delegation::class)->create([
             'PRO_ID' => $process->id
         ]);
         $process = factory(Process::class)->create([
-            'PRO_ID' => 3,
+            'PRO_ID' => $faker->unique()->numberBetween(1, 10000000),
             'PRO_TITLE' => 'Russia Supplier Payment Proposal'
         ]);
         factory(Delegation::class)->create([
@@ -1134,12 +1136,15 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         $process = factory(Process::class)->create();
         $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID,
             'APP_UID' => G::generateUniqueID()
         ]);
         factory(Delegation::class)->states('closed')->create([
+            'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID
         ]);
         factory(Delegation::class)->states('open')->create([
+            'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2
         ]);

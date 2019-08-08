@@ -13,9 +13,34 @@ class PmDynaformTest extends TestCase
     /**
      * Constructor of the class.
      */
-    function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
+        parent::__construct($name, $data, $dataName);
         $_SERVER["REQUEST_URI"] = "";
+        if (!defined("DB_ADAPTER")) {
+            define("DB_ADAPTER", "mysql");
+        }
+        if (!defined("DB_HOST")) {
+            define("DB_HOST", env('DB_HOST'));
+        }
+        if (!defined("DB_NAME")) {
+            define("DB_NAME", env('DB_DATABASE'));
+        }
+        if (!defined("DB_USER")) {
+            define("DB_USER", env('DB_USERNAME'));
+        }
+        if (!defined("DB_PASS")) {
+            define("DB_PASS", env('DB_PASSWORD'));
+        }
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        parent::setUp();
     }
 
     /**

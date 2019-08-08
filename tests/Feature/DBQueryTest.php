@@ -18,7 +18,7 @@ class DBQueryTest extends TestCase
      */
     protected function setUp()
     {
-        
+        parent::setUp();
     }
 
     /**
