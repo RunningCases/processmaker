@@ -23,7 +23,11 @@ if (file_exists($pathData)) {
     define('PATH_DATA', dirname(__DIR__) . '/shared/rbac/');
 }
 define('PATH_RBAC_CORE', dirname(__DIR__) . '/rbac/engine/');
-define('PATH_DB', dirname(__DIR__) . '/shared/sites/');
+if (file_exists($pathData)) {
+    define('PATH_DB', PATH_DATA . 'sites/');
+} else {
+    define('PATH_DB', dirname(__DIR__) . '/shared/sites/');
+}
 define('PATH_SEP', '/');
 define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
 define('SYS_LANG', 'en');

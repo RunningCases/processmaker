@@ -16,6 +16,7 @@ class CustomizeFormatterTest extends TestCase
      */
     protected function setUp()
     {
+        parent::setUp();
         self::$directory = PATH_TRUNK . '/storage/logs/';
     }
 
