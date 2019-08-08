@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: ProcessMaker (Branch 3.3.1)\n"
+"Project-Id-Version: ProcessMaker (Branch 3.4.0)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-05-20 19:36:15\n"
+"PO-Revision-Date: 2019-08-08 16:51:51\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -1700,12 +1700,6 @@ msgid "The answer has been submitted. Thank you."
 msgstr "The answer has been submitted. Thank you."
 
 # TRANSLATION
-# LABEL/ID_ABE_EMAIL_RESPONSE_BODY_NOTE
-#: LABEL/ID_ABE_EMAIL_RESPONSE_BODY_NOTE
-msgid "Please add your comments above this section. Don't modify or delete this section."
-msgstr "Please add your comments above this section. Don't modify or delete this section."
-
-# TRANSLATION
 # LABEL/ID_ABE_CASE_NOTE_ANSWER
 #: LABEL/ID_ABE_CASE_NOTE_ANSWER
 msgid "Answer: {optionLabel}"
@@ -1722,6 +1716,12 @@ msgstr "Comment: {emailBody}"
 #: LABEL/ID_ABE_CASE_NOTE_HEADER
 msgid "{emailAccount} has completed a task from Actions by Email."
 msgstr "{emailAccount} has completed a task from Actions by Email."
+
+# TRANSLATION
+# LABEL/ID_ABE_EMAIL_RESPONSE_BODY_NOTE
+#: LABEL/ID_ABE_EMAIL_RESPONSE_BODY_NOTE
+msgid "Please add your comments above this section. Don't modify or delete this section."
+msgstr "Please add your comments above this section. Don't modify or delete this section."
 
 # TRANSLATION
 # LABEL/ID_ABE_FORM_ALREADY_FILLED
@@ -9660,6 +9660,12 @@ msgid "Your Inbox is empty..."
 msgstr "Your Inbox is empty..."
 
 # TRANSLATION
+# LABEL/ID_INCOMING_SERVER
+#: LABEL/ID_INCOMING_SERVER
+msgid "Incoming Server"
+msgstr "Incoming Server"
+
+# TRANSLATION
 # LABEL/ID_INCORRECT_EMAIL
 #: LABEL/ID_INCORRECT_EMAIL
 msgid "Your E-mail address is not valid."
@@ -10884,6 +10890,12 @@ msgid "Regular Expression"
 msgstr "Regular Expression"
 
 # TRANSLATION
+# LABEL/ID_MAFE_02edd93949f6d3c57d9822691b59f649
+#: LABEL/ID_MAFE_02edd93949f6d3c57d9822691b59f649
+msgid "The"
+msgstr "The"
+
+# TRANSLATION
 # LABEL/ID_MAFE_02f5a8943b70bb7ee70ec52a58090caa
 #: LABEL/ID_MAFE_02f5a8943b70bb7ee70ec52a58090caa
 msgid "The key and label must be supplied."
@@ -11820,6 +11832,12 @@ msgid "External (s)"
 msgstr "External (s)"
 
 # TRANSLATION
+# LABEL/ID_MAFE_22430f0b1be537ea19f5f7a49dd5b15b
+#: LABEL/ID_MAFE_22430f0b1be537ea19f5f7a49dd5b15b
+msgid "For additional information:"
+msgstr "For additional information:"
+
+# TRANSLATION
 # LABEL/ID_MAFE_22ae0e2b89e5e3d477f988cc36d3272b
 #: LABEL/ID_MAFE_22ae0e2b89e5e3d477f988cc36d3272b
 msgid "Float"
@@ -11868,6 +11886,12 @@ msgid "Trigger (s)"
 msgstr "Trigger (s)"
 
 # TRANSLATION
+# LABEL/ID_MAFE_23cf385e5c56eeecebbd85b82acbdabd
+#: LABEL/ID_MAFE_23cf385e5c56eeecebbd85b82acbdabd
+msgid "The value provided for the Results limit property of the field \""
+msgstr "The value provided for the Results limit property of the field \""
+
+# TRANSLATION
 # LABEL/ID_MAFE_23faca394186e73f3446b5ff25802885
 #: LABEL/ID_MAFE_23faca394186e73f3446b5ff25802885
 msgid "[LABEL/ID_MAFE_23faca394186e73f3446b5ff25802885] Process Files Manager"
@@ -11878,6 +11902,12 @@ msgstr "Process Files Manager"
 #: LABEL/ID_MAFE_2421dc6680ce1aaf6cea69494a39df47
 msgid "Do you want to delete this Output Document?"
 msgstr "Do you want to delete this Output Document?"
+
+# TRANSLATION
+# LABEL/ID_MAFE_2448df3d33c626c2cf8e883f778454b3
+#: LABEL/ID_MAFE_2448df3d33c626c2cf8e883f778454b3
+msgid "The maximum value of this field is"
+msgstr "The maximum value of this field is"
 
 # TRANSLATION
 # LABEL/ID_MAFE_244d5dea1c18e5cd0eb873b030e1d824
@@ -12210,6 +12240,12 @@ msgid "is duplicated."
 msgstr "is duplicated."
 
 # TRANSLATION
+# LABEL/ID_MAFE_309a570360b12b43f63266735418715d
+#: LABEL/ID_MAFE_309a570360b12b43f63266735418715d
+msgid "Max date must be greater than the min and default date"
+msgstr "Max date must be greater than the min and default date"
+
+# TRANSLATION
 # LABEL/ID_MAFE_30a2dae0a135701b862050465b3e4e97
 #: LABEL/ID_MAFE_30a2dae0a135701b862050465b3e4e97
 msgid "Triggers after and before a step are not supported when working offline"
@@ -12342,6 +12378,12 @@ msgid "formula"
 msgstr "formula"
 
 # TRANSLATION
+# LABEL/ID_MAFE_35c8a5a9109d249216ba5e5df55db3af
+#: LABEL/ID_MAFE_35c8a5a9109d249216ba5e5df55db3af
+msgid "Form cannot be submitted because file(s) {%%%FILES%%%} (are/is) still uploading"
+msgstr "Form cannot be submitted because file(s) {%%%FILES%%%} (are/is) still uploading"
+
+# TRANSLATION
 # LABEL/ID_MAFE_35f251dbf805f6e532d579044aec1882
 #: LABEL/ID_MAFE_35f251dbf805f6e532d579044aec1882
 msgid "Input Document saved successfully"
@@ -12454,6 +12496,12 @@ msgstr "Category"
 #: LABEL/ID_MAFE_3afd78b28798273ac67a7b9f22619d98
 msgid "[LABEL/ID_MAFE_3afd78b28798273ac67a7b9f22619d98] DB Connection"
 msgstr "DB Connection"
+
+# TRANSLATION
+# LABEL/ID_MAFE_3b1b7e0ca46b70e7acfc1b1e6ff2e3d2
+#: LABEL/ID_MAFE_3b1b7e0ca46b70e7acfc1b1e6ff2e3d2
+msgid "icon."
+msgstr "icon."
 
 # TRANSLATION
 # LABEL/ID_MAFE_3b313f1e720672161bfa924e023cf015
@@ -13248,6 +13296,12 @@ msgid "Database connection saved successfully"
 msgstr "Database connection saved successfully"
 
 # TRANSLATION
+# LABEL/ID_MAFE_572405a2f96ccc48f34bc51eada3cec2
+#: LABEL/ID_MAFE_572405a2f96ccc48f34bc51eada3cec2
+msgid "Min date must be lesser than the max and default date."
+msgstr "Min date must be lesser than the max and default date."
+
+# TRANSLATION
 # LABEL/ID_MAFE_572d795e2d044f895cc511e5c05030e5
 #: LABEL/ID_MAFE_572d795e2d044f895cc511e5c05030e5
 msgid "INCLUSIVE"
@@ -13344,6 +13398,12 @@ msgid "Value Based Assignment"
 msgstr "Value Based Assignment"
 
 # TRANSLATION
+# LABEL/ID_MAFE_5a0e2c54b27b178c89d58a530b4fa334
+#: LABEL/ID_MAFE_5a0e2c54b27b178c89d58a530b4fa334
+msgid "There was an error when populating the values of field"
+msgstr "There was an error when populating the values of field"
+
+# TRANSLATION
 # LABEL/ID_MAFE_5a8dddb3b99ceb252ce638872cd2f506
 #: LABEL/ID_MAFE_5a8dddb3b99ceb252ce638872cd2f506
 msgid "PHP pages with Web Services"
@@ -13378,6 +13438,12 @@ msgstr "Wizard"
 #: LABEL/ID_MAFE_5b37be2f6e6fc0bc307e3146980709ea
 msgid "Please enter only CSS code"
 msgstr "Please enter only CSS code"
+
+# TRANSLATION
+# LABEL/ID_MAFE_5b4b59f272d282c31a55f4cd8839ee2c
+#: LABEL/ID_MAFE_5b4b59f272d282c31a55f4cd8839ee2c
+msgid "Results Limit"
+msgstr "Results Limit"
 
 # TRANSLATION
 # LABEL/ID_MAFE_5b5ebb466ae75a2ca15dbd1c92d64830
@@ -13746,12 +13812,6 @@ msgid "Executive"
 msgstr "Executive"
 
 # TRANSLATION
-# LABEL/ID_MAFE_dca93bce65f782477fb0ae42abbc3af8
-#: LABEL/ID_MAFE_dca93bce65f782477fb0ae42abbc3af8
-msgid "The value provided for the Results limit property of the field"
-msgstr "The value provided for the Results limit property of the field"
-
-# TRANSLATION
 # LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5
 #: LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5
 msgid "[LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5] End of process"
@@ -14094,6 +14154,12 @@ msgid "An unexpected error while assigning the trigger, please try again later."
 msgstr "An unexpected error while assigning the trigger, please try again later."
 
 # TRANSLATION
+# LABEL/ID_MAFE_730b728761d083abb3b63e7435f34629
+#: LABEL/ID_MAFE_730b728761d083abb3b63e7435f34629
+msgid "The form cannot be saved, please wait until all the fields are loaded"
+msgstr "The form cannot be saved, please wait until all the fields are loaded"
+
+# TRANSLATION
 # LABEL/ID_MAFE_7351dffefed9ebab76b3bd34aa6f755e
 #: LABEL/ID_MAFE_7351dffefed9ebab76b3bd34aa6f755e
 msgid "Output Document"
@@ -14134,6 +14200,18 @@ msgstr "month"
 #: LABEL/ID_MAFE_7469a286259799e5b37e5db9296f00b3
 msgid "YES"
 msgstr "YES"
+
+# TRANSLATION
+# LABEL/ID_MAFE_747d20a5df7b186bf5bbd0c7b079b0bc
+#: LABEL/ID_MAFE_747d20a5df7b186bf5bbd0c7b079b0bc
+msgid "remove the files from the form or upload the files again"
+msgstr "remove the files from the form or upload the files again"
+
+# TRANSLATION
+# LABEL/ID_MAFE_75146ae072f64a82285802a05e9de9c5
+#: LABEL/ID_MAFE_75146ae072f64a82285802a05e9de9c5
+msgid "This form contains deprecated controls marked with the"
+msgstr "This form contains deprecated controls marked with the"
 
 # TRANSLATION
 # LABEL/ID_MAFE_755c1cdb25ce0b28166932338fc860d8
@@ -14224,6 +14302,12 @@ msgstr "Related Input Document"
 #: LABEL/ID_MAFE_78ae6f0cd191d25147e252dc54768238
 msgid "Thursday"
 msgstr "Thursday"
+
+# TRANSLATION
+# LABEL/ID_MAFE_78e981599281c16fe016b55b136edf5f
+#: LABEL/ID_MAFE_78e981599281c16fe016b55b136edf5f
+msgid "Got it"
+msgstr "Got it"
 
 # TRANSLATION
 # LABEL/ID_MAFE_7916b6aa41d5ad862bfd15786f608ef9
@@ -14436,6 +14520,12 @@ msgid "Task duration"
 msgstr "Task duration"
 
 # TRANSLATION
+# LABEL/ID_MAFE_7fe21f3fc9c8ccd6a50eede1b7536ef2
+#: LABEL/ID_MAFE_7fe21f3fc9c8ccd6a50eede1b7536ef2
+msgid "Are you sure you want to delete this element?"
+msgstr "Are you sure you want to delete this element?"
+
+# TRANSLATION
 # LABEL/ID_MAFE_80038ba1c7711ab8f120940b59e85dc2
 #: LABEL/ID_MAFE_80038ba1c7711ab8f120940b59e85dc2
 msgid "Insert a subject variable"
@@ -14620,6 +14710,12 @@ msgstr "SubProcess must have an outgoing sequence flow"
 #: LABEL/ID_MAFE_86266ee937d97f812a8e57d22b62ee29
 msgid "[LABEL/ID_MAFE_86266ee937d97f812a8e57d22b62ee29] reset"
 msgstr "reset"
+
+# TRANSLATION
+# LABEL/ID_MAFE_8628cd75ef458409e7f6bfdc4835bf64
+#: LABEL/ID_MAFE_8628cd75ef458409e7f6bfdc4835bf64
+msgid "\" is invalid"
+msgstr "\" is invalid"
 
 # TRANSLATION
 # LABEL/ID_MAFE_8650e375ee80b2277a84fc9b85375e36
@@ -15024,6 +15120,12 @@ msgid "edit..."
 msgstr "edit..."
 
 # TRANSLATION
+# LABEL/ID_MAFE_919510c4c6308860e16885131e98a51c
+#: LABEL/ID_MAFE_919510c4c6308860e16885131e98a51c
+msgid "Ignore this warning if your flow is planned to reach to this gateway by only one of the incoming flows at a time"
+msgstr "Ignore this warning if your flow is planned to reach to this gateway by only one of the incoming flows at a time"
+
+# TRANSLATION
 # LABEL/ID_MAFE_91c7645ad0ba98666ab1648102f986e7
 #: LABEL/ID_MAFE_91c7645ad0ba98666ab1648102f986e7
 msgid "min date"
@@ -15372,6 +15474,12 @@ msgid "End Event Type"
 msgstr "End Event Type"
 
 # TRANSLATION
+# LABEL/ID_MAFE_9bf88dcc0548bfdc5028159eecdc648c
+#: LABEL/ID_MAFE_9bf88dcc0548bfdc5028159eecdc648c
+msgid "Control Deprecated. Refer to"
+msgstr "Control Deprecated. Refer to"
+
+# TRANSLATION
 # LABEL/ID_MAFE_9c197a0cff0c1e0b4410227c537b87ca
 #: LABEL/ID_MAFE_9c197a0cff0c1e0b4410227c537b87ca
 msgid "a unit cost here"
@@ -15690,6 +15798,12 @@ msgid "Start"
 msgstr "Start"
 
 # TRANSLATION
+# LABEL/ID_MAFE_a6478e58690248169052e55c467d1a76
+#: LABEL/ID_MAFE_a6478e58690248169052e55c467d1a76
+msgid "force selection"
+msgstr "force selection"
+
+# TRANSLATION
 # LABEL/ID_MAFE_a6527af0da63377b07a3effae750a485
 #: LABEL/ID_MAFE_a6527af0da63377b07a3effae750a485
 msgid "<br/>Triggers: Create scripts."
@@ -15826,6 +15940,12 @@ msgstr "Collapse all"
 #: LABEL/ID_MAFE_ab57fd0432e25d5b3013133a1c910d56
 msgid "KB"
 msgstr "KB"
+
+# TRANSLATION
+# LABEL/ID_MAFE_ab584372a831dfbe0761ddf888c67d5c
+#: LABEL/ID_MAFE_ab584372a831dfbe0761ddf888c67d5c
+msgid "Those controls will no longer be supported and probably will not be available in future versions."
+msgstr "Those controls will no longer be supported and probably will not be available in future versions."
 
 # TRANSLATION
 # LABEL/ID_MAFE_aba9ccd2c1467c4108a6dc534dd2b355
@@ -17148,6 +17268,12 @@ msgid "[LABEL/ID_MAFE_dc30bc0c7914db5918da4263fce93ad2] Clear"
 msgstr "Clear"
 
 # TRANSLATION
+# LABEL/ID_MAFE_dc3fd488f03d423a04da27ce66274c1b
+#: LABEL/ID_MAFE_dc3fd488f03d423a04da27ce66274c1b
+msgid "Warning!"
+msgstr "Warning!"
+
+# TRANSLATION
 # LABEL/ID_MAFE_dc45332742bde79337287a115c6422a4
 #: LABEL/ID_MAFE_dc45332742bde79337287a115c6422a4
 msgid "Select variable"
@@ -17188,6 +17314,12 @@ msgstr "Web Entry Title"
 #: LABEL/ID_MAFE_dca2d7da83c33cb7110af7c69de355fc
 msgid "The property event was saved successfully."
 msgstr "The property event was saved successfully."
+
+# TRANSLATION
+# LABEL/ID_MAFE_dca93bce65f782477fb0ae42abbc3af8
+#: LABEL/ID_MAFE_dca93bce65f782477fb0ae42abbc3af8
+msgid "The value provided for the Results limit property of the field"
+msgstr "The value provided for the Results limit property of the field"
 
 # TRANSLATION
 # LABEL/ID_MAFE_dce333d9e7472c085cf0e12d13d52be7
@@ -20116,6 +20248,12 @@ msgstr "Other"
 #: LABEL/ID_OUTBOX
 msgid "Outbox"
 msgstr "Outbox"
+
+# TRANSLATION
+# LABEL/ID_OUTGOING_SERVER
+#: LABEL/ID_OUTGOING_SERVER
+msgid "Outgoing Server"
+msgstr "Outgoing Server"
 
 # TRANSLATION
 # LABEL/ID_OUTPUT_DB
@@ -23268,6 +23406,36 @@ msgid "[LABEL/ID_SEARCH] Search"
 msgstr "Search"
 
 # TRANSLATION
+# LABEL/ID_SEARCHING
+#: LABEL/ID_SEARCHING
+msgid "Searching..."
+msgstr "Searching..."
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_CANCEL_MESSAGE
+#: LABEL/ID_SEARCHING_CANCEL_MESSAGE
+msgid "We are still gathering your search results. This may take a while based on your search criteria. You may cancel this search at any time"
+msgstr "We are still gathering your search results. This may take a while based on your search criteria. You may cancel this search at any time"
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_TIME_OUT
+#: LABEL/ID_SEARCHING_TIME_OUT
+msgid "Your search timed out"
+msgstr "Your search timed out"
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_UNEXPECTED_ERROR
+#: LABEL/ID_SEARCHING_UNEXPECTED_ERROR
+msgid "An unexpected error occurred while searching for your results. Error Code {0} and Please contact your administrator."
+msgstr "An unexpected error occurred while searching for your results. Error Code {0} and Please contact your administrator."
+
+# TRANSLATION
+# LABEL/ID_SEARCHING_UNEXPECTED_ERROR_DEFAULT
+#: LABEL/ID_SEARCHING_UNEXPECTED_ERROR_DEFAULT
+msgid "An unexpected error occurred while searching for your results. Please contact your administrator."
+msgstr "An unexpected error occurred while searching for your results. Please contact your administrator."
+
+# TRANSLATION
 # LABEL/ID_SEARCH_ALSO_APP_UID
 #: LABEL/ID_SEARCH_ALSO_APP_UID
 msgid "Search also in the APP_UID field"
@@ -23302,36 +23470,6 @@ msgstr "Username"
 #: LABEL/ID_SEARCH_XML_METADATA
 msgid "Search XML metadata"
 msgstr "Search XML metadata"
-
-# TRANSLATION
-# LABEL/ID_SEARCHING
-#: LABEL/ID_SEARCHING
-msgid "Searching..."
-msgstr "Searching..."
-
-# TRANSLATION
-# LABEL/ID_SEARCHING_CANCEL_MESSAGE
-#: LABEL/ID_SEARCHING_CANCEL_MESSAGE
-msgid "We are still gathering your search results. This may take a while based on your search criteria. You may cancel this search at any time"
-msgstr "We are still gathering your search results. This may take a while based on your search criteria. You may cancel this search at any time"
-
-# TRANSLATION
-# LABEL/ID_SEARCHING_TIME_OUT
-#: LABEL/ID_SEARCHING_TIME_OUT
-msgid "Your search timed out"
-msgstr "Your search timed out"
-
-# TRANSLATION
-# LABEL/ID_SEARCHING_UNEXPECTED_ERROR
-#: LABEL/ID_SEARCHING_UNEXPECTED_ERROR
-msgid "An unexpected error occurred while searching for your results. Error Code {0} and Please contact your administrator."
-msgstr "An unexpected error occurred while searching for your results. Error Code {0} and Please contact your administrator."
-
-# TRANSLATION
-# LABEL/ID_SEARCHING_UNEXPECTED_ERROR_DEFAULT
-#: LABEL/ID_SEARCHING_UNEXPECTED_ERROR_DEFAULT
-msgid "An unexpected error occurred while searching for your results. Please contact your administrator."
-msgstr "An unexpected error occurred while searching for your results. Please contact your administrator."
 
 # TRANSLATION
 # LABEL/ID_SECOND
@@ -23674,18 +23812,6 @@ msgstr "Sent By"
 #: LABEL/ID_SERVER
 msgid "[LABEL/ID_SERVER] Server"
 msgstr "Server"
-
-# TRANSLATION
-# LABEL/ID_OUTGOING_SERVER
-#: LABEL/ID_OUTGOING_SERVER
-msgid "Outgoing Server"
-msgstr "Outgoing Server"
-
-# TRANSLATION
-# LABEL/ID_INCOMING_SERVER
-#: LABEL/ID_INCOMING_SERVER
-msgid "Incoming Server"
-msgstr "Incoming Server"
 
 # TRANSLATION
 # LABEL/ID_SERVER_ADDRESS
@@ -27582,6 +27708,12 @@ msgid "Update the current process, overwriting all tasks and steps"
 msgstr "Update the current process, overwriting all tasks and steps"
 
 # TRANSLATION
+# LABEL/INCOMING_PORT_DEFAULT
+#: LABEL/INCOMING_PORT_DEFAULT
+msgid "Incoming Port (default 143)"
+msgstr "Incoming Port (default 143)"
+
+# TRANSLATION
 # LABEL/INVALID_FILE
 #: LABEL/INVALID_FILE
 msgid "Invalid file!"
@@ -27972,6 +28104,12 @@ msgid "Open new site"
 msgstr "Open new site"
 
 # TRANSLATION
+# LABEL/OUTGOING_PORT_DEFAULT
+#: LABEL/OUTGOING_PORT_DEFAULT
+msgid "Outgoing Port (default 25)"
+msgstr "Outgoing Port (default 25)"
+
+# TRANSLATION
 # LABEL/OUTPUT_CREATE
 #: LABEL/OUTPUT_CREATE
 msgid "Output document has been created successfully"
@@ -28156,18 +28294,6 @@ msgstr "Photo gallery"
 #: LABEL/PORT_DEFAULT
 msgid "Port (default 25)"
 msgstr "Port (default 25)"
-
-# TRANSLATION
-# LABEL/INCOMING_PORT_DEFAULT
-#: LABEL/INCOMING_PORT_DEFAULT
-msgid "Incoming Port (default 143)"
-msgstr "Incoming Port (default 143)"
-
-# TRANSLATION
-# LABEL/OUTGOING_PORT_DEFAULT
-#: LABEL/OUTGOING_PORT_DEFAULT
-msgid "Outgoing Port (default 25)"
-msgstr "Outgoing Port (default 25)"
 
 # TRANSLATION
 # LABEL/REQUIRE_AUTHENTICATION
