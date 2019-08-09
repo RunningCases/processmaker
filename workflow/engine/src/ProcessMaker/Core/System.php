@@ -68,7 +68,6 @@ class System
         'smtp_timeout' => 20,
         'google_map_api_key' => '',
         'google_map_signature' => '',
-        'logging_level' => 'INFO', 
         'upload_attempts_limit_per_user' => '60,1',
         'files_white_list' => '',
         'delay' => '0',
