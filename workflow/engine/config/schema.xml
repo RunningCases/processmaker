@@ -94,6 +94,15 @@
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
         </index>
+        <index name="indexAppStatusId">
+            <index-column name="APP_STATUS_ID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="APPLICATION"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexAppStatusId"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
         <fulltext name="indexAppTitle">
             <index-column name="APP_TITLE"/>
             <vendor type="mysql">
@@ -1002,7 +1011,7 @@
         <column name="PRO_TIME" type="DOUBLE" required="true" default="1"/>
         <column name="PRO_TIMEUNIT" type="VARCHAR" size="20" required="true" null="yes" default="DAYS"/>
         <column name="PRO_STATUS" type="VARCHAR" size="20" required="true" default="ACTIVE"/>
-        <column name="PRO_STATUS_ID" type="INTEGER" required="false" default="0"/>
+        <column name="PRO_STATUS_ID" type="INTEGER" required="false" default="1"/>
         <column name="PRO_TYPE_DAY" type="CHAR" size="1" required="true" default="0"/>
         <column name="PRO_TYPE" type="VARCHAR" size="256" required="true" default="NORMAL"/>
         <column name="PRO_ASSIGNMENT" type="VARCHAR" size="20" required="true" default="FALSE"/>
@@ -1040,6 +1049,24 @@
         <unique name="INDEX_PRO_ID">
             <unique-column name="PRO_ID"/>
         </unique>
+        <index name="indexProStatus">
+            <index-column name="PRO_STATUS"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="PROCESS"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexProStatus"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
+        <index name="indexProStatusId">
+            <index-column name="PRO_STATUS_ID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="PROCESS"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexProStatusId"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
         <validator column="PRO_TIMEUNIT">
             <rule name="validValues" value="WEEKS|MONTHS|DAYS|HOURS|MINUTES"
                   message="Please select a valid Time Unit."/>
@@ -1685,6 +1712,7 @@
         <column name="USR_CREATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="USR_UPDATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="USR_STATUS" type="VARCHAR" size="32" required="true" default="ACTIVE"/>
+        <column name="USR_STATUS_ID" type="INTEGER" required="false" default="1"/>
         <column name="USR_COUNTRY" type="VARCHAR" size="3" required="true" default=""/>
         <column name="USR_CITY" type="VARCHAR" size="3" required="true" default=""/>
         <column name="USR_LOCATION" type="VARCHAR" size="3" required="true" default=""/>
@@ -1720,6 +1748,24 @@
         <unique name="INDEX_USR_ID">
             <unique-column name="USR_ID"/>
         </unique>
+        <index name="indexUsrStatus">
+            <index-column name="USR_STATUS"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="USERS"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexUsrStatus"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
+        <index name="indexUsrStatusId">
+            <index-column name="USR_STATUS_ID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="USERS"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexUsrStatusId"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
         <index name="indexUsrUid">
             <index-column name="USR_UID"/>
         </index>
@@ -4186,6 +4232,16 @@
         <column name="VAR_DEFAULT" type="VARCHAR" size="32" default=""/>
         <column name="VAR_ACCEPTED_VALUES" type="LONGVARCHAR"/>
         <column name="INP_DOC_UID" type="VARCHAR" size="32" default=""/>
+        <index name="indexPrjUidVarName">
+            <index-column name="PRJ_UID"/>
+            <index-column name="VAR_NAME"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="PROCESS_VARIABLES"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexPrjUidVarName"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
     </table>
 
     <table name="APP_TIMEOUT_ACTION_EXECUTED">
@@ -4260,6 +4316,15 @@
         <column name="TAS_UID" type="VARCHAR" size="32" required="true"/>
         <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
         <column name="GRP_UID" type="LONGVARCHAR" required="true"/>
+        <index name="indexAppUid">
+            <index-column name="APP_UID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="APP_ASSIGN_SELF_SERVICE_VALUE"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexAppUid"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
     </table>
 
     <table name="APP_ASSIGN_SELF_SERVICE_VALUE_GROUP" idMethod="native">
@@ -4359,6 +4424,15 @@
                 <parameter name="Table" value="LIST_INBOX"/>
                 <parameter name="Non_unique" value="1"/>
                 <parameter name="Key_name" value="indexInboxUserStatusUpdateDate"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
+        <index name="indexAppNumber">
+            <index-column name="APP_NUMBER"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="LIST_INBOX"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexAppNumber"/>
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
         </index>
@@ -4502,6 +4576,16 @@
                 <parameter name="Table" value="LIST_PARTICIPATED_LAST"/>
                 <parameter name="Non_unique" value="1"/>
                 <parameter name="Key_name" value="delDelegateDate"/>
+                <parameter name="Seq_in_index" value="1"/>
+            </vendor>
+        </index>
+        <index name="indexDelegateDateUsrUid">
+            <index-column name="DEL_DELEGATE_DATE"/>
+            <index-column name="USR_UID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="LIST_PARTICIPATED_LAST"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexDelegateDateUsrUid"/>
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
         </index>
