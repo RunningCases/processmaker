@@ -41,6 +41,7 @@ CREATE TABLE `APPLICATION`
 	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `indexAppStatus`(`APP_STATUS`),
 	KEY `indexAppCreateDate`(`APP_CREATE_DATE`),
+	KEY `indexAppStatusId`(`APP_STATUS_ID`),
 	FULLTEXT `indexAppTitle`(`APP_TITLE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The application';
 #-----------------------------------------------------------------------------
@@ -482,7 +483,7 @@ CREATE TABLE `PROCESS`
 	`PRO_TIME` DOUBLE default 1 NOT NULL,
 	`PRO_TIMEUNIT` VARCHAR(20) default 'DAYS' NOT NULL,
 	`PRO_STATUS` VARCHAR(20) default 'ACTIVE' NOT NULL,
-	`PRO_STATUS_ID` INTEGER default 0,
+	`PRO_STATUS_ID` INTEGER default 1,
 	`PRO_TYPE_DAY` CHAR(1) default '0' NOT NULL,
 	`PRO_TYPE` VARCHAR(256) default 'NORMAL' NOT NULL,
 	`PRO_ASSIGNMENT` VARCHAR(20) default 'FALSE' NOT NULL,
@@ -518,7 +519,9 @@ CREATE TABLE `PROCESS`
 	`PRO_ACTION_DONE` MEDIUMTEXT,
 	`CATEGORY_ID` INTEGER default 0,
 	PRIMARY KEY (`PRO_UID`),
-	UNIQUE KEY `INDEX_PRO_ID` (`PRO_ID`)
+	UNIQUE KEY `INDEX_PRO_ID` (`PRO_ID`),
+	KEY `indexProStatus`(`PRO_STATUS`),
+	KEY `indexProStatusId`(`PRO_STATUS_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
 #-----------------------------------------------------------------------------
 #-- PROCESS_OWNER
@@ -805,6 +808,7 @@ CREATE TABLE `USERS`
 	`USR_CREATE_DATE` DATETIME  NOT NULL,
 	`USR_UPDATE_DATE` DATETIME  NOT NULL,
 	`USR_STATUS` VARCHAR(32) default 'ACTIVE' NOT NULL,
+	`USR_STATUS_ID` INTEGER default 1,
 	`USR_COUNTRY` VARCHAR(3) default '' NOT NULL,
 	`USR_CITY` VARCHAR(3) default '' NOT NULL,
 	`USR_LOCATION` VARCHAR(3) default '' NOT NULL,
@@ -830,6 +834,8 @@ CREATE TABLE `USERS`
 	`USR_LAST_LOGIN` DATETIME,
 	PRIMARY KEY (`USR_UID`),
 	UNIQUE KEY `INDEX_USR_ID` (`USR_ID`),
+	KEY `indexUsrStatus`(`USR_STATUS`),
+	KEY `indexUsrStatusId`(`USR_STATUS_ID`),
 	KEY `indexUsrUid`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Users';
 #-----------------------------------------------------------------------------
@@ -2272,7 +2278,8 @@ CREATE TABLE `PROCESS_VARIABLES`
 	`VAR_DEFAULT` VARCHAR(32) default '',
 	`VAR_ACCEPTED_VALUES` MEDIUMTEXT,
 	`INP_DOC_UID` VARCHAR(32) default '',
-	PRIMARY KEY (`VAR_UID`)
+	PRIMARY KEY (`VAR_UID`),
+	KEY `indexPrjUidVarName`(`PRJ_UID`, `VAR_NAME`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
 #-- APP_TIMEOUT_ACTION_EXECUTED
@@ -2372,7 +2379,8 @@ CREATE TABLE `APP_ASSIGN_SELF_SERVICE_VALUE`
 	`TAS_UID` VARCHAR(32)  NOT NULL,
 	`TAS_ID` INTEGER default 0,
 	`GRP_UID` MEDIUMTEXT  NOT NULL,
-	PRIMARY KEY (`ID`)
+	PRIMARY KEY (`ID`),
+	KEY `indexAppUid`(`APP_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- APP_ASSIGN_SELF_SERVICE_VALUE_GROUP
@@ -2427,6 +2435,7 @@ CREATE TABLE `LIST_INBOX`
 	KEY `indexUser`(`USR_UID`),
 	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`),
 	KEY `indexInboxUserStatusUpdateDate`(`USR_UID`, `APP_STATUS`, `APP_UPDATE_DATE`),
+	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `INDEX_PRO_ID`(`PRO_ID`),
 	KEY `INDEX_USR_ID`(`USR_ID`),
 	KEY `INDEX_TAS_ID`(`TAS_ID`),
@@ -2509,6 +2518,7 @@ CREATE TABLE `LIST_PARTICIPATED_LAST`
 	PRIMARY KEY (`APP_UID`,`USR_UID`,`DEL_INDEX`),
 	KEY `usrIndex`(`USR_UID`),
 	KEY `delDelegateDate`(`DEL_DELEGATE_DATE`),
+	KEY `indexDelegateDateUsrUid`(`DEL_DELEGATE_DATE`, `USR_UID`),
 	KEY `INDEX_PRO_ID`(`PRO_ID`),
 	KEY `INDEX_USR_ID`(`USR_ID`),
 	KEY `INDEX_TAS_ID`(`TAS_ID`)

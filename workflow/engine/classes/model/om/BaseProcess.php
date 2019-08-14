@@ -79,7 +79,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
      * The value for the pro_status_id field.
      * @var        int
      */
-    protected $pro_status_id = 0;
+    protected $pro_status_id = 1;
 
     /**
      * The value for the pro_type_day field.
@@ -999,7 +999,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->pro_status_id !== $v || $v === 0) {
+        if ($this->pro_status_id !== $v || $v === 1) {
             $this->pro_status_id = $v;
             $this->modifiedColumns[] = ProcessPeer::PRO_STATUS_ID;
         }
