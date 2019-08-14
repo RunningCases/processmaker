@@ -652,10 +652,11 @@ class Light extends Api
             if (preg_match($this->regexNull, $newerThan)) {
                 return [];
             }
+            $paged = ($start === 0 && $limit === 0) ? false : true;
 
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'unassigned';
-            $dataList['paged'] = false;
+            $dataList['paged'] = $paged;
 
             $dataList['start'] = $start;
             $dataList['limit'] = $limit;
@@ -682,6 +683,9 @@ class Light extends Api
                 /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
+            if ($paged === true) {
+                $response = $response['data'];
+            }
             $result = $this->parserDataUnassigned($response);
 
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);

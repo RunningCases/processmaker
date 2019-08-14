@@ -11,11 +11,17 @@
          bootstrap="tests/bootstrap.php"
 >
     <testsuites>
-        <testsuite name="workflow">
-            <directory>./tests/workflow/engine/src/</directory>
+        <testsuite name="LegacyClasses">
+            <directory>./tests/unit/workflow/engine/classes/</directory>
+        </testsuite>
+        <testsuite name="Classes">
+            <directory>./tests/unit/workflow/engine/src/</directory>
         </testsuite>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
+            <directory>./tests/unit/</directory>
+        </testsuite>
+        <testsuite name="Performance">
+            <directory>./tests/Performance/</directory>
         </testsuite>
     </testsuites>
 
@@ -33,6 +39,10 @@
     </filter>
 
     <php>
+        <!--Main environment-->
+        <env name="MAIN_SYS_SYS" value="workflow" />
+        <env name="MAIN_TIME_ZONE" value="America/New_York" />
+        <env name="MAIN_SYSTEM_UTC_TIME_ZONE" value="1" />
         <!--Connection to database-->
         <env name="DB_HOST" value="127.0.0.1" />
         <env name="DB_DATABASE" value="test" />
@@ -45,6 +55,17 @@
         <env name="MSSQL_DATABASE" value="testexternal" />
         <env name="MSSQL_USERNAME" value="test" />
         <env name="MSSQL_PASSWORD" value="test" />
+        <!--Define if we use a populated database-->
+        <env name="POPULATE_DATABASE" value="false" />
+        <!--Performance Mysql test-->
+        <env name="RUN_MYSQL_PERFORMANCE_TESTS" value="false" />
+        <!--email account-->
+        <env name="emailEngine" value="PHPMAILER" />
+        <env name="emailServer" value="smtp.gmail.com" />
+        <env name="emailPort" value="465" />
+        <env name="emailAccount" value="admin@processmaker.com" />
+        <env name="emailAccountPassword" value="" />
+        <env name="emailSecure" value="ssl" />
         <!--Php variables-->
         <var name="APP_ENV" value="testing" />
         <var name="SYS_SYS" value="test" />

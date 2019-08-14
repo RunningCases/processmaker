@@ -59,6 +59,79 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include open threads
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeIsThreadOpen($query)
+    {
+        return $query->where('DEL_THREAD_STATUS', '=', 'OPEN');
+    }
+
+    /**
+     * Scope a query to only include threads without user
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeNoUserInThread($query)
+    {
+        return $query->where('USR_ID', '=', 0);
+    }
+
+    /**
+     * Scope a query to only include specific tasks
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $tasks
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTasksIn($query, array $tasks)
+    {
+        return $query->whereIn('APP_DELEGATION.TAS_ID', $tasks);
+    }
+
+    /**
+     * Scope a query to only include a specific case
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  integer $appNumber
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCase($query, $appNumber)
+    {
+        return $query->where('APP_NUMBER', '=', $appNumber);
+    }
+
+    /**
+     * Scope a query to only include a specific index
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  integer $index
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeIndex($query, $index)
+    {
+        return $query->where('DEL_INDEX', '=', $index);
+    }
+
+    /**
+     * Scope a query to only include a specific task
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  integer $task
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTask($query, $task)
+    {
+        return $query->where('APP_DELEGATION.TAS_ID', '=', $task);
+    }
+
+    /**
      * Searches for delegations which match certain criteria
      *
      * The query is related to advanced search with different filters
@@ -152,7 +225,14 @@ class Delegation extends Model
         $query->join('APPLICATION', function ($join) use ($filterBy, $search, $status, $query) {
             $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
             if ($filterBy == 'APP_TITLE' && $search) {
-                $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
+                // Cleaning "fulltext" operators in order to avoid unexpected results
+                $search = str_replace(['-', '+', '<', '>', '(', ')', '~', '*', '"'], ['', '', '', '', '', '', '', '', ''], $search);
+
+                // Build the "fulltext" expression
+                $search = '+"' . preg_replace('/\s+/', '" +"', addslashes($search)) . '"';
+
+                // Searching using "fulltext" index
+                $join->whereRaw("MATCH(APPLICATION.APP_TITLE) AGAINST('{$search}' IN BOOLEAN MODE)");
             }
             // Based on the below, we can further limit the join so that we have a smaller data set based on join criteria
             switch ($status) {
@@ -205,7 +285,7 @@ class Delegation extends Model
 
         // Search for an app/case number
         if ($filterBy == 'APP_NUMBER' && $search) {
-            $query->where('APP_DELEGATION.APP_NUMBER', 'LIKE', "%${search}%");
+            $query->where('APP_DELEGATION.APP_NUMBER', '=', $search);
         }
 
         // Date range filter
@@ -389,4 +469,98 @@ class Delegation extends Model
         return $arrayData;
     }
 
+    /**
+     * Count the self-services cases by user
+     *
+     * @param string $usrUid
+     *
+     * @return integer
+     */
+    public static function countSelfService($usrUid)
+    {
+        //Get the task self services related to the user
+        $taskSelfService = TaskUser::getSelfServicePerUser($usrUid);
+        //Get the task self services value based related to the user
+        $selfServiceValueBased = AppAssignSelfServiceValue::getSelfServiceCasesByEvaluatePerUser($usrUid);
+
+        //Start the query for get the cases related to the user
+        $query = Delegation::query()->select('APP_NUMBER');
+        //Add Join with task filtering only the type self-service
+        $query->join('TASK', function ($join) {
+            $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
+                ->where('TASK.TAS_ASSIGN_TYPE', '=', 'SELF_SERVICE');
+        });
+        //Filtering the open threads and without users
+        $query->isThreadOpen()->noUserInThread();
+
+        //Get the cases unassigned
+        if (!empty($selfServiceValueBased)) {
+            $query->where(function ($query) use ($selfServiceValueBased, $taskSelfService) {
+                //Get the cases related to the task self service
+                $query->tasksIn($taskSelfService);
+                foreach ($selfServiceValueBased as $case) {
+                    //Get the cases related to the task self service value based
+                    $query->orWhere(function ($query) use ($case) {
+                        $query->case($case['APP_NUMBER'])->index($case['DEL_INDEX'])->task($case['TAS_ID']);
+                    });
+                }
+            });
+        } else {
+            //Get the cases related to the task self service
+            $query->tasksIn($taskSelfService);
+        }
+
+        return $query->count();
+    }
+
+    /**
+     * This function get the current user related to the specific case and index
+     *
+     * @param integer $appNumber, Case number
+     * @param integer $index, Index to review
+     * @param string $status, The status of the thread
+     *
+     * @return string
+     */
+    public static function getCurrentUser($appNumber, $index, $status = 'OPEN')
+    {
+        $query = Delegation::query()->select('USR_UID');
+        $query->where('APP_NUMBER', $appNumber);
+        $query->where('DEL_INDEX', $index);
+        $query->where('DEL_THREAD_STATUS', $status);
+        $query->first();
+        $results = $query->get();
+
+        $userUid = '';
+        $results->each(function ($item, $key) use (&$userUid) {
+            $userUid = $item->USR_UID;
+        });
+
+        return $userUid;
+    }
+
+    /**
+     * Return the open thread related to the task
+     *
+     * @param integer $appNumber, Case number
+     * @param string $tasUid, The task uid
+     *
+     * @return array
+     */
+    public static function getOpenThreads($appNumber, $tasUid)
+    {
+        $query = Delegation::query()->select();
+        $query->where('DEL_THREAD_STATUS', 'OPEN');
+        $query->where('DEL_FINISH_DATE', null);
+        $query->where('APP_NUMBER', $appNumber);
+        $query->where('TAS_UID', $tasUid);
+        $results = $query->get();
+
+        $arrayOpenThreads = [];
+        $results->each(function ($item, $key) use (&$arrayOpenThreads) {
+            $arrayOpenThreads = $item->toArray();
+        });
+
+        return $arrayOpenThreads;
+    }
 }

@@ -5,276 +5,164 @@ use Tests\TestCase;
 class ReplaceDataFieldTest extends TestCase
 {
     /**
-     * This checks that strings with HTML reserved characters are replaced with entities
+     * Check that the value of "@q" followed by a string is not being set as empty when using "@#" to identify a variable
+     *
      * @test
      * @covers G::replaceDataField
      */
-    public function it_should_replace_entities()
+    public function it_should_not_set_empty_when_calling_a_variable_with_hashtag_symbol()
     {
-        // Initializing Faker instance
-        $faker = Faker\Factory::create();
+        $string = '<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+                    <html>
+                    <head>
+                    </head>
+                    <body>
+                    <p>THIS IS ONLY A TEST OF THE VARIABLE&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;@#var_supplierEmail&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+                    </body>
+                    </html>';
 
-        // Initializing variables to use that will not change
-        $stringWithVariablesToReplace = 'Hello @@var1 the @#var2 is @=var3 not @&var4->value';
-        $dbEngine = 'mysql'; // This only affects the way to escape the variables with "@@" prefix
-        $applyEntities = true; // If a value to replace is a not valid HTML and have HTML reserved characters, entities should be applied
-
-        // Initializing variables to test the assertions, entities should be applied in variable with @@
-        $var4 = new stdClass();
-        $var4->value = $faker->words(1, true);
-        $valuesToReplace = [
-            'var1' => 'Java < PHP & Python',
-            'var2' => $faker->words(1, true),
-            'var3' => $faker->words(1, true),
-            'var4' => $var4
+        $result = [
+            'var_supplierEmail' => 'asa@qq.fds',
+            'var_supplierEmail_label' => 'asa@qq.fds',
         ];
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
+        $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Assertions
-        $this->assertRegExp('/&lt;/', $stringToCheck);
-        $this->assertRegExp('/&amp;/', $stringToCheck);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
-        // Initializing variables to test the assertions, entities should be applied in variable with @#
-        $var4 = new stdClass();
-        $var4->value = $faker->words(1, true);
-        $valuesToReplace = [
-            'var1' => $faker->words(1, true),
-            'var2' => 'Java < PHP & Python',
-            'var3' => $faker->words(1, true),
-            'var4' => $var4
+        // Assert the @qq is not being set as an empty value
+        $this->assertRegExp("/asa@qq.fds/", $stringToCheck);
+
+        // Testing with a "@qstring" value
+        $result = [
+            'var_supplierEmail' => '@qstring',
+            'var_supplierEmail_label' => '@qstring',
         ];
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
+        $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Assertions
-        $this->assertRegExp('/&lt;/', $stringToCheck);
-        $this->assertRegExp('/&amp;/', $stringToCheck);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
-        // Initializing variables to test the assertions, entities should be applied in variable with @=
-        $var4 = new stdClass();
-        $var4->value = $faker->words(1, true);
-        $valuesToReplace = [
-            'var1' => $faker->words(1, true),
-            'var2' => $faker->words(1, true),
-            'var3' => 'Java < PHP & Python',
-            'var4' => $var4
-        ];
-
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
-
-        // Assertions
-        $this->assertRegExp('/&lt;/', $stringToCheck);
-        $this->assertRegExp('/&amp;/', $stringToCheck);
-
-        // Initializing variables to test the assertions, entities should be applied in variable with @&
-        $var4 = new stdClass();
-        $var4->value = 'Java < PHP & Python';
-        $valuesToReplace = [
-            'var1' => $faker->words(1, true),
-            'var2' => $faker->words(1, true),
-            'var3' => $faker->words(1, true),
-            'var4' => $var4
-        ];
-
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
-
-        // Assertions
-        $this->assertRegExp('/&lt;/', $stringToCheck);
-        $this->assertRegExp('/&amp;/', $stringToCheck);
+        // Assert the @qstring is not being set as an empty value
+        $this->assertRegExp("/@qstring/", $stringToCheck);
     }
 
     /**
-     * This checks that strings with HTML reserved characters are NOT replaced with entities
+     * Check that the value of "@q" followed by a string is not being set as empty when using "@=" to identify a variable
+     *
      * @test
      * @covers G::replaceDataField
      */
-    public function it_should_no_replace_entities()
+    public function it_should_not_set_empty_when_calling_a_variable_with_equals_symbol()
     {
-        // Initializing Faker instance
-        $faker = Faker\Factory::create();
+        $string = '<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+                    <html>
+                    <head>
+                    </head>
+                    <body>
+                    <p>THIS IS ONLY A TEST OF THE VARIABLE&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;@=var_supplierEmail&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+                    </body>
+                    </html>';
 
-        // Initializing variables to use that will not change
-        $stringWithVariablesToReplace = 'Hello @@var1 the @#var2 is @=var3 not @&var4->value';
-        $dbEngine = 'mysql'; // This only affects the way to escape the variables with "@@" prefix
-        $applyEntities = false; // The values should not be replaced with entities
-
-        // Initializing variables to test the assertions, entities should be applied in variable with @@
-        $var4 = new stdClass();
-        $var4->value = $faker->words(1, true);
-        $valuesToReplace = [
-            'var1' => 'Java < PHP & Python',
-            'var2' => $faker->words(1, true),
-            'var3' => $faker->words(1, true),
-            'var4' => $var4
+        $result = [
+            'var_supplierEmail' => 'asa@qq.fds',
+            'var_supplierEmail_label' => 'asa@qq.fds',
         ];
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
+        $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Assertions
-        $this->assertRegExp('/</', $stringToCheck);
-        $this->assertRegExp('/&/', $stringToCheck);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
-        // Initializing variables to test the assertions, entities should be applied in variable with @#
-        $var4 = new stdClass();
-        $var4->value = $faker->words(1, true);
-        $valuesToReplace = [
-            'var1' => $faker->words(1, true),
-            'var2' => 'Java < PHP & Python',
-            'var3' => $faker->words(1, true),
-            'var4' => $var4
+        // Assert the @qq is not being set as an empty value
+        $this->assertRegExp("/asa@qq.fds/", $stringToCheck);
+
+        // Testing with a "@qstring" value
+        $result = [
+            'var_supplierEmail' => '@qstring',
+            'var_supplierEmail_label' => '@qstring',
         ];
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
+        $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Assertions
-        $this->assertRegExp('/</', $stringToCheck);
-        $this->assertRegExp('/&/', $stringToCheck);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $result, $dbEngine, $recursive);
 
-        // Initializing variables to test the assertions, entities should be applied in variable with @=
-        $var4 = new stdClass();
-        $var4->value = $faker->words(1, true);
-        $valuesToReplace = [
-            'var1' => $faker->words(1, true),
-            'var2' => $faker->words(1, true),
-            'var3' => 'Java < PHP & Python',
-            'var4' => $var4
-        ];
-
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
-
-        // Assertions
-        $this->assertRegExp('/</', $stringToCheck);
-        $this->assertRegExp('/&/', $stringToCheck);
-
-        // Initializing variables to test the assertions, entities should be applied in variable with @&
-        $var4 = new stdClass();
-        $var4->value = 'Java < PHP & Python';
-        $valuesToReplace = [
-            'var1' => $faker->words(1, true),
-            'var2' => $faker->words(1, true),
-            'var3' => $faker->words(1, true),
-            'var4' => $var4
-        ];
-
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
-
-        // Assertions
-        $this->assertRegExp('/</', $stringToCheck);
-        $this->assertRegExp('/&/', $stringToCheck);
+        // Assert the @qstring is not being set as an empty value
+        $this->assertRegExp("/@qstring/", $stringToCheck);
     }
 
     /**
-     * This checks that strings with HTML reserved characters are NOT replaced with entities if is a valid HTML, because
-     * PS team sometimes build a HTML string to insert in templates (output documents or emails), Ex.- A table to list
-     * users or results from a query
+     * Check that the variable using "@#" will be replaced recursively or not according to the parameters sent
+     *
      * @test
      * @covers G::replaceDataField
      */
-    public function it_should_no_replace_entities_if_exists_valid_html()
+    public function it_should_replace_recursively_a_variable_inside_another_variable_with_hashtag_symbol()
     {
-        // Initializing Faker instance
-        $faker = Faker\Factory::create();
+        // Initialize variables
+        $string = '@#upload_New';
+        $variables = ['upload_New' => "javascript:uploadInputDocument('@#DOC_UID');",
+            'DOC_UID' => '1988828025cc89aba0cd2b8079038028'];
 
-        // Initializing variables to use
-        $stringWithVariablesToReplace = 'bla @#var1 bla @=listHtml bla @@var2 bla';
-        $valuesToReplace = [
-            'var1' => $faker->words(1, true),
-            'listHtml' => '<table>
-                             <tr>
-                               <th>t1</th> 
-                               <th>t2</th>
-                               <th>t3</th>
-                               <th>t4</th>
-                               <th>t5</th>
-                               <th>t6</th>
-                             </tr>
-                             <tr>
-                               <td>c1</td>
-                               <td>c2</td>
-                               <td>c3</td>
-                               <td>c4</td>
-                               <td>c5</td>
-                               <td>c6</td>
-                             </tr>
-                           </table>',
-            'var2' => $faker->words(1, true)
-        ];
-        $dbEngine = 'mysql'; // This only affects the way to escape the variables with "@@" prefix
-        $applyEntities = true; // Is true because the string will b used in a output document or a email template
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithVariablesToReplace, $valuesToReplace, $dbEngine, $applyEntities);
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
 
-        // Assertions
-        $this->assertRegExp('/<table>/', $stringToCheck);
-        $this->assertRegExp('/<tr>/', $stringToCheck);
-        $this->assertRegExp('/<th>/', $stringToCheck);
-        $this->assertRegExp('/<td>/', $stringToCheck);
+        // The variable @#DOC_UID inside in the variable "@#upload_New" shouldn't be replaced
+        $this->assertRegExp("/@#DOC_UID/", $stringToCheck);
+
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = true;
+
+        // Replace variables in the string, $recursive is true because is required replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
+
+        // The variable @#DOC_UID inside in the variable "@#upload_New" should be replaced correctly
+        $this->assertRegExp("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
     }
 
     /**
-     * This checks that strings with tag <br /> should not be replaced, because is a valid tag
+     * Check that the variable using "@=" will be replaced recursively or not according to the parameters sent
+     *
      * @test
      * @covers G::replaceDataField
      */
-    public function it_should_no_replace_tag_br()
+    public function it_should_replace_recursively_a_variable_inside_another_variable_with_equals_symbol()
     {
-        // Initializing variables to use
-        $stringWithTagBr = nl2br("prospection auprès d'entreprises de CA < 10 M euros
-test
-<a
->a
-&a
-\"a
-'a
-¢a
-£a
-¥a
-€a
-©a
-®a
-test");
-        $valuesToReplace = [];
-        $dbEngine = 'mysql'; // This only affects the way to escape the variables with "@@" prefix
-        $applyEntities = true; // Is true because the string will be used in a output document or a email template
+        // Initialize variables
+        $string = '@=upload_New';
+        $variables = ['upload_New' => "javascript:uploadInputDocument('@=DOC_UID');",
+            'DOC_UID' => '1988828025cc89aba0cd2b8079038028'];
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($stringWithTagBr, $valuesToReplace, $dbEngine, $applyEntities);
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = false;
 
-        // Assertions
-        $this->assertRegExp("/<br \/>/", $stringToCheck);
-    }
+        // Replace variables in the string, $recursive is false because is don't needed replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
 
-    /**
-     * Check that the value for the System variable "__ABE__" should not be replaced never
-     * @test
-     * @covers G::replaceDataField
-     */
-    public function it_should_no_replace_entities_for_var_abe()
-    {
-        // Initializing variables to use
-        $string = "bla @#__ABE__ bla @#anotherVar bla";
-        $valuesToReplace = [// Add a value for reserved system variable "__ABE__" used in Actions By Email feature
-            '__ABE__' => 'Java < PHP', // The value for System variable "__ABE__" shouldn't be changed never
-            'anotherVar' => '.NET < Java' // The value for another variables should be validated/replaced normally
-        ];
-        $dbEngine = 'mysql'; // This only affects the way to escape the variables with "@@" prefix
-        $applyEntities = true; // Is true because the string will be used in a output document or a email template
+        // The variable @=DOC_UID inside in the variable "@=upload_New" shouldn't be replaced
+        $this->assertRegExp("/@=DOC_UID/", $stringToCheck);
 
-        // Replace variables in the string
-        $stringToCheck = G::replaceDataField($string, $valuesToReplace, $dbEngine, $applyEntities);
+        // Set parameters to test the method
+        $dbEngine = 'mysql';
+        $recursive = true;
 
-        // Assertions
-        $this->assertRegExp("/Java < PHP/", $stringToCheck);
-        $this->assertRegExp("/.NET &lt; Java/", $stringToCheck);
+        // Replace variables in the string, $recursive is true because is required replace recursively the same value
+        $stringToCheck = G::replaceDataField($string, $variables, $dbEngine, $recursive);
+
+        // The variable @=DOC_UID inside in the variable "@=upload_New" should be replaced correctly
+        $this->assertRegExp("/1988828025cc89aba0cd2b8079038028/", $stringToCheck);
     }
 }

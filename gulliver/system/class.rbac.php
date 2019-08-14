@@ -201,6 +201,17 @@ class RBAC
                 'unassigned' => ['PM_CASES'],
                 'to_reassign' => ['PM_REASSIGNCASE,PM_REASSIGNCASE_SUPERVISOR'],
                 'to_revise' => ['PM_SUPERVISOR']
+            ],
+            'casesList_Ajax.php' => [
+                'userValues' => ['PM_CASES'],
+                'processListExtJs' => ['PM_CASES'],
+                'verifySession' => [],
+                'getUsersToReassign' => ['PM_CASES'],
+                'reassignCase' => ['PM_CASES'],
+                'showHistoryMessage' => ['PM_CASES'],
+                'showDynaformListHistory' => ['PM_CASES'],
+                'dynaformChangeLogViewHistory' => ['PM_CASES'],
+                'historyDynaformGridPreview' => ['PM_CASES'],
             ]
         ];
         $this->aliasPermissions['PM_CASES'] = [self::PM_GUEST_CASE];
@@ -213,7 +224,7 @@ class RBAC
      * @access public
      * @return object
      */
-    public function &getSingleton()
+    public static function &getSingleton()
     {
         if (self::$instance == null) {
             self::$instance = new RBAC();
