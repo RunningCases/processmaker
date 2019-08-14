@@ -625,6 +625,7 @@ function database_upgrade($args)
     foreach ($workspaces as $workspace) {
         try {
             $workspace->upgradeDatabase();
+            $workspace->close();
         } catch (Exception $e) {
             G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
         }

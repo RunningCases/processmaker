@@ -1354,7 +1354,6 @@ class WorkspaceTools
 
         // Ending the schema update
         CLI::logging("-> Schema Updated\n");
-        $this->closeDatabase();
         return true;
     }
 
@@ -2562,40 +2561,22 @@ class WorkspaceTools
             throw new Exception($errorMessage);
         }
 
-        // Clean the queries array
-        $listQueries = [];
-        // Canceled List
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_CANCELED'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListUsrId('LIST_CANCELED'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_CANCELED'));
-        // Inbox List
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_INBOX'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListUsrId('LIST_INBOX'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_INBOX'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListAppStatusId('LIST_INBOX'));
-        // Participated List
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_PARTICIPATED_LAST'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListUsrId('LIST_PARTICIPATED_LAST'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_PARTICIPATED_LAST'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListAppStatusId('LIST_PARTICIPATED_LAST'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListParticipatedLastCurrentUser());
-        // Unassigned List
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListProId('LIST_UNASSIGNED'));
-        $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->updateListTasId('LIST_UNASSIGNED'));
+        // Updating PRO_ID field
+        $this->runUpdateListField(['LIST_CANCELED', 'LIST_INBOX', 'LIST_PARTICIPATED_LAST', 'LIST_UNASSIGNED'], 'updateListProId');
 
-        // Run queries in multiple threads for update the list tables
-        $processesManager = new ProcessesManager($listQueries);
-        $processesManager->run();
+        // Updating TAS_ID field
+        $this->runUpdateListField(['LIST_CANCELED', 'LIST_INBOX', 'LIST_PARTICIPATED_LAST', 'LIST_UNASSIGNED'], 'updateListTasId');
 
-        // If exists an error throw an exception
-        if (!empty($processesManager->getErrors())) {
-            $errorMessage = '';
-            foreach ($processesManager->getErrors() as $error) {
-                $errorMessage .= $error['rawAnswer'] . PHP_EOL;
-            }
-            throw new Exception($errorMessage);
-        }
+        // Updating USR_ID field
+        $this->runUpdateListField(['LIST_CANCELED', 'LIST_INBOX', 'LIST_PARTICIPATED_LAST'], 'updateListUsrId');
 
+        // Updating APP_STATUS_ID field
+        $this->runUpdateListField(['LIST_INBOX', 'LIST_PARTICIPATED_LAST'], 'updateListAppStatusId');
+
+        // Updating Last Current User Information
+        $this->runUpdateListField(['LIST_PARTICIPATED_LAST'], 'updateListParticipatedLastCurrentUser');
+
+        // Updating flags for the list population
         $this->listFirstExecution('insert');
         $this->listFirstExecution('insert', 'unassigned');
     }
@@ -2984,6 +2965,37 @@ class WorkspaceTools
         // Update some fields
         $stmt->executeQuery($this->updateListProId('LIST_UNASSIGNED'));
         $stmt->executeQuery($this->updateListTasId('LIST_UNASSIGNED'));
+    }
+
+    /**
+     * Run the update queries for the specified tables
+     *
+     * @param array $listTables
+     * @param string $methodName
+     *
+     * @throws Exception
+     */
+    public function runUpdateListField(array $listTables, $methodName) {
+        // Clean the queries array
+        $listQueries = [];
+
+        // Get the queries
+        foreach ($listTables as $listTable) {
+            $listQueries[] = new RunProcessUpgradeQuery($this->name, $this->$methodName($listTable));
+        }
+
+        // Run queries in multiple threads for update the list tables
+        $processesManager = new ProcessesManager($listQueries);
+        $processesManager->run();
+
+        // If exists an error throw an exception
+        if (!empty($processesManager->getErrors())) {
+            $errorMessage = '';
+            foreach ($processesManager->getErrors() as $error) {
+                $errorMessage .= $error['rawAnswer'] . PHP_EOL;
+            }
+            throw new Exception($errorMessage);
+        }
     }
 
     /**
