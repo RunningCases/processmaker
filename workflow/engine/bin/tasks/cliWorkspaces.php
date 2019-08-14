@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Validation\MySQL57;
 
@@ -105,26 +106,6 @@ EOT
 );
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_plugins_database_upgrade");
-
-CLI::taskName('workspace-upgrade');
-CLI::taskDescription(<<<EOT
-  Upgrade the specified workspace(s).
-
-  If no workspace is specified, the command will be run in all workspaces. More
-  than one workspace can be specified.
-
-  This command is a shortcut to execute all the upgrade commands for workspaces.
-  Upgrading a workspace will make it correspond to the current version of
-  ProcessMaker.
-
-  Use this command to upgrade workspaces individually, otherwise use the
-  'processmaker upgrade' command to upgrade the entire system.
-EOT
-);
-CLI::taskArg('workspace-name', true, true);
-CLI::taskOpt('buildACV', 'If this option is enabled, the Cache View is built.', 'ACV', 'buildACV');
-CLI::taskOpt('noxml', 'If this option is enabled, the XML files translation is not built.', 'NoXml', 'no-xml');
-CLI::taskRun("run_workspace_upgrade");
 
 CLI::taskName('translation-repair');
 CLI::taskDescription(<<<EOT
@@ -391,6 +372,21 @@ CLI::taskRun("run_check_queries_incompatibilities");
 /*********************************************************************/
 
 /**
+ * This command executes "artisan" loading the workspace connection parameters
+ */
+CLI::taskName('artisan');
+CLI::taskDescription(<<<EOT
+    This command executes "artisan" loading the workspace parameters.
+Example:
+    ./processmaker artisan queue:work --workspace=workflow
+
+To see other command options please refer to the artisan help. 
+    php artisan --help
+EOT
+);
+CLI::taskRun("run_artisan");
+
+/**
  * Function run_info
  * 
  * @param array $args
@@ -408,69 +404,6 @@ function run_info($args, $opts)
         foreach ($workspaces as $workspace) {
             echo "\n";
             passthru(PHP_BINARY . " processmaker info " . $workspace->name);
-        }
-    }
-}
-
-/**
- * Check if we need to execute the workspace-upgrade
- * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
- *
- * @param string $args, workspace name that we need to apply the database-upgrade
- * @param string $opts, additional arguments
- *
- * @return void
- */
-function run_workspace_upgrade($args, $opts)
-{
-    //Read the additional parameters for this command
-    $parameters = '';
-    $parameters .= array_key_exists('buildACV', $opts) ? '--buildACV ' : '';
-    $parameters .= array_key_exists('noxml', $opts) ? '--no-xml ' : '';
-    $parameters .= array_key_exists("lang", $opts) ? 'lang=' . $opts['lang'] : 'lang=' . SYS_LANG;
-
-    //Check if the command is executed by a specific workspace
-    if (count($args) === 1) {
-        workspace_upgrade($args, $opts);
-    } else {
-        $workspaces = get_workspaces_from_args($args);
-        foreach ($workspaces as $workspace) {
-            passthru(PHP_BINARY . ' processmaker upgrade ' . $parameters . ' ' . $workspace->name);
-        }
-    }
-}
-
-/**
- * This function is executed only by one workspace, for the command workspace-upgrade
- *
- * @param array $args, workspace name for to apply the upgrade
- * @param array $opts, specify additional arguments for language, flag for buildACV, flag for noxml
- *
- * @return void
- */
-function workspace_upgrade($args, $opts) {
-    $first = true;
-    $workspaces = get_workspaces_from_args($args);
-    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
-    $buildCacheView = array_key_exists('buildACV', $opts);
-    $flagUpdateXml = !array_key_exists('noxml', $opts);
-
-    $wsName = $workspaces[key($workspaces)]->name;
-    Bootstrap::setConstantsRelatedWs($wsName);
-    //Loop, read all the attributes related to the one workspace
-    foreach ($workspaces as $workspace) {
-        try {
-            $workspace->upgrade(
-                $buildCacheView,
-                $workspace->name,
-                false,
-                $lang,
-                ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]
-            );
-            $first = false;
-            $flagUpdateXml = false;
-        } catch (Exception $e) {
-            G::outRes("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
         }
     }
 }
@@ -633,26 +566,20 @@ function run_database_import($args, $opts)
  * Check if we need to execute an external program for each workspace
  * If we apply the command for all workspaces we will need to execute one by one by redefining the constants
  * @param string $args, workspaceName that we need to apply the database-upgrade
- * @param string $opts
  *
  * @return void
  */
-function run_database_upgrade($args, $opts)
+function run_database_upgrade($args)
 {
     //Check if the command is executed by a specific workspace
     if (count($args) === 1) {
-        database_upgrade('upgrade', $args);
+        database_upgrade($args);
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
             passthru(PHP_BINARY . ' processmaker database-upgrade ' . $workspace->name);
         }
     }
-}
-
-function run_database_check($args, $opts)
-{
-    database_upgrade("check", $args);
 }
 
 function run_migrate_new_cases_lists($args, $opts)
@@ -672,44 +599,33 @@ function run_migrate_list_unassigned($args, $opts)
 
 /**
  * This function is executed only by one workspace
- * @param string $command, the specific actions must be: upgrade|check
  * @param array $args, workspaceName for to apply the database-upgrade
  *
  * @return void
  */
-function database_upgrade($command, $args)
+function database_upgrade($args)
 {
+    // Sanitize parameters sent
     $filter = new InputFilter();
-    $command = $filter->xssFilterHard($command);
     $args = $filter->xssFilterHard($args);
-    //Load the attributes for the workspace
-    $workspaces = get_workspaces_from_args($args);
-    $checkOnly = (strcmp($command, "check") == 0);
-    //Loop, read all the attributes related to the one workspace
-    $wsName = $workspaces[key($workspaces)]->name;
-    Bootstrap::setConstantsRelatedWs($wsName);
-    if ($checkOnly) {
-        print_r("Checking database in " . pakeColor::colorize($wsName, "INFO") . "\n");
-    } else {
-        print_r("Upgrading database in " . pakeColor::colorize($wsName, "INFO") . "\n");
-    }
 
+    // Load the attributes for the workspace
+    $workspaces = get_workspaces_from_args($args);
+
+    // Get the name of the first workspace
+    $wsName = $workspaces[key($workspaces)]->name;
+
+    // Initialize workspace values
+    Bootstrap::setConstantsRelatedWs($wsName);
+
+    // Print a informative message
+    print_r("Upgrading database in " . pakeColor::colorize($wsName, "INFO") . "\n");
+
+    // Loop to update the databases of all workspaces
     foreach ($workspaces as $workspace) {
         try {
-            $changes = $workspace->upgradeDatabase($checkOnly);
-            if ($changes != false) {
-                if ($checkOnly) {
-                    echo "> " . pakeColor::colorize("Run upgrade", "INFO") . "\n";
-                    echo "  Tables (add = " . count($changes['tablesToAdd']);
-                    echo ", alter = " . count($changes['tablesToAlter']) . ") ";
-                    echo "- Indexes (add = " . count($changes['tablesWithNewIndex']) . "";
-                    echo ", alter = " . count($changes['tablesToAlterIndex']) . ")\n";
-                } else {
-                    echo "-> Schema fixed\n";
-                }
-            } else {
-                echo "> OK\n";
-            }
+            $workspace->upgradeDatabase();
+            $workspace->close();
         } catch (Exception $e) {
             G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
         }
@@ -1121,7 +1037,7 @@ function migrate_new_cases_lists($command, $args, $opts)
     foreach ($workspaces as $workspace) {
         print_r("Upgrading database in " . pakeColor::colorize($workspace->name, "INFO") . "\n");
         try {
-            $workspace->migrateList($workspace->name, true, $lang);
+            $workspace->migrateList(true, $lang);
             echo "> List tables are done\n";
         } catch (Exception $e) {
             G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
@@ -1146,17 +1062,15 @@ function migrate_counters($command, $args)
     }
 }
 
-function migrate_list_unassigned($command, $args, $opts)
+function migrate_list_unassigned($command, $args)
 {
     $filter = new InputFilter();
-    $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);
-    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
     $workspaces = get_workspaces_from_args($args);
     foreach ($workspaces as $workspace) {
         print_r("Upgrading Unassigned List in" . pakeColor::colorize($workspace->name, "INFO") . "\n");
         try {
-            $workspace->regenerateListUnassigned();
+            $workspace->runRegenerateListUnassigned();
             echo "> Unassigned List is done\n";
         } catch (Exception $e) {
             G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
@@ -1210,7 +1124,7 @@ function migrate_content($args, $opts)
     foreach ($workspaces as $workspace) {
         print_r('Regenerating content in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
         CLI::logging("-> Regenerating content \n");
-        $workspace->migrateContentRun($workspace->name, $lang);
+        $workspace->migrateContentRun($lang);
     }
     $stop = microtime(true);
     CLI::logging("<*>   Optimizing content data Process took " . ($stop - $start) . " seconds.\n");
@@ -1461,5 +1375,34 @@ function check_queries_incompatibilities($wsName)
         }
     } else {
         echo ">> No MySQL 5.7 incompatibilities in variables found for this workspace." . PHP_EOL;
+    }
+}
+
+/**
+ * This function obtains the connection parameters and passes them to the artisan. 
+ * All artisan options can be applied. For more information on artisan options use 
+ * php artisan --help
+ * @param array $args
+ */
+function run_artisan($args)
+{
+    $jobsManager = JobsManager::getSingleton()->init();
+    $workspace = $jobsManager->getOptionValueFromArguments($args, "--workspace");
+    if ($workspace !== false) {
+        config(['system.workspace' => $workspace]);
+
+        $sw = in_array($args[0], ['queue:work', 'queue:listen']);
+        $tries = $jobsManager->getOptionValueFromArguments($args, "--tries");
+        if ($sw === true && $tries === false) {
+            $tries = $jobsManager->getTries();
+            array_push($args, "--tries={$tries}");
+        }
+        array_push($args, "--processmakerPath=" . PROCESSMAKER_PATH);
+
+        $command = "artisan " . implode(" ", $args);
+        CLI::logging("> {$command}\n");
+        passthru(PHP_BINARY . " {$command}");
+    } else {
+        CLI::logging("> The --workspace option is undefined.\n");
     }
 }

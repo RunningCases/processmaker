@@ -20,6 +20,7 @@ class SkinsTest extends TestCase
      */
     protected function setUp()
     {
+        parent::setUp();
         $this->object = new Skins();
     }
 
@@ -28,6 +29,7 @@ class SkinsTest extends TestCase
      */
     protected function tearDown()
     {
+        parent::tearDown();
         G::rm_dir(PATH_DATA . 'skins');
         mkdir(PATH_DATA . 'skins');
     }

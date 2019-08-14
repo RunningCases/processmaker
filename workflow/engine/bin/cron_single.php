@@ -12,11 +12,15 @@
  */
 
 use Illuminate\Foundation\Http\Kernel;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
+/*----------------------------------********---------------------------------*/
 
 require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
 require_once __DIR__ . '/../../../bootstrap/app.php';
 
+use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -170,7 +174,8 @@ try {
         } else {
             eprintln('WARNING! No server info found!', 'red');
         }
-
+        //load Processmaker translations
+        Bootstrap::LoadTranslationObject(SYS_LANG);
         //DB
         $phpCode = '';
 
@@ -250,6 +255,11 @@ try {
 
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
+        
+        /**
+         * JobsManager
+         */
+        JobsManager::getSingleton()->init();
 
         // We load plugins' pmFunctions
         $oPluginRegistry = PluginRegistry::loadSingleton();
@@ -280,6 +290,11 @@ try {
                 case 'sendnotificationscron':
                     sendNotifications();
                     break;
+                /*----------------------------------********---------------------------------*/
+                case 'actionsByEmailEmailResponse':
+                    (new ResponseReader)->actionsByEmailEmailResponse();
+                    break;
+                /*----------------------------------********---------------------------------*/
             }
         } catch (Exception $e) {
             $token = strtotime("now");

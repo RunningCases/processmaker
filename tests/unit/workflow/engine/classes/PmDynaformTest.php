@@ -13,9 +13,34 @@ class PmDynaformTest extends TestCase
     /**
      * Constructor of the class.
      */
-    function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
+        parent::__construct($name, $data, $dataName);
         $_SERVER["REQUEST_URI"] = "";
+        if (!defined("DB_ADAPTER")) {
+            define("DB_ADAPTER", "mysql");
+        }
+        if (!defined("DB_HOST")) {
+            define("DB_HOST", env('DB_HOST'));
+        }
+        if (!defined("DB_NAME")) {
+            define("DB_NAME", env('DB_DATABASE'));
+        }
+        if (!defined("DB_USER")) {
+            define("DB_USER", env('DB_USERNAME'));
+        }
+        if (!defined("DB_PASS")) {
+            define("DB_PASS", env('DB_PASSWORD'));
+        }
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        parent::setUp();
     }
 
     /**
@@ -531,5 +556,272 @@ class PmDynaformTest extends TestCase
                 ]
             ]
         ];
+    }
+
+    /**
+     * It tests that the json file is getting the defined values when the grid has one undefined control
+     *
+     * @test
+     */
+    public function it_should_add_the_correct_fields_with_a_single_undefined_control()
+    {
+        //Creates the PmDynaform object
+        $pmDynaform = new PmDynaform();
+
+        //A json that contains the text control data and columns
+        $jsonData = (object)(
+        [
+            "data" => (object)([
+                "1" => [
+                    ["value" => "textControl1", "label" => "textControl1"],
+                    ["value" => "textControl2", "label" => "textControl2"],
+                    ["value" => "", "label" => ""]
+                ]
+            ]),
+
+            "columns" => (object)([
+                0 => (object)([
+                    "id" => "text0000000001",
+                    "name" => "text0000000001",
+                ]),
+                1 => (object)([
+                    "id" => "textarea0000000001",
+                    "name" => "textarea0000000001",
+                ]),
+                2 => (object)([
+                    "id" => "text0000000002",
+                    "name" => "text0000000002",
+                ])
+            ])
+        ]
+        );
+
+        // An array that contains the variables stored on the App Data
+        $appData = [
+            "1" => [
+                "text0000000001" => "",
+                "text0000000001_label" => "",
+                "textarea0000000001" => "",
+                "textarea0000000001_label" => ""
+            ]
+        ];
+
+        //Calls the setDataSchema method
+        $resultText = $pmDynaform->setDataSchema($jsonData, $appData);
+
+        //This assert the result is null
+        $this->assertNull($resultText);
+
+        //Assert the 'dataSchema' field was added
+        $this->assertObjectHasAttribute('dataSchema', $jsonData);
+
+        //It asserts the first control is defined
+        $this->assertTrue($jsonData->dataSchema['1'][0]['defined']);
+
+        //It asserts the second control is defined
+        $this->assertTrue($jsonData->dataSchema['1'][1]['defined']);
+
+        //It asserts the second control is undefined
+        $this->assertFalse($jsonData->dataSchema['1'][2]['defined']);
+    }
+
+    /**
+     * It tests that the json file is getting the defined values when the grid has more than one undefined control
+     *
+     * @test
+     */
+    public function it_should_add_the_correct_fields_with_more_than_one_undefined_control()
+    {
+        //Creates the PmDynaform object
+        $pmDynaform = new PmDynaform();
+
+        //A json that contains the text control data and columns
+        $jsonData = (object)(
+        [
+            "data" => (object)([
+                "1" => [
+                    ["value" => "textControl1", "label" => "textControl1"],
+                    ["value" => "textAreaControl2", "label" => "textAreaControl2"],
+                    ["value" => "dropdowncontrol1", "label" => "dropdowncontrol1"],
+                    ["value" => "", "label" => ""],
+                    ["value" => "", "label" => ""]
+                ]
+            ]),
+            "columns" => (object)([
+                0 => (object)([
+                    "id" => "text0000000001",
+                    "name" => "text0000000001",
+                ]),
+                1 => (object)([
+                    "id" => "textarea0000000001",
+                    "name" => "textarea0000000001",
+                ]),
+                2 => (object)([
+                    "id" => "dropdown0000000001",
+                    "name" => "dropdown0000000001",
+                ]),
+                3 => (object)([
+                    "id" => "text0000000002",
+                    "name" => "text0000000002",
+                ]),
+                4 => (object)([
+                    "id" => "text0000000003",
+                    "name" => "text0000000003",
+                ])
+            ])
+        ]
+        );
+
+        // An array that contains the variables stored on the App Data
+        $appData = [
+            "1" => [
+                "text0000000001" => "",
+                "text0000000001_label" => "",
+                "textarea0000000001" => "",
+                "textarea0000000001_label" => "",
+                "dropdown0000000001" => "",
+                "dropdown0000000001_label" => ""
+            ]
+        ];
+
+        //Calls the setDataSchema method
+        $resultText = $pmDynaform->setDataSchema($jsonData, $appData);
+
+        //This assert the result is null
+        $this->assertNull($resultText);
+
+        //Assert the 'dataSchema' field was added
+        $this->assertObjectHasAttribute('dataSchema', $jsonData);
+
+        //It asserts the first control is defined
+        $this->assertTrue($jsonData->dataSchema['1'][0]['defined']);
+
+        //It asserts the second control is defined
+        $this->assertTrue($jsonData->dataSchema['1'][1]['defined']);
+
+        //It asserts the third control is defined
+        $this->assertTrue($jsonData->dataSchema['1'][2]['defined']);
+
+        //It asserts the fourth control is undefined
+        $this->assertFalse($jsonData->dataSchema['1'][3]['defined']);
+
+        //It asserts the fifth control is undefined
+        $this->assertFalse($jsonData->dataSchema['1'][4]['defined']);
+    }
+
+    /**
+     * It tests that the json file is getting the defined and undefined values when the grid has more than one row
+     *
+     * @test
+     */
+    public function it_should_add_the_correct_fields_with_more_than_one_rows()
+    {
+        //Creates the PmDynaform object
+        $pmDynaform = new PmDynaform();
+
+        //A json that contains the text control data and columns
+        $jsonData = (object)(
+        [
+            "data" => (object)([
+                "1" => [
+                    ["value" => "textControl1", "label" => "textControl1"],
+                    ["value" => "textAreaControl2", "label" => "textAreaControl2"],
+                    ["value" => "dropdowncontrol1", "label" => "dropdowncontrol1"],
+                    ["value" => "", "label" => ""],
+                    ["value" => "", "label" => ""]
+                ],
+                "2" => [
+                    ["value" => "textControl1", "label" => "textControl1"],
+                    ["value" => "textAreaControl2", "label" => "textAreaControl2"],
+                    ["value" => "dropdowncontrol1", "label" => "dropdowncontrol1"],
+                    ["value" => "", "label" => ""],
+                    ["value" => "", "label" => ""]
+                ],
+                "3" => [
+                    ["value" => "textControl1", "label" => "textControl1"],
+                    ["value" => "textAreaControl2", "label" => "textAreaControl2"],
+                    ["value" => "dropdowncontrol1", "label" => "dropdowncontrol1"],
+                    ["value" => "", "label" => ""],
+                    ["value" => "", "label" => ""]
+                ]
+            ]),
+            "columns" => (object)([
+                0 => (object)([
+                    "id" => "text0000000001",
+                    "name" => "text0000000001",
+                ]),
+                1 => (object)([
+                    "id" => "textarea0000000001",
+                    "name" => "textarea0000000001",
+                ]),
+                2 => (object)([
+                    "id" => "dropdown0000000001",
+                    "name" => "dropdown0000000001",
+                ]),
+                3 => (object)([
+                    "id" => "text0000000002",
+                    "name" => "text0000000002",
+                ]),
+                4 => (object)([
+                    "id" => "text0000000003",
+                    "name" => "text0000000003",
+                ])
+            ])
+        ]
+        );
+
+        // An array that contains the variables stored on the App Data
+        $appData = [
+            "1" => [
+                "text0000000001" => "",
+                "text0000000001_label" => "",
+                "textarea0000000001" => "",
+                "textarea0000000001_label" => "",
+                "dropdown0000000001" => "",
+                "dropdown0000000001_label" => ""
+            ],
+            "2" => [
+                "text0000000001" => "",
+                "text0000000001_label" => "",
+                "textarea0000000001" => "",
+                "textarea0000000001_label" => "",
+                "dropdown0000000001" => "",
+                "dropdown0000000001_label" => ""
+            ],
+            "3" => [
+                "text0000000001" => "",
+                "text0000000001_label" => "",
+                "textarea0000000001" => "",
+                "textarea0000000001_label" => "",
+                "dropdown0000000001" => "",
+                "dropdown0000000001_label" => ""
+            ]
+        ];
+
+        //Calls the setDataSchema method
+        $resultText = $pmDynaform->setDataSchema($jsonData, $appData);
+
+        //This assert the result is null
+        $this->assertNull($resultText);
+
+        //Assert the 'dataSchema' field was added
+        $this->assertObjectHasAttribute('dataSchema', $jsonData);
+
+        foreach ($jsonData->dataSchema as $key => $value) {
+            //It asserts the first control is defined
+            $this->assertTrue($jsonData->dataSchema[$key][0]['defined']);
+
+            //It asserts the second control is defined
+            $this->assertTrue($jsonData->dataSchema[$key][1]['defined']);
+
+            //It asserts the third control is defined
+            $this->assertTrue($jsonData->dataSchema[$key][2]['defined']);
+
+            //It asserts the fourth control is undefined
+            $this->assertFalse($jsonData->dataSchema[$key][3]['defined']);
+
+            //It asserts the fifth control is undefined
+            $this->assertFalse($jsonData->dataSchema[$key][4]['defined']);
+        }
     }
 }

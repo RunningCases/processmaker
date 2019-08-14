@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\Kernel;
 use Luracast\Restler\Format\UploadFormat;
 use Luracast\Restler\RestException;
 use Maveriks\Util;
+use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services;
@@ -611,6 +612,11 @@ class WebApplication
         define('PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download');
 
         \Propel::init(PATH_CONFIG . "databases.php");
+
+        /**
+         * JobsManager
+         */
+        JobsManager::getSingleton()->init();
 
         $oPluginRegistry = PluginRegistry::loadSingleton();
         $attributes = $oPluginRegistry->getAttributes();

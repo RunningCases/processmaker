@@ -8,8 +8,9 @@ class SpoolRunTest extends TestCase
     /**
      * Constructor of the class.
      */
-    function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
+        parent::__construct($name, $data, $dataName);
     }
 
     /**
