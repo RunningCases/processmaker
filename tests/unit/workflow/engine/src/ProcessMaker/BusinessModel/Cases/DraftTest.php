@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\unit\workflow\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -11,7 +12,7 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
- * @coversDefaultClass ProcessMaker\BusinessModel\Cases\Draft
+ * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Draft
  */
 class DraftTest extends TestCase
 {
@@ -19,7 +20,8 @@ class DraftTest extends TestCase
 
     /**
      * This checks the counters is working properly in draft
-     * @covers ::getCounter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounter()
      * @test
      */
     public function it_should_count_cases()
@@ -63,7 +65,8 @@ class DraftTest extends TestCase
 
     /**
      * This checks to make sure pagination is working properly in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_return_draft_paged()
@@ -109,7 +112,8 @@ class DraftTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case number APP_NUMBER in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_case_number()
@@ -152,7 +156,8 @@ class DraftTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case title APP_TITLE in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_case_title()
@@ -195,43 +200,30 @@ class DraftTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case title PRO_TITLE in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_process()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);
-        $process2 = factory(Process::class)->create([
-            'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
-        ]);
-        //Create user
+        // Create a user
         $user = factory(User::class)->create();
-        //Create a task
-        $task = factory(Task::class)->create([
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        $task2 = factory(Task::class)->create([
-            'PRO_UID' => $process2->PRO_UID
-        ]);
-        //Create application and app_delegation related with DRAFT status
-        $application = factory(Application::class)->states('draft')->create();
-        factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'PRO_ID' => $process->id,
-            'TAS_ID' => $task->TAS_ID,
-            'USR_ID' => $user->USR_ID,
-        ]);
-        //Create application and app_delegation related with DRAFT status
-        $application = factory(Application::class)->states('draft')->create();
-        factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'PRO_ID' => $process2->id,
-            'TAS_ID' => $task2->TAS_ID,
-            'USR_ID' => $user->USR_ID,
-        ]);
+        // Create some cases
+        for ($i = 1; $i <= 2; $i++) {
+            $process = factory(Process::class)->create();
+            $task = factory(Task::class)->create([
+                'PRO_UID' => $process->PRO_UID,
+                'PRO_ID' => $process->PRO_ID,
+            ]);
+            //Create application and app_delegation related with DRAFT status
+            $application = factory(Application::class)->states('draft')->create();
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'PRO_ID' => $process->PRO_ID,
+                'TAS_ID' => $task->TAS_ID,
+                'USR_ID' => $user->USR_ID,
+            ]);
+        }
         // Get first page
         $draft = new Draft();
         $draft->setUserId($user->USR_ID);
@@ -248,7 +240,8 @@ class DraftTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by task title TAS_TITLE in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_task_title()
@@ -258,29 +251,18 @@ class DraftTest extends TestCase
         //Create user
         $user = factory(User::class)->create();
         //Create a task
-        $task = factory(Task::class)->create([
-            'PRO_UID' => $process->PRO_UID,
-            'TAS_TITLE' => 'Initiate Request',
-            'TAS_TYPE' => 'NORMAL',
-        ]);
-        $task2 = factory(Task::class)->create([
-            'PRO_UID' => $process->PRO_UID,
-            'TAS_TITLE' => 'Waiting for AP Manager Validation',
-            'TAS_TYPE' => 'NORMAL',
-        ]);
-        //Create application and app_delegation related with DRAFT status
-        $application = factory(Application::class)->states('draft')->create();
-        factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'USR_ID' => $user->USR_ID,
-        ]);
-        //Create the register in delegation related to draft
-        factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'TAS_ID' => $task2->TAS_ID,
-            'USR_ID' => $user->USR_ID,
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            $task = factory(Task::class)->create([
+                'PRO_UID' => $process->PRO_UID,
+                'TAS_TYPE' => 'NORMAL',
+            ]);
+            $application = factory(Application::class)->states('draft')->create();
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'USR_ID' => $user->USR_ID,
+            ]);
+        }
         // Get first page
         $draft = new Draft();
         $draft->setUserId($user->USR_ID);
@@ -297,7 +279,8 @@ class DraftTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by due date DEL_TASK_DUE_DATE in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_return_draft_sort_due_date()
@@ -343,7 +326,8 @@ class DraftTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by last modified APP_UPDATE_DATE in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_return_draft_sort_last_modified()
@@ -386,7 +370,8 @@ class DraftTest extends TestCase
 
     /**
      * This ensures searching specific cases and review the page in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_search_draft_search_specific_case_uid()
@@ -425,7 +410,8 @@ class DraftTest extends TestCase
 
     /**
      * This ensures searching specific cases and review the page in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_search_draft_search_specific_cases_uid_array()
@@ -460,55 +446,38 @@ class DraftTest extends TestCase
 
     /**
      * This ensures searching specific process and review the page in draft
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
     public function it_should_search_draft_search_specific_process()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);
-        $process2 = factory(Process::class)->create([
-            'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task
-        $task = factory(Task::class)->create([
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        $task2 = factory(Task::class)->create([
-            'PRO_UID' => $process2->PRO_UID
-        ]);
-        //Create application and app_delegation related with DRAFT status
-        $application = factory(Application::class)->states('draft')->create();
-        factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'PRO_ID' => $process->id,
-            'TAS_ID' => $task->TAS_ID,
-            'USR_ID' => $user->USR_ID,
-        ]);
-        //Create the register in delegation related to draft
-        factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'PRO_ID' => $process2->id,
-            'TAS_ID' => $task2->TAS_ID,
-            'USR_ID' => $user->USR_ID,
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            $task = factory(Task::class)->create([
+                'PRO_UID' => $process->PRO_UID,
+                'PRO_ID' => $process->PRO_ID,
+            ]);
+            //Create application and app_delegation related with DRAFT status
+            $application = factory(Application::class)->states('draft')->create();
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'PRO_ID' => $process->PRO_ID,
+                'TAS_ID' => $task->TAS_ID,
+                'USR_ID' => $user->USR_ID,
+            ]);
+        }
         // Get first page
         $draft = new Draft();
         $draft->setUserId($user->USR_ID);
         $draft->setOrderByColumn('PRO_TITLE');
-        $draft->setProcessId($process->id);
+        $draft->setProcessId($process->PRO_ID);
         // Get first page, the minor case title
         $draft->setOrderDirection('ASC');
         $results = $draft->getData();
         $this->assertEquals($process->PRO_UID, $results[0]['PRO_UID']);
-        // Get first page, the major case title
-        $draft->setOrderDirection('DESC');
-        $draft->setProcessId($process2->id);
-        $results = $draft->getData();
-        $this->assertEquals($process2->PRO_UID, $results[0]['PRO_UID']);
     }
 }

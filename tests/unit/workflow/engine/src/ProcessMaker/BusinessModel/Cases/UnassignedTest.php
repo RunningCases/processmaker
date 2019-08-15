@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\unit\workflow\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -16,7 +17,7 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
- * @coversDefaultClass ProcessMaker\BusinessModel\Cases\Unassigned
+ * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Unassigned
  */
 class UnassignedTest extends TestCase
 {
@@ -24,7 +25,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service user assigned
-     * @covers ::getCounter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_user_assigned()
@@ -60,9 +62,10 @@ class UnassignedTest extends TestCase
     }
 
     /**
-     * This checks the counters is working properly in self-service-value-based when the variable has a value related with the USR_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [USR_UID]
-     * @covers ::getCounter
+     * This checks the counters is working properly in self-service-value-based when the variable has a value related
+     * with the USR_UID When the value assigned in the variable @@ARRAY_OF_USERS = [USR_UID]
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid()
@@ -108,7 +111,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service and self-service value based
-     * @covers ::getCounter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_mixed_with_self_service_value_based()
@@ -173,7 +177,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service group assigned
-     * @covers ::getCounter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_group_assigned()
@@ -217,9 +222,10 @@ class UnassignedTest extends TestCase
     }
 
     /**
-     * This checks the counters is working properly in self-service-value-based when the variable has a value related with the GRP_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID]
-     * @covers ::getCounter
+     * This checks the counters is working properly in self-service-value-based when the variable has a value related
+     * with the GRP_UID When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID]
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_value_based_grp_uid()
@@ -278,7 +284,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service user and group assigned in parallel task
-     * @covers ::getCounter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_user_and_group_assigned_parallel_task()
@@ -379,9 +386,10 @@ class UnassignedTest extends TestCase
     }
 
     /**
-     * This checks the counters is working properly in self-service-value-based with GRP_UID and USR_UID in parallel task
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID, USR_UID]
-     * @covers ::getCounter
+     * This checks the counters is working properly in self-service-value-based with GRP_UID and USR_UID in parallel
+     * task When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID, USR_UID]
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid_and_grp_uid()
@@ -451,7 +459,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This checks to make sure pagination is working properly in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_user_assigned_paged()
@@ -520,9 +529,10 @@ class UnassignedTest extends TestCase
     }
 
     /**
-     * This checks to make sure pagination is working properly in elf-service-value-based when the variable has a value related with the USR_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [USR_UID]
-     * @covers ::getData
+     * This checks to make sure pagination is working properly in elf-service-value-based when the variable has a value
+     * related with the USR_UID When the value assigned in the variable @@ARRAY_OF_USERS = [USR_UID]
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_value_based_usr_uid_paged()
@@ -610,7 +620,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This checks to make sure pagination is working properly in self-service group assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_group_assigned_paged()
@@ -696,9 +707,10 @@ class UnassignedTest extends TestCase
     }
 
     /**
-     * This checks to make sure pagination is working properly in self-service-value-based when the variable has a value related with the GRP_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID]
-     * @covers ::getData
+     * This checks to make sure pagination is working properly in self-service-value-based when the variable has a
+     * value related with the GRP_UID When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID]
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_group_value_based_assigned_paged()
@@ -795,7 +807,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case number APP_NUMBER in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_user_assigned_sort_by_case_number()
@@ -863,7 +876,8 @@ class UnassignedTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case title APP_TITLE in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_user_assigned_sort_by_case_title()
@@ -933,52 +947,41 @@ class UnassignedTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case title PRO_TITLE in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_user_assigned_sort_by_process()
     {
-        //Create process
-        $process1 = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);
-        $process2 = factory(Process::class)->create([
-            'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
-        ]);
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process1->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process1->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process2->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            $process = factory(Process::class)->create();
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+                'PRO_ID' => $process->PRO_ID
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $unassigned->setOrderByColumn('PRO_TITLE');
@@ -987,78 +990,51 @@ class UnassignedTest extends TestCase
         $unassigned->setLimit(25);
         // Get first page, the minor process title
         $results = $unassigned->getData();
-        $this->assertEquals('China Supplier Payment Proposal', $results[0]['PRO_TITLE']);
-        $this->assertEquals('China Supplier Payment Proposal', $results[1]['PRO_TITLE']);
-        $this->assertEquals('Egypt Supplier Payment Proposal', $results[2]['PRO_TITLE']);
-        $this->assertEquals('Egypt Supplier Payment Proposal', $results[3]['PRO_TITLE']);
+        $this->assertGreaterThan($results[0]['PRO_TITLE'], $results[1]['PRO_TITLE']);
         // Get first page, the major process title
         $unassigned->setOrderDirection('DESC');
         $results = $unassigned->getData();
-        $this->assertEquals('Egypt Supplier Payment Proposal', $results[0]['PRO_TITLE']);
-        $this->assertEquals('Egypt Supplier Payment Proposal', $results[1]['PRO_TITLE']);
-        $this->assertEquals('China Supplier Payment Proposal', $results[2]['PRO_TITLE']);
-        $this->assertEquals('China Supplier Payment Proposal', $results[3]['PRO_TITLE']);
+        $this->assertLessThan($results[0]['PRO_TITLE'], $results[1]['PRO_TITLE']);
     }
 
     /**
      * This ensures ordering ascending and descending works by task title TAS_TITLE in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_user_assigned_sort_by_task_title()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);;
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'TAS_TITLE' => 'Initiate Request',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        $task1 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'TAS_TITLE' => 'Waiting for AP Manager Validation',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task1->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task1->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->id,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $unassigned->setOrderByColumn('TAS_TITLE');
@@ -1067,67 +1043,52 @@ class UnassignedTest extends TestCase
         $unassigned->setLimit(25);
         // Get first page, the minor task title
         $results = $unassigned->getData();
-        $this->assertEquals('Initiate Request', $results[0]['TAS_TITLE']);
-        $this->assertEquals('Initiate Request', $results[1]['TAS_TITLE']);
-        $this->assertEquals('Waiting for AP Manager Validation', $results[2]['TAS_TITLE']);
-        $this->assertEquals('Waiting for AP Manager Validation', $results[3]['TAS_TITLE']);
+        $this->assertGreaterThan($results[0]['TAS_TITLE'], $results[1]['TAS_TITLE']);
         // Get first page, the major task title
         $unassigned->setOrderDirection('DESC');
         $results = $unassigned->getData();
-        $this->assertEquals('Waiting for AP Manager Validation', $results[0]['TAS_TITLE']);
-        $this->assertEquals('Waiting for AP Manager Validation', $results[1]['TAS_TITLE']);
-        $this->assertEquals('Initiate Request', $results[2]['TAS_TITLE']);
-        $this->assertEquals('Initiate Request', $results[3]['TAS_TITLE']);
+        $this->assertLessThan($results[0]['TAS_TITLE'], $results[1]['TAS_TITLE']);
     }
 
     /**
      * This ensures ordering ascending and descending works by due date DEL_TASK_DUE_DATE in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_user_assigned_sort_due_date()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);;
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'TAS_TITLE' => 'Initiate Request',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-            'DEL_TASK_DUE_DATE' => '2019-04-01 00:00:00'
-        ]);
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-            'DEL_TASK_DUE_DATE' => '2019-01-01 00:00:00'
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $unassigned->setOrderByColumn('DEL_TASK_DUE_DATE');
@@ -1136,70 +1097,53 @@ class UnassignedTest extends TestCase
         $unassigned->setLimit(25);
         // Get first page, the minor due date
         $results = $unassigned->getData();
-        $this->assertEquals('2019-01-01 00:00:00', $results[0]['DEL_TASK_DUE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[1]['DEL_TASK_DUE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[2]['DEL_TASK_DUE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[3]['DEL_TASK_DUE_DATE']);
+        $this->assertGreaterThan($results[0]['DEL_TASK_DUE_DATE'], $results[1]['DEL_TASK_DUE_DATE']);
         // Get first page, the major due date
         $unassigned->setOrderDirection('DESC');
         $results = $unassigned->getData();
-        $this->assertEquals('2019-04-01 00:00:00', $results[0]['DEL_TASK_DUE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[1]['DEL_TASK_DUE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[2]['DEL_TASK_DUE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[3]['DEL_TASK_DUE_DATE']);
+        $this->assertLessThan($results[0]['DEL_TASK_DUE_DATE'], $results[1]['DEL_TASK_DUE_DATE']);
     }
 
     /**
-     * This ensures ordering ascending and descending works by last modified APP_UPDATE_DATE in self-service-user-assigned
-     * @covers ::getData
+     * This ensures ordering ascending and descending works by last modified APP_UPDATE_DATE in
+     * self-service-user-assigned
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_return_self_service_user_assigned_sort_last_modified()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);;
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2,
-            'APP_UPDATE_DATE' => '2019-04-01 00:00:00'
-        ]);
-        $application2 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2,
-            'APP_UPDATE_DATE' => '2019-01-01 00:00:00'
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'TAS_TITLE' => 'Initiate Request',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application2->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2,
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $unassigned->setOrderByColumn('APP_UPDATE_DATE');
@@ -1208,217 +1152,168 @@ class UnassignedTest extends TestCase
         $unassigned->setLimit(25);
         // Get first page, the minor update date
         $results = $unassigned->getData();
-        $this->assertEquals('2019-01-01 00:00:00', $results[0]['APP_UPDATE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[1]['APP_UPDATE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[2]['APP_UPDATE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[3]['APP_UPDATE_DATE']);
+        $this->assertGreaterThan($results[0]['APP_UPDATE_DATE'], $results[1]['APP_UPDATE_DATE']);
+
         // Get first page, the major update date
         $unassigned->setOrderDirection('DESC');
         $results = $unassigned->getData();
-        $this->assertEquals('2019-04-01 00:00:00', $results[0]['APP_UPDATE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[1]['APP_UPDATE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[2]['APP_UPDATE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[3]['APP_UPDATE_DATE']);
+        $this->assertLessThan($results[0]['APP_UPDATE_DATE'], $results[1]['APP_UPDATE_DATE']);
     }
 
     /**
      * This ensures searching by newest than and review the page in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_search_self_service_user_assigned_by_newest_than()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);;
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => '2019-04-01 00:00:00'
-        ]);
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => '2019-01-01 00:00:00'
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+                'PRO_ID' => $process->PRO_ID,
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            $del = factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("+$i year"))
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setNewestThan('2019-01-01');
+        $dateToFilter = date('Y-m-d', strtotime('+1 year'));
+        $unassigned->setNewestThan($dateToFilter);
         $unassigned->setOrderByColumn('DEL_DELEGATE_DATE');
         $unassigned->setOrderDirection('ASC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
         // Get the newest than (>=) delegate date
         $results = $unassigned->getData();
-        $this->assertEquals('2019-01-01 00:00:00', $results[0]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[1]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[2]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[3]['DEL_DELEGATE_DATE']);
+        $this->assertGreaterThan($results[0]['DEL_DELEGATE_DATE'], $results[1]['DEL_DELEGATE_DATE']);
         // Get the newest than (>=) delegate date
-        $unassigned->setNewestThan('2019-04-01');
+        $unassigned->setNewestThan($dateToFilter);
         $unassigned->setOrderDirection('DESC');
         $results = $unassigned->getData();
-        $this->assertEquals('2019-04-01 00:00:00', $results[0]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[1]['DEL_DELEGATE_DATE']);
-        // Get the newest than (>=) delegate date
-        $unassigned->setNewestThan('2019-05-01');
-        $unassigned->setOrderDirection('DESC');
-        $results = $unassigned->getData();
-        $this->assertEmpty($results);
+        $this->assertLessThan($results[0]['DEL_DELEGATE_DATE'], $results[1]['DEL_DELEGATE_DATE']);
     }
 
     /**
      * This ensures searching by newest than and review the page in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_search_self_service_user_assigned_by_oldest_than()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);;
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => '2019-04-01 00:00:00'
-        ]);
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => '2019-01-01 00:00:00'
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            $del = factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-$i year"))
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setOldestThan('2019-02-01');
+        $dateToFilter = date('Y-m-d', strtotime('+1 year'));
+        $unassigned->setOldestThan($dateToFilter);
         $unassigned->setOrderByColumn('DEL_DELEGATE_DATE');
         $unassigned->setOrderDirection('ASC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
         // Get the oldest than (<=) delegate date
         $results = $unassigned->getData();
-        $this->assertEquals('2019-01-01 00:00:00', $results[0]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[1]['DEL_DELEGATE_DATE']);
-        // Get the oldest than (<=) delegate date
-        $unassigned->setOldestThan('2019-04-01');
-        $unassigned->setOrderDirection('DESC');
-        $results = $unassigned->getData();
-        $this->assertEquals('2019-04-01 00:00:00', $results[0]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-04-01 00:00:00', $results[1]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[2]['DEL_DELEGATE_DATE']);
-        $this->assertEquals('2019-01-01 00:00:00', $results[3]['DEL_DELEGATE_DATE']);
-        // Get the oldest than (<=) delegate date
-        $unassigned->setOldestThan('2018-12-01');
-        $unassigned->setOrderDirection('DESC');
-        $results = $unassigned->getData();
-        $this->assertEmpty($results);
+        $this->assertGreaterThan($results[0]['DEL_DELEGATE_DATE'], $results[1]['DEL_DELEGATE_DATE']);
     }
 
     /**
      * This ensures searching specific cases and review the page in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_search_self_service_user_assigned_specific_case_uid()
     {
-        //Create process
-        $process = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);;
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
-        //Create application
-        $application2 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 1)->create([
-            'APP_UID' => $application1->APP_UID,
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0
-        ]);
-        factory(Delegation::class, 1)->create([
-            'APP_UID' => $application2->APP_UID,
-            'APP_NUMBER' => $application2->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0
-        ]);
-
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create([
+                'PRO_TITLE' => 'China Supplier Payment Proposal'
+            ]);
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            factory(Delegation::class)->create([
+                'APP_UID' => $application->APP_UID,
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $unassigned->setOrderByColumn('APP_DELEGATION.APP_UID');
@@ -1426,150 +1321,119 @@ class UnassignedTest extends TestCase
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
         // Get the specific case uid
-        $unassigned->setCaseUid($application1->APP_UID);
+        $unassigned->setCaseUid($application->APP_UID);
         $results = $unassigned->getData();
-        $this->assertEquals($application1->APP_UID, $results[0]['APP_UID']);
-
-        // Get the specific case uid
-        $unassigned->setCaseUid($application2->APP_UID);
-        $results = $unassigned->getData();
-        $this->assertEquals($application2->APP_UID, $results[0]['APP_UID']);
+        $this->assertEquals($application->APP_UID, $results[0]['APP_UID']);
     }
 
     /**
      * This ensures searching specific cases and review the page in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_search_self_service_user_assigned_specific_cases_uid_array()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
-        //Create application
-        $application2 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 1)->create([
-            'APP_UID' => $application1->APP_UID,
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0
-        ]);
-        factory(Delegation::class, 1)->create([
-            'APP_UID' => $application2->APP_UID,
-            'APP_NUMBER' => $application2->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            factory(Delegation::class)->create([
+                'APP_UID' => $application->APP_UID,
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setCasesUids([$application1->APP_UID, $application2->APP_UID]);
+        $unassigned->setCasesUids([$application->APP_UID]);
         $unassigned->setOrderByColumn('APP_DELEGATION.APP_UID');
         $unassigned->setOrderDirection('ASC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
         // Get the specific cases uid's
         $results = $unassigned->getData();
-        $this->assertCount(2, $results);
-
+        $this->assertCount(1, $results);
         // Get the specific cases uid's
-        $unassigned->setCasesUids([$application1->APP_UID]);
+        $unassigned->setCasesUids([$application->APP_UID]);
         $results = $unassigned->getData();
-        $this->assertEquals($application1->APP_UID, $results[0]['APP_UID']);
-
+        $this->assertEquals($application->APP_UID, $results[0]['APP_UID']);
         // Get the specific cases uid's
-        $unassigned->setCasesUids([$application2->APP_UID]);
+        $unassigned->setCasesUids([$application->APP_UID]);
         $results = $unassigned->getData();
-        $this->assertEquals($application2->APP_UID, $results[0]['APP_UID']);
+        $this->assertEquals($application->APP_UID, $results[0]['APP_UID']);
     }
 
     /**
      * This ensures searching specific process and review the page in self-service-user-assigned
-     * @covers ::getData
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
     public function it_should_search_self_service_user_assigned_specific_process()
     {
-        //Create process
-        $process1 = factory(Process::class)->create([
-            'PRO_TITLE' => 'China Supplier Payment Proposal'
-        ]);
-        $process2 = factory(Process::class)->create([
-            'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
-        ]);
-        //Create application
-        $application1 = factory(Application::class)->create([
-            'APP_STATUS_ID' => 2
-        ]);
         //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process1->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process1->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
-        factory(Delegation::class, 2)->create([
-            'APP_NUMBER' => $application1->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'PRO_ID' => $process2->id,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            //Create process
+            $process = factory(Process::class)->create();
+            //Create application
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            //Create a task self service
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID
+            ]);
+            //Assign a user in the task
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            //Create the register in delegation relate to self-service
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+            ]);
+        }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $unassigned->setOrderByColumn('PRO_TITLE');
         $unassigned->setOrderDirection('ASC');
-        $unassigned->setProcessId($process1->id);
+        $unassigned->setProcessId($process->PRO_ID);
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
         // Get first page, the minor process title
         $results = $unassigned->getData();
-        $this->assertEquals('China Supplier Payment Proposal', $results[0]['PRO_TITLE']);
-        $this->assertEquals('China Supplier Payment Proposal', $results[1]['PRO_TITLE']);
-        // Get first page, the major process title
-        $unassigned->setProcessId($process2->id);
-        $results = $unassigned->getData();
-        $this->assertEquals('Egypt Supplier Payment Proposal', $results[0]['PRO_TITLE']);
-        $this->assertEquals('Egypt Supplier Payment Proposal', $results[1]['PRO_TITLE']);
+        $this->assertEquals($process->PRO_TITLE, $results[0]['PRO_TITLE']);
     }
 }

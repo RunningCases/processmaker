@@ -11,7 +11,9 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
- * @coversDefaultClass ProcessMaker\BusinessModel\Model\Process
+ * Class ProcessTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\Process
  */
 class ProcessTest extends TestCase
 {

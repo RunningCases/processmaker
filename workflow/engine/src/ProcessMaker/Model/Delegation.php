@@ -180,6 +180,40 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include open threads
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeIsThreadOpen($query)
+    {
+        return $query->where('DEL_THREAD_STATUS', '=', 'OPEN');
+    }
+
+    /**
+     * Scope a query to only include threads without user
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeNoUserInThread($query)
+    {
+        return $query->where('USR_ID', '=', 0);
+    }
+
+    /**
+     * Scope a query to only include specific tasks
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $tasks
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTasksIn($query, array $tasks)
+    {
+        return $query->whereIn('APP_DELEGATION.TAS_ID', $tasks);
+    }
+
+    /**
      * Scope a query to only include specific cases by APP_UID
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -803,7 +837,7 @@ class Delegation extends Model
      * @param string $usrUid
      * @param bool $count
      *
-     * @return \Illuminate\Database\Query\Builder | string
+     * @return \Illuminate\Database\Query\Builder
      */
     public static function getSelfServiceQuery($usrUid, $count = false)
     {
