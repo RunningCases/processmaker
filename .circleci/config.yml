@@ -4,7 +4,11 @@ jobs:
    working_directory: ~/processmaker
    docker:
      - image: devopsstacks/pm:n225-phpunit
-   resource_class: large   
+   resource_class: large
+   branches:
+     only:
+       # Only executed circleci for this branch
+       - develop
    steps:         
      - checkout
      - run: service mysqld restart
