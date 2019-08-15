@@ -28,21 +28,19 @@ if (file_exists($pathData)) {
 } else {
     define('PATH_DB', dirname(__DIR__) . '/shared/sites/');
 }
-define('PATH_SEP', '/');
-define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
+// Define some values related to the workspace
 define('SYS_LANG', 'en');
 define('SYS_SKIN', 'neoclassic');
 define('SYS_SYS', env('MAIN_SYS_SYS', 'workflow'));
-define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
 define('PMTABLE_KEY', 'pmtable');
+define('DB_ADAPTER', 'mysql');
+// Path related some specific directories
+define('PATH_SEP', '/');
+define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
+define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
 define('PATH_WORKFLOW_MYSQL_DATA', PATH_TRUNK . '/workflow/engine/data/mysql/');
 define('PATH_RBAC_MYSQL_DATA', PATH_TRUNK . '/rbac/engine/data/mysql/');
 define('PATH_LANGUAGECONT', PATH_DATA . '/META-INF/');
-define('PM_NEW_PROCESS_SAVE', 1006);
-define('PATH_DATA_SITE', PATH_DATA . 'sites/' . SYS_SYS . '/');
-define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
-define('PATH_DATA_PUBLIC', PATH_DATA_SITE . 'public/');
-define('DB_ADAPTER', 'mysql');
 define('PATH_RBAC_HOME', PATH_TRUNK . '/rbac/');
 define('PATH_RBAC', PATH_RBAC_HOME . 'engine/classes/');
 define("PATH_CUSTOM_SKINS", PATH_DATA . "skins/");
