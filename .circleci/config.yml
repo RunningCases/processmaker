@@ -9,6 +9,7 @@ jobs:
      only:
        # Only executed circleci for this branch
        - develop
+       - KR-7471
    steps:         
      - checkout
      - run: service mysqld restart
