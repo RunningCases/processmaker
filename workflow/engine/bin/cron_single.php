@@ -224,6 +224,18 @@ try {
 
         Propel::init(PATH_CORE . 'config' . PATH_SEP . '_databases_.php');
 
+        /**
+         * Load Laravel database connection
+         */
+        $dbHost = explode(':', $DB_HOST);
+        config(['database.connections.workflow.host' => $dbHost[0]]);
+        config(['database.connections.workflow.database' => $DB_NAME]);
+        config(['database.connections.workflow.username' => $DB_USER]);
+        config(['database.connections.workflow.password' => $DB_PASS]);
+        if (count($dbHost) > 1) {
+            config(['database.connections.workflow.port' => $dbHost[1]]);
+        }
+
         //Enable RBAC
         $rbac = RBAC::getSingleton(PATH_DATA, session_id());
         $rbac->sSystem = 'PROCESSMAKER';
