@@ -14,10 +14,9 @@ class XMLResult
      * XMLResult
      *
      * @param array $result
-     *
      * @return void
      */
-    public function __construct($result = [])
+    public function XMLResult ($result = array())
     {
         $this->result = $result;
         $this->cursor = 0;

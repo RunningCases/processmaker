@@ -47,9 +47,9 @@ class DBRecordSet
      * @param string $intResult Database recordset default value = false
      * @return void
      */
-    public function __construct($intResult = null)
+    function DBRecordSet ($intResult = null)
     {
-        $this->SetTo($intResult);
+        $this->SetTo( $intResult );
     }
 
     /**

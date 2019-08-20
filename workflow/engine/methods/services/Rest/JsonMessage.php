@@ -22,7 +22,7 @@ class JsonMessage extends FormatedMessage
     /**
      * Call the parent Curl initialization and set the type of the message
      */
-    public function __construct()
+    public function JsonMessage ()
     {
         parent::__construct();
         $this->type = "json";

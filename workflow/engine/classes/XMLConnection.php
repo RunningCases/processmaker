@@ -13,7 +13,7 @@ class XMLConnection
      * @param string $file
      * @return void
      */
-    public function __construct($file)
+    public function XMLConnection($file)
     {
         $this->xmldoc = new Xml_Document();
         $this->xmldoc->parseXmlFile($file);

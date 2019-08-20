@@ -53,15 +53,12 @@ class DBTable
     /**
      * Initiate a database conecction using default values
      *
+     * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
-     *
-     * @param object $objConnection
-     * @param string $strTable
-     * @param array $arrKeys
-     *
+     * @param object $objConnection conecction string
      * @return void
      */
-    public function __construct($objConnection = null, $strTable = "", $arrKeys = ['UID'])
+    public function dBTable($objConnection = null, $strTable = "", $arrKeys = array('UID'))
     {
         $this->_dbc = null;
         $this->_dbses = null;
