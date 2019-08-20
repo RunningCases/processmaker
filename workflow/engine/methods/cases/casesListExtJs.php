@@ -116,8 +116,7 @@ if ($action == 'selfservice') {
 }
 
 $userUid = (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') ? $_SESSION['USER_LOGGED'] : null;
-$oAppCache = new AppCacheView();
-$oAppCache->confCasesList = $confCasesList;
+
 $solrEnabled = 0;
 if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "selfservice" ||
     $action == "unassigned" || $action == "search") {
