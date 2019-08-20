@@ -21,10 +21,9 @@ class XmlFormFieldToolBar extends XmlFormField
      * @param string $lang
      * @param string $home
      * @param string $owner
-     *
      * @return void
      */
-    public function __construct($xmlNode, $lang = 'en', $home = '', $owner = ' ')
+    public function XmlFormFieldToolBar($xmlNode, $lang = 'en', $home = '', $owner = ' ')
     {
         parent::__construct($xmlNode, $lang, $home, $owner);
         $this->home = $home;

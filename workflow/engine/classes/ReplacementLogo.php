@@ -6,13 +6,15 @@
  */
 class ReplacementLogo
 {
+
+    //var $dir='';
     /**
      * This function is the constructor of the ReplacementLogo class
      * param
      *
      * @return void
      */
-    public function __construct()
+    public function replacementLogo ()
     {
 
     }
