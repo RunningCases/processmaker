@@ -50,8 +50,12 @@ workflow/engine/classes/entities/SolrQueryResult.php
 workflow/engine/classes/entities/SolrRequestData.php
 workflow/engine/classes/entities/SolrUpdateDocument.php
 workflow/engine/classes/triggers/api/class.zimbraApi.php
+workflow/engine/controllers/authSourceProxy.php
 workflow/engine/controllers/dashboard.php
 workflow/engine/controllers/installer.php
+workflow/engine/data/mssql/insert.sql
+workflow/engine/data/mssql/schema.sql
+workflow/engine/data/mssql/sqldb.map
 workflow/engine/includes/inc.JSForms.php
 workflow/engine/js/cases/core/cases_Step_Pmdynaform.js
 workflow/engine/methods/cases/casesDemo.php
