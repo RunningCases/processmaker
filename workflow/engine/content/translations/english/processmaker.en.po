@@ -38487,60 +38487,6 @@ msgstr "Content"
 msgid "[messages/messages_Edit.xml?ACCEPT] Save"
 msgstr "Save"
 
-# messages/messages_List.xml?fMESS_TITLE
-# messages/messages_List.xml
-#: text - fMESS_TITLE
-msgid "[messages/messages_List.xml?fMESS_TITLE] Output document"
-msgstr "Output document"
-
-# messages/messages_List.xml?MESS_TYPE
-# messages/messages_List.xml
-#: dropdown - MESS_TYPE
-msgid "[messages/messages_List.xml?MESS_TYPE] Type"
-msgstr "Type"
-
-# messages/messages_List.xml?MESS_TYPE-HTML
-# messages/messages_List.xml
-#: dropdown - MESS_TYPE - HTML
-msgid "[messages/messages_List.xml?MESS_TYPE-HTML]"
-msgstr "HTML"
-
-# messages/messages_List.xml?MESS_TYPE-TEXT
-# messages/messages_List.xml
-#: dropdown - MESS_TYPE - TEXT
-msgid "[messages/messages_List.xml?MESS_TYPE-TEXT]"
-msgstr "Plain text"
-
-# messages/messages_List.xml?MESS_TYPE-SMS
-# messages/messages_List.xml
-#: dropdown - MESS_TYPE - SMS
-msgid "[messages/messages_List.xml?MESS_TYPE-SMS]"
-msgstr "SMS"
-
-# messages/messages_List.xml?fMESS_DESCRIPTION
-# messages/messages_List.xml
-#: textarea - fMESS_DESCRIPTION
-msgid "[messages/messages_List.xml?fMESS_DESCRIPTION] Content"
-msgstr "Content"
-
-# messages/messages_List.xml?EDIT
-# messages/messages_List.xml
-#: link - EDIT
-msgid "[messages/messages_List.xml?EDIT] "
-msgstr ""
-
-# messages/messages_List.xml?DELETE
-# messages/messages_List.xml
-#: link - DELETE
-msgid "[messages/messages_List.xml?DELETE] "
-msgstr ""
-
-# messages/messages_List.xml?SEARCH
-# messages/messages_List.xml
-#: button - SEARCH
-msgid "[messages/messages_List.xml?SEARCH] Apply Filter"
-msgstr "Apply Filter"
-
 # messages/messages_Options.xml?MNU_ADD
 # messages/messages_Options.xml
 #: link - MNU_ADD
@@ -38642,42 +38588,6 @@ msgstr "Save"
 #: button - BTN_CANCEL
 msgid "[outputdocs/outputdocs_Edit.xml?BTN_CANCEL] Cancel"
 msgstr "Cancel"
-
-# outputdocs/outputdocs_List.xml?OUT_DOC_TITLE
-# outputdocs/outputdocs_List.xml
-#: text - OUT_DOC_TITLE
-msgid "[outputdocs/outputdocs_List.xml?OUT_DOC_TITLE] Output document"
-msgstr "Output document"
-
-# outputdocs/outputdocs_List.xml?OUT_DOC_FILENAME
-# outputdocs/outputdocs_List.xml
-#: text - OUT_DOC_FILENAME
-msgid "[outputdocs/outputdocs_List.xml?OUT_DOC_FILENAME] Filename"
-msgstr "Filename"
-
-# outputdocs/outputdocs_List.xml?OUT_DOC_DESCRIPTION
-# outputdocs/outputdocs_List.xml
-#: textarea - OUT_DOC_DESCRIPTION
-msgid "[outputdocs/outputdocs_List.xml?OUT_DOC_DESCRIPTION] Description"
-msgstr "Description"
-
-# outputdocs/outputdocs_List.xml?EDIT
-# outputdocs/outputdocs_List.xml
-#: link - EDIT
-msgid "[outputdocs/outputdocs_List.xml?EDIT] "
-msgstr ""
-
-# outputdocs/outputdocs_List.xml?DELETE
-# outputdocs/outputdocs_List.xml
-#: link - DELETE
-msgid "[outputdocs/outputdocs_List.xml?DELETE] "
-msgstr ""
-
-# outputdocs/outputdocs_List.xml?SEARCH
-# outputdocs/outputdocs_List.xml
-#: button - SEARCH
-msgid "[outputdocs/outputdocs_List.xml?SEARCH] Apply Filter"
-msgstr "Apply Filter"
 
 # outputdocs/outputdocs_New.xml?TITLE
 # outputdocs/outputdocs_New.xml
