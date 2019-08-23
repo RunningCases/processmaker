@@ -694,7 +694,7 @@ class LdapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Get Users
-            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
+            $limit = $this->getPageSizeLimitByData($arrayAuthenticationSourceData);
             $flagError = false;
 
             if (!isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"])) {
@@ -801,7 +801,7 @@ class LdapAdvanced
      *
      * @return array Return array data
      */
-    private function __ldapGroupSynchronizeMembers($ldapcnn, array $arrayAuthSourceData, $groupUid, array $arrayGroupLdap, $memberAttribute, array $arrayData = [])
+    private function ldapGroupSynchronizeMembers($ldapcnn, array $arrayAuthSourceData, $groupUid, array $arrayGroupLdap, $memberAttribute, array $arrayData = [])
     {
         try {
             unset($arrayData['countMembers']);
@@ -946,7 +946,7 @@ class LdapAdvanced
                             }
                         }
 
-                        $arrayData = $this->__ldapGroupSynchronizeMembers(
+                        $arrayData = $this->ldapGroupSynchronizeMembers(
                             $ldapcnn,
                             $arrayAuthenticationSourceData,
                             $arrayGroupData['GRP_UID'],
@@ -984,7 +984,7 @@ class LdapAdvanced
                                                 }
                                             }
 
-                                            $arrayData = $this->__ldapGroupSynchronizeMembers(
+                                            $arrayData = $this->ldapGroupSynchronizeMembers(
                                                 $ldapcnn,
                                                 $arrayAuthenticationSourceData,
                                                 $arrayGroupData['GRP_UID'],
@@ -1107,7 +1107,7 @@ class LdapAdvanced
                     $user = new User();
                     $arrayUserData = $user->getUserRecordByPk($usrUid, [], false);
 
-                    $result = $this->__ldapUserUpdateByDnAndData(
+                    $result = $this->ldapUserUpdateByDnAndData(
                         $this->ldapcnn,
                         $arrayAuthSource,
                         $userDn,
@@ -1625,7 +1625,7 @@ class LdapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Get Departments
-            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
+            $limit = $this->getPageSizeLimitByData($arrayAuthenticationSourceData);
             $flagError = false;
 
             $filter = '(' . $this->arrayObjectClassFilter['department'] . ')';
@@ -2251,7 +2251,7 @@ class LdapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Get Groups
-            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
+            $limit = $this->getPageSizeLimitByData($arrayAuthenticationSourceData);
             $flagError = false;
 
             $filter = '(' . $this->arrayObjectClassFilter['group'] . ')';
@@ -2677,7 +2677,7 @@ class LdapAdvanced
      *
      * @return bool
      */
-    private function __ldapUserUpdateByDnAndData($ldapcnn, array $arrayAuthSourceData, $userDn, array $arrayUser)
+    private function ldapUserUpdateByDnAndData($ldapcnn, array $arrayAuthSourceData, $userDn, array $arrayUser)
     {
         try {
             //Set variables
@@ -2799,7 +2799,7 @@ class LdapAdvanced
      *
      * @return array
      */
-    private function __ldapUsersUpdateData($ldapcnn, array $arrayAuthSourceData, $filterUsers, array $arrayUserUid, array $arrayData)
+    private function ldapUsersUpdateData($ldapcnn, array $arrayAuthSourceData, $filterUsers, array $arrayUserUid, array $arrayData)
     {
         try {
             $totalUser = $arrayData['totalUser'];
@@ -2835,7 +2835,7 @@ class LdapAdvanced
                     $entry = ldap_first_entry($ldapcnn, $searchResult);
 
                     do {
-                        if ($this->__ldapUserUpdateByDnAndData(
+                        if ($this->ldapUserUpdateByDnAndData(
                             $ldapcnn,
                             $arrayAuthSourceData,
                             ldap_get_dn($ldapcnn, $entry),
@@ -2887,7 +2887,7 @@ class LdapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Update Users
-            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
+            $limit = $this->getPageSizeLimitByData($arrayAuthenticationSourceData);
             $count = 0;
 
             $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"])) ? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
@@ -2904,7 +2904,7 @@ class LdapAdvanced
                 $arrayUserUid[] = $arrayUserData["USR_UID"];
 
                 if ($count == $limit) {
-                    list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
+                    list($totalUser, $countUser) = $this->ldapUsersUpdateData(
                         $ldapcnn,
                         $arrayAuthenticationSourceData,
                         $filterUsers,
@@ -2920,7 +2920,7 @@ class LdapAdvanced
             }
 
             if ($count > 0) {
-                list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
+                list($totalUser, $countUser) = $this->ldapUsersUpdateData(
                     $ldapcnn,
                     $arrayAuthenticationSourceData,
                     $filterUsers,
@@ -2940,7 +2940,7 @@ class LdapAdvanced
      *
      * @return int Returns the page size limit for a search result
      */
-    private function __getPageSizeLimitByData(array $arrayAuthSourceData)
+    private function getPageSizeLimitByData(array $arrayAuthSourceData)
     {
         if (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'])) {
             return $arrayAuthSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'];
