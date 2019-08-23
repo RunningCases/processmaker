@@ -15,12 +15,24 @@ class ProcessesTest extends TestCase
 {
 
     /**
-     * This is using instead of DatabaseTransactions
-     * @todo DatabaseTransactions is having conflicts with propel
+     * Constructor of the class.
+     * 
+     * @param string $name
+     * @param array $data
+     * @param string $dataName
+     */
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
      */
     protected function setUp()
     {
-        $this->markTestIncomplete();//@todo: Please correct this unit test
+        parent::setUp();
     }
 
     /**
