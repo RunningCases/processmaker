@@ -8,18 +8,18 @@ use ProcessMaker\Model\EmailServer;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
-use Tests\CreateTestSite;
 use Tests\TestCase;
 
 class WsBaseTest extends TestCase
 {
 
     /**
-     * This trait allows obtaining a test site that makes use of the database 
-     * mentioned for the test.
+     * Constructor of the class.
+     * 
+     * @param string $name
+     * @param array $data
+     * @param string $dataName
      */
-    use CreateTestSite;
-
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -32,14 +32,6 @@ class WsBaseTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->timezone = config('app.timezone');
-        $_SESSION['USR_TIME_ZONE'] = $this->timezone;
-        $this->baseUri = $this->getBaseUri();
-        $this->user = 'admin';
-        $this->password = 'admin';
-        $this->workspace = env("DB_DATABASE", "test");
-        $this->createTestSite();
     }
 
     /**
@@ -152,17 +144,10 @@ class WsBaseTest extends TestCase
      */
     private function createTemplate($proUid, $usrUid)
     {
-        $path1 = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "mailTemplates" . PATH_SEP . "{$proUid}";
-        mkdir($path1);
-        $path2 = $path1 . PATH_SEP . "emailEvent_" . G::generateUniqueID() . ".html";
-
-        $htmlContent = $this->createDefaultHtmlContent('Test');
-        file_put_contents($path2, $htmlContent);
-
         $template = factory(\ProcessMaker\Model\ProcessFiles::class)->create([
             'PRO_UID' => $proUid,
             'USR_UID' => $usrUid,
-            'PRF_PATH' => $path2
+            'PRF_PATH' => '/'
         ]);
         return $template;
     }
@@ -219,7 +204,7 @@ class WsBaseTest extends TestCase
      * Queue-fake has been used, see more at: https://laravel.com/docs/5.7/mocking#queue-fake
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_with_queue_jobs($messageType)
     {
@@ -258,7 +243,7 @@ class WsBaseTest extends TestCase
      * Queue-fake has been used, see more at: https://laravel.com/docs/5.7/mocking#queue-fake
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_execute_an_sendMessage_without_queue_jobs($messageTypes)
     {
@@ -296,7 +281,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage with queue jobs and empty config parameter.
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_with_queue_jobs_and_empty_config_parameter($messageTypes)
     {
@@ -334,7 +319,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage without queue jobs and empty config parameter.
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_empty_config_parameter($messageTypes)
     {
@@ -372,7 +357,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage with queue jobs and config parameter like id.
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_with_queue_jobs_and_config_parameter_like_id($messageTypes)
     {
@@ -410,7 +395,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage without queue jobs and config parameter like id.
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_config_parameter_like_id($messageTypes)
     {
@@ -448,7 +433,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage without queue jobs and gmail parameter like one.
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_gmail_parameter_like_one($messageTypes)
     {
