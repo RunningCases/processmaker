@@ -31727,42 +31727,6 @@ msgstr "Reassigned to"
 msgid "BACK"
 msgstr "BACK"
 
-# cases/cases_ReassignBy.xml?title
-# cases/cases_ReassignBy.xml
-#: subtitle - title
-msgid "<center>Reassignment of Cases</center>"
-msgstr "<center>Reassignment of Cases</center>"
-
-# cases/cases_ReassignBy.xml?REASSIGN_BY
-# cases/cases_ReassignBy.xml
-#: radiogroup - REASSIGN_BY
-msgid "Reassign By"
-msgstr "Reassign By"
-
-# cases/cases_ReassignBy.xml?REASSIGN_BY-1
-# cases/cases_ReassignBy.xml
-#: radiogroup - REASSIGN_BY - 1
-msgid "[cases/cases_ReassignBy.xml?REASSIGN_BY-1]"
-msgstr "Case"
-
-# cases/cases_ReassignBy.xml?REASSIGN_BY-2
-# cases/cases_ReassignBy.xml
-#: radiogroup - REASSIGN_BY - 2
-msgid "[cases/cases_ReassignBy.xml?REASSIGN_BY-2]"
-msgstr "User"
-
-# cases/cases_ReassignBy.xml?REASSIGN_USER
-# cases/cases_ReassignBy.xml
-#: dropdown - REASSIGN_USER
-msgid "[cases/cases_ReassignBy.xml?REASSIGN_USER] "
-msgstr ""
-
-# cases/cases_ReassignBy.xml?REASSIGN_USER-
-# cases/cases_ReassignBy.xml
-#: dropdown - REASSIGN_USER -
-msgid "[cases/cases_ReassignBy.xml?REASSIGN_USER-]"
-msgstr "- Select -"
-
 # cases/cases_ReassignShowInfo.xml?TITLE
 # cases/cases_ReassignShowInfo.xml
 #: subtitle - TITLE
@@ -48531,60 +48495,6 @@ msgstr "Save"
 msgid "[users/users_EditRT.xml?BTN_CANCEL] Cancel"
 msgstr "Cancel"
 
-# users/users_List.xml?USR_COMPLETENAME
-# users/users_List.xml
-#: text - USR_COMPLETENAME
-msgid "[users/users_List.xml?USR_COMPLETENAME] Full Name"
-msgstr "Full Name"
-
-# users/users_List.xml?USR_USERNAME
-# users/users_List.xml
-#: text - USR_USERNAME
-msgid "[users/users_List.xml?USR_USERNAME] Username"
-msgstr "Username"
-
-# users/users_List.xml?USR_EMAIL
-# users/users_List.xml
-#: text - USR_EMAIL
-msgid "E-Mail"
-msgstr "E-Mail"
-
-# users/users_List.xml?USR_ROLE
-# users/users_List.xml
-#: text - USR_ROLE
-msgid "[users/users_List.xml?USR_ROLE] Role"
-msgstr "Role"
-
-# users/users_List.xml?USR_DUE_DATE
-# users/users_List.xml
-#: text - USR_DUE_DATE
-msgid "[users/users_List.xml?USR_DUE_DATE] Due Date"
-msgstr "Due Date"
-
-# users/users_List.xml?USR_EDIT
-# users/users_List.xml
-#: link - USR_EDIT
-msgid "[users/users_List.xml?USR_EDIT] "
-msgstr ""
-
-# users/users_List.xml?USR_GROUP
-# users/users_List.xml
-#: link - USR_GROUP
-msgid "[users/users_List.xml?USR_GROUP] "
-msgstr ""
-
-# users/users_List.xml?USR_AUTH
-# users/users_List.xml
-#: link - USR_AUTH
-msgid "[users/users_List.xml?USR_AUTH] "
-msgstr ""
-
-# users/users_List.xml?USR_DELETE
-# users/users_List.xml
-#: link - USR_DELETE
-msgid "[users/users_List.xml?USR_DELETE] "
-msgstr ""
-
 # users/users_New.xml?TITLE1
 # users/users_New.xml
 #: title - TITLE1
@@ -48800,12 +48710,6 @@ msgstr "Cancel"
 #: link - MNU
 msgid "[users/users_NewOptions.xml?MNU] Back to list"
 msgstr "Back to list"
-
-# users/users_Options.xml?MNU_ADD
-# users/users_Options.xml
-#: link - MNU_ADD
-msgid "[users/users_Options.xml?MNU_ADD] New"
-msgstr "New"
 
 # users/users_ReassignCases.xml?PROCESS
 # users/users_ReassignCases.xml
