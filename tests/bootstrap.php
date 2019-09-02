@@ -43,6 +43,15 @@ define('PATH_RBAC_HOME', PATH_TRUNK . '/rbac/');
 define('PATH_RBAC', PATH_RBAC_HOME . 'engine/classes/');
 define("PATH_CUSTOM_SKINS", PATH_DATA . "skins/");
 define("PATH_TPL", PATH_CORE . "templates/");
+define('DB_HOST', env('DB_HOST'));
+define('DB_NAME', env('DB_DATABASE'));
+define('DB_USER', env('DB_USERNAME'));
+define('DB_PASS', env('DB_PASSWORD'));
+define('PATH_HOME', PATH_TRUNK . '/workflow/');
+define('PATH_HTML', PATH_HOME . 'public_html/');
+define('PATH_SMARTY_C', PATH_TRUNK . '/shared/compiled/smarty/c');
+define('PATH_SMARTY_CACHE', PATH_TRUNK . '/shared/compiled/smarty/cache');
+define('PATH_THIRDPARTY', PATH_TRUNK . '/thirdparty/');
 
 // Set Time Zone
 $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)(env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;
