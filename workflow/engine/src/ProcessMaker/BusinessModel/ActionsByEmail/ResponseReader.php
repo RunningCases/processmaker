@@ -135,7 +135,20 @@ class ResponseReader
                     if (!empty($mail->textPlain)) {
                         preg_match("/{(.*)}/", $mail->textPlain, $matches);
                         if ($matches) {
-                            $dataEmail = G::json_decode(Crypt::decryptString($matches[1]), true);
+                            try {
+                                $dataEmail = G::json_decode(Crypt::decryptString($matches[1]), true);
+                            } catch (Exception $e) {
+                                Bootstrap::registerMonolog(
+                                    $this->channel,
+                                    300,
+                                    G::LoadTranslation('ID_ABE_RESPONSE_CANNOT_BE_IDENTIFIED'),
+                                    [],
+                                    config("system.workspace"),
+                                    'processmaker.log'
+                                );
+                                $mailbox->markMailAsRead($mailId);
+                                continue;
+                            }
                             $dataAbeReq = loadAbeRequest($dataEmail['ABE_REQ_UID']);
                             if (config("system.workspace") === $dataEmail['workspace']
                                 && (array_key_exists('ABE_UID', $dataAbeReq) && $dataAbeReq['ABE_UID'] == $dataAbe['ABE_UID'])) {
@@ -149,7 +162,6 @@ class ResponseReader
                                         throw (new Exception(G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'), 400));
                                     }
                                     $this->processABE($this->case, $mail, $dataAbe);
-                                    $mailbox->markMailAsRead($mailId);
                                     Bootstrap::registerMonolog(
                                         $this->channel,
                                         100, // DEBUG
@@ -174,6 +186,7 @@ class ResponseReader
                                         'processmaker.log'
                                     );
                                 }
+                                $mailbox->markMailAsRead($mailId);
                             }
                         }
                     }
@@ -347,7 +360,8 @@ class ResponseReader
             true,
             $caseInf['delIndex'],
             $emailSetup,
-            0
+            0,
+            WsBase::MESSAGE_TYPE_ACTIONS_BY_EMAIL
         );
         return $result;
     }
