@@ -8,6 +8,7 @@ use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Foundation\Http\Kernel as Kernel3;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use ProcessMaker\Core\System;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,8 @@ $app->singleton(
     ExceptionHandler::class,
     Handler::class
 );
+
+$app->useStoragePath(System::getPathsInstalled()->pathData);
 
 /*
 |--------------------------------------------------------------------------

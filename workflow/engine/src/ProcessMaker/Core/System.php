@@ -1655,5 +1655,30 @@ class System
         app()->make(Kernel::class)->bootstrap();
         restore_error_handler();
     }
+
+    /**
+     * If the installation file exists it returns the defined values.
+     * @return object
+     */
+    public static function getPathsInstalled()
+    {
+        //default values
+        $result = [
+            'pathData' => getcwd() . '/shared',
+            'pathCompiled' => getcwd() . '/shared/compiled',
+        ];
+
+        $pathsInstalled = getcwd() . "/workflow/engine/config/paths_installed.php";
+        if (file_exists($pathsInstalled)) {
+            $script = "require_once '{$pathsInstalled}';"
+                    . "return ["
+                    . "'pathData' => PATH_DATA,"
+                    . "'pathCompiled' => PATH_C,"
+                    . "'hashInstallation' => HASH_INSTALLATION,"
+                    . "'systemHash' => SYSTEM_HASH,"
+                    . "];";
+            $result = eval($script);
+        }
+        return (object) $result;
+    }
 }
-// end System class
