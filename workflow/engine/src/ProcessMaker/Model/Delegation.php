@@ -563,4 +563,22 @@ class Delegation extends Model
 
         return $arrayOpenThreads;
     }
+
+    /**
+     * Return if the user has participation in the case
+     *
+     * @param string $appUid, Case key
+     * @param string $userUid, User key
+     *
+     * @return boolean
+     */
+    public static function participation($appUid, $userUid)
+    {
+        $query = Delegation::query()->select();
+        $query->where('APP_UID', $appUid);
+        $query->where('USR_UID', $userUid);
+        $query->limit(1);
+
+        return ($query->count() > 0);
+    }
 }
