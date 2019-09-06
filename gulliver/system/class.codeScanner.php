@@ -12,7 +12,8 @@ if (!defined("T_ML_COMMENT")) {
 
 class CodeScanner
 {
-    private $arrayDisabledCode = array();
+    private $arrayDisabledCode = [];
+    private $scope = [];
 
     /**
      * Constructor of the class
@@ -25,29 +26,45 @@ class CodeScanner
     {
         try {
             $flag = false;
+            $scope = [];
+            $workspaceName = '';
 
-            if (!is_null($option)) {
-                switch (gettype($option)) {
-                    case 'string':
-                        $workspace = new WorkspaceTools($option);
-
-                        if ($workspace->workspaceExists()) {
-                            $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace->name);
-                            $flag = (int)($arraySystemConfiguration['enable_blacklist']) == 1;
-                        }
-                        break;
-                    case 'boolean':
-                        $flag = $option;
-                        break;
-                }
+            switch (gettype($option)) {
+                case 'string':
+                    $workspace = new WorkspaceTools($option);
+                    if ($workspace->workspaceExists()) {
+                        $workspaceName = $workspace->name;
+                    }
+                    // Note. Not exist the "break" statement because we need to continue with the next option immediately
+                case 'NULL':
+                    $workspaceName = !empty($workspaceName) ? $workspaceName : (defined('SYS_SYS') ? SYS_SYS : '');
+                    $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspaceName);
+                    $flag = (int)($arraySystemConfiguration['enable_blacklist']) == 1;
+                    $scope = explode(',', str_replace(' ', '', $arraySystemConfiguration['code_scanner_scope']));
+                    break;
+                case 'boolean':
+                    $flag = $option;
+                    break;
             }
 
             if ($flag) {
                 $this->setArrayDisabledCode();
             }
+
+            $this->scope = $scope;
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Get the scope
+     *
+     * @return array
+     */
+    public function getScope()
+    {
+        return $this->scope;
     }
 
     /**
@@ -173,21 +190,22 @@ class CodeScanner
     /**
      * Check disabled code
      *
-     * @param string $option Option (SOURCE, PATH, FILE)
-     * @param string $data   Data
+     * @param string $option, can be: (SOURCE, PATH, FILE)
+     * @param string $data
      *
-     * return array Returns an array with disabled code found, array empty otherwise
+     * @return array
+     * @throws Exception
      */
     public function checkDisabledCode($option, $data)
     {
         try {
             if (!$this->existsDisabledCode()) {
                 //Return
-                return array();
+                return [];
             }
 
             //Search code
-            $arrayFoundCode = array();
+            $arrayFoundCode = [];
 
             switch ($option) {
                 case "SOURCE":
@@ -210,7 +228,8 @@ class CodeScanner
                                     $f = $path . PATH_SEP . $file;
 
                                     if (is_dir($f) || (is_file($f) && preg_match("/\.php$/", $f))) {
-                                        $arrayFoundCode = array_merge($arrayFoundCode, $this->checkDisabledCode((is_dir($f))? "PATH" : "FILE", $f));
+                                        $arrayFoundCode = array_merge($arrayFoundCode,
+                                            $this->checkDisabledCode((is_dir($f)) ? "PATH" : "FILE", $f));
                                     }
                                 }
                             }
