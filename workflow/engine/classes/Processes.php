@@ -6352,17 +6352,21 @@ class Processes
     }
 
     /**
-     * Get disabled code
+     * If the feature is enable and the code_scanner_scope has the arguments for enable code scanner
+     * Review the triggers related to the process
      *
      * @param string $processUid    Unique id of Process
      * @param string $workspaceName Workspace name
      *
-     * @return array Returns an array with disabled code found, array empty otherwise
+     * @return array
+     * @throws Exception
+     *
+     * @link https://wiki.processmaker.com/Plugin_Trigger_Code_Security_Scanner_v2
      */
     public function getDisabledCode($processUid = null, $workspaceName = null)
     {
         try {
-            $arrayDisabledCode = array();
+            $arrayDisabledCode = [];
 
             /*----------------------------------********---------------------------------*/
             if (!PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
@@ -6412,23 +6416,24 @@ class Processes
                     $triggerTitle = $row["TRI_TITLE"];
                     $triggerWebbot = $row["TRI_WEBBOT"];
 
-                    //Check disabled code
+                    $arrayFoundDisabledCode = [];
+                    // @todo: The PO's needs to define the behaviour when the command check-workspace-disabled-code was executed
                     $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $triggerWebbot);
 
                     if (!empty($arrayFoundDisabledCode)) {
                         if (!isset($arrayDisabledCode[$processUid])) {
-                            $arrayDisabledCode[$processUid] = array(
+                            $arrayDisabledCode[$processUid] = [
                                 "processUid" => $processUid,
                                 "processTitle" => $processTitle,
-                                "triggers" => array()
-                            );
+                                "triggers" => []
+                            ];
                         }
 
-                        $arrayDisabledCode[$processUid]["triggers"][] = array(
+                        $arrayDisabledCode[$processUid]["triggers"][] = [
                             "triggerUid" => $triggerUid,
                             "triggerTitle" => $triggerTitle,
                             "disabledCode" => $arrayFoundDisabledCode["source"],
-                        );
+                        ];
                     }
                 }
             }

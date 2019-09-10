@@ -3610,7 +3610,8 @@ class Cases
     }
 
     /**
-     * Review the code in the trigger if the feature is enable
+     * If the feature is enable and the code_scanner_scope has the argument trigger the code scanner will check the code
+     * Review in the running cases
      *
      * @param CodeScanner $cs
      * @param string $code
@@ -3618,12 +3619,14 @@ class Cases
      *
      * @return string
      *
+     * @link https://wiki.processmaker.com/Plugin_Trigger_Code_Security_Scanner_v2
     */
     private function codeScannerReview(CodeScanner $cs, $code, $triTitle)
     {
         $foundDisabledCode = "";
         /*----------------------------------********---------------------------------*/
-        if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+        if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
+            in_array('trigger', $cs->getScope())) {
             //Check disabled code
             $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $code);
 

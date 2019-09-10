@@ -968,6 +968,7 @@ function run_check_workspace_disabled_code($args, $opts)
 /**
  * This function is executed only by one workspace
  * Code Security Scanner related to the custom blacklist
+ *
  * @param array $args, the specific actions must be: upgrade|check
  * @param array $opts, workspaceName for to apply the database-upgrade
  *
