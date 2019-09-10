@@ -2458,9 +2458,14 @@ class WorkspaceTools
     }
 
     /**
-     * Get disabled code
+     * If the feature is enable and the code_scanner_scope was enable will check in the command
+     * Review when the command check-workspace-disabled-code was executed
      *
-     * @return array Returns an array with disabled code found, array empty otherwise
+     * @return array
+     * @throws Exception
+     *
+     * @link https://wiki.processmaker.com/3.3/processmaker_command#check-workspace-disabled-code
+     * @uses cliWorkspaces.php
      */
     public function getDisabledCode()
     {

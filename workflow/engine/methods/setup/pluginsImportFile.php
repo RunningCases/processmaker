@@ -3,25 +3,10 @@
  *
  * processes_ImportFile.php
  *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
+ * If the feature is enable and the code_scanner_scope was enable with the argument import_plugin, will check the code
+ * Review when a plugin was enable
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
+ * @link https://wiki.processmaker.com/3.0/Plugins#Import_a_Plugin
  */
 
 use ProcessMaker\Core\System;
@@ -251,10 +236,12 @@ try {
         /*----------------------------------********---------------------------------*/
         if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
             //Check disabled code
-
+            $arrayFoundDisabledCode = [];
             $cs = new CodeScanner(config("system.workspace"));
-
-            $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", $path . $pluginFile), $cs->checkDisabledCode("PATH", $path . $sClassName));
+            if (in_array('import_plugin', $cs->getScope())) {
+                $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", $path . $pluginFile),
+                    $cs->checkDisabledCode("PATH", $path . $sClassName));
+            }
 
             if (!empty($arrayFoundDisabledCode)) {
                 throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_PLUGIN"));

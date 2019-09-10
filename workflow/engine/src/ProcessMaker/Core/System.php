@@ -54,6 +54,7 @@ class System
         'error_reporting' => "",
         'display_errors' => 'On',
         'enable_blacklist' => 0,
+        'code_scanner_scope' => 'import_plugin,enable_plugin,import_process,trigger',
         'system_utc_time_zone' => 0,
         'server_protocol' => '',
         'leave_case_warning' => 0,
