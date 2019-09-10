@@ -484,6 +484,19 @@ class ActionsByEmailCoreClass extends PMPlugin
     }
 
     /**
+     * Define the email from in a public way
+     *
+     * @param array $setup
+     * @return void
+     * @see ProcessMaker\BusinessModel\ActionsByEmail::forwardMail()
+     */
+    public function publicDefineEmailFrom($setup)
+    {
+        //Call the defineEmailFrom private method
+        $this->defineEmailFrom($setup);
+    }
+
+    /**
      * Define the email to
      *
      * @param string $emailField

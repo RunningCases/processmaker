@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(\ProcessMaker\Model\EmailServer::class, function(Faker $faker) {
+$factory->define(\ProcessMaker\Model\EmailServerModel::class, function(Faker $faker) {
     return [
         'MESS_UID' => G::generateUniqueID(),
         'MESS_ENGINE' => '',

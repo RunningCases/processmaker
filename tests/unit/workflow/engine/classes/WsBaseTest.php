@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Queue;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppThread;
 use ProcessMaker\Model\Delegation;
-use ProcessMaker\Model\EmailServer;
+use ProcessMaker\Model\EmailServerModel;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
@@ -114,13 +114,13 @@ class WsBaseTest extends TestCase
     /**
      * Create a email server configuration.
      * 
-     * @return ProcessMaker\Model\EmailServer;
+     * @return ProcessMaker\Model\EmailServerModel;
      */
     private function createEmailServer()
     {
         $passwordEnv = env('emailAccountPassword');
         $password = G::encrypt("hash:" . $passwordEnv, 'EMAILENCRYPT');
-        $emailServer = factory(EmailServer::class)->create([
+        $emailServer = factory(EmailServerModel::class)->create([
             'MESS_ENGINE' => env('emailEngine'),
             'MESS_SERVER' => env('emailServer'),
             'MESS_PORT' => env('emailPort'),
