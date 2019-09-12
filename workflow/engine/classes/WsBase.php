@@ -6,6 +6,7 @@ use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Util\WsMessageResponse;
 
 class WsBase
@@ -477,54 +478,48 @@ class WsBase
                     return $arrayData;
                 }
             } else {
-                $arrayData = [];
+                $data = [];
 
-                $criteria = new Criteria("workflow");
+                $selectedColumns = [
+                    'APP_DELEGATION.APP_UID',
+                    'APP_DELEGATION.DEL_INDEX',
+                    'APP_DELEGATION.APP_NUMBER',
+                    'APPLICATION.APP_STATUS',
+                    'APPLICATION.APP_TITLE',
+                    'APP_DELEGATION.PRO_UID'
+                ];
 
-                $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
-                $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-                $criteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
-                $criteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
-                $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
+                $query = Delegation::query()->select($selectedColumns);
+                $query->join('APPLICATION', function ($join) {
+                    $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
+                });
+                $query->join('APP_THREAD', function ($join) {
+                    $join->on('APP_THREAD.APP_UID', '=', 'APP_DELEGATION.APP_UID');
+                });
+                $query->where('APP_DELEGATION.USR_UID', $userUid);
+                $query->whereNested(function ($query) {
+                    $query->where('APPLICATION.APP_STATUS', 'TO_DO');
+                    $query->orWhere('APPLICATION.APP_STATUS', 'DRAFT');
+                });
+                $query->whereNull('APP_DELEGATION.DEL_FINISH_DATE');
+                $query->where('APP_DELEGATION.DEL_THREAD_STATUS', 'OPEN');
+                $query->where('APP_THREAD.APP_THREAD_STATUS', 'OPEN');
+                $query->orderBy('APP_DELEGATION.APP_NUMBER', 'DESC');
 
-                $criteria->add(AppCacheViewPeer::USR_UID, $userUid);
+                $result = $query->get();
+                $data2 = $result->values()->toArray();
+                $aux = [];
 
-                $criteria->add(
-                //ToDo - getToDo()
-                    $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "TO_DO", CRITERIA::EQUAL)->addAnd(
-                        $criteria->getNewCriterion(AppCacheViewPeer::DEL_FINISH_DATE, null, Criteria::ISNULL)
-                    )->addAnd(
-                        $criteria->getNewCriterion(AppCacheViewPeer::APP_THREAD_STATUS, "OPEN")
-                    )->addAnd(
-                        $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN")
-                    )
-                )->addOr(
-                //Draft - getDraft()
-                    $criteria->getNewCriterion(AppCacheViewPeer::APP_STATUS, "DRAFT", CRITERIA::EQUAL)->addAnd(
-                        $criteria->getNewCriterion(AppCacheViewPeer::APP_THREAD_STATUS, "OPEN")
-                    )->addAnd(
-                        $criteria->getNewCriterion(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN")
-                    )
-                );
-
-                $criteria->addDescendingOrderByColumn(AppCacheViewPeer::APP_NUMBER);
-
-                $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
-                $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                while ($rsCriteria->next()) {
-                    $row = $rsCriteria->getRow();
-
-                    $arrayData[] = array(
-                        "guid" => $row["APP_UID"],
-                        "name" => $row["APP_NUMBER"],
-                        "status" => $row["APP_STATUS"],
-                        "delIndex" => $row["DEL_INDEX"],
-                        "processId" => $row["PRO_UID"]
-                    );
+                foreach ($data2 as $value) {
+                    $aux['guid'] = $value['APP_UID'];
+                    $aux['name'] = $value['APP_TITLE'];
+                    $aux['status'] = $value['APP_STATUS'];
+                    $aux['delIndex'] = $value['DEL_INDEX'];
+                    $aux['processId'] = $value['PRO_UID'];
+                    array_push($data, $aux);
                 }
 
-                return $arrayData;
+                return $data;
             }
         } catch (Exception $e) {
             $arrayData = [];

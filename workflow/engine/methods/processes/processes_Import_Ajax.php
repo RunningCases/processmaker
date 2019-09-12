@@ -2,27 +2,13 @@
 /**
  * processes_ImportFile.php
  *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.
+ * If the feature is enable and the code_scanner_scope was enable the argument import_process will check the code
+ * Review in a process import
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
+ * @link https://wiki.processmaker.com/3.1/Importing_and_Exporting_Projects#Importing_a_Project
  */
 
-use \ProcessMaker\Importer\XmlImporter;
+use ProcessMaker\Importer\XmlImporter;
 use ProcessMaker\Validation\ValidationUploadedFiles;
 
 ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($validator) {
@@ -35,7 +21,7 @@ ValidationUploadedFiles::getValidationUploadedFiles()->dispatch(function($valida
 });
 
 ini_set("max_execution_time", 0);
-$affectedGroups = array();
+$affectedGroups = [];
 $granularImport = false;
 $objectImport = '';
 $objectsToImport = '';
@@ -49,10 +35,10 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
     preg_match("/^(?:pm|pmx|pmx2)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))
 ) {
     //Check disabled code
-    $response = array();
+    $response = [];
 
     try {
-        $arrayTrigger = array();
+        $arrayTrigger = [];
         $projectTitle = "";
 
         switch (pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION)) {
@@ -87,7 +73,11 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
             foreach ($arrayTrigger as $value) {
                 $arrayTriggerData = $value;
 
-                $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $arrayTriggerData["TRI_WEBBOT"]);
+                if (in_array('import_process', $cs->getScope())) {
+                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $arrayTriggerData["TRI_WEBBOT"]);
+                } else {
+                    $arrayFoundDisabledCode = [];
+                }
 
                 if (!empty($arrayFoundDisabledCode)) {
                     $strCodeAndLine = "";

@@ -16,18 +16,9 @@ use Illuminate\Support\Facades\Schema;
 define('PATH_TRUNK', dirname(__DIR__));
 define('PATH_CORE', PATH_TRUNK . '/workflow/engine/');
 define('PATH_CONFIG', PATH_CORE . 'config/');
-$pathData = PATH_CONFIG . 'paths_installed.php';
-if (file_exists($pathData)) {
-    require_once $pathData;
-} else {
-    define('PATH_DATA', dirname(__DIR__) . '/shared/rbac/');
-}
+define('PATH_DATA', dirname(__DIR__) . '/shared/');
 define('PATH_RBAC_CORE', dirname(__DIR__) . '/rbac/engine/');
-if (file_exists($pathData)) {
-    define('PATH_DB', PATH_DATA . 'sites/');
-} else {
-    define('PATH_DB', dirname(__DIR__) . '/shared/sites/');
-}
+define('PATH_DB', PATH_DATA . 'sites/');
 // Define some values related to the workspace
 define('SYS_LANG', 'en');
 define('SYS_SKIN', 'neoclassic');
@@ -45,6 +36,16 @@ define('PATH_RBAC_HOME', PATH_TRUNK . '/rbac/');
 define('PATH_RBAC', PATH_RBAC_HOME . 'engine/classes/');
 define("PATH_CUSTOM_SKINS", PATH_DATA . "skins/");
 define("PATH_TPL", PATH_CORE . "templates/");
+define('PATH_C', PATH_DATA . 'compiled/');
+define('DB_HOST', env('DB_HOST'));
+define('DB_NAME', env('DB_DATABASE'));
+define('DB_USER', env('DB_USERNAME'));
+define('DB_PASS', env('DB_PASSWORD'));
+define('PATH_HOME', PATH_TRUNK . '/workflow/');
+define('PATH_HTML', PATH_HOME . 'public_html/');
+define('PATH_SMARTY_C', PATH_TRUNK . '/shared/compiled/smarty/c');
+define('PATH_SMARTY_CACHE', PATH_TRUNK . '/shared/compiled/smarty/cache');
+define('PATH_THIRDPARTY', PATH_TRUNK . '/thirdparty/');
 
 // Set Time Zone
 $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)(env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;

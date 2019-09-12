@@ -12,7 +12,7 @@ include PATH_LANGUAGECONT . "translation." . SYS_LANG;
 
 class InstallerModule extends Controller
 {
-    const PHP_VERSION_MINIMUM_SUPPORTED = '5.6';
+    const PHP_VERSION_MINIMUM_SUPPORTED = '7.1';
     const PHP_VERSION_NOT_SUPPORTED = '7.2';
     public $path_config;
     public $path_languages;

@@ -58,9 +58,12 @@ workflow/engine/data/mssql/schema.sql
 workflow/engine/data/mssql/sqldb.map
 workflow/engine/includes/inc.JSForms.php
 workflow/engine/js/cases/core/cases_Step_Pmdynaform.js
+workflow/engine/js/cases/reassignByUser.js
 workflow/engine/methods/cases/casesDemo.php
+workflow/engine/methods/cases/cases_ReassignByUser.php
 workflow/engine/methods/cases/cases_Scheduler_Save.php
 workflow/engine/methods/cases/cases_Scheduler_Update.php
+workflow/engine/methods/cases/cases_UsersReassign.php
 workflow/engine/methods/cases/proxyPMTablesSaveFields.php
 workflow/engine/methods/cases/proxyProcessList.php
 workflow/engine/methods/cases/saveFormSupervisor.php
@@ -109,10 +112,15 @@ workflow/engine/templates/cases/casesDemo.html
 workflow/engine/templates/cases/cases_Step_Pmdynaform.html
 workflow/engine/templates/cases/cases_Step_Pmdynaform_Preview.html
 workflow/engine/templates/cases/cases_Step_Pmdynaform_View.html
+workflow/engine/templates/cases/cases_UsersReassignCases.html
 workflow/engine/templates/login/init.js
 workflow/engine/templates/reportTables/mainLoad.php
 workflow/engine/test
 workflow/engine/xmlform/messages/messages_List.xml
 workflow/engine/xmlform/outputdocs/outputdocs_List.xml
+workflow/engine/xmlform/cases/cases_ReassignBy.xml
+workflow/engine/xmlform/users/users_List.xml
+workflow/engine/xmlform/users/users_Options.xml
+>>>>>>> develop
 workflow/public_html/skins/JSForms.js
 workflow/public_html/skins/ajax.js

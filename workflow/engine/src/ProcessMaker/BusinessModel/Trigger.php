@@ -1,6 +1,12 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
+use CodeScanner;
+use Exception;
+use G;
+use PMLicensedFeatures;
+use Triggers as ModelTriggers;
+
 class Trigger
 {
     /**
@@ -134,76 +140,82 @@ class Trigger
     }
 
     /**
-     * Save Data for Trigger
-     * @var string $sProcessUID. Uid for Process
-     * @var string $dataTrigger. Data for Trigger
-     * @var string $create. Create o Update Trigger
-     * @var string $sTriggerUid. Uid for Trigger
+     * If the feature is enable and the code_scanner_scope was enable with the argument trigger, will check the code
+     * Review when a trigger is save or update
      *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $proUid. Uid for Process
+     * @param array $dataTrigger. Data for Trigger
+     * @param boolean $create. Create o Update Trigger
+     * @param string $triggerUid. Uid for Trigger
      *
      * @return array
+     * @throws Exception
+     *
+     * @uses \ProcessMaker\Services\Api\Project\Trigger::doPostTrigger()
+     * @uses \ProcessMaker\Services\Api\Project\Trigger::doPutTrigger()
      */
-    public function saveTrigger($sProcessUID = '', $dataTrigger = array(), $create = false, $sTriggerUid = '')
+    public function saveTrigger($proUid = '', $dataTrigger = [], $create = false, $triggerUid = '')
     {
-        if ( ($sProcessUID == '') || (count($dataTrigger) == 0) ) {
+        if ((empty($proUid)) || empty($dataTrigger)) {
             return false;
         }
         $dataTrigger = array_change_key_case($dataTrigger, CASE_UPPER);
 
-        if ( $create && (isset($dataTrigger['TRI_UID'])) ) {
+        if ($create && (isset($dataTrigger['TRI_UID']))) {
             unset($dataTrigger['TRI_UID']);
         }
 
-        $dataTrigger= (array)$dataTrigger;
+        $dataTrigger = (array)$dataTrigger;
         $dataTrigger['TRI_TYPE'] = 'SCRIPT';
 
         if (isset($dataTrigger['TRI_TITLE'])) {
-            if (!$this->verifyNameTrigger($sProcessUID, $dataTrigger['TRI_TITLE'], $sTriggerUid)) {
-                throw new \Exception(\G::LoadTranslation("ID_CANT_SAVE_TRIGGER"));
+            if (!$this->verifyNameTrigger($proUid, $dataTrigger['TRI_TITLE'], $triggerUid)) {
+                throw new Exception(G::LoadTranslation("ID_CANT_SAVE_TRIGGER"));
             }
         }
 
         /*----------------------------------********---------------------------------*/
-        if (\PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
+        if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
             isset($dataTrigger["TRI_WEBBOT"])
         ) {
             //Check disabled code
-
-            $cs = new \CodeScanner(config("system.workspace"));
-
-            $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $dataTrigger["TRI_WEBBOT"]);
+            $arrayFoundDisabledCode = [];
+            $cs = new CodeScanner(config("system.workspace"));
+            if (in_array('trigger', $cs->getScope())) {
+                $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $dataTrigger["TRI_WEBBOT"]);
+            }
 
             if (!empty($arrayFoundDisabledCode)) {
                 $strCodeAndLine = "";
 
                 foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
-                    $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . \G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                    $strCodeAndLine .= (($strCodeAndLine != "") ? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE",
+                            [$key, implode(", ", $value)]);
                 }
 
-                throw new \Exception(\G::LoadTranslation("ID_DISABLED_CODE_TRIGGER", array($strCodeAndLine)));
+                throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER", [$strCodeAndLine]));
             }
         }
         /*----------------------------------********---------------------------------*/
 
-        $dataTrigger['PRO_UID'] = $sProcessUID;
-        $oTrigger = new \Triggers();
+        $dataTrigger['PRO_UID'] = $proUid;
+        $trigger = new ModelTriggers();
         if ($create) {
-            $oTrigger->create( $dataTrigger );
-            $dataTrigger['TRI_UID'] = $oTrigger->getTriUid();
+            $trigger->create($dataTrigger);
+            $dataTrigger['TRI_UID'] = $trigger->getTriUid();
         }
 
-        $oTrigger->update( $dataTrigger );
+        $trigger->update($dataTrigger);
         if ($create) {
-            $dataResp = $oTrigger->load( $dataTrigger['TRI_UID'] );
+            $dataResp = $trigger->load($dataTrigger['TRI_UID']);
             $dataResp = array_change_key_case($dataResp, CASE_LOWER);
             if (isset($dataResp['pro_uid'])) {
                 unset($dataResp['pro_uid']);
             }
             return $dataResp;
         }
-        return array();
+
+        return [];
     }
 
     /**

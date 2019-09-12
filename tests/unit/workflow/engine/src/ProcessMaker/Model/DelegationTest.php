@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
 use Faker\Factory;
@@ -18,11 +19,18 @@ use ProcessMaker\Model\TaskUser;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
 
+/**
+ * Class DelegationTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\Delegation
+ */
 class DelegationTest extends TestCase
 {
     use DatabaseTransactions;
+
     /**
      * This checks to make sure pagination is working properly
+     *
      * @test
      */
     public function it_should_return_pages_of_data()
@@ -43,6 +51,7 @@ class DelegationTest extends TestCase
 
     /**
      * This checks to make sure pagination is working properly
+     *
      * @test
      */
     public function it_should_return_pages_of_data_unassigned()
@@ -66,6 +75,7 @@ class DelegationTest extends TestCase
 
     /**
      * This checks to make sure filter by process is working properly
+     *
      * @test
      */
     public function it_should_return_process_of_data()
@@ -89,6 +99,7 @@ class DelegationTest extends TestCase
     /**
      * This checks to make sure filter by status is working properly
      * Review status filter by a specific status, such as Draft
+     *
      * @test
      */
     public function it_should_return_status_draft_of_data()
@@ -96,7 +107,6 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 1,
             'APP_STATUS' => 'DRAFT'
         ]);
@@ -118,6 +128,7 @@ class DelegationTest extends TestCase
     /**
      * This checks to make sure filter by status is working properly
      * Review status filter by a specific status, such as To Do
+     *
      * @test
      */
     public function it_should_return_status_todo_of_data()
@@ -125,7 +136,6 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
@@ -147,6 +157,7 @@ class DelegationTest extends TestCase
     /**
      * This checks to make sure filter by status is working properly
      * Review status filter by a specific status, such as Completed
+     *
      * @test
      */
     public function it_should_return_status_completed_of_data()
@@ -154,7 +165,6 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 3,
             'APP_STATUS' => 'COMPLETED',
         ]);
@@ -178,6 +188,7 @@ class DelegationTest extends TestCase
     /**
      * This checks to make sure filter by status is working properly
      * Review status filter by a specific status, such as Cancelled
+     *
      * @test
      */
     public function it_should_return_status_cancelled_of_data()
@@ -185,7 +196,6 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001,
             'APP_STATUS_ID' => 4,
             'APP_STATUS' => 'CANCELLED'
         ]);
@@ -208,6 +218,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures searching for a valid user works
+     *
      * @test
      */
     public function it_should_return_one_result_for_specified_user()
@@ -231,6 +242,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures searching by case number and review the order
+     *
      * @test
      */
     public function it_should_search_by_case_id_and_order_of_data()
@@ -306,6 +318,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures searching by case title and review the page
+     *
      * @test
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_matches_case_title()
@@ -388,6 +401,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures searching by task title and review the page
+     *
      * @test
      */
     public function it_should_search_by_task_title_and_pages_of_data()
@@ -395,14 +409,12 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $task = factory(Task::class)->create([
-            'TAS_ID' => 1,
             'TAS_TITLE' => 'Request task'
         ]);
         factory(Delegation::class, 5)->create([
             'TAS_ID' => $task->TAS_ID
         ]);
         $task = factory(Task::class)->create([
-            'TAS_ID' => 2,
             'TAS_TITLE' => 'Account task'
         ]);
         factory(Delegation::class, 5)->create([
@@ -436,6 +448,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures searching by case title and review the page
+     *
      * @test
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_no_matches_case_title()
@@ -511,6 +524,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case number APP_NUMBER
+     *
      * @test
      */
     public function it_should_sort_by_case_id()
@@ -543,6 +557,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case title APP_TITLE
+     *
      * @test
      */
     public function it_should_sort_by_case_title()
@@ -550,14 +565,12 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001,
             'APP_TITLE' => 'Request by Thomas'
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 30002,
             'APP_TITLE' => 'Request by Ariel'
         ]);
         factory(Delegation::class)->create([
@@ -577,6 +590,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by case title APP_PRO_TITLE
+     *
      * @test
      */
     public function it_should_sort_by_process()
@@ -620,6 +634,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by task title APP_TAS_TITLE
+     *
      * @test
      */
     public function it_should_sort_by_task_title()
@@ -627,14 +642,12 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $task = factory(Task::class)->create([
-            'TAS_ID' => 1000,
             'TAS_TITLE' => 'Initiate Request'
         ]);
         factory(Delegation::class)->create([
             'TAS_ID' => $task->TAS_ID
         ]);
         $task = factory(Task::class)->create([
-            'TAS_ID' => 4000,
             'TAS_TITLE' => 'Waiting for AP Manager Validation'
         ]);
         factory(Delegation::class)->create([
@@ -654,6 +667,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by current user
+     *
      * @test
      */
     public function it_should_sort_by_user()
@@ -694,11 +708,12 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ordering ascending and descending works by last modified APP_UPDATE_DATE
+     *
      * @test
      */
     public function it_should_sort_by_last_modified()
     {
-        factory(User::class,100)->create();
+        factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
             'APP_UPDATE_DATE' => '2019-01-02 00:00:00'
@@ -746,11 +761,12 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by due date DEL_TASK_DUE_DATE
+     *
      * @test
      */
     public function it_should_sort_by_due_date()
     {
-        factory(User::class,100)->create();
+        factory(User::class, 100)->create();
         factory(Process::class)->create();
         factory(Delegation::class, 10)->create([
             'DEL_TASK_DUE_DATE' => '2019-01-02 00:00:00'
@@ -789,11 +805,12 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures ordering ascending and descending works by status APP_STATUS
+     *
      * @test
      */
     public function it_should_sort_by_status()
     {
-        factory(User::class,100)->create();
+        factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
             'APP_STATUS' => 'DRAFT'
@@ -842,6 +859,7 @@ class DelegationTest extends TestCase
 
     /**
      * This checks to make sure filter by category is working properly
+     *
      * @test
      */
     public function it_should_return_data_filtered_by_process_category()
@@ -881,6 +899,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensure the result is right when you search between two given dates
+     *
      * @test
      */
     public function it_should_return_right_data_between_two_dates()
@@ -903,6 +922,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensure the result is right when you search from a given date
+     *
      * @test
      */
     public function it_should_return_right_data_when_you_send_only_dateFrom_parameter()
@@ -924,6 +944,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensure the result is right when you search to a given date
+     *
      * @test
      */
     public function it_should_return_right_data_when_you_send_only_dateTo_parameter()
@@ -945,6 +966,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures return the correct data by sequential
+     *
      * @test
      */
     public function it_should_return_by_sequential_tasks_pages_of_data()
@@ -993,6 +1015,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures return the correct data by parallel task all threads CLOSED
+     *
      * @test
      */
     public function it_should_return_by_parallel_tasks_threads_closed()
@@ -1026,6 +1049,7 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures return the correct data by parallel task all threads OPEN
+     *
      * @test
      */
     public function it_should_return_by_parallel_tasks_threads_open()
@@ -1045,6 +1069,7 @@ class DelegationTest extends TestCase
 
     /**
      * Review when the status is empty
+     *
      * @test
      */
     public function it_should_return_status_empty()
@@ -1064,6 +1089,7 @@ class DelegationTest extends TestCase
 
     /**
      * Review when filter when the process and category does not have a relation
+     *
      * @test
      */
     public function it_should_return_process_and_category_does_not_have_a_relation()
@@ -1087,15 +1113,18 @@ class DelegationTest extends TestCase
             'PRO_ID' => $processNoCategory->id
         ]);
         //Search the cases related to the category and process does not have relation
-        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null, $category[1]->CATEGORY_UID);
+        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null,
+            $category[1]->CATEGORY_UID);
         $this->assertCount(0, $results['data']);
         //Search the cases related to the category and process does not have relation
-        $results = Delegation::search(null, 0, 25, null, $processNoCategory->id, null, null, null, $category[0]->CATEGORY_UID);
+        $results = Delegation::search(null, 0, 25, null, $processNoCategory->id, null, null, null,
+            $category[0]->CATEGORY_UID);
         $this->assertCount(0, $results['data']);
     }
 
     /**
      * Review when filter when the process and category does have a relation
+     *
      * @test
      */
     public function it_should_return_process_and_category_does_have_a_relation()
@@ -1119,7 +1148,8 @@ class DelegationTest extends TestCase
             'PRO_ID' => $process->id,
         ]);
         //Search the cases when the category and process does have relation with a category
-        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null, $category->CATEGORY_UID);
+        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null,
+            $category->CATEGORY_UID);
         $this->assertCount(1, $results['data']);
         //Search the cases when the category and process does have relation with category empty
         $results = Delegation::search(null, 0, 25, null, $process->id, null, null, null, '');
@@ -1128,6 +1158,7 @@ class DelegationTest extends TestCase
 
     /**
      * Check if return participation information
+     *
      * @test
      */
     public function it_should_return_participation_info()
@@ -1158,6 +1189,7 @@ class DelegationTest extends TestCase
 
     /**
      * Check if return an empty participation information
+     *
      * @test
      */
     public function it_should_return_empty_participation_info()
@@ -1171,7 +1203,8 @@ class DelegationTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service user assigned
-     * @covers Delegation::countSelfService
+     *
+     * @covers ::countSelfService()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_user_assigned()
@@ -1205,9 +1238,10 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This checks the counters is working properly in self-service-value-based when the variable has a value related with the USR_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [USR_UID]
-     * @covers Delegation::countSelfService
+     * This checks the counters is working properly in self-service-value-based when the variable has a value related
+     * with the USR_UID When the value assigned in the variable @@ARRAY_OF_USERS = [USR_UID]
+     *
+     * @covers ::countSelfService()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid()
@@ -1251,7 +1285,8 @@ class DelegationTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service and self-service value based
-     * @covers Delegation::countSelfService
+     *
+     * @covers ::countSelfService()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_mixed_with_self_service_value_based()
@@ -1314,7 +1349,8 @@ class DelegationTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service group assigned
-     * @covers Delegation::countSelfService
+     *
+     * @covers ::countSelfService()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_group_assigned()
@@ -1356,9 +1392,10 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This checks the counters is working properly in self-service-value-based when the variable has a value related with the GRP_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID]
-     * @covers Delegation::countSelfService
+     * This checks the counters is working properly in self-service-value-based when the variable has a value related
+     * with the GRP_UID When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID]
+     *
+     * @covers ::countSelfService()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_value_based_grp_uid()
@@ -1415,7 +1452,8 @@ class DelegationTest extends TestCase
 
     /**
      * This checks the counters is working properly in self-service user and group assigned in parallel task
-     * @covers Delegation::countSelfService
+     *
+     * @covers ::countSelfService()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_user_and_group_assigned_parallel_task()
@@ -1514,9 +1552,10 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This checks the counters is working properly in self-service-value-based with GRP_UID and USR_UID in parallel task
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID, USR_UID]
-     * @covers Delegation::countSelfService
+     * This checks the counters is working properly in self-service-value-based with GRP_UID and USR_UID in parallel
+     * task When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID, USR_UID]
+     *
+     * @covers ::countSelfService()
      * @test
      */
     public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid_and_grp_uid()
@@ -1585,7 +1624,7 @@ class DelegationTest extends TestCase
     /**
      * This check if return the USR_UID assigned in the thread OPEN
      *
-     * @covers Delegation::getCurrentUser
+     * @covers ::getCurrentUser()
      * @test
      */
     public function it_should_return_current_user_for_thread_open()
@@ -1618,7 +1657,7 @@ class DelegationTest extends TestCase
     /**
      * This check if return the USR_UID assigned in the thread CLOSED
      *
-     * @covers Delegation::getCurrentUser
+     * @covers ::getCurrentUser()
      * @test
      */
     public function it_should_return_current_user_for_thread_closed()
@@ -1651,7 +1690,7 @@ class DelegationTest extends TestCase
     /**
      * This check if return empty when the data does not exits
      *
-     * @covers Delegation::getCurrentUser
+     * @covers ::getCurrentUser()
      * @test
      */
     public function it_should_return_empty_when_row_does_not_exist()
@@ -1687,7 +1726,7 @@ class DelegationTest extends TestCase
     /**
      * This checks if return the open thread
      *
-     * @covers Delegation::getOpenThreads
+     * @covers ::getOpenThreads()
      * @test
      */
     public function it_should_return_thread_open()
@@ -1714,7 +1753,7 @@ class DelegationTest extends TestCase
     /**
      * This checks if return empty when the thread is CLOSED
      *
-     * @covers Delegation::getOpenThreads
+     * @covers ::getOpenThreads()
      * @test
      */
     public function it_should_return_empty_when_thread_is_closed()
@@ -1738,7 +1777,7 @@ class DelegationTest extends TestCase
     /**
      * This checks if return empty when the data is not null
      *
-     * @covers Delegation::getOpenThreads
+     * @covers ::getOpenThreads()
      * @test
      */
     public function it_should_return_empty_when_thread_finish_date_is_not_null()
@@ -1759,5 +1798,50 @@ class DelegationTest extends TestCase
         ]);
         $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
         $this->assertEmpty($result);
+    }
+
+    /**
+     * This checks if return the participation when the user does have participation
+     *
+     * @covers \ProcessMaker\Model\Delegation::participation()
+     * @test
+     */
+    public function it_when_the_user_does_have_participation()
+    {
+        factory(Process::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'USR_ID' => $user->USR_ID,
+            'USR_UID' => $user->USR_UID
+        ]);
+        $result = Delegation::participation($application->APP_UID, $user->USR_UID);
+        $this->assertTrue($result);
+
+    }
+
+    /**
+     * This checks if return the participation of the user when the user does not have participation
+     *
+     * @covers \ProcessMaker\Model\Delegation::participation()
+     * @test
+     */
+    public function it_when_the_user_does_not_have_participation()
+    {
+        factory(Process::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID
+        ]);
+        $result = Delegation::participation($application->APP_UID, $user->USR_UID);
+        $this->assertFalse($result);
     }
 }
