@@ -4,6 +4,8 @@ use App\Jobs\EmailEvent;
 use Faker\Factory;
 use Illuminate\Support\Facades\Queue;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\AppThread;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\EmailServer;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
@@ -12,7 +14,6 @@ use Tests\TestCase;
 
 class WsBaseTest extends TestCase
 {
-
     /**
      * Constructor of the class.
      * 
@@ -32,6 +33,9 @@ class WsBaseTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
+        Application::query()->truncate();
+        AppThread::query()->truncate();
+        Delegation::query()->truncate();
     }
 
     /**
@@ -465,5 +469,147 @@ class WsBaseTest extends TestCase
         $wsBase = new WsBase();
         $wsBase->sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $templateName, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType);
         Queue::assertNotPushed(EmailEvent::class);
+    }
+
+    /**
+     * Test that the casesList method returns the case title value
+     *
+     * @test
+     * @covers \WsBase::caseList
+     */
+    public function it_should_test_that_the_cases_list_method_returns_the_case_title()
+    {
+        //Create the user factory
+        $user = factory(User::class)->create();
+
+        //Create the application factory
+        $application1 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'TO_DO',
+                'APP_TITLE' => 'Title1'
+            ]
+        );
+        $application2 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'DRAFT',
+                'APP_TITLE' => 'Title2'
+            ]
+        );
+
+        //Create the delegation factory
+        $delegation1 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application1->APP_NUMBER
+            ]
+        );
+        $delegation2 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application2->APP_NUMBER
+            ]
+        );
+
+        //Create app thread factory
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation1->APP_UID
+            ]
+        );
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation2->APP_UID
+            ]
+        );
+
+        //Instance the object
+        $wsBase = new WsBase();
+        //Call the caseList method
+        $res = $wsBase->caseList($user->USR_UID);
+
+        //Assert the result has 2 rows
+        $this->assertCount(2, $res);
+
+        //Assert the status of the case
+        $this->assertTrue('TO_DO' || 'DRAFT' == $res[0]['status']);
+        $this->assertTrue('TO_DO' || 'DRAFT' == $res[1]['status']);
+
+        //Assert the case title is returned
+        $this->assertTrue($application1->APP_TITLE || $application2->APP_TITLE == $res[0]['name']);
+        $this->assertTrue($application1->APP_TITLE || $application2->APP_TITLE == $res[1]['name']);
+    }
+
+    /**
+     * Test the casesList method when the result is empty
+     *
+     * @test
+     * @covers \WsBase::caseList
+     */
+    public function it_should_test_the_cases_list_method_when_there_are_no_results()
+    {
+        //Create the user factory
+        $user1 = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+
+        //Create the application factory
+        $application1 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'TO_DO',
+                'APP_TITLE' => 'Title1'
+            ]
+        );
+        $application2 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'DRAFT',
+                'APP_TITLE' => 'Title2'
+            ]
+        );
+
+        //Create the delegation factory
+        $delegation1 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user1->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application1->APP_NUMBER
+            ]
+        );
+        $delegation2 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user1->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application2->APP_NUMBER
+            ]
+        );
+
+        //Create app thread factory
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation1->APP_UID
+            ]
+        );
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation2->APP_UID
+            ]
+        );
+
+        //Instance the object
+        $wsBase = new WsBase();
+
+        //Call the caseList method
+        $res = $wsBase->caseList($user2->USR_UID);
+
+        //Assert the result his empty
+        $this->assertEmpty($res);
     }
 }
