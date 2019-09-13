@@ -121,6 +121,5 @@ workflow/engine/xmlform/outputdocs/outputdocs_List.xml
 workflow/engine/xmlform/cases/cases_ReassignBy.xml
 workflow/engine/xmlform/users/users_List.xml
 workflow/engine/xmlform/users/users_Options.xml
->>>>>>> develop
 workflow/public_html/skins/JSForms.js
 workflow/public_html/skins/ajax.js
