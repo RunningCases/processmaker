@@ -136,7 +136,8 @@ CREATE TABLE `APP_DOCUMENT`
 	PRIMARY KEY (`APP_DOC_UID`,`DOC_VERSION`),
 	KEY `indexAppDocument`(`FOLDER_UID`, `APP_DOC_UID`),
 	KEY `indexAppUid`(`APP_UID`),
-	KEY `indexAppUidDocUidDocVersionDocType`(`APP_UID`, `DOC_UID`, `DOC_VERSION`, `APP_DOC_TYPE`)
+	KEY `indexAppUidDocUidDocVersionDocType`(`APP_UID`, `DOC_UID`, `DOC_VERSION`, `APP_DOC_TYPE`),
+	KEY `indexFolderUidDocStatus`(`FOLDER_UID`, `APP_DOC_STATUS`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documents in an Application';
 #-----------------------------------------------------------------------------
 #-- APP_MESSAGE
@@ -619,7 +620,9 @@ CREATE TABLE `STEP`
 	`STEP_CONDITION` MEDIUMTEXT  NOT NULL,
 	`STEP_POSITION` INTEGER default 0 NOT NULL,
 	`STEP_MODE` VARCHAR(10) default 'EDIT',
-	PRIMARY KEY (`STEP_UID`)
+	PRIMARY KEY (`STEP_UID`),
+	KEY `indexTasUidTypeUidObj`(`TAS_UID`, `STEP_TYPE_OBJ`, `STEP_UID_OBJ`),
+	KEY `indexProUidTasUidPosition`(`PRO_UID`, `TAS_UID`, `STEP_POSITION`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- STEP_TRIGGER
@@ -735,7 +738,8 @@ CREATE TABLE `TASK`
 	`TAS_RECEIVE_MESSAGE` MEDIUMTEXT,
 	PRIMARY KEY (`TAS_UID`),
 	UNIQUE KEY `INDEX_TAS_ID` (`TAS_ID`),
-	KEY `indexTasUid`(`TAS_UID`)
+	KEY `indexTasUid`(`TAS_UID`),
+	KEY `indexAssgTypeGrpVar`(`TAS_ASSIGN_TYPE`, `TAS_GROUP_VARIABLE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task of workflow';
 #-----------------------------------------------------------------------------
 #-- TASK_USER
@@ -752,7 +756,8 @@ CREATE TABLE `TASK_USER`
 	`TU_TYPE` INTEGER default 1 NOT NULL,
 	`TU_RELATION` INTEGER default 0 NOT NULL,
 	`ASSIGNED_ID` INTEGER default 0,
-	PRIMARY KEY (`TAS_UID`,`USR_UID`,`TU_TYPE`,`TU_RELATION`)
+	PRIMARY KEY (`TAS_UID`,`USR_UID`,`TU_TYPE`,`TU_RELATION`),
+	KEY `indexUsrUidType`(`USR_UID`, `TU_TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- TRANSLATION

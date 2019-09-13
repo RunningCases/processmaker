@@ -328,6 +328,10 @@
             <index-column name="DOC_VERSION"/>
             <index-column name="APP_DOC_TYPE"/>
         </index>
+        <index name="indexFolderUidDocStatus">
+            <index-column name="FOLDER_UID"/>
+            <index-column name="APP_DOC_STATUS"/>
+        </index>
     </table>
     <table name="APP_MESSAGE" idMethod="native">
         <vendor type="mysql">
@@ -1310,6 +1314,16 @@
             <rule name="validValues" value="DYNAFORM|INPUT_DOCUMENT|MESSAGE|OUTPUT_DOCUMENT|EXTERNAL"
                   message="Please select a valid value for STEP_TYPE_OBJ."/>
         </validator>
+        <index name="indexTasUidTypeUidObj">
+            <index-column name="TAS_UID"/>
+            <index-column name="STEP_TYPE_OBJ"/>
+            <index-column name="STEP_UID_OBJ"/>
+        </index>
+        <index name="indexProUidTasUidPosition">
+            <index-column name="PRO_UID"/>
+            <index-column name="TAS_UID"/>
+            <index-column name="STEP_POSITION"/>
+        </index>
     </table>
     <table name="STEP_TRIGGER">
         <vendor type="mysql">
@@ -1559,6 +1573,10 @@
             <rule name="validValues" value="NORMAL|FAST|AUTOMATIC"
                   message="Please select a valid value for TAS_DERIVATION."/>
         </validator>
+        <index name="indexAssgTypeGrpVar">
+            <index-column name="TAS_ASSIGN_TYPE"/>
+            <index-column name="TAS_GROUP_VARIABLE"/>
+        </index>
     </table>
     <table name="TASK_USER">
         <vendor type="mysql">
@@ -1603,6 +1621,10 @@
             <rule name="validValues" value="1|2" message="Please select a valid relation."/>
             <rule name="required" message="Relation is required."/>
         </validator>
+        <index name="indexUsrUidType">
+            <index-column name="USR_UID"/>
+            <index-column name="TU_TYPE"/>
+        </index>
     </table>
     <table name="TRANSLATION">
         <vendor type="mysql">
