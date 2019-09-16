@@ -12,11 +12,15 @@
  */
 
 use Illuminate\Foundation\Http\Kernel;
+/*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
+/*----------------------------------********---------------------------------*/
 
 require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
 require_once __DIR__ . '/../../../bootstrap/app.php';
 
+use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -170,7 +174,8 @@ try {
         } else {
             eprintln('WARNING! No server info found!', 'red');
         }
-
+        //load Processmaker translations
+        Bootstrap::LoadTranslationObject(SYS_LANG);
         //DB
         $phpCode = '';
 
@@ -219,6 +224,18 @@ try {
 
         Propel::init(PATH_CORE . 'config' . PATH_SEP . '_databases_.php');
 
+        /**
+         * Load Laravel database connection
+         */
+        $dbHost = explode(':', $DB_HOST);
+        config(['database.connections.workflow.host' => $dbHost[0]]);
+        config(['database.connections.workflow.database' => $DB_NAME]);
+        config(['database.connections.workflow.username' => $DB_USER]);
+        config(['database.connections.workflow.password' => $DB_PASS]);
+        if (count($dbHost) > 1) {
+            config(['database.connections.workflow.port' => $dbHost[1]]);
+        }
+
         //Enable RBAC
         $rbac = RBAC::getSingleton(PATH_DATA, session_id());
         $rbac->sSystem = 'PROCESSMAKER';
@@ -250,6 +267,11 @@ try {
 
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
+        
+        /**
+         * JobsManager
+         */
+        JobsManager::getSingleton()->init();
 
         // We load plugins' pmFunctions
         $oPluginRegistry = PluginRegistry::loadSingleton();
@@ -280,6 +302,11 @@ try {
                 case 'sendnotificationscron':
                     sendNotifications();
                     break;
+                /*----------------------------------********---------------------------------*/
+                case 'actionsByEmailEmailResponse':
+                    (new ResponseReader)->actionsByEmailEmailResponse();
+                    break;
+                /*----------------------------------********---------------------------------*/
             }
         } catch (Exception $e) {
             $token = strtotime("now");

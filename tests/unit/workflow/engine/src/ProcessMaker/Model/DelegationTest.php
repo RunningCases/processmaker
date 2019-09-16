@@ -1,8 +1,10 @@
 <?php
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
+use Faker\Factory;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\AppAssignSelfServiceValue;
 use ProcessMaker\Model\AppAssignSelfServiceValueGroup;
 use ProcessMaker\Model\Application;
@@ -19,7 +21,6 @@ use Tests\TestCase;
 class DelegationTest extends TestCase
 {
     use DatabaseTransactions;
-
     /**
      * This checks to make sure pagination is working properly
      * @test
@@ -220,86 +221,91 @@ class DelegationTest extends TestCase
         // Create a new delegation, but for this specific user
         factory(Delegation::class)->create([
             'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->id
+            'USR_ID' => $user->USR_ID
         ]);
         // Now fetch results, and assume delegation count is 1 and the user points to our user
-        $results = Delegation::search($user->id);
+        $results = Delegation::search($user->USR_ID);
         $this->assertCount(1, $results['data']);
         $this->assertEquals('testcaseuser', $results['data'][0]['USRCR_USR_USERNAME']);
     }
 
     /**
-     * This ensures searching by case number and review the page
+     * This ensures searching by case number and review the order
      * @test
      */
-    public function it_should_search_by_case_id_and_pages_of_data()
+    public function it_should_search_by_case_id_and_order_of_data()
     {
         factory(User::class, 100)->create();
         factory(Process::class)->create();
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001
+            'APP_NUMBER' => 11
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2010
+            'APP_NUMBER' => 111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2011
+            'APP_NUMBER' => 1111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2012
+            'APP_NUMBER' => 11111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2013
+            'APP_NUMBER' => 111111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2014
+            'APP_NUMBER' => 1111111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2015
+            'APP_NUMBER' => 11111111
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
-        // Get first page, the major case id
-        $results = Delegation::search(null, 0, 10, 1, null, null, 'DESC',
+        // Searching by a existent case number, result ordered in DESC mode
+        $results = Delegation::search(null, 0, 10, 11, null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(7, $results['data']);
-        $this->assertEquals(2015, $results['data'][0]['APP_NUMBER']);
-        // Get first page, the minor case id
-        $results = Delegation::search(null, 0, 10, 1, null, null, 'ASC',
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals(11, $results['data'][0]['APP_NUMBER']);
+        // Searching by another existent case number, result ordered in ASC mode
+        $results = Delegation::search(null, 0, 10, 11111, null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(7, $results['data']);
-        $this->assertEquals(2001, $results['data'][0]['APP_NUMBER']);
-        //Check the pagination
-        $results = Delegation::search(null, 0, 5, 1, null, null, 'DESC',
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals(11111, $results['data'][0]['APP_NUMBER']);
+        // Searching by another existent case number, result ordered in DESC mode
+        $results = Delegation::search(null, 0, 10, 1111111, null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(5, $results['data']);
-        $results = Delegation::search(null, 5, 2, 1, null, null, 'DESC',
+        $this->assertCount(1, $results['data']);
+        $this->assertEquals(1111111, $results['data'][0]['APP_NUMBER']);
+        // Searching by a not existent case number, result ordered in DESC mode
+        $results = Delegation::search(null, 0, 10, 1000, null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_NUMBER');
-        $this->assertCount(2, $results['data']);
+        $this->assertCount(0, $results['data']);
+        // Searching by a not existent case number, result ordered in ASC mode
+        $results = Delegation::search(null, 0, 10, 99999, null, null, 'ASC',
+            'APP_NUMBER', null, null, null, 'APP_NUMBER');
+        $this->assertCount(0, $results['data']);
     }
 
     /**
      * This ensures searching by case title and review the page
-     * case title contain the case number, ex: APP_TITLE = 'Request # @=APP_NUMBER'
      * @test
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_matches_case_title()
@@ -342,32 +348,42 @@ class DelegationTest extends TestCase
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
         $application = factory(Application::class)->create([
-            'APP_TITLE' => 3014,
+            'APP_NUMBER' => 3014,
             'APP_TITLE' => 'Request # 3014'
         ]);
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
 
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
+
         // Get first page, the major case id
-        $results = Delegation::search(null, 0, 10, '1', null, null, 'DESC',
+        $results = Delegation::search(null, 0, 10, 'Request', null, null, 'DESC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(6, $results['data']);
+        $this->assertEquals(3014, $results['data'][0]['APP_NUMBER']);
         $this->assertEquals('Request # 3014', $results['data'][0]['APP_TITLE']);
 
         // Get first page, the minor case id
-        $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 0, 10, 'Request', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(6, $results['data']);
         $this->assertEquals(3001, $results['data'][0]['APP_NUMBER']);
         $this->assertEquals('Request # 3001', $results['data'][0]['APP_TITLE']);
-        //Check the pagination
-        $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
+
+        // Check the pagination
+        $results = Delegation::search(null, 0, 5, 'Request', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(5, $results['data']);
-        $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 5, 2, 'Request', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
+
+        // We need to clean the tables manually
+        // @todo: The "Delegation" factory should be improved, the create method always is creating a record in application table
+        DB::unprepared("TRUNCATE APPLICATION;");
+        DB::unprepared("TRUNCATE APP_DELEGATION;");
     }
 
     /**
@@ -420,7 +436,6 @@ class DelegationTest extends TestCase
 
     /**
      * This ensures searching by case title and review the page
-     * case title does not match with case number (hertland use case)
      * @test
      */
     public function it_should_search_by_case_title_and_pages_of_data_app_number_no_matches_case_title()
@@ -469,20 +484,29 @@ class DelegationTest extends TestCase
         factory(Delegation::class)->create([
             'APP_NUMBER' => $application->APP_NUMBER
         ]);
+
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
+
         // Get first page, the major case title
-        $results = Delegation::search(null, 0, 10, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 0, 10, 'Abigail', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(6, $results['data']);
         $this->assertEquals(2001, $results['data'][0]['APP_NUMBER']);
         $this->assertEquals('Request from Abigail check nro 25001', $results['data'][0]['APP_TITLE']);
 
-        //Check the pagination
-        $results = Delegation::search(null, 0, 5, '1', null, null, 'ASC',
+        // Check the pagination
+        $results = Delegation::search(null, 0, 5, 'Abigail', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(5, $results['data']);
-        $results = Delegation::search(null, 5, 2, '1', null, null, 'ASC',
+        $results = Delegation::search(null, 5, 2, 'Abigail', null, null, 'ASC',
             'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
+
+        // We need to clean the tables manually
+        // @todo: The "Delegation" factory should be improved, the create method always is creating a record in application table
+        DB::unprepared("TRUNCATE APPLICATION;");
+        DB::unprepared("TRUNCATE APP_DELEGATION;");
     }
 
     /**
@@ -557,23 +581,24 @@ class DelegationTest extends TestCase
      */
     public function it_should_sort_by_process()
     {
+        $faker = Factory::create();
         factory(User::class, 100)->create();
         $process = factory(Process::class)->create([
-            'PRO_ID' => 2,
+            'PRO_ID' => $faker->unique()->numberBetween(1, 10000000),
             'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
         ]);
         factory(Delegation::class)->create([
             'PRO_ID' => $process->id
         ]);
         $process = factory(Process::class)->create([
-            'PRO_ID' => 1,
+            'PRO_ID' => $faker->unique()->numberBetween(1, 10000000),
             'PRO_TITLE' => 'China Supplier Payment Proposal'
         ]);
         factory(Delegation::class)->create([
             'PRO_ID' => $process->id
         ]);
         $process = factory(Process::class)->create([
-            'PRO_ID' => 3,
+            'PRO_ID' => $faker->unique()->numberBetween(1, 10000000),
             'PRO_TITLE' => 'Russia Supplier Payment Proposal'
         ]);
         factory(Delegation::class)->create([
@@ -644,7 +669,7 @@ class DelegationTest extends TestCase
         // Create a new delegation, but for this specific user
         factory(Delegation::class)->create([
             'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->id
+            'USR_ID' => $user->USR_ID
         ]);
         $user = factory(User::class)->create([
             'USR_USERNAME' => 'paul',
@@ -654,7 +679,7 @@ class DelegationTest extends TestCase
         // Create a new delegation, but for this specific user
         factory(Delegation::class)->create([
             'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->id
+            'USR_ID' => $user->USR_ID
         ]);
         // Now fetch results, and assume delegation count is 2 and the ordering ascending return Gary
         $results = Delegation::search(null, 0, 25, null, null, null, 'ASC', 'APP_CURRENT_USER');
@@ -1111,12 +1136,15 @@ class DelegationTest extends TestCase
         factory(User::class, 100)->create();
         $process = factory(Process::class)->create();
         $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID,
             'APP_UID' => G::generateUniqueID()
         ]);
         factory(Delegation::class)->states('closed')->create([
+            'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID
         ]);
         factory(Delegation::class)->states('open')->create([
+            'PRO_UID' => $process->PRO_UID,
             'APP_UID' => $application->APP_UID,
             'DEL_INDEX' => 2
         ]);
@@ -1552,5 +1580,184 @@ class DelegationTest extends TestCase
         //Review the count self-service
         $result = Delegation::countSelfService($user->USR_UID);
         $this->assertEquals(25, $result);
+    }
+
+    /**
+     * This check if return the USR_UID assigned in the thread OPEN
+     *
+     * @covers Delegation::getCurrentUser
+     * @test
+     */
+    public function it_should_return_current_user_for_thread_open()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $user->USR_UID,
+        ]);
+
+        //Get the current user assigned in the open thread
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 2, 'OPEN');
+        $this->assertEquals($user->USR_UID, $result);
+    }
+
+    /**
+     * This check if return the USR_UID assigned in the thread CLOSED
+     *
+     * @covers Delegation::getCurrentUser
+     * @test
+     */
+    public function it_should_return_current_user_for_thread_closed()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+        ]);
+
+        //Get the current user assigned in the open thread
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 1, 'CLOSED');
+        $this->assertEquals($user->USR_UID, $result);
+    }
+
+    /**
+     * This check if return empty when the data does not exits
+     *
+     * @covers Delegation::getCurrentUser
+     * @test
+     */
+    public function it_should_return_empty_when_row_does_not_exist()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+        ]);
+
+        //Get the current user assigned in the open thread
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 3, 'CLOSED');
+        $this->assertEmpty($result);
+
+        $result = Delegation::getCurrentUser($application->APP_NUMBER, 3, 'OPEN');
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * This checks if return the open thread
+     *
+     * @covers Delegation::getOpenThreads
+     * @test
+     */
+    public function it_should_return_thread_open()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create task
+        $task = factory(Task::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_FINISH_DATE' => null,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $this->assertEquals($application->APP_NUMBER, $result['APP_NUMBER']);
+    }
+
+    /**
+     * This checks if return empty when the thread is CLOSED
+     *
+     * @covers Delegation::getOpenThreads
+     * @test
+     */
+    public function it_should_return_empty_when_thread_is_closed()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create task
+        $task = factory(Task::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * This checks if return empty when the data is not null
+     *
+     * @covers Delegation::getOpenThreads
+     * @test
+     */
+    public function it_should_return_empty_when_thread_finish_date_is_not_null()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create a case
+        $application = factory(Application::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Create task
+        $task = factory(Task::class)->create();
+        //Create a delegation
+        factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        $result = Delegation::getOpenThreads($application->APP_NUMBER, $task->TAS_UID);
+        $this->assertEmpty($result);
     }
 }

@@ -722,39 +722,6 @@ Ext.onReady ( function() {
         }
     });
 
-    var btnExecReassign = new Ext.Button ({
-        text: _('ID_REASSIGN_ALL'),
-        // text: 'Reassign All',
-        //    text: TRANSLATIONS.LABEL_SELECT_ALL,
-        handler: function(){
-
-            var rs = storeReassignCases.getModifiedRecords();
-            var sv = [];
-            for(var i = 0; i <= rs.length-1; i++){
-                //sv[i]= rs[i].data['name'];
-                sv[i]= rs[i].data;
-            }
-            var gridData = storeReassignCases.getModifiedRecords();
-
-            Ext.Ajax.request({
-                url: 'proxySaveReassignCasesList',
-                success: function(response) {
-                    newPopUp.hide();
-                    storeCases.reload();
-                },
-                params: { APP_UIDS:ids, data:Ext.util.JSON.encode(sv), selected:false }
-            });
-
-            /*
-             storeReassignCases.setBaseParam('selected', false);
-             var result = storeReassignCases.save();
-             newPopUp.hide();
-             storeCases.reload();
-             */
-            //storeReassignCases.reload();
-        }
-    });
-
     var ExecReassign = function () {
         newPopUp.hide();
         var rs = storeReassignCases.getModifiedRecords();
@@ -908,21 +875,6 @@ Ext.onReady ( function() {
     /*----------------------------------********---------------------------------*/
     storeCases.on('load',function(){var viewport = Ext.getCmp("viewportcases");viewport.doLayout();})
 
-    // create the Data Store for processes
-    var storeProcesses = new Ext.data.JsonStore({
-        root: 'data',
-        totalProperty: 'totalCount',
-        idProperty: 'index',
-        remoteSort: true,
-        fields: [
-            'PRO_UID', 'APP_PRO_TITLE'
-        ],
-        proxy: new Ext.data.HttpProxy({
-            url: 'proxyProcessList?t=new'
-        })
-    });
-    storeProcesses.setDefaultSort('APP_PRO_TITLE', 'asc');
-
     // creating the button for filters
     var btnRead = new Ext.Button ({
         id: 'read',
@@ -977,25 +929,6 @@ Ext.onReady ( function() {
         '<span> {APP_PRO_TITLE}</span>',
         '</div></tpl>'
     );
-
-    Ext.Ajax.request({
-        url : 'casesList_Ajax',
-        params : {
-            actionAjax : 'processListExtJs',
-            action: action,
-            CATEGORY_UID: filterCategory
-        },
-        success: function ( result, request ) {
-            processValues = Ext.util.JSON.decode(result.responseText);
-            suggestProcess.getStore().removeAll();
-            suggestProcess.getStore().loadData(processValues);
-        },
-        failure: function ( result, request) {
-            if (typeof(result.responseText) != 'undefined') {
-                Ext.MessageBox.alert(_('ID_FAILED'), result.responseText);
-            }
-        }
-    });
 
     processProxy =  new Ext.data.HttpProxy( {
         url : 'casesList_Ajax?actionAjax=processListExtJs&action='+action,
@@ -1375,7 +1308,7 @@ Ext.onReady ( function() {
         //cls: 'x-form-toolbar-standardButton',
         handler: doSearch
     });
-  
+
     /**
      * Show loading Dialog
      */
@@ -1402,12 +1335,12 @@ Ext.onReady ( function() {
                     }
                     loadingMessage = Ext.Msg.show(commonSettings);
                     timeoutMark = false;
-                } 
+                }
             }, 2000);
     };
     /**
      * Show the error code.
-     * @param {*} errorCode 
+     * @param {*} errorCode
      */
     function showErrorMessage(errorCode) {
         var message;
@@ -1450,7 +1383,12 @@ Ext.onReady ( function() {
         searchText = textSearch.getValue();
         storeCases.setBaseParam('dateFrom', dateFrom.getValue());
         storeCases.setBaseParam('dateTo', dateTo.getValue());
-        storeCases.setBaseParam( 'search', searchText);
+        storeCases.setBaseParam('search', searchText);
+        if ( action === 'search' ) {
+            storeCases.setBaseParam('doSearch', true);
+            storeCases.setBaseParam('process_label', suggestProcess.getRawValue());
+            storeCases.setBaseParam('user_label', suggestUser.getRawValue());
+        }
         storeCases.load({params:{ start : 0 , limit : pageSize }});
         if ( action === 'search' ){
             showLoadingDialog();
@@ -1831,7 +1769,7 @@ Ext.onReady ( function() {
                             var smodelUsersToReassign = new Ext.grid.RowSelectionModel({
                                 singleSelect: true
                             });
-                            
+
                             var textareaReason = new Ext.form.TextArea({
                                 id: 'idTextareaReasonCasesList',
                                 disabled: true,
@@ -2506,13 +2444,34 @@ Ext.onReady ( function() {
             storeCases.setBaseParam("search", textSearch.getValue());
             break;
         case "search":
-            storeCases.setBaseParam("category", "");
-            storeCases.setBaseParam("process", "");
-            storeCases.setBaseParam("status", comboStatus.store.getAt(0).get(comboStatus.valueField));
-            storeCases.setBaseParam("columnSearch", comboColumnSearch.store.getAt(0).get(comboColumnSearch.valueField));
-            storeCases.setBaseParam("search", textSearch.getValue());
-            storeCases.setBaseParam("dateFrom", dateFrom.getValue());
-            storeCases.setBaseParam("dateTo", dateTo.getValue());
+            storeCases.setBaseParam("category",
+                typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.category ?
+                filtersValues.advanced.category : ""
+            );
+            storeCases.setBaseParam("process",
+                typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process ?
+                filtersValues.advanced.process : ""
+            );
+            storeCases.setBaseParam("filterStatus",
+                typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.filterStatus ?
+                filtersValues.advanced.filterStatus : ""
+            );
+            storeCases.setBaseParam("columnSearch",
+                typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.columnSearch ?
+                filtersValues.advanced.columnSearch : ""
+            );
+            storeCases.setBaseParam("search",
+                typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.search ?
+                filtersValues.advanced.search : ""
+            );
+            storeCases.setBaseParam("dateFrom",
+                typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.dateFrom ?
+                filtersValues.advanced.dateFrom : ""
+            );
+            storeCases.setBaseParam("dateTo",
+                typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.dateTo ?
+                filtersValues.advanced.dateTo : ""
+            );
             break;
         case "unassigned":
             storeCases.setBaseParam("category", "");
@@ -2533,8 +2492,19 @@ Ext.onReady ( function() {
     }
 
     storeCases.setBaseParam("action", action);
-    storeCases.setBaseParam("start", 0);
-    storeCases.setBaseParam("limit", pageSize);
+    if (action === "search") {
+        storeCases.setBaseParam("start",
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.start ?
+        parseInt(filtersValues.advanced.start, 10) : 0
+        );
+        storeCases.setBaseParam("limit",
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.limit ?
+            parseInt(filtersValues.advanced.limit, 10) : pageSize
+        );
+    } else {
+        storeCases.setBaseParam("start", 0);
+        storeCases.setBaseParam("limit", pageSize);
+    }
 
     var viewText = Ext.getCmp('casesGrid').getView();
     storeCases.removeAll();
@@ -2543,7 +2513,7 @@ Ext.onReady ( function() {
         storeCases.load();
     } else {
         viewText.emptyText = _('ID_ENTER_SEARCH_CRITERIA');
-        storeCases.load( {params: { first: true}} );
+        storeCases.load();
     }
 
     __OPEN_APPLICATION_UID__ = null;
@@ -2551,10 +2521,7 @@ Ext.onReady ( function() {
     //newPopUp.add(reassignGrid);
     newPopUp.add(gridForm);
     newPopUp.addButton(btnExecReassignSelected);
-    //newPopUp.addButton(btnExecReassign);
     newPopUp.addButton(btnCloseReassign);
-
-    //storeProcesses.load();
 
     function onItemToggle(item, pressed){
         switch ( item.id ) {
@@ -2589,7 +2556,6 @@ Ext.onReady ( function() {
         storeCases.setBaseParam( 'start',  0 );
         storeCases.setBaseParam( 'limit',  pageSize );
         storeCases.load();
-        //storeProcesses.load();
     }
 
 
@@ -2652,20 +2618,68 @@ Ext.onReady ( function() {
     catch (e) {
         // Nothing to do
     }
-
-    comboCategory.setValue("");
-    suggestProcess.setValue("");
-    comboStatus.setValue("");
-    comboColumnSearch.setValue("APP_TITLE");
-    /*----------------------------------********---------------------------------*/
-    if (typeof valueFilterStatus != 'undefined') {
-        comboFilterStatus.setValue(valueFilterStatus);
+    if (action === "search") {
+        comboCategory.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.category ?
+            filtersValues.advanced.category : ""
+        );
+        // Loading process suggest
+        suggestProcess.getStore().loadData([{
+            "PRO_UID": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process ?
+                filtersValues.advanced.process : "",
+            "PRO_TITLE": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process_label ?
+                filtersValues.advanced.process_label : ""
+        }]);
+        suggestProcess.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.process ?
+            filtersValues.advanced.process : ""
+        );
+        comboStatus.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.filterStatus ?
+            filtersValues.advanced.filterStatus : ""
+        );
+        comboColumnSearch.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.columnSearch ?
+            filtersValues.advanced.columnSearch: ""
+        );
+        comboColumnSearch.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.columnSearch ?
+            filtersValues.advanced.columnSearch : ""
+        );
+        textSearch.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.search ?
+            filtersValues.advanced.search : ""
+        );
+        dateFrom.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.dateFrom ?
+            filtersValues.advanced.dateFrom : ""
+        );
+        dateTo.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.dateTo ?
+            filtersValues.advanced.dateTo : ""
+        );
+        // Loading user suggest
+        suggestUser.getStore().loadData([{
+            "USR_UID": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.user ?
+                filtersValues.advanced.user : "",
+            "USR_FULLNAME": typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.user_label ?
+                filtersValues.advanced.user_label : ""
+        }]);
+        suggestUser.setValue(
+            typeof filtersValues !== 'undefined' && filtersValues.advanced && filtersValues.advanced.user ?
+            filtersValues.advanced.user : ""
+        );
+    } else {
+        comboCategory.setValue("");
+        suggestProcess.setValue("");
+        comboStatus.setValue("");
+        comboColumnSearch.setValue("APP_TITLE");
+        /*----------------------------------********---------------------------------*/
+        if (typeof valueFilterStatus !== 'undefined') {
+            comboFilterStatus.setValue(valueFilterStatus);
+        }
+        /*----------------------------------********---------------------------------*/
     }
-    /*----------------------------------********---------------------------------*/
-    if(typeof(comboUser) != 'undefined'){
-        comboUser.setValue("");
-    }
-
     function reassign(){
         storeReassignCases.removeAll();
         var rows  = grid.getSelectionModel().getSelections();

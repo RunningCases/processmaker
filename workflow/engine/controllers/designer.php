@@ -33,16 +33,20 @@ class Designer extends Controller
      */
     public function index($httpData)
     {
+        global $RBAC;
         $proUid = isset($httpData->prj_uid) ? $httpData->prj_uid : '';
         $appUid = isset($httpData->app_uid) ? $httpData->app_uid : '';
         $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
 
         $clientToken = $this->getCredentials($httpData);
         $debug = false; //System::isDebugMode();
-
         $consolidated = 0;
         $enterprise = 0;
         $distribution = 0;
+
+        $usrUid = (isset($RBAC->userObj)) ? $RBAC->userObj->getUsrUid() : '';
+
+        $userProperties = UsersPropertiesPeer::retrieveByPk($usrUid);
 
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = PMLicensedFeatures::getSingleton();
@@ -68,6 +72,8 @@ class Designer extends Controller
         $this->setVar("SYS_LANG", SYS_LANG);
         $this->setVar("SYS_SKIN", SYS_SKIN);
         $this->setVar('HTTP_SERVER_HOSTNAME', System::getHttpServerHostnameRequestsFrontEnd());
+        isset($userProperties) ? $this->setVar('PMDYNAFORM_FIRST_TIME',
+            $userProperties->getPmdynaformFirstTime()) : $this->setVar('PMDYNAFORM_FIRST_TIME', '0');
         $inpuDocument = new InputDocument();
         $this->setVar('maxFileSizeInformation', G::json_encode($inpuDocument->getMaxFileSize()));
 
@@ -94,7 +100,8 @@ class Designer extends Controller
             $this->setVar('pmuiJsCacheFile', file(PATH_HTML . "lib-dev/pmUI/build.cache", FILE_IGNORE_NEW_LINES));
             $this->setVar('pmuiCssCacheFile', file(PATH_HTML . "lib-dev/pmUI/css.cache", FILE_IGNORE_NEW_LINES));
 
-            $this->setVar('designerCacheFile', file(PATH_HTML . "lib-dev/mafe/applications.cache", FILE_IGNORE_NEW_LINES));
+            $this->setVar('designerCacheFile',
+                file(PATH_HTML . "lib-dev/mafe/applications.cache", FILE_IGNORE_NEW_LINES));
             $this->setVar('mafeJsFiles', $mafeJsFiles);
             $this->setVar('mafeCssFiles', $mafeCssFiles);
         } else {
@@ -248,7 +255,6 @@ class Designer extends Controller
             "Content-Type" => "multipart/form-data;",
             "Authorization" => "Basic " . base64_encode($client['CLIENT_ID'] . ":" . $client['CLIENT_SECRET'])
         );
-
         $request = new Request(array(), $request, array(), array(), array(), $server, null, $headers);
         $oauthServer = new Server();
         $response = $oauthServer->postToken($request, true);

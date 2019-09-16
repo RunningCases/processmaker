@@ -746,7 +746,13 @@ class Process extends BaseProcess
         return $aProcesses;
     }
 
-    public function getCasesCountForProcess($pro_uid)
+    /**
+     * This returns the number of cases for the process.
+     * @param string $pro_uid
+     * @return integer
+     * @see ProcessMaker\Project\Bpmn::canRemove()
+     */
+    public static function getCasesCountForProcess($pro_uid)
     {
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn('COUNT(*) AS TOTAL_CASES');
