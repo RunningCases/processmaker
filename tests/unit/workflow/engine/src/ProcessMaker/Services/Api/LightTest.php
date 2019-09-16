@@ -2,12 +2,11 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Services\Api;
 
-use G;
+use Faker\Factory;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use ProcessMaker\Core\Installer;
-use ProcessMaker\Core\System;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
@@ -24,16 +23,10 @@ use Tests\TestCase;
  */
 class LightTest extends TestCase
 {
-    private $http;
-    private $baseUri;
-    private $workspace;
     private $clientId;
     private $clientSecret;
-    private $user;
-    private $password;
     private $authorization;
     private $optionsForConvertDatetime;
-    private $timezone;
 
     /**
      * This is using instead of DatabaseTransactions
@@ -41,19 +34,12 @@ class LightTest extends TestCase
      */
     protected function setUp()
     {
-        $this->markTestIncomplete();//@todo: Please correct this unit test
-        $this->timezone = config('app.timezone');
-        $_SESSION['USR_TIME_ZONE'] = $this->timezone;
-        $this->baseUri = $this->getBaseUri();
+        parent::setUp();
         $this->workspace = env("DB_DATABASE", "test");
         $this->clientId = config("oauthClients.pm.clientId");
         $this->clientSecret = config("oauthClients.pm.clientSecret");
         $this->user = "admin";
         $this->password = "admin";
-        $this->createTestSite();
-        $this->http = new Client([
-            "base_uri" => $this->baseUri
-        ]);
         $this->optionsForConvertDatetime = [
             'newerThan',
             'oldestthan',
@@ -65,88 +51,26 @@ class LightTest extends TestCase
     }
 
     /**
-     * Get base uri for rest applications.
-     * @return string
+     * Return a simulated http client.
+     * @param string $body
+     * @return Client
      */
-    private function getBaseUri()
+    private function getHttp($body = "")
     {
-        $_SERVER = $this->getServerInformation();
-        $baseUri = System::getServerProtocolHost();
-
-        return $baseUri;
-    }
-
-    /**
-     * Get server information.
-     * @return object
-     */
-    private function getServerInformation()
-    {
-        $pathData = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . ".server_info";
-        $content = file_get_contents($pathData);
-        $serverInfo = unserialize($content);
-
-        return $serverInfo;
-    }
-
-    /**
-     * This method creates a test workspace so that the endpoints can be functional, 
-     * it is necessary to change the permissions of the directory so that other 
-     * users can access and write to the directory, these users can be for 
-     * example: apache2, www-data, httpd, etc... 
-     * This method finds the license file of the active site and uses it to register 
-     * this license in the LICENSE_MANAGER table. If there is no license file in 
-     * the active workspace, an asersion failure will be notified.
-     */
-    private function createTestSite()
-    {
-        //We copy the license, otherwise you will not be able to lift the site
-        $pathTest = PATH_DATA . "sites" . PATH_SEP . $this->workspace;
-        File::copyDirectory(PATH_DATA . "sites" . PATH_SEP . config("system.workspace"), $pathTest);
-
-        //Write permission for other users for example: apache2, www-data, httpd.
-        passthru('chmod 777 -R ' . $pathTest . ' >> .log 2>&1');
-
-        $installer = new Installer();
-        $options = [
-            'isset' => true,
-            'name' => $this->workspace,
-            'admin' => [
-                'username' => $this->user,
-                'password' => $this->password
-            ],
-            'advanced' => [
-                'ao_db_drop' => true,
-                'ao_db_wf' => $this->workspace,
-                'ao_db_rb' => $this->workspace,
-                'ao_db_rp' => $this->workspace
-            ]
+        $headers = [
+            'Access-Control-Allow-Origin' => '*',
+            'Cache-Control' => 'no-cache, must-revalidate',
+            'Connection' => 'keep-alive',
+            'Content-Type' => 'application/json; charset=utf-8',
         ];
-        //The false option creates a connection to the database, necessary to create a site.
-        $installer->create_site($options, false);
-        //Now create site
-        $installer->create_site($options, true);
-
-        //Important so that the dates are stored in the same timezone
-        file_put_contents($pathTest . "/env.ini", "time_zone ='{$this->timezone}'", FILE_APPEND);
-
-        $matchingFiles = File::glob("{$pathTest}/*.dat");
-        $this->assertNotEmpty($matchingFiles);
-
-        //set license
-        $licensePath = array_pop($matchingFiles);
-        DB::Table("LICENSE_MANAGER")->insert([
-            "LICENSE_UID" => G::generateUniqueID(),
-            "LICENSE_USER" => "ProcessMaker Inc",
-            "LICENSE_START" => "1490932800",
-            "LICENSE_END" => 0,
-            "LICENSE_SPAN" => 0,
-            "LICENSE_STATUS" => "ACTIVE",
-            "LICENSE_DATA" => file_get_contents($licensePath),
-            "LICENSE_PATH" => $licensePath,
-            "LICENSE_WORKSPACE" => $this->workspace,
-            "LICENSE_TYPE" => ""
+        $mock = new MockHandler([
+            new Response(200, $headers, $body)
         ]);
+        $handler = HandlerStack::create($mock);
+        $http = new Client([
+            'handler' => $handler
+        ]);
+        return $http;
     }
 
     /**
@@ -154,7 +78,15 @@ class LightTest extends TestCase
      */
     private function getAuthorization()
     {
-        $request = $this->http->request("POST", "{$this->workspace}/oauth2/token", [
+        $body = [
+            "access_token" => "",
+            "expires_in" => "",
+            "refresh_token" => "",
+            "scope" => "*",
+            "token_type" => "",
+        ];
+        $http = $this->getHttp(json_encode($body));
+        $request = $http->request("POST", "{$this->workspace}/oauth2/token", [
             "form_params" => [
                 "grant_type" => "password",
                 "scope" => "*",
@@ -191,8 +123,13 @@ class LightTest extends TestCase
      */
     private function getCollectionListUnassigned()
     {
+        $faker = $faker = Factory::create();
+
         //Create process
         $process = factory(Process::class)->create();
+
+        //Tasks created in the factory process are cleaned because it does not meet the test rules
+        Task::where('PRO_UID', $process->PRO_UID)->delete();
 
         //Get user
         $user = User::select()
@@ -213,6 +150,9 @@ class LightTest extends TestCase
             'TU_RELATION' => 1, //Related to the user
             'TU_TYPE' => 1
         ]);
+
+        //truncate previous elements for create 15 registers
+        ListUnassigned::truncate();
 
         //Create a record in list unassigned
         $listUnassigned = factory(ListUnassigned::class, 15)->create([
@@ -305,8 +245,10 @@ class LightTest extends TestCase
     {
         $listUnassigned = $this->getCollectionListUnassigned();
 
+        $body = clone $listUnassigned;
+        $http = $this->getHttp(json_encode($this->normalizeData($body)));
         $this->getAuthorization();
-        $request = $this->http->request("GET", "api/1.0/{$this->workspace}/light/unassigned", [
+        $request = $http->request("GET", "api/1.0/{$this->workspace}/light/unassigned", [
             "headers" => [
                 "Authorization" => $this->authorization
             ]
@@ -339,8 +281,10 @@ class LightTest extends TestCase
         $listUnassigned = $this->getCollectionListUnassigned();
         $result = $listUnassigned->forPage($page, $size);
 
+        $body = clone $result;
+        $http = $this->getHttp(json_encode($this->normalizeData($body)));
         $this->getAuthorization();
-        $request = $this->http->request("GET", "api/1.0/{$this->workspace}/light/unassigned?start={$start}&limit={$limit}", [
+        $request = $http->request("GET", "api/1.0/{$this->workspace}/light/unassigned?start={$start}&limit={$limit}", [
             "headers" => [
                 "Authorization" => $this->authorization
             ]

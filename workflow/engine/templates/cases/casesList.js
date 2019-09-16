@@ -545,23 +545,6 @@ Ext.onReady ( function() {
         return String.format("<a href='#' onclick='unpauseCaseFunction(\"{0}\",\"{1}\")'>" + _('ID_UNPAUSE') + "</a>", r.data['APP_UID'], r.data['DEL_INDEX'] );
     }
 
-    function convertDate ( value ) {
-        myDate = new Date( 1900,0,1,0,0,0);
-        try{
-            if(!Ext.isDate( value )){
-                var myArray = value.split(' ');
-                var myArrayDate = myArray[0].split('-');
-                if ( myArray.length > 1 )
-                    var myArrayHour = myArray[1].split(':');
-                else
-                    var myArrayHour = new Array('0','0','0');
-                var myDate = new Date( myArrayDate[0], myArrayDate[1]-1, myArrayDate[2], myArrayHour[0], myArrayHour[1], myArrayHour[2] );
-            }
-        }
-        catch(e){};
-
-        return myDate;
-    }
     function showDate (value,p,r) {
         var myDate = convertDate( value );
         return String.format("{0}", myDate.dateFormat( FORMATS.casesListDateFormat ));

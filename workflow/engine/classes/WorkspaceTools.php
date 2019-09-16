@@ -2085,8 +2085,14 @@ class WorkspaceTools
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
                     $versionBackupEngine = (isset($metadata->backupEngineVersion)) ? $metadata->backupEngineVersion : 1;
                     $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine, $connection);
-                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "localhost", $dbName, $connection);
-                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "%", $dbName, $connection);
+                    // Define the password
+                    if (empty($workspace->dbGrantUserPassword)) {
+                        $bdPassword = $db->pass;
+                    } else {
+                        $bdPassword = $workspace->dbGrantUserPassword;
+                    }
+                    $workspace->createDBUser($dbUser, $bdPassword, "localhost", $dbName, $connection);
+                    $workspace->createDBUser($dbUser, $bdPassword, "%", $dbName, $connection);
                 }
             }
 

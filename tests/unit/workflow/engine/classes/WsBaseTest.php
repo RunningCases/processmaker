@@ -4,22 +4,23 @@ use App\Jobs\EmailEvent;
 use Faker\Factory;
 use Illuminate\Support\Facades\Queue;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\AppThread;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\EmailServer;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
-use Tests\CreateTestSite;
 use Tests\TestCase;
 
 class WsBaseTest extends TestCase
 {
-
     /**
-     * This trait allows obtaining a test site that makes use of the database 
-     * mentioned for the test.
+     * Constructor of the class.
+     * 
+     * @param string $name
+     * @param array $data
+     * @param string $dataName
      */
-    use CreateTestSite;
-
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -32,14 +33,9 @@ class WsBaseTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->timezone = config('app.timezone');
-        $_SESSION['USR_TIME_ZONE'] = $this->timezone;
-        $this->baseUri = $this->getBaseUri();
-        $this->user = 'admin';
-        $this->password = 'admin';
-        $this->workspace = env("DB_DATABASE", "test");
-        $this->createTestSite();
+        Application::query()->truncate();
+        AppThread::query()->truncate();
+        Delegation::query()->truncate();
     }
 
     /**
@@ -152,17 +148,10 @@ class WsBaseTest extends TestCase
      */
     private function createTemplate($proUid, $usrUid)
     {
-        $path1 = PATH_DATA . "sites" . PATH_SEP . config("system.workspace") . PATH_SEP . "mailTemplates" . PATH_SEP . "{$proUid}";
-        mkdir($path1);
-        $path2 = $path1 . PATH_SEP . "emailEvent_" . G::generateUniqueID() . ".html";
-
-        $htmlContent = $this->createDefaultHtmlContent('Test');
-        file_put_contents($path2, $htmlContent);
-
         $template = factory(\ProcessMaker\Model\ProcessFiles::class)->create([
             'PRO_UID' => $proUid,
             'USR_UID' => $usrUid,
-            'PRF_PATH' => $path2
+            'PRF_PATH' => '/'
         ]);
         return $template;
     }
@@ -219,7 +208,7 @@ class WsBaseTest extends TestCase
      * Queue-fake has been used, see more at: https://laravel.com/docs/5.7/mocking#queue-fake
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_with_queue_jobs($messageType)
     {
@@ -258,7 +247,7 @@ class WsBaseTest extends TestCase
      * Queue-fake has been used, see more at: https://laravel.com/docs/5.7/mocking#queue-fake
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_execute_an_sendMessage_without_queue_jobs($messageTypes)
     {
@@ -296,7 +285,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage with queue jobs and empty config parameter.
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_with_queue_jobs_and_empty_config_parameter($messageTypes)
     {
@@ -334,7 +323,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage without queue jobs and empty config parameter.
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_empty_config_parameter($messageTypes)
     {
@@ -372,7 +361,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage with queue jobs and config parameter like id.
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_with_queue_jobs_and_config_parameter_like_id($messageTypes)
     {
@@ -410,7 +399,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage without queue jobs and config parameter like id.
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_config_parameter_like_id($messageTypes)
     {
@@ -448,7 +437,7 @@ class WsBaseTest extends TestCase
      * It should send an sendMessage without queue jobs and gmail parameter like one.
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers WsBase::sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $template, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType)
+     * @covers \WsBase::sendMessage
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_gmail_parameter_like_one($messageTypes)
     {
@@ -480,5 +469,147 @@ class WsBaseTest extends TestCase
         $wsBase = new WsBase();
         $wsBase->sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $templateName, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType);
         Queue::assertNotPushed(EmailEvent::class);
+    }
+
+    /**
+     * Test that the casesList method returns the case title value
+     *
+     * @test
+     * @covers \WsBase::caseList
+     */
+    public function it_should_test_that_the_cases_list_method_returns_the_case_title()
+    {
+        //Create the user factory
+        $user = factory(User::class)->create();
+
+        //Create the application factory
+        $application1 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'TO_DO',
+                'APP_TITLE' => 'Title1'
+            ]
+        );
+        $application2 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'DRAFT',
+                'APP_TITLE' => 'Title2'
+            ]
+        );
+
+        //Create the delegation factory
+        $delegation1 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application1->APP_NUMBER
+            ]
+        );
+        $delegation2 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application2->APP_NUMBER
+            ]
+        );
+
+        //Create app thread factory
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation1->APP_UID
+            ]
+        );
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation2->APP_UID
+            ]
+        );
+
+        //Instance the object
+        $wsBase = new WsBase();
+        //Call the caseList method
+        $res = $wsBase->caseList($user->USR_UID);
+
+        //Assert the result has 2 rows
+        $this->assertCount(2, $res);
+
+        //Assert the status of the case
+        $this->assertTrue('TO_DO' || 'DRAFT' == $res[0]['status']);
+        $this->assertTrue('TO_DO' || 'DRAFT' == $res[1]['status']);
+
+        //Assert the case title is returned
+        $this->assertTrue($application1->APP_TITLE || $application2->APP_TITLE == $res[0]['name']);
+        $this->assertTrue($application1->APP_TITLE || $application2->APP_TITLE == $res[1]['name']);
+    }
+
+    /**
+     * Test the casesList method when the result is empty
+     *
+     * @test
+     * @covers \WsBase::caseList
+     */
+    public function it_should_test_the_cases_list_method_when_there_are_no_results()
+    {
+        //Create the user factory
+        $user1 = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+
+        //Create the application factory
+        $application1 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'TO_DO',
+                'APP_TITLE' => 'Title1'
+            ]
+        );
+        $application2 = factory(Application::class)->create(
+            [
+                'APP_STATUS' => 'DRAFT',
+                'APP_TITLE' => 'Title2'
+            ]
+        );
+
+        //Create the delegation factory
+        $delegation1 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user1->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application1->APP_NUMBER
+            ]
+        );
+        $delegation2 = factory(Delegation::class)->create(
+            [
+                'USR_UID' => $user1->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application2->APP_NUMBER
+            ]
+        );
+
+        //Create app thread factory
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation1->APP_UID
+            ]
+        );
+        factory(AppThread::class)->create(
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation2->APP_UID
+            ]
+        );
+
+        //Instance the object
+        $wsBase = new WsBase();
+
+        //Call the caseList method
+        $res = $wsBase->caseList($user2->USR_UID);
+
+        //Assert the result his empty
+        $this->assertEmpty($res);
     }
 }

@@ -153,7 +153,6 @@ class RBAC
                 'error' => [],
                 'getUserArray' => ['PM_ALLCASES'],
                 'getCategoryArray' => ['PM_ALLCASES'],
-                'getAllUsersArray' => ['PM_ALLCASES'],
                 'getStatusArray' => ['PM_ALLCASES'],
                 'getProcessArray' => ['PM_ALLCASES'],
                 'getProcesses' => ['PM_ALLCASES'],

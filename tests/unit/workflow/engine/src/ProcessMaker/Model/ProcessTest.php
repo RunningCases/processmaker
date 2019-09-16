@@ -18,7 +18,7 @@ class ProcessTest extends TestCase
 
     /**
      * Test it returns all the processes for an specific user
-     * @covers ::getProcessList
+     * @covers \ProcessMaker\Model\Process::getProcessList
      * @test
      */
     public function it_should_return_all_the_processes_for_an_specific_user()
@@ -51,7 +51,7 @@ class ProcessTest extends TestCase
 
     /**
      * Tests that it returns the processes in an specific category
-     * @covers ::getProcessList
+     * @covers \ProcessMaker\Model\Process::getProcessList
      * @test
      */
     public function it_should_return_the_processes_in_an_specific_category()
@@ -92,7 +92,7 @@ class ProcessTest extends TestCase
 
     /**
      * Tests that it returns an empty array if no processes where found
-     * @covers ::getProcessList
+     * @covers \ProcessMaker\Model\Process::getProcessList
      * @test
      */
     public function it_should_return_empty_if_no_processes_where_found()
@@ -110,7 +110,7 @@ class ProcessTest extends TestCase
 
     /**
      * Test it returns all the processes in status active
-     * @covers ::getProcessList
+     * @covers \ProcessMaker\Model\Process::getProcessList
      * @test
      */
     public function it_should_return_all_the_processes_in_status_active()

@@ -16,33 +16,27 @@ use Illuminate\Support\Facades\Schema;
 define('PATH_TRUNK', dirname(__DIR__));
 define('PATH_CORE', PATH_TRUNK . '/workflow/engine/');
 define('PATH_CONFIG', PATH_CORE . 'config/');
-$pathData = PATH_CONFIG . 'paths_installed.php';
-if (file_exists($pathData)) {
-    require_once $pathData;
-} else {
-    define('PATH_DATA', dirname(__DIR__) . '/shared/rbac/');
-}
+define('PATH_DATA', dirname(__DIR__) . '/shared/');
 define('PATH_RBAC_CORE', dirname(__DIR__) . '/rbac/engine/');
-if (file_exists($pathData)) {
-    define('PATH_DB', PATH_DATA . 'sites/');
-} else {
-    define('PATH_DB', dirname(__DIR__) . '/shared/sites/');
-}
-define('PATH_SEP', '/');
-define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
+define('PATH_DB', PATH_DATA . 'sites/');
+// Define some values related to the workspace
 define('SYS_LANG', 'en');
 define('SYS_SKIN', 'neoclassic');
 define('SYS_SYS', env('MAIN_SYS_SYS', 'workflow'));
-define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
 define('PMTABLE_KEY', 'pmtable');
+define('DB_ADAPTER', 'mysql');
+// Path related some specific directories
+define('PATH_SEP', '/');
+define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
+define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
 define('PATH_WORKFLOW_MYSQL_DATA', PATH_TRUNK . '/workflow/engine/data/mysql/');
 define('PATH_RBAC_MYSQL_DATA', PATH_TRUNK . '/rbac/engine/data/mysql/');
 define('PATH_LANGUAGECONT', PATH_DATA . '/META-INF/');
-define('DB_ADAPTER', 'mysql');
 define('PATH_RBAC_HOME', PATH_TRUNK . '/rbac/');
 define('PATH_RBAC', PATH_RBAC_HOME . 'engine/classes/');
 define("PATH_CUSTOM_SKINS", PATH_DATA . "skins/");
 define("PATH_TPL", PATH_CORE . "templates/");
+define('PATH_C', PATH_DATA . 'compiled/');
 define('DB_HOST', env('DB_HOST'));
 define('DB_NAME', env('DB_DATABASE'));
 define('DB_USER', env('DB_USERNAME'));

@@ -141,7 +141,7 @@ class Console_Getopt {
      * @access private
      *
      */
-    function _parseShortOption($arg, $short_options, &$opts, &$args)
+    public static function _parseShortOption($arg, $short_options, &$opts, &$args)
     {
         for ($i = 0; $i < strlen($arg); $i++) {
             $opt = $arg{$i};
