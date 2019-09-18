@@ -27,7 +27,7 @@ class PmDynaform
     public $fields = null;
     public $isRTL = false;
     public $lang = SYS_LANG;
-    public $langs = null;
+    public $translations = null;
     public $onPropertyRead = "onPropertyReadFormInstance";
     public $pathRTLCss = '';
     public $record = null;
@@ -109,6 +109,46 @@ class PmDynaform
         }
     }
 
+    /**
+     * Get the translation defined in the dynaform
+     *
+     * @return object
+     */
+    public function getTranslations()
+    {
+        return $this->translations;
+    }
+
+    /**
+     * Set the translations defined in the dynaform
+     *
+     * @param string $dynUid
+     *
+     * @return void
+     */
+    public function setTranslations($dynUid)
+    {
+        $dynaForm = ModelDynaform::getByDynUid($dynUid);
+        $this->translations = empty($dynaForm->DYN_LABEL) ? null : G::json_decode($dynaForm->DYN_LABEL);
+    }
+
+    /**
+     * Get the labels from a specific language defined in the dynaform, if does not exist will return null
+     *
+     * @param string $language
+     *
+     * @return object|null
+     */
+    public function getLabelsPo($language)
+    {
+        $labelsPo = null;
+        if (!is_null($this->translations) && !empty($this->translations->{$language}->{'Labels'})) {
+            $labelsPo = $this->translations->{$language}->{'Labels'};
+        }
+
+        return $labelsPo;
+    }
+
     public function getDynaformTitle($idDynaform)
     {
         $d = new Dynaform();
@@ -119,11 +159,13 @@ class PmDynaform
 
     /**
      * Get a dynaform.
+     *
      * @return array|null
-     * @see ConsolidatedCases->processConsolidated()
+     *
      * @see workflow/engine/methods/cases/caseConsolidated.php
-     * @see ProcessMaker\BusinessModel\Cases->getCaseVariables()
-     * @see PmDynaform->__construct()
+     * @see ConsolidatedCases::processConsolidated()
+     * @see PmDynaform::__construct()
+     * @see \ProcessMaker\BusinessModel\Cases::getCaseVariables()
      */
     public function getDynaform()
     {
@@ -135,10 +177,10 @@ class PmDynaform
         }
         $dynaform = ModelDynaform::getByDynUid($this->fields["CURRENT_DYNAFORM"]);
         if (empty($dynaform)) {
-            $this->langs = null;
+            $this->translations = null;
             return null;
         }
-        $this->langs = empty($dynaform->DYN_LABEL) ? null : G::json_decode($dynaform->DYN_LABEL);
+        $this->translations = empty($dynaform->DYN_LABEL) ? null : G::json_decode($dynaform->DYN_LABEL);
         $this->record = (array) $dynaform;
         return $this->record;
     }
@@ -675,14 +717,26 @@ class PmDynaform
                         $this->setDataSchema($json, $this->fields["APP_DATA"][$json->name]);
                     }
                 }
-                //languages
+                // Set the language defined in the json
                 if ($this->lang === null && $key === "language" && isset($json->language)) {
                     $this->lang = $json->language;
                 }
-                if ($this->langs !== null) {
-                    if (($key === "label" || $key === "title" || $key === "hint" || $key === "placeholder" || $key === "validateMessage" || $key === "alternateText" || $key === "comment" || $key === "alt") && isset($this->langs->{$this->lang})) {
-                        $langs = $this->langs->{$this->lang}->Labels;
-                        foreach ($langs as $langsValue) {
+
+                // Get the translations related to the language
+                if (!is_null($this->translations)) {
+                    $labelsPo = $this->getLabelsPo($this->lang);
+                    $translatableLabels = [
+                        "label",
+                        "title",
+                        "hint",
+                        "placeholder",
+                        "validateMessage",
+                        "alternateText",
+                        "comment",
+                        "alt"
+                    ];
+                    if ((in_array($key, $translatableLabels)) && !is_null($labelsPo)) {
+                        foreach ($labelsPo as $langsValue) {
                             if (is_object($json) && $json->{$key} === $langsValue->msgid) {
                                 $json->{$key} = $langsValue->msgstr;
                             }
@@ -1701,32 +1755,44 @@ class PmDynaform
         return false;
     }
 
-    public function searchField($dyn_uid, $field_id, $pro_uid = null)
+    /**
+     * This funtion will get the DYN_CONTENT from the dynaform then
+     * Get the field and the properties defined, it's considerate the sub-forms
+     *
+     * @param string $dynUid
+     * @param string $fieldId
+     * @param string $proUid
+     *
+     * @return object
+     *
+     * @see \ProcessMaker\BusinessModel\Variable::executeSqlControl()
+    */
+    public function searchField($dynUid, $fieldId, $proUid = null)
     {
         //get pro_uid if empty
-        if (empty($pro_uid)) {
+        if (empty($proUid)) {
             $a = new Criteria("workflow");
             $a->addSelectColumn(DynaformPeer::PRO_UID);
-            $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
+            $a->add(DynaformPeer::DYN_UID, $dynUid, Criteria::EQUAL);
             $ds = DynaformPeer::doSelectRS($a);
             $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $ds->next();
             $row = $ds->getRow();
-            $pro_uid = $row["PRO_UID"];
+            $proUid = $row["PRO_UID"];
         }
         //get dynaforms
         $a = new Criteria("workflow");
         $a->addSelectColumn(DynaformPeer::DYN_UID);
         $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
-        $a->add(DynaformPeer::PRO_UID, $pro_uid, Criteria::EQUAL);
+        $a->add(DynaformPeer::PRO_UID, $proUid, Criteria::EQUAL);
         $ds = DynaformPeer::doSelectRS($a);
         $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         $json = new stdClass();
-        $dynaforms = array();
+        $dynaforms = [];
         while ($ds->next()) {
             $row = $ds->getRow();
-            if ($row["DYN_UID"] === $dyn_uid) {
+            if ($row["DYN_UID"] === $dynUid) {
                 $json = G::json_decode($row["DYN_CONTENT"]);
             } else {
                 $dynaforms[] = G::json_decode($row["DYN_CONTENT"]);
@@ -1745,7 +1811,7 @@ class PmDynaform
             }
         }
 
-        return $this->jsonsf($json, $field_id);
+        return $this->jsonsf($json, $fieldId);
     }
 
     public function searchFieldByName($dyn_uid, $name)

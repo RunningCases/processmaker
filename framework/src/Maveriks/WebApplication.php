@@ -544,6 +544,7 @@ class WebApplication
 
         config(['app.timezone' => TIME_ZONE]);
 
+        // Define the language
         Bootstrap::setLanguage();
 
         Bootstrap::LoadTranslationObject((defined("SYS_LANG")) ? SYS_LANG : "en");
