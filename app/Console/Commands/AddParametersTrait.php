@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Maveriks\WebApplication;
-use ProcessMaker\Core\System;
 
 trait AddParametersTrait
 {
@@ -34,10 +33,9 @@ trait AddParametersTrait
     {
         $workspace = $this->option('workspace');
         if (!empty($workspace)) {
-            System::readServerInfoFile($workspace);
             $webApplication = new WebApplication();
             $webApplication->setRootDir($this->option('processmakerPath'));
-            $webApplication->loadEnvironment($workspace);
+            $webApplication->loadEnvironment($workspace, false);
         }
         parent::handle();
     }
