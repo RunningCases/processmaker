@@ -1682,21 +1682,4 @@ class System
         }
         return (object) $result;
     }
-
-    /**
-     * This read the server information file and set the missing values to $_SERVER.
-     * @param string $workspace
-     */
-    public static function readServerInfoFile(string $workspace)
-    {
-        $path = PATH_DATA . "sites" . DIRECTORY_SEPARATOR . $workspace . DIRECTORY_SEPARATOR;
-        if (is_file($path . '.server_info')) {
-            $string = file_get_contents($path . '.server_info');
-            $result = unserialize($string);
-            $_SERVER['SERVER_NAME'] = $result['SERVER_NAME'];
-            $_SERVER['SERVER_PORT'] = $result['SERVER_PORT'];
-        } else {
-            eprintln('WARNING! No server info found!', 'red');
-        }
-    }
 }

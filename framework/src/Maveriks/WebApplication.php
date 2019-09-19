@@ -429,16 +429,19 @@ class WebApplication
     }
 
     /**
-     * Define constants, setup configuration and initialize Laravel
+     * Define constants, setup configuration and initialize Laravel.
+     * The value of $executeSetupPlugin must always be true for a web environment.
      *
      * @param string $workspace
+     * @param boolean $executeSetupPlugin
      * @return bool
      * @throws Exception
      *
      * @see run()
      * @see workflow/engine/bin/cli.php
+     * @see \App\Console\Commands\AddParametersTrait
      */
-    public function loadEnvironment($workspace = "")
+    public function loadEnvironment($workspace = "", $executeSetupPlugin = true)
     {
         define("PATH_SEP", DIRECTORY_SEPARATOR);
 
@@ -624,7 +627,9 @@ class WebApplication
         // Initialization functions plugins
         $oPluginRegistry->init();
         //get and setup enabled plugins
-        $oPluginRegistry->setupPlugins();
+        if ($executeSetupPlugin === true) {
+            $oPluginRegistry->setupPlugins();
+        }
 
         return true;
     }
