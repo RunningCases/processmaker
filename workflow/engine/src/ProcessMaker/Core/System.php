@@ -180,17 +180,17 @@ class System
         }
 
         /* For distros with the lsb_release, this returns a one-line description of
-        * the distro name, such as "CentOS release 5.3 (Final)" or "Ubuntu 10.10"
-        */
+         * the distro name, such as "CentOS release 5.3 (Final)" or "Ubuntu 10.10"
+         */
         $distro = '';
         if (file_exists("/dev/")) { //Windows does not have this folder
             $distro = exec("lsb_release -d -s 2> /dev/null");
         }
 
         /* For distros without lsb_release, we look for *release (such as
-        * redhat-release, gentoo-release, SuSE-release, etc) or *version (such as
-        * debian_version, slackware-version, etc)
-        */
+         * redhat-release, gentoo-release, SuSE-release, etc) or *version (such as
+         * debian_version, slackware-version, etc)
+         */
         if (empty($distro)) {
             foreach (glob("/etc/*release") as $filename) {
                 $distro = trim(file_get_contents($filename));
@@ -209,8 +209,8 @@ class System
         }
 
         /* CentOS returns a string with quotes, remove them and append
-        * the OS name (such as LINUX, WINNT, DARWIN, etc)
-        */
+         * the OS name (such as LINUX, WINNT, DARWIN, etc)
+         */
         $distro = trim($distro, "\"") . " (" . PHP_OS . ")";
 
         $Fields = [];
@@ -1001,16 +1001,16 @@ class System
             $arrayDataEmailServerConfig = array(
                 "MESS_ENGINE" => $arrayEmailServerDefault["MESS_ENGINE"],
                 "MESS_SERVER" => $arrayEmailServerDefault["MESS_SERVER"],
-                "MESS_PORT" => (int)($arrayEmailServerDefault["MESS_PORT"]),
-                "MESS_RAUTH" => (int)($arrayEmailServerDefault["MESS_RAUTH"]),
+                "MESS_PORT" => (int) ($arrayEmailServerDefault["MESS_PORT"]),
+                "MESS_RAUTH" => (int) ($arrayEmailServerDefault["MESS_RAUTH"]),
                 "MESS_ACCOUNT" => $arrayEmailServerDefault["MESS_ACCOUNT"],
                 "MESS_PASSWORD" => $arrayEmailServerDefault["MESS_PASSWORD"],
                 "MESS_FROM_MAIL" => $arrayEmailServerDefault["MESS_FROM_MAIL"],
                 "MESS_FROM_NAME" => $arrayEmailServerDefault["MESS_FROM_NAME"],
                 "SMTPSecure" => $arrayEmailServerDefault["SMTPSECURE"],
-                "MESS_TRY_SEND_INMEDIATLY" => (int)($arrayEmailServerDefault["MESS_TRY_SEND_INMEDIATLY"]),
+                "MESS_TRY_SEND_INMEDIATLY" => (int) ($arrayEmailServerDefault["MESS_TRY_SEND_INMEDIATLY"]),
                 "MAIL_TO" => $arrayEmailServerDefault["MAIL_TO"],
-                "MESS_DEFAULT" => (int)($arrayEmailServerDefault["MESS_DEFAULT"]),
+                "MESS_DEFAULT" => (int) ($arrayEmailServerDefault["MESS_DEFAULT"]),
                 "MESS_ENABLED" => 1,
                 "MESS_BACKGROUND" => "",
                 "MESS_PASSWORD_HIDDEN" => "",
@@ -1088,7 +1088,7 @@ class System
                 }
                 $res['SKIN_CREATEDATE'] = (isset($res['SKIN_CREATEDATE'])) ? $res['SKIN_CREATEDATE'] : '';
                 $res['SKIN_MODIFIEDDATE'] = (isset($res['SKIN_MODIFIEDDATE'])) ? $res['SKIN_MODIFIEDDATE'] : '';
-                
+
                 $res['SKIN_TYPE_GLOBAL'] = false;
                 if (isset($res['SKIN_WORKSPACE'])) {
                     if ($res['SKIN_WORKSPACE'] === '') {
@@ -1503,24 +1503,24 @@ class System
         $content = "<?php \n" . $content . "\n" . $insertStatements . "\n";
         return file_put_contents($filename, $content) !== false;
     }
-    
+
     /**
      * Set Connection Configuration using "config" helper from "Laravel" with 
      * the constants defined in file "db.php"
      */
     public static function setConnectionConfig(
-            $dbAdapter, 
-            $dbHost, 
-            $dbName, 
-            $dbUser, 
-            $dbPass, 
-            $dbRbacHost, 
-            $dbRbacName, 
-            $dbRbacUser, 
-            $dbRbacPass, 
-            $dbReportHost, 
-            $dbReportName, 
-            $dbReportUser, 
+            $dbAdapter,
+            $dbHost,
+            $dbName,
+            $dbUser,
+            $dbPass,
+            $dbRbacHost,
+            $dbRbacName,
+            $dbRbacUser,
+            $dbRbacPass,
+            $dbReportHost,
+            $dbReportName,
+            $dbReportUser,
             $dbReportPass)
     {
         config(['connections.driver' => $dbAdapter]);

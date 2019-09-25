@@ -118,7 +118,8 @@ trait SuggestTrait
                     }
                 }
 
-                if ($optionsLimit >= 0) {
+                // Define if we need to add a limit in the query
+                if ($optionsLimit > 0) {
                     $this->addSuggestLimit($json, $select, $limit, $where);
                 } else {
                     $this->addSuggestWhere($json, $parsed, $select, $where, $having);

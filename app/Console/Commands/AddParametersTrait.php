@@ -35,7 +35,7 @@ trait AddParametersTrait
         if (!empty($workspace)) {
             $webApplication = new WebApplication();
             $webApplication->setRootDir($this->option('processmakerPath'));
-            $webApplication->loadEnvironment($workspace);
+            $webApplication->loadEnvironment($workspace, false);
         }
         parent::handle();
     }
