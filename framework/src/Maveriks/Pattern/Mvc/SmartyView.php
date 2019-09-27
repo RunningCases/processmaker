@@ -39,6 +39,16 @@ class SmartyView extends View
     }
 
     /**
+     * Get "smarty" property
+     *
+     * @return Smarty
+     */
+    public function getSmarty()
+    {
+        return $this->smarty;
+    }
+
+    /**
      * Assign a value to a Smarty piece in the template
      *
      * @param string $name
