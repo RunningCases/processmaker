@@ -236,8 +236,8 @@ try {
             config(['database.connections.workflow.port' => $dbHost[1]]);
         }
 
-        //Enable RBAC
-        $rbac = RBAC::getSingleton(PATH_DATA, session_id());
+        //Enable RBAC, We need to keep both variables in upper and lower case.
+        $rbac = $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
         $rbac->sSystem = 'PROCESSMAKER';
 
         if (!defined('DB_ADAPTER')) {
