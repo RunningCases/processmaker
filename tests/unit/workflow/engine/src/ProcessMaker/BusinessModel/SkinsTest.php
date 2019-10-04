@@ -62,14 +62,17 @@ class SkinsTest extends TestCase
      */
     public function testGetSkinsCurrentWorkspace()
     {
-        $this->object->createSkin('test', 'test');
-        $this->object->createSkin(
-                'test2', 'test2', 'Second skin', 'ProcessMaker Team', 'current', 'neoclassic'
-        );
+        $this->object->createSkin('test2', 'test2', 'Second skin', 'ProcessMaker Team', 'current', 'neoclassic');
         $skins = $this->object->getSkins();
+
+        $this->assertCount(3, $skins);
+        $this->assertEquals($skins[2]['SKIN_FOLDER_ID'], 'test2');
+        $this->assertEquals($skins[2]['SKIN_WORKSPACE'], config("system.workspace"));
+
+        $this->object->createSkin('test', 'test');
+        $skins = $this->object->getSkins();
+
         $this->assertCount(4, $skins);
-        $this->assertEquals($skins[2]['SKIN_FOLDER_ID'], 'test');
-        $this->assertEquals($skins[3]['SKIN_FOLDER_ID'], 'test2');
-        $this->assertEquals($skins[3]['SKIN_WORKSPACE'], config("system.workspace"));
+        $this->assertEquals($skins[3]['SKIN_FOLDER_ID'], 'test');
     }
 }

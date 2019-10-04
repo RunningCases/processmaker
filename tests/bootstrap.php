@@ -3,12 +3,15 @@
 /**
  * Test harness bootstrap that sets up initial defines and builds up the initial database schema
  */
-
 include_once(__DIR__ . '/../bootstrap/autoload.php');
 
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+
+// Setup basic app services
+$app = require __DIR__ . '/../bootstrap/app.php';
+$app->make(Kernel::class)->bootstrap();
 
 /**
  * @todo Migrate to configuration parameters
@@ -16,7 +19,9 @@ use Illuminate\Support\Facades\Schema;
 define('PATH_TRUNK', dirname(__DIR__));
 define('PATH_CORE', PATH_TRUNK . '/workflow/engine/');
 define('PATH_CONFIG', PATH_CORE . 'config/');
-define('PATH_DATA', dirname(__DIR__) . '/shared/');
+if (!defined("PATH_DATA")) {
+    define('PATH_DATA', dirname(__DIR__) . '/shared/');
+}
 define('PATH_RBAC_CORE', dirname(__DIR__) . '/rbac/engine/');
 define('PATH_DB', PATH_DATA . 'sites/');
 // Define some values related to the workspace
@@ -36,7 +41,9 @@ define('PATH_RBAC_HOME', PATH_TRUNK . '/rbac/');
 define('PATH_RBAC', PATH_RBAC_HOME . 'engine/classes/');
 define("PATH_CUSTOM_SKINS", PATH_DATA . "skins/");
 define("PATH_TPL", PATH_CORE . "templates/");
-define('PATH_C', PATH_DATA . 'compiled/');
+if (!defined("PATH_C")) {
+    define('PATH_C', PATH_DATA . 'compiled/');
+}
 define('DB_HOST', env('DB_HOST'));
 define('DB_NAME', env('DB_DATABASE'));
 define('DB_USER', env('DB_USERNAME'));
@@ -48,13 +55,9 @@ define('PATH_SMARTY_CACHE', PATH_TRUNK . '/shared/compiled/smarty/cache');
 define('PATH_THIRDPARTY', PATH_TRUNK . '/thirdparty/');
 
 // Set Time Zone
-$_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)(env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;
+$_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) (env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;
 ini_set('date.timezone', $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] ? 'UTC' : env('MAIN_TIME_ZONE', 'America/New_York'));
 define('TIME_ZONE', ini_get('date.timezone'));
-
-// Setup basic app services
-$app = require __DIR__ . '/../bootstrap/app.php';
-$app->make(Kernel::class)->bootstrap();
 
 // Overwrite with the ProcessMaker env.ini configuration used in production environments
 //@todo: move env.ini configuration to .env
