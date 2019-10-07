@@ -389,6 +389,9 @@ abstract class BaseAppTimeoutActionExecutedPeer
             $comparison = $criteria->getComparison(AppTimeoutActionExecutedPeer::APP_UID);
             $selectCriteria->add(AppTimeoutActionExecutedPeer::APP_UID, $criteria->remove(AppTimeoutActionExecutedPeer::APP_UID), $comparison);
 
+            $comparison = $criteria->getComparison(AppTimeoutActionExecutedPeer::DEL_INDEX);
+            $selectCriteria->add(AppTimeoutActionExecutedPeer::DEL_INDEX, $criteria->remove(AppTimeoutActionExecutedPeer::DEL_INDEX), $comparison);
+
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -450,7 +453,22 @@ abstract class BaseAppTimeoutActionExecutedPeer
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(AppTimeoutActionExecutedPeer::APP_UID, (array) $values, Criteria::IN);
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey
+            // values
+            if (count($values) == count($values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                $values = array($values);
+            }
+            $vals = array();
+            foreach ($values as $value) {
+
+                $vals[0][] = $value[0];
+                $vals[1][] = $value[1];
+            }
+
+            $criteria->add(AppTimeoutActionExecutedPeer::APP_UID, $vals[0], Criteria::IN);
+            $criteria->add(AppTimeoutActionExecutedPeer::DEL_INDEX, $vals[1], Criteria::IN);
         }
 
         // Set the correct dbName
@@ -510,51 +528,23 @@ abstract class BaseAppTimeoutActionExecutedPeer
     }
 
     /**
-     * Retrieve a single object by pkey.
-     *
-     * @param      mixed $pk the primary key.
-     * @param      Connection $con the connection to use
+     * Retrieve object using using composite pkey values.
+     * @param string $app_uid
+       * @param int $del_index
+        * @param      Connection $con
      * @return     AppTimeoutActionExecuted
      */
-    public static function retrieveByPK($pk, $con = null)
+    public static function retrieveByPK($app_uid, $del_index, $con = null)
     {
         if ($con === null) {
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
-
-        $criteria = new Criteria(AppTimeoutActionExecutedPeer::DATABASE_NAME);
-
-        $criteria->add(AppTimeoutActionExecutedPeer::APP_UID, $pk);
-
-
+        $criteria = new Criteria();
+        $criteria->add(AppTimeoutActionExecutedPeer::APP_UID, $app_uid);
+        $criteria->add(AppTimeoutActionExecutedPeer::DEL_INDEX, $del_index);
         $v = AppTimeoutActionExecutedPeer::doSelect($criteria, $con);
 
-        return !empty($v) > 0 ? $v[0] : null;
-    }
-
-    /**
-     * Retrieve multiple objects by pkey.
-     *
-     * @param      array $pks List of primary keys
-     * @param      Connection $con the connection to use
-     * @throws     PropelException Any exceptions caught during processing will be
-     *       rethrown wrapped into a PropelException.
-     */
-    public static function retrieveByPKs($pks, $con = null)
-    {
-        if ($con === null) {
-            $con = Propel::getConnection(self::DATABASE_NAME);
-        }
-
-        $objs = null;
-        if (empty($pks)) {
-            $objs = array();
-        } else {
-            $criteria = new Criteria();
-            $criteria->add(AppTimeoutActionExecutedPeer::APP_UID, $pks, Criteria::IN);
-            $objs = AppTimeoutActionExecutedPeer::doSelect($criteria, $con);
-        }
-        return $objs;
+        return !empty($v) ? $v[0] : null;
     }
 }
 

@@ -17,6 +17,7 @@ use Applications;
 use AppNotes;
 use AppNotesPeer;
 use AppSolr;
+use AppTimeoutActionExecuted;
 use BasePeer;
 use Bootstrap;
 use BpmnEngineServicesSearchIndex;
@@ -25,6 +26,7 @@ use CasesPeer;
 use Configurations;
 use CreoleTypes;
 use Criteria;
+use DateTime;
 use DBAdapter;
 use EntitySolrRequestData;
 use Exception;
@@ -44,8 +46,11 @@ use ProcessMaker\Exception\UploadException;
 use ProcessMaker\Exception\CaseNoteUploadFile;
 use ProcessMaker\Model\Application as ModelApplication;
 use ProcessMaker\Model\AppNotes as Notes;
+use ProcessMaker\Model\AppTimeoutAction;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\ListUnassigned;
+use ProcessMaker\Model\Triggers;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Util\DateTime as UtilDateTime;
@@ -4106,5 +4111,128 @@ class Cases
         }
 
         return true;
+    }
+
+    /**
+     * Get the cases related to the self services timeout that needs to execute the trigger related
+     *
+     * @return array
+     * @throws Exception
+    */
+    public static function executeSelfServiceTimeout()
+    {
+        try {
+            $casesSelfService = ListUnassigned::selfServiceTimeout();
+            $casesExecuted = [];
+            foreach ($casesSelfService as $row) {
+                $appUid = $row["APP_UID"];
+                $appNumber = $row["APP_NUMBER"];
+                $delIndex = $row["DEL_INDEX"];
+                $delegateDate = $row["DEL_DELEGATE_DATE"];
+                $proUid = $row["PRO_UID"];
+                $taskUid = $row["TAS_UID"];
+                $taskSelfServiceTime = intval($row["TAS_SELFSERVICE_TIME"]);
+                $taskSelfServiceTimeUnit = $row["TAS_SELFSERVICE_TIME_UNIT"];
+                $triggerUid = $row["TAS_SELFSERVICE_TRIGGER_UID"];
+
+                /*----------------------------------********---------------------------------*/
+                $typeOfExecution = $row["TAS_SELFSERVICE_EXECUTION"];
+                $flagExecuteOnce = true;
+                // This option will be executed just once, can check if was executed before
+                if ($typeOfExecution == 'ONCE') {
+                    $appTimeout = new AppTimeoutAction();
+                    $appTimeout->setCaseUid($appUid);
+                    $appTimeout->setIndex($delIndex);
+                    $caseExecuted = $appTimeout->cases();
+                    $flagExecuteOnce = !empty($caseExecuted) ? false : true;
+                }
+                /*----------------------------------********---------------------------------*/
+
+                // Add the time in the corresponding unit to the delegation date
+                $delegateDate = calculateDate($delegateDate, $taskSelfServiceTimeUnit, $taskSelfServiceTime);
+
+                // Define the current time
+                $datetime = new DateTime('now');
+                $currentDate = $datetime->format('Y-m-d H:i:s');
+
+                // Check if the triggers to be executed
+                if ($currentDate >= $delegateDate && $flagExecuteOnce) {
+                    // Review if the session process is defined
+                    $sessProcess = null;
+                    $sessProcessSw = false;
+                    if (isset($_SESSION["PROCESS"])) {
+                        $sessProcess = $_SESSION["PROCESS"];
+                        $sessProcessSw = true;
+                    }
+                    // Load case data
+                    $case = new ClassesCases();
+                    $appFields = $case->loadCase($appUid);
+                    $appFields["APP_DATA"]["APPLICATION"] = $appUid;
+                    // Set the process defined in the case related
+                    $_SESSION["PROCESS"] = $appFields["PRO_UID"];
+
+                    // Get the trigger related and execute
+                    $triggersList = [];
+                    if (!empty($triggerUid)) {
+                        $trigger = new Triggers();
+                        $trigger->setTrigger($triggerUid);
+                        $triggersList = $trigger->triggers();
+                    }
+
+                    // If the trigger exist, let's to execute
+                    if (!empty($triggersList)) {
+                        // Execute the trigger defined in the self service timeout
+                        $fieldsCase['APP_DATA'] = $case->executeTriggerFromList(
+                            $triggersList,
+                            $appFields['APP_DATA'],
+                            'SELF_SERVICE_TIMEOUT',
+                            '',
+                            '',
+                            '',
+                            false
+                        );
+
+                        // Update the case
+                        $case->updateCase($appUid, $fieldsCase);
+
+                        /*----------------------------------********---------------------------------*/
+                        if ($typeOfExecution == 'ONCE') {
+                            // Saving the case`s data if the 'Execution' is set in ONCE.
+                            $appTimeoutActionExecuted = new AppTimeoutActionExecuted();
+                            $dataSelf = [];
+                            $dataSelf["APP_UID"] = $appUid;
+                            $dataSelf["DEL_INDEX"] = $delIndex;
+                            $dataSelf["EXECUTION_DATE"] = time();
+                            $appTimeoutActionExecuted->create($dataSelf);
+                        }
+                        /*----------------------------------********---------------------------------*/
+
+                        array_push($casesExecuted, $appNumber); // Register the cases executed
+
+                        // Logging this action
+                        $context = [
+                            'appUid' => $appUid,
+                            'appNumber' => $appNumber,
+                            'triUid' => $triggerUid,
+                            'proUid' => $proUid,
+                            'tasUid' => $taskUid,
+                            'selfServiceTime' => $taskSelfServiceTime,
+                            'selfServiceTimeUnit' => $taskSelfServiceTimeUnit,
+                        ];
+                        Log::channel(':TriggerExecution')->info('Timeout trigger execution', Bootstrap::context($context));
+                    }
+
+                    unset($_SESSION["PROCESS"]);
+
+                    if ($sessProcessSw) {
+                        $_SESSION["PROCESS"] = $sessProcess;
+                    }
+                }
+            }
+
+            return $casesExecuted;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }

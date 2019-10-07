@@ -16,6 +16,16 @@ use Tests\TestCase;
  */
 class ListUnassignedTest extends TestCase
 {
+    
+    /**
+     * Set up function.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        ListUnassigned::truncate();
+    }
+
     /**
      * Method set up.
      */
@@ -299,6 +309,26 @@ class ListUnassignedTest extends TestCase
         //Get data related to the search
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
         $this->assertCount(2, $result);
+    }
+
+    /**
+     * This checks the self-service timeout cases
+     *
+     * @covers \ProcessMaker\Model\ListUnassigned::selfServiceTimeout()
+     * @test
+     */
+    public function it_should_return_cases_configured_self_service_timeout()
+    {
+        // Create some cases configured the self service timeout
+        for ($x = 1; $x <= 5; $x++) {
+            $task = factory(Task::class)->states('sef_service_timeout')->create();
+            factory(ListUnassigned::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'TAS_ID' => $task->TAS_ID
+            ]);
+        }
+        $results = ListUnassigned::selfServiceTimeout();
+        $this->assertCount(5, $results);
     }
 }
 

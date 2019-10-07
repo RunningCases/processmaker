@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Kernel;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\Cases;
 
 require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
@@ -562,6 +563,11 @@ function executeUpdateAppTitle()
     }
 }
 
+/**
+ * Check if some task unassigned has enable the setting timeout and execute the trigger related
+ * 
+ * @link https://wiki.processmaker.com/3.2/Tasks#Self-Service
+*/
 function executeCaseSelfService()
 {
     try {
@@ -570,163 +576,16 @@ function executeCaseSelfService()
         if ($argvx != "" && strpos($argvx, "unassigned-case") === false) {
             return false;
         }
-
-        $criteria = new Criteria("workflow");
-
-        //SELECT
-        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
-        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addSelectColumn(AppCacheViewPeer::DEL_DELEGATE_DATE);
-        $criteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
-        $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
-        $criteria->addSelectColumn(TaskPeer::TAS_UID);
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME);
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME_UNIT);
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TRIGGER_UID);
-        /*----------------------------------********---------------------------------*/
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_EXECUTION);
-        /*----------------------------------********---------------------------------*/
-
-        //FROM
-        $condition = array();
-        $condition[] = array(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID);
-        $condition[] = array(TaskPeer::TAS_SELFSERVICE_TIMEOUT, 1);
-        $criteria->addJoinMC($condition, Criteria::LEFT_JOIN);
-
-        //WHERE
-        $criteria->add(AppCacheViewPeer::USR_UID, "");
-        $criteria->add(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN");
-
-        //QUERY
-        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
         setExecutionMessage("Unassigned case");
         saveLog("unassignedCase", "action", "Unassigned case", "c");
-
-        $calendar = new Calendar();
-
-        while ($rsCriteria->next()) {
-            $row = $rsCriteria->getRow();
-            $flag = false;
-
-            $appcacheAppUid = $row["APP_UID"];
-            $appcacheDelIndex = $row["DEL_INDEX"];
-            $appcacheDelDelegateDate = $row["DEL_DELEGATE_DATE"];
-            $appcacheAppNumber = $row["APP_NUMBER"];
-            $appcacheProUid = $row["PRO_UID"];
-            $taskUid = $row["TAS_UID"];
-            $taskSelfServiceTime = intval($row["TAS_SELFSERVICE_TIME"]);
-            $taskSelfServiceTimeUnit = $row["TAS_SELFSERVICE_TIME_UNIT"];
-            $taskSelfServiceTriggerUid = $row["TAS_SELFSERVICE_TRIGGER_UID"];
-            /*----------------------------------********---------------------------------*/
-            $taskSelfServiceJustOneExecution = $row["TAS_SELFSERVICE_EXECUTION"];
-
-            if ($taskSelfServiceJustOneExecution == 'ONCE') {
-                $criteriaSelfService = new Criteria("workflow");
-
-                $criteriaSelfService->add(AppTimeoutActionExecutedPeer::APP_UID, $appcacheAppUid);
-                $criteriaSelfService->add(AppTimeoutActionExecutedPeer::DEL_INDEX, $appcacheDelIndex);
-
-                $querySelfService = AppTimeoutActionExecutedPeer::doSelectRS($criteriaSelfService);
-                $querySelfService->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                if ($querySelfService->next()) {
-                    $row = $querySelfService->getRow();
-                    $flag = true; //already executed
-                }
-            }
-            /*----------------------------------********---------------------------------*/
-
-            if ($calendar->pmCalendarUid == '') {
-                $calendar->getCalendar(null, $appcacheProUid, $taskUid);
-                $calendar->getCalendarData();
-            }
-
-            $dueDate = $calendar->calculateDate(
-                $appcacheDelDelegateDate,
-                $taskSelfServiceTime,
-                $taskSelfServiceTimeUnit //HOURS|DAYS|MINUTES
-                //1
-            );
-
-            if (time() > $dueDate["DUE_DATE_SECONDS"] && $flag == false) {
-                $sessProcess = null;
-                $sessProcessSw = 0;
-
-                //Load data
-                $case = new Cases();
-                $appFields = $case->loadCase($appcacheAppUid);
-
-                $appFields["APP_DATA"]["APPLICATION"] = $appcacheAppUid;
-
-                if (isset($_SESSION["PROCESS"])) {
-                    $sessProcess = $_SESSION["PROCESS"];
-                    $sessProcessSw = 1;
-                }
-
-                $_SESSION["PROCESS"] = $appFields["PRO_UID"];
-
-                //Execute trigger
-                $criteriaTgr = new Criteria();
-                $criteriaTgr->add(TriggersPeer::TRI_UID, $taskSelfServiceTriggerUid);
-
-                $rsCriteriaTgr = TriggersPeer::doSelectRS($criteriaTgr);
-                $rsCriteriaTgr->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                if ($rsCriteriaTgr->next()) {
-                    $row = $rsCriteriaTgr->getRow();
-
-                    if (is_array($row) && $row["TRI_TYPE"] == "SCRIPT") {
-                        $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
-                        $arrayCron["processcTimeProcess"] = 60; //Minutes
-                        $arrayCron["processcTimeStart"] = time();
-                        @file_put_contents(PATH_DATA . "cron", serialize($arrayCron));
-
-                        //Trigger
-                        global $oPMScript;
-
-                        $oPMScript = new PMScript();
-                        $oPMScript->setDataTrigger($row);
-                        $oPMScript->setFields($appFields["APP_DATA"]);
-                        $oPMScript->setScript($row["TRI_WEBBOT"]);
-                        $oPMScript->setExecutedOn(PMScript::SELF_SERVICE_TIMEOUT);
-                        $oPMScript->execute();
-
-                        /*----------------------------------********---------------------------------*/
-                        //saving the case`s data if the 'Execution' is set in ONCE.
-                        if ($taskSelfServiceJustOneExecution == "ONCE") {
-                            $oAppTimeoutActionExecuted = new AppTimeoutActionExecuted();
-                            $dataSelf = array();
-                            $dataSelf["APP_UID"] = $appcacheAppUid;
-                            $dataSelf["DEL_INDEX"] = $appcacheDelIndex;
-                            $dataSelf["EXECUTION_DATE"] = time();
-                            $oAppTimeoutActionExecuted->create($dataSelf);
-                        }
-                        /*----------------------------------********---------------------------------*/
-                        $appFields["APP_DATA"] = array_merge($appFields["APP_DATA"], $oPMScript->aFields);
-
-                        unset($appFields['APP_STATUS']);
-                        unset($appFields['APP_PROC_STATUS']);
-                        unset($appFields['APP_PROC_CODE']);
-                        unset($appFields['APP_PIN']);
-                        $case->updateCase($appFields["APP_UID"], $appFields);
-
-                        saveLog("unassignedCase", "action", "OK Executed trigger to the case $appcacheAppNumber");
-                    }
-                }
-
-                unset($_SESSION["PROCESS"]);
-
-                if ($sessProcessSw == 1) {
-                    $_SESSION["PROCESS"] = $sessProcess;
-                }
-            }
+        $casesExecuted = Cases::executeSelfServiceTimeout();
+        foreach ($casesExecuted as $caseNumber) {
+            saveLog("unassignedCase", "action", "OK Executed trigger to the case $caseNumber");
         }
-
-        setExecutionResultMessage("DONE");
+        setExecutionResultMessage(count($casesExecuted) . " Cases");
     } catch (Exception $e) {
         setExecutionResultMessage("WITH ERRORS", "error");
+        saveLog("unassignedCase", "action", "Unassigned case", "c");
         eprintln("  '-" . $e->getMessage(), "red");
         saveLog("unassignedCase", "error", "Error in unassigned case: " . $e->getMessage());
     }
