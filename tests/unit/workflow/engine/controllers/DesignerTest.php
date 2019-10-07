@@ -49,6 +49,17 @@ class DesignerTest extends TestCase
         //Turn on output buffering
         ob_start();
 
+        //Creates the buildhash file just in case it does not exist
+        if (!file_exists(PATH_HTML . "lib/buildhash")) {
+            if (!file_exists(PATH_HTML . "lib")) {
+                if (!file_exists(PATH_HTML)) {
+                    mkdir(PATH_HTML);
+                }
+                mkdir(PATH_HTML . "lib");
+            }
+            fopen(PATH_HTML . "lib/buildhash", "w");
+        }
+
         //Call the index method
         $object->index($httpData);
 
