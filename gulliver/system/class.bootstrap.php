@@ -2616,22 +2616,27 @@ class Bootstrap
     }
 
     /**
-     * Set Language
+     * Set Language defined in HTTP_ACCEPT_LANGUAGE
+     * Only will accept if the language defined exist in the list of Admin > Settings > Language
+     *
+     * @link https://wiki.processmaker.com/3.2/Languages#Installing_the_PO_File
      */
     public static function setLanguage()
     {
-        $acceptLanguage = isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])?$_SERVER['HTTP_ACCEPT_LANGUAGE']:'en';
+        $acceptLanguage = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : 'en';
         if (!defined('SYS_LANG')) {
             $Translations = new \Translation;
+            // Get the translation uploaded in the system
             $translationsTable = $Translations->getTranslationEnvironments();
             $inLang = false;
             foreach ($translationsTable as $locale) {
-                if ($locale['LOCALE'] == $acceptLanguage) {
+                // Check if the language used was uploaded in the Language
+                if ($locale['LOCALE'] === $acceptLanguage) {
                     $inLang = true;
                     break;
                 }
             }
-            $lang = $inLang?$acceptLanguage:'en';
+            $lang = $inLang ? $acceptLanguage : 'en';
             define("SYS_LANG", $lang);
         }
     }

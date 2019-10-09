@@ -1,10 +1,16 @@
 <?php
 
+use Faker\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\Process;
 use Tests\TestCase;
 
+/**
+ * Class PmDynaformTest
+ *
+ * @coversDefaultClass PmDynaform
+ */
 class PmDynaformTest extends TestCase
 {
 
@@ -239,7 +245,7 @@ class PmDynaformTest extends TestCase
         $pmDynaform = new PmDynaform(['CURRENT_DYNAFORM' => G::generateUniqueID()]);
         $pmDynaform->getDynaform();
 
-        $this->assertEquals(null, $pmDynaform->langs);
+        $this->assertEquals(null, $pmDynaform->translations);
     }
 
     /**
@@ -823,5 +829,60 @@ class PmDynaformTest extends TestCase
             //It asserts the fifth control is undefined
             $this->assertFalse($jsonData->dataSchema[$key][4]['defined']);
         }
+    }
+    /**
+     * Review if the set translations are working correctly
+     * If the translation does not exit needs to return null
+     *
+     * @covers PmDynaform::setTranslations()
+     * @test
+     */
+    public function it_should_set_the_translations_if_exist()
+    {
+        // Create a form without translations defined
+        $arrayForm = $this->createArrayDynaform();
+        $form = factory(Dynaform::class)->create([
+            'DYN_UID' => $arrayForm['items'][0]['id'],
+            'DYN_CONTENT' => G::json_encode($arrayForm)
+        ]);
+        $pmDynaform = new PmDynaform([]);
+        $pmDynaform->setTranslations($form->DYN_UID);
+        $this->assertNull($pmDynaform->translations);
+
+        // Create a form with  translations defined
+        $arrayForm = $this->createArrayDynaform();
+        $form = factory(Dynaform::class)->states('translations')->create([
+            'DYN_UID' => $arrayForm['items'][0]['id'],
+            'DYN_CONTENT' => G::json_encode($arrayForm)
+        ]);
+        $pmDynaform = new PmDynaform([]);
+        $pmDynaform->setTranslations($form->DYN_UID);
+        $this->assertNotNull($pmDynaform->translations);
+    }
+
+    /**
+     * Review if the get labels from a specific language is working
+     * If the translation defined does not have the specific language will return null
+     *
+     * @covers PmDynaform::getLabelsPo()
+     * @test
+     */
+    public function it_should_get_label_from_translation()
+    {
+        $arrayForm = $this->createArrayDynaform();
+        // Create a translations related to ["es", "es-Es"]
+        $form = factory(Dynaform::class)->states('translations')->create([
+            'DYN_UID' => $arrayForm['items'][0]['id'],
+            'DYN_CONTENT' => G::json_encode($arrayForm)
+        ]);
+        $pmDynaform = new PmDynaform([]);
+        $pmDynaform->setTranslations($form->DYN_UID);
+        $labelsPo = $pmDynaform->getLabelsPo('es');
+        $this->assertNotNull($labelsPo);
+        $labelsPo = $pmDynaform->getLabelsPo('es-Es');
+        $this->assertNotNull($labelsPo);
+        $faker = Factory::create();
+        $labelsPo = $pmDynaform->getLabelsPo($faker->sentence(1));
+        $this->assertNull($labelsPo);
     }
 }
