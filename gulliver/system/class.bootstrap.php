@@ -2625,13 +2625,17 @@ class Bootstrap
     {
         $acceptLanguage = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : 'en';
         if (!defined('SYS_LANG')) {
-            $Translations = new \Translation;
+            $Translations = new Translation;
             // Get the translation uploaded in the system
             $translationsTable = $Translations->getTranslationEnvironments();
             $inLang = false;
             foreach ($translationsTable as $locale) {
                 // Check if the language used was uploaded in the Language
-                if ($locale['LOCALE'] === $acceptLanguage) {
+                // The languages can defined like this : en, en-US (language-localization)
+                // We need to validate if the language exist it does not matter the localization
+                $language = explode('-', $locale['LOCALE']);
+                $language = head($language);
+                if ($language === $acceptLanguage) {
                     $inLang = true;
                     break;
                 }
