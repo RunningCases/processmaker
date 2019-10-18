@@ -385,6 +385,8 @@ class ActionsByEmail
                 $emailServer = new EmailServerModel();
                 $criteria = $emailServer->getEmailServer($dataRes['ABE_EMAIL_SERVER_UID']);
                 $setup = !empty($criteria) ? $criteria : $emailServer->getEmailServerDefault();
+                $setup['SMTPSecure'] = $setup['SMTPSECURE'];
+                unset($setup['SMTPSECURE']);
                 $spool = new SpoolRun();
                 $spool->setConfig($setup);
                 $abeCore = new ActionsByEmailCoreClass();
