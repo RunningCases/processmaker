@@ -2624,6 +2624,7 @@ class Bootstrap
     public static function setLanguage()
     {
         $acceptLanguage = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : 'en';
+        $langServer = $acceptLanguage;
         if (!defined('SYS_LANG')) {
             $Translations = new Translation;
             // Get the translation uploaded in the system
@@ -2633,14 +2634,19 @@ class Bootstrap
                 // Check if the language used was uploaded in the Language
                 // The languages can defined like this : en, en-US (language-localization)
                 // We need to validate if the language exist it does not matter the localization
-                $language = explode('-', $locale['LOCALE']);
+                $langServer = $locale['LOCALE'];
+                $language = explode('-', $langServer);
                 $language = head($language);
                 if ($language === $acceptLanguage) {
                     $inLang = true;
                     break;
                 }
             }
-            $lang = $inLang ? $acceptLanguage : 'en';
+            // Overwriting the language defined in the server
+            // Example 1. Accept-Language = pt and langServer = pt-BR, result SYS_LANG = pt-BR
+            // Example 2. Accept-Language = pt and langServer = pt, result SYS_LANG = pt
+            // Example 3. Accept-Language = it and langServer = NONE, result SYS_LANG = en
+            $lang = ($inLang) ? $langServer : 'en';
             define("SYS_LANG", $lang);
         }
     }
