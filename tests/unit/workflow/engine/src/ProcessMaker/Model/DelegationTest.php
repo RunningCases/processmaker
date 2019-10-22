@@ -81,16 +81,16 @@ class DelegationTest extends TestCase
 
         $process = factory(Process::class)->create();
         factory(Delegation::class, 51)->states('foreign_keys')->create([
-            'PRO_ID' => $process->id
+            'PRO_ID' => $process->PRO_ID
         ]);
         // Get first page, which is 25
-        $results = Delegation::search(null, 0, 25, null, $process->id);
+        $results = Delegation::search(null, 0, 25, null, $process->PRO_ID);
         $this->assertCount(25, $results['data']);
         // Get second page, which is 25 results
-        $results = Delegation::search(null, 25, 25, null, $process->id);
+        $results = Delegation::search(null, 25, 25, null, $process->PRO_ID);
         $this->assertCount(25, $results['data']);
         // Get third page, which is only 1 result
-        $results = Delegation::search(null, 50, 25, null, $process->id);
+        $results = Delegation::search(null, 50, 25, null, $process->PRO_ID);
         $this->assertCount(1, $results['data']);
     }
 
@@ -373,7 +373,7 @@ class DelegationTest extends TestCase
     {
         factory(Delegation::class, 3)->states('foreign_keys')->create([
             'PRO_ID' => function () {
-                return factory(Process::class)->create()->id;
+                return factory(Process::class)->create()->PRO_ID;
             }
         ]);
         // Get first page, all process ordering ASC
@@ -541,7 +541,7 @@ class DelegationTest extends TestCase
         ]);
         // Delegations to found
         factory(Delegation::class, 51)->states('foreign_keys')->create([
-            'PRO_ID' => $processSearch->id
+            'PRO_ID' => $processSearch->PRO_ID
         ]);
         // Get first page, which is 25
         $results = Delegation::search(null, 0, 25, null, null, null, null, null, $category->CATEGORY_UID);
@@ -639,7 +639,7 @@ class DelegationTest extends TestCase
         $application = factory(Application::class)->create();
         // Create the threads for a parallel process
         factory(Delegation::class, 5)->states('foreign_keys')->create([
-            'PRO_ID' => $process->id,
+            'PRO_ID' => $process->PRO_ID,
             'TAS_ID' => $parallelTask->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'CLOSED'
@@ -666,7 +666,7 @@ class DelegationTest extends TestCase
         $application = factory(Application::class)->create();
         // Create the threads for a parallel process
         factory(Delegation::class, 5)->states('foreign_keys')->create([
-            'PRO_ID' => $process->id,
+            'PRO_ID' => $process->PRO_ID,
             'TAS_ID' => $parallelTask->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
             'DEL_THREAD_STATUS' => 'OPEN'
@@ -693,7 +693,7 @@ class DelegationTest extends TestCase
         $application = factory(Application::class)->create(['APP_STATUS_ID' => 2]);
         // Create the threads for a parallel process closed
         factory(Delegation::class)->states('closed')->create([
-            'PRO_ID' => $process->id,
+            'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_ID' => $parallelTask->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -701,7 +701,7 @@ class DelegationTest extends TestCase
         ]);
         // Create the threads for a parallel process closed
         factory(Delegation::class)->states('open')->create([
-            'PRO_ID' => $process->id,
+            'PRO_ID' => $process->PRO_ID,
             'PRO_UID' => $process->PRO_UID,
             'TAS_ID' => $parallelTask->TAS_ID,
             'APP_NUMBER' => $application->APP_NUMBER,
@@ -745,27 +745,27 @@ class DelegationTest extends TestCase
         //Create a process with category
         $processWithCat = factory(Process::class)->create(['PRO_CATEGORY' => $category[0]->CATEGORY_UID]);
         factory(Delegation::class)->states('foreign_keys')->create([
-            'PRO_ID' => $processWithCat->id
+            'PRO_ID' => $processWithCat->PRO_ID
         ]);
         // Create a process without category
         $processWithoutCat = factory(Process::class)->create(['PRO_CATEGORY' => '']);
         factory(Delegation::class, 5)->states('foreign_keys')->create([
-            'PRO_ID' => $processWithoutCat->id
+            'PRO_ID' => $processWithoutCat->PRO_ID
         ]);
         // Search the cases when the process has related to the category and search by another category
-        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null,
+        $results = Delegation::search(null, 0, 25, null, $processWithCat->PRO_ID, null, null, null,
             $category[1]->CATEGORY_UID);
         $this->assertCount(0, $results['data']);
         // Search the cases when the process has related to the category and search by this relation
-        $results = Delegation::search(null, 0, 25, null, $processWithCat->id, null, null, null,
+        $results = Delegation::search(null, 0, 25, null, $processWithCat->PRO_ID, null, null, null,
             $category[0]->CATEGORY_UID);
         $this->assertCount(1, $results['data']);
         // Search the cases when the process does not have relation with category and search by a category
-        $results = Delegation::search(null, 0, 25, null, $processWithoutCat->id, null, null, null,
+        $results = Delegation::search(null, 0, 25, null, $processWithoutCat->PRO_ID, null, null, null,
             $category[1]->CATEGORY_UID);
         $this->assertCount(0, $results['data']);
         // Search the cases when the process does not have relation with category empty
-        $results = Delegation::search(null, 0, 25, null, $processWithoutCat->id, null, null, null,
+        $results = Delegation::search(null, 0, 25, null, $processWithoutCat->PRO_ID, null, null, null,
             '');
         $this->assertCount(5, $results['data']);
     }
@@ -786,7 +786,7 @@ class DelegationTest extends TestCase
         ]);
         //Create a delegation related to this process
         factory(Delegation::class)->create([
-            'PRO_ID' => $processWithCat->id
+            'PRO_ID' => $processWithCat->PRO_ID
         ]);
         //Define a process related with he previous category
         $process = factory(Process::class)->create([
@@ -794,7 +794,7 @@ class DelegationTest extends TestCase
         ]);
         //Create a delegation related to other process
         factory(Delegation::class, 5)->create([
-            'PRO_ID' => $process->id,
+            'PRO_ID' => $process->PRO_ID,
         ]);
 
     }
