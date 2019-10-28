@@ -32,6 +32,7 @@ define('PMTABLE_KEY', 'pmtable');
 define('DB_ADAPTER', 'mysql');
 // Path related some specific directories
 define('PATH_SEP', '/');
+define("PATH_PLUGINS", PATH_CORE . "plugins" . PATH_SEP);
 define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
 define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
 define('PATH_WORKFLOW_MYSQL_DATA', PATH_TRUNK . '/workflow/engine/data/mysql/');
