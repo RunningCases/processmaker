@@ -2750,6 +2750,18 @@ msgid "AVAILABLE MEMBERS"
 msgstr "AVAILABLE MEMBERS"
 
 # TRANSLATION
+# LABEL/ID_AVAILABLE_OFFLINE
+#: LABEL/ID_AVAILABLE_OFFLINE
+msgid "Available offline"
+msgstr "Available offline"
+
+# TRANSLATION
+# LABEL/ID_AVAILABLE_OFFLINE_THE_MOBILE_APPLICATIONS
+#: LABEL/ID_AVAILABLE_OFFLINE_THE_MOBILE_APPLICATIONS
+msgid "Available offline, the mobile applications will download this table for offline use"
+msgstr "Available offline, the mobile applications will download this table for offline use"
+
+# TRANSLATION
 # LABEL/ID_AVAILABLE_PERMISSIONS
 #: LABEL/ID_AVAILABLE_PERMISSIONS
 msgid "AVAILABLE PERMISSIONS"
