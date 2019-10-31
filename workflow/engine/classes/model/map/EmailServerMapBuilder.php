@@ -95,6 +95,14 @@ class EmailServerMapBuilder
 
         $tMap->addColumn('MESS_DEFAULT', 'MessDefault', 'int', CreoleTypes::INTEGER, true, null);
 
+        $tMap->addColumn('OAUTH_CLIENT_ID', 'OauthClientId', 'string', CreoleTypes::VARCHAR, true, 256);
+
+        $tMap->addColumn('OAUTH_CLIENT_SECRET', 'OauthClientSecret', 'string', CreoleTypes::VARCHAR, true, 256);
+
+        $tMap->addColumn('OAUTH_REFRESH_TOKEN', 'OauthRefreshToken', 'string', CreoleTypes::VARCHAR, true, 256);
+
+        $tMap->addValidator('MESS_ENGINE', 'validValues', 'propel.validator.ValidValuesValidator', 'MAIL|PHPMAILER|XOAUTH2', 'Please enter a valid value for MESS_ENGINE');
+
     } // doBuild()
 
 } // EmailServerMapBuilder
