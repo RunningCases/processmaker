@@ -1,0 +1,58 @@
+[
+  {
+    "id": "PROCESSDEFINITION",
+    "action": "replace"
+  },
+  {
+    "id": "ASSIGNMENTRULES",
+    "action": "replace"
+  },
+  {
+    "id": "VARIABLES",
+    "action": "replace"
+  },
+  {
+    "id": "DYNAFORMS",
+    "action": "replace"
+  },
+  {
+    "id": "INPUTDOCUMENTS",
+    "action": "replace"
+  },
+  {
+    "id": "OUTPUTDOCUMENTS",
+    "action": "replace"
+  },
+  {
+    "id": "TRIGGERS",
+    "action": "replace"
+  },
+  {
+    "id": "REPORTTABLES",
+    "action": "replace"
+  },
+  {
+    "id": "TEMPLATES",
+    "action": "replace"
+  },
+  {
+    "id": "FILES",
+    "action": "replace"
+  },
+  {
+    "id": "DBCONNECTION",
+    "action": "replace"
+  },
+  {
+    "id": "PERMISSIONS",
+    "action": "replace"
+  },
+  {
+    "id": "SUPERVISORS",
+    "action": "replace"
+  },
+  {
+    "id": "SUPERVISORSOBJECTS",
+    "action": "replace"
+  }
+]
