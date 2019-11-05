@@ -1023,7 +1023,7 @@ class PmDynaform
                                 . $dt[$key]["table"]
                                 . ($dt[$key]["table"] == $dt[$key]["alias"] ? "" : " " . $dt[$key]["alias"]) . " "
                                 . $dt[$key]["ref_type"] . " "
-                                . $dt[$key]["ref_clause"];
+                                . rtrim($dt[$key]["ref_clause"], " INNER");
                     }
                 }
             }
