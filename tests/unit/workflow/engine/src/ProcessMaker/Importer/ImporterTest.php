@@ -2,6 +2,7 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Importer;
 
+use Carbon\Carbon;
 use ProcessMaker\Importer\Importer;
 use ProcessMaker\Model\BpmnProject;
 use ProcessMaker\Model\Process;
@@ -305,7 +306,9 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
         $result = $query->get()->values()->toArray();
 
         // Assert the created date is the same as the updated date
-        $this->assertEquals($result[0]['PRO_CREATE_DATE'], $result[0]['PRO_UPDATE_DATE']);
+        $createDate = Carbon::createFromTimeString($result[0]['PRO_CREATE_DATE'])->format("Y-m-d");
+        $updateDate = Carbon::createFromTimeString($result[0]['PRO_UPDATE_DATE'])->format("Y-m-d");
+        $this->assertEquals($createDate, $updateDate);
     }
 
     /**
