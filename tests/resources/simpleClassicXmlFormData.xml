@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dynaForm type="xmlform" name="2859218665d41d7c2920598058137861/3411353005d41d9a730ede8060385476" width="500" enabletemplate="0" mode="" nextstepsave="prompt">
+  <BUG type="title" required="0" readonly="0" optgroup="0">
+    <en>BUG</en>
+  </BUG>
+  <TEST type="text" maxlength="64" validate="Any" required="0" readonly="0" size="15" mode="edit" optgroup="0">
+    <en>TEST</en>
+  </TEST>
+  <SUGGEST type="suggest" required="0" size="15" mode="edit" sqlconnection="4898432885d41d9921cea61001765691" maxresults="6" searchtype="*searchtype*" table="0" readonly="0" optgroup="0"><![CDATA[SELECT IC_UID, IC_NAME
+FROM ISO_COUNTRY]]><en>SUGGEST</en></SUGGEST>
+  <SUBMIT type="submit" required="0" readonly="0" optgroup="0">
+    <en>SUBMIT</en>
+  </SUBMIT>
+  <Grid type="grid" xmlgrid="2859218665d41d7c2920598058137861/4923800155da71a732a4207031768424" addrow="1" deleterow="1" required="0" readonly="0" resizable="0" optgroup="0"/>
+</dynaForm>
