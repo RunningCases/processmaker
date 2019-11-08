@@ -25,7 +25,7 @@ abstract class BaseAppSequencePeer
     const CLASS_DEFAULT = 'classes.model.AppSequence';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 1;
+    const NUM_COLUMNS = 2;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -33,6 +33,9 @@ abstract class BaseAppSequencePeer
 
     /** the column name for the ID field */
     const ID = 'APP_SEQUENCE.ID';
+
+    /** the column name for the APP_TYPE field */
+    const APP_TYPE = 'APP_SEQUENCE.APP_TYPE';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -45,10 +48,10 @@ abstract class BaseAppSequencePeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', ),
-        BasePeer::TYPE_COLNAME => array (AppSequencePeer::ID, ),
-        BasePeer::TYPE_FIELDNAME => array ('ID', ),
-        BasePeer::TYPE_NUM => array (0, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'AppType', ),
+        BasePeer::TYPE_COLNAME => array (AppSequencePeer::ID, AppSequencePeer::APP_TYPE, ),
+        BasePeer::TYPE_FIELDNAME => array ('ID', 'APP_TYPE', ),
+        BasePeer::TYPE_NUM => array (0, 1, )
     );
 
     /**
@@ -58,10 +61,10 @@ abstract class BaseAppSequencePeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, ),
-        BasePeer::TYPE_COLNAME => array (AppSequencePeer::ID => 0, ),
-        BasePeer::TYPE_FIELDNAME => array ('ID' => 0, ),
-        BasePeer::TYPE_NUM => array (0, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'AppType' => 1, ),
+        BasePeer::TYPE_COLNAME => array (AppSequencePeer::ID => 0, AppSequencePeer::APP_TYPE => 1, ),
+        BasePeer::TYPE_FIELDNAME => array ('ID' => 0, 'APP_TYPE' => 1, ),
+        BasePeer::TYPE_NUM => array (0, 1, )
     );
 
     /**
@@ -163,6 +166,8 @@ abstract class BaseAppSequencePeer
     {
 
         $criteria->addSelectColumn(AppSequencePeer::ID);
+
+        $criteria->addSelectColumn(AppSequencePeer::APP_TYPE);
 
     }
 
