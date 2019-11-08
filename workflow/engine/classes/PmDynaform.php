@@ -985,7 +985,7 @@ class PmDynaform
                         }
                         break;
                     case "subquery":
-                        if (strpos($sAlias, $sBaseExpr, 0) != 0) {
+                        if (strpos($sAlias, $sBaseExpr, 0) !== 0) {
                             $select .= $sAlias;
                         } else {
                             $select .= $sBaseExpr . " AS " . $sAlias;
