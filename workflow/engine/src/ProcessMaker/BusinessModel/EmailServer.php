@@ -1106,6 +1106,9 @@ class EmailServer
             $criteria->addSelectColumn(\EmailServerPeer::MESS_TRY_SEND_INMEDIATLY);
             $criteria->addSelectColumn(\EmailServerPeer::MAIL_TO);
             $criteria->addSelectColumn(\EmailServerPeer::MESS_DEFAULT);
+            $criteria->addSelectColumn(\EmailServerPeer::OAUTH_CLIENT_ID);
+            $criteria->addSelectColumn(\EmailServerPeer::OAUTH_CLIENT_SECRET);
+            $criteria->addSelectColumn(\EmailServerPeer::OAUTH_REFRESH_TOKEN);
 
             return $criteria;
         } catch (Exception $e) {
@@ -1143,7 +1146,10 @@ class EmailServer
                 $this->getFieldNameByFormatFieldName("MESS_BACKGROUND")          => '',
                 $this->getFieldNameByFormatFieldName("MESS_PASSWORD_HIDDEN")     => '',
                 $this->getFieldNameByFormatFieldName("MESS_EXECUTE_EVERY")       => '',
-                $this->getFieldNameByFormatFieldName("MESS_SEND_MAX")            => ''
+                $this->getFieldNameByFormatFieldName("MESS_SEND_MAX")            => '',
+                $this->getFieldNameByFormatFieldName("OAUTH_CLIENT_ID")          => $record["OAUTH_CLIENT_ID"],
+                $this->getFieldNameByFormatFieldName("OAUTH_CLIENT_SECRET")      => $record["OAUTH_CLIENT_SECRET"],
+                $this->getFieldNameByFormatFieldName("OAUTH_REFRESH_TOKEN")      => $record["OAUTH_REFRESH_TOKEN"]
             );
         } catch (Exception $e) {
             throw $e;
@@ -1191,6 +1197,9 @@ class EmailServer
                 $arrayData["MESS_PASSWORD_HIDDEN"]     = '';
                 $arrayData["MESS_EXECUTE_EVERY"]       = '';
                 $arrayData["MESS_SEND_MAX"]            = '';
+                $arrayData["OAUTH_CLIENT_ID"]          = $row["OAUTH_CLIENT_ID"];
+                $arrayData["OAUTH_CLIENT_SECRET"]      = $row["OAUTH_CLIENT_SECRET"];
+                $arrayData["OAUTH_REFRESH_TOKEN"]      = $row["OAUTH_REFRESH_TOKEN"];
             }
 
             //Return

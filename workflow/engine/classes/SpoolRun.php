@@ -510,6 +510,7 @@ class SpoolRun
                     case 'MAIL':
                     case 'PHPMAILER':
                     case 'IMAP':
+                    case 'GMAILAPI':
                         switch ($this->config['MESS_ENGINE']) {
                             case 'MAIL':
                                 $phpMailer = new PHPMailer();
@@ -520,6 +521,11 @@ class SpoolRun
                                 $phpMailer = new PHPMailer(true);
                                 $phpMailer->Mailer = 'smtp';
                                 break;
+                            case 'GMAILAPI':
+                                $phpMailer = new PHPMailerOAuth();
+                                $phpMailer->AuthType = 'XOAUTH2';
+                                $phpMailer->isSMTP();
+                                break;
                         }
 
                         $phpMailer->SMTPAuth = (isset($this->config['SMTPAuth']) ? $this->config['SMTPAuth'] : '');
@@ -529,6 +535,7 @@ class SpoolRun
                                 break;
                             case 'IMAP':
                             case 'PHPMAILER':
+                            case 'GMAILAPI':
                                 //Posible Options for SMTPSecure are: "", "ssl" or "tls"
                                 if (isset($this->config['SMTPSecure']) && preg_match('/^(ssl|tls)$/', $this->config['SMTPSecure'])) {
                                     $phpMailer->SMTPSecure = $this->config['SMTPSecure'];
@@ -543,8 +550,15 @@ class SpoolRun
                             $phpMailer->Encoding = "8bit";
                             $phpMailer->Host = $this->config['MESS_SERVER'];
                             $phpMailer->Port = $this->config['MESS_PORT'];
-                            $phpMailer->Username = $this->config['MESS_ACCOUNT'];
-                            $phpMailer->Password = $this->config['MESS_PASSWORD'];
+                            if ($this->config['MESS_ENGINE'] !== 'GMAILAPI') {
+                                $phpMailer->Username = $this->config['MESS_ACCOUNT'];
+                                $phpMailer->Password = $this->config['MESS_PASSWORD'];
+                            } else {
+                                $phpMailer->oauthUserEmail = $this->config['MESS_ACCOUNT'];
+                                $phpMailer->oauthClientId = $this->config['OAUTH_CLIENT_ID'];
+                                $phpMailer->oauthClientSecret = $this->config['OAUTH_CLIENT_SECRET'];
+                                $phpMailer->oauthRefreshToken = $this->config['OAUTH_REFRESH_TOKEN'];
+                            }
 
                             //From
                             $phpMailer->SetFrom($this->fileData['from_email'], utf8_decode($this->fileData['from_name']));
