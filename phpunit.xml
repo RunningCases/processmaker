@@ -28,6 +28,7 @@
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">./gulliver</directory>
             <directory suffix=".php">./workflow/engine/classes</directory>
             <directory suffix=".php">./workflow/engine/src</directory>
         </whitelist>

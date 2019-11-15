@@ -2,9 +2,11 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Importer;
 
+use Carbon\Carbon;
 use ProcessMaker\Importer\Importer;
 use ProcessMaker\Model\BpmnProject;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\User;
 use ReflectionClass;
 use Tests\TestCase;
 
@@ -292,6 +294,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
         // Mock the load method
         $importer->method("load")
             ->willReturn($array);
+        $importer->setData("usr_uid", factory(User::class)->create()->USR_UID);
 
         // Call the import method
         $res = $importer->import(Importer::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW,
@@ -303,7 +306,9 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
         $result = $query->get()->values()->toArray();
 
         // Assert the created date is the same as the updated date
-        $this->assertEquals($result[0]['PRO_CREATE_DATE'], $result[0]['PRO_UPDATE_DATE']);
+        $createDate = Carbon::createFromTimeString($result[0]['PRO_CREATE_DATE'])->format("Y-m-d");
+        $updateDate = Carbon::createFromTimeString($result[0]['PRO_UPDATE_DATE'])->format("Y-m-d");
+        $this->assertEquals($createDate, $updateDate);
     }
 
     /**
@@ -541,6 +546,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
         // Mock the load method
         $importer->method("load")
             ->willReturn($array);
+        $importer->setData("usr_uid", factory(User::class)->create()->USR_UID);
 
         // Call the setProtectedProperty method
         $this->setProtectedProperty($importer, 'metadata', ['uid' => $process['PRO_UID']]);

@@ -69,9 +69,9 @@ class GranularImporter
         switch ($nameObject) {
             case 'PROCESSDEFINITION':
                 $objectList['PROCESSDEFINITION']['bpmn'] = isset($data['tables']['bpmn']) ? $this->structureBpmnData
-                ($data['tables']['bpmn']) : [];
-                $objectList['PROCESSDEFINITION']['workflow'] = isset($data['tables']['workflow']) ?
-                    $data['tables']['workflow'] : [];
+                    ($data['tables']['bpmn']) : [];
+                $objectList['PROCESSDEFINITION']['workflow'] = isset($data['tables']['workflow']) ? 
+                        $data['tables']['workflow'] : [];
                 break;
             case 'ASSIGNMENTRULES':
                 $objectList['ASSIGNMENTRULES']['tasks'] = isset($data['tables']['workflow']['tasks']) ?
@@ -165,17 +165,16 @@ class GranularImporter
     {
         $project = $tables["project"][0];
         $diagram = $tables["diagram"][0];
-        $diagram["activities"] = (isset($tables["activity"])) ? $tables["activity"] : array();
-        $diagram["artifacts"] = (isset($tables["artifact"])) ? $tables["artifact"] : array();
-        $diagram["events"] = (isset($tables["event"])) ? $tables["event"] : array();
-        $diagram["flows"] = (isset($tables["flow"])) ? $tables["flow"] : array();
-        $diagram["gateways"] = (isset($tables["gateway"])) ? $tables["gateway"] : array();
-        $diagram["data"] = (isset($tables["data"])) ? $tables["data"] : array();
-        $diagram["participants"] = (isset($tables["participant"])) ? $tables["participant"] : array();
-        $diagram["laneset"] = (isset($tables["laneset"])) ? $tables["laneset"] : array();
-        $diagram["lanes"] = (isset($tables["lane"])) ? $tables["lane"] : array();
+        $diagram["activities"] = (isset($tables["activity"])) ? $tables["activity"] : [];
+        $diagram["artifacts"] = (isset($tables["artifact"])) ? $tables["artifact"] : [];
+        $diagram["events"] = (isset($tables["event"])) ? $tables["event"] : [];
+        $diagram["flows"] = (isset($tables["flow"])) ? $tables["flow"] : [];
+        $diagram["gateways"] = (isset($tables["gateway"])) ? $tables["gateway"] : [];
+        $diagram["data"] = (isset($tables["data"])) ? $tables["data"] : [];
+        $diagram["participants"] = (isset($tables["participant"])) ? $tables["participant"] : [];
+        $diagram["laneset"] = (isset($tables["laneset"])) ? $tables["laneset"] : [];
+        $diagram["lanes"] = (isset($tables["lane"])) ? $tables["lane"] : [];
         $project["diagrams"] = array($diagram);
-        $project["prj_author"] = isset($this->data["usr_uid"]) ? $this->data["usr_uid"] : "00000000000000000000000000000001";
         $project["process"] = $tables["process"][0];
         return $project;
     }

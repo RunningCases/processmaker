@@ -885,4 +885,81 @@ class PmDynaformTest extends TestCase
         $labelsPo = $pmDynaform->getLabelsPo($faker->sentence(1));
         $this->assertNull($labelsPo);
     }
+
+    /**
+     * Review if the SQL that uses the SELECT statement is parsed correctly
+     *
+     * @covers PmDynaform::sqlParse()
+     * @test
+     */
+    public function it_should_get_sql_parsed_select_statement()
+    {
+        // Note.- The following queries are used by running tests but none of them are valid
+        $sqlOriginal1 = 'SELECT TOP 10 USERS.USR_UID, USERS.USR_ID, USERS.USR_USERNAME AS USERNAME, MAX(RBAC_USERS_ROLES.ROL_UID), 
+            MIN(RBAC_USERS_ROLES.ROL_UID) AS THEMIN, (SELECT USR_FIRSTNAME FROM USERS), (SELECT USR_LASTNAME AS XXX) AS YYY, <>, 1000
+            FROM USERS AS OFFSET INNER JOIN RBAC_USERS ON USERS.USR_UID = RBAC_USERS.USR_UID INNER JOIN RBAC_USERS_ROLES ON
+            USERS.USR_UID = RBAC_USERS_ROLES.USR_UID WHERE USERS.USR_UID <> "" AND 1 AND OFFSET 1 GROUP BY USERS.USR_UID HAVING
+            USERS.USR_UID <> "" ORDER BY USERS.USR_ID DESC LIMIT 1 OFFSET 10 FOR UPDATE';
+
+        $sqlOriginal2 = 'SELECT TOP 10 USERS.USR_UID, USERS.USR_ID, USERS.USR_USERNAME AS USERNAME, MAX(RBAC_USERS_ROLES.ROL_UID),
+            MIN(RBAC_USERS_ROLES.ROL_UID) AS THEMIN, (SELECT USR_FIRSTNAME FROM USERS), (SELECT USR_LASTNAME AS XXX) AS YYY, <>, 1000
+            FROM USERS INNER JOIN RBAC_USERS ON USERS.USR_UID = RBAC_USERS.USR_UID INNER JOIN RBAC_USERS_ROLES ON
+            USERS.USR_UID = RBAC_USERS_ROLES.USR_UID WHERE USERS.USR_UID <> "" AND 1 GROUP BY USERS.USR_UID HAVING
+            USERS.USR_UID <> "" ORDER BY USERS.USR_ID DESC LIMIT 1, 10 FOR UPDATE';
+
+        $sqlOriginal3 = 'DUMMY';
+
+        // Instance the class PmDynaform
+        $pmDynaform = new PmDynaform([]);
+
+        // Test bug PMC-1299
+        $sqlParsed1 = $pmDynaform->sqlParse($sqlOriginal1);
+        $this->assertFalse(strpos($sqlParsed1, 'INNER INNER'));
+
+        // For now is only used for complete the coverture
+        $sqlParsed2 = $pmDynaform->sqlParse($sqlOriginal2, 'dummy_function_for_this_unit_test');
+        // To Do: Currently, there is a coverture of 100%, but is necessary to add more tests to verify
+        // if the SQL string is parsed correctly in more scenarios
+
+        // Test another string, shoul be return the same value
+        $sqlParsed3 = $pmDynaform->sqlParse($sqlOriginal3);
+        $this->assertEquals($sqlOriginal3, $sqlParsed3);
+    }
+
+    /**
+     * Review if the SQL that uses the CALL statement is parsed correctly
+     *
+     * @covers PmDynaform::sqlParse()
+     * @test
+     */
+    public function it_should_get_sql_parsed_call_statement()
+    {
+        $sqlOriginal = 'CALL dummy_sp_for_this_unit_test()';
+
+        $pmDynaform = new PmDynaform([]);
+        $sqlParsed = $pmDynaform->sqlParse($sqlOriginal);
+
+        $this->assertEquals(strlen($sqlOriginal), strlen($sqlParsed));
+    }
+
+    /**
+     * Review if the SQL that uses the EXECUTE statement is parsed correctly
+     *
+     * @covers PmDynaform::sqlParse()
+     * @test
+     */
+    public function it_should_get_sql_parsed_execute_statement()
+    {
+        $sqlOriginal = 'EXECUTE dummy_sp_for_this_unit_test()';
+
+        $pmDynaform = new PmDynaform([]);
+        $sqlParsed = $pmDynaform->sqlParse($sqlOriginal);
+
+        $this->assertEquals(strlen($sqlOriginal), strlen($sqlParsed));
+    }
+}
+
+// Dummy function used for the coverture
+function dummy_function_for_this_unit_test()
+{
 }
