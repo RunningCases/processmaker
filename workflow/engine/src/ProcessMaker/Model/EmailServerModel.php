@@ -31,7 +31,10 @@ class EmailServerModel extends Model
             'EMAIL_SERVER.SMTPSECURE',
             'EMAIL_SERVER.MESS_TRY_SEND_INMEDIATLY',
             'EMAIL_SERVER.MAIL_TO',
-            'EMAIL_SERVER.MESS_DEFAULT'
+            'EMAIL_SERVER.MESS_DEFAULT',
+            'EMAIL_SERVER.OAUTH_CLIENT_ID',
+            'EMAIL_SERVER.OAUTH_CLIENT_SECRET',
+            'EMAIL_SERVER.OAUTH_REFRESH_TOKEN'
         ];
         $query = EmailServerModel::query()->select($selectedColumns);
         $query->where('EMAIL_SERVER.MESS_UID', '=', $messUid);
@@ -64,7 +67,10 @@ class EmailServerModel extends Model
             'EMAIL_SERVER.SMTPSECURE',
             'EMAIL_SERVER.MESS_TRY_SEND_INMEDIATLY',
             'EMAIL_SERVER.MAIL_TO',
-            'EMAIL_SERVER.MESS_DEFAULT'
+            'EMAIL_SERVER.MESS_DEFAULT',
+            'EMAIL_SERVER.OAUTH_CLIENT_ID',
+            'EMAIL_SERVER.OAUTH_CLIENT_SECRET',
+            'EMAIL_SERVER.OAUTH_REFRESH_TOKEN'
         ];
         $query = EmailServerModel::query()->select($selectedColumns)
             ->where('MESS_DEFAULT', '=', 1);
