@@ -1026,4 +1026,13 @@ class PmTable
 
         return $type;
     }
+
+    /**
+     * Remove the folder "pmt-folder" and all the content inside
+     */
+    public static function removePmtPropelFolder()
+    {
+        $pmtPropelFolder = PATH_DB . config('system.workspace') . PATH_SEP . 'pmt-propel';
+        G::rm_dir($pmtPropelFolder);
+    }
 }

@@ -205,4 +205,53 @@ class ActionsByEmailTest extends TestCase
         //Assert the email was not sent
         $this->assertContains('**ID_UNEXPECTED_ERROR_OCCURRED_PLEASE**', $res);
     }
+
+    /**
+     * Test the forwardMail method with ssl
+     *
+     * @covers \ProcessMaker\BusinessModel\ActionsByEmail::forwardMail()
+     * @test
+     */
+    public function it_should_test_the_forward_mail_method_with_ssl()
+    {
+        //Create the Task factory
+        factory(Task::class)->create();
+        //Create the Process factory
+        factory(Process::class)->create();
+        //Create the Dynaform factory
+        factory(Dynaform::class)->create();
+        //Create the EmailServerModel factory with smtp secure
+        factory(EmailServerModel::class)->create(
+            ['SMTPSECURE' => 'ssl']
+        );
+        //Create the Application factory
+        factory(Application::class)->create();
+        //Create the Delegation factory
+        $delegation = factory(Delegation::class)->create();
+        //Create the AbeConfiguration factory
+        $abeConfiguration = factory(AbeConfiguration::class)->create();
+        //Create the AbeConfiguration factory
+        $abeRequest = factory(AbeRequest::class)->create([
+            'ABE_UID' => $abeConfiguration->ABE_UID,
+            'APP_UID' => $delegation->APP_UID,
+            'DEL_INDEX' => $delegation->DEL_INDEX,
+            'ABE_REQ_UID' => $abeConfiguration->ABE_UID,
+        ]);
+
+        //Prepare the array send to the method
+        $arrayData = [
+            'action' => 'forwardMail',
+            'REQ_UID' => $abeRequest->ABE_REQ_UID,
+            'limit' => '',
+            'start' => ''
+        ];
+
+        //Create the ActionsByEmail object
+        $abe = new ActionsByEmail();
+        //Call the forwardMail method
+        $res = $abe->forwardMail($arrayData);
+
+        //Assert the email was sent successfully
+        $this->assertContains('**ID_EMAIL_RESENT_TO**: ' . $abeRequest->ABE_REQ_SENT_TO, $res);
+    }
 }

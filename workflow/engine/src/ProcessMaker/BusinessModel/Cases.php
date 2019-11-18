@@ -1859,6 +1859,11 @@ class Cases
             $arrayCaseVariable = array_merge($arrayCaseVariable, $dateHistory);
         }
 
+        // Get the SYS_LANG defined, it can be updated
+        if (defined('SYS_LANG')) {
+            $arrayCaseVariable['SYS_LANG'] = SYS_LANG;
+        }
+
         return $arrayCaseVariable;
     }
 
