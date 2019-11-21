@@ -101,7 +101,7 @@ class EmailServerMapBuilder
 
         $tMap->addColumn('OAUTH_REFRESH_TOKEN', 'OauthRefreshToken', 'string', CreoleTypes::VARCHAR, true, 256);
 
-        $tMap->addValidator('MESS_ENGINE', 'validValues', 'propel.validator.ValidValuesValidator', 'MAIL|PHPMAILER|XOAUTH2', 'Please enter a valid value for MESS_ENGINE');
+        $tMap->addValidator('MESS_ENGINE', 'validValues', 'propel.validator.ValidValuesValidator', 'MAIL|PHPMAILER|XOAUTH2|GMAILAPI', 'Please enter a valid value for MESS_ENGINE');
 
     } // doBuild()
 

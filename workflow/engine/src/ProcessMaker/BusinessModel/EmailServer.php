@@ -14,7 +14,7 @@ class EmailServer
 {
     private $arrayFieldDefinition = array(
         "MESS_UID"                 => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                    "fieldNameAux" => "emailServerUid"),
-        "MESS_ENGINE"              => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("PHPMAILER", "MAIL", "IMAP"), "fieldNameAux" => "emailServerEngine"),
+        "MESS_ENGINE"              => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("PHPMAILER", "MAIL", "IMAP", "GMAILAPI"), "fieldNameAux" => "emailServerEngine"),
         "MESS_SERVER"              => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerServer"),
         "MESS_PORT"                => array("type" => "int",    "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerPort"),
         "MESS_INCOMING_SERVER"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                    "fieldNameAux" => "emailServerIncomingServer"),
@@ -1127,7 +1127,7 @@ class EmailServer
     public function getEmailServerDataFromRecord(array $record)
     {
         try {
-            return array(
+            return [
                 $this->getFieldNameByFormatFieldName("MESS_UID")                 => $record["MESS_UID"],
                 $this->getFieldNameByFormatFieldName("MESS_ENGINE")              => $record["MESS_ENGINE"],
                 $this->getFieldNameByFormatFieldName("MESS_SERVER")              => $record["MESS_SERVER"],
@@ -1150,7 +1150,7 @@ class EmailServer
                 $this->getFieldNameByFormatFieldName("OAUTH_CLIENT_ID")          => $record["OAUTH_CLIENT_ID"],
                 $this->getFieldNameByFormatFieldName("OAUTH_CLIENT_SECRET")      => $record["OAUTH_CLIENT_SECRET"],
                 $this->getFieldNameByFormatFieldName("OAUTH_REFRESH_TOKEN")      => $record["OAUTH_REFRESH_TOKEN"]
-            );
+            ];
         } catch (Exception $e) {
             throw $e;
         }
