@@ -1,6 +1,5 @@
 /**
  * PM tables Edit
- * @author Erik A. O. <erik@colosa.com>
  */
 
 var store;
@@ -99,14 +98,13 @@ Ext.onReady(function () {
         listeners: {rowdblclick: AssignFieldsAction}
     });
 
-    //selecion model for table columns grid
+    //selection model for table columns grid
     sm = new Ext.grid.RowSelectionModel({
         selectSingle: false,
         listeners: {
             selectionchange: function (sm) {
                 switch (sm.getCount()) {
                     case 0:
-                        //Ext.getCmp('removeButton').disable();
                         Ext.getCmp('editColumn').disable();
                         Ext.getCmp('removeColumn').disable();
                         break;
@@ -115,7 +113,6 @@ Ext.onReady(function () {
                         Ext.getCmp('removeColumn').enable();
                         break;
                     default:
-                        //Ext.getCmp('removeButton').enable();
                         Ext.getCmp('editColumn').disable();
                         Ext.getCmp('removeColumn').enable();
                         break;
@@ -196,7 +193,6 @@ Ext.onReady(function () {
                         if (valueInputField) {
                             this.setValue(this.getValue().replace(/\s/g, '').toUpperCase());
                         } else {
-                            //Ext.Msg.alert(_('ID_WARNING'), _('ID_FIELD_NAME'));
                             this.setValue('');
                         }
                     }
@@ -232,7 +228,7 @@ Ext.onReady(function () {
                     } else {
                         return true;
                     }
-                },
+                }
             }
         }, {
             id: 'field_type',
@@ -286,7 +282,7 @@ Ext.onReady(function () {
 
                             flagShowMessageError = 1;
                         }
-                    }//select
+                    }
                 }
             })
         }, {
@@ -481,7 +477,6 @@ Ext.onReady(function () {
 
     //table columns grid
     assignedGrid = new Ext.grid.GridPanel({
-        //title: 'Columns',
         region: 'center',
         id: 'assignedGrid',
         ddGroup: 'availableGridDDGroup',
@@ -553,7 +548,6 @@ Ext.onReady(function () {
     });
 
     assignedGrid.getSelectionModel().on('selectionchange', function (sm) {
-        //alert('s');
     });
 
     // (vertical) selection buttons
@@ -588,9 +582,7 @@ Ext.onReady(function () {
 
 
     FieldsPanel = new Ext.Panel({
-        //title: _('ID_FIELDS'),
         region: 'center',
-        //autoWidth   : true,
         width: 150,
         layout: 'hbox',
         defaults: {flex: 1}, //auto stretch
@@ -702,7 +694,6 @@ Ext.onReady(function () {
         fieldLabel: _("ID_DB_CONNECTION"),
         hiddenName: 'DBS_UID',
         store: dbConnectionsStore,
-        //value: 'rp',
         valueField: 'DBS_UID',
         displayField: 'DBS_NAME',
         triggerAction: 'all',
@@ -765,8 +756,6 @@ Ext.onReady(function () {
         ]
     });
 
-    //items.push(comboDbConnections);
-
     var frmDetails = new Ext.FormPanel({
         id: 'frmDetails',
         region: 'north',
@@ -777,7 +766,6 @@ Ext.onReady(function () {
         frame: true,
         height: 170,
         items: items,
-        //tbar       : tbar,
         waitMsgTarget: true,
         defaults: {
             allowBlank: false,
@@ -785,7 +773,6 @@ Ext.onReady(function () {
             align: 'center'
         }
     });
-
 
     southPanel = new Ext.FormPanel({
         region: 'south',
@@ -849,7 +836,6 @@ Ext.onReady(function () {
 });
 
 // actions
-
 function createReportTable()
 {
     var tableName = Ext.getCmp('REP_TAB_NAME').getValue().trim();
@@ -1006,7 +992,6 @@ function _showDebugWin(content)
         modal: false,
         autoScroll: true,
         maximizable: true,
-        //closeAction: 'hide',
         maximizable: false,
         items: [],
         x: 0,
@@ -1019,7 +1004,6 @@ function _showDebugWin(content)
 
 function addColumn() {
     var PMRow = assignedGrid.getStore().recordType;
-    //var meta = mapPMFieldType(records[i].data['FIELD_UID']);
     var row = new PMRow({
         uid: '',
         field_uid: '',
@@ -1164,7 +1148,7 @@ function editorFieldsEnableDisable(fieldTypeValue, fieldNull, fieldPrimaryKey, f
     }
 }
 
-////ASSIGNBUTON FUNCTIONALITY
+//Assign button functionality
 AssignFieldsAction = function () {
     var records, i;
 
@@ -1306,7 +1290,6 @@ var DDLoadFields = function () {
 
             //add on target grid
             for (i = 0; i < records.length; i++) {
-                //arrAux[r] = records[r].data['FIELD_UID'];
                 var meta = mapPMFieldType(records[i].data['FIELD_UID']);
                 var row = new PMRow({
                     uid: '',
@@ -1329,7 +1312,6 @@ var DDLoadFields = function () {
             return true;
         }
     });
-    //sw_func_groups = true;
 };
 
 function loadTableRowsFromArray(records)

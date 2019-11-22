@@ -20,7 +20,7 @@ class Table
      *
      * @return array
      */
-    public function getTables($pro_uid = '', $reportFlag = false)
+    public function getTables($pro_uid = '', $reportFlag = false, $offline = false)
     {
         //VALIDATION
         if ($reportFlag) {

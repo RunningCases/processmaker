@@ -1,3 +1,7 @@
+/**
+ * PM tables list
+ */
+
 var newButton;
 var editButton;
 var deleteButton;
@@ -20,7 +24,7 @@ var currentSelectedRow = -1;
 var extensionPmt = 'pmt';
 
 Ext.onReady(function () {
-    ///Keyboard Events
+    // Keyboard Events
     new Ext.KeyMap(document, {
         key: Ext.EventObject.F5,
         fn: function (keycode, e) {
@@ -61,13 +65,6 @@ Ext.onReady(function () {
     }
 
     var flagProcessmap = (typeof ('flagProcessmap') != 'undefined') ? flagProcessmap : 0;
-
-    /*if (PRO_UID !== false) {
-     newMenuOptions.push({
-     text: _('ID_NEW_REPORT_TABLE_OLD'),
-     handler: NewReportTableOld
-     });
-     }*/
 
     if (PRO_UID !== false) {
         newButton = new Ext.Action({
@@ -424,14 +421,14 @@ Ext.onReady(function () {
     infoGrid.store.load();
 });
 
-//Funtion Handles Context Menu Opening
+//Function Handles Context Menu Opening
 onMessageContextMenu = function (grid, rowIndex, e) {
     e.stopEvent();
     var coords = e.getXY();
     contextMenu.showAt([coords[0], coords[1]]);
 };
 
-/////JS FUNCTIONS
+// JS Functions
 
 //Capitalize String Function
 capitalize = function (s) {
@@ -454,9 +451,6 @@ NewReportTable = function () {
 };
 
 NewReportTableOld = function () {
-    //location.href = 'reportTables/edit?PRO_UID='+PRO_UID+'&tableType=report';
-    //parent.reportTables2();
-    //parent.Pm.data.render.buildingBlocks.injector('reportTables2');
     location.href = 'reportTables/reportTables_Edit?PRO_UID=' + PRO_UID;
 };
 
@@ -544,7 +538,6 @@ ImportPMTable = function () {
         resizable: false,
         items: [
             new Ext.FormPanel({
-                /*renderTo: 'form-panel',*/
                 id: 'uploader',
                 fileUpload: true,
                 width: 400,
@@ -604,7 +597,6 @@ ImportPMTable = function () {
                                                     plain: true,
                                                     html: '<h3>' + _('ID_IMPORTING_ERROR') + '</h3>' + result.message,
                                                     items: [],
-
                                                     buttons: [{
                                                             text: 'Close',
                                                             handler: function () {
@@ -700,7 +692,6 @@ PMTableData = function ()
     var row = Ext.getCmp('infoGrid').getSelectionModel().getSelected();
     var type = row.get('PRO_UID');
 
-    //location.href = 'pmTables/data?id='+row.get('ADD_TAB_UID');
     if (row.get('TYPE') != '') {
         PMExt.info(_('ID_INFO'), _('ID_DATA_LIST_NOT_AVAILABLE_FOR_OLDVER'));
         return;
@@ -715,7 +706,6 @@ PMTableData = function ()
         modal: true,
         maximizable: true,
         constrain: true,
-        //closeAction:'hide',
         plain: true,
         items: [{
                 xtype: "iframepanel",
