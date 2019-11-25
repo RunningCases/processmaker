@@ -53,7 +53,7 @@ class Server implements iAuthenticate
         }
 
         // Pass a storage object or array of storage objects to the OAuth2 server class
-        $this->server = new \OAuth2\Server($this->storage, array('allow_implicit' => true, 'access_lifetime' => 86400));
+        $this->server = new OAuth2Server($this->storage, array('allow_implicit' => true, 'access_lifetime' => 86400));
 
         $this->server->setConfig('enforce_state', false);
 
