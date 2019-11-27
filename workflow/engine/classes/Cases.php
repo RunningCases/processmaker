@@ -797,7 +797,7 @@ class Cases
     public function array_key_intersect(&$a, &$b)
     {
         $array = array();
-        while (list($key, $value) = each($a)) {
+        foreach ($a as $key => $value) {
             if (isset($b[$key])) {
                 if (is_object($b[$key]) && is_object($value)) {
                     if (serialize($b[$key]) === serialize($value)) {
@@ -1034,6 +1034,7 @@ class Cases
     public function removeCase($sAppUid, $deleteDelegation = true)
     {
         try {
+            $appUidCopy = $sAppUid;
             $this->getExecuteTriggerProcess($sAppUid, 'DELETED');
 
             $oAppDocument = new AppDocument();
@@ -1152,7 +1153,7 @@ class Cases
 
             /** ProcessMaker log*/
             $context = Bootstrap::getDefaultContextLog();
-            $context['appUid'] = $sAppUid;
+            $context['appUid'] = $appUidCopy;
             $context['request'] = $nameFiles;
             Bootstrap::registerMonolog('DeleteCases', 200, 'Delete Case', $context);
 
