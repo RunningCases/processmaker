@@ -103,6 +103,8 @@ workflow/engine/plugins/pmosCommunity/open_flash_chart_object.php
 workflow/engine/plugins/pmosCommunity/public_html/open-flash-chart.swf
 workflow/engine/plugins/pmosCommunity/public_html/swfobject.js
 workflow/engine/plugins/pmosCommunity/setupPage.xml
+workflow/engine/plugins/processTemplate.php
+workflow/engine/plugins/processTemplate/class.processTemplate.php
 workflow/engine/skinEngine/base/images/updating/page_background.png
 workflow/engine/skinEngine/neoclassic/images/updating/page_background.png
 workflow/engine/src/ProcessMaker/Services/Api/Test2.php
