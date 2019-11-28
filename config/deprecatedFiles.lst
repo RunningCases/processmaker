@@ -82,6 +82,11 @@ workflow/engine/methods/setup/webServices.php
 workflow/engine/methods/setup/webServicesAjax.php
 workflow/engine/methods/setup/webServicesList.php
 workflow/engine/methods/users/data_usersList.php
+workflow/engine/plugins/charts.php
+workflow/engine/plugins/charts/class.charts.php
+workflow/engine/plugins/charts/config/setup.conf
+workflow/engine/plugins/charts/genericCharts.php
+workflow/engine/plugins/charts/setupPage.xml
 workflow/engine/plugins/openFlash.php
 workflow/engine/plugins/openFlash/chart-data.php
 workflow/engine/plugins/openFlash/chart.php
