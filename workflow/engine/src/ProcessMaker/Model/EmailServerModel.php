@@ -3,6 +3,7 @@
 namespace ProcessMaker\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 
 class EmailServerModel extends Model
 {
@@ -40,6 +41,15 @@ class EmailServerModel extends Model
         $query->where('EMAIL_SERVER.MESS_UID', '=', $messUid);
         $res = $query->get()->values()->toArray();
         $firstElement = head($res);
+
+        if (!empty($firstElement)) {
+            $firstElement['OAUTH_CLIENT_ID'] = !empty($firstElement['OAUTH_CLIENT_ID']) ?
+                Crypt::decryptString($firstElement['OAUTH_CLIENT_ID']) : '';
+            $firstElement['OAUTH_CLIENT_SECRET'] = !empty($firstElement['OAUTH_CLIENT_SECRET']) ?
+                Crypt::decryptString($firstElement['OAUTH_CLIENT_SECRET']) : '';
+            $firstElement['OAUTH_REFRESH_TOKEN'] = !empty($firstElement['OAUTH_REFRESH_TOKEN']) ?
+                Crypt::decryptString($firstElement['OAUTH_REFRESH_TOKEN']) : '';
+        }
 
         return $firstElement;
     }
@@ -83,6 +93,12 @@ class EmailServerModel extends Model
             $firstElement['MESS_PASSWORD_HIDDEN'] = '';
             $firstElement['MESS_EXECUTE_EVERY'] = '';
             $firstElement['MESS_SEND_MAX'] = '';
+            $firstElement['OAUTH_CLIENT_ID'] = !empty($firstElement['OAUTH_CLIENT_ID']) ?
+                Crypt::decryptString($firstElement['OAUTH_CLIENT_ID']) : '';
+            $firstElement['OAUTH_CLIENT_SECRET'] = !empty($firstElement['OAUTH_CLIENT_SECRET']) ?
+                Crypt::decryptString($firstElement['OAUTH_CLIENT_SECRET']) : '';
+            $firstElement['OAUTH_REFRESH_TOKEN'] = !empty($firstElement['OAUTH_REFRESH_TOKEN']) ?
+                Crypt::decryptString($firstElement['OAUTH_REFRESH_TOKEN']) : '';
         }
 
         return $firstElement;
