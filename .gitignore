@@ -42,3 +42,4 @@ test_shared/
 **/cache/
 storage/
 phpunit.xml
+!/workflow/engine/plugins/.gitignore
