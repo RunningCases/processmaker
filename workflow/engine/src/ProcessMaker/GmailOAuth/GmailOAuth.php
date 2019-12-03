@@ -317,9 +317,6 @@ class GmailOAuth
         if (!filter_var($this->fromAccount, FILTER_VALIDATE_EMAIL)) {
             return $googleServiceGmailMessage;
         }
-        if (!filter_var($this->senderEmail, FILTER_VALIDATE_EMAIL)) {
-            return $googleServiceGmailMessage;
-        }
         if (!filter_var($this->mailTo, FILTER_VALIDATE_EMAIL)) {
             return $googleServiceGmailMessage;
         }
@@ -391,15 +388,20 @@ class GmailOAuth
         if (!filter_var($this->fromAccount, FILTER_VALIDATE_EMAIL)) {
             return $phpMailerOAuth;
         }
-        if (!filter_var($this->senderEmail, FILTER_VALIDATE_EMAIL)) {
-            return $phpMailerOAuth;
-        }
         if (!filter_var($this->mailTo, FILTER_VALIDATE_EMAIL)) {
             return $phpMailerOAuth;
         }
         if ($this->sendTestMail === 0) {
             return $phpMailerOAuth;
         }
+        $senderEmail = $this->senderEmail;
+        if (!filter_var($senderEmail, FILTER_VALIDATE_EMAIL)) {
+            $senderEmail = $this->fromAccount;
+        }
+        if (empty($this->senderName)) {
+            $this->senderName = "";
+        }
+
         $phpMailerOAuth->isHTML(true);
         $phpMailerOAuth->isSMTP();
         $phpMailerOAuth->Host = 'smtp.gmail.com';
@@ -409,7 +411,7 @@ class GmailOAuth
         $phpMailerOAuth->oauthClientId = $this->clientID;
         $phpMailerOAuth->oauthClientSecret = $this->clientSecret;
         $phpMailerOAuth->oauthRefreshToken = $this->refreshToken;
-        $phpMailerOAuth->SetFrom($this->senderEmail, $this->senderName);
+        $phpMailerOAuth->SetFrom($senderEmail, $this->senderName);
         $phpMailerOAuth->Subject = G::LoadTranslation("ID_MESS_TEST_SUBJECT");
         $phpMailerOAuth->Body = utf8_encode($this->getMessageBody());
         $phpMailerOAuth->AddAddress($this->mailTo);
