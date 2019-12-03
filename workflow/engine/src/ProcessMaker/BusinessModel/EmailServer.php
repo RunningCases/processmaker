@@ -5,6 +5,7 @@ use AppMessage;
 use Bootstrap;
 use Exception;
 use G;
+use Illuminate\Support\Facades\Crypt;
 use ProcessMaker\Core\System;
 use SpoolRun;
 use TemplatePower;
@@ -809,6 +810,13 @@ class EmailServer
                     $arrayData["MESS_PASSWORD"] = G::encrypt($arrayData["MESS_PASSWORD"], "EMAILENCRYPT");
                 }
 
+                $arrayData["OAUTH_CLIENT_ID"] = !empty($arrayData["OAUTH_CLIENT_ID"]) ?
+                    Crypt::encryptString($arrayData["OAUTH_CLIENT_ID"]) : "";
+                $arrayData["OAUTH_CLIENT_SECRET"] = !empty($arrayData["OAUTH_CLIENT_SECRET"]) ?
+                    Crypt::encryptString($arrayData["OAUTH_CLIENT_SECRET"]) : "";
+                $arrayData["OAUTH_REFRESH_TOKEN"] = !empty($arrayData["OAUTH_REFRESH_TOKEN"]) ?
+                    Crypt::encryptString($arrayData["OAUTH_REFRESH_TOKEN"]) : "";
+
                 $emailServer->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 $emailServerUid = \ProcessMaker\Util\Common::generateUID();
@@ -980,6 +988,13 @@ class EmailServer
                         $arrayData['MESS_PASSWORD'] = G::encrypt($arrayData['MESS_PASSWORD'], 'EMAILENCRYPT');
                     }
                 }
+
+                $arrayData["OAUTH_CLIENT_ID"] = !empty($arrayData["OAUTH_CLIENT_ID"]) ?
+                    Crypt::encryptString($arrayData["OAUTH_CLIENT_ID"]) : "";
+                $arrayData["OAUTH_CLIENT_SECRET"] = !empty($arrayData["OAUTH_CLIENT_SECRET"]) ?
+                    Crypt::encryptString($arrayData["OAUTH_CLIENT_SECRET"]) : "";
+                $arrayData["OAUTH_REFRESH_TOKEN"] = !empty($arrayData["OAUTH_REFRESH_TOKEN"]) ?
+                    Crypt::encryptString($arrayData["OAUTH_REFRESH_TOKEN"]) : "";
 
                 $emailServer->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
@@ -1197,9 +1212,12 @@ class EmailServer
                 $arrayData["MESS_PASSWORD_HIDDEN"]     = '';
                 $arrayData["MESS_EXECUTE_EVERY"]       = '';
                 $arrayData["MESS_SEND_MAX"]            = '';
-                $arrayData["OAUTH_CLIENT_ID"]          = $row["OAUTH_CLIENT_ID"];
-                $arrayData["OAUTH_CLIENT_SECRET"]      = $row["OAUTH_CLIENT_SECRET"];
-                $arrayData["OAUTH_REFRESH_TOKEN"]      = $row["OAUTH_REFRESH_TOKEN"];
+                $arrayData["OAUTH_CLIENT_ID"]          = !empty($row["OAUTH_CLIENT_ID"]) ?
+                    Crypt::decryptString($row["OAUTH_CLIENT_ID"]) : '';
+                $arrayData["OAUTH_CLIENT_SECRET"]      = !empty($row["OAUTH_CLIENT_SECRET"]) ?
+                    Crypt::decryptString($row["OAUTH_CLIENT_SECRET"]) : '';
+                $arrayData["OAUTH_REFRESH_TOKEN"]      = !empty($row["OAUTH_REFRESH_TOKEN"]) ?
+                    Crypt::decryptString($row["OAUTH_REFRESH_TOKEN"]) : '';
             }
 
             //Return
@@ -1296,6 +1314,9 @@ class EmailServer
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
+                $row['OAUTH_CLIENT_ID'] = !empty($row['OAUTH_CLIENT_ID']) ? Crypt::decryptString($row['OAUTH_CLIENT_ID']) : '';
+                $row['OAUTH_CLIENT_SECRET'] = !empty($row['OAUTH_CLIENT_SECRET']) ? Crypt::decryptString($row['OAUTH_CLIENT_SECRET']) : '';
+                $row['OAUTH_REFRESH_TOKEN'] = !empty($row['OAUTH_REFRESH_TOKEN']) ? Crypt::decryptString($row['OAUTH_REFRESH_TOKEN']) : '';
                 $arrayEmailServer[] = $this->getEmailServerDataFromRecord($row);
             }
 
@@ -1349,6 +1370,9 @@ class EmailServer
             $row["MESS_PASSWORD_HIDDEN"] = '';
             $row["MESS_EXECUTE_EVERY"] = '';
             $row["MESS_SEND_MAX"] = '';
+            $row["OAUTH_CLIENT_ID"] = !empty($row["OAUTH_CLIENT_ID"]) ? Crypt::decryptString($row["OAUTH_CLIENT_ID"]) : '';
+            $row["OAUTH_CLIENT_SECRET"] = !empty($row["OAUTH_CLIENT_SECRET"]) ? Crypt::decryptString($row["OAUTH_CLIENT_SECRET"]) : '';
+            $row["OAUTH_REFRESH_TOKEN"] = !empty($row["OAUTH_REFRESH_TOKEN"]) ? Crypt::decryptString($row["OAUTH_REFRESH_TOKEN"]) : '';
 
             //Return
             return (!$flagGetRecord)? $this->getEmailServerDataFromRecord($row) : $row;
