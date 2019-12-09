@@ -215,13 +215,14 @@ class enterprisePlugin extends PMPlugin
      */
     public function registerEE($pluginFile, $pluginVersion)
     {
+        $cacheKey = config('system.workspace') . 'enterprise.ee';
         // Fetch the value from cache. If not present, fetch from the filesystem.
-        $value = Cache::get('enterprise.ee', function () {
+        $value = Cache::get($cacheKey, function () {
             if (file_exists(PATH_DATA_SITE . "ee")) {
                 return trim(file_get_contents(PATH_DATA_SITE . "ee"));
             }
         });
-        if($value) {
+        if ($value) {
             $this->systemAvailable = unserialize($value);
         } else {
             // Handle potential no value
@@ -240,7 +241,7 @@ class enterprisePlugin extends PMPlugin
             $this->systemAvailable[$pluginFile]["sFilename"] = $filename;
             file_put_contents(PATH_DATA_SITE . "ee", serialize($this->systemAvailable));
             // Put in cache as well
-            Cache::forever('enterprise.ee', serialize($this->systemAvailable));
+            Cache::forever($cacheKey, serialize($this->systemAvailable));
         }
         return true;
     }
