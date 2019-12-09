@@ -220,6 +220,8 @@ class enterprisePlugin extends PMPlugin
         $value = Cache::get($cacheKey, function () {
             if (file_exists(PATH_DATA_SITE . "ee")) {
                 return trim(file_get_contents(PATH_DATA_SITE . "ee"));
+            } else {
+                return null;
             }
         });
         if ($value) {
