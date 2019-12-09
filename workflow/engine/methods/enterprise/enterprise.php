@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -207,15 +208,40 @@ class enterprisePlugin extends PMPlugin
         }
     }
 
+    /**
+     * Registeres the plugin in the enterprise data
+     * Note, this utilizes caching to reduce the burden of the file I/O on the ee file. However, this does 
+     * require caching to be enabled.
+     */
     public function registerEE($pluginFile, $pluginVersion)
     {
-        if (file_exists(PATH_DATA_SITE . "ee")) {
-            $this->systemAvailable = unserialize(trim(file_get_contents(PATH_DATA_SITE . "ee")));
+        // Fetch the value from cache. If not present, fetch from the filesystem.
+        $value = Cache::get('enterprise.ee', function () {
+            if (file_exists(PATH_DATA_SITE . "ee")) {
+                return trim(file_get_contents(PATH_DATA_SITE . "ee"));
+            }
+        });
+        if($value) {
+            $this->systemAvailable = unserialize($value);
+        } else {
+            // Handle potential no value
+            $this->systemAvailable = [];
         }
 
-        $this->systemAvailable[$pluginFile]["sFilename"] = $pluginFile . "-" . $pluginVersion . ".tar";
-        file_put_contents(PATH_DATA_SITE . "ee", serialize($this->systemAvailable));
+        $filename = $pluginFile . '-' . $pluginVersion . '.tar';
 
+        // Check to see if update is required
+        if (
+            !isset($this->systemAvailable[$pluginFile]) ||
+            !isset($this->systemAvailable[$pluginFile]['sFilename']) ||
+            $this->systemAvailable[$pluginFile]['sFilename'] != $filename
+        ) {
+            // Update required
+            $this->systemAvailable[$pluginFile]["sFilename"] = $filename;
+            file_put_contents(PATH_DATA_SITE . "ee", serialize($this->systemAvailable));
+            // Put in cache as well
+            Cache::forever('enterprise.ee', serialize($this->systemAvailable));
+        }
         return true;
     }
 
