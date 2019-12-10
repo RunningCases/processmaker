@@ -65,7 +65,8 @@ class ExecuteQueryTest extends TestCase
         });
         $expected = $user->toArray();
 
-        $sql = "SELECT "
+        foreach ($expected as $value) {
+            $sql = "SELECT "
                 . "USR_UID ,"
                 . "USR_USERNAME ,"
                 . "USR_PASSWORD ,"
@@ -74,15 +75,16 @@ class ExecuteQueryTest extends TestCase
                 . "USR_EMAIL "
                 . "FROM USERS "
                 . "WHERE "
-                . "USR_UID NOT IN ("
-                . "    '00000000000000000000000000000001',"
-                . "    '00000000000000000000000000000002'"
-                . ")"
+                . "USR_UID = '" . $value['USR_UID'] . "'"
                 . "ORDER BY USR_UID DESC";
-        $actual = executeQuery($sql);
-        $actual = array_values($actual);
+            $actual = executeQuery($sql);
 
-        $this->assertEquals($expected, $actual);
+            $actual = array_values($actual);
+
+            $this->assertEquals($value, head($actual));
+        }
+
+
     }
 
     /**
