@@ -233,7 +233,7 @@ class adminProxy extends HttpProxyController
         return array('success' => $success, 'users' => $usersAdmin);
     }
 
-    public function getUxTypesList($type = 'assoc')
+    public static function getUxTypesList($type = 'assoc')
     {
         $list = array();
 
