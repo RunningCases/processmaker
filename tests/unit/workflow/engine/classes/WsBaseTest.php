@@ -10,6 +10,7 @@ use ProcessMaker\Model\EmailServerModel;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
+use ProcessMaker\Util\WsMessageResponse;
 use Tests\TestCase;
 
 class WsBaseTest extends TestCase
@@ -484,48 +485,48 @@ class WsBaseTest extends TestCase
 
         //Create the application factory
         $application1 = factory(Application::class)->create(
-            [
-                'APP_STATUS' => 'TO_DO',
-                'APP_TITLE' => 'Title1'
-            ]
+                [
+                    'APP_STATUS' => 'TO_DO',
+                    'APP_TITLE' => 'Title1'
+                ]
         );
         $application2 = factory(Application::class)->create(
-            [
-                'APP_STATUS' => 'DRAFT',
-                'APP_TITLE' => 'Title2'
-            ]
+                [
+                    'APP_STATUS' => 'DRAFT',
+                    'APP_TITLE' => 'Title2'
+                ]
         );
 
         //Create the delegation factory
         $delegation1 = factory(Delegation::class)->create(
-            [
-                'USR_UID' => $user->USR_UID,
-                'DEL_THREAD_STATUS' => 'OPEN',
-                'DEL_FINISH_DATE' => null,
-                'APP_NUMBER' => $application1->APP_NUMBER
-            ]
+                [
+                    'USR_UID' => $user->USR_UID,
+                    'DEL_THREAD_STATUS' => 'OPEN',
+                    'DEL_FINISH_DATE' => null,
+                    'APP_NUMBER' => $application1->APP_NUMBER
+                ]
         );
         $delegation2 = factory(Delegation::class)->create(
-            [
-                'USR_UID' => $user->USR_UID,
-                'DEL_THREAD_STATUS' => 'OPEN',
-                'DEL_FINISH_DATE' => null,
-                'APP_NUMBER' => $application2->APP_NUMBER
-            ]
+                [
+                    'USR_UID' => $user->USR_UID,
+                    'DEL_THREAD_STATUS' => 'OPEN',
+                    'DEL_FINISH_DATE' => null,
+                    'APP_NUMBER' => $application2->APP_NUMBER
+                ]
         );
 
         //Create app thread factory
         factory(AppThread::class)->create(
-            [
-                'APP_THREAD_STATUS' => 'OPEN',
-                'APP_UID' => $delegation1->APP_UID
-            ]
+                [
+                    'APP_THREAD_STATUS' => 'OPEN',
+                    'APP_UID' => $delegation1->APP_UID
+                ]
         );
         factory(AppThread::class)->create(
-            [
-                'APP_THREAD_STATUS' => 'OPEN',
-                'APP_UID' => $delegation2->APP_UID
-            ]
+                [
+                    'APP_THREAD_STATUS' => 'OPEN',
+                    'APP_UID' => $delegation2->APP_UID
+                ]
         );
 
         //Instance the object
@@ -559,48 +560,48 @@ class WsBaseTest extends TestCase
 
         //Create the application factory
         $application1 = factory(Application::class)->create(
-            [
-                'APP_STATUS' => 'TO_DO',
-                'APP_TITLE' => 'Title1'
-            ]
+                [
+                    'APP_STATUS' => 'TO_DO',
+                    'APP_TITLE' => 'Title1'
+                ]
         );
         $application2 = factory(Application::class)->create(
-            [
-                'APP_STATUS' => 'DRAFT',
-                'APP_TITLE' => 'Title2'
-            ]
+                [
+                    'APP_STATUS' => 'DRAFT',
+                    'APP_TITLE' => 'Title2'
+                ]
         );
 
         //Create the delegation factory
         $delegation1 = factory(Delegation::class)->create(
-            [
-                'USR_UID' => $user1->USR_UID,
-                'DEL_THREAD_STATUS' => 'OPEN',
-                'DEL_FINISH_DATE' => null,
-                'APP_NUMBER' => $application1->APP_NUMBER
-            ]
+                [
+                    'USR_UID' => $user1->USR_UID,
+                    'DEL_THREAD_STATUS' => 'OPEN',
+                    'DEL_FINISH_DATE' => null,
+                    'APP_NUMBER' => $application1->APP_NUMBER
+                ]
         );
         $delegation2 = factory(Delegation::class)->create(
-            [
-                'USR_UID' => $user1->USR_UID,
-                'DEL_THREAD_STATUS' => 'OPEN',
-                'DEL_FINISH_DATE' => null,
-                'APP_NUMBER' => $application2->APP_NUMBER
-            ]
+                [
+                    'USR_UID' => $user1->USR_UID,
+                    'DEL_THREAD_STATUS' => 'OPEN',
+                    'DEL_FINISH_DATE' => null,
+                    'APP_NUMBER' => $application2->APP_NUMBER
+                ]
         );
 
         //Create app thread factory
         factory(AppThread::class)->create(
-            [
-                'APP_THREAD_STATUS' => 'OPEN',
-                'APP_UID' => $delegation1->APP_UID
-            ]
+                [
+                    'APP_THREAD_STATUS' => 'OPEN',
+                    'APP_UID' => $delegation1->APP_UID
+                ]
         );
         factory(AppThread::class)->create(
-            [
-                'APP_THREAD_STATUS' => 'OPEN',
-                'APP_UID' => $delegation2->APP_UID
-            ]
+                [
+                    'APP_THREAD_STATUS' => 'OPEN',
+                    'APP_UID' => $delegation2->APP_UID
+                ]
         );
 
         //Instance the object
@@ -611,5 +612,37 @@ class WsBaseTest extends TestCase
 
         //Assert the result his empty
         $this->assertEmpty($res);
+    }
+
+    /**
+     * This test ensures obtaining the email configuration with all fields.
+     * @test
+     * @covers \WsBase::sendMessage()
+     */
+    public function it_should_get_email_configuration()
+    {
+        $faker = Factory::create();
+
+        //data
+        $case = $this->createNewCase();
+        $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
+
+        //parameters
+        $appUid = $case->applicationUid;
+        $from = $faker->email;
+        $to = "";
+        $cc = "";
+        $bcc = "";
+        $subject = $faker->title;
+        $templateName = basename($template->PRF_PATH);
+        $appFields = [
+            'var1' => $faker->numberBetween(1, 100)
+        ];
+
+        $wsBase = new WsBase();
+        $result = $wsBase->sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $templateName, $appFields);
+
+        //assertions
+        $this->assertInstanceOf(WsMessageResponse::class, $result);
     }
 }
