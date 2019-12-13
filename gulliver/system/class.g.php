@@ -633,7 +633,7 @@ class G
 
         try {
             $file = G::ExpandPath('skinEngine') . 'skinEngine.php';
-            include $file;
+            include_once $file;
             $skinEngine = new SkinEngine($G_TEMPLATE, $G_SKIN, $G_CONTENT);
             $skinEngine->setLayout($layout);
             $skinEngine->dispatch();
