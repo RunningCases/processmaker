@@ -75,6 +75,7 @@ define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("system.workspace") . "/"
 define("PATH_DYNAFORM", PATH_DATA_SITE . "xmlForms/");
 define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
 define("PATH_DATA_PUBLIC", PATH_DATA_SITE . "public/");
+define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
 G::defineConstants();
 
 /**
