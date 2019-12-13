@@ -27,7 +27,7 @@ class Pmtable extends Api
      * @throws RestException
      *
      * @access protected
-     * @class AccessControl {@permission PM_SETUP_PM_TABLES}
+     * @class AccessControl {@permission PM_LOGIN}
      * @link https://wiki.processmaker.com/3.1/REST_API_Administration/PM_Tables#PM_Tables_List:_GET_.2Fpmtable
      */
     public function doGetPmTables($offline = false)
@@ -59,7 +59,7 @@ class Pmtable extends Api
      * @throws RestException
      *
      * @access protected
-     * @class AccessControl {@permission PM_SETUP_PM_TABLES}
+     * @class AccessControl {@permission PM_LOGIN}
      * @link https://wiki.processmaker.com/3.1/REST_API_Administration/PM_Tables#PM_Tables_List:_GET_.2Fpmtable
      */
     public function doGetPmTablesDataOffline($compress = true)
