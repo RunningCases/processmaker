@@ -5007,9 +5007,6 @@
         <column name="OAUTH_CLIENT_ID" type="VARCHAR" size="512" required="true" default=""/>
         <column name="OAUTH_CLIENT_SECRET" type="VARCHAR" size="512" required="true" default=""/>
         <column name="OAUTH_REFRESH_TOKEN" type="VARCHAR" size="512" required="true" default=""/>
-        <validator column="MESS_ENGINE">
-            <rule name="validValues" value="MAIL|PHPMAILER|XOAUTH2|GMAILAPI" message="Please enter a valid value for MESS_ENGINE"/>
-        </validator>
     </table>
 
     <table name="WEB_ENTRY_EVENT">
