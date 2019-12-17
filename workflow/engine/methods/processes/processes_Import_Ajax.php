@@ -291,7 +291,8 @@ if (isset($_POST["PRO_FILENAME"]) &&
             exit(0);
         }
 
-        if (version_compare($data['version'], '3.0', '>') && $_POST['IMPORT_OPTION']==="3") {
+        if ((version_compare($data['version'], '3.0',
+                    '>') && $_POST['IMPORT_OPTION'] === "3") || empty($_POST['objectsToImport'])) {
             $objectsToImport = [];
             $objects = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
             $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
@@ -304,6 +305,7 @@ if (isset($_POST["PRO_FILENAME"]) &&
         if (isset($_POST['objectsToImport']) && !empty(G::json_decode($_POST['objectsToImport']))) {
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
         }
+
         /*----------------------------------********---------------------------------*/
         $prjUid = $importer->import($option, $optionGroup, false, $objectsToImport);
 
