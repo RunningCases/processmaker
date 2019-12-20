@@ -144,7 +144,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) && (pathinfo($_FILES["PROCESS_FILENAME"][
             }
         }
 
-        if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
+        if (isset($_POST['objectsToImport']) && !empty(G::json_decode($_POST['objectsToImport']))) {
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
         }
         /*----------------------------------********---------------------------------*/
@@ -301,7 +301,7 @@ if (isset($_POST["PRO_FILENAME"]) &&
             }
         }
 
-        if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
+        if (isset($_POST['objectsToImport']) && !empty(G::json_decode($_POST['objectsToImport']))) {
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
         }
         /*----------------------------------********---------------------------------*/

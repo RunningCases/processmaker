@@ -87,7 +87,9 @@ class CodeScanner
 
             if (file_exists($fileDisabledCode)) {
                 $arrayAux = array_filter(array_map("trim", file($fileDisabledCode, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)));
-                $arrayAux = array_filter($arrayAux, create_function("\$line", "return !preg_match(\"/^;.*\$/\", \$line);"));
+                $arrayAux = array_filter($arrayAux, function ($line) {
+                    return !preg_match("/^;.*\$/", $line);
+                });
 
                 $this->arrayDisabledCode = array_unique(array_merge($this->arrayDisabledCode, $arrayAux));
             }
