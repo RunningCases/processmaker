@@ -741,20 +741,6 @@ Ext.onReady(function () {
             }
         ]
     });
-    items.push({
-        layout: "column",
-        style: "margin-left: 255px;",
-        hidden: false,
-        items: [
-            {
-                xtype: "checkbox",
-                id: "checkboxAvailableOffline",
-                name: "checkboxAvailableOffline",
-                checked: false,
-                boxLabel: _("ID_AVAILABLE_OFFLINE_THE_MOBILE_APPLICATIONS")
-            }
-        ]
-    });
 
     var frmDetails = new Ext.FormPanel({
         id: 'frmDetails',
@@ -811,7 +797,6 @@ Ext.onReady(function () {
         Ext.getCmp('REP_TAB_NAME').setValue(TABLE.ADD_TAB_NAME);
         Ext.getCmp('REP_TAB_NAME').setDisabled(false);
         Ext.getCmp('REP_TAB_DSC').setValue(TABLE.ADD_TAB_DESCRIPTION);
-        Ext.getCmp('checkboxAvailableOffline').setValue(TABLE.ADD_TAB_OFFLINE === 1);
         loadTableRowsFromArray(TABLE.FIELDS);
     }
 
@@ -941,7 +926,6 @@ function createReportTable()
         REP_TAB_CONNECTION: "workflow",
         REP_TAB_TYPE: "",
         REP_TAB_GRID: "",
-        REP_TAB_OFFLINE: Ext.getCmp("checkboxAvailableOffline").checked === true ? "1" : "0",
         columns: Ext.util.JSON.encode(columns)
     };
 
