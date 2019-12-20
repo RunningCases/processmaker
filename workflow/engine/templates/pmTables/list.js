@@ -7,6 +7,7 @@ var editButton;
 var deleteButton;
 var importButton;
 var exportButton;
+var offlineEnableDisable;
 var dataButton;
 
 var store;
@@ -105,6 +106,26 @@ Ext.onReady(function () {
         iconCls: 'silk-add',
         icon: '/images/export.png',
         handler: ExportPMTable,
+        disabled: true
+    });
+
+    offlineEnableDisable = new Ext.Action({
+        id: 'offlineEnableDisable',
+        text: _('ID_OFFLINE_TABLES'),
+        iconCls: 'silk-add',
+        icon: '/images/offline-pin.png',
+        menu: [{
+                text: _('ID_OFFLINE_TABLES_ENABLE'),
+                handler: function () {
+                    OfflineEnableDisablePMTable(true);
+                }
+            }, {
+                text: _('ID_OFFLINE_TABLES_DISABLE'),
+                handler: function () {
+                    OfflineEnableDisablePMTable(false);
+                }
+            }
+        ],
         disabled: true
     });
 
@@ -252,18 +273,21 @@ Ext.onReady(function () {
                         editButton.disable();
                         deleteButton.disable();
                         exportButton.disable();
+                        offlineEnableDisable.disable();
                         dataButton.disable();
                         break;
                     case 1:
                         editButton.enable();
                         deleteButton.enable();
                         exportButton.enable();
+                        offlineEnableDisable.enable();
                         dataButton.enable();
                         break;
                     default:
                         editButton.disable();
                         deleteButton.enable();
                         exportButton.enable();
+                        offlineEnableDisable.enable();
                         dataButton.disable();
                         break;
                 }
@@ -365,6 +389,7 @@ Ext.onReady(function () {
             dataButton, '-',
             importButton,
             exportButton,
+            offlineEnableDisable,
             '->',
             searchText,
             clearTextButton,
@@ -515,6 +540,7 @@ DeletePMTable = function () {
                     editButton.disable();
                     deleteButton.disable();
                     exportButton.disable();
+                    offlineEnableDisable.disable();
                     dataButton.disable();
                 }
             }
@@ -777,7 +803,6 @@ function updateTagPermissions() {
         location.href = 'pmReports/reportsAjax?action=permissionList&ADD_TAB_NAME=' + rowsSelected[0].get('ADD_TAB_NAME') + '&ADD_TAB_UID=' + rowsSelected[0].get('ADD_TAB_UID') + '&pro_uid=' + PRO_UID + '&flagProcessmap=' + flagProcessmap;
     }
 }
-;
 
 function PopupCenter(pageURL, title, w, h) {
     var left = (Ext.getBody().getViewSize().width / 3);
@@ -947,4 +972,40 @@ function pmtablesErrors(aOverwrite, aRelated, aMessage) {
     for (i = 0; i < aOverwrite.length; i++) {
         Ext.get(aOverwrite[i]['NAME_TABLE']).setStyle({border: '0', marginTop: '0'});
     }
+}
+
+function OfflineEnableDisablePMTable(enableDisable) {
+    var rows = Ext.getCmp('infoGrid').getSelectionModel().getSelections();
+    if (rows.length <= 0) {
+        return;
+    }
+    var selections = [];
+    for (var i = 0; i < rows.length; i++) {
+        selections[i] = {
+            id: rows[i].get('ADD_TAB_UID'),
+            type: rows[i].get('ADD_TAB_TYPE'),
+            offline: enableDisable
+        };
+    }
+    Ext.Ajax.request({
+        url: 'pmTablesProxy/updateOffline',
+        params: {
+            rows: Ext.util.JSON.encode(selections)
+        },
+        success: function (response) {
+            Ext.MessageBox.hide();
+            var result = Ext.util.JSON.decode(response.responseText);
+            if (result.success) {
+                PMExt.notify(_("ID_OFFLINE_TABLES"), result.message.nl2br());
+            } else {
+                PMExt.error(_("ID_ERROR"), result.message.nl2br());
+            }
+            Ext.getCmp('infoGrid').getStore().reload();
+        },
+        failure: function (target, response) {
+            Ext.MessageBox.hide();
+            Ext.getCmp('infoGrid').getStore().reload();
+            Ext.Msg.alert(_('ID_ERROR'), response.result.message);
+        }
+    });
 }

@@ -90,4 +90,16 @@ class AdditionalTables extends Model
 
         return $data;
     }
+
+    /**
+     * Update the offline property.
+     * @param array $tablesUid
+     * @param int $value
+     * @return void
+     */
+    public static function updatePropertyOffline(array $tablesUid, $value): void
+    {
+        $query = AdditionalTables::whereIn('ADD_TAB_UID', $tablesUid)
+                ->update(['ADD_TAB_OFFLINE' => $value]);
+    }
 }

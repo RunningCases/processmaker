@@ -20088,6 +20088,24 @@ msgid "Off"
 msgstr "Off"
 
 # TRANSLATION
+# LABEL/ID_OFFLINE_TABLES
+#: LABEL/ID_OFFLINE_TABLES
+msgid "Offline Tables"
+msgstr "Offline Tables"
+
+# TRANSLATION
+# LABEL/ID_OFFLINE_TABLES_ENABLE
+#: LABEL/ID_OFFLINE_TABLES_ENABLE
+msgid "Set Offline"
+msgstr "Set Offline"
+
+# TRANSLATION
+# LABEL/ID_OFFLINE_TABLES_DISABLE
+#: LABEL/ID_OFFLINE_TABLES_DISABLE
+msgid "Set Online"
+msgstr "Set Online"
+
+# TRANSLATION
 # LABEL/ID_OF_THE_MONTH
 #: LABEL/ID_OF_THE_MONTH
 msgid "of the month(s)"
