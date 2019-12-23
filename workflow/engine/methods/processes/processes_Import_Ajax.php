@@ -268,44 +268,45 @@ if (isset($_POST["PRO_FILENAME"]) &&
     try {
         /*----------------------------------********---------------------------------*/
         $objectsToImport = '';
-        // only uploadFileNewProcessExist
-        if (version_compare($data['version'], '3.0', '>') && isset($_POST['objectsToImport']) && $_POST['objectsToImport'] === '' && $_POST['IMPORT_OPTION']==="1") {
-            $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
-            $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
-            $objectImport = $ids->getIdObjectList($objectImport);
-            $granularImport = true;
-            $result = array(
-                "success"                   => true,
-                "catchMessage"              => '',
-                "ExistProcessInDatabase"    => 0,
-                "ExistGroupsInDatabase"     => 0,
-                "notExistProcessInDatabase" => 0,
-                "affectedGroups"            => '',
-                "sNewProUid"                => '',
-                "project_type"              => 'bpmn',
-                "isGranularImport"          => $granularImport,
-                "objectGranularImport"      => $objectImport,
-                "project_type_aux"          => ''
-            );
-            echo G::json_encode($result);
-            exit(0);
-        }
+        if (version_compare($data['version'], '3.0', '>')) {
+            $dataObject = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
+            $exportObjects = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
+            $idObjectList = $exportObjects->getIdObjectList($dataObject);
 
-        if ((version_compare($data['version'], '3.0',
-                    '>') && $_POST['IMPORT_OPTION'] === "3") || empty($_POST['objectsToImport'])) {
+            // only uploadFileNewProcessExist
+            if (isset($_POST['objectsToImport']) && $_POST['objectsToImport'] === '' && $_POST['IMPORT_OPTION'] === "1") {
+                $granularImport = true;
+                $result = [
+                    "success" => true,
+                    "catchMessage" => '',
+                    "ExistProcessInDatabase" => 0,
+                    "ExistGroupsInDatabase" => 0,
+                    "notExistProcessInDatabase" => 0,
+                    "affectedGroups" => '',
+                    "sNewProUid" => '',
+                    "project_type" => 'bpmn',
+                    "isGranularImport" => $granularImport,
+                    "objectGranularImport" => $idObjectList,
+                    "project_type_aux" => ''
+                ];
+                echo G::json_encode($result);
+                exit(0);
+            }
+
+            $actionImport = "merge";
+            if ($_POST['IMPORT_OPTION'] === "3") {
+                $actionImport = "replace";
+            }
+
             $objectsToImport = [];
-            $objects = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
-            $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
-            $objects = $ids->getIdObjectList($objects);
-            foreach ($objects as $object) {
-                $objectsToImport[] = (object)array('id' => $object, 'action' => 'replace');
+            foreach ($idObjectList as $object) {
+                $objectsToImport[] = (object) ['id' => $object, 'action' => $actionImport];
+            }
+
+            if (isset($_POST['objectsToImport']) && !empty(G::json_decode($_POST['objectsToImport']))) {
+                $objectsToImport = G::json_decode($_POST['objectsToImport']);
             }
         }
-
-        if (isset($_POST['objectsToImport']) && !empty(G::json_decode($_POST['objectsToImport']))) {
-            $objectsToImport = G::json_decode($_POST['objectsToImport']);
-        }
-
         /*----------------------------------********---------------------------------*/
         $prjUid = $importer->import($option, $optionGroup, false, $objectsToImport);
 
