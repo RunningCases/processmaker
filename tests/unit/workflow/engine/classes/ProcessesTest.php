@@ -13,6 +13,7 @@ use Tests\TestCase;
 
 class ProcessesTest extends TestCase
 {
+    private $processes;
 
     /**
      * Constructor of the class.
@@ -33,6 +34,7 @@ class ProcessesTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
+        $this->processes = new Processes();
     }
 
     /**
@@ -154,7 +156,7 @@ class ProcessesTest extends TestCase
      * This checks fi the returned output documents are correct with the differect 
      * parameters.
      * @test
-     * @covers Processes::getOutputRows()
+     * @covers \Processes::getOutputRows()
      */
     public function it_should_return_output_documents()
     {
@@ -205,7 +207,7 @@ class ProcessesTest extends TestCase
     /**
      * This checks if the dynaforms structure is saved with the different parameters.
      * @test
-     * @covers Processes::createDynaformRows()
+     * @covers \Processes::createDynaformRows()
      */
     public function it_sholud_create_dynaform()
     {
@@ -269,7 +271,7 @@ class ProcessesTest extends TestCase
      * This checks if the input documents structure is saved with the different 
      * parameters.
      * @test
-     * @covers Processes::createInputRows()
+     * @covers \Processes::createInputRows()
      */
     public function it_should_create_input_document()
     {
@@ -339,7 +341,7 @@ class ProcessesTest extends TestCase
      * This checks if the output documents structure is saved with the different 
      * parameters.
      * @test
-     * @covers Processes::createOutputRows()
+     * @covers \Processes::createOutputRows()
      */
     public function it_should_create_output_document()
     {
@@ -432,7 +434,7 @@ class ProcessesTest extends TestCase
     /**
      * This gets the data structure of a project.
      * @test
-     * @covers Processes::getWorkflowData()
+     * @covers \Processes::getWorkflowData()
      */
     public function it_should_get_workflow_data()
     {
@@ -458,5 +460,41 @@ class ProcessesTest extends TestCase
         $processes = new Processes();
         $result = $processes->getWorkflowData($process->PRO_UID);
         $this->assertNotNull($result);
+    }
+
+    /**
+     * This test guarantees the replacement of new identifiers.
+     * @test
+     * @covers \Processes::renewAllDynaformGuid()
+     */
+    public function it_should_renew_all_dynaform_guid()
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/dynaformDataForRenewUids.json";
+        $data = file_get_contents($pathData);
+        $result = json_decode($data, JSON_OBJECT_AS_ARRAY);
+        $result = (object) $result;
+        $this->processes->renewAllDynaformGuid($result);
+        foreach ($result as $key => $value) {
+            $this->assertObjectHasAttribute($key, $result);
+        }
+
+        //without PRO_DYNAFORMS
+        $result = json_decode($data, JSON_OBJECT_AS_ARRAY);
+        $result = (object) $result;
+        unset($result->process['PRO_DYNAFORMS']);
+        $this->processes->renewAllDynaformGuid($result);
+        foreach ($result as $key => $value) {
+            $this->assertObjectHasAttribute($key, $result);
+        }
+
+        //for process inside PRO_DYNAFORMS
+        $result = json_decode($data, JSON_OBJECT_AS_ARRAY);
+        $result = (object) $result;
+        $result->process['PRO_DYNAFORMS'] = [];
+        $result->process['PRO_DYNAFORMS']['PROCESS'] = $result->dynaforms[0]['DYN_UID'];
+        $this->processes->renewAllDynaformGuid($result);
+        foreach ($result as $key => $value) {
+            $this->assertObjectHasAttribute($key, $result);
+        }
     }
 }
