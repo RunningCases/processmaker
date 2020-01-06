@@ -28,7 +28,7 @@ class DerivationTest extends TestCase
         // Truncate the APP_SEQUENCE table
         DB::table('APP_SEQUENCE')->truncate();
 
-        config(["system.workspace" => "test"]);
+        config(["system.workspace" => "new_site"]);
         $workspace = config("system.workspace");
 
         if (!file_exists(PATH_DB . $workspace)) {
