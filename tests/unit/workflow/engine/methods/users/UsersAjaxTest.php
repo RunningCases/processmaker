@@ -28,20 +28,21 @@ class UsersAjaxTest extends TestCase
         global $RBAC;
         //Creates the user factory
         $user = factory(User::class)->create();
+        $usrUid = $user['USR_UID'];
         //Creates the configuration factory
         factory(Configuration::class)->create([
             'CFG_UID' => 'USER_PREFERENCES',
             'OBJ_UID' => '',
             'CFG_VALUE' => 'a:3:{s:12:"DEFAULT_LANG";s:0:"";s:12:"DEFAULT_MENU";s:8:"PM_SETUP";s:18:"DEFAULT_CASES_MENU";s:0:"";}',
             'PRO_UID' => '',
-            'USR_UID' => $user['USR_UID'],
+            'USR_UID' => $usrUid,
             'APP_UID' => '',
         ]);
 
         //Sets the needed variables
-        $_SESSION['USER_LOGGED'] = $user['USR_UID'];
+        $_SESSION['USER_LOGGED'] = $usrUid;
         $_POST['action'] = 'userData';
-        $_POST['USR_UID'] = $user['USR_UID'];
+        $_POST['USR_UID'] = $usrUid;
         $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
         $RBAC->initRBAC();
         $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
@@ -63,7 +64,7 @@ class UsersAjaxTest extends TestCase
         //Assert the call was success
         $this->assertTrue($res->success);
         //Assert the result corresponds to the user logged
-        $this->assertEquals($user['USR_UID'], $res->user->USR_UID);
+        $this->assertEquals($usrUid, $res->user->USR_UID);
         //Assert the default menu is set
         $this->assertEquals('PM_EDIT_USER_PROFILE_DEFAULT_MAIN_MENU_OPTIONS',
             $res->permission->PREF_DEFAULT_MENUSELECTED);
