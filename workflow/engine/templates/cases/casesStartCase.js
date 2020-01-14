@@ -6,16 +6,6 @@ Ext.chart.Chart.CHART_URL = '/images/charts.swf';
 Ext.FlashComponent.EXPRESS_INSTALL_URL = '/images/expressinstall.swf';
 // The Quicktips are used for the toolbar and Tree mouseover tooltips!
 
-// Refresh treePanel
-try {
-  if (typeof(parent.timer) != 'undefined') {
-    parent.timer();
-  }
-} catch(theError) {
-  // This try-catch is for Zimbra error
-}
-
-
 var conn = new Ext.data.Connection();
 
 Docs = {};
