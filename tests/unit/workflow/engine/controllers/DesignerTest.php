@@ -27,7 +27,9 @@ class DesignerTest extends TestCase
         );
 
         //Start the session for the user logged
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
         $_SESSION['CASE'] = $application->APP_NUMBER;
         $_SESSION['PIN'] = "LJ5W";

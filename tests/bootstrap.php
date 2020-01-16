@@ -53,6 +53,8 @@ define('PATH_HTML', PATH_HOME . 'public_html/');
 define('PATH_SMARTY_C', PATH_TRUNK . '/shared/compiled/smarty/c');
 define('PATH_SMARTY_CACHE', PATH_TRUNK . '/shared/compiled/smarty/cache');
 define('PATH_THIRDPARTY', PATH_TRUNK . '/thirdparty/');
+define("URL_KEY", 'c0l0s40pt1mu59r1m3');
+define("PATH_XMLFORM", PATH_CORE . "xmlform" . PATH_SEP);
 
 // Set Time Zone
 $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) (env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;
@@ -73,6 +75,7 @@ define("PATH_DATA_SITE", PATH_DATA . "sites/" . config("system.workspace") . "/"
 define("PATH_DYNAFORM", PATH_DATA_SITE . "xmlForms/");
 define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
 define("PATH_DATA_PUBLIC", PATH_DATA_SITE . "public/");
+define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
 G::defineConstants();
 
 /**
