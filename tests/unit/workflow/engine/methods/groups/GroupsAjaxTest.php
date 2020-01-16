@@ -58,6 +58,8 @@ class GroupsAjaxTest extends TestCase
     {
         global $RBAC;
         $_POST['action'] = 'groupsList';
+        $_REQUEST["dir"] = "DESC";
+        $_REQUEST["sort"] = "GRP_TITLE";
 
         $fileName = PATH_METHODS . 'groups/groups_Ajax.php';
 
