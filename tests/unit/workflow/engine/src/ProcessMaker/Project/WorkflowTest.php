@@ -59,6 +59,10 @@ class WorkflowTest extends TestCase
             'PRO_UID' => $process->PRO_UID
         ]);
 
+        //xmlForms
+        if (!is_dir(PATH_DYNAFORM)) {
+            mkdir(PATH_DYNAFORM);
+        }
         $directory = PATH_DYNAFORM . $process->PRO_UID . "/";
         $this->directories[] = $directory;
         mkdir($directory);
@@ -79,6 +83,9 @@ class WorkflowTest extends TestCase
         }
 
         //template
+        if (!is_dir(PATH_DATA_MAILTEMPLATES)) {
+            mkdir(PATH_DATA_MAILTEMPLATES);
+        }
         $directory = PATH_DATA_MAILTEMPLATES . $process->PRO_UID;
         $this->directories[] = $directory;
         mkdir($directory);
@@ -88,6 +95,9 @@ class WorkflowTest extends TestCase
         file_put_contents($filename, '');
 
         //public files
+        if (!is_dir(PATH_DATA_PUBLIC)) {
+            mkdir(PATH_DATA_PUBLIC);
+        }
         $directory = PATH_DATA_PUBLIC . $process->PRO_UID;
         $this->directories[] = $directory;
         mkdir($directory);
