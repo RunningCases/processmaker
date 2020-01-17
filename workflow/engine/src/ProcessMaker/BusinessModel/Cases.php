@@ -40,6 +40,7 @@ use ProcessMaker\BusinessModel\Task as BmTask;
 use ProcessMaker\BusinessModel\User as BmUser;
 use ProcessMaker\Core\System;
 use ProcessMaker\Exception\UploadException;
+use ProcessMaker\Model\Application as ModelApplication;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
@@ -1114,35 +1115,37 @@ class Cases
      * Delete case
      *
      * @access public
-     * @param string $app_uid, Uid for case
-     * @param string $usr_uid, Uid user
+     * @param string $appUid, Uid for case
+     * @param string $usrUid, Uid user
      *
      * @return void
      * @throws Exception
      */
-    public function deleteCase($app_uid, $usr_uid)
+    public function deleteCase($appUid, $usrUid)
     {
-        Validator::isString($app_uid, '$app_uid');
-        Validator::appUid($app_uid, '$app_uid');
+        Validator::isString($appUid, '$app_uid');
+        Validator::appUid($appUid, '$app_uid');
 
-        $criteria = new Criteria();
-        $criteria->addSelectColumn(ApplicationPeer::APP_STATUS);
-        $criteria->addSelectColumn(ApplicationPeer::APP_INIT_USER);
-        $criteria->add(ApplicationPeer::APP_UID, $app_uid, Criteria::EQUAL);
-        $dataset = ApplicationPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-        if ($aRow['APP_STATUS'] != 'DRAFT') {
-            throw (new Exception(G::LoadTranslation("ID_DELETE_CASE_NO_STATUS")));
+        // Review the permission for delete case
+        global $RBAC;
+        if ($RBAC->userCanAccess('PM_DELETECASE') != 1) {
+            throw new Exception(G::LoadTranslation('ID_NOT_ABLE_DELETE_CASES'));
         }
-
-        if ($aRow['APP_INIT_USER'] != $usr_uid) {
-            throw (new Exception(G::LoadTranslation("ID_DELETE_CASE_NO_OWNER")));
+        // Review the status and user
+        $caseInfo = ModelApplication::getCase($appUid);
+        if (!empty($caseInfo)){
+            // Review the status
+            if ($caseInfo['APP_STATUS'] != 'DRAFT') {
+                throw new Exception(G::LoadTranslation("ID_DELETE_CASE_NO_STATUS"));
+            }
+            // Review the user requester
+            if ($caseInfo['APP_INIT_USER'] != $usrUid) {
+                throw new Exception(G::LoadTranslation("ID_DELETE_CASE_NO_OWNER"));
+            }
         }
 
         $case = new ClassesCases();
-        $case->removeCase($app_uid);
+        $case->removeCase($appUid);
     }
 
     /**
@@ -1733,7 +1736,7 @@ class Cases
      * @return array
      * @throws Exception
      */
-    private function __getFieldsAndValuesByDynaFormAndAppData(array $form, array $appData, array $caseVariable)
+    private function getFieldsAndValuesByDynaFormAndAppData(array $form, array $appData, array $caseVariable)
     {
         try {
             foreach ($form['items'] as $value) {
@@ -1754,7 +1757,7 @@ class Cases
                                 }
                             }
                         } else {
-                            $caseVariableAux = $this->__getFieldsAndValuesByDynaFormAndAppData($field, $appData,
+                            $caseVariableAux = $this->getFieldsAndValuesByDynaFormAndAppData($field, $appData,
                                 $caseVariable);
                             $caseVariable = array_merge($caseVariable, $caseVariableAux);
                         }
@@ -1827,7 +1830,7 @@ class Cases
 
             $arrayAppData = $fields['APP_DATA'];
 
-            $arrayCaseVariable = $this->__getFieldsAndValuesByDynaFormAndAppData(
+            $arrayCaseVariable = $this->getFieldsAndValuesByDynaFormAndAppData(
                 $arrayDynContent['items'][0], $arrayAppData, $arrayCaseVariable
             );
         } else {
@@ -2406,7 +2409,7 @@ class Cases
      * @return array
      * @throws Exception
     */
-    private function __getStatusInfoDataByRsCriteria($rsCriteria)
+    private function getStatusInfoDataByRsCriteria($rsCriteria)
     {
         try {
             $arrayData = [];
@@ -2489,7 +2492,7 @@ class Cases
             $rsCriteria = AppDelayPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria);
+            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria);
 
             if (!empty($arrayData)) {
                 return $arrayData;
@@ -2522,7 +2525,7 @@ class Cases
             $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria);
+            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria);
 
             if (!empty($arrayData)) {
                 return $arrayData;
@@ -2565,7 +2568,7 @@ class Cases
             $rsCriteria = ApplicationPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria);
+            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria);
 
             if (!empty($arrayData)) {
                 return $arrayData;
@@ -2605,7 +2608,7 @@ class Cases
             $rsCriteria2 = ApplicationPeer::doSelectRS($criteria2);
             $rsCriteria2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria2);
+            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria2);
 
             if (!empty($arrayData)) {
                 return $arrayData;
@@ -3152,7 +3155,7 @@ class Cases
      *
      * @return array Returns array with Case data updated
      */
-    private function __applicationDataDeleteMultipleFile(
+    private function applicationDataDeleteMultipleFile(
         array $arrayApplicationData,
         $variable1,
         $variable2,
@@ -3198,7 +3201,7 @@ class Cases
                 case 'GRID':
                     foreach ($arrayApplicationData[$variable1] as $key => $value) {
                         if (array_key_exists($variable2, $value)) {
-                            $arrayApplicationData[$variable1][$key] = $this->__applicationDataDeleteMultipleFile(
+                            $arrayApplicationData[$variable1][$key] = $this->applicationDataDeleteMultipleFile(
                                 $value, $variable2, null, 'NORMAL', $arrayDocumentToDelete
                             );
                         }
@@ -3254,7 +3257,7 @@ class Cases
                         foreach ($arrayDocumentDelete as $value2) {
                             $appDocument->remove($value2['appDocUid'], (int)($value2['version']));
 
-                            $arrayApplicationData['APP_DATA'] = $this->__applicationDataDeleteMultipleFile(
+                            $arrayApplicationData['APP_DATA'] = $this->applicationDataDeleteMultipleFile(
                                 $arrayApplicationData['APP_DATA'], $variable, null, $type, $value2
                             );
 
@@ -3272,7 +3275,7 @@ class Cases
                                 foreach ($arrayDocumentDelete as $value4) {
                                     $appDocument->remove($value4['appDocUid'], (int)($value4['version']));
 
-                                    $arrayApplicationData['APP_DATA'] = $this->__applicationDataDeleteMultipleFile(
+                                    $arrayApplicationData['APP_DATA'] = $this->applicationDataDeleteMultipleFile(
                                         $arrayApplicationData['APP_DATA'], $grid, $variable, $type, $value4
                                     );
 

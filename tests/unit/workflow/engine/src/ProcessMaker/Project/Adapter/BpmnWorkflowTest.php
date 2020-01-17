@@ -16,10 +16,14 @@ class BpmnWorkflowTest extends TestCase
 {
     private $user;
 
+    /**
+     * Set up testing.
+     */
     public function setUp()
     {
         parent::setUp();
         $this->user = factory(User::class)->create();
+        Process::truncate();
     }
 
     /**
@@ -156,6 +160,10 @@ class BpmnWorkflowTest extends TestCase
 
         factory(\ProcessMaker\Model\BpmnProject::class)->create([
             'PRJ_NAME' => $projectData['prj_name']
+        ]);
+
+        factory(\ProcessMaker\Model\Process::class)->create([
+            'PRO_TITLE' => $projectData['prj_name']
         ]);
 
         $this->expectException(Exception::class);

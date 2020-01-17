@@ -1,5 +1,5 @@
 INSERT INTO USERS (USR_UID,USR_USERNAME,USR_PASSWORD,USR_FIRSTNAME,USR_LASTNAME,USR_EMAIL,USR_DUE_DATE,USR_CREATE_DATE,USR_UPDATE_DATE,USR_STATUS,USR_COUNTRY,USR_CITY,USR_LOCATION,USR_ADDRESS,USR_PHONE,USR_FAX,USR_CELLULAR,USR_ZIP_CODE,DEP_UID,USR_POSITION,USR_RESUME,USR_BIRTHDAY,USR_ROLE,USR_REPORTS_TO,USR_REPLACED_BY ) VALUES 
-('00000000000000000000000000000001','admin','21232f297a57a5a743894a0e4a801fc3','Administrator',' ',  'admin@processmaker.com','2020-01-01','1999-11-30 00:00:00','2008-05-23 18:36:19','ACTIVE',  'US','FL','MMK','','',  '1-305-402-0282','1-305-675-1400','','','Administrator',  '','1999-02-25','PROCESSMAKER_ADMIN','',''),
+('00000000000000000000000000000001','admin','21232f297a57a5a743894a0e4a801fc3','Administrator',' ','admin@processmaker.com',DATE_ADD(curdate(), INTERVAL 1 YEAR),'1999-11-30 00:00:00','2008-05-23 18:36:19','ACTIVE',  'US','FL','MMK','','',  '1-305-402-0282','1-305-675-1400','','','Administrator',  '','1999-02-25','PROCESSMAKER_ADMIN','',''),
 ('00000000000000000000000000000002','guest','674ba9750749d735ec9787d606170d78','Guest',' ',  'guest@processmaker.com','2030-01-01','2009-02-01 12:24:36','2009-02-01 12:24:36','INACTIVE',  'US','FL','MMK','','',  '1-305-402-0282','1-305-675-1400','','','Guest',  '','2009-02-01','PROCESSMAKER_GUEST','','');
 
 INSERT INTO CONTENT (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG,CON_VALUE) VALUES 
@@ -57261,6 +57261,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_AVAILABLE_FIELDS','en','Available Fields','2014-01-15') ,
 ( 'LABEL','ID_AVAILABLE_GROUPS','en','AVAILABLE GROUPS','2014-01-15') ,
 ( 'LABEL','ID_AVAILABLE_MEMBERS','en','AVAILABLE MEMBERS','2014-01-15') ,
+( 'LABEL','ID_AVAILABLE_OFFLINE','en','Available offline','2019-10-15') ,
+( 'LABEL','ID_AVAILABLE_OFFLINE_THE_MOBILE_APPLICATIONS','en','Available offline, the mobile applications will download this table for offline use','2019-10-15') ,
 ( 'LABEL','ID_AVAILABLE_PERMISSIONS','en','AVAILABLE PERMISSIONS','2014-01-15') ,
 ( 'LABEL','ID_AVAILABLE_TRIGGERS','en','Available Triggers','2014-01-15') ,
 ( 'LABEL','ID_AVAILABLE_USERS','en','AVAILABLE USERS','2014-01-15') ,
@@ -57358,8 +57360,10 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE','en','Case','2014-01-15') ,
 ( 'LABEL','ID_CASECANCEL','en','No actions available for this case.','2014-01-15') ,
 ( 'LABEL','ID_CASEDEMO','en','Case Demo','2014-01-15') ,
+( 'LABEL','ID_CASE_DELETE_SUCCESFULLY','en','The Case was deleted successfully.','2020-01-08') ,
 ( 'LABEL','ID_CASES','en','HOME','2014-01-15') ,
 ( 'LABEL','ID_CASES1','en','Cases','2015-12-15') ,
+( 'LABEL','ID_CASES_DELETE_SUCCESFULLY','en','All Cases were deleted successfully.','2020-01-08') ,
 ( 'LABEL','ID_CASESLIST_APP_CURRENT_USER','en','Current User','2014-01-15') ,
 ( 'LABEL','ID_CASESLIST_APP_DEL_INDEX','en','Del Index','2014-01-15') ,
 ( 'LABEL','ID_CASESLIST_APP_DEL_PREVIOUS_USER','en','Sent by','2014-01-15') ,
@@ -57770,6 +57774,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DELETE','en','Delete','2014-01-15') ,
 ( 'LABEL','ID_DELETED','en','Deleted','2014-01-15') ,
 ( 'LABEL','ID_DELETED_SUCCESSFULLY','en','Deleted Successfully','2014-01-15') ,
+( 'LABEL','ID_DELETE_ACTION','en','Delete case','2020-01-15') ,
 ( 'LABEL','ID_DELETE_ALL_FIELDS','en','Do you want to delete all fields?','2014-01-15') ,
 ( 'LABEL','ID_DELETE_ALL_REPORT_TABLE','en','Do you want to delete all report tables?','2014-01-15') ,
 ( 'LABEL','ID_DELETE_AUTH_SOURCE','en','Delete Authentication Source','2014-10-13') ,
@@ -60150,6 +60155,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_NOTIFY','en','Notify','2016-10-20') ,
 ( 'LABEL','ID_NOTIFY_USERS_AFTER_ASSIGN','en','After routing notify the next assigned user(s)','2014-01-15') ,
 ( 'LABEL','ID_NOTIFY_USERS_CASE','en','Notify users of case','2014-01-15') ,
+( 'LABEL','ID_NOT_ABLE_DELETE_CASES','en','You are not allowed to delete cases, please contact your System Administrator.','2020-01-08') ,
 ( 'LABEL','ID_NOT_ABLE_REASSIGN','en','You are not able to reassign cases of this process.','2018-05-15') ,
 ( 'LABEL','ID_NOT_AVAILABLE_DATABASE','en','Not available.','2015-04-21') ,
 ( 'LABEL','ID_NOT_CREATE_TABLE','en','Could not create the table with the name','2014-01-15') ,
@@ -60217,6 +60223,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_OBJECT_REMOVE','en','Object has been removed successfully','2014-01-15') ,
 ( 'LABEL','ID_OBJECT_UPDATE','en','User has been updated successfully','2014-01-15') ,
 ( 'LABEL','ID_OFF','en','Off','2014-01-15') ,
+( 'LABEL','ID_OFFLINE_TABLES','en','Offline Tables','2019-12-19') ,
+( 'LABEL','ID_OFFLINE_TABLES_ENABLE','en','Set Offline Tables','2019-12-19') ,
+( 'LABEL','ID_OFFLINE_TABLES_DISABLE','en','Set Online Tables','2019-12-19') ,
 ( 'LABEL','ID_OF_THE_MONTH','en','of the month(s)','2014-01-15') ,
 ( 'LABEL','ID_OK','en','Ok','2015-09-17') ,
 ( 'LABEL','ID_OLD_VERSION','en','old version','2014-01-15') ,
@@ -60489,7 +60498,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_OPENSSL_OPTIONAL','en','Open SSL is optional','2014-01-15') ,
-( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_PHP','en','PHP recommended version 7.1 or higher, PHP 7.2 is not yet supported','2018-06-13') ,
+( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_PHP','en','PHP recommended version 7.3, we maintain compatibility starting with PHP 7.1','2019-12-02') ,
 ( 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_SOAP','en','Soap Support','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_SLOGAN1','en','This Business Process is Powered By ProcessMaker','2014-01-15') ,
 ( 'LABEL','ID_PROCESSMAKER_SUCCESS_INSTALLED','en','ProcessMaker was successfully installed<br/>Workspace <b>" {0} " </b> was installed correctly.','2014-01-15') ,

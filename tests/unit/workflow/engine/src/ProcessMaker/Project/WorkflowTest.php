@@ -1,0 +1,128 @@
+<?php
+
+namespace Tests\unit\workflow\engine\src\ProcessMaker\Project;
+
+use Exception;
+use Faker\Factory;
+use G;
+use ProcessMaker\Model\Dynaform;
+use ProcessMaker\Model\Process;
+use ProcessMaker\Model\WebEntry;
+use ProcessMaker\Project\Workflow;
+use Tests\TestCase;
+
+class WorkflowTest extends TestCase
+{
+    private $workflow;
+    private $directories;
+    private $files;
+    private $faker;
+
+    /**
+     * This method sets the values before starting any test.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->workflow = new Workflow();
+        $this->directories = [];
+        $this->files = [];
+        $this->faker = Factory::create();
+    }
+
+    /**
+     * This method is executed after each test.
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        foreach ($this->files as $value) {
+            unlink($value);
+        }
+        foreach ($this->directories as $value) {
+            rmdir($value);
+        }
+    }
+
+    /**
+     * This test ensures that the getData method returns the correct data.
+     * @test
+     * @covers \ProcessMaker\Project\Workflow::getData()
+     */
+    public function it_should_return_the_data_when_the_project_id_is_valid()
+    {
+        $process = factory(Process::class)->create();
+        $dynaforms = factory(Dynaform::class, 5)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(WebEntry::class, 5)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        //xmlForms
+        if (!is_dir(PATH_DYNAFORM)) {
+            mkdir(PATH_DYNAFORM);
+        }
+        $directory = PATH_DYNAFORM . $process->PRO_UID . "/";
+        $this->directories[] = $directory;
+        mkdir($directory);
+        foreach ($dynaforms as $dynaform) {
+            Dynaform::where('PRO_UID', $process->PRO_UID)
+                    ->where('DYN_UID', $dynaform->DYN_UID)
+                    ->update(['DYN_FILENAME' => $process->PRO_UID . '/' . $dynaform->DYN_UID]);
+
+            $dynUid = $dynaform->DYN_UID;
+            $data = '';
+            $filename = $directory . $dynUid . ".xml";
+            $this->files[] = $filename;
+            file_put_contents($filename, $data);
+
+            $filename = $directory . $dynUid . ".html";
+            $this->files[] = $filename;
+            file_put_contents($filename, $data);
+        }
+
+        //template
+        if (!is_dir(PATH_DATA_MAILTEMPLATES)) {
+            mkdir(PATH_DATA_MAILTEMPLATES);
+        }
+        $directory = PATH_DATA_MAILTEMPLATES . $process->PRO_UID;
+        $this->directories[] = $directory;
+        mkdir($directory);
+
+        $filename = $directory . "/test.html";
+        $this->files[] = $filename;
+        file_put_contents($filename, '');
+
+        //public files
+        if (!is_dir(PATH_DATA_PUBLIC)) {
+            mkdir(PATH_DATA_PUBLIC);
+        }
+        $directory = PATH_DATA_PUBLIC . $process->PRO_UID;
+        $this->directories[] = $directory;
+        mkdir($directory);
+
+        $filename = $directory . "/wsClient.php";
+        $this->files[] = $filename;
+        file_put_contents($filename, '');
+
+        $actual = $this->workflow->getData($process->PRO_UID);
+
+        $this->assertCount(2, $actual);
+        $this->assertArrayHasKey('process', $actual[0]);
+        $this->assertArrayHasKey('DYNAFORMS', $actual[1]);
+    }
+
+    /**
+     * This test should throw an exception when the parameter is not correct.
+     * @test
+     * @covers \ProcessMaker\Project\Workflow::getData()
+     */
+    public function it_should_throw_exception_when_get_data_is_failed()
+    {
+        $proUid = $this->faker->regexify("/[a-zA-Z]{32}/");
+
+        $this->expectException(Exception::class);
+        $actual = $this->workflow->getData($proUid);
+    }
+}

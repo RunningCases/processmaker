@@ -2522,6 +2522,8 @@
         <column name="ADD_TAB_TYPE" type="VARCHAR" size="32" required="false" default=""/>
         <column name="ADD_TAB_GRID" type="VARCHAR" size="256" required="false" default=""/>
         <column name="ADD_TAB_TAG" type="VARCHAR" size="256" required="false" default=""/>
+        <column name="ADD_TAB_OFFLINE" type="TINYINT" required="true" default="0"/>
+        <column name="ADD_TAB_UPDATE_DATE" type="TIMESTAMP" required="true"/>
         <index name="indexAdditionalProcess">
             <index-column name="PRO_UID"/>
         </index>

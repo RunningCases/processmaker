@@ -37,7 +37,7 @@ try {
     if (\BpmnProject::exists($_GET["pro_uid"]) && isset($_GET['objects'])) {
         /*----------------------------------********---------------------------------*/
         $_GET["objects"] = \G::json_decode($_GET['objects']);
-        if (sizeof($_GET['objects']) == 0) {
+        if (empty($_GET['objects'])) {
         /*----------------------------------********---------------------------------*/
             $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
             $projectName = $exporter->getProjectName();

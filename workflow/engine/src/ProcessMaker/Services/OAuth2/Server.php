@@ -3,6 +3,7 @@ namespace ProcessMaker\Services\OAuth2;
 
 use Luracast\Restler\iAuthenticate;
 use Luracast\Restler\RestException;
+use OAuth2\Request;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
@@ -53,7 +54,7 @@ class Server implements iAuthenticate
         }
 
         // Pass a storage object or array of storage objects to the OAuth2 server class
-        $this->server = new \OAuth2\Server($this->storage, array('allow_implicit' => true, 'access_lifetime' => 86400));
+        $this->server = new OAuth2Server($this->storage, array('allow_implicit' => true, 'access_lifetime' => 86400));
 
         $this->server->setConfig('enforce_state', false);
 
@@ -411,6 +412,19 @@ class Server implements iAuthenticate
 
     public static function getUserId()
     {
+        // If is empty, get the User Uid using the current request
+        if (empty(self::$userId) && !empty(self::$dsn)) {
+            // Get current request object
+            $request = Request::createFromGlobals();
+
+            // Get token data
+            $serverInstance = new Server();
+            $server = $serverInstance->getServer();
+            $tokenData = $server->getAccessTokenData($request);
+
+            // Set the User Uid
+            self::$userId = $tokenData['user_id'];
+        }
         return self::$userId;
     }
 

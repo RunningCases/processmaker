@@ -909,6 +909,8 @@ class PmDynaformTest extends TestCase
 
         $sqlOriginal3 = 'DUMMY';
 
+        $sqlOriginal4 = 'SELECT U.USR_UID, U.USR_USERNAME FROM PMT_CODES C INNER JOIN USERS U ON U.USR_USERNAME = C.USR_USERNAME';
+
         // Instance the class PmDynaform
         $pmDynaform = new PmDynaform([]);
 
@@ -924,6 +926,10 @@ class PmDynaformTest extends TestCase
         // Test another string, shoul be return the same value
         $sqlParsed3 = $pmDynaform->sqlParse($sqlOriginal3);
         $this->assertEquals($sqlOriginal3, $sqlParsed3);
+
+        // Test bug PMCORE-1049
+        $sqlParsed4 = $pmDynaform->sqlParse($sqlOriginal4);
+        $this->assertNotFalse(strpos($sqlParsed4, 'C.USR_USERNAME'));
     }
 
     /**
