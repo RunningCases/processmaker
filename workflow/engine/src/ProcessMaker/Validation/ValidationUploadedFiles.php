@@ -44,7 +44,7 @@ class ValidationUploadedFiles
         $validator->addRule()
                 ->validate($file, function($file) {
                     $filesystem = new Filesystem();
-                    $extension = $filesystem->extension($file->filename);
+                    $extension = strtolower($filesystem->extension($file->filename));
 
                     return Bootstrap::getDisablePhpUploadExecution() === 1 && $extension === 'php';
                 })
@@ -112,7 +112,7 @@ class ValidationUploadedFiles
                         return false;
                     }
 
-                    $extension = $filesystem->extension($file->filename);
+                    $extension = strtolower($filesystem->extension($file->filename));
                     $mimeType = $filesystem->mimeType($path);
 
                     $file = new File($path);
