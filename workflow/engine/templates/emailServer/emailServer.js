@@ -1283,6 +1283,10 @@ emailServer.application = {
             autoScroll: false,
             items: [grdpnlMain]
         });
+
+        if (errorMessageIfNotAuthenticate && errorMessageIfNotAuthenticate !== "") {
+            Ext.MessageBox.alert(_("ID_INVALID_DATA"), errorMessageIfNotAuthenticate);
+        }
     }
 }
 

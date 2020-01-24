@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
+
 global $RBAC;
 
 $resultRbac = $RBAC->requirePermissions('PM_SETUP_EMAIL');
@@ -8,6 +10,12 @@ if (!$resultRbac) {
     G::header('location: ../login/login');
     die();
 }
+
+$messageSent = "";
+if (Cache::has('errorMessageIfNotAuthenticate')) {
+    $messageSent = Cache::get('errorMessageIfNotAuthenticate');
+}
+Cache::forget('errorMessageIfNotAuthenticate');
 
 //Data
 $configuration = new Configurations();
@@ -20,6 +28,7 @@ $headPublisher = headPublisher::getSingleton();
 $headPublisher->addContent("emailServer/emailServer"); //Adding a HTML file
 $headPublisher->addExtJsScript("emailServer/emailServer", false); //Adding a JavaScript file
 $headPublisher->assign("CONFIG", $arrayConfig);
+$headPublisher->assign("errorMessageIfNotAuthenticate", $messageSent);
 
 /*----------------------------------********---------------------------------*/
 $headPublisher->assign("EMAILSERVER_LICENSED", (PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0=")) ? 1 : 0);
