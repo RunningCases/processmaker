@@ -1080,6 +1080,7 @@ Ext.onReady(function(){
                 success: function ( result, request ) {
                   try {
                       parent.notify("", _("ID_CASE_CANCELLED", stringReplace("\\: ", "", _APP_NUM)));
+                      parent.updateCasesTree();
                   }
                   catch (e) {
                   }
@@ -1346,6 +1347,7 @@ Ext.onReady(function(){
             if( data.status == 0 ) {
               try {
                 parent.notify('', data.msg);
+                parent.updateCasesTree();
               }
               catch (e) {
               }
@@ -1545,6 +1547,7 @@ Ext.onReady(function(){
                   if(req.result.success) {
                     try {
                       parent.notify('PAUSE CASE', req.result.msg);
+                      parent.updateCasesTree();
                     }catch (e) {
                     }
                     location.href = urlToRedirectAfterPause;
@@ -1583,6 +1586,7 @@ Ext.onReady(function(){
           if( data.success ) {
             try {
               parent.PMExt.notify(_('ID_UNPAUSE_ACTION'), data.msg);
+              parent.updateCasesTree();
             }
             catch (e) {
             }
@@ -1636,6 +1640,7 @@ Ext.onReady(function(){
 				if( data.success ) {
 					try {
 					   parent.PMExt.notify(_('ID_DELETE_ACTION'), data.msg);
+					   parent.updateCasesTree();
 					}
 					catch (e) {
 					}

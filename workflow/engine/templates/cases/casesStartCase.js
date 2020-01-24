@@ -464,6 +464,11 @@ function openCaseA(n){
             } else {
               window.location = res.openCase.PAGE;
             }
+            try {
+                parent.updateCasesTree();
+            } catch (e) {
+                // Nothing to do
+            }
           }else if (res.lostSession) {
               Ext.Msg.show({
                        title : TRANSLATIONS.ID_ERROR_CREATING_NEW_CASE, // 'Error creating a new Case',
