@@ -2,6 +2,8 @@
 
 namespace ProcessMaker\GmailOAuth;
 
+use AppMessage;
+use Bootstrap;
 use G;
 use Google_Client;
 use Google_Service_Gmail;
@@ -10,6 +12,7 @@ use PHPMailerOAuth;
 use ProcessMaker\BusinessModel\EmailServer;
 use ProcessMaker\Core\System;
 use TemplatePower;
+use WsBase;
 
 class GmailOAuth
 {
@@ -415,7 +418,65 @@ class GmailOAuth
         $phpMailerOAuth->Subject = G::LoadTranslation("ID_MESS_TEST_SUBJECT");
         $phpMailerOAuth->Body = utf8_encode($this->getMessageBody());
         $phpMailerOAuth->AddAddress($this->mailTo);
-        $phpMailerOAuth->Send();
+        $status = $phpMailerOAuth->Send();
+        $this->saveIntoStandardLogs($status ? "sent" : "pending");
+        $this->saveIntoAppMessage($status ? "sent" : "pending");
         return $phpMailerOAuth;
+    }
+
+    /**
+     * Register into APP_MESSAGE table.
+     * @param string $status
+     */
+    public function saveIntoAppMessage(string $status = "")
+    {
+        $appMsgUid = G::generateUniqueID();
+        $spool = new AppMessage();
+        $spool->setAppMsgUid($appMsgUid);
+        $spool->setMsgUid("");
+        $spool->setAppUid("");
+        $spool->setDelIndex(0);
+        $spool->setAppMsgType(WsBase::MESSAGE_TYPE_TEST_EMAIL);
+        $spool->setAppMsgTypeId(isset(AppMessage::$app_msg_type_values[WsBase::MESSAGE_TYPE_TEST_EMAIL]) ? AppMessage::$app_msg_type_values[WsBase::MESSAGE_TYPE_TEST_EMAIL] : 0);
+        $spool->setAppMsgSubject(G::LoadTranslation("ID_MESS_TEST_SUBJECT"));
+        $spool->setAppMsgFrom($this->fromAccount);
+        $spool->setAppMsgTo($this->mailTo);
+        $spool->setAppMsgBody(utf8_encode($this->getMessageBody()));
+        $spool->setAppMsgDate(date('Y-m-d H:i:s'));
+        $spool->setAppMsgCc("");
+        $spool->setAppMsgBcc("");
+        $spool->setappMsgAttach(serialize([""]));
+        $spool->setAppMsgTemplate("");
+        $spool->setAppMsgStatus($status);
+        $spool->setAppMsgStatusId(AppMessage::$app_msg_status_values[$status] ? AppMessage::$app_msg_status_values[$status] : 0);
+        $spool->setAppMsgSendDate(date('Y-m-d H:i:s'));
+        $spool->setAppMsgShowMessage(1);
+        $spool->setAppMsgError("");
+        $spool->setAppNumber(0);
+        $spool->setTasId(0);
+        $spool->setProId(0);
+        $spool->save();
+    }
+
+    /**
+     * Register into standard logs.
+     * @param string $status
+     */
+    public function saveIntoStandardLogs(string $status = "")
+    {
+        $channel = "Test Email Servers Configuration";
+        $severity = 200; //INFO
+        $message = "Email Server test has been sent";
+        $context = [
+            "emailServerUid" => $this->emailServerUid,
+            "emailEngine" => $this->emailEngine,
+            "from" => $this->fromAccount,
+            "senderAccount" => $this->mailTo,
+            "senderEmail" => $this->senderEmail,
+            "senderName" => $this->senderName,
+            "status" => $status
+        ];
+        $workspace = config("system.workspace");
+        Bootstrap::registerMonolog($channel, $severity, $message, $context, $workspace);
     }
 }

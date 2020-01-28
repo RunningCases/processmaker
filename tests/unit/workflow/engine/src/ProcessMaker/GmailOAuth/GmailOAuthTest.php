@@ -210,6 +210,10 @@ class GmailOAuthTest extends TestCase
         $gmailOauth->setSendTestMail(0);
         $result = $gmailOauth->sendTestEmailWithGoogleServiceGmail();
         $this->assertTrue($result instanceof Google_Service_Gmail_Message);
+        
+        $this->expectException(Exception::class);
+        $gmailOauth->setSendTestMail(1);
+        $result = $gmailOauth->sendTestEmailWithGoogleServiceGmail();
     }
 
     /**
@@ -249,6 +253,12 @@ class GmailOAuthTest extends TestCase
         $gmailOauth->setSendTestMail(0);
         $result = $gmailOauth->sendTestMailWithPHPMailerOAuth();
         $this->assertTrue($result instanceof PHPMailerOAuth);
+
+        $this->expectException(Exception::class);
+        $gmailOauth->setSenderEmail("");
+        $gmailOauth->setMailTo($faker->email);
+        $gmailOauth->setSendTestMail(1);
+        $result = $gmailOauth->sendTestMailWithPHPMailerOAuth();
     }
 
     /**
@@ -261,5 +271,63 @@ class GmailOAuthTest extends TestCase
         $gmailOauth = new GmailOAuth();
         $result = $gmailOauth->getMessageBody();
         $this->assertTrue(is_string($result));
+    }
+
+    /**
+     * This ensures that it is saved in the APP_MESSAGE table.
+     * @test
+     * @covers \ProcessMaker\GmailOAuth\GmailOAuth::saveIntoAppMessage()
+     */
+    public function it_should_save_into_app_message_table()
+    {
+        $faker = $this->faker;
+        $gmailOauth = new GmailOAuth();
+
+        $gmailOauth->setFromAccount($faker->email);
+        $gmailOauth->setSenderEmail($faker->email);
+        $gmailOauth->setMailTo($faker->email);
+
+        try {
+            $gmailOauth->saveIntoAppMessage("pending");
+        } catch (Exception $e) {
+            $this->fail($e->getMessage());
+        }
+        $this->assertTrue(true);
+
+        try {
+            $gmailOauth->saveIntoAppMessage("sent");
+        } catch (Exception $e) {
+            $this->fail($e->getMessage());
+        }
+        $this->assertTrue(true);
+    }
+
+    /**
+     * This ensures that it is saved in the Standard Log table.
+     * @test
+     * @covers \ProcessMaker\GmailOAuth\GmailOAuth::saveIntoStandardLogs()
+     */
+    public function it_should_save_into_standard_log()
+    {
+        $faker = $this->faker;
+        $gmailOauth = new GmailOAuth();
+
+        $gmailOauth->setFromAccount($faker->email);
+        $gmailOauth->setSenderEmail($faker->email);
+        $gmailOauth->setMailTo($faker->email);
+
+        try {
+            $gmailOauth->saveIntoStandardLogs("pending");
+        } catch (Exception $e) {
+            $this->fail($e->getMessage());
+        }
+        $this->assertTrue(true);
+
+        try {
+            $gmailOauth->saveIntoStandardLogs("sent");
+        } catch (Exception $e) {
+            $this->fail($e->getMessage());
+        }
+        $this->assertTrue(true);
     }
 }
