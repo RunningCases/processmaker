@@ -11,7 +11,7 @@ try {
     $validInput = empty($_GET['code']) || empty($_SESSION['gmailOAuth']) || !is_object($_SESSION['gmailOAuth']);
     if ($validInput) {
         G::header($header);
-        exit();
+        return;
     }
 
     $RBAC->allows(basename(__FILE__), "code");
@@ -22,7 +22,7 @@ try {
     if (isset($result["error"])) {
         Cache::put('errorMessageIfNotAuthenticate', G::json_decode($result["error"]), 2);
         G::header($header);
-        exit();
+        return;
     }
 
     $gmailOAuth->setRefreshToken($googleClient->getRefreshToken());
@@ -38,4 +38,4 @@ try {
 }
 
 G::header($header);
-exit();
+return;
