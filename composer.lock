@@ -1537,7 +1537,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jean-Marc Trémeaux",
+                    "name": "Jean-Marc Tr??meaux",
                     "homepage": "http://naku.dohcrew.com/",
                     "role": "Developer"
                 },
@@ -1634,7 +1634,7 @@
                 "rest",
                 "server"
             ],
-            "time": "2019-05-12T15:05:48+00:00"
+            "time": "2017-01-11T03:42:36+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -3067,7 +3067,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-11-03T06:39:13+00:00"
+            "time": "2016-07-19T18:31:12+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -5845,8 +5845,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "role": "lead",
-                    "email": "sb@sebastian-bergmann.de"
+                    "email": "sb@sebastian-bergmann.de",
+                    "role": "lead"
                 }
             ],
             "description": "Library that provides collection, processing, and rendering functionality for PHP code coverage information.",
@@ -6113,8 +6113,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "role": "lead",
-                    "email": "sebastian@phpunit.de"
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
                 }
             ],
             "description": "The PHP Unit Testing framework.",
