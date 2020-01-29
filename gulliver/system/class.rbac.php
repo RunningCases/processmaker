@@ -387,7 +387,7 @@ class RBAC
             ],
             [
                 "PER_UID" => "00000000000000000000000000000015",
-                "PER_CODE" => "PM_FOLDERS_VIEW",
+                "PER_CODE" => "PM_FOLDERS_ALL",
                 "PER_NAME" => "View Folders"
             ],
             [
@@ -645,8 +645,12 @@ class RBAC
                 'PER_UID' => '00000000000000000000000000000067',
                 'PER_CODE' => 'PM_SETUP_LOG_FILES',
                 'PER_NAME' => 'Log Files'
+            ],
+            [
+                'PER_UID' => '00000000000000000000000000000068',
+                'PER_CODE' => 'PM_FOLDERS_OWNER',
+                'PER_NAME' => 'View Your Folders'
             ]
-
         ];
 
         return $permissionsAdmin;
