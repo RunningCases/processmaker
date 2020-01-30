@@ -929,70 +929,6 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This checks the counters is working properly in self-service and self-service value based
-     *
-     * @covers \ProcessMaker\Model\Delegation::countSelfService()
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_mixed_with_self_service_value_based()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create a case
-        $application = factory(Application::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in self service
-        factory(Delegation::class, 15)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
-        //Create a task self service value based
-        $task1 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => 2,
-            'TAS_ID' => $task1->TAS_ID
-        ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
-            'ID' => $appSelfValue->ID,
-            'GRP_UID' => $user->USR_UID,
-            'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
-            'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
-        ]);
-        //Create the register in self service value based
-        factory(Delegation::class, 15)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => $appSelfValue->DEL_INDEX,
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_ID' => 0,
-        ]);
-        //Review the count self-service
-        $result = Delegation::countSelfService($user->USR_UID);
-        $this->assertEquals(30, $result);
-    }
-
-    /**
      * This checks the counters is working properly in self-service group assigned
      *
      * @covers \ProcessMaker\Model\Delegation::countSelfService()
@@ -1093,6 +1029,83 @@ class DelegationTest extends TestCase
         //Review the count self-service
         $result = Delegation::countSelfService($user->USR_UID);
         $this->assertEquals(25, $result);
+    }
+
+    /**
+     * This checks the counters is working properly with self-service and self-service-value-based
+     *
+     * @covers \ProcessMaker\Model\Delegation::countSelfService()
+     * @test
+     */
+    public function it_should_count_cases_by_user_with_self_service_and_self_service_value_based()
+    {
+        //Create process
+        $process = factory(Process::class)->create();
+        //Create group
+        $group = factory(Groupwf::class)->create();
+        //Create user
+        $user = factory(User::class)->create();
+        //Assign a user in the group
+        factory(GroupUser::class)->create([
+            'GRP_UID' => $group->GRP_UID,
+            'GRP_ID' => $group->GRP_ID,
+            'USR_UID' => $user->USR_UID
+        ]);
+        //Create a task self service
+        $taskSelfService = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        //Assign a user in the task
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $taskSelfService->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1, //Related to the user
+            'TU_TYPE' => 1
+        ]);
+        //Create the register in self service
+        factory(Delegation::class)->create([
+            'TAS_ID' => $taskSelfService->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+        ]);
+
+        //Create a task self service value based
+        $taskSelfServiceByVariable = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        //Assign a user in the task
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $taskSelfServiceByVariable->TAS_UID,
+            'USR_UID' => $group->GRP_UID,
+            'TU_RELATION' => 2, //Related to the group
+            'TU_TYPE' => 1
+        ]);
+        //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
+        $appAssignSelfService = factory(AppAssignSelfServiceValue::class)->create([
+            'TAS_ID' => $taskSelfServiceByVariable->TAS_ID
+        ]);
+        factory(AppAssignSelfServiceValueGroup::class)->create([
+            'ID' => $appAssignSelfService->ID,
+            'GRP_UID' => $group->GRP_UID,
+            'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
+            'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
+        ]);
+        //Create the register in self service value based
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $appAssignSelfService->APP_NUMBER,
+            'DEL_INDEX' => $appAssignSelfService->DEL_INDEX,
+            'TAS_ID' => $taskSelfServiceByVariable->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+        ]);
+
+        //Review the count self-service
+        $result = Delegation::countSelfService($user->USR_UID);
+        $this->assertEquals(2, $result);
     }
 
     /**
