@@ -22536,10 +22536,16 @@ msgid "You clicked Ctrl + F5"
 msgstr "You clicked Ctrl + F5"
 
 # TRANSLATION
+# LABEL/ID_REFRESH_TIME_SCOPE
+#: LABEL/ID_REFRESH_TIME_SCOPE
+msgid "Only applied for counters in the home view folder list"
+msgstr "Only applied for counters in the home view folder list"
+
+# TRANSLATION
 # LABEL/ID_REFRESH_TIME_SECONDS
 #: LABEL/ID_REFRESH_TIME_SECONDS
-msgid "Refresh Time (seconds)"
-msgstr "Refresh Time (seconds)"
+msgid "Counters Refresh Time (seconds)"
+msgstr "Counters Refresh Time (seconds)"
 
 # TRANSLATION
 # LABEL/ID_REFRESH_VIEW
