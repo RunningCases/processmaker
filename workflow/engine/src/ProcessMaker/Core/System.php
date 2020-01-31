@@ -74,7 +74,10 @@ class System
         'delay' => '0',
         'tries' => '10',
         'retry_after' => '90',
-        'mobile_offline_tables_download_interval' => 24
+        'mobile_offline_tables_download_interval' => 24,
+        'highlight_home_folder_enable' => 0,
+        'highlight_home_folder_refresh_time' => 10,
+        'highlight_home_folder_scope' => 'unassigned' // For now only this list is supported
     ];
 
     /**
@@ -1211,6 +1214,21 @@ class System
         $value = (string) $config['mobile_offline_tables_download_interval'];
         if (!is_numeric($value)) {
             $config['mobile_offline_tables_download_interval'] = self::$defaultConfig['mobile_offline_tables_download_interval'];
+        }
+
+        $value = $config['highlight_home_folder_enable'];
+        if (!is_numeric($value) || !in_array($value, [0, 1])) {
+            $config['highlight_home_folder_enable'] = self::$defaultConfig['highlight_home_folder_enable'];
+        }
+
+        $value = $config['highlight_home_folder_refresh_time'];
+        if (!is_numeric($value)) {
+            $config['highlight_home_folder_refresh_time'] = self::$defaultConfig['highlight_home_folder_refresh_time'];
+        }
+
+        $value = $config['highlight_home_folder_scope'];
+        if ($value !== "unassigned") { // Currently only this value is validated
+            $config['highlight_home_folder_scope'] = self::$defaultConfig['highlight_home_folder_scope'];
         }
 
         return $config;
