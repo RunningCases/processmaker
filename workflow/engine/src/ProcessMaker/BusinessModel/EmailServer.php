@@ -195,7 +195,7 @@ class EmailServer
             $bodyPre = new TemplatePower(PATH_TPL . "admin" . PATH_SEP . "email.tpl");
 
             $bodyPre->prepare();
-            $bodyPre->assign("server", $_SERVER["SERVER_NAME"]);
+            $bodyPre->assign("server", System::getServerProtocol() . System::getServerHost());
             $bodyPre->assign("date", date("H:i:s"));
             $bodyPre->assign("ver", System::getVersion());
             $bodyPre->assign("engine", $engine);
