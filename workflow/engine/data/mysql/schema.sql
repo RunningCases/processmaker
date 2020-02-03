@@ -2784,6 +2784,9 @@ CREATE TABLE `EMAIL_SERVER`
 	`MESS_TRY_SEND_INMEDIATLY` INTEGER default 0 NOT NULL,
 	`MAIL_TO` VARCHAR(256) default '',
 	`MESS_DEFAULT` INTEGER default 0 NOT NULL,
+	`OAUTH_CLIENT_ID` VARCHAR(512) default '' NOT NULL,
+	`OAUTH_CLIENT_SECRET` VARCHAR(512) default '' NOT NULL,
+	`OAUTH_REFRESH_TOKEN` VARCHAR(512) default '' NOT NULL,
 	PRIMARY KEY (`MESS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------

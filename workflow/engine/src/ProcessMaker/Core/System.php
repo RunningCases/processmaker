@@ -1016,7 +1016,10 @@ class System
                 "MESS_BACKGROUND" => "",
                 "MESS_PASSWORD_HIDDEN" => "",
                 "MESS_EXECUTE_EVERY" => "",
-                "MESS_SEND_MAX" => ""
+                "MESS_SEND_MAX" => "",
+                "OAUTH_CLIENT_ID" => $arrayEmailServerDefault["OAUTH_CLIENT_ID"],
+                "OAUTH_CLIENT_SECRET" => $arrayEmailServerDefault["OAUTH_CLIENT_SECRET"],
+                "OAUTH_REFRESH_TOKEN" => $arrayEmailServerDefault["OAUTH_REFRESH_TOKEN"]
             );
 
             //Return
