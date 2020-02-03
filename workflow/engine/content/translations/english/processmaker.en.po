@@ -4332,6 +4332,18 @@ msgid "Click the lock to prevent further changes."
 msgstr "Click the lock to prevent further changes."
 
 # TRANSLATION
+# LABEL/ID_CLIENT_ID
+#: LABEL/ID_CLIENT_ID
+msgid "Client ID"
+msgstr "Client ID"
+
+# TRANSLATION
+# LABEL/ID_CLIENT_SECRET
+#: LABEL/ID_CLIENT_SECRET
+msgid "Client Secret"
+msgstr "Client Secret"
+
+# TRANSLATION
 # LABEL/ID_CLOSE
 #: LABEL/ID_CLOSE
 msgid "Close"
@@ -7064,8 +7076,8 @@ msgstr "The email was resend to"
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_ACCOUNT_FROM
 #: LABEL/ID_EMAIL_SERVER_ACCOUNT_FROM
-msgid "Sender Account"
-msgstr "Sender Account"
+msgid "From Account"
+msgstr "From Account"
 
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_CONFIRM_DELETE
@@ -18700,6 +18712,12 @@ msgstr "SMTP (PHPMailer)"
 #: LABEL/ID_MESS_ENGINE_TYPE_3
 msgid "SMTP (OpenMail)"
 msgstr "SMTP (OpenMail)"
+
+# TRANSLATION
+# LABEL/ID_MESS_ENGINE_TYPE_4
+#: LABEL/ID_MESS_ENGINE_TYPE_4
+msgid "OAUTH (GMail OAuth)"
+msgstr "OAUTH (GMail OAuth)"
 
 # TRANSLATION
 # LABEL/ID_MESS_SEND_MAX_REQUIRED

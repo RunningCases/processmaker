@@ -5013,6 +5013,9 @@
         <column name="MESS_TRY_SEND_INMEDIATLY" type="INTEGER" required="true" default="0"/>
         <column name="MAIL_TO" type="VARCHAR" size="256" required="false" default=""/>
         <column name="MESS_DEFAULT" type="INTEGER" required="true" default="0"/>
+        <column name="OAUTH_CLIENT_ID" type="VARCHAR" size="512" required="true" default=""/>
+        <column name="OAUTH_CLIENT_SECRET" type="VARCHAR" size="512" required="true" default=""/>
+        <column name="OAUTH_REFRESH_TOKEN" type="VARCHAR" size="512" required="true" default=""/>
     </table>
 
     <table name="WEB_ENTRY_EVENT">

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Crypt;
 use ProcessMaker\BusinessModel\EmailServer;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
@@ -930,6 +931,12 @@ class WsBase
                             $row = $rsCriteria->getRow();
                             $arrayConfigAux = $row;
                             $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
+                            $arrayConfigAux["OAUTH_CLIENT_ID"] = !empty($row["OAUTH_CLIENT_ID"]) ?
+                                Crypt::decryptString($row["OAUTH_CLIENT_ID"]) : '';
+                            $arrayConfigAux["OAUTH_CLIENT_SECRET"] = !empty($row["OAUTH_CLIENT_SECRET"]) ?
+                                Crypt::decryptString($row["OAUTH_CLIENT_SECRET"]) : '';
+                            $arrayConfigAux["OAUTH_REFRESH_TOKEN"] = !empty($row["OAUTH_REFRESH_TOKEN"]) ?
+                                Crypt::decryptString($row["OAUTH_REFRESH_TOKEN"]) : '';
                         }
                     }
                 }
