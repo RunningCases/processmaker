@@ -1026,81 +1026,86 @@ Ext.onReady(function(){
        });
   }
 
-  Actions.cancelCase = function()
-  {
-    var msgCancel =  new Ext.Window({
-      width:500,
-      plain: true,
-      modal: true,
-      resizable: false,
-      title: _('ID_CONFIRM'),
-      items: [
-        new Ext.FormPanel({
-          labelAlign: 'top',
-          labelWidth: 75,
-          border: false,
-          frame: true,
+  Actions.cancelCase = function () {
+      var msgCancel = new Ext.Window({
+          width: 500,
+          plain: true,
+          modal: true,
+          resizable: false,
+          title: _('ID_CONFIRM'),
           items: [
-            {
-              html: '<div align="center" style="font: 14px tahoma,arial,helvetica,sans-serif">' + _('ID_CONFIRM_CANCEL_CASE')+'? </div> <br/>'
-            },
-            {
-              xtype: 'textarea',
-              id: 'noteReason',
-              fieldLabel: _('ID_CASE_CANCEL_REASON'),
-              name: 'noteReason',
-              width: 450,
-              height: 50
-            },
-            {
-              id: 'notifyReason',
-              xtype:'checkbox',
-              name: 'notifyReason',
-              hideLabel: true,
-              boxLabel: _('ID_NOTIFY_USERS_CASE')
-            }
-          ],
-
-          buttonAlign: 'center',
-
-          buttons: [{
-            text: 'Ok',
-            handler: function(){
-              if (Ext.getCmp('noteReason').getValue() != '') {
-                var noteReasonTxt = _('ID_CASE_CANCEL_LABEL_NOTE') + ' ' + Ext.getCmp('noteReason').getValue();
-              } else {
-                var noteReasonTxt = '';
-              }
-              var notifyReasonVal = Ext.getCmp('notifyReason').getValue() == true ? 1 : 0;
-
-              Ext.MessageBox.show({ msg: _('ID_PROCESSING'), wait:true,waitConfig: {interval:200} });
-              Ext.Ajax.request({
-                url : 'ajaxListener' ,
-                params : {action : 'cancelCase', NOTE_REASON: noteReasonTxt, NOTIFY_PAUSE: notifyReasonVal},
-                success: function ( result, request ) {
-                  try {
-                      parent.notify("", _("ID_CASE_CANCELLED", stringReplace("\\: ", "", _APP_NUM)));
-                      parent.updateCasesTree();
-                  }
-                  catch (e) {
-                  }
-                  location.href = 'casesListExtJs';
-                },
-                failure: function ( result, request) {
-                  Ext.MessageBox.alert( _('ID_FAILED'), result.responseText);
-                }
-              });
-            }
-          },{
-            text: _('ID_CANCEL'),
-            handler: function(){
-                msgCancel.close();
-            }
-          }]
-        })
-      ]
-    });
-    msgCancel.show(this);
+              new Ext.FormPanel({
+                  labelAlign: 'top',
+                  labelWidth: 75,
+                  border: false,
+                  frame: true,
+                  items: [{
+                          html: '<div align="center" style="font: 14px tahoma,arial,helvetica,sans-serif">' + _('ID_CONFIRM_CANCEL_CASE') + '? </div> <br/>'
+                      },
+                      {
+                          xtype: 'textarea',
+                          id: 'noteReason',
+                          fieldLabel: _('ID_CASE_CANCEL_REASON'),
+                          name: 'noteReason',
+                          width: 450,
+                          height: 50
+                      },
+                      {
+                          id: 'notifyReason',
+                          xtype: 'checkbox',
+                          name: 'notifyReason',
+                          hideLabel: true,
+                          boxLabel: _('ID_NOTIFY_USERS_CASE')
+                  }],
+                  buttonAlign: 'center',
+                  buttons: [{
+                      text: 'Ok',
+                      handler: function () {
+                          if (Ext.getCmp('noteReason').getValue() != '') {
+                              var noteReasonTxt = _('ID_CASE_CANCEL_LABEL_NOTE') + ' ' + Ext.getCmp('noteReason').getValue();
+                          } else {
+                              var noteReasonTxt = '';
+                          }
+                          var notifyReasonVal = Ext.getCmp('notifyReason').getValue() == true ? 1 : 0;
+                          Ext.MessageBox.show({msg: _('ID_PROCESSING'), wait: true, waitConfig: {interval: 200}});
+                          Ext.Ajax.request({
+                              url: 'ajaxListener',
+                              params: {
+                                  action: 'cancelCase',
+                                  NOTE_REASON: noteReasonTxt,
+                                  NOTIFY_PAUSE: notifyReasonVal
+                              },
+                              success: function (result, request) {
+                                  try {
+                                      var data = Ext.util.JSON.decode(result.responseText);
+                                      if (data.status == true) {
+                                          // The case was cancelled
+                                          parent.notify('', _("ID_CASE_CANCELLED", stringReplace("\\: ", "", _APP_NUM)));
+                                      } else {
+                                          // The case wasn't cancel
+                                          parent.notify('', data.msg);
+                                      }
+                                      parent.updateCasesTree();
+                                  } catch (e) {
+                                      parent.notify('', _('ID_SOMETHING_WRONG'));
+                                  }
+                                  location.href = 'casesListExtJs';
+                              },
+                              failure: function (result, request) {
+                                  Ext.MessageBox.alert(_('ID_FAILED'), result.responseText);
+                              }
+                          });
+                      }
+                  }, {
+                      text: _('ID_CANCEL'),
+                      handler: function () {
+                          msgCancel.close();
+                      }
+                  }]
+              })
+          ]
+      });
+      msgCancel.show(this);
   }
 
   Actions.getUsersToReassign = function()
