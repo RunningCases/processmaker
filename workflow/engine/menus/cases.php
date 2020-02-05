@@ -111,7 +111,7 @@ if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_REA
     );
 }
 
-if ($RBAC->userCanAccess('PM_FOLDERS_VIEW_ALL') == 1 || $RBAC->userCanAccess('PM_FOLDERS_VIEW_OWNER') == 1) {
+if ($RBAC->userCanAccess('PM_FOLDERS_ALL') == 1 || $RBAC->userCanAccess('PM_FOLDERS_OWNER') == 1) {
     $G_TMP_MENU->AddIdRawOption(
         'CASES_FOLDERS',
         'casesStartPage?action=documents',
