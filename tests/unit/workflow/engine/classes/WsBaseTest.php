@@ -2,6 +2,7 @@
 
 use App\Jobs\EmailEvent;
 use Faker\Factory;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Queue;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppThread;
@@ -13,8 +14,15 @@ use ProcessMaker\Model\User;
 use ProcessMaker\Util\WsMessageResponse;
 use Tests\TestCase;
 
+/**
+ * Class WsBase
+ *
+ * @coversDefaultClass WsBase
+ */
 class WsBaseTest extends TestCase
 {
+    use DatabaseTransactions;
+
     /**
      * Constructor of the class.
      * 
@@ -207,9 +215,10 @@ class WsBaseTest extends TestCase
     /**
      * This should send an email of types elements to the work queue jobs.
      * Queue-fake has been used, see more at: https://laravel.com/docs/5.7/mocking#queue-fake
+     *
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers \WsBase::sendMessage
+     * @covers WsBase::sendMessage()
      */
     public function it_should_send_an_sendMessage_with_queue_jobs($messageType)
     {
@@ -246,9 +255,10 @@ class WsBaseTest extends TestCase
     /**
      * This should send an email of types elements without work queue jobs.
      * Queue-fake has been used, see more at: https://laravel.com/docs/5.7/mocking#queue-fake
+     *
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers \WsBase::sendMessage
+     * @covers WsBase::sendMessage()
      */
     public function it_should_execute_an_sendMessage_without_queue_jobs($messageTypes)
     {
@@ -284,9 +294,10 @@ class WsBaseTest extends TestCase
 
     /**
      * It should send an sendMessage with queue jobs and empty config parameter.
+     *
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers \WsBase::sendMessage
+     * @covers WsBase::sendMessage()
      */
     public function it_should_send_an_sendMessage_with_queue_jobs_and_empty_config_parameter($messageTypes)
     {
@@ -322,9 +333,10 @@ class WsBaseTest extends TestCase
 
     /**
      * It should send an sendMessage without queue jobs and empty config parameter.
+     *
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers \WsBase::sendMessage
+     * @covers WsBase::sendMessage()
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_empty_config_parameter($messageTypes)
     {
@@ -360,9 +372,10 @@ class WsBaseTest extends TestCase
 
     /**
      * It should send an sendMessage with queue jobs and config parameter like id.
+     *
      * @test
      * @dataProvider messageTypesWithQueue
-     * @covers \WsBase::sendMessage
+     * @covers WsBase::sendMessage()
      */
     public function it_should_send_an_sendMessage_with_queue_jobs_and_config_parameter_like_id($messageTypes)
     {
@@ -398,9 +411,10 @@ class WsBaseTest extends TestCase
 
     /**
      * It should send an sendMessage without queue jobs and config parameter like id.
+     *
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers \WsBase::sendMessage
+     * @covers WsBase::sendMessage()
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_config_parameter_like_id($messageTypes)
     {
@@ -436,9 +450,10 @@ class WsBaseTest extends TestCase
 
     /**
      * It should send an sendMessage without queue jobs and gmail parameter like one.
+     *
      * @test
      * @dataProvider messageTypesWithoutQueue
-     * @covers \WsBase::sendMessage
+     * @covers WsBase::sendMessage()
      */
     public function it_should_send_an_sendMessage_without_queue_jobs_and_gmail_parameter_like_one($messageTypes)
     {
@@ -476,7 +491,7 @@ class WsBaseTest extends TestCase
      * Test that the casesList method returns the case title value
      *
      * @test
-     * @covers \WsBase::caseList
+     * @covers WsBase::caseList()
      */
     public function it_should_test_that_the_cases_list_method_returns_the_case_title()
     {
@@ -550,7 +565,7 @@ class WsBaseTest extends TestCase
      * Test the casesList method when the result is empty
      *
      * @test
-     * @covers \WsBase::caseList
+     * @covers WsBase::caseList()
      */
     public function it_should_test_the_cases_list_method_when_there_are_no_results()
     {
@@ -617,7 +632,7 @@ class WsBaseTest extends TestCase
     /**
      * This test ensures obtaining the email configuration with all fields.
      * @test
-     * @covers \WsBase::sendMessage()
+     * @covers WsBase::sendMessage()
      */
     public function it_should_get_email_configuration()
     {
@@ -644,5 +659,288 @@ class WsBaseTest extends TestCase
 
         //assertions
         $this->assertInstanceOf(WsMessageResponse::class, $result);
+    }
+
+    /**
+     * Review if the flag is true when the cancel case is related to the same case in SESSION
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_set_flag_when_is_same_case()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $_SESSION["APPLICATION"] = $delegation->APP_UID;
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->APP_UID);
+        $this->assertEquals($ws->getFlagSameCase(), true);
+        $this->assertNotEmpty($response);
+    }
+
+    /**
+     * Review the required field caseUid
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_validate_required_app_uid()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase('', $delegation->DE_INDEX, $delegation->URS_UID);
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_REQUIRED_FIELD") . ' caseUid');
+    }
+
+    /**
+     * Review the required field status = TO_DO
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_validate_required_status_todo()
+    {
+        // Create a case in DRAFT status
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 1,
+            'APP_STATUS' => 'DRAFT'
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' DRAFT');
+
+        // Create a case in COMPLETED status
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 3,
+            'APP_STATUS' => 'COMPLETED'
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' COMPLETED');
+
+        // Create a case in CANCELLED status
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 4,
+            'APP_STATUS' => 'CANCELLED'
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' CANCELLED');
+    }
+
+    /**
+     * Review the required field delIndex
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_validate_required_del_index()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, '', $delegation->USR_UID);
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_REQUIRED_FIELD") . ' delIndex');
+    }
+
+    /**
+     * Review the required field open thread
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_validate_required_open_thread()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'CLOSED'
+        ]);
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, '');
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_DELEGATION_ALREADY_CLOSED"));
+    }
+
+    /**
+     * Review the required field userUid
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_validate_required_usr_uid()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, '');
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_REQUIRED_FIELD") . ' userUid');
+    }
+
+    /**
+     * Review cancel case with parallel threads
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_validate_only_one_thread_opened()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_THREAD_INDEX' => 1,
+            'APP_THREAD_PARENT' => 1,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_THREAD_INDEX' => 2,
+            'APP_THREAD_PARENT' => 1,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+        ]);
+
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_CANCELLED_PARALLEL"));
+    }
+
+    /**
+     * Review the cancel case with one thread open
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_cancel_case()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_THREAD_INDEX' => 1,
+            'APP_THREAD_PARENT' => 1,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+        ]);
+
+        $ws = new WsBase();
+        // todo: the action Case::cancelCase() use Propel queries
+        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
+        $this->assertNotEmpty($response);
+        $this->markTestIncomplete(
+            'This test was not fully implemented.'
+        );
+    }
+
+    /**
+     * Review the cancel case with parallel threads
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_should_cancel_case_parallel()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_THREAD_INDEX' => 1,
+            'APP_THREAD_PARENT' => 1,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_THREAD_INDEX' => 2,
+            'APP_THREAD_PARENT' => 1,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+        ]);
+
+        $ws = new WsBase();
+        // todo: the action Case::cancelCase() use Propel queries
+        $response = (object)$ws->cancelCase($delegation->APP_UID, null, null);
+        $this->assertNotEmpty($response);
+        // Stop here and mark this test as incomplete.
+        $this->markTestIncomplete(
+            'This test was not fully implemented.'
+        );
     }
 }
