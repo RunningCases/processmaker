@@ -42,7 +42,7 @@ if (isset($_GET['ux'])) {
     }
     /*----------------------------------********---------------------------------*/
 }
-echo "try {parent.parent.updateCasesTree();} catch(e) {}";
+echo "try {parent.parent.updateCasesTree();parent.parent.highlightCasesTree();} catch(e) {}";
 ?>
 }
 </script>
