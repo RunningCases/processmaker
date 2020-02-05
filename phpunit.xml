@@ -32,6 +32,7 @@
             <directory suffix=".php">./workflow/engine/classes</directory>
             <directory suffix=".php">./workflow/engine/src</directory>
             <directory suffix=".php">./workflow/engine/methods/emailServer/</directory>
+            <directory suffix=".php">./workflow/engine/controllers</directory>
         </whitelist>
         <exclude>
             <directory>./workflow/engine/classes/model/map</directory>
