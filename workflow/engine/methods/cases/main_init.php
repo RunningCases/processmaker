@@ -131,7 +131,6 @@ $oHeadPublisher->assign("FORMATS", $conf->getFormats());
 if (HIGHLIGHT_HOME_FOLDER_ENABLE) {
     $oHeadPublisher->assign("highlightUrlProxy", "casesMenuHighlight?r=");
     $oHeadPublisher->assign("highlightRefreshTime", HIGHLIGHT_HOME_FOLDER_REFRESH_TIME);
-    $oHeadPublisher->assign("highlightScope", HIGHLIGHT_HOME_FOLDER_SCOPE);
 }
 /*----------------------------------********---------------------------------*/
 

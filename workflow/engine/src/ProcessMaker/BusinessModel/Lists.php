@@ -68,19 +68,20 @@ class Lists
             /*----------------------------------********---------------------------------*/
         ];
 
+        // If the feature for highlight the home folders is disabled, add self-service list to the map
+        if (!HIGHLIGHT_HOME_FOLDER_ENABLE) {
+            $this->mapList['ListSelfService'] = 'CASES_SELFSERVICE';
+        }
+
         $this->ListInbox = new \ListInbox();
         $this->ListDraft = new \ListInbox();
         $this->ListCanceled = new \ListCanceled();
         $this->ListParticipated = new \ListParticipatedLast();
         $this->ListPaused = new \ListPaused();
         $this->ListCompleted = new \ListCompleted();
+        $this->ListSelfService = new \ListUnassigned();
         /*----------------------------------********---------------------------------*/
         $this->ListConsolidated = new Consolidated();
-        // If the feature for highlight the home folders is disabled, add/initialize properties related to self-service list
-        if (!HIGHLIGHT_HOME_FOLDER_ENABLE) {
-            $this->mapList['ListSelfService'] = 'CASES_SELFSERVICE';
-            $this->ListSelfService = new \ListUnassigned();
-        }
         /*----------------------------------********---------------------------------*/
     }
 
@@ -153,11 +154,8 @@ class Lists
                 $listpeer = 'ListMyInboxPeer';
                 break;
             case 'unassigned':
-                // If the feature for highlight the home folders is disabled, initialize the variables for unassigned list
-                if (!HIGHLIGHT_HOME_FOLDER_ENABLE) {
-                    $list = new \ListUnassigned();
-                    $listpeer = 'ListUnassignedPeer';
-                }
+                $list = new \ListUnassigned();
+                $listpeer = 'ListUnassignedPeer';
                 break;
         }
 
