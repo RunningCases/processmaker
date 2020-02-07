@@ -8,6 +8,7 @@ use Google_Client;
 use Google_Service_Gmail_Message;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPMailerOAuth;
+use ProcessMaker\Core\System;
 use ProcessMaker\GmailOAuth\GmailOAuth;
 use RBAC;
 use Tests\TestCase;
@@ -329,5 +330,23 @@ class GmailOAuthTest extends TestCase
             $this->fail($e->getMessage());
         }
         $this->assertTrue(true);
+    }
+
+    /**
+     * It tests that the message body contains the link to the image
+     *
+     * @test
+     * @covers \ProcessMaker\GmailOAuth\GmailOAuth::getMessageBody()
+     */
+    public function it_should_tests_the_get_message_body_method()
+    {
+        // Create the GmailOAuth object
+        $gmailOauth = new GmailOAuth();
+        
+        // Call the getMessageBody method
+        $res = $gmailOauth->getMessageBody();
+
+        // Assert the result contains the server protocol and host
+        $this->assertRegExp("#" . System::getServerProtocol() . System::getServerHost() . "#", $res);
     }
 }
