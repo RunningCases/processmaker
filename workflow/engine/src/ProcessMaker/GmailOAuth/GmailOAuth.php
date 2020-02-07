@@ -350,7 +350,7 @@ class GmailOAuth
     {
         $templateTower = new TemplatePower(PATH_TPL . "admin" . PATH_SEP . "email.tpl");
         $templateTower->prepare();
-        $templateTower->assign("server", System::getServerHostname());
+        $templateTower->assign("server", System::getServerProtocol() . System::getServerHost());
         $templateTower->assign("date", date("H:i:s"));
         $templateTower->assign("ver", System::getVersion());
         $templateTower->assign("engine", G::LoadTranslation("ID_MESS_ENGINE_TYPE_4"));
