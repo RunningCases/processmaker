@@ -76,6 +76,11 @@ class SystemTest extends TestCase
         $this->assertArrayHasKey('server_hostname_requests_frontend', $result);
         $this->assertArrayHasKey('disable_php_upload_execution', $result);
         $this->assertArrayHasKey('mobile_offline_tables_download_interval', $result);
+
+        // Default values for highlight home folder feature
+        $this->assertArrayHasKey('highlight_home_folder_enable', $result);
+        $this->assertArrayHasKey('highlight_home_folder_refresh_time', $result);
+        $this->assertArrayHasKey('highlight_home_folder_scope', $result);
     }
 
     /**
@@ -93,6 +98,11 @@ class SystemTest extends TestCase
         $this->assertArrayHasKey('server_hostname_requests_frontend', $result);
         $this->assertArrayHasKey('disable_php_upload_execution', $result);
         $this->assertArrayHasKey('mobile_offline_tables_download_interval', $result);
+
+        // Default values for highlight home folder feature
+        $this->assertArrayHasKey('highlight_home_folder_enable', $result);
+        $this->assertArrayHasKey('highlight_home_folder_refresh_time', $result);
+        $this->assertArrayHasKey('highlight_home_folder_scope', $result);
     }
 
     /**
@@ -170,5 +180,61 @@ class SystemTest extends TestCase
         file_put_contents($path, $oldContent);
 
         $this->assertArrayHasKey("proxy_pass", $result);
+    }
+
+    /**
+     * It should return parameters defined inside env file for "highlight home folders" feature.
+     * @test
+     * @covers \ProcessMaker\Core\System::getSystemConfiguration()
+     */
+    public function it_should_return_highlight_home_folders_params_defined_inside_env_file()
+    {
+        // Initializing variables to use
+        $oldContent = "";
+        $path = PATH_CONFIG . "env.ini";
+        $faker = $faker = Factory::create();
+
+        // Get content of env.ini file, if exists
+        if (file_exists($path)) {
+            $oldContent = file_get_contents($path);
+        }
+
+        // Write correct values in env.ini file
+        $highlightEnable = 1;
+        $highlightRefreshTime = 5;
+        $highlightScope = "unassigned";
+        $content = "highlight_home_folder_enable = $highlightEnable" . PHP_EOL;
+        $content .= "highlight_home_folder_refresh_time = $highlightRefreshTime" . PHP_EOL;
+        $content .= "highlight_home_folder_scope = \"$highlightScope\"" . PHP_EOL;
+        file_put_contents($path, $content);
+
+        // Get configuration
+        $result = System::getSystemConfiguration();
+
+        // Check correct parameters, should be the same
+        $this->assertEquals($highlightEnable, $result["highlight_home_folder_enable"]);
+        $this->assertEquals($highlightRefreshTime, $result["highlight_home_folder_refresh_time"]);
+        $this->assertEquals($highlightScope, $result["highlight_home_folder_scope"]);
+
+        // Write incorrect values in env.ini file
+        $highlightEnable = $faker->numberBetween(2, 100);
+        $highlightRefreshTime = $faker->word;
+        $highlightScope = $faker->word;
+        $content = "highlight_home_folder_enable = $highlightEnable" . PHP_EOL;
+        $content .= "highlight_home_folder_refresh_time = $highlightRefreshTime" . PHP_EOL;
+        $content .= "highlight_home_folder_scope = \"$highlightScope\"" . PHP_EOL;
+        file_put_contents($path, $content);
+
+        // Get configuration
+        $result = System::getSystemConfiguration();
+
+        // Check incorrect parameters, should be return the default values, the default values are private, so for the current
+        // test has hardcoded values
+        $this->assertEquals(0, $result["highlight_home_folder_enable"]);
+        $this->assertEquals(10, $result["highlight_home_folder_refresh_time"]);
+        $this->assertEquals("unassigned", $result["highlight_home_folder_scope"]);
+
+        // Restore content of th env.ini file
+        file_put_contents($path, $oldContent);
     }
 }
