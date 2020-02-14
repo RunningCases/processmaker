@@ -2,79 +2,31 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Importer;
 
-use G;
+use Carbon\Carbon;
 use Exception;
+use G;
+use Illuminate\Support\Facades\Cache;
+use PmLicenseManager;
+use ProcessMaker\Importer\XmlImporter;
 use ProcessMaker\Model\Groupwf;
 use ProcessMaker\Model\User;
-use ProcessMaker\Importer\XmlImporter;
 use Tests\TestCase;
 
 class XmlImporterTest extends TestCase
 {
     private $user;
 
+    /**
+     * Set up unit tests.
+     */
     public function setUp()
     {
-        /**
-         * To perform the test this requires a valid installation and its respective license.
-         * 
-         * In the file "workflow/engine/classes/WorkspaceTools.php", 
-         * these lines need the db.php file.
-         * 
-         * public function __construct($workspaceName)
-         * {
-         *     $this->name = $workspaceName;
-         *     $this->path = PATH_DB . $this->name;
-         *     $this->dbPath = $this->path . '/db.php';
-         *     if ($this->workspaceExists()) {
-         *         $this->getDBInfo();
-         *     }
-         *     $this->setListContentMigrateTable();
-         * }
-         * 
-         * 
-         * In the file "workflow/engine/src/ProcessMaker/BusinessModel/Migrator/GranularImporter.php", 
-         * these lines need a valid license.
-         * 
-         * public function import($objectList)
-         * {
-         *     try {
-         *         if (\PMLicensedFeatures::getSingleton()->verifyfeature
-         *         ("jXsSi94bkRUcVZyRStNVExlTXhEclVadGRRcG9xbjNvTWVFQUF3cklKQVBiVT0=")
-         *         ) {
-         *             $objectList = $this->reorderImportOrder($objectList);
-         *             foreach ($objectList as $data) {
-         *                 $objClass = $this->factory->create($data['name']);
-         *                 if (is_object($objClass)) {
-         *                     $dataImport = $data['data'][$data['name']];
-         *                     $replace = ($data['value'] == 'replace') ? true : false;
-         *                     $objClass->beforeImport($dataImport);
-         *                     $migratorData = $objClass->import($dataImport, $replace);
-         *                     $objClass->afterImport($dataImport);
-         *                 }
-         *             }
-         *         } else {
-         *             $exception = new ImportException();
-         *             $exception->setNameException(\G::LoadTranslation('ID_NO_LICENSE_SELECTIVEIMPORTEXPORT_ENABLED'));
-         *             throw($exception);
-         *         }
-         * 
-         *     } catch (\Exception $e) {
-         *         if (get_class($e) === 'ProcessMaker\BusinessModel\Migrator\ImportException') {
-         *             throw $e;
-         *         } else {
-         *             $exception = new ImportException('Please review your current process definition
-         *             for missing elements, it\'s recommended that a new process should be exported
-         *             with all the elements.');
-         *             throw $exception;
-         *         }
-         *     }
-         * }
-         */
-        $this->markTestIncomplete("To perform the test this requires a valid installation and its respective license.");
         parent::setUp();
         $this->user = factory(User::class)->create();
         Groupwf::truncate();
+
+        $cached = ["jXsSi94bkRUcVZyRStNVExlTXhEclVadGRRcG9xbjNvTWVFQUF3cklKQVBiVT0=" => 1];
+        Cache::put(PmLicenseManager::CACHE_KEY . '.' . config("system.workspace"), $cached, Carbon::now()->addDay(1));
     }
 
     /**
