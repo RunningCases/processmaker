@@ -438,24 +438,6 @@ class ProcessesTest extends TestCase
      */
     public function it_should_get_workflow_data()
     {
-        /**
-         * To perform the test this requires a valid installation and its respective license.
-         * 
-         * In the file "workflow/engine/classes/WorkspaceTools.php", 
-         * these lines need the db.php file.
-         * 
-         * public function __construct($workspaceName)
-         * {
-         *     $this->name = $workspaceName;
-         *     $this->path = PATH_DB . $this->name;
-         *     $this->dbPath = $this->path . '/db.php';
-         *     if ($this->workspaceExists()) {
-         *         $this->getDBInfo();
-         *     }
-         *     $this->setListContentMigrateTable();
-         * }
-         */
-        $this->markTestIncomplete("To perform the test this requires a valid installation and its respective license.");
         $process = factory(\ProcessMaker\Model\Process::class)->create();
         $processes = new Processes();
         $result = $processes->getWorkflowData($process->PRO_UID);
