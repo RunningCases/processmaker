@@ -17,10 +17,18 @@ class ReportTablesTest extends TestCase
     /**
      * Sets up the unit tests.
      */
-    protected function setUp()
+    public function setUp()
     {
-        $this->markTestIncomplete();//@todo: Please correct this unit test
+        parent::setUp();
         $_SERVER["REQUEST_URI"] = "";
+    }
+
+    /**
+     * Tear down the unit tests.
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
     }
 
     /**
@@ -31,7 +39,7 @@ class ReportTablesTest extends TestCase
     public function it_should_populating_data_with_all_parameters()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 1);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = $result->fields;
@@ -61,7 +69,7 @@ class ReportTablesTest extends TestCase
     public function it_should_populating_data_with_all_parameters_with_type_is_grid()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 18, true);
+        $result = $this->prepareData($tableName, true);
         $connectionShortName = 'wf';
         $type = 'GRID';
         $fields = $result->fields;
@@ -100,7 +108,7 @@ class ReportTablesTest extends TestCase
     public function it_should_populating_data_with_all_parameters_with_type_is_grid_null()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 19, true);
+        $result = $this->prepareData($tableName, true);
         $connectionShortName = 'wf';
         $type = 'GRID';
         $fields = $result->fields;
@@ -130,7 +138,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_only_with_the_mandatory_parameter_tableName()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 2);
+        $result = $this->prepareData($tableName);
 
         $reportTables = new ReportTables();
         $reportTables->populateTable($tableName);
@@ -156,7 +164,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_connectionShortName_parameter()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 3);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
 
         $reportTables = new ReportTables();
@@ -183,7 +191,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_connectionShortName_parameter_is_null()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 8);
+        $result = $this->prepareData($tableName);
         $connectionShortName = null;
 
         $reportTables = new ReportTables();
@@ -210,7 +218,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_connectionShortName_parameter_is_incorrect_value()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 9);
+        $result = $this->prepareData($tableName);
         $connectionShortName = G::generateUniqueID();
 
         $reportTables = new ReportTables();
@@ -237,7 +245,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 4);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
 
@@ -265,7 +273,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_is_grid()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 11);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'GRID';
 
@@ -293,7 +301,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_is_null()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 10);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = null;
 
@@ -321,7 +329,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 5);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = $result->fields;
@@ -350,7 +358,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields_is_null()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 12);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = null;
@@ -379,7 +387,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields_is_empty_array()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 13);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = [];
@@ -408,7 +416,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields_is_incorrect_value()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 14);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = "";
@@ -437,7 +445,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields_proUid()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 6);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = $result->fields;
@@ -467,7 +475,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields_proUid_is_null()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 15);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = $result->fields;
@@ -497,7 +505,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields_proUid_grid()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 7);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = $result->fields;
@@ -528,7 +536,7 @@ class ReportTablesTest extends TestCase
     public function this_should_populate_the_reports_table_with_the_parameters_connectionShortName_type_fields_proUid_grid_if_null()
     {
         $tableName = 'TestReportTable';
-        $result = $this->prepareData($tableName, 16);
+        $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = $result->fields;
@@ -649,8 +657,14 @@ class ReportTablesTest extends TestCase
      * @param boolean $grid
      * @return object
      */
-    private function prepareData($tableName, $applicationNumber, $grid = null)
+    private function prepareData($tableName, $grid = null)
     {
+        $applicationNumber = Application::max('APP_NUMBER');
+        if (is_null($applicationNumber)) {
+            $applicationNumber = 0;
+        }
+        $applicationNumber = $applicationNumber + 1;
+
         $faker = Faker\Factory::create();
         $date = $faker->dateTime();
 
