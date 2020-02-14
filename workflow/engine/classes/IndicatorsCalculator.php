@@ -766,32 +766,32 @@ class IndicatorsCalculator
         return $returnVal;
     }
 
-    public function suggestedTimeForTask($taskId)
+    /**
+     * Get some calculations related to the specific task
+     * Returns population standard deviation of the expression from timeByTask/totalCase
+     * Return the average from timeByTask/totalCase
+     *
+     * @param string $tasUid
+     *
+     * @return array
+     * @throws Exception
+    */
+    public function suggestedTimeForTask($tasUid)
     {
-        $qryParams = array();
-        $qryParams[':taskId'] = $taskId;
-        $sqlString = 'select 
-            ROUND(AVG(TOTAL_TIME_BY_TASK/TOTAL_CASES_OUT), 2) as average,
-             ROUND(STDDEV(TOTAL_TIME_BY_TASK/TOTAL_CASES_OUT), 2) as sdv
-            from USR_REPORTING  where TAS_UID = :taskId';
-        $retval = $this->pdoExecutor($sqlString, $qryParams);
-        return $retval[0];
-    }
+        try {
+            $criteria = new Criteria('workflow');
+            $criteria->addSelectColumn(UsrReportingPeer::TOTAL_CASES_OUT);
+            $criteria->addAsColumn('average', 'ROUND(AVG(TOTAL_TIME_BY_TASK/TOTAL_CASES_OUT), 2)');
+            $criteria->addAsColumn('sdv', 'ROUND(STDDEV(TOTAL_TIME_BY_TASK/TOTAL_CASES_OUT), 2)');
+            $criteria->add(UsrReportingPeer::TAS_UID, $tasUid);
+            $dataset = UsrReportingPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $result = $dataset->getRow();
 
-
-    /* For debug only:
-     * public function interpolateQuery($query, $params) {
-        $keys = array();
-        # build a regular expression for each parameter
-        foreach ($params as $key => $value) {
-            echo "<br>key", $key, " -- value", $value;
-            if (is_string($key)) {
-                $keys[] = '/:'.$key.'/';
-            } else {
-                $keys[] = '/[?]/';
-            }
+            return $result;
+        } catch (Exception $error) {
+            throw $error;
         }
-        $query = preg_replace($keys, $params, $query, 1, $count);
-        return $query;
-    }*/
+    }
 }

@@ -4374,7 +4374,7 @@ class Cases
         /** Create a register in APP_DELAY */
         $delay = new AppDelay();
 
-        foreach ($indexesClosed as $value){
+        foreach ($indexesClosed as $value) {
             $dataList = [];
             $rowDelay = AppDelay::buildAppDelayRow(
                 $caseFields['PRO_UID'],
@@ -4402,6 +4402,7 @@ class Cases
 
             $dataList = array_merge($caseFields, $dataList);
             $listCanceled = new ListCanceled();
+            // This action requires interaction with IndicatorsCalculator class
             $listCanceled->create($dataList);
             /*----------------------------------********---------------------------------*/
         }
