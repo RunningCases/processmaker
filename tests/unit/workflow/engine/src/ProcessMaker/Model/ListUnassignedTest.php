@@ -1,11 +1,6 @@
 <?php
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
-use ProcessMaker\Model\AppAssignSelfServiceValue;
-use ProcessMaker\Model\AppAssignSelfServiceValueGroup;
-use ProcessMaker\Model\Application;
-use ProcessMaker\Model\GroupUser;
-use ProcessMaker\Model\Groupwf;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessCategory;
@@ -14,686 +9,172 @@ use ProcessMaker\Model\TaskUser;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
 
+/**
+ * Class ListUnassignedTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\ListUnassigned
+ */
 class ListUnassignedTest extends TestCase
 {
     /**
-     * This is using instead of DatabaseTransactions
-     * @todo DatabaseTransactions is having conflicts with propel
-     */
-    protected function setUp()
-    {
-        $this->markTestIncomplete();//@todo: Please correct this unit test
-    }
-
-    /**
-     * This checks the counters is working properly in self-service user assigned
-     * @covers ListUnassigned::doCount
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_user_assigned()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class, 25)->create([
-            'TAS_ID' => $task->TAS_ID
-        ]);
-        //Review the count self-service
-        $result = ListUnassigned::countSelfService($user->USR_UID);
-        $this->assertEquals(25, $result);
-    }
-
-    /**
-     * This checks the counters is working properly in self-service-value-based when the variable has a value related with the USR_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [USR_UID]
-     * @covers ListUnassigned::doCount
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create a case
-        $application = factory(Application::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Create a task self service value based
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => 2,
-            'TAS_ID' => $task->TAS_ID
-        ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
-            'ID' => $appSelfValue->ID,
-            'GRP_UID' => $user->USR_UID,
-            'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
-            'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class, 25)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => $appSelfValue->DEL_INDEX,
-            'TAS_ID' => $task->TAS_ID,
-        ]);
-        //Review the count self-service
-        $result = ListUnassigned::countSelfService($user->USR_UID);
-        $this->assertEquals(25, $result);
-    }
-
-    /**
-     * This checks the counters is working properly in self-service and self-service value based
-     * @covers ListUnassigned::doCount
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_mixed_with_self_service_value_based()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create a case
-        $application = factory(Application::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in self service
-        factory(ListUnassigned::class, 15)->create([
-            'TAS_ID' => $task->TAS_ID
-        ]);
-        //Create a task self service value based
-        $task1 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => 2,
-            'TAS_ID' => $task1->TAS_ID
-        ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
-            'ID' => $appSelfValue->ID,
-            'GRP_UID' => $user->USR_UID,
-            'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
-            'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
-        ]);
-        //Create the register in self service value based
-        factory(ListUnassigned::class, 15)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => $appSelfValue->DEL_INDEX,
-            'TAS_ID' => $task->TAS_ID,
-        ]);
-        //Review the count self-service
-        $result = ListUnassigned::countSelfService($user->USR_UID);
-        $this->assertEquals(30, $result);
-    }
-
-    /**
-     * This checks the counters is working properly in self-service group assigned
-     * @covers ListUnassigned::doCount
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_group_assigned()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create group
-        $group = factory(Groupwf::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Assign a user in the group
-        factory(GroupUser::class)->create([
-            'GRP_UID' => $group->GRP_UID,
-            'GRP_ID' => $group->GRP_ID,
-            'USR_UID' => $user->USR_UID
-        ]);
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 2, //Related to the group
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class, 25)->create([
-            'TAS_ID' => $task->TAS_ID
-        ]);
-        //Review the count self-service
-        $result = ListUnassigned::countSelfService($user->USR_UID);
-        $this->assertEquals(25, $result);
-    }
-
-    /**
-     * This checks the counters is working properly in self-service-value-based when the variable has a value related with the GRP_UID
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID]
-     * @covers ListUnassigned::doCount
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_value_based_grp_uid()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create a task self service value based
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Create a case
-        $application = factory(Application::class)->create();
-        //Create group
-        $group = factory(Groupwf::class)->create();
-        //Create user
-        $user = factory(User::class)->create([
-            'USR_USERNAME' => 'gary',
-            'USR_LASTNAME' => 'Gary',
-            'USR_FIRSTNAME' => 'Bailey',
-        ]);
-        //Assign a user in the group
-        factory(GroupUser::class)->create([
-            'GRP_UID' => $group->GRP_UID,
-            'GRP_ID' => $group->GRP_ID,
-            'USR_UID' => $user->USR_UID,
-        ]);
-        //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'APP_UID' => $application->APP_UID,
-            'DEL_INDEX' => 2,
-            'TAS_ID' => $task->TAS_ID
-        ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
-            'ID' => $appSelfValue->ID,
-            'GRP_UID' => $group->GRP_UID,
-            'ASSIGNEE_ID' => $group->GRP_ID, //The usrId or grpId
-            'ASSIGNEE_TYPE' => 2 //Related to the user=1 related to the group=2
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class, 25)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => 2,
-            'TAS_ID' => $task->TAS_ID,
-        ]);
-        //Review the count self-service
-        $result = ListUnassigned::countSelfService($user->USR_UID);
-        $this->assertEquals(25, $result);
-    }
-
-    /**
-     * This checks the counters is working properly in self-service user and group assigned in parallel task
-     * @covers ListUnassigned::doCount
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_user_and_group_assigned_parallel_task()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create group
-        $group = factory(Groupwf::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Assign a user in the group
-        factory(GroupUser::class)->create([
-            'GRP_UID' => $group->GRP_UID,
-            'GRP_ID' => $group->GRP_ID,
-            'USR_UID' => $user->USR_UID
-        ]);
-        //Create a task self service
-        $task1 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task1
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task1->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create a task self service
-        $task2 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task2
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task2->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create a task self service
-        $task3 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task3->TAS_UID,
-            'USR_UID' => $group->GRP_UID,
-            'TU_RELATION' => 2, //Related to the group
-            'TU_TYPE' => 1
-        ]);
-        //Create a task self service
-        $task4 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task4->TAS_UID,
-            'USR_UID' => $group->GRP_UID,
-            'TU_RELATION' => 2, //Related to the group
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in list unassigned related to the task1
-        factory(ListUnassigned::class, 10)->create([
-            'TAS_ID' => $task1->TAS_ID
-        ]);
-        //Create the register in list unassigned related to the task2
-        factory(ListUnassigned::class, 10)->create([
-            'TAS_ID' => $task2->TAS_ID
-        ]);
-        //Create the register in list unassigned related to the task3
-        factory(ListUnassigned::class, 10)->create([
-            'TAS_ID' => $task3->TAS_ID
-        ]);
-        //Create the register in list unassigned related to the task4
-        factory(ListUnassigned::class, 10)->create([
-            'TAS_ID' => $task4->TAS_ID
-        ]);
-        //Review the count self-service
-        $result = ListUnassigned::countSelfService($user->USR_UID);
-        $this->assertEquals(40, $result);
-    }
-
-    /**
-     * This checks the counters is working properly in self-service-value-based with GRP_UID and USR_UID in parallel task
-     * When the value assigned in the variable @@ARRAY_OF_USERS = [GRP_UID, USR_UID]
-     * @covers ListUnassigned::doCount
-     * @test
-     */
-    public function it_should_count_cases_by_user_with_self_service_value_based_usr_uid_and_grp_uid()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create a case
-        $application = factory(Application::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Create a task1 self service value based
-        $task1 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'TAS_ID' => $task1->TAS_ID
-        ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
-            'ID' => $appSelfValue->ID,
-            'GRP_UID' => $user->USR_UID,
-            'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
-            'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class, 15)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => $appSelfValue->DEL_INDEX,
-            'TAS_ID' => $task1->TAS_ID,
-        ]);
-        //Create a task2 self service value based
-        $task2 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '@@ARRAY_OF_USERS',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Create the relation for the value assigned in the TAS_GROUP_VARIABLE
-        $appSelfValue = factory(AppAssignSelfServiceValue::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'TAS_ID' => $task2->TAS_ID
-        ]);
-        factory(AppAssignSelfServiceValueGroup::class)->create([
-            'ID' => $appSelfValue->ID,
-            'GRP_UID' => $user->USR_UID,
-            'ASSIGNEE_ID' => $user->USR_ID, //The usrId or grpId
-            'ASSIGNEE_TYPE' => 1 //Related to the user=1 related to the group=2
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class, 15)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'DEL_INDEX' => $appSelfValue->DEL_INDEX,
-            'TAS_ID' => $task2->TAS_ID,
-        ]);
-        //Review the count self-service
-        $result = ListUnassigned::countSelfService($user->USR_UID);
-        $this->assertEquals(30, $result);
-    }
-
-    /**
      * This checks to make sure pagination is working properly
+     *
      * @covers ListUnassigned::loadList
      * @test
      */
     public function it_should_return_pages_of_data()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class, 51)->create([
-            'TAS_ID' => $task->TAS_ID
-        ]);
-        //Define the filters
-        $filters = ['start' => 0, 'limit' => 25];
-        //Get data first page
+        for ($x = 1; $x <= 5; $x++) {
+            $list = factory(ListUnassigned::class)->states('foreign_keys')->create();
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $list->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+        }
+
+        // Define the filters
+        $filters = ['start' => 0, 'limit' => 2];
+        // Get data first page
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(25, $result);
-        //Get data second page
-        $filters = ['start' => 25, 'limit' => 25];
+        $this->assertCount(2, $result);
+        // Get data second page
+        $filters = ['start' => 2, 'limit' => 2];
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(25, $result);
-        //Get data third page
-        $filters = ['start' => 50, 'limit' => 25];
+        $this->assertCount(2, $result);
+        // Get data third page
+        $filters = ['start' => 4, 'limit' => 2];
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
         $this->assertCount(1, $result);
     }
 
     /**
      * This ensures ordering ascending and descending works by case number APP_NUMBER
+     *
      * @covers ListUnassigned::loadList
      * @test
      */
     public function it_should_sort_by_case_number()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create a case
-        $application = factory(Application::class)->create([
-            'APP_NUMBER' => 3000
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_NUMBER' => $application->APP_NUMBER
-        ]);
-        //Create a case
-        $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2000
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_NUMBER' => $application->APP_NUMBER
-        ]);
+        for ($x = 1; $x <= 5; $x++) {
+            $list = factory(ListUnassigned::class)->states('foreign_keys')->create();
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $list->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+        }
         //Define the filters
         $filters = ['sort' => 'APP_NUMBER', 'dir' => 'ASC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the minor case number first
-        $this->assertEquals(2000, $result[0]['APP_NUMBER']);
-        //Get the major case number second
-        $this->assertEquals(3000, $result[1]['APP_NUMBER']);
+        $this->assertGreaterThan($result[0]['APP_NUMBER'], $result[1]['APP_NUMBER']);
+
         //Define the filters
         $filters = ['sort' => 'APP_NUMBER', 'dir' => 'DESC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the major case number first
-        $this->assertEquals(3000, $result[0]['APP_NUMBER']);
-        //Get the minor case number second
-        $this->assertEquals(2000, $result[1]['APP_NUMBER']);
+        $this->assertGreaterThan($result[1]['APP_NUMBER'], $result[0]['APP_NUMBER']);
     }
 
     /**
      * This ensures ordering ascending and descending works by case number APP_TITLE
+     *
      * @covers ListUnassigned::loadList
      * @test
      */
     public function it_should_sort_by_case_title()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create user
         $user = factory(User::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create a case
-        $application = factory(Application::class)->create([
-            'APP_NUMBER' => 3001
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'APP_TITLE' => 'Request nro ' . $application->APP_NUMBER,
-        ]);
-        //Create a case
-        $application = factory(Application::class)->create([
-            'APP_NUMBER' => 2001
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'APP_TITLE' => 'Request nro ' . $application->APP_NUMBER,
-        ]);
+        for ($x = 1; $x <= 5; $x++) {
+            $list = factory(ListUnassigned::class)->states('foreign_keys')->create();
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $list->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+        }
         //Define the filters
         $filters = ['sort' => 'APP_TITLE', 'dir' => 'ASC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the minor case title first
-        $this->assertEquals('Request nro 2001', $result[0]['APP_TITLE']);
-        //Get the major case title second
-        $this->assertEquals('Request nro 3001', $result[1]['APP_TITLE']);
+        $this->assertGreaterThan($result[0]['APP_TITLE'], $result[1]['APP_TITLE']);
+
         //Define the filters
         $filters = ['sort' => 'APP_TITLE', 'dir' => 'DESC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the major case title first
-        $this->assertEquals('Request nro 3001', $result[0]['APP_TITLE']);
-        //Get the minor case title second
-        $this->assertEquals('Request nro 2001', $result[1]['APP_TITLE']);
+        $this->assertGreaterThan($result[1]['APP_TITLE'], $result[0]['APP_TITLE']);
     }
 
     /**
      * This ensures ordering ascending and descending works by case number APP_PRO_TITLE
+     *
      * @covers ListUnassigned::loadList
      * @test
      */
     public function it_should_sort_by_process()
     {
-        //Create user
         $user = factory(User::class)->create();
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_PRO_TITLE' => 'Egypt Supplier Payment Proposal',
-        ]);
-
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_PRO_TITLE' => 'Russia Supplier Payment Proposal',
-        ]);
+        for ($x = 1; $x <= 5; $x++) {
+            $list = factory(ListUnassigned::class)->states('foreign_keys')->create();
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $list->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+        }
         //Define the filters
         $filters = ['sort' => 'APP_PRO_TITLE', 'dir' => 'ASC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the minor process name first
-        $this->assertEquals('Egypt Supplier Payment Proposal', $result[0]['APP_PRO_TITLE']);
-        //Get the major process name second
-        $this->assertEquals('Russia Supplier Payment Proposal', $result[1]['APP_PRO_TITLE']);
+        $this->assertGreaterThan($result[0]['APP_PRO_TITLE'], $result[1]['APP_PRO_TITLE']);
         //Define the filters
         $filters = ['sort' => 'APP_PRO_TITLE', 'dir' => 'DESC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the major process name first
-        $this->assertEquals('Russia Supplier Payment Proposal', $result[0]['APP_PRO_TITLE']);
-        //Get the minor process name second
-        $this->assertEquals('Egypt Supplier Payment Proposal', $result[1]['APP_PRO_TITLE']);
+        $this->assertGreaterThan($result[1]['APP_PRO_TITLE'], $result[0]['APP_PRO_TITLE']);
     }
 
     /**
      * This ensures ordering ascending and descending works by case number APP_TAS_TITLE
+     *
      * @covers ListUnassigned::loadList
      * @test
      */
     public function it_should_sort_by_task()
     {
-        //Create user
         $user = factory(User::class)->create();
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create a task self service
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID
-        ]);
-        //Assign a user in the task
-        factory(TaskUser::class)->create([
-            'TAS_UID' => $task->TAS_UID,
-            'USR_UID' => $user->USR_UID,
-            'TU_RELATION' => 1, //Related to the user
-            'TU_TYPE' => 1
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_TAS_TITLE' => 'Initiate Request',
-        ]);
-        //Create the register in list unassigned
-        factory(ListUnassigned::class)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'APP_TAS_TITLE' => 'Waiting for AP Manager Validation',
-        ]);
+        for ($x = 1; $x <= 5; $x++) {
+            $list = factory(ListUnassigned::class)->states('foreign_keys')->create();
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $list->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+        }
         //Define the filters
         $filters = ['sort' => 'APP_TAS_TITLE', 'dir' => 'ASC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the minor task name first
-        $this->assertEquals('Initiate Request', $result[0]['APP_TAS_TITLE']);
-        //Get the major task name second
-        $this->assertEquals('Waiting for AP Manager Validation', $result[1]['APP_TAS_TITLE']);
+        $this->assertGreaterThan($result[0]['APP_TAS_TITLE'], $result[1]['APP_TAS_TITLE']);
         //Define the filters
         $filters = ['sort' => 'APP_TAS_TITLE', 'dir' => 'DESC'];
         //Get data
         $result = ListUnassigned::loadList($user->USR_UID, $filters);
-        $this->assertCount(2, $result);
-        //Get the major task name first
-        $this->assertEquals('Waiting for AP Manager Validation', $result[0]['APP_TAS_TITLE']);
-        //Get the minor task namesecond
-        $this->assertEquals('Initiate Request', $result[1]['APP_TAS_TITLE']);
+        $this->assertGreaterThan($result[1]['APP_TAS_TITLE'], $result[0]['APP_TAS_TITLE']);
     }
 
     /**
      * This checks to make sure filter by category is working properly
+     *
      * @covers ListUnassigned::loadList
      * @test
      */
@@ -752,6 +233,7 @@ class ListUnassignedTest extends TestCase
 
     /**
      * This checks to make sure filter by category is working properly
+     *
      * @covers ListUnassigned::loadList
      * @test
      */
