@@ -798,12 +798,14 @@ emailServer.application = {
         var textClientId = new Ext.form.TextField({
             id: "textClientId",
             name: "textClientId",
-            fieldLabel: _("ID_CLIENT_ID")
+            fieldLabel: _("ID_CLIENT_ID"),
+            allowBlank: false
         });
         var textClientSecret = new Ext.form.TextField({
             id: "textClientSecret",
             name: "textClientSecret",
-            fieldLabel: _("ID_CLIENT_SECRET")
+            fieldLabel: _("ID_CLIENT_SECRET"),
+            allowBlank: false
         });
         var buttonContinue = new Ext.Action({
             id: 'buttonContinue',
