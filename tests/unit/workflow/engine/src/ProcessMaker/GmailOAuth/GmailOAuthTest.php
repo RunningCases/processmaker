@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPMailerOAuth;
 use ProcessMaker\Core\System;
 use ProcessMaker\GmailOAuth\GmailOAuth;
+use ProcessMaker\Model\User;
 use RBAC;
 use Tests\TestCase;
 
@@ -141,14 +142,23 @@ class GmailOAuthTest extends TestCase
      */
     public function it_should_create_email_server()
     {
-        $this->markTestIncomplete("It required valid workspace");
+        global $RBAC;
+        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $_SESSION['USER_LOGGED'] = $user['USR_UID'];
+        $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+        $RBAC->initRBAC();
+        $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
+
         $faker = $this->faker;
+        $clientId = $faker->uuid;
+        $clientSecret = $faker->uuid;
+        $refreshToken = $faker->uuid;
 
         $gmailOAuth = new GmailOAuth();
         $gmailOAuth->setEmailEngine("GMAILAPI");
-        $gmailOAuth->setClientID($faker->uuid);
-        $gmailOAuth->setClientSecret($faker->uuid);
-        $gmailOAuth->setRefreshToken($faker->uuid);
+        $gmailOAuth->setClientID($clientId);
+        $gmailOAuth->setClientSecret($clientSecret);
+        $gmailOAuth->setRefreshToken($refreshToken);
         $gmailOAuth->setFromAccount($faker->email);
         $gmailOAuth->setSenderEmail(1);
         $gmailOAuth->setSenderName($faker->word);
@@ -156,8 +166,11 @@ class GmailOAuthTest extends TestCase
         $gmailOAuth->setMailTo($faker->email);
         $gmailOAuth->setSetDefaultConfiguration(0);
 
-        $this->expectException(Exception::class);
         $result = $gmailOAuth->saveEmailServer();
+
+        $this->assertEquals($clientId, $result['OAUTH_CLIENT_ID']);
+        $this->assertEquals($clientSecret, $result['OAUTH_CLIENT_SECRET']);
+        $this->assertEquals($refreshToken, $result['OAUTH_REFRESH_TOKEN']);
     }
 
     /**
@@ -167,7 +180,6 @@ class GmailOAuthTest extends TestCase
      */
     public function it_should_udpate_email_server()
     {
-        $this->markTestIncomplete("It required valid workspace");
         $faker = $this->faker;
 
         $gmailOAuth = new GmailOAuth();
@@ -211,7 +223,7 @@ class GmailOAuthTest extends TestCase
         $gmailOauth->setSendTestMail(0);
         $result = $gmailOauth->sendTestEmailWithGoogleServiceGmail();
         $this->assertTrue($result instanceof Google_Service_Gmail_Message);
-        
+
         $this->expectException(Exception::class);
         $gmailOauth->setSendTestMail(1);
         $result = $gmailOauth->sendTestEmailWithGoogleServiceGmail();
@@ -342,7 +354,7 @@ class GmailOAuthTest extends TestCase
     {
         // Create the GmailOAuth object
         $gmailOauth = new GmailOAuth();
-        
+
         // Call the getMessageBody method
         $res = $gmailOauth->getMessageBody();
 
