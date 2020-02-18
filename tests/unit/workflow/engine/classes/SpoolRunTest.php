@@ -191,47 +191,6 @@ class SpoolRunTest extends TestCase
     }
 
     /**
-     * This test uses the OPENMAIL option in a simple way.
-     * @test
-     * @covers \SpoolRun::__construct()
-     * @covers \SpoolRun::setData()
-     * @covers \SpoolRun::setConfig()
-     * @covers \SpoolRun::sendMail()
-     * @covers \SpoolRun::handleMail()
-     */
-    public function it_should_handle_open_mail_option()
-    {
-        $this->markTestIncomplete("The OPENMAIL depends on the package class but this is not found in the environment.");
-
-        $appMsgUid = G::generateUniqueID();
-        factory(AppMessage::class)->create([
-            'APP_MSG_UID' => $appMsgUid
-        ]);
-
-        $emailServer = factory(EmailServerModel::class)->states('OPENMAIL')->make();
-
-        $config = $emailServer->toArray();
-
-        $faker = Factory::create();
-        $spoolRun = new SpoolRun();
-        $spoolRun->setData(
-                $appMsgUid,
-                $faker->title,
-                $faker->companyEmail,
-                $faker->freeEmail,
-                $faker->text(),
-                $faker->dateTime()->format('Y-m-d H:i:s'),
-                $faker->companyEmail,
-                $faker->freeEmail
-        );
-        $spoolRun->setConfig($config);
-
-        $expected = $spoolRun->sendMail();
-
-        $this->assertTrue($expected);
-    }
-
-    /**
      * This test ensures that characters that are not utf8 are converted properly,
      * for subject and body fields.
      * @test
