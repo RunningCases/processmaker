@@ -190,6 +190,7 @@ class JobsManager
                         $callback($environment);
                     } catch (Exception $e) {
                         Log::error($e->getMessage() . ": " . $e->getTraceAsString());
+                        throw $e;
                     }
                 });
         $instance->delay($this->delay);

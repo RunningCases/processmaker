@@ -82,6 +82,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_big_int_id()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a bigint id
@@ -192,6 +193,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_var_char_id()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a char id
@@ -302,6 +304,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_integer_id()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with an integer id
@@ -412,6 +415,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_smallint_id()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a smallint id
@@ -521,6 +525,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_tinyint_id()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a tinyint id
@@ -630,6 +635,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_varchar_id()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a varchar id
@@ -738,6 +744,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_varchar_id_filter()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a varchar id
@@ -891,6 +898,7 @@ define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
      */
     public function it_should_test_varchar_id_rows()
     {
+        $this->markTestIncomplete();
         $reportTable = new ReportTable();
 
         //PM table with a varchar id

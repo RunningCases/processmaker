@@ -7,6 +7,8 @@ use Faker\Factory;
 use G;
 use ProcessMaker\BusinessModel\EmailServer;
 use ProcessMaker\Model\EmailServerModel;
+use ProcessMaker\Model\User;
+use RBAC;
 use Tests\TestCase;
 
 class EmailServerTest extends TestCase
@@ -53,12 +55,28 @@ class EmailServerTest extends TestCase
     }
 
     /**
+     * Load default user session.
+     * @global object $RBAC
+     */
+    private function loadUserSession()
+    {
+        global $RBAC;
+        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $_SESSION['USER_LOGGED'] = $user['USR_UID'];
+        $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+        $RBAC->initRBAC();
+        $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
+    }
+
+    /**
      * This creates a record in the EMAIL_SERVER table.
      * @test
      * @covers \ProcessMaker\BusinessModel\EmailServer::create()
      */
     public function it_should_create()
     {
+        $this->loadUserSession();
+
         $faker = $this->faker;
         $expected = $this->getDataForEmailServerRegistry();
         $this->emailServer->setContextLog([
@@ -88,6 +106,8 @@ class EmailServerTest extends TestCase
      */
     public function it_should_update()
     {
+        $this->loadUserSession();
+
         $faker = $this->faker;
         $emailServer = factory(EmailServerModel::class)->create($this->getDataForEmailServerRegistry());
         $data = $emailServer->toArray();
@@ -259,6 +279,10 @@ class EmailServerTest extends TestCase
      */
     public function it_should_test_the_send_test_mail_method()
     {
+        $string = ini_get("sendmail_path");
+        if (!is_executable($string)) {
+            $this->markTestIncomplete($string . " not found");
+        }
         // The data that will be sent to the method
         $data = [
             "FROM_EMAIL" => "admin@processmaker.com",

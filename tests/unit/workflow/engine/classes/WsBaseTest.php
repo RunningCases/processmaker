@@ -11,11 +11,12 @@ use ProcessMaker\Model\EmailServerModel;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
+use ProcessMaker\Model\UserReporting;
 use ProcessMaker\Util\WsMessageResponse;
 use Tests\TestCase;
 
 /**
- * Class WsBase
+ * Class WsBaseTest
  *
  * @coversDefaultClass WsBase
  */
@@ -862,14 +863,27 @@ class WsBaseTest extends TestCase
     }
 
     /**
-     * Review the cancel case with one thread open
+     * Review the cancel case with one thread open was executed successfully
      *
      * @covers WsBase::cancelCase()
      * @test
      */
     public function it_should_cancel_case()
     {
-        $application = factory(Application::class)->create([
+        // Definition for avoid the error: Trying to get property 'aUserInfo' of non-object in the action buildAppDelayRow()
+        global $RBAC;
+        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $_SESSION['USER_LOGGED'] = $user['USR_UID'];
+        $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+        $RBAC->initRBAC();
+        $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
+
+        // Create the data related to the cancel a case
+        $task = factory(Task::class)->create();
+        factory(UserReporting::class)->create([
+            'TAS_UID' => $task->TAS_UID
+        ]);
+        $application = factory(Application::class)->states('foreign_keys')->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
@@ -881,6 +895,8 @@ class WsBaseTest extends TestCase
             'DEL_INDEX' => 2
         ]);
         $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'TAS_UID' => $task->TAS_UID,
+            'PRO_UID' => $application->PRO_UID,
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -888,38 +904,38 @@ class WsBaseTest extends TestCase
         ]);
 
         $ws = new WsBase();
-        // todo: the action Case::cancelCase() use Propel queries
         $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
         $this->assertNotEmpty($response);
-        $this->markTestIncomplete(
-            'This test was not fully implemented.'
-        );
+        $this->assertObjectHasAttribute('status_code', $response);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
     }
 
     /**
-     * Review the cancel case with parallel threads
+     * Review the cancel case with parallel threads was executed successfully
      *
      * @covers WsBase::cancelCase()
      * @test
      */
     public function it_should_cancel_case_parallel()
     {
-        $application = factory(Application::class)->create([
+        // Definition for avoid the error: Trying to get property 'aUserInfo' of non-object in the action buildAppDelayRow()
+        global $RBAC;
+        $user = User::where('USR_ID', '=', 1)->get()->first();
+        $_SESSION['USER_LOGGED'] = $user['USR_UID'];
+        $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+        $RBAC->initRBAC();
+        $RBAC->loadUserRolePermission('PROCESSMAKER', $_SESSION['USER_LOGGED']);
+
+        // Create the data related to the cancel a case
+        $task = factory(Task::class)->create();
+        factory(UserReporting::class)->create([
+            'TAS_UID' => $task->TAS_UID
+        ]);
+        $application = factory(Application::class)->states('foreign_keys')->create([
             'APP_STATUS_ID' => 2,
             'APP_STATUS' => 'TO_DO'
         ]);
-        factory(AppThread::class)->create([
-            'APP_UID' => $application->APP_UID,
-            'APP_THREAD_INDEX' => 1,
-            'APP_THREAD_PARENT' => 1,
-            'APP_THREAD_STATUS' => 'OPEN',
-            'DEL_INDEX' => 1
-        ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'APP_UID' => $application->APP_UID,
-            'DEL_THREAD_STATUS' => 'OPEN'
-        ]);
+        // Create the first thread
         factory(AppThread::class)->create([
             'APP_UID' => $application->APP_UID,
             'APP_THREAD_INDEX' => 2,
@@ -927,20 +943,67 @@ class WsBaseTest extends TestCase
             'APP_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2
         ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'TAS_UID' => $task->TAS_UID,
+            'PRO_UID' => $application->PRO_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+        ]);
+        // Create the second thread
+        factory(AppThread::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_THREAD_INDEX' => 3,
+            'APP_THREAD_PARENT' => 1,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 3
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'TAS_UID' => $task->TAS_UID,
+            'PRO_UID' => $application->PRO_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 3,
+        ]);
+
+        $ws = new WsBase();
+        $response = (object)$ws->cancelCase($delegation->APP_UID, null, null);
+        $this->assertNotEmpty($response);
+        $this->assertObjectHasAttribute('status_code', $response);
+        $this->assertEquals($response->message, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
+    }
+
+    /**
+     * Review the cancel case when the applications does not exist
+     *
+     * @covers WsBase::cancelCase()
+     * @test
+     */
+    public function it_tried_cancel_an_undefined_case()
+    {
+        $fakeApp = G::generateUniqueID();
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'APP_THREAD_INDEX' => 1,
+            'APP_THREAD_PARENT' => 1,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2
+        ]);
         $delegation = factory(Delegation::class)->states('foreign_keys')->create([
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 2,
         ]);
-
         $ws = new WsBase();
-        // todo: the action Case::cancelCase() use Propel queries
-        $response = (object)$ws->cancelCase($delegation->APP_UID, null, null);
-        $this->assertNotEmpty($response);
-        // Stop here and mark this test as incomplete.
-        $this->markTestIncomplete(
-            'This test was not fully implemented.'
-        );
+        $response = (object)$ws->cancelCase($fakeApp, $delegation->DEL_INDEX, $delegation->USR_UID);
+        $this->assertEquals($response->status_code, 100);
+        $this->assertEquals($response->message, "The Application row '$fakeApp' doesn't exist!");
     }
 }

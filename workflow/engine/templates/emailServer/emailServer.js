@@ -310,6 +310,8 @@ emailServer.application = {
                 Ext.getCmp("txtIncomingServer").allowBlank = true;
                 Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
+                Ext.getCmp("textClientId").allowBlank = true;
+                Ext.getCmp("textClientSecret").allowBlank = true;
             } else if (cboEmailEngine === "IMAP") {
                 /*----------------------------------********---------------------------------*/
                 Ext.getCmp("txtServer").setVisible(true);
@@ -338,6 +340,8 @@ emailServer.application = {
                 Ext.getCmp("txtIncomingServer").allowBlank = false;
                 Ext.getCmp("txtIncomingPort").allowBlank = false;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
+                Ext.getCmp("textClientId").allowBlank = true;
+                Ext.getCmp("textClientSecret").allowBlank = true;
                 /*----------------------------------********---------------------------------*/
             } else if (cboEmailEngine === "GMAILAPI") {
                 Ext.getCmp("txtServer").setVisible(false);
@@ -362,6 +366,8 @@ emailServer.application = {
                 Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = false;
                 Ext.getCmp("txtPassword").allowBlank = true;
+                Ext.getCmp("textClientId").allowBlank = false;
+                Ext.getCmp("textClientSecret").allowBlank = false;
             } else {
                 //MAIL
                 Ext.getCmp("txtServer").setVisible(false);
@@ -383,6 +389,8 @@ emailServer.application = {
                 Ext.getCmp("txtIncomingPort").allowBlank = true;
                 Ext.getCmp("txtAccountFrom").allowBlank = true;
                 Ext.getCmp("txtPassword").allowBlank = true;
+                Ext.getCmp("textClientId").allowBlank = true;
+                Ext.getCmp("textClientSecret").allowBlank = true;
             }
         }
 
@@ -798,12 +806,14 @@ emailServer.application = {
         var textClientId = new Ext.form.TextField({
             id: "textClientId",
             name: "textClientId",
-            fieldLabel: _("ID_CLIENT_ID")
+            fieldLabel: _("ID_CLIENT_ID"),
+            allowBlank: false
         });
         var textClientSecret = new Ext.form.TextField({
             id: "textClientSecret",
             name: "textClientSecret",
-            fieldLabel: _("ID_CLIENT_SECRET")
+            fieldLabel: _("ID_CLIENT_SECRET"),
+            allowBlank: false
         });
         var buttonContinue = new Ext.Action({
             id: 'buttonContinue',

@@ -15,24 +15,6 @@ class ProjectTest extends TestCase
 
     public function setUp()
     {
-        /**
-         * To perform the test this requires a valid installation and its respective license.
-         * 
-         * In the file "workflow/engine/classes/WorkspaceTools.php", 
-         * these lines need the db.php file.
-         * 
-         * public function __construct($workspaceName)
-         * {
-         *     $this->name = $workspaceName;
-         *     $this->path = PATH_DB . $this->name;
-         *     $this->dbPath = $this->path . '/db.php';
-         *     if ($this->workspaceExists()) {
-         *         $this->getDBInfo();
-         *     }
-         *     $this->setListContentMigrateTable();
-         * }
-         */
-        $this->markTestIncomplete("To perform the test this requires a valid installation and its respective license.");
         parent::setUp();
         $this->user = factory(User::class)->create();
     }
@@ -45,7 +27,7 @@ class ProjectTest extends TestCase
      */
     public function it_should_set_the_process_owner_with_invalid_value()
     {
-        $filename = PATH_TRUNK . "/tests/resources/p1normal-1.pmx";
+        $filename = PATH_TRUNK . "/tests/resources/p1normal-2.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);

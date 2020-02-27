@@ -487,32 +487,38 @@ class Task extends BaseTask
         return $row;
     }
 
-    public function load($TasUid)
+    /**
+     * Load the properties related to the task
+     *
+     * @param string $tasUid
+     *
+     * @return array
+     * @throws Exception
+    */
+    public function load($tasUid)
     {
         try {
-            $oRow = TaskPeer::retrieveByPK($TasUid);
+            $rows = TaskPeer::retrieveByPK($tasUid);
 
-            if (!is_null($oRow)) {
-                $aFields = $oRow->toArray(BasePeer::TYPE_FIELDNAME);
-
-                $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME); //Populating an object from of the array
-                                                                      //Populating attributes
+            if (!is_null($rows)) {
+                $fields = $rows->toArray(BasePeer::TYPE_FIELDNAME);
+                $this->fromArray($fields, BasePeer::TYPE_FIELDNAME); //Populating an object from of the array
+                //Populating attributes
                 $this->setNew(false);
 
                 /*----------------------------------********---------------------------------*/
                 $indicator = new IndicatorsCalculator();
-                $data = $indicator->suggestedTimeForTask($TasUid);
-                $aFields["TAS_AVERAGE"] = $data['average'];
-                $aFields["TAS_SDV"]     = $data['sdv'];
+                $data = $indicator->suggestedTimeForTask($tasUid);
+                $fields["TAS_AVERAGE"] = $data['average'];
+                $fields["TAS_SDV"] = $data['sdv'];
                 /*----------------------------------********---------------------------------*/
 
-                ///////
-                return $aFields;
+                return $fields;
             } else {
-                throw (new Exception("The row '" . $TasUid . "' in table TASK doesn't exist!"));
+                throw new Exception("The row '" . $tasUid . "' in table TASK doesn't exist!");
             }
-        } catch (Exception $oError) {
-            throw ($oError);
+        } catch (Exception $error) {
+            throw $error;
         }
     }
 

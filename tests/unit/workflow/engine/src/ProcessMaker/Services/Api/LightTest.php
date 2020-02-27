@@ -34,8 +34,6 @@ class LightTest extends TestCase
      */
     protected function setUp()
     {
-        $this->markTestIncomplete();//@todo: we need to correct this before the epic PMC-857 because this test use Unassigned cases
-
         parent::setUp();
         $this->workspace = env("DB_DATABASE", "test");
         $this->clientId = config("oauthClients.pm.clientId");
