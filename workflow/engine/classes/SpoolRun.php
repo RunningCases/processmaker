@@ -112,6 +112,16 @@ class SpoolRun
     }
 
     /**
+     * Set the fileData property
+     *
+     * @param array $fileData
+     */
+    public function setFileData($fileData)
+    {
+        $this->fileData = $fileData;
+    }
+
+    /**
      * Get the fileData property
      *
      * @return array

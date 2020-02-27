@@ -3,8 +3,12 @@
 namespace Tests\unit\gulliver\system;
 
 use G;
+use MonologProvider;
 use Tests\TestCase;
 
+/**
+ * @coversDefaultClass \G
+ */
 class gTest extends TestCase
 {
     /**
@@ -349,5 +353,28 @@ class gTest extends TestCase
             //This assert the array contains all the reserved words in MySQL 5.6 and MySQL 5.7
             $this->assertContains($word, $res);
         }
+    }
+
+    /**
+     * It tests if the errors related to the trigger execution was registered
+     *
+     * @covers ::logTriggerExecution
+     * @test
+     */
+    public function it_check_log_trigger_execution()
+    {
+        $data = [];
+        $error = 'This is some error';
+        $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = false;
+        G::logTriggerExecution($data, $error, 'FATAL_ERROR', 60);
+        $log = MonologProvider::getSingleton('TriggerExecutionError', 'processmaker.log', true);
+        $this->assertNotEmpty($log->getPathFile());
+        $this->assertTrue($_SESSION['_DATA_TRIGGER_']['_TRI_LOG_']);
+
+        $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = false;
+        G::logTriggerExecution($data, '', '', 100);
+        $log = MonologProvider::getSingleton('TriggerExecution', 'processmaker.log', true);
+        $this->assertNotEmpty($log->getPathFile());
+        $this->assertFalse($_SESSION['_DATA_TRIGGER_']['_TRI_LOG_']);
     }
 }
