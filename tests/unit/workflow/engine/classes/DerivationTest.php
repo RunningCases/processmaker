@@ -13,11 +13,13 @@ use ProcessMaker\Model\Route;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\TaskUser;
 use ProcessMaker\Model\User;
+use Tests\CreateTestSite;
 use Tests\TestCase;
 
 class DerivationTest extends TestCase
 {
-
+    use CreateTestSite;
+    
     /**
      * Call the setUp parent method
      */
@@ -30,28 +32,7 @@ class DerivationTest extends TestCase
 
         config(["system.workspace" => "new_site"]);
         $workspace = config("system.workspace");
-
-        if (!file_exists(PATH_DB . $workspace)) {
-            G::mk_dir(PATH_DB . $workspace);
-        }
-
-        if (!file_exists(PATH_DB . $workspace . PATH_SEP . "db.php")) {
-            $myfile = fopen(PATH_DB . $workspace . PATH_SEP . "db.php", "w");
-            fwrite($myfile, "<?php
-define ('DB_ADAPTER',     'mysql' );
-define ('DB_HOST',        '" . env('DB_HOST') . "' );
-define ('DB_NAME',        '" . env('DB_DATABASE') . "' );
-define ('DB_USER',        '" . env('DB_USERNAME') . "' );
-define ('DB_PASS',        '" . env('DB_PASSWORD') . "' );
-define ('DB_RBAC_HOST',   '" . env('DB_HOST') . "' );
-define ('DB_RBAC_NAME',   '" . env('DB_DATABASE') . "' );
-define ('DB_RBAC_USER',   '" . env('DB_USERNAME') . "' );
-define ('DB_RBAC_PASS',   '" . env('DB_PASSWORD') . "' );
-define ('DB_REPORT_HOST', '" . env('DB_HOST') . "' );
-define ('DB_REPORT_NAME', '" . env('DB_DATABASE') . "' );
-define ('DB_REPORT_USER', '" . env('DB_USERNAME') . "' );
-define ('DB_REPORT_PASS', '" . env('DB_PASSWORD') . "' );");
-        }
+        $this->createDBFile($workspace);
     }
 
     /**

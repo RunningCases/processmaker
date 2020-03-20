@@ -7,11 +7,12 @@ use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
+use Tests\CreateTestSite;
 use Tests\TestCase;
 
 class ReportTablesTest extends TestCase
 {
-
+    use CreateTestSite;
     use DatabaseTransactions;
 
     /**
@@ -20,7 +21,14 @@ class ReportTablesTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        $this->markTestIncomplete(""
+                . "This test has started using the ./processmaker command, this "
+                . "command requires the file 'paths_installed.php', that is, a "
+                . "valid installation of processmaker.");
         $_SERVER["REQUEST_URI"] = "";
+        config(["system.workspace" => "test"]);
+        $workspace = config("system.workspace");
+        $this->createDBFile($workspace);
     }
 
     /**
