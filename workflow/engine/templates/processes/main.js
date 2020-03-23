@@ -439,32 +439,32 @@ Ext.onReady(function(){
         // make sure it is added there or sorting will not work.
 
         {id:'PRO_UID', dataIndex: 'PRO_UID', hidden:true, hideable:false},
-        {header: "", dataIndex: 'PRO_STATUS', width: 50, hidden:true, hideable:false},
+        {header: "", dataIndex: 'PRO_STATUS', width: 10, hidden:true, hideable:false},
         {header: _('ID_PRO_DESCRIPTION'), dataIndex: 'PRO_DESCRIPTION', hidden:true, hideable:false},
-        {header: _('ID_PRO_TITLE'), dataIndex: 'PRO_TITLE', width: 380, hideable:false, renderer:function(v,p,r){
+        {header: _('ID_PRO_TITLE'), dataIndex: 'PRO_TITLE', width: 25, minWidth: 15, hideable:false, renderer:function(v,p,r){
             // TODO Labels for var 'type' are hardcoded, they must be replaced on the future
             var color = r.get('PROJECT_TYPE') == 'bpmn'? 'green': 'blue';
             var type = r.get('PROJECT_TYPE') == 'bpmn'? ' (BPMN Project)': '';
             return Ext.util.Format.htmlEncode(v) + ' ' + String.format("<font color='{0}'>{1}</font>", color, type);
         }},
-        {header: _('ID_TYPE'), dataIndex: 'PROJECT_TYPE', width: 60, hidden:false},
-        {header: _('ID_CATEGORY'), dataIndex: 'PRO_CATEGORY_LABEL', width: 100, hidden:false},
-        {header: _('ID_STATUS'), dataIndex: 'PRO_STATUS_LABEL', width: 60, renderer:function(v,p,r){
+        {header: _('ID_TYPE'), dataIndex: 'PROJECT_TYPE', width: 5, hidden:false},
+        {header: _('ID_CATEGORY'), dataIndex: 'PRO_CATEGORY_LABEL', width: 10, hidden:false},
+        {header: _('ID_STATUS'), dataIndex: 'PRO_STATUS_LABEL', width: 5, renderer:function(v,p,r){
           color = r.get('PRO_STATUS') == 'ACTIVE'? 'green': 'red';
           return String.format("<font color='{0}'>{1}</font>", color, v);
         }},
-        {header: _('ID_OWNER'), dataIndex: 'PRO_CREATE_USER_LABEL', width: 150},
-        {header: _('ID_PRO_CREATE_DATE'), dataIndex: 'PRO_CREATE_DATE', width: 70},
-        {header: _('ID_INBOX'), dataIndex: 'CASES_COUNT_TO_DO', width: 60, align:'right'},
-        {header: _('ID_DRAFT'), dataIndex: 'CASES_COUNT_DRAFT', width: 60, align:'right'},
-        {header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 60, align:'right'},
-        {header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 60, align:'right'},
-        {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 60, renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
-        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 50, align:'center'}
+        {header: _('ID_OWNER'), dataIndex: 'PRO_CREATE_USER_LABEL', width: 10},
+        {header: _('ID_PRO_CREATE_DATE'), dataIndex: 'PRO_CREATE_DATE', width: 5},
+        {header: _('ID_INBOX'), dataIndex: 'CASES_COUNT_TO_DO', width: 5, align:'right'},
+        {header: _('ID_DRAFT'), dataIndex: 'CASES_COUNT_DRAFT', width: 5, align:'right'},
+        {header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 5, align:'right'},
+        {header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 5, align:'right'},
+        {header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 5, renderer:function(v){return "<b>"+v+"</b>";}, align:'right'},
+        {header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 5, align:'center'}
         /*----------------------------------********---------------------------------*/
-        ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 70, align:"left"}
+        ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 5, minWidth: 5, align:"left"}
         /*----------------------------------********---------------------------------*/
-        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 70, align:"left"}
+        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 5, minWidth: 5, align:"left"}
       ]
     }),
     store: store,
