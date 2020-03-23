@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 class Application extends Model
 {
     protected $table = "APPLICATION";
+    protected $primaryKey = 'APP_NUMBER';
+    public $incrementing = false;
     // No timestamps
     public $timestamps = false;
 
