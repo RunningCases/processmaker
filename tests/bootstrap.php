@@ -16,8 +16,8 @@ $app->make(Kernel::class)->bootstrap();
 /**
  * @todo Migrate to configuration parameters
  */
-define('PATH_TRUNK', dirname(__DIR__));
-define('PATH_CORE', PATH_TRUNK . '/workflow/engine/');
+define('PATH_TRUNK', dirname(__DIR__) . '/');
+define('PATH_CORE', PATH_TRUNK . 'workflow/engine/');
 define('PATH_CONFIG', PATH_CORE . 'config/');
 if (!defined("PATH_DATA")) {
     define('PATH_DATA', dirname(__DIR__) . '/shared/');
@@ -33,12 +33,12 @@ define('DB_ADAPTER', 'mysql');
 // Path related some specific directories
 define('PATH_SEP', '/');
 define("PATH_PLUGINS", PATH_CORE . "plugins" . PATH_SEP);
-define('PATH_WORKSPACE', PATH_TRUNK . '/shared/sites/' . SYS_SYS . '/');
+define('PATH_WORKSPACE', PATH_TRUNK . 'shared/sites/' . SYS_SYS . '/');
 define('PATH_METHODS', dirname(__DIR__) . '/workflow/engine/methods/');
-define('PATH_WORKFLOW_MYSQL_DATA', PATH_TRUNK . '/workflow/engine/data/mysql/');
-define('PATH_RBAC_MYSQL_DATA', PATH_TRUNK . '/rbac/engine/data/mysql/');
+define('PATH_WORKFLOW_MYSQL_DATA', PATH_TRUNK . 'workflow/engine/data/mysql/');
+define('PATH_RBAC_MYSQL_DATA', PATH_TRUNK . 'rbac/engine/data/mysql/');
 define('PATH_LANGUAGECONT', PATH_DATA . '/META-INF/');
-define('PATH_RBAC_HOME', PATH_TRUNK . '/rbac/');
+define('PATH_RBAC_HOME', PATH_TRUNK . 'rbac/');
 define('PATH_RBAC', PATH_RBAC_HOME . 'engine/classes/');
 define("PATH_CUSTOM_SKINS", PATH_DATA . "skins/");
 define("PATH_TPL", PATH_CORE . "templates/");
@@ -49,11 +49,11 @@ define('DB_HOST', env('DB_HOST'));
 define('DB_NAME', env('DB_DATABASE'));
 define('DB_USER', env('DB_USERNAME'));
 define('DB_PASS', env('DB_PASSWORD'));
-define('PATH_HOME', PATH_TRUNK . '/workflow/');
+define('PATH_HOME', PATH_TRUNK . 'workflow/');
 define('PATH_HTML', PATH_HOME . 'public_html/');
-define('PATH_SMARTY_C', PATH_TRUNK . '/shared/compiled/smarty/c');
-define('PATH_SMARTY_CACHE', PATH_TRUNK . '/shared/compiled/smarty/cache');
-define('PATH_THIRDPARTY', PATH_TRUNK . '/thirdparty/');
+define('PATH_SMARTY_C', PATH_TRUNK . 'shared/compiled/smarty/c');
+define('PATH_SMARTY_CACHE', PATH_TRUNK . 'shared/compiled/smarty/cache');
+define('PATH_THIRDPARTY', PATH_TRUNK . 'thirdparty/');
 define("URL_KEY", 'c0l0s40pt1mu59r1m3');
 define("PATH_XMLFORM", PATH_CORE . "xmlform" . PATH_SEP);
 

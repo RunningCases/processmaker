@@ -27,7 +27,7 @@ class ProjectTest extends TestCase
      */
     public function it_should_set_the_process_owner_with_invalid_value()
     {
-        $filename = PATH_TRUNK . "/tests/resources/p1normal-2.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normal-2.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);

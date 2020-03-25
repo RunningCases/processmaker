@@ -13,7 +13,7 @@ class GranularImporterTest extends TestCase
      */
     public function importDataObject()
     {
-        $filename = PATH_TRUNK . "/tests/resources/GranularImporterTest.json";
+        $filename = PATH_TRUNK . "tests/resources/GranularImporterTest.json";
         $json = file_get_contents($filename);
         $data = json_decode($json, true);
         return $data;
