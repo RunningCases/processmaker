@@ -46,12 +46,16 @@ class FilesManagerTest extends TestCase
      */
     public function it_should_deleted_public_files_when_not_exist()
     {
-        $proUid = G::generateUniqueID();
-        $prfUid = G::generateUniqueID();
+        $processFiles = factory(ProcessFilesModel::class)->create();
+
+        $emailEvent = factory(EmailEventModel::class)->create([
+            'PRF_UID' => $processFiles->PRF_UID
+        ]);
+
         $filesManager = new FilesManager();
 
         $this->expectException(Exception::class);
-        $filesManager->deleteProcessFilesManager($proUid, $prfUid);
+        $filesManager->deleteProcessFilesManager($emailEvent->PRJ_UID, $processFiles->PRF_UID, true);
     }
 
     /**
@@ -203,6 +207,6 @@ class FilesManagerTest extends TestCase
         $filesManager = new FilesManager();
 
         $this->expectException(Exception::class);
-        $filesManager->deleteProcessFilesManager($process->PRO_UID, $processFiles->PRF_UID);
+        $filesManager->deleteProcessFilesManager($process->PRO_UID, $processFiles->PRF_UID, true);
     }
 }
