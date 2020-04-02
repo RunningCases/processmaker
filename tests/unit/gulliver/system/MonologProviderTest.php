@@ -213,4 +213,35 @@ class MonologProviderTest extends TestCase
         // Check that the CRITICAL was registered
         $this->assertTrue($res);
     }
+
+    /**
+     * It tests the getSingleton method
+     *
+     * @covers ::getSingleton
+     * @test
+     */
+    public function it_test_the_get_singleton_method()
+    {
+        // Call the getSingleton method twice
+        $log = MonologProvider::getSingleton('Channel Test', 'processmaker.log', true);
+        $log = MonologProvider::getSingleton('Channel Test', 'processmaker.log', true);
+        MonologProvider::setInstance("something");
+        // Set level debug to "INFO"
+        $log->setLevelDebug('INFO');
+        // This asserts the lever debug is 200
+        $this->assertEquals($log->getLevelDebug(), 200);
+        // Set level debug to "UNDEFINED"
+        $log->setLevelDebug('UNDEFINED');
+        // This asserts there is no level debug
+        $this->assertEmpty($log->getLevelDebug());
+    }
+
+    /**
+     * It calls the tearDown method
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        MonologProvider::setInstance(null);
+    }
 }
