@@ -416,7 +416,7 @@ Ext.onReady(function(){
     width:'',
     title : '',
     stateful : true,
-    stateId : 'gridProcessMain',
+    stateId : workspace + window.userUid + 'gridProcessMain',
     enableColumnResize: false,
     enableHdMenu: true,
     frame:false,
