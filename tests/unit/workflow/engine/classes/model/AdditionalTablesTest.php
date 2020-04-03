@@ -5,6 +5,9 @@ namespace Tests\unit\workflow\engine\classes\model;
 use AdditionalTables;
 use Exception;
 use G;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use ProcessMaker\BusinessModel\ReportTable;
 use ProcessMaker\Model\AdditionalTables as AdditionalTablesModel;
 use Tests\TestCase;
 
@@ -105,5 +108,174 @@ class AdditionalTablesTest extends TestCase
         $this->expectException(Exception::class);
         $additionalTables = new AdditionalTables();
         $additionalTables->update($expected);
+    }
+
+    /**
+     * It tries to getAll() method.
+     * @test
+     * @covers \AdditionalTables::getAll()
+     */
+    public function it_should_get_all_registries()
+    {
+        $proUid = factory(\ProcessMaker\Model\Process::class)->create()->PRO_UID;
+
+        //local connections
+        $additionalTables = factory(AdditionalTablesModel::class, 3);
+        $dbSource = factory(\ProcessMaker\Model\DbSource::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_SERVER' => env('DB_HOST'),
+            'DBS_DATABASE_NAME' => env('DB_DATABASE'),
+            'DBS_USERNAME' => env('DB_USERNAME'),
+            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), env('DB_DATABASE')) . "_2NnV3ujj3w",
+            'DBS_PORT' => '3306',
+            'DBS_CONNECTION_TYPE' => 'NORMAL'
+        ]);
+        $additionalTable = factory(AdditionalTablesModel::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_UID' => $dbSource->DBS_UID,
+        ]);
+        $tableName = $additionalTable->ADD_TAB_NAME;
+        $name = $additionalTable->ADD_TAB_CLASS_NAME;
+        $this->createSchema($dbSource->DBS_DATABASE_NAME, $tableName, $name, $dbSource->DBS_UID);
+
+        //external connection
+        $dbSource = factory(\ProcessMaker\Model\DbSource::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_SERVER' => config('database.connections.testexternal.host'),
+            'DBS_DATABASE_NAME' => config('database.connections.testexternal.database'),
+            'DBS_USERNAME' => config('database.connections.testexternal.username'),
+            'DBS_PASSWORD' => G::encrypt(config('database.connections.testexternal.password'), config('database.connections.testexternal.database')) . "_2NnV3ujj3w",
+            'DBS_PORT' => '3306',
+            'DBS_CONNECTION_TYPE' => 'NORMAL'
+        ]);
+        $additionalTable = factory(AdditionalTablesModel::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_UID' => $dbSource->DBS_UID,
+        ]);
+        $tableName = $additionalTable->ADD_TAB_NAME;
+        $name = $additionalTable->ADD_TAB_CLASS_NAME;
+        $this->createSchema($dbSource->DBS_DATABASE_NAME, $tableName, $name, $dbSource->DBS_UID);
+
+        //expected
+        $expected = AdditionalTablesModel::select()
+                ->get()
+                ->toArray();
+        $expected = array_column($expected, 'ADD_TAB_UID');
+
+        //assertions
+        $additionalTables = new AdditionalTables();
+
+        $actual = $additionalTables->getAll();
+        $actual = array_column($actual['rows'], 'ADD_TAB_UID');
+        $this->assertContains($actual[0], $expected, false);
+
+        $actual = $additionalTables->getAll(0, 20, 'a');
+        $actual = array_column($actual['rows'], 'ADD_TAB_UID');
+        $this->assertContains($actual[0], $expected, false);
+
+        $actual = $additionalTables->getAll(0, 20, '', ['equal' => $proUid]);
+        $actual = array_column($actual['rows'], 'ADD_TAB_UID');
+        $this->assertContains($actual[0], $expected, false);
+
+        $_POST['sort'] = 'ADD_TAB_NAME';
+        $_POST['dir'] = 'ASC';
+        $actual = $additionalTables->getAll(0, 20, '', ['notequal' => $proUid]);
+        $actual = array_column($actual['rows'], 'ADD_TAB_UID');
+        $this->assertContains($actual[0], $expected, false);
+
+        $_POST['sort'] = 'NUM_ROWS';
+        $_POST['dir'] = 'DESC';
+        $actual = $additionalTables->getAll(0, 20, '', ['notequal' => $proUid]);
+        $actual = array_column($actual['rows'], 'ADD_TAB_UID');
+        $this->assertContains($actual[0], $expected, false);
+
+        $actual = $additionalTables->getAll(0, 20, '', ['equal' => $proUid]);
+        $actual = array_column($actual['rows'], 'ADD_TAB_UID');
+        $this->assertContains($actual[0], $expected, false);
+
+        $actual = $additionalTables->getAll(0, 20, $tableName);
+        $actual = array_column($actual['rows'], 'ADD_TAB_UID');
+        $this->assertContains($actual[0], $expected, false);
+    }
+
+    /**
+     * This gets the content from template file.
+     * @param string $pathData
+     * @param string $tableName
+     * @param string $tableName2
+     * @param string $database
+     * @return string
+     */
+    private function getTemplate(string $pathData, string $tableName, string $tableName2 = "", string $database = ""): string
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/{$pathData}";
+        $result = file_get_contents($pathData);
+        $result = str_replace("{tableName}", $tableName, $result);
+        if (!empty($tableName2)) {
+            $result = str_replace("{tableName2}", $tableName2, $result);
+        }
+        if (!empty($database)) {
+            $result = str_replace("{database}", $database, $result);
+        }
+        return $result;
+    }
+
+    /**
+     * Create directory if not exist.
+     * @param string $path
+     * @return string
+     */
+    private function createDirectory(string $path): string
+    {
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+        return $path;
+    }
+
+    /**
+     * Create the schema of the table.
+     * @param string $connection
+     * @param string $tableName
+     * @param string $className
+     * @param string $dbsUid
+     */
+    private function createSchema(string $connection, string $tableName, string $className, string $dbsUid = 'workflow')
+    {
+        $query = ""
+                . "CREATE TABLE IF NOT EXISTS `{$tableName}` ("
+                . "`APP_UID` varchar(32) NOT NULL,"
+                . "`APP_NUMBER` int(11) NOT NULL,"
+                . "`APP_STATUS` varchar(10) NOT NULL,"
+                . "`VAR1` varchar(255) DEFAULT NULL,"
+                . "`VAR2` varchar(255) DEFAULT NULL,"
+                . "`VAR3` varchar(255) DEFAULT NULL,"
+                . "PRIMARY KEY (`APP_UID`),"
+                . "KEY `indexTable` (`APP_UID`))";
+        if (!empty(config("database.connections.{$connection}"))) {
+            DB::connection($connection)->statement($query);
+        } else {
+            DB::statement($query);
+        }
+
+        $this->createDirectory(PATH_DB);
+        $this->createDirectory(PATH_DB . env('MAIN_SYS_SYS'));
+
+        $pathClasses = PATH_DB . env('MAIN_SYS_SYS') . "/classes";
+        $this->createDirectory($pathClasses);
+        $this->createDirectory("{$pathClasses}/om");
+        $this->createDirectory("{$pathClasses}/map");
+
+        $template1 = $this->getTemplate("PmtTableName.tpl", $className);
+        $template2 = $this->getTemplate("PmtTableNamePeer.tpl", $className);
+        $template3 = $this->getTemplate("BasePmtTableName.tpl", $className);
+        $template4 = $this->getTemplate("BasePmtTableNamePeer.tpl", $className, $tableName, $dbsUid);
+        $template5 = $this->getTemplate("PmtTableNameMapBuilder.tpl", $className);
+
+        file_put_contents("{$pathClasses}/{$className}.php", $template1);
+        file_put_contents("{$pathClasses}/{$className}Peer.php", $template2);
+        file_put_contents("{$pathClasses}/om/Base{$className}.php", $template3);
+        file_put_contents("{$pathClasses}/om/Base{$className}Peer.php", $template4);
+        file_put_contents("{$pathClasses}/map/{$className}MapBuilder.php", $template5);
     }
 }
