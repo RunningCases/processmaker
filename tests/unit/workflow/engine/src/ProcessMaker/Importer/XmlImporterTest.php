@@ -37,7 +37,7 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_create_new_and_group_import_option_create_new()
     {
-        $filename = PATH_TRUNK . "/tests/resources/p1normal-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normal-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);
@@ -59,7 +59,7 @@ class XmlImporterTest extends TestCase
             'GRP_TITLE' => 'group2'
         ]);
         $regenerateUids = false;
-        $filename = PATH_TRUNK . "/tests/resources/p1normal-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normal-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);
@@ -80,7 +80,7 @@ class XmlImporterTest extends TestCase
         factory(\ProcessMaker\Model\Groupwf::class)->create([
             'GRP_TITLE' => 'group2'
         ]);
-        $filename = PATH_TRUNK . "/tests/resources/p1normal-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normal-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);
@@ -96,9 +96,9 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_create_new_and_group_import_option_create_new_and_objects_import()
     {
-        $filename = PATH_TRUNK . "/tests/resources/p2custom-1.pmx2";
+        $filename = PATH_TRUNK . "tests/resources/p2custom-1.pmx2";
 
-        $objectsToImportFilename = PATH_TRUNK . "/tests/resources/p2custom-1-ObjectsToImport.json";
+        $objectsToImportFilename = PATH_TRUNK . "tests/resources/p2custom-1-ObjectsToImport.json";
         $json = file_get_contents($objectsToImportFilename);
         $objectsToImport = json_decode($json);
 
@@ -117,9 +117,9 @@ class XmlImporterTest extends TestCase
     public function it_should_matter_with_import_option_keep_without_changing_and_create_new_and_group_import_option_create_new()
     {
         $regenerateUids = false;
-        $filename = PATH_TRUNK . "/tests/resources/p2custom-1.pmx2";
+        $filename = PATH_TRUNK . "tests/resources/p2custom-1.pmx2";
 
-        $objectsToImportFilename = PATH_TRUNK . "/tests/resources/p2custom-1-ObjectsToImport.json";
+        $objectsToImportFilename = PATH_TRUNK . "tests/resources/p2custom-1-ObjectsToImport.json";
         $json = file_get_contents($objectsToImportFilename);
         $objectsToImport = json_decode($json);
 
@@ -137,9 +137,9 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_overwrite_and_group_import_option_create_new()
     {
-        $filename = PATH_TRUNK . "/tests/resources/p2custom-1.pmx2";
+        $filename = PATH_TRUNK . "tests/resources/p2custom-1.pmx2";
 
-        $objectsToImportFilename = PATH_TRUNK . "/tests/resources/p2custom-1-ObjectsToImport.json";
+        $objectsToImportFilename = PATH_TRUNK . "tests/resources/p2custom-1-ObjectsToImport.json";
         $json = file_get_contents($objectsToImportFilename);
         $objectsToImport = json_decode($json);
 
@@ -158,9 +158,9 @@ class XmlImporterTest extends TestCase
     public function it_should_matter_with_import_option_disable_and_create_new_and_group_import_option_create_new()
     {
         $regenerateUids = false;
-        $filename = PATH_TRUNK . "/tests/resources/p2custom-1.pmx2";
+        $filename = PATH_TRUNK . "tests/resources/p2custom-1.pmx2";
 
-        $objectsToImportFilename = PATH_TRUNK . "/tests/resources/p2custom-1-ObjectsToImport.json";
+        $objectsToImportFilename = PATH_TRUNK . "tests/resources/p2custom-1-ObjectsToImport.json";
         $json = file_get_contents($objectsToImportFilename);
         $objectsToImport = json_decode($json);
 
@@ -178,7 +178,7 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_create_new_and_group_import_option_create_new_with_exception()
     {
-        $filename = PATH_TRUNK . "/tests/resources/p1normal-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normal-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);
@@ -202,7 +202,7 @@ class XmlImporterTest extends TestCase
         factory(\ProcessMaker\Model\Groupwf::class)->create([
             'GRP_TITLE' => 'group2'
         ]);
-        $filename = PATH_TRUNK . "/tests/resources/p1normal-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normal-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);
@@ -219,7 +219,7 @@ class XmlImporterTest extends TestCase
      */
     public function it_should_matter_with_import_option_create_new_and_group_import_option_create_new_try_exception()
     {
-        $filename = PATH_TRUNK . "/tests/resources/p1normalWithException-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normalWithException-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);
@@ -241,7 +241,7 @@ class XmlImporterTest extends TestCase
             'PRO_TITLE' => 'p1normalWithoutTitle'
         ]);
 
-        $filename = PATH_TRUNK . "/tests/resources/p1normalWithoutTitle-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normalWithoutTitle-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);
@@ -253,7 +253,7 @@ class XmlImporterTest extends TestCase
             'PRO_TITLE' => 'p1normalWithoutTitle2'
         ]);
 
-        $filename = PATH_TRUNK . "/tests/resources/p1normalWithoutTitle2-1.pmx";
+        $filename = PATH_TRUNK . "tests/resources/p1normalWithoutTitle2-1.pmx";
         $importer = new XmlImporter();
         $importer->setData("usr_uid", $this->user->USR_UID);
         $importer->setSourceFile($filename);

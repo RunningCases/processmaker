@@ -26,25 +26,25 @@ class CliWorkspacesTest extends TestCase
      */
     public function it_should_delete_the_deprecated_files()
     {
-        include(PATH_TRUNK . PATH_SEP . 'workflow/engine/bin/tasks/cliWorkspaces.php');
-        if (!file_exists(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/data_usersList.php')) {
-            $filename = PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/data_usersList.php';
+        include(PATH_TRUNK . 'workflow/engine/bin/tasks/cliWorkspaces.php');
+        if (!file_exists(PATH_TRUNK . 'workflow/engine/methods/users/data_usersList.php')) {
+            $filename = PATH_TRUNK . 'workflow/engine/methods/users/data_usersList.php';
             $handle = fopen($filename, 'w');
             fclose($handle);
         }
 
         // This assert the data_usersList.php file do exists before being deleted
-        $this->assertTrue(file_exists(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/data_usersList.php'));
+        $this->assertTrue(file_exists(PATH_TRUNK . 'workflow/engine/methods/users/data_usersList.php'));
 
-        $path = PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/';
+        $path = PATH_TRUNK . 'workflow/engine/methods/users/';
 
         if (getmyuid() == fileowner($path)) {
-            if (substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/data_usersList.php'),
+            if (substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/users/data_usersList.php'),
                     1, 2) == 'rw' &&
-                substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/'), 2, 1) == 'w' &&
-                substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/'), 3, 1) == 'x' &&
-                substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/'), 3, 1) == 'x' &&
-                substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/'), 3, 1) == 'x'
+                substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/users/'), 2, 1) == 'w' &&
+                substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/'), 3, 1) == 'x' &&
+                substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/'), 3, 1) == 'x' &&
+                substr($this->getPermissions(PATH_TRUNK . 'workflow/'), 3, 1) == 'x'
             ) {
                 remove_deprecated_files();
             } else {
@@ -53,13 +53,13 @@ class CliWorkspacesTest extends TestCase
             }
         } else {
             if (getmygid() == filegroup($path)) {
-                if (substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/data_usersList.php'),
+                if (substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/users/data_usersList.php'),
                         4, 2) == 'rw' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/'), 5,
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/users/'), 5,
                         1) == 'w' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/'), 6, 1) == 'x' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/'), 6, 1) == 'x' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/'), 6, 1) == 'x'
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/'), 6, 1) == 'x' &&
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/'), 6, 1) == 'x' &&
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/'), 6, 1) == 'x'
                 ) {
                     remove_deprecated_files();
                 } else {
@@ -68,13 +68,13 @@ class CliWorkspacesTest extends TestCase
                 }
 
             } else {
-                if (substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/data_usersList.php'),
+                if (substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/users/data_usersList.php'),
                         7, 2) == 'rw' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/'), 8,
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/users/'), 8,
                         1) == 'w' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/'), 9, 1) == 'x' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/engine/'), 9, 1) == 'x' &&
-                    substr($this->getPermissions(PATH_TRUNK . PATH_SEP . 'workflow/'), 9, 1) == 'x'
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/methods/'), 9, 1) == 'x' &&
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/engine/'), 9, 1) == 'x' &&
+                    substr($this->getPermissions(PATH_TRUNK . 'workflow/'), 9, 1) == 'x'
                 ) {
                     remove_deprecated_files();
                 } else {
@@ -85,7 +85,7 @@ class CliWorkspacesTest extends TestCase
         }
 
         // This assert the data_usersList.php does not exist anymore
-        $this->assertFalse(file_exists(PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/data_usersList.php'));
+        $this->assertFalse(file_exists(PATH_TRUNK . 'workflow/engine/methods/users/data_usersList.php'));
     }
 
     /**

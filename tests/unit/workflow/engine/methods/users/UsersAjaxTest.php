@@ -51,7 +51,7 @@ class UsersAjaxTest extends TestCase
         ob_start();
 
         //Call the tested file
-        require_once PATH_TRUNK . PATH_SEP . 'workflow/engine/methods/users/usersAjax.php';
+        require_once PATH_TRUNK . 'workflow/engine/methods/users/usersAjax.php';
 
         //Return the contents of the output buffer
         $outputBuffer = ob_get_contents();

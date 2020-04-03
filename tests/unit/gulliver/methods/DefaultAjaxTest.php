@@ -14,7 +14,7 @@ class DefaultAjaxTest extends TestCase
      */
     private function getDataFromFile(string $pathData): array
     {
-        $pathData = PATH_TRUNK . "/tests/resources/{$pathData}";
+        $pathData = PATH_TRUNK . "tests/resources/{$pathData}";
         $data = file_get_contents($pathData);
         $result = json_decode($data, JSON_OBJECT_AS_ARRAY);
         return $result;
@@ -35,10 +35,10 @@ class DefaultAjaxTest extends TestCase
         if (!is_dir($pathName)) {
             mkdir($pathName);
         }
-        $data = file_get_contents(PATH_TRUNK . "/tests/resources/simpleClassicXmlFormData.xml");
+        $data = file_get_contents(PATH_TRUNK . "tests/resources/simpleClassicXmlFormData.xml");
         file_put_contents($pathFileName, $data);
 
-        require_once PATH_TRUNK . '/gulliver/methods/defaultAjax.php';
+        require_once PATH_TRUNK . 'gulliver/methods/defaultAjax.php';
         $this->expectOutputString('[]');
 
         unlink($pathFileName);
