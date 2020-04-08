@@ -64,6 +64,8 @@ class CaseMessageHistory_AjaxTest extends TestCase
 
         $_REQUEST['actionAjax'] = "messageHistoryGridList_JXP";
 
+        $_POST['sort'] = 'MSG_UID';
+
         //Turn on output buffering
         ob_start();
 
