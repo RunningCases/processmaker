@@ -164,6 +164,7 @@ $headPublisher->assign('solrEnabled', $solrEnabled); //Sending the status of sol
 $headPublisher->assign('enableEnterprise', $enableEnterprise); //sending the page size
 $headPublisher->assign('columnSearchValues', $columnToSearch); //Sending the list of column for search: caseTitle, caseNumber, tasTitle
 $headPublisher->assign('filtersValues', $filters); //Sending filters defined
+$headPublisher->assign('workspace', config('system.workspace'));
 
 /*----------------------------------********---------------------------------*/
 $licensedFeatures = PMLicensedFeatures::getSingleton();
@@ -197,7 +198,6 @@ $headPublisher->addExtJsScript('cases/casesList', false); //adding a javascript 
 $headPublisher->addContent('cases/casesListExtJs'); //adding a html file  .html.
 $headPublisher->assign('FORMATS', $c->getFormats());
 $headPublisher->assign('userUid', $userUid);
-$headPublisher->assign('extJsViewState', $headPublisher->getExtJsViewState($userUid));
 $headPublisher->assign('isIE', Bootstrap::isIE());
 $headPublisher->assign('__OPEN_APPLICATION_UID__', $openApplicationUid);
 
