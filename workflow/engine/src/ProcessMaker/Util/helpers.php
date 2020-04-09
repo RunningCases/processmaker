@@ -475,30 +475,40 @@ function changeAbbreviationOfDirectives($size)
 }
 
 /**
- * Encoding header filename used in Content-Disposition
+ * Remove reserved characters for file names, this value will be used in the headers for stream the file
  *
  * @param string $fileName
  * @param string $replacement
  *
  * @return string
  *
- * @see cases_Step.php
- * @see \ProcessMaker\BusinessModel\Cases\OutputDocument::addCasesOutputDocument()
+ * @see workflow/engine/methods/cases/cases_ShowOutputDocument.php
+ *
+ * @link https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN#file-and-directory-names
+ * @link https://en.wikipedia.org/wiki/Filename#Comparison_of_filename_limitations
  */
 function fixContentDispositionFilename($fileName, $replacement = '_')
 {
-    //(double quote) has to be removed
-    //(question mark) has to be replaced by underscore due to the issue in google chrome
-    //(forward slash) has to replaced by underscore
-    //(backslash) has to replaced by underscore
-    $default = [
-        '/[\"]/' => '',
-        '/[\?]/' => $replacement,
-        '/[\\|\/]/' => $replacement,
-        '/\\\\/' => $replacement
+    // The reserved characters vary depending on the S.O., but this list covers the more important
+    $invalidCharacters = [
+        "<", //(less than)
+        ">", //(greater than)
+        ":", //(colon)
+        "\"", //(double quote)
+        "/", //(forward slash)
+        "\\", //(backslash)
+        "|", //(vertical bar or pipe)
+        "?", //(question mark)
+        "*", //(asterisk)
     ];
 
-    return preg_replace(array_keys($default), array_values($default), $fileName);
+    // Replace the reserved characters
+    $fileName = str_replace($invalidCharacters, $replacement, $fileName);;
+
+    // We need to encode the string in order to preserve some characters like "%"
+    $fileName = rawurlencode($fileName);
+
+    return $fileName;
 }
 
 /**
