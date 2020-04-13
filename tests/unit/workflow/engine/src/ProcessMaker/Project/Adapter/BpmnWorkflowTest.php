@@ -108,7 +108,7 @@ class BpmnWorkflowTest extends TestCase
     {
         $faker = Factory::create();
 
-        $projectDataFilename = PATH_TRUNK . "/tests/resources/projectData.json";
+        $projectDataFilename = PATH_TRUNK . "tests/resources/projectData.json";
         $json = file_get_contents($projectDataFilename);
         $projectData = json_decode($json, JSON_OBJECT_AS_ARRAY);
         $projectData['prj_uid'] = G::generateUniqueID();
@@ -127,7 +127,7 @@ class BpmnWorkflowTest extends TestCase
     {
         $faker = Factory::create();
 
-        $projectDataFilename = PATH_TRUNK . "/tests/resources/projectData.json";
+        $projectDataFilename = PATH_TRUNK . "tests/resources/projectData.json";
         $json = file_get_contents($projectDataFilename);
         $projectData = json_decode($json, JSON_OBJECT_AS_ARRAY);
         $projectData['prj_uid'] = G::generateUniqueID();
@@ -150,7 +150,7 @@ class BpmnWorkflowTest extends TestCase
     {
         $faker = Factory::create();
 
-        $projectDataFilename = PATH_TRUNK . "/tests/resources/projectData.json";
+        $projectDataFilename = PATH_TRUNK . "tests/resources/projectData.json";
         $json = file_get_contents($projectDataFilename);
         $projectData = json_decode($json, JSON_OBJECT_AS_ARRAY);
         $projectData['prj_uid'] = G::generateUniqueID();
@@ -179,7 +179,7 @@ class BpmnWorkflowTest extends TestCase
     {
         $faker = Factory::create();
 
-        $projectDataFilename = PATH_TRUNK . "/tests/resources/projectData.json";
+        $projectDataFilename = PATH_TRUNK . "tests/resources/projectData.json";
         $json = file_get_contents($projectDataFilename);
         $projectData = json_decode($json, JSON_OBJECT_AS_ARRAY);
         $projectData['prj_uid'] = G::generateUniqueID();
@@ -203,7 +203,7 @@ class BpmnWorkflowTest extends TestCase
     {
         $faker = Factory::create();
 
-        $projectDataFilename = PATH_TRUNK . "/tests/resources/projectData.json";
+        $projectDataFilename = PATH_TRUNK . "tests/resources/projectData.json";
         $json = file_get_contents($projectDataFilename);
         $projectData = json_decode($json, JSON_OBJECT_AS_ARRAY);
         $projectData['prj_uid'] = G::generateUniqueID();
@@ -227,7 +227,7 @@ class BpmnWorkflowTest extends TestCase
     {
         $faker = Factory::create();
 
-        $projectDataFilename = PATH_TRUNK . "/tests/resources/projectData.json";
+        $projectDataFilename = PATH_TRUNK . "tests/resources/projectData.json";
         $json = file_get_contents($projectDataFilename);
         $projectData = json_decode($json, JSON_OBJECT_AS_ARRAY);
         $projectData['prj_uid'] = G::generateUniqueID();

@@ -149,12 +149,16 @@ class PmDynaform
         return $labelsPo;
     }
 
-    public function getDynaformTitle($idDynaform)
+    /**
+     * Get the title of a Dynaform
+     *
+     * @param string $dynUid
+     * @return string
+     */
+    public function getDynaformTitle($dynUid)
     {
-        $d = new Dynaform();
-        $d->setDynUid($idDynaform);
-        $titleDynaform = $d->getDynTitle();
-        return $titleDynaform;
+        $dynaform = ModelDynaform::getByDynUid($dynUid);
+        return $dynaform->DYN_TITLE;
     }
 
     /**
@@ -1737,8 +1741,7 @@ class PmDynaform
             return false;
         }
         foreach ($result as $row) {
-            $dynaform = new PmDynaform(["CURRENT_DYNAFORM" => $row->DYN_UID]);
-            $json = G::json_decode($dynaform->record["DYN_CONTENT"]);
+            $json = G::json_decode($row->DYN_CONTENT);
             if ($this->jsoni($json, $variable)) {
                 return $row->DYN_UID;
             }

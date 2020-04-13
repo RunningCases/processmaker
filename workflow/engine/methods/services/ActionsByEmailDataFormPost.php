@@ -57,6 +57,12 @@ if (PMLicensedFeatures::getSingleton()
         //Load data related to the case
         $case = new Cases();
         $casesFields = $case->loadCase($appUid, $delIndex);
+
+        // Check if the current thread is not finished
+        if (!is_null($casesFields['DEL_FINISH_DATE'])) {
+            throw new Exception(G::loadTranslation('ID_ABE_FORM_ALREADY_FILLED'));
+        }
+        // Merge the data
         $casesFields['APP_DATA'] = array_merge($casesFields['APP_DATA'], $forms);
 
         //Get current user info

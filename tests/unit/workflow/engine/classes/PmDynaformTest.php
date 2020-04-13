@@ -963,6 +963,27 @@ class PmDynaformTest extends TestCase
 
         $this->assertEquals(strlen($sqlOriginal), strlen($sqlParsed));
     }
+
+    /**
+     * Review if the title of a Dynaform is correct
+     *
+     * @covers PmDynaform::getDynaformTitle()
+     * @test
+     */
+    public function it_should_get_dynaform_title()
+    {
+        // Create a Dynaform
+        $dynaform = factory(Dynaform::class)->create([]);
+
+        // Instance the class to test
+        $pmDynaform = new PmDynaform();
+
+        // Get the title of the Dynaform
+        $dynaformTitle = $pmDynaform->getDynaformTitle($dynaform->DYN_UID);
+
+        // Compare the values
+        $this->assertEquals($dynaformTitle, $dynaform->DYN_TITLE);
+    }
 }
 
 // Dummy function used for the coverture

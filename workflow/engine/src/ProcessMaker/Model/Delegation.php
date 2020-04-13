@@ -499,7 +499,7 @@ class Delegation extends Model
         Delegation::$groups = $groups;
 
         // Start the first query
-        $query1 = Delegation::query()->select('APP_NUMBER');
+        $query1 = Delegation::query()->select(['APP_NUMBER', 'DEL_INDEX']);
 
         // Add the join clause
         $query1->join('TASK', function ($join) {
@@ -539,9 +539,10 @@ class Delegation extends Model
         $selfServiceTasks = TaskUser::getSelfServicePerUser($usrUid);
 
         if (!empty($selfServiceTasks)) {
-            // Start the first query
-            $query2 = Delegation::query()->select('APP_NUMBER');
+            // Start the second query
+            $query2 = Delegation::query()->select(['APP_NUMBER', 'DEL_INDEX']);
             $query2->tasksIn($selfServiceTasks);
+            $query2->isThreadOpen();
             $query2->noUserInThread();
 
             // Build the complex query that uses "UNION DISTINCT" clause

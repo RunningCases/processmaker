@@ -1079,16 +1079,25 @@ Ext.onReady(function(){
                                   try {
                                       var data = Ext.util.JSON.decode(result.responseText);
                                       if (data.status == true) {
-                                          // The case was cancelled
-                                          parent.notify('', _("ID_CASE_CANCELLED", stringReplace("\\: ", "", _APP_NUM)));
-                                          parent.updateCasesTree();
-                                          parent.highlightCasesTree();
+                                          if (!isBrowserIE()) {
+                                              // The case was cancelled
+                                              parent.notify('', _("ID_CASE_CANCELLED", stringReplace("\\: ", "", _APP_NUM)));
+                                              parent.updateCasesTree();
+                                              parent.highlightCasesTree();
+                                          }
                                       } else {
-                                          // The case wasn't cancel
-                                          parent.notify('', data.msg);
+                                          if (!isBrowserIE()) {
+                                              // The case wasn't cancel
+                                              parent.notify('', data.msg);
+                                          }
                                       }
                                   } catch (e) {
-                                      parent.notify('', _('ID_SOMETHING_WRONG'));
+                                      if (isBrowserIE()) {
+                                          Ext.MessageBox.alert(_('ID_FAILED'), _('ID_SOMETHING_WRONG'));
+                                      } else {
+                                          parent.notify('', _('ID_SOMETHING_WRONG'));
+                                      }
+
                                   }
                                   location.href = 'casesListExtJs';
                               },

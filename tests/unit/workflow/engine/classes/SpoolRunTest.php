@@ -122,6 +122,10 @@ class SpoolRunTest extends TestCase
      */
     public function it_should_handle_mail_option()
     {
+        $string = ini_get("sendmail_path");
+        if (!is_executable($string)) {
+            $this->markTestIncomplete($string . " not found");
+        }
         $appMsgUid = G::generateUniqueID();
         factory(AppMessage::class)->create([
             'APP_MSG_UID' => $appMsgUid
