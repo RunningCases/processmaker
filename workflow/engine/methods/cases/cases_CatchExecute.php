@@ -1,25 +1,9 @@
 <?php
 /**
  * cases_CatchExecute.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
+ * This page is executed when we claim the case
+ * 
+ * @link https://wiki.processmaker.com/3.2/Cases/Cases#Unassigned
  */
 if (!isset($_SESSION['USER_LOGGED'])) {
     $responseObject = new stdclass();
@@ -50,23 +34,23 @@ if (isset($_POST['form']['BTN_CANCEL'])) {
 
 /* Includes */
 
-$oCase = new Cases();
-$sAppUid = $_SESSION['APPLICATION'];
-$iDelIndex = $_SESSION['INDEX'];
+$case = new Cases();
+$appUid = $_SESSION['APPLICATION'];
+$delIndex = $_SESSION['INDEX'];
 
-$oAppDelegation = new AppDelegation();
-$aDelegation = $oAppDelegation->load($sAppUid, $iDelIndex);
+$appDelegation = new AppDelegation();
+$delegation = $appDelegation->load($appUid, $delIndex);
 
-//if there are no user in the delegation row, this case is still in selfservice
-if ($aDelegation['USR_UID'] == "") {
-    $oCase->setCatchUser($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED']);
+// if there are no user in the delegation row, this case is still in selfservice
+if (empty($delegation['USR_UID'])) {
+    $case->setCatchUser($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED']);
     /*----------------------------------********---------------------------------*/
     $licensedFeatures = PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
         $pmGoogle = new PmGoogleApi();
         if ($pmGoogle->getServiceGmailStatus()) {
             $labGmail = new labelsGmail();
-            $labGmail->addRelabelingToQueue($sAppUid, $iDelIndex, -1, true);
+            $labGmail->addRelabelingToQueue($appUid, $delIndex, -1, true);
         }
     }
 
@@ -76,7 +60,7 @@ if ($aDelegation['USR_UID'] == "") {
             //add users email next task
             $user = new Users();
             $userInfo = $user->load($_SESSION['USER_LOGGED']);
-            $drive->addUsersDocumentDrive($sAppUid, array($userInfo['USR_EMAIL']));
+            $drive->addUsersDocumentDrive($appUid, [$userInfo['USR_EMAIL']]);
         }
     }
     /*----------------------------------********---------------------------------*/
@@ -97,11 +81,11 @@ unset($_SESSION['TASK']);
 die('<script type="text/javascript">
   if (' . $validation . ') {
       if (window.parent.frames.length != 0) {
-          parent.location = "open?APP_UID=' . $_SESSION['APPLICATION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] . '&action=unassigned";
+          parent.location = "open?APP_UID=' . $_SESSION['APPLICATION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] . '&action=jump";
       } else {
-          window.location = "../cases/cases_Open?APP_UID=' . $_SESSION['APPLICATION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] . '&action=unassigned";
+          window.location = "../cases/cases_Open?APP_UID=' . $_SESSION['APPLICATION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] . '&action=jump";
       }
   } else {
-      window.location = "../cases/cases_Open?APP_UID=' . $_SESSION['APPLICATION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] . '&action=unassigned";
+      window.location = "../cases/cases_Open?APP_UID=' . $_SESSION['APPLICATION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] . '&action=jump";
   }
   </script>');
