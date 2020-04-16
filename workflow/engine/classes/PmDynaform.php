@@ -1741,7 +1741,8 @@ class PmDynaform
             return false;
         }
         foreach ($result as $row) {
-            $json = G::json_decode($row->DYN_CONTENT);
+            $dynaform = new PmDynaform(["CURRENT_DYNAFORM" => $row->DYN_UID]);
+            $json = G::json_decode($dynaform->record["DYN_CONTENT"]);
             if ($this->jsoni($json, $variable)) {
                 return $row->DYN_UID;
             }
