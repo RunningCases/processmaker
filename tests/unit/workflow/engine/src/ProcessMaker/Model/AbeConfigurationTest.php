@@ -2,6 +2,7 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
+use EmailServer;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AbeConfiguration;
 use ProcessMaker\Model\AbeRequest;
@@ -104,5 +105,83 @@ class AbeConfigurationTest extends TestCase
 
         //Asserts the result has one record
         $this->assertEmpty($res);
+    }
+
+    /**
+     * It should test the updateReceiverUidToEmpty method
+     * 
+     * @covers \ProcessMaker\Model\AbeConfiguration::updateReceiverUidToEmpty()
+     * @test
+     */
+    public function it_should_test_the_update_abe_configuration_receiver_uid_method()
+    {
+        $emailServer = factory(EmailServerModel::class)->create();
+
+        $abeConfigurationFactory = factory(AbeConfiguration::class)->create([
+            'ABE_EMAIL_SERVER_UID' => $emailServer['MESS_UID']
+        ]);
+
+        $abeConfiguration = new AbeConfiguration();
+        $abeConfiguration->updateReceiverUidToEmpty($emailServer['MESS_UID']);
+
+        $query = AbeConfiguration::query()->select();
+        $query->where('ABE_UID', $abeConfigurationFactory['ABE_UID']);
+        $updatedAbe = $query->get()->values()->toArray();
+
+        $this->assertEquals($updatedAbe[0]['ABE_EMAIL_SERVER_RECEIVER_UID'], '');
+    }
+
+    /**
+     * It should test the updateEmailServerUidToDefaultOrEmpty method when there is not a default server
+     * 
+     * @covers \ProcessMaker\Model\AbeConfiguration::updateEmailServerUidToDefaultOrEmpty()
+     * @test
+     */
+    public function it_should_test_the_update_abe_configuration_email_server_uid_method_when_there_is_not_a_default_server()
+    {
+        EmailServerModel::query()->delete();
+        $emailServer = factory(EmailServerModel::class)->create();
+
+        $abeConfigurationFactory = factory(AbeConfiguration::class)->create([
+            'ABE_EMAIL_SERVER_UID' => $emailServer['MESS_UID']
+        ]);
+
+        $abeConfiguration = new AbeConfiguration();
+        $abeConfiguration->updateEmailServerUidToDefaultOrEmpty($emailServer['MESS_UID']);
+
+        $query = AbeConfiguration::query()->select();
+        $query->where('ABE_UID', $abeConfigurationFactory['ABE_UID']);
+        $updatedAbe = $query->get()->values()->toArray();
+
+        $this->assertEquals($updatedAbe[0]['ABE_EMAIL_SERVER_UID'], '');
+    }
+
+    /**
+     * It should test the updateEmailServerUidToDefaultOrEmpty method when there is a default server
+     * 
+     * @covers \ProcessMaker\Model\AbeConfiguration::updateEmailServerUidToDefaultOrEmpty()
+     * @test
+     */
+    public function it_should_test_the_update_abe_configuration_email_server_uid_method_when_there_is_a_default_server()
+    {
+        EmailServerModel::query()->delete();
+        $emailServer = factory(EmailServerModel::class)->create();
+        
+        $defaultServer = factory(EmailServerModel::class)->create([
+            'MESS_DEFAULT' => 1
+        ]);
+
+        $abeConfigurationFactory = factory(AbeConfiguration::class)->create([
+            'ABE_EMAIL_SERVER_UID' => $emailServer['MESS_UID']
+        ]);
+
+        $abeConfiguration = new AbeConfiguration();
+        $abeConfiguration->updateEmailServerUidToDefaultOrEmpty($emailServer['MESS_UID']);
+
+        $query = AbeConfiguration::query()->select();
+        $query->where('ABE_UID', $abeConfigurationFactory['ABE_UID']);
+        $updatedAbe = $query->get()->values()->toArray();
+        
+        $this->assertEquals($updatedAbe[0]['ABE_EMAIL_SERVER_UID'], $defaultServer['MESS_UID']);
     }
 }

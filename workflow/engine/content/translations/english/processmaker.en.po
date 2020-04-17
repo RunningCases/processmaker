@@ -7100,8 +7100,8 @@ msgstr "Delete data..."
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE
 #: LABEL/ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE
-msgid "[LABEL/ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE] Do you want to delete the Email Server?"
-msgstr "Do you want to delete the Email Server?"
+msgid "[LABEL/ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE] Are you sure you want to delete this Email Server? the components that were using it will now use the default email server."
+msgstr "Are you sure you want to delete this Email Server? the components that were using it will now use the default email server."
 
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_DOES_NOT_EXIST
