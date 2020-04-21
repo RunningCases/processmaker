@@ -360,7 +360,7 @@
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="APP_MSG_TYPE" type="VARCHAR" size="100" required="true" default=""/>
         <column name="APP_MSG_TYPE_ID" type="TINYINT" required="false" default="0"/>
-        <column name="APP_MSG_SUBJECT" type="VARCHAR" size="150" required="true" default=""/>
+        <column name="APP_MSG_SUBJECT" type="VARCHAR" size="998" required="true" default=""/>
         <column name="APP_MSG_FROM" type="VARCHAR" size="100" required="true" default=""/>
         <column name="APP_MSG_TO" type="LONGVARCHAR" required="true"/>
         <column name="APP_MSG_BODY" type="LONGVARCHAR" required="true"/>
