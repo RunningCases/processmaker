@@ -1126,26 +1126,26 @@ class Cases
         Validator::isString($appUid, '$app_uid');
         Validator::appUid($appUid, '$app_uid');
 
-        // Review the permission for delete case
-        global $RBAC;
-        if ($RBAC->userCanAccess('PM_DELETECASE') != 1) {
-            throw new Exception(G::LoadTranslation('ID_NOT_ABLE_DELETE_CASES'));
-        }
-        // Review the status and user
+        // Review the status and owner
         $caseInfo = ModelApplication::getCase($appUid);
-        if (!empty($caseInfo)){
+        if (!empty($caseInfo)) {
+            // Check if the requester is the owner
+            if ($caseInfo['APP_INIT_USER'] !== $usrUid) {
+                global $RBAC;
+                // If no we need to review if have the permission
+                if ($RBAC->userCanAccess('PM_DELETECASE') != 1) {
+                    throw new Exception(G::LoadTranslation('ID_NOT_ABLE_DELETE_CASES'));
+                }
+            }
+
             // Review the status
             if ($caseInfo['APP_STATUS'] != 'DRAFT') {
                 throw new Exception(G::LoadTranslation("ID_DELETE_CASE_NO_STATUS"));
             }
-            // Review the user requester
-            if ($caseInfo['APP_INIT_USER'] != $usrUid) {
-                throw new Exception(G::LoadTranslation("ID_DELETE_CASE_NO_OWNER"));
-            }
-        }
 
-        $case = new ClassesCases();
-        $case->removeCase($appUid);
+            $case = new ClassesCases();
+            $case->removeCase($appUid);
+        }
     }
 
     /**
