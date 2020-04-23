@@ -365,6 +365,46 @@ class EmailServerTest extends TestCase
     }
 
     /**
+     * It test the delete method 
+     * 
+     * @covers \ProcessMaker\BusinessModel\EmailServer::delete()
+     * @test
+     */
+    public function it_should_test_the_delete_method()
+    {
+        $email = factory(EmailServerModel::class)->create();
+        
+        $emailServer = new EmailServer();
+        $res = $emailServer->delete($email['MESS_UID']);
+
+        $this->assertNull($res);
+
+        $this->expectExceptionMessage("**ID_EMAIL_SERVER_DOES_NOT_EXIST**");
+        $emailServer->getEmailServer($email['MESS_UID']);
+    }
+
+    /**
+     * It test the delete method with an IMAP email server
+     * 
+     * @covers \ProcessMaker\BusinessModel\EmailServer::delete()
+     * @test
+     */
+    public function it_should_test_the_delete_method_with_imap()
+    {
+        $email = factory(EmailServerModel::class)->create([
+            'MESS_ENGINE' => 'IMAP'
+        ]);
+        
+        $emailServer = new EmailServer();
+        $res = $emailServer->delete($email['MESS_UID']);
+
+        $this->assertNull($res);
+
+        $this->expectExceptionMessage("**ID_EMAIL_SERVER_DOES_NOT_EXIST**");
+        $emailServer->getEmailServer($email['MESS_UID']);
+    }
+
+    /**
      * Call the tearDown method
      */
     public function tearDown()
