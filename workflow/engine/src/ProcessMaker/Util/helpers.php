@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use ProcessMaker\Model\User;
 
@@ -585,4 +587,17 @@ function toSqlWithBindings(Illuminate\Database\Eloquent\Builder $queryObject) {
 
     // Return query
     return $query;
+}
+
+/**
+ * Get the version of the mysql
+ * 
+ * @return string
+ */
+function getMysqlVersion()
+{
+    $results = DB::select(DB::raw("select version()"));
+    $mysqlVersion = $results[0]->{'version()'};
+
+    return $mysqlVersion;
 }

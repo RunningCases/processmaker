@@ -86,4 +86,38 @@ class EmailServerModelTest extends TestCase
         //Assert the result es not empty
         $this->assertNotEmpty($res);
     }
+
+    /**
+     * It tests the isImap method when there is an IMAP server
+     * 
+     * @covers \ProcessMaker\Model\EmailServerModel::isImap()
+     * @test
+     */
+    public function it_should_test_the_is_imap_method_when_there_is_an_imap_server()
+    {
+        EmailServerModel::query()->delete();
+        $emailServer = factory(EmailServerModel::class)->create([
+            'MESS_ENGINE' => 'IMAP'
+        ]);
+        $emailServerModel = new EmailServerModel();
+        $r = $emailServerModel->isImap($emailServer['MESS_UID']);
+        
+        $this->assertTrue($r);
+    }
+
+    /**
+     * It tests the isImap method when there is not an IMAP server
+     * 
+     * @covers \ProcessMaker\Model\EmailServerModel::isImap()
+     * @test
+     */
+    public function it_should_test_the_is_imap_method_when_there_is_not_an_imap_server()
+    {
+        EmailServerModel::query()->delete();
+        $emailServer = factory(EmailServerModel::class)->create();
+        $emailServerModel = new EmailServerModel();
+        $r = $emailServerModel->isImap($emailServer['MESS_UID']);
+        
+        $this->assertFalse($r);
+    }
 }
