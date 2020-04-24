@@ -126,6 +126,14 @@ $oHeadPublisher->assign('urlProxy', $urlProxy); //sending the urlProxy to make
 $oHeadPublisher->assign("_nodeId", isset($confDefaultOption) ? $confDefaultOption : "PM_USERS"); //User menu permissions
 $oHeadPublisher->assign("FORMATS", $conf->getFormats());
 
+/*----------------------------------********---------------------------------*/
+// If the feature for highlight the home folders is enabled, set some javascript variables
+if (HIGHLIGHT_HOME_FOLDER_ENABLE) {
+    $oHeadPublisher->assign("highlightUrlProxy", "casesMenuHighlight?r=");
+    $oHeadPublisher->assign("highlightRefreshTime", HIGHLIGHT_HOME_FOLDER_REFRESH_TIME);
+}
+/*----------------------------------********---------------------------------*/
+
 $_SESSION["current_ux"] = "NORMAL";
 
 G::RenderPage("publish", "extJs");

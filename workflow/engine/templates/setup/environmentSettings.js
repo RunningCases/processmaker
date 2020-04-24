@@ -223,6 +223,17 @@ Ext.onReady(function() {
           keyup: function (txt, e)
           {
               changeSettings(6);
+          },
+          render : function(c)
+          {
+              new Ext.ToolTip({
+                  target : c.getEl(),
+                  listeners: {
+                      'show': function (t) {
+                          t.update(_("ID_REFRESH_TIME_SCOPE"));
+                      }
+                  }
+              });
           }
       }
   });

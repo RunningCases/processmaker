@@ -336,6 +336,11 @@ define('LOGS_MAX_FILES', $config['logs_max_files']);
 define('LOGS_LOCATION', $config['logs_location']);
 define('LOGGING_LEVEL', $config['logging_level']);
 define('TIME_ZONE', ini_get('date.timezone'));
+/*----------------------------------********---------------------------------*/
+define('HIGHLIGHT_HOME_FOLDER_ENABLE', $config['highlight_home_folder_enable'] === "1");
+define('HIGHLIGHT_HOME_FOLDER_REFRESH_TIME', $config['highlight_home_folder_refresh_time']);
+define('HIGHLIGHT_HOME_FOLDER_SCOPE', $config['highlight_home_folder_scope']);
+/*----------------------------------********---------------------------------*/
 
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];
