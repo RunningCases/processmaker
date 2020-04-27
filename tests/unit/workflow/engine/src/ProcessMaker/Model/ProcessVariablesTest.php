@@ -6,6 +6,9 @@ use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessVariables;
 use Tests\TestCase;
 
+/**
+ * @coversDefaultClass ProcessMaker\Model\ProcessVariables
+ */
 class ProcessVariablesTest extends TestCase
 {
     /**
@@ -47,5 +50,24 @@ class ProcessVariablesTest extends TestCase
         // Assert that the result has the correct filtered process
         $this->assertEquals($process[0]['PRO_UID'], $result[0]['PRJ_UID']);
         $this->assertEquals($process[0]['PRO_UID'], $result[1]['PRJ_UID']);
+    }
+
+    /**
+     * Test it return the variables related to the PRO_ID
+     *
+     * @covers \ProcessMaker\Model\ProcessVariables::getVariables()
+     * @test
+     */
+    public function it_list_variables_by_process()
+    {
+        $process = factory(Process::class)->create();
+
+        factory(ProcessVariables::class)->create([
+                'PRJ_UID' => $process->PRO_UID,
+                'PRO_ID' => $process->PRO_ID,
+            ]
+        );
+        $result = ProcessVariables::getVariables($process->PRO_ID);
+        $this->assertNotEmpty($result);
     }
 }
