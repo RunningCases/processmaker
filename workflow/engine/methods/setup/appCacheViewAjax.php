@@ -175,25 +175,40 @@ switch ($request) {
         }
         break;
     case 'recreate-root':
-        $user = $_POST['user'];
-        $pass = $_POST['password'];
-        $server = $_POST['host'];
-        $code = $_POST['codeCaptcha'];
+        // Get the post variables
+        $user = !empty($_POST['user']) ? $_POST['user'] : '';
+        $pass = !empty($_POST['password']) ? $_POST['password'] : '';
+        $server = !empty($_POST['host']) ? $_POST['host'] : '';
+        $code = !empty($_POST['codeCaptcha']) ? $_POST['codeCaptcha'] : '';
+
+        // Check if in the host was included the port
         $server = explode(':', $server);
         $serverName = $server[0];
         $port = (count($server) > 1) ? $server[1] : '';
+
+        // Review if the captcha is not empty
+        if (empty($code)) {
+            echo G::loadTranslation('ID_CAPTCHA_CODE_INCORRECT');
+            break;
+        }
+        // Review if th captcha is incorrect
         if ($code !== $_SESSION['securimage_code_disp']['default']) {
             echo G::loadTranslation('ID_CAPTCHA_CODE_INCORRECT');
             break;
         }
-        list($success, $message) = System::checkPermissionsDbUser(DB_ADAPTER, $serverName, $port, $user, $pass);
-        if ($success) {
-            $id = 'ID_MESSAGE_ROOT_CHANGE_FAILURE';
-            if (System::regenerateCredentiaslPathInstalled($server, $user, $pass)) {
-                $id = 'ID_MESSAGE_ROOT_CHANGE_SUCESS';
+        // Define a message of failure
+        $message = G::loadTranslation('ID_MESSAGE_ROOT_CHANGE_FAILURE');
+        if (!empty($user) && !empty($pass) && !empty($serverName)) {
+            list($success, $message) = System::checkPermissionsDbUser(DB_ADAPTER, $serverName, $port, $user, $pass);
+            if ($success) {
+                $id = 'ID_MESSAGE_ROOT_CHANGE_FAILURE';
+                if (System::regenerateCredentiaslPathInstalled($serverName, $user, $pass)) {
+                    $id = 'ID_MESSAGE_ROOT_CHANGE_SUCESS';
+                }
+                $message = G::loadTranslation($id);
             }
-            $message = G::loadTranslation($id);
         }
+
         echo $message;
         break;
     case 'captcha':
