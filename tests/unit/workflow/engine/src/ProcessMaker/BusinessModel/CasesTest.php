@@ -77,33 +77,4 @@ class CasesTest extends TestCase
         $case = new Cases();
         $case->deleteCase($application->APP_UID, $_SESSION['USER_LOGGED']);
     }
-    /**
-     * This checks the validation of documents
-     * 
-     * @covers \ProcessMaker\BusinessModel\Cases::validateAppDocUid()
-     * @test
-     */
-    public function it_should_validate_app_doc_uid()
-    {
-        $arrayVariableDocument = [
-            0 => [
-                "appDocUid" => "4371401485e7cd60d160062060139220",
-                "name" => "test_1.txt",
-                "version" => "1"
-            ],
-            1 => [
-                "name" => "test_1.txt",
-                "version" => "1"
-            ],
-            2 => [
-                "appDocUid" => "6837968225e7cd60dc17588042896388",
-                "name" => "test_1.txt",
-                "version" => "1"
-            ]
-        ];
-        $case = new Cases();
-        $newArrayVariableDocument = $case->validateAppDocUid($arrayVariableDocument);
-        $this->assertNotEmpty($newArrayVariableDocument);
-        $this->assertNotEquals($newArrayVariableDocument, $arrayVariableDocument);
-    }
 }
