@@ -77,7 +77,8 @@ class System
         'mobile_offline_tables_download_interval' => 24,
         'highlight_home_folder_enable' => 0,
         'highlight_home_folder_refresh_time' => 10,
-        'highlight_home_folder_scope' => 'unassigned' // For now only this list is supported
+        'highlight_home_folder_scope' => 'unassigned', // For now only this list is supported
+        'disable_advanced_search_case_title_fulltext' => 0
     ];
 
     /**
