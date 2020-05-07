@@ -70,4 +70,41 @@ class ProcessVariablesTest extends TestCase
         $result = ProcessVariables::getVariables($process->PRO_ID);
         $this->assertNotEmpty($result);
     }
+
+    /**
+     * Test it return the variables by type related to the PRO_ID
+     *
+     * @covers \ProcessMaker\Model\ProcessVariables::getVariablesByType()
+     * @test
+     */
+    public function it_list_variables_type_by_process()
+    {
+        $process = factory(Process::class)->create();
+        $varType = 'integer';
+        $varTypeId = 2;
+        for ($x = 1; $x <= 5; $x++) {
+            $processVar = factory(ProcessVariables::class)->states('foreign_keys')->create([
+                'PRO_ID' => $process->PRO_ID,
+                'PRJ_UID' => $process->PRO_UID,
+                'VAR_FIELD_TYPE' => $varType,
+                'VAR_FIELD_TYPE_ID' => $varTypeId,
+                'VAR_NAME' => 'varTestName' . $x,
+            ]);
+        }
+
+        $res = ProcessVariables::getVariablesByType($processVar->PRO_ID, 2, null, null, null);
+        $this->assertNotEmpty($res);
+        $this->assertEquals(5, count($res));
+        // Get a specific start and limit
+        $res = ProcessVariables::getVariablesByType($process->PRO_ID, 2, 0, 2);
+        $this->assertNotEmpty($res);
+        $this->assertEquals(2, count($res));
+        // Get a specific search
+        $res = ProcessVariables::getVariablesByType($process->PRO_ID, 2, 0, 4, 'varTest');
+        $this->assertNotEmpty($res);
+        $this->assertEquals(4, count($res));
+        // When the search does not match
+        $res = ProcessVariables::getVariablesByType($process->PRO_ID, 2, null, null, 'other');
+        $this->assertEmpty($res);
+    }
 }
