@@ -9,6 +9,7 @@ use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\InputDocument;
 use ProcessMaker\Model\OutputDocument;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\ProcessVariables;
 use Tests\TestCase;
 
 class ProcessesTest extends TestCase
@@ -478,5 +479,71 @@ class ProcessesTest extends TestCase
         foreach ($result as $key => $value) {
             $this->assertObjectHasAttribute($key, $result);
         }
+    }
+
+    /**
+     * Test it create a variable from old xml fields
+     *
+     * @covers \Processes::createProcessVariables()
+     * @test
+     */
+    public function it_create_variables_from_import_old()
+    {
+        $process = factory(\ProcessMaker\Model\Process::class)->create();
+        $attributes[] = [
+            'VAR_UID' => G::generateUniqueID(),
+            'PRJ_UID' => $process->PRO_UID,
+            'VAR_NAME' => 'varTest',
+            'VAR_FIELD_TYPE' => 'integer',
+            'VAR_FIELD_SIZE' => 10,
+            'VAR_LABEL' => 'string',
+            'VAR_DBCONNECTION' => '',
+            'VAR_SQL' => '',
+            'VAR_NULL' => 0,
+            'VAR_DEFAULT' => '',
+            'VAR_ACCEPTED_VALUES' => '[]',
+            'INP_DOC_UID' => ''
+        ];
+        $processes = new Processes();
+        $processes->createProcessVariables($attributes);
+        $result = ProcessVariables::getVariables($process->PRO_ID);
+        $this->assertNotEmpty($result);
+        $result = head($result);
+        $this->assertArrayHasKey('PRO_ID', $result, "The result does not contains 'PRO_ID' as a key");
+        $this->assertArrayHasKey('VAR_FIELD_TYPE_ID', $result, "The result does not contains 'VAR_FIELD_TYPE_ID' as a key");
+        $this->assertEquals($result['VAR_FIELD_TYPE_ID'], 2);
+    }
+
+    /**
+     * Test it create a variable from new xml fields
+     *
+     * @covers \Processes::createProcessVariables()
+     * @test
+     */
+    public function it_create_variables_from_import_new()
+    {
+        $process = factory(\ProcessMaker\Model\Process::class)->create();
+        $attributes[] = [
+            'VAR_UID' => G::generateUniqueID(),
+            'PRJ_UID' => $process->PRO_UID,
+            'VAR_NAME' => 'varTest',
+            'VAR_FIELD_TYPE' => 'string',
+            'VAR_FIELD_TYPE_ID' => 1,
+            'VAR_FIELD_SIZE' => 10,
+            'VAR_LABEL' => 'string',
+            'VAR_DBCONNECTION' => '',
+            'VAR_SQL' => '',
+            'VAR_NULL' => 0,
+            'VAR_DEFAULT' => '',
+            'VAR_ACCEPTED_VALUES' => '[]',
+            'INP_DOC_UID' => ''
+        ];
+        $processes = new Processes();
+        $processes->createProcessVariables($attributes);
+        $result = ProcessVariables::getVariables($process->PRO_ID);
+        $this->assertNotEmpty($result);
+        $result = head($result);
+        $this->assertArrayHasKey('PRO_ID', $result, "The result does not contains 'PRO_ID' as a key");
+        $this->assertArrayHasKey('VAR_FIELD_TYPE_ID', $result, "The result does not contains 'VAR_FIELD_TYPE_ID' as a key");
     }
 }
