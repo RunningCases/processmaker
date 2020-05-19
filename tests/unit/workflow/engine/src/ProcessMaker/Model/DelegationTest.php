@@ -28,6 +28,15 @@ class DelegationTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Set up function.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Delegation::truncate();
+    }
+
+    /**
      * This checks to make sure pagination is working properly
      *
      * @covers \ProcessMaker\Model\Delegation::search()
@@ -255,6 +264,7 @@ class DelegationTest extends TestCase
         $this->assertCount(1, $results['data']);
         $this->assertEquals($application->APP_NUMBER, $results['data'][0]['APP_NUMBER']);
     }
+
     /**
      * This ensures searching by case number and review the order
      *
@@ -263,28 +273,23 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_and_filter_by_app_title()
     {
-        $title = '';
-        for ($x = 1; $x <= 10; $x++) {
-            $application = factory(Application::class)->states('foreign_keys')->create();
-            factory(Delegation::class)->states('foreign_keys')->create([
-                'APP_UID' => $application->APP_UID,
-                'APP_NUMBER' => $application->APP_NUMBER,
-                'PRO_UID' => $application->PRO_UID,
-                'PRO_ID' => $application->PRO_ID
-            ]);
-            $title = $application->APP_TITLE;
-        }
+        $delegations = factory(Delegation::class, 1)
+                ->states('foreign_keys')
+                ->create();
+        $title = $delegations->last()
+                ->application
+                ->APP_TITLE;
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
 
         // Searching by a existent case title, result ordered by APP_NUMBER, filter by APP_NUMBER in DESC mode
         $results = Delegation::search(null, 0, 10, $title, null, null, 'DESC',
-            'APP_NUMBER', null, null, null, 'APP_TITLE');
+                        'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
         $this->assertEquals($title, $results['data'][0]['APP_TITLE']);
         // Searching by a existent case title, result ordered by APP_NUMBER, filter by APP_NUMBER in ASC mode
         $results = Delegation::search(null, 0, 10, $title, null, null, 'ASC',
-            'APP_NUMBER', null, null, null, 'APP_TITLE');
+                        'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
         $this->assertEquals($title, $results['data'][0]['APP_TITLE']);
     }
@@ -536,7 +541,6 @@ class DelegationTest extends TestCase
         // Process with the category to search
         $category = factory(ProcessCategory::class)->create();
         $processSearch = factory(Process::class)->create([
-            'PRO_ID' => 5,
             'PRO_CATEGORY' => $category->CATEGORY_UID
         ]);
         // Delegations to found
