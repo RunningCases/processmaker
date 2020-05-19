@@ -25,10 +25,10 @@ class ProcessTest extends TestCase
      */
     public function it_has_tasks()
     {
-        $process = factory(Process::class)->create([
-            'PRO_ID' => function () {
-                return factory(Task::class)->create()->PRO_ID;
-            }
+        $process = factory(Process::class)->create();
+        factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID
         ]);
         $this->assertInstanceOf(Task::class, $process->tasks);
     }

@@ -888,7 +888,7 @@ class Derivation
             define( 'TASK_FINISH_TASK', - 2 );
         }
 
-        $this->case = new cases();
+        $this->case = new Cases();
 
         //Get data for this DEL_INDEX current
         $appFields = $this->case->loadCase( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
