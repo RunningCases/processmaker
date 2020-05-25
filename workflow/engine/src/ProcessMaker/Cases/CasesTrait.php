@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Cases;
 
+use AbeResponses;
 use AppDelegation;
 use AppDelegationPeer;
 use AppDocumentDrive;
@@ -9,17 +10,22 @@ use BasePeer;
 use Cases;
 use Derivation;
 use Event;
+use Exception;
 use G;
+use Illuminate\Support\Facades\Log;
 use PMLicensedFeatures;
+use ProcessMaker\BusinessModel\Cases\InputDocument;
 use ProcessMaker\BusinessModel\Pmgmail;
+use ProcessMaker\ChangeLog\ChangeLog;
+use stdClass;
 use Users;
-use WebDriver\Exception;
+use WsBase;
 
 trait CasesTrait
 {
 
     /**
-     * This initiates the routing of the case given the application and the form 
+     * This initiates the routing of the case given the application and the form
      * data in the web application interface.
      * @param string $processUid
      * @param string $application
@@ -29,8 +35,9 @@ trait CasesTrait
      * @param string $tasUid
      * @param integer $index
      * @param string $userLogged
+     * @return stdClass
      */
-    public function routeCase($processUid, $application, $postForm, $status, $flagGmail, $tasUid, $index, $userLogged)
+    public function routeCase($processUid, $application, $postForm, $status, $flagGmail, $tasUid, $index, $userLogged): stdClass
     {
         //warning: we are not using the result value of function thisIsTheCurrentUser, so I'm commenting to optimize speed.
         $appFields = $this->loadCase($application);
@@ -195,11 +202,131 @@ trait CasesTrait
         }
         // Set users drive - End
         /*----------------------------------********---------------------------------*/
-        
+
         $result = [
             'appFields' => $appFields,
             'triggerDebug' => $triggerDebug
         ];
         return (object) $result;
+    }
+
+    /**
+     * This initiates the routing of the case given the application and the form 
+     * data in the email application interface.
+     * @param string $appUid
+     * @param int $delIndex
+     * @param string $aber
+     * @param string $dynUid
+     * @param array $forms
+     * @param string $remoteAddr
+     * @param array $files
+     * @return array
+     * @throws Exception
+     */
+    public function routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files): array
+    {
+        //Load data related to the case
+        $case = new Cases();
+        $fields = $case->loadCase($appUid, $delIndex);
+
+        // Check if the current thread is not finished
+        if (!is_null($fields['DEL_FINISH_DATE'])) {
+            $message = G::loadTranslation('ID_ABE_FORM_ALREADY_FILLED');
+            Log::error($message);
+            throw new Exception($message);
+        }
+        // Merge the data
+        $fields['APP_DATA'] = array_merge($fields['APP_DATA'], $forms);
+
+        //Get current user info
+        $delegation = new AppDelegation();
+        $currentUsrUid = $delegation->getUserAssignedInThread($appUid, $delIndex);
+        if (!is_null($currentUsrUid)) {
+            $users = new Users();
+            $userInfo = $users->loadDetails($currentUsrUid);
+            $fields["APP_DATA"]["USER_LOGGED"] = $currentUsrUid;
+            $fields["APP_DATA"]["USR_USERNAME"] = $userInfo['USR_USERNAME'];
+        }
+
+        foreach ($fields["APP_DATA"] as $index => $value) {
+            $_SESSION[$index] = $value;
+        }
+
+        $fields['CURRENT_DYNAFORM'] = $dynUid;
+        $fields['USER_UID'] = $fields['CURRENT_USER_UID'];
+
+        ChangeLog::getChangeLog()
+                ->getUsrIdByUsrUid($fields['USER_UID'], true)
+                ->setSourceId(ChangeLog::FromABE);
+
+        //Update case info
+        $case->updateCase($appUid, $fields);
+        if (isset($files['form'])) {
+            if (isset($files["form"]["name"]) && count($files["form"]["name"]) > 0) {
+                $oInputDocument = new InputDocument();
+                $oInputDocument->uploadFileCase($files, $case, $fields, $currentUsrUid, $appUid, $delIndex);
+            }
+        }
+        $wsBase = new WsBase();
+        $result = $wsBase->derivateCase($fields['CURRENT_USER_UID'], $appUid, $delIndex, true);
+        $code = is_array($result) ? $result['status_code'] : $result->status_code;
+
+        $dataResponses = [];
+        $dataResponses['ABE_REQ_UID'] = $aber;
+        $dataResponses['ABE_RES_CLIENT_IP'] = $remoteAddr;
+        $dataResponses['ABE_RES_DATA'] = serialize($forms);
+        $dataResponses['ABE_RES_STATUS'] = 'PENDING';
+        $dataResponses['ABE_RES_MESSAGE'] = '';
+
+        try {
+            require_once 'classes/model/AbeResponses.php';
+            $abeResponses = new AbeResponses();
+            $dataResponses['ABE_RES_UID'] = $abeResponses->createOrUpdate($dataResponses);
+        } catch (Exception $error) {
+            $message = $error->getMessage();
+            Log::error($message);
+            throw $error;
+        }
+
+        if ($code == 0) {
+            //Save Cases Notes
+            $abeRequest = loadAbeRequest($aber);
+            $abeConfiguration = loadAbeConfiguration($abeRequest['ABE_UID']);
+
+            if ($abeConfiguration['ABE_CASE_NOTE_IN_RESPONSE'] == 1) {
+                $response = new stdclass();
+                $response->usrUid = $fields['APP_DATA']['USER_LOGGED'];
+                $response->appUid = $appUid;
+                $response->delIndex = $delIndex;
+                $response->noteText = "Check the information that was sent for the receiver: " . $abeRequest['ABE_REQ_SENT_TO'];
+                postNote($response);
+            }
+
+            $abeRequest['ABE_REQ_ANSWERED'] = 1;
+            $code == 0 ? uploadAbeRequest($abeRequest) : '';
+        } else {
+            $resStatusCode = is_array($result) ? $result['status_code'] : $result->status_code;
+            $resMessage = is_array($result) ? $result['message'] : $result->message;
+            $message = 'An error occurred while the application was being processed.<br /><br />
+                        Error code: ' . $resStatusCode . '<br />
+                        Error message: ' . $resMessage . '<br /><br />';
+            Log::error($message);
+            throw new Exception($message);
+        }
+
+        // Update
+        $resMessage = is_array($result) ? $result['message'] : $result->message;
+        $dataResponses['ABE_RES_STATUS'] = ($code == 0 ? 'SENT' : 'ERROR');
+        $dataResponses['ABE_RES_MESSAGE'] = ($code == 0 ? '-' : $resMessage);
+
+        try {
+            $abeResponses = new AbeResponses();
+            $abeResponses->createOrUpdate($dataResponses);
+        } catch (Exception $error) {
+            $message = $error->getMessage();
+            Log::error($message);
+            throw $error;
+        }
+        return $dataResponses;
     }
 }
