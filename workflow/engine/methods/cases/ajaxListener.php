@@ -571,6 +571,14 @@ class Ajax
                 // Review if the case was cancelled, true if the case was cancelled
                 $result->status = ($response->status_code == 0) ? true : false;
                 $result->msg = $response->message;
+                // Register in cases notes
+                if (!empty($_POST['NOTE_REASON'])) {
+                    $appNotes = new AppNotes();
+                    $noteContent = addslashes($_POST['NOTE_REASON']);
+                    $appNotes->postNewNote(
+                        $appUid, $usrUid, $noteContent, $_POST['NOTIFY_CANCEL']
+                    );
+                }
             } else {
                 $result->status = false;
                 $result->msg = G::LoadTranslation("ID_CASE_USER_INVALID_CANCEL_CASE", [$usrUid]);
