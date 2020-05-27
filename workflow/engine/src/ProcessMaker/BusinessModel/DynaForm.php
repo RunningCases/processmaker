@@ -1178,7 +1178,9 @@ class DynaForm
                 }
                 foreach ($oldColumns as $oldColumn) {
                     if (strtolower(AdditionalTables::getPHPName($column->id)) === strtolower(AdditionalTables::getPHPName($oldColumn->id))) {
-                        $identicals[] = "'" . $column->id . "' - '" . $oldColumn->id . "'";
+                        if (strtolower(AdditionalTables::getPHPName($column->var_name)) === strtolower(AdditionalTables::getPHPName($oldColumn->var_name))) {
+                            $identicals[] = "'" . $column->id . "' - '" . $oldColumn->id . "'";
+                        }
                     }
                 }
             }
