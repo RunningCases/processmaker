@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\RouteCase;
 use ProcessMaker\Core\JobsManager;
 
 /**
@@ -105,8 +106,8 @@ try {
         $cases = new Cases();
         $cases->routeCase($processUid, $application, $postForm, $sStatus, $flagGmail, $tasUid, $index, $userLogged);
     };
-    JobsManager::getSingleton()->dispatch("CasesDispatch", $closure);
-    
+    JobsManager::getSingleton()->dispatch(RouteCase::class, $closure);
+
     //We close the related threads.
     $cases = new Cases();
     $cases->CloseCurrentDelegation($application, $index);

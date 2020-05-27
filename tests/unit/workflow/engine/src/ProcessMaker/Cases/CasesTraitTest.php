@@ -2,11 +2,17 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Cases;
 
-use App\Jobs\CasesDispatch;
+use App\Jobs\RouteCase;
 use Cases;
+use G;
 use Illuminate\Support\Facades\Queue;
+use ProcessMaker\Model\AbeConfiguration;
+use ProcessMaker\Model\AbeRequest;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Dynaform;
+use ProcessMaker\Model\EmailServerModel;
+use ProcessMaker\Model\InputDocument;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Route;
 use ProcessMaker\Model\Step;
@@ -286,6 +292,162 @@ class CasesTraitTest extends TestCase
 
         require_once PATH_METHODS . 'cases/cases_Derivate.php';
 
-        Queue::assertPushed(CasesDispatch::class);
+        Queue::assertPushed(RouteCase::class);
+    }
+
+    /**
+     * This test verifies if ABE is completed.
+     * @test
+     * @covers Cases::routeCaseActionByEmail
+     */
+    public function it_should_verify_if_abe_is_completed()
+    {
+        $user = User::where('USR_ID', '=', 1)->get()->first();
+
+        $process = factory(Process::class)->create([
+            'PRO_CREATE_USER' => $user->USR_UID
+        ]);
+        $dynaform = factory(Dynaform::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        $inpuDocument = factory(InputDocument::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'BALANCED',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'BALANCED',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+
+        $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        $delegation1 = factory(Delegation::class)->create([
+            'USR_UID' => $user->USR_UID,
+            'PRO_UID' => $process->PRO_UID,
+            'APP_UID' => $application->APP_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'DEL_INDEX' => 1,
+        ]);
+        factory(Delegation::class)->create([
+            'USR_UID' => $user->USR_UID,
+            'PRO_UID' => $process->PRO_UID,
+            'APP_UID' => $application->APP_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'DEL_INDEX' => 2,
+            'DEL_PREVIOUS' => $delegation1->DEL_INDEX
+        ]);
+        factory(Route::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'ROU_NEXT_TASK' => $task2->TAS_UID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        $emailServer = factory(EmailServerModel::class)->create();
+        $abeConfiguration = factory(AbeConfiguration::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'DYN_UID' => $dynaform->DYN_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'ABE_EMAIL_SERVER_UID' => $emailServer->MESS_UID,
+            'ABE_TYPE' => 'LINK',
+            'ABE_CASE_NOTE_IN_RESPONSE' => 1,
+        ]);
+        $abeRequest = factory(AbeRequest::class)->create([
+            'ABE_UID' => $abeConfiguration->ABE_UID,
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => $delegation1->DEL_INDEX,
+        ]);
+        if (!defined('PATH_DOCUMENT')) {
+            define('PATH_DOCUMENT', PATH_DB . config('system.workspace') . PATH_SEP . 'files' . PATH_SEP);
+        }
+
+
+        $appUid = $delegation1->APP_UID;
+        $delIndex = $delegation1->DEL_INDEX;
+        $aber = $abeRequest->ABE_REQ_UID;
+        $dynUid = $dynaform->DYN_UID;
+        $forms = [];
+        $remoteAddr = '127.0.0.1';
+        $files = [
+            'form' => [
+                'name' => ['test'],
+                'type' => ['test'],
+                'size' => ['1000'],
+                'tmp_name' => [tempnam(sys_get_temp_dir(), 'test')],
+                'error' => [''],
+            ]
+        ];
+
+        $cases = new Cases();
+        $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
+    }
+
+    /**
+     * This test verifies if the ABE form has been completed.
+     * @test
+     * @covers Cases::routeCaseActionByEmail
+     */
+    public function it_should_verify_if_abe_has_completed()
+    {
+        $delegation1 = factory(Delegation::class)->state('closed')->create();
+        $abeRequest = factory(AbeRequest::class)->create();
+        $dynaform = factory(Dynaform::class)->create([
+            'PRO_UID' => $delegation1->PRO_UID
+        ]);
+
+        $appUid = $delegation1->APP_UID;
+        $delIndex = $delegation1->DEL_INDEX;
+        $aber = $abeRequest->ABE_REQ_UID;
+        $dynUid = $dynaform->DYN_UID;
+        $forms = [];
+        $remoteAddr = '127.0.0.1';
+        $files = [];
+
+        $this->expectException(\Exception::class);
+        $cases = new Cases();
+        $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
+    }
+
+    /**
+     * This test verifies if the case has failed due to any circumstance.
+     * @test
+     * @covers Cases::routeCaseActionByEmail
+     */
+    public function it_should_test_an_exception_if_the_case_throws_an_incorrect_state()
+    {
+        $delegation1 = factory(Delegation::class)->create();
+        $abeRequest = factory(AbeRequest::class)->create();
+        $dynaform = factory(Dynaform::class)->create([
+            'PRO_UID' => $delegation1->PRO_UID
+        ]);
+
+        $appUid = $delegation1->APP_UID;
+        $delIndex = $delegation1->DEL_INDEX;
+        $aber = $abeRequest->ABE_REQ_UID;
+        $dynUid = $dynaform->DYN_UID;
+        $forms = [];
+        $remoteAddr = '127.0.0.1';
+        $files = [];
+
+        $this->expectException(\Exception::class);
+        $cases = new Cases();
+        $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
     }
 }
