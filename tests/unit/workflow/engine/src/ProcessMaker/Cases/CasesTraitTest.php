@@ -396,15 +396,19 @@ class CasesTraitTest extends TestCase
         ];
 
         $cases = new Cases();
-        $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
+        $result = $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
+
+        //asserts
+        $this->assertEquals($aber, $result['ABE_REQ_UID']);
+        $this->assertArrayHasKey('ABE_RES_STATUS', $result);
     }
 
     /**
-     * This test verifies if the ABE form has been completed.
+     * This test verifies if the ABE form has not been completed and hope for an exception.
      * @test
      * @covers Cases::routeCaseActionByEmail
      */
-    public function it_should_verify_if_abe_has_completed()
+    public function it_should_verify_if_abe_has_not_completed()
     {
         $delegation1 = factory(Delegation::class)->state('closed')->create();
         $abeRequest = factory(AbeRequest::class)->create();
@@ -420,6 +424,7 @@ class CasesTraitTest extends TestCase
         $remoteAddr = '127.0.0.1';
         $files = [];
 
+        //assert exception
         $this->expectException(\Exception::class);
         $cases = new Cases();
         $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
@@ -446,6 +451,7 @@ class CasesTraitTest extends TestCase
         $remoteAddr = '127.0.0.1';
         $files = [];
 
+        //assert exception
         $this->expectException(\Exception::class);
         $cases = new Cases();
         $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
