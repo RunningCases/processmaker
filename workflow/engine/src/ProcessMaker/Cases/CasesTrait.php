@@ -139,27 +139,27 @@ trait CasesTrait
         $this->updateCase($application, $appFields);
 
         // Send notifications - Start
-        $oUser = new Users();
-        $aUser = $oUser->load($userLogged);
-        $fromName = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'];
+        $user = new Users();
+        $userInfo = $user->load($userLogged);
+        $fromName = $userInfo['USR_FIRSTNAME'] . ' ' . $userInfo['USR_LASTNAME'];
 
-        $sFromData = $fromName . ($aUser['USR_EMAIL'] != '' ? ' <' . $aUser['USR_EMAIL'] . '>' : '');
+        $fromData = $fromName . ($userInfo['USR_EMAIL'] != '' ? ' <' . $userInfo['USR_EMAIL'] . '>' : '');
 
         if ($flagGmail === true) {
             $appDel = new AppDelegation();
             $actualThread = $appDel->Load($application, $index);
 
             $appDelPrev = $appDel->LoadParallel($application);
-            $Pmgmail = new Pmgmail();
+            $pmGmail = new Pmgmail();
             foreach ($appDelPrev as $app) {
                 if (($app['DEL_INDEX'] != $index) && ($app['DEL_PREVIOUS'] != $actualThread['DEL_PREVIOUS'])) {
-                    $Pmgmail->gmailsIfSelfServiceValueBased($application, $app['DEL_INDEX'], $postForm['TASKS'], $appFields['APP_DATA']);
+                    $pmGmail->gmailsIfSelfServiceValueBased($application, $app['DEL_INDEX'], $postForm['TASKS'], $appFields['APP_DATA']);
                 }
             }
         }
 
         try {
-            $this->sendNotifications($tasUid, $postForm['TASKS'], $appFields['APP_DATA'], $application, $index, $sFromData);
+            $this->sendNotifications($tasUid, $postForm['TASKS'], $appFields['APP_DATA'], $application, $index, $fromData);
         } catch (Exception $e) {
             G::SendTemporalMessage(G::loadTranslation('ID_NOTIFICATION_ERROR') . ' - ' . $e->getMessage(), 'warning', 'string', null, '100%');
         }
@@ -263,8 +263,8 @@ trait CasesTrait
         $case->updateCase($appUid, $fields);
         if (isset($files['form'])) {
             if (isset($files["form"]["name"]) && count($files["form"]["name"]) > 0) {
-                $oInputDocument = new InputDocument();
-                $oInputDocument->uploadFileCase($files, $case, $fields, $currentUsrUid, $appUid, $delIndex);
+                $inputDocument = new InputDocument();
+                $inputDocument->uploadFileCase($files, $case, $fields, $currentUsrUid, $appUid, $delIndex);
             }
         }
         $wsBase = new WsBase();

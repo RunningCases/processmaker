@@ -101,8 +101,8 @@ try {
     $index = $_SESSION["INDEX"];
     $userLogged = $_SESSION["USER_LOGGED"];
     
-    //Now we dispatch the derivation of the case through Jobs Laravel.
-    $closure = function() use($processUid, $application, $postForm, $sStatus, $flagGmail, $tasUid, $index, $userLogged) {
+    // Now we dispatch the derivation of the case through Jobs Laravel.
+    $closure = function() use ($processUid, $application, $postForm, $sStatus, $flagGmail, $tasUid, $index, $userLogged) {
         $cases = new Cases();
         $cases->routeCase($processUid, $application, $postForm, $sStatus, $flagGmail, $tasUid, $index, $userLogged);
     };
@@ -114,18 +114,19 @@ try {
 
     $debuggerAvailable = true;
     $casesRedirector = 'casesListExtJsRedirector';
-    if (isset($_SESSION ['user_experience']) && $flagGmail === false) {
-        $aNextStep ['PAGE'] = $casesRedirector . '?ux=' . $_SESSION ['user_experience'];
+    $nextStep = [];
+    if (isset($_SESSION['user_experience']) && $flagGmail === false) {
+        $nextStep['PAGE'] = $casesRedirector . '?ux=' . $_SESSION['user_experience'];
         $debuggerAvailable = false;
     } else {
         if ($flagGmail === true) {
-            $aNextStep ['PAGE'] = $casesRedirector . '?gmail=1';
+            $nextStep['PAGE'] = $casesRedirector . '?gmail=1';
         } else {
-            $aNextStep ['PAGE'] = $casesRedirector;
+            $nextStep['PAGE'] = $casesRedirector;
         }
     }
 
-    $loc = $aNextStep['PAGE'];
+    $loc = $nextStep['PAGE'];
 
     //Triggers After
     $isIE = Bootstrap::isIE();

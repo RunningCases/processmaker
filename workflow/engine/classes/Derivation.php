@@ -1416,7 +1416,7 @@ class Derivation
     protected function subProcessCreation(array $subProcessInfo, array $appFields, array $currentDelegation, $delIndex, $threadIndex)
     {
         // Check if is SelfService the task in the SubProcess
-        $isSelfService = (empty($subProcessInfo['USR_UID'])) ? true : false;
+        $isSelfService = empty($subProcessInfo['USR_UID']) ? true : false;
 
         // Create the new case in the sub-process
         // Set the initial date to null the time its created

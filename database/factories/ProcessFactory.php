@@ -9,7 +9,6 @@ $factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
     //The incremental fields of the tables must not be specified in the creation list.
     return [
         'PRO_UID' => G::generateUniqueID(),
-        //'PRO_ID' The incremental fields of the tables must not be specified in the creation list.
         'PRO_TITLE' => $faker->sentence(3),
         'PRO_DESCRIPTION' => $faker->paragraph(3),
         'PRO_CREATE_USER' => '00000000000000000000000000000001',
@@ -31,7 +30,6 @@ $factory->state(\ProcessMaker\Model\Process::class, 'foreign_keys', function (Fa
     $user = factory(\ProcessMaker\Model\User::class)->create();
     return [
         'PRO_UID' => G::generateUniqueID(),
-        //'PRO_ID' The incremental fields of the tables must not be specified in the creation list.
         'PRO_TITLE' => $faker->sentence(3),
         'PRO_DESCRIPTION' => $faker->paragraph(3),
         'PRO_CREATE_USER' => $user->USR_UID,
@@ -52,7 +50,6 @@ $factory->state(\ProcessMaker\Model\Process::class, 'flow', function (Faker $fak
     $user = factory(\ProcessMaker\Model\User::class)->create();
     $process = [
         'PRO_UID' => G::generateUniqueID(),
-        //'PRO_ID' The incremental fields of the tables must not be specified in the creation list.
         'PRO_TITLE' => $faker->sentence(3),
         'PRO_DESCRIPTION' => $faker->paragraph(3),
         'PRO_CREATE_USER' => $user->USR_UID,

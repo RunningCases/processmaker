@@ -11,7 +11,6 @@ $factory->define(\ProcessMaker\Model\Task::class, function(Faker $faker) {
         'PRO_UID' => $process->PRO_UID,
         'PRO_ID' => $process->PRO_ID,
         'TAS_UID' => G::generateUniqueID(),
-        //'TAS_ID' The incremental fields of the tables must not be specified in the creation list.
         'TAS_TITLE' => $faker->sentence(2),
         'TAS_TYPE' => 'NORMAL',
         'TAS_TYPE_DAY' => 1,
@@ -40,7 +39,6 @@ $factory->state(\ProcessMaker\Model\Task::class, 'foreign_keys', function (Faker
         'PRO_UID' => $process->PRO_UID,
         'PRO_ID' => $process->PRO_ID,
         'TAS_UID' => G::generateUniqueID(),
-        //'TAS_ID' The incremental fields of the tables must not be specified in the creation list.
         'TAS_TITLE' => $faker->sentence(2),
         'TAS_TYPE' => 'NORMAL',
         'TAS_TYPE_DAY' => 1,

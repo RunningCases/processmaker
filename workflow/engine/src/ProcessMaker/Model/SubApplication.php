@@ -20,6 +20,7 @@ class SubApplication extends Model
     protected $primaryKey = 'APP_UID';
     // The IDs are auto-incrementing
     public $incrementing = false;
+
     /**
      * The model's default values for attributes.
      *
