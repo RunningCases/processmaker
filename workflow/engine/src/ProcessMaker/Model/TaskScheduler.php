@@ -1,0 +1,26 @@
+<?php
+
+namespace ProcessMaker\Model;
+
+use \Illuminate\Database\Eloquent\Model;
+use \Illuminate\Support\Facades\DB;
+use \Cron\CronExpression;
+use \Illuminate\Support\Carbon;
+use \Illuminate\Console\Scheduling\ManagesFrequencies;
+use Illuminate\Console\Scheduling\Schedule;
+/**
+ * Class TaskScheduler
+ * @package ProcessMaker\Model
+ *
+ * Represents a dynaform object in the system.
+ */
+class TaskScheduler extends Model
+{
+    protected $table = 'SCHEDULER';
+    public $timestamps = false;
+
+    public function isDue(){
+        $date = Carbon::now();
+        return CronExpression::factory($this->expression)->isDue($date->toDateTimeString());
+    }
+}
