@@ -80,7 +80,7 @@ class TaskSchedulerBM
                 "description" => "Unpauses any case whose pause time has expired"
             ),
             array(
-                "title" => "Unpause Cases",
+                "title" => "ID_TASK_SCHEDULER_UNPAUSE",
                 "enable" => "0",
                 "service" => "unpause",
                 "category" => "case_actions",
@@ -88,10 +88,10 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* */1 * * *",
-                "description" => "Unpauses any case whose pause time has expired"                     
+                "description" => "ID_TASK_SCHEDULER_UNPAUSE_DESC"                     
             ),
             array(
-                "title" => "Case Emails",
+                "title" => "ID_TASK_SCHEDULER_CASE_EMAILS",
                 "enable" => "1",
                 "service" => "emails",
                 "category" => "emails_notifications",
@@ -99,10 +99,10 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "*/5 * * * *",
-                "description" => "Task, triggers, and actions by email notifications"   
+                "description" => "ID_TASK_SCHEDULER_CASE_EMAILS_DESC"   
             ),
             array(
-                "title" => "ProcessMaker Plugins",
+                "title" => "ID_TASK_SCHEDULER_PM_PLUGINS",
                 "enable" => "0",
                 "service" => "plugins",
                 "category" => "plugins",
@@ -110,17 +110,17 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* * */1 * *",
-                "description" => "Custom plugins execution"     
+                "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"     
             ),
             array(
-                "title" => "Calculate the elapsed time",
+                "title" => "ID_TASK_SCHEDULER_CALCULATE_ELAPSED",
                 "service" => "calculate",
                 "category" => "case_actions",
                 "file" => "workflow/engine/bin/cron.php",
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* * */1 * *",
-                "description" => 'Calculates the elapsed time "according to the configured calendar" of all open tasks in active cases)'    
+                "description" => 'ID_TASK_SCHEDULER_CALCULATE_ELAPSED_DESC'    
             ),
             array(
                 "title" => "Calculate App data",
@@ -130,27 +130,27 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* * */1 * *",
-                "description" => 'Calculates the elapsed time "according to the configured calendar" of all open tasks in active cases)'            
+                "description" => 'Calculates the elapsed time "according to the configured calendar" of all open tasks in active cases'            
             ),
             array(
-                "title" => "Unassigned Case",
+                "title" => "ID_TASK_SCHEDULER_UNASSIGNED",
                 "service" => "unassigned-case",
                 "category" => "case_actions",
                 "file" => "workflow/engine/bin/cron.php",
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* */1 * * *",
-                "description" => 'Run the trigger for self-service cases that have a configured timeout setting)'               
+                "description" => 'ID_TASK_SCHEDULER_UNASSIGNED_DESC'               
             ),
             array(
-                "title" => "Clean self service tables",
+                "title" => "ID_TASK_SCHEDULER_CLEAN_SELF",
                 "service" => "clean-self-service-tables",
                 "category" => "case_actions",
                 "file" => "workflow/engine/bin/cron.php",
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* * */1 * *",
-                "description" => 'Clean unused records for Self-Service Value-Based feature. It is a maintenance command'     
+                "description" => 'ID_TASK_SCHEDULER_CLEAN_SELF_DESC'     
             ),
             array(
                 "title" => "Report by Users",
@@ -176,7 +176,7 @@ class TaskSchedulerBM
                 "description" => "Report by process"      
             ),
             array(
-                "title" => "Message Events",
+                "title" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS",
                 "enable" => "1",
                 "service" => "",
                 "category" => "emails_notifications",
@@ -184,7 +184,7 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "*/5 * * * *",
-                "description" => "Intermediate and End Email Event"    
+                "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"    
             ),
             array(
                 "title" => "ProcessMaker timer event cron",
@@ -198,7 +198,7 @@ class TaskSchedulerBM
                 "description" => "ProcessMaker timer event cron"    
             ),
             array(
-                "title" => "ProcessMaker LDAP cron",
+                "title" => "ID_TASK_SCHEDULER_LDAP",
                 "enable" => "0",
                 "service" => "",
                 "category" => "processmaker_sync",
@@ -206,10 +206,10 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* * */1 * *",
-                "description" => "Synchronize Advance LDAP Attributes from their settings"    
+                "description" => "ID_TASK_SCHEDULER_LDAP_DESC"    
             ),
             array(
-                "title" => "Send notifications",
+                "title" => "ID_TASK_SCHEDULER_SEND_NOT",
                 "enable" => "1",
                 "service" => "",
                 "category" => "emails_notifications",
@@ -217,10 +217,10 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "*/5 * * * *",
-                "description" => "ProcessMaker Mobile Notifications"   
+                "description" => "ID_TASK_SCHEDULER_SEND_NOT_DESC"   
             ),
             array(
-                "title" => "Action by emails response",
+                "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
                 "enable" => "1",
                 "service" => "",
                 "category" => "emails_notifications",
@@ -228,7 +228,7 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "*/5 * * * *",
-                "description" => "Actions by email response account email revision"    
+                "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"    
             )
         );
      

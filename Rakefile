@@ -67,6 +67,10 @@ task :build => [:required] do
     mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
     pmdynaformHash = getHash(Dir.pwd + "/vendor/colosa/pmDynaform")
 
+    system "npm run build --prefix #{Dir.pwd}/vendor/colosa/taskscheduler"
+    system "cp -Rf #{Dir.pwd}/vendor/colosa/taskscheduler/taskscheduler #{targetDir}/taskscheduler"
+    system "cp  #{Dir.pwd}/vendor/colosa/taskscheduler/taskscheduler/index.html #{targetDir}/taskscheduler"  
+
     hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files
     puts "Building file: " + "/js/mafe-#{hashVendors}.js".cyan
