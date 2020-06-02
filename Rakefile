@@ -1,5 +1,17 @@
 require 'rubygems'
 require 'json'
+require "po_to_json"
+
+class PoToJson
+  def _generate_for_json(language, overwrite = {})
+     @options = parse_options(overwrite.merge(language: language))
+     #parse_document
+     #@parsed ||= inject_meta(parse_document)
+     generated = build_json_for(parse_document)
+   end
+end
+
+
 desc "Default Task - Build Library"
 task :default  => [:required] do
   Rake::Task['build'].execute
@@ -67,9 +79,20 @@ task :build => [:required] do
     mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
     pmdynaformHash = getHash(Dir.pwd + "/vendor/colosa/pmDynaform")
 
+    puts "Building PO to JSON".cyan
+
+    Dir["#{Dir.pwd}/workflow/engine/content/translations/*.po"].each do |file|
+        lang = file.split('.')
+        json_string = PoToJson.new(file)._generate_for_json(lang[1], :pretty => true)
+        File.open("#{Dir.pwd}/workflow/public_html/translations/#{lang[1]}.json",'w').write(json_string)
+        puts file
+    end
+
+
+    puts "Building file: Task Scheduler".cyan
     system "npm run build --prefix #{Dir.pwd}/vendor/colosa/taskscheduler"
     system "cp -Rf #{Dir.pwd}/vendor/colosa/taskscheduler/taskscheduler #{targetDir}/taskscheduler"
-    system "cp  #{Dir.pwd}/vendor/colosa/taskscheduler/taskscheduler/index.html #{targetDir}/taskscheduler"  
+    system "cp  #{Dir.pwd}/vendor/colosa/taskscheduler/public/index.html #{targetDir}/taskscheduler"
 
     hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files
@@ -469,3 +492,10 @@ def getLog
     return output
 end
 
+def generate_for_json()
+    @overwrite = {pretty: false}
+    @options = parse_options(overwrite.merge(language: 'en'))
+    @parsed ||= inject_meta(parse_document)
+
+    generated = build_json_for(build_json_for(@parsed))
+end

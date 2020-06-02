@@ -14,12 +14,15 @@ try {
     "var timezoneArray = " . G::json_encode($arrayTimeZoneId) . ";\n" .
     "</script>\n";
     echo($js);  
+
   }
   $js = "" .
+  "<script type=\"text/javascript\" src=/js/ext/translation.".SYS_LANG.".".G::browserCacheFilesGetUid() ."js></script>\n".
     "<script type='text/javascript'>\n" .
     "var server = '" . System::getHttpServerHostnameRequestsFrontEnd() . "';\n" .
     "var credentials = " . G::json_encode($pmDynaform->getCredentials()) . ";\n" .
     "var category = '" . $category . "';\n" .
+    "var lang = '" . SYS_LANG . "';\n" .
     "</script>\n";
   echo($js);  
 

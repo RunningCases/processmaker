@@ -22,6 +22,10 @@
         {
             "type": "git",
             "url": "git@bitbucket.org:colosa/pmui.git"
+        },
+        {
+            "type": "git",
+            "url": "git@bitbucket.org:colosa/taskscheduler.git"
         }
     ],
     "minimum-stability": "dev",
@@ -34,6 +38,7 @@
         "colosa/pmui": "release/3.4.8-dev",
         "colosa/michelangelofe": "release/3.4.8-dev",
         "colosa/pmdynaform": "release/3.4.8-dev",
+        "colosa/taskscheduler": "0.1.0",
         "google/apiclient": "1.1.6",
         "dapphp/securimage": "^3.6",
         "psr/log": "1.0.0",

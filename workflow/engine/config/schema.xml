@@ -6033,7 +6033,9 @@
         <column name="id" type="BIGINT" size="20" required="true" autoIncrement="true" primaryKey="true"/>
         <column name="title" type="VARCHAR"  size="255" required="false"/>
         <column name="startingTime" type="VARCHAR"  size="100" required="false"/>
-        <column name="endingTime" type="VARCHAR"  size="100" required="false"/>}
+        <column name="endingTime" type="VARCHAR"  size="100" required="false"/>
+        <column name="everyOn" type="VARCHAR"  size="255" required="false"/>
+        <column name="interval" type="VARCHAR"  size="10" required="false"/>
         <column name="description" type="VARCHAR"  size="255" required="false"/>
         <column name="expression" type="VARCHAR"  size="255" required="false"/>
         <column name="body" type="VARCHAR"  size="255" required="false"/>
@@ -6042,5 +6044,7 @@
         <column name="system" type="TINYINT"  size="3" required="false"/>
         <column name="timezone" type="VARCHAR"  size="255" required="false"/>
         <column name="enable" type="TINYINT"  size="3" required="false"/>
+        <column name="creation_date" type="TIMESTAMP" required="false"/>
+        <column name="last_update" type="TIMESTAMP" required="false"/>
     </table>
 </database>

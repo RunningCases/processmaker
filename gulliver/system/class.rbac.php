@@ -615,6 +615,11 @@ class RBAC
                 'PER_UID' => '00000000000000000000000000000068',
                 'PER_CODE' => 'PM_FOLDERS_OWNER',
                 'PER_NAME' => 'View Your Folders'
+            ],
+            [
+                'PER_UID' => '00000000000000000000000000000069',
+                'PER_CODE' => 'PM_TASK_SCHEDULER_ADMIN',
+                'PER_NAME' => 'View Task Scheduler'
             ]
         ];
 

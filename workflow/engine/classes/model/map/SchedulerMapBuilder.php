@@ -73,6 +73,10 @@ class SchedulerMapBuilder
 
         $tMap->addColumn('ENDINGTIME', 'Endingtime', 'string', CreoleTypes::VARCHAR, false, 100);
 
+        $tMap->addColumn('EVERYON', 'Everyon', 'string', CreoleTypes::VARCHAR, false, 255);
+
+        $tMap->addColumn('INTERVAL', 'Interval', 'string', CreoleTypes::VARCHAR, false, 10);
+
         $tMap->addColumn('DESCRIPTION', 'Description', 'string', CreoleTypes::VARCHAR, false, 255);
 
         $tMap->addColumn('EXPRESSION', 'Expression', 'string', CreoleTypes::VARCHAR, false, 255);
@@ -88,6 +92,10 @@ class SchedulerMapBuilder
         $tMap->addColumn('TIMEZONE', 'Timezone', 'string', CreoleTypes::VARCHAR, false, 255);
 
         $tMap->addColumn('ENABLE', 'Enable', 'int', CreoleTypes::TINYINT, false, 3);
+
+        $tMap->addColumn('CREATION_DATE', 'CreationDate', 'int', CreoleTypes::TIMESTAMP, false, null);
+
+        $tMap->addColumn('LAST_UPDATE', 'LastUpdate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
     } // doBuild()
 

@@ -17,7 +17,9 @@ use Illuminate\Console\Scheduling\Schedule;
 class TaskScheduler extends Model
 {
     protected $table = 'SCHEDULER';
-    public $timestamps = false;
+    public $timestamps = true;
+    const CREATED_AT = 'creation_date';
+    const UPDATED_AT = 'last_update';
 
     public function isDue(){
         $date = Carbon::now();
