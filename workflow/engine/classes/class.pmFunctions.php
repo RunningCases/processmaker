@@ -447,6 +447,123 @@ function evaluateFunction($aGrid, $sExpresion)
 }
 
 /**
+ *
+ * @method
+ *
+ * Executes operations in the grid fields, such as sum, average, median, minimum, maximun,
+ * stantard derivation, variance, percentile, count, count distinct
+ * 
+ * @name PMFTotalCalculation
+ * @label PMFTotalCalculation Function
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFTotalCalculation.28.29
+ * @param array | $grid | Grid | The input grid.
+ * @param string (32) | $field | Name of field | The name of the field.
+ * @param string (32) | $function | Operation.
+ * @return object|array | $result | Result | Result according of the function
+ *
+ */
+function PMFTotalCalculation($grid, $field, $function)
+{
+    $systemConfiguration = Bootstrap::getSystemConfiguration();
+    $floatPointNumber = $systemConfiguration['PMFTOTALCALCULATION_FLOATING_POINT_NUMBER'];
+    $function = strtolower($function);
+    $totalRows = count($grid);
+    $result = 0;
+    $sum = 0;
+
+    switch ($function) {
+        case "sum":
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $result += $grid[$i][$field];
+            }
+            break;
+        case "average":
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $result += $grid[$i][$field];
+            }
+            $result = $result / $totalRows;
+            break;
+        case "median":
+            $arrayAux = [];
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $arrayAux[] = $grid[$i][$field];
+            }
+            sort($arrayAux);
+            $term = ($totalRows + 1) / 2;
+            if ($totalRows % 2 === 0) {
+                $term = floor($term);
+                $result = ($arrayAux[$term - 1] + $arrayAux[$term]) / 2;
+            } else {
+                $result = $arrayAux[$term - 1];
+            }
+            break;
+        case "minimum":
+            $result = $grid[1][$field];
+            for ($i = 2; $i <= $totalRows; $i += 1) {
+                if ($grid[$i][$field] < $result) {
+                    $result = $grid[$i][$field];
+                }
+            }
+            break;
+        case "maximum":
+            $result = $grid[1][$field];
+            for ($i = 2; $i <= $totalRows; $i += 1) {
+                if ($grid[$i][$field] > $result) {
+                    $result = $grid[$i][$field];
+                }
+            }
+            break;
+        case "standarddeviation":
+            $mean = 0;
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $mean += $grid[$i][$field];
+            }
+            $mean = $mean / $totalRows;
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $result += pow($grid[$i][$field] - $mean, 2);
+            }
+            $result = sqrt($result / $totalRows);
+            break;
+        case "variance":
+            $mean = 0;
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $mean += $grid[$i][$field];
+            }
+            $mean = $mean / $totalRows;
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $result += pow($grid[$i][$field] - $mean, 2);
+            }
+            $result = $result / $totalRows;
+            break;
+        case "percentile":
+            $result = [];
+            $arrayAux = [];
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $sum += $grid[$i][$field];
+                $arrayAux[] = $grid[$i][$field];
+            }
+            for ($i = 0; $i < count($arrayAux); $i += 1) {
+                $result[] = round(($arrayAux[$i] * 100) / $sum, $floatPointNumber);
+            }
+            break;
+        case "count":
+            $result = $totalRows;
+            break;
+        case "countdistinct":
+            $arrayAux = [];
+            for ($i = 1; $i <= $totalRows; $i += 1) {
+                $arrayAux[] = $grid[$i][$field];
+            }
+            $result = count(array_count_values($arrayAux));
+            break;
+    }
+    if ($function !== "percentile") {
+        return round($result, $floatPointNumber);
+    }
+    return $result;
+}
+
+/**
  * Web Services Functions *
  */
 /**
