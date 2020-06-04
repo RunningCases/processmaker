@@ -15,7 +15,7 @@ class VariableTest extends TestCase
     /**
      * Test it create variables related to the process
      *
-     * @covers \ProcessMaker\BusinessModel\Variables::create()
+     * @covers \ProcessMaker\BusinessModel\Variable::create()
      * @test
      */
     public function it_create_variable_by_process()
@@ -62,7 +62,7 @@ class VariableTest extends TestCase
     /**
      * Tests the exception
      *
-     * @covers \ProcessMaker\BusinessModel\Variables::create()
+     * @covers \ProcessMaker\BusinessModel\Variable::create()
      * @test
      */
     public function it_return_an_exception_when_var_name_is_empty()
@@ -94,7 +94,7 @@ class VariableTest extends TestCase
     /**
      * Tests the exception
      *
-     * @covers \ProcessMaker\BusinessModel\Variables::create()
+     * @covers \ProcessMaker\BusinessModel\Variable::create()
      * @test
      */
     public function it_return_an_exception_when_var_field_type_is_empty()
@@ -126,7 +126,7 @@ class VariableTest extends TestCase
     /**
      * Tests the exception
      *
-     * @covers \ProcessMaker\BusinessModel\Variables::create()
+     * @covers \ProcessMaker\BusinessModel\Variable::create()
      * @test
      */
     public function it_return_an_exception_when_var_label_is_empty()
@@ -158,7 +158,7 @@ class VariableTest extends TestCase
     /**
      * Test it return the variables related to the PRO_UID
      *
-     * @covers \ProcessMaker\BusinessModel\Variables::getVariables()
+     * @covers \ProcessMaker\BusinessModel\Variable::getVariables()
      * @test
      */
     public function it_list_variables_by_process()
