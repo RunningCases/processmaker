@@ -2708,6 +2708,8 @@ class G
             $nameToSave = $filter->validateInput($nameToSave, "path");
             @chmod($path . "/" . $nameToSave, $permission);
             umask($oldumask);
+
+            return true;
         } catch (Exception $oException) {
             throw $oException;
         }
