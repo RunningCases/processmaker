@@ -601,39 +601,3 @@ function getMysqlVersion()
 
     return $mysqlVersion;
 }
-
-/**
- * Move the uploaded file to the documents folder
- * 
- * @param array $file
- * @param string $appUid
- * @param string $appDocUid
- * @param int $version
- * 
- * @return string
- */
-function saveAppDocument($file, $appUid, $appDocUid, $version = 1, $upload = true)
-{
-    try {
-        $info = pathinfo($file["name"]);
-        $extension = ((isset($info["extension"])) ? $info["extension"] : "");
-        //$pathCase = G::getPathFromUID($appUid);
-        $fileName = $appDocUid . "_" . $version . "." . $extension;
-
-        $pathCase = PATH_DATA_SITE . 'files' . PATH_SEP . G::getPathFromUID($appUid) . PATH_SEP;
-
-        $response = false;
-        if ($upload) {
-            $response = G::uploadFile(
-                $file["tmp_name"],
-                $pathCase,
-                $fileName
-            );
-        } else {
-            G::verifyPath($pathCase, true);
-            $response = copy($file["tmp_name"], $pathCase . $fileName);
-        }
-    } catch (Exception $e) {
-        throw $e;
-    }
-}
