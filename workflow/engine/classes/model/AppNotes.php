@@ -260,9 +260,24 @@ class AppNotes extends BaseAppNotes
         }
     }
 
-    public function addCaseNote($applicationUid, $userUid, $note, $sendMail)
+    /**
+     * Add a note in the case and send an email
+     * 
+     * @param string $applicationUid
+     * @param string $userUid
+     * @param string $note
+     * @param bool $sendMail
+     * @param array $files
+     * 
+     * @return array
+     */
+    public function addCaseNote($applicationUid, $userUid, $note, $sendMail, $files)
     {
         $response = $this->postNewNote($applicationUid, $userUid, $note, false);
+
+        // Check the files to upload
+        $case = new Cases();
+        $res = $case->uploadFilesInCaseNotes($userUid, $applicationUid, $files, null);
 
         if ($sendMail == 1) {
 

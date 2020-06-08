@@ -3420,16 +3420,17 @@ class WsBase
     /**
      * Add case note
      *
-     * @param string caseUid : ID of the case.
-     * @param string processUid : ID of the process.
-     * @param string taskUid : ID of the task.
-     * @param string userUid : The unique ID of the user who will add note case.
-     * @param string note : Note of the case.
-     * @param int    sendMail : Optional parameter. If set to 1, will send an email to all participants in the case.
+     * @param string $caseUid, ID of the case.
+     * @param string $processUid, ID of the process.
+     * @param string $taskUid, ID of the task.
+     * @param string $userUid, The unique ID of the user who will add note case.
+     * @param string $note, Note of the case.
+     * @param int $sendMail, Optional parameter. If set to 1, will send an email to all participants in the case.
+     * @param array $files, Optional parameter. This is an array of files.
      *
-     * @return $result will return an object
+     * @return object
      */
-    public function addCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail = 1)
+    public function addCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail = 1, $files = [])
     {
         try {
             if (empty($caseUid)) {
@@ -3475,7 +3476,7 @@ class WsBase
 
             //Add note case
             $appNote = new AppNotes();
-            $response = $appNote->addCaseNote($caseUid, $userUid, $note, $sendMail);
+            $response = $appNote->addCaseNote($caseUid, $userUid, $note, $sendMail, $files);
 
             //Response
             $result = new WsResponse(0, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
