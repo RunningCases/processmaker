@@ -233,7 +233,7 @@ class XmlImporterTest extends TestCase
      * Test the import new option and the import new group option with repeated title.
      * @test
      * @covers \ProcessMaker\Importer\XmlImporter::import()
-     * @covers \ProcessMaker\Importer\XmlImporter::updateTheProcessOwner()
+     * @covers \ProcessMaker\Importer\XmlImporter::updateProcessInformation()
      */
     public function it_should_matter_with_import_option_create_new_and_group_import_option_create_new_try_rename_title()
     {
