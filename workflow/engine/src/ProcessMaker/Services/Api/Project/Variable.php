@@ -3,9 +3,9 @@ namespace ProcessMaker\Services\Api\Project;
 
 use Exception;
 use G;
+use Luracast\Restler\RestException;
 use ProcessMaker\BusinessModel\Variable as BmVariable;
 use ProcessMaker\Services\Api;
-use Luracast\Restler\RestException;
 
 /**
  * Project\Variable Api Controller
@@ -33,6 +33,8 @@ class Variable extends Api
     }
 
     /**
+     * Get variables by type
+     * 
      * @url GET /:prj_uid/process-variables/:typeVariable/paged
      *
      * @param string $prj_uid {@min 32}{@max 32}

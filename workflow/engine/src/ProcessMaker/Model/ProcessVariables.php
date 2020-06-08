@@ -76,7 +76,7 @@ class ProcessVariables extends Model
     }
 
     /**
-     * Scope a query to filter an specific type for variable
+     * Scope a query to filter a specific type for variable
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param  int $typeId
@@ -136,7 +136,7 @@ class ProcessVariables extends Model
         if (!empty($search)) {
             $query->where('VAR_NAME', 'LIKE', "${search}%");
         }
-        // orde by varNane
+        // order by varNane
         $query->orderBy('VAR_NAME', 'ASC');
         // Check if we need to add a pagination
         if(!is_null($start) && !is_null($limit)) {

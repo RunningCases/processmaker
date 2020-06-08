@@ -207,9 +207,9 @@ class PMFTotalCalculationTest extends TestCase
             ]
         ];
         $expectedArray = [
-            "0" => 20,
-            "1" => 70,
-            "2" => 10,
+            "1" => 20,
+            "2" => 70,
+            "3" => 10,
         ];
         $this->assertEquals($expectedArray, PMFTotalCalculation($grid, 'field2', 'percentile'));
     }

@@ -375,8 +375,7 @@ class Variable
      * @param string $search
      * @param string $prefix
      *
-     * @return array, return an array with data of a DynaForm
-     * @throws Exception
+     * @return array, return an array with varaibles filter by type
      */
     public function getVariablesByType($processUid, $typeVarId = 0, $start = null, $limit = null, $search = null, $prefix = null)
     {

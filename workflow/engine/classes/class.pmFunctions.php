@@ -451,7 +451,7 @@ function evaluateFunction($aGrid, $sExpresion)
  * @method
  *
  * Executes operations in the grid fields, such as sum, average, median, minimum, maximun,
- * stantard derivation, variance, percentile, count, count distinct
+ * stantard deviation, variance, percentile, count, count distinct
  * 
  * @name PMFTotalCalculation
  * @label PMFTotalCalculation Function
@@ -459,7 +459,7 @@ function evaluateFunction($aGrid, $sExpresion)
  * @param array | $grid | Grid | The input grid.
  * @param string (32) | $field | Name of field | The name of the field.
  * @param string (32) | $function | Operation.
- * @return object|array | $result | Result | Result according of the function
+ * @return int|float|array | $result | Result | Result according of the function
  *
  */
 function PMFTotalCalculation($grid, $field, $function)
@@ -540,10 +540,10 @@ function PMFTotalCalculation($grid, $field, $function)
             $arrayAux = [];
             for ($i = 1; $i <= $totalRows; $i += 1) {
                 $sum += $grid[$i][$field];
-                $arrayAux[] = $grid[$i][$field];
+                $arrayAux[$i] = $grid[$i][$field];
             }
-            for ($i = 0; $i < count($arrayAux); $i += 1) {
-                $result[] = round(($arrayAux[$i] * 100) / $sum, $floatPointNumber);
+            for ($i = 1; $i <= count($arrayAux); $i += 1) {
+                $result[$i] = round(($arrayAux[$i] * 100) / $sum, $floatPointNumber);
             }
             break;
         case "count":
