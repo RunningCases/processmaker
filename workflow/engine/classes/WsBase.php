@@ -8,7 +8,6 @@ use ProcessMaker\ChangeLog\ChangeLog;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Delegation;
-use ProcessMaker\Util\WsMessageResponse;
 
 class WsBase
 {
@@ -910,6 +909,7 @@ class WsBase
     )
     {
         try {
+            $setup = [];
 
             /*----------------------------------********---------------------------------*/
             if (!empty($config)) {
@@ -972,9 +972,7 @@ class WsBase
 
             if (!file_exists($fileTemplate)) {
                 $data['FILE_TEMPLATE'] = $fileTemplate;
-                $result = new WsResponse(28, G::LoadTranslation('ID_TEMPLATE_FILE_NOT_EXIST', SYS_LANG, $data));
-
-                return $result;
+                return new WsResponse(28, G::LoadTranslation('ID_TEMPLATE_FILE_NOT_EXIST', SYS_LANG, $data));
             }
 
             if ($appFields == null) {
@@ -1002,45 +1000,46 @@ class WsBase
                 (preg_match("/^.+\.html?$/i", $fileTemplate)) ? true : false,
                 isset($fieldsCase['APP_NUMBER']) ? $fieldsCase['APP_NUMBER'] : 0,
                 isset($fieldsCase['PRO_ID']) ? $fieldsCase['PRO_ID'] : 0,
-                $this->getTaskId() ?$this->getTaskId():(isset($oldFields['TAS_ID'])? $oldFields['TAS_ID'] : 0)
+                $this->getTaskId() ? $this->getTaskId() : (isset($oldFields['TAS_ID']) ? $oldFields['TAS_ID'] : 0)
             );
 
-            $result = "";
-            if ($gmail != 1) {
-                // Create always the record in APP_MESSAGE table
+            if ($gmail === 1) {
+                return new WsResponse(0, G::loadTranslation('ID_PMGMAIL'));
+            }
+
+            // Create always the record in APP_MESSAGE table
+            $spool = new SpoolRun();
+            $spool->setConfig($setup);
+            $spool->create($messageArray);
+
+            // Get the data of the record created
+            $fileData = $spool->getFileData();
+            $fileData['spoolId'] = $spool->getSpoolId();
+
+            // Create the closure and send the required data
+            $closure = function() use ($setup, $fileData, $gmail, $to) {
                 $spool = new SpoolRun();
                 $spool->setConfig($setup);
-                $spool->create($messageArray);
-
-                // Get the data of the record created
-                $fileData = $spool->getFileData();
-                $fileData['spoolId'] = $spool->getSpoolId();
-
-                // Create the closure and send the required data
-                $closure = function() use ($setup, $fileData, $gmail, $to) {
-                    $spool = new SpoolRun();
-                    $spool->setConfig($setup);
-                    $spool->setSpoolId($fileData['spoolId']);
-                    $spool->setFileData($fileData);
-                    $spool->sendMail();
-                    return $spool;
-                };
-                $result = new WsMessageResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
-                switch ($appMsgType) {
-                    case WsBase::MESSAGE_TYPE_EMAIL_EVENT:
-                    case WsBase::MESSAGE_TYPE_PM_FUNCTION:
-                        JobsManager::getSingleton()->dispatch('EmailEvent', $closure);
-                        break;
-                    default :
-                        $spool = $closure();
-                        if ($spool->status == 'sent') {
-                            $result = new WsMessageResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
-                            $result->setAppMessUid($spool->getSpoolId());
-                        } else {
-                            $result = new WsResponse(29, $spool->status . ' ' . $spool->error . PHP_EOL . print_r($setup, 1));
-                        }
-                        break;
-                }
+                $spool->setSpoolId($fileData['spoolId']);
+                $spool->setFileData($fileData);
+                $spool->sendMail();
+                return $spool;
+            };
+            switch ($appMsgType) {
+                case WsBase::MESSAGE_TYPE_EMAIL_EVENT:
+                case WsBase::MESSAGE_TYPE_PM_FUNCTION:
+                    JobsManager::getSingleton()->dispatch('EmailEvent', $closure);
+                    $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
+                    break;
+                default :
+                    $spool = $closure();
+                    if ($spool->status == 'sent') {
+                        $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
+                        $result->addExtraParam('AppMessUid', $spool->getSpoolId());
+                    } else {
+                        $result = new WsResponse(29, $spool->status . ' ' . $spool->error . PHP_EOL . print_r($setup, 1));
+                    }
+                    break;
             }
             return $result;
         } catch (Exception $e) {

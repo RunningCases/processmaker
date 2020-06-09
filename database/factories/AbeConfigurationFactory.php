@@ -23,7 +23,7 @@ $factory->define(\ProcessMaker\Model\AbeConfiguration::class, function (Faker $f
         'ABE_UPDATE_DATE' => $faker->dateTime(),
         'ABE_SUBJECT_FIELD' => '',
         'ABE_MAILSERVER_OR_MAILCURRENT' => 0,
-        'ABE_CUSTOM_GRID' => '',
+        'ABE_CUSTOM_GRID' => serialize([]),
         'ABE_EMAIL_SERVER_UID' => $emailServer->MESS_UID,
         'ABE_ACTION_BODY_FIELD' => '',
         'ABE_EMAIL_SERVER_RECEIVER_UID' => ''
