@@ -51717,3 +51717,88 @@ msgstr "ProcessMaker events"
 #: LABEL/ID_TASK_SCHEDULER_PM_SCHEDULER
 msgid "ProcessMaker scheduler"
 msgstr "ProcessMaker scheduler"
+
+# TRANSLATION
+# LABEL/ID_YEARS
+#: LABEL/ID_YEARS
+msgid "Years"
+msgstr "Years"
+
+# TRANSLATION
+# LABEL/ID_MONTHS
+#: LABEL/ID_MONTHS
+msgid "Months"
+msgstr "Months"
+
+# TRANSLATION
+# LABEL/ID_WEEK
+#: LABEL/ID_WEEK
+msgid "Week"
+msgstr "Week"
+
+# TRANSLATION
+# LABEL/ID_WEEKS
+#: LABEL/ID_WEEKS
+msgid "Weeks"
+msgstr "Weeks"
+
+# TRANSLATION
+# LABEL/ID_EVERY_MINUTE
+#: LABEL/ID_EVERY_MINUTE
+msgid "Every minute"
+msgstr "Every minute"
+
+# TRANSLATION
+# LABEL/ID_EVERY_FIVE_MINUTES
+#: LABEL/ID_EVERY_FIVE_MINUTES
+msgid "Every five minutes"
+msgstr "Every five minutes"
+
+# TRANSLATION
+# LABEL/ID_EVERY_TEN_MINUTES
+#: LABEL/ID_EVERY_TEN_MINUTES
+msgid "Every ten minutes"
+msgstr "Every ten minutes"
+
+# TRANSLATION
+# LABEL/ID_EVERY_FIFTEEN_MINUTES
+#: LABEL/ID_EVERY_FIFTEEN_MINUTES
+msgid "Every fifteen minutes"
+msgstr "Every fifteen minutes"
+
+# TRANSLATION
+# LABEL/ID_EVERY_THIRTY_MINUTES
+#: LABEL/ID_EVERY_THIRTY_MINUTES
+msgid "Every thirty minutes"
+msgstr "Every thirty minutes"
+
+# TRANSLATION
+# LABEL/ID_HOURLY
+#: LABEL/ID_HOURLY
+msgid "Hourly"
+msgstr "Hourly"
+
+# TRANSLATION
+# LABEL/ID_HOURLY_AT
+#: LABEL/ID_HOURLY_AT
+msgid "Hourly at"
+msgstr "Hourly at"
+
+# TRANSLATION
+# LABEL/ID_AT_TILL
+#: LABEL/ID_AT_TILL
+msgid "at ${0} Till ${1}"
+msgstr "at ${0} Till ${1}"
+
+# TRANSLATION
+# LABEL/ID_TIME_IN
+#: LABEL/ID_TIME_IN
+msgid "time in ${0}"
+msgstr "time in ${0}"
+
+# TRANSLATION
+# LABEL/ID_EVERY
+#: LABEL/ID_EVERY
+msgid "every ${0} ${1}"
+msgstr "every ${0} ${1}"
+
