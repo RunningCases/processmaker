@@ -20,9 +20,4 @@ class TaskScheduler extends Model
     public $timestamps = true;
     const CREATED_AT = 'creation_date';
     const UPDATED_AT = 'last_update';
-
-    public function isDue(){
-        $date = Carbon::now();
-        return CronExpression::factory($this->expression)->isDue($date->toDateTimeString());
-    }
 }

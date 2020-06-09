@@ -11,14 +11,47 @@ use ProcessMaker\Core\System;
 
 class TaskSchedulerBM
 {
-    public function executeTasks(){
-        TaskScheduler::all()->each(function($p){
-            if($p->isDue()){
-                Log::info("EXECUTE::" . $p->title . " -->" . $p->expression);
-            }
-        });   
+    /**
+     * Execute the records with Laravel Task Scheduler
+     */
+    public static function executeScheduler($that){
+        TaskScheduler::all()->each(function ($p) use ($that) {
+            $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
+            $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
+            $timezone = isset($p->timezone) && $p->timezone != ""? $p->timezone: date_default_timezone_get();
+            $that->schedule->exec($p->body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
+                $now = Carbon::now();
+                $result = false;
+                $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
+                if (isset($p->everyOn)) {
+                    switch ($p->interval) {
+                        case "day":
+                            $interval = $now->diffInDays($datework);
+                            $result = ($interval !== 0 && ($interval % intval($p->everyOn)) == 0);
+                            break;
+                        case "week":
+                            $interval = $now->diffInDays($datework);
+                            $result = ($interval !== 0 && $interval % (intval($p->everyOn) * 7) == 0);
+                            break;
+                        case "month":
+                            $interval = $now->diffInMonths($datework);
+                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
+                            break;
+                        case "year":
+                            $interval = $now->diffInYears($datework);
+                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
+                            break;
+                    }
+                    return $result;
+                }
+                return true;
+            });
+        });
     }
 
+    /**
+     * Return the records in Schedule Table by category
+     */
     public static function getSchedule($category){
         $tasks = TaskScheduler::all();
         $count =  $tasks->count();
@@ -32,23 +65,23 @@ class TaskSchedulerBM
             return TaskScheduler::where('category', $category)->get();
         }
     }
-
+    /**
+     * Save the record Schedule in Schedule Table
+     */
     public static function saveSchedule(array $request_data){
         $task = TaskScheduler::find($request_data['id']);
-        if(isset($request_data['expression'])){
-            $task->expression = $request_data['expression'];
-        }
         if(isset($request_data['enable'])){           
             $task->enable =  $request_data['enable'];
         }
-        if(isset($request_data['startingTime'])){   
+
+        if(isset($request_data['expression'])){
+            $task->expression = $request_data['expression'];
             $task->startingTime =  $request_data['startingTime'];
-        }
-        if(isset($request_data['endingTime'])){  
             $task->endingTime =  $request_data['endingTime'];
-        }
-        if(isset($request_data['timezone'])){
             $task->timezone =  $request_data['timezone'];
+            $task->everyOn =  $request_data['everyOn'];
+            $task->interval =  $request_data['interval'];
+            
         }            
         $task->save();
         return  array();
@@ -206,22 +239,6 @@ class TaskSchedulerBM
                 "startingTime" => "0:00",
                 "endingTime" => "23:59",
                 "expression" => "* * */1 * *",
-                "description" => "ID_TASK_SCHEDULER_LDAP_DESC"    
-            ),
-            array(
-                "title" => "ID_TASK_SCHEDULER_SEND_NOT",
-                "enable" => "1",
-                "service" => "",
-                "category" => "emails_notifications",
-                "file" => "workflow/engine/bin/sendnotificationscron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "*/5 * * * *",
-                "description" => "ID_TASK_SCHEDULER_SEND_NOT_DESC"   
-            ),
-            array(
-                "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
-                "enable" => "1",
                 "service" => "",
                 "category" => "emails_notifications",
                 "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",

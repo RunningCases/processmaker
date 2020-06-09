@@ -6,7 +6,7 @@ use Maveriks\WebApplication;
 use \Illuminate\Support\Carbon;
 use Illuminate\Console\Scheduling\ScheduleRunCommand as BaseCommand;
 use Illuminate\Support\Facades\Log;
-use ProcessMaker\Model\TaskScheduler;
+use ProcessMaker\BusinessModel\TaskSchedulerBM;
 
 class ScheduleRunCommand extends BaseCommand
 {
@@ -45,38 +45,7 @@ class ScheduleRunCommand extends BaseCommand
             $webApplication->setRootDir($this->option('processmakerPath'));
             $webApplication->loadEnvironment($workspace, false);
         }
-        TaskScheduler::all()->each(function ($p) use ($that) {
-            $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
-            $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
-            $timezone = isset($p->timezone) && $p->timezone != ""? $p->timezone: date_default_timezone_get();
-            $that->schedule->exec($p->body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
-                $now = Carbon::now();
-                $result = false;
-                $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
-                if (isset($p->everyOn)) {
-                    switch ($p->interval) {
-                        case "day":
-                            $interval = $now->diffInDays($datework);
-                            $result = ($interval !== 0 && ($interval % intval($p->everyOn)) == 0);
-                            break;
-                        case "week":
-                            $interval = $now->diffInDays($datework);
-                            $result = ($interval !== 0 && $interval % (intval($p->everyOn) * 7) == 0);
-                            break;
-                        case "month":
-                            $interval = $now->diffInMonths($datework);
-                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
-                            break;
-                        case "year":
-                            $interval = $now->diffInYears($datework);
-                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
-                            break;
-                    }
-                    return $result;
-                }
-                return true;
-            });
-        });
+        TaskSchedulerBM::executeScheduler($this);
         parent::handle();
     }
 }
