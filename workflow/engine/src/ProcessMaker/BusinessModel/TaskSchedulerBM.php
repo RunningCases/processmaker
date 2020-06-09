@@ -12,44 +12,6 @@ use ProcessMaker\Core\System;
 class TaskSchedulerBM
 {
     /**
-     * Execute the records with Laravel Task Scheduler
-     */
-    public static function executeScheduler($that){
-        TaskScheduler::all()->each(function ($p) use ($that) {
-            $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
-            $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
-            $timezone = isset($p->timezone) && $p->timezone != ""? $p->timezone: date_default_timezone_get();
-            $that->schedule->exec($p->body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
-                $now = Carbon::now();
-                $result = false;
-                $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
-                if (isset($p->everyOn)) {
-                    switch ($p->interval) {
-                        case "day":
-                            $interval = $now->diffInDays($datework);
-                            $result = ($interval !== 0 && ($interval % intval($p->everyOn)) == 0);
-                            break;
-                        case "week":
-                            $interval = $now->diffInDays($datework);
-                            $result = ($interval !== 0 && $interval % (intval($p->everyOn) * 7) == 0);
-                            break;
-                        case "month":
-                            $interval = $now->diffInMonths($datework);
-                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
-                            break;
-                        case "year":
-                            $interval = $now->diffInYears($datework);
-                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
-                            break;
-                    }
-                    return $result;
-                }
-                return true;
-            });
-        });
-    }
-
-    /**
      * Return the records in Schedule Table by category
      */
     public static function getSchedule($category){
