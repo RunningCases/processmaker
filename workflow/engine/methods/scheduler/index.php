@@ -25,6 +25,7 @@ try {
     "var credentials = " . G::json_encode($pmDynaform->getCredentials()) . ";\n" .
     "var category = '" . $category . "';\n" .
     "var lang = '" . SYS_LANG . "';\n" .
+    "var workspace = '" .config("system.workspace") . "';\n" .
     "</script>\n";
   echo($js);  
 
