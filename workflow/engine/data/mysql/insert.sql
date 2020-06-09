@@ -61508,7 +61508,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_WEB_SERVICE_PASSWORD','en','Web Service Password','2014-01-15') ,
 ( 'LABEL','ID_WEB_SERVICE_USER','en','Web Service User','2014-01-15') ,
 ( 'LABEL','ID_WEEK','en','Week','2014-01-15') ,
-( 'LABEL','ID_WEEKS','en','Week','2014-01-15') ,
+( 'LABEL','ID_WEEKS','en','Weeks','2014-01-15') ,
 ( 'LABEL','ID_WEEKDAY_0','en','Sunday','2014-01-15') ,
 ( 'LABEL','ID_WEEKDAY_1','en','Monday','2014-01-15') ,
 ( 'LABEL','ID_WEEKDAY_2','en','Tuesday','2014-01-15') ,
