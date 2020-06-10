@@ -51610,18 +51610,6 @@ msgid "Clean unused records for Self-Service Value-Based feature. It is a mainte
 msgstr "Clean unused records for Self-Service Value-Based feature. It is a maintenance command"
 
 # TRANSLATION
-# LABEL/ID_TASK_SCHEDULER_REPORT_USERS
-#: LABEL/ID_TASK_SCHEDULER_REPORT_USERS
-msgid "Report by users"
-msgstr "Report by users"
-
-# TRANSLATION
-# LABEL/ID_TASK_SCHEDULER_REPORT_PROCESS
-#: LABEL/ID_TASK_SCHEDULER_REPORT_PROCESS
-msgid "Report by process"
-msgstr "Report by process"
-
-# TRANSLATION
 # LABEL/ID_TASK_SCHEDULER_MESSAGE_EVENTS
 #: LABEL/ID_TASK_SCHEDULER_MESSAGE_EVENTS
 msgid "Message events"
@@ -51644,13 +51632,6 @@ msgstr "Unassigned case"
 #: LABEL/ID_TASK_SCHEDULER_UNASSIGNED_DESC
 msgid "Run the trigger for self-service cases that have a configured timeout setting"
 msgstr "Run the trigger for self-service cases that have a configured timeout setting"
-
-
-# TRANSLATION
-# LABEL/ID_TASK_SCHEDULER_CALCULATE_APP
-#: LABEL/ID_TASK_SCHEDULER_CALCULATE_APP
-msgid "Calculate app data"
-msgstr "Calculate app data"
 
 # TRANSLATION
 # LABEL/ID_TASK_SCHEDULER_CALCULATE_ELAPSED
@@ -51728,10 +51709,15 @@ msgstr "Years"
 # LABEL/ID_MONTHS
 #: LABEL/ID_MONTHS
 msgid "Months"
-msgstr "Months"
+msgstr "Months"# 
 
-# TRANSLATION
-# LABEL/ID_WEEK
+TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_SEND_NOTIFICATIONS
+#: LABEL/ID_TASK_SCHEDULER_SEND_NOTIFICATIONS
+msgid "Actions by email response account email revision"
+msgstr "Actions by email response account email revision"
+
+ID_TASK_SCHEDULER_SEND_NOTIFICATIONS
 #: LABEL/ID_WEEK
 msgid "Week"
 msgstr "Week"
@@ -51802,3 +51788,50 @@ msgstr "time in ${0}"
 msgid "every ${0} ${1}"
 msgstr "every ${0} ${1}"
 
+# TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_REPORTING
+#: LABEL/ID_TASK_SCHEDULER_REPORTING
+msgid "Reporting"
+msgstr "Reporting"
+
+# TRANSLATION
+# LABEL/ID_EVERY_HOUR
+#: LABEL/ID_EVERY_HOUR
+msgid "Every hour"
+msgstr "Every hour"
+
+# TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_REPORT_USERS
+#: LABEL/ID_TASK_SCHEDULER_REPORT_USERS
+msgid "KPI Report by user"
+msgstr "KPI Report by user"
+
+# TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_REPORT_USERS_DESC
+#: LABEL/ID_TASK_SCHEDULER_REPORT_USERS_DESC
+msgid "Recalculate KPI's information by user"
+msgstr "Recalculate KPI's information by user"
+
+# TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_REPORT_PROCESS
+#: LABEL/ID_TASK_SCHEDULER_REPORT_PROCESS
+msgid "KPI Report by process"
+msgstr "KPI Report by process"
+
+# TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_REPORT_PROCESS_DESC
+#: LABEL/ID_TASK_SCHEDULER_REPORT_PROCESS_DESC
+msgid "Recalculate KPI's information by process"
+msgstr "Recalculate KPI's information by process"
+
+# TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_CALCULATE_APP
+#: LABEL/ID_TASK_SCHEDULER_CALCULATE_APP
+msgid "KPI Calculate app"
+msgstr "KPI Calculate app"
+
+# TRANSLATION
+# LABEL/ID_TASK_SCHEDULER_CALCULATE_APP_DESC
+#: LABEL/ID_TASK_SCHEDULER_CALCULATE_APP_DESC
+msgid "Recalculate main KPI board information"
+msgstr "Recalculate main KPI board information"

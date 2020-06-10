@@ -317,4 +317,9 @@ if ($RBAC->userCanAccess('PM_TASK_SCHEDULER_ADMIN') === 1) {
         G::LoadTranslation("ID_TASK_SCHEDULER_PM_SYNC"),
         '', '', G::LoadTranslation("ID_TASK_SCHEDULER")
     );     
+    $G_TMP_MENU->AddIdRawOption(
+        'ID_MENU_REPORTING', '../scheduler/index?category=reporting',
+        G::LoadTranslation("ID_TASK_SCHEDULER_REPORTING"),
+        '', '', G::LoadTranslation("ID_TASK_SCHEDULER")
+    );   
 }

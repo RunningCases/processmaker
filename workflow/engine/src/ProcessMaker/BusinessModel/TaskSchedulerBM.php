@@ -54,36 +54,56 @@ class TaskSchedulerBM
         $toSave = array();
         $services = array(
             array(
-                "title" => "ProcessMaker Events",
-                "service" => "events",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * * * *",
-                "description" => "Unpauses any case whose pause time has expired"             
-            ),
-            array(
-                "title" => "ProcessMaker Scheduler",
-                "enable" => "1",
-                "service" => "scheduler",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * */1 * *",
-                "description" => "Unpauses any case whose pause time has expired"
-            ),
-            array(
                 "title" => "ID_TASK_SCHEDULER_UNPAUSE",
                 "enable" => "0",
                 "service" => "unpause",
                 "category" => "case_actions",
                 "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* */1 * * *",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "0 */1 * * 0,1,2,3,4,5,6",
                 "description" => "ID_TASK_SCHEDULER_UNPAUSE_DESC"                     
+            ),
+            array(
+                "title" => "ID_TASK_SCHEDULER_CALCULATE_ELAPSED",
+                "enable" => "0",
+                "service" => "calculate",
+                "category" => "case_actions",
+                "file" => "workflow/engine/bin/cron.php",
+                "startingTime" => "0:00",
+                "endingTime" => "0:30",
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "0 */1 * * 0,1,2,3,4,5,6",
+                "description" => 'ID_TASK_SCHEDULER_CALCULATE_ELAPSED_DESC'    
+            ),
+            array(
+                "title" => "ID_TASK_SCHEDULER_UNASSIGNED",
+                "enable" => "0",
+                "service" => "unassigned-case",
+                "category" => "case_actions",
+                "file" => "workflow/engine/bin/cron.php",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "0 */1 * * 0,1,2,3,4,5,6",
+                "description" => 'ID_TASK_SCHEDULER_UNASSIGNED_DESC'               
+            ),
+            array(
+                "title" => "ID_TASK_SCHEDULER_CLEAN_SELF",
+                "enable" => "0",
+                "service" => "clean-self-service-tables",
+                "category" => "case_actions",
+                "file" => "workflow/engine/bin/cron.php",
+                "startingTime" => "0:00",
+                "endingTime" => "0:30",
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "0 */1 * * 0,1,2,3,4,5,6",
+                "description" => 'ID_TASK_SCHEDULER_CLEAN_SELF_DESC'     
             ),
             array(
                 "title" => "ID_TASK_SCHEDULER_CASE_EMAILS",
@@ -91,84 +111,25 @@ class TaskSchedulerBM
                 "service" => "emails",
                 "category" => "emails_notifications",
                 "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "*/5 * * * *",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "*/5 * * * 0,1,2,3,4,5,6",
                 "description" => "ID_TASK_SCHEDULER_CASE_EMAILS_DESC"   
             ),
             array(
-                "title" => "ID_TASK_SCHEDULER_PM_PLUGINS",
-                "enable" => "0",
-                "service" => "plugins",
-                "category" => "plugins",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * */1 * *",
-                "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"     
-            ),
-            array(
-                "title" => "ID_TASK_SCHEDULER_CALCULATE_ELAPSED",
-                "service" => "calculate",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * */1 * *",
-                "description" => 'ID_TASK_SCHEDULER_CALCULATE_ELAPSED_DESC'    
-            ),
-            array(
-                "title" => "Calculate App data",
-                "service" => "calculateapp",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * */1 * *",
-                "description" => 'Calculates the elapsed time "according to the configured calendar" of all open tasks in active cases'            
-            ),
-            array(
-                "title" => "ID_TASK_SCHEDULER_UNASSIGNED",
-                "service" => "unassigned-case",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* */1 * * *",
-                "description" => 'ID_TASK_SCHEDULER_UNASSIGNED_DESC'               
-            ),
-            array(
-                "title" => "ID_TASK_SCHEDULER_CLEAN_SELF",
-                "service" => "clean-self-service-tables",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * */1 * *",
-                "description" => 'ID_TASK_SCHEDULER_CLEAN_SELF_DESC'     
-            ),
-            array(
-                "title" => "Report by Users",
-                "enable" => "0",
-                "service" => "report_by_user",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* */1 * * *",
-                "description" => "Report by Users"  
-                     
-            ),
-            array(
-                "title" => "Report by process",
-                "enable" => "0",
-                "service" => "report_by_process",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/cron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* */1 * * *",
-                "description" => "Report by process"      
+                "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
+                "enable" => "1",
+                "service" => "",
+                "category" => "emails_notifications",
+                "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "*/5 * * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"   
             ),
             array(
                 "title" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS",
@@ -176,21 +137,64 @@ class TaskSchedulerBM
                 "service" => "",
                 "category" => "emails_notifications",
                 "file" => "workflow/engine/bin/messageeventcron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "*/5 * * * *",
-                "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"    
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "*/5 * * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"   
             ),
             array(
-                "title" => "ProcessMaker timer event cron",
-                "enable" => "0",
+                "title" => "ID_TASK_SCHEDULER_SEND_NOT",
+                "enable" => "1",
                 "service" => "",
-                "category" => "case_actions",
-                "file" => "workflow/engine/bin/timereventcron.php",
-                "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * */1 * *",
-                "description" => "ProcessMaker timer event cron"    
+                "category" => "emails_notifications",
+                "file" => "workflow/engine/bin/sendnotificationscron.php",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "*/5 * * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_SEND_NOT_DESC"   
+            ),
+            array(
+                "title" => "ID_TASK_SCHEDULER_REPORT_BY_USER",
+                "enable" => "0",
+                "service" => "report_by_user",
+                "category" => "reporting",
+                "file" => "workflow/engine/bin/cron.php",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "*/10 * * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_REPORT_BY_USER_DESC"   
+            ),
+            array(
+                "title" => "ID_TASK_SCHEDULER_REPORT_BY_PROCESS",
+                "enable" => "0",
+                "service" => "report_by_process",
+                "category" => "reporting",
+                "file" => "workflow/engine/bin/cron.php",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "*/10 * * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_REPORT_BY_PROCESS_DESC"   
+            ),
+            array(
+                "title" => "ID_TASK_SCHEDULER_CALCULATE_APP",
+                "enable" => "0",
+                "service" => "report_by_process",
+                "category" => "reporting",
+                "file" => "workflow/engine/bin/cron.php",
+                "startingTime" => null,
+                "endingTime" => null,
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "*/10 * * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_CALCULATE_APP_DESC"   
             ),
             array(
                 "title" => "ID_TASK_SCHEDULER_LDAP",
@@ -199,16 +203,25 @@ class TaskSchedulerBM
                 "category" => "processmaker_sync",
                 "file" => "workflow/engine/bin/ldapcron.php",
                 "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "* * */1 * *",
-                "service" => "",
-                "category" => "emails_notifications",
-                "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",
+                "endingTime" => "0:30",
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "0 */1 * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_LDAP"   
+            ),
+            array(
+                "title" => "ID_TASK_SCHEDULER_PLUGINS",
+                "enable" => "0",
+                "service" => "plugins",
+                "category" => "plugins",
+                "file" => "workflow/engine/bin/ldapcron.php",
                 "startingTime" => "0:00",
-                "endingTime" => "23:59",
-                "expression" => "*/5 * * * *",
-                "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"    
-            )
+                "endingTime" => "0:30",
+                "everyOn" => "1",
+                "interval" => "week",
+                "expression" => "0 */1 * * 0,1,2,3,4,5,6",
+                "description" => "ID_TASK_SCHEDULER_PLUGINS_DESC"   
+            )                       
         );
      
         for($i = 0; $i < count($services); ++$i) {           
@@ -222,10 +235,10 @@ class TaskSchedulerBM
             $task->expression = $services[$i]["expression"];
             $task->type = "shell";
             $task->system = 1;
-            $task->timezone = $arraySystemConfiguration['time_zone'];
+            //$task->timezone = $arraySystemConfiguration['time_zone'];
             $task->enable = $services[$i]["enable"];
-            $task->startingTime = "0:00";
-            $task->endingTime = "23:59";
+            $task->everyOn = $services[$i]["everyOn"];
+            $task->interval = $services[$i]["interval"];
             $task->save();   
         }
     }
