@@ -32,6 +32,7 @@ use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\ElementTranslation;
+use Illuminate\Support\Facades\DB;
 
 /**
  * ProcessMaker has made a number of its PHP functions available be used in triggers and conditions.
@@ -243,8 +244,22 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
 {
     $sysSys = (!empty(config("system.workspace")))? config("system.workspace") : "Undefined";
     $aContext = \Bootstrap::getDefaultContextLog();
-    $con = Propel::getConnection( $DBConnectionUID );
-    $con->begin();
+
+    // This means the DBConnectionUID is not loaded yet, so we'll force DbConnections::loadAdditionalConnections
+    if (is_null(config('database.connections.' . $DBConnectionUID . '.driver'))) {
+        // Force to load the external connections
+        DbConnections::loadAdditionalConnections();
+        if (config('database.connections.' . $DBConnectionUID . '.driver') !== 'oracle') {
+            // If the connections drivers are "mysql", "pgsql" or "sqlsrv" we're using Laravel
+            $con = DB::connection($DBConnectionUID);
+            $con->beginTransaction();
+        } else {
+            // If the connection driver is "oracle" we're using the native oci8 functions
+            $con = Propel::getConnection($DBConnectionUID);
+            $con->begin();
+        }
+    }
+
     $blackList = System::getQueryBlackList();
     $listQueries = explode('|', isset($blackList['queries']) ? $blackList['queries'] : '');
     $aListAllTables = explode(
@@ -299,36 +314,34 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
         $statement = str_replace( '(', '', $statement );
 
         $result = false;
-        if (getEngineDataBaseName( $con ) != 'oracle') {
+
+        // Check to see if we're not running oracle, which is usually a safe default
+        if (config('database.connections.' . $DBConnectionUID . '.driver') != 'oracle') {
             switch (true) {
                 case preg_match( "/^(SELECT|EXECUTE|EXEC|SHOW|DESCRIBE|EXPLAIN|BEGIN)\s/i", $statement ):
-                    $rs = $con->executeQuery( $SqlStatement );
-                    $result = Array ();
-                    $i = 1;
-                    while ($rs->next()) {
-                        $result[$i ++] = $rs->getRow();
-                    }
-                    $rs->close();
+                    $result = $con->select( $SqlStatement );
+
+                    // Convert to 1 index key array of array results
+                    $result = collect($result)->map(function($x) { return (array)$x; })->toArray();
+                    array_unshift($result, []);
+                    unset($result[0]);
+
                     $con->commit();
                     break;
                 case preg_match( "/^INSERT\s/i", $statement ):
-                    $rs = $con->executeUpdate( $SqlStatement );
-                    $result = $con->getUpdateCount();
+                    $result = $con->insert( $SqlStatement );
                     $con->commit();
                     break;
                 case preg_match( "/^REPLACE\s/i", $statement ):
-                    $rs = $con->executeUpdate( $SqlStatement );
-                    $result = $con->getUpdateCount();
+                    $result = $con->update( $SqlStatement );
                     $con->commit();
                     break;
                 case preg_match( "/^UPDATE\s/i", $statement ):
-                    $rs = $con->executeUpdate( $SqlStatement );
-                    $result = $con->getUpdateCount();
+                    $result = $con->update( $SqlStatement );
                     $con->commit();
                     break;
                 case preg_match( "/^DELETE\s/i", $statement ):
-                    $rs = $con->executeUpdate( $SqlStatement );
-                    $result = $con->getUpdateCount();
+                    $result = $con->delete( $SqlStatement );
                     $con->commit();
                     break;
             }
