@@ -41,7 +41,9 @@ use ProcessMaker\BusinessModel\User as BmUser;
 use ProcessMaker\Core\System;
 use ProcessMaker\Exception\UploadException;
 use ProcessMaker\Model\Application as ModelApplication;
+use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Documents;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Util\DateTime as UtilDateTime;
@@ -3834,6 +3836,138 @@ class Cases
                     } else {
                         throw new UploadException($arrayFileName['error']);
                     }
+                }
+            }
+        } else {
+            throw new Exception(G::LoadTranslation('ID_ERROR_UPLOAD_FILE_CONTACT_ADMINISTRATOR'));
+        }
+
+        return $response;
+    }
+
+    /**
+     * Add a case note
+     *
+     * @param string $appUid
+     * @param string $userUid
+     * @param string $note
+     * @param bool $sendMail
+     * @param array $files
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function addNote($appUid, $userUid, $note, $sendMail = false, $files = [])
+    {
+        // Register the note
+        $attributes = [
+            "APP_UID" => $appUid,
+            "USR_UID" => $userUid,
+            "NOTE_DATE" => date("Y-m-d H:i:s"),
+            "NOTE_CONTENT" => $note,
+            "NOTE_TYPE" => "USER",
+            "NOTE_AVAILABILITY" => "PUBLIC",
+            "NOTE_RECIPIENTS" => ""
+        ];
+        $response = AppNotes::create($attributes);
+        // Get the FK
+        $noteId = $response->NOTE_ID;
+
+        // Register the files related to the note
+        $this->uploadFilesInCaseNotes($userUid, $appUid, $files, $noteId);
+
+        // Send the email
+        if ($sendMail) {
+            // @todo refactor this section the files attached need to send in the email
+            $case = new ClassesCases();
+            $p = $case->getUsersParticipatedInCase($appUid, 'ACTIVE');
+            $noteRecipientsList = [];
+
+            foreach ($p["array"] as $key => $userParticipated) {
+                if ($key != '') {
+                    $noteRecipientsList[] = $key;
+                }
+            }
+
+            $noteRecipients = implode(",", $noteRecipientsList);
+            $note = stripslashes($note);
+
+            $note = new \AppNotes();
+            $note->sendNoteNotification($appUid, $userUid, $note, $noteRecipients); 
+        }
+    }
+
+    /**
+     * Upload file related to the case notes
+     *
+     * @param string $userUid
+     * @param string $appUid
+     * @param array $filesReferences
+     * @param string $appDocUid
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function uploadFilesInCaseNotes($userUid, $appUid, $filesReferences = [], $noteId = 0)
+    {
+        if (!empty($_FILES["form"]["name"])) {
+            $upload = true;
+            // Array from post upload
+            foreach ($_FILES["form"]["name"] as $fileIndex => $fileName) {
+                if (!is_array($fileName)) {
+                    $files[] = [
+                        'name' => $_FILES["form"]["name"][$fileIndex],
+                        'tmp_name' => $_FILES["form"]["tmp_name"][$fileIndex],
+                        'error' => $_FILES["form"]["error"][$fileIndex]
+                    ];
+                }
+            }
+        } elseif (!empty($filesReferences)) {
+            $upload = false;
+            // Array with path references
+            foreach ($filesReferences as $fileIndex => $fileName) {
+                $nameFile = !is_numeric($fileIndex) ? basename($fileIndex) : basename($fileName);
+                $files[] = [
+                    'name' => $nameFile,
+                    'tmp_name' => $fileName,
+                    'error' => UPLOAD_ERR_OK
+                ];
+            }
+        }
+
+        // Get the delIndex related to the case
+        $cases = new ClassesCases();
+        $delIndex = $cases->getCurrentDelegation($appUid);
+
+        // We will to register the files in the database
+        $response = [];
+        if (!empty($files)) {
+            $i = 0;
+            foreach ($files as $fileIndex => $fileName) {
+                // There is no error, the file uploaded with success
+                if ($fileName["error"] === UPLOAD_ERR_OK) {
+                    $appDocUid = G::generateUniqueID();
+                    $attributes = [
+                        "DOC_ID" => $noteId,
+                        "APP_DOC_UID" => $appDocUid,
+                        "DOC_VERSION" => 1,
+                        "APP_UID" => $appUid,
+                        "DEL_INDEX" => $delIndex,
+                        "USR_UID" => $userUid,
+                        "DOC_UID" => -1,
+                        "APP_DOC_TYPE" => 'CASE_NOTE',
+                        "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"),
+                        "APP_DOC_FILENAME" => $fileName["name"]
+                    ];
+                    Documents::create($attributes);
+
+                    // Upload or move the file
+                    $isUploaded = saveAppDocument($fileName, $appUid, $appDocUid, 1, $upload);
+
+                    // List of files uploaded or copy
+                    $response[$i++] = $attributes;
+                } else {
+                    throw new UploadException($fileName['error']);
                 }
             }
         } else {
