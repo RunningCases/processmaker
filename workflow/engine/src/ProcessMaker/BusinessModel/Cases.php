@@ -14,6 +14,7 @@ use AppHistoryPeer;
 use Application;
 use ApplicationPeer;
 use Applications;
+use AppNotes;
 use AppNotesPeer;
 use AppSolr;
 use BasePeer;
@@ -41,7 +42,7 @@ use ProcessMaker\BusinessModel\User as BmUser;
 use ProcessMaker\Core\System;
 use ProcessMaker\Exception\UploadException;
 use ProcessMaker\Model\Application as ModelApplication;
-use ProcessMaker\Model\AppNotes;
+use ProcessMaker\Model\AppNotes as Notes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -3869,16 +3870,25 @@ class Cases
             "NOTE_AVAILABILITY" => "PUBLIC",
             "NOTE_RECIPIENTS" => ""
         ];
-        $response = AppNotes::create($attributes);
+        $newNote = Notes::create($attributes);
         // Get the FK
-        $noteId = $response->NOTE_ID;
+        $noteId = $newNote->NOTE_ID;
 
+        $attachments = [];
         // Register the files related to the note
-        $this->uploadFilesInCaseNotes($userUid, $appUid, $files, $noteId);
+        if (!empty($files) || !empty($_FILES["filesToUpload"])) {
+            $filesResponse = $this->uploadFilesInCaseNotes($userUid, $appUid, $files, $noteId);
+            foreach ($filesResponse['attachments'] as $key => $value) {
+                $attachments[$key] = [];
+                $attachments[$key]['APP_DOC_FILENAME'] = $value['APP_DOC_FILENAME'];
+                $attachments[$key]['LINK'] = "../cases/cases_ShowDocument?a=" . $value["APP_DOC_UID"] . "&v=" . $value["DOC_VERSION"];
+            }
+
+        }
 
         // Send the email
         if ($sendMail) {
-            // @todo refactor this section the files attached need to send in the email
+            // Get the recipients
             $case = new ClassesCases();
             $p = $case->getUsersParticipatedInCase($appUid, 'ACTIVE');
             $noteRecipientsList = [];
@@ -3892,9 +3902,19 @@ class Cases
             $noteRecipients = implode(",", $noteRecipientsList);
             $note = stripslashes($note);
 
-            $note = new \AppNotes();
-            $note->sendNoteNotification($appUid, $userUid, $note, $noteRecipients); 
+            // Send the notification
+            $appNote = new AppNotes();
+            $appNote->sendNoteNotification($appUid, $userUid, $note, $noteRecipients, '', 0, $noteId);
         }
+
+        // Prepare the response
+        $result = [];
+        $result['success'] = 'success';
+        $result['message'] = '';
+        $result['attachments'] = $attachments;
+        $result['attachment_errors'] = [];
+
+        return $result;
     }
 
     /**
@@ -3910,15 +3930,20 @@ class Cases
      */
     public function uploadFilesInCaseNotes($userUid, $appUid, $filesReferences = [], $noteId = 0)
     {
-        if (!empty($_FILES["form"]["name"])) {
+        $files = [];
+        if (!empty($_FILES["filesToUpload"])) {
             $upload = true;
-            // Array from post upload
-            foreach ($_FILES["form"]["name"] as $fileIndex => $fileName) {
-                if (!is_array($fileName)) {
+            // This format is from ext-js multipart
+            $filesName = !empty($_FILES["filesToUpload"]["name"]) ? $_FILES["filesToUpload"]["name"] : [];
+            $filesTmpName = !empty($_FILES["filesToUpload"]["tmp_name"]) ? $_FILES["filesToUpload"]["tmp_name"] : [];
+            $filesError = !empty($_FILES["filesToUpload"]["error"]) ? $_FILES["filesToUpload"]["error"] : [];
+
+            foreach ($filesName as $index => $value) {
+                if (!empty($value)) {
                     $files[] = [
-                        'name' => $_FILES["form"]["name"][$fileIndex],
-                        'tmp_name' => $_FILES["form"]["tmp_name"][$fileIndex],
-                        'error' => $_FILES["form"]["error"][$fileIndex]
+                        'name' => $filesName[$index],
+                        'tmp_name' => $filesTmpName[$index],
+                        'error' => $filesError[$index]
                     ];
                 }
             }
@@ -3941,31 +3966,43 @@ class Cases
 
         // We will to register the files in the database
         $response = [];
+        $response['attachments'] = [];
+        $response['attachment_errors'] = [];
         if (!empty($files)) {
             $i = 0;
+            $j = 0;
             foreach ($files as $fileIndex => $fileName) {
                 // There is no error, the file uploaded with success
                 if ($fileName["error"] === UPLOAD_ERR_OK) {
                     $appDocUid = G::generateUniqueID();
-                    $attributes = [
-                        "DOC_ID" => $noteId,
-                        "APP_DOC_UID" => $appDocUid,
-                        "DOC_VERSION" => 1,
-                        "APP_UID" => $appUid,
-                        "DEL_INDEX" => $delIndex,
-                        "USR_UID" => $userUid,
-                        "DOC_UID" => -1,
-                        "APP_DOC_TYPE" => 'CASE_NOTE',
-                        "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"),
-                        "APP_DOC_FILENAME" => $fileName["name"]
-                    ];
-                    Documents::create($attributes);
 
                     // Upload or move the file
                     $isUploaded = saveAppDocument($fileName, $appUid, $appDocUid, 1, $upload);
 
-                    // List of files uploaded or copy
-                    $response[$i++] = $attributes;
+                    // If the file was uploaded correctly we will to register in the DB
+                    if ($isUploaded) {
+                        $attributes = [
+                            "DOC_ID" => $noteId,
+                            "APP_DOC_UID" => $appDocUid,
+                            "DOC_VERSION" => 1,
+                            "APP_UID" => $appUid,
+                            "DEL_INDEX" => $delIndex,
+                            "USR_UID" => $userUid,
+                            "DOC_UID" => -1,
+                            "APP_DOC_TYPE" => 'CASE_NOTE',
+                            "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"),
+                            "APP_DOC_FILENAME" => $fileName["name"]
+                        ];
+                        Documents::create($attributes);
+
+                        // List of files uploaded or copy
+                        $response['attachments'][$i++] = $attributes;
+                    } else {
+                        $response['attachment_errors'][$j++] = [
+                            'error' => 'error',
+                            'file' => $fileName["name"]
+                        ];
+                    }
                 } else {
                     throw new UploadException($fileName['error']);
                 }
