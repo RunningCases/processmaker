@@ -1994,6 +1994,12 @@ msgid "Add field"
 msgstr "Add field"
 
 # TRANSLATION
+# LABEL/ID_ADD_FILE
+#: LABEL/ID_ADD_FILE
+msgid "Add file"
+msgstr "Add file"
+
+# TRANSLATION
 # LABEL/ID_ADD_HORIZONTAL_LINE
 #: LABEL/ID_ADD_HORIZONTAL_LINE
 msgid "Add horizontal line"
@@ -2574,6 +2580,12 @@ msgstr "Attach"
 #: LABEL/ID_ATTACHED_DB
 msgid "Attached"
 msgstr "Attached"
+
+# TRANSLATION
+# LABEL/ID_ATTACH_FILE
+#: LABEL/ID_ATTACH_FILE
+msgid "Attach file"
+msgstr "Attach file"
 
 # TRANSLATION
 # LABEL/ID_ATTACHED_FILES

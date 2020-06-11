@@ -4,8 +4,9 @@ var storeNotes;
 var appUid;
 var title;
 var summaryWindowOpened = false;
-
 var toolTipChkSendMail;
+var caseNotesForm;
+var uploadItemsSize = 5;
 
 function closeCaseNotesWindow(){
   if(Ext.get("caseNotesWindowPanel")){
@@ -173,12 +174,101 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
       }
     ]
   });
+  /**
+   * Factory to create upload files field dinamically
+   * @return {Object}
+   */
+  function uploadFileFactory () {
+      return  {
+          xtype: 'fileuploadfield',
+          emptyText: '',
+          fieldLabel: _('ID_ATTACH_FILE'),
+          buttonText: _('ID_SELECT_FILE'),
+          name: 'filesToUpload[]',
+          allowBlank: true,
+          width : '70%',
+          validator: function (filePath) {
+              var flag = false;
+              if (caseNotesWindow.isVisible() === false || filePath === "") {
+                  return true;
+              }
+              filePath = filePath.replace(/^\s|\s$/g, ""); //trims string
+              if (filePath.match(/([^\/\\]+)\.(pdf|gif|jpg|png|doc|docx|xls|xlsx|txt|mp4|mpv|mpeg|mpg|mov)$/i)) {
+                flag = true;
+              } else {
+                  messageError = _('ID_ERROR_UPLOADING_IMAGE_TYPE');
+                  PMExt.notify(_('ID_ERROR'), messageError);
+                  flag = false;
+                  this.setRawValue(null);
+              }
+            return flag;
+          }
+      };
+  };
 
+  // Cases notes form to insert coments and attach files
+  caseNotesForm = new Ext.FormPanel({
+      width: 462,
+      anchor: '100%',
+      baseCls: 'x-plain',
+      fileUpload: true,
+      items:
+          [
+              {
+                  text : _('ID_NEW_NOTE'),  
+                  xtype : 'textarea',
+                  id : 'caseNoteText',
+                  name : 'caseNoteText',
+                  width : '98%',
+                  height : 100,
+                  hideLabel: true,
+                  maxLengthText : 1500,
+                  allowBlank :false,
+                  selectOnFocus :true,
+                  enableKeyEvents: true,
+                  listeners : {
+                    scope : this,
+                    keyup : updateTextCtr,
+                    keydown: updateTextCtr,
+                    'change': function(field, newVal, oldVal) {
+                        var textAreaValue = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                        field.setValue(textAreaValue.trim());
+                        Ext.getCmp('caseNoteText').focus(false, 200);
+                    }
+                  }
+              }
+          ],
+      buttons:
+          [
+              {
+                  text: _('ID_ADD_FILE'),
+                  id: 'btnAddFile',
+                  type: 'button',
+                  handler: function () {
+                      var uploadFields = caseNotesForm.findByType('fileuploadfield');
+                      if (uploadFields.length >= 1 && uploadFields.length  < uploadItemsSize) {
+                          if (uploadFields[uploadFields.length - 1].getValue() !== "") {
+                              caseNotesForm.add(uploadFileFactory());
+                              caseNotesForm.doLayout();
+                              caseNotesWindow.doLayout(); 
+                          } else {
+                              messageError = _('ID_PLEASE_SELECT_FILES_TO_UPLOAD');
+                              PMExt.notify(_('ID_ERROR'), messageError);
+                          }
+                      }
+                      if (uploadFields.length === uploadItemsSize - 1) {
+                          this.setDisabled(true);
+                      }
+                     
+                  }
+              }
+          ]
+  });
   caseNotesWindow = new Ext.Window({
     title: _('ID_CASES_NOTES'), //Title of the Window
     id: 'caseNotesWindowPanel', //ID of the Window Panel
     width: 480, //Width of the Window
-    resizable: true, //Resize of the Window, if false - it cannot be resized
+    resizable: false, //Resize of the Window, if false - it cannot be resized
     closable: true, //Hide close button of the Window
     modal: modalSw, //When modal:true it make the window modal and mask everything behind it when displayed
     //iconCls: 'ICON_CASES_NOTES',
@@ -205,33 +295,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
       }
     }
     ],
-    tbar:[
-        new Ext.form.TextArea({
-          text : _('ID_NEW_NOTE'),
-          xtype : 'textarea',
-          id : 'caseNoteText',
-          name : 'caseNoteText',
-          width : 440,
-          grow : true,
-          height : 100,
-          growMin: 100,
-          growMax: 80,
-          maxLengthText : 1500,
-          allowBlank :false,
-          selectOnFocus :true,
-          enableKeyEvents: true,
-          listeners : {
-            scope : this,
-            keyup : updateTextCtr,
-            keydown: updateTextCtr,
-            'change': function(field, newVal, oldVal){
-                var textAreaValue = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
-                field.setValue(textAreaValue.trim());
-                Ext.getCmp('caseNoteText').focus(false, 200);
-            }
-          }
-        })
-      ],
+    tbar:[caseNotesForm],
     rowtbar: [
       [
         {
@@ -283,6 +347,9 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
         this.loadMask = new Ext.LoadMask(this.body, {
           msg:_('ID_LOADING')
         });
+        caseNotesForm.add(uploadFileFactory());
+        caseNotesForm.doLayout();
+        caseNotesWindow.doLayout();
       },
       close:function(){
         if (typeof(parent.setFlag) != 'undefined') {
@@ -322,6 +389,7 @@ function updateTextCtr(body, event) {
 
 function newNoteHandler()
 {
+  var i;
   newNoteAreaActive = newNoteAreaActive ? false : true;
   if (newNoteAreaActive) {
     Ext.getCmp('addCancelBtn').setText('');
@@ -351,6 +419,14 @@ function newNoteHandler()
     document.getElementById('countChar').style.display = 'block';
     Ext.getCmp('caseNoteText').focus();
     Ext.getCmp('caseNoteText').reset();
+    uploadFields = caseNotesForm.findByType('fileuploadfield');
+    // clean the first upload field
+    uploadFields[0].setRawValue(null);
+    for (i = 1; i < uploadFields.length; i += 1) {
+      caseNotesForm.remove(uploadFields[i]);
+    }
+    caseNotesForm.doLayout();
+    Ext.getCmp('btnAddFile').setDisabled(false);
     document.getElementById('countChar').innerHTML = '1500';
     caseNotesWindow.doLayout();
   }
@@ -358,81 +434,76 @@ function newNoteHandler()
   caseNotesWindow.doLayout();
 }
 
-function sendNote()
-{
+function sendNote(){
   var noteText = Ext.getCmp('caseNoteText').getValue();
-
   if (noteText == "") {
     return false;
   }
-
   newNoteHandler();
-
   Ext.getCmp('caseNoteText').focus();
   Ext.getCmp('caseNoteText').reset();
   Ext.getCmp('caseNoteText').setDisabled(true);
   Ext.getCmp('sendBtn').setDisabled(true);
   Ext.getCmp('addCancelBtn').setDisabled(true);
   statusBarMessage( _('ID_CASES_NOTE_POSTING'), true);
-  Ext.Ajax.request({
-    url : '../appProxy/postNote' ,
-    params : {
-      appUid: appUid,
-      noteText: noteText,
-      swSendMail: (Ext.getCmp("chkSendMail").checked == true)? 1 : 0
-    },
-    success: function ( result, request ) {
-      var data = Ext.util.JSON.decode(result.responseText);
-      if(data.success=="success"){
-        Ext.getCmp('caseNoteText').setDisabled(false);
-        Ext.getCmp('sendBtn').setDisabled(false);
-        Ext.getCmp('addCancelBtn').setDisabled(false);
-        if (data.message != '') {
-            Ext.Msg.show({
+
+  caseNotesForm.getForm().submit({
+      clientValidation: true,
+      url: '../appProxy/postNote',
+      params: {
+        appUid: appUid,
+        noteText: noteText,
+        swSendMail: (Ext.getCmp("chkSendMail").checked === true) ? 1 : 0
+      },
+      success: function ( result, request ) {
+        var data = Ext.util.JSON.decode(request.response.responseText);
+        if(data.success=="success"){
+          Ext.getCmp('caseNoteText').setDisabled(false);
+          Ext.getCmp('sendBtn').setDisabled(false);
+          Ext.getCmp('addCancelBtn').setDisabled(false);
+          if (data.message != '') {
+              Ext.Msg.show({
+                  title : _('ID_CASES_NOTE_POST_ERROR'),
+                  msg : data.message,
+                  icon : Ext.MessageBox.WARNING,
+                  buttons : Ext.Msg.OK,
+                  fn : function(btn) {
+                      statusBarMessage( _('ID_CASES_NOTE_POST_SUCCESS'), false,true);
+                      storeNotes.load();
+                  }
+              });
+          } else {
+              statusBarMessage( _('ID_CASES_NOTE_POST_SUCCESS'), false,true);
+              storeNotes.load();
+          }
+        } else if (data.lostSession) {
+          Ext.Msg.show({
                 title : _('ID_CASES_NOTE_POST_ERROR'),
                 msg : data.message,
-                icon : Ext.MessageBox.WARNING,
+                icon : Ext.MessageBox.ERROR,
                 buttons : Ext.Msg.OK,
                 fn : function(btn) {
-                    statusBarMessage( _('ID_CASES_NOTE_POST_SUCCESS'), false,true);
-                    storeNotes.load();
+                    try {
+                        prnt = parent.parent;
+                        top.location = top.location;
+                    } catch (err) {
+                        parent.location = parent.location;
+                    }
                 }
-            });
+           });
         } else {
-            statusBarMessage( _('ID_CASES_NOTE_POST_SUCCESS'), false,true);
-            storeNotes.load();
+          Ext.getCmp('caseNoteText').setDisabled(false);
+          Ext.getCmp('sendBtn').setDisabled(false);
+          Ext.getCmp('addCancelBtn').setDisabled(false);
+          statusBarMessage( _('ID_CASES_NOTE_POST_ERROR'), false,false);
+          Ext.MessageBox.alert(_('ID_CASES_NOTE_POST_ERROR'), data.message);
+  
         }
-      } else if (data.lostSession) {
-        Ext.Msg.show({
-              title : _('ID_CASES_NOTE_POST_ERROR'),
-              msg : data.message,
-              icon : Ext.MessageBox.ERROR,
-              buttons : Ext.Msg.OK,
-              fn : function(btn) {
-                try
-                     {
-                       prnt = parent.parent;
-                       top.location = top.location;
-                     }
-                   catch (err)
-                      {
-                       parent.location = parent.location;
-                      }
-              }
-         });
-      } else {
-        Ext.getCmp('caseNoteText').setDisabled(false);
-        Ext.getCmp('sendBtn').setDisabled(false);
-        Ext.getCmp('addCancelBtn').setDisabled(false);
-        statusBarMessage( _('ID_CASES_NOTE_POST_ERROR'), false,false);
-        Ext.MessageBox.alert(_('ID_CASES_NOTE_POST_ERROR'), data.message);
-
+      },
+      failure: function ( result, request) {
+        statusBarMessage( _('ID_CASES_NOTE_POST_FAILED'), false,false);
+        Ext.MessageBox.alert(_('ID_CASES_NOTE_POST_FAILED'), result.responseText);
       }
-    },
-    failure: function ( result, request) {
-      statusBarMessage( _('ID_CASES_NOTE_POST_FAILED'), false,false);
-      Ext.MessageBox.alert(_('ID_CASES_NOTE_POST_FAILED'), result.responseText);
-    }
   });
 }
 
