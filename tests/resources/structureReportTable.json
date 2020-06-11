@@ -1,0 +1,33 @@
+{
+    "data": {
+        "var_Text1": "5298067855ed6e6893e1424067710552",
+        "var_Textarea1": "4835809915ed6e6893e14a6079656976",
+        "var_Dropdown1": "5287566085ed6e6893e14e0083475368",
+        "var_Suggest1": "4813021735ed6e6893e1520081779769",
+        "var_DateTime1": "1975-04-04 16:34:22",
+        "var_String1": "7984290665ed6e6893e15b2092042769",
+        "var_Integer1": "44"
+    },
+    "mapping": [{
+            "sFieldName": "var_Text1",
+            "sType": "char"
+        }, {
+            "sFieldName": "var_Textarea1",
+            "sType": "text"
+        }, {
+            "sFieldName": "var_Dropdown1",
+            "sType": "char"
+        }, {
+            "sFieldName": "var_Suggest1",
+            "sType": "char"
+        }, {
+            "sFieldName": "var_DateTime1",
+            "sType": "date"
+        }, {
+            "sFieldName": "var_String1",
+            "sType": "char"
+        }, {
+            "sFieldName": "var_Integer1",
+            "sType": "number"
+        }]
+}
