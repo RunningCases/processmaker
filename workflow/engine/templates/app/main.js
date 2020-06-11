@@ -112,7 +112,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
         emptyText: _('ID_CASE_NOTES_EMPTY'),
         cls: 'x-cnotes-view',
         tpl: '<tpl for=".">' +
-                '<div><table><tbody>' +
+                '<div class="x-cnotes-source"><table><tbody>' +
                     '<tr>' +
                       '<td class="x-cnotes-label"><img border="0" src="../users/users_ViewPhotoGrid?pUID={USR_UID}" width="40" height="40"/></td>' +
                       '<td class="x-cnotes-name">'+
@@ -127,7 +127,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
         itemSelector: 'div.x-cnotes-source',
         overClass: 'x-cnotes-over',
         selectedClass: 'x-cnotes-selected',
-        singleSelect: true,
+        singleSelect: false,
 
         prepareData: function(data){
           var i;
