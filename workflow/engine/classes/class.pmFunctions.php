@@ -960,9 +960,8 @@ function PMFSendMessage(
     $delIndex = 0,
     $config = []
 ) {
-    ini_set ( "pcre.backtrack_limit", 1000000 );
-    ini_set ( 'memory_limit', '-1' );
-    @set_time_limit ( 100000 );
+    ini_set("pcre.backtrack_limit", 1000000);
+    @set_time_limit(100000);
 
     global $oPMScript;
 

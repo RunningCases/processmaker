@@ -36,7 +36,6 @@ class System
         'debug_time' => 0,
         'debug_calendar' => 0,
         'wsdl_cache' => 1,
-        'memory_limit' => "256M",
         'time_zone' => 'America/New_York',
         'expiration_year' => '1',
         'memcached' => 0,
