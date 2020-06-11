@@ -12,7 +12,6 @@ use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 use ProcessMaker\Model\UserReporting;
-use ProcessMaker\Util\WsMessageResponse;
 use Tests\TestCase;
 
 /**
@@ -22,6 +21,7 @@ use Tests\TestCase;
  */
 class WsBaseTest extends TestCase
 {
+
     use DatabaseTransactions;
 
     /**
@@ -65,21 +65,20 @@ class WsBaseTest extends TestCase
      */
     private function createNewCase($applicationNumber = null)
     {
+        $userUid = G::generateUniqueID();
+        $processUid = G::generateUniqueID();
+        $applicationUid = G::generateUniqueID();
         if (empty($applicationNumber)) {
             $faker = Factory::create();
             $applicationNumber = $faker->unique()->numberBetween(1, 10000000);
         }
-        $userUid = G::generateUniqueID();
-        $processUid = G::generateUniqueID();
-        $taskUid = G::generateUniqueID();
-        $applicationUid = G::generateUniqueID();
 
         $appData = [
             'SYS_LANG' => 'en',
             'SYS_SKIN' => 'neoclassic',
             'SYS_SYS' => 'workflow',
-            'APPLICATION' => G::generateUniqueID(),
-            'PROCESS' => G::generateUniqueID(),
+            'APPLICATION' => $applicationUid,
+            'PROCESS' => $processUid,
             'TASK' => '',
             'INDEX' => 2,
             'USER_LOGGED' => $userUid,
@@ -108,16 +107,9 @@ class WsBaseTest extends TestCase
         ]);
 
         $result = new stdClass();
-        $result->userUid = $userUid;
-        $result->processUid = $processUid;
-        $result->taskUid = $taskUid;
-        $result->applicationUid = $applicationUid;
-        $result->applicationNumber = $applicationNumber;
-        $result->appData = $appData;
+        $result->application = $application;
         $result->user = $user;
         $result->process = $process;
-        $result->task = $task;
-        $result->application = $application;
         return $result;
     }
 
@@ -229,7 +221,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $emailServer->MESS_ACCOUNT;
         $to = $emailServer->MESS_ACCOUNT;
         $cc = "";
@@ -269,7 +261,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $emailServer->MESS_ACCOUNT;
         $to = "";
         $cc = "";
@@ -308,7 +300,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $emailServer->MESS_ACCOUNT;
         $to = $emailServer->MESS_ACCOUNT;
         $cc = "";
@@ -347,7 +339,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $emailServer->MESS_ACCOUNT;
         $to = "";
         $cc = "";
@@ -386,7 +378,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $emailServer->MESS_ACCOUNT;
         $to = $emailServer->MESS_ACCOUNT;
         $cc = "";
@@ -425,7 +417,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $emailServer->MESS_ACCOUNT;
         $to = "";
         $cc = "";
@@ -464,7 +456,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $emailServer->MESS_ACCOUNT;
         $to = "";
         $cc = "";
@@ -644,7 +636,7 @@ class WsBaseTest extends TestCase
         $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
 
         //parameters
-        $appUid = $case->applicationUid;
+        $appUid = $case->application->APP_UID;
         $from = $faker->email;
         $to = "";
         $cc = "";
@@ -659,7 +651,131 @@ class WsBaseTest extends TestCase
         $result = $wsBase->sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $templateName, $appFields);
 
         //assertions
-        $this->assertInstanceOf(WsMessageResponse::class, $result);
+        $this->assertInstanceOf(WsResponse::class, $result);
+    }
+
+    /**
+     * This test ensures the response when the default configuration does not exist.
+     * @test
+     * @covers WsBase::sendMessage
+     */
+    public function it_should_test_an_send_message_without_default_configuration()
+    {
+        //data
+        $emailServer = $this->createEmailServer();
+        $case = $this->createNewCase();
+        $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
+
+        //parameters
+        $appUid = $case->application->APP_UID;
+        $from = $emailServer->MESS_ACCOUNT;
+        $to = $emailServer->MESS_ACCOUNT;
+        $cc = "";
+        $bcc = "";
+        $subject = "test";
+        $templateName = basename($template->PRF_PATH);
+        $appFields = [];
+        $attachment = [];
+        $showMessage = true;
+        $delIndex = 0;
+        $config = [];
+        $gmail = 0;
+        $appMsgType = '';
+
+        //for empty configuration
+        EmailServerModel::truncate();
+
+        $wsBase = new WsBase();
+        $result = $wsBase->sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $templateName, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType);
+
+        //assertions
+        $this->assertObjectHasAttribute('status_code', $result);
+        $this->assertObjectHasAttribute('message', $result);
+        $this->assertObjectHasAttribute('timestamp', $result);
+        $this->assertObjectHasAttribute('extraParams', $result);
+        $this->assertEquals(29, $result->status_code);
+    }
+
+    /**
+     * This test ensures the response when the template is not found.
+     * @test
+     * @covers WsBase::sendMessage
+     */
+    public function it_should_test_an_send_message_missing_template()
+    {
+        //data
+        $emailServer = $this->createEmailServer();
+        $case = $this->createNewCase();
+        $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
+
+        //parameters
+        $appUid = $case->application->APP_UID;
+        $from = $emailServer->MESS_ACCOUNT;
+        $to = $emailServer->MESS_ACCOUNT;
+        $cc = "";
+        $bcc = "";
+        $subject = "test";
+        $templateName = basename($template->PRF_PATH);
+        $appFields = [];
+        $attachment = [];
+        $showMessage = true;
+        $delIndex = 0;
+        $config = $emailServer->toArray();
+        $gmail = 0;
+        $appMsgType = '';
+
+        //for a missing template
+        $templateName = 'MissingFile';
+        G::rm_dir(PATH_DATA_SITE . 'mailTemplates');
+
+        $wsBase = new WsBase();
+        $result = $wsBase->sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $templateName, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType);
+
+        //assertions
+        $this->assertObjectHasAttribute('status_code', $result);
+        $this->assertObjectHasAttribute('message', $result);
+        $this->assertObjectHasAttribute('timestamp', $result);
+        $this->assertObjectHasAttribute('extraParams', $result);
+        $this->assertEquals(28, $result->status_code);
+    }
+
+    /**
+     * This test ensures the response when there is an exception.
+     * @test
+     * @covers WsBase::sendMessage
+     */
+    public function it_should_test_an_send_message_when_appears_an_exception()
+    {
+        //data
+        $emailServer = $this->createEmailServer();
+        $case = $this->createNewCase();
+        $template = $this->createTemplate($case->process->PRO_UID, $case->user->USR_UID);
+
+        //parameters
+        $appUid = null;
+        $from = $emailServer->MESS_ACCOUNT;
+        $to = $emailServer->MESS_ACCOUNT;
+        $cc = "";
+        $bcc = "";
+        $subject = "test";
+        $templateName = basename($template->PRF_PATH);
+        $appFields = [];
+        $attachment = [];
+        $showMessage = true;
+        $delIndex = 0;
+        $config = $emailServer->toArray();
+        $gmail = 0;
+        $appMsgType = '';
+
+        $wsBase = new WsBase();
+        $result = $wsBase->sendMessage($appUid, $from, $to, $cc, $bcc, $subject, $templateName, $appFields, $attachment, $showMessage, $delIndex, $config, $gmail, $appMsgType);
+
+        //assertions
+        $this->assertObjectHasAttribute('status_code', $result);
+        $this->assertObjectHasAttribute('message', $result);
+        $this->assertObjectHasAttribute('timestamp', $result);
+        $this->assertObjectHasAttribute('extraParams', $result);
+        $this->assertEquals(100, $result->status_code);
     }
 
     /**
@@ -680,7 +796,7 @@ class WsBaseTest extends TestCase
         ]);
         $_SESSION["APPLICATION"] = $delegation->APP_UID;
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->APP_UID);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->APP_UID);
         $this->assertEquals($ws->getFlagSameCase(), true);
         $this->assertNotEmpty($response);
     }
@@ -695,7 +811,7 @@ class WsBaseTest extends TestCase
     {
         $delegation = factory(Delegation::class)->states('foreign_keys')->create();
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase('', $delegation->DE_INDEX, $delegation->URS_UID);
+        $response = (object) $ws->cancelCase('', $delegation->DE_INDEX, $delegation->URS_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_REQUIRED_FIELD") . ' caseUid');
     }
@@ -718,7 +834,7 @@ class WsBaseTest extends TestCase
             'APP_UID' => $application->APP_UID,
         ]);
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' DRAFT');
 
@@ -732,7 +848,7 @@ class WsBaseTest extends TestCase
             'APP_UID' => $application->APP_UID,
         ]);
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' COMPLETED');
 
@@ -746,7 +862,7 @@ class WsBaseTest extends TestCase
             'APP_UID' => $application->APP_UID,
         ]);
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DE_INDEX, $delegation->URS_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_IN_STATUS") . ' CANCELLED');
     }
@@ -768,7 +884,7 @@ class WsBaseTest extends TestCase
             'APP_UID' => $application->APP_UID,
         ]);
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, '', $delegation->USR_UID);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, '', $delegation->USR_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_REQUIRED_FIELD") . ' delIndex');
     }
@@ -791,7 +907,7 @@ class WsBaseTest extends TestCase
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, '');
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, '');
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_DELEGATION_ALREADY_CLOSED"));
     }
@@ -813,7 +929,7 @@ class WsBaseTest extends TestCase
             'APP_UID' => $application->APP_UID,
         ]);
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, '');
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, '');
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_REQUIRED_FIELD") . ' userUid');
     }
@@ -857,7 +973,7 @@ class WsBaseTest extends TestCase
         ]);
 
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, G::LoadTranslation("ID_CASE_CANCELLED_PARALLEL"));
     }
@@ -904,7 +1020,7 @@ class WsBaseTest extends TestCase
         ]);
 
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
         $this->assertNotEmpty($response);
         $this->assertObjectHasAttribute('status_code', $response);
         $this->assertEquals($response->message, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
@@ -969,7 +1085,7 @@ class WsBaseTest extends TestCase
         ]);
 
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($delegation->APP_UID, null, null);
+        $response = (object) $ws->cancelCase($delegation->APP_UID, null, null);
         $this->assertNotEmpty($response);
         $this->assertObjectHasAttribute('status_code', $response);
         $this->assertEquals($response->message, G::LoadTranslation("ID_COMMAND_EXECUTED_SUCCESSFULLY"));
@@ -1002,7 +1118,7 @@ class WsBaseTest extends TestCase
             'DEL_INDEX' => 2,
         ]);
         $ws = new WsBase();
-        $response = (object)$ws->cancelCase($fakeApp, $delegation->DEL_INDEX, $delegation->USR_UID);
+        $response = (object) $ws->cancelCase($fakeApp, $delegation->DEL_INDEX, $delegation->USR_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertEquals($response->message, "The Application row '$fakeApp' doesn't exist!");
     }
