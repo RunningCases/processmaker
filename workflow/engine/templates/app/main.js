@@ -39,7 +39,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
     url: "../appProxy/getNotesList?appUid=" + appUid + "&delIndex=" + delIndex + "&pro=" + proUid + "&tas=" + taskUid,
     root: 'notes',
     totalProperty: 'totalCount',
-    fields: ['USR_USERNAME','USR_FIRSTNAME','USR_LASTNAME','USR_FULL_NAME','NOTE_DATE','NOTE_CONTENT', 'USR_UID', 'user'],
+    fields: ['USR_USERNAME','USR_FIRSTNAME','USR_LASTNAME','USR_FULL_NAME','NOTE_DATE','NOTE_CONTENT', 'USR_UID','USR_EMAIL', 'attachments', 'user'],
     baseParams:{
       start:0,
       limit:startRecord+loadSize
@@ -112,12 +112,13 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
         emptyText: _('ID_CASE_NOTES_EMPTY'),
         cls: 'x-cnotes-view',
         tpl: '<tpl for=".">' +
-                '<div class="x-cnotes-source"><table><tbody>' +
+                '<div><table><tbody>' +
                     '<tr>' +
                       '<td class="x-cnotes-label"><img border="0" src="../users/users_ViewPhotoGrid?pUID={USR_UID}" width="40" height="40"/></td>' +
                       '<td class="x-cnotes-name">'+
                         '<p class="user-from">{user}</p>'+
-                        '<p style="width: 370px; overflow-x:auto; height: 80px;", class="x-editable x-message">{NOTE_CONTENT}</p> '+
+                        '<div style="width: 370px; overflow-x:auto; height: 80px;" class="x-editable x-message"><p>{NOTE_CONTENT}</p>'+
+                        '<ul class="nav_list"><li>{files}</li></ul></div>' +
                         '<p class="x-editable"><small>'+_('ID_POSTED_AT')+'<i> {NOTE_DATE}</i></small></p>'+
                       '</td>' +
                     '</tr>' +
@@ -129,12 +130,13 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
         singleSelect: true,
 
         prepareData: function(data){
-          //data.shortName = Ext.util.Format.ellipsis(data.name, 15);
-          //data.sizeString = Ext.util.Format.fileSize(data.size);
-          //data.dateString = data.lastmod.format("m/d/Y g:i a");
-
-          data.user = _FNF(data.USR_USERNAME, data.USR_FIRSTNAME, data.USR_LASTNAME);
+          var i;
+          data.user = _FNF(data.USR_EMAIL, data.USR_FIRSTNAME, data.USR_LASTNAME);
           data.NOTE_CONTENT = data.NOTE_CONTENT.replace(/\n/g,' <br/>');
+          data.files = "";
+          for (i = 0; i < data.attachments.length; i += 1) {
+              data.files += "<a href='" + data.attachments[i].LINK + "' title='" + data.attachments[i].APP_DOC_FILENAME + "'>" + data.attachments[i].APP_DOC_FILENAME + "</a>";
+          }
           return data;
         },
 
