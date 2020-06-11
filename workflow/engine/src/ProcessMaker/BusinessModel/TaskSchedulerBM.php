@@ -158,7 +158,7 @@ class TaskSchedulerBM
                 "description" => "ID_TASK_SCHEDULER_SEND_NOT_DESC"   
             ),
             array(
-                "title" => "ID_TASK_SCHEDULER_REPORT_BY_USER",
+                "title" => "ID_TASK_SCHEDULER_REPORT_USERS",
                 "enable" => "0",
                 "service" => "report_by_user",
                 "category" => "reporting",
@@ -168,10 +168,10 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/10 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_REPORT_BY_USER_DESC"   
+                "description" => "ID_TASK_SCHEDULER_REPORT_USERS_DESC"   
             ),
             array(
-                "title" => "ID_TASK_SCHEDULER_REPORT_BY_PROCESS",
+                "title" => "ID_TASK_SCHEDULER_REPORT_PROCESS",
                 "enable" => "0",
                 "service" => "report_by_process",
                 "category" => "reporting",
@@ -181,12 +181,12 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/10 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_REPORT_BY_PROCESS_DESC"   
+                "description" => "ID_TASK_SCHEDULER_REPORT_PROCESS_DESC"   
             ),
             array(
                 "title" => "ID_TASK_SCHEDULER_CALCULATE_APP",
                 "enable" => "0",
-                "service" => "report_by_process",
+                "service" => "calculateapp",
                 "category" => "reporting",
                 "file" => "workflow/engine/bin/cron.php",
                 "startingTime" => null,
@@ -210,17 +210,17 @@ class TaskSchedulerBM
                 "description" => "ID_TASK_SCHEDULER_LDAP"   
             ),
             array(
-                "title" => "ID_TASK_SCHEDULER_PLUGINS",
+                "title" => "ID_TASK_SCHEDULER_PM_PLUGINS",
                 "enable" => "0",
                 "service" => "plugins",
                 "category" => "plugins",
-                "file" => "workflow/engine/bin/ldapcron.php",
+                "file" => "workflow/engine/bin/cron.php",
                 "startingTime" => "0:00",
                 "endingTime" => "0:30",
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "0 */1 * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_PLUGINS_DESC"   
+                "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"   
             )                       
         );
      

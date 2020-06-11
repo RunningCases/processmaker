@@ -26,6 +26,7 @@ class ScheduleRunCommand extends BaseCommand
         $this->signature = "schedule:run";
         $this->signature .= '
         {--workspace=workflow : ProcessMaker Indicates the workspace to be processed.}
+        {--user=apache : ProcessMaker Indicates the user to execute the crons.}        
         {--processmakerPath=./ : ProcessMaker path.}
         ';
         $this->description .= ' (ProcessMaker has extended this command)';
@@ -41,46 +42,60 @@ class ScheduleRunCommand extends BaseCommand
     {
         $that = $this;
         $workspace = $this->option('workspace');
+        $user =  $this->option('user');
         if (!empty($workspace)) {
             $webApplication = new WebApplication();
             $webApplication->setRootDir($this->option('processmakerPath'));
             $webApplication->loadEnvironment($workspace, false);
         }
-        TaskScheduler::all()->each(function ($p) use ($that) {
-            $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
-            $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
-            $timezone = isset($p->timezone) && $p->timezone != ""? $p->timezone: date_default_timezone_get();
-            $that->schedule->exec($p->body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
-                $now = Carbon::now();
-                $result = false;
-                $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
-                if (isset($p->everyOn)) {
-                    switch ($p->interval) {
-                        case "day":
-                            $interval = $now->diffInDays($datework);
-                            $result = ($interval !== 0 && ($interval % intval($p->everyOn)) == 0);
-                            break;
-                        case "week":
-                            $interval = $now->diffInDays($datework);
-                            $result = ($interval !== 0 && $interval % (intval($p->everyOn) * 7) == 0);
-                            break;
-                        case "month":
-                            $interval = $now->diffInMonths($datework);
-                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
-                            break;
-                        case "year":
-                            $interval = $now->diffInYears($datework);
-                            $result = ($interval !== 0 && $interval % intval($p->everyOn) == 0);
-                            break;
+        TaskScheduler::all()->each(function ($p) use ($that, $user) {
+            if ($p->enable == 1) {
+                $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
+                $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
+
+                $timezone = isset($p->timezone) && $p->timezone != "" ? $p->timezone : date_default_timezone_get();
+                $body =  str_replace("-c", $user . " -c", $p->body);
+                $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
+                    $now = Carbon::now();
+                    $result = false;
+                    $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
+                    if (isset($p->everyOn)) {
+                        switch ($p->interval) {
+                            case "day":
+                                $interval = $now->diffInDays($datework);
+                                $result = ($interval !== 0 && ($interval % intval($p->everyOn)) == 0);
+                                break;
+                            case "week":
+                                $diff = $now->diffInDays($datework);
+                                if ($diff % (intval($p->everyOn) * 7) < 7 && $diff % (intval($p->everyOn) * 7) >= 0) {
+                                    $result = true;
+                                } else {
+                                    $result = false;
+                                }
+                                break;
+                            case "month":
+                                $interval = $now->diffInMonths($datework);
+                                if ($interval % intval($p->everyOn) == 0) {
+                                    $result = true;
+                                } else {
+                                    $result = false;
+                                }
+                                break;
+                            case "year":
+                                $interval = $now->diffInYears($datework);
+                                if ($interval % intval($p->everyOn) == 0) {
+                                    $result = true;
+                                } else {
+                                    $result = false;
+                                }
+                                break;
+                        }
+                        return $result;
                     }
-                    return $result;
-                }
-                return true;
-            });
+                    return true;
+                });
+            }
         });
         parent::handle();
     }
 }
-
-
-
