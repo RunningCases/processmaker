@@ -2576,6 +2576,12 @@ msgid "Attached"
 msgstr "Attached"
 
 # TRANSLATION
+# LABEL/ID_ATTACHED_FILES
+#: LABEL/ID_ATTACHED_FILES
+msgid "Attached files"
+msgstr "Attached files"
+
+# TRANSLATION
 # LABEL/ID_ATTRIBUTES
 #: LABEL/ID_ATTRIBUTES
 msgid "Attributes"

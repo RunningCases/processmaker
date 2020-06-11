@@ -57232,6 +57232,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ASSIGN_VARIABLES_OUT','en','Assign Variables Out','2014-01-15') ,
 ( 'LABEL','ID_ATTACH','en','Attach','2014-01-15') ,
 ( 'LABEL','ID_ATTACHED_DB','en','Attached','2014-10-08') ,
+( 'LABEL','ID_ATTACHED_FILES','en','Attached files','2020-06-10') ,
 ( 'LABEL','ID_ATTRIBUTES','en','Attributes','2014-01-15') ,
 ( 'LABEL','ID_ATTRIBUTE_HAS_INVALID_ELEMENT_KEY','en','The attribute {0}, has an invalid element (incorrect keys).','2014-05-20') ,
 ( 'LABEL','ID_AT_RISK','en','At Risk','2014-01-15') ,

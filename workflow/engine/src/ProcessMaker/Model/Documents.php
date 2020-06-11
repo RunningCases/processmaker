@@ -93,4 +93,20 @@ class Documents extends Model
 
         return $documentList;
     }
+
+    /**
+     * Get attached files from the case note.
+     * @param string $appUid
+     * @return object
+     */
+    public static function getAttachedFilesFromTheCaseNote(string $appUid)
+    {
+        $result = Documents::select('APP_DOCUMENT.APP_DOC_UID', 'APP_DOCUMENT.DOC_VERSION', 'APP_DOCUMENT.APP_DOC_FILENAME')
+                ->join('APP_NOTES', function($join) use($appUid) {
+                    $join->on('APP_NOTES.NOTE_ID', '=', 'APP_DOCUMENT.DOC_ID')
+                    ->where('APP_DOCUMENT.APP_UID', '=', $appUid);
+                })
+                ->get();
+        return $result;
+    }
 }
