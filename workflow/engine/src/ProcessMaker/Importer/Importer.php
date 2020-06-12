@@ -1,10 +1,12 @@
 <?php
 namespace ProcessMaker\Importer;
 
+use Process as ModelProcess;
 use Processes;
 use ProcessMaker\BusinessModel\Migrator;
 use ProcessMaker\BusinessModel\Migrator\ImportException;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\ProcessVariables;
 use ProcessMaker\Project;
 use ProcessMaker\Project\Adapter;
 use ProcessMaker\Util;
@@ -191,7 +193,7 @@ abstract class Importer
                 }
                 //Shouldn't generate new UID for all objects
                 /*----------------------------------********---------------------------------*/
-                if($objectsToImport === ''){
+                if ($objectsToImport === '') {
                 /*----------------------------------********---------------------------------*/
                     try {
                         $this->verifyIfTheProcessHasStartedCases();
@@ -333,7 +335,7 @@ abstract class Importer
                     $diagram = $project->getStruct($projectUid);
                     $res = $project->updateFromStruct($projectUid, $diagram);
                 }
-                $this->updateTheProcessOwner($projectUid);
+                $this->updateProcessInformation($projectUid);
                 return $projectUid;
             }
         } catch (\Exception $e) {
@@ -342,17 +344,20 @@ abstract class Importer
         /*----------------------------------********---------------------------------*/
 
         $result = $this->doImport($generateUid);
-        $this->updateTheProcessOwner($result);
+        $this->updateProcessInformation($result);
         return $result;
     }
     
     /**
-     * This updates the process owner.
+     * This updates information related to the process
+     * 
      * @param string $proUid
+     * 
      * @return void
      */
-    private function updateTheProcessOwner(string $proUid): void
+    private function updateProcessInformation(string $proUid): void
     {
+        // Update the process owner
         $processOwner = $this->data["usr_uid"];
 
         $currentProcess = $this->getCurrentProcess();
@@ -363,6 +368,17 @@ abstract class Importer
         $process->update([
             'PRO_CREATE_USER' => $processOwner
         ]);
+
+        // Update the process Variables with the PRO_ID related
+        $process = new ModelProcess();
+        if ($process->processExists($proUid)) {
+            $processRow = $process->load($proUid);
+            $proId = $processRow['PRO_ID'];
+            $processVar = ProcessVariables::where('PRJ_UID', '=', $proUid);
+            $processVar->update([
+                'PRO_ID' => $proId
+            ]);
+        }
     }
 
     /**
@@ -887,7 +903,7 @@ abstract class Importer
             $this->importData["tables"]["workflow"]["process"] = $this->importData["tables"]["workflow"]["process"][0];
 
             $result = $this->doImport(true, false);
-            $this->updateTheProcessOwner($result);
+            $this->updateProcessInformation($result);
             return ['prj_uid' => $result];
         } catch (\Exception $e) {
             return $e->getMessage();

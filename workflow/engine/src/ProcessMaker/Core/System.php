@@ -36,7 +36,6 @@ class System
         'debug_time' => 0,
         'debug_calendar' => 0,
         'wsdl_cache' => 1,
-        'memory_limit' => "256M",
         'time_zone' => 'America/New_York',
         'expiration_year' => '1',
         'memcached' => 0,
@@ -77,7 +76,8 @@ class System
         'mobile_offline_tables_download_interval' => 24,
         'highlight_home_folder_enable' => 0,
         'highlight_home_folder_refresh_time' => 10,
-        'highlight_home_folder_scope' => 'unassigned' // For now only this list is supported
+        'highlight_home_folder_scope' => 'unassigned', // For now only this list is supported
+        'disable_advanced_search_case_title_fulltext' => 0
     ];
 
     /**
@@ -1712,5 +1712,51 @@ class System
             $result = eval($script);
         }
         return (object) $result;
+    }
+
+    /**
+     * Parse an url with not encoded password that break the native “parse_url” function.
+     * @param string $dsn
+     * @return array
+     */
+    public static function parseUrlWithNotEncodedPassword(string $dsn): array
+    {
+        $default = [
+            'scheme' => '',
+            'host' => '',
+            'port' => '',
+            'user' => '',
+            'pass' => '',
+            'path' => '',
+            'query' => '',
+        ];
+        $separator = "://";
+        $colon = ":";
+        $at = "@";
+
+        $result = explode($separator, $dsn, 2);
+        if (empty($result[0]) || empty($result[1])) {
+            return $default;
+        }
+        $scheme = $result[0];
+        $urlWithoutScheme = $result[1];
+
+        $colonPosition = strpos($urlWithoutScheme, $colon);
+        $user = substr($urlWithoutScheme, 0, $colonPosition);
+
+        $withoutUser = substr($urlWithoutScheme, $colonPosition + 1);
+        $atPosition = strrpos($withoutUser, $at);
+        $pass = substr($urlWithoutScheme, $colonPosition + 1, $atPosition);
+
+        $withoutPass = substr($withoutUser, $atPosition + 1);
+
+        $fixedDsn = $scheme . $separator . $user . $colon . urlencode($pass) . $at . $withoutPass;
+
+        $parseDsn = parse_url($fixedDsn);
+        if ($parseDsn === false) {
+            return $default;
+        }
+        $parseDsn["pass"] = urldecode($parseDsn["pass"]);
+        return $parseDsn;
     }
 }

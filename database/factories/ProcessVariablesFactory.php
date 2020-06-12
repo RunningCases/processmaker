@@ -15,7 +15,7 @@ $factory->define(ProcessVariables::class, function (Faker $faker) {
         'VAR_SQL' => '',
         'VAR_NULL' => 0,
         'VAR_DEFAULT' => '',
-        'VAR_ACCEPTED_VALUES' => '',
+        'VAR_ACCEPTED_VALUES' => '[]',
         'INP_DOC_UID' => ''
     ];
 });

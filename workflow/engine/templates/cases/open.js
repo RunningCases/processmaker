@@ -1073,7 +1073,7 @@ Ext.onReady(function(){
                               params: {
                                   action: 'cancelCase',
                                   NOTE_REASON: noteReasonTxt,
-                                  NOTIFY_PAUSE: notifyReasonVal
+                                  NOTIFY_CANCEL: notifyReasonVal
                               },
                               success: function (result, request) {
                                   try {

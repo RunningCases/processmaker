@@ -23,6 +23,7 @@ class DBQueryTest extends TestCase
 
     /**
      * Verify the execution of a common SQL statement.
+     * Note, this test is now using Laravel DB backend work
      * @test
      */
     public function testStandardExecuteQuery()
