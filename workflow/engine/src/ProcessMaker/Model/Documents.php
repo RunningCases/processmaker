@@ -139,7 +139,7 @@ class Documents extends Model
         $documentList = [];
         $results->each(function ($item, $key) use (&$documentList) {
             $row = $item->toArray();
-            $row['LINK'] = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
+            $row['LINK'] = "../cases/casesShowCaseNotes?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
             $documentList[] = $row;
         });
 
