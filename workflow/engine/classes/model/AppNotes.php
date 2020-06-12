@@ -290,7 +290,7 @@ class AppNotes extends BaseAppNotes
         $url = System::getServerMainPath();
         $result = Documents::getFiles($docId);
         foreach ($result as $item) {
-            $href = $url . "/cases/casesShowCaseNotes?a={$item['APP_DOC_UID']}=&v={$item['DOC_VERSION']}";
+            $href = $url . "/cases/casesShowCaseNotes?a={$item['APP_DOC_UID']}&v={$item['DOC_VERSION']}";
             $attachFileLinks[] = "<a href='{$href}'>{$item['APP_DOC_FILENAME']}</a>";
         }
 

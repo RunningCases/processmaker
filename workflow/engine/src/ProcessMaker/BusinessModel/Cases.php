@@ -3881,7 +3881,7 @@ class Cases
             foreach ($filesResponse['attachments'] as $key => $value) {
                 $attachments[$key] = [];
                 $attachments[$key]['APP_DOC_FILENAME'] = $value['APP_DOC_FILENAME'];
-                $attachments[$key]['LINK'] = "../cases/cases_ShowDocument?a=" . $value["APP_DOC_UID"] . "&v=" . $value["DOC_VERSION"];
+                $attachments[$key]['LINK'] = "../cases/casesShowCaseNotes?a=" . $value["APP_DOC_UID"] . "&v=" . $value["DOC_VERSION"];
             }
 
         }
