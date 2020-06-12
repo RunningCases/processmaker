@@ -249,15 +249,16 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
     if (is_null(config('database.connections.' . $DBConnectionUID . '.driver'))) {
         // Force to load the external connections
         DbConnections::loadAdditionalConnections();
-        if (config('database.connections.' . $DBConnectionUID . '.driver') !== 'oracle') {
-            // If the connections drivers are "mysql", "pgsql" or "sqlsrv" we're using Laravel
-            $con = DB::connection($DBConnectionUID);
-            $con->beginTransaction();
-        } else {
-            // If the connection driver is "oracle" we're using the native oci8 functions
-            $con = Propel::getConnection($DBConnectionUID);
-            $con->begin();
-        }
+    }
+
+    if (config('database.connections.' . $DBConnectionUID . '.driver') !== 'oracle') {
+        // If the connections drivers are "mysql", "pgsql" or "sqlsrv" we're using Laravel
+        $con = DB::connection($DBConnectionUID);
+        $con->beginTransaction();
+    } else {
+        // If the connection driver is "oracle" we are using the native oci8 functions
+        $con = Propel::getConnection($DBConnectionUID);
+        $con->begin();
     }
 
     $blackList = System::getQueryBlackList();
