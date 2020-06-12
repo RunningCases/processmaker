@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Core;
 
+use App\Jobs\Email;
 use Tests\TestCase;
 
 class JobsManagerTest extends TestCase

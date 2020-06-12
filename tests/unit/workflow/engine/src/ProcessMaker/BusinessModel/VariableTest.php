@@ -188,4 +188,43 @@ class VariableTest extends TestCase
         $this->assertArrayHasKey('var_accepted_values', $res, "The result does not contains 'var_accepted_values' as key");
         $this->assertArrayHasKey('inp_doc_uid', $res, "The result does not contains 'inp_doc_uid' as key");
     }
+
+    /**
+     * Test it return the variables by type related to the PRO_UID
+     *
+     * @covers \ProcessMaker\BusinessModel\Variable::getVariablesByType()
+     * @test
+     */
+    public function it_list_variables_by_type_related_a_process()
+    {
+        $process = factory(Process::class)->create();
+        $varType = 'integer';
+        $varTypeId = 2;
+        for ($x = 1; $x <= 5; $x++) {
+            $processVar = factory(ProcessVariables::class)->states('foreign_keys')->create([
+                'PRO_ID' => $process->PRO_ID,
+                'PRJ_UID' => $process->PRO_UID,
+                'VAR_FIELD_TYPE' => $varType,
+                'VAR_FIELD_TYPE_ID' => $varTypeId,
+                'VAR_NAME' => 'varTestName' . $x,
+            ]);
+        }
+        $variable = new Variable();
+        // Get all results
+        $res = $variable->getVariablesByType($process->PRO_UID, 2);
+        $this->assertEquals(5, count($res));
+        $res = head($res);
+        $this->assertArrayHasKey('value', $res, "The result does not contains 'value' as key");
+        // Get a specific start and limit
+        $res = $variable->getVariablesByType($process->PRO_UID, 2, 0, 2);
+        $this->assertNotEmpty($res);
+        $this->assertEquals(2, count($res));
+        // Get a specific search
+        $res = $variable->getVariablesByType($process->PRO_UID, 2, 0, 4, 'varTest');
+        $this->assertNotEmpty($res);
+        $this->assertEquals(4, count($res));
+        // When the search does not match
+        $res = $variable->getVariablesByType($process->PRO_UID, 2, null, null, 'other');
+        $this->assertEmpty($res);
+    }
 }

@@ -25326,6 +25326,12 @@ msgid "Please complete the reassign reason."
 msgstr "Please complete the reassign reason."
 
 # TRANSLATION
+# LABEL/ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES
+#: LABEL/ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES
+msgid "The report table is regenerating please come back in a few minutes."
+msgstr "The report table is regenerating please come back in a few minutes."
+
+# TRANSLATION
 # LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
 #: LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
 msgid "The upload of PHP files was disabled please contact the system administrator."

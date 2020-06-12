@@ -61112,6 +61112,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS','en','The change might cause data loss in the PM table. Do you want to continue?','2017-03-30') ,
 ( 'LABEL','ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED','en','The PHP files execution was disabled please contact the system administrator.','2018-04-20') ,
 ( 'LABEL','ID_THE_REASON_REASSIGN_USER_EMPTY','en','Please complete the reassign reason.','2016-10-20') ,
+( 'LABEL','ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES','en','The report table is regenerating please come back in a few minutes.','2020-06-01') ,
 ( 'LABEL','ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED','en','The upload of PHP files was disabled please contact the system administrator.','2018-04-20') ,
 ( 'LABEL','ID_THE_USERNAME_EMAIL_IS_INCORRECT','en','The username or email is incorrect','2018-01-18') ,
 ( 'LABEL','ID_THIS_MONTH','en','This Month','2014-01-15') ,

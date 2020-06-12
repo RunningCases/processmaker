@@ -29,6 +29,7 @@ class PmDynaform
     public $lang = SYS_LANG;
     public $translations = null;
     public $onPropertyRead = "onPropertyReadFormInstance";
+    public $onAfterPropertyRead = "onAfterPropertyReadFormInstance";
     public $pathRTLCss = '';
     public $record = null;
     public $records = null;
@@ -545,6 +546,7 @@ class PmDynaform
                     if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
                         $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
                     }
+                    $this->setDependentOptionsForDatetime($json, $this->fields);
                 }
                 if ($key === "type" && ($value === "file") && isset($this->fields["APP_DATA"]["APPLICATION"])) {
                     $oCriteriaAppDocument = new Criteria("workflow");
@@ -770,6 +772,11 @@ class PmDynaform
                             $this->jsonr($json);
                         }
                     }
+                }
+                //read event after
+                $fn = $this->onAfterPropertyRead;
+                if (is_callable($fn) || function_exists($fn)) {
+                    $fn($json, $key, $value);
                 }
             }
         }
@@ -2488,5 +2495,39 @@ class PmDynaform
             }
             $json->dataSchema[$key] = $columnsData;
         }
+    }
+
+    /**
+     * Sets the dependentOptions property for datetime control, if it contains dependent fields.
+     * @param stdClass $json
+     * @param array $fields
+     * @return void
+     */
+    private function setDependentOptionsForDatetime(stdClass &$json, array $fields = []): void
+    {
+        if (!isset($json->type)) {
+            return;
+        }
+        if ($json->type !== 'datetime') {
+            return;
+        }
+        $json->dependentOptions = '';
+        $backup = $this->onAfterPropertyRead;
+        $properties = [
+            'defaultDate' => $json->defaultDate,
+            'minDate' => $json->minDate,
+            'maxDate' => $json->maxDate
+        ];
+        $this->onAfterPropertyRead = function(stdClass &$json, $key, $value) use($backup, $properties) {
+            if (isset($json->type) && $json->type === 'datetime' && $key === "dependentOptions") {
+                $json->dependentOptions = new stdClass();
+                foreach ($properties as $property => $value) {
+                    if (is_string($value) && in_array(substr($value, 0, 2), self::$prefixs)) {
+                        $json->dependentOptions->{$property} = $value;
+                    }
+                }
+                $this->onAfterPropertyRead = $backup;
+            }
+        };
     }
 }
