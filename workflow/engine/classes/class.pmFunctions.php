@@ -479,7 +479,7 @@ function evaluateFunction($aGrid, $sExpresion)
 function PMFTotalCalculation($grid, $field, $function)
 {
     $systemConfiguration = Bootstrap::getSystemConfiguration();
-    $floatPointNumber = $systemConfiguration['PMFTOTALCALCULATION_FLOATING_POINT_NUMBER'];
+    $floatPointNumber = $systemConfiguration['pmftotalcalculation_floating_point_number'];
     $function = strtolower($function);
     $totalRows = count($grid);
     $result = 0;

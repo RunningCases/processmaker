@@ -78,7 +78,7 @@ class System
         'highlight_home_folder_refresh_time' => 10,
         'highlight_home_folder_scope' => 'unassigned', // For now only this list is supported
         'disable_advanced_search_case_title_fulltext' => 0,
-        'PMFTOTALCALCULATION_FLOATING_POINT_NUMBER' => 10,
+        'pmftotalcalculation_floating_point_number' => 10,
         'report_table_batch_regeneration' => 1000
     ];
 
