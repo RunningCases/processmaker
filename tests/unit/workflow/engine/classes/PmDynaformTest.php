@@ -984,6 +984,64 @@ class PmDynaformTest extends TestCase
         // Compare the values
         $this->assertEquals($dynaformTitle, $dynaform->DYN_TITLE);
     }
+    
+    /**
+     * This test should verify the setDependentOptionsForDatetime() method, to 
+     * add the dependentOptions property to the datetime control.
+     * @test
+     * @covers PmDynaform::jsonr()
+     * @covers PmDynaform::setDependentOptionsForDatetime()
+     */
+    public function it_should_test_dependent_options_for_datetime_control()
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/dynaform1.json";
+        $data = file_get_contents($pathData);
+        $json = json_decode($data);
+
+        //assert for not contain property: dependentOptions
+        $result = json_decode(json_encode($json), JSON_OBJECT_AS_ARRAY);
+        $fn = function($item) use(&$fn) {
+            if (is_array($item)) {
+                if (isset($item['type']) && $item['type'] === 'datetime') {
+                    $this->assertArrayNotHasKey('dependentOptions', $item);
+                }
+                array_map($fn, $item);
+            }
+        };
+        array_map($fn, $result);
+
+        //assert new property: dependentOptions
+        $dynaform = new PmDynaform();
+        $dynaform->jsonr($json);
+        $result = json_decode(json_encode($json), JSON_OBJECT_AS_ARRAY);
+
+        $fn = function($item) use(&$fn) {
+            if (is_array($item)) {
+                if (isset($item['type']) && $item['type'] === 'datetime') {
+                    $this->assertArrayHasKey('dependentOptions', $item);
+                    $this->assertArrayHasKey('minDate', $item['dependentOptions']);
+                    $this->assertArrayHasKey('maxDate', $item['dependentOptions']);
+                    $this->assertArrayHasKey('defaultDate', $item['dependentOptions']);
+                }
+                array_map($fn, $item);
+            }
+        };
+        array_map($fn, $result);
+
+        $dynaform = new PmDynaform();
+        $reflection = new ReflectionClass($dynaform);
+        $reflectionMethod = $reflection->getMethod('setDependentOptionsForDatetime');
+        $reflectionMethod->setAccessible(true);
+
+        $a = new stdClass();
+        $reflectionMethod->invokeArgs($dynaform, [&$a]);
+        $this->assertInstanceOf('ReflectionMethod', $reflectionMethod);
+
+        $a = new stdClass();
+        $a->type = 'suggest';
+        $reflectionMethod->invokeArgs($dynaform, [&$a]);
+        $this->assertInstanceOf('ReflectionMethod', $reflectionMethod);
+    }
 }
 
 // Dummy function used for the coverture
