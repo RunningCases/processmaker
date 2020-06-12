@@ -27,6 +27,16 @@ class Variable
     ];
 
     /**
+     * Get the variables types accepted
+     * 
+     * @return array 
+     */
+    public function getVariableTypes()
+    {
+        return $this->variableTypes;
+    }
+
+    /**
      * Create Variable for a Process
      *
      * @param string $proUid Unique id of Process
@@ -349,6 +359,33 @@ class Variable
                 'var_default' => $var['VAR_DEFAULT'],
                 'var_accepted_values' => $encodeAcceptedValues,
                 'inp_doc_uid' => $var['INP_DOC_UID']
+            ];
+        }
+
+        return $arrayVariables;
+    }
+
+     /**
+     * Get data of Variables related to the specific type
+     *
+     * @param string $processUid Unique id of Process
+     * @param int $typeVarId
+     * @param int $start
+     * @param int $limit
+     * @param string $search
+     * @param string $prefix
+     *
+     * @return array, return an array with varaibles filter by type
+     */
+    public function getVariablesByType($processUid, $typeVarId = 0, $start = null, $limit = null, $search = null, $prefix = null)
+    {
+        //Verify data
+        $proId = Validator::proUid($processUid, '$prj_uid');
+        $variables = ProcessVariables::getVariablesByType($proId, $typeVarId, $start, $limit, $search);
+        $arrayVariables = [];
+        foreach ($variables as $var) {
+            $arrayVariables[] = [
+                'value' => is_null($prefix) ? $var['VAR_NAME'] : $prefix . $var['VAR_NAME'],
             ];
         }
 

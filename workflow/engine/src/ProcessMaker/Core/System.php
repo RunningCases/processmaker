@@ -36,7 +36,6 @@ class System
         'debug_time' => 0,
         'debug_calendar' => 0,
         'wsdl_cache' => 1,
-        'memory_limit' => "256M",
         'time_zone' => 'America/New_York',
         'expiration_year' => '1',
         'memcached' => 0,
@@ -79,6 +78,7 @@ class System
         'highlight_home_folder_refresh_time' => 10,
         'highlight_home_folder_scope' => 'unassigned', // For now only this list is supported
         'disable_advanced_search_case_title_fulltext' => 0,
+        'PMFTOTALCALCULATION_FLOATING_POINT_NUMBER' => 10,
         'report_table_batch_regeneration' => 1000
     ];
 
