@@ -12,6 +12,7 @@ use Tests\TestCase;
 
 class ReportTablesTest extends TestCase
 {
+
     use CreateTestSite;
     use DatabaseTransactions;
 
@@ -21,14 +22,12 @@ class ReportTablesTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->markTestIncomplete(""
-                . "This test has started using the ./processmaker command, this "
-                . "command requires the file 'paths_installed.php', that is, a "
-                . "valid installation of processmaker.");
         $_SERVER["REQUEST_URI"] = "";
+        config(['queue.default' => 'sync']);
         config(["system.workspace" => "test"]);
         $workspace = config("system.workspace");
         $this->createDBFile($workspace);
+        $this->createConstantsOfConnection();
     }
 
     /**
@@ -37,6 +36,33 @@ class ReportTablesTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+    }
+
+    /**
+     * Create constants of connection to databases.
+     */
+    private function createConstantsOfConnection()
+    {
+        $constants = [
+            'DB_ADAPTER' => env('mysql'),
+            'DB_HOST' => env('DB_HOST'),
+            'DB_NAME' => env('DB_DATABASE'),
+            'DB_USER' => env('DB_USERNAME'),
+            'DB_PASS' => env('DB_PASSWORD'),
+            'DB_RBAC_HOST' => env('DB_HOST'),
+            'DB_RBAC_NAME' => env('DB_DATABASE'),
+            'DB_RBAC_USER' => env('DB_USERNAME'),
+            'DB_RBAC_PASS' => env('DB_PASSWORD'),
+            'DB_REPORT_HOST' => env('DB_HOST'),
+            'DB_REPORT_NAME' => env('DB_DATABASE'),
+            'DB_REPORT_USER' => env('DB_USERNAME'),
+            'DB_REPORT_PASS' => env('DB_PASSWORD'),
+        ];
+        foreach ($constants as $key => $value) {
+            if (!defined($key)) {
+                define($key, $value);
+            }
+        }
     }
 
     /**
@@ -566,97 +592,6 @@ class ReportTablesTest extends TestCase
     }
 
     /**
-     * Get mapping fields supported by report table.
-     * @return array
-     */
-    private function getMapFields()
-    {
-        return [
-            [
-                'sFieldName' => 'var_Text1',
-                'sType' => 'char'
-            ],
-            [
-                'sFieldName' => 'var_Textarea1',
-                'sType' => 'text'
-            ],
-            [
-                'sFieldName' => 'var_Dropdown1',
-                'sType' => 'char'
-            ],
-            [
-                'sFieldName' => 'var_Suggest1',
-                'sType' => 'char'
-            ],
-            [
-                'sFieldName' => 'var_DateTime1',
-                'sType' => 'date'
-            ],
-            [
-                'sFieldName' => 'var_String1',
-                'sType' => 'char'
-            ],
-            [
-                'sFieldName' => 'var_Integer1',
-                'sType' => 'number'
-            ],
-            [
-                'sFieldName' => 'var_Boolean1',
-                'sType' => 'boolean'
-            ],
-            [
-                'sFieldName' => 'var_Array1',
-                'sType' => 'array'
-            ]
-        ];
-    }
-
-    /**
-     * Create fields data by type supported.
-     * @param array $types
-     * @return array
-     */
-    private function createFieldsByType($types = [])
-    {
-        $fields = [];
-        $mapping = [];
-        $faker = Faker\Factory::create();
-        $date = $faker->dateTime();
-        $mapFields = $this->getMapFields();
-        foreach ($mapFields as $key => $value) {
-            if (!in_array($value['sType'], $types)) {
-                continue;
-            }
-            switch ($value['sType']) {
-                case 'number':
-                    $mapping[] = $value;
-                    $fields[$value['sFieldName']] = (string) random_int(0, 100);
-                    break;
-                case 'char':
-                    $mapping[] = $value;
-                    $fields[$value['sFieldName']] = G::generateUniqueID();
-                    break;
-                case 'text':
-                    $mapping[] = $value;
-                    $fields[$value['sFieldName']] = G::generateUniqueID();
-                    break;
-                case 'date':
-                    $mapping[] = $value;
-                    $fields[$value['sFieldName']] = $date->format('Y-m-d H:i:s');
-                    break;
-                case 'boolean':
-                    $mapping[] = $value;
-                    $fields[$value['sFieldName']] = ['0' => 0];
-                    break;
-            }
-        }
-        return [
-            'data' => $fields,
-            'mapping' => $mapping
-        ];
-    }
-
-    /**
      * Prepare data initial for test, the grid parameter is optional if you want 
      * to create a grid type field.
      * 
@@ -665,7 +600,7 @@ class ReportTablesTest extends TestCase
      * @param boolean $grid
      * @return object
      */
-    private function prepareData($tableName, $grid = null)
+    private function prepareData($tableName, $grid = null, $structure = [])
     {
         $applicationNumber = Application::max('APP_NUMBER');
         if (is_null($applicationNumber)) {
@@ -681,7 +616,10 @@ class ReportTablesTest extends TestCase
         $taskUid = G::generateUniqueID();
         $applicationUid = G::generateUniqueID();
 
-        $structure = $this->createFieldsByType(['number', 'char', 'text', 'date']);
+        if (empty($structure)) {
+            $structure = $this->getDataFromFile('structureReportTable.json');
+        }
+
         $fields = $structure['mapping'];
         $dataFields = $structure['data'];
         $appData = [
@@ -751,6 +689,159 @@ class ReportTablesTest extends TestCase
         $result->process = $process;
         $result->task = $task;
         $result->application = $application;
+        return $result;
+    }
+
+    /**
+     * Check if the "populateTable" method is it filling with missing values into app_data.
+     * @test
+     * @covers ReportTables::populateTable
+     */
+    public function it_should_populating_data_with_fields_missing_in_to_app_data()
+    {
+        $tableName = 'TestReportTable';
+        $result = $this->prepareData($tableName);
+        $connectionShortName = 'wf';
+        $type = 'NORMAL';
+        $fields = $result->fields;
+        $proUid = $result->processUid;
+        $grid = '';
+
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $appData = unserialize($app->APP_DATA);
+        unset($appData['var_Textarea1']);
+        $appData = serialize($appData);
+        Application::where('APP_UID', '=', $result->applicationUid)->update(['APP_DATA' => $appData]);
+
+        $reportTables = new ReportTables();
+        $reportTables->populateTable($tableName, $connectionShortName, $type, $fields, $proUid, $grid);
+
+        $expected = $result->dataFields;
+        $expected['APP_UID'] = $result->applicationUid;
+        $expected['APP_NUMBER'] = $result->applicationNumber;
+        $expected['var_Textarea1'] = '';
+
+        $actual = (array) DB::table($tableName)
+                        ->select()
+                        ->first();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Check if the "populateTable" method is it filling with arrays values.
+     * @test
+     * @covers ReportTables::populateTable
+     */
+    public function it_should_populating_data_with_arrays_values()
+    {
+        $tableName = 'TestReportTable';
+        $result = $this->prepareData($tableName);
+        $connectionShortName = 'wf';
+        $type = 'NORMAL';
+        $fields = $result->fields;
+        $proUid = $result->processUid;
+        $grid = '';
+
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $appData = unserialize($app->APP_DATA);
+        $appData['var_Textarea1'] = [];
+        $appData = serialize($appData);
+        Application::where('APP_UID', '=', $result->applicationUid)->update(['APP_DATA' => $appData]);
+
+        $reportTables = new ReportTables();
+        $reportTables->populateTable($tableName, $connectionShortName, $type, $fields, $proUid, $grid);
+
+        $expected = $result->dataFields;
+        $expected['APP_UID'] = $result->applicationUid;
+        $expected['APP_NUMBER'] = $result->applicationNumber;
+        $expected['var_Textarea1'] = '';
+
+        $actual = (array) DB::table($tableName)
+                        ->select()
+                        ->first();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Check if the "populateTable" method is it filling with missing values into app_data for grids control.
+     * parameters and type and grid are correct values.
+     * @test
+     * @covers ReportTables::populateTable
+     */
+    public function it_should_populating_data_with_all_parameters_with_type_is_grid_fields_missing_in_to_app_data()
+    {
+        $tableName = 'TestReportTable';
+        $result = $this->prepareData($tableName, true);
+        $connectionShortName = 'wf';
+        $type = 'GRID';
+        $fields = $result->fields;
+        $proUid = $result->processUid;
+        $grid = 'var_Grid1';
+
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $appData = unserialize($app->APP_DATA);
+        unset($appData['var_Grid1'][1]['var_Textarea1']);
+        $appData = serialize($appData);
+        Application::where('APP_UID', '=', $result->applicationUid)->update(['APP_DATA' => $appData]);
+
+        $reportTables = new ReportTables();
+        $reportTables->populateTable($tableName, $connectionShortName, $type, $fields, $proUid, $grid);
+
+        $indexRow = 1;
+        $expected = $result->appData[$grid];
+        foreach ($expected as &$row) {
+            $row['APP_UID'] = $result->applicationUid;
+            $row['APP_NUMBER'] = $result->applicationNumber;
+            $row['ROW'] = (string) ($indexRow++);
+        }
+        $expected = array_values($expected);
+        $expected[0]['var_Textarea1'] = '';
+
+        $actual = DB::table($tableName)
+                ->select()
+                ->get();
+        $actual->transform(function ($item, $key) {
+            return (array) $item;
+        });
+        $actual = $actual->toArray();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Check an exception if the input parameters are wrong.
+     * @test
+     * @covers ReportTables::populateTable
+     */
+    public function it_should_catch_an_exception()
+    {
+        $tableName = 'TestReportTable';
+        $result = $this->prepareData($tableName, true);
+        $connectionShortName = 'wf';
+        $type = 'GRID';
+        $fields = $result->fields;
+        $proUid = $result->processUid;
+        $grid = 'var_Grid1';
+
+        //assert exception
+        $this->expectException(Exception::class);
+
+        $reportTables = new ReportTables();
+        $reportTables->populateTable($tableName, $connectionShortName, $type, null, $proUid, $grid);
+    }
+
+    /**
+     * This gets data from a json file.
+     * @param string $pathData
+     * @return array
+     */
+    private function getDataFromFile(string $pathData): array
+    {
+        $pathData = PATH_TRUNK . "tests/resources/{$pathData}";
+        $data = file_get_contents($pathData);
+        $result = json_decode($data, JSON_OBJECT_AS_ARRAY);
         return $result;
     }
 }

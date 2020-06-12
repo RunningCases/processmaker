@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\EmailEvent;
 use Illuminate\Support\Facades\Crypt;
 use ProcessMaker\BusinessModel\EmailServer;
 /*----------------------------------********---------------------------------*/
@@ -1028,7 +1029,7 @@ class WsBase
             switch ($appMsgType) {
                 case WsBase::MESSAGE_TYPE_EMAIL_EVENT:
                 case WsBase::MESSAGE_TYPE_PM_FUNCTION:
-                    JobsManager::getSingleton()->dispatch('EmailEvent', $closure);
+                    JobsManager::getSingleton()->dispatch(EmailEvent::class, $closure);
                     $result = new WsResponse(0, G::loadTranslation('ID_MESSAGE_SENT') . ": " . $to);
                     break;
                 default :

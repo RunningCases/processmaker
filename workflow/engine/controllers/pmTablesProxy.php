@@ -1215,7 +1215,7 @@ class pmTablesProxy extends HttpProxyController
         if (!empty($table) && $table['PRO_UID'] != '') {
             try {
                 $additionalTables->populateReportTable($table['ADD_TAB_NAME'], PmTable::resolveDbSource($table['DBS_UID']), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID']);
-                $result->message = 'Generated for table ' . $table['ADD_TAB_NAME'];
+                $result->message = G::LoadTranslation("ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES");
             } catch (Exception $e) {
                 $context = Bootstrap::getDefaultContextLog();
                 $context['proUid'] = $table['PRO_UID'];
