@@ -124,7 +124,8 @@ class CasesTest extends TestCase
         // Upload the file
         $case = new Cases();
         $result = $case->uploadFilesInCaseNotes('00000000000000000000000000000001', $application->APP_UID, $filesReferences);
-        $result = head($result);
+        $this->assertNotEmpty($result['attachments']);
+        $result = head($result['attachments']);
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('APP_UID', $result);
         $this->assertEquals($application->APP_UID, $result['APP_UID']);

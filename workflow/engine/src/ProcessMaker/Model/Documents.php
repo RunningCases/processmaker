@@ -64,7 +64,7 @@ class Documents extends Model
      * Scope a query to filter an specific case
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  string $proUid
+     * @param  string $appUid
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeAppUid($query, string $appUid)
@@ -73,9 +73,21 @@ class Documents extends Model
     }
 
     /**
+     * Scope a query to filter an specific reference file
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  int $docId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDocId($query, int $docId)
+    {
+        return $query->where('DOC_ID', $docId);
+    }
+
+    /**
      * Return the documents related to the case
      *
-     * @param int $proId
+     * @param string $appUid
      * @param string $type
      *
      * @return array
@@ -96,7 +108,9 @@ class Documents extends Model
 
     /**
      * Get attached files from the case note.
+     *
      * @param string $appUid
+     *
      * @return object
      */
     public static function getAttachedFilesFromTheCaseNote(string $appUid)
@@ -108,5 +122,27 @@ class Documents extends Model
                 })
                 ->get();
         return $result;
+    }
+
+    /**
+     * Return the documents related to the specific DOC_ID
+     *
+     * @param int $docId
+     *
+     * @return array
+     */
+    public static function getFiles(int $docId)
+    {
+        $query = Documents::query()->select(['APP_DOC_UID', 'APP_DOC_FILENAME', 'DOC_VERSION']);
+        $query->docId($docId);
+        $results = $query->get();
+        $documentList = [];
+        $results->each(function ($item, $key) use (&$documentList) {
+            $row = $item->toArray();
+            $row['LINK'] = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
+            $documentList[] = $row;
+        });
+
+        return $documentList;
     }
 }

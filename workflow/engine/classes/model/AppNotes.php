@@ -181,6 +181,7 @@ class AppNotes extends BaseAppNotes
      * @param string $noteRecipients
      * @param string $from
      * @param integer $delIndex
+     * @param integer $noteId
      * @return void
      * @throws Exception
      *
@@ -188,7 +189,15 @@ class AppNotes extends BaseAppNotes
      * @see AppNotes->postNewNote()
      * @see workflow/engine/src/ProcessMaker/Util/helpers.php::postNote()
      */
-    public function sendNoteNotification($appUid, $usrUid, $noteContent, $noteRecipients, $from = '', $delIndex = 0)
+    public function sendNoteNotification(
+        $appUid,
+        $usrUid,
+        $noteContent,
+        $noteRecipients,
+        $from = '',
+        $delIndex = 0,
+        $noteId = 0
+    )
     {
         try {
             $configuration = System::getEmailConfiguration();
@@ -216,9 +225,13 @@ class AppNotes extends BaseAppNotes
             $configNoteNotification['body'] = $this->getBodyCaseNote($authorName, $noteContent);
             $body = nl2br(G::replaceDataField($configNoteNotification['body'], $fieldCase, 'mysql', false));
 
-            $attachFileLinks = $this->getAttachedFilesFromTheCaseNote($appUid);
+            // Get the files related to the specific case note
+            if ($noteId !== 0) {
+                $attachFileLinks = $this->getAttachedFilesFromTheCaseNote($noteId);
+            }
+
             if (!empty($attachFileLinks)) {
-                $body = $body . "<br>" . G::LoadTranslation('ID_ATTACHED_FILES') . ":&nbsp;" . implode("<br>", $attachFileLinks) . ".";
+                $body = $body . "<br>" . G::LoadTranslation('ID_ATTACHED_FILES') . ":&nbsp; <br>" . implode("<br>", $attachFileLinks);
             }
             $users = new Users();
             $recipientsArray = explode(",", $noteRecipients);
@@ -267,19 +280,20 @@ class AppNotes extends BaseAppNotes
     }
 
     /**
-     * Get attached files from the case note, this require appUid.
-     * @param string $appUid
+     * Get attached files from a specific case note
+     * @param int $docId
      * @return array
      */
-    public function getAttachedFilesFromTheCaseNote(string $appUid): array
+    public function getAttachedFilesFromTheCaseNote(int $docId): array
     {
         $attachFileLinks = [];
         $url = System::getServerMainPath();
-        $result = Documents::getAttachedFilesFromTheCaseNote($appUid);
-        $result->each(function($item) use($url, &$attachFileLinks) {
-            $href = $url . "/cases/casesShowCaseNotes?a={$item->APP_DOC_UID}=&v={$item->DOC_VERSION}";
-            $attachFileLinks[] = "<a href='{$href}'>{$item->APP_DOC_FILENAME}</a>";
-        });
+        $result = Documents::getFiles($docId);
+        foreach ($result as $item) {
+            $href = $url . "/cases/casesShowCaseNotes?a={$item['APP_DOC_UID']}=&v={$item['DOC_VERSION']}";
+            $attachFileLinks[] = "<a href='{$href}'>{$item['APP_DOC_FILENAME']}</a>";
+        }
+
         return $attachFileLinks;
     }
 

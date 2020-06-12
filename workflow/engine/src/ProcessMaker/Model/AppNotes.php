@@ -44,4 +44,63 @@ class AppNotes extends Model
         'NOTE_AFFECTED_OBJ2',
         'NOTE_RECIPIENTS'
     ];
+
+    /**
+     * Scope a query to filter an specific case
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string $appUid
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAppUid($query, string $appUid)
+    {
+        return $query->where('APP_UID', $appUid);
+    }
+
+    /**
+     * Return the documents related to the case
+     *
+     * @param string $appUid
+     * @param int $start
+     * @param int $limit
+     * @param string $dir
+     *
+     * @return array
+     */
+    public static function getNotes(string $appUid, $start = 0, $limit = 25, $dir = 'DESC')
+    {
+        $query = AppNotes::query()->select([
+            'NOTE_ID',
+            'APP_UID',
+            'NOTE_DATE',
+            'NOTE_CONTENT',
+            'NOTE_TYPE',
+            'NOTE_AVAILABILITY',
+            'USERS.USR_UID',
+            'USERS.USR_USERNAME',
+            'USERS.USR_FIRSTNAME',
+            'USERS.USR_LASTNAME'
+        ]);
+        $query->leftJoin('USERS', function ($join) {
+            $join->on('USERS.USR_UID', '=', 'APP_NOTES.USR_UID');
+        });
+        $query->appUid($appUid);
+        $query->orderBy('NOTE_DATE', $dir);
+        // Add pagination to the query
+        $query->offset($start)->limit($limit);
+
+        $results = $query->get();
+        $notes = [];
+        $notes['notes'] = [];
+        $results->each(function ($item, $key) use (&$notes) {
+            $row = $item->toArray();
+            $row['NOTE_CONTENT'] = stripslashes($row['NOTE_CONTENT']);
+            $notes['notes'][] = $row;
+        });
+
+        // Add the total of rows to return
+        $notes['totalCount'] = $limit;
+
+        return $notes;
+    }
 }
