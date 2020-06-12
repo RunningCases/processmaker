@@ -117,7 +117,7 @@ class JobsManagerTest extends TestCase
         $callback = function() {
         };
 
-        $actual = $this->object->dispatch(Email::class, $callback);
+        $actual = $this->object->dispatch(\App\Jobs\Email::class, $callback);
 
         $this->assertInstanceOf(\Illuminate\Foundation\Bus\PendingDispatch::class, $actual);
     }

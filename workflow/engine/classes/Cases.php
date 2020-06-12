@@ -2,6 +2,7 @@
 
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
 use ProcessMaker\BusinessModel\WebEntryEvent;
+use ProcessMaker\Cases\CasesTrait;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
@@ -16,6 +17,7 @@ use ProcessMaker\Util\DateTime;
  */
 class Cases
 {
+    use CasesTrait;
     private $appSolr = null;
     public $dir = 'ASC';
     public $sort = 'APP_MSG_DATE';
