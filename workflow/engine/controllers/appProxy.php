@@ -10,6 +10,7 @@
 */
 
 use ProcessMaker\BusinessModel\Cases as BmCases;
+use ProcessMaker\Exception\CaseNoteUploadFile;
 use ProcessMaker\Model\AppNotes as Notes;
 use ProcessMaker\Model\Documents;
 use ProcessMaker\Util\DateTime;
@@ -165,6 +166,11 @@ class AppProxy extends HttpProxyController
         try {
             $sendMail = intval($httpData->swSendMail);
             $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
+        } catch (CaseNoteUploadFile $e) {
+            $response = new stdclass();
+            $response->success = 'success';
+            $response->message = $e->getMessage();
+            die(G::json_encode($response));
         } catch (Exception $error) {
             $response = new stdclass();
             $response->success  = 'success';

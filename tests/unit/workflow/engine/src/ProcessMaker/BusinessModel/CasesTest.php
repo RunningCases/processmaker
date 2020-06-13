@@ -7,6 +7,7 @@ use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\User;
 use RBAC;
 use Tests\TestCase;
 
@@ -17,6 +18,21 @@ use Tests\TestCase;
  */
 class CasesTest extends TestCase
 {
+
+    /**
+     * Set up method.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Delegation::truncate();
+        Documents::truncate();
+        Application::truncate();
+        User::where('USR_ID', '=', 1)
+                ->where('USR_ID', '=', 2)
+                ->delete();
+    }
+
     /**
      * This checks the delete case
      *
@@ -28,11 +44,11 @@ class CasesTest extends TestCase
     {
         // Set the RBAC
         global $RBAC;
-        $_SESSION['USER_LOGGED'] = '00000000000000000000000000000002';
-        $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+        $_SESSION['USER_LOGGED'] = G::generateUniqueID();
+        $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
-        $application = factory(Application::class)->create();
+        $application = factory(Application::class)->create(['APP_INIT_USER' => G::generateUniqueID()]);
         // Tried to delete case
         $case = new Cases();
         $case->deleteCase($application->APP_UID, $_SESSION['USER_LOGGED']);
@@ -50,7 +66,7 @@ class CasesTest extends TestCase
         // Set the RBAC
         global $RBAC;
         $_SESSION['USER_LOGGED'] = '00000000000000000000000000000001';
-        $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+        $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
         $application = factory(Application::class)->create(['APP_STATUS' => 'TO_DO']);
@@ -70,38 +86,17 @@ class CasesTest extends TestCase
     {
         // Set the RBAC
         global $RBAC;
-        $_SESSION['USER_LOGGED'] = '00000000000000000000000000000001';
-        $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+        $_SESSION['USER_LOGGED'] = G::generateUniqueID();
+        $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
-        $application = factory(Application::class)->create(['APP_INIT_USER' => '00000000000000000000000000000002']);
+        $application = factory(Application::class)->create(['APP_INIT_USER' => G::generateUniqueID()]);
         // Tried to delete case
         $case = new Cases();
         $case->deleteCase($application->APP_UID, $_SESSION['USER_LOGGED']);
     }
 
     /**
-     * Review the upload file related to the case notes, an return an exception when the array is empty 
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases::uploadFilesInCaseNotes()
-     * 
-     * @test
-     * @expectedException Exception
-     */
-    public function it_return_exception_in_upload_files_related_case_note()
-    {
-        $application = factory(Application::class)->create();
-        factory(Delegation::class)->states('foreign_keys')->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'APP_UID' => $application->APP_UID
-        ]);
-        // Upload the file
-        $case = new Cases();
-        // Return an exception because the files does not exist
-        $case->uploadFilesInCaseNotes('00000000000000000000000000000001', $application->APP_UID, $filesReferences = []);
-    }
-
-     /**
      * Review the upload file related to the case notes
      *
      * @covers \ProcessMaker\BusinessModel\Cases::uploadFilesInCaseNotes()
