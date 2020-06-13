@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Crypt;
+use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\BusinessModel\EmailServer;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
@@ -3475,7 +3476,7 @@ class WsBase
             }
 
             //Add note case
-            $appNote = new ProcessMaker\BusinessModel\Cases();
+            $appNote = new BmCases();
             $response = $appNote->addNote($caseUid, $userUid, $note, $sendMail, $files);
 
             //Response

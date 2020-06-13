@@ -28,7 +28,7 @@ $factory->define(\ProcessMaker\Model\Documents::class, function (Faker $faker) {
     ];
 });
 
-// Create a dynaform with the foreign keys
+// Create a document related to the case notes
 $factory->state(\ProcessMaker\Model\Documents::class, 'case_notes', function (Faker $faker) {
     return [
         'APP_DOC_UID' => G::generateUniqueID(),

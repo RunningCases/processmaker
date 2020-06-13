@@ -3858,7 +3858,6 @@ class Cases
      * @param array $files
      *
      * @return array
-     * @throws Exception
      */
     public function addNote($appUid, $userUid, $note, $sendMail = false, $files = [])
     {
@@ -3925,7 +3924,7 @@ class Cases
      * @param string $userUid
      * @param string $appUid
      * @param array $filesReferences
-     * @param string $appDocUid
+     * @param int $noteId
      *
      * @return array
      * @throws Exception

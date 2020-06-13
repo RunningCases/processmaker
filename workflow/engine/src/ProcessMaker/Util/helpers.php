@@ -609,6 +609,7 @@ function getMysqlVersion()
  * @param string $appUid
  * @param string $appDocUid
  * @param int $version
+ * @param bool $upload
  * 
  * @return string
  */

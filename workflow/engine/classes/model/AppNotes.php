@@ -231,7 +231,7 @@ class AppNotes extends BaseAppNotes
             }
 
             if (!empty($attachFileLinks)) {
-                $body = $body . "<br>" . G::LoadTranslation('ID_ATTACHED_FILES') . ":&nbsp; <br>" . implode("<br>", $attachFileLinks);
+                $body = $body . "<br />" . G::LoadTranslation('ID_ATTACHED_FILES') . ":&nbsp; <br />" . implode("<br />", $attachFileLinks);
             }
             $users = new Users();
             $recipientsArray = explode(",", $noteRecipients);
