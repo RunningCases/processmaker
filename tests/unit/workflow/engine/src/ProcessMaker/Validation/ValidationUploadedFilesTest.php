@@ -113,6 +113,43 @@ class ValidationUploadedFilesTest extends TestCase
     }
 
     /**
+     * This test verify validation rules for files post in cases notes.
+     * @test
+     * @covers ::runRulesForPostFilesOfNote
+     */
+    public function it_should_test_run_rules_for_post_files_of_note()
+    {
+        //assert for file has not exist
+        $file = [
+            'filename' => 'testDocument.pdf',
+            'path' => "testDocument.pdf"
+        ];
+        $validation = new ValidationUploadedFiles();
+        $result = $validation->runRulesForPostFilesOfNote($file);
+        $this->assertTrue($result->fails());
+
+        //assert for file has not valid extension
+        $file = [
+            'filename' => 'projectData.json',
+            'path' => PATH_TRUNK . "tests/resources/projectData.json"
+        ];
+        $validation = new ValidationUploadedFiles();
+        $result = $validation->runRulesForPostFilesOfNote($file);
+        $this->assertTrue($result->fails());
+
+        //assert the file exists and has valid extension
+        $file = [
+            'filename' => 'testDocument.pdf',
+            'path' => PATH_TRUNK . "tests/resources/testDocument.pdf"
+        ];
+        $validation = new ValidationUploadedFiles();
+        $result = $validation->runRulesForPostFilesOfNote($file);
+        $this->assertFalse($result->fails());
+        $this->assertEmpty($result->getMessage());
+        $this->assertEquals(0, $result->getStatus());
+    }
+
+    /**
      * It deletes the images created
      */
     public function tearDown()

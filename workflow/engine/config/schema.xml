@@ -230,6 +230,7 @@
         <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="DOC_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="DOC_ID" type="INTEGER" required="false" default="0"/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="APP_DOC_TYPE" type="VARCHAR" size="32" required="true" default=""/>
         <column name="APP_DOC_CREATE_DATE" type="TIMESTAMP" required="true"/>
@@ -284,7 +285,7 @@
             <rule name="required" message="User UID is required."/>
         </validator>
         <validator column="APP_DOC_TYPE">
-            <rule name="validValues" value="INPUT|OUTPUT|ATTACHED" message="Please select a valid document type."/>
+            <rule name="validValues" value="INPUT|OUTPUT|ATTACHED|CASE_NOTE" message="Please select a valid document type."/>
             <rule name="required" message="Application Document Type is required."/>
         </validator>
         <validator column="APP_DOC_CREATE_DATE">
@@ -3287,7 +3288,7 @@
             <unique-column name="CATEGORY_ID"/>
         </unique>
     </table>
-    <table name="APP_NOTES">
+    <table name="APP_NOTES" idMethod="native">
         <vendor type="mysql">
             <parameter name="Name" value="APP_NOTES"/>
             <parameter name="Engine" value="InnoDB"/>
@@ -3308,6 +3309,7 @@
             <parameter name="Create_options" value=""/>
             <parameter name="Comment" value="Application Notes"/>
         </vendor>
+        <column name="NOTE_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="NOTE_DATE" type="TIMESTAMP" required="true"/>
@@ -3318,6 +3320,9 @@
         <column name="NOTE_AFFECTED_OBJ1" type="VARCHAR" size="32" default=""/>
         <column name="NOTE_AFFECTED_OBJ2" type="VARCHAR" size="32" required="true" default=""/>
         <column name="NOTE_RECIPIENTS" type="LONGVARCHAR"/>
+        <unique name="NOTE_ID">
+            <unique-column name="NOTE_ID"/>
+        </unique>
         <index name="indexAppNotesDate">
             <index-column name="APP_UID"/>
             <index-column name="NOTE_DATE"/>
