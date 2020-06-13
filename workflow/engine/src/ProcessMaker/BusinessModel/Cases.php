@@ -41,6 +41,7 @@ use ProcessMaker\BusinessModel\Task as BmTask;
 use ProcessMaker\BusinessModel\User as BmUser;
 use ProcessMaker\Core\System;
 use ProcessMaker\Exception\UploadException;
+use ProcessMaker\Exception\CaseNoteUploadFile;
 use ProcessMaker\Model\Application as ModelApplication;
 use ProcessMaker\Model\AppNotes as Notes;
 use ProcessMaker\Model\Delegation;
@@ -49,6 +50,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Util\DateTime as UtilDateTime;
 use ProcessMaker\Validation\ExceptionRestApi;
+use ProcessMaker\Validation\ValidationUploadedFiles;
 use ProcessMaker\Validation\Validator as FileValidator;
 use ProcessPeer;
 use ProcessUser;
@@ -3960,6 +3962,21 @@ class Cases
             }
         }
 
+        //rules validation
+        foreach ($files as $key => $value) {
+            $entry = [
+                "filename" => $value['name'],
+                "path" => $value['tmp_name']
+            ];
+            $validator = ValidationUploadedFiles::getValidationUploadedFiles()
+                    ->runRulesForPostFilesOfNote($entry);
+            if ($validator->fails()) {
+                Notes::where('NOTE_ID', '=', $noteId)->delete();
+                $messageError = G::LoadTranslation('ID_THE_FILE_COULDNT_BE_UPLOADED');
+                throw new CaseNoteUploadFile($messageError . ' ' . $validator->getMessage());
+            }
+        }
+
         // Get the delIndex related to the case
         $cases = new ClassesCases();
         $delIndex = $cases->getCurrentDelegation($appUid);
@@ -4007,8 +4024,6 @@ class Cases
                     throw new UploadException($fileName['error']);
                 }
             }
-        } else {
-            throw new Exception(G::LoadTranslation('ID_ERROR_UPLOAD_FILE_CONTACT_ADMINISTRATOR'));
         }
 
         return $response;
