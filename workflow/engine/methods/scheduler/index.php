@@ -17,11 +17,16 @@ try {
     $fields["category"] = $category;
     $fields["lang"] = SYS_LANG;
     $fields["workspace"] = config("system.workspace");
-    $fields["translation"] = "/js/ext/translation.".SYS_LANG.".".G::browserCacheFilesGetUid().".js";  
+    $fields["translation"] = "/js/ext/translation." . SYS_LANG . "." . G::browserCacheFilesGetUid() . ".js";  
 
-    $G_PUBLISH->addContent('smarty','scheduler/index.html','', '', $fields); //Adding a HTML file .html
-    $G_PUBLISH->addContent('smarty',PATH_HOME . 'public_html/lib/taskscheduler/index.html'); //Adding a HTML file .html
-    G::RenderPage("publish", "raw");
+    $G_PUBLISH->addContent('smarty' , 'scheduler/index.html' , '', '' , $fields); //Adding a HTML file .html
+    $G_PUBLISH->addContent('smarty' , PATH_HOME . 'public_html/lib/taskscheduler/index.html'); //Adding a HTML file .html
+    G::RenderPage("publish" , "raw");
 } catch (Exception $e) {
-    echo($e);
+    $message = [];
+    $message['MESSAGE'] = $e->getMessage();
+    $G_PUBLISH = new Publisher();
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', $message);
+    G::RenderPage('publish', 'blank');
+    die();
 }

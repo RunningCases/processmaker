@@ -51877,3 +51877,45 @@ msgstr "KPI Calculate app"
 #: LABEL/ID_TASK_SCHEDULER_CALCULATE_APP_DESC
 msgid "Recalculate main KPI board information"
 msgstr "Recalculate main KPI board information"
+
+# TRANSLATION
+# LABEL/ID_CUSTOM_SCHEDULE_SETTINGS
+#: LABEL/ID_CUSTOM_SCHEDULE_SETTINGS
+msgid "Custom schedule settings"
+msgstr "Custom schedule settings"
+
+# TRANSLATION
+# LABEL/ID_CHOOSE_TIME
+#: LABEL/ID_CHOOSE_TIME
+msgid "Choose a time"
+msgstr "Choose a time"
+
+# TRANSLATION
+# LABEL/ID_STARTING_TIME
+#: LABEL/ID_STARTING_TIME
+msgid "Starting time"
+msgstr "Starting time"
+
+# TRANSLATION
+# LABEL/ID_ENDING_TIME
+#: LABEL/ID_ENDING_TIME
+msgid "Ending time"
+msgstr "Ending time"
+
+# TRANSLATION
+# LABEL/ID_REPEAT_EVERY
+#: LABEL/ID_REPEAT_EVERY
+msgid "Repeat every"
+msgstr "Repeat every"
+
+# TRANSLATION
+# LABEL/ID_REPEAT_ON
+#: LABEL/ID_REPEAT_ON
+msgid "Repeat on"
+msgstr "Repeat on"
+
+# TRANSLATION
+# LABEL/ID_CUSTOM_SETTINGS
+#: LABEL/ID_CUSTOM_SETTINGS
+msgid "Custom settings"
+msgstr "Custom settings"
