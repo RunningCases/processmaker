@@ -31,8 +31,9 @@ class DocumentsTest extends TestCase
     
     /**
      * This test verify if exists attachment files.
+     * 
      * @test
-     * @covers Documents::getAttachedFilesFromTheCaseNote
+     * @covers \ProcessMaker\Model\Documents::getAttachedFilesFromTheCaseNote()
      */
     public function it_should_test_get_attached_files_from_the_casenote()
     {
