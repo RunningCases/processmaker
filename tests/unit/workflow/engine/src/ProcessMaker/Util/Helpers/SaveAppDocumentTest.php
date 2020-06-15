@@ -21,8 +21,8 @@ class SaveAppDocumentTest extends TestCase
         $appUid  = G::generateUniqueID();
         $appDocUid  = G::generateUniqueID();
         $pathCase = PATH_DB . config('system.workspace') . PATH_SEP . 'files' . PATH_SEP . G::getPathFromUID($appUid) . PATH_SEP;
-        saveAppDocument($files, $appUid, $appDocUid, 1, false);
-        $this->assertFileExists($pathCase . $appDocUid . '_1.png');
+        $res = saveAppDocument($files, $appUid, $appDocUid, 1, false);
+        $this->assertTrue($res);
         G::rm_dir($pathCase);
     }
 
@@ -40,8 +40,8 @@ class SaveAppDocumentTest extends TestCase
         $appUid  = G::generateUniqueID();
         $appDocUid  = G::generateUniqueID();
         $pathCase = PATH_DB . config('system.workspace') . PATH_SEP . 'files' . PATH_SEP . G::getPathFromUID($appUid) . PATH_SEP;
-        saveAppDocument($files, $appUid, $appDocUid, 1, false);
-        $this->assertFileExists($pathCase . $appDocUid . '_1.gif');
+        $res = saveAppDocument($files, $appUid, $appDocUid, 1, false);
+        $this->assertTrue($res);
         G::rm_dir($pathCase);
     }
 }
