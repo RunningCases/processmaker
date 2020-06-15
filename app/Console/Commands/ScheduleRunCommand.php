@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Maveriks\WebApplication;
-use \Illuminate\Support\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Console\Scheduling\ScheduleRunCommand as BaseCommand;
-use Illuminate\Support\Facades\Log;
-use ProcessMaker\BusinessModel\TaskSchedulerBM;
+use Maveriks\WebApplication;
 use ProcessMaker\Model\TaskScheduler;
 
 class ScheduleRunCommand extends BaseCommand
@@ -24,11 +22,11 @@ class ScheduleRunCommand extends BaseCommand
     {
         $this->startedAt = Carbon::now();
         $this->signature = "schedule:run";
-        $this->signature .= '
-        {--workspace=workflow : ProcessMaker Indicates the workspace to be processed.}
-        {--user=apache : ProcessMaker Indicates the user to execute the crons.}        
+        $this->signature .= "
+        {--workspace=workflow : Workspace to use.}
+        {--user=apache : Operating system's user who executes the crons.}        
         {--processmakerPath=./ : ProcessMaker path.}
-        ';
+        ";
         $this->description .= ' (ProcessMaker has extended this command)';
         parent::__construct($schedule);
     }
@@ -54,7 +52,7 @@ class ScheduleRunCommand extends BaseCommand
                 $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
 
                 $timezone = isset($p->timezone) && $p->timezone != "" ? $p->timezone : date_default_timezone_get();
-                $body =  str_replace("-c", $user . " -c", $p->body);
+                $body = str_replace("-c", $user . " -c", $p->body);
                 $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
                     $now = Carbon::now();
                     $result = false;

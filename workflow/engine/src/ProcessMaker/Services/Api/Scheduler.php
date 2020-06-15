@@ -1,12 +1,11 @@
 <?php
 namespace ProcessMaker\Services\Api;
 
-use \ProcessMaker\Services\Api;
-use Illuminate\Support\Facades\DB;
-use \Luracast\Restler\RestException;
-use \ProcessMaker\Model\TaskScheduler;
-use Illuminate\Support\Facades\Log;
+use Exception;
+use Luracast\Restler\RestException;
 use ProcessMaker\BusinessModel\TaskSchedulerBM;
+use ProcessMaker\Services\Api;
+
 /**
  * TaskScheduler Controller
  *
@@ -15,19 +14,24 @@ use ProcessMaker\BusinessModel\TaskSchedulerBM;
 class Scheduler extends Api
 {
     /**
+     * Returns the records of SchedulerTask by category
      * @url GET 
      *
      * @param string $category
+     * 
+     * @return mixed
+     * @throws RestException
      */
     public function doGet($category = null) {
         try {
             return TaskSchedulerBM::getSchedule($category);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
     /**
+     * Receive the options sent from Scheduler UI
      * @url POST 
      * @status 200
      *
@@ -37,10 +41,10 @@ class Scheduler extends Api
      * @throws RestException
      *
      */
-    public function doPost(array $request_data) {
+    public function doPost(array $request) {
         try {
-            return TaskSchedulerBM::saveSchedule($request_data);
-        } catch (\Exception $e) {
+            return TaskSchedulerBM::saveSchedule($request);
+        } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }

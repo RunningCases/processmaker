@@ -1,12 +1,8 @@
 <?php
+
 namespace ProcessMaker\BusinessModel;
 
 use ProcessMaker\Model\TaskScheduler;
-use \G;
-use ProcessMaker\Plugins\Interfaces\StepDetail;
-use ProcessMaker\Plugins\PluginRegistry;
-use \ProcessMaker\Util;
-use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\System;
 
 class TaskSchedulerBM
@@ -14,46 +10,51 @@ class TaskSchedulerBM
     /**
      * Return the records in Schedule Table by category
      */
-    public static function getSchedule($category){
+    public static function getSchedule($category)
+    {
         $tasks = TaskScheduler::all();
         $count =  $tasks->count();
-        if($count == 0){          
+        if ($count == 0) {
             TaskSchedulerBM::generateInitialData();
             $tasks = TaskScheduler::all();
-        }       
-        if(is_null($category)){
+        }
+        if (is_null($category)) {
             return $tasks;
-        }else{
+        } else {
             return TaskScheduler::where('category', $category)->get();
         }
     }
     /**
      * Save the record Schedule in Schedule Table
      */
-    public static function saveSchedule(array $request_data){
-        $task = TaskScheduler::find($request_data['id']);
-        if(isset($request_data['enable'])){           
-            $task->enable =  $request_data['enable'];
+    public static function saveSchedule(array $request)
+    {
+        $task = TaskScheduler::find($request['id']);
+        if (isset($request['enable'])) {
+            $task->enable =  $request['enable'];
         }
 
-        if(isset($request_data['expression'])){
-            $task->expression = $request_data['expression'];
-            $task->startingTime =  $request_data['startingTime'];
-            $task->endingTime =  $request_data['endingTime'];
-            $task->timezone =  $request_data['timezone'];
-            $task->everyOn =  $request_data['everyOn'];
-            $task->interval =  $request_data['interval'];
-            
-        }            
+        if (isset($request['expression'])) {
+            $task->expression = $request['expression'];
+            $task->startingTime =  $request['startingTime'];
+            $task->endingTime =  $request['endingTime'];
+            $task->timezone =  $request['timezone'];
+            $task->everyOn =  $request['everyOn'];
+            $task->interval =  $request['interval'];
+        }
         $task->save();
-        return  array();
+        return $task;
     }
 
-    public static function generateInitialData(){
+    /**
+     * Initial data for Schedule Table, with default values
+     */
+    public static function generateInitialData()
+    {
         $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
-        $toSave = array();
-        $services = array(
-            array(
+        $toSave = [];
+        $services = [
+            [
                 "title" => "ID_TASK_SCHEDULER_UNPAUSE",
                 "enable" => "0",
                 "service" => "unpause",
@@ -64,9 +65,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "0 */1 * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_UNPAUSE_DESC"                     
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_UNPAUSE_DESC"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_CALCULATE_ELAPSED",
                 "enable" => "0",
                 "service" => "calculate",
@@ -77,9 +78,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "0 */1 * * 0,1,2,3,4,5,6",
-                "description" => 'ID_TASK_SCHEDULER_CALCULATE_ELAPSED_DESC'    
-            ),
-            array(
+                "description" => 'ID_TASK_SCHEDULER_CALCULATE_ELAPSED_DESC'
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_UNASSIGNED",
                 "enable" => "0",
                 "service" => "unassigned-case",
@@ -90,9 +91,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "0 */1 * * 0,1,2,3,4,5,6",
-                "description" => 'ID_TASK_SCHEDULER_UNASSIGNED_DESC'               
-            ),
-            array(
+                "description" => 'ID_TASK_SCHEDULER_UNASSIGNED_DESC'
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_CLEAN_SELF",
                 "enable" => "0",
                 "service" => "clean-self-service-tables",
@@ -103,9 +104,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "0 */1 * * 0,1,2,3,4,5,6",
-                "description" => 'ID_TASK_SCHEDULER_CLEAN_SELF_DESC'     
-            ),
-            array(
+                "description" => 'ID_TASK_SCHEDULER_CLEAN_SELF_DESC'
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_CASE_EMAILS",
                 "enable" => "1",
                 "service" => "emails",
@@ -116,9 +117,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/5 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_CASE_EMAILS_DESC"   
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_CASE_EMAILS_DESC"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
                 "enable" => "1",
                 "service" => "",
@@ -129,9 +130,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/5 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"   
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS",
                 "enable" => "1",
                 "service" => "",
@@ -142,9 +143,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/5 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"   
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_SEND_NOT",
                 "enable" => "1",
                 "service" => "",
@@ -155,9 +156,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/5 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_SEND_NOT_DESC"   
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_SEND_NOT_DESC"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_REPORT_USERS",
                 "enable" => "0",
                 "service" => "report_by_user",
@@ -168,25 +169,15 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/10 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_REPORT_USERS_DESC"   
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_REPORT_USERS_DESC"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_REPORT_PROCESS",
                 "enable" => "0",
                 "service" => "report_by_process",
                 "category" => "reporting",
                 "file" => "workflow/engine/bin/cron.php",
                 "startingTime" => null,
-                "endingTime" => null,
-                "everyOn" => "1",
-                "interval" => "week",
-                "expression" => "*/10 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_REPORT_PROCESS_DESC"   
-            ),
-            array(
-                "title" => "ID_TASK_SCHEDULER_CALCULATE_APP",
-                "enable" => "0",
-                "service" => "calculateapp",
                 "category" => "reporting",
                 "file" => "workflow/engine/bin/cron.php",
                 "startingTime" => null,
@@ -194,9 +185,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "*/10 * * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_CALCULATE_APP_DESC"   
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_CALCULATE_APP_DESC"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_LDAP",
                 "enable" => "0",
                 "service" => "",
@@ -207,9 +198,9 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "0 */1 * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_LDAP"   
-            ),
-            array(
+                "description" => "ID_TASK_SCHEDULER_LDAP"
+            ],
+            [
                 "title" => "ID_TASK_SCHEDULER_PM_PLUGINS",
                 "enable" => "0",
                 "service" => "plugins",
@@ -220,26 +211,25 @@ class TaskSchedulerBM
                 "everyOn" => "1",
                 "interval" => "week",
                 "expression" => "0 */1 * * 0,1,2,3,4,5,6",
-                "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"   
-            )                       
-        );
-     
-        for($i = 0; $i < count($services); ++$i) {           
+                "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"
+            ]
+        ];
+
+        foreach ($services as $service) {
             $task = new TaskScheduler;
-            $task->title = $services[$i]["title"];
-            $task->category = $services[$i]["category"];
-            $task->description = $services[$i]["description"];
-            $task->startingTime = $services[$i]["startingTime"];
-            $task->endingTime = $services[$i]["endingTime"];            
-            $task->body =  'su -s /bin/sh -c "php '. PATH_TRUNK . $services[$i]["file"] . " " . $services[$i]["service"] . ' +w' . config("system.workspace") . ' +force"';
-            $task->expression = $services[$i]["expression"];
+            $task->title = $service["title"];
+            $task->category = $service["category"];
+            $task->description = $service["description"];
+            $task->startingTime = $service["startingTime"];
+            $task->endingTime = $service["endingTime"];
+            $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force"';
+            $task->expression = $service["expression"];
             $task->type = "shell";
             $task->system = 1;
-            //$task->timezone = $arraySystemConfiguration['time_zone'];
-            $task->enable = $services[$i]["enable"];
-            $task->everyOn = $services[$i]["everyOn"];
-            $task->interval = $services[$i]["interval"];
-            $task->save();   
+            $task->enable = $service["enable"];
+            $task->everyOn = $service["everyOn"];
+            $task->interval = $service["interval"];
+            $task->save();
         }
     }
 }

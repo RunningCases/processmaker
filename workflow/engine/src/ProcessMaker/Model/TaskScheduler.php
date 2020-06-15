@@ -3,11 +3,7 @@
 namespace ProcessMaker\Model;
 
 use \Illuminate\Database\Eloquent\Model;
-use \Illuminate\Support\Facades\DB;
-use \Cron\CronExpression;
-use \Illuminate\Support\Carbon;
-use \Illuminate\Console\Scheduling\ManagesFrequencies;
-use Illuminate\Console\Scheduling\Schedule;
+
 /**
  * Class TaskScheduler
  * @package ProcessMaker\Model
