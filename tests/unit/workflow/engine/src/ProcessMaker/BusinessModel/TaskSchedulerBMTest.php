@@ -74,7 +74,7 @@ class TaskSchedulerBMTest extends TestCase
         ];
 
         $res = $obj->saveSchedule($request_data);
-        $this->assertEquals([] ,$res);
+        $this->assertEquals($scheduler->id , $res->id);
     }
 
     /**
