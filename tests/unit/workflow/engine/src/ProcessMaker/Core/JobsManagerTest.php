@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Core;
 
+use App\Jobs\Email;
 use Tests\TestCase;
 
 class JobsManagerTest extends TestCase
@@ -116,7 +117,7 @@ class JobsManagerTest extends TestCase
         $callback = function() {
         };
 
-        $actual = $this->object->dispatch('Email', $callback);
+        $actual = $this->object->dispatch(\App\Jobs\Email::class, $callback);
 
         $this->assertInstanceOf(\Illuminate\Foundation\Bus\PendingDispatch::class, $actual);
     }

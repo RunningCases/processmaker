@@ -72,8 +72,21 @@ class ProcessVariables extends Model
      */
     public function scopeProcessId($query, int $proId)
     {
-        return $query->where('PRO_ID', $proId);
+        return $query->where('PROCESS_VARIABLES.PRO_ID', $proId);
     }
+
+    /**
+     * Scope a query to filter a specific type for variable
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  int $typeId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTypeId($query, int $typeId)
+    {
+        return $query->where('VAR_FIELD_TYPE_ID', $typeId);
+    }
+
     /**
      * Return the variables list
      *
@@ -88,6 +101,48 @@ class ProcessVariables extends Model
             $join->on('DB_SOURCE.PRO_ID', '=', 'PROCESS_VARIABLES.PRO_ID');
         });
         $query->where('PROCESS_VARIABLES.PRO_ID', $proId);
+        $results = $query->get();
+        $variablesList = [];
+        $results->each(function ($item, $key) use (&$variablesList) {
+            $variablesList[] = $item->toArray();
+        });
+
+        return $variablesList;
+    }
+
+    /**
+     * Return the variables list
+     *
+     * @param int $proId
+     * @param int $typeId
+     * @param int $start
+     * @param int $limit
+     * @param string $search
+     *
+     * @return array
+     */
+    public static function getVariablesByType(int $proId, int $typeId = 0, $start = null, $limit = null, $search = null)
+    {
+        $query = ProcessVariables::query()->select();
+        $query->leftJoin('DB_SOURCE', function ($join) {
+            $join->on('DB_SOURCE.PRO_ID', '=', 'PROCESS_VARIABLES.PRO_ID');
+        });
+        $query->processId($proId);
+        // Check if we need to filter the type of variables
+        if ($typeId > 0) {
+            $query->typeId($typeId);
+        }
+        // search a specific variable name
+        if (!empty($search)) {
+            $query->where('VAR_NAME', 'LIKE', "${search}%");
+        }
+        // order by varNane
+        $query->orderBy('VAR_NAME', 'ASC');
+        // Check if we need to add a pagination
+        if(!is_null($start) && !is_null($limit)) {
+            $query->offset($start)->limit($limit);
+        }
+        // Get records
         $results = $query->get();
         $variablesList = [];
         $results->each(function ($item, $key) use (&$variablesList) {

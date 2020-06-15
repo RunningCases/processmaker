@@ -5,7 +5,6 @@ namespace ProcessMaker\Core;
 use Bootstrap;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use ProcessMaker\BusinessModel\Factories\Jobs;
 use ProcessMaker\Core\System;
 use Propel;
 
@@ -187,7 +186,7 @@ class JobsManager
     {
         $environment = $this->getDataSnapshot();
 
-        $instance = Jobs::create($name, function() use ($callback, $environment) {
+        $instance = $name::dispatch(function() use ($callback, $environment) {
                     try {
                         $this->recoverDataSnapshot($environment);
                         $callback($environment);

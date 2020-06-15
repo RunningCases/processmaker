@@ -192,11 +192,12 @@ class ServerTest extends TestCase
         if (!is_dir(PATH_DB)) {
             mkdir(PATH_DB);
         }
-        if (!is_dir(PATH_WORKSPACE)) {
-            mkdir(PATH_WORKSPACE);
+        $pathWorkspace = PATH_DB . config('system.workspace') . PATH_SEP;
+        if (!is_dir($pathWorkspace)) {
+            mkdir($pathWorkspace);
         }
         $info = $this->getLicenseInfo();
-        $filename = PATH_WORKSPACE . $info['name'];
+        $filename = $pathWorkspace . $info['name'];
         $data = $info['content'];
         file_put_contents($filename, $data);
 

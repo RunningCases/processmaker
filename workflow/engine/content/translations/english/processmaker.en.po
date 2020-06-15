@@ -1994,6 +1994,12 @@ msgid "Add field"
 msgstr "Add field"
 
 # TRANSLATION
+# LABEL/ID_ADD_FILE
+#: LABEL/ID_ADD_FILE
+msgid "Add file"
+msgstr "Add file"
+
+# TRANSLATION
 # LABEL/ID_ADD_HORIZONTAL_LINE
 #: LABEL/ID_ADD_HORIZONTAL_LINE
 msgid "Add horizontal line"
@@ -2574,6 +2580,18 @@ msgstr "Attach"
 #: LABEL/ID_ATTACHED_DB
 msgid "Attached"
 msgstr "Attached"
+
+# TRANSLATION
+# LABEL/ID_ATTACH_FILE
+#: LABEL/ID_ATTACH_FILE
+msgid "Attach file"
+msgstr "Attach file"
+
+# TRANSLATION
+# LABEL/ID_ATTACHED_FILES
+#: LABEL/ID_ATTACHED_FILES
+msgid "Attached files"
+msgstr "Attached files"
 
 # TRANSLATION
 # LABEL/ID_ATTRIBUTES
@@ -25290,6 +25308,12 @@ msgid "The default configuration was not defined"
 msgstr "The default configuration was not defined"
 
 # TRANSLATION
+# LABEL/ID_THE_FILE_COULDNT_BE_UPLOADED
+#: LABEL/ID_THE_FILE_COULDNT_BE_UPLOADED
+msgid "The file couldn’t be uploaded please review the allowed files or contact your System Administrator."
+msgstr "The file couldn’t be uploaded please review the allowed files or contact your System Administrator."
+
+# TRANSLATION
 # LABEL/ID_THE_FILE_SIZE_IS_BIGGER_THAN_THE_MAXIMUM_ALLOWED
 #: LABEL/ID_THE_FILE_SIZE_IS_BIGGER_THAN_THE_MAXIMUM_ALLOWED
 msgid "The file size is bigger than the maximum allowed, the maximum size allowed is {0} Mbytes."
@@ -25324,6 +25348,12 @@ msgstr "The PHP files execution was disabled please contact the system administr
 #: LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
 msgid "Please complete the reassign reason."
 msgstr "Please complete the reassign reason."
+
+# TRANSLATION
+# LABEL/ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES
+#: LABEL/ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES
+msgid "The report table is regenerating please come back in a few minutes."
+msgstr "The report table is regenerating please come back in a few minutes."
 
 # TRANSLATION
 # LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
@@ -27690,6 +27720,12 @@ msgid "[LABEL/ID_YES_VALUE] Yes"
 msgstr "Yes"
 
 # TRANSLATION
+# LABEL/ID_YOUR_FILE_HAS_EXCEEDED
+#: LABEL/ID_YOUR_FILE_HAS_EXCEEDED
+msgid "Your file has exceeded the file maximum size that is {0}."
+msgstr "Your file has exceeded the file maximum size that is {0}."
+
+# TRANSLATION
 # LABEL/ID_YOUR_IMAGE_HAS_BEEN_SUCCESSFULLY
 #: LABEL/ID_YOUR_IMAGE_HAS_BEEN_SUCCESSFULLY
 msgid "Your image has been successfully uploaded"
@@ -27742,6 +27778,12 @@ msgstr "You do not select any user to import"
 #: LABEL/ID_YOU_HAVE_ERROR
 msgid "you have an error"
 msgstr "you have an error"
+
+# TRANSLATION
+# LABEL/ID_YOU_UPLOADED_AN_UNSUPPORTED_FILE_EXTENSION
+#: LABEL/ID_YOU_UPLOADED_AN_UNSUPPORTED_FILE_EXTENSION
+msgid "You uploaded an unsupported file extension, please review the permitted files uploaded in the wiki of ProcessMaker for the cases notes."
+msgstr "You uploaded an unsupported file extension, please review the permitted files uploaded in the wiki of ProcessMaker for the cases notes."
 
 # TRANSLATION
 # LABEL/ID_ZIP_CODE

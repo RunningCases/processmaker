@@ -3,16 +3,31 @@
 namespace Tests\unit\workflow\engine\classes\model;
 
 use AdditionalTables;
+use App\Jobs\GenerateReportTable;
 use Exception;
 use G;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 use ProcessMaker\BusinessModel\ReportTable;
 use ProcessMaker\Model\AdditionalTables as AdditionalTablesModel;
+use ProcessMaker\Model\Application;
+use ProcessMaker\Model\DbSource;
+use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Process;
+use ProcessMaker\Model\Task;
 use Tests\TestCase;
 
 class AdditionalTablesTest extends TestCase
 {
+
+    /**
+     * Set up method.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
 
     /**
      * This tests the creation of a PMTable.
@@ -196,6 +211,74 @@ class AdditionalTablesTest extends TestCase
         $actual = $additionalTables->getAll(0, 20, $tableName);
         $actual = array_column($actual['rows'], 'ADD_TAB_UID');
         $this->assertContains($actual[0], $expected, false);
+    }
+
+    /**
+     * Check if populate report table is added to job queue.
+     * @test
+     * @covers \AdditionalTables::populateReportTable
+     */
+    public function it_should_test_populate_report_table()
+    {
+        $proUid = factory(Process::class)->create()->PRO_UID;
+
+        $task = factory(Task::class)->create([
+            'PRO_UID' => $proUid
+        ]);
+
+        //local connections
+        $dbSource = factory(DbSource::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_SERVER' => env('DB_HOST'),
+            'DBS_DATABASE_NAME' => env('DB_DATABASE'),
+            'DBS_USERNAME' => env('DB_USERNAME'),
+            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), env('DB_DATABASE')) . "_2NnV3ujj3w",
+            'DBS_PORT' => '3306',
+            'DBS_CONNECTION_TYPE' => 'NORMAL'
+        ]);
+        $additionalTable = factory(AdditionalTablesModel::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_UID' => $dbSource->DBS_UID,
+        ]);
+        $tableName = $additionalTable->ADD_TAB_NAME;
+        $name = $additionalTable->ADD_TAB_CLASS_NAME;
+        $this->createSchema($dbSource->DBS_DATABASE_NAME, $tableName, $name, $dbSource->DBS_UID);
+
+        //external connection
+        $dbSource = factory(DbSource::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_SERVER' => config('database.connections.testexternal.host'),
+            'DBS_DATABASE_NAME' => config('database.connections.testexternal.database'),
+            'DBS_USERNAME' => config('database.connections.testexternal.username'),
+            'DBS_PASSWORD' => G::encrypt(config('database.connections.testexternal.password'), config('database.connections.testexternal.database')) . "_2NnV3ujj3w",
+            'DBS_PORT' => '3306',
+            'DBS_CONNECTION_TYPE' => 'NORMAL'
+        ]);
+        $additionalTable = factory(AdditionalTablesModel::class)->create([
+            'PRO_UID' => $proUid,
+            'DBS_UID' => $dbSource->DBS_UID,
+        ]);
+        $tableNameExternal = $additionalTable->ADD_TAB_NAME;
+        $nameExternal = $additionalTable->ADD_TAB_CLASS_NAME;
+        $this->createSchema($dbSource->DBS_DATABASE_NAME, $tableNameExternal, $nameExternal, $dbSource->DBS_UID);
+
+        $application = factory(Application::class)->create([
+            'PRO_UID' => $proUid
+        ]);
+        factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+
+        //assertions
+        Queue::fake();
+        Queue::assertNothingPushed();
+
+        $additionalTables = new AdditionalTables();
+        $additionalTables->populateReportTable($tableName, 'workflow', 'NORMAL', $proUid, '', $additionalTable->ADD_TAB_UID);
+
+        Queue::assertPushed(GenerateReportTable::class);
     }
 
     /**

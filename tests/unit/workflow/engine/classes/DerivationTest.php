@@ -10,6 +10,7 @@ use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Route;
+use ProcessMaker\Model\SubApplication;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\TaskUser;
 use ProcessMaker\Model\User;
@@ -111,6 +112,8 @@ class DerivationTest extends TestCase
      * It tests the doDerivation method sending variables synchronously
      *
      * @covers Derivation::doDerivation()
+     * @covers Derivation::<protected>
+     * 
      * @test
      */
     public function it_should_test_the_do_derivation_method_sending_variables_synchronously()
@@ -151,7 +154,7 @@ class DerivationTest extends TestCase
         $sp = [
             'SP_VARIABLES_OUT' => 'a:1:{s:6:"@&var1";s:6:"@&var2";}',
             'SP_VARIABLES_IN' => 'a:1:{s:6:"@&var2";s:6:"@&var3";}',
-            'SP_SYNCHRONOUS' => '1',
+            'SP_SYNCHRONOUS' => 1,
             'SP_TYPE' => '',
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
@@ -166,12 +169,22 @@ class DerivationTest extends TestCase
 
         // Assert the new delegation index is 1
         $this->assertEquals(1, $res);
+
+        // Review the subprocess synchronously
+        $query = SubApplication::query()->select();
+        $query->where('APP_PARENT', $application->APP_UID);
+        $query->where('DEL_INDEX_PARENT', $appDelegation->DEL_INDEX);
+        $results = $query->get()->toArray();
+        $this->assertNotEmpty($results);
+        $this->assertEquals($results[0]['SA_STATUS'], 'ACTIVE');
     }
 
     /**
      * It tests the doDerivation method sending variables asynchronously
      *
      * @covers Derivation::doDerivation()
+     * @covers Derivation::<protected>
+     * 
      * @test
      */
     public function it_should_test_the_do_derivation_method_sending_variables_asynchronously()
@@ -225,7 +238,7 @@ class DerivationTest extends TestCase
         $sp = [
             'SP_VARIABLES_OUT' => 'a:1:{s:6:"@&var1";s:6:"@&var2";}',
             'SP_VARIABLES_IN' => 'a:1:{s:6:"@&var2";s:6:"@&var3";}',
-            'SP_SYNCHRONOUS' => '0',
+            'SP_SYNCHRONOUS' => 0,
             'SP_TYPE' => '',
             'TAS_UID' => $task->TAS_UID,
             'USR_UID' => $user->USR_UID,
@@ -240,5 +253,13 @@ class DerivationTest extends TestCase
 
         // Assert the new delegation index is 1
         $this->assertEquals(1, $res);
+
+        // Review the subprocess asynchronously
+        $query = SubApplication::query()->select();
+        $query->where('APP_PARENT', $application->APP_UID);
+        $query->where('DEL_INDEX_PARENT', $appDelegation->DEL_INDEX);
+        $results = $query->get()->toArray();
+        $this->assertNotEmpty($results);
+        $this->assertEquals($results[0]['SA_STATUS'], 'FINISHED');
     }
 }
