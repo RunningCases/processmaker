@@ -151,6 +151,8 @@ class Variable
                     if (isset($arrayData["VAR_FIELD_TYPE"])) {
                         $arrayData["VAR_FIELD_TYPE"] = $this->validateVarFieldType($arrayData["VAR_FIELD_TYPE"]);
                         $variable->setVarFieldType($arrayData["VAR_FIELD_TYPE"]);
+                        $fielTypeId = self::$varTypesValues[$arrayData["VAR_FIELD_TYPE"]];
+                        $variable->setVarFieldTypeId($fielTypeId);
                     }
                     if (isset($arrayData["VAR_FIELD_SIZE"])) {
                         $variable->setVarFieldSize($arrayData["VAR_FIELD_SIZE"]);
