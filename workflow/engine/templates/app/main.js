@@ -302,7 +302,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
             xtype: "checkbox",
             id: "chkSendMail",
             name: "chkSendMail",
-            checked: true,
+            checked: false,
             boxLabel: _("ID_CASE_NOTES_LABEL_SEND")
         },
         '->',
