@@ -98,9 +98,22 @@ class AppNotes extends Model
             $notes['notes'][] = $row;
         });
 
-        // Add the total of rows to return
-        $notes['totalCount'] = $limit;
-
         return $notes;
+    }
+
+    /**
+     * Return the total notes by case
+     *
+     * @param string $appUid
+     *
+     * @return array
+     */
+    public static function getTotal(string $appUid)
+    {
+        $query = AppNotes::query()->select(['NOTE_ID']);
+        $query->appUid($appUid);
+        $total = $query->get()->count();
+
+        return $total;
     }
 }

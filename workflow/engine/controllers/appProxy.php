@@ -117,6 +117,7 @@ class AppProxy extends HttpProxyController
 
         // Get the notes
         $appNote = new Notes();
+        $total = $appNote->getTotal($appUid);
         $response = $appNote->getNotes($appUid, $httpData->start, $httpData->limit);
         $response = AppNotes::applyHtmlentitiesInNotes($response);
 
@@ -128,6 +129,8 @@ class AppProxy extends HttpProxyController
             $response['notes'][$iterator]['attachments'] = $documents->getFiles($value['NOTE_ID']);
             $iterator++;
         }
+        // Get the total of cases notes by case
+        $response['totalCount'] = $total;
 
         require_once("classes/model/Application.php");
         $application = new Application();
