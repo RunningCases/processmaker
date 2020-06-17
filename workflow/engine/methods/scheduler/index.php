@@ -17,8 +17,11 @@ try {
     $fields["category"] = $category;
     $fields["lang"] = SYS_LANG;
     $fields["workspace"] = config("system.workspace");
-    $fields["translation"] = "/js/ext/translation." . SYS_LANG . "." . G::browserCacheFilesGetUid() . ".js";  
-
+    if (!empty(G::browserCacheFilesGetUid())) {
+        $fields["translation"] = "/js/ext/translation." . SYS_LANG . "." . G::browserCacheFilesGetUid() . ".js";  
+    } else {
+        $fields["translation"] = "/js/ext/translation." . SYS_LANG . ".js";  
+    }
     $G_PUBLISH->addContent('smarty' , 'scheduler/index.html' , '', '' , $fields); //Adding a HTML file .html
     $G_PUBLISH->addContent('smarty' , PATH_HOME . 'public_html/lib/taskscheduler/index.html'); //Adding a HTML file .html
     G::RenderPage("publish" , "raw");

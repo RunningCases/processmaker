@@ -52,7 +52,7 @@ class ScheduleRunCommand extends BaseCommand
                 $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
 
                 $timezone = isset($p->timezone) && $p->timezone != "" ? $p->timezone : date_default_timezone_get();
-                $body = str_replace("-c", $user . " -c", $p->body);
+                $body = str_replace(" -c"," " . $user . " -c", $p->body);
                 $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
                     $now = Carbon::now();
                     $result = false;
