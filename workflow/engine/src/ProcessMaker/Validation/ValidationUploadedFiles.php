@@ -6,6 +6,7 @@ use Bootstrap;
 use G;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
+use Monolog\Logger;
 use ProcessMaker\Core\System;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Util\PhpShorthandByte;
@@ -301,7 +302,7 @@ class ValidationUploadedFiles
      */
     public function runRulesForPostFilesOfNote($file)
     {
-        $validator = new Validator();
+        $validator = $this->runRules($file);
 
         //rule: file exists
         $rule = $validator->addRule();
@@ -314,20 +315,9 @@ class ValidationUploadedFiles
                     }
                     return self::VALID;
                 })
-                ->status(400)
+                ->status(Logger::ERROR)
                 ->log(function($rule) {
-                    /**
-                     * Levels supported by MonologProvider is:
-                     * 100 "DEBUG"
-                     * 200 "INFO"
-                     * 250 "NOTICE"
-                     * 300 "WARNING"
-                     * 400 "ERROR"
-                     * 500 "CRITICAL"
-                     * 550 "ALERT"
-                     * 600 "EMERGENCY"
-                     */
-                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', $rule->getStatus(), $rule->getMessage(), $rule->getData()->filename);
+                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', Logger::ERROR, $rule->getMessage(), $rule->getData()->filename);
                 });
 
         //rule: extensions
@@ -344,20 +334,9 @@ class ValidationUploadedFiles
                     }
                     return self::VALID;
                 })
-                ->status(400)
+                ->status(Logger::ERROR)
                 ->log(function($rule) {
-                    /**
-                     * Levels supported by MonologProvider is:
-                     * 100 "DEBUG"
-                     * 200 "INFO"
-                     * 250 "NOTICE"
-                     * 300 "WARNING"
-                     * 400 "ERROR"
-                     * 500 "CRITICAL"
-                     * 550 "ALERT"
-                     * 600 "EMERGENCY"
-                     */
-                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', $rule->getStatus(), $rule->getMessage(), $rule->getData()->filename);
+                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', Logger::ERROR, $rule->getMessage(), $rule->getData()->filename);
                 });
 
         //rule: file size
@@ -375,20 +354,9 @@ class ValidationUploadedFiles
                     }
                     return self::VALID;
                 })
-                ->status(400)
+                ->status(Logger::ERROR)
                 ->log(function($rule) {
-                    /**
-                     * Levels supported by MonologProvider is:
-                     * 100 "DEBUG"
-                     * 200 "INFO"
-                     * 250 "NOTICE"
-                     * 300 "WARNING"
-                     * 400 "ERROR"
-                     * 500 "CRITICAL"
-                     * 550 "ALERT"
-                     * 600 "EMERGENCY"
-                     */
-                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', $rule->getStatus(), $rule->getMessage(), $rule->getData()->filename);
+                    Bootstrap::registerMonologPhpUploadExecution('phpUpload', Logger::ERROR, $rule->getMessage(), $rule->getData()->filename);
                 });
 
         return $validator->validate();
