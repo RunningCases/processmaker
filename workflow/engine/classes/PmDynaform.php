@@ -686,8 +686,6 @@ class PmDynaform
                     $json->dataGridEnvironment = "onDataGridEnvironment";
                     if (isset($this->fields["APP_DATA"])) {
                         $dataGridEnvironment = $this->fields["APP_DATA"];
-                        //Grids only access the global variables of 'ProcessMaker', other variables are removed.
-                        $this->fields["APP_DATA"] = Cases::getGlobalVariables($this->fields["APP_DATA"]);
                         //restore AppData with dataVariable definition, only for columns control
                         foreach ($columnsDataVariable as $dge) {
                             if (isset($dataGridEnvironment[$dge])) {
