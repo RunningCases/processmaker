@@ -17,7 +17,7 @@ try {
     $fields["category"] = $category;
     $fields["lang"] = SYS_LANG;
     $fields["workspace"] = config("system.workspace");
-    if (G::browserCacheFilesGetUid()) {
+    if (!empty(G::browserCacheFilesGetUid())) {
         $fields["translation"] = "/js/ext/translation." . SYS_LANG . "." . G::browserCacheFilesGetUid() . ".js";  
     } else {
         $fields["translation"] = "/js/ext/translation." . SYS_LANG . ".js";  
