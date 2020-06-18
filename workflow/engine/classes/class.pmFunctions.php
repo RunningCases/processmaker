@@ -1083,11 +1083,15 @@ function PMFSendMessage(
 
     global $oPMScript;
 
-    if (isset($oPMScript->aFields) && is_array($oPMScript->aFields)) {
-        if (is_array($emailTemplateVariables)) {
-            $emailTemplateVariables = array_merge($oPMScript->aFields, $emailTemplateVariables);
-        } else {
-            $emailTemplateVariables = $oPMScript->aFields;
+    if (isset($_SESSION['APPLICATION'])) {
+        if ($caseId == $_SESSION['APPLICATION']) {
+            if (isset($oPMScript->aFields) && is_array($oPMScript->aFields)) {
+                if (is_array($emailTemplateVariables)) {
+                    $emailTemplateVariables = array_merge($oPMScript->aFields, $emailTemplateVariables);
+                } else {
+                    $emailTemplateVariables = $oPMScript->aFields;
+                }
+            }
         }
     }
 
@@ -1112,7 +1116,6 @@ function PMFSendMessage(
     if ($result->status_code == 0) {
         return 1;
     } else {
-        error_log($result->message);
         return 0;
     }
 }
