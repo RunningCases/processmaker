@@ -468,12 +468,13 @@ function evaluateFunction($aGrid, $sExpresion)
  * stantard deviation, variance, percentile, count, count distinct
  * 
  * @name PMFTotalCalculation
- * @label PMFTotalCalculation Function
+ * @label PMF TotalCalculation
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFTotalCalculation.28.29
- * @param array | $grid | Grid | The input grid.
+ * @param array | $grid | Grid | The input grid
  * @param string (32) | $field | Name of field | The name of the field.
- * @param string (32) | $function | Operation.
- * @return int|float|array | $result | Result | Result according of the function
+ * @param string (32) | $function | Operation | More information about the type of calculations can be found in https://wiki.processmaker.com/3.2/ProcessMaker_Functions
+ * 
+ * @return mixed | $result | Result | Result according of the operation
  *
  */
 function PMFTotalCalculation($grid, $field, $function)
