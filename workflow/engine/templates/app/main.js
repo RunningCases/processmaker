@@ -421,7 +421,7 @@ function newNoteHandler()
     Ext.getCmp('caseNoteText').reset();
     uploadFields = caseNotesForm.findByType('fileuploadfield');
     // clean the first upload field
-    uploadFields[0].setRawValue(null);
+    uploadFields[0].reset();
     for (i = 1; i < uploadFields.length; i += 1) {
       caseNotesForm.remove(uploadFields[i]);
     }
