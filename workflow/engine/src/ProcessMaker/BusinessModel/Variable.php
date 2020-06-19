@@ -765,7 +765,9 @@ class Variable
             $start = isset($params["start"]) ? $params["start"] : 0;
             $limit = isset($params["limit"]) ? $params["limit"] : 10;
             $appUid = empty($params["app_uid"]) ? null : $params["app_uid"];
-            $delIndex = (int)isset($params["del_index"]) ? $params["del_index"] : 0;
+            $delIndex = (int) isset($params["del_index"]) ? $params["del_index"] : 0;
+            $gridName = isset($params['grid_name']) ? $params['grid_name'] : null;
+
             unset($params["dyn_uid"]);
             unset($params["field_id"]);
             unset($params["app_uid"]);
@@ -774,6 +776,7 @@ class Variable
             unset($params["query"]);
             unset($params["start"]);
             unset($params["limit"]);
+            unset($params["grid_name"]);
 
             //Get appData and system variables
             $paramsAndGlobal = $params;
@@ -798,7 +801,11 @@ class Variable
             //Get control from dynaform.
             //The parameters: queryFilter, queryStart, queryLimit, are only necessary
             //for the suggest control, the rest of the controls are ignored.
-            $field = $pmDynaform->searchField($dynUid, $fieldId, $proUid);
+            $parameters = [$dynUid, $fieldId, $proUid];
+            if (!empty($gridName)) {
+                $parameters[] = ['gridName' => $gridName];
+            }
+            $field = $pmDynaform->searchField(...$parameters);
             $field->queryField = true;
             $field->queryInputData = $params;
             $field->queryFilter = $filter;

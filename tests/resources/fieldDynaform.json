@@ -1,0 +1,34 @@
+{
+    "type": "dropdown",
+    "variable": "",
+    "var_uid": "",
+    "dataType": "",
+    "protectedValue": false,
+    "id": "stateDropdown",
+    "name": "stateDropdown",
+    "label": "State use form",
+    "tabIndex": "",
+    "defaultValue": "BO",
+    "placeholder": "BO",
+    "hint": "",
+    "ariaLabel": "",
+    "required": false,
+    "requiredFieldErrorMessage": "",
+    "mode": "parent",
+    "datasource": "database",
+    "dbConnection": "workflow",
+    "dbConnectionLabel": "PM Database",
+    "sql": "SELECT IS_UID, IS_NAME FROM ISO_SUBDIVISION \nWHERE IC_UID = @?countryDropdown ORDER BY IS_NAME",
+    "memoryCache": false,
+    "dataVariable": "",
+    "options": [
+        {
+            "value": "val1",
+            "label": "val1"
+        }
+    ],
+    "columnWidth": "25",
+    "width": 100,
+    "title": "State use form",
+    "var_name": "gridVar003"
+}

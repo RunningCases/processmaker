@@ -13,15 +13,13 @@ use Tests\TestCase;
  */
 class PmDynaformTest extends TestCase
 {
-
-    use DatabaseTransactions;
-
     /**
-     * Constructor of the class.
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
      */
-    public function __construct($name = null, array $data = [], $dataName = '')
+    protected function setUp()
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
         $_SERVER["REQUEST_URI"] = "";
         if (!defined("DB_ADAPTER")) {
             define("DB_ADAPTER", "mysql");
@@ -38,15 +36,7 @@ class PmDynaformTest extends TestCase
         if (!defined("DB_PASS")) {
             define("DB_PASS", env('DB_PASSWORD'));
         }
-    }
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        parent::setUp();
+        Dynaform::truncate();
     }
 
     /**
@@ -1041,6 +1031,156 @@ class PmDynaformTest extends TestCase
         $a->type = 'suggest';
         $reflectionMethod->invokeArgs($dynaform, [&$a]);
         $this->assertInstanceOf('ReflectionMethod', $reflectionMethod);
+    }
+    
+    /**
+     * This verify method getValuesDependentFields.
+     * @test
+     * @covers PmDynaform::jsonr()
+     * @covers PmDynaform::getValuesDependentFields()
+     */
+    public function it_should_test_get_values_dependent_fields()
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/dynaform2.json";
+        $data = file_get_contents($pathData);
+        $json = json_decode($data);
+
+        $pathData2 = PATH_TRUNK . "/tests/resources/fieldDynaform.json";
+        $data2 = file_get_contents($pathData2);
+        $json2 = json_decode($data2);
+
+        $dynaform = new PmDynaform();
+        $dynaform->record = [
+            'DYN_CONTENT' => $data
+        ];
+        $dynaform->fields = [
+            'APP_DATA' => [
+                'stateDropdown' => 'stateDropdown'
+            ]
+        ];
+        $reflection = new ReflectionClass($dynaform);
+        $reflectionMethod = $reflection->getMethod('getValuesDependentFields');
+        $reflectionMethod->setAccessible(true);
+        $result = $reflectionMethod->invokeArgs($dynaform, [&$json2]);
+
+        $this->assertArrayHasKey('countryDropdown', $result);
+    }
+
+    /**
+     * This verify method searchField.
+     * @test
+     * @covers PmDynaform::jsonr()
+     * @covers PmDynaform::searchField()
+     */
+    public function it_should_test_search_field()
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/dynaform2.json";
+        $data = file_get_contents($pathData);
+        $json = json_decode($data);
+
+        $pathData2 = PATH_TRUNK . "/tests/resources/fieldDynaform.json";
+        $data2 = file_get_contents($pathData2);
+        $json2 = json_decode($data2);
+
+        $dynaform = factory(Dynaform::class)->create([
+            'DYN_CONTENT' => $data
+        ]);
+        factory(Dynaform::class)->create([
+            'DYN_CONTENT' => $data,
+            'PRO_UID' => $dynaform->PRO_UID
+        ]);
+
+        $dynUid = $dynaform->DYN_UID;
+        $fieldId = 'stateDropdown';
+        $proUid = '';
+        $and = [];
+
+        $dynaform = new PmDynaform();
+        $result = $dynaform->searchField($dynUid, $fieldId, $proUid, $and);
+
+        $this->assertObjectHasAttribute('id', $result);
+        $this->assertEquals($result->id, 'stateDropdown');
+    }
+
+    /**
+     * This verify method replaceDataField.
+     * @test
+     * @covers PmDynaform::jsonr()
+     * @covers PmDynaform::replaceDataField()
+     */
+    public function it_should_test_replace_data_field()
+    {
+        $sql = "SELECT IS_UID, IS_NAME FROM ISO_SUBDIVISION WHERE IC_UID = '@?countryDropdown' ORDER BY IS_NAME";
+        $data = [
+            'countryDropdown' => 'BO'
+        ];
+        $dynaform = new PmDynaform();
+        $reflection = new ReflectionClass($dynaform);
+        $reflectionMethod = $reflection->getMethod('replaceDataField');
+        $reflectionMethod->setAccessible(true);
+        $result = $reflectionMethod->invokeArgs($dynaform, [&$sql, $data]);
+
+        $expected = "SELECT IS_UID, IS_NAME FROM ISO_SUBDIVISION WHERE IC_UID = 'BO' ORDER BY IS_NAME";
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * This verify method completeAdditionalHelpInformationOnControls.
+     * @test
+     * @covers PmDynaform::jsonr()
+     * @covers PmDynaform::completeAdditionalHelpInformationOnControls()
+     */
+    public function it_should_test_complete_additional_help_information_on_controls()
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/dynaform2.json";
+        $data = file_get_contents($pathData);
+        $json = json_decode($data);
+
+        $dynaform = new PmDynaform();
+        $reflection = new ReflectionClass($dynaform);
+        $reflectionMethod = $reflection->getMethod('completeAdditionalHelpInformationOnControls');
+        $reflectionMethod->setAccessible(true);
+        $reflectionMethod->invokeArgs($dynaform, [&$json]);
+        $this->assertInstanceOf('ReflectionMethod', $reflectionMethod);
+    }
+
+    /**
+     * This verify method jsonsf.
+     * @test
+     * @covers PmDynaform::jsonr()
+     * @covers PmDynaform::jsonsf()
+     */
+    public function it_should_test_jsonsf()
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/dynaform2.json";
+        $data = file_get_contents($pathData);
+        $json = json_decode($data);
+
+        $pathData2 = PATH_TRUNK . "/tests/resources/fieldDynaform.json";
+        $data2 = file_get_contents($pathData2);
+        $json2 = json_decode($data2);
+
+        $dynaform = factory(Dynaform::class)->create([
+            'DYN_CONTENT' => $data
+        ]);
+        factory(Dynaform::class)->create([
+            'DYN_CONTENT' => $data,
+            'PRO_UID' => $dynaform->PRO_UID
+        ]);
+
+        $id = 'stateDropdown';
+        $for = 'id';
+        $and = ['gridName' => 'gridVar003'];
+
+        $dynaform = new PmDynaform();
+        $reflection = new ReflectionClass($dynaform);
+
+        $reflectionMethod = $reflection->getMethod('jsonsf');
+        $reflectionMethod->setAccessible(true);
+        $result = $reflectionMethod->invokeArgs($dynaform, [&$json, $id, $for, $and]);
+
+        $this->assertObjectHasAttribute('id', $result);
+        $this->assertEquals($result->id, 'stateDropdown');
     }
 }
 
