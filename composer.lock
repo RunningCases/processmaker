@@ -147,6 +147,21 @@
             "time": "2020-03-10T12:38:14+00:00"
         },
         {
+            "name": "colosa/taskscheduler",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@bitbucket.org:colosa/taskscheduler.git",
+                "reference": "master"
+            },
+            "type": "library",
+            "description": "JS Library to render ProcessMaker Task Scheduler",
+            "homepage": "http://processmaker.com",
+            "keywords": [
+                "Vue js lib ProcessMaker Task Scheduler"
+            ]
+        },
+        {
             "name": "colosa/pmUI",
             "version": "dev-release/3.4.8",
             "source": {

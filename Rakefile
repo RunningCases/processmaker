@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'json'
+
 desc "Default Task - Build Library"
 task :default  => [:required] do
   Rake::Task['build'].execute
@@ -66,6 +67,11 @@ task :build => [:required] do
     pmuiHash = getHash(Dir.pwd + "/vendor/colosa/pmUI")
     mafeHash = getHash(Dir.pwd + "/vendor/colosa/MichelangeloFE")
     pmdynaformHash = getHash(Dir.pwd + "/vendor/colosa/pmDynaform")
+
+    puts "Building file: Task Scheduler".cyan
+    system "npm run build --prefix #{Dir.pwd}/vendor/colosa/taskscheduler"
+    system "cp -Rf #{Dir.pwd}/vendor/colosa/taskscheduler/taskscheduler #{targetDir}/taskscheduler"
+    system "cp  #{Dir.pwd}/vendor/colosa/taskscheduler/public/index.html #{targetDir}/taskscheduler"
 
     hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files
@@ -464,4 +470,3 @@ def getLog
     output = `git log -30 --pretty='[%cr] %h %d %s <%an>' --no-merges`
     return output
 end
-
