@@ -51751,15 +51751,16 @@ msgstr "Years"
 # LABEL/ID_MONTHS
 #: LABEL/ID_MONTHS
 msgid "Months"
-msgstr "Months"# 
+msgstr "Months"
 
-TRANSLATION
+# TRANSLATION
 # LABEL/ID_TASK_SCHEDULER_SEND_NOTIFICATIONS
 #: LABEL/ID_TASK_SCHEDULER_SEND_NOTIFICATIONS
 msgid "Actions by email response account email revision"
 msgstr "Actions by email response account email revision"
 
-ID_TASK_SCHEDULER_SEND_NOTIFICATIONS
+# TRANSLATION
+# LABEL/ID_WEEK
 #: LABEL/ID_WEEK
 msgid "Week"
 msgstr "Week"
