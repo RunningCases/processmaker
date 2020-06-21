@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8053778c032829e3f85826b33c5f43c5",
+    "content-hash": "da3512db89554c0bf1626fe310fd8254",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -113,14 +113,14 @@
         },
         {
             "name": "colosa/MichelangeloFE",
-            "version": "dev-release/3.4.8",
+            "version": "dev-release/3.5.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/michelangelofe.git",
-                "reference": "6de1f5f98c9a6e90d939d788d5bb4e6bcf3aff51"
+                "reference": "c18ebcb87a9672f53e71fbcb79c6ad00c0e87056"
             },
             "require": {
-                "colosa/pmui": "release/3.4.8-dev"
+                "colosa/pmui": "release/3.5.0-dev"
             },
             "type": "library",
             "description": "ProcessMaker Michelangelo Front End",
@@ -128,15 +128,15 @@
             "keywords": [
                 "js app ProcessMaker"
             ],
-            "time": "2020-03-11T16:01:33+00:00"
+            "time": "2020-06-21T22:03:52+00:00"
         },
         {
             "name": "colosa/pmDynaform",
-            "version": "dev-release/3.4.8",
+            "version": "dev-release/3.5.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmdynaform.git",
-                "reference": "47fcf0dc5793b227730b5b8549a2c715445726bb"
+                "reference": "ac7df412ede47e2de1a5a341c2c9087769ac5b8b"
             },
             "type": "library",
             "description": "JS Library to render ProcessMaker Dynaforms",
@@ -144,26 +144,11 @@
             "keywords": [
                 "js lib ProcessMaker Dynaforms"
             ],
-            "time": "2020-03-10T12:38:14+00:00"
-        },
-        {
-            "name": "colosa/taskscheduler",
-            "version": "0.1.0",
-            "source": {
-                "type": "git",
-                "url": "git@bitbucket.org:colosa/taskscheduler.git",
-                "reference": "master"
-            },
-            "type": "library",
-            "description": "JS Library to render ProcessMaker Task Scheduler",
-            "homepage": "http://processmaker.com",
-            "keywords": [
-                "Vue js lib ProcessMaker Task Scheduler"
-            ]
+            "time": "2020-06-19T22:41:51+00:00"
         },
         {
             "name": "colosa/pmUI",
-            "version": "dev-release/3.4.8",
+            "version": "dev-release/3.5.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmui.git",
@@ -176,6 +161,22 @@
                 "js lib ProcessMaker UI"
             ],
             "time": "2019-04-26T14:15:30+00:00"
+        },
+        {
+            "name": "colosa/taskscheduler",
+            "version": "dev-release/1.0.0",
+            "source": {
+                "type": "git",
+                "url": "git@bitbucket.org:colosa/taskscheduler.git",
+                "reference": "879dad0d6ccb0579bf9df68f74be5790c2f5eaab"
+            },
+            "type": "library",
+            "description": "JS Library to ProcessMaker Task scheduler",
+            "homepage": "http://processmaker.com",
+            "keywords": [
+                "js lib ProcessMaker Task scheduler"
+            ],
+            "time": "2020-06-21T15:07:49+00:00"
         },
         {
             "name": "dapphp/securimage",
@@ -666,7 +667,7 @@
                     "src/"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "notification-url": "http://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -1607,7 +1608,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jean-Marc Trémeaux",
+                    "name": "Jean-Marc Tr??meaux",
                     "homepage": "http://naku.dohcrew.com/",
                     "role": "Developer"
                 },
@@ -1704,7 +1705,7 @@
                 "rest",
                 "server"
             ],
-            "time": "2020-02-13T18:25:17+00:00"
+            "time": "2017-01-11T03:42:36+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2097,16 +2098,16 @@
         },
         {
             "name": "pdepend/pdepend",
-            "version": "2.7.1",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "daba1cf0a6edaf172fa02a17807ae29f4c1c7471"
+                "reference": "c64472f8e76ca858c79ad9a4cf1e2734b3f8cc38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/daba1cf0a6edaf172fa02a17807ae29f4c1c7471",
-                "reference": "daba1cf0a6edaf172fa02a17807ae29f4c1c7471",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/c64472f8e76ca858c79ad9a4cf1e2734b3f8cc38",
+                "reference": "c64472f8e76ca858c79ad9a4cf1e2734b3f8cc38",
                 "shasum": ""
             },
             "require": {
@@ -2140,7 +2141,13 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of pdepend to be handled with Composer",
-            "time": "2020-02-08T12:06:13+00:00"
+            "funding": [
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/pdepend/pdepend",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-06-20T10:53:13+00:00"
         },
         {
             "name": "pear/archive_tar",
@@ -7049,6 +7056,7 @@
         "colosa/pmui": 20,
         "colosa/michelangelofe": 20,
         "colosa/pmdynaform": 20,
+        "colosa/taskscheduler": 20,
         "geshi/geshi": 20,
         "pdepend/pdepend": 0
     },
@@ -7057,5 +7065,6 @@
     "platform": {
         "php": ">=7.1"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
