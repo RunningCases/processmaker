@@ -185,9 +185,13 @@ class JobsManager
     public function dispatch($name, $callback)
     {
         $environment = $this->getDataSnapshot();
-
-        $instance = $name::dispatch(function() use ($callback, $environment) {
+        global $RBAC;
+        $referrerRBAC = $RBAC;
+        $instance = $name::dispatch(function() use ($callback, $environment, $referrerRBAC) {
                     try {
+                        global $RBAC;
+                        $RBAC = $referrerRBAC;
+
                         $this->recoverDataSnapshot($environment);
                         $callback($environment);
                     } catch (Exception $e) {

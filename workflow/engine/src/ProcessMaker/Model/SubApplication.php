@@ -33,6 +33,7 @@ class SubApplication extends Model
         'SA_INIT_DATE' => '',
         'SA_FINISH_DATE' => ''
     ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -49,4 +50,5 @@ class SubApplication extends Model
         'SA_INIT_DATE',
         'SA_FINISH_DATE'
     ];
+
 }
