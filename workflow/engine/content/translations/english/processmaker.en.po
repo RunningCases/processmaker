@@ -51920,3 +51920,15 @@ msgstr "Repeat on"
 #: LABEL/ID_CUSTOM_SETTINGS
 msgid "Custom settings"
 msgstr "Custom settings"
+
+# TRANSLATION
+# LABEL/ID_TIMER_EVENT
+#: LABEL/ID_TIMER_EVENT
+msgid "Timer event"
+msgstr "Timer event"
+
+# TRANSLATION
+# LABEL/ID_TIMER_EVENT_DESC
+#: LABEL/ID_TIMER_EVENT_DESC
+msgid "Executes timer start and intermediate timer events"
+msgstr "Executes timer start and intermediate timer events"

@@ -166,6 +166,19 @@ class TaskSchedulerBM
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"
+        ],
+        [
+            "title" => "ID_TIMER_EVENT",
+            "enable" => "1",
+            "service" => "",
+            "category" => "case_actions",
+            "file" => "workflow/engine/bin/timereventcron.php",
+            "startingTime" => null,
+            "endingTime" => null,
+            "everyOn" => "1",
+            "interval" => "week",
+            "expression" => "*/1 * * * 0,1,2,3,4,5,6",
+            "description" => "ID_TIMER_EVENT_DESC"
         ]
     ];
     /**
