@@ -25410,6 +25410,18 @@ msgid "Thu"
 msgstr "Thu"
 
 # TRANSLATION
+# LABEL/ID_TIMER_EVENT
+#: LABEL/ID_TIMER_EVENT
+msgid "Timer event"
+msgstr "Timer event"
+
+# TRANSLATION
+# LABEL/ID_TIMER_EVENT_DESC
+#: LABEL/ID_TIMER_EVENT_DESC
+msgid "Executes timer start and intermediate timer events"
+msgstr "Executes timer start and intermediate timer events"
+
+# TRANSLATION
 # LABEL/ID_TIMER_EVENT_ALREADY_REGISTERED
 #: LABEL/ID_TIMER_EVENT_ALREADY_REGISTERED
 msgid "The Timer-Event with {0}: \"{1}\" already registered."
