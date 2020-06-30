@@ -37,7 +37,8 @@ class ActionsByEmailCoreClassTest extends TestCase
         }
         $path = $path . PATH_SEP . 'pmdynaform.html';
         if (!file_exists($path)) {
-            file_put_contents($path, '');
+            $template = file_get_contents(PATH_TPL . 'cases/pmdynaform.html');
+            file_put_contents($path, $template);
         }
     }
 
@@ -46,7 +47,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_with_exception()
+    public function it_should_test_sendActionsByEmail_method_with_exception()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
@@ -85,7 +86,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_if_abe_configuration_is_undefined()
+    public function it_should_test_sendActionsByEmail_method_if_abe_configuration_is_undefined()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
@@ -127,7 +128,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_with_exception_if_task_property_is_undefined()
+    public function it_should_test_sendActionsByEmail_method_with_exception_if_task_property_is_undefined()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
@@ -183,7 +184,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_with_exception_if_email_to_is_empty()
+    public function it_should_test_sendActionsByEmail_method_with_exception_if_email_to_is_empty()
     {
         $user = factory(User::class)->create([
             'USR_EMAIL' => ''
@@ -242,7 +243,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_with_exception_if_email_type_is_empty()
+    public function it_should_test_sendActionsByEmail_method_with_exception_if_email_type_is_empty()
     {
         $user = factory(User::class)->create();
 
@@ -298,7 +299,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_custom()
+    public function it_should_test_sendActionsByEmail_method_custom()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
@@ -357,7 +358,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_response()
+    public function it_should_test_sendActionsByEmail_method_response()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
@@ -413,11 +414,11 @@ class ActionsByEmailCoreClassTest extends TestCase
     }
 
     /**
-     * This test verifies if the sendActionsByEmail method supports the 'FIELD' setting.
+     * This test verifies if the sendActionsByEmail method supports the 'LINK' setting.
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_link()
+    public function it_should_test_sendActionsByEmail_method_link()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
@@ -477,7 +478,7 @@ class ActionsByEmailCoreClassTest extends TestCase
      * @test
      * @covers \ActionsByEmailCoreClass::sendActionsByEmail
      */
-    public function it_should_test_send_actions_by_email_field()
+    public function it_should_test_sendActionsByEmail_method_field()
     {
         $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
                 ->get()
@@ -487,7 +488,8 @@ class ActionsByEmailCoreClassTest extends TestCase
             'PRO_UID' => $process->PRO_UID
         ]);
         $dynaform = factory(Dynaform::class)->create([
-            'PRO_UID' => $process->PRO_UID
+            'PRO_UID' => $process->PRO_UID,
+            'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform2.json")
         ]);
         $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
         $abeConfiguration = factory(AbeConfiguration::class)->create([
@@ -530,5 +532,219 @@ class ActionsByEmailCoreClassTest extends TestCase
         $result = $this->actionsByEmailCoreClass->getAbeRequest();
 
         $this->assertArrayHasKey('ABE_REQ_UID', $result);
+    }
+
+    /**
+     * This test verifies if the getFieldTemplate method supports the 'dropdown' control.
+     * @test
+     * @covers \ActionsByEmailCoreClass::getFieldTemplate
+     */
+    public function it_should_test_getFieldTemplate_method_dropdown_control()
+    {
+        $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
+                ->get()
+                ->first();
+        $process = factory(Process::class)->create();
+        $task = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        $dynaform = factory(Dynaform::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform3.json")
+        ]);
+        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
+        $abeConfiguration = factory(AbeConfiguration::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'DYN_UID' => $dynaform->DYN_UID,
+            'ABE_EMAIL_SERVER_UID' => $emailServer->MESS_UID,
+            'ABE_TYPE' => 'LINK',
+            'ABE_CUSTOM_GRID' => serialize([]),
+            'ABE_EMAIL_SERVER_RECEIVER_UID' => $emailServer->MESS_UID,
+            'ABE_ACTION_FIELD' => '@@option'
+        ]);
+        $abeConfiguration = $abeConfiguration->toArray();
+
+        $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+
+        $data = [
+            'TAS_UID' => $task->TAS_UID,
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => $delegation->DEL_INDEX,
+            'USR_UID' => $user->USR_UID,
+            'PREVIOUS_USR_UID' => $user->USR_UID
+        ];
+        $data = (object) $data;
+
+        $_SERVER["REQUEST_URI"] = '';
+
+        $this->actionsByEmailCoreClass = new ActionsByEmailCoreClass();
+        $this->actionsByEmailCoreClass->setUser($user->USR_UID);
+        $this->actionsByEmailCoreClass->setIndex($delegation->DEL_INDEX);
+        $this->actionsByEmailCoreClass->sendActionsByEmail($data, $abeConfiguration);
+
+        $reflection = new ReflectionClass($this->actionsByEmailCoreClass);
+        $reflectionMethod = $reflection->getMethod('getFieldTemplate');
+        $reflectionMethod->setAccessible(true);
+
+        $result = $reflectionMethod->invokeArgs($this->actionsByEmailCoreClass, []);
+
+        $this->assertContains('jsondata', $result);
+        $this->assertContains('httpServerHostname', $result);
+        $this->assertContains('pm_run_outside_main_app', $result);
+        $this->assertContains('pathRTLCss', $result);
+        $this->assertContains('fieldsRequired', $result);
+    }
+
+    /**
+     * This test verifies if the getFieldTemplate method supports the 'checkbox' control.
+     * @test
+     * @covers \ActionsByEmailCoreClass::getFieldTemplate
+     */
+    public function it_should_test_getFieldTemplate_method_checkbox_control()
+    {
+        $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
+                ->get()
+                ->first();
+        $process = factory(Process::class)->create();
+        $task = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        $dynaform = factory(Dynaform::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform3.json")
+        ]);
+        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
+        $abeConfiguration = factory(AbeConfiguration::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'DYN_UID' => $dynaform->DYN_UID,
+            'ABE_EMAIL_SERVER_UID' => $emailServer->MESS_UID,
+            'ABE_TYPE' => 'LINK',
+            'ABE_CUSTOM_GRID' => serialize([]),
+            'ABE_EMAIL_SERVER_RECEIVER_UID' => $emailServer->MESS_UID,
+            'ABE_ACTION_FIELD' => '@@checkboxVar001'
+        ]);
+        $abeConfiguration = $abeConfiguration->toArray();
+
+        $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+
+        $data = [
+            'TAS_UID' => $task->TAS_UID,
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => $delegation->DEL_INDEX,
+            'USR_UID' => $user->USR_UID,
+            'PREVIOUS_USR_UID' => $user->USR_UID
+        ];
+        $data = (object) $data;
+
+        $_SERVER["REQUEST_URI"] = '';
+
+        $this->actionsByEmailCoreClass = new ActionsByEmailCoreClass();
+        $this->actionsByEmailCoreClass->setUser($user->USR_UID);
+        $this->actionsByEmailCoreClass->setIndex($delegation->DEL_INDEX);
+        $this->actionsByEmailCoreClass->sendActionsByEmail($data, $abeConfiguration);
+
+        $reflection = new ReflectionClass($this->actionsByEmailCoreClass);
+        $reflectionMethod = $reflection->getMethod('getFieldTemplate');
+        $reflectionMethod->setAccessible(true);
+
+        $result = $reflectionMethod->invokeArgs($this->actionsByEmailCoreClass, []);
+
+        $this->assertContains('jsondata', $result);
+        $this->assertContains('httpServerHostname', $result);
+        $this->assertContains('pm_run_outside_main_app', $result);
+        $this->assertContains('pathRTLCss', $result);
+        $this->assertContains('fieldsRequired', $result);
+    }
+
+    /**
+     * This test verifies if the getFieldTemplate method supports the 'yesno' control.
+     * The 'yesno' control is obsolete and not used in pmdynaform.
+     * @test
+     * @covers \ActionsByEmailCoreClass::getFieldTemplate
+     */
+    public function it_should_test_getFieldTemplate_method_yesno_control()
+    {
+        $user = User::where('USR_UID', '=', '00000000000000000000000000000001')
+                ->get()
+                ->first();
+        $process = factory(Process::class)->create();
+        $task = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        $dynaform = factory(Dynaform::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'DYN_CONTENT' => file_get_contents(PATH_TRUNK . "/tests/resources/dynaform3.json")
+        ]);
+        $emailServer = factory(ProcessMaker\Model\EmailServerModel::class)->create();
+        $abeConfiguration = factory(AbeConfiguration::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'DYN_UID' => $dynaform->DYN_UID,
+            'ABE_EMAIL_SERVER_UID' => $emailServer->MESS_UID,
+            'ABE_TYPE' => 'LINK',
+            'ABE_CUSTOM_GRID' => serialize([]),
+            'ABE_EMAIL_SERVER_RECEIVER_UID' => $emailServer->MESS_UID,
+            'ABE_ACTION_FIELD' => '@@radioVar001'
+        ]);
+        $abeConfiguration = $abeConfiguration->toArray();
+
+        $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+
+        $data = [
+            'TAS_UID' => $task->TAS_UID,
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => $delegation->DEL_INDEX,
+            'USR_UID' => $user->USR_UID,
+            'PREVIOUS_USR_UID' => $user->USR_UID
+        ];
+        $data = (object) $data;
+
+        $_SERVER["REQUEST_URI"] = '';
+
+        $this->actionsByEmailCoreClass = new ActionsByEmailCoreClass();
+        $this->actionsByEmailCoreClass->setUser($user->USR_UID);
+        $this->actionsByEmailCoreClass->setIndex($delegation->DEL_INDEX);
+        $this->actionsByEmailCoreClass->sendActionsByEmail($data, $abeConfiguration);
+
+        $reflection = new ReflectionClass($this->actionsByEmailCoreClass);
+        $reflectionMethod = $reflection->getMethod('getFieldTemplate');
+        $reflectionMethod->setAccessible(true);
+
+        $result = $reflectionMethod->invokeArgs($this->actionsByEmailCoreClass, []);
+
+        $this->assertContains('jsondata', $result);
+        $this->assertContains('httpServerHostname', $result);
+        $this->assertContains('pm_run_outside_main_app', $result);
+        $this->assertContains('pathRTLCss', $result);
+        $this->assertContains('fieldsRequired', $result);
     }
 }
