@@ -882,7 +882,7 @@ class ActionsByEmailCoreClass extends PMPlugin
             }
         }
 
-        $obj = new PmDynaform($dynUid);
+        $obj = new PmDynaform(["CURRENT_DYNAFORM" => $dynUid]);
         $this->addItemAbeProperties(['CURRENT_DYNAFORM' => $dynUid]);
         $file = $obj->printPmDynaformAbe($this->getTaskAbeProperties());
         $html = $file;
