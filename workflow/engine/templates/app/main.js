@@ -302,7 +302,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
             xtype: "checkbox",
             id: "chkSendMail",
             name: "chkSendMail",
-            checked: true,
+            checked: false,
             boxLabel: _("ID_CASE_NOTES_LABEL_SEND")
         },
         '->',
@@ -421,7 +421,7 @@ function newNoteHandler()
     Ext.getCmp('caseNoteText').reset();
     uploadFields = caseNotesForm.findByType('fileuploadfield');
     // clean the first upload field
-    uploadFields[0].setRawValue(null);
+    uploadFields[0].reset();
     for (i = 1; i < uploadFields.length; i += 1) {
       caseNotesForm.remove(uploadFields[i]);
     }

@@ -69,7 +69,8 @@ class Lists
         ];
 
         // If the feature for highlight the home folders is disabled, add self-service list to the map
-        if (!HIGHLIGHT_HOME_FOLDER_ENABLE) {
+        $flag = defined('HIGHLIGHT_HOME_FOLDER_ENABLE') ? HIGHLIGHT_HOME_FOLDER_ENABLE : 0;
+        if (!$flag) {
             $this->mapList['ListSelfService'] = 'CASES_SELFSERVICE';
         }
 

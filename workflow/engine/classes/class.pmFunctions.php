@@ -468,12 +468,13 @@ function evaluateFunction($aGrid, $sExpresion)
  * stantard deviation, variance, percentile, count, count distinct
  * 
  * @name PMFTotalCalculation
- * @label PMFTotalCalculation Function
+ * @label PMF TotalCalculation
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFTotalCalculation.28.29
- * @param array | $grid | Grid | The input grid.
+ * @param array | $grid | Grid | The input grid
  * @param string (32) | $field | Name of field | The name of the field.
- * @param string (32) | $function | Operation.
- * @return int|float|array | $result | Result | Result according of the function
+ * @param string (32) | $function | Operation | More information about the type of calculations can be found in https://wiki.processmaker.com/3.2/ProcessMaker_Functions
+ * 
+ * @return mixed | $result | Result | Result according of the operation
  *
  */
 function PMFTotalCalculation($grid, $field, $function)
@@ -3019,13 +3020,13 @@ function PMFUnpauseCase ($caseUid, $delIndex, $userUid)
  * @param string(32) | $taskUid | ID of the task | The unique ID of the task.
  * @param string(32) | $userUid | ID user | The unique ID of the user who will add note case.
  * @param string | $note | Note of the case | Note of the case.
- * @param int | $sendMail = 1 | Send mail | Optional parameter. If set to 1, will send an email to all participants in the case.
+ * @param int | $sendMail = 0 | Send mail | Optional parameter. If set to 1, will send an email to all participants in the case.
  * @param array | $files | Array of files | An array of files (full paths) to be attached to the case notes.
  * 
  * @return int | $result | Result of the add a case note | Returns 1 if the note has been added to the case.; otherwise, returns 0 if an error occurred.
  *
  */
-function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail = 1, $files = [])
+function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail = 0, $files = [])
 {
     $ws = new WsBase();
     $result = $ws->addCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail, $files);

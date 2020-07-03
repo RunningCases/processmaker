@@ -1,8 +1,12 @@
 <?php
+
 namespace ProcessMaker\BusinessModel;
 
+use Exception;
 use G;
 use ProcessMaker\BusinessModel\Variable;
+use ProcessMaker\Model\Application;
+use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessVariables;
 use Tests\TestCase;
@@ -12,6 +16,7 @@ use Tests\TestCase;
  */
 class VariableTest extends TestCase
 {
+
     /**
      * Test it create variables related to the process
      *
@@ -23,10 +28,9 @@ class VariableTest extends TestCase
         $process = factory(Process::class)->create();
 
         factory(ProcessVariables::class)->create([
-                'PRJ_UID' => $process->PRO_UID,
-                'PRO_ID' => $process->PRO_ID,
-            ]
-        );
+            'PRJ_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID,
+        ]);
         $properties = [
             'VAR_UID' => G::generateUniqueID(),
             'VAR_NAME' => 'var_test',
@@ -69,10 +73,9 @@ class VariableTest extends TestCase
     {
         $process = factory(Process::class)->create();
         factory(ProcessVariables::class)->create([
-                'PRJ_UID' => $process->PRO_UID,
-                'PRO_ID' => $process->PRO_ID,
-            ]
-        );
+            'PRJ_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID,
+        ]);
         $properties = [
             'VAR_UID' => G::generateUniqueID(),
             'VAR_NAME' => '',
@@ -101,10 +104,9 @@ class VariableTest extends TestCase
     {
         $process = factory(Process::class)->create();
         factory(ProcessVariables::class)->create([
-                'PRJ_UID' => $process->PRO_UID,
-                'PRO_ID' => $process->PRO_ID,
-            ]
-        );
+            'PRJ_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID,
+        ]);
         $properties = [
             'VAR_UID' => G::generateUniqueID(),
             'VAR_NAME' => 'var_test',
@@ -133,10 +135,9 @@ class VariableTest extends TestCase
     {
         $process = factory(Process::class)->create();
         factory(ProcessVariables::class)->create([
-                'PRJ_UID' => $process->PRO_UID,
-                'PRO_ID' => $process->PRO_ID,
-            ]
-        );
+            'PRJ_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID,
+        ]);
         $properties = [
             'VAR_UID' => G::generateUniqueID(),
             'VAR_NAME' => 'var_test',
@@ -166,10 +167,9 @@ class VariableTest extends TestCase
         $process = factory(Process::class)->create();
 
         factory(ProcessVariables::class)->create([
-                'PRJ_UID' => $process->PRO_UID,
-                'PRO_ID' => $process->PRO_ID,
-            ]
-        );
+            'PRJ_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID,
+        ]);
         $variable = new Variable();
         $res = $variable->getVariables($process->PRO_UID);
         $this->assertNotEmpty($res);
@@ -226,5 +226,50 @@ class VariableTest extends TestCase
         // When the search does not match
         $res = $variable->getVariablesByType($process->PRO_UID, 2, null, null, 'other');
         $this->assertEmpty($res);
+    }
+
+    /**
+     * This verify method executeSqlControl.
+     * @test
+     * @covers \ProcessMaker\BusinessModel\Variable::executeSqlControl()
+     */
+    public function it_should_test_execute_sql_control()
+    {
+        $pathData = PATH_TRUNK . "/tests/resources/dynaform2.json";
+        $data = file_get_contents($pathData);
+        $json = json_decode($data);
+
+        $dynaform = factory(Dynaform::class)->create([
+            'DYN_CONTENT' => $data
+        ]);
+        $application = factory(Application::class)->create();
+
+        $proUid = '';
+        $params = [
+            'app_uid' => $application->APP_UID,
+            'countryDropdown1' => 'BO',
+            'dyn_uid' => $dynaform->DYN_UID,
+            'field_id' => 'stateDropdown',
+            'grid_name' => 'gridVar004',
+        ];
+        $_SERVER["REQUEST_URI"] = '';
+        $variable = new Variable();
+        $result = $variable->executeSqlControl($proUid, $params);
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * This verify method executeSqlControl try exception.
+     * @test
+     * @covers \ProcessMaker\BusinessModel\Variable::executeSqlControl()
+     */
+    public function it_should_test_execute_sql_control_with_exception()
+    {
+        //assert
+        $this->expectException(Exception::class);
+
+        $variable = new Variable();
+        $result = $variable->executeSqlControl(null, []);
     }
 }

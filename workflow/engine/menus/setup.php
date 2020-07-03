@@ -295,3 +295,31 @@ if ((string)($status) !== 'enabled' &&
     );
 }
 /*----------------------------------********---------------------------------*/
+
+if ($RBAC->userCanAccess('PM_TASK_SCHEDULER_ADMIN') === 1) {
+    $G_TMP_MENU->AddIdRawOption(
+        'ID_MENU_CASE_ACTIONS', '../scheduler/index?category=case_actions',
+        G::LoadTranslation("ID_TASK_SCHEDULER_CASE_ACTIONS"),
+        '', '',  G::LoadTranslation("ID_TASK_SCHEDULER")
+    );
+    $G_TMP_MENU->AddIdRawOption(
+        'ID_MENU_EMAILS_NOTIFICATIONS', '../scheduler/index?category=emails_notifications',
+        G::LoadTranslation("ID_TASK_SCHEDULER_EMAILS_NOTIFICATIONS"),
+        '', '', G::LoadTranslation("ID_TASK_SCHEDULER")
+    );
+    $G_TMP_MENU->AddIdRawOption(
+        'ID_MENU_PLUGINS', '../scheduler/index?category=plugins',
+        G::LoadTranslation("ID_TASK_SCHEDULER_PLUGINS"),
+        '', '', G::LoadTranslation("ID_TASK_SCHEDULER")
+    ); 
+    $G_TMP_MENU->AddIdRawOption(
+        'ID_MENU_PM_SYNC', '../scheduler/index?category=processmaker_sync',
+        G::LoadTranslation("ID_TASK_SCHEDULER_PM_SYNC"),
+        '', '', G::LoadTranslation("ID_TASK_SCHEDULER")
+    );     
+    $G_TMP_MENU->AddIdRawOption(
+        'ID_MENU_REPORTING', '../scheduler/index?category=reporting',
+        G::LoadTranslation("ID_TASK_SCHEDULER_REPORTING"),
+        '', '', G::LoadTranslation("ID_TASK_SCHEDULER")
+    );   
+}

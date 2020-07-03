@@ -3328,5 +3328,32 @@ CREATE TABLE `JOBS_FAILED`
 	`failed_at` DATETIME  NOT NULL,
 	PRIMARY KEY (`id`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- SCHEDULER
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `SCHEDULER`;
+
+
+CREATE TABLE `SCHEDULER`
+(
+	`id` BIGINT(20)  NOT NULL AUTO_INCREMENT,
+	`title` VARCHAR(255),
+	`startingTime` VARCHAR(100),
+	`endingTime` VARCHAR(100),
+	`everyOn` VARCHAR(255),
+	`interval` VARCHAR(10),
+	`description` VARCHAR(255),
+	`expression` VARCHAR(255),
+	`body` VARCHAR(255),
+	`type` VARCHAR(255),
+	`category` VARCHAR(255),
+	`system` TINYINT(3),
+	`timezone` VARCHAR(255),
+	`enable` TINYINT(3),
+	`creation_date` DATETIME,
+	`last_update` DATETIME,
+	PRIMARY KEY (`id`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
