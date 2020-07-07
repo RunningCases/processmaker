@@ -1,17 +1,12 @@
 <?php
-
 namespace App\Console\Commands;
-
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Scheduling\ScheduleRunCommand as BaseCommand;
 use Maveriks\WebApplication;
 use ProcessMaker\Model\TaskScheduler;
-
 class ScheduleRunCommand extends BaseCommand
 {
-
     use AddParametersTrait;
-
     /**
      * Create a new command instance.
      *
@@ -30,7 +25,6 @@ class ScheduleRunCommand extends BaseCommand
         $this->description .= ' (ProcessMaker has extended this command)';
         parent::__construct($schedule);
     }
-
     /**
      * Execute the console command.
      *
@@ -47,12 +41,15 @@ class ScheduleRunCommand extends BaseCommand
             $webApplication->loadEnvironment($workspace, false);
         }
         TaskScheduler::all()->each(function ($p) use ($that, $user) {
+            $win = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             if ($p->enable == 1) {
                 $starting = isset($p->startingTime) ? $p->startingTime : "0:00";
                 $ending = isset($p->startingTime) ? $p->endingTime : "23:59";
-
                 $timezone = isset($p->timezone) && $p->timezone != "" ? $p->timezone : date_default_timezone_get();
-                $body = str_replace(" -c"," " . $user . " -c", $p->body);
+                $body = $p->body;
+                if (!$win) {
+                    $body = str_replace(" -c"," " . $user . " -c", $p->body);
+                }
                 $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
                     $now = Carbon::now();
                     $result = false;
