@@ -1,10 +1,7 @@
 <?php
-
 namespace ProcessMaker\BusinessModel;
-
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\TaskScheduler;
-
 class TaskSchedulerBM
 {
     public static $services = [
@@ -14,6 +11,7 @@ class TaskSchedulerBM
             "service" => "unpause",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -27,6 +25,7 @@ class TaskSchedulerBM
             "service" => "calculate",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
             "everyOn" => "1",
@@ -40,6 +39,7 @@ class TaskSchedulerBM
             "service" => "unassigned-case",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -53,6 +53,7 @@ class TaskSchedulerBM
             "service" => "clean-self-service-tables",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
             "everyOn" => "1",
@@ -66,6 +67,7 @@ class TaskSchedulerBM
             "service" => "emails",
             "category" => "emails_notifications",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -79,6 +81,7 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "emails_notifications",
             "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",
+            "filew" => "workflow\\engine\bin\actionsByEmailEmailResponse.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -92,6 +95,7 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "emails_notifications",
             "file" => "workflow/engine/bin/messageeventcron.php",
+            "filew" => "workflow\\engine\bin\messageeventcron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -105,6 +109,7 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "emails_notifications",
             "file" => "workflow/engine/bin/sendnotificationscron.php",
+            "filew" => "workflow\\engine\bin\sendnotificationscron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -118,6 +123,7 @@ class TaskSchedulerBM
             "service" => "report_by_user",
             "category" => "reporting",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -131,9 +137,9 @@ class TaskSchedulerBM
             "service" => "report_by_process",
             "category" => "reporting",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "category" => "reporting",
-            "file" => "workflow/engine/bin/cron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -147,6 +153,7 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "processmaker_sync",
             "file" => "workflow/engine/bin/ldapcron.php",
+            "filew" => "workflow\\engine\bin\ldapcron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
             "everyOn" => "1",
@@ -160,6 +167,7 @@ class TaskSchedulerBM
             "service" => "plugins",
             "category" => "plugins",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
             "everyOn" => "1",
@@ -173,6 +181,7 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/timereventcron.php",
+            "filew" => "workflow\\engine\bin\\timereventcron.php",
             "startingTime" => null,
             "endingTime" => null,
             "everyOn" => "1",
@@ -207,7 +216,6 @@ class TaskSchedulerBM
         if (isset($request['enable'])) {
             $task->enable =  $request['enable'];
         }
-
         if (isset($request['expression'])) {
             $task->expression = $request['expression'];
             $task->startingTime =  $request['startingTime'];
@@ -219,7 +227,6 @@ class TaskSchedulerBM
         $task->save();
         return $task;
     }
-
     /**
      * Initial data for Schedule Table, with default values
      */
@@ -227,7 +234,7 @@ class TaskSchedulerBM
     {
         $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
         $toSave = [];
- 
+        $win = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         foreach (TaskSchedulerBM::$services as $service) {
             $task = new TaskScheduler;
             $task->title = $service["title"];
@@ -235,7 +242,11 @@ class TaskSchedulerBM
             $task->description = $service["description"];
             $task->startingTime = $service["startingTime"];
             $task->endingTime = $service["endingTime"];
-            $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force"';
+            if ($win) {
+                $task->body = 'php "' . PATH_TRUNK . $service["filew"] . '" ' . $service["service"] . ' +w' . config("system.workspace") . ' +force';
+            } else {
+                $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force"';
+            }
             $task->expression = $service["expression"];
             $task->type = "shell";
             $task->system = 1;
