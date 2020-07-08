@@ -282,7 +282,9 @@ emailServer.application = {
             Ext.getCmp("buttonContinue").setVisible(false);
             Ext.getCmp("btnTest").setVisible(true);
             Ext.getCmp("btnSave").setVisible(true);
-
+            /*----------------------------------********---------------------------------*/
+            Ext.getCmp("chkEmailServerDefault").setVisible(true);
+            /*----------------------------------********---------------------------------*/
             if (cboEmailEngine === "PHPMAILER") {
                 Ext.getCmp("txtServer").setVisible(true);
                 Ext.getCmp("txtPort").setVisible(true);
@@ -316,7 +318,6 @@ emailServer.application = {
                 /*----------------------------------********---------------------------------*/
                 Ext.getCmp("txtServer").setVisible(true);
                 Ext.getCmp("txtPort").setVisible(true);
-
                 try {
                     Ext.getCmp("txtServer").label.update(_("ID_OUTGOING_SERVER"));
                     Ext.getCmp("txtPort").label.update(_("OUTGOING_PORT_DEFAULT"));
@@ -334,6 +335,7 @@ emailServer.application = {
 
                 Ext.getCmp("txtAccountFrom").setVisible(true);
                 Ext.getCmp("rdoGrpSmtpSecure").setVisible(true);
+                Ext.getCmp("chkEmailServerDefault").setVisible(false);
 
                 Ext.getCmp("txtServer").allowBlank = false;
                 Ext.getCmp("txtPort").allowBlank = false;
