@@ -26,6 +26,11 @@ return [
         Illuminate\Notifications\NotificationServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Redis\RedisServiceProvider::class,
+
+        /*
+         * Application Service Providers...
+         */
+        App\Providers\AppServiceProvider::class,
     ],
 
     'aliases' => [
