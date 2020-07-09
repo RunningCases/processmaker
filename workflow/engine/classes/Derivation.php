@@ -1339,7 +1339,7 @@ class Derivation
         //if there are SubProcess to create
         if (isset($aSP)) {
             // Create case in the subprocess
-            $this->subProcessCreation($aSP, $appFields, $currentDelegation, $iNewDelIndex, $iAppThreadIndex);
+            $subProcessFields = $this->subProcessCreation($aSP, $appFields, $currentDelegation, $iNewDelIndex, $iAppThreadIndex);
 
             // If is ASYNCHRONOUS we will to route the case master
             if ($aSP['SP_SYNCHRONOUS'] == 0) {
@@ -1382,9 +1382,9 @@ class Derivation
                         if ($openThreads == 0) {
                             $this->derivate($currentDelegation2, $nextDelegations2);
                         } else {
-                            $oSubApplication = new SubApplication();
-                            $aSubApplication['SA_STATUS'] = 'ACTIVE';
-                            $oSubApplication->update($aSubApplication);
+                            $subApplication = new SubApplication();
+                            $subProcessFields['SA_STATUS'] = 'ACTIVE';
+                            $subApplication->update($subProcessFields);
                         }
                     }
                 }
@@ -1411,7 +1411,7 @@ class Derivation
      * @param int $delIndex
      * @param int $threadIndex
      * 
-     * @return void
+     * @return array
      */
     protected function subProcessCreation(array $subProcessInfo, array $appFields, array $currentDelegation, $delIndex, $threadIndex)
     {
@@ -1496,6 +1496,8 @@ class Derivation
         $nextTaskData = $taskNextDel->toArray(BasePeer::TYPE_FIELDNAME);
         $nextTaskData['USR_UID'] = $subProcessInfo['USR_UID'];
         $sendNotifications = $this->notifyAssignedUser($appFields, $nextTaskData, $newCase['INDEX']);
+
+        return $attributes;
     }
 
     /**
