@@ -62,6 +62,20 @@ class TaskSchedulerBM
             "description" => 'ID_TASK_SCHEDULER_CLEAN_SELF_DESC'
         ],
         [
+            "title" => "ID_TIMER_EVENT",
+            "enable" => "1",
+            "service" => "",
+            "category" => "case_actions",
+            "file" => "workflow/engine/bin/timereventcron.php",
+            "filew" => "workflow\\engine\bin\\timereventcron.php",
+            "startingTime" => null,
+            "endingTime" => null,
+            "everyOn" => "1",
+            "interval" => "week",
+            "expression" => "*/1 * * * 0,1,2,3,4,5,6",
+            "description" => "ID_TIMER_EVENT_DESC"
+        ],
+        [
             "title" => "ID_TASK_SCHEDULER_CASE_EMAILS",
             "enable" => "1",
             "service" => "emails",
@@ -76,20 +90,6 @@ class TaskSchedulerBM
             "description" => "ID_TASK_SCHEDULER_CASE_EMAILS_DESC"
         ],
         [
-            "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
-            "enable" => "1",
-            "service" => "",
-            "category" => "emails_notifications",
-            "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",
-            "filew" => "workflow\\engine\bin\actionsByEmailEmailResponse.php",
-            "startingTime" => null,
-            "endingTime" => null,
-            "everyOn" => "1",
-            "interval" => "week",
-            "expression" => "*/5 * * * 0,1,2,3,4,5,6",
-            "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"
-        ],
-        [
             "title" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS",
             "enable" => "1",
             "service" => "",
@@ -102,6 +102,21 @@ class TaskSchedulerBM
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"
+        ]
+    /*----------------------------------********---------------------------------*/
+        ,[
+            "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
+            "enable" => "1",
+            "service" => "",
+            "category" => "emails_notifications",
+            "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",
+            "filew" => "workflow\\engine\bin\actionsByEmailEmailResponse.php",
+            "startingTime" => null,
+            "endingTime" => null,
+            "everyOn" => "1",
+            "interval" => "week",
+            "expression" => "*/5 * * * 0,1,2,3,4,5,6",
+            "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"
         ],
         [
             "title" => "ID_TASK_SCHEDULER_SEND_NOT",
@@ -174,21 +189,8 @@ class TaskSchedulerBM
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"
-        ],
-        [
-            "title" => "ID_TIMER_EVENT",
-            "enable" => "1",
-            "service" => "",
-            "category" => "case_actions",
-            "file" => "workflow/engine/bin/timereventcron.php",
-            "filew" => "workflow\\engine\bin\\timereventcron.php",
-            "startingTime" => null,
-            "endingTime" => null,
-            "everyOn" => "1",
-            "interval" => "week",
-            "expression" => "*/1 * * * 0,1,2,3,4,5,6",
-            "description" => "ID_TIMER_EVENT_DESC"
         ]
+    /*----------------------------------********---------------------------------*/
     ];
     /**
      * Return the records in Schedule Table by category
