@@ -3345,6 +3345,7 @@ CREATE TABLE `SCHEDULER`
 	`interval` VARCHAR(10),
 	`description` VARCHAR(255),
 	`expression` VARCHAR(255),
+	`default_value` MEDIUMTEXT,
 	`body` VARCHAR(255),
 	`type` VARCHAR(255),
 	`category` VARCHAR(255),

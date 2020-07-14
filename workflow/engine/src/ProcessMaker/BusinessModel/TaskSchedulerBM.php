@@ -1,7 +1,10 @@
 <?php
+
 namespace ProcessMaker\BusinessModel;
+
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\TaskScheduler;
+
 class TaskSchedulerBM
 {
     public static $services = [
@@ -103,8 +106,7 @@ class TaskSchedulerBM
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"
         ]
-    /*----------------------------------********---------------------------------*/
-        ,[
+        /*----------------------------------********---------------------------------*/, [
             "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
             "enable" => "1",
             "service" => "",
@@ -190,7 +192,7 @@ class TaskSchedulerBM
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"
         ]
-    /*----------------------------------********---------------------------------*/
+        /*----------------------------------********---------------------------------*/
     ];
     /**
      * Return the records in Schedule Table by category
@@ -206,7 +208,11 @@ class TaskSchedulerBM
         if (is_null($category)) {
             return $tasks;
         } else {
-            return TaskScheduler::where('category', $category)->get();
+            $tasks = TaskScheduler::where('category', $category)->get();
+            foreach ($tasks as $task) {
+                $task->default_value = json_decode($task->default_value);
+            }
+            return $tasks;
         }
     }
     /**
@@ -255,6 +261,14 @@ class TaskSchedulerBM
             $task->enable = $service["enable"];
             $task->everyOn = $service["everyOn"];
             $task->interval = $service["interval"];
+            $task->default_value = json_encode([
+                "startingTime" => $service["startingTime"],
+                "endingTime" => $service["endingTime"],
+                "everyOn" => $service["everyOn"],
+                "interval" => $service["interval"],
+                "expression" => $service["expression"],
+                "timezone" => null
+            ]);
             $task->save();
         }
     }

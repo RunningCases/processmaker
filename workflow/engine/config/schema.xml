@@ -6043,6 +6043,7 @@
         <column name="interval" type="VARCHAR"  size="10" required="false"/>
         <column name="description" type="VARCHAR"  size="255" required="false"/>
         <column name="expression" type="VARCHAR"  size="255" required="false"/>
+        <column name="default_value" type="LONGVARCHAR" required="false"/>
         <column name="body" type="VARCHAR"  size="255" required="false"/>
         <column name="type" type="VARCHAR"  size="255" required="false"/>
         <column name="category" type="VARCHAR"  size="255" required="false"/>
