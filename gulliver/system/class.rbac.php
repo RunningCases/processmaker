@@ -12,6 +12,7 @@ class RBAC
     const PROCESSMAKER_GUEST = 'PROCESSMAKER_GUEST';
     const PROCESSMAKER_GUEST_UID = '00000000000000000000000000000005';
     const GUEST_USER_UID = '00000000000000000000000000000002';
+    public static $defaultPermissionsForAdmin = ['PM_TASK_SCHEDULER_ADMIN'];
 
     /**
      *
@@ -1979,8 +1980,8 @@ class RBAC
             $o = new RolesPermissions();
             $o->setPerUid($item['PER_UID']);
             $o->setPermissionName($item['PER_NAME']);
-            //assigning new permissions
-            $this->assigningNewPermissionsPmSetup($item);
+            // Assigning new permissions to specific roles
+            $this->assigningNewPermissionsForAdmin($item);
             $this->assigningNewPermissionsPmEditProfile($item);
         }
 
@@ -1988,12 +1989,13 @@ class RBAC
     }
 
     /**
-     * Permissions for tab ADMIN
+     * Assign new permissions to the role defined
+     * Permissions with the name with PM_SETUP_* or defined in the array $defaultPermissionsForAdmin
      * @param array $item
      */
-    public function assigningNewPermissionsPmSetup($item = [])
+    public function assigningNewPermissionsForAdmin($item = [])
     {
-        if (strpos($item['PER_CODE'], 'PM_SETUP_') !== false) {
+        if (strpos($item['PER_CODE'], 'PM_SETUP_') !== false || in_array($item['PER_CODE'], self::$defaultPermissionsForAdmin)) {
             $rolesWithPermissionSetup = $this->getRolePermissionsByPerUid(self::SETUPERMISSIONUID);
             $rolesWithPermissionSetup->next();
             while ($aRow = $rolesWithPermissionSetup->getRow()) {
