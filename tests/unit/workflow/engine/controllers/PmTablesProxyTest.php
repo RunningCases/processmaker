@@ -1085,4 +1085,51 @@ class PmTablesProxyTest extends TestCase
         $obj->delete($httpDataVarChar);
         $obj->delete($httpDataTinyInt);
     }
+    
+    /**
+     * This test verifies the import of pmtable with post form error catching.
+     * 
+     * Note: not all paths of this import method can be covered, because there is the 
+     * definition of constants at the beginning of the method. Removing the 
+     * constants would imply a very big change.
+     * @test
+     * @covers ::import()
+     */
+    public function it_should_test_import_method_with_post_form_error_catch()
+    {
+        $httpData = [
+            'form' => [
+                "TYPE_TABLE" => "admin",
+                "PRO_UID" => "false"
+            ]
+        ];
+        $_POST['form'] = [
+            'TYPE_TABLE' => 'admin',
+            'FROM_CONFIRM' => 'admin'
+        ];
+        $_SESSION['FILES_FORM'] = [
+            'error' => [
+                'FILENAME' => -1
+            ]
+        ];
+        $_FILES['form'] = [];
+
+        $pmTablesProxy = new pmTablesProxy();
+        $result = $pmTablesProxy->import($httpData);
+
+        //asserts
+        $this->assertObjectHasAttribute('fromAdmin', $result);
+        $this->assertObjectHasAttribute('arrayMessage', $result);
+        $this->assertObjectHasAttribute('arrayRelated', $result);
+        $this->assertObjectHasAttribute('arrayOverwrite', $result);
+        $this->assertObjectHasAttribute('validationType', $result);
+        $this->assertObjectHasAttribute('errorType', $result);
+        $this->assertObjectHasAttribute('buildResult', $result);
+        $this->assertObjectHasAttribute('success', $result);
+        $this->assertObjectHasAttribute('message', $result);
+        $this->assertObjectHasAttribute('type', $result);
+
+        $this->assertEquals($result->success, false);
+        $this->assertEquals($result->errorType, 'error');
+    }
 }
