@@ -25,7 +25,7 @@ abstract class BaseSchedulerPeer
     const CLASS_DEFAULT = 'classes.model.Scheduler';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 16;
+    const NUM_COLUMNS = 17;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -54,6 +54,9 @@ abstract class BaseSchedulerPeer
 
     /** the column name for the EXPRESSION field */
     const EXPRESSION = 'SCHEDULER.EXPRESSION';
+
+    /** the column name for the DEFAULT_VALUE field */
+    const DEFAULT_VALUE = 'SCHEDULER.DEFAULT_VALUE';
 
     /** the column name for the BODY field */
     const BODY = 'SCHEDULER.BODY';
@@ -90,10 +93,10 @@ abstract class BaseSchedulerPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Title', 'Startingtime', 'Endingtime', 'Everyon', 'Interval', 'Description', 'Expression', 'Body', 'Type', 'Category', 'System', 'Timezone', 'Enable', 'CreationDate', 'LastUpdate', ),
-        BasePeer::TYPE_COLNAME => array (SchedulerPeer::ID, SchedulerPeer::TITLE, SchedulerPeer::STARTINGTIME, SchedulerPeer::ENDINGTIME, SchedulerPeer::EVERYON, SchedulerPeer::INTERVAL, SchedulerPeer::DESCRIPTION, SchedulerPeer::EXPRESSION, SchedulerPeer::BODY, SchedulerPeer::TYPE, SchedulerPeer::CATEGORY, SchedulerPeer::SYSTEM, SchedulerPeer::TIMEZONE, SchedulerPeer::ENABLE, SchedulerPeer::CREATION_DATE, SchedulerPeer::LAST_UPDATE, ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'title', 'startingTime', 'endingTime', 'everyOn', 'interval', 'description', 'expression', 'body', 'type', 'category', 'system', 'timezone', 'enable', 'creation_date', 'last_update', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Title', 'Startingtime', 'Endingtime', 'Everyon', 'Interval', 'Description', 'Expression', 'DefaultValue', 'Body', 'Type', 'Category', 'System', 'Timezone', 'Enable', 'CreationDate', 'LastUpdate', ),
+        BasePeer::TYPE_COLNAME => array (SchedulerPeer::ID, SchedulerPeer::TITLE, SchedulerPeer::STARTINGTIME, SchedulerPeer::ENDINGTIME, SchedulerPeer::EVERYON, SchedulerPeer::INTERVAL, SchedulerPeer::DESCRIPTION, SchedulerPeer::EXPRESSION, SchedulerPeer::DEFAULT_VALUE, SchedulerPeer::BODY, SchedulerPeer::TYPE, SchedulerPeer::CATEGORY, SchedulerPeer::SYSTEM, SchedulerPeer::TIMEZONE, SchedulerPeer::ENABLE, SchedulerPeer::CREATION_DATE, SchedulerPeer::LAST_UPDATE, ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'title', 'startingTime', 'endingTime', 'everyOn', 'interval', 'description', 'expression', 'default_value', 'body', 'type', 'category', 'system', 'timezone', 'enable', 'creation_date', 'last_update', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
     );
 
     /**
@@ -103,10 +106,10 @@ abstract class BaseSchedulerPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Title' => 1, 'Startingtime' => 2, 'Endingtime' => 3, 'Everyon' => 4, 'Interval' => 5, 'Description' => 6, 'Expression' => 7, 'Body' => 8, 'Type' => 9, 'Category' => 10, 'System' => 11, 'Timezone' => 12, 'Enable' => 13, 'CreationDate' => 14, 'LastUpdate' => 15, ),
-        BasePeer::TYPE_COLNAME => array (SchedulerPeer::ID => 0, SchedulerPeer::TITLE => 1, SchedulerPeer::STARTINGTIME => 2, SchedulerPeer::ENDINGTIME => 3, SchedulerPeer::EVERYON => 4, SchedulerPeer::INTERVAL => 5, SchedulerPeer::DESCRIPTION => 6, SchedulerPeer::EXPRESSION => 7, SchedulerPeer::BODY => 8, SchedulerPeer::TYPE => 9, SchedulerPeer::CATEGORY => 10, SchedulerPeer::SYSTEM => 11, SchedulerPeer::TIMEZONE => 12, SchedulerPeer::ENABLE => 13, SchedulerPeer::CREATION_DATE => 14, SchedulerPeer::LAST_UPDATE => 15, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'title' => 1, 'startingTime' => 2, 'endingTime' => 3, 'everyOn' => 4, 'interval' => 5, 'description' => 6, 'expression' => 7, 'body' => 8, 'type' => 9, 'category' => 10, 'system' => 11, 'timezone' => 12, 'enable' => 13, 'creation_date' => 14, 'last_update' => 15, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Title' => 1, 'Startingtime' => 2, 'Endingtime' => 3, 'Everyon' => 4, 'Interval' => 5, 'Description' => 6, 'Expression' => 7, 'DefaultValue' => 8, 'Body' => 9, 'Type' => 10, 'Category' => 11, 'System' => 12, 'Timezone' => 13, 'Enable' => 14, 'CreationDate' => 15, 'LastUpdate' => 16, ),
+        BasePeer::TYPE_COLNAME => array (SchedulerPeer::ID => 0, SchedulerPeer::TITLE => 1, SchedulerPeer::STARTINGTIME => 2, SchedulerPeer::ENDINGTIME => 3, SchedulerPeer::EVERYON => 4, SchedulerPeer::INTERVAL => 5, SchedulerPeer::DESCRIPTION => 6, SchedulerPeer::EXPRESSION => 7, SchedulerPeer::DEFAULT_VALUE => 8, SchedulerPeer::BODY => 9, SchedulerPeer::TYPE => 10, SchedulerPeer::CATEGORY => 11, SchedulerPeer::SYSTEM => 12, SchedulerPeer::TIMEZONE => 13, SchedulerPeer::ENABLE => 14, SchedulerPeer::CREATION_DATE => 15, SchedulerPeer::LAST_UPDATE => 16, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'title' => 1, 'startingTime' => 2, 'endingTime' => 3, 'everyOn' => 4, 'interval' => 5, 'description' => 6, 'expression' => 7, 'default_value' => 8, 'body' => 9, 'type' => 10, 'category' => 11, 'system' => 12, 'timezone' => 13, 'enable' => 14, 'creation_date' => 15, 'last_update' => 16, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
     );
 
     /**
@@ -222,6 +225,8 @@ abstract class BaseSchedulerPeer
         $criteria->addSelectColumn(SchedulerPeer::DESCRIPTION);
 
         $criteria->addSelectColumn(SchedulerPeer::EXPRESSION);
+
+        $criteria->addSelectColumn(SchedulerPeer::DEFAULT_VALUE);
 
         $criteria->addSelectColumn(SchedulerPeer::BODY);
 
