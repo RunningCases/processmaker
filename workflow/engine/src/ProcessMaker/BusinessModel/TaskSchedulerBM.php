@@ -17,6 +17,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -31,6 +32,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -45,6 +47,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -59,6 +62,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -73,6 +77,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\\timereventcron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/1 * * * 0,1,2,3,4,5,6",
@@ -87,6 +92,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
@@ -101,6 +107,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\messageeventcron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
@@ -115,6 +122,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\actionsByEmailEmailResponse.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
@@ -129,6 +137,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\sendnotificationscron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
@@ -143,6 +152,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/10 * * * 0,1,2,3,4,5,6",
@@ -159,6 +169,7 @@ class TaskSchedulerBM
             "category" => "reporting",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/10 * * * 0,1,2,3,4,5,6",
@@ -173,6 +184,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\ldapcron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -187,6 +199,7 @@ class TaskSchedulerBM
             "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -261,13 +274,14 @@ class TaskSchedulerBM
             $task->enable = $service["enable"];
             $task->everyOn = $service["everyOn"];
             $task->interval = $service["interval"];
+            $task->timezone = $service["timezone"] == "default" ? date_default_timezone_get() : null;
             $task->default_value = json_encode([
                 "startingTime" => $service["startingTime"],
                 "endingTime" => $service["endingTime"],
                 "everyOn" => $service["everyOn"],
                 "interval" => $service["interval"],
                 "expression" => $service["expression"],
-                "timezone" => null
+                "timezone" => $task->timezone
             ]);
             $task->save();
         }
