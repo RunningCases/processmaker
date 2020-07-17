@@ -44,7 +44,7 @@ class WorkCommand extends BaseWorkCommand
     }
 
     /**
-     * This call the 'pluginClassLoader.json' file, is required by artisan for dynamically 
+     * This call the 'classLoaderForCommands.json' file, is required by artisan for dynamically 
      * access to plugin classes.
      */
     private function loadAdditionalClassesAtRuntime(): void
@@ -62,7 +62,7 @@ class WorkCommand extends BaseWorkCommand
                 continue;
             }
             //this file is required by artisan for dynamically access to class
-            $classloader = $path . PATH_SEP . 'pluginClassLoader.json';
+            $classloader = $path . PATH_SEP . 'classLoaderForCommands.json';
             if (!file_exists($classloader)) {
                 continue;
             }
