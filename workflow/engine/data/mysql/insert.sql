@@ -58657,6 +58657,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_LOGIN_LIBRARY','en','Login into ProcessMaker Library','2014-01-15') ,
 ( 'LABEL','ID_LOGIN_SETTINGS','en','Login Settings','2014-01-15') ,
 ( 'LABEL','ID_LOGIN_TITLE','en','Please enter your credentials below','2015-12-07') ,
+( 'LABEL','ID_LOGIN_TO_SEE_OUTPUTDOCS','en','You must be logged to see the documents','2020-07-17') ,
 ( 'LABEL','ID_LOGIN_WITH_FACEBOOK','en','Login with Facebook!!','2014-01-15') ,
 ( 'LABEL','ID_LOGO','en','Logo','2014-01-15') ,
 ( 'LABEL','ID_LOGOUT','en','Logout','2014-01-15') ,

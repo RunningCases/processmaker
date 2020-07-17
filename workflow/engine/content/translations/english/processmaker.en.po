@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: ProcessMaker (Branch 3.4.0)\n"
+"Project-Id-Version: ProcessMaker (Branch 3.5.0)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-08-08 16:51:51\n"
+"PO-Revision-Date: 2020-07-17 10:31:00\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -10822,6 +10822,12 @@ msgstr "Login Settings"
 #: LABEL/ID_LOGIN_TITLE
 msgid "Please enter your credentials below"
 msgstr "Please enter your credentials below"
+
+# TRANSLATION
+# LABEL/ID_LOGIN_TO_SEE_OUTPUTDOCS
+#: LABEL/ID_LOGIN_TO_SEE_OUTPUTDOCS
+msgid "You must be logged to see the documents"
+msgstr "You must be logged to see the documents"
 
 # TRANSLATION
 # LABEL/ID_LOGIN_WITH_FACEBOOK
