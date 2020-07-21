@@ -429,7 +429,7 @@ Ext.onReady(function(){
     },
     cm: new Ext.grid.ColumnModel({
       defaults: {
-          width: 50,
+          width: 40,
           sortable: true
       },
       columns: [
@@ -445,9 +445,9 @@ Ext.onReady(function(){
             return Ext.util.Format.htmlEncode(v) + ' ' + String.format("<font color='{0}'>{1}</font>", color, type);
         }}
         // The following columns can hidden and show:
-        ,{header: _('ID_TYPE'), dataIndex: 'PROJECT_TYPE', width: 60, hidden:false}
+        ,{header: _('ID_TYPE'), dataIndex: 'PROJECT_TYPE', width: 50, hidden:false}
         ,{header: _('ID_CATEGORY'), dataIndex: 'PRO_CATEGORY_LABEL', width: 100, hidden:false}
-        ,{header: _('ID_STATUS'), dataIndex: 'PRO_STATUS_LABEL', width: 50, renderer:function(v,p,r){
+        ,{header: _('ID_STATUS'), dataIndex: 'PRO_STATUS_LABEL', width: 45, renderer:function(v,p,r){
           color = r.get('PRO_STATUS') == 'ACTIVE'? 'green': 'red';
           return String.format("<font color='{0}'>{1}</font>", color, v);
         }}
@@ -458,11 +458,11 @@ Ext.onReady(function(){
         ,{header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 50, align:'right'}
         ,{header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 50, align:'right'}
         ,{header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 70, renderer:function(v){return "<b>"+v+"</b>";}, align:'right'}
-        ,{header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 5, align:'right'}
+        ,{header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 30}
         /*----------------------------------********---------------------------------*/
-        ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 75, align:"right"}
+        ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 70}
         /*----------------------------------********---------------------------------*/
-        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 90, align:"right"}
+        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 90}
       ]
     }),
     sm: proSelModel,
