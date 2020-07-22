@@ -14,8 +14,10 @@ class TaskSchedulerBM
             "service" => "unpause",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -27,8 +29,10 @@ class TaskSchedulerBM
             "service" => "calculate",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -40,8 +44,10 @@ class TaskSchedulerBM
             "service" => "unassigned-case",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -53,12 +59,29 @@ class TaskSchedulerBM
             "service" => "clean-self-service-tables",
             "category" => "case_actions",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
             "description" => 'ID_TASK_SCHEDULER_CLEAN_SELF_DESC'
+        ],
+        [
+            "title" => "ID_TIMER_EVENT",
+            "enable" => "1",
+            "service" => "",
+            "category" => "case_actions",
+            "file" => "workflow/engine/bin/timereventcron.php",
+            "filew" => "workflow\\engine\bin\\timereventcron.php",
+            "startingTime" => null,
+            "endingTime" => null,
+            "timezone" => null,
+            "everyOn" => "1",
+            "interval" => "week",
+            "expression" => "*/1 * * * 0,1,2,3,4,5,6",
+            "description" => "ID_TIMER_EVENT_DESC"
         ],
         [
             "title" => "ID_TASK_SCHEDULER_CASE_EMAILS",
@@ -66,25 +89,14 @@ class TaskSchedulerBM
             "service" => "emails",
             "category" => "emails_notifications",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_CASE_EMAILS_DESC"
-        ],
-        [
-            "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
-            "enable" => "1",
-            "service" => "",
-            "category" => "emails_notifications",
-            "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",
-            "startingTime" => null,
-            "endingTime" => null,
-            "everyOn" => "1",
-            "interval" => "week",
-            "expression" => "*/5 * * * 0,1,2,3,4,5,6",
-            "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"
         ],
         [
             "title" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS",
@@ -92,12 +104,29 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "emails_notifications",
             "file" => "workflow/engine/bin/messageeventcron.php",
+            "filew" => "workflow\\engine\bin\messageeventcron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"
+        ]
+        /*----------------------------------********---------------------------------*/, [
+            "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
+            "enable" => "1",
+            "service" => "",
+            "category" => "emails_notifications",
+            "file" => "workflow/engine/bin/actionsByEmailEmailResponse.php",
+            "filew" => "workflow\\engine\bin\actionsByEmailEmailResponse.php",
+            "startingTime" => null,
+            "endingTime" => null,
+            "timezone" => null,
+            "everyOn" => "1",
+            "interval" => "week",
+            "expression" => "*/5 * * * 0,1,2,3,4,5,6",
+            "description" => "ID_TASK_SCHEDULER_ACTION_EMAIL_DESC"
         ],
         [
             "title" => "ID_TASK_SCHEDULER_SEND_NOT",
@@ -105,8 +134,10 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "emails_notifications",
             "file" => "workflow/engine/bin/sendnotificationscron.php",
+            "filew" => "workflow\\engine\bin\sendnotificationscron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
@@ -118,8 +149,10 @@ class TaskSchedulerBM
             "service" => "report_by_user",
             "category" => "reporting",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/10 * * * 0,1,2,3,4,5,6",
@@ -131,11 +164,12 @@ class TaskSchedulerBM
             "service" => "report_by_process",
             "category" => "reporting",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => null,
             "category" => "reporting",
-            "file" => "workflow/engine/bin/cron.php",
             "startingTime" => null,
             "endingTime" => null,
+            "timezone" => null,
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/10 * * * 0,1,2,3,4,5,6",
@@ -147,8 +181,10 @@ class TaskSchedulerBM
             "service" => "",
             "category" => "processmaker_sync",
             "file" => "workflow/engine/bin/ldapcron.php",
+            "filew" => "workflow\\engine\bin\ldapcron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
@@ -160,26 +196,16 @@ class TaskSchedulerBM
             "service" => "plugins",
             "category" => "plugins",
             "file" => "workflow/engine/bin/cron.php",
+            "filew" => "workflow\\engine\bin\cron.php",
             "startingTime" => "0:00",
             "endingTime" => "0:30",
+            "timezone" => "default",
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"
-        ],
-        [
-            "title" => "ID_TIMER_EVENT",
-            "enable" => "1",
-            "service" => "",
-            "category" => "case_actions",
-            "file" => "workflow/engine/bin/timereventcron.php",
-            "startingTime" => null,
-            "endingTime" => null,
-            "everyOn" => "1",
-            "interval" => "week",
-            "expression" => "*/1 * * * 0,1,2,3,4,5,6",
-            "description" => "ID_TIMER_EVENT_DESC"
         ]
+        /*----------------------------------********---------------------------------*/
     ];
     /**
      * Return the records in Schedule Table by category
@@ -195,7 +221,11 @@ class TaskSchedulerBM
         if (is_null($category)) {
             return $tasks;
         } else {
-            return TaskScheduler::where('category', $category)->get();
+            $tasks = TaskScheduler::where('category', $category)->get();
+            foreach ($tasks as $task) {
+                $task->default_value = json_decode($task->default_value);
+            }
+            return $tasks;
         }
     }
     /**
@@ -207,7 +237,6 @@ class TaskSchedulerBM
         if (isset($request['enable'])) {
             $task->enable =  $request['enable'];
         }
-
         if (isset($request['expression'])) {
             $task->expression = $request['expression'];
             $task->startingTime =  $request['startingTime'];
@@ -219,7 +248,6 @@ class TaskSchedulerBM
         $task->save();
         return $task;
     }
-
     /**
      * Initial data for Schedule Table, with default values
      */
@@ -227,7 +255,7 @@ class TaskSchedulerBM
     {
         $arraySystemConfiguration = System::getSystemConfiguration('', '', config("system.workspace"));
         $toSave = [];
- 
+        $win = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         foreach (TaskSchedulerBM::$services as $service) {
             $task = new TaskScheduler;
             $task->title = $service["title"];
@@ -235,13 +263,26 @@ class TaskSchedulerBM
             $task->description = $service["description"];
             $task->startingTime = $service["startingTime"];
             $task->endingTime = $service["endingTime"];
-            $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force"';
+            if ($win) {
+                $task->body = 'php "' . PATH_TRUNK . $service["filew"] . '" ' . $service["service"] . ' +w' . config("system.workspace") . ' +force';
+            } else {
+                $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force"';
+            }
             $task->expression = $service["expression"];
             $task->type = "shell";
             $task->system = 1;
             $task->enable = $service["enable"];
             $task->everyOn = $service["everyOn"];
             $task->interval = $service["interval"];
+            $task->timezone = $service["timezone"] == "default" ? date_default_timezone_get() : null;
+            $task->default_value = json_encode([
+                "startingTime" => $service["startingTime"],
+                "endingTime" => $service["endingTime"],
+                "everyOn" => $service["everyOn"],
+                "interval" => $service["interval"],
+                "expression" => $service["expression"],
+                "timezone" => $task->timezone
+            ]);
             $task->save();
         }
     }

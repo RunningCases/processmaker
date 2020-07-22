@@ -81,6 +81,8 @@ class SchedulerMapBuilder
 
         $tMap->addColumn('EXPRESSION', 'Expression', 'string', CreoleTypes::VARCHAR, false, 255);
 
+        $tMap->addColumn('DEFAULT_VALUE', 'DefaultValue', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addColumn('BODY', 'Body', 'string', CreoleTypes::VARCHAR, false, 255);
 
         $tMap->addColumn('TYPE', 'Type', 'string', CreoleTypes::VARCHAR, false, 255);

@@ -3417,24 +3417,26 @@ class Processes
     /**
      * Get DB Connections Rows for a Process
      *
-     * @param array $sProUid
-     * @return array $aConnections
+     * @param string $proUid
+     * @return array $connections
      */
-    public function getDBConnectionsRows($sProUid)
+    public function getDBConnectionsRows($proUid)
     {
         try {
-            $aConnections = array();
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(DbSourcePeer::PRO_UID, $sProUid);
-            $oDataset = DbSourcePeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $oConnection = new DbSource();
-                $aConnections[] = $oConnection->Load($aRow['DBS_UID'], $aRow['PRO_UID']);
-                $oDataset->next();
+            $connections = [];
+            $criteria = new Criteria('workflow');
+            $criteria->add(DbSourcePeer::PRO_UID, $proUid);
+            $dataset = DbSourcePeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            while ($row = $dataset->getRow()) {
+                $connection = new DbSource();
+                $infoConnection = $connection->Load($row['DBS_UID'], $row['PRO_UID']);
+                unset($infoConnection['DBS_ID']);
+                $connections[] = $infoConnection;
+                $dataset->next();
             }
-            return $aConnections;
+            return $connections;
         } catch (Exception $oError) {
             throw $oError;
         }

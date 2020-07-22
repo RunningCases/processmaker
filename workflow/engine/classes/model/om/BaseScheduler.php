@@ -76,6 +76,12 @@ abstract class BaseScheduler extends BaseObject implements Persistent
     protected $expression;
 
     /**
+     * The value for the default_value field.
+     * @var        string
+     */
+    protected $default_value;
+
+    /**
      * The value for the body field.
      * @var        string
      */
@@ -223,6 +229,17 @@ abstract class BaseScheduler extends BaseObject implements Persistent
     {
 
         return $this->expression;
+    }
+
+    /**
+     * Get the [default_value] column value.
+     * 
+     * @return     string
+     */
+    public function getDefaultValue()
+    {
+
+        return $this->default_value;
     }
 
     /**
@@ -532,6 +549,28 @@ abstract class BaseScheduler extends BaseObject implements Persistent
     } // setExpression()
 
     /**
+     * Set the value of [default_value] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setDefaultValue($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->default_value !== $v) {
+            $this->default_value = $v;
+            $this->modifiedColumns[] = SchedulerPeer::DEFAULT_VALUE;
+        }
+
+    } // setDefaultValue()
+
+    /**
      * Set the value of [body] column.
      * 
      * @param      string $v new value
@@ -754,28 +793,30 @@ abstract class BaseScheduler extends BaseObject implements Persistent
 
             $this->expression = $rs->getString($startcol + 7);
 
-            $this->body = $rs->getString($startcol + 8);
+            $this->default_value = $rs->getString($startcol + 8);
 
-            $this->type = $rs->getString($startcol + 9);
+            $this->body = $rs->getString($startcol + 9);
 
-            $this->category = $rs->getString($startcol + 10);
+            $this->type = $rs->getString($startcol + 10);
 
-            $this->system = $rs->getInt($startcol + 11);
+            $this->category = $rs->getString($startcol + 11);
 
-            $this->timezone = $rs->getString($startcol + 12);
+            $this->system = $rs->getInt($startcol + 12);
 
-            $this->enable = $rs->getInt($startcol + 13);
+            $this->timezone = $rs->getString($startcol + 13);
 
-            $this->creation_date = $rs->getTimestamp($startcol + 14, null);
+            $this->enable = $rs->getInt($startcol + 14);
 
-            $this->last_update = $rs->getTimestamp($startcol + 15, null);
+            $this->creation_date = $rs->getTimestamp($startcol + 15, null);
+
+            $this->last_update = $rs->getTimestamp($startcol + 16, null);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 16; // 16 = SchedulerPeer::NUM_COLUMNS - SchedulerPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 17; // 17 = SchedulerPeer::NUM_COLUMNS - SchedulerPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Scheduler object", $e);
@@ -1006,27 +1047,30 @@ abstract class BaseScheduler extends BaseObject implements Persistent
                 return $this->getExpression();
                 break;
             case 8:
-                return $this->getBody();
+                return $this->getDefaultValue();
                 break;
             case 9:
-                return $this->getType();
+                return $this->getBody();
                 break;
             case 10:
-                return $this->getCategory();
+                return $this->getType();
                 break;
             case 11:
-                return $this->getSystem();
+                return $this->getCategory();
                 break;
             case 12:
-                return $this->getTimezone();
+                return $this->getSystem();
                 break;
             case 13:
-                return $this->getEnable();
+                return $this->getTimezone();
                 break;
             case 14:
-                return $this->getCreationDate();
+                return $this->getEnable();
                 break;
             case 15:
+                return $this->getCreationDate();
+                break;
+            case 16:
                 return $this->getLastUpdate();
                 break;
             default:
@@ -1057,14 +1101,15 @@ abstract class BaseScheduler extends BaseObject implements Persistent
             $keys[5] => $this->getInterval(),
             $keys[6] => $this->getDescription(),
             $keys[7] => $this->getExpression(),
-            $keys[8] => $this->getBody(),
-            $keys[9] => $this->getType(),
-            $keys[10] => $this->getCategory(),
-            $keys[11] => $this->getSystem(),
-            $keys[12] => $this->getTimezone(),
-            $keys[13] => $this->getEnable(),
-            $keys[14] => $this->getCreationDate(),
-            $keys[15] => $this->getLastUpdate(),
+            $keys[8] => $this->getDefaultValue(),
+            $keys[9] => $this->getBody(),
+            $keys[10] => $this->getType(),
+            $keys[11] => $this->getCategory(),
+            $keys[12] => $this->getSystem(),
+            $keys[13] => $this->getTimezone(),
+            $keys[14] => $this->getEnable(),
+            $keys[15] => $this->getCreationDate(),
+            $keys[16] => $this->getLastUpdate(),
         );
         return $result;
     }
@@ -1121,27 +1166,30 @@ abstract class BaseScheduler extends BaseObject implements Persistent
                 $this->setExpression($value);
                 break;
             case 8:
-                $this->setBody($value);
+                $this->setDefaultValue($value);
                 break;
             case 9:
-                $this->setType($value);
+                $this->setBody($value);
                 break;
             case 10:
-                $this->setCategory($value);
+                $this->setType($value);
                 break;
             case 11:
-                $this->setSystem($value);
+                $this->setCategory($value);
                 break;
             case 12:
-                $this->setTimezone($value);
+                $this->setSystem($value);
                 break;
             case 13:
-                $this->setEnable($value);
+                $this->setTimezone($value);
                 break;
             case 14:
-                $this->setCreationDate($value);
+                $this->setEnable($value);
                 break;
             case 15:
+                $this->setCreationDate($value);
+                break;
+            case 16:
                 $this->setLastUpdate($value);
                 break;
         } // switch()
@@ -1200,35 +1248,39 @@ abstract class BaseScheduler extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setBody($arr[$keys[8]]);
+            $this->setDefaultValue($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setType($arr[$keys[9]]);
+            $this->setBody($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setCategory($arr[$keys[10]]);
+            $this->setType($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setSystem($arr[$keys[11]]);
+            $this->setCategory($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setTimezone($arr[$keys[12]]);
+            $this->setSystem($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setEnable($arr[$keys[13]]);
+            $this->setTimezone($arr[$keys[13]]);
         }
 
         if (array_key_exists($keys[14], $arr)) {
-            $this->setCreationDate($arr[$keys[14]]);
+            $this->setEnable($arr[$keys[14]]);
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setLastUpdate($arr[$keys[15]]);
+            $this->setCreationDate($arr[$keys[15]]);
+        }
+
+        if (array_key_exists($keys[16], $arr)) {
+            $this->setLastUpdate($arr[$keys[16]]);
         }
 
     }
@@ -1272,6 +1324,10 @@ abstract class BaseScheduler extends BaseObject implements Persistent
 
         if ($this->isColumnModified(SchedulerPeer::EXPRESSION)) {
             $criteria->add(SchedulerPeer::EXPRESSION, $this->expression);
+        }
+
+        if ($this->isColumnModified(SchedulerPeer::DEFAULT_VALUE)) {
+            $criteria->add(SchedulerPeer::DEFAULT_VALUE, $this->default_value);
         }
 
         if ($this->isColumnModified(SchedulerPeer::BODY)) {
@@ -1373,6 +1429,8 @@ abstract class BaseScheduler extends BaseObject implements Persistent
         $copyObj->setDescription($this->description);
 
         $copyObj->setExpression($this->expression);
+
+        $copyObj->setDefaultValue($this->default_value);
 
         $copyObj->setBody($this->body);
 
