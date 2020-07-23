@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Queue\Console\WorkCommand as BaseWorkCommand;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Worker;
@@ -44,38 +45,64 @@ class WorkCommand extends BaseWorkCommand
     }
 
     /**
-     * This call the 'classLoaderForCommands.json' file, is required by artisan for dynamically 
-     * access to plugin classes.
+     * This is required by artisan for dynamically access to plugin classes.
      */
     private function loadAdditionalClassesAtRuntime(): void
     {
+        //load the main plugin classes because inside is the definition 'set_include_path()'
         if (!defined('PATH_PLUGINS')) {
             return;
         }
-        $content = scandir(PATH_PLUGINS, SCANDIR_SORT_ASCENDING);
-        foreach ($content as $value) {
-            if (in_array($value, ['.', '..'])) {
+        $files = File::files(PATH_PLUGINS);
+        foreach ($files as $file) {
+            $isPhpFile = strtolower(File::extension($file)) === "php";
+            if (!$isPhpFile) {
                 continue;
             }
-            $path = PATH_PLUGINS . $value;
-            if (!is_dir($path)) {
-                continue;
-            }
-            //this file is required by artisan for dynamically access to class
-            $classloader = $path . PATH_SEP . 'classLoaderForCommands.json';
-            if (!file_exists($classloader)) {
-                continue;
-            }
-            $object = json_decode(file_get_contents($classloader), false);
-            if (empty($object)) {
-                continue;
-            }
-            if (!property_exists($object, 'classes') && !is_array($object->classes)) {
-                continue;
-            }
-            foreach ($object->classes as $classpath) {
-                require_once $path . PATH_SEP . $classpath;
-            }
+            require_once $file;
         }
+        //load the classes of the plugins when is required dynamically.
+        $closure = function($className) {
+            if (class_exists($className)) {
+                return;
+            }
+            if (!defined('PATH_PLUGINS')) {
+                return;
+            }
+            $searchFiles = function($path) use(&$searchFiles, $className) {
+                $directories = File::directories($path);
+                foreach ($directories as $directory) {
+                    $omittedDirectories = [
+                        'bin', 'cache', 'colosa', 'config',
+                        'data', 'documentation', 'fields',
+                        'files', 'js', 'log', 'node_modules',
+                        'public_html', 'resources', 'routes',
+                        'templates', 'tests', 'translations',
+                        'vendor', 'view', 'views'
+                    ];
+                    if (in_array(File::basename($directory), $omittedDirectories)) {
+                        continue;
+                    }
+                    $searchFiles($directory);
+                    $files = File::files($directory);
+                    foreach ($files as $file) {
+                        $isPhpFile = strtolower(File::extension($file)) === "php";
+                        if (!$isPhpFile) {
+                            continue;
+                        }
+                        $className = explode("\\", $className);
+                        $className = array_pop($className);
+                        $pattern = "/class[\n\s]+" . $className . "[\s\n]*\{/";
+                        $status = preg_match($pattern, file_get_contents($file), $result);
+                        if ($status === 1) {
+                            require_once $file;
+                            break;
+                        }
+                    }
+                }
+            };
+            $searchFiles(PATH_PLUGINS);
+        };
+        spl_autoload_register($closure);
     }
 }
