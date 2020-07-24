@@ -64,6 +64,7 @@ if (defined('PATH_DB') && !empty(config("system.workspace"))) {
     $pro ['datasources']['rp']['connection'] = $dsnReport;
     $pro ['datasources']['rp']['adapter'] = DB_ADAPTER;
 
+    // "workflow" connection
     $dbHost = explode(':', DB_HOST);
     config(['database.connections.workflow.host' => $dbHost[0]]);
     config(['database.connections.workflow.database' => DB_NAME]);
@@ -71,6 +72,28 @@ if (defined('PATH_DB') && !empty(config("system.workspace"))) {
     config(['database.connections.workflow.password' => DB_PASS]);
     if (count($dbHost) > 1) {
         config(['database.connections.workflow.port' => $dbHost[1]]);
+    }
+
+    // "rbac" connection
+    $dbRbacHost = explode(':', DB_RBAC_HOST);
+    config(['database.connections.rbac.driver' => DB_ADAPTER]);
+    config(['database.connections.rbac.host' => $dbRbacHost[0]]);
+    config(['database.connections.rbac.database' => DB_RBAC_NAME]);
+    config(['database.connections.rbac.username' => DB_RBAC_USER]);
+    config(['database.connections.rbac.password' => DB_RBAC_PASS]);
+    if (count($dbRbacHost) > 1) {
+        config(['database.connections.rbac.port' => $dbRbacHost[1]]);
+    }
+
+    // "report" connection
+    $dbReportHost = explode(':', DB_REPORT_HOST);
+    config(['database.connections.report.driver' => DB_ADAPTER]);
+    config(['database.connections.report.host' => $dbReportHost[0]]);
+    config(['database.connections.report.database' => DB_REPORT_NAME]);
+    config(['database.connections.report.username' => DB_REPORT_USER]);
+    config(['database.connections.report.password' => DB_REPORT_PASS]);
+    if (count($dbReportHost) > 1) {
+        config(['database.connections.report.port' => $dbReportHost[1]]);
     }
 }
 
