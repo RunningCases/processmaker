@@ -85,15 +85,15 @@ if (defined('PATH_DB') && !empty(config("system.workspace"))) {
         config(['database.connections.rbac.port' => $dbRbacHost[1]]);
     }
 
-    // "report" connection
+    // "rp" connection
     $dbReportHost = explode(':', DB_REPORT_HOST);
-    config(['database.connections.report.driver' => DB_ADAPTER]);
-    config(['database.connections.report.host' => $dbReportHost[0]]);
-    config(['database.connections.report.database' => DB_REPORT_NAME]);
-    config(['database.connections.report.username' => DB_REPORT_USER]);
-    config(['database.connections.report.password' => DB_REPORT_PASS]);
+    config(['database.connections.rp.driver' => DB_ADAPTER]);
+    config(['database.connections.rp.host' => $dbReportHost[0]]);
+    config(['database.connections.rp.database' => DB_REPORT_NAME]);
+    config(['database.connections.rp.username' => DB_REPORT_USER]);
+    config(['database.connections.rp.password' => DB_REPORT_PASS]);
     if (count($dbReportHost) > 1) {
-        config(['database.connections.report.port' => $dbReportHost[1]]);
+        config(['database.connections.rp.port' => $dbReportHost[1]]);
     }
 }
 
