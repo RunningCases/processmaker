@@ -3,7 +3,7 @@
 namespace Tests\unit\workflow\engine\methods\cases;
 
 use G;
-use ProcessMaker\Model\AppDocument;
+use ProcessMaker\Model\Documents;
 use RBAC;
 use Tests\TestCase;
 
@@ -31,7 +31,7 @@ class CasesShowDocumentTest extends TestCase
         $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
 
-        $appDocument = factory(AppDocument::class)->create([
+        $appDocument = factory(Documents::class)->create([
             'APP_DOC_FILENAME' => 'text.txt'
         ]);
 
