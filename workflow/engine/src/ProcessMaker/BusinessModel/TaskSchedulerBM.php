@@ -113,7 +113,8 @@ class TaskSchedulerBM
             "expression" => "*/5 * * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_MESSAGE_EVENTS_DESC"
         ]
-        /*----------------------------------********---------------------------------*/, [
+/*----------------------------------********---------------------------------*/
+        ,[
             "title" => "ID_TASK_SCHEDULER_ACTION_EMAIL",
             "enable" => "1",
             "service" => "",
@@ -205,7 +206,7 @@ class TaskSchedulerBM
             "expression" => "0 */1 * * 0,1,2,3,4,5,6",
             "description" => "ID_TASK_SCHEDULER_PM_PLUGINS_DESC"
         ]
-        /*----------------------------------********---------------------------------*/
+/*----------------------------------********---------------------------------*/
     ];
     /**
      * Return the records in Schedule Table by category
