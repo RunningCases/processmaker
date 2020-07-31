@@ -1182,6 +1182,36 @@ class PmDynaformTest extends TestCase
         $this->assertObjectHasAttribute('id', $result);
         $this->assertEquals($result->id, 'stateDropdown');
     }
+
+    /**
+     * This check that the method getCredentials is destroying correctly the session variable "USER_LOGGED" for
+     * not authenticated users
+     * @test
+     * @covers PmDynaform::getCredentials()
+     */
+    public function it_should_test_get_credentials_destroy_user_logged_if_not_authenticated_user()
+    {
+        // Set the request URI, this is required by the method "getCredentials"
+        $_SERVER['REQUEST_URI'] = '/sysworkflow/en/neoclassic/tracker/tracker_Show';
+
+        // Destroy variable for "USER_LOGGED" if exists
+        unset($_SESSION['USER_LOGGED']);
+
+        // Create a new instance of the class for the first time
+        $pmDynaform = new PmDynaform();
+
+        // Call method "getCredentials"
+        $pmDynaform->getCredentials();
+
+        // Session variable for "USER_LOGGED" should be empty
+        $this->assertTrue(empty($_SESSION['USER_LOGGED']));
+
+        // Create a new instance of the class for the second time
+        $pmDynaform = new PmDynaform();
+
+        // Session variable for "USER_LOGGED" should be empty
+        $this->assertTrue(empty($_SESSION['USER_LOGGED']));
+    }
 }
 
 // Dummy function used for the coverture

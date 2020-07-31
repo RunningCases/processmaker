@@ -229,6 +229,10 @@ class PmDynaform
             $flagTrackerUser = true;
         }
         if ($this->credentials != null) {
+            // Destroy variable "USER_LOGGED" in session if is a not authenticated user
+            if ($flagTrackerUser) {
+                unset($_SESSION["USER_LOGGED"]);
+            }
             return $this->credentials;
         }
         if (isset($_SESSION["PMDYNAFORM_CREDENTIALS"]) && isset($_SESSION["PMDYNAFORM_CREDENTIALS_EXPIRES"])) {
@@ -236,6 +240,12 @@ class PmDynaform
             $time2 = strtotime($_SESSION["PMDYNAFORM_CREDENTIALS_EXPIRES"]);
             if ($time1 < $time2) {
                 $this->credentials = $_SESSION["PMDYNAFORM_CREDENTIALS"];
+
+                // Destroy variable "USER_LOGGED" in session if is a not authenticated user
+                if ($flagTrackerUser) {
+                    unset($_SESSION["USER_LOGGED"]);
+                }
+
                 return $this->credentials;
             }
         }
@@ -250,6 +260,7 @@ class PmDynaform
             "clientSecret" => $a["client_secret"]
         );
 
+        // Destroy variable "USER_LOGGED" in session if is a not authenticated user
         if ($flagTrackerUser) {
             unset($_SESSION["USER_LOGGED"]);
         }
