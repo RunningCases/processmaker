@@ -195,12 +195,12 @@ class JobsManager
                         $this->recoverDataSnapshot($environment);
                         $callback($environment);
                     } catch (Exception $e) {
-                        Log::error($e->getMessage() . ": " . $e->getTraceAsString());
+                        $message = $e->getMessage();
                         $context = [
                             "trace" => $e->getTraceAsString(),
                             "workspace" => $environment["constants"]["SYS_SYS"]
                         ];
-                        Bootstrap::registerMonolog("queue:work", 400, $e->getMessage(), $context, "");
+                        Log::channel(':queue-work')->error($message, Bootstrap::context($context));
                         throw $e;
                     }
                 });

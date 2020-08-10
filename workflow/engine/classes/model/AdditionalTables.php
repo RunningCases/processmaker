@@ -2,6 +2,7 @@
 
 use App\Jobs\GenerateReportTable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
@@ -1033,10 +1034,9 @@ class AdditionalTables extends BaseAdditionalTables
                         if ($externalResultSet->next()) {
                             $stringCount = $externalResultSet->getInt(1);
                         }
-                    } catch (Exception $externalException) {
-                        $context = Bootstrap::getDefaultContextLog();
-                        $context = array_merge($context, $row);
-                        Bootstrap::registerMonolog("additional tables", 400, $externalException->getMessage(), $context);
+                    } catch (Exception $e) {
+                        $message = $e->getMessage();
+                        Log::channel(':additional tables')->error($message, Bootstrap::context($row));
                     }
                 }
             }

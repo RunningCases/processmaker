@@ -367,14 +367,10 @@ class gTest extends TestCase
         $error = 'This is some error';
         $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = false;
         G::logTriggerExecution($data, $error, 'FATAL_ERROR', 60);
-        $log = MonologProvider::getSingleton('TriggerExecutionError', 'processmaker.log', true);
-        $this->assertNotEmpty($log->getPathFile());
         $this->assertTrue($_SESSION['_DATA_TRIGGER_']['_TRI_LOG_']);
 
         $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = false;
         G::logTriggerExecution($data, '', '', 100);
-        $log = MonologProvider::getSingleton('TriggerExecution', 'processmaker.log', true);
-        $this->assertNotEmpty($log->getPathFile());
         $this->assertFalse($_SESSION['_DATA_TRIGGER_']['_TRI_LOG_']);
     }
 }

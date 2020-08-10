@@ -14,6 +14,7 @@ use EmailServerPeer;
 use Exception;
 use G;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use PhpImap\IncomingMail;
 use PhpImap\Mailbox;
 use PMLicensedFeatures;
@@ -73,14 +74,34 @@ class ResponseReader
                 }
             }
         } catch (Exception $e) {
-            Bootstrap::registerMonolog(
-                $this->channel,
-                $e->getCode() != 0 ? $e->getCode() : 300,
-                $e->getMessage(),
-                $this->case,
-                config("system.workspace"),
-                'processmaker.log'
-            );
+            $message = $e->getMessage();
+            $context = $this->case;
+            switch ($e->getCode()) {
+                case 100:
+                    Log::channel(':' . $this->channel)->debug($message, Bootstrap::context($context));
+                    break;
+                case 200:
+                    Log::channel(':' . $this->channel)->info($message, Bootstrap::context($context));
+                    break;
+                case 250:
+                    Log::channel(':' . $this->channel)->notice($message, Bootstrap::context($context));
+                    break;
+                default://300
+                    Log::channel(':' . $this->channel)->warning($message, Bootstrap::context($context));
+                    break;
+                case 400:
+                    Log::channel(':' . $this->channel)->error($message, Bootstrap::context($context));
+                    break;
+                case 500:
+                    Log::channel(':' . $this->channel)->critical($message, Bootstrap::context($context));
+                    break;
+                case 550:
+                    Log::channel(':' . $this->channel)->alert($message, Bootstrap::context($context));
+                    break;
+                case 600:
+                    Log::channel(':' . $this->channel)->emergency($message, Bootstrap::context($context));
+                    break;
+            }
         }
     }
 
@@ -138,14 +159,9 @@ class ResponseReader
                             try {
                                 $dataEmail = G::json_decode(Crypt::decryptString($matches[1]), true);
                             } catch (Exception $e) {
-                                Bootstrap::registerMonolog(
-                                    $this->channel,
-                                    300,
-                                    G::LoadTranslation('ID_ABE_RESPONSE_CANNOT_BE_IDENTIFIED'),
-                                    [],
-                                    config("system.workspace"),
-                                    'processmaker.log'
-                                );
+                                $message = G::LoadTranslation('ID_ABE_RESPONSE_CANNOT_BE_IDENTIFIED');
+                                $context = [];
+                                Log::channel(':' . $this->channel)->warning($message, Bootstrap::context($context));
                                 $mailbox->markMailAsRead($mailId);
                                 continue;
                             }
@@ -162,14 +178,9 @@ class ResponseReader
                                         throw (new Exception(G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED'), 400));
                                     }
                                     $this->processABE($this->case, $mail, $dataAbe);
-                                    Bootstrap::registerMonolog(
-                                        $this->channel,
-                                        100, // DEBUG
-                                        G::LoadTranslation('ID_ABE_LOG_PROCESSED_OK'),
-                                        $this->case,
-                                        config("system.workspace"),
-                                        'processmaker.log'
-                                    );
+                                    $message = G::LoadTranslation('ID_ABE_LOG_PROCESSED_OK');
+                                    $context = $this->case;
+                                    Log::channel(':' . $this->channel)->debug($message, Bootstrap::context($context));
                                 } catch (Exception $e) {
                                     $this->sendMessageError(
                                         $this->getMessageResponseError() ? $this->getMessageResponseError() : $e->getMessage(),
@@ -177,14 +188,34 @@ class ResponseReader
                                         $mail,
                                         $emailSetup
                                     );
-                                    Bootstrap::registerMonolog(
-                                        $this->channel,
-                                        $e->getCode() != 0 ? $e->getCode() : 400,
-                                        $e->getMessage(),
-                                        $this->case,
-                                        config("system.workspace"),
-                                        'processmaker.log'
-                                    );
+                                    $message = $e->getMessage();
+                                    $context = $this->case;
+                                    switch ($e->getCode()) {
+                                        case 100:
+                                            Log::channel(':' . $this->channel)->debug($message, Bootstrap::context($context));
+                                            break;
+                                        case 200:
+                                            Log::channel(':' . $this->channel)->info($message, Bootstrap::context($context));
+                                            break;
+                                        case 250:
+                                            Log::channel(':' . $this->channel)->notice($message, Bootstrap::context($context));
+                                            break;
+                                        case 300:
+                                            Log::channel(':' . $this->channel)->warning($message, Bootstrap::context($context));
+                                            break;
+                                        default://400
+                                            Log::channel(':' . $this->channel)->error($message, Bootstrap::context($context));
+                                            break;
+                                        case 500:
+                                            Log::channel(':' . $this->channel)->critical($message, Bootstrap::context($context));
+                                            break;
+                                        case 550:
+                                            Log::channel(':' . $this->channel)->alert($message, Bootstrap::context($context));
+                                            break;
+                                        case 600:
+                                            Log::channel(':' . $this->channel)->emergency($message, Bootstrap::context($context));
+                                            break;
+                                    }
                                 }
                                 $mailbox->markMailAsRead($mailId);
                             }
@@ -193,14 +224,34 @@ class ResponseReader
                 }
             }
         } catch (Exception $e) {
-            Bootstrap::registerMonolog(
-                $this->channel,
-                $e->getCode() != 0 ? $e->getCode() : 500,
-                $e->getMessage(),
-                $this->case,
-                config("system.workspace"),
-                'processmaker.log'
-            );
+            $message = $e->getMessage();
+            $context = $this->case;
+            switch ($e->getCode()) {
+                case 100:
+                    Log::channel(':' . $this->channel)->debug($message, Bootstrap::context($context));
+                    break;
+                case 200:
+                    Log::channel(':' . $this->channel)->info($message, Bootstrap::context($context));
+                    break;
+                case 250:
+                    Log::channel(':' . $this->channel)->notice($message, Bootstrap::context($context));
+                    break;
+                case 300:
+                    Log::channel(':' . $this->channel)->warning($message, Bootstrap::context($context));
+                    break;
+                case 400:
+                    Log::channel(':' . $this->channel)->error($message, Bootstrap::context($context));
+                    break;
+                default://500
+                    Log::channel(':' . $this->channel)->critical($message, Bootstrap::context($context));
+                    break;
+                case 550:
+                    Log::channel(':' . $this->channel)->alert($message, Bootstrap::context($context));
+                    break;
+                case 600:
+                    Log::channel(':' . $this->channel)->emergency($message, Bootstrap::context($context));
+                    break;
+            }
         }
     }
 
@@ -249,14 +300,9 @@ class ResponseReader
                 $abeAbeResponsesInstance = new AbeResponses();
                 $dataResponses['ABE_RES_UID'] = $abeAbeResponsesInstance->createOrUpdate($dataResponses);
             } catch (Exception $e) {
-                Bootstrap::registerMonolog(
-                    $this->channel,
-                    300,
-                    $e->getMessage(),
-                    $this->case,
-                    config("system.workspace"),
-                    'processmaker.log'
-                );
+                $message = $e->getMessage();
+                $context = $this->case;
+                Log::channel(':' . $this->channel)->warning($message, Bootstrap::context($context));
             }
 
             ChangeLog::getChangeLog()
@@ -297,14 +343,9 @@ class ResponseReader
                 $abeAbeResponsesInstance = new AbeResponses();
                 $abeAbeResponsesInstance->createOrUpdate($dataResponses);
             } catch (Exception $e) {
-                Bootstrap::registerMonolog(
-                    $this->channel,
-                    300,
-                    $e->getMessage(),
-                    $this->case,
-                    config("system.workspace"),
-                    'processmaker.log'
-                );
+                $message = $e->getMessage();
+                $context = $this->case;
+                Log::channel(':' . $this->channel)->warning($message, Bootstrap::context($context));
             }
             $dataAbeRequests = loadAbeRequest($caseInfo['ABE_REQ_UID']);
             //Save Cases Notes

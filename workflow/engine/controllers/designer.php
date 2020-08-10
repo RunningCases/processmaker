@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -230,7 +231,9 @@ class Designer extends Controller
                 }
                 Tracker::authentication($_SESSION['CASE'], $_SESSION['PIN']);
             } catch (\Exception $e) {
-                Bootstrap::registerMonolog('CaseTracker', 400, $e->getMessage(), [], config("system.workspace"), 'processmaker.log');
+                $message = $e->getMessage();
+                $context = [];
+                Log::channel(':CaseTracker')->error($message, Bootstrap::context($context));
                 \G::header('Location: /errors/error403.php');
                 die();
             }

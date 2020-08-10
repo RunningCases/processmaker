@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use ProcessMaker\Exception\RBACException;
 
 class RBAC
@@ -917,10 +918,12 @@ class RBAC
                                 return $res;
                             }
                         } catch (Exception $e) {
-                            $context = Bootstrap::getDefaultContextLog();
-                            $context["action"] = "ldapSynchronize";
-                            $context["authSource"] = $row;
-                            Bootstrap::registerMonolog("ldapSynchronize", 400, $e->getMessage(), $context, $context["workspace"], "processmaker.log");
+                            $message = $e->getMessage();
+                            $context = [
+                                'action' => 'ldapSynchronize',
+                                'authSource' => $row
+                            ];
+                            Log::channel(':ldapSynchronize')->error($message, Bootstrap::context($context));
                         }
                     }
 

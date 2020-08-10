@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Http\Kernel;
+use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\AppEvent;
 use ProcessMaker\Core\JobsManager;
 /*----------------------------------********---------------------------------*/
@@ -826,13 +827,22 @@ if (substr(SYS_COLLECTION, 0, 8) === 'gulliver') {
         $isWebEntry = \ProcessMaker\BusinessModel\WebEntry::isWebEntry(SYS_COLLECTION, $phpFile);
         if (\Bootstrap::getDisablePhpUploadExecution() === 1 && !$isWebEntry) {
             $message = \G::LoadTranslation('ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED');
-            \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 550, $message, $phpFile);
+            $context = [
+                'filename' => $phpFile,
+                'url' => $_SERVER["REQUEST_URI"] ?? ''
+            ];
+            Log::channel(':phpExecution')->alert($message, \Bootstrap::context($context));
             echo $message;
             die();
         } else {
             //Backward compatibility: Preload PmDynaform for old generated webentry files.
             class_exists('PmDynaform');
-            \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 200, 'Php Execution', $phpFile);
+            $message = 'Php Execution';
+            $context = [
+                'filename' => $phpFile,
+                'url' => $_SERVER["REQUEST_URI"] ?? ''
+            ];
+            Log::channel(':phpExecution')->info($message, \Bootstrap::context($context));
         }
 
         $avoidChangedWorkspaceValidation = true;
