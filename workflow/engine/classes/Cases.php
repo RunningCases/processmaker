@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\BusinessModel\Task as BusinessModelTask;
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
 use ProcessMaker\BusinessModel\WebEntryEvent;
 use ProcessMaker\Cases\CasesTrait;
@@ -109,14 +110,16 @@ class Cases
     }
 
     /**
-     * get user starting tasks
-     * @param string $sUIDUser
-     * @return $rows
+     * Get user's starting tasks
+     *
+     * @param string $uidUser
+     * @param bool $withoutDummyTasks
+     * @return array
      */
-    public function getStartCases($sUIDUser = '')
+    public function getStartCases($uidUser = '', $withoutDummyTasks = false)
     {
-        $rows[] = array('uid' => 'char', 'value' => 'char');
-        $tasks = array();
+        $rows = [['uid' => 'char', 'value' => 'char']];
+        $tasks = [];
 
         $c = new Criteria();
         $c->clearSelectColumns();
@@ -126,7 +129,7 @@ class Cases
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_START, 'TRUE');
-        $c->add(TaskUserPeer::USR_UID, $sUIDUser);
+        $c->add(TaskUserPeer::USR_UID, $uidUser);
         $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -141,7 +144,7 @@ class Cases
 
         //check groups
         $group = new Groups();
-        $aGroups = $group->getActiveGroupsForAnUser($sUIDUser);
+        $groups = $group->getActiveGroupsForAnUser($uidUser);
 
         $c = new Criteria();
         $c->clearSelectColumns();
@@ -151,7 +154,7 @@ class Cases
         $c->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_START, 'TRUE');
-        $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
+        $c->add(TaskUserPeer::USR_UID, $groups, Criteria::IN);
         $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -171,17 +174,21 @@ class Cases
         $c->addSelectColumn(ProcessPeer::PRO_TITLE);
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
+        // Include or not the dummy tasks
+        if ($withoutDummyTasks) {
+            $c->add(TaskPeer::TAS_TYPE, BusinessModelTask::getDummyTypes(), Criteria::NOT_IN);
+        }
         $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
         $c->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
         while ($row = $rs->getRow()) {
-            $rows[] = array(
+            $rows[] = [
                 'uid' => $row['TAS_UID'],
                 'value' => $row['PRO_TITLE'] . ' (' . $row['TAS_TITLE'] . ')',
                 'pro_uid' => $row['PRO_UID']
-            );
+            ];
             $rs->next();
             $row = $rs->getRow();
         }
