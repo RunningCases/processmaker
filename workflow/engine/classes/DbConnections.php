@@ -226,16 +226,11 @@ class DbConnections
                     // Not TNS, build a standard configuration
                     $dbsPort = ($externalDb->DBS_PORT == '') ? ('') : (':' . $externalDb->DBS_PORT);
                     $encoding = (trim($externalDb->DBS_ENCODE) == '') ? '' : '?encoding=' . $externalDb->DBS_ENCODE;
-                    if (strpos($externalDb->DBS_SERVER, "\\") && $externalDb->DBS_TYPE == 'mssql') {
-                        // This is a microsoft SQL server which is using a netbios connection string
-                        $conf['datasources'][$externalDb->DBS_UID]['connection'] = $externalDb->DBS_TYPE . '://'
-                            . $externalDb->DBS_USERNAME . ':' . $passw . '@' . $externalDb->DBS_SERVER . '/'
-                            . $externalDb->DBS_DATABASE_NAME . $encoding;
-                    } else {
-                        $conf['datasources'][$externalDb->DBS_UID]['connection'] = $externalDb->DBS_TYPE . '://'
-                            . $externalDb->DBS_USERNAME . ':' . $passw . '@' . $externalDb->DBS_SERVER . $dbsPort . '/'
-                            . $externalDb->DBS_DATABASE_NAME . $encoding;
-                    }
+
+                    $conf['datasources'][$externalDb->DBS_UID]['connection'] = $externalDb->DBS_TYPE . '://'
+                        . $externalDb->DBS_USERNAME . ':' . $passw . '@' . $externalDb->DBS_SERVER . $dbsPort . '/'
+                        . $externalDb->DBS_DATABASE_NAME . $encoding;
+
                     $laravelConfig = [
                         'driver' => $externalDb->DBS_TYPE === 'mssql' ? 'sqlsrv' : $externalDb->DBS_TYPE, // MSSQL driver is not supported anymore, only SQLSRV
                         'host' => $externalDb->DBS_SERVER,
