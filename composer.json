@@ -60,7 +60,8 @@
         "league/oauth2-google": "^3.0",
         "tecnickcom/tcpdf": "6.3.*",
         "fzaninotto/faker": "^1.7",
-        "predis/predis": "1.1.1"
+        "predis/predis": "1.1.1",
+        "phpmyadmin/sql-parser": "^5.3"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^6.3",
