@@ -1444,7 +1444,7 @@ class TimerEvent
                 $aInfo = array(
                     'ip'        => \G::getIpAddress()
                     ,'action'   => $action
-                    ,'TimeZone' => $datetime
+                    ,'timeZone' => $datetime
                     ,'workspace'=> $sysSys
                 );
                 $message = 'Not exists any record to start a new case';
@@ -1460,7 +1460,7 @@ class TimerEvent
             $aInfo = array(
                 'ip'        => \G::getIpAddress()
                 ,'action'   => $action
-                ,'TimeZone' => $datetime
+                ,'timeZone' => $datetime
                 ,'workspace'=> $sysSys
             );
             $message = 'Start continue the cases';
@@ -1715,7 +1715,7 @@ class TimerEvent
                 $aInfo = array(
                     'ip'        => \G::getIpAddress()
                     ,'action'   => $action
-                    ,'TimeZone' => $datetime
+                    ,'timeZone' => $datetime
                     ,'workspace'=> $sysSys
                 );
                 $message = 'No existing records to continue a case';
