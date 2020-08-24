@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 use ProcessMaker\Core\System;
-use ProcessMaker\AuditLog\AuditLog;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Validation\ValidationUploadedFiles;
@@ -332,6 +332,9 @@ class G
             $ip = getenv('HTTP_X_FORWARDED_FOR');
         } else {
             $ip = getenv('REMOTE_ADDR');
+        }
+        if ($ip === false) {
+            $ip = Request::ip();
         }
         return $ip;
     }
