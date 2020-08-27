@@ -49,6 +49,7 @@ class JobsManager
         '__SYSTEM_UTC_TIME_ZONE__',
         'USER_LOGGED',
         'USR_USERNAME',
+        'USR_TIME_ZONE',
         'APPLICATION',
         'INDEX',
         'PROCESS',
