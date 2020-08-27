@@ -797,6 +797,9 @@ class OutputDocument extends BaseOutputDocument
      */
     public function generateTcpdf($outDocUid, $fields, $path, $filename, $content, $landscape = false, $properties = [])
     {
+        // Check and prepare the fonts path used by TCPDF library
+        self::checkTcpdfFontsPath();
+
         // Including the basic configuration for the TCPDF library
         require_once PATH_TRUNK . "vendor" . PATH_SEP . "tecnickcom" . PATH_SEP . "tcpdf" . PATH_SEP . "config" . PATH_SEP . "tcpdf_config.php";
 
@@ -924,16 +927,6 @@ class OutputDocument extends BaseOutputDocument
 
         // Enable the font sub-setting option
         $pdf->setFontSubsetting(true);
-
-        // Set unicode font if is required, we need to detect if is chinese, japanese, thai, etc.
-        if (preg_match('/[\x{30FF}\x{3040}-\x{309F}\x{4E00}-\x{9FFF}\x{0E00}-\x{0E7F}]/u', $content, $matches)) {
-            // The additional fonts should be in "shared/fonts" folder
-            $fileArialUniTTF = PATH_DATA . "fonts" . PATH_SEP . "arialuni.ttf";
-            if (file_exists($fileArialUniTTF)) {
-                $font = TCPDF_FONTS::addTTFfont($fileArialUniTTF, 'TrueTypeUnicode');
-                $pdf->SetFont($font);
-            }
-        }
 
         // Convert the encoding of the content if is UTF-8
         if (mb_detect_encoding($content) == 'UTF-8') {
