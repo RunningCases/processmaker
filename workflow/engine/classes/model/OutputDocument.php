@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Filesystem\Filesystem;
 use ProcessMaker\Core\System;
 
 class OutputDocument extends BaseOutputDocument
@@ -1198,6 +1199,27 @@ class OutputDocument extends BaseOutputDocument
             }
         } catch (Exception $oError) {
             throw ($oError);
+        }
+    }
+
+    /**
+     * Check and prepare the fonts path used by TCPDF library
+     */
+    public static function checkTcpdfFontsPath()
+    {
+        // Define the path of the fonts, "K_PATH_FONTS" is a constant used by "TCPDF" library
+        define('K_PATH_FONTS', PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP);
+
+        // Check if already exists the path, if not exist we need to prepare the same
+        if (!file_exists(K_PATH_FONTS)) {
+            // Instance Filesystem class
+            $filesystem = new Filesystem();
+
+            // Create the missing folder(s)
+            $filesystem->makeDirectory(K_PATH_FONTS, 0755, true, true);
+
+            // Copy files related to the fonts
+            $filesystem->copyDirectory(PATH_TRUNK . 'vendor' . PATH_SEP . 'tecnickcom' . PATH_SEP . 'tcpdf' . PATH_SEP . 'fonts' . PATH_SEP, K_PATH_FONTS);
         }
     }
 }
