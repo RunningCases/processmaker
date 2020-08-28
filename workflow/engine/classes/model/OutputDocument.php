@@ -798,7 +798,7 @@ class OutputDocument extends BaseOutputDocument
     public function generateTcpdf($outDocUid, $fields, $path, $filename, $content, $landscape = false, $properties = [])
     {
         // Check and prepare the fonts path used by TCPDF library
-        self::checkTcpdfFontsPath();
+        self::checkTcPdfFontsPath();
 
         // Including the basic configuration for the TCPDF library
         require_once PATH_TRUNK . "vendor" . PATH_SEP . "tecnickcom" . PATH_SEP . "tcpdf" . PATH_SEP . "config" . PATH_SEP . "tcpdf_config.php";
@@ -1198,7 +1198,7 @@ class OutputDocument extends BaseOutputDocument
     /**
      * Check and prepare the fonts path used by TCPDF library
      */
-    public static function checkTcpdfFontsPath()
+    public static function checkTcPdfFontsPath()
     {
         // Define the path of the fonts, "K_PATH_FONTS" is a constant used by "TCPDF" library
         define('K_PATH_FONTS', PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP);
@@ -1214,5 +1214,95 @@ class OutputDocument extends BaseOutputDocument
             // Copy files related to the fonts
             $filesystem->copyDirectory(PATH_TRUNK . 'vendor' . PATH_SEP . 'tecnickcom' . PATH_SEP . 'tcpdf' . PATH_SEP . 'fonts' . PATH_SEP, K_PATH_FONTS);
         }
+    }
+
+    /**
+     * Load the custom fonts list
+     *
+     * @return array
+     */
+    public static function loadTcPdfFontsList()
+    {
+        // Initialize variables
+        $jsonFilePath = K_PATH_FONTS . 'fonts.json';
+
+        // Load the custom fonts list
+        if (file_exists($jsonFilePath)) {
+            $fonts = json_decode(file_get_contents($jsonFilePath), true);
+        } else {
+            $fonts = [];
+        }
+
+        return $fonts;
+    }
+
+    /**
+     * Save the custom fonts list
+     *
+     * @param $fonts
+     */
+    public static function saveTcPdfFontsList($fonts)
+    {
+        // Initialize variables
+        $jsonFilePath = K_PATH_FONTS . 'fonts.json';
+
+        // Save the JSON file
+        file_put_contents($jsonFilePath, json_encode($fonts));
+    }
+
+    /**
+     * Check if a font file name exist in the fonts list
+     *
+     * @param string $fontFileName
+     * @return bool
+     */
+    public static function existTcpdfFont($fontFileName)
+    {
+        // Load the custom fonts list
+        $fonts = self::loadTcPdfFontsList();
+
+        // Exist?
+        return isset($fonts[$fontFileName]);
+    }
+
+    /**
+     * Add a custom font to be used by TCPDF library
+     *
+     * @param array $font
+     */
+    public static function addTcPdfFont($font)
+    {
+        // Load the custom fonts list
+        $fonts = self::loadTcPdfFontsList();
+
+        // Add the font
+        $fonts[$font['fileName']] = $font;
+
+        // Save the fonts list
+        self::saveTcPdfFontsList($fonts);
+
+        // Re-generate CSS file
+        self::generateCssFile();
+    }
+
+    /**
+     * Generate CSS with the fonts definition to be used by TinyMCE editor
+     */
+    private static function generateCssFile()
+    {
+        // Initialize variables
+        $template = "@font-face {font-family: @familyName;src: url(@fileName) format('truetype');@properties}\n";
+        $css = '';
+
+        // Load the custom fonts list
+        $fonts = self::loadTcPdfFontsList();
+
+        // Build the CSS content
+        foreach ($fonts as $font) {
+            $css .= str_replace(['@familyName', '@fileName', '@properties'], [$font['familyName'], $font['fileName'], $font['properties']], $template);
+        }
+
+        // Save the CSS file
+        file_put_contents(K_PATH_FONTS . 'fonts.css', $css);
     }
 }

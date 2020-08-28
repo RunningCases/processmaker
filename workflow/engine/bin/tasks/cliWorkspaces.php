@@ -387,6 +387,23 @@ EOT
 CLI::taskRun("run_artisan");
 
 /**
+ * Add new font to be used in Output Documents generation (TinyMCE editor and TCPDF library)
+ */
+CLI::taskName('output-documents-add-font');
+CLI::taskDescription(<<<EOT
+Add new font to be used in Output Documents generation (TinyMCE editor and TCPDF library).
+EOT
+);
+CLI::taskOpt('font_type', <<<EOT
+Can be "TrueType" or "TrueTypeUnicode", if the option is not specified the default value is "TrueType"
+EOT
+,'ft', 'font_type=');
+CLI::taskArg('fontFileName', false);
+CLI::taskArg('friendlyName', true);
+CLI::taskArg('fontProperties', true);
+CLI::taskRun('output_documents_add_font');
+
+/**
  * Function run_info
  * 
  * @param array $args
@@ -1405,5 +1422,83 @@ function run_artisan($args)
         passthru(PHP_BINARY . " {$command}");
     } else {
         CLI::logging("> The --workspace option is undefined.\n");
+    }
+}
+
+/**
+ * Add new font to be used in Output Documents generation (TinyMCE editor and TCPDF library)
+ *
+ * @param array $args
+ * @param array $options
+ */
+function output_documents_add_font($args, $options)
+{
+    try {
+        // Validate the main required argument
+        if (empty($args)) {
+            throw new Exception('Please send the font filename.');
+        }
+
+        // Load and initialize optional arguments and options
+        $fontFileName = $args[0];
+        $fontFriendlyName = $args[1] ?? '';
+        $fontProperties = $args[2] ?? '';
+        $fontType = $options['font_type'] ?? 'TrueType';
+        $name = '';
+
+        // Check fonts path
+        OutputDocument::checkTcPdfFontsPath();
+
+        // Check if the font file exist
+        if (!file_exists(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName)) {
+            throw new Exception("Font '{$fontFileName}' not exists.");
+        }
+
+        // Check if the font file was already added
+        if (OutputDocument::existTcpdfFont($fontFileName)) {
+            throw new Exception("Font '{$fontFileName}' already added.");
+        }
+
+        // Check if the friendly font name is valid
+        if (preg_match('/[^0-9A-Za-z ]/', $fontFriendlyName)) {
+            throw new Exception('The friendly font name is using an incorrect format please use only letters, numbers and spaces.');
+        }
+
+        // Check if the font type is valid
+        if (!in_array($fontType, ['TrueType', 'TrueTypeUnicode'])) {
+            throw new Exception("Font type '{$fontType}' is invalid.");
+        }
+
+        // Convert TTF file to the format required by TCPDF library
+        $tcPdfFont = TCPDF_FONTS::addTTFfont(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName, $fontType);
+
+        // Check if the conversion was successful
+        if ($tcPdfFont === false) {
+            throw new Exception("The font file '{$fontFileName}' cannot be converted.");
+        }
+
+        // Include font definition, in order to use the variable $name
+        require_once K_PATH_FONTS . $tcPdfFont . '.php';
+
+        // Build the font family name to be used in the styles
+        $fontFamilyName = strtolower($name);
+        $fontFamilyName = str_replace('-', ' ', $fontFamilyName);
+        $fontFamilyName = str_replace(['bold', 'oblique', 'italic', 'regular'], '', $fontFamilyName);
+        $fontFamilyName = trim($fontFamilyName);
+
+        // Add new font
+        $font = [
+            'fileName' => $fontFileName,
+            'familyName' => $fontFamilyName,
+            'friendlyName' => !empty($fontFriendlyName) ? $fontFriendlyName : $fontFamilyName,
+            'properties' => $fontProperties
+        ];
+        OutputDocument::addTcPdfFont($font);
+
+        // Print finalization message
+        CLI::logging("Font '{$fontFileName}' added successfully." . PHP_EOL . PHP_EOL);
+    } catch (Exception $e) {
+        // Display the error message
+        CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
     }
 }
