@@ -144,6 +144,15 @@ class Designer extends Controller
             }
         }
 
+        // Load additional fonts registered by TCPDF library
+        $tcPdfFonts = [];
+        OutputDocument::checkTcPdfFontsPath();
+        foreach (OutputDocument::loadTcPdfFontsList() as $font) {
+            $font['friendlyName'] = !empty($font['friendlyName']) ? $font['friendlyName'] : $font['familyName'];
+            $tcPdfFonts[] = "{$font['friendlyName']}={$font['familyName']}";
+        }
+        $this->setVar('tcPdfFonts', implode(';', $tcPdfFonts));
+
         //plugin set source path
         $sourceCss = array();
         $sourceJs = array();

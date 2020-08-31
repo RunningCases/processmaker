@@ -9,16 +9,11 @@ $pathHome = implode('/', $sections) . '/';
 // Include the "paths_installed.php" file
 require_once $pathHome . 'engine/config/paths_installed.php';
 
-// Set the fonts styles file
+// Set the fonts styles file, for now the value is fixed (Maybe later we have another PDF engine)
 $fileName = 'fonts.css';
 
-// Check if the requested css file exists and if is accessible
-if (!file_exists(PATH_DATA . 'fonts/tcpdf/' . $fileName)) {
-    // Redirect to error page 404
-    header('Location: /errors/error404.php');
-    die();
-} else {
-    // Stream the font file
-    header('Content-Type: text/css');
+// Stream the requested css file if exists and if is accessible
+header('Content-Type: text/css');
+if (file_exists(PATH_DATA . 'fonts/tcpdf/' . $fileName)) {
     readfile(PATH_DATA . 'fonts/tcpdf/' . $fileName);
 }
