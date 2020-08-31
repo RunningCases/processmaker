@@ -127,6 +127,11 @@ class JobsManager
             'constants' => $constants['user'],
             'session' => $session,
             'server' => $_SERVER,
+            'phpEnv' => [
+                'HTTP_CLIENT_IP' => getenv('HTTP_CLIENT_IP'),
+                'HTTP_X_FORWARDED_FOR' => getenv('HTTP_X_FORWARDED_FOR'),
+                'REMOTE_ADDR' => getenv('REMOTE_ADDR'),
+            ],
         ];
     }
 
@@ -149,6 +154,13 @@ class JobsManager
 
         Propel::close();
         Propel::init(PATH_CONFIG . "databases.php");
+
+        foreach ($environment['phpEnv'] as $key => $value) {
+            if (empty($value)) {
+                continue;
+            }
+            putenv("{$key}={$value}");
+        }
     }
 
     /**
