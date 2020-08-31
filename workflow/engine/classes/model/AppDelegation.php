@@ -270,7 +270,8 @@ class AppDelegation extends BaseAppDelegation
                     if ($resultAbe->next()) {
                         $dataAbe = $resultAbe->getRow();
                         $flagActionsByEmail = false;
-                        if ($dataAbe['ABE_TYPE']!='' && $data->USR_UID!='') {
+                        // These validations are important for the the action by email
+                        if (!empty($dataAbe['ABE_TYPE']) && !empty($data->USR_UID) && $data->DEL_INDEX > 1) {
                             $actionsByEmail = new ActionsByEmailCoreClass();
                             $actionsByEmail->sendActionsByEmail($data, $dataAbe);
                         }

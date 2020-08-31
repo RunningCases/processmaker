@@ -7,6 +7,9 @@ use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Step;
+use ProcessMaker\Model\Task;
+use ProcessMaker\Model\TaskUser;
+use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 class CasesTest extends TestCase
@@ -358,6 +361,49 @@ class CasesTest extends TestCase
         $cases = new Cases();
         $res = $cases->getNextStep($process->PRO_UID, $application->APP_UID, $appDelegation->DEL_INDEX, 1);
         $this->assertCount(4, $res);
+    }
+
+    /**
+     * Test the getStartCases method
+     *
+     * @covers \Cases::getStartCases()
+     * @test
+     */
+    public function it_should_test_get_start_cases()
+    {
+        // Creating a process with initial tasks
+        $process = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $normalTask = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID,
+            'TAS_START' => 'TRUE'
+        ]);
+        $webEntryTask = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'PRO_ID' => $process->PRO_ID,
+            'TAS_START' => 'TRUE',
+            'TAS_TYPE' => 'WEBENTRYEVENT'
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $normalTask->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $webEntryTask->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+
+        // Instance class Cases
+        $cases = new Cases();
+
+        // Get all initial tasks
+        $startingTasks = $cases->getStartCases($user->USR_UID);
+        $this->assertCount(3, $startingTasks);
+
+        // Get initial tasks without dummy tasks
+        $startingTasks = $cases->getStartCases($user->USR_UID, true);
+        $this->assertCount(2, $startingTasks);
     }
 
     /**

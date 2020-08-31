@@ -21,6 +21,7 @@ setFlag = function (val) {
     flagRefresh = val;
 };
 
+Ext.BLANK_IMAGE_URL = "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 Ext.onReady(function(){
   new Ext.KeyMap(document, {
     key: Ext.EventObject.F5,

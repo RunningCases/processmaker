@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Log;
+use PhpMyAdmin\SqlParser\Parser;
 use ProcessMaker\Core\System;
 use ProcessMaker\BusinessModel\DynaForm\SuggestTrait;
 use ProcessMaker\BusinessModel\Cases;
@@ -1043,6 +1044,16 @@ class PmDynaform
                         $dt[$key]["alias"] = "";
                     }
                     if ($key == 0) {
+                        //compatibility with table name alias when uses the sentence 'AS'
+                        if (strtoupper($dt[$key]["alias"]) === 'AS') {
+                            $parser = new Parser($sql);
+                            if (isset($parser->statements[$key]) && isset($parser->statements[$key]->from[$key])) {
+                                $obj1 = $parser->statements[$key]->from[$key];
+                                if (!empty($obj1->alias)) {
+                                    $dt[$key]["alias"] = $dt[$key]["alias"] . ' ' . $obj1->alias;
+                                }
+                            }
+                        }
                         $from .= $dt[$key]["table"]
                                 . ($dt[$key]["table"] == $dt[$key]["alias"] ? "" : " " . $dt[$key]["alias"]);
                     } else {

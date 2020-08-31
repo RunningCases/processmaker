@@ -216,7 +216,7 @@ Ext.onReady(function() {
       maskRe: /^\d*$/,
       enableKeyEvents: true,
       
-      minValue: 90,
+      minValue: 30,
       maxValue: 14400,
 
       listeners: {

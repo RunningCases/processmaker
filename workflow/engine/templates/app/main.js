@@ -133,6 +133,9 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
         prepareData: function(data){
           var i;
           data.user = _FNF(data.USR_EMAIL, data.USR_FIRSTNAME, data.USR_LASTNAME);
+          //the 'NOTE_CONTENT' is used directly in an HTML template, so reserved characters 
+          //must be converted to HTML entities.
+          data.NOTE_CONTENT = Ext.util.Format.htmlEncode(data.NOTE_CONTENT);
           data.NOTE_CONTENT = data.NOTE_CONTENT.replace(/\n/g,' <br/>');
           data.files = "";
           for (i = 0; i < data.attachments.length; i += 1) {
