@@ -155,7 +155,7 @@ class Designer extends Controller
             $font['friendlyName'] = !empty($font['friendlyName']) ? $font['friendlyName'] : $font['familyName'];
             $tcPdfFonts[$font['friendlyName']] = "{$font['friendlyName']}={$font['familyName']}";
         }
-        ksort($tcPdfFonts,   SORT_NATURAL | SORT_FLAG_CASE);
+        ksort($tcPdfFonts, SORT_NATURAL | SORT_FLAG_CASE);
         $this->setVar('tcPdfFonts', implode(';', $tcPdfFonts));
 
         //plugin set source path

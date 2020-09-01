@@ -404,6 +404,17 @@ CLI::taskArg('fontProperties', true);
 CLI::taskRun('documents_add_font');
 
 /**
+ * Remove a font used in Documents generation (TinyMCE editor and TCPDF library for now)
+ */
+CLI::taskName('documents-remove-font');
+CLI::taskDescription(<<<EOT
+Remove a font used in Documents generation (TinyMCE editor and TCPDF library for now).
+EOT
+);
+CLI::taskArg('fontFileName', false);
+CLI::taskRun('documents_remove_font');
+
+/**
  * Function run_info
  * 
  * @param array $args
@@ -1497,6 +1508,57 @@ function documents_add_font($args, $options)
 
         // Print finalization message
         CLI::logging("Font '{$fontFileName}' added successfully." . PHP_EOL . PHP_EOL);
+    } catch (Exception $e) {
+        // Display the error message
+        CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
+    }
+}
+
+/**
+ * Remove a font used in Documents generation (TinyMCE editor and TCPDF library for now)
+ *
+ * @param array $args
+ */
+function documents_remove_font($args)
+{
+    try {
+        // Validate the main required argument
+        if (empty($args)) {
+            throw new Exception('Please send the font filename.');
+        }
+
+        // Load arguments
+        $fontFileName = $args[0];
+
+        // Check fonts path
+        OutputDocument::checkTcPdfFontsPath();
+
+        // Check if the font file exist
+        if (!file_exists(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName)) {
+            throw new Exception("Font '{$fontFileName}' not exists.");
+        }
+
+        // Check if the font file was registered
+        if (!OutputDocument::existTcpdfFont($fontFileName)) {
+            throw new Exception("Font '{$fontFileName}' was not registered.");
+        }
+
+        // This line get the filename of the previous converted font
+        $tcPdfFont = TCPDF_FONTS::addTTFfont(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName);
+
+        // Remove TCPDF font files
+        $extensions = ['ctg.z', 'php', 'z'];
+        foreach ($extensions as $extension) {
+            if (file_exists(PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP . $tcPdfFont . '.' . $extension)) {
+                unlink(PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP . $tcPdfFont . '.' . $extension);
+            }
+        }
+
+        // Remove font
+        OutputDocument::removeTcPdfFont($fontFileName);
+
+        // Print finalization message
+        CLI::logging("Font '{$fontFileName}' removed successfully." . PHP_EOL . PHP_EOL);
     } catch (Exception $e) {
         // Display the error message
         CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);

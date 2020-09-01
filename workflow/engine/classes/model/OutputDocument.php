@@ -1286,6 +1286,26 @@ class OutputDocument extends BaseOutputDocument
     }
 
     /**
+     * Remove a custom font used in TCPDF library
+     *
+     * @param string $fileName
+     */
+    public static function removeTcPdfFont($fileName)
+    {
+        // Load the custom fonts list
+        $fonts = self::loadTcPdfFontsList();
+
+        // Add the font
+        unset($fonts[$fileName]);
+
+        // Save the fonts list
+        self::saveTcPdfFontsList($fonts);
+
+        // Re-generate CSS file
+        self::generateCssFile();
+    }
+
+    /**
      * Generate CSS with the fonts definition to be used by TinyMCE editor
      */
     private static function generateCssFile()
