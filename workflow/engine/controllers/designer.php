@@ -144,13 +144,18 @@ class Designer extends Controller
             }
         }
 
-        // Load additional fonts registered by TCPDF library
-        $tcPdfFonts = [];
+        // Merge default fonts with fonts registered by TCPDF library
+        $tcPdfFonts = [
+            'Courier New' => 'Courier New=courier new,courier',
+            'Helvetica' => 'Helvetica=helvetica',
+            'Times New Roman' => 'Times New Roman=times new roman,times'
+        ];
         OutputDocument::checkTcPdfFontsPath();
         foreach (OutputDocument::loadTcPdfFontsList() as $font) {
             $font['friendlyName'] = !empty($font['friendlyName']) ? $font['friendlyName'] : $font['familyName'];
-            $tcPdfFonts[] = "{$font['friendlyName']}={$font['familyName']}";
+            $tcPdfFonts[$font['friendlyName']] = "{$font['friendlyName']}={$font['familyName']}";
         }
+        ksort($tcPdfFonts,   SORT_NATURAL | SORT_FLAG_CASE);
         $this->setVar('tcPdfFonts', implode(';', $tcPdfFonts));
 
         //plugin set source path

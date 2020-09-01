@@ -387,11 +387,11 @@ EOT
 CLI::taskRun("run_artisan");
 
 /**
- * Add new font to be used in Output Documents generation (TinyMCE editor and TCPDF library)
+ * Add new font to be used in Documents generation (TinyMCE editor and TCPDF library for now)
  */
-CLI::taskName('output-documents-add-font');
+CLI::taskName('documents-add-font');
 CLI::taskDescription(<<<EOT
-Add new font to be used in Output Documents generation (TinyMCE editor and TCPDF library).
+Add new font to be used in Documents generation (TinyMCE editor and TCPDF library for now).
 EOT
 );
 CLI::taskOpt('font_type', <<<EOT
@@ -401,7 +401,7 @@ EOT
 CLI::taskArg('fontFileName', false);
 CLI::taskArg('friendlyName', true);
 CLI::taskArg('fontProperties', true);
-CLI::taskRun('output_documents_add_font');
+CLI::taskRun('documents_add_font');
 
 /**
  * Function run_info
@@ -1426,12 +1426,12 @@ function run_artisan($args)
 }
 
 /**
- * Add new font to be used in Output Documents generation (TinyMCE editor and TCPDF library)
+ * Add new font to be used in Documents generation (TinyMCE editor and TCPDF library for now)
  *
  * @param array $args
  * @param array $options
  */
-function output_documents_add_font($args, $options)
+function documents_add_font($args, $options)
 {
     try {
         // Validate the main required argument
