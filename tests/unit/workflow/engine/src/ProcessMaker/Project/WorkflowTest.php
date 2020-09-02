@@ -125,4 +125,25 @@ class WorkflowTest extends TestCase
         $this->expectException(Exception::class);
         $actual = $this->workflow->getData($proUid);
     }
+
+    /**
+     * Test if the target xml dynaform was created correctly
+     * 
+     * @test
+     * @covers \ProcessMaker\Project\Workflow::createDataFileByArrayFile()
+     */
+    public function it_review_creation_of_xml_dynaforms()
+    {
+        $dyna1 = [
+            'file_name' => $this->faker->sentence(2),
+            'file_path' => '7256532885f4e6876cc8a50043688438\\3953439805f4e689265e2b8072489041.xml',
+            'file_content' => '<?xml version="1.0" encoding="UTF-8"?><dynaForm type="xmlform" name="7256532885f4e6876cc8a50043688438/3953439805f4e689265e2b8072489041" width="500" enabletemplate="0" mode="" nextstepsave="prompt"></dynaForm>',
+        ];
+        $formatFiles = [];
+        $formatFiles['dynaforms'][] = $dyna1;
+        $this->workflow->createDataFileByArrayFile($formatFiles);
+        $this->assertTrue(file_exists(PATH_DYNAFORM . '7256532885f4e6876cc8a50043688438/3953439805f4e689265e2b8072489041.xml'));
+        // Remove the xml created
+        G::rm_dir(PATH_DYNAFORM . '7256532885f4e6876cc8a50043688438/3953439805f4e689265e2b8072489041.xml');
+    }
 }
