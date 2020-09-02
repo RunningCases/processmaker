@@ -928,6 +928,31 @@ class OutputDocument extends BaseOutputDocument
         // Enable the font sub-setting option
         $pdf->setFontSubsetting(true);
 
+        // Set default unicode font if is required, we need to detect if is chinese, japanese, thai, etc.
+        if (preg_match('/[\x{30FF}\x{3040}-\x{309F}\x{4E00}-\x{9FFF}\x{0E00}-\x{0E7F}]/u', $content, $matches)) {
+            // The additional fonts should be in "shared/fonts" folder
+            $fileArialUniTTF = PATH_DATA . 'fonts' . PATH_SEP . 'arialuni.ttf';
+            if (file_exists($fileArialUniTTF)) {
+                // Convert TTF file to the format required by TCPDF library
+                $fontFamilyName = TCPDF_FONTS::addTTFfont($fileArialUniTTF, 'TrueTypeUnicode');
+
+                // Set the default unicode font for the document
+                $pdf->SetFont($fontFamilyName);
+
+                // Register the font file if is not present in the JSON file
+                if (!self::existTcpdfFont('arialuni.ttf')) {
+                    // Add "arialuni.ttf" font
+                    $font = [
+                        'fileName' => 'arialuni.ttf',
+                        'familyName' => $fontFamilyName,
+                        'friendlyName' => $fontFamilyName,
+                        'properties' => ''
+                    ];
+                    self::addTcPdfFont($font);
+                }
+            }
+        }
+
         // Convert the encoding of the content if is UTF-8
         if (mb_detect_encoding($content) == 'UTF-8') {
             $content = mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8');

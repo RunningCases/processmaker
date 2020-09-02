@@ -1455,7 +1455,6 @@ function documents_add_font($args, $options)
         $fontFriendlyName = $args[1] ?? '';
         $fontProperties = $args[2] ?? '';
         $fontType = $options['font_type'] ?? 'TrueType';
-        $name = '';
 
         // Check fonts path
         OutputDocument::checkTcPdfFontsPath();
@@ -1481,21 +1480,12 @@ function documents_add_font($args, $options)
         }
 
         // Convert TTF file to the format required by TCPDF library
-        $tcPdfFont = TCPDF_FONTS::addTTFfont(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName, $fontType);
+        $fontFamilyName = TCPDF_FONTS::addTTFfont(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName, $fontType);
 
         // Check if the conversion was successful
-        if ($tcPdfFont === false) {
+        if ($fontFamilyName === false) {
             throw new Exception("The font file '{$fontFileName}' cannot be converted.");
         }
-
-        // Include font definition, in order to use the variable $name
-        require_once K_PATH_FONTS . $tcPdfFont . '.php';
-
-        // Build the font family name to be used in the styles
-        $fontFamilyName = strtolower($name);
-        $fontFamilyName = str_replace('-', ' ', $fontFamilyName);
-        $fontFamilyName = str_replace(['bold', 'oblique', 'italic', 'regular'], '', $fontFamilyName);
-        $fontFamilyName = trim($fontFamilyName);
 
         // Add new font
         $font = [
