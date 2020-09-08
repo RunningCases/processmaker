@@ -3,6 +3,8 @@
 namespace ProcessMaker\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use RbacUsers;
+use RBAC;
 
 /**
  * Class Process
@@ -56,5 +58,36 @@ class Process extends Model
         }
 
         return ($query->get()->values()->toArray());
+    }
+
+    /**
+     * Obtains the list of private processes assigned to the user
+     * 
+     * @param string $userUid
+     * @return array
+     */
+    public static function getProcessPrivateListByUser($userUid)
+    {
+        $query = Process::query()
+            ->select()
+            ->where('PRO_CREATE_USER', $userUid)
+            ->where('PRO_TYPE_PROCESS', 'PRIVATE');
+
+        return ($query->get()->values()->toArray());
+    }
+
+    /**
+     * Converts the private processes to public
+     * 
+     * @param array $privateProcesses
+     * @return void
+     */
+    public static function convertPrivateProcessesToPublic($privateProcesses)
+    {
+        $admin = RBAC::ADMIN_USER_UID;
+
+        $processes = array_column($privateProcesses, 'PRO_ID');
+        Process::whereIn('PRO_ID', $processes)
+                ->update(['PRO_TYPE_PROCESS' => 'PUBLIC', 'PRO_CREATE_USER' => $admin]);
     }
 }

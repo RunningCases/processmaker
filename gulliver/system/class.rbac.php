@@ -57,6 +57,7 @@ class RBAC
                 'ofToAssign' => ['PM_FACTORY'],
                 'usersGroup' => ['PM_FACTORY'],
                 'canDeleteUser' => ['PM_USERS'],
+                'privateProcesses' => ['PM_USERS'],
                 'deleteUser' => ['PM_USERS'],
                 'changeUserStatus' => ['PM_USERS'],
                 'availableGroups' => ['PM_USERS'],

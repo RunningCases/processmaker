@@ -19254,6 +19254,12 @@ msgid "The user can not be deleted while assigned as a supervisor. Do you want t
 msgstr "The user can not be deleted while assigned as a supervisor. Do you want to delete it anyway?"
 
 # TRANSLATION
+# LABEL/ID_MSG_CONFIRM_DELETE_USER_PRIVATE_PROCESSES
+#: LABEL/ID_MSG_CONFIRM_DELETE_USER_PRIVATE_PROCESSES
+msgid "This user has private processes, if you continue all the user's private processes will become public processes. Do you want to continue?"
+msgstr "This user has private processes, if you continue all the user's private processes will become public processes. Do you want to continue?"
+
+# TRANSLATION
 # LABEL/ID_MSG_CONFIRM_DELETE_WEBBOT
 #: LABEL/ID_MSG_CONFIRM_DELETE_WEBBOT
 msgid "Are you sure you want to delete this webbot?"
