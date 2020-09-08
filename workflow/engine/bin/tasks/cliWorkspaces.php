@@ -387,28 +387,42 @@ EOT
 CLI::taskRun("run_artisan");
 
 /**
- * Add new font to be used in Documents generation (TinyMCE editor and TCPDF library for now)
+ * Add a font to be used in Documents generation (TinyMCE editor and/or TCPDF library)
  */
 CLI::taskName('documents-add-font');
 CLI::taskDescription(<<<EOT
-Add new font to be used in Documents generation (TinyMCE editor and TCPDF library for now).
+Add a font to be used in Documents generation (TinyMCE editor and/or TCPDF library).
 EOT
 );
-CLI::taskOpt('font_type', <<<EOT
+CLI::taskOpt('type', <<<EOT
 Can be "TrueType" or "TrueTypeUnicode", if the option is not specified the default value is "TrueType"
 EOT
-,'ft', 'font_type=');
+,'t', 'type=');
+CLI::taskOpt('tinymce', <<<EOT
+Can be "true" or "false", if the option is not specified the default value is "true". If the value is "false" the optional arguments [FRIENDLYNAME] [FONTPROPERTIES] are omitted. 
+EOT
+    ,'tm', 'tinymce=');
 CLI::taskArg('fontFileName', false);
 CLI::taskArg('friendlyName', true);
 CLI::taskArg('fontProperties', true);
 CLI::taskRun('documents_add_font');
 
 /**
- * Remove a font used in Documents generation (TinyMCE editor and TCPDF library for now)
+ * List the registered fonts
+ */
+CLI::taskName('documents-list-registered-fonts');
+CLI::taskDescription(<<<EOT
+List the registered fonts.
+EOT
+);
+CLI::taskRun('documents_list_registered_fonts');
+
+/**
+ * Remove a font used in Documents generation (TinyMCE editor and/or TCPDF library)
  */
 CLI::taskName('documents-remove-font');
 CLI::taskDescription(<<<EOT
-Remove a font used in Documents generation (TinyMCE editor and TCPDF library for now).
+Remove a font used in Documents generation (TinyMCE editor and/or TCPDF library).
 EOT
 );
 CLI::taskArg('fontFileName', false);
@@ -1437,7 +1451,7 @@ function run_artisan($args)
 }
 
 /**
- * Add new font to be used in Documents generation (TinyMCE editor and TCPDF library for now)
+ * Add a font to be used in Documents generation (TinyMCE editor and/or TCPDF library)
  *
  * @param array $args
  * @param array $options
@@ -1454,7 +1468,9 @@ function documents_add_font($args, $options)
         $fontFileName = $args[0];
         $fontFriendlyName = $args[1] ?? '';
         $fontProperties = $args[2] ?? '';
-        $fontType = $options['font_type'] ?? 'TrueType';
+        $fontType = $options['type'] ?? 'TrueType';
+        $inTinyMce = !empty($options['tinymce']) ? $options['tinymce'] === 'true' : true;
+        $name = '';
 
         // Check fonts path
         OutputDocument::checkTcPdfFontsPath();
@@ -1480,17 +1496,28 @@ function documents_add_font($args, $options)
         }
 
         // Convert TTF file to the format required by TCPDF library
-        $fontFamilyName = TCPDF_FONTS::addTTFfont(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName, $fontType);
+        $tcPdfFileName = TCPDF_FONTS::addTTFfont(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName, $fontType);
 
         // Check if the conversion was successful
-        if ($fontFamilyName === false) {
+        if ($tcPdfFileName === false) {
             throw new Exception("The font file '{$fontFileName}' cannot be converted.");
         }
+
+        // Include font definition, in order to use the variable $name
+        require_once K_PATH_FONTS . $tcPdfFileName . '.php';
+
+        // Build the font family name to be used in the styles
+        $fontFamilyName = strtolower($name);
+        $fontFamilyName = str_replace('-', ' ', $fontFamilyName);
+        $fontFamilyName = str_replace(['bold', 'oblique', 'italic', 'regular'], '', $fontFamilyName);
+        $fontFamilyName = trim($fontFamilyName);
 
         // Add new font
         $font = [
             'fileName' => $fontFileName,
+            'tcPdfFileName' => $tcPdfFileName,
             'familyName' => $fontFamilyName,
+            'inTinyMce' => $inTinyMce,
             'friendlyName' => !empty($fontFriendlyName) ? $fontFriendlyName : $fontFamilyName,
             'properties' => $fontProperties
         ];
@@ -1505,7 +1532,28 @@ function documents_add_font($args, $options)
 }
 
 /**
- * Remove a font used in Documents generation (TinyMCE editor and TCPDF library for now)
+ * List the registered fonts
+ */
+function documents_list_registered_fonts()
+{
+    // Check fonts path
+    OutputDocument::checkTcPdfFontsPath();
+
+    // Get registered fonts
+    $fonts = OutputDocument::loadTcPdfFontsList();
+
+    // Display information
+    CLI::logging(PHP_EOL);
+    foreach ($fonts as $fileName => $font) {
+        $inTinyMce = $font['inTinyMce'] ? 'Yes' : 'No';
+        CLI::logging("TTF Filename: {$fileName}" . PHP_EOL);
+        CLI::logging("TCPDF Filename: {$font['tcPdfFileName']}" . PHP_EOL);
+        CLI::logging("Display in TinyMCE: {$inTinyMce}" . PHP_EOL . PHP_EOL . PHP_EOL);
+    }
+}
+
+/**
+ * Remove a font used in Documents generation (TinyMCE editor and/or TCPDF library)
  *
  * @param array $args
  */
@@ -1533,14 +1581,14 @@ function documents_remove_font($args)
             throw new Exception("Font '{$fontFileName}' was not registered.");
         }
 
-        // This line get the filename of the previous converted font
-        $tcPdfFont = TCPDF_FONTS::addTTFfont(PATH_DATA . 'fonts' . PATH_SEP . $fontFileName);
+        // Get registered font
+        $font = OutputDocument::loadTcPdfFontsList()[$fontFileName];
 
         // Remove TCPDF font files
         $extensions = ['ctg.z', 'php', 'z'];
         foreach ($extensions as $extension) {
-            if (file_exists(PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP . $tcPdfFont . '.' . $extension)) {
-                unlink(PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP . $tcPdfFont . '.' . $extension);
+            if (file_exists(PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP . $font['tcPdfFileName'] . '.' . $extension)) {
+                unlink(PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP . $font['tcPdfFileName'] . '.' . $extension);
             }
         }
 

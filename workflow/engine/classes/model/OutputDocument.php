@@ -934,18 +934,20 @@ class OutputDocument extends BaseOutputDocument
             $fileArialUniTTF = PATH_DATA . 'fonts' . PATH_SEP . 'arialuni.ttf';
             if (file_exists($fileArialUniTTF)) {
                 // Convert TTF file to the format required by TCPDF library
-                $fontFamilyName = TCPDF_FONTS::addTTFfont($fileArialUniTTF, 'TrueTypeUnicode');
+                $tcPdfFileName = TCPDF_FONTS::addTTFfont($fileArialUniTTF, 'TrueTypeUnicode');
 
                 // Set the default unicode font for the document
-                $pdf->SetFont($fontFamilyName);
+                $pdf->SetFont($tcPdfFileName);
 
                 // Register the font file if is not present in the JSON file
                 if (!self::existTcpdfFont('arialuni.ttf')) {
-                    // Add "arialuni.ttf" font
+                    // Add font "arialuni.ttf"
                     $font = [
                         'fileName' => 'arialuni.ttf',
-                        'familyName' => $fontFamilyName,
-                        'friendlyName' => $fontFamilyName,
+                        'tcPdfFileName' => $tcPdfFileName,
+                        'familyName' => $tcPdfFileName,
+                        'inTinyMce' => true,
+                        'friendlyName' => $tcPdfFileName,
                         'properties' => ''
                     ];
                     self::addTcPdfFont($font);
@@ -1344,7 +1346,10 @@ class OutputDocument extends BaseOutputDocument
 
         // Build the CSS content
         foreach ($fonts as $font) {
-            $css .= str_replace(['@familyName', '@fileName', '@properties'], [$font['familyName'], $font['fileName'], $font['properties']], $template);
+            if ($font['inTinyMce']) {
+                $css .= str_replace(['@familyName', '@fileName', '@properties'],
+                    [$font['familyName'], $font['fileName'], $font['properties']], $template);
+            }
         }
 
         // Save the CSS file
