@@ -332,14 +332,14 @@ Ext.onReady(function(){
     columns: [
       {id: 'USR_UID', dataIndex: 'USR_UID', hidden: true, hideable: false},
       //{header: '', dataIndex: 'USR_UID', width: 30, align: 'center', renderer: photo_user},
-      {header: _('ID_USER_NAME'), dataIndex: 'USR_USERNAME', width: 90, align: 'left', sortable: true},
+      {header: _('ID_USER_NAME'), dataIndex: 'USR_USERNAME', width: 90, align: 'left', sortable: true, renderer: userName},
       {header: _('ID_FULL_NAME'), dataIndex: 'USR_USERNAME', width: 175, align: 'left', renderer: full_name},
-      {header: _('ID_EMAIL'), dataIndex: 'USR_EMAIL', width: 120, hidden: true, align: 'left', sortable: true},
+      {header: _('ID_EMAIL'), dataIndex: 'USR_EMAIL', width: 120, hidden: true, align: 'left', sortable: true, renderer: userEmail},
       {header: _('ID_STATUS'), dataIndex: 'USR_STATUS', width: 50, align: 'center', renderer: render_status, sortable: true},
-      {header: _('ID_ROLE'), dataIndex: 'USR_ROLE', width: 150, align:'left', sortable: true},
-      {header: _('ID_DEPARTMENT'), dataIndex: 'DEP_TITLE', width: 150, hidden: true, align: 'left'},
+      {header: _('ID_ROLE'), dataIndex: 'USR_ROLE', width: 150, align:'left', sortable: true, renderer: userRole},
+      {header: _('ID_DEPARTMENT'), dataIndex: 'DEP_TITLE', width: 150, hidden: true, align: 'left', renderer: userDepartment},
       {header: _('ID_LAST_LOGIN'), dataIndex: 'LAST_LOGIN', width: 108, align: 'center', renderer: render_lastlogin},
-      {header: _('ID_AUTHENTICATION_SOURCE'), dataIndex: 'USR_AUTH_SOURCE', width: 108, hidden: true, align: 'left'},
+      {header: _('ID_AUTHENTICATION_SOURCE'), dataIndex: 'USR_AUTH_SOURCE', width: 108, hidden: true, align: 'left', renderer: userAuthSource},
       {header: _('ID_CASES_NUM'), dataIndex: 'TOTAL_CASES', width: 75, align:'right', sortType: 'asInt'},
       {header: _('ID_DUE_DATE'), dataIndex: 'USR_DUE_DATE', width: 108, align:'center', renderer: render_duedate, sortable: true}
     ]
@@ -590,9 +590,27 @@ AuthUserPage = function(value){
 //  return '<img border="0" src="users_ViewPhotoGrid?h=' + Math.random() +'&pUID=' + value + '" width="20" />';
 //};
 
-//Render Full Name
-full_name = function(v,x,s){
-  return _FNF(v, s.data.USR_FIRSTNAME, s.data.USR_LASTNAME);
+//render functions
+full_name = function (value, x, s) {
+    var name = Ext.util.Format.htmlEncode(value);
+    var firstName = Ext.util.Format.htmlEncode(s.data.USR_FIRSTNAME);
+    var lastName = Ext.util.Format.htmlEncode(s.data.USR_LASTNAME);
+    return _FNF(name, firstName, lastName);
+};
+userName = function (value) {
+    return Ext.util.Format.htmlEncode(value);
+};
+userEmail = function (value) {
+    return Ext.util.Format.htmlEncode(value);
+};
+userRole = function (value) {
+    return Ext.util.Format.htmlEncode(value);
+};
+userDepartment = function (value) {
+    return Ext.util.Format.htmlEncode(value);
+};
+userAuthSource = function (value) {
+    return Ext.util.Format.htmlEncode(value);
 };
 
 //Render Status
