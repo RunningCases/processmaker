@@ -331,4 +331,56 @@ class SpoolRunTest extends TestCase
 
         $this->assertTrue($expected);
     }
+
+    /**
+     * This test updateSpoolStatus method.
+     * @test
+     * @covers \SpoolRun::__construct()
+     * @covers \SpoolRun::setData()
+     * @covers \SpoolRun::setConfig()
+     * @covers \SpoolRun::sendMail()
+     * @covers \SpoolRun::handleMail()
+     * @covers \SpoolRun::updateSpoolStatus()
+     */
+    public function it_should_test_updateSpoolStatus_method()
+    {
+        $appMsgUid = G::generateUniqueID();
+        factory(AppMessage::class)->create([
+            'APP_MSG_UID' => $appMsgUid
+        ]);
+
+        $emailServer = factory(EmailServerModel::class)->states('PHPMAILER')->make();
+
+        $config = $emailServer->toArray();
+        $config['SMTPSecure'] = 'ssl';
+
+        $faker = Factory::create();
+
+        $file1 = UploadedFile::fake()->image('avatar.jpg', 400, 300);
+        $file2 = UploadedFile::fake()->create('document.pdf', 200);
+
+        $files = [
+            $file1->path(),
+            $file2->path()
+        ];
+
+        $spoolRun = new SpoolRun();
+        $spoolRun->setData(
+                $appMsgUid,
+                $faker->title,
+                $faker->companyEmail,
+                $faker->freeEmail,
+                $faker->text(),
+                $faker->dateTime()->format('Y-m-d H:i:s'),
+                $faker->companyEmail,
+                $faker->freeEmail,
+                '',
+                $files
+        );
+        $spoolRun->setConfig($config);
+
+        $expected = $spoolRun->sendMail();
+
+        $this->assertTrue($expected);
+    }
 }
