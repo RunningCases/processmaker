@@ -1224,11 +1224,15 @@ class OutputDocument extends BaseOutputDocument
 
     /**
      * Check and prepare the fonts path used by TCPDF library
+     *
+     * @param string $folderName
      */
-    public static function checkTcPdfFontsPath()
+    public static function checkTcPdfFontsPath($folderName = 'tcpdf')
     {
-        // Define the path of the fonts, "K_PATH_FONTS" is a constant used by "TCPDF" library
-        define('K_PATH_FONTS', PATH_DATA . 'fonts' . PATH_SEP . 'tcpdf' . PATH_SEP);
+        if (!defined('K_PATH_FONTS')) {
+            // Define the path of the fonts, "K_PATH_FONTS" is a constant used by "TCPDF" library
+            define('K_PATH_FONTS', PATH_DATA . 'fonts' . PATH_SEP . $folderName . PATH_SEP);
+        }
 
         // Check if already exists the path, if not exist we need to prepare the same
         if (!file_exists(K_PATH_FONTS)) {
@@ -1335,7 +1339,7 @@ class OutputDocument extends BaseOutputDocument
     /**
      * Generate CSS with the fonts definition to be used by TinyMCE editor
      */
-    private static function generateCssFile()
+    public static function generateCssFile()
     {
         // Initialize variables
         $template = "@font-face {font-family: @familyName;src: url(/fonts/font.php?file=@fileName) format('truetype');@properties}\n";
