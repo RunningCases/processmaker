@@ -336,6 +336,9 @@ class SpoolRun
     private function updateSpoolStatus()
     {
         $oAppMessage = AppMessagePeer::retrieveByPK($this->spoolId);
+        if (empty($oAppMessage)) {
+            return;
+        }
         if (is_array($this->fileData['attachments'])) {
             $attachment = implode(",", $this->fileData['attachments']);
             $oAppMessage->setappMsgAttach($attachment);
