@@ -4,6 +4,7 @@ namespace ProcessMaker\BusinessModel;
 
 use Exception;
 use G;
+use ProcessMaker\BusinessModel\Cases;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
@@ -29,8 +30,8 @@ class CasesTest extends TestCase
         Documents::truncate();
         Application::truncate();
         User::where('USR_ID', '=', 1)
-                ->where('USR_ID', '=', 2)
-                ->delete();
+            ->where('USR_ID', '=', 2)
+            ->delete();
     }
 
     /**
@@ -131,5 +132,105 @@ class CasesTest extends TestCase
 
         // Remove the path created
         G::rm_dir($pathCase);
+    }
+
+    /**
+     * It tests the uploadFiles method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::uploadFiles()
+     * @test
+     */
+    public function it_should_test_upload_files_method()
+    {
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create([
+            'APP_CUR_USER' => $user->USR_UID
+        ]);
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID
+        ]);
+        $varName = "/tmp/test.pdf";
+        fopen($varName, "w");
+        $_FILES = ["form" =>
+        [
+            "name" => ["test"],
+            "type" => ["application/pdf"],
+            "tmp_name" => ["/tmp/test.pdf"],
+            "error" => [0],
+            "size" => [0]
+        ]];
+
+        $case = new Cases();
+
+        // Call the uploadFiles method, sending the delIndex
+        $res = $case->uploadFiles($user->USR_UID, $application->APP_UID, $varName, -1, null, $delegation->DEL_INDEX);
+        // Asserts the result is not empy
+        $this->assertNotEmpty($res);
+
+        //Call the uploadFiles method, without the delIndex
+        $res = $case->uploadFiles($user->USR_UID, $application->APP_UID, $varName);
+        // Asserts the result is not empy
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the exception in the uploadFiles method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::uploadFiles()
+     * @test
+     */
+    public function it_should_test_exception_in_upload_files_method()
+    {
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create([
+            'APP_CUR_USER' => $user->USR_UID
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID
+        ]);
+        $varName = "/tmp/test.pdf";
+        fopen($varName, "w");
+
+        $_FILES = [];
+        $case = new Cases();
+
+        // Asserts an exception is expected
+        $this->expectExceptionMessage("**ID_ERROR_UPLOAD_FILE_CONTACT_ADMINISTRATOR**");
+        // Call the uploadFiles method
+        $case->uploadFiles($user->USR_UID, $application->APP_UID, $varName);
+    }
+
+    /**
+     * It tests the exception in uploadFiles method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases::uploadFiles()
+     * @test
+     */
+    public function it_should_test_the_exception_in_upload_files_method()
+    {
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create([
+            'APP_CUR_USER' => $user->USR_UID
+        ]);
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID
+        ]);
+        $varName = "/tmp/test.pdf";
+        fopen($varName, "w");
+        $_FILES = ["form" =>
+        [
+            "name" => ["test"],
+            "type" => ["application/pdf"],
+            "tmp_name" => ["/tmp/test.pdf"],
+            "error" => [UPLOAD_ERR_INI_SIZE],
+            "size" => [0]
+        ]];
+
+        $case = new Cases();
+
+        // Asserts there is an exception for the file
+        $this->expectExceptionMessage("The uploaded file exceeds the upload_max_filesize directive in php.ini");
+        // Call the uploadFiles method
+        $case->uploadFiles($user->USR_UID, $application->APP_UID, $varName, -1, null, $delegation->DEL_INDEX);
     }
 }

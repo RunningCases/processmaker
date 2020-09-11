@@ -56,6 +56,7 @@ define('PATH_SMARTY_CACHE', PATH_TRUNK . 'shared/compiled/smarty/cache');
 define('PATH_THIRDPARTY', PATH_TRUNK . 'thirdparty/');
 define("URL_KEY", 'c0l0s40pt1mu59r1m3');
 define("PATH_XMLFORM", PATH_CORE . "xmlform" . PATH_SEP);
+define('PATH_DOCUMENT', PATH_WORKSPACE . '/files/');
 
 // Set Time Zone
 $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) (env('MAIN_SYSTEM_UTC_TIME_ZONE', 'workflow')) == 1;
