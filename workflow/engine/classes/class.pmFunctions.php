@@ -318,33 +318,32 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
 
         // Check to see if we're not running oracle, which is usually a safe default
         if (config('database.connections.' . $DBConnectionUID . '.driver') != 'oracle') {
-            switch (true) {
-                case preg_match( "/^(SELECT|EXECUTE|EXEC|SHOW|DESCRIBE|EXPLAIN|BEGIN)\s/i", $statement ):
-                    $result = $con->select( $SqlStatement );
-
-                    // Convert to 1 index key array of array results
-                    $result = collect($result)->map(function($x) { return (array)$x; })->toArray();
-                    array_unshift($result, []);
-                    unset($result[0]);
-
-                    $con->commit();
-                    break;
-                case preg_match( "/^INSERT\s/i", $statement ):
-                    $result = $con->insert( $SqlStatement );
-                    $con->commit();
-                    break;
-                case preg_match( "/^REPLACE\s/i", $statement ):
-                    $result = $con->update( $SqlStatement );
-                    $con->commit();
-                    break;
-                case preg_match( "/^UPDATE\s/i", $statement ):
-                    $result = $con->update( $SqlStatement );
-                    $con->commit();
-                    break;
-                case preg_match( "/^DELETE\s/i", $statement ):
-                    $result = $con->delete( $SqlStatement );
-                    $con->commit();
-                    break;
+            try {
+                switch (true) {
+                    case preg_match( "/^(SELECT|EXECUTE|EXEC|SHOW|DESCRIBE|EXPLAIN|BEGIN)\s/i", $statement ):
+                        $result = $con->select( $SqlStatement );
+                        // Convert to 1 index key array of array results
+                        $result = collect($result)->map(function($x) { return (array)$x; })->toArray();
+                        array_unshift($result, []);
+                        unset($result[0]);
+                        break;
+                    case preg_match( "/^INSERT\s/i", $statement ):
+                        $result = $con->insert( $SqlStatement );
+                        break;
+                    case preg_match( "/^REPLACE\s/i", $statement ):
+                        $result = $con->update( $SqlStatement );
+                        break;
+                    case preg_match( "/^UPDATE\s/i", $statement ):
+                        $result = $con->update( $SqlStatement );
+                        break;
+                    case preg_match( "/^DELETE\s/i", $statement ):
+                        $result = $con->delete( $SqlStatement );
+                        break;
+                }
+                $con->commit();
+            } catch (Exception $e) {
+                $con->rollback();
+                throw new SQLException($e->getMessage());
             }
         } else {
             $dataEncode = $con->getDSN();
