@@ -1544,11 +1544,15 @@ function documents_list_registered_fonts()
 
     // Display information
     CLI::logging(PHP_EOL);
-    foreach ($fonts as $fileName => $font) {
-        $inTinyMce = $font['inTinyMce'] ? 'Yes' : 'No';
-        CLI::logging("TTF Filename: {$fileName}" . PHP_EOL);
-        CLI::logging("TCPDF Filename: {$font['tcPdfFileName']}" . PHP_EOL);
-        CLI::logging("Display in TinyMCE: {$inTinyMce}" . PHP_EOL . PHP_EOL . PHP_EOL);
+    if (!empty($fonts)) {
+        foreach ($fonts as $fileName => $font) {
+            $inTinyMce = $font['inTinyMce'] ? 'Yes' : 'No';
+            CLI::logging("TTF Filename: {$fileName}" . PHP_EOL);
+            CLI::logging("TCPDF Filename: {$font['tcPdfFileName']}" . PHP_EOL);
+            CLI::logging("Display in TinyMCE: {$inTinyMce}" . PHP_EOL . PHP_EOL . PHP_EOL);
+        }
+    } else {
+        CLI::logging('It has not been added fonts yet.' . PHP_EOL . PHP_EOL);
     }
 }
 
