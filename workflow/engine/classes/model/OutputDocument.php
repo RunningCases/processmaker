@@ -1242,8 +1242,11 @@ class OutputDocument extends BaseOutputDocument
             // Create the missing folder(s)
             $filesystem->makeDirectory(K_PATH_FONTS, 0755, true, true);
 
-            // Copy files related to the fonts
+            // Copy files related to the fonts from vendors
             $filesystem->copyDirectory(PATH_TRUNK . 'vendor' . PATH_SEP . 'tecnickcom' . PATH_SEP . 'tcpdf' . PATH_SEP . 'fonts' . PATH_SEP, K_PATH_FONTS);
+
+            // Copy files related to the fonts from core
+            $filesystem->copyDirectory(PATH_CORE . 'content' . PATH_SEP . 'tcPdfFonts' . PATH_SEP, K_PATH_FONTS);
         }
     }
 
