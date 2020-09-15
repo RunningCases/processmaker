@@ -1165,12 +1165,14 @@ class RBAC
                 $dataCase['USR_STATUS'] = 1;
             }
         }
-
+        $currentUser = $this->userObj;
+        $this->userObj = new RbacUsers();
         $this->userObj->update($dataCase);
         if ($rolCode != '') {
             $this->removeRolesFromUser($dataCase['USR_UID']);
             $this->assignRoleToUser($dataCase['USR_UID'], $rolCode);
         }
+        $this->userObj = $currentUser;
     }
 
     /**
