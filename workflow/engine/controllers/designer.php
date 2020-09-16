@@ -163,7 +163,15 @@ class Designer extends Controller
         OutputDocument::checkTcPdfFontsPath();
         foreach (OutputDocument::loadTcPdfFontsList() as $font) {
             if ($font['inTinyMce']) {
+                // If these value are different, create a complex font family string
+                if ($font['familyName'] != $font['tcPdfFileName']) {
+                    $font['familyName'] = "{$font['familyName']},{$font['tcPdfFileName']}";
+                }
+
+                // Build friendly name
                 $font['friendlyName'] = !empty($font['friendlyName']) ? $font['friendlyName'] : $font['familyName'];
+
+                // Set the value to use in the html editor
                 $tcPdfFonts[$font['friendlyName']] = "{$font['friendlyName']}={$font['familyName']}";
             }
         }
