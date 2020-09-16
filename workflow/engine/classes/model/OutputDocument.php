@@ -1345,7 +1345,7 @@ class OutputDocument extends BaseOutputDocument
     public static function generateCssFile()
     {
         // Initialize variables
-        $template = "@font-face {font-family: @familyName;src: url(/fonts/font.php?file=@fileName) format('truetype');@properties}\n";
+        $template = "@font-face {font-family: @familyName;src: url('/fonts/font.php?file=@fileName') format('truetype');@properties}\n";
         $css = '';
 
         // Load the custom fonts list
