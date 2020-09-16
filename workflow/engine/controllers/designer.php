@@ -144,6 +144,40 @@ class Designer extends Controller
             }
         }
 
+        // Merge default fonts with fonts registered by TCPDF library
+        $tcPdfFonts = [
+            'Cormorant Garamond' => 'Cormorant Garamond=cormorantgaramond',
+            'Courier New' => 'Courier New=courier new,courier',
+            'Gentium Book Basic' => 'Gentium Book Basic=gentiumbookbasic',
+            'Grandstander' => 'Grandstander=grandstander',
+            'Helvetica' => 'Helvetica=helvetica',
+            'Inconsolata' => 'Inconsolata=inconsolata',
+            'Josefin Sans' => 'Josefin Sans=josefinsans',
+            'Lato' => 'Lato=lato',
+            'Montserrat' => 'Montserrat=montserrat',
+            'Noto Serif' => 'Noto Serif=notoserif',
+            'Open Sans' => 'Open Sans=opensans',
+            'Quicksand' => 'Quicksand=quicksand',
+            'Times New Roman' => 'Times New Roman=times new roman,times'
+        ];
+        OutputDocument::checkTcPdfFontsPath();
+        foreach (OutputDocument::loadTcPdfFontsList() as $font) {
+            if ($font['inTinyMce']) {
+                // If these value are different, create a complex font family string
+                if ($font['familyName'] != $font['tcPdfFileName']) {
+                    $font['familyName'] = "{$font['familyName']},{$font['tcPdfFileName']}";
+                }
+
+                // Build friendly name
+                $font['friendlyName'] = !empty($font['friendlyName']) ? $font['friendlyName'] : $font['familyName'];
+
+                // Set the value to use in the html editor
+                $tcPdfFonts[$font['friendlyName']] = "{$font['friendlyName']}={$font['familyName']}";
+            }
+        }
+        ksort($tcPdfFonts, SORT_NATURAL | SORT_FLAG_CASE);
+        $this->setVar('tcPdfFonts', implode(';', $tcPdfFonts));
+
         //plugin set source path
         $sourceCss = array();
         $sourceJs = array();
