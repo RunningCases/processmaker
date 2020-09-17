@@ -334,6 +334,7 @@ define('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION', $config['disable_downloa
 define('LOGS_MAX_FILES', $config['logs_max_files']);
 define('LOGS_LOCATION', $config['logs_location']);
 define('LOGGING_LEVEL', $config['logging_level']);
+define('EXT_AJAX_TIMEOUT', $config['ext_ajax_timeout']);
 define('TIME_ZONE', ini_get('date.timezone'));
 /*----------------------------------********---------------------------------*/
 define('HIGHLIGHT_HOME_FOLDER_ENABLE', $config['highlight_home_folder_enable'] === "1");
