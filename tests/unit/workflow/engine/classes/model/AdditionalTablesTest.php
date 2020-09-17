@@ -282,6 +282,34 @@ class AdditionalTablesTest extends TestCase
     }
 
     /**
+     * It tests the validateParameter method
+     * 
+     * @covers \AdditionalTables::validateParameter()
+     * @test
+     */
+    public function it_should_test_the_validate_parameter_method()
+    {
+        //Create the AdditionalTables object
+        $additionalTables = new AdditionalTables();
+        //Call validateParameter method
+        $result = $additionalTables->validateParameter(8, 1, 8, 4);
+        //Assert the number is in the rage
+        $this->assertEquals(8, $result);
+        //Call validateParameter method
+        $result = $additionalTables->validateParameter(9, 1, 5, 4);
+        //Assert the number has exceeded the max value
+        $this->assertEquals(5, $result);
+        //Call validateParameter method
+        $result = $additionalTables->validateParameter(-3, 1, 5, 4);
+        //Assert the number has exceeded the min value
+        $this->assertEquals(1, $result);
+        //Call validateParameter method
+        $result = $additionalTables->validateParameter("$%&(%&(DGS=UJHGE32598", 1, 5, 4);
+        //Assert the number has extrange characters
+        $this->assertEquals(4, $result);
+    }
+
+    /**
      * This gets the content from template file.
      * @param string $pathData
      * @param string $tableName
