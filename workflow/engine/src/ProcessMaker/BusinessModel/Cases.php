@@ -3783,17 +3783,22 @@ class Cases
      * @param string $varName
      * @param mixed $inpDocUid
      * @param string $appDocUid
+     * @param int $delegationIndex
      *
      * @return array
      * @throws Exception
      */
-    public function uploadFiles($userUid, $appUid, $varName, $inpDocUid = -1, $appDocUid = null)
+    public function uploadFiles($userUid, $appUid, $varName, $inpDocUid = -1, $appDocUid = null, $delegationIndex = null)
     {
         $response = [];
         if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
             // Get the delIndex related to the case
             $cases = new ClassesCases();
-            $delIndex = $cases->getCurrentDelegation($appUid, $userUid);
+            if (!empty($delegationIndex)) {
+                $delIndex = $delegationIndex;
+            } else {
+                $delIndex = $cases->getCurrentDelegation($appUid, $userUid);
+            }
             // Get information about the user
             $user = new ModelUsers();
             $userCreator = $user->loadDetailed($userUid)['USR_FULLNAME'];

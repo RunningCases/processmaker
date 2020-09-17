@@ -7,6 +7,9 @@ use Luracast\Restler\Defaults;
 use Luracast\Restler\HumanReadableCache;
 use Luracast\Restler\RestException;
 use Maveriks\Extension\Restler;
+use ProcessMaker\Model\Application;
+use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\User;
 use ProcessMaker\Services\Api\Cases;
 use RBAC;
 use ReflectionClass;
@@ -212,5 +215,75 @@ class CasesTest extends TestCase
         $expected = $cases->__isAllowed();
 
         $this->assertTrue($expected);
+    }
+
+    /**
+     * Test the uploadDocumentToCase method
+     * 
+     * @covers ProcessMaker\Services\Api\Cases::uploadDocumentToCase
+     * @test
+     */
+    public function test_upload_document_to_case_method()
+    {
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create([
+            'APP_CUR_USER' => $user->USR_UID
+        ]);
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID
+        ]);
+        $varName = "/tmp/test.pdf";
+
+        $varName = "/tmp/test.pdf";
+        fopen($varName, "w");
+        $_FILES = ["form" =>
+        [
+            "name" => ["test"],
+            "type" => ["application/pdf"],
+            "tmp_name" => ["/tmp/test.pdf"],
+            "error" => [0],
+            "size" => [0]
+        ]];
+
+        $case = new Cases();
+
+        //Call the uploadDocumentToCase method without a post delindex
+        $res = $case->uploadDocumentToCase($application->APP_UID, $varName);
+        //Asserts the result is not empty
+        $this->assertNotEmpty($res);
+        $_POST['delIndex'] = $delegation->DEL_INDEX;
+        //Call the uploadDocumentToCase method with a post delindex
+        $res = $case->uploadDocumentToCase($application->APP_UID, $varName, -1, null, $delegation->DEL_INDEX);
+        //Asserts the result is not empty
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * Test the exception in the uploadDocumentToCase method
+     * 
+     * @covers ProcessMaker\Services\Api\Cases::uploadDocumentToCase
+     * @test
+     */
+    public function test_exception_upload_document_to_case_method()
+    {
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create([
+            'APP_CUR_USER' => $user->USR_UID
+        ]);
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID
+        ]);
+        $varName = "/tmp/test.pdf";
+
+        $varName = "/tmp/test.pdf";
+        fopen($varName, "w");
+        $_FILES = [];
+
+        $case = new Cases();
+
+        //Asserts the expected exception
+        $this->expectExceptionMessage("**ID_ERROR_UPLOAD_FILE_CONTACT_ADMINISTRATOR**");
+        //Call the uploadDocumentToCase method without a post delindex
+        $res = $case->uploadDocumentToCase($application->APP_UID, $varName);
     }
 }
