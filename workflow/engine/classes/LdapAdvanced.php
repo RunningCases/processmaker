@@ -1,6 +1,7 @@
 <?php
 
-use \ProcessMaker\BusinessModel\User;
+use Illuminate\Support\Facades\Log;
+use ProcessMaker\BusinessModel\User;
 
 /**
  * class.ldapAdvanced.php
@@ -1127,10 +1128,12 @@ class LdapAdvanced
                     BasePeer::doUpdate($c1, $c2, $con);
                 }
             } catch (Exception $e) {
-                $context = Bootstrap::getDefaultContextLog();
-                $context["action"] = "ldapSynchronize";
-                $context["authSource"] = $arrayAuthSource;
-                Bootstrap::registerMonolog("ldapSynchronize", 400, $e->getMessage(), $context, $context["workspace"], "processmaker.log");
+                $context = [
+                    "action" => "ldapSynchronize",
+                    "authSource" => $arrayAuthSource
+                ];
+                $message = $e->getMessage();
+                Log::channel(':ldapSynchronize')->error($message, Bootstrap::context($context));
             }
 
             //Check ldap connection for user

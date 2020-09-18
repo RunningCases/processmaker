@@ -31,9 +31,9 @@ use Exception;
 use G;
 use Groups;
 use GroupUserPeer;
+use Illuminate\Support\Facades\Log;
 use InputDocument;
 use InvalidIndexSearchTextException;
-use ListParticipatedLast;
 use PmDynaform;
 use PmTable;
 use ProcessMaker\BusinessModel\ProcessSupervisor as BmProcessSupervisor;
@@ -3311,7 +3311,9 @@ class Cases
                         }
                         $arrayApplicationData['APP_DATA'][$key] = G::json_encode($files);
                     } catch (Exception $e) {
-                        Bootstrap::registerMonolog('DeleteFile', 400, $e->getMessage(), $value, config("system.workspace"), 'processmaker.log');
+                        $message = $e->getMessage();
+                        $context = $value;
+                        Log::channel(':DeleteFile')->error($message, Bootstrap::context($context));
                     }
                 }
                 $flagDelete = true;
@@ -4064,8 +4066,12 @@ class Cases
                     ->status(415)
                     ->message(G::LoadTranslation('ID_UPLOAD_INVALID_DOC_TYPE_FILE', [$inpDocTypeFile]))
                     ->log(function ($rule) {
-                        Bootstrap::registerMonologPhpUploadExecution('phpUpload', 250, $rule->getMessage(),
-                            $rule->getData()->filename);
+                        $message = $rule->getMessage();
+                        $context = [
+                            'filename' => $rule->getData()->filename,
+                            'url' => $_SERVER["REQUEST_URI"] ?? ''
+                        ];
+                        Log::channel(':phpUpload')->notice($message, Bootstrap::context($context));
                     });
                 // Rule: maximum file size
                 $validator->addRule()
@@ -4084,8 +4090,12 @@ class Cases
                     ->message(G::LoadTranslation("ID_UPLOAD_INVALID_DOC_MAX_FILESIZE",
                         [$inpDocMaxFileSize . $inpDocMaxFileSizeUnit]))
                     ->log(function ($rule) {
-                        Bootstrap::registerMonologPhpUploadExecution('phpUpload', 250, $rule->getMessage(),
-                            $rule->getData()->filename);
+                        $message = $rule->getMessage();
+                        $context = [
+                            'filename' => $rule->getData()->filename,
+                            'url' => $_SERVER["REQUEST_URI"] ?? ''
+                        ];
+                        Log::channel(':phpUpload')->notice($message, Bootstrap::context($context));
                     });
                 $validator->validate();
                 // We will to review if the validator has some error

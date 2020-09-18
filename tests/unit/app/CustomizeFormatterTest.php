@@ -45,14 +45,14 @@ class CustomizeFormatterTest extends TestCase
     public function levelProviders()
     {
         return [
-            ['emergency', 'production.EMERGENCY'],
-            ['alert', 'production.ALERT'],
-            ['critical', 'production.CRITICAL'],
-            ['error', 'production.ERROR'],
-            ['warning', 'production.WARNING'],
-            ['notice', 'production.NOTICE'],
-            ['info', 'production.INFO'],
-            ['debug', 'production.DEBUG'],
+            ['emergency', 'EMERGENCY'],
+            ['alert', 'ALERT'],
+            ['critical', 'CRITICAL'],
+            ['error', 'ERROR'],
+            ['warning', 'WARNING'],
+            ['notice', 'NOTICE'],
+            ['info', 'INFO'],
+            ['debug', 'DEBUG'],
         ];
     }
 
