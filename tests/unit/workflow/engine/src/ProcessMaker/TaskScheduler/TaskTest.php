@@ -166,4 +166,32 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * This test verify the calculateDuration activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::calculateDuration()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_calculateDuration_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->calculateDuration();
+            $printing = ob_get_clean();
+            $this->assertRegExp("/DONE/", $printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->calculateDuration();
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }

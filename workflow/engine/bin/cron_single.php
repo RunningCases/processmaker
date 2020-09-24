@@ -297,7 +297,9 @@ try {
                         if (empty($argvx) || strpos($argvx, "unpause") !== false) {
                             $task->unpauseApplications($now);
                         }
-                        calculateDuration();
+                        if (empty($argvx) || strpos($argvx, "calculate") !== false) {
+                            $task->calculateDuration();
+                        }
                         /*----------------------------------********---------------------------------*/
                         calculateAppDuration();
                         /*----------------------------------********---------------------------------*/
@@ -438,28 +440,6 @@ function executeCustomCronFunction($pathFile, $className)
     }
 }
 
-function calculateDuration()
-{
-    global $argvx;
-
-    if ($argvx != "" && strpos($argvx, "calculate") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Calculating Duration");
-
-    try {
-        $oAppDelegation = new AppDelegation();
-        $oAppDelegation->calculateDuration(1);
-
-        setExecutionResultMessage('DONE');
-        saveLog('calculateDuration', 'action', 'Calculating Duration');
-    } catch (Exception $oError) {
-        setExecutionResultMessage('WITH ERRORS', 'error');
-        eprintln("  '-" . $oError->getMessage(), 'red');
-        saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
-    }
-}
 /*----------------------------------********---------------------------------*/
 
 function calculateAppDuration()

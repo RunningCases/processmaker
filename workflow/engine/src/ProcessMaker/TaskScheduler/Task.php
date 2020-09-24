@@ -2,8 +2,10 @@
 
 namespace ProcessMaker\TaskScheduler;
 
+use AppDelegation;
 use App\Jobs\TaskScheduler;
 use Bootstrap;
+use Cases;
 use ConfigurationPeer;
 use Criteria;
 use Exception;
@@ -192,7 +194,7 @@ class Task
         $job = function() use($now) {
             $this->setExecutionMessage("Unpausing applications");
             try {
-                $cases = new \Cases();
+                $cases = new Cases();
                 $cases->ThrowUnpauseDaemon($now, 1);
 
                 $this->setExecutionResultMessage('DONE');
@@ -201,6 +203,27 @@ class Task
                 $this->setExecutionResultMessage('WITH ERRORS', 'error');
                 eprintln("  '-" . $e->getMessage(), 'red');
                 $this->saveLog('unpauseApplications', 'error', 'Error Unpausing Applications: ' . $e->getMessage());
+            }
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * This calculate duration.
+     */
+    public function calculateDuration()
+    {
+        $job = function() {
+            $this->setExecutionMessage("Calculating Duration");
+            try {
+                $appDelegation = new AppDelegation();
+                $appDelegation->calculateDuration(1);
+                $this->setExecutionResultMessage('DONE');
+                $this->saveLog('calculateDuration', 'action', 'Calculating Duration');
+            } catch (Exception $e) {
+                $this->setExecutionResultMessage('WITH ERRORS', 'error');
+                eprintln("  '-" . $e->getMessage(), 'red');
+                $this->saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $e->getMessage());
             }
         };
         $this->runTask($job);
