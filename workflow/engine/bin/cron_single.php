@@ -313,7 +313,9 @@ try {
                         if (empty($argvx) || strpos($argvx, "clean-self-service-tables") !== false) {
                             $task->cleanSelfServiceTables();
                         }
-                        executePlugins();
+                        if (empty($argvx) || strpos($argvx, "plugins") !== false) {
+                            $task->executePlugins();
+                        }
                         /*----------------------------------********---------------------------------*/
                         fillReportByUser();
                         fillReportByProcess();
@@ -368,81 +370,6 @@ try {
     $token = strtotime("now");
     PMException::registerErrorLog($e, $token);
     G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . "\n");
-}
-
-function executePlugins()
-{
-    global $argvx;
-
-    if ($argvx != "" && strpos($argvx, "plugins") === false) {
-        return false;
-    }
-
-    $pathCronPlugins = PATH_CORE . 'bin' . PATH_SEP . 'plugins' . PATH_SEP;
-
-    // Executing cron files in bin/plugins directory
-    if (!is_dir($pathCronPlugins)) {
-        return false;
-    }
-
-    if ($handle = opendir($pathCronPlugins)) {
-        setExecutionMessage('Executing cron files in bin/plugins directory in Workspace: ' . config("system.workspace"));
-        while (false !== ($file = readdir($handle))) {
-            if (strpos($file, '.php', 1) && is_file($pathCronPlugins . $file)) {
-                $filename = str_replace('.php', '', $file);
-                $className = $filename . 'ClassCron';
-
-                // Execute custom cron function
-                executeCustomCronFunction($pathCronPlugins . $file, $className);
-            }
-        }
-    }
-
-    // Executing registered cron files
-    // -> Get registered cron files
-    $oPluginRegistry = PluginRegistry::loadSingleton();
-    $cronFiles = $oPluginRegistry->getCronFiles();
-
-    // -> Execute functions
-    if (!empty($cronFiles)) {
-        setExecutionMessage('Executing registered cron files for Workspace: ' . config('system.workspace'));
-        /**
-         * @var \ProcessMaker\Plugins\Interfaces\CronFile $cronFile
-         */
-        foreach ($cronFiles as $cronFile) {
-            $path = PATH_PLUGINS . $cronFile->getNamespace() . PATH_SEP . 'bin' . PATH_SEP . $cronFile->getCronFile() . '.php';
-            if (file_exists($path)) {
-                executeCustomCronFunction($path, $cronFile->getCronFile());
-            } else {
-                setExecutionMessage('File ' . $cronFile->getCronFile() . '.php ' . 'does not exist.');
-            }
-        }
-    }
-}
-
-function executeCustomCronFunction($pathFile, $className)
-{
-    include_once $pathFile;
-
-    $oPlugin = new $className();
-
-    if (method_exists($oPlugin, 'executeCron')) {
-        $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
-        $arrayCron["processcTimeProcess"] = 60; //Minutes
-        $arrayCron["processcTimeStart"] = time();
-        @file_put_contents(PATH_DATA . "cron", serialize($arrayCron));
-
-        //Try to execute Plugin Cron. If there is an error then continue with the next file
-        setExecutionMessage("\n--- Executing cron file: $pathFile");
-        try {
-            $oPlugin->executeCron();
-            setExecutionResultMessage('DONE');
-        } catch (Exception $e) {
-            setExecutionResultMessage('FAILED', 'error');
-            eprintln("  '-" . $e->getMessage(), 'red');
-            saveLog('executePlugins', 'error', 'Error executing cron file: ' . $pathFile . ' - ' . $e->getMessage());
-        }
-    }
 }
 
 function executeEvents()

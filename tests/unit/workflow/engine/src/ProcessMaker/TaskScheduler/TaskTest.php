@@ -280,4 +280,32 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * This test verify the executePlugins activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::executePlugins()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_executePlugins_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->executePlugins();
+            $printing = ob_get_clean();
+            $this->assertRegExp("/plugins/", $printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->executePlugins();
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }
