@@ -25,6 +25,7 @@ require_once __DIR__ . '/../../../bootstrap/app.php';
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\TaskScheduler\Task;
 
 register_shutdown_function(function () {
     if (class_exists("Propel")) {
@@ -55,6 +56,14 @@ try {
     $cronName = $argv[4];
     $workspace = $argv[5];
     $now = $argv[6]; //date
+    //asynchronous flag
+    $asynchronous = false;
+    $result = array_search('+async', $argv);
+    if ($result !== false && is_int($result)) {
+        $asynchronous = true;
+        unset($argv[$result]);
+        $argv = array_values($argv);
+    }
     //Defines constants
     define('PATH_SEP', ($osIsLinux) ? '/' : '\\');
 
@@ -280,7 +289,31 @@ try {
         try {
             switch ($cronName) {
                 case 'cron':
-                    processWorkspace();
+                    try {
+                        $task = new Task($asynchronous, $sObject);
+                        if (empty($argvx) || strpos($argvx, "emails") !== false) {
+                            $task->resendEmails($now, $dateSystem);
+                        }
+                        unpauseApplications();
+                        calculateDuration();
+                        /*----------------------------------********---------------------------------*/
+                        calculateAppDuration();
+                        /*----------------------------------********---------------------------------*/
+                        executeEvents();
+                        executeScheduledCases();
+                        executeUpdateAppTitle();
+                        executeCaseSelfService();
+                        cleanSelfServiceTables();
+                        executePlugins();
+                        /*----------------------------------********---------------------------------*/
+                        fillReportByUser();
+                        fillReportByProcess();
+                        synchronizeDrive();
+                        synchronizeGmailLabels();
+                        /*----------------------------------********---------------------------------*/
+                    } catch (Exception $oError) {
+                        saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
+                    }
                     break;
                 case 'ldapcron':
                     require_once(PATH_HOME . 'engine' . PATH_SEP . 'methods' . PATH_SEP . 'services' . PATH_SEP . 'ldapadvanced.php');
@@ -326,101 +359,6 @@ try {
     $token = strtotime("now");
     PMException::registerErrorLog($e, $token);
     G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . "\n");
-}
-
-//Functions
-function processWorkspace()
-{
-    try {
-        global $sObject;
-        global $sLastExecution;
-
-        resendEmails();
-        unpauseApplications();
-        calculateDuration();
-        /*----------------------------------********---------------------------------*/
-        calculateAppDuration();
-        /*----------------------------------********---------------------------------*/
-        executeEvents($sLastExecution);
-        executeScheduledCases();
-        executeUpdateAppTitle();
-        executeCaseSelfService();
-        cleanSelfServiceTables();
-        executePlugins();
-        /*----------------------------------********---------------------------------*/
-        fillReportByUser();
-        fillReportByProcess();
-        synchronizeDrive();
-        synchronizeGmailLabels();
-        /*----------------------------------********---------------------------------*/
-    } catch (Exception $oError) {
-        saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
-    }
-}
-
-function resendEmails()
-{
-    global $argvx;
-    global $now;
-    global $dateSystem;
-
-    if ($argvx != "" && strpos($argvx, "emails") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Resending emails");
-
-    try {
-        $dateResend = $now;
-
-        if ($now == $dateSystem) {
-            $arrayDateSystem = getdate(strtotime($dateSystem));
-
-            $mktDateSystem = mktime(
-                $arrayDateSystem["hours"],
-                $arrayDateSystem["minutes"],
-                $arrayDateSystem["seconds"],
-                $arrayDateSystem["mon"],
-                $arrayDateSystem["mday"],
-                $arrayDateSystem["year"]
-            );
-
-            $dateResend = date("Y-m-d H:i:s", $mktDateSystem - (7 * 24 * 60 * 60));
-        }
-
-        $oSpool = new SpoolRun();
-        $oSpool->resendEmails($dateResend, 1);
-
-        saveLog("resendEmails", "action", "Resending Emails", "c");
-
-        $aSpoolWarnings = $oSpool->getWarnings();
-
-        if ($aSpoolWarnings !== false) {
-            foreach ($aSpoolWarnings as $sWarning) {
-                print("MAIL SPOOL WARNING: " . $sWarning . "\n");
-                saveLog("resendEmails", "warning", "MAIL SPOOL WARNING: " . $sWarning);
-            }
-        }
-
-        setExecutionResultMessage("DONE");
-    } catch (Exception $e) {
-        $c = new Criteria("workflow");
-        $c->clearSelectColumns();
-        $c->addSelectColumn(ConfigurationPeer::CFG_UID);
-        $c->add(ConfigurationPeer::CFG_UID, "Emails");
-        $result = ConfigurationPeer::doSelectRS($c);
-        $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        if ($result->next()) {
-            setExecutionResultMessage("WARNING", "warning");
-            $message = "Emails won't be sent, but the cron will continue its execution";
-            eprintln("  '-" . $message, "yellow");
-        } else {
-            setExecutionResultMessage("WITH ERRORS", "error");
-            eprintln("  '-" . $e->getMessage(), "red");
-        }
-
-        saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
-    }
 }
 
 function unpauseApplications()
@@ -570,8 +508,9 @@ function calculateAppDuration()
 }
 /*----------------------------------********---------------------------------*/
 
-function executeEvents($sLastExecution, $now = null)
+function executeEvents()
 {
+    global $sLastExecution;
     global $argvx;
     global $now;
 
@@ -859,6 +798,14 @@ function executeCaseSelfService()
     }
 }
 
+/**
+ * @deprecated This function is only used in this file and must be deleted.
+ * @global string $sObject
+ * @global string $isDebug
+ * @param string $sSource
+ * @param string $sType
+ * @param string $sDescription
+ */
 function saveLog($sSource, $sType, $sDescription)
 {
     try {
@@ -876,6 +823,10 @@ function saveLog($sSource, $sType, $sDescription)
     }
 }
 
+/**
+ * @deprecated This function is only used in this file and must be deleted.
+ * @param string $m
+ */
 function setExecutionMessage($m)
 {
     $len = strlen($m);
@@ -889,6 +840,11 @@ function setExecutionMessage($m)
     }
 }
 
+/**
+ * @deprecated This function is only used in this file and must be deleted.
+ * @param string $m
+ * @param string $t
+ */
 function setExecutionResultMessage($m, $t = '')
 {
     $c = 'green';
