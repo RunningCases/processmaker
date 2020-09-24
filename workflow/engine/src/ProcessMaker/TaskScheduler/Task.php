@@ -3,6 +3,8 @@
 namespace ProcessMaker\TaskScheduler;
 
 use Application;
+use AppAssignSelfServiceValueGroupPeer;
+use AppAssignSelfServiceValuePeer;
 use AppDelegation;
 use App\Jobs\TaskScheduler;
 use Bootstrap;
@@ -13,6 +15,7 @@ use Exception;
 use G;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\JobsManager;
+use Propel;
 use ResultSet;
 use SpoolRun;
 
@@ -62,14 +65,16 @@ class Task
     public function setExecutionMessage(string $message)
     {
         Log::channel('taskScheduler:taskScheduler')->info($message, Bootstrap::context());
-        $len = strlen($message);
-        $linesize = 60;
-        $rOffset = $linesize - $len;
+        if ($this->asynchronous === false) {
+            $len = strlen($message);
+            $linesize = 60;
+            $rOffset = $linesize - $len;
 
-        eprint("* $message");
+            eprint("* $message");
 
-        for ($i = 0; $i < $rOffset; $i++) {
-            eprint('.');
+            for ($i = 0; $i < $rOffset; $i++) {
+                eprint('.');
+            }
         }
     }
 
@@ -93,7 +98,9 @@ class Task
             $color = 'yellow';
             Log::channel('taskScheduler:taskScheduler')->warning($message, Bootstrap::context());
         }
-        eprintln("[$message]", $color);
+        if ($this->asynchronous === false) {
+            eprintln("[$message]", $color);
+        }
     }
 
     /**
@@ -104,16 +111,20 @@ class Task
      */
     public function saveLog(string $source, string $type, string $description)
     {
-        $context = [
-            'type' => $type,
-            'description' => $description
-        ];
-        Log::channel('taskScheduler:taskScheduler')->info($source, Bootstrap::context($context));
-        try {
-            G::verifyPath(PATH_DATA . "log" . PATH_SEP, true);
-            G::log("| $this->object | " . $source . " | $type | " . $description, PATH_DATA);
-        } catch (Exception $e) {
-            Log::channel('taskScheduler:taskScheduler')->error($e->getMessage(), Bootstrap::context($context));
+        if ($this->asynchronous === true) {
+            $context = [
+                'type' => $type,
+                'description' => $description
+            ];
+            Log::channel('taskScheduler:taskScheduler')->info($source, Bootstrap::context($context));
+        }
+        if ($this->asynchronous === false) {
+            try {
+                G::verifyPath(PATH_DATA . "log" . PATH_SEP, true);
+                G::log("| $this->object | " . $source . " | $type | " . $description, PATH_DATA);
+            } catch (Exception $e) {
+                Log::channel('taskScheduler:taskScheduler')->error($e->getMessage(), Bootstrap::context($context));
+            }
         }
     }
 
@@ -174,10 +185,14 @@ class Task
                 if ($result->next()) {
                     $this->setExecutionResultMessage("WARNING", "warning");
                     $message = "Emails won't be sent, but the cron will continue its execution";
-                    eprintln("  '-" . $message, "yellow");
+                    if ($this->asynchronous === false) {
+                        eprintln("  '-" . $message, "yellow");
+                    }
                 } else {
                     $this->setExecutionResultMessage("WITH ERRORS", "error");
-                    eprintln("  '-" . $e->getMessage(), "red");
+                    if ($this->asynchronous === false) {
+                        eprintln("  '-" . $e->getMessage(), "red");
+                    }
                 }
 
                 $this->saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
@@ -202,7 +217,9 @@ class Task
                 $this->saveLog('unpauseApplications', 'action', 'Unpausing Applications');
             } catch (Exception $e) {
                 $this->setExecutionResultMessage('WITH ERRORS', 'error');
-                eprintln("  '-" . $e->getMessage(), 'red');
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), 'red');
+                }
                 $this->saveLog('unpauseApplications', 'error', 'Error Unpausing Applications: ' . $e->getMessage());
             }
         };
@@ -223,7 +240,9 @@ class Task
                 $this->saveLog('calculateDuration', 'action', 'Calculating Duration');
             } catch (Exception $e) {
                 $this->setExecutionResultMessage('WITH ERRORS', 'error');
-                eprintln("  '-" . $e->getMessage(), 'red');
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), 'red');
+                }
                 $this->saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $e->getMessage());
             }
         };
@@ -244,8 +263,47 @@ class Task
                 $this->saveLog('calculateDurationByApp', 'action', 'Calculating Duration by Application');
             } catch (Exception $e) {
                 $this->setExecutionResultMessage('WITH ERRORS', 'error');
-                eprintln("  '-" . $e->getMessage(), 'red');
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), 'red');
+                }
                 $this->saveLog('calculateDurationByApp', 'error', 'Error Calculating Duration: ' . $e->getMessage());
+            }
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * Clean unused records in tables related to the Self-Service Value Based feature.
+     */
+    public function cleanSelfServiceTables()
+    {
+        $job = function() {
+            try {
+                // Start message
+                $this->setExecutionMessage("Clean unused records for Self-Service Value Based feature");
+
+                // Get Propel connection
+                $cnn = Propel::getConnection(AppAssignSelfServiceValueGroupPeer::DATABASE_NAME);
+
+                // Delete related rows and missing relations, criteria don't execute delete with joins
+                $cnn->begin();
+                $stmt = $cnn->createStatement();
+                $stmt->executeQuery("DELETE " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . "
+                             FROM " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . "
+                             LEFT JOIN " . AppAssignSelfServiceValuePeer::TABLE_NAME . "
+                             ON (" . AppAssignSelfServiceValueGroupPeer::ID . " = " . AppAssignSelfServiceValuePeer::ID . ")
+                             WHERE " . AppAssignSelfServiceValuePeer::ID . " IS NULL");
+                $cnn->commit();
+
+                // Success message
+                $this->setExecutionResultMessage("DONE");
+            } catch (Exception $e) {
+                $cnn->rollback();
+                $this->setExecutionResultMessage("WITH ERRORS", "error");
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), "red");
+                }
+                $this->saveLog("ExecuteCleanSelfServiceTables", "error", "Error when try to clean self-service tables " . $e->getMessage());
             }
         };
         $this->runTask($job);

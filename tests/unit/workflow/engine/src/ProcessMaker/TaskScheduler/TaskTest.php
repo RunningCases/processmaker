@@ -57,7 +57,13 @@ class TaskTest extends TestCase
         $printing = ob_get_clean();
 
         //assert if message is contained in output buffer
-        $this->assertRegExp("/{$message}/", $printing);
+        if ($asynchronous === false) {
+            $this->assertRegExp("/{$message}/", $printing);
+        }
+        //assert if not showing message
+        if ($asynchronous === true) {
+            $this->assertEmpty($printing);
+        }
     }
 
     /**
@@ -76,19 +82,37 @@ class TaskTest extends TestCase
         $task->setExecutionResultMessage($message, 'error');
         $printing = ob_get_clean();
         //assert if message is contained in output buffer
-        $this->assertRegExp("/{$message}/", $printing);
+        if ($asynchronous === false) {
+            $this->assertRegExp("/{$message}/", $printing);
+        }
+        //assert if not showing message
+        if ($asynchronous === true) {
+            $this->assertEmpty($printing);
+        }
 
         ob_start();
         $task->setExecutionResultMessage($message, 'info');
         $printing = ob_get_clean();
         //assert if message is contained in output buffer
-        $this->assertRegExp("/{$message}/", $printing);
+        if ($asynchronous === false) {
+            $this->assertRegExp("/{$message}/", $printing);
+        }
+        //assert if not showing message
+        if ($asynchronous === true) {
+            $this->assertEmpty($printing);
+        }
 
         ob_start();
         $task->setExecutionResultMessage($message, 'warning');
         $printing = ob_get_clean();
         //assert if message is contained in output buffer
-        $this->assertRegExp("/{$message}/", $printing);
+        if ($asynchronous === false) {
+            $this->assertRegExp("/{$message}/", $printing);
+        }
+        //assert if not showing message
+        if ($asynchronous === true) {
+            $this->assertEmpty($printing);
+        }
     }
 
     /**
@@ -106,8 +130,14 @@ class TaskTest extends TestCase
         $task->saveLog('', '', $description);
         $file = PATH_DATA . "log/cron.log";
         $this->assertFileExists($file);
-        $contentLog = file_get_contents($file);
-        $this->assertRegExp("/{$description}/", $contentLog);
+        if ($asynchronous === false) {
+            $contentLog = file_get_contents($file);
+            $this->assertRegExp("/{$description}/", $contentLog);
+        }
+        if ($asynchronous === true) {
+            $contentLog = file_get_contents($file);
+            $this->assertNotRegExp("/{$description}/", $contentLog);
+        }
     }
 
     /**
@@ -219,6 +249,34 @@ class TaskTest extends TestCase
             Queue::fake();
             Queue::assertNothingPushed();
             $task->calculateAppDuration();
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
+
+    /**
+     * This test verify the cleanSelfServiceTables activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::cleanSelfServiceTables()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_cleanSelfServiceTables_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->cleanSelfServiceTables();
+            $printing = ob_get_clean();
+            $this->assertRegExp("/DONE/", $printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->cleanSelfServiceTables();
             Queue::assertPushed(TaskScheduler::class);
         }
     }
