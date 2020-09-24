@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\TaskScheduler;
 
+use Application;
 use AppDelegation;
 use App\Jobs\TaskScheduler;
 use Bootstrap;
@@ -224,6 +225,27 @@ class Task
                 $this->setExecutionResultMessage('WITH ERRORS', 'error');
                 eprintln("  '-" . $e->getMessage(), 'red');
                 $this->saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $e->getMessage());
+            }
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * This calculate application duration.
+     */
+    public function calculateAppDuration()
+    {
+        $job = function() {
+            $this->setExecutionMessage("Calculating Duration by Application");
+            try {
+                $application = new Application();
+                $application->calculateAppDuration(1);
+                $this->setExecutionResultMessage('DONE');
+                $this->saveLog('calculateDurationByApp', 'action', 'Calculating Duration by Application');
+            } catch (Exception $e) {
+                $this->setExecutionResultMessage('WITH ERRORS', 'error');
+                eprintln("  '-" . $e->getMessage(), 'red');
+                $this->saveLog('calculateDurationByApp', 'error', 'Error Calculating Duration: ' . $e->getMessage());
             }
         };
         $this->runTask($job);

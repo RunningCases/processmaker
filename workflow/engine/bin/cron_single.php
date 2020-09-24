@@ -301,7 +301,9 @@ try {
                             $task->calculateDuration();
                         }
                         /*----------------------------------********---------------------------------*/
-                        calculateAppDuration();
+                        if (empty($argvx) || strpos($argvx, "calculateapp") !== false) {
+                            $task->calculateAppDuration();
+                        }
                         /*----------------------------------********---------------------------------*/
                         executeEvents();
                         executeScheduledCases();
@@ -439,32 +441,6 @@ function executeCustomCronFunction($pathFile, $className)
         }
     }
 }
-
-/*----------------------------------********---------------------------------*/
-
-function calculateAppDuration()
-{
-    global $argvx;
-
-    if ($argvx != "" && strpos($argvx, "calculateapp") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Calculating Duration by Application");
-
-    try {
-        $oApplication = new Application();
-        $oApplication->calculateAppDuration(1);
-
-        setExecutionResultMessage('DONE');
-        saveLog('calculateDurationByApp', 'action', 'Calculating Duration by Application');
-    } catch (Exception $oError) {
-        setExecutionResultMessage('WITH ERRORS', 'error');
-        eprintln("  '-" . $oError->getMessage(), 'red');
-        saveLog('calculateDurationByApp', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
-    }
-}
-/*----------------------------------********---------------------------------*/
 
 function executeEvents()
 {
