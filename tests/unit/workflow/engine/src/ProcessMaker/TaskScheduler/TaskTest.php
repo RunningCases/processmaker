@@ -138,4 +138,32 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * This test verify the unpauseApplications activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::unpauseApplications()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_unpauseApplications_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->unpauseApplications('');
+            $printing = ob_get_clean();
+            $this->assertRegExp("/DONE/", $printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->unpauseApplications('');
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }

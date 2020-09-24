@@ -182,4 +182,27 @@ class Task
         };
         $this->runTask($job);
     }
+
+    /**
+     * This unpause applications.
+     * @param string $now
+     */
+    public function unpauseApplications($now)
+    {
+        $job = function() use($now) {
+            $this->setExecutionMessage("Unpausing applications");
+            try {
+                $cases = new \Cases();
+                $cases->ThrowUnpauseDaemon($now, 1);
+
+                $this->setExecutionResultMessage('DONE');
+                $this->saveLog('unpauseApplications', 'action', 'Unpausing Applications');
+            } catch (Exception $e) {
+                $this->setExecutionResultMessage('WITH ERRORS', 'error');
+                eprintln("  '-" . $e->getMessage(), 'red');
+                $this->saveLog('unpauseApplications', 'error', 'Error Unpausing Applications: ' . $e->getMessage());
+            }
+        };
+        $this->runTask($job);
+    }
 }

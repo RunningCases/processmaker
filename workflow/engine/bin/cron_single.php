@@ -294,7 +294,9 @@ try {
                         if (empty($argvx) || strpos($argvx, "emails") !== false) {
                             $task->resendEmails($now, $dateSystem);
                         }
-                        unpauseApplications();
+                        if (empty($argvx) || strpos($argvx, "unpause") !== false) {
+                            $task->unpauseApplications($now);
+                        }
                         calculateDuration();
                         /*----------------------------------********---------------------------------*/
                         calculateAppDuration();
@@ -359,30 +361,6 @@ try {
     $token = strtotime("now");
     PMException::registerErrorLog($e, $token);
     G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . "\n");
-}
-
-function unpauseApplications()
-{
-    global $argvx;
-    global $now;
-
-    if ($argvx != "" && strpos($argvx, "unpause") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Unpausing applications");
-
-    try {
-        $oCases = new Cases();
-        $oCases->ThrowUnpauseDaemon($now, 1);
-
-        setExecutionResultMessage('DONE');
-        saveLog('unpauseApplications', 'action', 'Unpausing Applications');
-    } catch (Exception $oError) {
-        setExecutionResultMessage('WITH ERRORS', 'error');
-        eprintln("  '-" . $oError->getMessage(), 'red');
-        saveLog('unpauseApplications', 'error', 'Error Unpausing Applications: ' . $oError->getMessage());
-    }
 }
 
 function executePlugins()
