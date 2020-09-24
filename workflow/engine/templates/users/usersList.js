@@ -525,7 +525,7 @@ DeleteUserAction = function(){
       if (response.hashistory){
         Ext.Msg.confirm(_('ID_CONFIRM'), _('ID_USERS_DELETE_WITH_HISTORY'),
         function(btn){
-          if (btn=='yes') DeleteUser(uid.data.USR_UID);
+          if (btn=='yes') hasPrivateProcesses(uid.data.USR_UID);
         }
         );
       }else{
@@ -533,7 +533,7 @@ DeleteUserAction = function(){
 
         Ext.Msg.confirm(_('ID_CONFIRM'), msgConfirm,
         function(btn){
-          if (btn=='yes') DeleteUser(uid.data.USR_UID);
+          if (btn=='yes') hasPrivateProcesses(uid.data.USR_UID);
           }
         );
         }
@@ -649,10 +649,10 @@ DoSearch = function(){
 };
 
 //Delete User Function
-DeleteUser = function(uid){
+DeleteUser = function(uid, privateProcesses){
   Ext.Ajax.request({
   url: 'users_Ajax',
-  params: {'function': 'deleteUser', USR_UID: uid},
+  params: {'function': 'deleteUser', USR_UID: uid, private_processes: privateProcesses},
   success: function(res, opt){
     var response = Ext.util.JSON.decode(res.responseText);
     if (response.status === 'ERROR') {
@@ -664,6 +664,31 @@ DeleteUser = function(uid){
   },
   failure: DoNothing
   });
+};
+
+/**
+ * Show a message in case the user to be deleted has private processes
+ * 
+ * @param {string} uid
+ */
+hasPrivateProcesses = function (uid) {
+  Ext.Ajax.request({
+    url: 'users_Ajax',
+    params: { 'function': 'privateProcesses', USR_UID: uid },
+    success: function (res, opt) {
+    var response = Ext.util.JSON.decode(res.responseText);
+    if (!(response.publicProcesses === undefined || response.publicProcesses.length == 0)) {
+      Ext.Msg.confirm(_('ID_CONFIRM'), _("ID_MSG_CONFIRM_DELETE_USER_PRIVATE_PROCESSES"),
+        function(btn){
+          if (btn == 'yes') DeleteUser(uid, Ext.util.JSON.encode(response.publicProcesses));
+        }
+      );
+    } else {
+        DeleteUser(uid, Ext.util.JSON.encode(response.publicProcesses));
+      }
+    },
+    failure: DoNothing
+    });
 };
 
 //Update Page Size Configuration

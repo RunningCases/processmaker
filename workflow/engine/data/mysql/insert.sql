@@ -60092,6 +60092,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_TRIGGER','en','Do you want to delete this trigger?','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_USER','en','Do you want to delete this user ?','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_USER_ASSINGED_SUPERVISOR','en','The user can not be deleted while assigned as a supervisor. Do you want to delete it anyway?','2014-10-21') ,
+( 'LABEL','ID_MSG_CONFIRM_DELETE_USER_PRIVATE_PROCESSES','en',"This user has private processes, if you continue all the user's private processes will become public processes. Do you want to continue?",'2020-09-02') ,
 ( 'LABEL','ID_MSG_CONFIRM_DELETE_WEBBOT','en','Are you sure you want to delete this webbot?','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_REMOVE_LANGUAGE','en','Are you sure you want to remove this language?','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_REMOVE_TRIGGER','en','Are you sure you want to remove this trigger?','2014-01-15') ,

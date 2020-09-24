@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Model\Process;
+
 try {
     global $RBAC;
     switch ($RBAC->userCanAccess('PM_LOGIN')) {
@@ -107,7 +109,15 @@ try {
             $response .= '}';
             echo $response;
             break;
+        case 'privateProcesses':
+            $usrUid = $_POST['USR_UID'];
+            //Check if the user has private processes
+            $r = Process::getProcessPrivateListByUser($usrUid);
+            $response = json_encode(['success'=>true, 'publicProcesses'=>$r]);
+            echo $response;
+            break;
         case 'deleteUser':
+            Process::convertPrivateProcessesToPublic(json_decode($_POST['private_processes']));
             $usrUid = $_POST['USR_UID'];
             //Check if the user was defined in a process permissions
             $oObjectPermission = new ObjectPermission();

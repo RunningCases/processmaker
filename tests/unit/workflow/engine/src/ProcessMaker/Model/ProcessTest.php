@@ -183,4 +183,63 @@ class ProcessTest extends TestCase
         $this->assertNotEquals($process2['PRO_UID'], $res[0]['PRO_UID']);
         $this->assertNotEquals($process3['PRO_UID'], $res[0]['PRO_UID']);
     }
+
+    /**
+     * It tests the getProcessPrivateListByUser method
+     * 
+     * @covers \ProcessMaker\Model\Process::getProcessPrivateListByUser()
+     * @test
+     */
+    public function it_should_test_the_get_process_private_list_by_user_method()
+    {
+        //Create user
+        $user = factory(User::class)->create();
+
+        //Create process
+        factory(Process::class)->create([
+            'PRO_CREATE_USER' => $user['USR_UID'],
+            'PRO_STATUS' => 'ACTIVE',
+            'PRO_TYPE_PROCESS' => 'PRIVATE',
+        ]);
+
+        //Create a Process object
+        $process = new Process();
+
+        //Call the getProcessPrivateListByUser() method
+        $res = $process->getProcessPrivateListByUser($user['USR_UID']);
+
+        // This asserts the result contains one row
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the convertPrivateProcessesToPublic method
+     * 
+     * @covers \ProcessMaker\Model\Process::convertPrivateProcessesToPublic()
+     * @test
+     */
+    public function it_should_test_the_convert_private_processes_to_public_method()
+    {
+        //Create user
+        $user = factory(User::class)->create();
+
+        //Create process
+        $pro = factory(Process::class)->create([
+            'PRO_CREATE_USER' => $user['USR_UID'],
+            'PRO_STATUS' => 'ACTIVE',
+            'PRO_TYPE_PROCESS' => 'PRIVATE',
+        ]);
+
+        $p = Process::where('PRO_UID', $pro->PRO_UID)->get()->values()->toArray();
+        //Create a Process object
+        $process = new Process();
+
+        //Call the convertPrivateProcessesToPublic() method
+        $process->convertPrivateProcessesToPublic($p);
+
+        $p = Process::where('PRO_UID', $pro->PRO_UID)->get()->values();
+
+        // This asserts the process was converted from private to public
+        $this->assertEquals('PUBLIC', $p[0]->PRO_TYPE_PROCESS);
+    }
 }

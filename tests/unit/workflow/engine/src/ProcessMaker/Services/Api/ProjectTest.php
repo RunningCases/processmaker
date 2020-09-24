@@ -5,6 +5,7 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\Services\Api;
 use Faker\Factory;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\User;
+use ProcessMaker\Model\RbacUsers;
 use ProcessMaker\Importer\XmlImporter;
 use ProcessMaker\Services\Api\Project;
 use Tests\TestCase;
@@ -39,5 +40,53 @@ class ProjectTest extends TestCase
         $result = $project->doSaveAs($proUid, $faker->title);
 
         $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Tests the doGetProcess method
+     * 
+     * @test
+     * @covers \ProcessMaker\Services\Api\Project::doGetProcess()
+     */
+    public function it_should_test_the_do_get_process_method()
+    {
+        //Create user
+        $user = factory(User::class)->create();
+        factory(RbacUsers::class)->create([
+            'USR_UID' => $user->USR_UID,
+            'USR_USERNAME' => $user->USR_USERNAME,
+            'USR_FIRSTNAME' => $user->USR_FIRSTNAME,
+            'USR_LASTNAME' => $user->USR_LASTNAME
+        ]);
+
+        //Create process
+        $process = factory(Process::class)->create([
+            'PRO_CREATE_USER' => $user->USR_UID,
+            'PRO_STATUS' => 'ACTIVE',
+            'PRO_TYPE_PROCESS' => 'PRIVATE',
+        ]);
+
+        $project = new Project();
+        $res = $project->doGetProcess($process->PRO_UID);
+
+        //Asserts the response has the user information
+        $this->assertArrayHasKey('pro_create_username', $res);
+        $this->assertArrayHasKey('pro_create_firstname', $res);
+        $this->assertArrayHasKey('pro_create_lastname', $res);
+    }
+
+    /**
+     * Tests the doGetProcess with exception
+     * 
+     * @test
+     * @covers \ProcessMaker\Services\Api\Project::doGetProcess()
+     */
+    public function it_should_test_the_do_get_process_method_with_exception()
+    {
+        $project = new Project();
+
+        //This asserts the expected exception
+        $this->expectExceptionMessage("**ID_PROJECT_DOES_NOT_EXIST**");
+        $project->doGetProcess('');
     }
 }
