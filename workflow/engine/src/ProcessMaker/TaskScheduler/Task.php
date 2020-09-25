@@ -5,6 +5,7 @@ namespace ProcessMaker\TaskScheduler;
 use Application;
 use AppAssignSelfServiceValueGroupPeer;
 use AppAssignSelfServiceValuePeer;
+use AppCacheView;
 use AppDelegation;
 use App\Jobs\TaskScheduler;
 use Bootstrap;
@@ -391,5 +392,44 @@ class Task
                 $this->saveLog('executePlugins', 'error', 'Error executing cron file: ' . $pathFile . ' - ' . $e->getMessage());
             }
         }
+    }
+
+    /**
+     * This fills the report by user.
+     * @param datetime $dateInit
+     * @param datetime $dateFinish
+     */
+    public function fillReportByUser($dateInit, $dateFinish)
+    {
+        $job = function() use($dateInit, $dateFinish) {
+            try {
+                if ($dateInit == null) {
+                    if ($this->asynchronous === false) {
+                        eprintln("You must enter the starting date.", "red");
+                        eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
+                    }
+                    if ($this->asynchronous === true) {
+                        $message = 'You must enter the starting date. Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"';
+                        Log::channel('taskScheduler:taskScheduler')->info($message, Bootstrap::context($context));
+                    }
+                    return false;
+                }
+
+                $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
+
+                $appCacheView = new AppCacheView();
+                $appCacheView->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
+                $this->setExecutionMessage("Calculating data to fill the 'User Reporting'...");
+                $appCacheView->fillReportByUser($dateInit, $dateFinish);
+                setExecutionResultMessage("DONE");
+            } catch (Exception $e) {
+                $this->setExecutionResultMessage("WITH ERRORS", "error");
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), "red");
+                }
+                $this->saveLog("fillReportByUser", "error", "Error in fill report by user: " . $e->getMessage());
+            }
+        };
+        $this->runTask($job);
     }
 }

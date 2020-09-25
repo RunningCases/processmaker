@@ -308,4 +308,34 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * This test verify the fillReportByUser activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::fillReportByUser()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_fillReportByUser_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+        $dateInit = $this->faker->dateTime;
+        $dateFinish = $this->faker->dateTime;
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->fillReportByUser($dateInit, $dateFinish);
+            $printing = ob_get_clean();
+            $this->assertRegExp("/User Reporting/", $printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->fillReportByUser($dateInit, $dateFinish);
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }
