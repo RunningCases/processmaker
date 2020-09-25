@@ -317,10 +317,12 @@ try {
                             $task->executePlugins();
                         }
                         /*----------------------------------********---------------------------------*/
-                        if (empty($argvx) || strpos($argvx, "report_by_user") !== false) {
+                        if (strpos($argvx, "report_by_user") !== false) {
                             $task->fillReportByUser($dateInit, $dateFinish);
                         }
-                        fillReportByProcess();
+                        if (strpos($argvx, "report_by_process") !== false) {
+                            $task->fillReportByProcess($dateInit, $dateFinish);
+                        }
                         synchronizeDrive();
                         synchronizeGmailLabels();
                         /*----------------------------------********---------------------------------*/
@@ -588,37 +590,6 @@ function setExecutionResultMessage($m, $t = '')
     eprintln("[$m]", $c);
 }
 /*----------------------------------********---------------------------------*/
-
-function fillReportByProcess()
-{
-    try {
-        global $argvx;
-        global $dateInit;
-        global $dateFinish;
-
-        if (strpos($argvx, "report_by_process") === false) {
-            return false;
-        }
-
-        if ($dateInit == null) {
-            eprintln("You must enter the starting date.", "red");
-            eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
-            return false;
-        }
-
-        $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
-        $appcv = new AppCacheView();
-        $appcv->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
-
-        setExecutionMessage("Calculating data to fill the 'Process Reporting'...");
-        $appcv->fillReportByProcess($dateInit, $dateFinish);
-        setExecutionResultMessage("DONE");
-    } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
-        eprintln("  '-" . $e->getMessage(), "red");
-        saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
-    }
-}
 
 function synchronizeDrive()
 {

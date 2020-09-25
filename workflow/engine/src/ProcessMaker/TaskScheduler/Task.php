@@ -15,8 +15,8 @@ use Criteria;
 use Exception;
 use G;
 use Illuminate\Support\Facades\Log;
-use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Core\JobsManager;
+use ProcessMaker\Plugins\PluginRegistry;
 use Propel;
 use ResultSet;
 use SpoolRun;
@@ -396,24 +396,25 @@ class Task
 
     /**
      * This fills the report by user.
-     * @param datetime $dateInit
-     * @param datetime $dateFinish
+     * @param string $dateInit
+     * @param string $dateFinish
+     * @return boolean
      */
     public function fillReportByUser($dateInit, $dateFinish)
     {
+        if ($dateInit == null) {
+            if ($this->asynchronous === false) {
+                eprintln("You must enter the starting date.", "red");
+                eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
+            }
+            if ($this->asynchronous === true) {
+                $message = 'You must enter the starting date. Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"';
+                Log::channel('taskScheduler:taskScheduler')->info($message, Bootstrap::context($context));
+            }
+            return false;
+        }
         $job = function() use($dateInit, $dateFinish) {
             try {
-                if ($dateInit == null) {
-                    if ($this->asynchronous === false) {
-                        eprintln("You must enter the starting date.", "red");
-                        eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
-                    }
-                    if ($this->asynchronous === true) {
-                        $message = 'You must enter the starting date. Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"';
-                        Log::channel('taskScheduler:taskScheduler')->info($message, Bootstrap::context($context));
-                    }
-                    return false;
-                }
 
                 $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
 
@@ -428,6 +429,46 @@ class Task
                     eprintln("  '-" . $e->getMessage(), "red");
                 }
                 $this->saveLog("fillReportByUser", "error", "Error in fill report by user: " . $e->getMessage());
+            }
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * This fills the report by process.
+     * @param string $dateInit
+     * @param string $dateFinish
+     * @return boolean
+     */
+    public function fillReportByProcess($dateInit, $dateFinish)
+    {
+        if ($dateInit == null) {
+            if ($this->asynchronous === false) {
+                eprintln("You must enter the starting date.", "red");
+                eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
+            }
+            if ($this->asynchronous === true) {
+                $message = 'You must enter the starting date. Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"';
+                Log::channel('taskScheduler:taskScheduler')->info($message, Bootstrap::context());
+            }
+            return false;
+        }
+        $job = function() {
+            try {
+
+                $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
+                $appcv = new AppCacheView();
+                $appcv->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
+
+                $this->setExecutionMessage("Calculating data to fill the 'Process Reporting'...");
+                $appcv->fillReportByProcess($dateInit, $dateFinish);
+                $this->setExecutionResultMessage("DONE");
+            } catch (Exception $e) {
+                $this->setExecutionResultMessage("WITH ERRORS", "error");
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), "red");
+                }
+                $this->saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
             }
         };
         $this->runTask($job);
