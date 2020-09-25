@@ -331,11 +331,8 @@ try {
                     }
                     break;
                 case 'ldapcron':
-                    require_once(PATH_HOME . 'engine' . PATH_SEP . 'methods' . PATH_SEP . 'services' . PATH_SEP . 'ldapadvanced.php');
-
-                    $ldapadvancedClassCron = new ldapadvancedClassCron();
-
-                    $ldapadvancedClassCron->executeCron(in_array('+debug', $argv));
+                    $task = new Task($asynchronous, $sObject);
+                    $task->ldapcron(in_array('+debug', $argv));
                     break;
                 case 'messageeventcron':
                     $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();

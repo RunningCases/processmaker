@@ -15,6 +15,7 @@ use Criteria;
 use Exception;
 use G;
 use Illuminate\Support\Facades\Log;
+use ldapadvancedClassCron;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Plugins\PluginRegistry;
 use Propel;
@@ -453,7 +454,7 @@ class Task
             }
             return false;
         }
-        $job = function() {
+        $job = function() use($dateInit, $dateFinish) {
             try {
 
                 $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
@@ -470,6 +471,20 @@ class Task
                 }
                 $this->saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
             }
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * This execute ldap cron.
+     * @param boolean $debug
+     */
+    public function ldapcron($debug)
+    {
+        $job = function() use($debug) {
+            require_once(PATH_HOME . 'engine' . PATH_SEP . 'methods' . PATH_SEP . 'services' . PATH_SEP . 'ldapadvanced.php');
+            $ldapadvancedClassCron = new ldapadvancedClassCron();
+            $ldapadvancedClassCron->executeCron($debug);
         };
         $this->runTask($job);
     }
