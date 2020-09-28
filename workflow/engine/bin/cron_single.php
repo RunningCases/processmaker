@@ -336,9 +336,8 @@ try {
                     $task->messageeventcron();
                     break;
                 case 'timereventcron':
-                    $timerEvent = new \ProcessMaker\BusinessModel\TimerEvent();
-
-                    $timerEvent->startContinueCaseByTimerEvent($now, true);
+                    $task = new Task($asynchronous, $sObject);
+                    $task->timerEventCron($now, true);
                     break;
                 case 'sendnotificationscron':
                     if (empty($argvx) || strpos($argvx, "send-notifications") !== false) {

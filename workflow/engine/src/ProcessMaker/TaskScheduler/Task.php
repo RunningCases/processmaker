@@ -22,6 +22,7 @@ use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\BusinessModel\Light\PushMessageAndroid;
 use ProcessMaker\BusinessModel\Light\PushMessageIOS;
 use ProcessMaker\BusinessModel\MessageApplication;
+use ProcessMaker\BusinessModel\TimerEvent;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Plugins\PluginRegistry;
 use Propel;
@@ -595,6 +596,21 @@ class Task
         $job = function() {
             $messageApplication = new MessageApplication();
             $messageApplication->catchMessageEvent(true);
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * Start/Continue cases by Timer-Event
+     * 
+     * @param string $datetime
+     * @param bool $frontEnd
+     */
+    public function timerEventCron($datetime, $frontEnd)
+    {
+        $job = function() use ($datetime, $frontEnd) {
+            $timerEvent = new TimerEvent();
+            $timerEvent->startContinueCaseByTimerEvent($datetime, $frontEnd);
         };
         $this->runTask($job);
     }

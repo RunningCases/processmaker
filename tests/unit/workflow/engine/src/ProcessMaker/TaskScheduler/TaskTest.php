@@ -519,4 +519,36 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * Tests the timerEventCron method with jobs in the task scheduler 
+     * 
+     * @test
+     * @covers ProcessMaker\TaskScheduler\Task::timerEventCron()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_the_timer_event_cron_method($asynchronous)
+    {
+        //Creates a new task
+        $task = new Task($asynchronous, '');
+        //Sets the currect date
+        $date =  date('Y-m-d H:i:s');
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            //Calls the timerEventCron method 
+            $task->timerEventCron($date, true);
+            //Gets the result
+            $printing = ob_get_clean();
+            //Asserts the result is printing that there is no exisiting records to continue a case in the determined date
+            $this->assertRegExp('/No existing records to continue a case, on date "'.$date . '/', $printing);
+        }
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->timerEventCron($date, true);
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }
