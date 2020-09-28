@@ -13,9 +13,6 @@
  */
 
 use Illuminate\Foundation\Http\Kernel;
-/*----------------------------------********---------------------------------*/
-use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
-/*----------------------------------********---------------------------------*/
 use ProcessMaker\BusinessModel\Cases;
 
 require_once __DIR__ . '/../../../gulliver/system/class.g.php';
@@ -351,7 +348,8 @@ try {
                     break;
                 /*----------------------------------********---------------------------------*/
                 case 'actionsByEmailEmailResponse':
-                    (new ResponseReader)->actionsByEmailEmailResponse();
+                    $task = new Task($asynchronous, $sObject);
+                    $task->actionsByEmailResponse();
                     break;
                 /*----------------------------------********---------------------------------*/
             }

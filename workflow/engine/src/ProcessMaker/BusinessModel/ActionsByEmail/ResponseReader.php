@@ -59,7 +59,7 @@ class ResponseReader
         try {
             if (!extension_loaded('imap')) {
                 G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", ['php_imap']) . "\n");
-                exit;
+                return;
             }
             if (PMLicensedFeatures
                 ::getSingleton()

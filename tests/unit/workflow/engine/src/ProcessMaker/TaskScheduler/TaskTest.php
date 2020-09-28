@@ -424,4 +424,32 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * This test verify the actionsByEmailResponse activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::actionsByEmailResponse()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_actionsByEmailResponse_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->actionsByEmailResponse();
+            $printing = ob_get_clean();
+            $this->assertEmpty($printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->actionsByEmailResponse();
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }

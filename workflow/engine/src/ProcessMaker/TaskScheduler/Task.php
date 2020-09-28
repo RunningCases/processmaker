@@ -17,6 +17,7 @@ use G;
 use Illuminate\Support\Facades\Log;
 use ldapadvancedClassCron;
 use NotificationQueue;
+use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
 use ProcessMaker\BusinessModel\Light\PushMessageAndroid;
 use ProcessMaker\BusinessModel\Light\PushMessageIOS;
 use ProcessMaker\Core\JobsManager;
@@ -540,6 +541,18 @@ class Task
                 }
                 $this->saveLog("ExecuteSendNotifications", "error", "Error when sending notifications " . $e->getMessage());
             }
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * This executes an actions by email responses.
+     */
+    public function actionsByEmailResponse()
+    {
+        $job = function() {
+            $responseReader = new ResponseReader();
+            $responseReader->actionsByEmailEmailResponse();
         };
         $this->runTask($job);
     }
