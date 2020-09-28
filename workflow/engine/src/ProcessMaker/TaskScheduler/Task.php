@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use ldapadvancedClassCron;
 use NotificationQueue;
 use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
+use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\BusinessModel\Light\PushMessageAndroid;
 use ProcessMaker\BusinessModel\Light\PushMessageIOS;
 use ProcessMaker\Core\JobsManager;
@@ -228,6 +229,34 @@ class Task
                     eprintln("  '-" . $e->getMessage(), 'red');
                 }
                 $this->saveLog('unpauseApplications', 'error', 'Error Unpausing Applications: ' . $e->getMessage());
+            }
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * Check if some task unassigned has enable the setting timeout and execute the trigger related
+     *
+     * @link https://wiki.processmaker.com/3.2/Tasks#Self-Service
+    */
+    function executeCaseSelfService()
+    {
+        $job = function() {
+            try {
+                $this->setExecutionMessage("Unassigned case");
+                $this->saveLog("unassignedCase", "action", "Unassigned case", "c");
+                $casesExecuted = BmCases::executeSelfServiceTimeout();
+                foreach ($casesExecuted as $caseNumber) {
+                    $this->saveLog("unassignedCase", "action", "OK Executed trigger to the case $caseNumber");
+                }
+                $this->setExecutionResultMessage(count($casesExecuted) . " Cases");
+            } catch (Exception $e) {
+                $this->setExecutionResultMessage("WITH ERRORS", "error");
+                $this->saveLog("unassignedCase", "action", "Unassigned case", "c");
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), "red");
+                }
+                $this->saveLog("unassignedCase", "error", "Error in unassigned case: " . $e->getMessage());
             }
         };
         $this->runTask($job);

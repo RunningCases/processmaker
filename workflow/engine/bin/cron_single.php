@@ -305,7 +305,9 @@ try {
                         executeEvents();
                         executeScheduledCases();
                         executeUpdateAppTitle();
-                        executeCaseSelfService();
+                        if (empty($argvx) || strpos($argvx, "unassigned-case") !== false) {
+                            $task->executeCaseSelfService();
+                        }
                         if (empty($argvx) || strpos($argvx, "clean-self-service-tables") !== false) {
                             $task->cleanSelfServiceTables();
                         }
@@ -490,34 +492,6 @@ function executeUpdateAppTitle()
         setExecutionResultMessage("WITH ERRORS", "error");
         eprintln("  '-" . $e->getMessage(), "red");
         saveLog("updateCaseLabels", "error", "Error updating case labels: " . $e->getMessage());
-    }
-}
-
-/**
- * Check if some task unassigned has enable the setting timeout and execute the trigger related
- * 
- * @link https://wiki.processmaker.com/3.2/Tasks#Self-Service
-*/
-function executeCaseSelfService()
-{
-    try {
-        global $argvx;
-
-        if ($argvx != "" && strpos($argvx, "unassigned-case") === false) {
-            return false;
-        }
-        setExecutionMessage("Unassigned case");
-        saveLog("unassignedCase", "action", "Unassigned case", "c");
-        $casesExecuted = Cases::executeSelfServiceTimeout();
-        foreach ($casesExecuted as $caseNumber) {
-            saveLog("unassignedCase", "action", "OK Executed trigger to the case $caseNumber");
-        }
-        setExecutionResultMessage(count($casesExecuted) . " Cases");
-    } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
-        saveLog("unassignedCase", "action", "Unassigned case", "c");
-        eprintln("  '-" . $e->getMessage(), "red");
-        saveLog("unassignedCase", "error", "Error in unassigned case: " . $e->getMessage());
     }
 }
 
