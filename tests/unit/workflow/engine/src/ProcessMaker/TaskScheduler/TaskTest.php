@@ -396,4 +396,32 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * This test verify the sendNotifications activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::sendNotifications()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_sendNotifications_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->sendNotifications();
+            $printing = ob_get_clean();
+            $this->assertRegExp("/Resending Notifications/", $printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->sendNotifications();
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }

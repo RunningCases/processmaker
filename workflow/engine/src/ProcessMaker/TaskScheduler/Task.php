@@ -16,6 +16,9 @@ use Exception;
 use G;
 use Illuminate\Support\Facades\Log;
 use ldapadvancedClassCron;
+use NotificationQueue;
+use ProcessMaker\BusinessModel\Light\PushMessageAndroid;
+use ProcessMaker\BusinessModel\Light\PushMessageIOS;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Plugins\PluginRegistry;
 use Propel;
@@ -485,6 +488,58 @@ class Task
             require_once(PATH_HOME . 'engine' . PATH_SEP . 'methods' . PATH_SEP . 'services' . PATH_SEP . 'ldapadvanced.php');
             $ldapadvancedClassCron = new ldapadvancedClassCron();
             $ldapadvancedClassCron->executeCron($debug);
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * This execute the sending of notifications.
+     */
+    function sendNotifications()
+    {
+        $job = function() {
+            try {
+                $this->setExecutionMessage("Resending Notifications");
+                $this->setExecutionResultMessage("PROCESSING");
+                $notQueue = new NotificationQueue();
+                $notQueue->checkIfCasesOpenForResendingNotification();
+                $notificationsAndroid = $notQueue->loadStatusDeviceType('pending', 'android');
+                if ($notificationsAndroid) {
+                    $this->setExecutionMessage("|-- Send Android's Notifications");
+                    $n = 0;
+                    foreach ($notificationsAndroid as $key => $item) {
+                        $notification = new PushMessageAndroid();
+                        $notification->setSettingNotification();
+                        $notification->setDevices(unserialize($item['DEV_UID']));
+                        $response['android'] = $notification->send($item['NOT_MSG'], unserialize($item['NOT_DATA']));
+                        $notQueue = new NotificationQueue();
+                        $notQueue->changeStatusSent($item['NOT_UID']);
+                        $n += $notification->getNumberDevices();
+                    }
+                    $this->setExecutionResultMessage("Processed $n");
+                }
+                $notificationsApple = $notQueue->loadStatusDeviceType('pending', 'apple');
+                if ($notificationsApple) {
+                    $this->setExecutionMessage("|-- Send Apple Notifications");
+                    $n = 0;
+                    foreach ($notificationsApple as $key => $item) {
+                        $notification = new PushMessageIOS();
+                        $notification->setSettingNotification();
+                        $notification->setDevices(unserialize($item['DEV_UID']));
+                        $response['apple'] = $notification->send($item['NOT_MSG'], unserialize($item['NOT_DATA']));
+                        $notQueue = new NotificationQueue();
+                        $notQueue->changeStatusSent($item['NOT_UID']);
+                        $n += $notification->getNumberDevices();
+                    }
+                    $this->setExecutionResultMessage("Processed $n");
+                }
+            } catch (Exception $e) {
+                $this->setExecutionResultMessage("WITH ERRORS", "error");
+                if ($this->asynchronous === false) {
+                    eprintln("  '-" . $e->getMessage(), "red");
+                }
+                $this->saveLog("ExecuteSendNotifications", "error", "Error when sending notifications " . $e->getMessage());
+            }
         };
         $this->runTask($job);
     }
