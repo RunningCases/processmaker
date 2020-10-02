@@ -350,6 +350,21 @@ try {
         $userPropertyInfo['USR_LAST_UPDATE_DATE'],
         $userPropertyInfo['USR_LOGGED_NEXT_TIME']
     );
+    //The other authentication methods should not be validated by password security policies.
+    if (!empty($aUser['USR_AUTH_TYPE'])) {
+        $authType = $aUser['USR_AUTH_TYPE'];
+        if ($authType != "mysql" && $authType != "") {
+            $policiesToExclude = [
+                'ID_PPP_MINIMUM_LENGTH',
+                'ID_PPP_MAXIMUM_LENGTH',
+                'ID_PPP_NUMERICAL_CHARACTER_REQUIRED',
+                'ID_PPP_UPPERCASE_CHARACTER_REQUIRED',
+                'ID_PPP_SPECIAL_CHARACTER_REQUIRED'
+            ];
+            $errorInPassword = array_diff($errorInPassword, $policiesToExclude);
+            $errorInPassword = array_values($errorInPassword);
+        }
+    }
     //Get the policies enabled
     $policiesInPassword = $userProperty->validatePassword('', date('Y-m-d'), $userPropertyInfo['USR_LOGGED_NEXT_TIME'], true);
     //Enable change password from GAP
