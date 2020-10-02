@@ -5,7 +5,9 @@ use ProcessMaker\BusinessModel\Cases\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLogResult;
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\Model\Task as ModelTask;
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Util\DateTime;
 
 if (!isset($_SESSION['USER_LOGGED'])) {
     $responseObject = new stdclass();
@@ -428,9 +430,9 @@ class Ajax
         }
         $taskUid = $arrayTaskUid[0];
 
-        $taskData = $task->getDelegatedTaskData($taskUid, $_SESSION['APPLICATION'], $_SESSION['INDEX']);
-
-        $taskData = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($taskData);
+        $task = new ModelTask();
+        $taskData = $task->information($_SESSION['APPLICATION'], $taskUid, $_SESSION['INDEX']);
+        $taskData = DateTime::convertUtcToTimeZone($taskData);
 
         print(G::json_encode($taskData));
     }
