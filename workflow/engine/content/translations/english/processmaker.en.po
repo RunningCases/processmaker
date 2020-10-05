@@ -5538,6 +5538,12 @@ msgid "Day"
 msgstr "Day"
 
 # TRANSLATION
+# LABEL/ID_DAY_DAYS
+#: LABEL/ID_DAY_DAYS
+msgid "Day(s)"
+msgstr "Day(s)"
+
+# TRANSLATION
 # LABEL/ID_DAYS
 #: LABEL/ID_DAYS
 msgid "Days"
@@ -9466,6 +9472,12 @@ msgstr "Hour"
 #: LABEL/ID_HOURS
 msgid "Hours"
 msgstr "Hours"
+
+# TRANSLATION
+# LABEL/ID_HOUR_ABBREVIATE
+#: LABEL/ID_HOUR_ABBREVIATE
+msgid "Hr(s)"
+msgstr "Hr(s)"
 
 # TRANSLATION
 # LABEL/ID_HOUR_HOURS
@@ -18804,6 +18816,12 @@ msgid "[LABEL/ID_MINUTE] Minute"
 msgstr "Minute"
 
 # TRANSLATION
+# LABEL/ID_MINUTE_ABBREVIATE
+#: LABEL/ID_MINUTE_ABBREVIATE
+msgid "min"
+msgstr "min"
+
+# TRANSLATION
 # LABEL/ID_MINUTES
 #: LABEL/ID_MINUTES
 msgid "[LABEL/ID_MINUTES] Minutes"
@@ -23602,6 +23620,12 @@ msgstr "Seconds"
 #: LABEL/ID_SECOND_FIGURE
 msgid "Second Graph"
 msgstr "Second Graph"
+
+# TRANSLATION
+# LABEL/ID_SECOND_ABBREVIATE
+#: LABEL/ID_SECOND_ABBREVIATE
+msgid "s"
+msgstr "s"
 
 # TRANSLATION
 # LABEL/ID_SEE

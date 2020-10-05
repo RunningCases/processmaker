@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use DateTime;
 use G;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -686,5 +687,54 @@ class Delegation extends Model
         $query->limit(1);
 
         return ($query->count() > 0);
+    }
+
+    /**
+     * Return the thread related to the specific task-index
+     *
+     * @param string $appUid
+     * @param string $delIndex
+     * @param string $tasUid
+     * @param string $taskType
+     *
+     * @return array
+     */
+    public static function getDatesFromThread(string $appUid, string $delIndex, string $tasUid, string $taskType)
+    {
+        $query = Delegation::query()->select([
+            'DEL_INIT_DATE',
+            'DEL_DELEGATE_DATE',
+            'DEL_FINISH_DATE',
+            'DEL_RISK_DATE',
+            'DEL_TASK_DUE_DATE'
+        ]);
+        $query->where('APP_UID', $appUid);
+        $query->where('DEL_INDEX', $delIndex);
+        $query->where('TAS_UID', $tasUid);
+        $results = $query->get();
+
+        $thread = [];
+        $results->each(function ($item, $key) use (&$thread, $taskType) {
+            $thread = $item->toArray();
+            if (in_array($taskType, Task::$typesRunAutomatically)) {
+                $startDate = $thread['DEL_DELEGATE_DATE'];
+            } else {
+                $startDate = $thread['DEL_INIT_DATE'];
+            }
+            $endDate = $thread['DEL_FINISH_DATE'];
+            // Calculate the task-thread duration
+            if (!empty($startDate) && !empty($endDate)) {
+                $initDate = new DateTime($startDate);
+                $finishDate = new DateTime($endDate);
+                $diff = $initDate->diff($finishDate);
+                $format = ' %a ' . G::LoadTranslation('ID_DAY_DAYS');
+                $format .= ' %H '. G::LoadTranslation('ID_HOUR_ABBREVIATE');
+                $format .= ' %I '. G::LoadTranslation('ID_MINUTE_ABBREVIATE');
+                $format .= ' %S '. G::LoadTranslation('ID_SECOND_ABBREVIATE');
+                $thread['DEL_THREAD_DURATION'] = $diff->format($format);
+            }
+        });
+
+        return $thread;
     }
 }
