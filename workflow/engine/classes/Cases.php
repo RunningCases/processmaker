@@ -5870,7 +5870,6 @@ class Cases
                     }
 
                     $arrayAux1 = $tasks->getUsersOfTask($taskUid, 1);
-
                     foreach ($arrayAux1 as $arrayUser) {
                         $arrayTaskUser[] = $arrayUser['USR_UID'];
                     }
@@ -5893,7 +5892,7 @@ class Cases
                         if ($to == '') {
                             $to = $toAux;
                         } else {
-                            $cc .= (($cc != '') ? ',' : '') . $toAux;
+                            $to .= ',' . $toAux;
                         }
                     }
                 }
@@ -5914,7 +5913,7 @@ class Cases
                             $to = $toAux;
                             $sw = 0;
                         } else {
-                            $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                            $to .= ',' . $toAux;
                         }
                     }
                     $arrayResp ['to'] = $to;
@@ -5939,7 +5938,7 @@ class Cases
                             $to = $toAux;
                             $sw = 0;
                         } else {
-                            $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                            $to .= ',' . $toAux;
                         }
                     }
                     $arrayResp ['to'] = $to;
