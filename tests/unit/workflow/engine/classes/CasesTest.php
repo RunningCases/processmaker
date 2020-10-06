@@ -407,6 +407,337 @@ class CasesTest extends TestCase
     }
 
     /**
+     * Tests the getTo method when the task assign type is BALANCED
+     * 
+     * @covers \Cases::getTo()
+     * @test
+     */
+    public function it_shoult_test_the_get_to_method_with_default_tas_assign_type()
+    {
+        $task = factory(Task::class)->create();
+        $user = factory(User::class)->create([
+            'USR_EMAIL' => 'test@test.com'
+        ]);
+
+        // Instance class Cases
+        $cases = new Cases();
+        $result = $cases->getTo($task->TAS_UID, $user->USR_UID, '');
+        $this->assertNotEmpty($result);
+        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
+    }
+
+    /**
+     * Tests the getTo method when the task assign type is SELF_SERVICE
+     * 
+     * @covers \Cases::getTo()
+     * @test
+     */
+    public function it_shoult_test_the_get_to_method_with_self_service_tas_assign_type()
+    {
+        $process = factory(Process::class)->create();
+
+        $task = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'BALANCED'
+        ]);
+        $task2 = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE'
+        ]);
+
+        $user = factory(User::class)->create([
+            'USR_EMAIL' => 'test@test.com'
+        ]);
+        $user2 = factory(User::class)->create([
+            'USR_EMAIL' => 'test2@test2.com'
+        ]);
+
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user2->USR_UID
+        ]);
+
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'PRO_UID' => $process->PRO_UID,
+            'APP_INIT_USER' => "00000000000000000000000000000001",
+            'APP_CUR_USER' => $user2->USR_UID
+        ]);
+
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 1,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 0,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => "00000000000000000000000000000001",
+            'DEL_THREAD' => 1,
+            'DEL_THREAD_STATUS' => 'CLOSED'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 2,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 1,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'DEL_THREAD' => 2,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 3,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 1,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user2->USR_UID,
+            'DEL_THREAD' => 3,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+
+        $arrayData = [
+            "SYS_LANG" => "en",
+            "SYS_SKIN" => "neoclassic",
+            "SYS_SYS" => "workflow",
+            "APPLICATION" => $application->APP_UID,
+            "PROCESS" => $process->PRO_UID,
+            "TASK" => $task->TAS_UID,
+            "INDEX" => "1",
+            "USER_LOGGED" => "00000000000000000000000000000001",
+            "USR_USERNAME" => "admin",
+            "APP_NUMBER" => $application->APP_NUMBER,
+            "PIN" => $application->APP_PIN,
+            "TAS_ID" => $task->TAS_ID
+        ];
+
+        // Instance class Cases
+        $cases = new Cases();
+        $result = $cases->getTo($task2->TAS_UID, $user->USR_UID, $arrayData);
+
+        // Asserts the result is not empty
+        $this->assertNotEmpty($result);
+
+        // Asserts the emails of both users are contained in the result
+        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
+        $this->assertRegExp("/{$user2->USR_EMAIL}/", $result["to"]);
+    }
+
+    /**
+     * Tests the getTo method when the task assign type is MULTIPLE_INSTANCE
+     * 
+     * @covers \Cases::getTo()
+     * @test
+     */
+    public function it_shoult_test_the_get_to_method_with_multiple_instance_tas_assign_type()
+    {
+        $process = factory(Process::class)->create();
+
+        $task = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'BALANCED'
+        ]);
+        $task2 = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'MULTIPLE_INSTANCE'
+        ]);
+
+        $user = factory(User::class)->create([
+            'USR_EMAIL' => 'test@test.com'
+        ]);
+        $user2 = factory(User::class)->create([
+            'USR_EMAIL' => 'test2@test2.com'
+        ]);
+
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user2->USR_UID
+        ]);
+
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'PRO_UID' => $process->PRO_UID,
+            'APP_INIT_USER' => "00000000000000000000000000000001",
+            'APP_CUR_USER' => $user2->USR_UID
+        ]);
+
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 1,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 0,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => "00000000000000000000000000000001",
+            'DEL_THREAD' => 1,
+            'DEL_THREAD_STATUS' => 'CLOSED'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 2,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 1,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'DEL_THREAD' => 2,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 3,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 1,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user2->USR_UID,
+            'DEL_THREAD' => 3,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+
+        $arrayData = [
+            "SYS_LANG" => "en",
+            "SYS_SKIN" => "neoclassic",
+            "SYS_SYS" => "workflow",
+            "APPLICATION" => $application->APP_UID,
+            "PROCESS" => $process->PRO_UID,
+            "TASK" => $task->TAS_UID,
+            "INDEX" => "1",
+            "USER_LOGGED" => "00000000000000000000000000000001",
+            "USR_USERNAME" => "admin",
+            "APP_NUMBER" => $application->APP_NUMBER,
+            "PIN" => $application->APP_PIN,
+            "TAS_ID" => $task->TAS_ID
+        ];
+
+        // Instance class Cases
+        $cases = new Cases();
+        $result = $cases->getTo($task2->TAS_UID, $user->USR_UID, $arrayData);
+
+        // Asserts the result is not empty
+        $this->assertNotEmpty($result);
+
+        // Asserts the emails of both users are contained in the result
+        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
+        $this->assertRegExp("/{$user2->USR_EMAIL}/", $result["to"]);
+    }
+
+    /**
+     * Tests the getTo method when the task assign type is MULTIPLE_INSTANCE_VALUE_BASED
+     * 
+     * @covers \Cases::getTo()
+     * @test
+     */
+    public function it_shoult_test_the_get_to_method_with_multiple_instance_value_based_tas_assign_type()
+    {
+        $process = factory(Process::class)->create();
+
+        $task = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'BALANCED'
+        ]);
+        $task2 = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_ASSIGN_TYPE' => 'MULTIPLE_INSTANCE_VALUE_BASED',
+            'TAS_ASSIGN_VARIABLE' => '@@users'
+        ]);
+
+        $user = factory(User::class)->create([
+            'USR_EMAIL' => 'test@test.com'
+        ]);
+        $user2 = factory(User::class)->create([
+            'USR_EMAIL' => 'test2@test2.com'
+        ]);
+
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user2->USR_UID
+        ]);
+
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'PRO_UID' => $process->PRO_UID,
+            'APP_INIT_USER' => "00000000000000000000000000000001",
+            'APP_CUR_USER' => $user2->USR_UID
+        ]);
+
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 1,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 0,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => "00000000000000000000000000000001",
+            'DEL_THREAD' => 1,
+            'DEL_THREAD_STATUS' => 'CLOSED'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 2,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 1,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'DEL_THREAD' => 2,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+        factory(Delegation::class)->create([
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => 3,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 1,
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user2->USR_UID,
+            'DEL_THREAD' => 3,
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+
+        $arrayData = [
+            "SYS_LANG" => "en",
+            "SYS_SKIN" => "neoclassic",
+            "SYS_SYS" => "workflow",
+            "APPLICATION" => $application->APP_UID,
+            "PROCESS" => $process->PRO_UID,
+            "TASK" => $task->TAS_UID,
+            "INDEX" => "1",
+            "USER_LOGGED" => "00000000000000000000000000000001",
+            "USR_USERNAME" => "admin",
+            "APP_NUMBER" => $application->APP_NUMBER,
+            "PIN" => $application->APP_PIN,
+            "TAS_ID" => $task->TAS_ID,
+            'users' => [$user->USR_UID, $user2->USR_UID]
+        ];
+
+        // Instance class Cases
+        $cases = new Cases();
+        $result = $cases->getTo($task2->TAS_UID, $user->USR_UID, $arrayData);
+
+        // Asserts the result is not empty
+        $this->assertNotEmpty($result);
+
+        // Asserts the emails of both users are contained in the result
+        $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
+        $this->assertRegExp("/{$user2->USR_EMAIL}/", $result["to"]);
+    }
+
+    /**
      * Call the tearDown method
      */
     public function tearDown()
