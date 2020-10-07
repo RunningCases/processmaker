@@ -4,7 +4,6 @@
  * cron_single.php
  *
  * @see workflow/engine/bin/cron.php
- * @see workflow/engine/bin/messageeventcron.php
  * @see workflow/engine/bin/timereventcron.php
  * @see workflow/engine/bin/ldapcron.php
  * @see workflow/engine/methods/setup/cron.php
@@ -333,9 +332,8 @@ try {
                     $task->ldapcron(in_array('+debug', $argv));
                     break;
                 case 'messageeventcron':
-                    $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
-
-                    $messageApplication->catchMessageEvent(true);
+                    $task = new Task($asynchronous, $sObject);
+                    $task->messageeventcron();
                     break;
                 case 'timereventcron':
                     $timerEvent = new \ProcessMaker\BusinessModel\TimerEvent();

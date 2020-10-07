@@ -9,10 +9,10 @@ use ProcessMaker\TaskScheduler\Task;
 use Tests\TestCase;
 
 /**
-  * Class TaskTest
-  *
-  * @coversDefaultClass \ProcessMaker\TaskScheduler\Task
-  */
+ * Class TaskTest
+ *
+ * @coversDefaultClass \ProcessMaker\TaskScheduler\Task
+ */
 class TaskTest extends TestCase
 {
     private $faker;
@@ -129,19 +129,25 @@ class TaskTest extends TestCase
      */
     public function it_should_test_saveLog_method($asynchronous)
     {
-        $task = new Task($asynchronous, '');
-        $description = $this->faker->paragraph;
-
-        $task->saveLog('', '', $description);
+        $task = new Task(false, '');
+        $task->saveLog('', '', $this->faker->paragraph);
         $file = PATH_DATA . "log/cron.log";
-        $this->markTestIncomplete('Please solve the error related to unit test');
         $this->assertFileExists($file);
+
         if ($asynchronous === false) {
+            $description = $this->faker->paragraph;
+            $task = new Task($asynchronous, '');
+            $task->saveLog('', '', $description);
             $contentLog = file_get_contents($file);
+
             $this->assertRegExp("/{$description}/", $contentLog);
         }
         if ($asynchronous === true) {
+            $description = $this->faker->paragraph;
+            $task = new Task($asynchronous, '');
+            $task->saveLog('', '', $description);
             $contentLog = file_get_contents($file);
+
             $this->assertNotRegExp("/{$description}/", $contentLog);
         }
     }
@@ -482,6 +488,34 @@ class TaskTest extends TestCase
             Queue::fake();
             Queue::assertNothingPushed();
             $task->actionsByEmailResponse();
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
+
+    /**
+     * This test verify the messageeventcron activity method for synchronous and asynchronous execution.
+     * @test 
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::messageeventcron()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_messageeventcron_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->messageeventcron();
+            $printing = ob_get_clean();
+            $this->assertRegExp("/Message-Events/", $printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->messageeventcron();
             Queue::assertPushed(TaskScheduler::class);
         }
     }

@@ -21,6 +21,7 @@ use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
 use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\BusinessModel\Light\PushMessageAndroid;
 use ProcessMaker\BusinessModel\Light\PushMessageIOS;
+use ProcessMaker\BusinessModel\MessageApplication;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Plugins\PluginRegistry;
 use Propel;
@@ -238,7 +239,7 @@ class Task
      * Check if some task unassigned has enable the setting timeout and execute the trigger related
      *
      * @link https://wiki.processmaker.com/3.2/Tasks#Self-Service
-    */
+     */
     function executeCaseSelfService()
     {
         $job = function() {
@@ -582,6 +583,18 @@ class Task
         $job = function() {
             $responseReader = new ResponseReader();
             $responseReader->actionsByEmailEmailResponse();
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * This execute message event cron.
+     */
+    public function messageeventcron()
+    {
+        $job = function() {
+            $messageApplication = new MessageApplication();
+            $messageApplication->catchMessageEvent(true);
         };
         $this->runTask($job);
     }
