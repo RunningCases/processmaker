@@ -265,9 +265,9 @@ class TaskSchedulerBM
             $task->startingTime = $service["startingTime"];
             $task->endingTime = $service["endingTime"];
             if ($win) {
-                $task->body = 'php "' . PATH_TRUNK . $service["filew"] . '" ' . $service["service"] . ' +w' . config("system.workspace") . ' +force';
+                $task->body = 'php "' . PATH_TRUNK . $service["filew"] . '" ' . $service["service"] . ' +w' . config("system.workspace") . ' +force +async';
             } else {
-                $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force"';
+                $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force +async"';
             }
             $task->expression = $service["expression"];
             $task->type = "shell";
