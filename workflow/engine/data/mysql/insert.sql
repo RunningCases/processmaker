@@ -58630,9 +58630,17 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_LATEST_VERSION','en','Latest version','2014-09-18') ,
+( 'LABEL','ID_LDAP_ACCOUNT_DISABLED','en','The account is currently disabled.','2020-10-02') ,
+( 'LABEL','ID_LDAP_ACCOUNT_EXPIRED','en','The user''s account has expired.','2020-10-02') ,
+( 'LABEL','ID_LDAP_ERROR_CONNECTION','en','Error connection.','2020-10-02') ,
 ( 'LABEL','ID_LDAP_FIELD','en','LDAP Field','2015-09-15') ,
+( 'LABEL','ID_LDAP_NOT_PERMITTED_TO_LOGON_AT_THIS_TIME','en','The user is not permitted to log on at this time.','2020-10-02') ,
 ( 'LABEL','ID_LDAP_OPTIONAL','en','LDAP is optional.','2014-01-15') ,
+( 'LABEL','ID_LDAP_PASSWORD_EXPIRED','en','User''s account has expired.','2020-10-02') ,
+( 'LABEL','ID_LDAP_RESTRICTED_TO_SPECIFIC_MACHINES','en','The user is not permitted to log on from this computer.','2020-10-02') ,
 ( 'LABEL','ID_LDAP_USERS','en','LDAP Users','2015-09-15') ,
+( 'LABEL','ID_LDAP_USER_MUST_RESET_PASSWORD','en','The user''s password must be changed before logging on the first time.','2020-10-02') ,
+( 'LABEL','ID_LDAP_USER_NOT_FOUND_INVALID','en','The username is invalid.','2020-10-02') ,
 ( 'LABEL','ID_LECA','en','Your license has expired. Please contact your administrator.','2016-07-28') ,
 ( 'LABEL','ID_LEFT','en','left','2014-09-18') ,
 ( 'LABEL','ID_LEFT_MARGIN','en','Left Margin','2014-01-15') ,

@@ -10662,10 +10662,34 @@ msgid "Latest version"
 msgstr "Latest version"
 
 # TRANSLATION
+# LABEL/ID_LDAP_ACCOUNT_DISABLED
+#: LABEL/ID_LDAP_ACCOUNT_DISABLED
+msgid  "The account is currently disabled."
+msgstr "The account is currently disabled."
+
+# TRANSLATION
+# LABEL/ID_LDAP_ACCOUNT_EXPIRED
+#: LABEL/ID_LDAP_ACCOUNT_EXPIRED
+msgid  "The user's account has expired."
+msgstr "The user's account has expired."
+
+# TRANSLATION
+# LABEL/ID_LDAP_ERROR_CONNECTION
+#: LABEL/ID_LDAP_ERROR_CONNECTION
+msgid  "Error connection."
+msgstr "Error connection."
+
+# TRANSLATION
 # LABEL/ID_LDAP_FIELD
 #: LABEL/ID_LDAP_FIELD
 msgid "LDAP Field"
 msgstr "LDAP Field"
+
+# TRANSLATION
+# LABEL/ID_LDAP_NOT_PERMITTED_TO_LOGON_AT_THIS_TIME
+#: LABEL/ID_LDAP_NOT_PERMITTED_TO_LOGON_AT_THIS_TIME
+msgid  "The user is not permitted to log on at this time."
+msgstr "The user is not permitted to log on at this time."
 
 # TRANSLATION
 # LABEL/ID_LDAP_OPTIONAL
@@ -10674,10 +10698,34 @@ msgid "LDAP is optional."
 msgstr "LDAP is optional."
 
 # TRANSLATION
+# LABEL/ID_LDAP_PASSWORD_EXPIRED
+#: LABEL/ID_LDAP_PASSWORD_EXPIRED
+msgid  "User's account has expired."
+msgstr "User's account has expired."
+
+# TRANSLATION
+# LABEL/ID_LDAP_RESTRICTED_TO_SPECIFIC_MACHINES
+#: LABEL/ID_LDAP_RESTRICTED_TO_SPECIFIC_MACHINES
+msgid  "The user is not permitted to log on from this computer."
+msgstr "The user is not permitted to log on from this computer."
+
+# TRANSLATION
 # LABEL/ID_LDAP_USERS
 #: LABEL/ID_LDAP_USERS
 msgid "LDAP Users"
 msgstr "LDAP Users"
+
+# TRANSLATION
+# LABEL/ID_LDAP_USER_MUST_RESET_PASSWORD
+#: LABEL/ID_LDAP_USER_MUST_RESET_PASSWORD
+msgid  "The user's password must be changed before logging on the first time."
+msgstr "The user's password must be changed before logging on the first time."
+
+# TRANSLATION
+# LABEL/ID_LDAP_USER_NOT_FOUND_INVALID
+#: LABEL/ID_LDAP_USER_NOT_FOUND_INVALID
+msgid  "The username is invalid."
+msgstr "The username is invalid."
 
 # TRANSLATION
 # LABEL/ID_LECA
