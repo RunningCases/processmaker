@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\User;
 
@@ -533,12 +534,70 @@ class LdapAdvanced
             $bBind = @ldap_bind($ldapcnn, $aAuthSource['AUTH_SOURCE_SEARCH_USER'], $aAuthSource['AUTH_SOURCE_PASSWORD']);
             $this->log($ldapcnn, "bind $ldapServer with user " . $aAuthSource["AUTH_SOURCE_SEARCH_USER"]);
         }
-
+        $this->getDiagnosticMessage($ldapcnn);
         if (!$bBind) {
             throw new Exception("Unable to bind to server: $ldapServer . " . "LDAP-Errno: " . ldap_errno($ldapcnn) . " : " . ldap_error($ldapcnn) . " \n");
         }
 
         return $ldapcnn;
+    }
+
+    /**
+     * Get a diagnostic message of the ldap connection status.
+     * @param resource $linkIdentifier
+     */
+    public function getDiagnosticMessage($linkIdentifier)
+    {
+        //specific message
+        $keysError = [
+            [
+                'key' => 'USER_NOT_FOUND',
+                'code' => 525,
+                'message' => G::LoadTranslation('ID_LDAP_USER_NOT_FOUND_INVALID'),
+            ], [
+                'key' => 'NOT_PERMITTED_TO_LOGON_AT_THIS_TIME',
+                'code' => 530,
+                'message' => G::LoadTranslation('ID_LDAP_NOT_PERMITTED_TO_LOGON_AT_THIS_TIME'),
+            ], [
+                'key' => 'RESTRICTED_TO_SPECIFIC_MACHINES',
+                'code' => 531,
+                'message' => G::LoadTranslation('ID_LDAP_RESTRICTED_TO_SPECIFIC_MACHINES'),
+            ], [
+                'key' => 'PASSWORD_EXPIRED',
+                'code' => 532,
+                'message' => G::LoadTranslation('ID_LDAP_PASSWORD_EXPIRED'),
+            ], [
+                'key' => 'ACCOUNT_DISABLED',
+                'code' => 533,
+                'message' => G::LoadTranslation('ID_LDAP_ACCOUNT_DISABLED'),
+            ], [
+                'key' => 'ACCOUNT_EXPIRED',
+                'code' => 701,
+                'message' => G::LoadTranslation('ID_LDAP_ACCOUNT_EXPIRED'),
+            ], [
+                'key' => 'USER_MUST_RESET_PASSWORD',
+                'code' => 773,
+                'message' => G::LoadTranslation('ID_LDAP_USER_MUST_RESET_PASSWORD'),
+            ]
+        ];
+        $message = '';
+        ldap_get_option($linkIdentifier, LDAP_OPT_DIAGNOSTIC_MESSAGE, $messageError);
+        foreach ($keysError as $key => $value) {
+            if (strpos($messageError, (string) $value['code']) !== false) {
+                $message = $value['message'];
+                break;
+            }
+        }
+        //standard message
+        if (empty($message)) {
+            $errorNumber = ldap_errno($linkIdentifier);
+            $message = ldap_err2str($errorNumber) . ".";
+        }
+        if (empty($message)) {
+            $message = G::LoadTranslation('ID_LDAP_ERROR_CONNECTION');
+        }
+        Cache::put('ldapMessageError', $message, 2);
+        $this->log($linkIdentifier, $messageError);
     }
 
     /**
@@ -1451,6 +1510,8 @@ class LdapAdvanced
             $searchResult = @ldap_search($ldapcnn, $arrayAuthenticationSourceData["AUTH_SOURCE_BASE_DN"], $filter, array_merge($this->arrayAttributesForUser, $attributeSetAdd));
 
             if ($error = ldap_errno($ldapcnn)) {
+                $messageError = ldap_err2str($error);
+                Cache::put('ldapMessageError', $messageError, 2);
                 //
             } else {
                 if ($searchResult) {

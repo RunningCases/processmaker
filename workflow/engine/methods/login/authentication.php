@@ -50,7 +50,9 @@ try {
             $enterprise->setup();
         }
         /*----------------------------------********---------------------------------*/
-        $uid = $RBAC->VerifyLogin($usr , $pwd);
+        Cache::put('ldapMessageError', '', 2);
+        $uid = $RBAC->VerifyLogin($usr, $pwd);
+        $ldapMessageError = Cache::pull('ldapMessageError');
         $RBAC->cleanSessionFiles(72); //cleaning session files older than 72 hours
 
         switch ($uid) {
@@ -148,7 +150,11 @@ try {
                 $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => G::LoadTranslation($errLabel)]);
                 $urlLogin = $urlLogin . '?d=' . base64_encode($d);
             } else {
-                G::SendTemporalMessage($errLabel, "warning");
+                if (empty($ldapMessageError)) {
+                    G::SendTemporalMessage($errLabel, "warning");
+                } else {
+                    G::SendTemporalMessage($ldapMessageError, "warning", "string");
+                }
             }
 
             $u = (array_key_exists('form', $_POST) && array_key_exists('URL', $_POST['form']))? 'u=' . urlencode(htmlspecialchars_decode($_POST['form']['URL'])) : '';
