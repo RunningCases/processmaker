@@ -2731,4 +2731,67 @@ class Bootstrap
         }
         set_include_path(get_include_path() . PATH_SEPARATOR . PATH_DATA_SITE);
     }
+
+    /**
+     * @deprecated since version 3.5.3
+     */
+    public static function registerMonolog(
+        $channel,
+        $level,
+        $message,
+        $context,
+        $workspace = '',
+        $file = 'processmaker.log',
+        $readLoggingLevel = true
+    )
+    {
+        $level = intval($level);
+        $context = is_array($context) ? $context : [];
+        switch ($level) {
+            case 100:
+                Log::channel(':' . $channel)->debug($message, Bootstrap::context($context));
+                break;
+            default://200
+                Log::channel(':' . $channel)->info($message, Bootstrap::context($context));
+                break;
+            case 250:
+                Log::channel(':' . $channel)->notice($message, Bootstrap::context($context));
+                break;
+            case 300:
+                Log::channel(':' . $channel)->warning($message, Bootstrap::context($context));
+                break;
+            case 400:
+                Log::channel(':' . $channel)->error($message, Bootstrap::context($context));
+                break;
+            case 500:
+                Log::channel(':' . $channel)->critical($message, Bootstrap::context($context));
+                break;
+            case 550:
+                Log::channel(':' . $channel)->alert($message, Bootstrap::context($context));
+                break;
+            case 600:
+                Log::channel(':' . $channel)->emergency($message, Bootstrap::context($context));
+                break;
+        }
+    }
+
+    /**
+     * @deprecated since version 3.5.3
+     */
+    public static function getDefaultContextLog()
+    {
+        return self::context();
+    }
+
+    /**
+     * @deprecated since version 3.5.3
+     */
+    public static function registerMonologPhpUploadExecution($channel, $level, $message, $fileName)
+    {
+        $context = [
+            'filename' => $fileName,
+            'url' => $_SERVER["REQUEST_URI"] ?? ''
+        ];
+        self::registerMonolog($channel, $level, $message, $context);
+    }
 }
