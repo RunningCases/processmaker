@@ -364,6 +364,11 @@ class WorkspaceTools
         $start = microtime(true);
         $this->updateTriggers(true, $lang);
         CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
+        
+        CLI::logging("* Start adding +async option to scheduler commands...\n");
+        $start = microtime(true);
+        $this->addAsyncOptionToSchedulerCommands(true);
+        CLI::logging("* End adding +async option to scheduler commands...(Completed on " . (microtime(true) - $start) . " seconds)\n");
     }
 
     /**
@@ -2206,6 +2211,11 @@ class WorkspaceTools
                 $start = microtime(true);
                 $workspace->updateTriggers(true, $lang);
                 CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start adding +async option to scheduler commands...\n");
+                $start = microtime(true);
+                $this->addAsyncOptionToSchedulerCommands(false);
+                CLI::logging("* End adding +async option to scheduler commands...(Completed on " . (microtime(true) - $start) . " seconds)\n");
             }
 
             CLI::logging("> Start To Verify License Enterprise...\n");
@@ -5039,5 +5049,38 @@ class WorkspaceTools
     {
         $database = $this->getDatabase($rbac);
         $database->executeQuery($query, true);
+    }
+
+    /**
+     * Add +async option to scheduler commands in table SCHEDULER.
+     * @param boolean $force
+     */
+    public function addAsyncOptionToSchedulerCommands($force = false)
+    {
+        //read update status
+        $this->initPropel(true);
+        $conf = new Configurations();
+        $exist = $conf->exists('ADDED_ASYNC_OPTION_TO_SCHEDULER', 'scheduler');
+        if ($exist === true && $force === false) {
+            $config = (object) $conf->load('ADDED_ASYNC_OPTION_TO_SCHEDULER', 'scheduler');
+            if ($config->updated) {
+                CLI::logging("-> This was previously updated.\n");
+                return;
+            }
+        }
+
+        //update process
+        $updateQuery = ""
+            . "UPDATE {$this->dbName}.SCHEDULER SET body = REPLACE(body, '+force\"', '+force +async\"') "
+            . "WHERE body NOT LIKE '%+async%'"
+            . "";
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($updateQuery);
+        CLI::logging("-> Adding +async option to scheduler commands in table {$this->dbName}.SCHEDULER\n");
+
+        //save update status
+        $conf->aConfig = ['updated' => true];
+        $conf->saveConfig('ADDED_ASYNC_OPTION_TO_SCHEDULER', 'scheduler');
     }
 }
