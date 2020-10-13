@@ -5,6 +5,9 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\TaskScheduler;
 use App\Jobs\TaskScheduler;
 use Faker\Factory;
 use Illuminate\Support\Facades\Queue;
+use ProcessMaker\Model\Application;
+use ProcessMaker\Model\AppThread;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\TaskScheduler\Task;
 use Tests\TestCase;
 
@@ -24,6 +27,9 @@ class TaskTest extends TestCase
     {
         parent::setUp();
         $this->faker = Factory::create();
+        Delegation::truncate();
+        AppThread::truncate();
+        Application::truncate();
     }
 
     /**
@@ -532,7 +538,7 @@ class TaskTest extends TestCase
         //Creates a new task
         $task = new Task($asynchronous, '');
         //Sets the currect date
-        $date =  date('Y-m-d H:i:s');
+        $date = date('Y-m-d H:i:s');
         //assert synchronous for cron file
         if ($asynchronous === false) {
             ob_start();
@@ -541,7 +547,7 @@ class TaskTest extends TestCase
             //Gets the result
             $printing = ob_get_clean();
             //Asserts the result is printing that there is no exisiting records to continue a case in the determined date
-            $this->assertRegExp('/No existing records to continue a case, on date "'.$date . '/', $printing);
+            $this->assertRegExp('/No existing records to continue a case, on date "' . $date . '/', $printing);
         }
         //assert asynchronous for job process
         if ($asynchronous === true) {
