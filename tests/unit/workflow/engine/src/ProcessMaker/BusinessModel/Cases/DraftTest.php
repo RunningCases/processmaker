@@ -21,7 +21,7 @@ class DraftTest extends TestCase
     /**
      * This checks the counters is working properly in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounter()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCounter()
      * @test
      */
     public function it_should_count_cases()
@@ -66,7 +66,7 @@ class DraftTest extends TestCase
     /**
      * This checks to make sure pagination is working properly in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_return_draft_paged()
@@ -113,7 +113,7 @@ class DraftTest extends TestCase
     /**
      * This ensures ordering ascending and descending works by case number APP_NUMBER in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_case_number()
@@ -157,7 +157,7 @@ class DraftTest extends TestCase
     /**
      * This ensures ordering ascending and descending works by case title APP_TITLE in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_case_title()
@@ -201,7 +201,7 @@ class DraftTest extends TestCase
     /**
      * This ensures ordering ascending and descending works by case title PRO_TITLE in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_process()
@@ -241,7 +241,7 @@ class DraftTest extends TestCase
     /**
      * This ensures ordering ascending and descending works by task title TAS_TITLE in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_return_draft_sort_by_task_title()
@@ -280,7 +280,7 @@ class DraftTest extends TestCase
     /**
      * This ensures ordering ascending and descending works by due date DEL_TASK_DUE_DATE in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_return_draft_sort_due_date()
@@ -327,7 +327,7 @@ class DraftTest extends TestCase
     /**
      * This ensures ordering ascending and descending works by last modified APP_UPDATE_DATE in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_return_draft_sort_last_modified()
@@ -371,7 +371,7 @@ class DraftTest extends TestCase
     /**
      * This ensures searching specific cases and review the page in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_search_draft_search_specific_case_uid()
@@ -411,7 +411,7 @@ class DraftTest extends TestCase
     /**
      * This ensures searching specific cases and review the page in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_search_draft_search_specific_cases_uid_array()
@@ -447,7 +447,7 @@ class DraftTest extends TestCase
     /**
      * This ensures searching specific process and review the page in draft
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @test
      */
     public function it_should_search_draft_search_specific_process()
