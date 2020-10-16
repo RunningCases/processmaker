@@ -33,7 +33,7 @@
     "require": {
         "php": ">=7.1",
         "laravel/framework": "5.7.*",
-        "luracast/restler": "^3.0",
+        "luracast/restler": "3.0",
         "bshaffer/oauth2-server-php": "v1.0",
         "colosa/pmui": "release/3.5.0-dev",
         "colosa/michelangelofe": "release/3.5.0-dev",

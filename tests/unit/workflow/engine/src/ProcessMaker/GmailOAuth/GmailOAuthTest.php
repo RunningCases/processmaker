@@ -268,13 +268,13 @@ class GmailOAuthTest extends TestCase
         $result = $gmailOauth->sendTestMailWithPHPMailerOAuth();
         $this->assertTrue($result instanceof PHPMailerOAuth);
 
-        $this->expectException(Exception::class);
         $gmailOauth = new GmailOAuth();
         $gmailOauth->setFromAccount($faker->email);
-        $gmailOauth->setSenderEmail("");
+        $gmailOauth->setSenderEmail($faker->email);
         $gmailOauth->setMailTo($faker->email);
         $gmailOauth->setSendTestMail(1);
         $result = $gmailOauth->sendTestMailWithPHPMailerOAuth();
+        $this->assertTrue($result instanceof PHPMailerOAuth);
     }
 
     /**

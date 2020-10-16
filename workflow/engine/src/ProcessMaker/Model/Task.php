@@ -13,14 +13,15 @@ class Task extends Model
     public $timestamps = false;
     // The following types will execute without user and run automatically
     public static $typesRunAutomatically = [
-        "WEBENTRYEVENT",
         "END-MESSAGE-EVENT",
-        "START-MESSAGE-EVENT",
         "INTERMEDIATE-THROW-MESSAGE-EVENT",
         "INTERMEDIATE-CATCH-MESSAGE-EVENT",
+        "INTERMEDIATE-CATCH-TIMER-EVENT",
         "SCRIPT-TASK",
+        "SERVICE-TASK",
+        "START-MESSAGE-EVENT",
         "START-TIMER-EVENT",
-        "INTERMEDIATE-CATCH-TIMER-EVENT"
+        "WEBENTRYEVENT",
     ];
 
     const DUMMY_TASKS = [

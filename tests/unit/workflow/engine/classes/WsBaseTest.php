@@ -1120,6 +1120,6 @@ class WsBaseTest extends TestCase
         $ws = new WsBase();
         $response = (object) $ws->cancelCase($fakeApp, $delegation->DEL_INDEX, $delegation->USR_UID);
         $this->assertEquals($response->status_code, 100);
-        $this->assertEquals($response->message, "The Application row '$fakeApp' doesn't exist!");
+        $this->assertContains($fakeApp, $response->message);
     }
 }
