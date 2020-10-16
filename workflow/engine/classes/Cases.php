@@ -569,7 +569,7 @@ class Cases
                 }
             }
             return $fields;
-        } catch (exception $e) {
+        } catch (Exception $e) {
             throw ($e);
         }
     }

@@ -6219,4 +6219,17 @@ class G
         }, $string);
         return $string;
     }
+
+    /**
+     * This function is used to create a legal SQL string that you can use in an SQL statement. 
+     * The given string is encoded to an escaped SQL string, taking into account the current 
+     * character set of the connection.
+     * @param string $string
+     * @return string
+     */
+    public static function realEscapeString(string $string): string
+    {
+        $resource = Propel::getConnection('workflow')->getResource();
+        return mysqli_real_escape_string($resource, $string);
+    }
 }
