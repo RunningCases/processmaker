@@ -117,8 +117,8 @@ try {
             echo $response;
             break;
         case 'deleteUser':
-            Process::convertPrivateProcessesToPublic(json_decode($_POST['private_processes']));
             $usrUid = $_POST['USR_UID'];
+            Process::convertPrivateProcessesToPublicAndUpdateUser(json_decode($_POST['private_processes']), $usrUid);
             //Check if the user was defined in a process permissions
             $oObjectPermission = new ObjectPermission();
             $aProcess = $oObjectPermission->objectPermissionPerUser($usrUid, 1);
