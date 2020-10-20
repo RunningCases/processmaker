@@ -82,12 +82,15 @@ class Process extends Model
      * @param array $privateProcesses
      * @return void
      */
-    public static function convertPrivateProcessesToPublic($privateProcesses)
+    public static function convertPrivateProcessesToPublicAndUpdateUser($privateProcesses, $userUid)
     {
         $admin = RBAC::ADMIN_USER_UID;
 
         $processes = array_column($privateProcesses, 'PRO_ID');
         Process::whereIn('PRO_ID', $processes)
-                ->update(['PRO_TYPE_PROCESS' => 'PUBLIC', 'PRO_CREATE_USER' => $admin]);
+                ->update(['PRO_TYPE_PROCESS' => 'PUBLIC']);
+
+        Process::where('PRO_CREATE_USER', $userUid)
+                ->update(['PRO_CREATE_USER' => $admin]);
     }
 }
