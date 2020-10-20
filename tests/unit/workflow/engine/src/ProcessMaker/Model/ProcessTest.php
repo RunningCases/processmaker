@@ -213,9 +213,9 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * It tests the convertPrivateProcessesToPublic method
+     * It tests the convertPrivateProcessesToPublicAndUpdateUser method
      * 
-     * @covers \ProcessMaker\Model\Process::convertPrivateProcessesToPublic()
+     * @covers \ProcessMaker\Model\Process::convertPrivateProcessesToPublicAndUpdateUser()
      * @test
      */
     public function it_should_test_the_convert_private_processes_to_public_method()
@@ -234,8 +234,8 @@ class ProcessTest extends TestCase
         //Create a Process object
         $process = new Process();
 
-        //Call the convertPrivateProcessesToPublic() method
-        $process->convertPrivateProcessesToPublic($p);
+        //Call the convertPrivateProcessesToPublicAndUpdateUser() method
+        $process->convertPrivateProcessesToPublicAndUpdateUser($p, $pro->PRO_CREATE_USER);
 
         $p = Process::where('PRO_UID', $pro->PRO_UID)->get()->values();
 
