@@ -566,7 +566,7 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounter()
      * @test
      */
-    public function it_should_test_the_counter_for_list_inbox()
+    public function it_should_test_the_counter_for_inbox()
     {
         //Create process
         $process = factory(Process::class)->create();

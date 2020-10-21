@@ -17,6 +17,8 @@ class Application extends Model
     const STATUS_TODO = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
+    // Status name and status id
+    public static $app_status_values = ['DRAFT' => 1, 'TO_DO' => 2, 'COMPLETED' => 3, 'CANCELLED' => 4];
 
     public function delegations()
     {

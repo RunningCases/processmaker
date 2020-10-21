@@ -10,7 +10,6 @@ use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
 
-
 /**
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\AbstractCases
  */
@@ -105,7 +104,7 @@ class AbstractCasesTest extends TestCase
         $absCases->setInboxStatus($arguments[$index]);
         $actual = $absCases->getInboxStatus();
         if (empty($arguments[$index])) {
-            $this->assertEquals($arguments[$index], 'ALL');
+            $this->assertEquals('ALL', $actual);
         } else {
             $this->assertEquals($arguments[$index], $actual);
         }
@@ -126,7 +125,7 @@ class AbstractCasesTest extends TestCase
         $absCases->setParticipatedStatus($arguments[$index]);
         $actual = $absCases->getParticipatedStatus();
         if (empty($arguments[$index])) {
-            $this->assertEquals($arguments[$index], 'ALL');
+            $this->assertEquals('ALL', $actual);
         } else {
             $this->assertEquals($arguments[$index], $actual);
         }
@@ -147,7 +146,7 @@ class AbstractCasesTest extends TestCase
         $absCases->setRiskStatus($arguments[$index]);
         $actual = $absCases->getRiskStatus();
         if (empty($arguments[$index])) {
-            $this->assertEquals($arguments[$index], 'ALL');
+            $this->assertEquals('ALL', $actual);
         } else {
             $this->assertEquals($arguments[$index], $actual);
         }
@@ -168,7 +167,7 @@ class AbstractCasesTest extends TestCase
         $absCases->setCaseStatus($arguments[$index]);
         $actual = $absCases->getCaseStatus();
         if (empty($arguments[$index])) {
-            $this->assertEquals($arguments[$index], 'ALL');
+            $this->assertEquals('ALL', $actual);
         } else {
             $this->assertEquals($arguments[$index], $actual);
         }
@@ -311,6 +310,13 @@ class AbstractCasesTest extends TestCase
             'search' => G::generateUniqueID(),
             'caseLink' => G::generateUniqueID(),
             'appUidCheck' => [G::generateUniqueID()],
+            'newestthan' => date('Y-m-d'),
+            'oldestthan' => date('Y-m-d'),
+            'sort' => 'APP_DELEGATION.APP_NUMBER',
+            'dir' => 'DESC',
+            'paged' => true,
+            'start' => 5,
+            'limit' => 10,
         ];
         $absCases->setProperties($properties);
         $actual = $absCases->getCategoryUid();
@@ -321,5 +327,23 @@ class AbstractCasesTest extends TestCase
         $this->assertEquals($properties['user'], $actual);
         $actual = $absCases->getValueToSearch();
         $this->assertEquals($properties['search'], $actual);
+        $actual = $absCases->getCaseUid();
+        $this->assertEquals($properties['caseLink'], $actual);
+        $actual = $absCases->getCasesUids();
+        $this->assertEquals($properties['appUidCheck'], $actual);
+        $actual = $absCases->getNewestThan();
+        $this->assertEquals($properties['newestthan'], $actual);
+        $actual = $absCases->getOldestThan();
+        $this->assertEquals($properties['oldestthan'], $actual);
+        $actual = $absCases->getOrderByColumn();
+        $this->assertEquals($properties['sort'], $actual);
+        $actual = $absCases->getOrderDirection();
+        $this->assertEquals($properties['dir'], $actual);
+        $actual = $absCases->getPaged();
+        $this->assertEquals($properties['paged'], $actual);
+        $actual = $absCases->getOffset();
+        $this->assertEquals($properties['start'], $actual);
+        $actual = $absCases->getLimit();
+        $this->assertEquals($properties['limit'], $actual);
     }
 }

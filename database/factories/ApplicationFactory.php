@@ -77,6 +77,14 @@ $factory->state(\ProcessMaker\Model\Application::class, 'draft', function (Faker
     ];
 });
 
+$factory->state(\ProcessMaker\Model\Application::class, 'completed', function (Faker $faker) {
+    return [
+        'APP_NUMBER' => $faker->unique()->numberBetween(1000),
+        'APP_STATUS_ID' => 3,
+        'APP_STATUS' => 'COMPLETED'
+    ];
+});
+
 $factory->state(\ProcessMaker\Model\Application::class, 'draft_minor_case', function (Faker $faker) {
     $caseNumber = $faker->unique()->numberBetween(1, 1000);
     return [
