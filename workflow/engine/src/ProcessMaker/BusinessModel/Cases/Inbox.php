@@ -3,11 +3,9 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use ProcessMaker\Model\Delegation;
-use ProcessMaker\Model\Task;
 
 class Inbox extends AbstractCases
 {
-
     /**
      * Get the data corresponding to List Inbox
      *
@@ -39,7 +37,7 @@ class Inbox extends AbstractCases
                 break;
         }
 
-        if ($this->getProcessId() != '') {
+        if (!empty($this->getProcessId())) {
             // Scope to search for an specific process
             $query->processId($this->getProcessId());
         }

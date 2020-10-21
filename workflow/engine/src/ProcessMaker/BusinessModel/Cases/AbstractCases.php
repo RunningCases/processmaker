@@ -466,6 +466,16 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Get Oldest Than value
+     *
+     * @return string
+     */
+    public function getOldestThan()
+    {
+        return $this->oldestThan;
+    }
+
+    /**
      * Set order by column
      *
      * @param string $orderByColumn
@@ -486,16 +496,6 @@ class AbstractCases implements CasesInterface
     public function getOrderByColumn()
     {
         return $this->orderByColumn;
-    }
-
-    /**
-     * Get Oldest Than value
-     *
-     * @return string
-     */
-    public function getOldestThan()
-    {
-        return $this->oldestThan;
     }
 
     /**

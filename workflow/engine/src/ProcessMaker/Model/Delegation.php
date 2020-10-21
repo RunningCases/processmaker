@@ -79,6 +79,30 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to get the started by me
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCaseStarted($query)
+    {
+        return $query->where('DEL_INDEX', '=', 1);
+    }
+
+    /**
+     * Scope a query to get the completed by me
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCaseCompleted($query)
+    {
+        return $query->appStatusId(3);
+    }
+
+    /**
      * Scope a query to only include a specific delegate date
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -188,6 +212,17 @@ class Delegation extends Model
     public function scopeIsThreadOpen($query)
     {
         return $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
+    }
+
+    /**
+     * Scope a query to get the last thread
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeLastThread($query)
+    {
+        return $query->where('APP_DELEGATION.DEL_LAST_INDEX', '=', 1);
     }
 
     /**
@@ -412,6 +447,27 @@ class Delegation extends Model
     }
 
     /**
+     * Scope the Inbox cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInboxWithoutUser($query)
+    {
+        // This scope is for the join with the APP_DELEGATION table
+        $query->appStatusId(2);
+
+        // Scope for the restriction of the task that must not be searched for
+        $query->excludeTaskTypes(Task::DUMMY_TASKS);
+
+        // Scope that establish that the DEL_THREAD_STATUS must be OPEN
+        $query->threadOpen();
+
+        return $query;
+    }
+
+    /**
      * Scope a self service cases
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -445,6 +501,24 @@ class Delegation extends Model
         $query->appStatusId(Application::STATUS_DRAFT);
         // Case assigned to the user
         $query->userId($user);
+
+        return $query;
+    }
+
+    /**
+     * Scope a participated cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeParticipated($query, $user)
+    {
+        // Scope to set the user
+        $query->userId($user);
+        // Scope to set the last thread
+        $query->lastThread();
 
         return $query;
     }

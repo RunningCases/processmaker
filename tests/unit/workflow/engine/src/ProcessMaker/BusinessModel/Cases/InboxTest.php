@@ -2,20 +2,18 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\Inbox;
-use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 /**
  * Class InboxTest
  *
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Inbox
- * @package Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases
  */
 class InboxTest extends TestCase
 {
