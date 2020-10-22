@@ -2,8 +2,8 @@
 
 namespace Tests\unit\gulliver\system;
 
+use Faker\Factory;
 use G;
-use MonologProvider;
 use Tests\TestCase;
 
 /**
@@ -11,6 +11,16 @@ use Tests\TestCase;
  */
 class gTest extends TestCase
 {
+
+    /**
+     * Set up method.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->faker = Factory::create();
+    }
+
     /**
      * It tests that the new words added to the array are present
      *
@@ -372,5 +382,18 @@ class gTest extends TestCase
         $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = false;
         G::logTriggerExecution($data, '', '', 100);
         $this->assertFalse($_SESSION['_DATA_TRIGGER_']['_TRI_LOG_']);
+    }
+
+    /**
+     * This test the realEscapeString method.
+     * @test
+     * @covers G::realEscapeString()
+     */
+    public function it_should_test_realEscapeString_method()
+    {
+        $string = $this->faker->word;
+        $result = G::realEscapeString($string);
+
+        $this->assertNotEmpty($result);
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\unit\workflow\engine\classes;
 
 use Cases;
+use Exception;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
@@ -244,7 +245,7 @@ class CasesTest extends TestCase
     public function it_should_test_get_next_step_method_step_exception()
     {
         $cases = new Cases();
-        $this->expectExceptionMessage("The Application row '' doesn't exist!");
+        $this->expectException(Exception::class);
         $res = $cases->getNextStep();
     }
 
