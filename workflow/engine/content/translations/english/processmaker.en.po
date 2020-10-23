@@ -51940,6 +51940,18 @@ msgid "Every hour"
 msgstr "Every hour"
 
 # TRANSLATION
+# LABEL/ID_ONCE_PER_DAY
+#: LABEL/ID_ONCE_PER_DAY
+msgid "Once per day"
+msgstr "Once per day"
+
+# TRANSLATION
+# LABEL/ID_TWICE_PER_DAY
+#: LABEL/ID_TWICE_PER_DAY
+msgid "Twice per day"
+msgstr "Twice per day"
+
+# TRANSLATION
 # LABEL/ID_TASK_SCHEDULER_REPORT_USERS
 #: LABEL/ID_TASK_SCHEDULER_REPORT_USERS
 msgid "KPI Report by user"
