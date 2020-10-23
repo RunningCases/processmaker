@@ -22086,6 +22086,12 @@ msgid "[LABEL/ID_PROCESS_NO_CATEGORY] No Category"
 msgstr "No Category"
 
 # TRANSLATION
+# LABEL/ID_PROCESS_NONE_CATEGORY
+#: LABEL/ID_PROCESS_NONE_CATEGORY
+msgid "- No Category -"
+msgstr "- No Category -"
+
+# TRANSLATION
 # LABEL/ID_PROCESS_NO_EXIST
 #: LABEL/ID_PROCESS_NO_EXIST
 msgid "Process doesn't exist!"

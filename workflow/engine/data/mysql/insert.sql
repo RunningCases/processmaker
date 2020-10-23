@@ -60577,6 +60577,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PROCESS_NOCATEGORY','en','No Category','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_NOT_EXIST','en','The report table ''{0}'' is related to a process not present in the workspace, import the related process first. To relate the report table to other process, open the process in the designer and import from there. The report table can''t be imported.','2016-03-08') ,
 ( 'LABEL','ID_PROCESS_NO_CATEGORY','en','No Category','2014-01-15') ,
+( 'LABEL','ID_PROCESS_NONE_CATEGORY','en','- No Category -','2020-10-23') ,
 ( 'LABEL','ID_PROCESS_NO_EXIST','en','Process doesn''t exist!','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_PERMISSIONS','en','Process Permissions','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_PERMISSIONS_CREATE','en','Process Permission created successfully','2014-01-15') ,
