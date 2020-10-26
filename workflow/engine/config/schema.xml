@@ -117,7 +117,7 @@
         </unique>
     </table>
     <table name="APP_SEQUENCE" idMethod="native">
-        <column name="ID" type="INTEGER" required="true" primaryKey="true"/>
+        <column name="ID" type="INTEGER" required="true"/>
         <column name="APP_TYPE" type="VARCHAR" size="20" required="true" default="NORMAL"/>
     </table>
     <table name="APP_DELEGATION" idMethod="native">

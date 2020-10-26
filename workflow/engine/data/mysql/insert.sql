@@ -61791,6 +61791,7 @@ INSERT INTO ADDONS_MANAGER (ADDON_DESCRIPTION,ADDON_ID,ADDON_NAME,ADDON_NICK,ADD
 ('User-based Time Zone Management.','userBasedTimeZone','userBasedTimeZone','userBasedTimeZone','Colosa','localRegistry','ready','','00000000000000000000000000010014','features','','','0'),
 ('SSO with an LDAP provider.','windowsSSO','windowsSSO','windowsSSO','Colosa','localRegistry','ready','','00000000000000000000000000010011','features','','','0');
 
-INSERT INTO APP_SEQUENCE (ID) VALUES 
-('0');
+INSERT INTO APP_SEQUENCE (ID, APP_TYPE) VALUES
+(0, 'NORMAL'),
+(0, 'WEB_ENTRY');
 

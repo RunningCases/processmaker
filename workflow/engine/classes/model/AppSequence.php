@@ -16,27 +16,34 @@ require_once 'classes/model/om/BaseAppSequence.php';
  */
 class AppSequence extends BaseAppSequence {
 
+    const APP_TYPE_NORMAL = 'NORMAL';
+    const APP_TYPE_WEB_ENTRY = 'WEB_ENTRY';
+
     /**
      * Get an Set new sequence number
      *
+     * @param string $sequenceType
      * @return mixed
      * @throws Exception
      */
-    public function sequenceNumber()
+    public function sequenceNumber($sequenceType)
     {
         try {
             $con = Propel::getConnection('workflow');
             $stmt = $con->createStatement();
-            //UPDATE SEQUENCES SET SEQ_VALUE = LAST_INSERT_ID(SEQ_VALUE + 1);
-            $sql = "UPDATE APP_SEQUENCE SET ID=LAST_INSERT_ID(ID+1)";
+            $sql = "UPDATE APP_SEQUENCE SET ID=LAST_INSERT_ID(ID+1) WHERE APP_TYPE = '{$sequenceType}'";
             $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-            //SELECT LAST_INSERT_ID()
             $sql = "SELECT LAST_INSERT_ID()";
             $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
             $rs->next();
             $row = $rs->getRow();
             $result = $row['LAST_INSERT_ID()'];
-        } catch (\Exception $e) {
+
+            // If the type is WEB_ENTRY, we need to change to negative
+            if ($sequenceType === 'WEB_ENTRY') {
+                $result *= -1;
+            }
+        } catch (Exception $e) {
             throw ($e);
         }
         return $result;
