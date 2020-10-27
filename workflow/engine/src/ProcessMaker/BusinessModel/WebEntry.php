@@ -1,8 +1,12 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
+use AppSequence;
+use Cases;
 use Criteria;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\Application;
 use ResultSet;
 use WebEntryPeer;
 
@@ -1124,6 +1128,45 @@ class WebEntry
                 "(".htmlentities($task['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME']).")";
         }
         return $message;
+    }
+
+    /**
+     * Swap temporary web entry application number to a normal application number
+     *
+     * @param string $appUid
+     * @return int
+     */
+    public function swapTemporaryAppNumber($appUid)
+    {
+        // Get the application
+        $application = Application::query()->select(['APP_NUMBER'])->where('APP_UID', '=', $appUid)->first()->toArray();
+
+        // If application exists, swap the number
+        if (!empty($application)) {
+            // Get a normal sequence number
+            $appSequence = new AppSequence();
+            $appNumber = $appSequence->sequenceNumber(AppSequence::APP_TYPE_NORMAL);
+
+            // Update case with the new application number
+            $cases = new Cases();
+            $casesData = $cases->loadCase($appUid);
+            $casesData['APP_NUMBER'] = $casesData['APP_DATA']['APP_NUMBER'] = $appNumber;
+            $cases->updateCase($appUid, $casesData);
+
+            // Build the query to update related tables and fields
+            $query = "UPDATE `APPLICATION` SET `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `APP_DATA_CHANGE_LOG` SET `APP_NUMBER` = {$appNumber} WHERE `APP_NUMBER` = {$application['APP_NUMBER']};";
+            $query .= "UPDATE `APP_DELEGATION` SET `APP_NUMBER` = {$appNumber} WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `LIST_INBOX` SET `APP_NUMBER` = {$appNumber}, `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `LIST_PARTICIPATED_HISTORY` SET `APP_NUMBER` = {$appNumber}, `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `LIST_PARTICIPATED_LAST` SET `APP_NUMBER` = {$appNumber}, `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+
+            // Execute the query
+            DB::connection('workflow')->unprepared($query);
+
+            // Return new application number
+            return $appNumber;
+        }
     }
 }
 
