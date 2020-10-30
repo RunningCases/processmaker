@@ -96,6 +96,7 @@ class Application extends Model
         $query = Application::query()
             ->select()
             ->proUid($proUid)
+            ->positivesCases()
             ->orderBy('APP_NUMBER', 'ASC');
         return $query->get();
     }

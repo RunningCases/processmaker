@@ -4939,7 +4939,9 @@ class WorkspaceTools
         $case = new Cases();
 
         //select cases for this Process, ordered by APP_NUMBER
-        $applications = Application::where('PRO_UID', '=', $processUid)
+        $applications = Application::query()
+                ->where('PRO_UID', '=', $processUid)
+                ->where('APP_NUMBER', '>', 0)
                 ->orderBy('APP_NUMBER', 'asc')
                 ->offset($start)
                 ->limit($limit)
