@@ -983,22 +983,24 @@ class Cases
             /** Update case*/
             $app->update($Fields);
 
-            //Update the reportTables and tables related to the case
-            require_once 'classes/model/AdditionalTables.php';
-            $reportTables = new ReportTables();
-            $additionalTables = new additionalTables();
+            //Update the reportTables and tables related to the case, only for applications with positive application number
+            if ($appFields['APP_NUMBER'] > 0) {
+                require_once 'classes/model/AdditionalTables.php';
+                $reportTables = new ReportTables();
+                $additionalTables = new additionalTables();
 
-            if (!isset($Fields['APP_NUMBER'])) {
-                $Fields['APP_NUMBER'] = $appFields['APP_NUMBER'];
-            }
-            if (!isset($Fields['APP_STATUS'])) {
-                $Fields['APP_STATUS'] = $appFields['APP_STATUS'];
-            }
+                if (!isset($Fields['APP_NUMBER'])) {
+                    $Fields['APP_NUMBER'] = $appFields['APP_NUMBER'];
+                }
+                if (!isset($Fields['APP_STATUS'])) {
+                    $Fields['APP_STATUS'] = $appFields['APP_STATUS'];
+                }
 
-            $reportTables->updateTables($appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData);
-            $additionalTables->updateReportTables(
+                $reportTables->updateTables($appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData);
+                $additionalTables->updateReportTables(
                     $appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData, $Fields['APP_STATUS']
-            );
+                );
+            }
 
             //Update the priority related to the task
             $delIndex = isset($Fields['DEL_INDEX']) ? trim($Fields['DEL_INDEX']) : '';
