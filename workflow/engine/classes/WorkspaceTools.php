@@ -1243,11 +1243,14 @@ class WorkspaceTools
                 if ($action == 'ADD') {
                     $tablesToAddColumns[$tableName] = $actionData;
 
-                    // In a very old schema the primary key for table "LOGIN_LOG" was changed and we need to delete the
+                    // In a very old schema the primary key for tables "LOGIN_LOG" and "APP_SEQUENCE" were changed and we need to delete the
                     // primary index to avoid errors in the database upgrade
                     // TO DO: The change of a Primary Key in a table should be generic
                     if ($tableName == 'LOGIN_LOG' && array_key_exists('LOG_ID', $actionData)) {
                         $database->executeQuery('DROP INDEX `PRIMARY` ON LOGIN_LOG;');
+                    }
+                    if ($tableName == 'APP_SEQUENCE' && array_key_exists('APP_TYPE', $actionData)) {
+                        $database->executeQuery('DROP INDEX `PRIMARY` ON APP_SEQUENCE;');
                     }
                 } else {
                     foreach ($actionData as $columnName => $meta) {
@@ -3285,21 +3288,45 @@ class WorkspaceTools
         }
     }
 
+    /**
+     * Add sequence numbers
+     */
     public function checkSequenceNumber()
     {
-        $criteria = new Criteria("workflow");
+        // Instance required class
+        $appSequenceInstance = new AppSequence();
+
+        // Get a record from APP_SEQUENCE table
+        $criteria = new Criteria('workflow');
         $rsCriteria = AppSequencePeer::doSelectRS($criteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rsCriteria->next();
         $appSequenceRow = $rsCriteria->getRow();
+
+        // If table APP_SEQUENCE is empty, insert two records
         if (empty($appSequenceRow)) {
-            $sequenceInstance = SequencesPeer::retrieveByPK("APP_NUMBER");
-            $appSequenceInstance = new AppSequence();
+            // Check if exist a value in old table SEQUENCES
+            $sequenceInstance = SequencesPeer::retrieveByPK('APP_NUMBER');
+
             if (!is_null($sequenceInstance)) {
+                // If exists a value in SEQUENCE table, copy the same to APP_SEQUENCES table
                 $sequenceFields = $sequenceInstance->toArray(BasePeer::TYPE_FIELDNAME);
                 $appSequenceInstance->updateSequenceNumber($sequenceFields['SEQ_VALUE']);
             } else {
+                // If not exists a value in SEQUENCE table, insert a initial value
                 $appSequenceInstance->updateSequenceNumber(0);
+            }
+
+            // Insert a initial value for the web entries
+            $appSequenceInstance->updateSequenceNumber(0, AppSequence::APP_TYPE_WEB_ENTRY);
+        } else {
+            // Create a new instance of Criteria class
+            $criteria = new Criteria('workflow');
+            $criteria->add(AppSequencePeer::APP_TYPE, AppSequence::APP_TYPE_WEB_ENTRY);
+
+            // Check if exists a record for the web entries, if not exist insert the initial value
+            if (AppSequencePeer::doCount($criteria) === 0) {
+                $appSequenceInstance->updateSequenceNumber(0, AppSequence::APP_TYPE_WEB_ENTRY);
             }
         }
     }
