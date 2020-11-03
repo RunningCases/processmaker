@@ -171,8 +171,8 @@ abstract class BaseAppSequencePeer
 
     }
 
-    const COUNT = 'COUNT(APP_SEQUENCE.ID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT APP_SEQUENCE.ID)';
+    const COUNT = 'COUNT(*)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT *)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -381,9 +381,6 @@ abstract class BaseAppSequencePeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(AppSequencePeer::ID);
-            $selectCriteria->add(AppSequencePeer::ID, $criteria->remove(AppSequencePeer::ID), $comparison);
-
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -441,11 +438,22 @@ abstract class BaseAppSequencePeer
             $criteria = clone $values; // rename for clarity
         } elseif ($values instanceof AppSequence) {
 
-            $criteria = $values->buildPkeyCriteria();
+            $criteria = $values->buildCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(AppSequencePeer::ID, (array) $values, Criteria::IN);
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey
+            // values
+            if (count($values) == count($values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                $values = array($values);
+            }
+            $vals = array();
+            foreach ($values as $value) {
+
+            }
+
         }
 
         // Set the correct dbName
@@ -502,54 +510,6 @@ abstract class BaseAppSequencePeer
         }
 
         return BasePeer::doValidate(AppSequencePeer::DATABASE_NAME, AppSequencePeer::TABLE_NAME, $columns);
-    }
-
-    /**
-     * Retrieve a single object by pkey.
-     *
-     * @param      mixed $pk the primary key.
-     * @param      Connection $con the connection to use
-     * @return     AppSequence
-     */
-    public static function retrieveByPK($pk, $con = null)
-    {
-        if ($con === null) {
-            $con = Propel::getConnection(self::DATABASE_NAME);
-        }
-
-        $criteria = new Criteria(AppSequencePeer::DATABASE_NAME);
-
-        $criteria->add(AppSequencePeer::ID, $pk);
-
-
-        $v = AppSequencePeer::doSelect($criteria, $con);
-
-        return !empty($v) > 0 ? $v[0] : null;
-    }
-
-    /**
-     * Retrieve multiple objects by pkey.
-     *
-     * @param      array $pks List of primary keys
-     * @param      Connection $con the connection to use
-     * @throws     PropelException Any exceptions caught during processing will be
-     *       rethrown wrapped into a PropelException.
-     */
-    public static function retrieveByPKs($pks, $con = null)
-    {
-        if ($con === null) {
-            $con = Propel::getConnection(self::DATABASE_NAME);
-        }
-
-        $objs = null;
-        if (empty($pks)) {
-            $objs = array();
-        } else {
-            $criteria = new Criteria();
-            $criteria->add(AppSequencePeer::ID, $pks, Criteria::IN);
-            $objs = AppSequencePeer::doSelect($criteria, $con);
-        }
-        return $objs;
     }
 }
 

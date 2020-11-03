@@ -480,30 +480,33 @@ abstract class BaseAppSequence extends BaseObject implements Persistent
     {
         $criteria = new Criteria(AppSequencePeer::DATABASE_NAME);
 
-        $criteria->add(AppSequencePeer::ID, $this->id);
 
         return $criteria;
     }
 
     /**
-     * Returns the primary key for this object (row).
-     * @return     int
+     * Returns NULL since this table doesn't have a primary key.
+     * This method exists only for BC and is deprecated!
+     * @return     null
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        return null;
     }
 
     /**
-     * Generic method to set the primary key (id column).
+     * Dummy primary key setter.
      *
-     * @param      int $key Primary key.
-     * @return     void
+     * This function only exists to preserve backwards compatibility.  It is no longer
+     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
+     * release of Propel.
+     *
+     * @deprecated
      */
-    public function setPrimaryKey($key)
-    {
-        $this->setId($key);
-    }
+     public function setPrimaryKey($pk)
+     {
+         // do nothing, because this object doesn't have any primary keys
+     }
 
     /**
      * Sets contents of passed object to values from current object.
@@ -518,12 +521,12 @@ abstract class BaseAppSequence extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false)
     {
 
+        $copyObj->setId($this->id);
+
         $copyObj->setAppType($this->app_type);
 
 
         $copyObj->setNew(true);
-
-        $copyObj->setId(NULL); // this is a pkey column, so set to default value
 
     }
 

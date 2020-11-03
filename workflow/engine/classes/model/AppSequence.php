@@ -53,26 +53,36 @@ class AppSequence extends BaseAppSequence {
     /**
      * Update sequence number
      *
-     * @return mixed
+     * @param int $number
+     * @param string $sequenceType
+     *
      * @throws Exception
      */
-    public function updateSequenceNumber($number)
+    public function updateSequenceNumber($number, $sequenceType = AppSequence::APP_TYPE_NORMAL)
     {
         try {
-            $con = Propel::getConnection('workflow');
-            $stmt = $con->createStatement();
-            $c = new Criteria();
-            $rs = AppSequencePeer::doSelectRS($c);
-            $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $rs->next();
-            $row = $rs->getRow();
+            // Get the current connection
+            $connection = Propel::getConnection('workflow');
+
+            // Create a statement instance
+            $statement = $connection->createStatement();
+
+            // Get the record according to the sequence type
+            $criteria = new Criteria();
+            $criteria->add(AppSequencePeer::APP_TYPE, $sequenceType);
+            $rsCriteria = AppSequencePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            $row = $rsCriteria->getRow();
+
+            // Insert/Update sequence table with the number sent
             if ($row) {
-                $sql = "UPDATE APP_SEQUENCE SET ID=LAST_INSERT_ID('$number')";
+                $sql = "UPDATE APP_SEQUENCE SET ID=LAST_INSERT_ID('{$number}') WHERE APP_TYPE = '{$sequenceType}'";
             } else {
-                $sql = "INSERT INTO APP_SEQUENCE (ID) VALUES ('$number');";
+                $sql = "INSERT INTO APP_SEQUENCE (ID, APP_TYPE) VALUES ('{$number}', '{$sequenceType}')";
             }
-            $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-        } catch (\Exception $e) {
+            $statement->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+        } catch (Exception $e) {
             throw ($e);
         }
     }
