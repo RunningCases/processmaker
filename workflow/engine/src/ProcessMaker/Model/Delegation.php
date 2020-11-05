@@ -55,6 +55,18 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include specific priority
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  int $priority
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePriority($query, int $priority)
+    {
+        return $query->where('DEL_PRIORITY', $priority);
+    }
+
+    /**
      * Scope a query to only include open threads
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -73,7 +85,7 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeIndex($query, $index)
+    public function scopeIndex($query, int $index)
     {
         return $query->where('DEL_INDEX', '=', $index);
     }
@@ -175,6 +187,21 @@ class Delegation extends Model
     public function scopeCase($query, $appNumber)
     {
         return $query->where('APP_DELEGATION.APP_NUMBER', '=', $appNumber);
+    }
+
+    /**
+     * Scope a query to only include cases from a range
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  int $from
+     * @param  int $to
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRangeOfCases($query, int $from, int $to)
+    {
+        return $query->where('APP_DELEGATION.APP_NUMBER', '>=', $from)
+            ->where('APP_DELEGATION.APP_NUMBER', '<=', $to);
     }
 
     /**
@@ -305,7 +332,7 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeTask($query, $task)
+    public function scopeTask($query, int $task)
     {
         return $query->where('APP_DELEGATION.TAS_ID', '=', $task);
     }
@@ -1272,38 +1299,5 @@ class Delegation extends Model
         });
 
         return $thread;
-    }
-
-    /**
-     * Helper to get the priority code from a given value
-     *
-     * @param int $priorityValue
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    public static function getPriorityCode($priorityValue)
-    {
-        if (!empty(self::PRIORITIES_MAP[$priorityValue])) {
-            $priorityCode = self::PRIORITIES_MAP[$priorityValue];
-        } else {
-            throw new Exception("Priority value {$priorityValue} is not valid.");
-        }
-        return $priorityCode;
-    }
-
-    /**
-     * Helper to get the priority label from a given value
-     *
-     * @param int $priorityValue
-     *
-     * @return string
-     */
-    public static function getPriorityLabel($priorityValue)
-    {
-        $priorityCode = self::getPriorityCode($priorityValue);
-
-        return G::LoadTranslation("ID_PRIORITY_{$priorityCode}");
     }
 }

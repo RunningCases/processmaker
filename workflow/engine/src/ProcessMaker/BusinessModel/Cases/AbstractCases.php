@@ -16,6 +16,7 @@ class AbstractCases implements CasesInterface
     const ORDER_DIRECTIONS = ['DESC', 'ASC'];
     const CORRECT_CANCELED_STATUS = 'CANCELED';
     const INCORRECT_CANCELED_STATUS = 'CANCELLED';
+    const PRIORITIES = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
 
     // Filter by category from a process, know as "$category" in the old lists classes
     private $categoryUid = '';
@@ -25,6 +26,9 @@ class AbstractCases implements CasesInterface
 
     // Filter by process using the Id field
     private $processId = 0;
+
+    // Filter by task using the Id field
+    private $taskId = 0;
 
     // Filter by user, know as "$user" in the old lists classes
     private $userUid = '';
@@ -44,6 +48,9 @@ class AbstractCases implements CasesInterface
     // Filter by risk status, know as "$filterStatus" in the old list "inbox" class
     private $riskStatus = '';
 
+    // Filter by specific priority
+    private $priority = 0;
+
     // Filter by case status, know as "$filterStatus" in the old "participated last" class
     private $caseStatus = '';
 
@@ -52,6 +59,10 @@ class AbstractCases implements CasesInterface
 
     // Filter by a specific case using case number
     private $caseNumber = 0;
+
+    // Filter by a specific range of case number
+    private $fromCaseNumber = 0;
+    private $toCaseNumber = 0;
 
     // Filter by specific cases, know as "$appUidCheck" in the old lists classes
     private $casesUids = [];
@@ -138,6 +149,26 @@ class AbstractCases implements CasesInterface
     public function getProcessId()
     {
         return $this->processId;
+    }
+
+    /**
+     * Set task Id value
+     *
+     * @param int $taskId
+     */
+    public function setTaskId(int $taskId)
+    {
+        $this->taskId = $taskId;
+    }
+
+    /**
+     * Get task Id value
+     *
+     * @return int
+     */
+    public function getTaskId()
+    {
+        return $this->taskId;
     }
 
     /**
@@ -296,13 +327,47 @@ class AbstractCases implements CasesInterface
     }
 
     /**
-     * Get risk status
+     * Get risk value
      *
      * @return string
      */
     public function getRiskStatus()
     {
         return $this->riskStatus;
+    }
+
+    /**
+     * Set priority value
+     *
+     * @param int $priority
+     *
+     * @throws Exception
+     */
+    public function setPriority(int $priority)
+    {
+        // Validate the priority value
+        if (!empty($priority)) {
+            if (!empty(self::PRIORITIES[$priority])) {
+                $priorityCode = $priority;
+            } else {
+                throw new Exception("Priority value {$priority} is not valid.");
+            }
+        } else {
+            // List all priorities
+            $priorityCode = 0;
+        }
+
+        $this->priority = $priorityCode;
+    }
+
+    /**
+     * Get priority status
+     *
+     * @return string
+     */
+    public function getPriority()
+    {
+        return $this->priority;
     }
 
     /**
@@ -383,6 +448,38 @@ class AbstractCases implements CasesInterface
     public function getCaseNumber()
     {
         return $this->caseNumber;
+    }
+
+    /**
+     * Set range of Case Number
+     *
+     * @param int $from
+     * @param int $to
+     */
+    public function setRangeCaseNumber(int $from, int $to)
+    {
+        $this->fromCaseNumber = $from;
+        $this->toCaseNumber = $to;
+    }
+
+    /**
+     * Get from Case Number
+     *
+     * @return int
+     */
+    public function getFromCaseNumber()
+    {
+        return $this->fromCaseNumber;
+    }
+
+    /**
+     * Get to Case Number
+     *
+     * @return int
+     */
+    public function getToCaseNumber()
+    {
+        return $this->toCaseNumber;
     }
 
     /**
@@ -603,8 +700,24 @@ class AbstractCases implements CasesInterface
             $this->setProcessUid($properties['process']);
         }
 
+        if (!empty($properties['task'])) {
+            $this->setTaskId($properties['task']);
+        }
+
         if (!empty($properties['user'])) {
             $this->setUserUid($properties['user']);
+        }
+
+        if (!empty($properties['priority'])) {
+            $this->setPriority($properties['priority']);
+        }
+
+        if (!empty($properties['caseNumber'])) {
+            $this->setCaseNumber($properties['caseNumber']);
+        }
+
+        if (!empty($properties['caseNumberFrom']) && !empty($properties['caseNumberTo'])) {
+            $this->setRangeCaseNumber($properties['caseNumberFrom'], $properties['caseNumberTo']);
         }
 
         if (!empty($properties['search'])) {
