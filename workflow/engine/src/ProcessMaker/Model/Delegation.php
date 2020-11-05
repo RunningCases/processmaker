@@ -62,7 +62,7 @@ class Delegation extends Model
      */
     public function scopeThreadOpen($query)
     {
-        return $query->where('DEL_THREAD_STATUS', '=', 'OPEN');
+        return $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
     }
 
     /**
@@ -520,6 +520,53 @@ class Delegation extends Model
         // Scope to set the last thread
         $query->lastThread();
 
+        return $query;
+    }
+
+    /**
+     * Scope delegation table
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinPreviousIndex($query)
+    {
+        $query->leftJoin('APP_DELEGATION AS AD', function( $leftJoin) {
+            $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'AD.APP_NUMBER')
+            ->on('APP_DELEGATION.DEL_PREVIOUS', '=', 'AD.DEL_INDEX');
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope users table as previous
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinPreviousUser($query)
+    {
+        $query->leftJoin('USERS AS PREVIOUS', function ($leftJoin) {
+            $leftJoin->on('AD.USR_UID', '=', 'PREVIOUS.USR_UID');
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope the Process is in list
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $processes
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeProcessInList($query, $processes)
+    {
+        $query->whereIn('PROCESS.PRO_ID', $processes);
         return $query;
     }
 
