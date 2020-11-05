@@ -169,6 +169,7 @@
         <column name="USR_ID" type="INTEGER" required="false" default="0"/>
         <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
         <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
+        <column name="DEL_TITLE" type="VARCHAR" size="999" required="true"/>
         <unique name="DELEGATION_ID">
             <unique-column name="DELEGATION_ID"/>
         </unique>
