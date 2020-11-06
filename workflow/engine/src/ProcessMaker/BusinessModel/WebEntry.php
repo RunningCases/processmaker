@@ -1168,5 +1168,26 @@ class WebEntry
             return $appNumber;
         }
     }
-}
 
+    /**
+     * Convert Web Entries v1.0 to v2.0
+     */
+    public static function convertFromV1ToV2()
+    {
+        // Build query
+        $sql = "UPDATE
+                    `WEB_ENTRY`
+                LEFT JOIN
+                    `BPMN_PROCESS`
+                ON
+                    (`WEB_ENTRY`.`PRO_UID` = `BPMN_PROCESS`.`PRJ_UID`)
+                SET
+                    `WEB_ENTRY`.`DYN_UID` = '', `WEB_ENTRY`.`WE_TYPE` = 'MULTIPLE'
+                WHERE
+                    `WE_TYPE` = 'SINGLE' AND `WE_AUTHENTICATION` = 'ANONYMOUS' AND
+                    `WE_CALLBACK` = 'PROCESSMAKER' AND `BPMN_PROCESS`.`PRJ_UID` IS NOT NULL";
+
+        // Execute query
+        DB::connection('workflow')->statement($sql);
+    }
+}

@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Validation\MySQL57;
@@ -427,6 +428,16 @@ EOT
 );
 CLI::taskArg('fontFileName', false);
 CLI::taskRun('documents_remove_font');
+
+/**
+ * Convert Web Entries v1.0 to v2.0 for BPMN processes in order to deprecate the old version.
+ */
+CLI::taskName('convert-old-web-entries');
+CLI::taskDescription(<<<EOT
+Convert Web Entries v1.0 to v2.0 for BPMN processes in order to deprecate the old version.
+EOT
+);
+CLI::taskRun('convert_old_web_entries');
 
 /**
  * Function run_info
@@ -1601,6 +1612,44 @@ function documents_remove_font($args)
 
         // Print finalization message
         CLI::logging("Font '{$fontFileName}' removed successfully." . PHP_EOL . PHP_EOL);
+    } catch (Exception $e) {
+        // Display the error message
+        CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
+    }
+}
+
+/**
+ * Convert Web Entries v1.0 to v2.0 for BPMN processes in order to deprecate the old version.
+ *
+ * @param array $args
+ */
+function convert_old_web_entries($args)
+{
+    try {
+        if (!empty($args)) {
+            // Print initial message
+            $start = microtime(true);
+            CLI::logging("> Converting Web Entries v1.0 to v2.0 for BPMN processes...\n");
+
+            // Set workspace constants and initialize DB connection
+            Bootstrap::setConstantsRelatedWs($args[0]);
+            Propel::init(PATH_CONFIG . 'databases.php');
+
+            // Convert Web Entries
+            WebEntry::convertFromV1ToV2();
+
+            // Print last message
+            $stop = microtime(true);
+            CLI::logging("<*>   Converting Web Entries v1.0 to v2.0 for BPMN processes data took " . ($stop - $start) . " seconds.\n");
+        } else {
+            // If a workspace is not specified, get all available workspaces in the server
+            $workspaces = get_workspaces_from_args($args);
+
+            // Execute the command for each workspace
+            foreach ($workspaces as $workspace) {
+                passthru(PHP_BINARY . ' processmaker convert-old-web-entries ' . $workspace->name);
+            }
+        }
     } catch (Exception $e) {
         // Display the error message
         CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
