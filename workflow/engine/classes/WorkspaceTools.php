@@ -7,6 +7,7 @@ use ProcessMaker\BusinessModel\Process as BmProcess;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\ProcessesManager;
 use ProcessMaker\Core\System;
@@ -364,6 +365,13 @@ class WorkspaceTools
         $start = microtime(true);
         $this->updateTriggers(true, $lang);
         CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start Converting Web Entries v1.0 to v2.0 for BPMN processes...\n");
+        $start = microtime(true);
+        Bootstrap::setConstantsRelatedWs($workspace);
+        Propel::init(PATH_CONFIG . 'databases.php');
+        WebEntry::convertFromV1ToV2();
+        CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
     }
 
     /**
@@ -2209,6 +2217,13 @@ class WorkspaceTools
                 $start = microtime(true);
                 $workspace->updateTriggers(true, $lang);
                 CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start Converting Web Entries v1.0 to v2.0 for BPMN processes...\n");
+                $start = microtime(true);
+                Bootstrap::setConstantsRelatedWs($workspace);
+                Propel::init(PATH_CONFIG . 'databases.php');
+                WebEntry::convertFromV1ToV2();
+                CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
             }
 
             CLI::logging("> Start To Verify License Enterprise...\n");
