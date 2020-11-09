@@ -59,6 +59,9 @@ class AbstractCases implements CasesInterface
     // Filter by specific cases using the case numbers
     private $casesNumbers = [];
 
+    // Filter by taskId
+    private $taskId = '';
+
     // Filter recent cases starting by a specific date, know as "newestthan" in the old lists classes
     private $newestThan = '';
 
@@ -423,6 +426,26 @@ class AbstractCases implements CasesInterface
     public function getCasesNumbers()
     {
         return $this->casesNumbers;
+    }
+
+    /**
+     * Set taskId value
+     * 
+     * @param int $taskId
+     */
+    public function setTaskId($taskId)
+    {
+        $this->taskId = (int) $taskId;
+    }
+    
+    /**
+     * Get taskId value
+     *
+     * @return int
+     */
+    public function getTaskId()
+    {
+        return $this->taskId;
     }
 
     /**

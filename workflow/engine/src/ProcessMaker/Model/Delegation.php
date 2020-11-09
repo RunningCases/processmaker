@@ -358,8 +358,6 @@ class Delegation extends Model
             $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
                 ->whereNotIn('TASK.TAS_TYPE', $taskTypes);
         });
-
-        return $query;
     }
 
     /**
@@ -571,6 +569,118 @@ class Delegation extends Model
     }
 
     /**
+     * Scope AppDelay and AppDelegation
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAppDelayPaused($query)
+    {
+        $query->leftJoin('APP_DELAY', function ($leftJoin) {
+            $leftJoin->on('APP_DELAY.APP_NUMBER', '=', 'APP_DELEGATION.APP_NUMBER')
+                ->on('APP_DELEGATION.DEL_INDEX', '=', 'APP_DELAY.APP_DEL_INDEX');
+        });
+
+        $query->where('APP_DELAY.APP_DISABLE_ACTION_USER', '=', '0');
+        $query->where('APP_DELAY.APP_TYPE', '=', 'PAUSE');
+
+        return $query;
+    }
+
+    /**
+     * Scope Users and AppDelay
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $userId
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAppDelayUserDel($query, $userId)
+    {
+        $query->leftJoin('USERS', function ($leftJoin) {
+            $leftJoin->on('APP_DELAY.APP_DELEGATION_USER', '=', 'USERS.USR_UID');
+        });
+
+        if ($userId) {
+            $query->where('USERS.USR_ID', $userId);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope Application and AppDelegation
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder 
+     */
+    public function scopeApplication($query)
+    {
+        $query->leftJoin('APPLICATION', function ($leftJoin) {
+            $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
+        });
+    }
+
+    /**
+     * Scope paused cases list
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $userId
+     * @param string $categoryUid
+     * @param int $taskId
+     * @param int $caseNumber
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePaused($query, $userId, $categoryUid, $taskId, $caseNumber)
+    {
+        $query->appDelayPaused();
+        $query->appDelayUserDel($userId);
+        $query->application();
+        $query->caseNumberFilter($caseNumber);
+        $query->categoryProcess($categoryUid);
+        $query->excludeTaskTypes(Task::DUMMY_TASKS);
+        $query->taskIdFilter($taskId);
+
+        return $query;
+    }
+
+    /**
+     * Scope taskId filter
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $taskId
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTaskIdFilter($query, $taskId)
+    {
+        if ($taskId) {
+            $query->where('TASK.TAS_ID', $taskId);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope CaseNumber Filter
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $caseNumber
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder 
+     */
+    public function scopeCaseNumberFilter($query, $caseNumber)
+    {
+        if ($caseNumber) {
+            $query->where('APP_DELEGATION.APP_NUMBER', $caseNumber);
+        }
+
+        return $query;
+    } 
+
+    /**
      * Get specific cases unassigned that the user can view
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -702,8 +812,11 @@ class Delegation extends Model
                 $config = System::getSystemConfiguration();
                 if ((int)$config['disable_advanced_search_case_title_fulltext'] === 0) {
                     // Cleaning "fulltext" operators in order to avoid unexpected results
-                    $search = str_replace(['-', '+', '<', '>', '(', ')', '~', '*', '"'],
-                        ['', '', '', '', '', '', '', '', ''], $search);
+                    $search = str_replace(
+                        ['-', '+', '<', '>', '(', ')', '~', '*', '"'],
+                        ['', '', '', '', '', '', '', '', ''],
+                        $search
+                    );
 
                     // Build the "fulltext" expression
                     $search = '+"' . preg_replace('/\s+/', '" +"', addslashes($search)) . '"';
@@ -966,9 +1079,16 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Query\Builder
      */
-    public static function getSelfServiceQuery($usrUid, $count = false, $selectedColumns = ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'],
-        $categoryUid = null, $processUid = null, $textToSearch = null, $sort = null, $dir = null)
-    {
+    public static function getSelfServiceQuery(
+        $usrUid,
+        $count = false,
+        $selectedColumns = ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'],
+        $categoryUid = null,
+        $processUid = null,
+        $textToSearch = null,
+        $sort = null,
+        $dir = null
+    ) {
         // Set the 'usrUid' property to preserve
         Delegation::$usrUid = $usrUid;
 
@@ -994,7 +1114,7 @@ class Delegation extends Model
 
         // Add join clause with the previous APP_DELEGATION record if required
         if (array_search('APP_DELEGATION.DEL_PREVIOUS', $selectedColumns) !== false) {
-            $query1->join('APP_DELEGATION AS ADP', function ($join)  {
+            $query1->join('APP_DELEGATION AS ADP', function ($join) {
                 $join->on('APP_DELEGATION.APP_NUMBER', '=', 'ADP.APP_NUMBER');
                 $join->on('APP_DELEGATION.DEL_PREVIOUS', '=', 'ADP.DEL_INDEX');
             });
@@ -1026,8 +1146,7 @@ class Delegation extends Model
             $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID');
             $join->on('TASK.TAS_ASSIGN_TYPE', '=', DB::raw("'SELF_SERVICE'"));
             $join->on('APP_DELEGATION.DEL_THREAD_STATUS', '=', DB::raw("'OPEN'"));
-            $join->on('APP_DELEGATION.USR_ID', '=', DB::raw("'0'"))->
-            whereRaw($complexJoin);
+            $join->on('APP_DELEGATION.USR_ID', '=', DB::raw("'0'"))->whereRaw($complexJoin);
         });
 
         // Add join clause with APPLICATION table if required
@@ -1073,7 +1192,7 @@ class Delegation extends Model
 
             // Add join clause with the previous APP_DELEGATION record if required
             if (array_search('APP_DELEGATION.DEL_PREVIOUS', $selectedColumns) !== false) {
-                $query2->join('APP_DELEGATION AS ADP', function ($join)  {
+                $query2->join('APP_DELEGATION AS ADP', function ($join) {
                     $join->on('APP_DELEGATION.APP_NUMBER', '=', 'ADP.APP_NUMBER');
                     $join->on('APP_DELEGATION.DEL_PREVIOUS', '=', 'ADP.DEL_INDEX');
                 });
@@ -1084,7 +1203,6 @@ class Delegation extends Model
                 $query2->join('TASK', function ($join) {
                     $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID');
                 });
-
             }
             // Add join clause with APPLICATION table if required
             if (array_search('APPLICATION.APP_TITLE', $selectedColumns) !== false || !empty($textToSearch) || $sort == 'APP_TITLE') {
@@ -1114,9 +1232,14 @@ class Delegation extends Model
             }
 
             // Build the complex query that uses "UNION DISTINCT" clause
-            $query = sprintf('select '  . ($count ? 'count(*) as aggregate' : '*') .
-                ' from ((%s) union distinct (%s)) self_service_cases' . (!empty($sort) && !empty($dir) ? ' ORDER BY %s %s' : ''),
-                toSqlWithBindings($query1), toSqlWithBindings($query2), $sort, $dir);
+            $query = sprintf(
+                'select '  . ($count ? 'count(*) as aggregate' : '*') .
+                    ' from ((%s) union distinct (%s)) self_service_cases' . (!empty($sort) && !empty($dir) ? ' ORDER BY %s %s' : ''),
+                toSqlWithBindings($query1),
+                toSqlWithBindings($query2),
+                $sort,
+                $dir
+            );
 
             return $query;
         } else {
@@ -1141,9 +1264,17 @@ class Delegation extends Model
      * @param int $limit
      * @return array
      */
-    public static function getSelfService($usrUid, $selectedColumns = ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'],
-        $categoryUid = null, $processUid = null, $textToSearch = null, $sort = null, $dir = null, $offset = null, $limit = null)
-    {
+    public static function getSelfService(
+        $usrUid,
+        $selectedColumns = ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'],
+        $categoryUid = null,
+        $processUid = null,
+        $textToSearch = null,
+        $sort = null,
+        $dir = null,
+        $offset = null,
+        $limit = null
+    ) {
         // Initializing the variable to return
         $data = [];
 
@@ -1189,8 +1320,14 @@ class Delegation extends Model
     public static function countSelfService($usrUid, $categoryUid = null, $processUid = null, $textToSearch = null)
     {
         // Get the query
-        $query = self::getSelfServiceQuery($usrUid, true, ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'],
-            $categoryUid, $processUid, $textToSearch);
+        $query = self::getSelfServiceQuery(
+            $usrUid,
+            true,
+            ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'],
+            $categoryUid,
+            $processUid,
+            $textToSearch
+        );
 
         // Get count value
         if (!is_string($query)) {
@@ -1311,9 +1448,9 @@ class Delegation extends Model
                 $finishDate = new DateTime($endDate);
                 $diff = $initDate->diff($finishDate);
                 $format = ' %a ' . G::LoadTranslation('ID_DAY_DAYS');
-                $format .= ' %H '. G::LoadTranslation('ID_HOUR_ABBREVIATE');
-                $format .= ' %I '. G::LoadTranslation('ID_MINUTE_ABBREVIATE');
-                $format .= ' %S '. G::LoadTranslation('ID_SECOND_ABBREVIATE');
+                $format .= ' %H ' . G::LoadTranslation('ID_HOUR_ABBREVIATE');
+                $format .= ' %I ' . G::LoadTranslation('ID_MINUTE_ABBREVIATE');
+                $format .= ' %S ' . G::LoadTranslation('ID_SECOND_ABBREVIATE');
                 $thread['DEL_THREAD_DURATION'] = $diff->format($format);
             }
         });
