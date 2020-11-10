@@ -17,7 +17,8 @@ try {
         'ldapcron'         => ['title' => 'LDAP Advanced CRON'],
         'messageeventcron' => ['title' => 'Message-Event CRON'],
         'timereventcron'   => ['title' => 'Timer-Event CRON'],
-        'sendnotificationscron' => ['title' => 'Send-Notifications CRON']
+        'sendnotificationscron' => ['title' => 'Send-Notifications CRON'],
+        'webentriescron'   => ['title' => 'Wen Entries CRON']
     ];
 
     //Define constants
