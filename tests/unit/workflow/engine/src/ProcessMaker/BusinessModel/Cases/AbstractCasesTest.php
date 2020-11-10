@@ -3,10 +3,12 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use G;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\AbstractCases;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessCategory;
+use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
 
@@ -15,6 +17,8 @@ use Tests\TestCase;
  */
 class AbstractCasesTest extends TestCase
 {
+    use DatabaseTransactions;
+
     /**
      * This check the getter and setter related to the category
      *
@@ -53,6 +57,22 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This check the getter and setter related to the task
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setTaskId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getTaskId()
+     * @test
+     */
+    public function it_return_set_get_task()
+    {
+        $task = factory(Task::class)->create();
+        $absCases = new AbstractCases();
+        $absCases->setTaskId($task->TAS_ID);
+        $actual = $absCases->getTaskId();
+        $this->assertEquals($task->TAS_ID, $actual);
+    }
+
+    /**
      * This check the getter and setter related to the user
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setUserUid()
@@ -71,6 +91,61 @@ class AbstractCasesTest extends TestCase
         $absCases->setUserId($users->USR_ID);
         $actual = $absCases->getUserId();
         $this->assertEquals($users->USR_ID, $actual);
+    }
+
+    /**
+     * This check the getter and setter related to the priority
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPriority()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getPriority()
+     * @test
+     */
+    public function it_return_set_get_priority()
+    {
+        $absCases = new AbstractCases();
+        $arguments = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
+        $index = array_rand($arguments);
+        $absCases->setPriority($index);
+        $actual = $absCases->getPriority();
+        $this->assertEquals($index, $actual);
+    }
+
+    /**
+     * This check the getter and setter related to the case number
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseNumber()
+     * @test
+     */
+    public function it_return_set_get_case_number()
+    {
+        $case = factory(Application::class)->create();
+        $absCases = new AbstractCases();
+        $absCases->setCaseNumber($case->APP_NUMBER);
+        $actual = $absCases->getCaseNumber();
+        $this->assertEquals($case->APP_NUMBER, $actual);
+    }
+
+    /**
+     * This check the getter and setter related to the range of case number
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setRangeCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getFromCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getToCaseNumber()
+     * @test
+     */
+    public function it_return_set_get_range_case_number()
+    {
+        $case1 = factory(Application::class)->create();
+        $case2 = factory(Application::class)->create([
+            'APP_NUMBER' => $case1->APP_NUMBER + 1
+        ]);
+        $absCases = new AbstractCases();
+        $absCases->setRangeCaseNumber($case1->APP_NUMBER, $case2->APP_NUMBER);
+        $from = $absCases->getFromCaseNumber();
+        $to = $absCases->getToCaseNumber();
+        $this->assertEquals($case1->APP_NUMBER, $from);
+        $this->assertEquals($case2->APP_NUMBER, $to);
     }
 
     /**
@@ -306,7 +381,12 @@ class AbstractCasesTest extends TestCase
         $properties = [
             'category' => G::generateUniqueID(),
             'process' => G::generateUniqueID(),
+            'task' => rand(),
             'user' => G::generateUniqueID(),
+            'priority' => 1,
+            'caseNumber' => rand(),
+            'caseNumberFrom' => rand(),
+            'caseNumberTo' => rand(),
             'search' => G::generateUniqueID(),
             'caseLink' => G::generateUniqueID(),
             'appUidCheck' => [G::generateUniqueID()],
@@ -323,8 +403,18 @@ class AbstractCasesTest extends TestCase
         $this->assertEquals($properties['category'], $actual);
         $actual = $absCases->getProcessUid();
         $this->assertEquals($properties['process'], $actual);
+        $actual = $absCases->getTaskId();
+        $this->assertEquals($properties['task'], $actual);
         $actual = $absCases->getUserUid();
         $this->assertEquals($properties['user'], $actual);
+        $actual = $absCases->getPriority();
+        $this->assertEquals($properties['priority'], $actual);
+        $actual = $absCases->getCaseNumber();
+        $this->assertEquals($properties['caseNumber'], $actual);
+        $actual = $absCases->getFromCaseNumber();
+        $this->assertEquals($properties['caseNumberFrom'], $actual);
+        $actual = $absCases->getToCaseNumber();
+        $this->assertEquals($properties['caseNumberTo'], $actual);
         $actual = $absCases->getValueToSearch();
         $this->assertEquals($properties['search'], $actual);
         $actual = $absCases->getCaseUid();
