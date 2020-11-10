@@ -25506,6 +25506,18 @@ msgid "Timer event"
 msgstr "Timer event"
 
 # TRANSLATION
+# LABEL/ID_CLEAN_WEBENTRIES
+#: LABEL/ID_CLEAN_WEBENTRIES
+msgid "Clean web-entries"
+msgstr "Clean web-entries"
+
+# TRANSLATION
+# LABEL/ID_CLEAN_WEBENTRIES_DESC
+#: LABEL/ID_CLEAN_WEBENTRIES_DESC
+msgid "Clean web-entries"
+msgstr "Clean web-entries"
+
+# TRANSLATION
 # LABEL/ID_TIMER_EVENT_DESC
 #: LABEL/ID_TIMER_EVENT_DESC
 msgid "Executes timer start and intermediate timer events"

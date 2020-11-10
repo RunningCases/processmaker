@@ -57529,6 +57529,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CLASS_ALREADY_EXISTS','en','Class already exists','2014-01-15') ,
 ( 'LABEL','ID_CLASS_TABLE_DOESNT_EXIST','en','This Class Table doesn''t exist!','2014-01-15') ,
 ( 'LABEL','ID_CLEAR','en','Clear','2014-01-15') ,
+( 'LABEL','ID_CLEAN_WEBENTRIES','en','Clean web-entries','2020-11-10') ,
+( 'LABEL','ID_CLEAN_WEBENTRIES_DESC','en','Clean web-entries','2020-11-10') ,
 ( 'LABEL','ID_CLEAR_CACHE','en','Clear Cache','2014-01-15') ,
 ( 'LABEL','ID_CLEAR_CACHE_CONFIRM1','en','Clear all cache files now?','2014-01-15') ,
 ( 'LABEL','ID_CLEAR_CACHE_MSG1','en','All cache data was deleted','2014-01-15') ,
