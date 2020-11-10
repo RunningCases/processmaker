@@ -1175,19 +1175,46 @@ class WebEntry
     public static function convertFromV1ToV2()
     {
         // Build query
-        $sql = "UPDATE
-                    `WEB_ENTRY`
-                LEFT JOIN
-                    `BPMN_PROCESS`
-                ON
-                    (`WEB_ENTRY`.`PRO_UID` = `BPMN_PROCESS`.`PRJ_UID`)
-                SET
-                    `WEB_ENTRY`.`DYN_UID` = '', `WEB_ENTRY`.`WE_TYPE` = 'MULTIPLE'
-                WHERE
-                    `WE_TYPE` = 'SINGLE' AND `WE_AUTHENTICATION` = 'ANONYMOUS' AND
-                    `WE_CALLBACK` = 'PROCESSMAKER' AND `BPMN_PROCESS`.`PRJ_UID` IS NOT NULL";
+        $query = "UPDATE
+                      `WEB_ENTRY`
+                  LEFT JOIN
+                      `BPMN_PROCESS`
+                  ON
+                      (`WEB_ENTRY`.`PRO_UID` = `BPMN_PROCESS`.`PRJ_UID`)
+                  SET
+                      `WEB_ENTRY`.`DYN_UID` = '', `WEB_ENTRY`.`WE_TYPE` = 'MULTIPLE'
+                  WHERE
+                      `WE_TYPE` = 'SINGLE' AND `WE_AUTHENTICATION` = 'ANONYMOUS' AND
+                      `WE_CALLBACK` = 'PROCESSMAKER' AND `BPMN_PROCESS`.`PRJ_UID` IS NOT NULL";
 
         // Execute query
-        DB::connection('workflow')->statement($sql);
+        DB::connection('workflow')->statement($query);
+    }
+
+    /**
+     * Delete web entries created one week ago or more
+     */
+    public static function deleteOldWebEntries()
+    {
+        // Define some values for PM tables classes
+        if (!defined('PATH_WORKSPACE')) {
+            define('PATH_WORKSPACE', PATH_DB . config('system.workspace') . PATH_SEP);
+        }
+        set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
+
+        // Calculate date, one week ago from today
+        $date = now()->subWeek()->format('Y-m-d H:i:s');
+
+        // Build query
+        $query = "SELECT `APP_UID` FROM `APPLICATION` WHERE `APP_NUMBER` < 0 AND `APP_CREATE_DATE` < '{$date}'";
+
+        // Execute query
+        $cases = DB::connection('workflow')->select($query);
+
+        // Delete cases, one by one with all related records
+        $casesInstance = new Cases();
+        foreach ($cases as $case) {
+            $casesInstance->removeCase($case->APP_UID);
+        }
     }
 }
