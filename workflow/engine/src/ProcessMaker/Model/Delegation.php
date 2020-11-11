@@ -103,6 +103,18 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to get the in-progress
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCaseInProgress($query)
+    {
+        return $query->appStatusId(2);
+    }
+
+    /**
      * Scope a query to get the completed by me
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -434,7 +446,7 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCategoryProcess($query, $category = '')
+    public function scopeJoinCategoryProcess($query, $category = '')
     {
         $query->join('PROCESS', function ($join) use ($category) {
             $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
@@ -549,7 +561,7 @@ class Delegation extends Model
     }
 
     /**
-     * Scope delegation table
+     * Scope join with delegation for get the previous index
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
@@ -566,7 +578,7 @@ class Delegation extends Model
     }
 
     /**
-     * Scope users table as previous
+     * Scope join with user for get the previous user
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
@@ -582,6 +594,68 @@ class Delegation extends Model
     }
 
     /**
+     * Scope join with process
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinProcess($query)
+    {
+        $query->leftJoin('PROCESS', function ($leftJoin) {
+            $leftJoin->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope join with task
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinTask($query)
+    {
+        $query->leftJoin('TASK', function ($leftJoin) {
+            $leftJoin->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID');
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope join with user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinUser($query)
+    {
+        $query->leftJoin('USERS', function ($leftJoin) {
+            $leftJoin->on('APP_DELEGATION.USR_ID', '=', 'USERS.USR_ID');
+        });
+
+        return $query;
+    }
+
+    /**
+     * Scope join with application
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinApplication($query)
+    {
+        $query->leftJoin('APPLICATION', function ($leftJoin) {
+            $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
+        });
+    }
+
+    /**
      * Scope the Process is in list
      * 
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -589,41 +663,42 @@ class Delegation extends Model
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeProcessInList($query, $processes)
+    public function scopeProcessInList($query, array $processes)
     {
-        $query->whereIn('PROCESS.PRO_ID', $processes);
+        $query->whereIn('APP_DELEGATION.PRO_ID', $processes);
         return $query;
     }
 
     /**
-     * Scope AppDelay and AppDelegation
-     * 
+     * Scope join with AppDelay
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $type
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeAppDelayPaused($query)
+    public function scopeJoinAppDelay($query, $type = 'PAUSE')
     {
-        $query->leftJoin('APP_DELAY', function ($leftJoin) {
+        $query->leftJoin('APP_DELAY', function ($leftJoin)  use ($type) {
             $leftJoin->on('APP_DELAY.APP_NUMBER', '=', 'APP_DELEGATION.APP_NUMBER')
                 ->on('APP_DELEGATION.DEL_INDEX', '=', 'APP_DELAY.APP_DEL_INDEX');
         });
 
         $query->where('APP_DELAY.APP_DISABLE_ACTION_USER', '=', '0');
-        $query->where('APP_DELAY.APP_TYPE', '=', 'PAUSE');
+        $query->where('APP_DELAY.APP_TYPE', '=', $type);
 
         return $query;
     }
 
     /**
-     * Scope Users and AppDelay
+     * Scope join with AppDelay and users
      * 
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $userId
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeAppDelayUserDel($query, $userId)
+    public function scopeJoinAppDelayUsers($query, int $userId)
     {
         $query->leftJoin('USERS', function ($leftJoin) {
             $leftJoin->on('APP_DELAY.APP_DELEGATION_USER', '=', 'USERS.USR_UID');
@@ -636,76 +711,32 @@ class Delegation extends Model
     }
 
     /**
-     * Scope Application and AppDelegation
-     * 
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder 
-     */
-    public function scopeApplication($query)
-    {
-        $query->leftJoin('APPLICATION', function ($leftJoin) {
-            $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
-        });
-    }
-
-    /**
      * Scope paused cases list
      * 
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $userId
-     * @param string $categoryUid
      * @param int $taskId
      * @param int $caseNumber
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePaused($query, $userId, $categoryUid, $taskId, $caseNumber)
+    public function scopePaused($query, int $userId, int $taskId, int $caseNumber)
     {
-        $query->appDelayPaused();
-        $query->appDelayUserDel($userId);
-        $query->application();
-        $query->caseNumberFilter($caseNumber);
-        $query->categoryProcess($categoryUid);
+        $query->joinAppDelay('PAUSE');
+        $query->joinAppDelayUsers($userId);
+        $query->joinApplication();
+        // Specific case number
+        if (!empty($caseNumber)) {
+            $query->case($caseNumber);
+        }
         $query->excludeTaskTypes(Task::DUMMY_TASKS);
-        $query->taskIdFilter($taskId);
-
-        return $query;
-    }
-
-    /**
-     * Scope taskId filter
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $taskId
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeTaskIdFilter($query, $taskId)
-    {
-        if ($taskId) {
-            $query->where('TASK.TAS_ID', $taskId);
+        // Specific task
+        if (!empty($taskId)) {
+            $query->task($taskId);
         }
 
         return $query;
     }
-
-    /**
-     * Scope CaseNumber Filter
-     * 
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $caseNumber
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder 
-     */
-    public function scopeCaseNumberFilter($query, $caseNumber)
-    {
-        if ($caseNumber) {
-            $query->where('APP_DELEGATION.APP_NUMBER', $caseNumber);
-        }
-
-        return $query;
-    } 
 
     /**
      * Get specific cases unassigned that the user can view

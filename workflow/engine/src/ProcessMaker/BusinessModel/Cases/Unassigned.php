@@ -2,14 +2,38 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
-use ProcessMaker\Model\AppAssignSelfServiceValue;
+use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
-use ProcessMaker\Model\TaskUser;
-
 
 class Unassigned extends AbstractCases
 {
+    // Columns to see in the cases list
+    public $columnsView = [
+        // Columns view in the cases list
+        'APP_DELEGATION.APP_NUMBER', // Case #
+        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'PROCESS.PRO_TITLE', // Process
+        'TASK.TAS_TITLE',  // Task
+        'USERS.USR_USERNAME',  // Current UserName
+        'USERS.USR_FIRSTNAME',  // Current User FirstName
+        'USERS.USR_LASTNAME',  // Current User LastName
+        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date
+        'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
+        'APP_DELEGATION.DEL_PRIORITY',  // Priority
+        // Additional column for other functionalities
+        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+    ];
+
+    /**
+     * Get the columns related to the cases list
+     * @return array
+     */
+    public function getColumnsView()
+    {
+        return $this->columnsView;
+    }
+
     /**
      * Get data self-services cases by user
      *
@@ -17,15 +41,15 @@ class Unassigned extends AbstractCases
      */
     public function getData()
     {
-        $query = Delegation::query()->select();
-        // Add the initial scope for unassigned cases
+        $query = Delegation::query()->select($this->getColumnsView());
+        // Join with process
+        $query->joinProcess();
+        // Join with users
+        $query->joinUser();
+        // Join with application for add the initial scope for unassigned cases
         $query->selfService($this->getUserUid());
         // Add join for application, for get the case title when the case status is TO_DO
         $query->appStatusId(Application::STATUS_TODO);
-        // Add join for process, but only for certain scenarios such as category or process
-        if ($this->getCategoryUid() || $this->getProcessUid() || $this->getOrderByColumn() === 'PRO_TITLE') {
-            $query->categoryProcess($this->getCategoryUid());
-        }
         // Specific process
         if ($this->getProcessId()) {
             $query->processId($this->getProcessId());
@@ -53,6 +77,20 @@ class Unassigned extends AbstractCases
         $query->offset($this->getOffset())->limit($this->getLimit());
         // Get the data
         $results = $query->get();
+        // Prepare the result
+        $results->transform(function ($item, $key) {
+            // Get priority label
+            $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
+            $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
+            // Get task color label
+            $item['TAS_COLOR'] = 1; // green - onTime
+            $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
+            // Apply the date format defined in environment
+            $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
+            $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
+
+            return $item;
+        });
 
         return $results->values()->toArray();
     }

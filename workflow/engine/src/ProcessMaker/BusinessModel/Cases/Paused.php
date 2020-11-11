@@ -2,10 +2,37 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use G;
 use ProcessMaker\Model\Delegation;
 
 class Paused extends AbstractCases
 {
+    // Columns to see in the cases list
+    public $columnsView = [
+        // Columns view in the cases list
+        'APP_DELEGATION.APP_NUMBER', // Case #
+        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'PROCESS.PRO_TITLE', // Process
+        'TASK.TAS_TITLE',  // Task
+        'USERS.USR_USERNAME',  // Current UserName
+        'USERS.USR_FIRSTNAME',  // Current User FirstName
+        'USERS.USR_LASTNAME',  // Current User LastName
+        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date
+        'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
+        'APP_DELEGATION.DEL_PRIORITY',  // Priority
+        // Additional column for other functionalities
+        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+    ];
+
+    /**
+     * Get the columns related to the cases list
+     * @return array
+     */
+    public function getColumnsView()
+    {
+        return $this->columnsView;
+    }
+
     /**
      * Gets the data for the paused cases list
      * 
@@ -13,16 +40,37 @@ class Paused extends AbstractCases
      */
     public function getData()
     {
-        $query = Delegation::query()->select();
-        $query->paused($this->getUserId(), $this->getCategoryUid(), $this->getTaskId(), $this->getCaseNumber());
+        $query = Delegation::query()->select($this->getColumnsView());
+        // Join with process
+        $query->joinProcess();
+        // Scope that set the paused cases
+        $query->paused($this->getUserId(), $this->getTaskId(), $this->getCaseNumber());
+        // Join with delegation for get the previous index
         $query->joinPreviousIndex();
+        // Join with delegation for get the previous user
         $query->joinPreviousUser();
+        // Add any sort if needed
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
+        // Add pagination to the query
         $query->offset($this->getOffset())->limit($this->getLimit());
+        //Execute the query
+        $results = $query->get();
+        // Prepare the result
+        $results->transform(function ($item, $key) {
+            // Get priority label
+            $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
+            $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
+            // Get task color label
+            $item['TAS_COLOR'] = $this->getTaskColor($item['DEL_TASK_DUE_DATE']);
+            $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
+            // Apply the date format defined in environment
+            $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
+            $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
 
-        $result = $query->get()->values()->toArray();
+            return $item;
+        });
 
-        return $result;
+        return $results->values()->toArray();
     }
 
     /**
@@ -32,8 +80,10 @@ class Paused extends AbstractCases
      */
     public function getCounter()
     {
-        $total = $this->getData();
+        $query = Delegation::query()->select();
+        // Scope that set the paused cases
+        $query->paused($this->getUserId(), $this->getTaskId(), $this->getCaseNumber());
 
-        return count($total);
+        return $query->count();
     }
 }

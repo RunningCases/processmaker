@@ -298,15 +298,15 @@ class InboxTest extends TestCase
         $inbox = new Inbox();
         $inbox->setUserUid($user->USR_UID);
         $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('TASK.TAS_ID');
+        $inbox->setOrderByColumn('TASK.TAS_TITLE');
         $inbox->setOrderDirection('DESC');
         $res = $inbox->getData();
-        $this->assertLessThanOrEqual($res[0]['TAS_ID'], $res[1]['TAS_ID']);
+        $this->assertLessThanOrEqual($res[0]['TAS_TITLE'], $res[1]['TAS_TITLE']);
 
-        $inbox->setOrderByColumn('TASK.TAS_ID');
+        $inbox->setOrderByColumn('TASK.TAS_TITLE');
         $inbox->setOrderDirection('ASC');
         $res = $inbox->getData();
-        $this->assertGreaterThanOrEqual($res[0]['TAS_ID'], $res[1]['TAS_ID']);
+        $this->assertGreaterThanOrEqual($res[0]['TAS_TITLE'], $res[1]['TAS_TITLE']);
     }
 
     /**
@@ -396,17 +396,17 @@ class InboxTest extends TestCase
         $inbox = new Inbox();
         $inbox->setUserUid($user->USR_UID);
         $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('PROCESS.PRO_ID');
+        $inbox->setOrderByColumn('PROCESS.PRO_TITLE');
         $inbox->setOrderDirection('DESC');
         $res = $inbox->getData();
         // This asserts the order is for PRO_ID from highest to lowest
-        $this->assertLessThanOrEqual($res[0]['PRO_ID'], $res[1]['PRO_ID']);
+        $this->assertLessThanOrEqual($res[0]['PRO_TITLE'], $res[1]['PRO_TITLE']);
 
         $inbox->setOrderByColumn('PROCESS.PRO_ID');
         $inbox->setOrderDirection('ASC');
         $res = $inbox->getData();
         // This asserts the order is for PRO_ID from highest to lowest
-        $this->assertGreaterThanOrEqual($res[0]['PRO_ID'], $res[1]['PRO_ID']);
+        $this->assertGreaterThanOrEqual($res[0]['PRO_TITLE'], $res[1]['PRO_TITLE']);
     }
 
     /**
@@ -469,7 +469,7 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
-    public function it_should_return_inbox_sort_by_last_modified()
+    public function it_should_return_inbox_sort_by_delegate_date()
     {
         //Create process
         $process1 = factory(Process::class)->create();
@@ -504,17 +504,17 @@ class InboxTest extends TestCase
         $inbox = new Inbox();
         $inbox->setUserUid($user->USR_UID);
         $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('APP_UPDATE_DATE');
+        $inbox->setOrderByColumn('DEL_DELEGATE_DATE');
         $inbox->setOrderDirection('DESC');
         $res = $inbox->getData();
         // This asserts the order is for APP_UPDATE_DATE from highest to lowest
-        $this->assertLessThanOrEqual($res[0]['APP_UPDATE_DATE'], $res[1]['APP_UPDATE_DATE']);
+        $this->assertLessThanOrEqual($res[0]['DEL_DELEGATE_DATE'], $res[1]['DEL_DELEGATE_DATE']);
 
-        $inbox->setOrderByColumn('APP_UPDATE_DATE');
+        $inbox->setOrderByColumn('DEL_DELEGATE_DATE');
         $inbox->setOrderDirection('ASC');
         $res = $inbox->getData();
         // This asserts the order is for APP_UPDATE_DATE from highest to lowest
-        $this->assertGreaterThanOrEqual($res[0]['APP_UPDATE_DATE'], $res[1]['APP_UPDATE_DATE']);
+        $this->assertGreaterThanOrEqual($res[0]['DEL_DELEGATE_DATE'], $res[1]['DEL_DELEGATE_DATE']);
     }
 
     /**

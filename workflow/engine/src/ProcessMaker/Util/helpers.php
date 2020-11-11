@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -600,6 +599,55 @@ function getMysqlVersion()
     $mysqlVersion = $results[0]->{'version()'};
 
     return $mysqlVersion;
+}
+
+/**
+ * Get the version of the mysql
+ *
+ * @param string $date in the format <Y-m-d H:m:d>
+ * @param string $mask
+ *
+ * @return string
+ */
+function applyMaskDateEnvironment(string $date, $mask = '')
+{
+    $result = '';
+    if (empty($mask)) {
+        $systemConf = new Configurations();
+        $systemConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
+        $mask = isset($systemConf->aConfig['dateFormat']) ? $systemConf->aConfig['dateFormat'] : '';
+    }
+    if (!empty($date)) {
+        $date = new DateTime($date);
+        $result = $date->format($mask);
+    }
+
+    return $result;
+}
+
+/**
+ * Get the difference between two dates
+ *
+ * @param string $startDate
+ * @param string $endDate
+ *
+ * @return string
+ */
+function getDiffBetweenDates(string $startDate, string $endDate)
+{
+    $result = '';
+    if (!empty($startDate) && !empty($endDate)) {
+        $initDate = new DateTime($startDate);
+        $finishDate = new DateTime($endDate);
+        $diff = $initDate->diff($finishDate);
+        $format = ' %a ' . G::LoadTranslation('ID_DAY_DAYS');
+        $format .= ' %H ' . G::LoadTranslation('ID_HOUR_ABBREVIATE');
+        $format .= ' %I ' . G::LoadTranslation('ID_MINUTE_ABBREVIATE');
+        $format .= ' %S ' . G::LoadTranslation('ID_SECOND_ABBREVIATE');
+        $result = $diff->format($format);
+    }
+
+    return $result;
 }
 
 /**

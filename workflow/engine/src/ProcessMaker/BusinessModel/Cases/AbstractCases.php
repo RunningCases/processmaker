@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use Datetime;
 use Exception;
 use ProcessMaker\BusinessModel\Interfaces\CasesInterface;
 use ProcessMaker\BusinessModel\Validator;
@@ -10,13 +11,19 @@ class AbstractCases implements CasesInterface
 {
     // Constants for validate values
     const INBOX_STATUSES = ['', 'ALL', 'READ', 'UNREAD'];
-    const PARTICIPATED_STATUSES = ['',  'ALL', 'STARTED', 'COMPLETED'];
+    const PARTICIPATED_STATUSES = ['', 'ALL', 'STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
     const RISK_STATUSES = ['', 'ALL', 'ON_TIME', 'AT_RISK', 'OVERDUE'];
     const CASE_STATUSES = ['', 'ALL', 'DRAFT', 'TO_DO', 'COMPLETED', 'CANCELLED', 'CANCELED'];
     const ORDER_DIRECTIONS = ['DESC', 'ASC'];
     const CORRECT_CANCELED_STATUS = 'CANCELED';
     const INCORRECT_CANCELED_STATUS = 'CANCELLED';
     const PRIORITIES = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
+    const TASK_COLORS = [1 => 'green', 2 => 'red', 3 => 'orange', 4 => 'blue', 5 => 'gray'];
+    const COLOR_OVERDUE = 1;
+    const COLOR_ON_TIME = 2;
+    const COLOR_DRAFT = 3;
+    const COLOR_PAUSED = 4;
+    const COLOR_UNASSIGNED = 5;
 
     // Filter by category from a process, know as "$category" in the old lists classes
     private $categoryUid = '';
@@ -70,9 +77,6 @@ class AbstractCases implements CasesInterface
     // Filter by specific cases using the case numbers
     private $casesNumbers = [];
 
-    // Filter by taskId
-    private $taskId = '';
-
     // Filter recent cases starting by a specific date, know as "newestthan" in the old lists classes
     private $newestThan = '';
 
@@ -99,7 +103,7 @@ class AbstractCases implements CasesInterface
      *
      * @param string $categoryUid
      */
-    public function setCategoryUid($categoryUid)
+    public function setCategoryUid(string $categoryUid)
     {
         $this->categoryUid = $categoryUid;
     }
@@ -119,7 +123,7 @@ class AbstractCases implements CasesInterface
      *
      * @param string $processUid
      */
-    public function setProcessUid($processUid)
+    public function setProcessUid(string $processUid)
     {
         $this->processUid = $processUid;
     }
@@ -139,7 +143,7 @@ class AbstractCases implements CasesInterface
      *
      * @param int $processId
      */
-    public function setProcessId($processId)
+    public function setProcessId(int $processId)
     {
         $this->processId = $processId;
     }
@@ -179,7 +183,7 @@ class AbstractCases implements CasesInterface
      *
      * @param string $userUid
      */
-    public function setUserUid($userUid)
+    public function setUserUid(string $userUid)
     {
         $this->userUid = $userUid;
     }
@@ -199,7 +203,7 @@ class AbstractCases implements CasesInterface
      *
      * @param int $userId
      */
-    public function setUserId($userId)
+    public function setUserId(int $userId)
     {
         $this->userId = $userId;
     }
@@ -219,7 +223,7 @@ class AbstractCases implements CasesInterface
      *
      * @param string $valueToSearch
      */
-    public function setValueToSearch($valueToSearch)
+    public function setValueToSearch(string $valueToSearch)
     {
         $this->valueToSearch = $valueToSearch;
     }
@@ -241,7 +245,7 @@ class AbstractCases implements CasesInterface
      *
      * @throws Exception
      */
-    public function setInboxStatus($inboxStatus)
+    public function setInboxStatus(string $inboxStatus)
     {
         // Convert the value to upper case
         $inboxStatus = strtoupper($inboxStatus);
@@ -276,7 +280,7 @@ class AbstractCases implements CasesInterface
      *
      * @throws Exception
      */
-    public function setParticipatedStatus($participatedStatus)
+    public function setParticipatedStatus(string $participatedStatus)
     {
         // Convert the value to upper case
         $participatedStatus = strtoupper($participatedStatus);
@@ -311,7 +315,7 @@ class AbstractCases implements CasesInterface
      *
      * @throws Exception
      */
-    public function setRiskStatus($riskStatus)
+    public function setRiskStatus(string $riskStatus)
     {
         // Convert the value to upper case
         $riskStatus = strtoupper($riskStatus);
@@ -380,7 +384,7 @@ class AbstractCases implements CasesInterface
      *
      * @throws Exception
      */
-    public function setCaseStatus($caseStatus)
+    public function setCaseStatus(string $caseStatus)
     {
         // Convert the value to upper case
         $caseStatus = strtoupper($caseStatus);
@@ -418,7 +422,7 @@ class AbstractCases implements CasesInterface
      *
      * @param string $caseUid
      */
-    public function setCaseUid($caseUid)
+    public function setCaseUid(string $caseUid)
     {
         $this->caseUid = $caseUid;
     }
@@ -438,7 +442,7 @@ class AbstractCases implements CasesInterface
      *
      * @param int $caseNumber
      */
-    public function setCaseNumber($caseNumber)
+    public function setCaseNumber(int $caseNumber)
     {
         $this->caseNumber = $caseNumber;
     }
@@ -526,33 +530,13 @@ class AbstractCases implements CasesInterface
     }
 
     /**
-     * Set taskId value
-     * 
-     * @param int $taskId
-     */
-    public function setTaskId($taskId)
-    {
-        $this->taskId = (int) $taskId;
-    }
-    
-    /**
-     * Get taskId value
-     *
-     * @return int
-     */
-    public function getTaskId()
-    {
-        return $this->taskId;
-    }
-
-    /**
      * Set Newest Than value
      *
      * @param string $newestThan
      *
      * @throws Exception
      */
-    public function setNewestThan($newestThan)
+    public function setNewestThan(string $newestThan)
     {
         if (!Validator::isDate($newestThan, 'Y-m-d')) {
             throw new Exception("Value '{$newestThan}' is not a valid date.");
@@ -577,7 +561,7 @@ class AbstractCases implements CasesInterface
      *
      * @throws Exception
      */
-    public function setOldestThan($oldestThan)
+    public function setOldestThan(string $oldestThan)
     {
         if (!Validator::isDate($oldestThan, 'Y-m-d')) {
             throw new Exception("Value '{$oldestThan}' is not a valid date.");
@@ -600,7 +584,7 @@ class AbstractCases implements CasesInterface
      *
      * @param string $orderByColumn
      */
-    public function setOrderByColumn($orderByColumn)
+    public function setOrderByColumn(string $orderByColumn)
     {
         // Convert the value to upper case
         $orderByColumn = strtoupper($orderByColumn);
@@ -625,7 +609,7 @@ class AbstractCases implements CasesInterface
      *
      * @throws Exception
      */
-    public function setOrderDirection($orderDirection)
+    public function setOrderDirection(string $orderDirection)
     {
         // Convert the value to upper case
         $orderDirection = strtoupper($orderDirection);
@@ -653,7 +637,7 @@ class AbstractCases implements CasesInterface
      *
      * @param bool $paged
      */
-    public function setPaged($paged)
+    public function setPaged(bool $paged)
     {
         $this->paged = (bool) $paged;
     }
@@ -673,7 +657,7 @@ class AbstractCases implements CasesInterface
      *
      * @param int $offset
      */
-    public function setOffset($offset)
+    public function setOffset(int $offset)
     {
         $this->offset = (int) $offset;
     }
@@ -693,7 +677,7 @@ class AbstractCases implements CasesInterface
      *
      * @param int $limit
      */
-    public function setLimit($limit)
+    public function setLimit(int $limit)
     {
         $this->limit = (int) $limit;
     }
@@ -709,92 +693,118 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Get task color according the due date
+     *
+     * @param string $dueDate
+     *
+     * @return int
+     */
+    public function getTaskColor(string $dueDate)
+    {
+        $currentDate = new DateTime('now');
+        $dueDate = new DateTime($dueDate);
+        if ($dueDate > $currentDate) {
+            $taskColor = self::COLOR_OVERDUE;
+        } else {
+            $taskColor = self::COLOR_ON_TIME;
+            if (get_class($this) === Draft::class) {
+                $taskColor = self::COLOR_DRAFT;
+            }
+            if (get_class($this) === Paused::class) {
+                $taskColor = self::COLOR_PAUSED;
+            }
+            if (get_class($this) === Unassigned::class) {
+                $taskColor = self::COLOR_UNASSIGNED;
+            }
+        }
+
+        return $taskColor;
+    }
+
+    /**
      * Set all properties
      *
      * @param array $properties
      */
     public function setProperties(array $properties)
     {
+        // Filter by category
         if (!empty($properties['category'])) {
             $this->setCategoryUid($properties['category']);
         }
-
+        // Filter by process
         if (!empty($properties['process'])) {
-            $this->setProcessUid($properties['process']);
+            $this->setProcessId($properties['process']);
         }
-
+        // Filter by task
         if (!empty($properties['task'])) {
             $this->setTaskId($properties['task']);
         }
-
+        // Filter by user
         if (!empty($properties['user'])) {
-            $this->setUserUid($properties['user']);
+            $this->setUserId($properties['user']);
         }
-
+        // Filter by priority
         if (!empty($properties['priority'])) {
             $this->setPriority($properties['priority']);
         }
-
+        // Filter by case number
         if (!empty($properties['caseNumber'])) {
             $this->setCaseNumber($properties['caseNumber']);
         }
-
+        // Filter by range of case number
         if (!empty($properties['caseNumberFrom']) && !empty($properties['caseNumberTo'])) {
             $this->setRangeCaseNumber($properties['caseNumberFrom'], $properties['caseNumberTo']);
         }
-
+        // Filter by search
         if (!empty($properties['search'])) {
             $this->setValueToSearch($properties['search']);
         }
-
-        if (!empty($properties['filter']) && get_class($this) === Inbox::class) {
-            $this->setInboxStatus($properties['filter']);
-        }
-
-        if (!empty($properties['filter']) && get_class($this) === Participated::class) {
+        // My cases filter: started, in-progress, completed, supervising
+        if (!empty($properties['filter']) && get_class($this) === MyCases::class) {
             $this->setParticipatedStatus($properties['filter']);
         }
-
-        if (!empty($properties['filterStatus']) && get_class($this) === Inbox::class) {
-            $this->setRiskStatus($properties['filterStatus']);
-        }
-
-        if (!empty($properties['filterStatus']) && get_class($this) === Participated::class) {
+        // Filter by case status
+        if (!empty($properties['filterStatus']) && get_class($this) === MyCases::class) {
             $this->setCaseStatus($properties['filterStatus']);
         }
-
+        // Filter by case status
+        if (!empty($properties['filterStatus']) && get_class($this) === Search::class) {
+            $this->setCaseStatus($properties['filterStatus']);
+        }
+        // Filter by case uid
         if (!empty($properties['caseLink'])) {
             $this->setCaseUid($properties['caseLink']);
         }
-
+        // Filter by array of case uids
         if (!empty($properties['appUidCheck'])) {
             $this->setCasesUids($properties['appUidCheck']);
         }
-
+        // Filter date newest related to delegation date
         if (!empty($properties['newestthan'])) {
             $this->setNewestThan($properties['newestthan']);
         }
-
+        // Filter date oldest related to delegation date
         if (!empty($properties['oldestthan'])) {
             $this->setOldestThan($properties['oldestthan']);
         }
-
+        // Sort column
         if (!empty($properties['sort'])) {
             $this->setOrderByColumn($properties['sort']);
         }
-
+        // Direction column
         if (!empty($properties['dir'])) {
             $this->setOrderDirection($properties['dir']);
         }
-
+        // Paged
         if (!empty($properties['paged'])) {
             $this->setPaged($properties['paged']);
         }
-
+        // Start
         if (!empty($properties['start'])) {
             $this->setOffset($properties['start']);
         }
-
+        // Limit
         if (!empty($properties['limit'])) {
             $this->setLimit($properties['limit']);
         }

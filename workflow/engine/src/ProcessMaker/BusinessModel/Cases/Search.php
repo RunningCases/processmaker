@@ -2,10 +2,37 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use G;
 use ProcessMaker\Model\Delegation;
 
 class Search extends AbstractCases
 {
+    // Columns to see in the cases list
+    public $columnsView = [
+        // Columns view in the cases list
+        'APP_DELEGATION.APP_NUMBER', // Case #
+        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'PROCESS.PRO_TITLE', // Process
+        'TASK.TAS_TITLE',  // Task
+        'USERS.USR_USERNAME',  // Current UserName
+        'USERS.USR_FIRSTNAME',  // Current User FirstName
+        'USERS.USR_LASTNAME',  // Current User LastName
+        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date
+        'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
+        'APP_DELEGATION.DEL_PRIORITY',  // Priority
+        // Additional column for other functionalities
+        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+    ];
+
+    /**
+     * Get the columns related to the cases list
+     * @return array
+     */
+    public function getColumnsView()
+    {
+        return $this->columnsView;
+    }
+
     /**
      * Get the data corresponding to advanced search
      *
@@ -13,11 +40,17 @@ class Search extends AbstractCases
      */
     public function getData()
     {
-        $query = Delegation::query()->select();
-
+        $query = Delegation::query()->select($this->getColumnsView());
+        // Join with process
+        $query->joinProcess();
+        // Join with task
+        $query->joinTask();
+        // Join with users
+        $query->joinUser();
         // Filter by case number
-        $query->case($this->getCaseNumber());
-
+        if ($this->getCaseNumber() > 0) {
+            $query->case($this->getCaseNumber());
+        }
         // Filter by case number: from and to
         if ($this->getFromCaseNumber() > 0 && $this->getToCaseNumber() > 0) {
             $query->rangeOfCases($this->getFromCaseNumber(), $this->getToCaseNumber());
@@ -25,39 +58,43 @@ class Search extends AbstractCases
 
         // @todo: Filter by case title, pending from other PRD
 
-        // Filter by category
-        $query->categoryProcess($this->getCategoryUid());
-
         // Filter by priority
         if ($this->getPriority() > 0) {
             $query->priority($this->getPriority());
         }
-
         // Filter by process
         if (!empty($this->getProcessId())) {
             $query->processId($this->getProcessId());
         }
-
         // Filter by user
         if (!empty($this->getUserId())) {
             $query->userId($this->getUserId());
         }
-
         // Filter by task
         if (!empty($this->getTaskId())) {
             $query->task($this->getTaskId());
         }
-
         // The order by clause
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
-
         // The limit by clause
         $query->offset($this->getOffset())->limit($this->getLimit());
-
         //Execute the query
         $results = $query->get();
+        // Prepare the result
+        $results->transform(function ($item, $key) {
+            // Get priority label
+            $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
+            $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
+            // Get task color label
+            $item['TAS_COLOR'] = $this->getTaskColor($item['DEL_TASK_DUE_DATE']);
+            $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
+            // Apply the date format defined in environment
+            $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
+            $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
 
-        //Return the values as an array format
+            return $item;
+        });
+
         return $results->values()->toArray();
     }
 

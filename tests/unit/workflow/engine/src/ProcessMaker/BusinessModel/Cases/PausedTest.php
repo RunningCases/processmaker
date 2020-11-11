@@ -103,112 +103,6 @@ class PausedTest extends TestCase
     }
 
     /**
-     * It tests the getData method with category filter
-     *
-     * @covers ::getData()
-     * @test
-     */
-    public function it_should_test_get_data_method_with_category_filter()
-    {
-        //Create processes
-        $process1 = factory(Process::class)->create(
-            ['PRO_CATEGORY' => '1']
-        );
-        $process2 = factory(Process::class)->create(
-            ['PRO_CATEGORY' => '2']
-        );
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process1->PRO_UID,
-            'TAS_TYPE' => 'NORMAL'
-        ]);
-
-        $application = factory(Application::class)->create();
-        //Create the register in delegation
-        $delegation1 = factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process1->PRO_ID,
-            'PRO_UID' => $process1->PRO_UID,
-            'DEL_PREVIOUS' => 0,
-            'DEL_INDEX' => 1
-        ]);
-
-        $delegation2 = factory(Delegation::class)->create([
-            'APP_NUMBER' => $application->APP_NUMBER,
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID,
-            'PRO_UID' => $process2->PRO_UID,
-            'DEL_PREVIOUS' => 1,
-            'DEL_INDEX' => 2
-        ]);
-
-        //Create the registers in AppDelay
-        factory(AppDelay::class, 5)->create([
-            'APP_DELEGATION_USER' => $user->USR_UID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $delegation1->APP_NUMBER,
-            'APP_DEL_INDEX' => $delegation1->DEL_INDEX,
-            'APP_DISABLE_ACTION_USER' => 0,
-            'APP_TYPE' => 'PAUSE'
-        ]);
-        //Create the registers in AppDelay
-        factory(AppDelay::class, 5)->create([
-            'APP_DELEGATION_USER' => $user->USR_UID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $delegation2->APP_NUMBER,
-            'APP_DEL_INDEX' => $delegation2->DEL_INDEX,
-            'APP_DISABLE_ACTION_USER' => 0,
-            'APP_TYPE' => 'PAUSE'
-        ]);
-
-        //Create new Paused object
-        $paused = new Paused();
-
-        //Set the user UID
-        $paused->setUserUid($user->USR_UID);
-
-        //Set the user ID
-        $paused->setUserId($user->USR_ID);
-
-        //Set the Category Status
-        $paused->setCategoryUid($process1->PRO_CATEGORY);
-
-        //Call to getData method
-        $res = $paused->getData();
-
-        //This assert the expected results for an specific category
-        $this->assertCount(5, $res);
-
-        //This assert the expected value for the category
-        $this->assertEquals(1, $res[0]['PRO_CATEGORY']);
-
-        //Set the Category Status
-        $paused->setCategoryUid($process2->PRO_CATEGORY);
-
-        //Call to getData method
-        $res = $paused->getData();
-
-        //This assert the expected results for an specific category
-        $this->assertCount(5, $res);
-
-        //This assert the expected value for the category
-        $this->assertEquals(2, $res[0]['PRO_CATEGORY']);
-    }
-
-    /**
      * It tests the getData method with app number filter
      *
      * @covers ::getData()
@@ -454,7 +348,7 @@ class PausedTest extends TestCase
         $this->assertCount(5, $res);
 
         //This asserts the result corresponds to the task filtered
-        $this->assertEquals($task1->TAS_ID, $res[0]['TAS_ID']);
+        $this->assertEquals($task1->TAS_TITLE, $res[0]['TAS_TITLE']);
 
         //Set taskId
         $paused->setTaskId($task2->TAS_ID);
@@ -466,7 +360,7 @@ class PausedTest extends TestCase
         $this->assertCount(5, $res);
 
         //This asserts the result corresponds to the task filtered
-        $this->assertEquals($task2->TAS_ID, $res[0]['TAS_ID']);
+        $this->assertEquals($task2->TAS_TITLE, $res[0]['TAS_TITLE']);
     }
 
     /**

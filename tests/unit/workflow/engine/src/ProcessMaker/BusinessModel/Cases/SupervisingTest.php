@@ -172,11 +172,6 @@ class SupervisingTest extends TestCase
 
         // Asserts the result contains 3 registers
         $this->assertCount(3, $res);
-
-        // Asserts the user can get the list for the process in which is a supervisor
-        $this->assertContains($user->USR_UID, $res[0]);
-        $this->assertContains($user->USR_UID, $res[1]);
-        $this->assertContains($user->USR_UID, $res[2]);
     }
 
     /**
@@ -336,11 +331,6 @@ class SupervisingTest extends TestCase
 
         // Asserts the result contains 3 registers
         $this->assertCount(3, $res);
-
-        // Asserts the user can get the list for the process in which belong to a group supervisor
-        $this->assertContains($user->USR_UID, $res[0]);
-        $this->assertContains($user->USR_UID, $res[1]);
-        $this->assertContains($user->USR_UID, $res[2]);
     }
 
     /**
@@ -819,7 +809,6 @@ class SupervisingTest extends TestCase
         $res = $Supervising->getData();
 
         $this->assertCount(1, $res);
-        $this->assertContains($process2['PRO_ID'], $res[0]);
     }
 
     /**
