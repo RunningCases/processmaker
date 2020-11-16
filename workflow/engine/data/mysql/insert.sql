@@ -58677,6 +58677,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_LOG_AGAIN','en','Please login again to apply the changes.','2014-01-15') ,
 ( 'LABEL','ID_LOG_CASE_SCHEDULER','en','Case Scheduler Log','2014-01-15') ,
 ( 'LABEL','ID_LOG_INFO','en','Log Information','2014-01-15') ,
+( 'LABEL','ID_MAFE_TRANSLATION_DIRECTORY','en','MAFE Translation Directory','2014-01-15') ,
 ( 'LABEL','ID_MAFE_0015b7e51c1ca4293041c429985ca323','en','The specified subform could not be found in the process.', NOW()) ,
 ( 'LABEL','ID_MAFE_0025301679e9722c3abd5914cfbc7dd7','en','Database connection edited successfully', NOW()) ,
 ( 'LABEL','ID_MAFE_004d33be4d12eb8c0ae00703e7c70f61','en','Pick Second', NOW()) ,

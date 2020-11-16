@@ -10932,6 +10932,12 @@ msgid "Log Information"
 msgstr "Log Information"
 
 # TRANSLATION
+# LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+#: LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+msgid "MAFE Translation Directory"
+msgstr "MAFE Translation Directory"
+
+# TRANSLATION
 # LABEL/ID_MAFE_0015b7e51c1ca4293041c429985ca323
 #: LABEL/ID_MAFE_0015b7e51c1ca4293041c429985ca323
 msgid "The specified subform could not be found in the process."
