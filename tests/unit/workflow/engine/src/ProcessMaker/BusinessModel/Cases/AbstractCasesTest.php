@@ -244,7 +244,11 @@ class AbstractCasesTest extends TestCase
         if (empty($arguments[$index])) {
             $this->assertEquals('ALL', $actual);
         } else {
-            $this->assertEquals($arguments[$index], $actual);
+            if ($arguments[$index] === AbstractCases::INCORRECT_CANCELED_STATUS) {
+                $this->assertEquals(AbstractCases::CORRECT_CANCELED_STATUS, $actual);
+            } else {
+                $this->assertEquals($arguments[$index], $actual);
+            }
         }
     }
 
@@ -380,9 +384,9 @@ class AbstractCasesTest extends TestCase
         $absCases = new AbstractCases();
         $properties = [
             'category' => G::generateUniqueID(),
-            'process' => G::generateUniqueID(),
+            'process' => rand(),
             'task' => rand(),
-            'user' => G::generateUniqueID(),
+            'user' => rand(),
             'priority' => 1,
             'caseNumber' => rand(),
             'caseNumberFrom' => rand(),
@@ -401,11 +405,11 @@ class AbstractCasesTest extends TestCase
         $absCases->setProperties($properties);
         $actual = $absCases->getCategoryUid();
         $this->assertEquals($properties['category'], $actual);
-        $actual = $absCases->getProcessUid();
+        $actual = $absCases->getProcessId();
         $this->assertEquals($properties['process'], $actual);
         $actual = $absCases->getTaskId();
         $this->assertEquals($properties['task'], $actual);
-        $actual = $absCases->getUserUid();
+        $actual = $absCases->getUserId();
         $this->assertEquals($properties['user'], $actual);
         $actual = $absCases->getPriority();
         $this->assertEquals($properties['priority'], $actual);

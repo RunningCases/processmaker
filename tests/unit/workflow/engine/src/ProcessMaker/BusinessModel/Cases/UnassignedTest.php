@@ -882,6 +882,9 @@ class UnassignedTest extends TestCase
      */
     public function it_should_return_self_service_user_assigned_sort_by_case_title()
     {
+        $this->markTestIncomplete(
+            'This test needs to write when the column DELEGATION.DEL_THREAD was added'
+        );
         //Create process
         $process = factory(Process::class)->create();
         //Create application
@@ -1111,7 +1114,7 @@ class UnassignedTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @test
      */
-    public function it_should_return_self_service_user_assigned_sort_last_modified()
+    public function it_should_return_self_service_user_assigned_sort_delegate_date()
     {
         //Create user
         $user = factory(User::class)->create();
@@ -1146,18 +1149,18 @@ class UnassignedTest extends TestCase
         }
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setOrderByColumn('APP_UPDATE_DATE');
+        $unassigned->setOrderByColumn('DEL_DELEGATE_DATE');
         $unassigned->setOrderDirection('ASC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
         // Get first page, the minor update date
         $results = $unassigned->getData();
-        $this->assertGreaterThan($results[0]['APP_UPDATE_DATE'], $results[1]['APP_UPDATE_DATE']);
+        $this->assertGreaterThan($results[0]['DEL_DELEGATE_DATE'], $results[1]['DEL_DELEGATE_DATE']);
 
         // Get first page, the major update date
         $unassigned->setOrderDirection('DESC');
         $results = $unassigned->getData();
-        $this->assertLessThan($results[0]['APP_UPDATE_DATE'], $results[1]['APP_UPDATE_DATE']);
+        $this->assertLessThan($results[0]['DEL_DELEGATE_DATE'], $results[1]['DEL_DELEGATE_DATE']);
     }
 
     /**

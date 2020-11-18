@@ -2,10 +2,37 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use G;
 use ProcessMaker\Model\Delegation;
 
 class Inbox extends AbstractCases
 {
+    // Columns to see in the cases list
+    public $columnsView = [
+        // Columns view in the cases list
+        'APP_DELEGATION.APP_NUMBER', // Case #
+        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'PROCESS.PRO_TITLE', // Process
+        'TASK.TAS_TITLE',  // Task
+        'USERS.USR_USERNAME',  // Current UserName
+        'USERS.USR_FIRSTNAME',  // Current User FirstName
+        'USERS.USR_LASTNAME',  // Current User LastName
+        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date
+        'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
+        'APP_DELEGATION.DEL_PRIORITY',  // Priority
+        // Additional column for other functionalities
+        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+    ];
+
+    /**
+     * Get the columns related to the cases list
+     * @return array
+     */
+    public function getColumnsView()
+    {
+        return $this->columnsView;
+    }
+
     /**
      * Get the data corresponding to List Inbox
      *
@@ -14,14 +41,14 @@ class Inbox extends AbstractCases
     public function getData()
     {
         // Start the query for get the cases related to the user
-        $query = Delegation::query()->select();
-
-        // Scope that sets the queries for List Inbox
+        $query = Delegation::query()->select($this->getColumnsView());
+        // Join with process
+        $query->joinProcess();
+        // Join with users
+        $query->joinUser();
+        // Join with application for add the initial scope for TO_DO cases
         $query->inbox($this->getUserId());
-
-        // Scope that joins with the process and/or for an specific category in the process
-        $query->categoryProcess($this->getCategoryUid());
-
+        // Define a specific risk
         switch ($this->getRiskStatus()) {
             case 'ON_TIME':
                 // Scope that search for the ON_TIME cases
@@ -36,21 +63,31 @@ class Inbox extends AbstractCases
                 $query->overdue();
                 break;
         }
-
+        // Scope to search for an specific process
         if (!empty($this->getProcessId())) {
-            // Scope to search for an specific process
             $query->processId($this->getProcessId());
         }
-
         // The order by clause
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
         // The limit by clause
         $query->offset($this->getOffset())->limit($this->getLimit());
-
         //Execute the query
         $results = $query->get();
+        // Prepare the result
+        $results->transform(function ($item, $key) {
+            // Get priority label
+            $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
+            $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
+            // Get task color label
+            $item['TAS_COLOR'] = $this->getTaskColor($item['DEL_TASK_DUE_DATE']);
+            $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
+            // Apply the date format defined in environment
+            $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
+            $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
 
-        //Return the values as an array format
+            return $item;
+        });
+
         return $results->values()->toArray();
     }
 
