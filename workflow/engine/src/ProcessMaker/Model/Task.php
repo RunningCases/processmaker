@@ -120,4 +120,43 @@ class Task extends Model
 
         return $taskInfo;
     }
+
+    /**
+     * Set the TAS_DEF_TITLE value
+     * 
+     * @param string $evnUid
+     * @param string $caseTitle
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function setTaskDefTitle($evnUid, $caseTitle)
+    {
+        $query = Task::select(['TASK.TAS_UID']);
+        $query->join('ELEMENT_TASK_RELATION', function ($join) use ($evnUid) {
+            $join->on('ELEMENT_TASK_RELATION.TAS_UID', '=', 'TASK.TAS_UID')
+            ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
+        });
+
+        $query->update(['TASK.TAS_DEF_TITLE' => $caseTitle]);
+        
+        return $query;
+    }
+
+    /**
+     * Get the TAS_DEF_TITLE value
+     * 
+     * @param string $evnUid
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function getTaskDefTitle($evnUid)
+    {
+        $query = Task::select(['TASK.TAS_DEF_TITLE']);
+        $query->join('ELEMENT_TASK_RELATION', function ($join) use ($evnUid) {
+            $join->on('ELEMENT_TASK_RELATION.TAS_UID', '=', 'TASK.TAS_UID')
+            ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
+        });
+
+        return $query->get()->values()->toArray()['0']['TAS_DEF_TITLE'];
+    }
 }
