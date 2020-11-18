@@ -16,16 +16,6 @@ use Tests\TestCase;
  */
 class ListUnassignedTest extends TestCase
 {
-    
-    /**
-     * Set up function.
-     */
-    public function setUp()
-    {
-        parent::setUp();
-        ListUnassigned::truncate();
-    }
-
     /**
      * Method set up.
      */
