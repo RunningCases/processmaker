@@ -81,6 +81,27 @@ class Task extends Model
     }
 
     /**
+     * Get the title of the task
+     *
+     * @param string $tasUid
+     *
+     * @return string
+     */
+    public function taskCaseTitle(string $tasUid)
+    {
+        $query = Task::query()->select(['TAS_DEF_TITLE']);
+        $query->where('TAS_UID', $tasUid);
+        $query->limit(1);
+        $results = $query->get();
+        $title = '';
+        $results->each(function ($item) use (&$title) {
+            $title = $item->TAS_DEF_TITLE;
+        });
+
+        return $title;
+    }
+
+    /**
      * Get task data
      *
      * @param  string $tasUid

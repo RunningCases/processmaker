@@ -172,4 +172,18 @@ class TaskTest extends TestCase
         
         $this->assertEquals($res, $task->TAS_DEF_TITLE);
     }
+
+    /**
+     * It tests the get case title defined in the task
+     *
+     * @covers \ProcessMaker\Model\Task::taskCaseTitle()
+     * @test
+     */
+    public function it_get_case_title()
+    {
+        $task = factory(Task::class)->create();
+        $tas = new Task();
+        $result = $tas->taskCaseTitle($task->TAS_UID);
+        $this->assertNotEmpty($result);
+    }
 }

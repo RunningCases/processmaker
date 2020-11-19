@@ -2372,4 +2372,18 @@ class DelegationTest extends TestCase
         $result = Delegation::participation($application->APP_UID, $user->USR_UID);
         $this->assertFalse($result);
     }
+
+    /**
+     * This check the return of thread title
+     *
+     * @covers \ProcessMaker\Model\Delegation::getThreadTitle()
+     * @test
+     */
+    public function it_get_thread_title()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $result = Delegation::getThreadTitle($delegation->TAS_UID, $delegation->APP_NUMBER, $delegation->DEL_INDEX, []);
+        $this->assertNotEmpty($result);
+    }
+
 }
