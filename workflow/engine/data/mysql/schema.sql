@@ -102,7 +102,8 @@ CREATE TABLE `APP_DELEGATION`
 	KEY `INDEX_PRO_ID`(`PRO_ID`),
 	KEY `INDEX_TAS_ID`(`TAS_ID`),
 	KEY `INDEX_USR_UID`(`USR_UID`),
-	KEY `INDEX_THREAD_STATUS_APP_NUMBER`(`DEL_THREAD_STATUS`, `APP_NUMBER`)
+	KEY `INDEX_THREAD_STATUS_APP_NUMBER`(`DEL_THREAD_STATUS`, `APP_NUMBER`),
+	FULLTEXT `indexDelTitle`(`DEL_TITLE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Delegation a task to user';
 #-----------------------------------------------------------------------------
 #-- APP_DOCUMENT
