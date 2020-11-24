@@ -4,10 +4,15 @@ namespace ProcessMaker\BusinessModel;
 
 use Exception;
 use G;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\ListUnassigned;
+use ProcessMaker\Model\Task;
+use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\User;
 use RBAC;
 use Tests\TestCase;
@@ -19,7 +24,6 @@ use Tests\TestCase;
  */
 class CasesTest extends TestCase
 {
-
     /**
      * Set up method.
      */
@@ -232,5 +236,83 @@ class CasesTest extends TestCase
         $this->expectExceptionMessage("The uploaded file exceeds the upload_max_filesize directive in php.ini");
         // Call the uploadFiles method
         $case->uploadFiles($user->USR_UID, $application->APP_UID, $varName, -1, null, $delegation->DEL_INDEX);
+    }
+
+    /**
+     * This test the execution of trigger from cases related to the self services timeout
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::executeSelfServiceTimeout()
+     * @test
+     */
+    public function it_execute_trigger_from_cases_with_self_service_timeout_every_time()
+    {
+        ListUnassigned::truncate();
+        // Define the Execute Trigger = EVERY_TIME
+        $application = factory(Application::class)->states('foreign_keys')->create();
+        // Create a trigger
+        $trigger = factory(Triggers::class)->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TRI_WEBBOT' => 'echo(1);'
+        ]);
+        // Create a task with the configuration trigger execution
+        $task = factory(Task::class)->states('sef_service_timeout')->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TAS_SELFSERVICE_EXECUTION' => 'EVERY_TIME',
+            'TAS_SELFSERVICE_TRIGGER_UID' => $trigger->TRI_UID
+        ]);
+        // Create a unassigned cases
+        factory(ListUnassigned::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'TAS_ID' => $task->TAS_ID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'PRO_UID' => $application->PRO_UID
+        ]);
+        // Define the session
+        $_SESSION["PROCESS"] = $application->PRO_UID;
+
+        // todo: the function Cases::loadCase is using propel we need to change this
+        DB::commit();
+        $casesExecuted = Cases::executeSelfServiceTimeout();
+        $this->assertTrue(is_array($casesExecuted));
+    }
+
+    /**
+     * This test the execution of trigger from cases related to the self services timeout
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::executeSelfServiceTimeout()
+     * @test
+     */
+    public function it_execute_trigger_from_cases_with_self_service_timeout_once()
+    {
+        ListUnassigned::truncate();
+        // Define the Execute Trigger = ONCE
+        $application = factory(Application::class)->states('foreign_keys')->create();
+        // Create a trigger
+        $trigger = factory(Triggers::class)->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TRI_WEBBOT' => 'echo(1);'
+        ]);
+        // Create a task with the configuration trigger execution
+        $task = factory(Task::class)->states('sef_service_timeout')->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TAS_SELFSERVICE_EXECUTION' => 'ONCE',
+            'TAS_SELFSERVICE_TRIGGER_UID' => $trigger->TRI_UID
+        ]);
+        // Create a unassigned cases
+        factory(ListUnassigned::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'TAS_ID' => $task->TAS_ID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'PRO_UID' => $application->PRO_UID
+        ]);
+        // Define the session
+        $_SESSION["PROCESS"] = $application->PRO_UID;
+
+        // todo: the function Cases::loadCase is using propel we need to change this
+        DB::commit();
+        $casesExecuted = Cases::executeSelfServiceTimeout();
+        $this->assertTrue(is_array($casesExecuted));
     }
 }

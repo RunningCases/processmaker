@@ -1,6 +1,6 @@
 <?php
 
-namespace ProcessMaker\AuditLog;
+namespace ProcessMaker\Log;
 
 use Bootstrap;
 use Configurations;

@@ -4,19 +4,15 @@
  * cron_single.php
  *
  * @see workflow/engine/bin/cron.php
- * @see workflow/engine/bin/messageeventcron.php
  * @see workflow/engine/bin/timereventcron.php
  * @see workflow/engine/bin/ldapcron.php
- * @see workflow/engine/bin/sendnotificationscron.php
  * @see workflow/engine/methods/setup/cron.php
  * 
  * @link https://wiki.processmaker.com/3.2/Executing_cron.php
  */
 
 use Illuminate\Foundation\Http\Kernel;
-/*----------------------------------********---------------------------------*/
-use ProcessMaker\BusinessModel\ActionsByEmail\ResponseReader;
-/*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\Cases;
 
 require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
@@ -25,6 +21,7 @@ require_once __DIR__ . '/../../../bootstrap/app.php';
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\TaskScheduler\Task;
 
 register_shutdown_function(function () {
     if (class_exists("Propel")) {
@@ -55,6 +52,14 @@ try {
     $cronName = $argv[4];
     $workspace = $argv[5];
     $now = $argv[6]; //date
+    //asynchronous flag
+    $asynchronous = false;
+    $result = array_search('+async', $argv);
+    if ($result !== false && is_int($result)) {
+        $asynchronous = true;
+        unset($argv[$result]);
+        $argv = array_values($argv);
+    }
     //Defines constants
     define('PATH_SEP', ($osIsLinux) ? '/' : '\\');
 
@@ -280,31 +285,70 @@ try {
         try {
             switch ($cronName) {
                 case 'cron':
-                    processWorkspace();
+                    try {
+                        $task = new Task($asynchronous, $sObject);
+                        if (empty($argvx) || strpos($argvx, "emails") !== false) {
+                            $task->resendEmails($now, $dateSystem);
+                        }
+                        if (empty($argvx) || strpos($argvx, "unpause") !== false) {
+                            $task->unpauseApplications($now);
+                        }
+                        if (empty($argvx) || strpos($argvx, "calculate") !== false) {
+                            $task->calculateDuration();
+                        }
+                        /*----------------------------------********---------------------------------*/
+                        if (empty($argvx) || strpos($argvx, "calculateapp") !== false) {
+                            $task->calculateAppDuration();
+                        }
+                        /*----------------------------------********---------------------------------*/
+                        executeEvents();
+                        executeScheduledCases();
+                        executeUpdateAppTitle();
+                        if (empty($argvx) || strpos($argvx, "unassigned-case") !== false) {
+                            $task->executeCaseSelfService();
+                        }
+                        if (empty($argvx) || strpos($argvx, "clean-self-service-tables") !== false) {
+                            $task->cleanSelfServiceTables();
+                        }
+                        if (empty($argvx) || strpos($argvx, "plugins") !== false) {
+                            $task->executePlugins();
+                        }
+                        /*----------------------------------********---------------------------------*/
+                        if (strpos($argvx, "report_by_user") !== false) {
+                            $task->fillReportByUser($dateInit, $dateFinish);
+                        }
+                        if (strpos($argvx, "report_by_process") !== false) {
+                            $task->fillReportByProcess($dateInit, $dateFinish);
+                        }
+                        synchronizeDrive();
+                        synchronizeGmailLabels();
+                        /*----------------------------------********---------------------------------*/
+                    } catch (Exception $oError) {
+                        saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
+                    }
                     break;
                 case 'ldapcron':
-                    require_once(PATH_HOME . 'engine' . PATH_SEP . 'methods' . PATH_SEP . 'services' . PATH_SEP . 'ldapadvanced.php');
-
-                    $ldapadvancedClassCron = new ldapadvancedClassCron();
-
-                    $ldapadvancedClassCron->executeCron(in_array('+debug', $argv));
+                    $task = new Task($asynchronous, $sObject);
+                    $task->ldapcron(in_array('+debug', $argv));
                     break;
                 case 'messageeventcron':
-                    $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
-
-                    $messageApplication->catchMessageEvent(true);
+                    $task = new Task($asynchronous, $sObject);
+                    $task->messageeventcron();
                     break;
                 case 'timereventcron':
-                    $timerEvent = new \ProcessMaker\BusinessModel\TimerEvent();
-
-                    $timerEvent->startContinueCaseByTimerEvent($now, true);
+                    $task = new Task($asynchronous, $sObject);
+                    $task->timerEventCron($now, true);
                     break;
                 case 'sendnotificationscron':
-                    sendNotifications();
+                    if (empty($argvx) || strpos($argvx, "send-notifications") !== false) {
+                        $task = new Task($asynchronous, $sObject);
+                        $task->sendNotifications();
+                    }
                     break;
                 /*----------------------------------********---------------------------------*/
                 case 'actionsByEmailEmailResponse':
-                    (new ResponseReader)->actionsByEmailEmailResponse();
+                    $task = new Task($asynchronous, $sObject);
+                    $task->actionsByEmailResponse();
                     break;
                 /*----------------------------------********---------------------------------*/
             }
@@ -328,250 +372,9 @@ try {
     G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . "\n");
 }
 
-//Functions
-function processWorkspace()
+function executeEvents()
 {
-    try {
-        global $sObject;
-        global $sLastExecution;
-
-        resendEmails();
-        unpauseApplications();
-        calculateDuration();
-        /*----------------------------------********---------------------------------*/
-        calculateAppDuration();
-        /*----------------------------------********---------------------------------*/
-        executeEvents($sLastExecution);
-        executeScheduledCases();
-        executeUpdateAppTitle();
-        executeCaseSelfService();
-        cleanSelfServiceTables();
-        executePlugins();
-        /*----------------------------------********---------------------------------*/
-        fillReportByUser();
-        fillReportByProcess();
-        synchronizeDrive();
-        synchronizeGmailLabels();
-        /*----------------------------------********---------------------------------*/
-    } catch (Exception $oError) {
-        saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
-    }
-}
-
-function resendEmails()
-{
-    global $argvx;
-    global $now;
-    global $dateSystem;
-
-    if ($argvx != "" && strpos($argvx, "emails") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Resending emails");
-
-    try {
-        $dateResend = $now;
-
-        if ($now == $dateSystem) {
-            $arrayDateSystem = getdate(strtotime($dateSystem));
-
-            $mktDateSystem = mktime(
-                $arrayDateSystem["hours"],
-                $arrayDateSystem["minutes"],
-                $arrayDateSystem["seconds"],
-                $arrayDateSystem["mon"],
-                $arrayDateSystem["mday"],
-                $arrayDateSystem["year"]
-            );
-
-            $dateResend = date("Y-m-d H:i:s", $mktDateSystem - (7 * 24 * 60 * 60));
-        }
-
-        $oSpool = new SpoolRun();
-        $oSpool->resendEmails($dateResend, 1);
-
-        saveLog("resendEmails", "action", "Resending Emails", "c");
-
-        $aSpoolWarnings = $oSpool->getWarnings();
-
-        if ($aSpoolWarnings !== false) {
-            foreach ($aSpoolWarnings as $sWarning) {
-                print("MAIL SPOOL WARNING: " . $sWarning . "\n");
-                saveLog("resendEmails", "warning", "MAIL SPOOL WARNING: " . $sWarning);
-            }
-        }
-
-        setExecutionResultMessage("DONE");
-    } catch (Exception $e) {
-        $c = new Criteria("workflow");
-        $c->clearSelectColumns();
-        $c->addSelectColumn(ConfigurationPeer::CFG_UID);
-        $c->add(ConfigurationPeer::CFG_UID, "Emails");
-        $result = ConfigurationPeer::doSelectRS($c);
-        $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        if ($result->next()) {
-            setExecutionResultMessage("WARNING", "warning");
-            $message = "Emails won't be sent, but the cron will continue its execution";
-            eprintln("  '-" . $message, "yellow");
-        } else {
-            setExecutionResultMessage("WITH ERRORS", "error");
-            eprintln("  '-" . $e->getMessage(), "red");
-        }
-
-        saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
-    }
-}
-
-function unpauseApplications()
-{
-    global $argvx;
-    global $now;
-
-    if ($argvx != "" && strpos($argvx, "unpause") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Unpausing applications");
-
-    try {
-        $oCases = new Cases();
-        $oCases->ThrowUnpauseDaemon($now, 1);
-
-        setExecutionResultMessage('DONE');
-        saveLog('unpauseApplications', 'action', 'Unpausing Applications');
-    } catch (Exception $oError) {
-        setExecutionResultMessage('WITH ERRORS', 'error');
-        eprintln("  '-" . $oError->getMessage(), 'red');
-        saveLog('unpauseApplications', 'error', 'Error Unpausing Applications: ' . $oError->getMessage());
-    }
-}
-
-function executePlugins()
-{
-    global $argvx;
-
-    if ($argvx != "" && strpos($argvx, "plugins") === false) {
-        return false;
-    }
-
-    $pathCronPlugins = PATH_CORE . 'bin' . PATH_SEP . 'plugins' . PATH_SEP;
-
-    // Executing cron files in bin/plugins directory
-    if (!is_dir($pathCronPlugins)) {
-        return false;
-    }
-
-    if ($handle = opendir($pathCronPlugins)) {
-        setExecutionMessage('Executing cron files in bin/plugins directory in Workspace: ' . config("system.workspace"));
-        while (false !== ($file = readdir($handle))) {
-            if (strpos($file, '.php', 1) && is_file($pathCronPlugins . $file)) {
-                $filename = str_replace('.php', '', $file);
-                $className = $filename . 'ClassCron';
-
-                // Execute custom cron function
-                executeCustomCronFunction($pathCronPlugins . $file, $className);
-            }
-        }
-    }
-
-    // Executing registered cron files
-    // -> Get registered cron files
-    $oPluginRegistry = PluginRegistry::loadSingleton();
-    $cronFiles = $oPluginRegistry->getCronFiles();
-
-    // -> Execute functions
-    if (!empty($cronFiles)) {
-        setExecutionMessage('Executing registered cron files for Workspace: ' . config('system.workspace'));
-        /**
-         * @var \ProcessMaker\Plugins\Interfaces\CronFile $cronFile
-         */
-        foreach ($cronFiles as $cronFile) {
-            $path = PATH_PLUGINS . $cronFile->getNamespace() . PATH_SEP . 'bin' . PATH_SEP . $cronFile->getCronFile() . '.php';
-            if (file_exists($path)) {
-                executeCustomCronFunction($path, $cronFile->getCronFile());
-            } else {
-                setExecutionMessage('File ' . $cronFile->getCronFile() . '.php ' . 'does not exist.');
-            }
-        }
-    }
-}
-
-function executeCustomCronFunction($pathFile, $className)
-{
-    include_once $pathFile;
-
-    $oPlugin = new $className();
-
-    if (method_exists($oPlugin, 'executeCron')) {
-        $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
-        $arrayCron["processcTimeProcess"] = 60; //Minutes
-        $arrayCron["processcTimeStart"] = time();
-        @file_put_contents(PATH_DATA . "cron", serialize($arrayCron));
-
-        //Try to execute Plugin Cron. If there is an error then continue with the next file
-        setExecutionMessage("\n--- Executing cron file: $pathFile");
-        try {
-            $oPlugin->executeCron();
-            setExecutionResultMessage('DONE');
-        } catch (Exception $e) {
-            setExecutionResultMessage('FAILED', 'error');
-            eprintln("  '-" . $e->getMessage(), 'red');
-            saveLog('executePlugins', 'error', 'Error executing cron file: ' . $pathFile . ' - ' . $e->getMessage());
-        }
-    }
-}
-
-function calculateDuration()
-{
-    global $argvx;
-
-    if ($argvx != "" && strpos($argvx, "calculate") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Calculating Duration");
-
-    try {
-        $oAppDelegation = new AppDelegation();
-        $oAppDelegation->calculateDuration(1);
-
-        setExecutionResultMessage('DONE');
-        saveLog('calculateDuration', 'action', 'Calculating Duration');
-    } catch (Exception $oError) {
-        setExecutionResultMessage('WITH ERRORS', 'error');
-        eprintln("  '-" . $oError->getMessage(), 'red');
-        saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
-    }
-}
-/*----------------------------------********---------------------------------*/
-
-function calculateAppDuration()
-{
-    global $argvx;
-
-    if ($argvx != "" && strpos($argvx, "calculateapp") === false) {
-        return false;
-    }
-
-    setExecutionMessage("Calculating Duration by Application");
-
-    try {
-        $oApplication = new Application();
-        $oApplication->calculateAppDuration(1);
-
-        setExecutionResultMessage('DONE');
-        saveLog('calculateDurationByApp', 'action', 'Calculating Duration by Application');
-    } catch (Exception $oError) {
-        setExecutionResultMessage('WITH ERRORS', 'error');
-        eprintln("  '-" . $oError->getMessage(), 'red');
-        saveLog('calculateDurationByApp', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
-    }
-}
-/*----------------------------------********---------------------------------*/
-
-function executeEvents($sLastExecution, $now = null)
-{
+    global $sLastExecution;
     global $argvx;
     global $now;
 
@@ -689,176 +492,14 @@ function executeUpdateAppTitle()
     }
 }
 
-function executeCaseSelfService()
-{
-    try {
-        global $argvx;
-
-        if ($argvx != "" && strpos($argvx, "unassigned-case") === false) {
-            return false;
-        }
-
-        $criteria = new Criteria("workflow");
-
-        //SELECT
-        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
-        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-        $criteria->addSelectColumn(AppCacheViewPeer::DEL_DELEGATE_DATE);
-        $criteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
-        $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
-        $criteria->addSelectColumn(TaskPeer::TAS_UID);
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME);
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TIME_UNIT);
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_TRIGGER_UID);
-        /*----------------------------------********---------------------------------*/
-        $criteria->addSelectColumn(TaskPeer::TAS_SELFSERVICE_EXECUTION);
-        /*----------------------------------********---------------------------------*/
-
-        //FROM
-        $condition = array();
-        $condition[] = array(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID);
-        $condition[] = array(TaskPeer::TAS_SELFSERVICE_TIMEOUT, 1);
-        $criteria->addJoinMC($condition, Criteria::LEFT_JOIN);
-
-        //WHERE
-        $criteria->add(AppCacheViewPeer::USR_UID, "");
-        $criteria->add(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN");
-
-        //QUERY
-        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        setExecutionMessage("Unassigned case");
-        saveLog("unassignedCase", "action", "Unassigned case", "c");
-
-        $calendar = new Calendar();
-
-        while ($rsCriteria->next()) {
-            $row = $rsCriteria->getRow();
-            $flag = false;
-
-            $appcacheAppUid = $row["APP_UID"];
-            $appcacheDelIndex = $row["DEL_INDEX"];
-            $appcacheDelDelegateDate = $row["DEL_DELEGATE_DATE"];
-            $appcacheAppNumber = $row["APP_NUMBER"];
-            $appcacheProUid = $row["PRO_UID"];
-            $taskUid = $row["TAS_UID"];
-            $taskSelfServiceTime = intval($row["TAS_SELFSERVICE_TIME"]);
-            $taskSelfServiceTimeUnit = $row["TAS_SELFSERVICE_TIME_UNIT"];
-            $taskSelfServiceTriggerUid = $row["TAS_SELFSERVICE_TRIGGER_UID"];
-            /*----------------------------------********---------------------------------*/
-            $taskSelfServiceJustOneExecution = $row["TAS_SELFSERVICE_EXECUTION"];
-
-            if ($taskSelfServiceJustOneExecution == 'ONCE') {
-                $criteriaSelfService = new Criteria("workflow");
-
-                $criteriaSelfService->add(AppTimeoutActionExecutedPeer::APP_UID, $appcacheAppUid);
-                $criteriaSelfService->add(AppTimeoutActionExecutedPeer::DEL_INDEX, $appcacheDelIndex);
-
-                $querySelfService = AppTimeoutActionExecutedPeer::doSelectRS($criteriaSelfService);
-                $querySelfService->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                if ($querySelfService->next()) {
-                    $row = $querySelfService->getRow();
-                    $flag = true; //already executed
-                }
-            }
-            /*----------------------------------********---------------------------------*/
-
-            if ($calendar->pmCalendarUid == '') {
-                $calendar->getCalendar(null, $appcacheProUid, $taskUid);
-                $calendar->getCalendarData();
-            }
-
-            $dueDate = $calendar->calculateDate(
-                $appcacheDelDelegateDate,
-                $taskSelfServiceTime,
-                $taskSelfServiceTimeUnit //HOURS|DAYS|MINUTES
-                //1
-            );
-
-            if (time() > $dueDate["DUE_DATE_SECONDS"] && $flag == false) {
-                $sessProcess = null;
-                $sessProcessSw = 0;
-
-                //Load data
-                $case = new Cases();
-                $appFields = $case->loadCase($appcacheAppUid);
-
-                $appFields["APP_DATA"]["APPLICATION"] = $appcacheAppUid;
-
-                if (isset($_SESSION["PROCESS"])) {
-                    $sessProcess = $_SESSION["PROCESS"];
-                    $sessProcessSw = 1;
-                }
-
-                $_SESSION["PROCESS"] = $appFields["PRO_UID"];
-
-                //Execute trigger
-                $criteriaTgr = new Criteria();
-                $criteriaTgr->add(TriggersPeer::TRI_UID, $taskSelfServiceTriggerUid);
-
-                $rsCriteriaTgr = TriggersPeer::doSelectRS($criteriaTgr);
-                $rsCriteriaTgr->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                if ($rsCriteriaTgr->next()) {
-                    $row = $rsCriteriaTgr->getRow();
-
-                    if (is_array($row) && $row["TRI_TYPE"] == "SCRIPT") {
-                        $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
-                        $arrayCron["processcTimeProcess"] = 60; //Minutes
-                        $arrayCron["processcTimeStart"] = time();
-                        @file_put_contents(PATH_DATA . "cron", serialize($arrayCron));
-
-                        //Trigger
-                        global $oPMScript;
-
-                        $oPMScript = new PMScript();
-                        $oPMScript->setDataTrigger($row);
-                        $oPMScript->setFields($appFields["APP_DATA"]);
-                        $oPMScript->setScript($row["TRI_WEBBOT"]);
-                        $oPMScript->setExecutedOn(PMScript::SELF_SERVICE_TIMEOUT);
-                        $oPMScript->execute();
-
-                        /*----------------------------------********---------------------------------*/
-                        //saving the case`s data if the 'Execution' is set in ONCE.
-                        if ($taskSelfServiceJustOneExecution == "ONCE") {
-                            $oAppTimeoutActionExecuted = new AppTimeoutActionExecuted();
-                            $dataSelf = array();
-                            $dataSelf["APP_UID"] = $appcacheAppUid;
-                            $dataSelf["DEL_INDEX"] = $appcacheDelIndex;
-                            $dataSelf["EXECUTION_DATE"] = time();
-                            $oAppTimeoutActionExecuted->create($dataSelf);
-                        }
-                        /*----------------------------------********---------------------------------*/
-                        $appFields["APP_DATA"] = array_merge($appFields["APP_DATA"], $oPMScript->aFields);
-
-                        unset($appFields['APP_STATUS']);
-                        unset($appFields['APP_PROC_STATUS']);
-                        unset($appFields['APP_PROC_CODE']);
-                        unset($appFields['APP_PIN']);
-                        $case->updateCase($appFields["APP_UID"], $appFields);
-
-                        saveLog("unassignedCase", "action", "OK Executed trigger to the case $appcacheAppNumber");
-                    }
-                }
-
-                unset($_SESSION["PROCESS"]);
-
-                if ($sessProcessSw == 1) {
-                    $_SESSION["PROCESS"] = $sessProcess;
-                }
-            }
-        }
-
-        setExecutionResultMessage("DONE");
-    } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
-        eprintln("  '-" . $e->getMessage(), "red");
-        saveLog("unassignedCase", "error", "Error in unassigned case: " . $e->getMessage());
-    }
-}
-
+/**
+ * @deprecated This function is only used in this file and must be deleted.
+ * @global string $sObject
+ * @global string $isDebug
+ * @param string $sSource
+ * @param string $sType
+ * @param string $sDescription
+ */
 function saveLog($sSource, $sType, $sDescription)
 {
     try {
@@ -876,6 +517,10 @@ function saveLog($sSource, $sType, $sDescription)
     }
 }
 
+/**
+ * @deprecated This function is only used in this file and must be deleted.
+ * @param string $m
+ */
 function setExecutionMessage($m)
 {
     $len = strlen($m);
@@ -889,6 +534,11 @@ function setExecutionMessage($m)
     }
 }
 
+/**
+ * @deprecated This function is only used in this file and must be deleted.
+ * @param string $m
+ * @param string $t
+ */
 function setExecutionResultMessage($m, $t = '')
 {
     $c = 'green';
@@ -908,67 +558,6 @@ function setExecutionResultMessage($m, $t = '')
     eprintln("[$m]", $c);
 }
 /*----------------------------------********---------------------------------*/
-
-function fillReportByUser()
-{
-    try {
-        global $argvx;
-        global $dateInit;
-        global $dateFinish;
-
-        if (strpos($argvx, "report_by_user") === false) {
-            return false;
-        }
-        if ($dateInit == null) {
-            eprintln("You must enter the starting date.", "red");
-            eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
-            return false;
-        }
-
-        $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
-
-        $appcv = new AppCacheView();
-        $appcv->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
-        setExecutionMessage("Calculating data to fill the 'User Reporting'...");
-        $appcv->fillReportByUser($dateInit, $dateFinish);
-        setExecutionResultMessage("DONE");
-    } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
-        eprintln("  '-" . $e->getMessage(), "red");
-        saveLog("fillReportByUser", "error", "Error in fill report by user: " . $e->getMessage());
-    }
-}
-
-function fillReportByProcess()
-{
-    try {
-        global $argvx;
-        global $dateInit;
-        global $dateFinish;
-
-        if (strpos($argvx, "report_by_process") === false) {
-            return false;
-        }
-
-        if ($dateInit == null) {
-            eprintln("You must enter the starting date.", "red");
-            eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
-            return false;
-        }
-
-        $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
-        $appcv = new AppCacheView();
-        $appcv->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
-
-        setExecutionMessage("Calculating data to fill the 'Process Reporting'...");
-        $appcv->fillReportByProcess($dateInit, $dateFinish);
-        setExecutionResultMessage("DONE");
-    } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
-        eprintln("  '-" . $e->getMessage(), "red");
-        saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
-    }
-}
 
 function synchronizeDrive()
 {
@@ -1027,94 +616,3 @@ function synchronizeGmailLabels()
     }
 }
 /*----------------------------------********---------------------------------*/
-
-function sendNotifications()
-{
-    try {
-        global $argvx;
-        if ($argvx != "" && strpos($argvx, "send-notifications") === false) {
-            return false;
-        }
-        setExecutionMessage("Resending Notifications");
-        setExecutionResultMessage("PROCESSING");
-        $notQueue = new \NotificationQueue();
-        $notQueue->checkIfCasesOpenForResendingNotification();
-        $notificationsAndroid = $notQueue->loadStatusDeviceType('pending', 'android');
-        if ($notificationsAndroid) {
-            setExecutionMessage("|-- Send Android's Notifications");
-            $n = 0;
-            foreach ($notificationsAndroid as $key => $item) {
-                $oNotification = new \ProcessMaker\BusinessModel\Light\PushMessageAndroid();
-                $oNotification->setSettingNotification();
-                $oNotification->setDevices(unserialize($item['DEV_UID']));
-                $response['android'] = $oNotification->send($item['NOT_MSG'], unserialize($item['NOT_DATA']));
-                $notQueue = new \NotificationQueue();
-                $notQueue->changeStatusSent($item['NOT_UID']);
-                $n += $oNotification->getNumberDevices();
-            }
-            setExecutionResultMessage("Processed $n");
-        }
-        $notificationsApple = $notQueue->loadStatusDeviceType('pending', 'apple');
-        if ($notificationsApple) {
-            setExecutionMessage("|-- Send Apple Notifications");
-            $n = 0;
-            foreach ($notificationsApple as $key => $item) {
-                $oNotification = new \ProcessMaker\BusinessModel\Light\PushMessageIOS();
-                $oNotification->setSettingNotification();
-                $oNotification->setDevices(unserialize($item['DEV_UID']));
-                $response['apple'] = $oNotification->send($item['NOT_MSG'], unserialize($item['NOT_DATA']));
-                $notQueue = new \NotificationQueue();
-                $notQueue->changeStatusSent($item['NOT_UID']);
-                $n += $oNotification->getNumberDevices();
-            }
-            setExecutionResultMessage("Processed $n");
-        }
-    } catch (Exception $e) {
-        setExecutionResultMessage("WITH ERRORS", "error");
-        eprintln("  '-" . $e->getMessage(), "red");
-        saveLog("ExecuteSendNotifications", "error", "Error when sending notifications " . $e->getMessage());
-    }
-}
-
-/**
- * Clean unused records in tables related to the Self-Service Value Based feature
- *
- * @see processWorkspace()
- *
- * @link https://wiki.processmaker.com/3.2/Executing_cron.php#Syntax_of_cron.php_Options
- */
-function cleanSelfServiceTables()
-{
-    try {
-        global $argvx;
-
-        // Check if the action can be executed
-        if ($argvx !== "" && strpos($argvx, "clean-self-service-tables") === false) {
-            return false;
-        }
-
-        // Start message
-        setExecutionMessage("Clean unused records for Self-Service Value Based feature");
-
-        // Get Propel connection
-        $cnn = Propel::getConnection(AppAssignSelfServiceValueGroupPeer::DATABASE_NAME);
-
-        // Delete related rows and missing relations, criteria don't execute delete with joins
-        $cnn->begin();
-        $stmt = $cnn->createStatement();
-        $stmt->executeQuery("DELETE " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . "
-                             FROM " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . "
-                             LEFT JOIN " . AppAssignSelfServiceValuePeer::TABLE_NAME . "
-                             ON (" . AppAssignSelfServiceValueGroupPeer::ID . " = " . AppAssignSelfServiceValuePeer::ID . ")
-                             WHERE " . AppAssignSelfServiceValuePeer::ID . " IS NULL");
-        $cnn->commit();
-
-        // Success message
-        setExecutionResultMessage("DONE");
-    } catch (Exception $e) {
-        $cnn->rollback();
-        setExecutionResultMessage("WITH ERRORS", "error");
-        eprintln("  '-" . $e->getMessage(), "red");
-        saveLog("ExecuteCleanSelfServiceTables", "error", "Error when try to clean self-service tables " . $e->getMessage());
-    }
-}
