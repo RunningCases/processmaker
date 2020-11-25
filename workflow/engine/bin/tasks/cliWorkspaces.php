@@ -430,6 +430,17 @@ CLI::taskArg('fontFileName', false);
 CLI::taskRun('documents_remove_font');
 
 /**
+ * Add +async option to scheduler commands in table SCHEDULER.
+ */
+CLI::taskName('add-async-option-to-scheduler-commands');
+CLI::taskDescription(<<<EOT
+    Add +async option to scheduler commands in table SCHEDULER.
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun('add_async_option_to_scheduler_commands');
+
+/**
  * Convert Web Entries v1.0 to v2.0 for BPMN processes in order to deprecate the old version.
  */
 CLI::taskName('convert-old-web-entries');
@@ -1615,6 +1626,29 @@ function documents_remove_font($args)
     } catch (Exception $e) {
         // Display the error message
         CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
+    }
+}
+
+/**
+ * Add +async option to scheduler commands in table SCHEDULER.
+ * @param array $args
+ * @param string $opts
+ */
+function add_async_option_to_scheduler_commands($args, $opts)
+{
+    if (count($args) === 1) {
+        Bootstrap::setConstantsRelatedWs($args[0]);
+        $workspaceTools = new WorkspaceTools($args[0]);
+
+        CLI::logging("> Adding +async option to scheduler commands...\n");
+        $start = microtime(true);
+        $workspaceTools->addAsyncOptionToSchedulerCommands(true);
+        CLI::logging("<*>   Adding +async option to scheduler commands took " . (microtime(true) - $start) . " seconds.\n");
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru(PHP_BINARY . ' processmaker add-async-option-to-scheduler-commands ' . $workspace->name);
+        }
     }
 }
 

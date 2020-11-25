@@ -2314,7 +2314,7 @@ CREATE TABLE `APP_TIMEOUT_ACTION_EXECUTED`
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
 	`DEL_INDEX` INTEGER default 0 NOT NULL,
 	`EXECUTION_DATE` DATETIME,
-	PRIMARY KEY (`APP_UID`)
+	PRIMARY KEY (`APP_UID`,`DEL_INDEX`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
 #-- ADDONS_STORE

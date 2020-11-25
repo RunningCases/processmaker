@@ -4304,7 +4304,7 @@
 
     <table name="APP_TIMEOUT_ACTION_EXECUTED">
         <column name="APP_UID" type="VARCHAR" size="32" required="true" default="" primaryKey="true"/>
-        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" default="0" primaryKey="true"/>
         <column name="EXECUTION_DATE" type="TIMESTAMP" required="false"/>
     </table>
 
