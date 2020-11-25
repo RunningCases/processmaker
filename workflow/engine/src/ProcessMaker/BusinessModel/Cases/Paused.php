@@ -21,7 +21,8 @@ class Paused extends AbstractCases
         'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
         'APP_DELEGATION.DEL_PRIORITY',  // Priority
         // Additional column for other functionalities
-        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+        'APP_DELEGATION.APP_UID', // Case Uid for Open case
+        'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
     ];
 
     /**
@@ -31,6 +32,39 @@ class Paused extends AbstractCases
     public function getColumnsView()
     {
         return $this->columnsView;
+    }
+
+    /**
+     * Scope filters
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function filters($query)
+    {
+        // Specific case
+        if ($this->getCaseNumber()) {
+            $query->case($this->getCaseNumber());
+        }
+        // Specific case title
+        if (!empty($this->getCaseTitle())) {
+            // @todo: Filter by case title, pending from other PRD
+        }
+        // Specific process
+        if ($this->getProcessId()) {
+            $query->processId($this->getProcessId());
+        }
+        // Specific task
+        if ($this->getTaskId()) {
+            $query->task($this->getTaskId());
+        }
+        // Specific case uid PMFCaseLink
+        if (!empty($this->getCaseUid())) {
+            $query->appUid($this->getCaseUid());
+        }
+
+        return $query;
     }
 
     /**
@@ -44,11 +78,10 @@ class Paused extends AbstractCases
         // Join with process
         $query->joinProcess();
         // Scope that set the paused cases
-        $query->paused($this->getUserId(), $this->getTaskId(), $this->getCaseNumber());
-        // Join with delegation for get the previous index
-        $query->joinPreviousIndex();
-        // Join with delegation for get the previous user
-        $query->joinPreviousUser();
+        $query->paused($this->getUserId(), $this->getTaskId());
+        /** Apply filters */
+        $this->filters($query);
+        /** Apply order and pagination */
         // Add any sort if needed
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
         // Add pagination to the query

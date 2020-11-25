@@ -70,7 +70,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setCaseNumber($cases[0]->APP_NUMBER);
         // Set order by column value
-        $search->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals($cases[0]->APP_NUMBER, $result[0]['APP_NUMBER']);
@@ -88,9 +88,9 @@ class SearchTest extends TestCase
         $cases = $this->createSearch();
         // Create new Search object
         $search = new Search();
-        $search->setPriority($cases[0]->DEL_PRIORITY);
+        $search->setPriority('N');
         // Set order by column value
-        $search->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -110,7 +110,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setProcessId($cases[0]->PRO_ID);
         // Set order by column value
-        $search->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -130,7 +130,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setTaskId($cases[0]->TAS_ID);
         // Set order by column value
-        $search->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -150,7 +150,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setUserId($cases[0]->USR_ID);
         // Set order by column value
-        $search->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -169,7 +169,7 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         // Set order by column value
-        $search->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $search->setOrderByColumn('APP_NUMBER');
         $total = $search->getCounter();
         $this->assertEquals(count($cases), $total);
     }
