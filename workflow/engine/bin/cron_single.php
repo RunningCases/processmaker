@@ -6,6 +6,8 @@
  * @see workflow/engine/bin/cron.php
  * @see workflow/engine/bin/timereventcron.php
  * @see workflow/engine/bin/ldapcron.php
+ * @see workflow/engine/bin/sendnotificationscron.php
+ * @see workflow/engine/bin/webentriescron.php
  * @see workflow/engine/methods/setup/cron.php
  * 
  * @link https://wiki.processmaker.com/3.2/Executing_cron.php
@@ -18,6 +20,7 @@ require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
 require_once __DIR__ . '/../../../bootstrap/app.php';
 
+use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -344,6 +347,11 @@ try {
                         $task = new Task($asynchronous, $sObject);
                         $task->sendNotifications();
                     }
+                    break;
+                case 'webentriescron':
+                    setExecutionMessage('Deleting web entry cases created one week ago or more');
+                    WebEntry::deleteOldWebEntries();
+                    setExecutionResultMessage('FINISHED');
                     break;
                 /*----------------------------------********---------------------------------*/
                 case 'actionsByEmailEmailResponse':

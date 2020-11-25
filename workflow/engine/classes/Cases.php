@@ -983,22 +983,24 @@ class Cases
             /** Update case*/
             $app->update($Fields);
 
-            //Update the reportTables and tables related to the case
-            require_once 'classes/model/AdditionalTables.php';
-            $reportTables = new ReportTables();
-            $additionalTables = new additionalTables();
+            //Update the reportTables and tables related to the case, only for applications with positive application number
+            if ($appFields['APP_NUMBER'] > 0) {
+                require_once 'classes/model/AdditionalTables.php';
+                $reportTables = new ReportTables();
+                $additionalTables = new additionalTables();
 
-            if (!isset($Fields['APP_NUMBER'])) {
-                $Fields['APP_NUMBER'] = $appFields['APP_NUMBER'];
-            }
-            if (!isset($Fields['APP_STATUS'])) {
-                $Fields['APP_STATUS'] = $appFields['APP_STATUS'];
-            }
+                if (!isset($Fields['APP_NUMBER'])) {
+                    $Fields['APP_NUMBER'] = $appFields['APP_NUMBER'];
+                }
+                if (!isset($Fields['APP_STATUS'])) {
+                    $Fields['APP_STATUS'] = $appFields['APP_STATUS'];
+                }
 
-            $reportTables->updateTables($appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData);
-            $additionalTables->updateReportTables(
+                $reportTables->updateTables($appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData);
+                $additionalTables->updateReportTables(
                     $appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData, $Fields['APP_STATUS']
-            );
+                );
+            }
 
             //Update the priority related to the task
             $delIndex = isset($Fields['DEL_INDEX']) ? trim($Fields['DEL_INDEX']) : '';
@@ -2105,199 +2107,201 @@ class Cases
      * This function start a case using the task for the user $sUsrUid
      * With this function we can Start a case
      *
-     * @name startCase
-     * @param string $sTasUid
-     * @param string $sUsrUid
-     * @return Fields
+     * @param string $taskUid
+     * @param string $userUid
+     * @param bool $isSubProcess
+     * @param array $dataPreviousApplication
+     * @param bool $isSelfService
+     * @param  string $sequenceType
+     * @return array
+     * @throws Exception
      */
-    public function startCase($sTasUid, $sUsrUid, $isSubprocess = false, $dataPreviusApplication = array(), $isSelfService = false)
+    public function startCase($taskUid, $userUid, $isSubProcess = false, $dataPreviousApplication = [], $isSelfService = false, $sequenceType = AppSequence::APP_TYPE_NORMAL)
     {
-        if ($sTasUid != '') {
+        if ($taskUid != '') {
             try {
-                $task = TaskPeer::retrieveByPK($sTasUid);
-                $user = UsersPeer::retrieveByPK($sUsrUid);
+                $task = TaskPeer::retrieveByPK($taskUid);
+                $user = UsersPeer::retrieveByPK($userUid);
 
                 if (is_null($task)) {
-                    throw new Exception(G::LoadTranslation("ID_TASK_NOT_EXIST", array("TAS_UID", $sTasUid)));
+                    throw new Exception(G::LoadTranslation("ID_TASK_NOT_EXIST", ["TAS_UID", $taskUid]));
                 }
 
-                //To allow Self Service as the first task
-                $arrayTaskTypeToExclude = array("START-TIMER-EVENT");
+                // To allow Self Service as the first task
+                $arrayTaskTypeToExclude = ["START-TIMER-EVENT"];
 
-                if (!is_null($task) && !in_array($task->getTasType(), $arrayTaskTypeToExclude) && $task->getTasAssignType() != "SELF_SERVICE" && $sUsrUid == "") {
+                if (!is_null($task) && !in_array($task->getTasType(), $arrayTaskTypeToExclude) && $task->getTasAssignType() != "SELF_SERVICE" && $userUid == "") {
                     throw (new Exception('You tried to start a new case without send the USER UID!'));
                 }
 
-                //Process
-                $sProUid = $task->getProUid();
+                // Process
+                $processUid = $task->getProUid();
                 $this->Process = new Process;
-                $proFields = $this->Process->Load($sProUid);
+                $proFields = $this->Process->Load($processUid);
 
-                //application
-                $Application = new Application;
-                $sAppUid = $Application->create($sProUid, $sUsrUid);
+                // Application
+                $application = new Application;
+                $appUid = $application->create($processUid, $userUid, $sequenceType);
 
-                //appDelegation
-                $AppDelegation = new AppDelegation;
-                $iAppThreadIndex = 1; // Start Thread
-                $iAppDelPrio = 3; // Priority
-                $iDelIndex = $AppDelegation->createAppDelegation(
-                    $sProUid,
-                    $sAppUid,
-                    $sTasUid,
-                    $sUsrUid,
-                    $iAppThreadIndex,
-                    $iAppDelPrio,
-                    $isSubprocess,
+                // AppDelegation
+                $appDelegation = new AppDelegation;
+                $appThreadIndex = 1; // Start Thread
+                $appDelPriority = 3; // Priority
+                $delIndex = $appDelegation->createAppDelegation(
+                    $processUid,
+                    $appUid,
+                    $taskUid,
+                    $userUid,
+                    $appThreadIndex,
+                    $appDelPriority,
+                    $isSubProcess,
                     -1,
                     null,
                     false,
                     false,
                     0,
-                    $Application->getAppNumber(),
+                    $application->getAppNumber(),
                     $task->getTasId(),
                     (empty($user)) ? 0 : $user->getUsrId(),
                     $this->Process->getProId()
 
                 );
 
-                //appThread
-                $AppThread = new AppThread;
-                $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex, 0);
+                // AppThread
+                $appThread = new AppThread;
+                $appThreadIndex = $appThread->createAppThread($appUid, $delIndex, 0);
 
-                $oDerivation = new Derivation();
+                $derivation = new Derivation();
 
-                //Multiple Instance
-                $aUserFields = array();
+                // Multiple Instance
+                $usersFields = [];
                 $taskAssignType = $task->getTasAssignType();
                 $nextTaskAssignVariable = $task->getTasAssignVariable();
                 if ($taskAssignType == "MULTIPLE_INSTANCE" || $taskAssignType == "MULTIPLE_INSTANCE_VALUE_BASED") {
                     switch ($taskAssignType) {
                         case 'MULTIPLE_INSTANCE':
-                            $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($sTasUid));
+                            $userFields = $derivation->getUsersFullNameFromArray($derivation->getAllUsersFromAnyTask($taskUid));
                             break;
                         default:
                             throw (new Exception('Invalid Task Assignment method'));
                             break;
                     }
-                    $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($sTasUid));
+                    $userFields = $derivation->getUsersFullNameFromArray($derivation->getAllUsersFromAnyTask($taskUid));
                     $count = 0;
                     foreach ($userFields as $rowUser) {
-                        if ($rowUser["USR_UID"] != $sUsrUid) {
-                            //appDelegation
-                            $AppDelegation = new AppDelegation;
-                            $iAppThreadIndex ++; // Start Thread
-                            $iAppDelPrio = 3; // Priority
+                        if ($rowUser["USR_UID"] != $userUid) {
+                            // AppDelegation
+                            $appDelegation = new AppDelegation;
+                            $appThreadIndex ++; // Start Thread
+                            $appDelPriority = 3; // Priority
                             $user = UsersPeer::retrieveByPK($rowUser["USR_UID"]);
-                            $iDelIndex1 = $AppDelegation->createAppDelegation(
-                                $sProUid,
-                                $sAppUid,
-                                $sTasUid,
+                            $delIndex1 = $appDelegation->createAppDelegation(
+                                $processUid,
+                                $appUid,
+                                $taskUid,
                                 $rowUser["USR_UID"],
-                                $iAppThreadIndex,
-                                $iAppDelPrio,
-                                $isSubprocess,
+                                $appThreadIndex,
+                                $appDelPriority,
+                                $isSubProcess,
                                 -1,
                                 null,
                                 false,
                                 false,
                                 0,
-                                $Application->getAppNumber(),
+                                $application->getAppNumber(),
                                 $task->getTasId(),
                                 (empty($user)) ? 0 : $user->getUsrId(),
                                 $this->Process->getProId()
                             );
-                            //appThread
-                            $AppThread = new AppThread;
-                            $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0);
-                            //Save Information
-                            $aUserFields[$count] = $rowUser;
-                            $aUserFields[$count]["DEL_INDEX"] = $iDelIndex1;
+                            // AppThread
+                            $appThread = new AppThread;
+                            $appThreadIndex = $appThread->createAppThread($appUid, $delIndex1, 0);
+                            // Save Information
+                            $usersFields[$count] = $rowUser;
+                            $usersFields[$count]["DEL_INDEX"] = $delIndex1;
                             $count++;
                         }
                     }
                 }
 
-                //DONE: Al ya existir un delegation, se puede "calcular" el caseTitle.
-                $Fields = $Application->toArray(BasePeer::TYPE_FIELDNAME);
-                $aApplicationFields = $Fields['APP_DATA'];
-                $Fields['DEL_INDEX'] = $iDelIndex;
-                $newValues = $this->newRefreshCaseTitleAndDescription($sAppUid, $Fields, $aApplicationFields);
+                $fields = $application->toArray(BasePeer::TYPE_FIELDNAME);
+                $applicationFields = $fields['APP_DATA'];
+                $fields['DEL_INDEX'] = $delIndex;
+                $newValues = $this->newRefreshCaseTitleAndDescription($appUid, $fields, $applicationFields);
                 if (!isset($newValues['APP_TITLE'])) {
                     $newValues['APP_TITLE'] = '';
                 }
 
-                $caseNumber = $Fields['APP_NUMBER'];
-                $Application->update($Fields);
+                $caseNumber = $fields['APP_NUMBER'];
+                $application->update($fields);
 
-                //Update the task last assigned (for web entry and web services)
-                $oDerivation->setTasLastAssigned($sTasUid, $sUsrUid);
+                // Update the task last assigned (for web entry and web services)
+                $derivation->setTasLastAssigned($taskUid, $userUid);
 
                 // Execute Events
-                require_once 'classes/model/Event.php';
                 $event = new Event();
-                $event->createAppEvents($sProUid, $sAppUid, $iDelIndex, $sTasUid);
+                $event->createAppEvents($processUid, $appUid, $delIndex, $taskUid);
 
-                //update searchindex
+                // Update search index
                 if ($this->appSolr != null) {
-                    $this->appSolr->updateApplicationSearchIndex($sAppUid);
+                    $this->appSolr->updateApplicationSearchIndex($appUid);
                 }
 
                 /*----------------------------------********---------------------------------*/
-                $Fields['TAS_UID'] = $sTasUid;
-                $Fields['USR_UID'] = $sUsrUid;
-                $Fields['DEL_INDEX'] = $iDelIndex;
-                $Fields['APP_STATUS'] = 'TO_DO';
-                $Fields['DEL_DELEGATE_DATE'] = $Fields['APP_INIT_DATE'];
-                if (!$isSubprocess) {
-                    $Fields['APP_STATUS'] = 'DRAFT';
+                $fields['TAS_UID'] = $taskUid;
+                $fields['USR_UID'] = $userUid;
+                $fields['DEL_INDEX'] = $delIndex;
+                $fields['APP_STATUS'] = 'TO_DO';
+                $fields['DEL_DELEGATE_DATE'] = $fields['APP_INIT_DATE'];
+                if (!$isSubProcess) {
+                    $fields['APP_STATUS'] = 'DRAFT';
                 } else {
-                    $Fields['APP_INIT_DATE'] = null;
+                    $fields['APP_INIT_DATE'] = null;
                 }
                 $inbox = new ListInbox();
-                $inbox->newRow($Fields, $sUsrUid, $isSelfService);
+                $inbox->newRow($fields, $userUid, $isSelfService);
 
-                //Multiple Instance
-                foreach ($aUserFields as $rowUser) {
-                    $Fields["USR_UID"] = $rowUser["USR_UID"];
-                    $Fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
+                // Multiple Instance
+                foreach ($usersFields as $rowUser) {
+                    $fields["USR_UID"] = $rowUser["USR_UID"];
+                    $fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
                     $inbox = new ListInbox();
-                    $inbox->newRow($Fields, $sUsrUid, $isSelfService);
+                    $inbox->newRow($fields, $userUid, $isSelfService);
                 }
                 /*----------------------------------********---------------------------------*/
-            } catch (exception $e) {
+            } catch (Exception $e) {
                 throw ($e);
             }
         } else {
             throw (new Exception('You tried to start a new case without send the USER UID or TASK UID!'));
         }
 
-        //Log
+        // Log
         $message = 'Create case';
         $context = $data = [
-            "appUid" => $sAppUid,
-            "usrUid" => $sUsrUid,
-            "tasUid" => $sTasUid,
-            "isSubprocess" => $isSubprocess,
+            "appUid" => $appUid,
+            "usrUid" => $userUid,
+            "tasUid" => $taskUid,
+            "isSubProcess" => $isSubProcess,
             "appNumber" => $caseNumber,
-            "delIndex" => $iDelIndex,
-            "appInitDate" => $Fields['APP_INIT_DATE']
+            "delIndex" => $delIndex,
+            "appInitDate" => $fields['APP_INIT_DATE']
         ];
         Log::channel(':CreateCase')->info($message, Bootstrap::context($context));
-        //call plugin
+        // Call plugin
         if (class_exists('folderData')) {
-            $folderData = new folderData($sProUid, $proFields['PRO_TITLE'], $sAppUid, $newValues['APP_TITLE'], $sUsrUid);
-            $oPluginRegistry = PluginRegistry::loadSingleton();
-            $oPluginRegistry->executeTriggers(PM_CREATE_CASE, $folderData);
+            $folderData = new folderData($processUid, $proFields['PRO_TITLE'], $appUid, $newValues['APP_TITLE'], $userUid);
+            $pluginRegistry = PluginRegistry::loadSingleton();
+            $pluginRegistry->executeTriggers(PM_CREATE_CASE, $folderData);
         }
-        $this->getExecuteTriggerProcess($sAppUid, 'CREATE');
-        //end plugin
-        return array(
-            'APPLICATION' => $sAppUid,
-            'INDEX' => $iDelIndex,
-            'PROCESS' => $sProUid,
+        $this->getExecuteTriggerProcess($appUid, 'CREATE');
+        // End plugin
+        return [
+            'APPLICATION' => $appUid,
+            'INDEX' => $delIndex,
+            'PROCESS' => $processUid,
             'CASE_NUMBER' => $caseNumber
-        );
+        ];
     }
 
     /**

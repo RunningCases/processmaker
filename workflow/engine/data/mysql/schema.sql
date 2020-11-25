@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS `APP_SEQUENCE`;
 CREATE TABLE `APP_SEQUENCE`
 (
 	`ID` INTEGER  NOT NULL,
-	PRIMARY KEY (`ID`)
+	`APP_TYPE` VARCHAR(20) default 'NORMAL' NOT NULL
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
 #-- APP_DELEGATION

@@ -314,6 +314,8 @@ class AppFolder extends BaseAppFolder
         $oCriteria->addSelectColumn( AppDocumentPeer::APP_DOC_STATUS_DATE);
         $oCriteria->addSelectColumn( AppDocumentPeer::APP_DOC_FIELDNAME);
         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_DRIVE_DOWNLOAD);
+        $oCriteria->addJoin(AppDocumentPeer::APP_UID, ApplicationPeer::APP_UID);
+        $oCriteria->add(ApplicationPeer::APP_NUMBER, 0, Criteria::GREATER_THAN);
 
         if ((is_array( $docIdFilter )) && (count( $docIdFilter ) > 0)) {
             //Search by App Doc UID no matter what Folder it is
