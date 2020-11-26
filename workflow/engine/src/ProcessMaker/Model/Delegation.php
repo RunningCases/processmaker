@@ -7,6 +7,7 @@ use G;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\Task;
 
 class Delegation extends Model
 {
@@ -804,6 +805,25 @@ class Delegation extends Model
     }
 
     /**
+     * Return the task related to the thread
+     *
+     * @param int $appNumber
+     * @param int $index
+     *
+     * @return array
+     */
+    public static function getThreadInfo(int $appNumber, int $index)
+    {
+        $query = Delegation::query()->select(['APP_NUMBER', 'TAS_UID', 'TAS_ID', 'DEL_PREVIOUS', 'DEL_TITLE']);
+        $query->where('APP_NUMBER', $appNumber);
+        $query->where('DEL_INDEX', $index);
+        $query->limit(1);
+        $result = $query->get()->toArray();
+
+        return head($result);
+    }
+
+    /**
      * Return the thread related to the specific task-index
      *
      * @param string $appUid
@@ -850,5 +870,36 @@ class Delegation extends Model
         });
 
         return $thread;
+    }
+
+    /**
+     * Get the thread title related to the delegation
+     *
+     * @param string $tasUid
+     * @param int $appNumber
+     * @param int $delIndexPrevious
+     * @param array $caseData
+     *
+     * @return string
+     */
+    public static function getThreadTitle(string $tasUid, int $appNumber, int $delIndexPrevious, $caseData = [])
+    {
+        // Get task title defined
+        $task = new Task();
+        $taskTitle = $task->taskCaseTitle($tasUid);
+        // If exist we will to replace the variables data
+        if (!empty($taskTitle)) {
+            $threadTitle = G::replaceDataField($taskTitle, $caseData, 'mysql', false);
+        } else {
+            // If is empty get the previous title
+            if ($delIndexPrevious > 0) {
+                $thread = self::getThreadInfo($appNumber, $delIndexPrevious);
+                $threadTitle = $thread['DEL_TITLE'];
+            } else {
+                $threadTitle = '# '. $appNumber;
+            }
+        }
+
+        return $threadTitle;
     }
 }

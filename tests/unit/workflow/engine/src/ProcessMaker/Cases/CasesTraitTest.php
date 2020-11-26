@@ -196,7 +196,7 @@ class CasesTraitTest extends TestCase
         $task2 = $result->task2;
 
         $processUid = $application->PRO_UID;
-        $application = $application->APP_UID;
+        $appUid = $application->APP_UID;
         $postForm = [
             'ROU_TYPE' => 'SEQUENTIAL',
             'TASKS' => [
@@ -229,9 +229,9 @@ class CasesTraitTest extends TestCase
         $userLogged = $user->USR_UID;
 
         $cases = new Cases();
-        $cases->routeCase($processUid, $application, $postForm, $status, $flagGmail, $tasUid, $index, $userLogged);
+        $cases->routeCase($processUid, $appUid, $postForm, $status, $flagGmail, $tasUid, $index, $userLogged);
 
-        $result = Delegation::where('APP_UID', '=', $application)->where('DEL_INDEX', '=', $index)->get()->first();
+        $result = Delegation::where('APP_UID', '=', $appUid)->where('DEL_INDEX', '=', $index)->get()->first();
 
         $this->assertEquals('CLOSED', $result->DEL_THREAD_STATUS);
     }
