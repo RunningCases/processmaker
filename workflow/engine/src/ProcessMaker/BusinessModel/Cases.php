@@ -33,6 +33,7 @@ use Exception;
 use G;
 use Groups;
 use GroupUserPeer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InputDocument;
 use InvalidIndexSearchTextException;
@@ -4234,5 +4235,49 @@ class Cases
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Get DynaForms Uids assigned as steps in the related process by application Uid
+     *
+     * @param string $appUid
+     * @param int $sourceTask
+     * @param string $dynUid
+     * @param string $caseStatus
+     * @return array
+     */
+    public static function dynaFormsByApplication($appUid, $sourceTask = 0, $dynUid = '', $caseStatus = '')
+    {
+        // Select distinct DYN_UID
+        $query = ModelApplication::query()->select('STEP.STEP_UID_OBJ AS DYN_UID')->distinct();
+
+        // Join with STEP table
+        $query->join('STEP', function ($join)  {
+            $join->on('APPLICATION.PRO_UID', '=', 'STEP.PRO_UID');
+            $join->on('STEP.STEP_TYPE_OBJ', '=', DB::raw("'DYNAFORM'"));
+        });
+
+        // Filter by application Uid
+        $query->where('APPLICATION.APP_UID', '=', $appUid);
+
+        // Filter by source task
+        if ($caseStatus != 'COMPLETED' && $sourceTask != '' && (int)$sourceTask != 0) {
+            $query->where('STEP.TAS_UID', '=', $sourceTask);
+        }
+
+        // Filter by DynaForm Uid
+        if ($dynUid != '' && $dynUid != '0') {
+            $query->where('STEP.STEP_UID_OBJ', '=', $dynUid);
+        }
+
+        // Get results
+        $dynaForms = [];
+        $items = $query->get();
+        $items->each(function ($item) use (&$dynaForms) {
+            $dynaForms[] = $item->DYN_UID;
+        });
+
+        // Return results
+        return $dynaForms;
     }
 }
