@@ -4,13 +4,13 @@ namespace ProcessMaker\BusinessModel;
 
 use Exception;
 use G;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
-use ProcessMaker\BusinessModel\Cases;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
 use ProcessMaker\Model\ListUnassigned;
+use ProcessMaker\Model\Process;
+use ProcessMaker\Model\Step;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\User;
@@ -18,7 +18,7 @@ use RBAC;
 use Tests\TestCase;
 
 /**
- * Class DelegationTest
+ * Class CasesTest
  *
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases
  */
@@ -314,5 +314,67 @@ class CasesTest extends TestCase
         DB::commit();
         $casesExecuted = Cases::executeSelfServiceTimeout();
         $this->assertTrue(is_array($casesExecuted));
+    }
+
+    /**
+     * It test get assigned DynaForms as steps by application Uid
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::dynaFormsByApplication()
+     * @test
+     */
+    public function it_should_test_get_dynaforms_by_application()
+    {
+        // Create a process
+        $process = factory(Process::class)->create();
+
+        // Create a task related to the process
+        $task1 = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        // Created another task related to the process
+        $task2 = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        // Created a step related to the first task
+        factory(Step::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task1->TAS_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => G::generateUniqueID(),
+            'STEP_POSITION' => 1
+        ]);
+
+        // Created a step related to the second task and with a specific DynaForm Uid
+        $dynUid = G::generateUniqueID();
+        factory(Step::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynUid,
+            'STEP_POSITION' => 1
+        ]);
+
+        // Create an application related to the process in draft status
+        $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'APP_STATUS' => 'DRAFT'
+        ]);
+
+        // Get all DynaForms assigned as steps
+        self::assertCount(2, Cases::dynaFormsByApplication($application->APP_UID));
+
+        // Get DynaForms assigned as steps for the first task
+        self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, $task1->TAS_UID));
+
+        // Get DynaForms assigned as steps sending a specific DynaForm Uid
+        self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, '', $dynUid));
+
+        // Get DynaForms assigned as steps for the second task when the application status is DRAFT
+        self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'TO_DO'));
+
+        // Get DynaForms assigned as steps for the second task when the application status is COMPLETED
+        self::assertCount(2, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'COMPLETED'));
     }
 }

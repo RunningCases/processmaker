@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Log;
+use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
 use ProcessMaker\BusinessModel\Task as BusinessModelTask;
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
 use ProcessMaker\BusinessModel\WebEntryEvent;
@@ -6093,7 +6094,7 @@ class Cases
                 switch ($opType) {
                     case 'ANY':
                         //For dynaforms
-                        $listDynaform = $objectPermission->objectPermissionByDynaform(
+                        $listDynaform = BusinessModelCases::dynaFormsByApplication(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
@@ -6153,7 +6154,7 @@ class Cases
                         $resultMessages = array_merge($resultMessages, $listMessage);
                         break;
                     case 'DYNAFORM':
-                        $listDynaform = $objectPermission->objectPermissionByDynaform(
+                        $listDynaform = BusinessModelCases::dynaFormsByApplication(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
