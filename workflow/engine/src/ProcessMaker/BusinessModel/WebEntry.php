@@ -1,8 +1,12 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
+use AppSequence;
+use Cases;
 use Criteria;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\Application;
 use ResultSet;
 use WebEntryPeer;
 
@@ -1125,5 +1129,92 @@ class WebEntry
         }
         return $message;
     }
-}
 
+    /**
+     * Swap temporary web entry application number to a normal application number
+     *
+     * @param string $appUid
+     * @return int
+     */
+    public function swapTemporaryAppNumber($appUid)
+    {
+        // Get the application
+        $application = Application::query()->select(['APP_NUMBER'])->where('APP_UID', '=', $appUid)->first()->toArray();
+
+        // If application exists, swap the number
+        if (!empty($application)) {
+            // Get a normal sequence number
+            $appSequence = new AppSequence();
+            $appNumber = $appSequence->sequenceNumber(AppSequence::APP_TYPE_NORMAL);
+
+            // Update case with the new application number
+            $cases = new Cases();
+            $casesData = $cases->loadCase($appUid);
+            $casesData['APP_NUMBER'] = $casesData['APP_DATA']['APP_NUMBER'] = $appNumber;
+            $cases->updateCase($appUid, $casesData);
+
+            // Build the query to update related tables and fields
+            $query = "UPDATE `APPLICATION` SET `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `APP_DATA_CHANGE_LOG` SET `APP_NUMBER` = {$appNumber} WHERE `APP_NUMBER` = {$application['APP_NUMBER']};";
+            $query .= "UPDATE `APP_DELEGATION` SET `APP_NUMBER` = {$appNumber} WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `LIST_INBOX` SET `APP_NUMBER` = {$appNumber}, `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `LIST_PARTICIPATED_HISTORY` SET `APP_NUMBER` = {$appNumber}, `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+            $query .= "UPDATE `LIST_PARTICIPATED_LAST` SET `APP_NUMBER` = {$appNumber}, `APP_TITLE` = '#{$appNumber}' WHERE `APP_UID` = '{$appUid}';";
+
+            // Execute the query
+            DB::connection('workflow')->unprepared($query);
+
+            // Return new application number
+            return $appNumber;
+        }
+    }
+
+    /**
+     * Convert Web Entries v1.0 to v2.0
+     */
+    public static function convertFromV1ToV2()
+    {
+        // Build query
+        $query = "UPDATE
+                      `WEB_ENTRY`
+                  LEFT JOIN
+                      `BPMN_PROCESS`
+                  ON
+                      (`WEB_ENTRY`.`PRO_UID` = `BPMN_PROCESS`.`PRJ_UID`)
+                  SET
+                      `WEB_ENTRY`.`DYN_UID` = '', `WEB_ENTRY`.`WE_TYPE` = 'MULTIPLE'
+                  WHERE
+                      `WE_TYPE` = 'SINGLE' AND `WE_AUTHENTICATION` = 'ANONYMOUS' AND
+                      `WE_CALLBACK` = 'PROCESSMAKER' AND `BPMN_PROCESS`.`PRJ_UID` IS NOT NULL";
+
+        // Execute query
+        DB::connection('workflow')->statement($query);
+    }
+
+    /**
+     * Delete web entries created one week ago or more
+     */
+    public static function deleteOldWebEntries()
+    {
+        // Define some values for PM tables classes
+        if (!defined('PATH_WORKSPACE')) {
+            define('PATH_WORKSPACE', PATH_DB . config('system.workspace') . PATH_SEP);
+        }
+        set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
+
+        // Calculate date, one week ago from today
+        $date = now()->subWeek()->format('Y-m-d H:i:s');
+
+        // Build query
+        $query = "SELECT `APP_UID` FROM `APPLICATION` WHERE `APP_NUMBER` < 0 AND `APP_CREATE_DATE` < '{$date}'";
+
+        // Execute query
+        $cases = DB::connection('workflow')->select($query);
+
+        // Delete cases, one by one with all related records
+        $casesInstance = new Cases();
+        foreach ($cases as $case) {
+            $casesInstance->removeCase($case->APP_UID);
+        }
+    }
+}

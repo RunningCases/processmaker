@@ -1061,6 +1061,9 @@ try {
                     $tplFile = 'webentry/cases_ScreenDerivation';
                     $caseId = $currentTask['APP_UID'];
                     $delIndex = $currentTask['DEL_INDEX'];
+                    // Swap temporary APP_NUMBER
+                    $newAppNumber = $bmWebEntry->swapTemporaryAppNumber($caseId);
+                    $Fields['APP_NUMBER'] = $Fields['APP_DATA']['APP_NUMBER'] = $newAppNumber;
                     $derivationResponse = PMFDerivateCase($caseId, $delIndex, true);
                     if ($derivationResponse) {
                         $webEntryUrl = $bmWebEntry->getCallbackUrlByTask($currentTask['TAS_UID']);

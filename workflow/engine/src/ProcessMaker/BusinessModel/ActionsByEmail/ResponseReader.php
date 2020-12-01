@@ -59,7 +59,7 @@ class ResponseReader
         try {
             if (!extension_loaded('imap')) {
                 G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", ['php_imap']) . "\n");
-                exit;
+                return;
             }
             if (PMLicensedFeatures
                 ::getSingleton()
@@ -145,6 +145,7 @@ class ResponseReader
                 $emailSetup['MESS_ACCOUNT'],
                 $this->decryptPassword($emailSetup)
             );
+            Log::channel(':' . $this->channel)->debug("Open mailbox", Bootstrap::context($emailSetup));
 
             // Read all messages into an array
             $mailsIds = $mailbox->searchMailbox('UNSEEN');
@@ -153,6 +154,7 @@ class ResponseReader
                 foreach ($mailsIds as $key => $mailId) {
                     /** @var IncomingMail $mail */
                     $mail = $mailbox->getMail($mailId, false);
+                    Log::channel(':' . $this->channel)->debug("Get mail", Bootstrap::context(['mailId' => $mailId]));
                     if (!empty($mail->textPlain)) {
                         preg_match("/{(.*)}/", $mail->textPlain, $matches);
                         if ($matches) {

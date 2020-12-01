@@ -10932,6 +10932,12 @@ msgid "Log Information"
 msgstr "Log Information"
 
 # TRANSLATION
+# LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+#: LABEL/ID_MAFE_TRANSLATION_DIRECTORY
+msgid "MAFE Translation Directory"
+msgstr "MAFE Translation Directory"
+
+# TRANSLATION
 # LABEL/ID_MAFE_0015b7e51c1ca4293041c429985ca323
 #: LABEL/ID_MAFE_0015b7e51c1ca4293041c429985ca323
 msgid "The specified subform could not be found in the process."
@@ -22086,6 +22092,12 @@ msgid "[LABEL/ID_PROCESS_NO_CATEGORY] No Category"
 msgstr "No Category"
 
 # TRANSLATION
+# LABEL/ID_PROCESS_NONE_CATEGORY
+#: LABEL/ID_PROCESS_NONE_CATEGORY
+msgid "- No Category -"
+msgstr "- No Category -"
+
+# TRANSLATION
 # LABEL/ID_PROCESS_NO_EXIST
 #: LABEL/ID_PROCESS_NO_EXIST
 msgid "Process doesn't exist!"
@@ -25498,6 +25510,18 @@ msgstr "Thu"
 #: LABEL/ID_TIMER_EVENT
 msgid "Timer event"
 msgstr "Timer event"
+
+# TRANSLATION
+# LABEL/ID_CLEAN_WEBENTRIES
+#: LABEL/ID_CLEAN_WEBENTRIES
+msgid "Clean web-entries"
+msgstr "Clean web-entries"
+
+# TRANSLATION
+# LABEL/ID_CLEAN_WEBENTRIES_DESC
+#: LABEL/ID_CLEAN_WEBENTRIES_DESC
+msgid "Clean web-entries"
+msgstr "Clean web-entries"
 
 # TRANSLATION
 # LABEL/ID_TIMER_EVENT_DESC

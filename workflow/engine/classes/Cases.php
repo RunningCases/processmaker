@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Log;
+use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
 use ProcessMaker\BusinessModel\Task as BusinessModelTask;
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
 use ProcessMaker\BusinessModel\WebEntryEvent;
@@ -872,22 +873,24 @@ class Cases
             /** Update case*/
             $app->update($Fields);
 
-            //Update the reportTables and tables related to the case
-            require_once 'classes/model/AdditionalTables.php';
-            $reportTables = new ReportTables();
-            $additionalTables = new additionalTables();
+            //Update the reportTables and tables related to the case, only for applications with positive application number
+            if ($appFields['APP_NUMBER'] > 0) {
+                require_once 'classes/model/AdditionalTables.php';
+                $reportTables = new ReportTables();
+                $additionalTables = new additionalTables();
 
-            if (!isset($Fields['APP_NUMBER'])) {
-                $Fields['APP_NUMBER'] = $appFields['APP_NUMBER'];
-            }
-            if (!isset($Fields['APP_STATUS'])) {
-                $Fields['APP_STATUS'] = $appFields['APP_STATUS'];
-            }
+                if (!isset($Fields['APP_NUMBER'])) {
+                    $Fields['APP_NUMBER'] = $appFields['APP_NUMBER'];
+                }
+                if (!isset($Fields['APP_STATUS'])) {
+                    $Fields['APP_STATUS'] = $appFields['APP_STATUS'];
+                }
 
-            $reportTables->updateTables($appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData);
-            $additionalTables->updateReportTables(
+                $reportTables->updateTables($appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData);
+                $additionalTables->updateReportTables(
                     $appFields['PRO_UID'], $appUid, $Fields['APP_NUMBER'], $appData, $Fields['APP_STATUS']
-            );
+                );
+            }
 
             //Update the priority related to the task
             $delIndex = isset($Fields['DEL_INDEX']) ? trim($Fields['DEL_INDEX']) : '';
@@ -2032,11 +2035,12 @@ class Cases
      * @param bool $isSubprocess
      * @param array $previousInfo
      * @param bool $isSelfService
+     * @param string $sequenceType
      *
      * @return Fields
      * @throw Exception
      */
-    public function startCase(string $tasUid, string $usrUid, $isSubprocess = false, $previousInfo = [], $isSelfService = false)
+    public function startCase(string $tasUid, string $usrUid, $isSubprocess = false, $previousInfo = [], $isSelfService = false, $sequenceType = AppSequence::APP_TYPE_NORMAL)
     {
         if (!empty($tasUid)) {
             try {
@@ -2059,7 +2063,7 @@ class Cases
 
                 // Create application
                 $application = new Application;
-                $appUid = $application->create($proUid, $usrUid);
+                $appUid = $application->create($proUid, $usrUid, $sequenceType);
                 $fields = $application->toArray(BasePeer::TYPE_FIELDNAME);
 
                 // Create appDelegation
@@ -2088,7 +2092,7 @@ class Cases
                 $routing = new Derivation();
 
                 // Multiple Instance
-                $aUserFields = [];
+                $userFields = [];
                 $taskAssignType = $task->getTasAssignType();
                 if ($taskAssignType == "MULTIPLE_INSTANCE" || $taskAssignType == "MULTIPLE_INSTANCE_VALUE_BASED") {
                     switch ($taskAssignType) {
@@ -2130,8 +2134,8 @@ class Cases
                             $thread = new AppThread;
                             $threadIndex = $thread->createAppThread($appUid, $delIndex1, 0);
                             // Save Information
-                            $aUserFields[$count] = $rowUser;
-                            $aUserFields[$count]["DEL_INDEX"] = $delIndex1;
+                            $userFields[$count] = $rowUser;
+                            $userFields[$count]["DEL_INDEX"] = $delIndex1;
                             $count++;
                         }
                     }
@@ -2171,7 +2175,7 @@ class Cases
                 $inbox->newRow($fields, $usrUid, $isSelfService);
 
                 // Multiple Instance
-                foreach ($aUserFields as $rowUser) {
+                foreach ($userFields as $rowUser) {
                     $fields["USR_UID"] = $rowUser["USR_UID"];
                     $fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
                     $inbox = new ListInbox();
@@ -5994,7 +5998,7 @@ class Cases
                 switch ($opType) {
                     case 'ANY':
                         //For dynaforms
-                        $listDynaform = $objectPermission->objectPermissionByDynaform(
+                        $listDynaform = BusinessModelCases::dynaFormsByApplication(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
@@ -6054,7 +6058,7 @@ class Cases
                         $resultMessages = array_merge($resultMessages, $listMessage);
                         break;
                     case 'DYNAFORM':
-                        $listDynaform = $objectPermission->objectPermissionByDynaform(
+                        $listDynaform = BusinessModelCases::dynaFormsByApplication(
                             $appUid,
                             $opTaskSource,
                             $opObjUid,

@@ -640,3 +640,33 @@ function saveAppDocument($file, $appUid, $appDocUid, $version = 1, $upload = tru
         throw $e;
     }
 }
+
+/**
+ * Add a specific date minutes, hours or days
+ *
+ * @param string $iniDate
+ * @param string $timeUnit
+ * @param int $time
+ *
+ * @return string
+ *
+ * @link https://www.php.net/manual/en/datetime.modify.php
+ */
+function calculateDate($iniDate, $timeUnit, $time)
+{
+
+    $datetime = new DateTime($iniDate);
+    switch ($timeUnit) {
+        case 'DAYS':
+            $datetime->modify('+' . $time . ' day');
+            break;
+        case 'HOURS':
+            $datetime->modify('+' . $time . ' hour');
+            break;
+        case 'MINUTES':
+            $datetime->modify('+' . $time . ' minutes');
+            break;
+    }
+
+    return $datetime->format('Y-m-d H:i:s');
+}

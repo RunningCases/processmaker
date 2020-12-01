@@ -7,6 +7,7 @@ use ProcessMaker\BusinessModel\Process as BmProcess;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
+use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\ProcessesManager;
 use ProcessMaker\Core\System;
@@ -364,6 +365,18 @@ class WorkspaceTools
         $start = microtime(true);
         $this->updateTriggers(true, $lang);
         CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
+        
+        CLI::logging("* Start adding +async option to scheduler commands...\n");
+        $start = microtime(true);
+        $this->addAsyncOptionToSchedulerCommands(true);
+        CLI::logging("* End adding +async option to scheduler commands...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start Converting Web Entries v1.0 to v2.0 for BPMN processes...\n");
+        $start = microtime(true);
+        Bootstrap::setConstantsRelatedWs($workspace);
+        Propel::init(PATH_CONFIG . 'databases.php');
+        WebEntry::convertFromV1ToV2();
+        CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
     }
 
     /**
@@ -1243,11 +1256,14 @@ class WorkspaceTools
                 if ($action == 'ADD') {
                     $tablesToAddColumns[$tableName] = $actionData;
 
-                    // In a very old schema the primary key for table "LOGIN_LOG" was changed and we need to delete the
+                    // In a very old schema the primary key for tables "LOGIN_LOG" and "APP_SEQUENCE" were changed and we need to delete the
                     // primary index to avoid errors in the database upgrade
                     // TO DO: The change of a Primary Key in a table should be generic
                     if ($tableName == 'LOGIN_LOG' && array_key_exists('LOG_ID', $actionData)) {
                         $database->executeQuery('DROP INDEX `PRIMARY` ON LOGIN_LOG;');
+                    }
+                    if ($tableName == 'APP_SEQUENCE' && array_key_exists('APP_TYPE', $actionData)) {
+                        $database->executeQuery('DROP INDEX `PRIMARY` ON APP_SEQUENCE;');
                     }
                 } else {
                     foreach ($actionData as $columnName => $meta) {
@@ -2206,6 +2222,18 @@ class WorkspaceTools
                 $start = microtime(true);
                 $workspace->updateTriggers(true, $lang);
                 CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start adding +async option to scheduler commands...\n");
+                $start = microtime(true);
+                $workspace->addAsyncOptionToSchedulerCommands(false);
+                CLI::logging("* End adding +async option to scheduler commands...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start Converting Web Entries v1.0 to v2.0 for BPMN processes...\n");
+                $start = microtime(true);
+                Bootstrap::setConstantsRelatedWs($workspace);
+                Propel::init(PATH_CONFIG . 'databases.php');
+                WebEntry::convertFromV1ToV2();
+                CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
             }
 
             CLI::logging("> Start To Verify License Enterprise...\n");
@@ -3285,21 +3313,45 @@ class WorkspaceTools
         }
     }
 
+    /**
+     * Add sequence numbers
+     */
     public function checkSequenceNumber()
     {
-        $criteria = new Criteria("workflow");
+        // Instance required class
+        $appSequenceInstance = new AppSequence();
+
+        // Get a record from APP_SEQUENCE table
+        $criteria = new Criteria('workflow');
         $rsCriteria = AppSequencePeer::doSelectRS($criteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rsCriteria->next();
         $appSequenceRow = $rsCriteria->getRow();
+
+        // If table APP_SEQUENCE is empty, insert two records
         if (empty($appSequenceRow)) {
-            $sequenceInstance = SequencesPeer::retrieveByPK("APP_NUMBER");
-            $appSequenceInstance = new AppSequence();
+            // Check if exist a value in old table SEQUENCES
+            $sequenceInstance = SequencesPeer::retrieveByPK('APP_NUMBER');
+
             if (!is_null($sequenceInstance)) {
+                // If exists a value in SEQUENCE table, copy the same to APP_SEQUENCES table
                 $sequenceFields = $sequenceInstance->toArray(BasePeer::TYPE_FIELDNAME);
                 $appSequenceInstance->updateSequenceNumber($sequenceFields['SEQ_VALUE']);
             } else {
+                // If not exists a value in SEQUENCE table, insert a initial value
                 $appSequenceInstance->updateSequenceNumber(0);
+            }
+
+            // Insert a initial value for the web entries
+            $appSequenceInstance->updateSequenceNumber(0, AppSequence::APP_TYPE_WEB_ENTRY);
+        } else {
+            // Create a new instance of Criteria class
+            $criteria = new Criteria('workflow');
+            $criteria->add(AppSequencePeer::APP_TYPE, AppSequence::APP_TYPE_WEB_ENTRY);
+
+            // Check if exists a record for the web entries, if not exist insert the initial value
+            if (AppSequencePeer::doCount($criteria) === 0) {
+                $appSequenceInstance->updateSequenceNumber(0, AppSequence::APP_TYPE_WEB_ENTRY);
             }
         }
     }
@@ -4939,7 +4991,9 @@ class WorkspaceTools
         $case = new Cases();
 
         //select cases for this Process, ordered by APP_NUMBER
-        $applications = Application::where('PRO_UID', '=', $processUid)
+        $applications = Application::query()
+                ->where('PRO_UID', '=', $processUid)
+                ->where('APP_NUMBER', '>', 0)
                 ->orderBy('APP_NUMBER', 'asc')
                 ->offset($start)
                 ->limit($limit)
@@ -5039,5 +5093,38 @@ class WorkspaceTools
     {
         $database = $this->getDatabase($rbac);
         $database->executeQuery($query, true);
+    }
+
+    /**
+     * Add +async option to scheduler commands in table SCHEDULER.
+     * @param boolean $force
+     */
+    public function addAsyncOptionToSchedulerCommands($force = false)
+    {
+        //read update status
+        $this->initPropel(true);
+        $conf = new Configurations();
+        $exist = $conf->exists('ADDED_ASYNC_OPTION_TO_SCHEDULER', 'scheduler');
+        if ($exist === true && $force === false) {
+            $config = (object) $conf->load('ADDED_ASYNC_OPTION_TO_SCHEDULER', 'scheduler');
+            if ($config->updated) {
+                CLI::logging("-> This was previously updated.\n");
+                return;
+            }
+        }
+
+        //update process
+        $updateQuery = ""
+            . "UPDATE {$this->dbName}.SCHEDULER SET body = REPLACE(body, '+force\"', '+force +async\"') "
+            . "WHERE body NOT LIKE '%+async%'"
+            . "";
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($updateQuery);
+        CLI::logging("-> Adding +async option to scheduler commands in table {$this->dbName}.SCHEDULER\n");
+
+        //save update status
+        $conf->aConfig = ['updated' => true];
+        $conf->saveConfig('ADDED_ASYNC_OPTION_TO_SCHEDULER', 'scheduler');
     }
 }

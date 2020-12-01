@@ -4,7 +4,7 @@ namespace Tests\unit\workflow\src\ProcessMaker\Util\Helpers;
 
 use Tests\TestCase;
 
-class ChangeAbbreviationOfDirectives extends TestCase
+class ChangeAbbreviationOfDirectivesTest extends TestCase
 {
     /**
      * Provider to define different types of configurations in the php.ini and the result expected

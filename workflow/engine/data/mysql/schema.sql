@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS `APP_SEQUENCE`;
 CREATE TABLE `APP_SEQUENCE`
 (
 	`ID` INTEGER  NOT NULL,
-	PRIMARY KEY (`ID`)
+	`APP_TYPE` VARCHAR(20) default 'NORMAL' NOT NULL
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
 #-- APP_DELEGATION
@@ -2316,7 +2316,7 @@ CREATE TABLE `APP_TIMEOUT_ACTION_EXECUTED`
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
 	`DEL_INDEX` INTEGER default 0 NOT NULL,
 	`EXECUTION_DATE` DATETIME,
-	PRIMARY KEY (`APP_UID`)
+	PRIMARY KEY (`APP_UID`,`DEL_INDEX`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
 #-- ADDONS_STORE
