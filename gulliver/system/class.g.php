@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use ProcessMaker\Core\System;
+use ProcessMaker\Log\AuditLog;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Validation\ValidationUploadedFiles;

@@ -20,6 +20,15 @@ class ProcessTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Call the setUp parent method
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Process::query()->delete();
+    }
+
+    /**
      * Test belongs to PRO_ID
      *
      * @covers \ProcessMaker\Model\Process::tasks()
@@ -215,9 +224,9 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * It tests the convertPrivateProcessesToPublic method
+     * It tests the convertPrivateProcessesToPublicAndUpdateUser method
      * 
-     * @covers \ProcessMaker\Model\Process::convertPrivateProcessesToPublic()
+     * @covers \ProcessMaker\Model\Process::convertPrivateProcessesToPublicAndUpdateUser()
      * @test
      */
     public function it_should_test_the_convert_private_processes_to_public_method()
@@ -236,12 +245,100 @@ class ProcessTest extends TestCase
         //Create a Process object
         $process = new Process();
 
-        //Call the convertPrivateProcessesToPublic() method
-        $process->convertPrivateProcessesToPublic($p);
+        //Call the convertPrivateProcessesToPublicAndUpdateUser() method
+        $process->convertPrivateProcessesToPublicAndUpdateUser($p, $pro->PRO_CREATE_USER);
 
         $p = Process::where('PRO_UID', $pro->PRO_UID)->get()->values();
 
         // This asserts the process was converted from private to public
         $this->assertEquals('PUBLIC', $p[0]->PRO_TYPE_PROCESS);
+    }
+
+    /**
+     * It tests the process list
+     *
+     * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::scopeNoStatus()
+     * @covers \ProcessMaker\Model\Process::scopeSubProcess()
+     * @test
+     */
+    public function it_should_test_process_without_filter()
+    {
+        $process = factory(Process::class)->create();
+        $result = Process::getProcessesFilter(
+            null,
+            null,
+            null,
+            $process->PRO_CREATE_USER
+        );
+        $this->assertEquals($process->PRO_CREATE_USER, $result[0]['USR_UID']);
+    }
+
+    /**
+     * It tests the process list with specific category
+     *
+     * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::scopeCategory()
+     * @test
+     */
+    public function it_should_test_process_with_category_filter()
+    {
+        $process = factory(Process::class)->create([
+            'PRO_CATEGORY' => function () {
+                return factory(ProcessCategory::class)->create()->CATEGORY_UID;
+            }
+        ]);
+        $result = Process::getProcessesFilter(
+            $process->PRO_CATEGORY
+        );
+        $this->assertEquals($process->PRO_CATEGORY, $result[0]['PRO_CATEGORY']);
+    }
+
+    /**
+     * It tests the process list with specific process
+     *
+     * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::scopeProcess()
+     * @test
+     */
+    public function it_should_test_process_with_process_filter()
+    {
+        $process = factory(Process::class)->create();
+        $result = Process::getProcessesFilter(
+            null,
+            $process->PRO_UID
+        );
+        $this->assertEquals($process->PRO_UID, $result[0]['PRO_UID']);
+    }
+
+    /**
+     * It tests the process list with specific process title
+     *
+     * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::scopeTitle()
+     * @test
+     */
+    public function it_should_test_process_with_title_filter()
+    {
+        $process = factory(Process::class)->create();
+        $result = Process::getProcessesFilter(
+            null,
+            null,
+            $process->PRO_TITLE
+        );
+        $this->assertEquals($process->PRO_TITLE, $result[0]['PRO_TITLE']);
+    }
+
+    /**
+     * It tests the count process
+     *
+     * @covers \ProcessMaker\Model\Process::getCounter()
+     * @test
+     */
+    public function it_should_test_count_process()
+    {
+        $process = factory(Process::class)->create();
+        $total = Process::getCounter($process->PRO_CREATE_USER);
+        $this->assertEquals(1, $total);
     }
 }

@@ -12,7 +12,7 @@ $factory->define(Triggers::class, function (Faker $faker) {
             return factory(\ProcessMaker\Model\Process::class)->create()->PRO_UID;
         },
         'TRI_TYPE' => 'SCRIPT',
-        'TRI_WEBBOT' => $faker->text,
+        'TRI_WEBBOT' => '$var = 1;',
         'TRI_PARAM' => '',
     ];
 });

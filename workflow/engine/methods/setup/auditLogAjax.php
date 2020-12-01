@@ -1,6 +1,6 @@
 <?php
 
-use ProcessMaker\AuditLog\AuditLog;
+use ProcessMaker\Log\AuditLog;
 
 $auditLog = new AuditLog();
 $auditLog->setUserLogged($_SESSION["USER_LOGGED"]);

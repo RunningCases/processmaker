@@ -355,7 +355,8 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                                 data: {
                                     action: 'startCase',
                                     processId: processUid,
-                                    taskId: tasUid
+                                    taskId: tasUid,
+                                    actionFrom: 'webEntry'
                                 },
                                 success: function (data) {
                                     data.TAS_UID = tasUid;
