@@ -28,13 +28,14 @@
 <script>
 import CustomSidebar from "./../components/menu/CustomSidebar";
 import MyCases from "./MyCases";
-
+import MyDocuments from "./MyDocuments";
 
 export default {
     name: "Home",
     components: {
         CustomSidebar,
-        MyCases
+        MyCases,
+        MyDocuments
     },
     data() {
         return {
@@ -53,7 +54,7 @@ export default {
     },
     methods: {
         OnClickSidebarItem(item) {
-            console.log(item);
+            this.page= item.item.page || "MyCases"
         },
         onResize() {
             if (window.innerWidth <= 767) {
@@ -83,6 +84,4 @@ export default {
 .container {
   max-width: 1500px;
 }
-</style>
-
 </style>

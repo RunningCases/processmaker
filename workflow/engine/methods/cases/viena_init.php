@@ -2,6 +2,7 @@
 
 use Eusebiu\JavaScript\Facades\ScriptVariables;
 use Illuminate\Support\Facades\View;
+use ProcessMaker\Core\System;
 
 $conf = new Configurations();
 
@@ -147,8 +148,12 @@ if (HIGHLIGHT_HOME_FOLDER_ENABLE) {
 // echo View::make('welcome');
 $userCanAccess = 1;
 global $translation;
-// print 'var TRANSLATIONS = ' . G::json_encode($translation) . ';';
-// echo view('Templates::Home.home', compact("userCanAccess"));
+
+$pmDynaform = new PmDynaform();
+ScriptVariables::add('SYS_CREDENTIALS', $pmDynaform->getCredentials());
+ScriptVariables::add('SYS_SERVER', System::getHttpServerHostnameRequestsFrontEnd());
+ScriptVariables::add('SYS_WORKSPACE', config("system.workspace"));
+ScriptVariables::add('SYS_URI', SYS_URI);
 ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
 echo View::make('Views::home.home', compact("userCanAccess"))->render();
