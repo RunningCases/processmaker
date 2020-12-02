@@ -5,7 +5,10 @@
         <router-view />
       </div>
 
-      <CustomSidebar @OnClickSidebarItem="OnClickSidebarItem" />
+      <CustomSidebar
+              @OnClickSidebarItem="OnClickSidebarItem"
+              @onToggleCollapse="onToggleCollapse"
+      />
       <div
         v-if="isOnMobile && !collapsed"
         class="sidebar-overlay"
@@ -15,16 +18,7 @@
       <component v-bind:is="page"></component>
     </div>
   </div>
-</template> onResize() {
-            if (window.innerWidth <= 767) {
-                this.isOnMobile = true;
-                this.collapsed = true;
-            } else {
-                this.isOnMobile = false;
-                this.collapsed = false;
-            }
-        },
-
+</template> 
 <script>
 import CustomSidebar from "./../components/menu/CustomSidebar";
 import MyCases from "./MyCases";
@@ -65,6 +59,14 @@ export default {
                 this.collapsed = false;
             }
         },
+        /**
+         * Toggle sidebar handler
+         * @param {Boolean} collapsed - if sidebar is collapsed true|false
+         *  
+         */
+        onToggleCollapse(collapsed) {
+            this.collapsed = collapsed;
+        }
     },
 };
 </script>
@@ -72,7 +74,7 @@ export default {
 <style lang="scss">
 #home {
   padding-left: 310px;
-  transition: 0.3s ease;
+  transition: 0.3s;
 }
 #home.collapsed {
   padding-left: 50px;
