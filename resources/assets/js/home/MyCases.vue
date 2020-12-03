@@ -19,6 +19,9 @@
       <div slot="process_name" slot-scope="props">
         {{ props.row.PROCESS_NAME }}
       </div>
+      <div slot="pending_taks" slot-scope="props">
+         <GroupedCell :data="props.row.PENDING_TASKS"/>
+      </div>
       <div slot="status" slot-scope="props">{{ props.row.STATUS }}</div>
       <div slot="start_date" slot-scope="props">
         {{ props.row.START_DATE }}
@@ -42,6 +45,7 @@
 import HeaderCounter from "../components/home/HeaderCounter.vue";
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
+import GroupedCell from "../components/utils/GroupedCell.vue";
 import api from "./../api/index";
 
 export default {
@@ -50,6 +54,7 @@ export default {
     HeaderCounter,
     ButtonFleft,
     ModalNewRequest,
+    GroupedCell
   },
   props: {},
   data() {
@@ -70,6 +75,7 @@ export default {
         "case_number",
         "case_title",
         "process_name",
+        "pending_taks",
         "status",
         "start_date",
         "finish_date",
@@ -82,6 +88,7 @@ export default {
           case_number: "ID_CASE_NUMBER",
           case_title: "ID_CASE_TITLE",
           process_name: "ID_PROCESS_NAME",
+          pending_taks: "PENDING_TASKS",
           status: "ID_STATUS",
           start_date: "ID_START_DATE",
           finish_date: "ID_FINISH_DATE",
@@ -121,7 +128,6 @@ export default {
   },
   mounted() {
     this.getHeaders();
-    document.body.querySelector(".pmDynaformLoading").style.display = "none";
   },
   watch: {},
   computed: {
@@ -180,6 +186,7 @@ export default {
           STATUS: v.APP_STATUS,
           START_DATE: v.DEL_DELEGATE_DATE_LABEL,
           FINISH_DATE: v.DEL_DELEGATE_DATE_LABEL,
+          PENDING_TASKS: v.PENDING_TASKS,
           DURATION: v.DURATION_LABEL,
         });
       });

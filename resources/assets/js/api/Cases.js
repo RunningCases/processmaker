@@ -1,5 +1,5 @@
 import headerData from "./../mocks/casesHeader.json";
-import startedData from "./../mocks/startedCases.json";
+import startedData from "./../mocks/startedCasesFaker.js";
 import inprogressData from "./../mocks/inprogressCases.json";
 import completedData from "./../mocks/completedCases.json";
 import supervisingData from "./../mocks/supervisingCases.json";
