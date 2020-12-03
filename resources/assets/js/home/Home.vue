@@ -24,6 +24,7 @@ import CustomSidebar from "./../components/menu/CustomSidebar";
 import MyCases from "./MyCases";
 import MyDocuments from "./MyDocuments";
 import BatchRouting from "./BatchRouting";
+import TaskReassignments from "./TaskReassignments";
 
 export default {
   name: "Home",
@@ -32,6 +33,7 @@ export default {
     MyCases,
     MyDocuments,
     BatchRouting,
+    TaskReassignments,
   },
   data() {
     return {

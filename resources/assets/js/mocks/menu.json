@@ -77,7 +77,8 @@
   {
     "href": "/task-Reassignments",
     "title": "Task Reassignments",
-    "icon": "fas fa-arrows-alt"
+    "icon": "fas fa-arrows-alt",
+    "id": "task-reassignments"
   },
   {
     "href": "/page",
