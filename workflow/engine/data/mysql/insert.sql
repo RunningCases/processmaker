@@ -57529,6 +57529,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CLASS_ALREADY_EXISTS','en','Class already exists','2014-01-15') ,
 ( 'LABEL','ID_CLASS_TABLE_DOESNT_EXIST','en','This Class Table doesn''t exist!','2014-01-15') ,
 ( 'LABEL','ID_CLEAR','en','Clear','2014-01-15') ,
+( 'LABEL','ID_CLEAN_WEBENTRIES','en','Clean web-entries','2020-11-10') ,
+( 'LABEL','ID_CLEAN_WEBENTRIES_DESC','en','Clean web-entries','2020-11-10') ,
 ( 'LABEL','ID_CLEAR_CACHE','en','Clear Cache','2014-01-15') ,
 ( 'LABEL','ID_CLEAR_CACHE_CONFIRM1','en','Clear all cache files now?','2014-01-15') ,
 ( 'LABEL','ID_CLEAR_CACHE_MSG1','en','All cache data was deleted','2014-01-15') ,
@@ -58675,6 +58677,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_LOG_AGAIN','en','Please login again to apply the changes.','2014-01-15') ,
 ( 'LABEL','ID_LOG_CASE_SCHEDULER','en','Case Scheduler Log','2014-01-15') ,
 ( 'LABEL','ID_LOG_INFO','en','Log Information','2014-01-15') ,
+( 'LABEL','ID_MAFE_TRANSLATION_DIRECTORY','en','MAFE Translation Directory','2014-01-15') ,
 ( 'LABEL','ID_MAFE_0015b7e51c1ca4293041c429985ca323','en','The specified subform could not be found in the process.', NOW()) ,
 ( 'LABEL','ID_MAFE_0025301679e9722c3abd5914cfbc7dd7','en','Database connection edited successfully', NOW()) ,
 ( 'LABEL','ID_MAFE_004d33be4d12eb8c0ae00703e7c70f61','en','Pick Second', NOW()) ,
@@ -60266,6 +60269,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_OLD_VERSION','en','old version','2014-01-15') ,
 ( 'LABEL','ID_ON','en','On','2014-01-15') ,
 ( 'LABEL','ID_ON_TIME','en','On Time','2014-01-15') ,
+( 'LABEL','ID_ONCE_PER_DAY','en','Once per day','2015-03-10') ,
 ( 'LABEL','ID_OPEN','en','Open','2014-01-15') ,
 ( 'LABEL','ID_OPENSSL_OPTIONAL','en','OpenSSL is optional.','2014-01-15') ,
 ( 'LABEL','ID_OPEN_CASE','en','Open Case','2014-01-15') ,
@@ -60576,6 +60580,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PROCESS_NOCATEGORY','en','No Category','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_NOT_EXIST','en','The report table ''{0}'' is related to a process not present in the workspace, import the related process first. To relate the report table to other process, open the process in the designer and import from there. The report table can''t be imported.','2016-03-08') ,
 ( 'LABEL','ID_PROCESS_NO_CATEGORY','en','No Category','2014-01-15') ,
+( 'LABEL','ID_PROCESS_NONE_CATEGORY','en','- No Category -','2020-10-23') ,
 ( 'LABEL','ID_PROCESS_NO_EXIST','en','Process doesn''t exist!','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_PERMISSIONS','en','Process Permissions','2014-01-15') ,
 ( 'LABEL','ID_PROCESS_PERMISSIONS_CREATE','en','Process Permission created successfully','2014-01-15') ,
@@ -61287,6 +61292,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TUE','en','Tue','2014-01-15') ,
 ( 'LABEL','ID_TYPE','en','Type','2014-01-15') ,
 ( 'LABEL','ID_TYPE_PROCESS','en','Process Type','2014-10-22') ,
+( 'LABEL','ID_TWICE_PER_DAY','en','Twice per day','2014-10-22') ,
 ( 'LABEL','ID_UID','en','UID','2014-01-15') ,
 ( 'LABEL','ID_UNABLE_GET_DASHBOARDS','en','Unable to get Dashboards','2014-01-15') ,
 ( 'LABEL','ID_UNABLE_START_CASE','en','Unable to start a case','2014-01-15') ,
@@ -61789,6 +61795,7 @@ INSERT INTO ADDONS_MANAGER (ADDON_DESCRIPTION,ADDON_ID,ADDON_NAME,ADDON_NICK,ADD
 ('User-based Time Zone Management.','userBasedTimeZone','userBasedTimeZone','userBasedTimeZone','Colosa','localRegistry','ready','','00000000000000000000000000010014','features','','','0'),
 ('SSO with an LDAP provider.','windowsSSO','windowsSSO','windowsSSO','Colosa','localRegistry','ready','','00000000000000000000000000010011','features','','','0');
 
-INSERT INTO APP_SEQUENCE (ID) VALUES 
-('0');
+INSERT INTO APP_SEQUENCE (ID, APP_TYPE) VALUES
+(0, 'NORMAL'),
+(0, 'WEB_ENTRY');
 

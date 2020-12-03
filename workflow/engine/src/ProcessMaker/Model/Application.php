@@ -36,6 +36,19 @@ class Application extends Model
     }
 
     /**
+     * Scope for query to get the positive cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePositivesCases($query)
+    {
+        $result = $query->where('APP_NUMBER', '>', 0);
+        return $result;
+    }
+
+    /**
      * Scope for query to get the application by APP_UID.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -46,6 +59,20 @@ class Application extends Model
     public function scopeAppUid($query, $appUid)
     {
         $result = $query->where('APP_UID', '=', $appUid);
+        return $result;
+    }
+
+    /**
+     * Scope for query to get the application by status Id
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param integer $status
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStatusId($query, int $status)
+    {
+        $result = $query->where('APP_STATUS_ID', '=', $status);
         return $result;
     }
 
@@ -76,6 +103,7 @@ class Application extends Model
         $query = Application::query()
             ->select()
             ->proUid($proUid)
+            ->positivesCases()
             ->orderBy('APP_NUMBER', 'ASC');
         return $query->get();
     }
@@ -117,5 +145,25 @@ class Application extends Model
         Application::query()->appUid($appUid)->update($properties);
 
         return $properties;
+    }
+
+    /**
+     * Get Applications by PRO_UID, ordered by APP_NUMBER.
+     *
+     * @param string $proUid
+     * @param int $status
+     *
+     * @return object
+     * @see ReportTables->populateTable()
+     */
+    public static function getCountByProUid(string $proUid, $status = 2)
+    {
+        $query = Application::query()
+            ->select()
+            ->proUid($proUid)
+            ->statusId($status)
+            ->positivesCases();
+
+        return $query->get()->count();
     }
 }

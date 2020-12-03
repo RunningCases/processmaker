@@ -67,7 +67,7 @@ class AppTimeoutActionExecutedMapBuilder
 
         $tMap->addPrimaryKey('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->addPrimaryKey('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
 
         $tMap->addColumn('EXECUTION_DATE', 'ExecutionDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 

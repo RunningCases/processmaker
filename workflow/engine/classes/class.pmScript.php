@@ -302,6 +302,9 @@ class PMScript
             case 'SCRIPT_TASK':
                 $executedOn = self::SCRIPT_TASK;
                 break;
+            case 'SELF_SERVICE_TIMEOUT':
+                $executedOn = self::SELF_SERVICE_TIMEOUT;
+                break;
             default:
                 $executedOn = self::UNDEFINED_ORIGIN;
                 break;

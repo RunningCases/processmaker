@@ -565,28 +565,40 @@ abstract class BaseAppTimeoutActionExecuted extends BaseObject implements Persis
         $criteria = new Criteria(AppTimeoutActionExecutedPeer::DATABASE_NAME);
 
         $criteria->add(AppTimeoutActionExecutedPeer::APP_UID, $this->app_uid);
+        $criteria->add(AppTimeoutActionExecutedPeer::DEL_INDEX, $this->del_index);
 
         return $criteria;
     }
 
     /**
-     * Returns the primary key for this object (row).
-     * @return     string
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return     array
      */
     public function getPrimaryKey()
     {
-        return $this->getAppUid();
+        $pks = array();
+
+        $pks[0] = $this->getAppUid();
+
+        $pks[1] = $this->getDelIndex();
+
+        return $pks;
     }
 
     /**
-     * Generic method to set the primary key (app_uid column).
+     * Set the [composite] primary key.
      *
-     * @param      string $key Primary key.
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
      * @return     void
      */
-    public function setPrimaryKey($key)
+    public function setPrimaryKey($keys)
     {
-        $this->setAppUid($key);
+
+        $this->setAppUid($keys[0]);
+
+        $this->setDelIndex($keys[1]);
+
     }
 
     /**
@@ -602,14 +614,14 @@ abstract class BaseAppTimeoutActionExecuted extends BaseObject implements Persis
     public function copyInto($copyObj, $deepCopy = false)
     {
 
-        $copyObj->setDelIndex($this->del_index);
-
         $copyObj->setExecutionDate($this->execution_date);
 
 
         $copyObj->setNew(true);
 
         $copyObj->setAppUid(''); // this is a pkey column, so set to default value
+
+        $copyObj->setDelIndex('0'); // this is a pkey column, so set to default value
 
     }
 

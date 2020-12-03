@@ -1,6 +1,6 @@
 <?php
 
-use ProcessMaker\AuditLog\AuditLog;
+use ProcessMaker\Log\AuditLog;
 
 global $RBAC;
 

@@ -135,7 +135,6 @@ Ext.onReady(function(){
   Ext.QuickTips.init();
 
   store = new Ext.data.GroupingStore( {
-  //var store = new Ext.data.Store( {
 	remoteSort: true,
     proxy : new Ext.data.HttpProxy({
       url: 'processesList'
@@ -167,9 +166,6 @@ Ext.onReady(function(){
         ,{name : "PRO_UPDATE_DATE"}
       ]
     }),
-
-    //sortInfo:{field: 'PRO_TITLE', direction: "ASC"}
-    //groupField:'PRO_CATEGORY_LABEL'
 
     listeners: {
       load: function (store) {
@@ -225,44 +221,6 @@ Ext.onReady(function(){
         store.load({params: {category: filter, start: 0, limit: 25}});
       }}
     })
-/*  storePageSize = new Ext.data.SimpleStore({
-    fields: ['size'],
-    data: [['20'],['30'],['40'],['50'],['100']],
-    autoLoad: true
-  });
-
-  var comboPageSize = new Ext.form.ComboBox({
-    typeAhead     : false,
-    mode          : 'local',
-    triggerAction : 'all',
-    store: storePageSize,
-    valueField: 'size',
-    displayField: 'size',
-    width: 50,
-    editable: false,
-    listeners:{
-      select: function(c,d,i){
-        //UpdatePageConfig(d.data['size']);
-        bbar.pageSize = parseInt(d.data['size']);
-        bbar.moveFirst();
-
-        //Ext.getCmp('bbar').setPageSize(comboPageSize.getValue());
-      }
-    }
-  });
-
-  comboPageSize.setValue(pageSize);
-
-
-  var bbar = new Ext.PagingToolbar({
-    id: 'bbar',
-    pageSize: '15',
-    store: store,
-    displayInfo: true,
-    displayMsg: 'Displaying Processes {0} - {1} of {2}',
-    emptyMsg: "",
-    items:[_('ID_PAGE_SIZE')+':',comboPageSize]
-  })  */
 
   var mnuNewBpmnProject = {
       text: _("ID_NEW_BPMN_PROJECT"),
@@ -453,11 +411,11 @@ Ext.onReady(function(){
         }}
         ,{header: _('ID_OWNER'), dataIndex: 'PRO_CREATE_USER_LABEL', width: 90}
         ,{header: _('ID_PRO_CREATE_DATE'), dataIndex: 'PRO_CREATE_DATE', width: 90}
-        ,{header: _('ID_INBOX'), dataIndex: 'CASES_COUNT_TO_DO', width: 50, align:'right'}
-        ,{header: _('ID_DRAFT'), dataIndex: 'CASES_COUNT_DRAFT', width: 50, align:'right'}
-        ,{header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 50, align:'right'}
-        ,{header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 50, align:'right'}
-        ,{header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 70, renderer:function(v){return "<b>"+v+"</b>";}, align:'right'}
+        ,{header: _('ID_INBOX'), dataIndex: 'CASES_COUNT_TO_DO', width: 50, align:'right', sortable: false}
+        ,{header: _('ID_DRAFT'), dataIndex: 'CASES_COUNT_DRAFT', width: 50, align:'right', sortable: false}
+        ,{header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 50, align:'right', sortable: false}
+        ,{header: _('ID_CANCELLED'), dataIndex: 'CASES_COUNT_CANCELLED', width: 50, align:'right', sortable: false}
+        ,{header: _('ID_TOTAL_CASES'), dataIndex: 'CASES_COUNT', width: 70, renderer:function(v){return "<b>"+v+"</b>";}, align:'right', sortable: false}
         ,{header: _('ID_PRO_DEBUG'), dataIndex: 'PRO_DEBUG_LABEL', width: 30}
         /*----------------------------------********---------------------------------*/
         ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 70}
@@ -468,25 +426,14 @@ Ext.onReady(function(){
     sm: proSelModel,
     store: store,
     tbar:[
-      newTypeProcess,/*
-      {
-        text: _('ID_NEW'),
-        iconCls: 'button_menu_ext ss_sprite ss_add',
-        //icon: '/images/addc.png',
-        handler: newProcess
-      },*/
+      newTypeProcess,
     	'-'
       ,{
         text: _('ID_EDIT'),
         iconCls: 'button_menu_ext',
         icon: '/images/pencil.png',
         handler: editProcess
-      },/*{
-        text: 'Edit (New Editor)',
-        iconCls: 'button_menu_ext',
-        icon: '/images/pencil_beta.png',
-        handler: editNewProcess
-      },*/{
+      },{
         text: _('ID_STATUS'),
         id:'activator',
         icon: '',
@@ -541,12 +488,9 @@ Ext.onReady(function(){
         text:'X',
         ctCls:'pm_search_x_button_des',
         handler: function(){
-          //store.setBaseParam( 'category', '<reset>');
           store.setBaseParam('processName', '');
           store.load({params: {start: 0, limit: 25}});
           Ext.getCmp('searchTxt').setValue('');
-          //comboCategory.setValue('');
-          //store.reload();
         }
       },{
         text: _('ID_SEARCH'),
@@ -881,13 +825,11 @@ function saveProcess()
     }
 }
 
-function doSearch(){
-  if(comboCategory.getValue() == '')
-    store.setBaseParam( 'category', '<reset>');
-  filter = Ext.getCmp('searchTxt').getValue();
-  store.setBaseParam('processName', filter);
+function doSearch() {
+    filter = Ext.getCmp('searchTxt').getValue();
+    store.setBaseParam('processName', filter);
 
-  store.load({params:{processName: filter, start: 0 , limit: 25}});
+    store.load({params: {processName: filter, start: 0, limit: 25}});
 }
 
 editProcess = function(typeParam)

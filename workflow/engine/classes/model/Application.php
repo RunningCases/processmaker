@@ -207,30 +207,31 @@ class Application extends BaseApplication
     }
 
     /**
-     * Creates the Application
+     * Creates an Application
      *
-     * @param
-     *   $sProUid the process id
-     *   $sUsrUid the userid
-     * @return     void
+     * @param string $processUid
+     * @param string $userUid
+     * @param string $sequenceType
+     * @throws PropelException
+     * @throws Exception
+     * @return string
      */
-    public function create($sProUid, $sUsrUid)
+    public function create($processUid, $userUid, $sequenceType)
     {
-        require_once ("classes/model/AppSequence.php");
         $con = Propel::getConnection('workflow');
 
         try {
-            //fill the default values for new application row
+            // Fill the default values for new application row
             $this->setAppUid(G::generateUniqueID());
             $this->setAppParent('');
             $this->setAppStatus('DRAFT');
             $this->setAppStatusId(1);
-            $this->setProUid($sProUid);
+            $this->setProUid($processUid);
             $this->setAppProcStatus('');
             $this->setAppProcCode('');
             $this->setAppParallel('N');
-            $this->setAppInitUser($sUsrUid);
-            $this->setAppCurUser($sUsrUid);
+            $this->setAppInitUser($userUid);
+            $this->setAppCurUser($userUid);
             $this->setAppCreateDate('now');
             $this->setAppInitDate('now');
             $this->setAppUpdateDate('now');
@@ -241,8 +242,8 @@ class Application extends BaseApplication
             $c = new Criteria();
             $c->clearSelectColumns();
 
-            $oAppSequence = new AppSequence();
-            $maxNumber = $oAppSequence->sequenceNumber();
+            $appSequence = new AppSequence();
+            $maxNumber = $appSequence->sequenceNumber($sequenceType);
 
             $this->setAppNumber($maxNumber);
             $this->setAppData(serialize(['APP_NUMBER' => $maxNumber, 'PIN' => $pin]));
@@ -253,9 +254,7 @@ class Application extends BaseApplication
                 $con->begin();
                 $this->setAppTitleContent('#' . $maxNumber);
                 $this->setAppDescriptionContent('');
-                //to do: ID_CASE in translation $this->setAppTitle(G::LoadTranslation('ID_CASE') . $maxNumber);
-                //Content::insertContent('APP_PROC_CODE', '', $this->getAppUid(), $lang, '');
-                $res = $this->save();
+                $this->save();
                 $con->commit();
 
                 return $this->getAppUid();

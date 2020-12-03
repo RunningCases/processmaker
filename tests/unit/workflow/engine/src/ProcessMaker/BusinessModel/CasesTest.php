@@ -4,22 +4,26 @@ namespace ProcessMaker\BusinessModel;
 
 use Exception;
 use G;
-use ProcessMaker\BusinessModel\Cases;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
+use ProcessMaker\Model\ListUnassigned;
+use ProcessMaker\Model\Process;
+use ProcessMaker\Model\Step;
+use ProcessMaker\Model\Task;
+use ProcessMaker\Model\Triggers;
 use ProcessMaker\Model\User;
 use RBAC;
 use Tests\TestCase;
 
 /**
- * Class DelegationTest
+ * Class CasesTest
  *
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases
  */
 class CasesTest extends TestCase
 {
-
     /**
      * Set up method.
      */
@@ -232,5 +236,145 @@ class CasesTest extends TestCase
         $this->expectExceptionMessage("The uploaded file exceeds the upload_max_filesize directive in php.ini");
         // Call the uploadFiles method
         $case->uploadFiles($user->USR_UID, $application->APP_UID, $varName, -1, null, $delegation->DEL_INDEX);
+    }
+
+    /**
+     * This test the execution of trigger from cases related to the self services timeout
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::executeSelfServiceTimeout()
+     * @test
+     */
+    public function it_execute_trigger_from_cases_with_self_service_timeout_every_time()
+    {
+        ListUnassigned::truncate();
+        // Define the Execute Trigger = EVERY_TIME
+        $application = factory(Application::class)->states('foreign_keys')->create();
+        // Create a trigger
+        $trigger = factory(Triggers::class)->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TRI_WEBBOT' => 'echo(1);'
+        ]);
+        // Create a task with the configuration trigger execution
+        $task = factory(Task::class)->states('sef_service_timeout')->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TAS_SELFSERVICE_EXECUTION' => 'EVERY_TIME',
+            'TAS_SELFSERVICE_TRIGGER_UID' => $trigger->TRI_UID
+        ]);
+        // Create a unassigned cases
+        factory(ListUnassigned::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'TAS_ID' => $task->TAS_ID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'PRO_UID' => $application->PRO_UID
+        ]);
+        // Define the session
+        $_SESSION["PROCESS"] = $application->PRO_UID;
+
+        // todo: the function Cases::loadCase is using propel we need to change this
+        DB::commit();
+        $casesExecuted = Cases::executeSelfServiceTimeout();
+        $this->assertTrue(is_array($casesExecuted));
+    }
+
+    /**
+     * This test the execution of trigger from cases related to the self services timeout
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::executeSelfServiceTimeout()
+     * @test
+     */
+    public function it_execute_trigger_from_cases_with_self_service_timeout_once()
+    {
+        ListUnassigned::truncate();
+        // Define the Execute Trigger = ONCE
+        $application = factory(Application::class)->states('foreign_keys')->create();
+        // Create a trigger
+        $trigger = factory(Triggers::class)->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TRI_WEBBOT' => 'echo(1);'
+        ]);
+        // Create a task with the configuration trigger execution
+        $task = factory(Task::class)->states('sef_service_timeout')->create([
+            'PRO_UID' => $application->PRO_UID,
+            'TAS_SELFSERVICE_EXECUTION' => 'ONCE',
+            'TAS_SELFSERVICE_TRIGGER_UID' => $trigger->TRI_UID
+        ]);
+        // Create a unassigned cases
+        factory(ListUnassigned::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'TAS_ID' => $task->TAS_ID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'PRO_UID' => $application->PRO_UID
+        ]);
+        // Define the session
+        $_SESSION["PROCESS"] = $application->PRO_UID;
+
+        // todo: the function Cases::loadCase is using propel we need to change this
+        DB::commit();
+        $casesExecuted = Cases::executeSelfServiceTimeout();
+        $this->assertTrue(is_array($casesExecuted));
+    }
+
+    /**
+     * It test get assigned DynaForms as steps by application Uid
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::dynaFormsByApplication()
+     * @test
+     */
+    public function it_should_test_get_dynaforms_by_application()
+    {
+        // Create a process
+        $process = factory(Process::class)->create();
+
+        // Create a task related to the process
+        $task1 = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        // Created another task related to the process
+        $task2 = factory(Task::class)->create([
+            'PRO_UID' => $process->PRO_UID
+        ]);
+
+        // Created a step related to the first task
+        factory(Step::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task1->TAS_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => G::generateUniqueID(),
+            'STEP_POSITION' => 1
+        ]);
+
+        // Created a step related to the second task and with a specific DynaForm Uid
+        $dynUid = G::generateUniqueID();
+        factory(Step::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'TAS_UID' => $task2->TAS_UID,
+            'STEP_TYPE_OBJ' => 'DYNAFORM',
+            'STEP_UID_OBJ' => $dynUid,
+            'STEP_POSITION' => 1
+        ]);
+
+        // Create an application related to the process in draft status
+        $application = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'APP_STATUS' => 'DRAFT'
+        ]);
+
+        // Get all DynaForms assigned as steps
+        self::assertCount(2, Cases::dynaFormsByApplication($application->APP_UID));
+
+        // Get DynaForms assigned as steps for the first task
+        self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, $task1->TAS_UID));
+
+        // Get DynaForms assigned as steps sending a specific DynaForm Uid
+        self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, '', $dynUid));
+
+        // Get DynaForms assigned as steps for the second task when the application status is DRAFT
+        self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'TO_DO'));
+
+        // Get DynaForms assigned as steps for the second task when the application status is COMPLETED
+        self::assertCount(2, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'COMPLETED'));
     }
 }
