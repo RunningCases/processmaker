@@ -211,8 +211,10 @@ CREATE TABLE `CONFIGURATION`
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
-	PRIMARY KEY (`CFG_UID`,`OBJ_UID`,`PRO_UID`,`USR_UID`,`APP_UID`)
-)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Stores the users, processes and/or applications configuratio';
+	PRIMARY KEY (`CFG_UID`,`OBJ_UID`,`PRO_UID`,`USR_UID`,`APP_UID`),
+	KEY `INDEX_CFG_UID`(`CFG_UID`),
+	KEY `INDEX_USR_UID`(`USR_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Stores the users, processes and/or applications configuration';
 #-----------------------------------------------------------------------------
 #-- CONTENT
 #-----------------------------------------------------------------------------

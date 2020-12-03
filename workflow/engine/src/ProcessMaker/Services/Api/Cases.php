@@ -10,6 +10,7 @@ use Exception;
 use ListUnassigned;
 use Luracast\Restler\RestException;
 use ProcessMaker\BusinessModel\Cases as BmCases;
+use ProcessMaker\BusinessModel\Cases\Filter;
 use ProcessMaker\BusinessModel\User as BmUser;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Util\DateTime;
@@ -1459,6 +1460,96 @@ class Cases extends Api
             $caseInfo = DateTime::convertUtcToIso8601($caseInfo, $this->arrayFieldIso8601);
 
             return $caseInfo;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get filters of the advanced search for the current user
+     *
+     * @url GET /advanced-search/filters
+     *
+     * @return array
+     *
+     * @throws RestException
+     */
+    public function doGetAdvancedSearchFilters()
+    {
+        try {
+            return Filter::getByUser($this->getUserId());
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get a specific filter of the advanced search for the current user
+     *
+     * @url GET /advanced-search/filter/:filterUid
+     *
+     * @param string $filterUid {@min 32}{@max 32}
+     *
+     * @return object
+     *
+     * @throws RestException
+     */
+    public function doGetAdvancedSearchFilter($filterUid)
+    {
+        try {
+            $filter = Filter::getByUid($this->getUserId(), $filterUid);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+
+        // If not exists the requested filter throw an 404 error
+        if (is_null($filter)) {
+            throw new RestException(404, "Filter with Uid '{$filterUid}'.");
+        }
+        return $filter;
+    }
+
+    /**
+     * Add a new filter of the advanced search for the current user
+     *
+     * @url POST /advanced-search/filter
+     *
+     * @param string $name
+     * @param string $filters
+     *
+     * @return object
+     *
+     * @throws RestException
+     */
+    public function doPostAdvancedSearchFilter($name, $filters)
+    {
+        try {
+            // Create JSON object if is a serialized string
+            $filters = is_string($filters) ? json_decode($filters) : $filters;
+
+            // Create new filter
+            $filter = Filter::create($this->getUserId(), $name, $filters);
+
+            // Return the new filter
+            return $filter;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete a specific filter of the advanced search for the current user
+     *
+     * @url DELETE /advanced-search/filter/:filterUid
+     *
+     * @param string $filterUid {@min 32}{@max 32}
+     *
+     * @throws RestException
+     */
+    public function doDeleteAdvancedSearchFilter($filterUid)
+    {
+        try {
+            Filter::delete($filterUid);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

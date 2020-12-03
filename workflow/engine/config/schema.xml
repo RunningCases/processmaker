@@ -457,6 +457,12 @@
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <index name="INDEX_CFG_UID">
+            <index-column name="CFG_UID"/>
+        </index>
+        <index name="INDEX_USR_UID">
+            <index-column name="USR_UID"/>
+        </index>
     </table>
     <table name="CONTENT">
         <vendor type="mysql">
