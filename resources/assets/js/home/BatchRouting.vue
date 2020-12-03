@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: "MyDocuments",
+  name: "BatchRouting",
   components: {},
   props: {
     data: Object,
@@ -29,7 +29,7 @@ export default {
       path:
         window.config.SYS_SERVER +
         window.config.SYS_URI +
-        "cases/casesStartPage?action=documents",
+        "cases/casesConsolidatedListExtJs?action=consolidated",
     };
   },
   methods: {

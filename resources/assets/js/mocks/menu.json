@@ -63,13 +63,14 @@
   {
     "href": "/batch-routing",
     "title": "Batch Routing",
+    "id": "batch-routing",
     "icon": "fas fa-bars",
-    "disabled": true
+    "disabled": false
   },
   {
     "href": "/my-documents",
     "title": "My Documents",
-    "page": "my-documents",
+    "id": "my-documents",
     "icon": "fas fa-bars",
     "disabled": false
   },

@@ -6,8 +6,8 @@
       </div>
 
       <CustomSidebar
-              @OnClickSidebarItem="OnClickSidebarItem"
-              @onToggleCollapse="onToggleCollapse"
+        @OnClickSidebarItem="OnClickSidebarItem"
+        @onToggleCollapse="onToggleCollapse"
       />
       <div
         v-if="isOnMobile && !collapsed"
@@ -23,51 +23,53 @@
 import CustomSidebar from "./../components/menu/CustomSidebar";
 import MyCases from "./MyCases";
 import MyDocuments from "./MyDocuments";
+import BatchRouting from "./BatchRouting";
 
 export default {
-    name: "Home",
-    components: {
-        CustomSidebar,
-        MyCases,
-        MyDocuments
+  name: "Home",
+  components: {
+    CustomSidebar,
+    MyCases,
+    MyDocuments,
+    BatchRouting,
+  },
+  data() {
+    return {
+      page: "MyCases",
+      menu: [],
+      hideToggle: true,
+      collapsed: false,
+      selectedTheme: "",
+      isOnMobile: false,
+      sidebarWidth: "310px",
+    };
+  },
+  mounted() {
+    this.onResize();
+    window.addEventListener("resize", this.onResize);
+  },
+  methods: {
+    OnClickSidebarItem(item) {
+      this.page = item.item.id || "MyCases";
     },
-    data() {
-        return {
-            page:"MyCases",
-            menu: [],
-            hideToggle: true,
-            collapsed: false,
-            selectedTheme: "",
-            isOnMobile: false,
-            sidebarWidth: "310px",
-        };
+    onResize() {
+      if (window.innerWidth <= 767) {
+        this.isOnMobile = true;
+        this.collapsed = true;
+      } else {
+        this.isOnMobile = false;
+        this.collapsed = false;
+      }
     },
-    mounted() {
-        this.onResize();
-        window.addEventListener("resize", this.onResize);
+    /**
+     * Toggle sidebar handler
+     * @param {Boolean} collapsed - if sidebar is collapsed true|false
+     *
+     */
+    onToggleCollapse(collapsed) {
+      this.collapsed = collapsed;
     },
-    methods: {
-        OnClickSidebarItem(item) {
-            this.page= item.item.page || "MyCases"
-        },
-        onResize() {
-            if (window.innerWidth <= 767) {
-                this.isOnMobile = true;
-                this.collapsed = true;
-            } else {
-                this.isOnMobile = false;
-                this.collapsed = false;
-            }
-        },
-        /**
-         * Toggle sidebar handler
-         * @param {Boolean} collapsed - if sidebar is collapsed true|false
-         *  
-         */
-        onToggleCollapse(collapsed) {
-            this.collapsed = collapsed;
-        }
-    },
+  },
 };
 </script>
 
