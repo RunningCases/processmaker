@@ -52058,3 +52058,27 @@ msgstr "Custom settings"
 #: LABEL/ID_WEVE_MADE_IT_EASY_FOR_YOU
 msgid "We've made it easy for you to make the following requests"
 msgstr "We've made it easy for you to make the following requests"
+
+# TRANSLATION
+# LABEL/ID_MYCASE_NUMBER
+#: LABEL/ID_MYCASE_NUMBER
+msgid "Case #"
+msgstr "Case #"
+
+# TRANSLATION
+# LABEL/ID_PROCESS_NAME
+#: LABEL/ID_PROCESS_NAME
+msgid "Process Name"
+msgstr "Process Name"
+
+# TRANSLATION
+# LABEL/ID_DURATION
+#: LABEL/ID_DURATION
+msgid "Duration"
+msgstr "Duration"
+
+# TRANSLATION
+# LABEL/ID_PENDING_TASKS
+#: LABEL/ID_PENDING_TASKS
+msgid "Pending Tasks"
+msgstr "Pending Tasks"

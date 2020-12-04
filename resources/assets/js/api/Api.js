@@ -56,7 +56,8 @@ const services = {
     CHECK: "/light/{listType}/check",
     GET_NEXT_STEP: "/light/get-next-step/{app_uid}",
     REQUEST_SQLITE_DATABASE_TABLES: "/pmtable?offline=1",
-    REQUEST_SQLITE_DATABASE_TABLES_DATA: "/pmtable/offline/data?compress=false"
+    REQUEST_SQLITE_DATABASE_TABLES_DATA: "/pmtable/offline/data?compress=false",
+    MY_CASES: "/home/mycases"
 };
 
 export default {
@@ -103,6 +104,27 @@ export default {
             method: method,
             url: url,
             data: data,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ` + credentials.accessToken
+            }
+        });
+    },
+    get(options) {
+        let service = options.service || "",
+            params = options.params || {},
+            keys = options.keys || {},
+            url,
+            credentials = window.config.SYS_CREDENTIALS,
+            workspace = window.config.SYS_WORKSPACE,
+            server = window.config.SYS_SERVER;
+        url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
+
+        return axios({
+            method: "get",
+            url: url,
+            params,
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",

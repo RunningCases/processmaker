@@ -1,32 +1,16 @@
 import axios from "axios";
 import headerData from "./../mocks/casesHeader.json";
-import startedData from "./../mocks/startedCasesFaker.js";
-import inprogressData from "./../mocks/inprogressCases.json";
-import completedData from "./../mocks/completedCases.json";
-import supervisingData from "./../mocks/supervisingCases.json";
+import Api from "./Api.js";
 
 export let cases = {
-    get(data) {
-        if (data.type == "STARTED_BY_ME") {
-            return new Promise((resolutionFunc, rejectionFunc) => {
-                resolutionFunc(startedData);
-            });
-        }
-        if (data.type == "IN_PROGRESS") {
-            return new Promise((resolutionFunc, rejectionFunc) => {
-                resolutionFunc(inprogressData);
-            });
-        }
-        if (data.type == "COMPLETED") {
-            return new Promise((resolutionFunc, rejectionFunc) => {
-                resolutionFunc(completedData);
-            });
-        }
-        if (data.type == "SUPERVISING") {
-            return new Promise((resolutionFunc, rejectionFunc) => {
-                resolutionFunc(supervisingData);
-            });
-        }
+    myCases(data) {
+        return Api.get({
+            service: "MY_CASES",
+            params: {
+                filter: data.filter
+            },
+            keys: {}
+        });
     },
     getPost(id) {
         return Client.get(`${resource}/${id}`);
