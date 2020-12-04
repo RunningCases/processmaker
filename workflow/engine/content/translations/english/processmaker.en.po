@@ -52052,3 +52052,9 @@ msgstr "Repeat on"
 #: LABEL/ID_CUSTOM_SETTINGS
 msgid "Custom settings"
 msgstr "Custom settings"
+
+# TRANSLATION
+# LABEL/ID_WEVE_MADE_IT_EASY_FOR_YOU
+#: LABEL/ID_WEVE_MADE_IT_EASY_FOR_YOU
+msgid "We've made it easy for you to make the following requests"
+msgstr "We've made it easy for you to make the following requests"

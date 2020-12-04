@@ -1,3 +1,4 @@
+import axios from "axios";
 import headerData from "./../mocks/casesHeader.json";
 import startedData from "./../mocks/startedCasesFaker.js";
 import inprogressData from "./../mocks/inprogressCases.json";
@@ -38,6 +39,15 @@ export let cases = {
     },
     delete(id) {
         return Client.delete(`${resource}/${id}`)
+    },
+    start(dt) {
+        var params = new URLSearchParams();
+        params.append('action', 'startCase');
+        params.append('processId', dt.pro_uid);
+        params.append('taskId', dt.task_uid);
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/casesStartPage_Ajax.php`, params);
     }
 };
 
