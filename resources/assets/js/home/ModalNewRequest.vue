@@ -3,7 +3,7 @@
     <b-modal
       ref="my-modal"
       hide-footer
-      title="Weve made it easy for you to make the following request"
+      :title="$t('ID_WEVE_MADE_IT_EASY_FOR_YOU')"
       size="xl"
     >
       <div class="input-group mb-3">
@@ -16,13 +16,13 @@
           v-model="filter"
           type="text"
           class="form-control"
-          placeholder="Search"
+          :placeholder="$t('ID_CASES_MENU_SEARCH')"
           aria-label="Search"
           aria-describedby="basic-addon1"
           @input="onChangeFilter"
         />
       </div>
-      <div v-for="item in categories" :key="item.title">
+      <div v-for="item in categoriesFiltered" :key="item.title">
         <process-category :data="item" />
       </div>
     </b-modal>
@@ -41,181 +41,13 @@ export default {
   props: {
     data: Object,
   },
-  mounted() {
-    //this.categoriesFiltered = this.categories;
-  },
+  mounted() {},
   data() {
     return {
       filter: "",
       categories: [],
-      //Data for test
-      dataCaseSummary: {
-        title: "Case Summary",
-        titleActions: "Actions",
-        btnLabel: "Success",
-        onClick: () => {
-          console.log("acitons");
-        },
-        label: {
-          numberCase: "Case #",
-          process: "Process",
-          status: "Status",
-          caseTitle: "Case title",
-          created: "Created",
-          delegationDate: "Delegation Date",
-          duration: "Duration",
-        },
-        text: {
-          numberCase: "123",
-          process: "Leave Absence Request",
-          status: "In progress",
-          caseTitle: "CVacation request for Enrique",
-          created: "# days Ago",
-          delegationDate: "10 mins ago",
-          duration: "34hrs",
-        },
-      },
-      dataAttachedDocuments: {
-        title: "Attached Documents",
-        items: [
-          {
-            title: "Invoice January 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "Invoice Febrauery 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "GPRD Employee GR90.doc",
-            extension: "doc",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "Contract one tres.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "GPRD Employee 2020.doc",
-            extension: "doc",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-        ],
-      },
-      dataIoDocuments: {
-        titleInput: "Input Document",
-        inputDocuments: [
-          {
-            title: "Invoice January 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "Invoice Febrauery 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "GPRD Employee GR90.doc",
-            extension: "doc",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "Contract one tres.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "GPRD Employee 2020.doc",
-            extension: "doc",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-        ],
-        titleOutput: "Output Document",
-        outputDocuments: [
-          {
-            title: "Invoice January 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "Invoice Febrauery 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "GPRD Employee GR90.doc",
-            extension: "doc",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "Contract one tres.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-          {
-            title: "GPRD Employee 2020.doc",
-            extension: "doc",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-        ],
-      },
-      dataComments: {
-        title: "Comments",
-        items: [
-          {
-            user: "Gustavo Cruz",
-            date: "Today 2:38",
-            comment:
-              "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod http://wwwwww.com tempoua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.",
-          },
-          {
-            user: "Gustavo Cruz",
-            date: "Today 2:39",
-            comment:
-              "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod http://wwwwww.com tempoua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.",
-          },
-          {
-            user: "Gustavo Cruz",
-            date: "Today 2:40",
-            comment:
-              "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod http://wwwwww.com tempoua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.",
-          },
-        ],
-      },
+      categoriesFiltered: [],
+      TRANSLATIONS: window.config.TRANSLATIONS,
     };
   },
   methods: {
@@ -228,10 +60,11 @@ export default {
     },
     getProcess() {
       let that = this;
-      api.process
-        .get()
+      api.process.list
+        .start()
         .then((response) => {
-          that.categories = that.formatResponseGetProcess(response);
+          that.categories = that.formatCategories(response.data);
+          that.categoriesFiltered = that.categories;
         })
         .catch((e) => {
           console.error(e);
@@ -290,17 +123,41 @@ export default {
       });
       return res;
     },
+    formatCategories(data) {
+      let res = [],
+        that = this,
+        index,
+        categories = [];
+      _.each(data, (o) => {
+        index = _.findIndex(categories, (c) => {
+          return c.id == o.categoryId;
+        });
+        if (index == -1) {
+          categories.push({
+            id: o.categoryId,
+            title: o.categoryName,
+            items: [],
+          });
+          index = categories.length - 1;
+        }
+        categories[index].items.push({
+          title: o.text,
+          description: o.text,
+          task_uid: o.taskId,
+          pro_uid: o.processId,
+          onClick: that.startNewCase,
+        });
+      });
+      return categories;
+    },
     startNewCase(dt) {
       let self = this;
       api.cases
         .start(dt)
         .then(function (data) {
-          console.log("newCase yeah!!!!!!!!!!");
-          if (self.isIE) {
-            window.open(data.data.url);
-          } else {
-            window.location.href = `http://localhost/sysworkflow/en/neoclassic/viena/index.php/cases/xcase/project/${dt.pro_uid}/activity/${dt.task_uid}/case/${data.data.caseId}/index/${data.data.caseIndex}`;
-          }
+          self.$refs["my-modal"].hide();
+          self.$parent.$parent.dataCase = data.data;
+          self.$parent.$parent.page = "XCase";
         })
         .catch((err) => {
           throw new Error(err);

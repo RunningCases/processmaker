@@ -11,7 +11,7 @@
 
 <body>
     {{ ScriptVariables::render() }}
-    <div id="home">
+    <div id="app">
     </div>
 </body>
 <script type="text/javascript" src="/webapp/js/home/main.js"></script>

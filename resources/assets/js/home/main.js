@@ -50,7 +50,7 @@ const router = new VueRouter({
 new Vue({
     i18n,
     // eslint-disable-line no-new
-    el: "#home",
+    el: "#app",
     router,
     render: (h) => h(Home),
 });

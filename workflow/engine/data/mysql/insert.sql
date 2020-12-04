@@ -61570,6 +61570,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_WELL_DONE','en','Well Done!','2015-03-30') ,
 ( 'LABEL','ID_WEN','en','Wen','2014-01-15') ,
 ( 'LABEL','ID_WESTPANEL','en','westPanel','2014-01-15') ,
+( 'LABEL','ID_WEVE_MADE_IT_EASY_FOR_YOU','en',"We've made it easy for you to make the following requests",'2020-12-04') ,
 ( 'LABEL','ID_WF_DATABASE_NAME','en','Workflow Database Name','2014-01-15') ,
 ( 'LABEL','ID_WITHOUT_RESUME','en','Without resume!','2014-01-15') ,
 ( 'LABEL','ID_WIZARD_LIBRARY_AND_FUNCTION_IS_INVALID_FOR_TRIGGER','en','The wizard with the library "{0}" and function "{1}", is invalid for the trigger with {2}: {3}.','2014-05-20') ,
