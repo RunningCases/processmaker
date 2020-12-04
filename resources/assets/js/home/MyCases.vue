@@ -20,7 +20,7 @@
         {{ props.row.PROCESS_NAME }}
       </div>
       <div slot="pending_taks" slot-scope="props">
-         <GroupedCell :data="props.row.PENDING_TASKS"/>
+        <GroupedCell :data="props.row.PENDING_TASKS" />
       </div>
       <div slot="status" slot-scope="props">{{ props.row.STATUS }}</div>
       <div slot="start_date" slot-scope="props">
@@ -54,7 +54,7 @@ export default {
     HeaderCounter,
     ButtonFleft,
     ModalNewRequest,
-    GroupedCell
+    GroupedCell,
   },
   props: {},
   data() {
@@ -62,7 +62,7 @@ export default {
       metrics: [],
       filter: "CASES_INBOX",
       allView: [],
-      filterHeader: "STARTED_BY_ME",
+      filterHeader: "STARTED",
       headers: [],
       newCase: {
         title: "New Case",
@@ -85,14 +85,14 @@ export default {
       tableData: [],
       options: {
         headings: {
-          case_number: "ID_CASE_NUMBER",
-          case_title: "ID_CASE_TITLE",
-          process_name: "ID_PROCESS_NAME",
-          pending_taks: "PENDING_TASKS",
-          status: "ID_STATUS",
-          start_date: "ID_START_DATE",
-          finish_date: "ID_FINISH_DATE",
-          duration: "ID_DURATION",
+          case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
+          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          process_name: this.$i18n.t("ID_PROCESS_NAME"),
+          pending_taks: this.$i18n.t("PENDING_TASKS"),
+          status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
+          start_date: this.$i18n.t("ID_START_DATE"),
+          finish_date: this.$i18n.t("ID_FINISH_DATE"),
+          duration: this.$i18n.t("ID_DURATION"),
           actions: "",
         },
         selectable: {
@@ -158,14 +158,14 @@ export default {
         dt;
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
-          .get({
-            type: that.filterHeader,
+          .myCases({
+            filter: that.filterHeader,
           })
           .then((response) => {
-            dt = that.formatDataResponse(response.data);
+            dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
               data: dt,
-              count: response.total,
+              count: response.data.total,
             });
           })
           .catch((e) => {
@@ -184,10 +184,10 @@ export default {
           CASE_TITLE: v.APP_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
           STATUS: v.APP_STATUS,
-          START_DATE: v.DEL_DELEGATE_DATE_LABEL,
-          FINISH_DATE: v.DEL_DELEGATE_DATE_LABEL,
-          PENDING_TASKS: v.PENDING_TASKS,
-          DURATION: v.DURATION_LABEL,
+          START_DATE: v.APP_CREATE_DATE || "",
+          FINISH_DATE: v.APP_FINISH_DATE || "",
+          PENDING_TASKS: [],
+          DURATION: v.DURATION,
         });
       });
       return data;
@@ -335,7 +335,7 @@ export default {
       let data = [],
         that = this,
         info = {
-          STARTED_BY_ME: {
+          STARTED: {
             icon: "fas fa-inbox",
             class: "btn-primary",
           },
