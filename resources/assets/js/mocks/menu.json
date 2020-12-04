@@ -11,6 +11,7 @@
   },
   {
     "href": "/advanced-search",
+    "id": "advanced-search",
     "title": "Advanced Search",
     "icon": "fas fa-search"
   },

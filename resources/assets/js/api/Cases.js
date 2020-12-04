@@ -1,5 +1,6 @@
 import axios from "axios";
 import headerData from "./../mocks/casesHeader.json";
+import startedCasesFaker from "./../mocks/startedCasesFaker.js";
 import Api from "./Api.js";
 
 export let cases = {
@@ -32,6 +33,14 @@ export let cases = {
         return axios.post(window.config.SYS_SERVER +
             window.config.SYS_URI +
             `cases/casesStartPage_Ajax.php`, params);
+    },
+    //remove this section
+    search(data) {
+        return new Promise((resolutionFunc, rejectionFunc) => {
+
+            resolutionFunc(startedCasesFaker);
+
+        });
     }
 };
 
