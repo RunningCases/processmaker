@@ -470,7 +470,7 @@ class PausedTest extends TestCase
         $paused->setUserId($user->USR_ID);
 
         //Set OrderBYColumn value
-        $paused->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $paused->setOrderByColumn('APP_NUMBER');
 
         //Set Order Direction value
         $paused->setOrderDirection('DESC');
@@ -598,7 +598,7 @@ class PausedTest extends TestCase
         $paused->setUserId($user->USR_ID);
 
         //Set OrderBYColumn value
-        $paused->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $paused->setOrderByColumn('APP_NUMBER');
 
         //Set offset and limit values
         $paused->setOffset(0);

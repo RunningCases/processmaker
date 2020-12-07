@@ -2,8 +2,8 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
-use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Task;
 
 class Participated extends AbstractCases
 {
@@ -15,11 +15,13 @@ class Participated extends AbstractCases
         'PROCESS.PRO_TITLE', // Process Name
         'TASK.TAS_TITLE',  // Pending Task
         'APPLICATION.APP_STATUS',  // Status
-        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date
-        'APP_DELEGATION.DEL_DELEGATE_DATE',  // Start Date
-        'APP_DELEGATION.DEL_FINISH_DATE',  // Finish Date
+        'APPLICATION.APP_CREATE_DATE',  // Start Date
+        'APPLICATION.APP_FINISH_DATE',  // Finish Date
+        'USERS.USR_ID',  // Current UserId
+        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date related to the colors
         // Additional column for other functionalities
-        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+        'APP_DELEGATION.APP_UID', // Case Uid for Open case
+        'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
     ];
 
     /**
@@ -32,6 +34,59 @@ class Participated extends AbstractCases
     }
 
     /**
+     * Scope filters
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function filters($query)
+    {
+        // Specific case
+        if ($this->getCaseNumber()) {
+            $query->case($this->getCaseNumber());
+        }
+        // Specific case title
+        if (!empty($this->getCaseTitle())) {
+            // @todo: Filter by case title, pending from other PRD
+        }
+        // Scope to search for an specific process
+        if ($this->getProcessId()) {
+            $query->processId($this->getProcessId());
+        }
+        // Specific task
+        if ($this->getTaskId()) {
+            $query->task($this->getTaskId());
+        }
+        // Specific status
+        if ($this->getCaseStatus()) {
+            $query->status($this->getCaseStatus());
+        }
+        // Specific start case date from
+        if (!empty($this->getStartCaseFrom())) {
+            $query->startDateFrom($this->getStartCaseFrom());
+        }
+        // Specific by start case date to
+        if (!empty($this->getStartCaseTo())) {
+            $query->startDateTo($this->getStartCaseTo());
+        }
+        // Specific finish case date from
+        if (!empty($this->getFinishCaseFrom())) {
+            $query->finishCaseFrom($this->getFinishCaseFrom());
+        }
+        // Filter by finish case date to
+        if (!empty($this->getFinishCaseTo())) {
+            $query->finishCaseTo($this->getFinishCaseTo());
+        }
+        // Specific case uid PMFCaseLink
+        if (!empty($this->getCaseUid())) {
+            $query->appUid($this->getCaseUid());
+        }
+
+        return $query;
+    }
+
+    /**
      * Get the data corresponding to Participated
      *
      * @return array
@@ -39,13 +94,15 @@ class Participated extends AbstractCases
     public function getData()
     {
         // Start the query for get the cases related to the user
-        $query = Delegation::query()->select();
+        $query = Delegation::query()->select($this->getColumnsView());
         // Join with process
         $query->joinProcess();
         // Join with task
         $query->joinTask();
         // Join with users
         $query->joinUser();
+        // Join with application
+        $query->joinApplication();
         // Scope to Participated
         $query->participated($this->getUserId());
         // Add filter
@@ -53,29 +110,42 @@ class Participated extends AbstractCases
         if (!empty($filter)) {
             switch ($filter) {
                 case 'STARTED':
-                    // Scope that search for the STARTED
+                    // Scope that search for the STARTED by user
                     $query->caseStarted();
                     break;
-                case 'IN-PROGRESS':
+                case 'IN_PROGRESS':
                     // Scope that search for the TO_DO
+                    $query->selectRaw(
+                        'CONCAT(
+                                        \'[\',
+                                        GROUP_CONCAT(
+                                            CONCAT(
+                                                \'{"tas_id":\',
+                                                APP_DELEGATION.TAS_ID,
+                                                \', "user_id":\',
+                                                APP_DELEGATION.USR_ID,
+                                                \', "due_date":"\',
+                                                APP_DELEGATION.DEL_TASK_DUE_DATE,
+                                                \'"}\'
+                                            )
+                                        ),
+                                        \']\'
+                                  ) AS PENDING'
+                    );
                     $query->caseInProgress();
+                    $query->groupBy('APP_NUMBER');
                     break;
                 case 'COMPLETED':
                     // Scope that search for the COMPLETED
                     $query->caseCompleted();
+                    // Scope to set the last thread
+                    $query->lastThread();
                     break;
             }
         }
-        // Scope to search for an specific process
-        if (!empty($this->getProcessId())) {
-            $query->processId($this->getProcessId());
-        }
-        // Scope the specific case status
-        $status = $this->getCaseStatus();
-        if (array_key_exists($status, Application::$app_status_values)) {
-            $statusId = Application::$app_status_values[$status];
-            $query->appStatusId($statusId);
-        }
+        /** Apply filters */
+        $this->filters($query);
+        /** Apply order and pagination */
         // The order by clause
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
         // The limit by clause
@@ -83,17 +153,57 @@ class Participated extends AbstractCases
         //Execute the query
         $results = $query->get();
         // Prepare the result
-        $results->transform(function ($item, $key) {
-            // Get task color label
-            $item['TAS_COLOR'] = $this->getTaskColor($item['DEL_TASK_DUE_DATE']);
-            $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
+        $results->transform(function ($item, $key) use ($filter) {
             // Apply the date format defined in environment
-            $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
-            $item['DEL_FINISH_DATE_LABEL'] = !empty($item['DEL_FINISH_DATE']) ? applyMaskDateEnvironment($item['DEL_FINISH_DATE']): null;
+            $item['APP_CREATE_DATE_LABEL'] = !empty($item['APP_CREATE_DATE']) ? applyMaskDateEnvironment($item['APP_CREATE_DATE']): null;
+            $item['APP_FINISH_DATE_LABEL'] = !empty($item['APP_FINISH_DATE']) ? applyMaskDateEnvironment($item['APP_FINISH_DATE']): null;
             // Calculate duration
-            $startDate = $item['DEL_DELEGATE_DATE'];
-            $endDate = !empty($item['DEL_FINISH_DATE']) ? $item['DEL_FINISH_DATE'] : date("Y-m-d H:i:s");
+            $startDate = (string)$item['APP_CREATE_DATE'];
+            $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
             $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
+            // Get the detail related to the open thread
+            if (!empty($item['PENDING'])) {
+                $item['PENDING'] = $this->prepareTaskPending($item['PENDING']);
+            }
+            switch ($filter) {
+                case 'STARTED':
+                    $result = [];
+                    $i = 0;
+                    if ($item['APP_STATUS'] === 'TO_DO') {
+                        $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
+                        foreach ($taskPending as $thread) {
+                            // todo this need to review
+                            $result[$i]['tas_title'] = $thread['TAS_TITLE'];
+                            $result[$i]['user_id'] = $thread['USR_ID'];
+                            $result[$i]['due_date'] = $thread['DEL_TASK_DUE_DATE'];
+                            $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
+                            $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                            $i++;
+                        }
+                        $item['PENDING'] = $result;
+                    } else {
+                        $result[$i]['tas_title'] = $item['TAS_TITLE'];
+                        $result[$i]['user_id'] = $item['USR_ID'];
+                        $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
+                        $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
+                        $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                        $item['PENDING'] = $result;
+                    }
+                    break;
+                case 'IN_PROGRESS':
+                    $item['PENDING'] = $this->prepareTaskPending($item['PENDING']);
+                    break;
+                case 'COMPLETED':
+                    $result = [];
+                    $i = 0;
+                    $result[$i]['tas_title'] = $item['TAS_TITLE'];
+                    $result[$i]['user_id'] = $item['USR_ID'];
+                    $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
+                    $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
+                    $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                    $item['PENDING'] = $result;
+                    break;
+            }
 
             return $item;
         });

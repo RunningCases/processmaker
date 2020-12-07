@@ -60,7 +60,7 @@ class ParticipatedTest extends TestCase
         // Set the user ID
         $participated->setUserId($cases->USR_ID);
         // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
@@ -86,7 +86,7 @@ class ParticipatedTest extends TestCase
         // Set the process ID
         $participated->setProcessId($cases->PRO_ID);
         // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
@@ -116,7 +116,7 @@ class ParticipatedTest extends TestCase
         // Set the category
         $participated->setCategoryUid($process['PRO_CATEGORY']);
         // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
@@ -142,7 +142,7 @@ class ParticipatedTest extends TestCase
         // Set the case status
         $participated->setCaseStatus('TO_DO');
         // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
@@ -168,7 +168,7 @@ class ParticipatedTest extends TestCase
         // Set the filter STARTED
         $participated->setParticipatedStatus('STARTED');
         // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
@@ -194,7 +194,7 @@ class ParticipatedTest extends TestCase
         // Set the filter COMPLETED
         $participated->setParticipatedStatus('COMPLETED');
         // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned

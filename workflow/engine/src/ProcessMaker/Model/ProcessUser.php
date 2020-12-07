@@ -65,40 +65,28 @@ class ProcessUser extends Model
     }
 
     /**
-     * It returns a list of processes ids as an array
-     * 
-     * @param array $processes
-     * @return array
-     */
-    public static function getListOfProcessUid($processes)
-    {
-        $res = (array_map(function ($x) {
-            if (array_key_exists('PRO_ID', $x)) {
-                return $x['PRO_ID'];
-            }
-        }, $processes));
-
-        return array_filter($res);
-    }
-
-    /**
      * It returns a list of processes of the supervisor
      * 
      * @param string $userUid
      * @return array
      */
-    public static function getProcessesOfSupervisor($userUid)
+    public static function getProcessesOfSupervisor(string $userUid)
     {
-        $query1 = ProcessUser::query()->select(['PRO_ID']);
-        $query1->processSupervisor($userUid);
-        $processes = $query1->get()->values()->toArray();
-
-        $query2 = ProcessUser::query()->select(['PRO_ID']);
-        $query2->processGroupSupervisor($userUid);
-
-        array_push($processes, $query2->get()->values()->toArray());
-
-        $processes = ProcessUser::getListOfProcessUid($processes);
+        // Get the list of process when the user is supervisor
+        $query = ProcessUser::query()->select(['PRO_ID']);
+        $query->processSupervisor($userUid);
+        $results = $query->get();
+        $processes = [];
+        $results->each(function ($item, $key) use (&$processes) {
+            $processes[] = $item->PRO_ID;
+        });
+        // Get the list of process when the group related to the user is supervisor
+        $query = ProcessUser::query()->select(['PRO_ID']);
+        $query->processGroupSupervisor($userUid);
+        $results = $query->get();
+        $results->each(function ($item, $key) use (&$processes) {
+            $processes[] = $item->PRO_ID;
+        });
 
         return $processes;
     }

@@ -103,11 +103,28 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_priority()
     {
         $absCases = new AbstractCases();
-        $arguments = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
+        $arguments = ['ALL', 'VL', 'L', 'N', 'H', 'VH'];
         $index = array_rand($arguments);
-        $absCases->setPriority($index);
+        $absCases->setPriority($arguments[$index]);
         $actual = $absCases->getPriority();
         $this->assertEquals($index, $actual);
+    }
+
+    /**
+     * This check the getter and setter related to the priorities
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPriorities()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getPriorities()
+     * @test
+     */
+    public function it_return_set_get_priorities()
+    {
+        $absCases = new AbstractCases();
+        $arguments = ['ALL', 'VL', 'L', 'N', 'H', 'VH'];
+        $index = array_rand($arguments);
+        $absCases->setPriorities([$arguments[$index]]);
+        $actual = $absCases->getPriorities();
+        $this->assertEquals([$index], $actual);
     }
 
     /**
@@ -129,9 +146,8 @@ class AbstractCasesTest extends TestCase
     /**
      * This check the getter and setter related to the range of case number
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setRangeCaseNumber()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getFromCaseNumber()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getToCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseNumberFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseNumberTo()
      * @test
      */
     public function it_return_set_get_range_case_number()
@@ -141,9 +157,10 @@ class AbstractCasesTest extends TestCase
             'APP_NUMBER' => $case1->APP_NUMBER + 1
         ]);
         $absCases = new AbstractCases();
-        $absCases->setRangeCaseNumber($case1->APP_NUMBER, $case2->APP_NUMBER);
-        $from = $absCases->getFromCaseNumber();
-        $to = $absCases->getToCaseNumber();
+        $absCases->setCaseNumberFrom($case1->APP_NUMBER);
+        $absCases->setCaseNumberTo($case2->APP_NUMBER);
+        $from = $absCases->getCaseNumberFrom();
+        $to = $absCases->getCaseNumberTo();
         $this->assertEquals($case1->APP_NUMBER, $from);
         $this->assertEquals($case2->APP_NUMBER, $to);
     }
@@ -174,12 +191,12 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_inbox_status()
     {
         $absCases = new AbstractCases();
-        $arguments = ['', 'ALL', 'READ', 'UNREAD'];
+        $arguments = ['ALL', 'READ', 'UNREAD'];
         $index = array_rand($arguments);
         $absCases->setInboxStatus($arguments[$index]);
         $actual = $absCases->getInboxStatus();
-        if (empty($arguments[$index])) {
-            $this->assertEquals('ALL', $actual);
+        if ($arguments[$index] === 'ALL') {
+            $this->assertEmpty($actual);
         } else {
             $this->assertEquals($arguments[$index], $actual);
         }
@@ -195,12 +212,12 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_participated_status()
     {
         $absCases = new AbstractCases();
-        $arguments = ['',  'ALL', 'STARTED', 'COMPLETED'];
+        $arguments = ['ALL', 'STARTED', 'COMPLETED'];
         $index = array_rand($arguments);
         $absCases->setParticipatedStatus($arguments[$index]);
         $actual = $absCases->getParticipatedStatus();
-        if (empty($arguments[$index])) {
-            $this->assertEquals('ALL', $actual);
+        if ($arguments[$index] === 'ALL') {
+            $this->assertEmpty($actual);
         } else {
             $this->assertEquals($arguments[$index], $actual);
         }
@@ -216,12 +233,12 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_risk_status()
     {
         $absCases = new AbstractCases();
-        $arguments = ['', 'ALL', 'ON_TIME', 'AT_RISK', 'OVERDUE'];
+        $arguments = ['ALL', 'ON_TIME', 'AT_RISK', 'OVERDUE'];
         $index = array_rand($arguments);
         $absCases->setRiskStatus($arguments[$index]);
         $actual = $absCases->getRiskStatus();
-        if (empty($arguments[$index])) {
-            $this->assertEquals('ALL', $actual);
+        if ($arguments[$index] === 'ALL') {
+            $this->assertEmpty($actual);
         } else {
             $this->assertEquals($arguments[$index], $actual);
         }
@@ -237,18 +254,36 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_case_status()
     {
         $absCases = new AbstractCases();
-        $arguments = ['', 'ALL', 'DRAFT', 'TO_DO', 'COMPLETED', 'CANCELLED', 'CANCELED'];
+        $arguments = ['ALL', 'DRAFT', 'TO_DO', 'COMPLETED', 'CANCELED'];
         $index = array_rand($arguments);
         $absCases->setCaseStatus($arguments[$index]);
         $actual = $absCases->getCaseStatus();
-        if (empty($arguments[$index])) {
-            $this->assertEquals('ALL', $actual);
+        $this->assertEquals($index, $actual);
+        if ($arguments[$index] === 'ALL') {
+            $this->assertEquals(0, $actual);
         } else {
-            if ($arguments[$index] === AbstractCases::INCORRECT_CANCELED_STATUS) {
-                $this->assertEquals(AbstractCases::CORRECT_CANCELED_STATUS, $actual);
-            } else {
-                $this->assertEquals($arguments[$index], $actual);
-            }
+            $this->assertEquals($index, $actual);
+        }
+    }
+
+    /**
+     * This check the getter and setter related to the case statuses
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatuses()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseStatuses()
+     * @test
+     */
+    public function it_return_set_get_case_statuses()
+    {
+        $absCases = new AbstractCases();
+        $arguments = ['ALL', 'DRAFT', 'TO_DO', 'COMPLETED', 'CANCELED'];
+        $index = array_rand($arguments);
+        $absCases->setCaseStatuses([$arguments[$index]]);
+        $actual = $absCases->getCaseStatuses();
+        if ($arguments[$index] === 'ALL') {
+            $this->assertEquals([], $actual);
+        } else {
+            $this->assertEquals([$index], $actual);
         }
     }
 
@@ -286,32 +321,32 @@ class AbstractCasesTest extends TestCase
     /**
      * This check the getter and setter related to the newest than date
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setNewestThan()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getNewestThan()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDelegateFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getDelegateFrom()
      * @test
      */
     public function it_return_set_get_newest_than()
     {
         $absCases = new AbstractCases();
         $text = date('Y-m-d');
-        $absCases->setNewestThan($text);
-        $actual = $absCases->getNewestThan();
+        $absCases->setDelegateFrom($text);
+        $actual = $absCases->getDelegateFrom();
         $this->assertEquals($text, $actual);
     }
 
     /**
      * This check the getter and setter related to the oldest than date
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOldestThan()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getOldestThan()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDelegateTo()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getDelegateTo()
      * @test
      */
     public function it_return_set_get_oldest_than()
     {
         $absCases = new AbstractCases();
         $text = date('Y-m-d');
-        $absCases->setOldestThan($text);
-        $actual = $absCases->getOldestThan();
+        $absCases->setDelegateTo($text);
+        $actual = $absCases->getDelegateTo();
         $this->assertEquals($text, $actual);
     }
 
@@ -383,52 +418,61 @@ class AbstractCasesTest extends TestCase
     {
         $absCases = new AbstractCases();
         $properties = [
-            'category' => G::generateUniqueID(),
+            // Tasks - Cases
             'process' => rand(),
             'task' => rand(),
             'user' => rand(),
-            'priority' => 1,
             'caseNumber' => rand(),
-            'caseNumberFrom' => rand(),
-            'caseNumberTo' => rand(),
+            'caseTitle' => G::generateUniqueID(),
+            // Home - Search
+            'priorities' => ['N'],
+            'caseStatuses' => ['TO_DO','DRAFT'],
+            'filterCases'=> '1,3-5,8,10-15',
+            'delegationDateFrom' => date('Y-m-d'),
+            'delegationDateTo' => date('Y-m-d'),
+            // Home - My cases
+            'filter'=> 'ALL',
+            'caseStatus' => 'TO_DO',
+            'startCaseFrom' => date('Y-m-d'),
+            'startCaseTo' => date('Y-m-d'),
+            'finishCaseFrom' => date('Y-m-d'),
+            'finishCaseTo' => date('Y-m-d'),
+            // Other
             'search' => G::generateUniqueID(),
+            'category' => G::generateUniqueID(),
             'caseLink' => G::generateUniqueID(),
             'appUidCheck' => [G::generateUniqueID()],
-            'newestthan' => date('Y-m-d'),
-            'oldestthan' => date('Y-m-d'),
-            'sort' => 'APP_DELEGATION.APP_NUMBER',
+            'sort' => 'APP_NUMBER',
             'dir' => 'DESC',
             'paged' => true,
             'start' => 5,
             'limit' => 10,
         ];
         $absCases->setProperties($properties);
-        $actual = $absCases->getCategoryUid();
-        $this->assertEquals($properties['category'], $actual);
+        // Tasks - Cases
         $actual = $absCases->getProcessId();
         $this->assertEquals($properties['process'], $actual);
         $actual = $absCases->getTaskId();
         $this->assertEquals($properties['task'], $actual);
         $actual = $absCases->getUserId();
         $this->assertEquals($properties['user'], $actual);
-        $actual = $absCases->getPriority();
-        $this->assertEquals($properties['priority'], $actual);
         $actual = $absCases->getCaseNumber();
         $this->assertEquals($properties['caseNumber'], $actual);
-        $actual = $absCases->getFromCaseNumber();
-        $this->assertEquals($properties['caseNumberFrom'], $actual);
-        $actual = $absCases->getToCaseNumber();
-        $this->assertEquals($properties['caseNumberTo'], $actual);
+        // Home - Search
+        $actual = $absCases->getPriorities();
+        $this->assertNotEmpty($actual);
+        // Home - My cases
+        $actual = $absCases->getParticipatedStatus();
+        $this->assertEmpty($actual);
+        // Other
         $actual = $absCases->getValueToSearch();
         $this->assertEquals($properties['search'], $actual);
+        $actual = $absCases->getCategoryUid();
+        $this->assertEquals($properties['category'], $actual);
         $actual = $absCases->getCaseUid();
         $this->assertEquals($properties['caseLink'], $actual);
         $actual = $absCases->getCasesUids();
         $this->assertEquals($properties['appUidCheck'], $actual);
-        $actual = $absCases->getNewestThan();
-        $this->assertEquals($properties['newestthan'], $actual);
-        $actual = $absCases->getOldestThan();
-        $this->assertEquals($properties['oldestthan'], $actual);
         $actual = $absCases->getOrderByColumn();
         $this->assertEquals($properties['sort'], $actual);
         $actual = $absCases->getOrderDirection();

@@ -22,7 +22,8 @@ class Unassigned extends AbstractCases
         'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
         'APP_DELEGATION.DEL_PRIORITY',  // Priority
         // Additional column for other functionalities
-        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+        'APP_DELEGATION.APP_UID', // Case Uid for Open case
+        'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
     ];
 
     /**
@@ -32,6 +33,39 @@ class Unassigned extends AbstractCases
     public function getColumnsView()
     {
         return $this->columnsView;
+    }
+
+    /**
+     * Scope filters
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function filters($query)
+    {
+        // Specific case
+        if ($this->getCaseNumber()) {
+            $query->case($this->getCaseNumber());
+        }
+        // Specific case title
+        if ($this->getCaseTitle()) {
+            // @todo: Filter by case title, pending from other PRD
+        }
+        // Specific process
+        if ($this->getProcessId()) {
+            $query->processId($this->getProcessId());
+        }
+        // Specific task
+        if ($this->getTaskId()) {
+            $query->task($this->getTaskId());
+        }
+        // Specific case uid PMFCaseLink
+        if (!empty($this->getCaseUid())) {
+            $query->appUid($this->getCaseUid());
+        }
+
+        return $query;
     }
 
     /**
@@ -47,28 +81,15 @@ class Unassigned extends AbstractCases
         // Join with users
         $query->joinUser();
         // Join with application for add the initial scope for unassigned cases
-        $query->selfService($this->getUserUid());
+        if (!empty($this->getUserUid())) {
+            $query->selfService($this->getUserUid());
+        }
         // Add join for application, for get the case title when the case status is TO_DO
-        $query->appStatusId(Application::STATUS_TODO);
-        // Specific process
-        if ($this->getProcessId()) {
-            $query->processId($this->getProcessId());
-        }
-        // Date range filter, this is used from mobile GET /light/unassigned
-        if ($this->getNewestThan()) {
-            $query->delegateDateFrom($this->getNewestThan());
-        }
-        if ($this->getOldestThan()) {
-            $query->delegateDateTo($this->getOldestThan());
-        }
-        // Specific case uid
-        if (!empty($this->getCaseUid())) {
-            $query->appUid($this->getCaseUid());
-        }
-        // Specific cases
-        if (!empty($this->getCasesUids())) {
-            $query->specificCasesByUid($this->getCasesUids());
-        }
+        $query->joinApplication();
+        $query->status(Application::STATUS_TODO);
+        /** Apply filters */
+        $this->filters($query);
+        /** Apply order and pagination */
         // Add any sort if needed
         if ($this->getOrderByColumn()) {
             $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
