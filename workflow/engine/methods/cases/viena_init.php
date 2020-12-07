@@ -138,14 +138,7 @@ if (HIGHLIGHT_HOME_FOLDER_ENABLE) {
 }
 /*----------------------------------********-   --------------------------------*/
 
-// include "/opt/processmaker/workflow/public_html/Viena.php";
-// $phpFile = "/opt/processmaker/workflow/viena/EHX/index.php";
-// require_once($phpFile); 
-// header("Location:../viena/index.php/hom  e");
-// SYS_COLLECTION = "viena";
-// echo "hola mundo ";
-// die();
-// echo View::make('welcome');
+
 $userCanAccess = 1;
 global $translation;
 
@@ -157,12 +150,6 @@ ScriptVariables::add('SYS_URI', SYS_URI);
 ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
 echo View::make('Views::home.home', compact("userCanAccess"))->render();
-// $_SESSION["current_ux"] = "NORMAL";
-
-// G::RenderPage("publish", "blade");
-// const PLUGIN_NAME = 'EHX';
-
-
 
 /*----------------------------------********---------------------------------*/
 function getClientCredentials($clientId)
