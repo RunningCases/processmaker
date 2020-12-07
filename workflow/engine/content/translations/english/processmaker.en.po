@@ -19476,6 +19476,18 @@ msgid "My account"
 msgstr "My account"
 
 # TRANSLATION
+# LABEL/ID_MY_CASES
+#: LABEL/ID_MY_CASES
+msgid "My Cases"
+msgstr "My Cases"
+
+# TRANSLATION
+# LABEL/ID_MY_DOCUMENTS
+#: LABEL/ID_MY_DOCUMENTS
+msgid "My Documents"
+msgstr "My Documents"
+
+# TRANSLATION
 # LABEL/ID_MY_DRAFTS
 #: LABEL/ID_MY_DRAFTS
 msgid "My Drafts"
@@ -24978,6 +24990,12 @@ msgid "Supervisor has been removed successfully from Process"
 msgstr "Supervisor has been removed successfully from Process"
 
 # TRANSLATION
+# LABEL/ID_SUPERVISOR_TASKS
+#: LABEL/ID_SUPERVISOR_TASKS
+msgid "Supervisor Tasks"
+msgstr "Supervisor Tasks"
+
+# TRANSLATION
 # LABEL/ID_SUPERVISOR_UNAVAILABLE
 #: LABEL/ID_SUPERVISOR_UNAVAILABLE
 msgid "No supervisors are available. All supervisors have been already assigned."
@@ -25240,6 +25258,12 @@ msgstr "Overdue"
 #: LABEL/ID_TASK_PROPERTIES_SAVE
 msgid "Task properties has been saved successfully"
 msgstr "Task properties has been saved successfully"
+
+# TRANSLATION
+# LABEL/ID_TASK_REASSIGNMENTS
+#: LABEL/ID_TASK_REASSIGNMENTS
+msgid "Task Reassignments"
+msgstr "Task Reassignments"
 
 # TRANSLATION
 # LABEL/ID_TASK_TRANSFER

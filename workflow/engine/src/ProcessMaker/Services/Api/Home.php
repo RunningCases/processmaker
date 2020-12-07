@@ -4,7 +4,9 @@ namespace ProcessMaker\Services\Api;
 
 use Exception;
 use Luracast\Restler\RestException;
+use Menu;
 use ProcessMaker\BusinessModel\Cases\Draft;
+use ProcessMaker\BusinessModel\Cases\Filter;
 use ProcessMaker\BusinessModel\Cases\Inbox;
 use ProcessMaker\BusinessModel\Cases\Participated;
 use ProcessMaker\BusinessModel\Cases\Paused;
@@ -14,6 +16,7 @@ use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\Model\User;
 use ProcessMaker\Services\Api;
 use RBAC;
+use stdClass;
 
 class Home extends Api
 {
@@ -459,5 +462,76 @@ class Home extends Api
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
+    }
+
+    /**
+     * Get home menu
+     *
+     * @url GET /menu
+     *
+     * @return array
+     *
+     * @access protected
+     */
+    public function getMenu()
+    {
+        // Parse menu definition
+        $menuInstance = new Menu();
+        $menuInstance->load('home');
+
+        // Initializing variables
+        $optionsWithCounter = ['CASES_INBOX', 'CASES_DRAFT', 'CASES_PAUSED', 'CASES_SELFSERVICE'];
+        $menuHome = [];
+
+        // Build the Home menu
+        for ($i = 0; $i < count($menuInstance->Options); $i++) {
+            // Initializing option object
+            $option = new stdClass();
+
+            // Build the object according to the option menu type
+            if ($menuInstance->Types[$i] === 'blockHeader') {
+                $option->header = true;
+                $option->title = $menuInstance->Labels[$i];
+                $option->hiddenOnCollapse = true;
+            } else {
+                $option->href = $menuInstance->Options[$i];
+                $option->id = $menuInstance->Id[$i];
+                $option->title = $menuInstance->Labels[$i];
+                $option->icon = $menuInstance->Icons[$i];
+            }
+
+            // Add additional attributes for some options
+            if (in_array($menuInstance->Id[$i], $optionsWithCounter)) {
+                $option->badge = new stdClass();
+                $option->badge->text = '0';
+                $option->badge->class = 'badge-custom';
+            }
+            if ($menuInstance->Id[$i] === 'CASES_SEARCH') {
+                // Get advanced search filters for the current user
+                $filters = Filter::getByUser($this->getUserId());
+
+                // Initializing
+                $child = [];
+                foreach ($filters as $filter) {
+                    $childFilter = new stdClass();
+                    $childFilter->id = $filter->id;
+                    $childFilter->page = '/advanced-search';
+                    $childFilter->href = "{$childFilter->page}/{$filter->id}";
+                    $childFilter->title = $filter->name;
+                    $childFilter->icon = 'fas fa-circle';
+                    $childFilter->filters = $filter->filters;
+                    $child[] = $childFilter;
+                }
+
+                // Adding filters to the "Advanced Search" option
+                $option->child = $child;
+            }
+
+            // Add option to the menu
+            $menuHome[] = $option;
+        }
+
+        // Return menu
+        return $menuHome;
     }
 }
