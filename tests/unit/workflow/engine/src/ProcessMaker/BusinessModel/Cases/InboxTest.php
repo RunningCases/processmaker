@@ -20,6 +20,23 @@ class InboxTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Create inbox cases factories
+     *
+     * @param string
+     *
+     * @return array
+     */
+    public function createInbox()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+        ]);
+
+        return $delegation;
+    }
+
+    /**
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
@@ -27,89 +44,18 @@ class InboxTest extends TestCase
      */
     public function it_should_test_get_data_method_without_filters()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-        //Create the register in delegation
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-        //Create new Inbox object
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
         $inbox = new Inbox();
-        //Set the user UID
-        $inbox->setUserUid($user->USR_UID);
-        //Set the user ID
-        $inbox->setUserId($user->USR_ID);
-        //Set OrderBYColumn value
+        // Set the user ID
+        $inbox->setUserId($cases->USR_ID);
+        // Set OrderBYColumn value
         $inbox->setOrderByColumn('APP_NUMBER');
-        //Call to getData method
+        // Call to getData method
         $res = $inbox->getData();
-        //This assert that the expected numbers of results are returned
-        $this->assertEquals(10, count($res));
-    }
-
-    /**
-     * It tests the getData method with Category Filter
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @test
-     */
-    public function it_it_should_test_get_data_method_with_Category_Filter()
-    {
-        //Create process
-        $process = factory(Process::class)->create(
-            ['PRO_CATEGORY' => '248565910552bd7d6006458065223611']
-        );
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'PRO_UID' => $process->PRO_UID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-
-        //Create new Inbox object
-        $inbox = new Inbox();
-
-        //Set the user UID
-        $inbox->setUserUid($user->USR_UID);
-
-        //Set the user ID
-        $inbox->setUserId($user->USR_ID);
-
-        //Set OrderBYColumn value
-        $inbox->setOrderByColumn('APP_NUMBER');
-
-        //Set Category value
-        $inbox->setCategoryUid('248565910552bd7d6006458065223611');
-
-        //Call to getData method
-        $res = $inbox->getData();
-
-        //
-        $this->assertEquals(10, count($res));
+        // This assert that the expected numbers of results are returned
+        $this->assertNotEmpty($res);
     }
 
     /**
@@ -118,39 +64,17 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
-    public function it_it_should_test_get_data_method_with_Process_Filter()
+    public function it_should_test_get_data_by_process_filter()
     {
-        //Create process
-        $process = factory(Process::class, 2)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'PRO_UID' => $process[0]->PRO_UID,
-            'PRO_ID' => $process[0]->PRO_ID
-        ]);
-
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process[0]->PRO_ID
-        ]);
-
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
         $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setProcessId($cases->PRO_ID);
         $inbox->setOrderByColumn('APP_NUMBER');
-        $inbox->setProcessId($process[1]->PRO_ID);
         $res = $inbox->getData();
-        $this->assertEmpty($res);
-        $inbox->setProcessId($process[0]->PRO_ID);
-        $res = $inbox->getData();
-        $this->assertEquals(10, count($res));
+        $this->assertNotEmpty($res);
     }
 
     /**
@@ -159,43 +83,17 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
-    public function it_should_return_inbox_sort_by_case_number()
+    public function it_should_test_get_data_by_case_number()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create tasks
-        $task = factory(Task::class)->create([
-            'PRO_UID' => $process->PRO_UID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
         $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setCaseNumber($cases->APP_NUMBER);
         $inbox->setOrderByColumn('APP_NUMBER');
-        $inbox->setOrderDirection('DESC');
         $res = $inbox->getData();
-        // This asserts the order is for APP_NUMBER from highest to lowest
-        $this->assertLessThan($res[0]['APP_NUMBER'], $res[1]['APP_NUMBER']);
-
-        $inbox->setOrderByColumn('APP_NUMBER');
-        $inbox->setOrderDirection('ASC');
-        $res = $inbox->getData();
-        // This asserts the order is for APP_NUMBER from highest to lowest
-        $this->assertGreaterThan($res[0]['APP_NUMBER'], $res[1]['APP_NUMBER']);
+        $this->assertNotEmpty($res);
     }
 
     /**
@@ -204,40 +102,17 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
-    public function it_should_return_inbox_sort_by_task_title()
+    public function it_should_test_get_data_by_task_filter()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        //Create user
-        $user = factory(User::class)->create();
-        for ($i = 1; $i <= 2; $i++) {
-            //Create tasks
-            $task = factory(Task::class)->create([
-                'PRO_UID' => $process->PRO_UID,
-                'PRO_ID' => $process->PRO_ID
-            ]);
-            //Create the register in delegation
-            factory(Delegation::class, 10)->create([
-                'TAS_ID' => $task->TAS_ID,
-                'DEL_THREAD_STATUS' => 'OPEN',
-                'USR_UID' => $user->USR_UID,
-                'USR_ID' => $user->USR_ID,
-                'PRO_ID' => $process->PRO_ID
-            ]);
-        }
-
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
         $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('TASK.TAS_TITLE');
-        $inbox->setOrderDirection('DESC');
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setTaskId($cases->TAS_ID);
         $res = $inbox->getData();
-        $this->assertLessThanOrEqual($res[0]['TAS_TITLE'], $res[1]['TAS_TITLE']);
+        $this->assertNotEmpty($res);
 
-        $inbox->setOrderByColumn('TASK.TAS_TITLE');
-        $inbox->setOrderDirection('ASC');
-        $res = $inbox->getData();
-        $this->assertGreaterThanOrEqual($res[0]['TAS_TITLE'], $res[1]['TAS_TITLE']);
     }
 
     /**
@@ -246,249 +121,15 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @test
      */
-    public function it_should_return_inbox_sort_by_case_title()
+    public function it_should_test_get_data_by_case_title()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create tasks
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 20)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
         $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('APP_TITLE');
-        $inbox->setOrderDirection('DESC');
+        $inbox->setUserId($cases->USR_ID);
         $res = $inbox->getData();
-        // This asserts the order is for APP_TITLE from highest to lowest
-        $this->assertLessThan($res[0]['APP_TITLE'], $res[1]['APP_TITLE']);
-
-        $inbox->setOrderByColumn('APP_TITLE');
-        $inbox->setOrderDirection('ASC');
-        $res = $inbox->getData();
-        // This asserts the order is for APP_TITLE from highest to lowest
-        $this->assertGreaterThan($res[0]['APP_TITLE'], $res[1]['APP_TITLE']);
-    }
-
-    /**
-     * It tests the getData method using OrderBy
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @test
-     */
-    public function it_should_return_inbox_sort_by_process()
-    {
-        //Create process
-        $process1 = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create tasks
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process1->PRO_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process1->PRO_ID
-        ]);
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID
-        ]);
-
-        $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('PROCESS.PRO_TITLE');
-        $inbox->setOrderDirection('DESC');
-        $res = $inbox->getData();
-        // This asserts the order is for PRO_ID from highest to lowest
-        $this->assertLessThanOrEqual($res[0]['PRO_TITLE'], $res[1]['PRO_TITLE']);
-
-        $inbox->setOrderByColumn('PROCESS.PRO_ID');
-        $inbox->setOrderDirection('ASC');
-        $res = $inbox->getData();
-        // This asserts the order is for PRO_ID from highest to lowest
-        $this->assertGreaterThanOrEqual($res[0]['PRO_TITLE'], $res[1]['PRO_TITLE']);
-    }
-
-    /**
-     * It tests the getData method using OrderBy
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @test
-     */
-    public function it_should_return_inbox_sort_by_due_date()
-    {
-        //Create process
-        $process1 = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create tasks
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process1->PRO_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process1->PRO_ID
-        ]);
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID
-        ]);
-
-        $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('DEL_TASK_DUE_DATE');
-        $inbox->setOrderDirection('DESC');
-        $res = $inbox->getData();
-        // This asserts the order is for DEL_TASK_DUE_DATE from highest to lowest
-        $this->assertLessThanOrEqual($res[0]['DEL_TASK_DUE_DATE'], $res[1]['DEL_TASK_DUE_DATE']);
-
-        $inbox->setOrderByColumn('DEL_TASK_DUE_DATE');
-        $inbox->setOrderDirection('ASC');
-        $res = $inbox->getData();
-        // This asserts the order is for DEL_TASK_DUE_DATE from highest to lowest
-        $this->assertGreaterThanOrEqual($res[0]['DEL_TASK_DUE_DATE'], $res[1]['DEL_TASK_DUE_DATE']);
-    }
-
-    /**
-     * It tests the getData method using OrderBy
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @test
-     */
-    public function it_should_return_inbox_sort_by_delegate_date()
-    {
-        //Create process
-        $process1 = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create tasks
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process1->PRO_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process1->PRO_ID
-        ]);
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID
-        ]);
-
-        $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('DEL_DELEGATE_DATE');
-        $inbox->setOrderDirection('DESC');
-        $res = $inbox->getData();
-        // This asserts the order is for APP_UPDATE_DATE from highest to lowest
-        $this->assertLessThanOrEqual($res[0]['DEL_DELEGATE_DATE'], $res[1]['DEL_DELEGATE_DATE']);
-
-        $inbox->setOrderByColumn('DEL_DELEGATE_DATE');
-        $inbox->setOrderDirection('ASC');
-        $res = $inbox->getData();
-        // This asserts the order is for APP_UPDATE_DATE from highest to lowest
-        $this->assertGreaterThanOrEqual($res[0]['DEL_DELEGATE_DATE'], $res[1]['DEL_DELEGATE_DATE']);
-    }
-
-    /**
-     * It tests the getData method with pager
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @test
-     */
-    public function it_it_should_test_get_data_method_with_pager()
-    {
-        //Create process
-        $process = factory(Process::class)->create(
-            ['PRO_CATEGORY' => '248565910552bd7d6006458065223611']
-        );
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 50)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-
-        $inbox = new Inbox();
-        $inbox->setUserUid($user->USR_UID);
-        $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('APP_NUMBER');
-        $inbox->setOffset(5);
-        $inbox->setLimit(2);
-        $res = $inbox->getData();
-
-        $this->assertEquals(2, count($res));
+        $this->assertNotEmpty($res);
     }
 
     /**
@@ -499,34 +140,12 @@ class InboxTest extends TestCase
      */
     public function it_should_test_the_counter_for_inbox()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        //Create the register in delegation relate to self-service
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID
-        ]);
-
-        //Create the Inbox object
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create the Inbox object
         $inbox = new Inbox();
-        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserId($cases->USR_ID);
         $res = $inbox->getCounter();
-
-        //Assert the result of getCounter method
-        $this->assertEquals(10, $res);
+        $this->assertTrue($res > 0);
     }
 }

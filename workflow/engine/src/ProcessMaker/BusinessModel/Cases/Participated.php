@@ -22,6 +22,8 @@ class Participated extends AbstractCases
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
+        'APP_DELEGATION.PRO_UID', // Process Uid for Case notes
+        'APP_DELEGATION.TAS_UID', // Task Uid for Case notes
     ];
 
     /**
@@ -107,16 +109,15 @@ class Participated extends AbstractCases
         $query->participated($this->getUserId());
         // Add filter
         $filter = $this->getParticipatedStatus();
-        if (!empty($filter)) {
-            switch ($filter) {
-                case 'STARTED':
-                    // Scope that search for the STARTED by user
-                    $query->caseStarted();
-                    break;
-                case 'IN_PROGRESS':
-                    // Scope that search for the TO_DO
-                    $query->selectRaw(
-                        'CONCAT(
+        switch ($filter) {
+            case 'STARTED':
+                // Scope that search for the STARTED by user
+                $query->caseStarted();
+                break;
+            case 'IN_PROGRESS':
+                // Scope that search for the TO_DO
+                $query->selectRaw(
+                    'CONCAT(
                                         \'[\',
                                         GROUP_CONCAT(
                                             CONCAT(
@@ -131,17 +132,18 @@ class Participated extends AbstractCases
                                         ),
                                         \']\'
                                   ) AS PENDING'
-                    );
-                    $query->caseInProgress();
-                    $query->groupBy('APP_NUMBER');
-                    break;
-                case 'COMPLETED':
-                    // Scope that search for the COMPLETED
-                    $query->caseCompleted();
-                    // Scope to set the last thread
-                    $query->lastThread();
-                    break;
-            }
+                );
+                // Only cases in progress
+                $query->caseInProgress();
+                // Group by AppNumber
+                $query->groupBy('APP_NUMBER');
+                break;
+            case 'COMPLETED':
+                // Scope that search for the COMPLETED
+                $query->caseCompleted();
+                // Scope to set the last thread
+                $query->lastThread();
+                break;
         }
         /** Apply filters */
         $this->filters($query);

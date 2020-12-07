@@ -21,6 +21,8 @@ class Supervising extends AbstractCases
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
+        'APP_DELEGATION.PRO_UID', // Process Uid for Case notes
+        'APP_DELEGATION.TAS_UID', // Task Uid for Case notes
     ];
 
     /**
@@ -98,6 +100,23 @@ class Supervising extends AbstractCases
         if (!empty($processes)) {
             // Start the query for get the cases related to the user
             $query = Delegation::query()->select($this->getColumnsView());
+            $query->selectRaw(
+                'CONCAT(
+                                        \'[\',
+                                        GROUP_CONCAT(
+                                            CONCAT(
+                                                \'{"tas_id":\',
+                                                APP_DELEGATION.TAS_ID,
+                                                \', "user_id":\',
+                                                APP_DELEGATION.USR_ID,
+                                                \', "due_date":"\',
+                                                APP_DELEGATION.DEL_TASK_DUE_DATE,
+                                                \'"}\'
+                                            )
+                                        ),
+                                        \']\'
+                                  ) AS PENDING'
+            );
             // Join with process
             $query->joinProcess();
             // Join with task
@@ -112,6 +131,8 @@ class Supervising extends AbstractCases
             $query->userId($this->getUserId());
             // Scope the specific array of processes supervising
             $query->processInList($processes);
+            // Group by appNumber
+            $query->groupBy('APP_NUMBER');
             /** Apply filters */
             $this->filters($query);
             /** Apply order and pagination */
@@ -133,6 +154,10 @@ class Supervising extends AbstractCases
                 $startDate = (string)$item['APP_CREATE_DATE'];
                 $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
                 $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
+                // Get the detail related to the open thread
+                if (!empty($item['PENDING'])) {
+                    $item['PENDING'] = $this->prepareTaskPending($item['PENDING']);
+                }
 
                 return $item;
             });

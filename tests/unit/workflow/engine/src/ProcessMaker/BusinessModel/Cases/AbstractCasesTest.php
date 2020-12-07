@@ -103,7 +103,7 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_priority()
     {
         $absCases = new AbstractCases();
-        $arguments = ['ALL', 'VL', 'L', 'N', 'H', 'VH'];
+        $arguments = ['VL', 'L', 'N', 'H', 'VH'];
         $index = array_rand($arguments);
         $absCases->setPriority($arguments[$index]);
         $actual = $absCases->getPriority();
@@ -120,7 +120,7 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_priorities()
     {
         $absCases = new AbstractCases();
-        $arguments = ['ALL', 'VL', 'L', 'N', 'H', 'VH'];
+        $arguments = ['VL', 'L', 'N', 'H', 'VH'];
         $index = array_rand($arguments);
         $absCases->setPriorities([$arguments[$index]]);
         $actual = $absCases->getPriorities();
@@ -276,15 +276,11 @@ class AbstractCasesTest extends TestCase
     public function it_return_set_get_case_statuses()
     {
         $absCases = new AbstractCases();
-        $arguments = ['ALL', 'DRAFT', 'TO_DO', 'COMPLETED', 'CANCELED'];
+        $arguments = ['DRAFT', 'TO_DO', 'COMPLETED', 'CANCELED'];
         $index = array_rand($arguments);
         $absCases->setCaseStatuses([$arguments[$index]]);
         $actual = $absCases->getCaseStatuses();
-        if ($arguments[$index] === 'ALL') {
-            $this->assertEquals([], $actual);
-        } else {
-            $this->assertEquals([$index], $actual);
-        }
+        $this->assertEquals([$index], $actual);
     }
 
     /**
@@ -407,11 +403,91 @@ class AbstractCasesTest extends TestCase
         $actual = $absCases->getLimit();
         $this->assertEquals($number, $actual);
     }
+    /**
+     * This check the setter by default related to the properties
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setProperties()
+     * @test
+     */
+    public function it_return_set_get_properties_default()
+    {
+        $absCases = new AbstractCases();
+        $properties = [];
+        $absCases->setProperties($properties);
+        $actual = $absCases->getProcessId();
+        $this->assertEquals(0, $actual);
+        $actual = $absCases->getTaskId();
+        $this->assertEquals(0, $actual);
+        $actual = $absCases->getTaskId();
+        $this->assertEquals(0, $actual);
+        $actual = $absCases->getUserId();
+        $this->assertEquals(0, $actual);
+        $actual = $absCases->getCaseNumber();
+        $this->assertEquals(0, $actual);
+        $actual = $absCases->getOrderDirection();
+        $this->assertEquals('DESC', $actual);
+        $actual = $absCases->getOrderByColumn();
+        $this->assertEquals('APP_NUMBER', $actual);
+        $actual = $absCases->getOffset();
+        $this->assertEquals(0, $actual);
+        $actual = $absCases->getLimit();
+        $this->assertEquals(15, $actual);
+        // Home - Search
+        $actual = $absCases->getPriorities();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getCaseStatuses();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getFilterCases();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getDelegateFrom();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getDelegateTo();
+        $this->assertEmpty($actual);
+        // Home - My cases
+        $actual = $absCases->getParticipatedStatus();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getCaseNumberFrom();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getCaseNumberTo();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getFinishCaseFrom();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getFinishCaseTo();
+        $this->assertEmpty($actual);
+    }
 
     /**
      * This check the setter related all the properties
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setProperties()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setProcessId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setTaskId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseTitle()
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setParticipatedStatus()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatus()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setStartCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setStartCaseTo()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setFinishCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setFinishCaseTo()
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatuses()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setProperties()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDelegateFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDelegateTo()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDueFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDueTo()
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCasesUids()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOrderByColumn()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOrderDirection()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPaged()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOffset()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setLimit()
      * @test
      */
     public function it_return_set_get_properties()
@@ -431,7 +507,7 @@ class AbstractCasesTest extends TestCase
             'delegationDateFrom' => date('Y-m-d'),
             'delegationDateTo' => date('Y-m-d'),
             // Home - My cases
-            'filter'=> 'ALL',
+            'filter'=> 'STARTED',
             'caseStatus' => 'TO_DO',
             'startCaseFrom' => date('Y-m-d'),
             'startCaseTo' => date('Y-m-d'),
@@ -461,9 +537,31 @@ class AbstractCasesTest extends TestCase
         // Home - Search
         $actual = $absCases->getPriorities();
         $this->assertNotEmpty($actual);
+        $actual = $absCases->getCaseStatuses();
+        $this->assertNotEmpty($actual);
+        $actual = $absCases->getFilterCases();
+        $this->assertEquals([1,8], $actual);
+        $actual = $absCases->getCasesNumbers();
+        $this->assertEquals(['3-5','10-15'], $actual);
+        $actual = $absCases->getRangeCasesFromTo();
+        $this->assertNotEmpty($actual);
+        $actual = $absCases->getDelegateFrom();
+        $this->assertEquals($properties['delegationDateFrom'], $actual);
+        $actual = $absCases->getDelegateTo();
+        $this->assertEquals($properties['delegationDateTo'], $actual);
         // Home - My cases
         $actual = $absCases->getParticipatedStatus();
         $this->assertEmpty($actual);
+        $actual = $absCases->getCaseStatus();
+        $this->assertEquals(2, $actual);
+        $actual = $absCases->getStartCaseFrom();
+        $this->assertEquals($properties['startCaseFrom'], $actual);
+        $actual = $absCases->getStartCaseTo();
+        $this->assertEquals($properties['startCaseTo'], $actual);
+        $actual = $absCases->getFinishCaseFrom();
+        $this->assertEquals($properties['finishCaseFrom'], $actual);
+        $actual = $absCases->getFinishCaseTo();
+        $this->assertEquals($properties['finishCaseTo'], $actual);
         // Other
         $actual = $absCases->getValueToSearch();
         $this->assertEquals($properties['search'], $actual);

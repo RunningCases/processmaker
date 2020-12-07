@@ -23,5 +23,5 @@ return [
     | directory. However, as usual, you are free to change this value.
     |
     */
-    'compiled' => realpath(PATH_TRUNK . 'bootstrap/cache/views')
+    'compiled' => realpath(dirname(__DIR__) . '/' . 'bootstrap/cache/views')
 ];
