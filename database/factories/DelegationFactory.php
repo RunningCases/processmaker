@@ -34,7 +34,8 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
         'USR_ID' => $user->USR_ID,
         'PRO_ID' => $process->PRO_ID,
         'TAS_ID' => $task->TAS_ID,
-        'DEL_DATA' => ''
+        'DEL_DATA' => '',
+        'DEL_TITLE' => $faker->word()
     ];
 });
 
@@ -73,7 +74,8 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
         'USR_ID' => $user->USR_ID,
         'PRO_ID' => $process->PRO_ID,
         'TAS_ID' => $task->TAS_ID,
-        'DEL_DATA' => ''
+        'DEL_DATA' => '',
+        'DEL_TITLE' => $faker->word()
     ];
 });
 

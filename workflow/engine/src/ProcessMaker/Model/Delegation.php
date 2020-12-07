@@ -187,7 +187,7 @@ class Delegation extends Model
             'APPLICATION.APP_CREATE_DATE',
             'APPLICATION.APP_FINISH_DATE',
             'APPLICATION.APP_UPDATE_DATE',
-            'APPLICATION.APP_TITLE',
+            'APP_DELEGATION.DEL_TITLE AS APP_TITLE',
             'APP_DELEGATION.USR_UID',
             'APP_DELEGATION.TAS_UID',
             'APP_DELEGATION.USR_ID',
@@ -240,12 +240,11 @@ class Delegation extends Model
 
                     // Build the "fulltext" expression
                     $search = '+"' . preg_replace('/\s+/', '" +"', addslashes($search)) . '"';
-
                     // Searching using "fulltext" index
-                    $join->whereRaw("MATCH(APPLICATION.APP_TITLE) AGAINST('{$search}' IN BOOLEAN MODE)");
+                    $join->whereRaw("MATCH(APP_DELEGATION.DEL_TITLE) AGAINST('{$search}' IN BOOLEAN MODE)");
                 } else {
                     // Searching using "like" operator
-                    $join->where('APPLICATION.APP_TITLE', 'LIKE', "%${search}%");
+                    $join->where('APP_DELEGATION.DEL_TITLE', 'LIKE', "%${search}%");
                 }
             }
             // Based on the below, we can further limit the join so that we have a smaller data set based on join criteria
@@ -269,7 +268,6 @@ class Delegation extends Model
                     // Don't do anything here, we'll need to do the more advanced where below
             }
         });
-
         // Add join for process, but only for certain scenarios such as category or process
         if ($category || $process || $sort == 'APP_PRO_TITLE') {
             $query->join('PROCESS', function ($join) use ($category) {
@@ -562,7 +560,7 @@ class Delegation extends Model
         });
 
         // Add join clause with APPLICATION table if required
-        if (array_search('APPLICATION.APP_TITLE', $selectedColumns) !== false || !empty($textToSearch) || $sort == 'APP_TITLE') {
+        if (array_search('APP_DELEGATION.DEL_TITLE AS APP_TITLE', $selectedColumns) !== false || array_search('APPLICATION.APP_TITLE', $selectedColumns) !== false || !empty($textToSearch) || $sort == 'APP_TITLE') {
             $query1->join('APPLICATION', function ($join) {
                 $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
             });
@@ -583,7 +581,7 @@ class Delegation extends Model
 
         // Build where clause for the text to search
         if (!empty($textToSearch)) {
-            $query1->where('APPLICATION.APP_TITLE', 'LIKE', "%$textToSearch%")
+            $query1->where('APP_DELEGATION.DEL_TITLE', 'LIKE', "%$textToSearch%")
                 ->orWhere('TASK.TAS_TITLE', 'LIKE', "%$textToSearch%")
                 ->orWhere('PROCESS.PRO_TITLE', 'LIKE', "%$textToSearch%");
         }
@@ -618,7 +616,7 @@ class Delegation extends Model
 
             }
             // Add join clause with APPLICATION table if required
-            if (array_search('APPLICATION.APP_TITLE', $selectedColumns) !== false || !empty($textToSearch) || $sort == 'APP_TITLE') {
+            if (array_search('APP_DELEGATION.DEL_TITLE AS APP_TITLE', $selectedColumns) !== false || !empty($textToSearch) || $sort == 'APP_TITLE') {
                 $query2->join('APPLICATION', function ($join) {
                     $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
                 });
@@ -639,7 +637,7 @@ class Delegation extends Model
 
             // Build where clause for the text to search
             if (!empty($textToSearch)) {
-                $query2->where('APPLICATION.APP_TITLE', 'LIKE', "%$textToSearch%")
+                $query2->where('APP_DELEGATION.DEL_TITLE', 'LIKE', "%$textToSearch%")
                     ->orWhere('TASK.TAS_TITLE', 'LIKE', "%$textToSearch%")
                     ->orWhere('PROCESS.PRO_TITLE', 'LIKE', "%$textToSearch%");
             }
@@ -901,5 +899,19 @@ class Delegation extends Model
         }
 
         return $threadTitle;
+    }
+
+    /**
+     * Get the DEL_TITLE related to DELEGATION table
+     * 
+     * @param int $appNumber
+     * @param int $delIndex
+     * @return string
+     */
+    public static function getDeltitle($appNumber, $delIndex)
+    {
+        $query = Delegation::select(['DEL_TITLE'])->where('APP_NUMBER', $appNumber)->where('DEL_INDEX', $delIndex);
+        $res = $query->first();
+        return $res->DEL_TITLE;
     }
 }
