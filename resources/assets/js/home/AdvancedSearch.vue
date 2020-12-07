@@ -1,408 +1,391 @@
 <template>
-    <div id="v-mycases3" ref="v-mycases2" class="v-container-mycases">
-        <button-fleft :data="newCase"></button-fleft>
-        <GenericFilter/>
-        <modal-new-request ref="newRequest"></modal-new-request>
+  <div id="v-mycases3" ref="v-mycases2" class="v-container-mycases">
+    <button-fleft :data="newCase"></button-fleft>
+    <GenericFilter />
+    <modal-new-request ref="newRequest"></modal-new-request>
 
-        <v-server-table
-            :data="tableData"
-            :columns="columns"
-            :options="options"
-            ref="test"
-        >
-            <div slot="info" slot-scope="props">
-                <b-icon
-                    icon="exclamation-circle-fill"
-                    variant="primary"
-                    @click="caseDetail(props)"
-                ></b-icon>
-            </div>
-            <div slot="case_number" slot-scope="props">
-                 {{ props.row.CASE_NUMBER }}
-            </div>
-            <div slot="case_title" slot-scope="props">
-                {{ props.row.CASE_TITLE }}
-            </div>
-            <div slot="process_name" slot-scope="props">
-                {{ props.row.PROCESS_NAME }}
-            </div>
-            <!-- <div slot="pending_taks" slot-scope="props">
+    <v-server-table
+      :data="tableData"
+      :columns="columns"
+      :options="options"
+      ref="test"
+    >
+      <div slot="info" slot-scope="props">
+        <b-icon
+          icon="exclamation-circle-fill"
+          variant="primary"
+          @click="caseDetail(props)"
+        ></b-icon>
+      </div>
+      <div slot="case_number" slot-scope="props">
+        {{ props.row.CASE_NUMBER }}
+      </div>
+      <div slot="case_title" slot-scope="props">
+        {{ props.row.CASE_TITLE }}
+      </div>
+      <div slot="process_name" slot-scope="props">
+        {{ props.row.PROCESS_NAME }}
+      </div>
+      <!-- <div slot="pending_taks" slot-scope="props">
                 <GroupedCell :data="props.row.PENDING_TASKS" />
             </div> -->
-            <div slot="status" slot-scope="props">{{ props.row.STATUS }}</div>
-            <div slot="start_date" slot-scope="props">
-                {{ props.row.START_DATE }}
-            </div>
-            <div slot="finish_date" slot-scope="props">
-                {{ props.row.FINISH_DATE }}
-            </div>
-            <div slot="duration" slot-scope="props">
-                {{ props.row.DURATION }}
-            </div>
-            <div slot="actions" slot-scope="props">
-                <div class="btn-default">
-                    <i class="fas fa-comments"></i>
-                    <span class="badge badge-light">9</span>
-                    <span class="sr-only">unread messages</span>
-                </div>
-            </div>
-        </v-server-table>
-    </div>
+      <div slot="status" slot-scope="props">{{ props.row.STATUS }}</div>
+      <div slot="start_date" slot-scope="props">
+        {{ props.row.START_DATE }}
+      </div>
+      <div slot="finish_date" slot-scope="props">
+        {{ props.row.FINISH_DATE }}
+      </div>
+      <div slot="duration" slot-scope="props">
+        {{ props.row.DURATION }}
+      </div>
+      <div slot="actions" slot-scope="props">
+        <div class="btn-default">
+          <i class="fas fa-comments"></i>
+          <span class="badge badge-light">9</span>
+          <span class="sr-only">unread messages</span>
+        </div>
+      </div>
+    </v-server-table>
+  </div>
 </template>
 <script>
-
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
-import GenericFilter from "../components/search/GenericFilter"
+import GenericFilter from "../components/search/GenericFilter";
 import api from "./../api/index";
 
-
 export default {
-    name: "AdvancedSearch",
-    components: {
-        GenericFilter,
-        ButtonFleft,
-        ModalNewRequest
+  name: "AdvancedSearch",
+  components: {
+    GenericFilter,
+    ButtonFleft,
+    ModalNewRequest,
+  },
+  props: {},
+  data() {
+    return {
+      metrics: [],
+      filter: "CASES_INBOX",
+      allView: [],
+      filterHeader: "STARTED_BY_ME",
+      headers: [],
+      newCase: {
+        title: "New Case",
+        class: "btn-success",
+        onClick: () => {
+          this.$refs["newRequest"].show();
+        },
+      },
+      columns: [
+        "info",
+        "case_number",
+        "case_title",
+        "process_name",
+        "status",
+        "start_date",
+        "finish_date",
+        "duration",
+        "actions",
+      ],
+      tableData: [],
+      options: {
+        filterable: false,
+        headings: {
+          info: "",
+          case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
+          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          process_name: this.$i18n.t("ID_PROCESS_NAME"),
+          pending_taks: this.$i18n.t("PENDdING_TASKS"),
+          status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
+          start_date: this.$i18n.t("ID_START_DATE"),
+          finish_date: this.$i18n.t("ID_FINISH_DATE"),
+          duration: this.$i18n.t("ID_DURATION"),
+          actions: "",
+        },
+        selectable: {
+          mode: "single",
+          only: function (row) {
+            return true;
+          },
+          selectAllMode: "page",
+          programmatic: false,
+        },
+        requestFunction(data) {
+          return this.$parent.$parent.getCasesForVueTable();
+        },
+      },
+      translations: null,
+      pmDateFormat: "Y-m-d H:i:s",
+      apiParams: {
+        action: "todo",
+        list: "inbox",
+        filter: "",
+        search: "",
+        sort: "APP_NUMBER",
+        dir: "DESC",
+        category: "",
+        process: "",
+        filterStatus: "",
+        paged: true,
+        start: 0,
+        limit: 10,
+      },
+    };
+  },
+  mounted() {
+    //  this.$refs.vueTable24.refresh();
+    this.$refs.test.refresh();
+    this.getHeaders();
+  },
+  watch: {},
+  computed: {
+    ProcessMaker() {
+      return window.ProcessMaker;
     },
-    props: {},
-    data() {
-        return {
-            metrics: [],
-            filter: "CASES_INBOX",
-            allView: [],
-            filterHeader: "STARTED_BY_ME",
-            headers: [],
-            newCase: {
-                title: "New Case",
-                class: "btn-success",
-                onClick: () => {
-                    this.$refs["newRequest"].show();
-                },
-            },
-            columns: [
-                "info",
-                "case_number",
-                "case_title",
-                "process_name",
-                "status",
-                "start_date",
-                "finish_date",
-                "duration",
-                "actions",
-            ],
-            tableData: [],
-            options: {
-                filterable: false,
-                headings: {
-                    info: "",
-                    case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                    case_title: this.$i18n.t("ID_CASE_TITLE"),
-                    process_name: this.$i18n.t("ID_PROCESS_NAME"),
-                    pending_taks: this.$i18n.t("PENDdING_TASKS"),
-                    status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
-                    start_date: this.$i18n.t("ID_START_DATE"),
-                    finish_date: this.$i18n.t("ID_FINISH_DATE"),
-                    duration: this.$i18n.t("ID_DURATION"),
-                    actions: "",
-                },
-                selectable: {
-                    mode: "single",
-                    only: function(row) {
-                        return true;
-                    },
-                    selectAllMode: "page",
-                    programmatic: false,
-                },
-                requestFunction(data) {
-                    return this.$parent.$parent.getCasesForVueTable();
-                },
-            },
-            translations: null,
-            pmDateFormat: "Y-m-d H:i:s",
-            apiParams: {
-                action: "todo",
-                list: "inbox",
-                filter: "",
-                search: "",
-                sort: "APP_NUMBER",
-                dir: "DESC",
-                category: "",
-                process: "",
-                filterStatus: "",
-                paged: true,
-                start: 0,
-                limit: 10,
-            },
-        };
+  },
+  updated() {},
+  beforeCreate() {},
+  methods: {
+    /**
+     * Get Cases Headers from BE
+     */
+    getHeaders() {
+      let that = this;
+      api.casesHeader.get().then((response) => {
+        that.headers = that.formatCasesHeaders(response.data);
+      });
     },
-    mounted() {
-        //  this.$refs.vueTable24.refresh();
-        this.$refs.test.refresh();
-        this.getHeaders();
+    /**
+     * Get cases data by header
+     */
+    getCasesForVueTable() {
+      let that = this,
+        dt;
+      return new Promise((resolutionFunc, rejectionFunc) => {
+        api.cases
+          .search({
+            type: that.filterHeader,
+          })
+          .then((response) => {
+            dt = that.formatDataResponse(response.data);
+            resolutionFunc({
+              data: dt,
+              count: response.total,
+            });
+          })
+          .catch((e) => {
+            rejectionFunc(e);
+          });
+      });
     },
-    watch: {},
-    computed: {
-        ProcessMaker() {
-            return window.ProcessMaker;
-        },
+    /**
+     * Format Response API TODO to grid inbox and columns
+     */
+    formatDataResponse(response) {
+      let data = [];
+      _.forEach(response, (v) => {
+        data.push({
+          CASE_NUMBER: v.APP_NUMBER,
+          CASE_TITLE: v.APP_TITLE,
+          PROCESS_NAME: v.PRO_TITLE,
+          STATUS: v.APP_STATUS,
+          START_DATE: v.DEL_DELEGATE_DATE_LABEL,
+          FINISH_DATE: v.DEL_DELEGATE_DATE_LABEL,
+          PENDING_TASKS: v.PENDING_TASKS,
+          DURATION: v.DURATION_LABEL,
+        });
+      });
+      return data;
     },
-    updated() {},
-    beforeCreate() {},
-    methods: {
-        /**
-         * Get Cases Headers from BE
-         */
-        getHeaders() {
-            let that = this;
-            api.casesHeader.get().then((response) => {
-                that.headers = that.formatCasesHeaders(response.data);
-            });
-        },
-        /**
-         * Get cases data by header
-         */
-        getCasesForVueTable() {
-            let that = this,
-                dt;
-            return new Promise((resolutionFunc, rejectionFunc) => {
-                api.cases
-                    .search({
-                        type: that.filterHeader,
-                    })
-                    .then((response) => {
-                        dt = that.formatDataResponse(response.data);
-                        resolutionFunc({
-                            data: dt,
-                            count: response.total,
-                        });
-                    })
-                    .catch((e) => {
-                        rejectionFunc(e);
-                    });
-            });
-        },
-        /**
-         * Format Response API TODO to grid inbox and columns
-         */
-        formatDataResponse(response) {
-            let data = [];
-            _.forEach(response, (v) => {
-                data.push({
-                    CASE_NUMBER: v.APP_NUMBER,
-                    CASE_TITLE: v.APP_TITLE,
-                    PROCESS_NAME: v.PRO_TITLE,
-                    STATUS: v.APP_STATUS,
-                    START_DATE: v.DEL_DELEGATE_DATE_LABEL,
-                    FINISH_DATE: v.DEL_DELEGATE_DATE_LABEL,
-                    PENDING_TASKS: v.PENDING_TASKS,
-                    DURATION: v.DURATION_LABEL,
-                });
-            });
-            return data;
-        },
-        /**
-         * Get for user format name configured in Processmaker Environment Settings
-         *
-         * @param {string} name
-         * @param {string} lastName
-         * @param {string} userName
-         * @return {string} nameFormat
-         */
-        nameFormatCases(name, lastName, userName) {
-            let nameFormat = "";
-            if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-                return nameFormat;
-            }
-            if (this.nameFormat === "@firstName @lastName") {
-                nameFormat = name + " " + lastName;
-            } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-                nameFormat = name + " " + lastName + " (" + userName + ")";
-            } else if (this.nameFormat === "@userName") {
-                nameFormat = userName;
-            } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-                nameFormat = userName + " (" + name + " " + lastName + ")";
-            } else if (this.nameFormat === "@lastName @firstName") {
-                nameFormat = lastName + " " + name;
-            } else if (this.nameFormat === "@lastName, @firstName") {
-                nameFormat = lastName + ", " + name;
-            } else if (
-                this.nameFormat === "@lastName, @firstName (@userName)"
-            ) {
-                nameFormat = lastName + ", " + name + " (" + userName + ")";
-            } else {
-                nameFormat = name + " " + lastName;
-            }
-            return nameFormat;
-        },
-        /**
-         * Convert string to date format
-         *
-         * @param {string} value
-         * @return {date} myDate
-         */
-        convertDate(value) {
-            myDate = new Date(1900, 0, 1, 0, 0, 0);
-            try {
-                if (!isNaN(Date.parse(value))) {
-                    var myArray = value.split(" ");
-                    var myArrayDate = myArray[0].split("-");
-                    if (myArray.length > 1) {
-                        var myArrayHour = myArray[1].split(":");
-                    } else {
-                        var myArrayHour = new Array("0", "0", "0");
-                    }
-                    var myDate = new Date(
-                        myArrayDate[0],
-                        myArrayDate[1] - 1,
-                        myArrayDate[2],
-                        myArrayHour[0],
-                        myArrayHour[1],
-                        myArrayHour[2]
-                    );
-                }
-            } catch (err) {
-                throw new Error(err);
-            }
-            return myDate;
-        },
-        /**
-         * Get a format for specific date
-         *
-         * @param {string} d
-         * @return {string} dateToConvert
-         */
-        dateFormatCases(d) {
-            let dateToConvert = d;
-            const stringToDate = this.convertDate(dateToConvert);
-            if (this.pmDateFormat === "Y-m-d H:i:s") {
-                dateToConvert = dateFormat(stringToDate, "yyyy-mm-dd HH:MM:ss");
-            } else if (this.pmDateFormat === "d/m/Y") {
-                dateToConvert = dateFormat(stringToDate, "dd/mm/yyyy");
-            } else if (this.pmDateFormat === "m/d/Y") {
-                dateToConvert = dateFormat(stringToDate, "mm/dd/yyyy");
-            } else if (this.pmDateFormat === "Y/d/m") {
-                dateToConvert = dateFormat(stringToDate, "yyyy/dd/mm");
-            } else if (this.pmDateFormat === "Y/m/d") {
-                dateToConvert = dateFormat(stringToDate, "yyyy/mm/dd");
-            } else if (this.pmDateFormat === "F j, Y, g:i a") {
-                dateToConvert = dateFormat(
-                    stringToDate,
-                    "mmmm d, yyyy, h:MM tt"
-                );
-            } else if (this.pmDateFormat === "m.d.y") {
-                dateToConvert = dateFormat(stringToDate, "mm.dd.yy");
-            } else if (this.pmDateFormat === "j, n, Y") {
-                dateToConvert = dateFormat(stringToDate, "d,m,yyyy");
-            } else if (this.pmDateFormat === "D M j G:i:s T Y") {
-                dateToConvert = dateFormat(
-                    stringToDate,
-                    "ddd mmm d HH:MM:ss Z yyyy"
-                );
-            } else if (this.pmDateFormat === "M d, Y") {
-                dateToConvert = dateFormat(stringToDate, "mmm dd, yyyy");
-            } else if (this.pmDateFormat === "m D, Y") {
-                dateToConvert = dateFormat(stringToDate, "mm ddd, yyyy");
-            } else if (this.pmDateFormat === "D d M, Y") {
-                dateToConvert = dateFormat(stringToDate, "ddd dd mmm, yyyy");
-            } else if (this.pmDateFormat === "D M, Y") {
-                dateToConvert = dateFormat(stringToDate, "ddd mmm, yyyy");
-            } else if (this.pmDateFormat === "d M, Y") {
-                dateToConvert = dateFormat(stringToDate, "dd mmm, yyyy");
-            } else if (this.pmDateFormat === "d m, Y") {
-                dateToConvert = dateFormat(stringToDate, "dd mm, yyyy");
-            } else if (this.pmDateFormat === "d.m.Y") {
-                dateToConvert = dateFormat(stringToDate, "mm.dd.yyyy");
-            } else {
-                dateToConvert = dateFormat(
-                    stringToDate,
-                    'dd "de" mmmm "de" yyyy'
-                );
-            }
-            return dateToConvert;
-        },
-        /**
-         * Open selected cases in the inbox
-         *
-         * @param {object} item
-         */
-        openCase(item) {
-            const action = "todo";
-            if (this.isIE) {
-                window.open(
-                    "../../../cases/open?APP_UID=" +
-                        item.row.APP_UID +
-                        "&DEL_INDEX=" +
-                        item.row.DEL_INDEX +
-                        "&action=" +
-                        action
-                );
-            } else {
-                window.location.href =
-                    "../../../cases/open?APP_UID=" +
-                    item.row.APP_UID +
-                    "&DEL_INDEX=" +
-                    item.row.DEL_INDEX +
-                    "&action=" +
-                    action;
-            }
-        },
-        /**
-         * Format Response from HEADERS
-         * @param {*} response
-         */
-        formatCasesHeaders(response) {
-            let data = [],
-                that = this,
-                info = {
-                    STARTED_BY_ME: {
-                        icon: "fas fa-inbox",
-                        class: "btn-primary",
-                    },
-                    COMPLETED: {
-                        icon: "fas fa-check-square",
-                        class: "btn-success",
-                    },
-                    IN_PROGRESS: {
-                        icon: "fas fa-tasks",
-                        class: "btn-danger",
-                    },
-                    SUPERVISING: {
-                        icon: "fas fa-binoculars",
-                        class: "btn-warning",
-                    },
-                };
-            _.forEach(response, (v) => {
-                data.push({
-                    title: v.name,
-                    counter: v.count,
-                    item: v.item,
-                    icon: info[v.item].icon,
-                    onClick: (obj) => {
-                        that.filterHeader = obj.item;
-                        that.$refs["vueTable"].getData();
-                    },
-                    class: info[v.item].class,
-                });
-            });
-            return data;
-        },
-        /**
-         * Open case detail
-         * @param {*} item
-         */
-        caseDetail(item) {
-            console.log("CaseDetail");
-            console.log("item");
+    /**
+     * Get for user format name configured in Processmaker Environment Settings
+     *
+     * @param {string} name
+     * @param {string} lastName
+     * @param {string} userName
+     * @return {string} nameFormat
+     */
+    nameFormatCases(name, lastName, userName) {
+      let nameFormat = "";
+      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
+        return nameFormat;
+      }
+      if (this.nameFormat === "@firstName @lastName") {
+        nameFormat = name + " " + lastName;
+      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
+        nameFormat = name + " " + lastName + " (" + userName + ")";
+      } else if (this.nameFormat === "@userName") {
+        nameFormat = userName;
+      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
+        nameFormat = userName + " (" + name + " " + lastName + ")";
+      } else if (this.nameFormat === "@lastName @firstName") {
+        nameFormat = lastName + " " + name;
+      } else if (this.nameFormat === "@lastName, @firstName") {
+        nameFormat = lastName + ", " + name;
+      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
+        nameFormat = lastName + ", " + name + " (" + userName + ")";
+      } else {
+        nameFormat = name + " " + lastName;
+      }
+      return nameFormat;
+    },
+    /**
+     * Convert string to date format
+     *
+     * @param {string} value
+     * @return {date} myDate
+     */
+    convertDate(value) {
+      myDate = new Date(1900, 0, 1, 0, 0, 0);
+      try {
+        if (!isNaN(Date.parse(value))) {
+          var myArray = value.split(" ");
+          var myArrayDate = myArray[0].split("-");
+          if (myArray.length > 1) {
+            var myArrayHour = myArray[1].split(":");
+          } else {
+            var myArrayHour = new Array("0", "0", "0");
+          }
+          var myDate = new Date(
+            myArrayDate[0],
+            myArrayDate[1] - 1,
+            myArrayDate[2],
+            myArrayHour[0],
+            myArrayHour[1],
+            myArrayHour[2]
+          );
         }
+      } catch (err) {
+        throw new Error(err);
+      }
+      return myDate;
     },
-   
+    /**
+     * Get a format for specific date
+     *
+     * @param {string} d
+     * @return {string} dateToConvert
+     */
+    dateFormatCases(d) {
+      let dateToConvert = d;
+      const stringToDate = this.convertDate(dateToConvert);
+      if (this.pmDateFormat === "Y-m-d H:i:s") {
+        dateToConvert = dateFormat(stringToDate, "yyyy-mm-dd HH:MM:ss");
+      } else if (this.pmDateFormat === "d/m/Y") {
+        dateToConvert = dateFormat(stringToDate, "dd/mm/yyyy");
+      } else if (this.pmDateFormat === "m/d/Y") {
+        dateToConvert = dateFormat(stringToDate, "mm/dd/yyyy");
+      } else if (this.pmDateFormat === "Y/d/m") {
+        dateToConvert = dateFormat(stringToDate, "yyyy/dd/mm");
+      } else if (this.pmDateFormat === "Y/m/d") {
+        dateToConvert = dateFormat(stringToDate, "yyyy/mm/dd");
+      } else if (this.pmDateFormat === "F j, Y, g:i a") {
+        dateToConvert = dateFormat(stringToDate, "mmmm d, yyyy, h:MM tt");
+      } else if (this.pmDateFormat === "m.d.y") {
+        dateToConvert = dateFormat(stringToDate, "mm.dd.yy");
+      } else if (this.pmDateFormat === "j, n, Y") {
+        dateToConvert = dateFormat(stringToDate, "d,m,yyyy");
+      } else if (this.pmDateFormat === "D M j G:i:s T Y") {
+        dateToConvert = dateFormat(stringToDate, "ddd mmm d HH:MM:ss Z yyyy");
+      } else if (this.pmDateFormat === "M d, Y") {
+        dateToConvert = dateFormat(stringToDate, "mmm dd, yyyy");
+      } else if (this.pmDateFormat === "m D, Y") {
+        dateToConvert = dateFormat(stringToDate, "mm ddd, yyyy");
+      } else if (this.pmDateFormat === "D d M, Y") {
+        dateToConvert = dateFormat(stringToDate, "ddd dd mmm, yyyy");
+      } else if (this.pmDateFormat === "D M, Y") {
+        dateToConvert = dateFormat(stringToDate, "ddd mmm, yyyy");
+      } else if (this.pmDateFormat === "d M, Y") {
+        dateToConvert = dateFormat(stringToDate, "dd mmm, yyyy");
+      } else if (this.pmDateFormat === "d m, Y") {
+        dateToConvert = dateFormat(stringToDate, "dd mm, yyyy");
+      } else if (this.pmDateFormat === "d.m.Y") {
+        dateToConvert = dateFormat(stringToDate, "mm.dd.yyyy");
+      } else {
+        dateToConvert = dateFormat(stringToDate, 'dd "de" mmmm "de" yyyy');
+      }
+      return dateToConvert;
+    },
+    /**
+     * Open selected cases in the inbox
+     *
+     * @param {object} item
+     */
+    openCase(item) {
+      const action = "todo";
+      if (this.isIE) {
+        window.open(
+          "../../../cases/open?APP_UID=" +
+            item.row.APP_UID +
+            "&DEL_INDEX=" +
+            item.row.DEL_INDEX +
+            "&action=" +
+            action
+        );
+      } else {
+        window.location.href =
+          "../../../cases/open?APP_UID=" +
+          item.row.APP_UID +
+          "&DEL_INDEX=" +
+          item.row.DEL_INDEX +
+          "&action=" +
+          action;
+      }
+    },
+    /**
+     * Format Response from HEADERS
+     * @param {*} response
+     */
+    formatCasesHeaders(response) {
+      let data = [],
+        that = this,
+        info = {
+          STARTED_BY_ME: {
+            icon: "fas fa-inbox",
+            class: "btn-primary",
+          },
+          COMPLETED: {
+            icon: "fas fa-check-square",
+            class: "btn-success",
+          },
+          IN_PROGRESS: {
+            icon: "fas fa-tasks",
+            class: "btn-danger",
+          },
+          SUPERVISING: {
+            icon: "fas fa-binoculars",
+            class: "btn-warning",
+          },
+        };
+      _.forEach(response, (v) => {
+        data.push({
+          title: v.name,
+          counter: v.count,
+          item: v.item,
+          icon: info[v.item].icon,
+          onClick: (obj) => {
+            that.filterHeader = obj.item;
+            that.$refs["vueTable"].getData();
+          },
+          class: info[v.item].class,
+        });
+      });
+      return data;
+    },
+    /**
+     * Open case detail
+     * @param {*} item
+     */
+    caseDetail(item) {},
+  },
 };
 </script>
 <style>
 .v-container-mycases {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 50px;
-    padding-right: 50px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 </style>

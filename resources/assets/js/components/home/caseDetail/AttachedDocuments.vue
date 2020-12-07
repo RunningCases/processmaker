@@ -37,6 +37,7 @@ export default {
       icon: {
         pdf: "fas fa-file-pdf",
         doc: "fas fa-file-word",
+        png: "fas fa-image",
       },
     };
   },

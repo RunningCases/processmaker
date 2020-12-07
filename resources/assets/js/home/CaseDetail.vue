@@ -1,5 +1,5 @@
 <template>
-  <div id="case-detail" ref="case-detail" class="v-container-mycases">
+  <div id="case-detail" ref="case-detail" class="v-container-case-detail">
     <div>
       <p class="mb-2">
         <b-icon icon="arrow-left" @click="backSearch()"></b-icon
@@ -41,35 +41,27 @@
           </v-server-table>
         </div>
         <Tabs :data="dataTabs"></Tabs>
-        <div>
-          <p><b>Comments</b></p>
-          <div class="form-group">
-            <textarea
-              class="form-control"
-              name="comments"
-              id="comments"
-              cols="80"
-              rows="5"
-            ></textarea>
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="sendEmail" />
-              <label class="form-check-label" for="sendEmail"
-                >Send email to Participants</label
-              >
-              <button
-                class="btn btn-secondary btn-sm"
-                id="comment"
-                name="comment"
-              >
-                Comment
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
       <div class="col-sm4">
-        <case-summary :data="dataCaseSummary"></case-summary>
-        <io-documents :data="dataIoDocuments"></io-documents>
+        <case-summary
+          v-if="dataCaseSummary"
+          :data="dataCaseSummary"
+        ></case-summary>
+        <io-documents
+          v-if="
+            dataIoDocuments.inputDocuments.length > 0 ||
+            dataIoDocuments.outputDocuments.length > 0
+          "
+          :data="dataIoDocuments"
+        ></io-documents>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-8">
+        <case-comments :data="dataComments" :onClick="onClickComment" />
+      </div>
+      <div class="col-sm4">
         <attached-documents :data="dataAttachedDocuments"></attached-documents>
       </div>
     </div>
@@ -81,6 +73,10 @@ import Tabs from "../components/home/caseDetail/Tabs.vue";
 import IoDocuments from "../components/home/caseDetail/IoDocuments.vue";
 import CaseSummary from "../components/home/caseDetail/CaseSummary.vue";
 import AttachedDocuments from "../components/home/caseDetail/AttachedDocuments.vue";
+import CaseComment from "../components/home/caseDetail/CaseComment";
+import CaseComments from "../components/home/caseDetail/CaseComments";
+
+import Api from "../api/index";
 
 export default {
   name: "CaseDetail",
@@ -89,10 +85,13 @@ export default {
     IoDocuments,
     CaseSummary,
     AttachedDocuments,
+    CaseComment,
+    CaseComments,
   },
   props: {},
   data() {
     return {
+      dataCase: null,
       columns: [
         "task",
         "case_title",
@@ -129,66 +128,16 @@ export default {
         },
         filterable: false,
       },
-      dataCaseSummary: {
-        title: "Case Summary",
-        titleActions: "Actions",
-        btnLabel: "Cancel Request",
-        btnType: false,
-        onClick: () => {
-          console.log("acitons");
-        },
-        label: {
-          numberCase: "Case #",
-          process: "Process",
-          status: "Status",
-          caseTitle: "Case title",
-          created: "Created",
-          delegationDate: "Delegation Date",
-          duration: "Duration",
-        },
-        text: {
-          numberCase: "",
-          process: "",
-          status: "",
-          caseTitle: "",
-          created: "",
-          delegationDate: "",
-          duration: "",
-        },
-      },
+      dataCaseSummary: null,
       dataIoDocuments: {
-        titleInput: "Input Document",
-        inputDocuments: [
-          {
-            title: "Invoice January 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-        ],
-        titleOutput: "Output Document",
-        outputDocuments: [
-          {
-            title: "Invoice January 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-        ],
+        titleInput: this.$i18n.t("ID_REQUEST_DOCUMENTS"),
+        titleOutput: this.$i18n.t("ID_OUTPUT_DOCUMENTS"),
+        inputDocuments: [],
+        outputDocuments: [],
       },
       dataAttachedDocuments: {
         title: "Attached Documents",
-        items: [
-          {
-            title: "Invoice January 2018.pdf",
-            extension: "pdf",
-            onClick: () => {
-              console.log("Attached document");
-            },
-          },
-        ],
+        items: [],
       },
       dataTabs: {
         items: [
@@ -216,24 +165,39 @@ export default {
           },
         ],
       },
+      dataComments: {
+        title: "Comments",
+        items: [],
+      },
     };
   },
 
   mounted() {
     let that = this;
+    this.dataCase = this.$parent.dataCase;
     this.$el.getElementsByClassName("VuePagination__count")[0].remove();
     this.getDataCaseSummary();
-    this.getDataIODocuments();
+    this.getInputDocuments();
+    this.getOutputDocuments();
+    this.getCasesNotes();
   },
   methods: {
+    onClickComment(data) {
+      let att = [];
+      this.dataAttachedDocuments.items = [];
+      _.each(data.data.attachments, (a) => {
+        att.push({
+          data: a,
+          title: a.APP_DOC_FILENAME,
+          extension: a.APP_DOC_FILENAME.split(".").pop(),
+          onClick: () => {},
+        });
+      });
+      this.dataAttachedDocuments.items = att;
+    },
     getDataCaseSummary() {
-      var data = new FormData();
-      data.append("appUid", APP_UID);
-      data.append("delIndex", DEL_INDEX);
-      data.append("action", "todo");
-
-      ProcessMaker.apiClient
-        .post("../../../appProxy/getSummary", data)
+      Api.cases
+        .casesummary(this.dataCase)
         .then((response) => {
           var data = response.data;
           this.dataCaseSummary = {
@@ -241,9 +205,7 @@ export default {
             titleActions: "Actions",
             btnLabel: "Cancel Request",
             btnType: false,
-            onClick: () => {
-              console.log("acitons");
-            },
+            onClick: () => {},
             label: {
               numberCase: data[2].label,
               process: data[0].label,
@@ -268,21 +230,11 @@ export default {
           throw new Error(err);
         });
     },
-    getDataIODocuments() {
-      this.getInputDocuments();
-      this.getOutputDocuments();
-    },
     getInputDocuments() {
-      var data = new FormData();
-      data.append("appUid", APP_UID);
-      data.append("delIndex", DEL_INDEX);
-      ProcessMaker.apiClient
-        .post(
-          "../../../cases/cases_Ajax.php?action=getCasesInputDocuments",
-          data
-        )
+      Api.cases
+        .inputdocuments(this.dataCase)
         .then((response) => {
-          var data = response.data,
+          let data = response.data,
             document = data.data,
             i,
             info;
@@ -304,14 +256,8 @@ export default {
         });
     },
     getOutputDocuments() {
-      var data = new FormData();
-      data.append("appUid", APP_UID);
-      data.append("delIndex", DEL_INDEX);
-      ProcessMaker.apiClient
-        .post(
-          "../../../cases/cases_Ajax.php?action=getCasesOutputDocuments",
-          data
-        )
+      Api.cases
+        .outputdocuments(this.dataCase)
         .then((response) => {
           var data = response.data,
             document = data.data,
@@ -334,6 +280,76 @@ export default {
           throw new Error(err);
         });
     },
+    /**
+     * Get for user format name configured in Processmaker Environment Settings
+     *
+     * @param {string} name
+     * @param {string} lastName
+     * @param {string} userName
+     * @return {string} nameFormat
+     */
+    nameFormatCases(name, lastName, userName) {
+      let nameFormat = "";
+      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
+        return nameFormat;
+      }
+      if (this.nameFormat === "@firstName @lastName") {
+        nameFormat = name + " " + lastName;
+      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
+        nameFormat = name + " " + lastName + " (" + userName + ")";
+      } else if (this.nameFormat === "@userName") {
+        nameFormat = userName;
+      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
+        nameFormat = userName + " (" + name + " " + lastName + ")";
+      } else if (this.nameFormat === "@lastName @firstName") {
+        nameFormat = lastName + " " + name;
+      } else if (this.nameFormat === "@lastName, @firstName") {
+        nameFormat = lastName + ", " + name;
+      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
+        nameFormat = lastName + ", " + name + " (" + userName + ")";
+      } else {
+        nameFormat = name + " " + lastName;
+      }
+      return nameFormat;
+    },
+
+    getCasesNotes() {
+      let that = this;
+      Api.cases
+        .casenotes(this.dataCase)
+        .then((response) => {
+          that.formatResponseCaseNotes(response.data.notes);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    },
+    formatResponseCaseNotes(notes) {
+      let that = this,
+        notesArray = [];
+      _.each(notes, (n) => {
+        notesArray.push({
+          user: that.nameFormatCases(
+            n.USR_FIRSTNAME,
+            n.USR_LASTNAME,
+            n.USR_USERNAME
+          ),
+          date: n.NOTE_DATE,
+          comment: n.NOTE_CONTENT,
+          data: n,
+        });
+      });
+
+      this.dataComments.items = notesArray;
+    },
   },
 };
 </script>
+<style>
+.v-container-case-detail {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 50px;
+  padding-right: 0px;
+}
+</style>

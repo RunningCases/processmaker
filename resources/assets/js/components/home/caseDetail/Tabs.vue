@@ -25,14 +25,13 @@ export default {
   data() {
     return {
       0: function () {
-        console.log(this.data.items[0].appUid);
       },
     };
   },
   methods: {
     selectedTab(e, index) {
       if (index === 0) {
-        console.log("fabio");
+
       }
     },
   },
