@@ -12,29 +12,30 @@
 </template>
 
 <script>
-import { Tabs, Tab } from 'vue-slim-tabs'
+import { Tabs, Tab } from "vue-slim-tabs";
 
 export default {
   props: {
-    data: Object
+    data: Object,
   },
   components: {
-    Tabs, Tab
+    Tabs,
+    Tab,
   },
   data() {
     return {
-      0: function() {
+      0: function () {
         console.log(this.data.items[0].appUid);
-      }
+      },
     };
   },
   methods: {
     selectedTab(e, index) {
       if (index === 0) {
-        console.log("fabio")
+        console.log("fabio");
       }
-    }
+    },
   },
-}
+};
 </script>
 <style src="vue-slim-tabs/themes/default.css"></style>

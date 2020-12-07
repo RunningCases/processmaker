@@ -53,7 +53,7 @@
       </div>
       <br />
       <h6 class="card-subtitle mb-2 text-muted">{{ data.titleActions }}</h6>
-      <div v-if=data.btnType class="container v-case-summary-center">
+      <div v-if="data.btnType" class="container v-case-summary-center">
         <button
           type="button"
           class="btn btn-success btn-sm"

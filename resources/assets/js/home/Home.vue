@@ -28,9 +28,10 @@ import Draft from "./Draft";
 import Paused from "./Paused";
 import Unassigned from "./Unassigned";
 import BatchRouting from "./BatchRouting";
+import CaseDetail from "./CaseDetail";
 import XCase from "./XCase";
 import TaskReassignments from "./TaskReassignments";
-import AdvancedSearch from "./AdvancedSearch"
+import AdvancedSearch from "./AdvancedSearch";
 
 export default {
   name: "Home",
@@ -46,6 +47,7 @@ export default {
     Draft,
     Paused,
     Unassigned,
+    CaseDetail,
   },
   data() {
     return {
@@ -88,10 +90,10 @@ export default {
     /**
      * Toggle sidebar handler
      * @param {Boolean} collapsed - if sidebar is collapsed true|false
-     *  
+     *
      */
     onToggleCollapse(collapsed) {
-        this.collapsed = collapsed;
+      this.collapsed = collapsed;
     },
   },
 };
