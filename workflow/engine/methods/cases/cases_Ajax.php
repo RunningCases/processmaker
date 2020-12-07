@@ -541,6 +541,92 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
 
         G::RenderPage('publish', 'raw');
         break;
+    case 'getCasesInputDocuments':
+        $arrayToTranslation = array(
+            "INPUT" => G::LoadTranslation("ID_INPUT_DB"),
+            "OUTPUT" => G::LoadTranslation("ID_OUTPUT_DB"),
+            "ATTACHED" => G::LoadTranslation("ID_ATTACHED_DB")
+        );
+        $oCase = new Cases();
+        $fields = $oCase->loadCase($_POST['appUid']);
+        $sProcessUID = $fields['PRO_UID'];
+        $criteria = $oCase->getAllUploadedDocumentsCriteria(
+            $sProcessUID,
+            $_POST['appUid'],
+            '',
+            $_SESSION['USER_LOGGED'],
+            $_POST['delIndex']
+        );
+        if ($criteria->getDbName() == 'dbarray') {
+            $rs = ArrayBasePeer::doSelectRs($criteria);
+        } else {
+            $rs = GulliverBasePeer::doSelectRs($criteria);
+        }
+        $totalCount = $rs->getRecordCount();
+        if ($criteria->getDbName() == 'dbarray') {
+            $rs = ArrayBasePeer::doSelectRs($criteria);
+        } else {
+            $rs = GulliverBasePeer::doSelectRs($criteria);
+        }
+        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        while ($rs->next()) {
+            $result = $rs->getRow();
+            $result["TYPE"] = (array_key_exists($result["TYPE"], $arrayToTranslation)) ? $arrayToTranslation[$result["TYPE"]] : $result["TYPE"];
+            $result['CREATE_DATE'] = DateTime::convertUtcToTimeZone($result['CREATE_DATE']);
+            $aProcesses[] = $result;
+        }
+        $r = new stdclass();
+        $r->data = $aProcesses;
+        $r->totalCount = $totalCount;
+        echo Bootstrap::json_encode($r);
+        break;
+    case 'getCasesOutputDocuments':
+        $oCase = new Cases();
+        $fields = $oCase->loadCase($_POST['appUid']);
+        $sProcessUID = $fields['PRO_UID'];
+        $aProcesses = array();
+        $c = $oCase->getAllGeneratedDocumentsCriteria(
+            $sProcessUID,
+            $_POST['appUid'],
+            '',
+            $_SESSION['USER_LOGGED'],
+            $_POST['delIndex']
+        );
+        if ($c->getDbName() == 'dbarray') {
+            $rs = ArrayBasePeer::doSelectRs($c);
+        } else {
+            $rs = GulliverBasePeer::doSelectRs($c);
+        }
+        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $rs->next();
+        $totalCount = 0;
+        for ($j = 0; $j < $rs->getRecordCount(); $j++) {
+            $result = $rs->getRow();
+            $result["FILEPDFEXIST"] = ($result["FILEPDF"]);
+            $result["DELETE_FILE"] = (isset($result['ID_DELETE']) && $result['ID_DELETE'] == 'Delete') ? true : false;
+            $result['CREATE_DATE'] = DateTime::convertUtcToTimeZone($result['CREATE_DATE']);
+            $aProcesses[] = $result;
+            $rs->next();
+            $totalCount++;
+        }
+        //!dateFormat
+        $conf = new Configurations();
+        try {
+            $globaleneralConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');   
+        } catch (Exception $e) {
+            $generalConfCasesList = array();
+        }
+        $dateFormat = "";
+        $varFlag = isset($generalConfCasesList['casesListDateFormat']);
+        if ($varFlag && !empty($generalConfCasesList['casesListDateFormat'])) {
+            $dateFormat = $generalConfCasesList['casesListDateFormat'];
+        }
+        $r = new stdclass();
+        $r->data = $aProcesses;
+        $r->totalCount = $totalCount;
+        $r->dataFormat = $dateFormat;
+        echo Bootstrap::json_encode($r);
+        break;
     case 'uploadDocumentGrid_Ajax':
         global $G_PUBLISH;
 
