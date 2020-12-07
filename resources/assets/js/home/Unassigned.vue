@@ -1,0 +1,220 @@
+<template>
+  <div id="v-unassigned" ref="v-unassigned" class="v-container-unassigned">
+    <button-fleft :data="newCase"></button-fleft>
+    <modal-new-request ref="newRequest"></modal-new-request>
+
+    <v-server-table
+      :data="tableData"
+      :columns="columns"
+      :options="options"
+      ref="vueTable"
+    >
+      <div slot="case_number" slot-scope="props">
+        {{ props.row.CASE_NUMBER }}
+      </div>
+      <div slot="case_title" slot-scope="props">
+        {{ props.row.CASE_TITLE }}
+      </div>
+      <div slot="process_name" slot-scope="props">
+        {{ props.row.PROCESS_NAME }}
+      </div>
+
+      <div slot="task" slot-scope="props">
+        <TaskCell :data="props.row.TASK" />
+      </div>
+      <div slot="current_user" slot-scope="props">
+        {{
+          nameFormatCases(
+            props.row.USR_FIRSTNAME,
+            props.row.USR_LASTNAME,
+            props.row.USR_USERNAME
+          )
+        }}
+      </div>
+
+      <div slot="due_date" slot-scope="props">
+        {{ props.row.DUE_DATE }}
+      </div>
+      <div slot="delegation_date" slot-scope="props">
+        {{ props.row.DELEGATION_DATE }}
+      </div>
+      <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
+      <div slot="actions" slot-scope="props">
+        <button class="settings-radio" @click="openCase(props)">Claim Case</button>
+      </div>
+    </v-server-table>
+  </div>
+</template>
+
+<script>
+import HeaderCounter from "../components/home/HeaderCounter.vue";
+import ButtonFleft from "../components/home/ButtonFleft.vue";
+import ModalNewRequest from "./ModalNewRequest.vue";
+import TaskCell from "../components/vuetable/TaskCell.vue";
+import api from "./../api/index";
+
+export default {
+  name: "Paused",
+  components: {
+    HeaderCounter,
+    ButtonFleft,
+    ModalNewRequest,
+    TaskCell,
+  },
+  props: {},
+  data() {
+    return {
+      newCase: {
+        title: "New Case",
+        class: "btn-success",
+        onClick: () => {
+          this.$refs["newRequest"].show();
+        },
+      },
+      columns: [
+        "case_number",
+        "case_title",
+        "process_name",
+        "task",
+        "current_user",
+        "due_date",
+        "delegation_date",
+        "priority",
+        "actions",
+      ],
+      tableData: [],
+      options: {
+        headings: {
+          case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
+          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          process_name: this.$i18n.t("ID_PROCESS_NAME"),
+          task: this.$i18n.t("ID_TASK"),
+          current_user: this.$i18n.t("ID_CURRENT_USER"),
+          due_date: this.$i18n.t("ID_DUE_DATE"),
+          delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
+          priority: this.$i18n.t("ID_PRIORITY"),
+          actions: "",
+        },
+        selectable: {
+          mode: "single",
+          only: function (row) {
+            return true;
+          },
+          selectAllMode: "page",
+          programmatic: false,
+        },
+        requestFunction(data) {
+          return this.$parent.$parent.getCasesForVueTable();
+        },
+      },
+      pmDateFormat: "Y-m-d H:i:s",
+    };
+  },
+  mounted() {},
+  watch: {},
+  computed: {
+    /**
+     * Build our ProcessMaker apiClient
+     */
+    ProcessMaker() {
+      return window.ProcessMaker;
+    },
+  },
+  updated() {},
+  beforeCreate() {},
+  methods: {
+    /**
+     * Get cases unassigned data
+     */
+    getCasesForVueTable() {
+      let that = this,
+        dt;
+      return new Promise((resolutionFunc, rejectionFunc) => {
+        api.cases
+          .unassigned()
+          .then((response) => {
+            dt = that.formatDataResponse(response.data.data);
+            resolutionFunc({
+              data: dt,
+              count: response.data.total,
+            });
+          })
+          .catch((e) => {
+            rejectionFunc(e);
+          });
+      });
+    },
+    /**
+     * Format Response API TODO to grid todo and columns
+     */
+    formatDataResponse(response) {
+      let data = [];
+      _.forEach(response, (v) => {
+        data.push({
+          CASE_NUMBER: v.APP_NUMBER,
+          CASE_TITLE: v.APP_TITLE,
+          PROCESS_NAME: v.PRO_TITLE,
+          TASK: {
+            TITLE: v.TAS_TITLE,
+            CODE_COLOR: v.TAS_COLOR,
+            COLOR: v.TAS_COLOR_LABEL,
+          },
+          USR_FIRSTNAME: v.USR_FIRSTNAME,
+          USR_LASTNAME: v.USR_LASTNAME,
+          USR_USERNAME: v.USR_USERNAME,
+          DUE_DATE: v.DEL_TASK_DUE_DATE,
+          DELEGATION_DATE: v.DEL_DELEGATE_DATE,
+          PRIORITY: v.DEL_PRIORITY_LABEL,
+        });
+      });
+      return data;
+    },
+    /**
+     * Get for user format name configured in Processmaker Environment Settings
+     *
+     * @param {string} name
+     * @param {string} lastName
+     * @param {string} userName
+     * @return {string} nameFormat
+     */
+    nameFormatCases(name, lastName, userName) {
+      let nameFormat = "";
+      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
+        return nameFormat;
+      }
+      if (this.nameFormat === "@firstName @lastName") {
+        nameFormat = name + " " + lastName;
+      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
+        nameFormat = name + " " + lastName + " (" + userName + ")";
+      } else if (this.nameFormat === "@userName") {
+        nameFormat = userName;
+      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
+        nameFormat = userName + " (" + name + " " + lastName + ")";
+      } else if (this.nameFormat === "@lastName @firstName") {
+        nameFormat = lastName + " " + name;
+      } else if (this.nameFormat === "@lastName, @firstName") {
+        nameFormat = lastName + ", " + name;
+      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
+        nameFormat = lastName + ", " + name + " (" + userName + ")";
+      } else {
+        nameFormat = name + " " + lastName;
+      }
+      return nameFormat;
+    },
+    /**
+     * Open selected cases in the inbox
+     *
+     * @param {object} item
+     */
+    openCase(item) {},
+  },
+};
+</script>
+<style>
+.v-container-unassigned {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+</style>

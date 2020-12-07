@@ -23,6 +23,10 @@
 import CustomSidebar from "./../components/menu/CustomSidebar";
 import MyCases from "./MyCases";
 import MyDocuments from "./MyDocuments";
+import Todo from "./Todo";
+import Draft from "./Draft";
+import Paused from "./Paused";
+import Unassigned from "./Unassigned";
 import BatchRouting from "./BatchRouting";
 import XCase from "./XCase";
 import TaskReassignments from "./TaskReassignments";
@@ -38,6 +42,10 @@ export default {
     BatchRouting,
     TaskReassignments,
     XCase,
+    Todo,
+    Draft,
+    Paused,
+    Unassigned,
   },
   data() {
     return {

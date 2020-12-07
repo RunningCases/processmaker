@@ -24,7 +24,7 @@ export default {
     this.path =
       window.config.SYS_SERVER +
       window.config.SYS_URI +
-      `cases/open?APP_UID=${this.dataCase.APPLICATION}&DEL_INDEX=1&action=draft`;
+      `cases/open?APP_UID=${this.dataCase.APP_UID}&DEL_INDEX=${this.dataCase.DEL_INDEX}&action=${this.dataCase.ACTION}`;
   },
   data() {
     return {

@@ -156,7 +156,11 @@ export default {
         .start(dt)
         .then(function (data) {
           self.$refs["my-modal"].hide();
-          self.$parent.$parent.dataCase = data.data;
+          self.$parent.$parent.dataCase = {
+            APP_UID: data.data.APPLICATION,
+            DEL_INDEX: 1,
+            ACTION: "draft",
+          };
           self.$parent.$parent.page = "XCase";
         })
         .catch((err) => {
