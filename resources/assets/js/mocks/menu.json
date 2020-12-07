@@ -27,7 +27,8 @@
     "badge": {
       "text": "23",
       "class": "badge-custom"
-    }
+    },
+    "id": "todo"
   },
   {
     "href": "/draft",
@@ -36,7 +37,8 @@
     "badge": {
       "text": "1",
       "class": "badge-custom"
-    }
+    },
+    "id": "draft"
   },
   {
     "href": "/paused",
@@ -45,7 +47,8 @@
     "badge": {
       "text": "7",
       "class": "badge-custom"
-    }
+    },
+    "id": "paused"
   },
   {
     "href": "/unassigned",
@@ -54,7 +57,8 @@
     "badge": {
       "text": "99+",
       "class": "badge-custom"
-    }
+    },
+    "id": "unassigned"
   },
   {
     "header": true,

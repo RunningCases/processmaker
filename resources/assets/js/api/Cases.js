@@ -13,17 +13,37 @@ export let cases = {
             keys: {}
         });
     },
-    getPost(id) {
-        return Client.get(`${resource}/${id}`);
+    todo(data) {
+        return Api.get({
+            service: "TODO_LIST",
+            params: {
+            },
+            keys: {}
+        });
     },
-    create(payload) {
-        return Client.post(`${resource}`, payload);
+    draft(data) {
+        return Api.get({
+            service: "DRAFT_LIST",
+            params: {
+            },
+            keys: {}
+        });
     },
-    update(payload, id) {
-        return Client.put(`${resource}/${id}`, payload);
+    paused(data) {
+        return Api.get({
+            service: "PAUSED_LIST",
+            params: {
+            },
+            keys: {}
+        });
     },
-    delete(id) {
-        return Client.delete(`${resource}/${id}`)
+    unassigned(data) {
+        return Api.get({
+            service: "UNASSIGNED_LIST",
+            params: {
+            },
+            keys: {}
+        });
     },
     start(dt) {
         var params = new URLSearchParams();

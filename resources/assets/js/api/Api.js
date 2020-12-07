@@ -7,7 +7,6 @@ const services = {
     GET_MAIN_MENU_COUNTERS: "/light/counters",
     GET_CASE_NOTES_LIST: "/light/case/{app_uid}/notes",
     GET_PROCESS_MAP: "/light/project/{prj_uid}/case/{app_uid}",
-    GET_LISTS_TODO: "/light/todo",
     GET_LIST_UNASSIGNED: "/light/unassigned{suffix}",
     GET_LISTS_PARTICIPATED: "/light/participated{suffix}",
     GET_LISTS_DRAFT: "/light/draft{suffix}",
@@ -57,7 +56,12 @@ const services = {
     GET_NEXT_STEP: "/light/get-next-step/{app_uid}",
     REQUEST_SQLITE_DATABASE_TABLES: "/pmtable?offline=1",
     REQUEST_SQLITE_DATABASE_TABLES_DATA: "/pmtable/offline/data?compress=false",
-    MY_CASES: "/home/mycases"
+    MY_CASES: "/home/mycases",
+    TODO_LIST: "/home/todo",
+    DRAFT_LIST: "/home/draft",
+    PAUSED_LIST: "/home/paused",
+    UNASSIGNED_LIST: "/home/unassigned",
+
 };
 
 export default {
