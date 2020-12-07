@@ -510,7 +510,7 @@ class UnassignedTest extends TestCase
         // Get first page
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $unassigned->setOrderByColumn('APP_NUMBER');
         $unassigned->setOrderDirection('DESC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
@@ -600,7 +600,7 @@ class UnassignedTest extends TestCase
         // Get first page
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $unassigned->setOrderByColumn('APP_NUMBER');
         $unassigned->setOrderDirection('DESC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
@@ -688,7 +688,7 @@ class UnassignedTest extends TestCase
         // Get first page
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $unassigned->setOrderByColumn('APP_NUMBER');
         $unassigned->setOrderDirection('DESC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
@@ -787,7 +787,7 @@ class UnassignedTest extends TestCase
         // Get first page
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $unassigned->setOrderByColumn('APP_NUMBER');
         $unassigned->setOrderDirection('DESC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
@@ -856,7 +856,7 @@ class UnassignedTest extends TestCase
         // Get first page, the minor case id
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $unassigned->setOrderByColumn('APP_NUMBER');
         $unassigned->setOrderDirection('ASC');
         $unassigned->setOffset(0);
         $unassigned->setLimit(25);
@@ -1207,7 +1207,7 @@ class UnassignedTest extends TestCase
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $dateToFilter = date('Y-m-d', strtotime('+1 year'));
-        $unassigned->setNewestThan($dateToFilter);
+        $unassigned->setDelegateFrom($dateToFilter);
         $unassigned->setOrderByColumn('DEL_DELEGATE_DATE');
         $unassigned->setOrderDirection('ASC');
         $unassigned->setOffset(0);
@@ -1216,7 +1216,7 @@ class UnassignedTest extends TestCase
         $results = $unassigned->getData();
         $this->assertGreaterThan($results[0]['DEL_DELEGATE_DATE'], $results[1]['DEL_DELEGATE_DATE']);
         // Get the newest than (>=) delegate date
-        $unassigned->setNewestThan($dateToFilter);
+        $unassigned->setDelegateFrom($dateToFilter);
         $unassigned->setOrderDirection('DESC');
         $results = $unassigned->getData();
         $this->assertLessThan($results[0]['DEL_DELEGATE_DATE'], $results[1]['DEL_DELEGATE_DATE']);
@@ -1265,7 +1265,7 @@ class UnassignedTest extends TestCase
         $unassigned = new Unassigned;
         $unassigned->setUserUid($user->USR_UID);
         $dateToFilter = date('Y-m-d', strtotime('+1 year'));
-        $unassigned->setOldestThan($dateToFilter);
+        $unassigned->setDelegateTo($dateToFilter);
         $unassigned->setOrderByColumn('DEL_DELEGATE_DATE');
         $unassigned->setOrderDirection('ASC');
         $unassigned->setOffset(0);
@@ -1325,66 +1325,6 @@ class UnassignedTest extends TestCase
         $unassigned->setLimit(25);
         // Get the specific case uid
         $unassigned->setCaseUid($application->APP_UID);
-        $results = $unassigned->getData();
-        $this->assertEquals($application->APP_UID, $results[0]['APP_UID']);
-    }
-
-    /**
-     * This ensures searching specific cases and review the page in self-service-user-assigned
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
-     * @test
-     */
-    public function it_should_search_self_service_user_assigned_specific_cases_uid_array()
-    {
-        //Create user
-        $user = factory(User::class)->create();
-        for ($i = 1; $i <= 2; $i++) {
-            //Create process
-            $process = factory(Process::class)->create();
-            //Create application
-            $application = factory(Application::class)->create([
-                'APP_STATUS_ID' => 2
-            ]);
-            //Create a task self service
-            $task = factory(Task::class)->create([
-                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
-                'TAS_GROUP_VARIABLE' => '',
-                'PRO_UID' => $process->PRO_UID,
-            ]);
-            //Assign a user in the task
-            factory(TaskUser::class)->create([
-                'TAS_UID' => $task->TAS_UID,
-                'USR_UID' => $user->USR_UID,
-                'TU_RELATION' => 1, //Related to the user
-                'TU_TYPE' => 1
-            ]);
-            //Create the register in delegation relate to self-service
-            factory(Delegation::class)->create([
-                'APP_UID' => $application->APP_UID,
-                'APP_NUMBER' => $application->APP_NUMBER,
-                'TAS_ID' => $task->TAS_ID,
-                'PRO_ID' => $process->PRO_ID,
-                'DEL_THREAD_STATUS' => 'OPEN',
-                'USR_ID' => 0
-            ]);
-        }
-        $unassigned = new Unassigned;
-        $unassigned->setUserUid($user->USR_UID);
-        $unassigned->setCasesUids([$application->APP_UID]);
-        $unassigned->setOrderByColumn('APP_DELEGATION.APP_UID');
-        $unassigned->setOrderDirection('ASC');
-        $unassigned->setOffset(0);
-        $unassigned->setLimit(25);
-        // Get the specific cases uid's
-        $results = $unassigned->getData();
-        $this->assertCount(1, $results);
-        // Get the specific cases uid's
-        $unassigned->setCasesUids([$application->APP_UID]);
-        $results = $unassigned->getData();
-        $this->assertEquals($application->APP_UID, $results[0]['APP_UID']);
-        // Get the specific cases uid's
-        $unassigned->setCasesUids([$application->APP_UID]);
         $results = $unassigned->getData();
         $this->assertEquals($application->APP_UID, $results[0]['APP_UID']);
     }

@@ -81,7 +81,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_case_in_progress()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->caseInProgress()->get());
+        $this->assertCount(1, $table->joinApplication()->caseInProgress()->get());
     }
 
     /**
@@ -97,7 +97,7 @@ class DelegationTest extends TestCase
             'APP_NUMBER' => $application->APP_NUMBER,
             'APP_UID' => $application->APP_UID,
         ]);
-        $this->assertCount(1, $table->caseCompleted()->get());
+        $this->assertCount(1, $table->joinApplication()->caseCompleted()->get());
     }
 
     /**
@@ -121,7 +121,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_delegate_date_to()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->delegateDateFrom($table->DEL_DELEGATE_DATE)->get());
+        $this->assertCount(1, $table->delegateDateTo($table->DEL_DELEGATE_DATE)->get());
     }
 
     /**

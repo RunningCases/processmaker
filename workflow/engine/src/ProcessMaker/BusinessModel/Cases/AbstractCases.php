@@ -6,18 +6,20 @@ use Datetime;
 use Exception;
 use ProcessMaker\BusinessModel\Interfaces\CasesInterface;
 use ProcessMaker\BusinessModel\Validator;
+use ProcessMaker\Model\Task;
+use ProcessMaker\Model\User;
 
 class AbstractCases implements CasesInterface
 {
     // Constants for validate values
-    const INBOX_STATUSES = ['', 'ALL', 'READ', 'UNREAD'];
-    const PARTICIPATED_STATUSES = ['', 'ALL', 'STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
-    const RISK_STATUSES = ['', 'ALL', 'ON_TIME', 'AT_RISK', 'OVERDUE'];
-    const CASE_STATUSES = ['', 'ALL', 'DRAFT', 'TO_DO', 'COMPLETED', 'CANCELLED', 'CANCELED'];
+    const INBOX_STATUSES = ['ALL', 'READ', 'UNREAD'];
+    const PARTICIPATED_STATUSES = ['ALL', 'STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
+    const RISK_STATUSES = ['ALL', 'ON_TIME', 'AT_RISK', 'OVERDUE'];
+    const CASE_STATUSES = [0 => 'ALL', 1 => 'DRAFT', 2 => 'TO_DO', 3 => 'COMPLETED', 4 => 'CANCELED'];
     const ORDER_DIRECTIONS = ['DESC', 'ASC'];
     const CORRECT_CANCELED_STATUS = 'CANCELED';
     const INCORRECT_CANCELED_STATUS = 'CANCELLED';
-    const PRIORITIES = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
+    const PRIORITIES = [0 => 'ALL', 1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
     const TASK_COLORS = [1 => 'green', 2 => 'red', 3 => 'orange', 4 => 'blue', 5 => 'gray'];
     const COLOR_OVERDUE = 1;
     const COLOR_ON_TIME = 2;
@@ -58,8 +60,14 @@ class AbstractCases implements CasesInterface
     // Filter by specific priority
     private $priority = 0;
 
+    // Filter by specific priorities
+    private $priorities = [];
+
     // Filter by case status, know as "$filterStatus" in the old "participated last" class
     private $caseStatus = '';
+
+    // Filter by case statuses
+    private $caseStatuses = [1, 2, 3, 4];
 
     // Filter by a specific case, know as "$caseLink" in the old lists classes
     private $caseUid = '';
@@ -67,24 +75,47 @@ class AbstractCases implements CasesInterface
     // Filter by a specific case using case number
     private $caseNumber = 0;
 
-    // Filter by a specific range of case number
-    private $fromCaseNumber = 0;
-    private $toCaseNumber = 0;
+    // Filter by specific cases using the case numbers like [1,4,8]
+    private $casesNumbers = [];
+
+    // Filter by only one range of case number
+    private $caseNumberFrom = 0;
+    private $caseNumberTo = 0;
+
+    // Filter more than one range of case number
+    private $rangeCasesFromTo = [];
+
+    // Filter by a specific cases like 1,3-5,8,10-15
+    private $filterCases = '';
+
+    // Filter by a specific case title
+    private $caseTitle = '';
 
     // Filter by specific cases, know as "$appUidCheck" in the old lists classes
     private $casesUids = [];
 
-    // Filter by specific cases using the case numbers
-    private $casesNumbers = [];
+    // Filter range related to the start case date
+    private $startCaseFrom = '';
+    private $startCaseTo = '';
 
-    // Filter recent cases starting by a specific date, know as "newestthan" in the old lists classes
-    private $newestThan = '';
+    // Filter range related to the finish case date
+    private $finishCaseFrom = '';
+    private $finishCaseTo = '';
 
-    // Filter old cases ending by a specific date, know as "oldestthan" in the old lists classes
-    private $oldestThan = '';
+    // Filter range related to the delegate date
+    private $delegateFrom = '';
+    private $delegateTo = '';
+
+    // Filter range related to the finish date
+    private $finishFrom = '';
+    private $finishTo = '';
+
+    // Filter range related to the due date
+    private $dueFrom = '';
+    private $dueTo = '';
 
     // Column by which the results will be sorted, know as "$sort" in the old lists classes
-    private $orderByColumn = 'APP_DELEGATION.APP_NUMBER';
+    private $orderByColumn = 'APP_NUMBER';
 
     // Sorts the data in descending or ascending order, know as "$dir" in the old lists classes
     private $orderDirection = 'DESC';
@@ -96,7 +127,7 @@ class AbstractCases implements CasesInterface
     private $offset = 0;
 
     // Number of rows to return
-    private $limit = 25;
+    private $limit = 15;
 
     /**
      * Set Category Uid value
@@ -290,9 +321,9 @@ class AbstractCases implements CasesInterface
             throw new Exception("Participated status '{$participatedStatus}' is not valid.");
         }
 
-        // If empty string is sent, use value 'ALL'
-        if ($participatedStatus === '') {
-            $participatedStatus = 'ALL';
+        // If empty string will not apply the filter
+        if ($participatedStatus === 'ALL') {
+            $participatedStatus = '';
         }
 
         $this->participatedStatus = $participatedStatus;
@@ -325,9 +356,9 @@ class AbstractCases implements CasesInterface
             throw new Exception("Risk status '{$riskStatus}' is not valid.");
         }
 
-        // If empty string is sent, use value 'ALL'
-        if ($riskStatus === '') {
-            $riskStatus = 'ALL';
+        // If empty string will not apply the filter
+        if ($riskStatus === 'ALL') {
+            $riskStatus = '';
         }
 
         $this->riskStatus = $riskStatus;
@@ -346,17 +377,16 @@ class AbstractCases implements CasesInterface
     /**
      * Set priority value
      *
-     * @param int $priority
+     * @param string $priority
      *
      * @throws Exception
      */
-    public function setPriority(int $priority)
+    public function setPriority(string $priority)
     {
         // Validate the priority value
         if (!empty($priority)) {
-            if (!empty(self::PRIORITIES[$priority])) {
-                $priorityCode = $priority;
-            } else {
+            $priorityCode = array_search($priority, self::PRIORITIES);
+            if (empty($priorityCode) && $priorityCode !== 0) {
                 throw new Exception("Priority value {$priority} is not valid.");
             }
         } else {
@@ -378,43 +408,107 @@ class AbstractCases implements CasesInterface
     }
 
     /**
-     * Set Case status
+     * Set priorities
      *
-     * @param string $caseStatus
+     * @param array $priorities
      *
      * @throws Exception
      */
-    public function setCaseStatus(string $caseStatus)
+    public function setPriorities(array $priorities)
     {
-        // Convert the value to upper case
-        $caseStatus = strtoupper($caseStatus);
-
-        // Validate the case status
-        if (!in_array($caseStatus, self::CASE_STATUSES)) {
-            throw new Exception("Case status '{$caseStatus}' is not valid.");
+        $prioritiesCode = [];
+        foreach ($priorities as $priority) {
+            // Validate the priority value
+            $priorityCode = array_search($priority, self::PRIORITIES);
+            if (empty($priorityCode) && $priorityCode !== 0) {
+                throw new Exception("Priority value {$priority} is not valid.");
+            } else {
+                array_push($prioritiesCode, $priorityCode);
+            }
         }
+        $this->priorities = $prioritiesCode;
+    }
 
-        // If empty string is sent, use value 'ALL'
-        if ($caseStatus === '') {
-            $caseStatus = 'ALL';
-        }
+    /**
+     * Get priorities
+     *
+     * @return array
+     */
+    public function getPriorities()
+    {
+        return $this->priorities;
+    }
 
+    /**
+     * Set Case status
+     *
+     * @param string $status
+     *
+     * @throws Exception
+     */
+    public function setCaseStatus(string $status)
+    {
         // Fix the canceled status, this is a legacy code error
-        if ($caseStatus === self::INCORRECT_CANCELED_STATUS) {
-            $caseStatus = self::CORRECT_CANCELED_STATUS;
+        if ($status === self::INCORRECT_CANCELED_STATUS) {
+            $status = self::CORRECT_CANCELED_STATUS;
         }
-
-        $this->caseStatus = $caseStatus;
+        $statusCode = 0;
+        // Validate the status value
+        if (!empty($status)) {
+            $statusCode = array_search($status, self::CASE_STATUSES);
+            if (empty($statusCode) && $statusCode !== 0) {
+                throw new Exception("Case status '{$status}' is not valid.");
+            }
+        }
+        $this->caseStatus = $statusCode;
     }
 
     /**
      * Get Case Status
      *
-     * @return string
+     * @return int
      */
     public function getCaseStatus()
     {
         return $this->caseStatus;
+    }
+
+    /**
+     * Set Case statuses
+     *
+     * @param array $statuses
+     *
+     * @throws Exception
+     */
+    public function setCaseStatuses(array $statuses)
+    {
+        $statusCodes = [];
+        foreach ($statuses as $status) {
+            // Fix the canceled status, this is a legacy code error
+            if ($status === self::INCORRECT_CANCELED_STATUS) {
+                $status = self::CORRECT_CANCELED_STATUS;
+            }
+            // Validate the status value
+            if (!empty($status)) {
+                $statusCode = array_search($status, self::CASE_STATUSES);
+                if (empty($statusCode) && $statusCode !== 0) {
+                    throw new Exception("Case status '{$status}' is not valid.");
+                } else {
+                    array_push($statusCodes, $statusCode);
+                }
+            }
+        }
+        $this->caseStatuses = $statusCodes;
+    }
+
+    /**
+     * Get Case Statuses
+     *
+     * @return array
+     */
+    public function getCaseStatuses()
+    {
+        return $this->caseStatuses;
     }
 
     /**
@@ -458,15 +552,13 @@ class AbstractCases implements CasesInterface
     }
 
     /**
-     * Set range of Case Number
+     * Set range of case number from
      *
      * @param int $from
-     * @param int $to
      */
-    public function setRangeCaseNumber(int $from, int $to)
+    public function setCaseNumberFrom(int $from)
     {
-        $this->fromCaseNumber = $from;
-        $this->toCaseNumber = $to;
+        $this->caseNumberFrom = $from;
     }
 
     /**
@@ -474,9 +566,19 @@ class AbstractCases implements CasesInterface
      *
      * @return int
      */
-    public function getFromCaseNumber()
+    public function getCaseNumberFrom()
     {
-        return $this->fromCaseNumber;
+        return $this->caseNumberFrom;
+    }
+
+    /**
+     * Set range of case number to
+     *
+     * @param int $to
+     */
+    public function setCaseNumberTo(int $to)
+    {
+        $this->caseNumberTo = $to;
     }
 
     /**
@@ -484,9 +586,82 @@ class AbstractCases implements CasesInterface
      *
      * @return int
      */
-    public function getToCaseNumber()
+    public function getCaseNumberTo()
     {
-        return $this->toCaseNumber;
+        return $this->caseNumberTo;
+    }
+
+    /**
+     * Set more than one range of cases
+     *
+     * @param array $rangeCases
+     */
+    public function setRangeCasesFromTo(array $rangeCases)
+    {
+        $this->rangeCasesFromTo = $rangeCases;
+    }
+
+    /**
+     * Get more than one range of cases
+     *
+     * @return array
+     */
+    public function getRangeCasesFromTo()
+    {
+        return $this->rangeCasesFromTo;
+    }
+
+    /**
+     * Set filter of cases like '1,3-5,8,10-15'
+     *
+     * @param string $filterCases
+     */
+    public function setFilterCases(string $filterCases)
+    {
+        $this->filterCases = $filterCases;
+        // Review the cases defined in the filter
+        $rangeOfCases = explode(",", $filterCases);
+        $specificCases = [];
+        $rangeCases = [];
+        foreach ($rangeOfCases as $cases) {
+            if(is_numeric($cases)) {
+                array_push($specificCases,$cases);
+            } else {
+                array_push($rangeCases,$cases);
+            }
+        }
+        $this->setCasesNumbers($specificCases);
+        $this->setRangeCasesFromTo($rangeCases);
+    }
+
+    /**
+     * Get filter of cases
+     *
+     * @return string
+     */
+    public function getFilterCases()
+    {
+        return $this->filterCases;
+    }
+
+    /**
+     * Set Case Title
+     *
+     * @param string $caseTitle
+     */
+    public function setCaseTitle(string $caseTitle)
+    {
+        $this->caseTitle = $caseTitle;
+    }
+
+    /**
+     * Get Case Title
+     *
+     * @return string
+     */
+    public function getCaseTitle()
+    {
+        return $this->caseTitle;
     }
 
     /**
@@ -530,18 +705,118 @@ class AbstractCases implements CasesInterface
     }
 
     /**
-     * Set Newest Than value
+     * Set start case from
      *
-     * @param string $newestThan
+     * @param string $from
      *
      * @throws Exception
      */
-    public function setNewestThan(string $newestThan)
+    public function setStartCaseFrom(string $from)
     {
-        if (!Validator::isDate($newestThan, 'Y-m-d')) {
-            throw new Exception("Value '{$newestThan}' is not a valid date.");
+        if (!Validator::isDate($from, 'Y-m-d')) {
+            throw new Exception("Value '{$from}' is not a valid date.");
         }
-        $this->newestThan = $newestThan;
+        $this->startCaseFrom = $from;
+    }
+
+    /**
+     * Get start case from
+     *
+     * @return string
+     */
+    public function getStartCaseFrom()
+    {
+        return $this->startCaseFrom;
+    }
+
+    /**
+     * Set start case to
+     *
+     * @param string $to
+     *
+     * @throws Exception
+     */
+    public function setStartCaseTo(string $to)
+    {
+        if (!Validator::isDate($to, 'Y-m-d')) {
+            throw new Exception("Value '{$to}' is not a valid date.");
+        }
+        $this->startCaseTo = $to;
+    }
+
+    /**
+     * Get start case to
+     *
+     * @return string
+     */
+    public function getStartCaseTo()
+    {
+        return $this->startCaseTo;
+    }
+
+    /**
+     * Set finish case from
+     *
+     * @param string $from
+     *
+     * @throws Exception
+     */
+    public function setFinishCaseFrom(string $from)
+    {
+        if (!Validator::isDate($from, 'Y-m-d')) {
+            throw new Exception("Value '{$from}' is not a valid date.");
+        }
+        $this->finishCaseFrom = $from;
+    }
+
+    /**
+     * Get start case from
+     *
+     * @return string
+     */
+    public function getFinishCaseFrom()
+    {
+        return $this->finishCaseFrom;
+    }
+
+    /**
+     * Set start case to
+     *
+     * @param string $to
+     *
+     * @throws Exception
+     */
+    public function setFinishCaseTo(string $to)
+    {
+        if (!Validator::isDate($to, 'Y-m-d')) {
+            throw new Exception("Value '{$to}' is not a valid date.");
+        }
+        $this->finishCaseTo = $to;
+    }
+
+    /**
+     * Get start case to
+     *
+     * @return string
+     */
+    public function getFinishCaseTo()
+    {
+        return $this->finishCaseTo;
+    }
+
+    /**
+     * Set Newest Than value
+     *
+     * @param string $delegateFrom
+     *
+     * @throws Exception
+     */
+    public function setDelegateFrom(string $delegateFrom)
+    {
+        if (!Validator::isDate($delegateFrom, 'Y-m-d')) {
+            throw new Exception("Value '{$delegateFrom}' is not a valid date.");
+        }
+        $this->delegateFrom = $delegateFrom;
     }
 
     /**
@@ -549,24 +824,24 @@ class AbstractCases implements CasesInterface
      *
      * @return string
      */
-    public function getNewestThan()
+    public function getDelegateFrom()
     {
-        return $this->newestThan;
+        return $this->delegateFrom;
     }
 
     /**
      * Set Oldest Than value
      *
-     * @param string $oldestThan
+     * @param string $delegateTo
      *
      * @throws Exception
      */
-    public function setOldestThan(string $oldestThan)
+    public function setDelegateTo(string $delegateTo)
     {
-        if (!Validator::isDate($oldestThan, 'Y-m-d')) {
-            throw new Exception("Value '{$oldestThan}' is not a valid date.");
+        if (!Validator::isDate($delegateTo, 'Y-m-d')) {
+            throw new Exception("Value '{$delegateTo}' is not a valid date.");
         }
-        $this->oldestThan = $oldestThan;
+        $this->delegateTo = $delegateTo;
     }
 
     /**
@@ -574,10 +849,111 @@ class AbstractCases implements CasesInterface
      *
      * @return string
      */
-    public function getOldestThan()
+    public function getDelegateTo()
     {
-        return $this->oldestThan;
+        return $this->delegateTo;
     }
+
+    /**
+     * Set finish date value
+     *
+     * @param string $from
+     *
+     * @throws Exception
+     */
+    public function setFinishFrom(string $from)
+    {
+        if (!Validator::isDate($from, 'Y-m-d')) {
+            throw new Exception("Value '{$from}' is not a valid date.");
+        }
+        $this->finishFrom = $from;
+    }
+
+    /**
+     * Get finish date value
+     *
+     * @return string
+     */
+    public function getFinishFrom()
+    {
+        return $this->finishFrom;
+    }
+
+    /**
+     * Set finish date value
+     *
+     * @param string $to
+     *
+     * @throws Exception
+     */
+    public function setFinishTo(string $to)
+    {
+        if (!Validator::isDate($to, 'Y-m-d')) {
+            throw new Exception("Value '{$to}' is not a valid date.");
+        }
+        $this->finishTo = $to;
+    }
+
+    /**
+     * Get finish date value
+     *
+     * @return string
+     */
+    public function getFinishTo()
+    {
+        return $this->finishTo;
+    }
+
+    /**
+     * Set due date from
+     *
+     * @param string $dueFrom
+     *
+     * @throws Exception
+     */
+    public function setDueFrom(string $dueFrom)
+    {
+        if (!Validator::isDate($dueFrom, 'Y-m-d')) {
+            throw new Exception("Value '{$dueFrom}' is not a valid date.");
+        }
+        $this->dueFrom = $dueFrom;
+    }
+
+    /**
+     * Get due date from
+     *
+     * @return string
+     */
+    public function getDueFrom()
+    {
+        return $this->dueFrom;
+    }
+
+    /**
+     * Set due date to
+     *
+     * @param string $dueTo
+     *
+     * @throws Exception
+     */
+    public function setDueTo(string $dueTo)
+    {
+        if (!Validator::isDate($dueTo, 'Y-m-d')) {
+            throw new Exception("Value '{$dueTo}' is not a valid date.");
+        }
+        $this->dueTo = $dueTo;
+    }
+
+    /**
+     * Get due date to
+     *
+     * @return string
+     */
+    public function getDueTo()
+    {
+        return $this->dueTo;
+    }
+
 
     /**
      * Set order by column
@@ -722,6 +1098,40 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Get task color according the due date
+     *
+     * @param string $pending
+     *
+     * @return int
+     */
+    public function prepareTaskPending($pending)
+    {
+        $taskPending = json_decode($pending, true);
+        $result = [];
+        $i = 0;
+        foreach ($taskPending as $thread) {
+            foreach ($thread as $key => $row) {
+                if($key === 'tas_id') {
+                    $result[$i][$key] = $row;
+                    $result[$i]['tas_title'] = (!empty($row)) ? Task::where('TAS_ID', $row)->first()->TAS_TITLE : '';
+                }
+                if($key === 'user_id') {
+                    $result[$i][$key] = $row;
+                }
+                if($key === 'due_date') {
+                    $result[$i][$key] = $row;
+                    // Get task color label
+                    $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
+                    $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                }
+            }
+            $i ++;
+        }
+
+        return $result;
+    }
+
+    /**
      * Set all properties
      *
      * @param array $properties
@@ -744,33 +1154,67 @@ class AbstractCases implements CasesInterface
         if (!empty($properties['user'])) {
             $this->setUserId($properties['user']);
         }
-        // Filter by priority
-        if (!empty($properties['priority'])) {
-            $this->setPriority($properties['priority']);
-        }
-        // Filter by case number
+        // Filter by one case number
         if (!empty($properties['caseNumber'])) {
             $this->setCaseNumber($properties['caseNumber']);
         }
-        // Filter by range of case number
-        if (!empty($properties['caseNumberFrom']) && !empty($properties['caseNumberTo'])) {
-            $this->setRangeCaseNumber($properties['caseNumberFrom'], $properties['caseNumberTo']);
+        // Filter by case title
+        if (!empty($properties['caseTitle'])) {
+            $this->setCaseTitle($properties['caseTitle']);
         }
-        // Filter by search
-        if (!empty($properties['search'])) {
-            $this->setValueToSearch($properties['search']);
-        }
+        /** Apply filters related to MY CASES */
         // My cases filter: started, in-progress, completed, supervising
-        if (!empty($properties['filter']) && get_class($this) === MyCases::class) {
+        if (!empty($properties['filter']) && get_class($this) === Participated::class) {
             $this->setParticipatedStatus($properties['filter']);
         }
-        // Filter by case status
-        if (!empty($properties['filterStatus']) && get_class($this) === MyCases::class) {
-            $this->setCaseStatus($properties['filterStatus']);
+        // Filter by one case status
+        if (!empty($properties['caseStatus']) && get_class($this) === Participated::class) {
+            $this->setCaseStatus($properties['caseStatus']);
         }
-        // Filter by case status
-        if (!empty($properties['filterStatus']) && get_class($this) === Search::class) {
-            $this->setCaseStatus($properties['filterStatus']);
+        // Filter date related to started date from
+        if (!empty($properties['startCaseFrom'] && (get_class($this) === Participated::class || get_class($this) === Supervising::class))) {
+            $this->setStartCaseFrom($properties['startCaseFrom']);
+        }
+        // Filter date related to started date to
+        if (!empty($properties['startCaseTo']) && (get_class($this) === Participated::class || get_class($this) === Supervising::class)) {
+            $this->setStartCaseTo($properties['startCaseTo']);
+        }
+        // Filter date related to finish date from
+        if (!empty($properties['finishCaseFrom']) && (get_class($this) === Participated::class || get_class($this) === Supervising::class)) {
+            $this->setFinishCaseFrom($properties['finishCaseFrom']);
+        }
+        //  Filter date related to finish date to
+        if (!empty($properties['finishCaseTo']) && (get_class($this) === Participated::class || get_class($this) === Supervising::class)) {
+            $this->setFinishCaseTo($properties['finishCaseTo']);
+        }
+        /** Apply filters related to SEARCH */
+        // Add a filter with specific cases or range of cases like '1, 3-5, 8, 10-15'
+        if (!empty($properties['filterCases']) && get_class($this) === Search::class) {
+            $this->setFilterCases($properties['filterCases']);
+        }
+        // Filter by more than one case statuses like ['DRAFT', 'TO_DO']
+        if (!empty($properties['caseStatuses']) && get_class($this) === Search::class) {
+            $this->setCaseStatuses($properties['caseStatuses']);
+        }
+        // Filter by more than one priorities like ['VL', 'L', 'N']
+        if (!empty($properties['priorities']) && get_class($this) === Search::class) {
+            $this->setProperties($properties['priorities']);
+        }
+        // Filter date newest related to delegation/started date
+        if (!empty($properties['delegationDateFrom'] && get_class($this) === Search::class)) {
+            $this->setDelegateFrom($properties['delegationDateFrom']);
+        }
+        // Filter date oldest related to delegation/started date
+        if (!empty($properties['delegationDateTo']) && get_class($this) === Search::class) {
+            $this->setDelegateTo($properties['delegationDateTo']);
+        }
+        // Filter date newest related to due date
+        if (!empty($properties['dueDateFrom']) && get_class($this) === Search::class) {
+            $this->setDueFrom($properties['dueDateFrom']);
+        }
+        // Filter date oldest related to due date
+        if (!empty($properties['dueDateTo']) && get_class($this) === Search::class) {
+            $this->setDueTo($properties['dueDateTo']);
         }
         // Filter by case uid
         if (!empty($properties['caseLink'])) {
@@ -779,14 +1223,6 @@ class AbstractCases implements CasesInterface
         // Filter by array of case uids
         if (!empty($properties['appUidCheck'])) {
             $this->setCasesUids($properties['appUidCheck']);
-        }
-        // Filter date newest related to delegation date
-        if (!empty($properties['newestthan'])) {
-            $this->setNewestThan($properties['newestthan']);
-        }
-        // Filter date oldest related to delegation date
-        if (!empty($properties['oldestthan'])) {
-            $this->setOldestThan($properties['oldestthan']);
         }
         // Sort column
         if (!empty($properties['sort'])) {

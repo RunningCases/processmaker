@@ -18,7 +18,8 @@ class Draft extends AbstractCases
         'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
         'APP_DELEGATION.DEL_PRIORITY',  // Priority
         // Additional column for other functionalities
-        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+        'APP_DELEGATION.APP_UID', // Case Uid for Open case
+        'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
     ];
 
     /**
@@ -28,6 +29,39 @@ class Draft extends AbstractCases
     public function getColumnsView()
     {
         return $this->columnsView;
+    }
+
+    /**
+     * Scope filters
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function filters($query)
+    {
+        // Specific case
+        if ($this->getCaseNumber()) {
+            $query->case($this->getCaseNumber());
+        }
+        // Specific case title
+        if (!empty($this->getCaseTitle())) {
+            // @todo: Filter by case title, pending from other PRD
+        }
+        // Specific process
+        if ($this->getProcessId()) {
+            $query->processId($this->getProcessId());
+        }
+        // Specific task
+        if ($this->getTaskId()) {
+            $query->task($this->getTaskId());
+        }
+        // Specific case uid PMFCaseLink
+        if (!empty($this->getCaseUid())) {
+            $query->appUid($this->getCaseUid());
+        }
+
+        return $query;
     }
 
     /**
@@ -44,18 +78,9 @@ class Draft extends AbstractCases
         $query->joinTask();
         // Join with application for add the initial scope for DRAFT cases
         $query->draft($this->getUserId());
-        // Specific process
-        if ($this->getProcessId()) {
-            $query->processId($this->getProcessId());
-        }
-        // Specific case uid
-        if (!empty($this->getCaseUid())) {
-            $query->appUid($this->getCaseUid());
-        }
-        // Specific cases
-        if (!empty($this->getCasesUids())) {
-            $query->specificCasesByUid($this->getCasesUids());
-        }
+        /** Apply filters */
+        $this->filters($query);
+        /** Apply order and pagination */
         // Add any sort if needed
         if ($this->getOrderByColumn()) {
             $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
@@ -92,6 +117,7 @@ class Draft extends AbstractCases
         $query = Delegation::query()->select();
         // Add the initial scope for draft cases
         $query->draft($this->getUserId());
+        $this->filters($query);
 
         return $query->count();
     }

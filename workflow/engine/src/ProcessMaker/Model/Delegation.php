@@ -67,6 +67,18 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include specific priorities
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $priorities
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePriorities($query, array $priorities)
+    {
+        return $query->whereIn('DEL_PRIORITY', $priorities);
+    }
+
+    /**
      * Scope a query to only include open threads
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -75,6 +87,34 @@ class Delegation extends Model
     public function scopeThreadOpen($query)
     {
         return $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
+    }
+
+    /**
+     * Scope to use when the case is IN_PROGRESS like DRAFT or TO_DO
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $ids
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCasesInProgress($query, array $ids)
+    {
+        $query->isThreadOpen()->statusIds($ids);
+
+        return $query;
+    }
+
+    /**
+     * Scope to use when the case is DONE like COMPLETED or CANCELED
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $ids
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCasesDone($query, array $ids)
+    {
+        $query->lastThread()->statusIds($ids);
+
+        return $query;
     }
 
     /**
@@ -111,7 +151,7 @@ class Delegation extends Model
      */
     public function scopeCaseInProgress($query)
     {
-        return $query->appStatusId(2);
+        return $query->where('APPLICATION.APP_STATUS_ID', 2);
     }
 
     /**
@@ -123,7 +163,85 @@ class Delegation extends Model
      */
     public function scopeCaseCompleted($query)
     {
-        return $query->appStatusId(3);
+        return $query->where('APPLICATION.APP_STATUS_ID', 3);
+    }
+
+    /**
+     * Scope a query to get specific status
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param int $statusId
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStatus($query, int $statusId)
+    {
+        return $query->where('APPLICATION.APP_STATUS_ID', $statusId);
+    }
+
+    /**
+     * Scope a more status
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $statuses
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStatusIds($query, array $statuses)
+    {
+        return $query->whereIn('APPLICATION.APP_STATUS_ID', $statuses);
+    }
+
+    /**
+     * Scope a query to only include a specific start date
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $from
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStartDateFrom($query, string $from)
+    {
+        return $query->where('APPLICATION.APP_CREATE_DATE', '>=', $from);
+    }
+
+    /**
+     * Scope a query to only include a specific start date
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $to
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStartDateTo($query, string $to)
+    {
+        return $query->where('APPLICATION.APP_CREATE_DATE', '<=', $to);
+    }
+
+    /**
+     * Scope a query to only include a specific finish date
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $from
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFinishCaseFrom($query, string $from)
+    {
+        return $query->where('APPLICATION.APP_FINISH_DATE', '>=', $from);
+    }
+
+    /**
+     * Scope a query to only include a specific finish date
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $to
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFinishCaseTo($query, string $to)
+    {
+        return $query->where('APPLICATION.APP_FINISH_DATE', '<=', $to);
     }
 
     /**
@@ -134,7 +252,7 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeDelegateDateFrom($query, $from)
+    public function scopeDelegateDateFrom($query, string $from)
     {
         return $query->where('DEL_DELEGATE_DATE', '>=', $from);
     }
@@ -147,9 +265,61 @@ class Delegation extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeDelegateDateTo($query, $to)
+    public function scopeDelegateDateTo($query, string $to)
     {
         return $query->where('DEL_DELEGATE_DATE', '<=', $to);
+    }
+
+    /**
+     * Scope a query to only include a specific finish date
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $from
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFinishDateFrom($query, $from)
+    {
+        return $query->where('DEL_FINISH_DATE', '>=', $from);
+    }
+
+    /**
+     * Scope a query to only include a specific finish date
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $to
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFinishDateTo($query, $to)
+    {
+        return $query->where('DEL_FINISH_DATE', '<=', $to);
+    }
+
+    /**
+     * Scope a query to only include a specific due date
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $from
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDueFrom($query, $from)
+    {
+        return $query->where('DEL_TASK_DUE_DATE', '>=', $from);
+    }
+
+    /**
+     * Scope a query to only include a specific due date
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $to
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDueTo($query, $to)
+    {
+        return $query->where('DEL_TASK_DUE_DATE', '<=', $to);
     }
 
     /**
@@ -202,21 +372,6 @@ class Delegation extends Model
     }
 
     /**
-     * Scope a query to only include cases from a range
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  int $from
-     * @param  int $to
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeRangeOfCases($query, int $from, int $to)
-    {
-        return $query->where('APP_DELEGATION.APP_NUMBER', '>=', $from)
-            ->where('APP_DELEGATION.APP_NUMBER', '<=', $to);
-    }
-
-    /**
      * Scope a query to only include specific cases
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -227,6 +382,57 @@ class Delegation extends Model
     public function scopeSpecificCases($query, array $cases)
     {
         return $query->whereIn('APP_DELEGATION.APP_NUMBER', $cases);
+    }
+
+    /**
+     * Scope a query to only include cases from a range
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  int $from
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCasesFrom($query, int $from)
+    {
+        return $query->where('APP_DELEGATION.APP_NUMBER', '>=', $from);
+    }
+
+    /**
+     * Scope a query to only include cases from a range
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  int $to
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCasesTo($query, int $to)
+    {
+        return $query->where('APP_DELEGATION.APP_NUMBER', '<=', $to);
+
+    }
+
+    /**
+     * Scope more than one range of cases
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $rangeCases
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRangeOfCases($query, array $rangeCases)
+    {
+        foreach ($rangeCases as $fromTo) {
+            $fromTo = explode("-", $fromTo);
+            if (count($fromTo) === 2) {
+                $from = $fromTo[0];
+                $to = $fromTo[1];
+                if ($to > $from) {
+                    $query->orWhere(function ($query) use ($from, $to) {
+                        $query->casesFrom($from)->casesTo($to);
+                    });
+                }
+            }
+        }
     }
 
     /**
@@ -469,7 +675,8 @@ class Delegation extends Model
     public function scopeInbox($query, $userId)
     {
         // This scope is for the join with the APP_DELEGATION table
-        $query->appStatusId(2);
+        $query->joinApplication();
+        $query->status(Application::STATUS_TODO);
 
         // Scope for the restriction of the task that must not be searched for
         $query->excludeTaskTypes(Task::DUMMY_TASKS);
@@ -493,7 +700,8 @@ class Delegation extends Model
     public function scopeInboxWithoutUser($query)
     {
         // This scope is for the join with the APP_DELEGATION table
-        $query->appStatusId(2);
+        $query->joinApplication();
+        $query->status(Application::STATUS_TODO);
 
         // Scope for the restriction of the task that must not be searched for
         $query->excludeTaskTypes(Task::DUMMY_TASKS);
@@ -535,7 +743,8 @@ class Delegation extends Model
     public function scopeDraft($query, $user)
     {
         // Add join for application, for get the case title when the case status is DRAFT
-        $query->appStatusId(Application::STATUS_DRAFT);
+        $query->joinApplication();
+        $query->status(Application::STATUS_TODO);
         // Case assigned to the user
         $query->userId($user);
 
@@ -554,8 +763,6 @@ class Delegation extends Model
     {
         // Scope to set the user
         $query->userId($user);
-        // Scope to set the last thread
-        $query->lastThread();
 
         return $query;
     }
@@ -720,15 +927,12 @@ class Delegation extends Model
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePaused($query, int $userId, int $taskId, int $caseNumber)
+    public function scopePaused($query, int $userId, int $taskId)
     {
         $query->joinAppDelay('PAUSE');
         $query->joinAppDelayUsers($userId);
         $query->joinApplication();
-        // Specific case number
-        if (!empty($caseNumber)) {
-            $query->case($caseNumber);
-        }
+        // Exclude some specific task
         $query->excludeTaskTypes(Task::DUMMY_TASKS);
         // Specific task
         if (!empty($taskId)) {
@@ -1401,13 +1605,13 @@ class Delegation extends Model
     /**
      * This function get the current user related to the specific case and index
      *
-     * @param integer $appNumber, Case number
-     * @param integer $index, Index to review
+     * @param int $appNumber, Case number
+     * @param int $index, Index to review
      * @param string $status, The status of the thread
      *
      * @return string
      */
-    public static function getCurrentUser($appNumber, $index, $status = 'OPEN')
+    public static function getCurrentUser(int $appNumber, int $index, $status = 'OPEN')
     {
         $query = Delegation::query()->select('USR_UID');
         $query->where('APP_NUMBER', $appNumber);
@@ -1427,12 +1631,12 @@ class Delegation extends Model
     /**
      * Return the open thread related to the task
      *
-     * @param integer $appNumber, Case number
+     * @param int $appNumber, Case number
      * @param string $tasUid, The task uid
      *
      * @return array
      */
-    public static function getOpenThreads($appNumber, $tasUid)
+    public static function getOpenThreads(int $appNumber, string $tasUid)
     {
         $query = Delegation::query()->select();
         $query->where('DEL_THREAD_STATUS', 'OPEN');
@@ -1457,7 +1661,7 @@ class Delegation extends Model
      *
      * @return boolean
      */
-    public static function participation($appUid, $userUid)
+    public static function participation(string $appUid, string $userUid)
     {
         $query = Delegation::query()->select();
         $query->where('APP_UID', $appUid);
@@ -1514,5 +1718,32 @@ class Delegation extends Model
         });
 
         return $thread;
+    }
+
+
+    /**
+     * Return the open thread related to the task
+     *
+     * @param int $appNumber
+     *
+     * @return array
+     */
+    public static function getPendingThreads(int $appNumber)
+    {
+        $query = Delegation::query()->select([
+            'TASK.TAS_TITLE',
+            'APP_DELEGATION.USR_ID',
+            'APP_DELEGATION.DEL_TASK_DUE_DATE'
+        ]);
+        // Join with task
+        $query->joinTask();
+        // Get the open threads
+        $query->threadOpen();
+        // Related to the specific case number
+        $query->case($appNumber);
+        // Get the results
+        $results = $query->get()->values()->toArray();
+
+        return $results;
     }
 }

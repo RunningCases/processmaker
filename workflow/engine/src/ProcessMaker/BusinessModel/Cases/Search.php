@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use G;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 
 class Search extends AbstractCases
@@ -14,6 +15,7 @@ class Search extends AbstractCases
         'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
         'PROCESS.PRO_TITLE', // Process
         'TASK.TAS_TITLE',  // Task
+        'APPLICATION.APP_STATUS',  // Status
         'USERS.USR_USERNAME',  // Current UserName
         'USERS.USR_FIRSTNAME',  // Current User FirstName
         'USERS.USR_LASTNAME',  // Current User LastName
@@ -21,7 +23,8 @@ class Search extends AbstractCases
         'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
         'APP_DELEGATION.DEL_PRIORITY',  // Priority
         // Additional column for other functionalities
-        'APP_DELEGATION.APP_UID', // Case Uid for PMFCaseLink
+        'APP_DELEGATION.APP_UID', // Case Uid for Open case
+        'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
     ];
 
     /**
@@ -31,6 +34,101 @@ class Search extends AbstractCases
     public function getColumnsView()
     {
         return $this->columnsView;
+    }
+
+    /**
+     * Scope filters
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function filters($query)
+    {
+        // Filter case by case number
+        if ($this->getCaseNumber()) {
+            $query->case($this->getCaseNumber());
+        }
+        // Filter cases by specific cases like [1,3,5]
+        if (!empty($this->getCasesNumbers())) {
+            $query->specificCases($this->getCasesNumbers());
+        }
+        // Filter cases by range of cases like ['1-5', '10-15']
+        if (!empty($this->getRangeCasesFromTo())) {
+            $query->rangeOfCases($this->getRangeCasesFromTo());
+        }
+        // Specific case title
+        if (!empty($this->getCaseTitle())) {
+            // @todo: Filter by case title, pending from other PRD
+        }
+        // Filter by process
+        if ($this->getProcessId()) {
+            $query->processId($this->getProcessId());
+        }
+        // Filter by user
+        if ($this->getUserId()) {
+            $query->userId($this->getUserId());
+        }
+        // Filter by task
+        if ($this->getTaskId()) {
+            $query->task($this->getTaskId());
+        }
+        // Filter one or more priorities like ['VL', 'L', 'N']
+        if (!empty($this->getPriorities())) {
+            $query->priorities($this->getPriorities());
+        }
+        // Filter by delegate from
+        if (!empty($this->getDelegateFrom())) {
+            $query->delegateDateFrom($this->getDelegateFrom());
+        }
+        // Filter by delegate to
+        if (!empty($this->getDelegateTo())) {
+            $query->delegateDateTo($this->getDelegateTo());
+        }
+        // Filter by due from
+        if (!empty($this->getDueFrom())) {
+            $query->dueFrom($this->getDueFrom());
+        }
+        // Filter by due to
+        if (!empty($this->getDueTo())) {
+            $query->dueTo($this->getDueTo());
+        }
+        /** This filter define the UNION */
+
+        // Filter related to the case status like ['DRAFT', 'TO_DO']
+        if (!empty($this->getCaseStatuses())) {
+            $statuses = $this->getCaseStatuses();
+            $casesOpen = [];
+            $casesClosed = [];
+            foreach ($statuses as $row) {
+                if ($row === Application::STATUS_DRAFT or $row === Application::STATUS_TODO) {
+                    $casesOpen[] = $row;
+                } else {
+                    $casesClosed[] = $row;
+                }
+            }
+            if (!empty($casesOpen) && !empty($casesClosed)) {
+                // Only in this case need to clone the same query for the union
+                $cloneQuery = clone $query;
+                // Get the open threads
+                $query->casesInProgress($casesOpen);
+                // Get the last thread
+                $cloneQuery->casesDone($casesClosed);
+                // Union
+                $query->union($cloneQuery);
+            } else {
+                if (!empty($casesOpen)) {
+                    // Get the open thread
+                    $query->casesInProgress($casesOpen);
+                }
+                if (!empty($casesClosed)) {
+                    // Get the last thread
+                    $query->casesDone($casesClosed);
+                }
+            }
+        }
+
+        return $query;
     }
 
     /**
@@ -47,33 +145,11 @@ class Search extends AbstractCases
         $query->joinTask();
         // Join with users
         $query->joinUser();
-        // Filter by case number
-        if ($this->getCaseNumber() > 0) {
-            $query->case($this->getCaseNumber());
-        }
-        // Filter by case number: from and to
-        if ($this->getFromCaseNumber() > 0 && $this->getToCaseNumber() > 0) {
-            $query->rangeOfCases($this->getFromCaseNumber(), $this->getToCaseNumber());
-        }
-
-        // @todo: Filter by case title, pending from other PRD
-
-        // Filter by priority
-        if ($this->getPriority() > 0) {
-            $query->priority($this->getPriority());
-        }
-        // Filter by process
-        if (!empty($this->getProcessId())) {
-            $query->processId($this->getProcessId());
-        }
-        // Filter by user
-        if (!empty($this->getUserId())) {
-            $query->userId($this->getUserId());
-        }
-        // Filter by task
-        if (!empty($this->getTaskId())) {
-            $query->task($this->getTaskId());
-        }
+        // Join with application
+        $query->joinApplication();
+        /** Apply filters */
+        $this->filters($query);
+        /** Apply order and pagination */
         // The order by clause
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
         // The limit by clause

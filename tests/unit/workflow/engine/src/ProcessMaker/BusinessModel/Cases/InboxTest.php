@@ -52,80 +52,11 @@ class InboxTest extends TestCase
         //Set the user ID
         $inbox->setUserId($user->USR_ID);
         //Set OrderBYColumn value
-        $inbox->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $inbox->setOrderByColumn('APP_NUMBER');
         //Call to getData method
         $res = $inbox->getData();
         //This assert that the expected numbers of results are returned
         $this->assertEquals(10, count($res));
-    }
-
-    /**
-     * It tests the getData method with Risk Filter
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @test
-     */
-    public function it_it_should_test_get_data_method_with_Risk_Filter()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 10)->create([
-            'TAS_ID' => $task->TAS_ID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'DEL_RISK_DATE' => '2019-06-07 12:30:58'
-        ]);
-
-        //Create new Inbox object
-        $inbox = new Inbox();
-
-        //Set the user UID
-        $inbox->setUserUid($user->USR_UID);
-
-        //Set the user ID
-        $inbox->setUserId($user->USR_ID);
-
-        //Set OrderBYColumn value
-        $inbox->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
-
-        //Set setRiskStatus value
-        $inbox->setRiskStatus('ON_TIME');
-        $res = $inbox->getData();
-
-        //This asserts that no cases are in ON_TIME status
-        $this->assertEmpty($res);
-
-        //Set setRiskStatus value
-        $inbox->setRiskStatus('OVERDUE');
-
-        //Call to getData method
-        $res = $inbox->getData();
-
-        //This asserts that there are cases in AT_RISK status
-        $this->assertNotEmpty($res);
-
-        //Set setRiskStatus value
-        $inbox->setRiskStatus('AT_RISK');
-
-        //Call to getData method
-        $res = $inbox->getData();
-
-        //This asserts that no cases are in AT_RISK status
-        $this->assertEmpty($res);
     }
 
     /**
@@ -169,7 +100,7 @@ class InboxTest extends TestCase
         $inbox->setUserId($user->USR_ID);
 
         //Set OrderBYColumn value
-        $inbox->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $inbox->setOrderByColumn('APP_NUMBER');
 
         //Set Category value
         $inbox->setCategoryUid('248565910552bd7d6006458065223611');
@@ -213,7 +144,7 @@ class InboxTest extends TestCase
         $inbox = new Inbox();
         $inbox->setUserUid($user->USR_UID);
         $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $inbox->setOrderByColumn('APP_NUMBER');
         $inbox->setProcessId($process[1]->PRO_ID);
         $res = $inbox->getData();
         $this->assertEmpty($res);
@@ -254,13 +185,13 @@ class InboxTest extends TestCase
         $inbox = new Inbox();
         $inbox->setUserUid($user->USR_UID);
         $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $inbox->setOrderByColumn('APP_NUMBER');
         $inbox->setOrderDirection('DESC');
         $res = $inbox->getData();
         // This asserts the order is for APP_NUMBER from highest to lowest
         $this->assertLessThan($res[0]['APP_NUMBER'], $res[1]['APP_NUMBER']);
 
-        $inbox->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $inbox->setOrderByColumn('APP_NUMBER');
         $inbox->setOrderDirection('ASC');
         $res = $inbox->getData();
         // This asserts the order is for APP_NUMBER from highest to lowest
@@ -552,7 +483,7 @@ class InboxTest extends TestCase
         $inbox = new Inbox();
         $inbox->setUserUid($user->USR_UID);
         $inbox->setUserId($user->USR_ID);
-        $inbox->setOrderByColumn('APP_DELEGATION.APP_NUMBER');
+        $inbox->setOrderByColumn('APP_NUMBER');
         $inbox->setOffset(5);
         $inbox->setLimit(2);
         $res = $inbox->getData();
