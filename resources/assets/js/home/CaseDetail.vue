@@ -40,7 +40,7 @@
             </div>
           </v-server-table>
         </div>
-        <Tabs :data="dataTabs"></Tabs>
+        <TabsCaseDetail :dataCaseSummary="dataCaseSummaryTab"></TabsCaseDetail>
       </div>
       <div class="col-sm4">
         <case-summary
@@ -73,19 +73,18 @@
 </template>
 
 <script>
-import Tabs from "../components/home/caseDetail/Tabs.vue";
 import IoDocuments from "../components/home/caseDetail/IoDocuments.vue";
 import CaseSummary from "../components/home/caseDetail/CaseSummary.vue";
 import AttachedDocuments from "../components/home/caseDetail/AttachedDocuments.vue";
 import CaseComment from "../components/home/caseDetail/CaseComment";
 import CaseComments from "../components/home/caseDetail/CaseComments";
+import TabsCaseDetail from "../home/TabsCaseDetail.vue";
 
 import Api from "../api/index";
-
 export default {
   name: "CaseDetail",
   components: {
-    Tabs,
+    TabsCaseDetail,
     IoDocuments,
     CaseSummary,
     AttachedDocuments,
@@ -133,6 +132,7 @@ export default {
         filterable: false,
       },
       dataCaseSummary: null,
+      dataCaseSummaryTab: null,
       dataIoDocuments: {
         titleInput: this.$i18n.t("ID_REQUEST_DOCUMENTS"),
         titleOutput: this.$i18n.t("ID_OUTPUT_DOCUMENTS"),
@@ -142,32 +142,6 @@ export default {
       dataAttachedDocuments: {
         title: "Attached Documents",
         items: [],
-      },
-      dataTabs: {
-        items: [
-          {
-            title: "Request Summary",
-            data: {
-              firstName: "Jason",
-              lastName: "Burne",
-              userName: "jburne@processmaker.com",
-            },
-          },
-          {
-            title: "Process Map",
-            data: [
-              {
-                pro_uid: "123dit",
-              },
-            ],
-          },
-          {
-            title: "Case History",
-          },
-          {
-            title: "Change Log",
-          },
-        ],
       },
       dataComments: {
         title: "Comments",
@@ -215,10 +189,12 @@ export default {
       this.dataAttachedDocuments.items = att;
     },
     getDataCaseSummary() {
+      let that = this;
       Api.cases
         .casesummary(this.dataCase)
         .then((response) => {
           var data = response.data;
+          this.formatCaseSummary(response.data);
           this.dataCaseSummary = {
             title: "Case Summary",
             titleActions: "Actions",
@@ -360,6 +336,27 @@ export default {
       });
 
       this.dataComments.items = notesArray;
+    },
+    formatCaseSummary(data) {
+      let index,
+        sections = [];
+      this.dataCaseSummaryTab = [];
+      _.each(data, (o) => {
+        if (
+          (index = _.findIndex(sections, (s) => {
+            return s.title == o.section;
+          })) == -1
+        ) {
+          sections.push({
+            title: o.section,
+            items: [],
+          });
+          index = 0;
+        }
+        sections[index].items.push(o);
+      });
+
+      this.dataCaseSummaryTab = sections;
     },
   },
 };
