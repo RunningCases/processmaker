@@ -45,6 +45,14 @@ export let cases = {
             keys: {}
         });
     },
+    summary(data) {
+        return Api.get({
+            service: "UNASSIGNED_LIST",
+            params: {
+            },
+            keys: {}
+        });
+    },
     inputdocuments(data) {
         var params = new FormData();
         params.append('appUid', data.APP_UID);
