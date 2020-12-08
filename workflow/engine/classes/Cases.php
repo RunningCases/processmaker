@@ -4147,14 +4147,16 @@ class Cases
         $this->getExecuteTriggerProcess($sApplicationUID, 'PAUSED');
 
         /*----------------------------------********---------------------------------*/
+        $threadTitle = Delegation::getDeltitle($aData['APP_NUMBER'], $aData['APP_DEL_INDEX']);
         $data = array(
             'APP_UID' => $sApplicationUID,
             'DEL_INDEX' => $iDelegation,
             'USR_UID' => $sUserUID,
             'APP_RESTART_DATE' => $sUnpauseDate,
-            'APP_TITLE' => ($appTitle != null) ? $appTitle : $aFields['APP_TITLE']
+            'APP_TITLE' => $threadTitle,
         );
         $data = array_merge($aFields, $data);
+
         $oListPaused = new ListPaused();
         $oListPaused->create($data);
         /*----------------------------------********---------------------------------*/

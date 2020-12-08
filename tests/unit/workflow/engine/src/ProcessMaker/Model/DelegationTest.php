@@ -277,8 +277,7 @@ class DelegationTest extends TestCase
                 ->states('foreign_keys')
                 ->create();
         $title = $delegations->last()
-                ->application
-                ->APP_TITLE;
+                ->DEL_TITLE;
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
 
@@ -2386,4 +2385,19 @@ class DelegationTest extends TestCase
         $this->assertNotEmpty($result);
     }
 
+    /**
+     * This tests the getDeltitle() method
+     *
+     * @covers \ProcessMaker\Model\Delegation::getDeltitle()
+     * @test
+     */
+    public function it_should_test_the_get_del_title_method()
+    {
+        $delegation = factory(Delegation::class)->create([
+            'DEL_TITLE' => "test"
+        ]);
+        $result = Delegation::getDeltitle($delegation->APP_NUMBER, $delegation->DEL_INDEX);
+        $this->assertNotEmpty($result);
+        $this->assertEquals($result, $delegation->DEL_TITLE);
+    }
 }
