@@ -2,6 +2,7 @@
 
 use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\JobsManager;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Validation\MySQL57;
 
@@ -10,8 +11,7 @@ CLI::taskDescription(<<<EOT
 Print information about the current system and any specified workspaces.
 
   If no workspace is specified, show information about all available workspaces
-EOT
-);
+EOT);
 CLI::taskArg('workspace-name', true, true);
 CLI::taskRun("run_info");
 
@@ -27,8 +27,7 @@ CLI::taskDescription(<<<EOT
   A backup archive will contain all information about the specified workspace
   so that it can be restored later. The archive includes a database dump and
   all the workspace files.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', false);
 CLI::taskArg('backup-file', true);
 CLI::taskOpt("filesize", "Split the backup file in multiple files which are compressed. The maximum size of these files is set to MAX-SIZE in megabytes. If MAX-SIZE is not set, then it is 1000 megabytes by default. It may be necessary to use this option if using a 32 bit Linux/UNIX system which limits its maximum file size to 2GB. This option does not work on Windows systems.", "s:", "filesize=");
@@ -44,8 +43,7 @@ CLI::taskDescription(<<<EOT
 
   Specify the WORKSPACE to restore to a different workspace name. Otherwise,
   it will restore to the same workspace name as the original backup.
-EOT
-);
+EOT);
 CLI::taskArg('backup-file', false);
 CLI::taskArg('workspace', true);
 CLI::taskOpt("overwrite", "If a workspace already exists, overwrite it.", "o", "overwrite");
@@ -69,8 +67,7 @@ CLI::taskDescription(<<<EOT
   to present the correct information in the cases inbox. This command will
   create the table and populate it with the right information. This only needs
   to be used after upgrading ProcessMaker or if the cases inbox is out of sync.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskOpt("lang", "Specify the language to rebuild the case cache list. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:", "lang=");
 CLI::taskRun("run_cacheview_upgrade");
@@ -87,8 +84,7 @@ CLI::taskDescription(<<<EOT
   tables to match this new schema. Use this command to fix corrupted database
   schemas or after ProcessMaker has been upgraded, so the database schemas will
   be changed to match the new ProcessMaker code.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_database_upgrade");
 
@@ -103,8 +99,7 @@ CLI::taskDescription(<<<EOT
   This is the same as database-upgrade but it works with schemas provided
   by plugins. This is useful if plugins are installed that include
   database schemas.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_plugins_database_upgrade");
 
@@ -118,8 +113,7 @@ CLI::taskDescription(<<<EOT
   This command will go through each language installed in ProcessMaker and
   update the translations for the workspace(s) to match the current version of
   ProcessMaker.
-EOT
-);
+EOT);
 CLI::taskArg('workspace-name', true, true);
 CLI::taskOpt('noxml', 'If this option is enabled, the XML files will not be modified.', 'NoXml', 'no-xml');
 CLI::taskOpt('nomafe', 'If this option is enabled, the Front End (BPMN Designer and Bootstrap Forms) translation file will not be modified.', 'NoMafe', 'no-mafe');
@@ -130,8 +124,7 @@ CLI::taskDescription(<<<EOT
   Migrating cases folders of the workspaces
 
   Specify the WORKSPACE to migrate from a existing workspace.
-EOT
-);
+EOT);
 //CLI::taskArg('workspace', true);
 CLI::taskOpt("workspace", "Select the workspace whose case folders will be migrated, if multiple workspaces are present in the server.\n        Ex: -wworkflow.        Ex: --workspace=workflow", "w:", "workspace=");
 CLI::taskRun("runStructureDirectories");
@@ -146,8 +139,7 @@ CLI::taskDescription(<<<EOT
   This command will read the system schema and data in an attempt to verify the database
   integrity. Use this command to check the database data consistency before any costly
   database-upgrade operation is planned to be executed.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_database_verify_consistency");
 
@@ -162,8 +154,7 @@ CLI::taskDescription(<<<EOT
   This command will read the Cancelled, Completed, Inbox, My Inbox, participated
   unassigned data in an attempt to verify the database integrity. It's recommended
   to run this script after the migrate cases job has been executed.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_database_verify_migration_consistency");
 
@@ -174,8 +165,7 @@ CLI::taskDescription(<<<EOT
   Specify the workspaces, the processes in this workspace will be updated.
 
   If no workspace is specified, the command will be run in all workspaces.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_itee_to_dummytask");
 
@@ -188,8 +178,7 @@ CLI::taskDescription(<<<EOT
 
   If no workspace is specified, the command will be run in all workspaces.
   More than one workspace can be specified.
-EOT
-);
+EOT);
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_check_workspace_disabled_code");
 
@@ -201,8 +190,7 @@ CLI::taskDescription(<<<EOT
 
   If no workspace is specified, then the tables schema will be upgraded or
   migrate on all available workspaces.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_new_cases_lists");
 
@@ -214,8 +202,7 @@ CLI::taskDescription(<<<EOT
 
   If no workspace is specified, then the tables schema will be upgraded or
   migrate on all available workspaces.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_list_unassigned");
 /*----------------------------------********---------------------------------*/
@@ -227,8 +214,7 @@ CLI::taskDescription(<<<EOT
   Specify the workspace, the self-service cases in this workspace will be updated.
 
   If no workspace is specified, the command will be running in all workspaces.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_indexing_acv");
 
@@ -240,8 +226,7 @@ CLI::taskDescription(<<<EOT
 
   If no workspace is specified, then the tables schema will be upgraded or
   migrate on all available workspaces.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskOpt("lang", "Specify the language to migrate the content data. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:", "lang=");
 CLI::taskRun("run_migrate_content");
@@ -254,8 +239,7 @@ CLI::taskDescription(<<<EOT
 
   If no workspace is specified, then the tables schema will be upgraded or
   migrated to all available workspaces.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_plugin");
 
@@ -266,8 +250,7 @@ CLI::taskDescription(<<<EOT
   Specify the workspaces, the self-service cases in this workspace will be updated.
 
   If no workspace is specified, the command will be run in all workspaces.
-EOT
-);
+EOT);
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_self_service_value");
 
@@ -279,8 +262,7 @@ CLI::taskRun("run_migrate_self_service_value");
 CLI::taskName('list-ids');
 CLI::taskDescription(<<<EOT
     Complete the PRO_ID and USR_ID in the LIST_* tables.
-EOT
-);
+EOT);
 CLI::taskOpt("lang", "", "lLANG", "lang=LANG");
 CLI::taskArg('workspace');
 CLI::taskRun("cliListIds");
@@ -291,8 +273,7 @@ CLI::taskRun("cliListIds");
 CLI::taskName('upgrade-content');
 CLI::taskDescription(<<<EOT
     Upgrade the content table
-EOT
-);
+EOT);
 CLI::taskArg('workspace');
 CLI::taskRun("run_upgrade_content");
 
@@ -307,8 +288,7 @@ CLI::taskDescription(<<<EOT
     incorrectly, which is caused by importing processes where the data directory 
     of ProcessMaker has different routes. Modified files are backed up with the 
     extension '.backup' in the same directory.
-EOT
-);
+EOT);
 CLI::taskArg('workspace');
 CLI::taskRun("regenerate_pmtable_classes");
 
@@ -319,8 +299,7 @@ CLI::taskRun("regenerate_pmtable_classes");
 CLI::taskName('migrate-history-data');
 CLI::taskDescription(<<<EOT
     Migrate the content of the APP_HISTORY table to the APP_DATA_CHANGE_LOG table.
-EOT
-);
+EOT);
 CLI::taskArg('workspace');
 CLI::taskRun('migrate_history_data');
 /*----------------------------------********---------------------------------*/
@@ -331,8 +310,7 @@ CLI::taskRun('migrate_history_data');
 CLI::taskName('clear-dyn-content-history-data');
 CLI::taskDescription(<<<EOT
     Clear History of Use data from APP_HISTORY table
-EOT
-);
+EOT);
 CLI::taskArg('workspace');
 CLI::taskRun("run_clear_dyn_content_history_data");
 
@@ -342,8 +320,7 @@ CLI::taskRun("run_clear_dyn_content_history_data");
 CLI::taskName('sync-forms-with-info-from-input-documents');
 CLI::taskDescription(<<<EOT
     Sync JSON definition of the Forms with Input Documents information
-EOT
-);
+EOT);
 CLI::taskArg('workspace');
 CLI::taskRun("run_sync_forms_with_info_from_input_documents");
 
@@ -353,8 +330,7 @@ CLI::taskRun("run_sync_forms_with_info_from_input_documents");
 CLI::taskName('remove-unused-files');
 CLI::taskDescription(<<<EOT
     Remove the deprecated files.
-EOT
-);
+EOT);
 CLI::taskRun("remove_deprecated_files");
 
 /*********************************************************************/
@@ -366,8 +342,7 @@ CLI::taskDescription(<<<EOT
 
   If no workspace is specified, the command will be run in all workspaces.
   More than one workspace can be specified.
-EOT
-);
+EOT);
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_check_queries_incompatibilities");
 /*********************************************************************/
@@ -383,8 +358,7 @@ Example:
 
 To see other command options please refer to the artisan help. 
     php artisan --help
-EOT
-);
+EOT);
 CLI::taskRun("run_artisan");
 
 /**
@@ -393,16 +367,23 @@ CLI::taskRun("run_artisan");
 CLI::taskName('documents-add-font');
 CLI::taskDescription(<<<EOT
 Add a font to be used in Documents generation (TinyMCE editor and/or TCPDF library).
-EOT
-);
-CLI::taskOpt('type', <<<EOT
+EOT);
+CLI::taskOpt(
+    'type',
+    <<<EOT
 Can be "TrueType" or "TrueTypeUnicode", if the option is not specified the default value is "TrueType"
-EOT
-,'t', 'type=');
-CLI::taskOpt('tinymce', <<<EOT
+EOT,
+    't',
+    'type='
+);
+CLI::taskOpt(
+    'tinymce',
+    <<<EOT
 Can be "true" or "false", if the option is not specified the default value is "true". If the value is "false" the optional arguments [FRIENDLYNAME] [FONTPROPERTIES] are omitted. 
-EOT
-    ,'tm', 'tinymce=');
+EOT,
+    'tm',
+    'tinymce='
+);
 CLI::taskArg('fontFileName', false);
 CLI::taskArg('friendlyName', true);
 CLI::taskArg('fontProperties', true);
@@ -414,8 +395,7 @@ CLI::taskRun('documents_add_font');
 CLI::taskName('documents-list-registered-fonts');
 CLI::taskDescription(<<<EOT
 List the registered fonts.
-EOT
-);
+EOT);
 CLI::taskRun('documents_list_registered_fonts');
 
 /**
@@ -424,8 +404,7 @@ CLI::taskRun('documents_list_registered_fonts');
 CLI::taskName('documents-remove-font');
 CLI::taskDescription(<<<EOT
 Remove a font used in Documents generation (TinyMCE editor and/or TCPDF library).
-EOT
-);
+EOT);
 CLI::taskArg('fontFileName', false);
 CLI::taskRun('documents_remove_font');
 
@@ -449,6 +428,18 @@ Convert Web Entries v1.0 to v2.0 for BPMN processes in order to deprecate the ol
 EOT
 );
 CLI::taskRun('convert_old_web_entries');
+
+/**
+ * Populate the column APP_DELEGATION.DEL_TITLE with the case title APPLICATION.APP_TITLE
+ */
+CLI::taskName('migrate-case-title-to-threads');
+CLI::taskDescription(<<<EOT
+Populate the new column APPLICATION.APP_TITLE into the APP_DELEGATION table
+EOT);
+CLI::taskArg('WORKSPACE', false);
+CLI::taskArg('caseNumberFrom', true);
+CLI::taskArg('caseNumberTo', true);
+CLI::taskRun('migrate_case_title_to_threads');
 
 /**
  * Function run_info
@@ -1312,7 +1303,7 @@ function migrate_history_data($args, $opts)
  * @param array $opts
  *
  * @return void
-*/
+ */
 function run_clear_dyn_content_history_data($args, $opts)
 {
     $workspaces = get_workspaces_from_args($args);
@@ -1335,7 +1326,8 @@ function run_clear_dyn_content_history_data($args, $opts)
  * @return void
  * @see workflow/engine/bin/tasks/cliWorkspaces.php CLI::taskRun()
  */
-function run_sync_forms_with_info_from_input_documents($args, $opts) {
+function run_sync_forms_with_info_from_input_documents($args, $opts)
+{
     if (count($args) === 1) {
         //This variable is not defined and does not involve its value in this
         //task, it is removed at the end of the method.
@@ -1688,4 +1680,16 @@ function convert_old_web_entries($args)
         // Display the error message
         CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
     }
+}
+
+/**
+ * Populate the new column APPLICATION.APP_TITLE into the APP_DELEGATION table
+ * 
+ * @param array $args
+ */
+function migrate_case_title_to_threads($args)
+{
+    //The constructor requires an argument, so we send an empty value in order to use the class.
+    $workspaceTools = new WorkspaceTools('');
+    $workspaceTools->migrateCaseTitleToThreads($args);
 }

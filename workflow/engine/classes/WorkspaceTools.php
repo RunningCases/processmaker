@@ -12,6 +12,7 @@ use ProcessMaker\Core\Installer;
 use ProcessMaker\Core\ProcessesManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Fields;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
 use ProcessMaker\Project\Adapter\BpmnWorkflow;
@@ -365,7 +366,7 @@ class WorkspaceTools
         $start = microtime(true);
         $this->updateTriggers(true, $lang);
         CLI::logging("* End updating MySQL triggers...(" . (microtime(true) - $start) . " seconds)\n");
-        
+
         CLI::logging("* Start adding +async option to scheduler commands...\n");
         $start = microtime(true);
         $this->addAsyncOptionToSchedulerCommands(true);
@@ -377,6 +378,11 @@ class WorkspaceTools
         Propel::init(PATH_CONFIG . 'databases.php');
         WebEntry::convertFromV1ToV2();
         CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
+
+        CLI::logging("* Start migrating case title...\n");
+        $start = microtime(true);
+        $this->migrateCaseTitleToThreads([$workspace]);
+        CLI::logging("* End migrating case title...(Completed on " . (microtime(true) - $start) . " seconds)\n");
     }
 
     /**
@@ -593,11 +599,21 @@ class WorkspaceTools
         $rbDetails = $this->getDBCredentials("rb");
         $rpDetails = $this->getDBCredentials("rp");
 
-        $config = array('datasources' => array('workflow' => array('connection' => $wfDetails["dsn"], 'adapter' => $wfDetails["adapter"]
-        ), 'rbac' => array('connection' => $rbDetails["dsn"], 'adapter' => $rbDetails["adapter"]
-        ), 'rp' => array('connection' => $rpDetails["dsn"], 'adapter' => $rpDetails["adapter"]
-        )
-        )
+        $config = array(
+            'datasources' => array(
+                'workflow' => array(
+                    'connection' => $wfDetails["dsn"],
+                    'adapter' => $wfDetails["adapter"]
+                ),
+                'rbac' => array(
+                    'connection' => $rbDetails["dsn"],
+                    'adapter' => $rbDetails["adapter"]
+                ),
+                'rp' => array(
+                    'connection' => $rpDetails["dsn"],
+                    'adapter' => $rpDetails["adapter"]
+                )
+            )
         );
 
         if ($root) {
@@ -1039,12 +1055,14 @@ class WorkspaceTools
         $this->initPropel(true);
         $conf = new Configurations();
         if (!$conf->exists("ENVIRONMENT_SETTINGS")) {
-            $conf->aConfig = array("format" => '@userName (@firstName @lastName)',
+            $conf->aConfig = array(
+                "format" => '@userName (@firstName @lastName)',
                 "dateFormat" => 'd/m/Y',
                 "startCaseHideProcessInf" => false,
                 "casesListDateFormat" => 'Y-m-d H:i:s',
                 "casesListRowNumber" => 25,
-                "casesListRefreshTime" => 120);
+                "casesListRefreshTime" => 120
+            );
             $conf->saveConfig('ENVIRONMENT_SETTINGS', '');
         }
         $conf->setDirectoryStructureVer(2);
@@ -1076,12 +1094,12 @@ class WorkspaceTools
         P11835::$dbAdapter = $this->dbAdapter;
         P11835::isApplicable();
         $systemSchema = System::getSystemSchema($this->dbAdapter);
-        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// Get the RBAC Schema
+        $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter); // Get the RBAC Schema
         $this->registerSystemTables(array_merge($systemSchema, $systemSchemaRbac));
         $this->upgradeSchema($systemSchema, false, false, $includeIndexes);
         $this->upgradeSchema($systemSchemaRbac, false, true); // Perform upgrade to RBAC
         $this->upgradeData();
-        $this->checkRbacPermissions();//check or add new permissions
+        $this->checkRbacPermissions(); //check or add new permissions
         $this->checkSequenceNumber();
         $this->migrateIteeToDummytask($this->name);
         /*----------------------------------********---------------------------------*/
@@ -1215,8 +1233,8 @@ class WorkspaceTools
         $changes = System::compareSchema($workspaceSchema, $schema);
 
         $changed = (count($changes['tablesToAdd']) > 0 || count($changes['tablesToAlter']) > 0 ||
-                    count($changes['tablesWithNewIndex']) > 0 || count($changes['tablesToAlterIndex']) > 0 ||
-                    count($changes['tablesWithNewFulltext']) > 0 || count($changes['tablesToAlterFulltext']) > 0);
+            count($changes['tablesWithNewIndex']) > 0 || count($changes['tablesToAlterIndex']) > 0 ||
+            count($changes['tablesWithNewFulltext']) > 0 || count($changes['tablesToAlterFulltext']) > 0);
 
         if ($checkOnly || (!$changed)) {
             if ($changed) {
@@ -1299,8 +1317,12 @@ class WorkspaceTools
                 }
 
                 // Instantiate the class to execute the query in background
-                $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql($tableName,
-                    $tableColumn, $indexes, $fulltextIndexes), $rbac);
+                $upgradeQueries[] = new RunProcessUpgradeQuery($this->name, $database->generateAddColumnsSql(
+                    $tableName,
+                    $tableColumn,
+                    $indexes,
+                    $fulltextIndexes
+                ), $rbac);
             }
 
             // Run queries in multiple threads
@@ -1510,7 +1532,8 @@ class WorkspaceTools
         if ($fields['DB_NAME'] == $fields['DB_RBAC_NAME']) {
             $info = array('Workspace Name' => $fields['WORKSPACE_NAME'], 'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'MySql Version' => $fields['DATABASE']);
         } else {
-            $info = array('Workspace Name' => $fields['WORKSPACE_NAME'],
+            $info = array(
+                'Workspace Name' => $fields['WORKSPACE_NAME'],
                 //'Available Databases'  => $fields['AVAILABLE_DB'],
                 'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'RBAC Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_RBAC_USER'], $fields['DB_RBAC_PASS'], $fields['DB_RBAC_HOST'], $fields['DB_RBAC_NAME']), 'Report Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_REPORT_USER'], $fields['DB_REPORT_PASS'], $fields['DB_REPORT_HOST'], $fields['DB_REPORT_NAME']), 'MySql Version' => $fields['DATABASE']
             );
@@ -1648,9 +1671,7 @@ class WorkspaceTools
         /* Write metadata to file, but make it prettier before. The metadata is just
          * a JSON codified array.
          */
-        if (!file_put_contents($metaFilename, str_replace(array(",", "{", "}"
-        ), array(",\n  ", "{\n  ", "\n}\n"
-        ), G::json_encode($metadata)))) {
+        if (!file_put_contents($metaFilename, str_replace(array(",", "{", "}"), array(",\n  ", "{\n  ", "\n}\n"), G::json_encode($metadata)))) {
             throw new Exception("Could not create backup metadata");
         }
         CLI::logging("Copying database to backup...\n");
@@ -2120,11 +2141,10 @@ class WorkspaceTools
             }
 
             if (!empty($pmVersionWorkspaceToRestore) && (version_compare(
-                        $pmVersionWorkspaceToRestore . "",
-                        $pmVersion . "",
-                        "<"
-                    ) || empty($pmVersion)) || $pmVersion == "dev-version-backup"
-            ) {
+                $pmVersionWorkspaceToRestore . "",
+                $pmVersion . "",
+                "<"
+            ) || empty($pmVersion)) || $pmVersion == "dev-version-backup") {
                 // Upgrade the database schema and data
                 CLI::logging("* Start updating database schema...\n");
                 $start = microtime(true);
@@ -2234,6 +2254,11 @@ class WorkspaceTools
                 Propel::init(PATH_CONFIG . 'databases.php');
                 WebEntry::convertFromV1ToV2();
                 CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
+
+                CLI::logging("* Start migrating case title...\n");
+                $start = microtime(true);
+                $workspace->migrateCaseTitleToThreads([$workspaceName]);
+                CLI::logging("* End migrating case title...(Completed on " . (microtime(true) - $start) . " seconds)\n");
             }
 
             CLI::logging("> Start To Verify License Enterprise...\n");
@@ -3017,7 +3042,8 @@ class WorkspaceTools
      *
      * @throws Exception
      */
-    public function runUpdateListField(array $listTables, $methodName) {
+    public function runUpdateListField(array $listTables, $methodName)
+    {
         // Clean the queries array
         $listQueries = [];
 
@@ -3049,7 +3075,8 @@ class WorkspaceTools
      *
      * @see \WorkspaceTools->migrateList()
      */
-    public function updateListProId($list) {
+    public function updateListProId($list)
+    {
         $query = 'UPDATE ' . $list . ' AS LT
                   INNER JOIN (
                       SELECT PROCESS.PRO_UID, PROCESS.PRO_ID
@@ -3070,7 +3097,8 @@ class WorkspaceTools
      *
      * @see \WorkspaceTools->migrateList()
      */
-    public function updateListUsrId($list) {
+    public function updateListUsrId($list)
+    {
         $query = 'UPDATE ' . $list . ' AS LT
                   INNER JOIN (
                       SELECT USERS.USR_UID, USERS.USR_ID
@@ -3091,7 +3119,8 @@ class WorkspaceTools
      *
      * @see \WorkspaceTools->migrateList()
      */
-    public function updateListTasId($list) {
+    public function updateListTasId($list)
+    {
         $query = 'UPDATE ' . $list . ' AS LT
                   INNER JOIN (
                       SELECT TASK.TAS_UID, TASK.TAS_ID
@@ -3112,7 +3141,8 @@ class WorkspaceTools
      *
      * @see \WorkspaceTools->migrateList()
      */
-    public function updateListAppStatusId($list) {
+    public function updateListAppStatusId($list)
+    {
         $query = "UPDATE " . $list . "
                   SET APP_STATUS_ID = (case
                       when APP_STATUS = 'DRAFT' then 1
@@ -3384,8 +3414,8 @@ class WorkspaceTools
             file_put_contents(
                 PATH_DATA . "/missing-users-" . $this->name . ".txt",
                 "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
-                "with invalid or non-existent user user with " .
-                "id [" . $item['USR_UID'] . "]"
+                    "with invalid or non-existent user user with " .
+                    "id [" . $item['USR_UID'] . "]"
             );
         }
         CLI::logging("> Number of user related inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -3420,8 +3450,8 @@ class WorkspaceTools
             file_put_contents(
                 PATH_DATA . "/missing-tasks-" . $this->name . ".txt",
                 "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
-                "with invalid or non-existent task with " .
-                "id [" . $item['TAS_UID'] . "]"
+                    "with invalid or non-existent task with " .
+                    "id [" . $item['TAS_UID'] . "]"
             );
         }
 
@@ -3457,8 +3487,8 @@ class WorkspaceTools
             file_put_contents(
                 PATH_DATA . "/missing-processes-" . $this->name . ".txt",
                 "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
-                "with invalid or non-existent process with " .
-                "id [" . $item['PRO_UID'] . "]"
+                    "with invalid or non-existent process with " .
+                    "id [" . $item['PRO_UID'] . "]"
             );
         }
         CLI::logging("> Number of processes related data inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -3493,8 +3523,8 @@ class WorkspaceTools
             file_put_contents(
                 PATH_DATA . "/missing-app-delegation-" . $this->name . ".txt",
                 "APP_UID:[" . $item['APP_UID'] . "] - DEL_INDEX[" . $item['DEL_INDEX'] . "] have relation " .
-                "with invalid or non-existent process with " .
-                "id [" . $item['PRO_UID'] . "]"
+                    "with invalid or non-existent process with " .
+                    "id [" . $item['PRO_UID'] . "]"
             );
         }
         CLI::logging("> Number of delegations related data inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -4414,8 +4444,7 @@ class WorkspaceTools
             if (is_dir($path)) {
                 $dir = opendir($path);
                 while ($fileName = readdir($dir)) {
-                    if ($fileName !== "." && $fileName !== ".." && strpos($fileName, "wsClient.php") === false && strpos($fileName, "Post.php") === false
-                    ) {
+                    if ($fileName !== "." && $fileName !== ".." && strpos($fileName, "wsClient.php") === false && strpos($fileName, "Post.php") === false) {
                         CLI::logging("Verifying if file: " . $fileName . " is a web entry\n");
                         $step = new Criteria("workflow");
                         $step->addSelectColumn(StepPeer::PRO_UID);
@@ -4568,7 +4597,7 @@ class WorkspaceTools
      * @param boolean $keepDynContent
      *
      * @return void
-    */
+     */
     public function clearDynContentHistoryData($force = false, $keepDynContent = false)
     {
         $this->initPropel(true);
@@ -4724,27 +4753,27 @@ class WorkspaceTools
             . "LEFT JOIN " . $this->dbName . ".INPUT_DOCUMENT AS H ON (H.INP_DOC_UID=A.DYN_UID) ";
 
         $delete = "DELETE FROM " . $this->dbName . ".APP_DATA_CHANGE_LOG "
-                . "WHERE "
-                . "ROW_MIGRATION=1";
+            . "WHERE "
+            . "ROW_MIGRATION=1";
 
         $insert = "INSERT INTO " . $this->dbName . ".APP_DATA_CHANGE_LOG ( "
-                . "    DATE, "
-                . "    APP_NUMBER, "
-                . "    DEL_INDEX, "
-                . "    PRO_ID, "
-                . "    TAS_ID, "
-                . "    USR_ID, "
-                . "    OBJECT_TYPE, "
-                . "    OBJECT_ID, "
-                . "    OBJECT_UID, "
-                . "    EXECUTED_AT, "
-                . "    SOURCE_ID, "
-                . "    DATA, "
-                . "    SKIN, "
-                . "    LANGUAGE, "
-                . "    ROW_MIGRATION "
-                . ") "
-                . $select;
+            . "    DATE, "
+            . "    APP_NUMBER, "
+            . "    DEL_INDEX, "
+            . "    PRO_ID, "
+            . "    TAS_ID, "
+            . "    USR_ID, "
+            . "    OBJECT_TYPE, "
+            . "    OBJECT_ID, "
+            . "    OBJECT_UID, "
+            . "    EXECUTED_AT, "
+            . "    SOURCE_ID, "
+            . "    DATA, "
+            . "    SKIN, "
+            . "    LANGUAGE, "
+            . "    ROW_MIGRATION "
+            . ") "
+            . $select;
 
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
@@ -4780,49 +4809,50 @@ class WorkspaceTools
         $con->begin();
         $stmt = $con->createStatement();
         $stmt->executeQuery(""
-                . "UPDATE GROUPWF AS GW "
-                . "INNER JOIN GROUP_USER AS GU ON "
-                . "    GW.GRP_UID=GU.GRP_UID "
-                . "SET GU.GRP_ID=GW.GRP_ID "
-                . "WHERE GU.GRP_ID = 0");
+            . "UPDATE GROUPWF AS GW "
+            . "INNER JOIN GROUP_USER AS GU ON "
+            . "    GW.GRP_UID=GU.GRP_UID "
+            . "SET GU.GRP_ID=GW.GRP_ID "
+            . "WHERE GU.GRP_ID = 0");
         $con->commit();
 
         CLI::logging("->    Update table APP_ASSIGN_SELF_SERVICE_VALUE_GROUP\n");
         $con->begin();
         $stmt = $con->createStatement();
         $stmt->executeQuery(""
-                . "UPDATE GROUPWF AS GW "
-                . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
-                . "    GW.GRP_UID=GU.GRP_UID "
-                . "SET "
-                . "GU.ASSIGNEE_ID=GW.GRP_ID, "
-                . "GU.ASSIGNEE_TYPE=2 "
-                . "WHERE GU.ASSIGNEE_ID = 0");
+            . "UPDATE GROUPWF AS GW "
+            . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
+            . "    GW.GRP_UID=GU.GRP_UID "
+            . "SET "
+            . "GU.ASSIGNEE_ID=GW.GRP_ID, "
+            . "GU.ASSIGNEE_TYPE=2 "
+            . "WHERE GU.ASSIGNEE_ID = 0");
         $con->commit();
 
         $con->begin();
         $stmt = $con->createStatement();
         $stmt->executeQuery(""
-                . "UPDATE USERS AS U "
-                . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
-                . "    U.USR_UID=GU.GRP_UID "
-                . "SET "
-                . "GU.ASSIGNEE_ID=U.USR_ID, "
-                . "GU.ASSIGNEE_TYPE=1 "
-                . "WHERE GU.ASSIGNEE_ID = 0");
+            . "UPDATE USERS AS U "
+            . "INNER JOIN APP_ASSIGN_SELF_SERVICE_VALUE_GROUP AS GU ON "
+            . "    U.USR_UID=GU.GRP_UID "
+            . "SET "
+            . "GU.ASSIGNEE_ID=U.USR_ID, "
+            . "GU.ASSIGNEE_TYPE=1 "
+            . "WHERE GU.ASSIGNEE_ID = 0");
         $con->commit();
 
         $con->begin();
         $stmt = $con->createStatement();
         $stmt->executeQuery(""
-                . "UPDATE APP_ASSIGN_SELF_SERVICE_VALUE_GROUP "
-                . "SET "
-                . "ASSIGNEE_ID=-1, "
-                . "ASSIGNEE_TYPE=-1 "
-                . "WHERE ASSIGNEE_ID = 0");
+            . "UPDATE APP_ASSIGN_SELF_SERVICE_VALUE_GROUP "
+            . "SET "
+            . "ASSIGNEE_ID=-1, "
+            . "ASSIGNEE_TYPE=-1 "
+            . "WHERE ASSIGNEE_ID = 0");
         $con->commit();
+
     }
-    
+
     /**
      * Remove deprecated files and directory.
      */
@@ -4850,7 +4880,8 @@ class WorkspaceTools
     /**
      * Sync JSON definition of the Forms with Input Documents information
      */
-    public function syncFormsWithInputDocumentInfo() {
+    public function syncFormsWithInputDocumentInfo()
+    {
         // Initialize Propel and instance the required classes
         $this->initPropel(true);
         $processInstance = new Process();
@@ -4942,16 +4973,16 @@ class WorkspaceTools
      * @throws Exception
      */
     public function generateDataReport(
-            $tableName, 
-            $type = 'NORMAL', 
-            $processUid = '', 
-            $gridKey = '', 
-            $addTabUid = '', 
-            $className = '', 
-            $pathWorkspace, 
-            int $start = 0, 
-            int $limit = 10)
-    {
+        $tableName,
+        $type = 'NORMAL',
+        $processUid = '',
+        $gridKey = '',
+        $addTabUid = '',
+        $className = '',
+        $pathWorkspace,
+        int $start = 0,
+        int $limit = 10
+    ) {
         $this->initPropel();
         $dbHost = explode(':', $this->dbHost);
         config(['database.connections.workflow.host' => $dbHost[0]]);
@@ -4992,12 +5023,12 @@ class WorkspaceTools
 
         //select cases for this Process, ordered by APP_NUMBER
         $applications = Application::query()
-                ->where('PRO_UID', '=', $processUid)
-                ->where('APP_NUMBER', '>', 0)
-                ->orderBy('APP_NUMBER', 'asc')
-                ->offset($start)
-                ->limit($limit)
-                ->get();
+            ->where('PRO_UID', '=', $processUid)
+            ->where('APP_NUMBER', '>', 0)
+            ->orderBy('APP_NUMBER', 'asc')
+            ->offset($start)
+            ->limit($limit)
+            ->get();
         foreach ($applications as $application) {
             //getting the case data
             $appData = $case->unserializeData($application->APP_DATA);
@@ -5126,5 +5157,44 @@ class WorkspaceTools
         //save update status
         $conf->aConfig = ['updated' => true];
         $conf->saveConfig('ADDED_ASYNC_OPTION_TO_SCHEDULER', 'scheduler');
+    }
+
+    /**
+     * Populate the column APP_DELEGATION.DEL_TITLE with the case title APPLICATION.APP_TITLE
+     * @param array $args
+     */
+    public function migrateCaseTitleToThreads($args)
+    {
+        try {
+            if (!empty($args)) {
+                // Set workspace constants and initialize DB connection
+                Bootstrap::setConstantsRelatedWs($args[0]);
+                Propel::init(PATH_CONFIG . 'databases.php');
+                $query = Delegation::leftJoin('APPLICATION', function ($leftJoin) {
+                    $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
+                });
+                $query->where(function ($query) {
+                    $query->whereIn('APPLICATION.APP_STATUS_ID', [2]);
+                    $query->orWhere(function ($query) {
+                        $query->whereIn('APPLICATION.APP_STATUS_ID', [3, 4]);
+                        $query->where('APP_DELEGATION.DEL_LAST_INDEX', '=', 1);
+                    });
+                });
+                if (!empty($args[1]) && is_numeric($args[1])) {
+                    $query->where('APP_DELEGATION.APP_NUMBER', '>=', $args[1]);
+                }
+                if (!empty($args[2]) && is_numeric($args[2])) {
+                    $query->where('APP_DELEGATION.APP_NUMBER', '<=', $args[2]);
+                }
+                $query->update(['APP_DELEGATION.DEL_TITLE' => DB::raw('APPLICATION.APP_TITLE')]);
+
+                CLI::logging("The Case Title has been updated successfully in APP_DELEGATION table." . PHP_EOL);
+            } else {
+                CLI::logging("The workspace is required." . PHP_EOL . PHP_EOL);
+            }
+        } catch (Exception $e) {
+            // Display the error message
+            CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
+        }
     }
 }
