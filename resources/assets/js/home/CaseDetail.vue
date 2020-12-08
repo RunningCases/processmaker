@@ -1,0 +1,374 @@
+<template>
+  <div id="case-detail" ref="case-detail" class="v-container-case-detail">
+    <div>
+      <p class="mb-2">
+        <b-icon icon="arrow-left" @click="backSearch()"></b-icon
+        ><u>Back to Results</u>
+      </p>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <div id="pending-task" ref="pending-task">
+          <v-server-table
+            :data="tableData"
+            :columns="columns"
+            :options="options"
+            ref="vueTable"
+            style="height: 120px"
+          >
+            <div slot="task" slot-scope="props">
+              {{ props.row.TASK }}
+            </div>
+            <div slot="case_title" slot-scope="props">
+              {{ props.row.CASE_TITLE }}
+            </div>
+            <div slot="assignee" slot-scope="props">
+              {{ props.row.ASSIGNEE }}
+            </div>
+            <div slot="status" slot-scope="props">
+              {{ props.row.STATUS }}
+            </div>
+            <div slot="due_date" slot-scope="props">
+              {{ props.row.DUE_DATE }}
+            </div>
+            <div slot="actions">
+              <div class="btn-default">
+                <i class="fas fa-comments"></i>
+                <span class="badge badge-light">9</span>
+                <span class="sr-only">Continue</span>
+              </div>
+            </div>
+          </v-server-table>
+        </div>
+        <Tabs :data="dataTabs"></Tabs>
+      </div>
+      <div class="col-sm4">
+        <case-summary
+          v-if="dataCaseSummary"
+          :data="dataCaseSummary"
+        ></case-summary>
+        <io-documents
+          v-if="
+            dataIoDocuments.inputDocuments.length > 0 ||
+            dataIoDocuments.outputDocuments.length > 0
+          "
+          :data="dataIoDocuments"
+        ></io-documents>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-8">
+        <case-comments
+          :data="dataComments"
+          :onClick="onClickComment"
+          :postComment="postComment"
+        />
+      </div>
+      <div class="col-sm4">
+        <attached-documents :data="dataAttachedDocuments"></attached-documents>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import Tabs from "../components/home/caseDetail/Tabs.vue";
+import IoDocuments from "../components/home/caseDetail/IoDocuments.vue";
+import CaseSummary from "../components/home/caseDetail/CaseSummary.vue";
+import AttachedDocuments from "../components/home/caseDetail/AttachedDocuments.vue";
+import CaseComment from "../components/home/caseDetail/CaseComment";
+import CaseComments from "../components/home/caseDetail/CaseComments";
+
+import Api from "../api/index";
+
+export default {
+  name: "CaseDetail",
+  components: {
+    Tabs,
+    IoDocuments,
+    CaseSummary,
+    AttachedDocuments,
+    CaseComment,
+    CaseComments,
+  },
+  props: {},
+  data() {
+    return {
+      dataCase: null,
+      columns: [
+        "task",
+        "case_title",
+        "assignee",
+        "status",
+        "due_date",
+        "actions",
+      ],
+      tableData: [
+        {
+          task: "Approve Art",
+          case_title: "Case Title A",
+          assignee: "User 1",
+          status: "To Do",
+          due_date: "3 days",
+        },
+      ],
+      options: {
+        headings: {
+          task: this.$i18n.t("ID_TASK"),
+          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          assignee: this.$i18n.t("ID_ASSIGNEE"),
+          status: this.$i18n.t("ID_STATUS"),
+          due_date: this.$i18n.t("ID_DUE_DATE"),
+          actions: this.$i18n.t("ID_ACTIONS"),
+        },
+        selectable: {
+          mode: "single", // or 'multiple'
+          only: function (row) {
+            return true; // any condition
+          },
+          selectAllMode: "all", // or 'page',
+          programmatic: false,
+        },
+        filterable: false,
+      },
+      dataCaseSummary: null,
+      dataIoDocuments: {
+        titleInput: this.$i18n.t("ID_REQUEST_DOCUMENTS"),
+        titleOutput: this.$i18n.t("ID_OUTPUT_DOCUMENTS"),
+        inputDocuments: [],
+        outputDocuments: [],
+      },
+      dataAttachedDocuments: {
+        title: "Attached Documents",
+        items: [],
+      },
+      dataTabs: {
+        items: [
+          {
+            title: "Request Summary",
+            data: {
+              firstName: "Jason",
+              lastName: "Burne",
+              userName: "jburne@processmaker.com",
+            },
+          },
+          {
+            title: "Process Map",
+            data: [
+              {
+                pro_uid: "123dit",
+              },
+            ],
+          },
+          {
+            title: "Case History",
+          },
+          {
+            title: "Change Log",
+          },
+        ],
+      },
+      dataComments: {
+        title: "Comments",
+        items: [],
+      },
+    };
+  },
+
+  mounted() {
+    let that = this;
+    this.dataCase = this.$parent.dataCase;
+    this.$el.getElementsByClassName("VuePagination__count")[0].remove();
+    this.getDataCaseSummary();
+    this.getInputDocuments();
+    this.getOutputDocuments();
+    this.getCasesNotes();
+  },
+  methods: {
+    postComment(comment, send) {
+      let that = this;
+      Api.caseNotes
+        .post(
+          _.extend({}, this.dataCase, {
+            COMMENT: comment,
+            SEND_MAIL: send,
+          })
+        )
+        .then((response) => {
+          if (response.data.success === "success") {
+            that.getCasesNotes();
+          }
+        });
+    },
+    onClickComment(data) {
+      let att = [];
+      this.dataAttachedDocuments.items = [];
+      _.each(data.data.attachments, (a) => {
+        att.push({
+          data: a,
+          title: a.APP_DOC_FILENAME,
+          extension: a.APP_DOC_FILENAME.split(".").pop(),
+          onClick: () => {},
+        });
+      });
+      this.dataAttachedDocuments.items = att;
+    },
+    getDataCaseSummary() {
+      Api.cases
+        .casesummary(this.dataCase)
+        .then((response) => {
+          var data = response.data;
+          this.dataCaseSummary = {
+            title: "Case Summary",
+            titleActions: "Actions",
+            btnLabel: "Cancel Request",
+            btnType: false,
+            onClick: () => {},
+            label: {
+              numberCase: data[2].label,
+              process: data[0].label,
+              status: data[3].label,
+              caseTitle: data[1].label,
+              created: data[6].label,
+              delegationDate: response.data[11].label,
+              duration: "Duration",
+            },
+            text: {
+              numberCase: data[2].value,
+              process: data[0].value,
+              status: data[3].value,
+              caseTitle: data[1].value,
+              created: data[6].value,
+              delegationDate: response.data[11].value.split(" ")[0],
+              duration: response.data[11].value.split(" ")[1],
+            },
+          };
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    },
+    getInputDocuments() {
+      Api.cases
+        .inputdocuments(this.dataCase)
+        .then((response) => {
+          let data = response.data,
+            document = data.data,
+            i,
+            info;
+
+          if (data.totalCount > 0 && document !== []) {
+            this.dataIoDocuments.inputDocuments = [];
+            for (i = 0; i < data.totalCount; i += 1) {
+              info = {
+                title: document[i].TITLE,
+                extension: document[i].TITLE.split(".")[1],
+                onClick: document[i].DOWNLOAD_LINK,
+              };
+              this.dataIoDocuments.inputDocuments.push(info);
+            }
+          }
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    },
+    getOutputDocuments() {
+      Api.cases
+        .outputdocuments(this.dataCase)
+        .then((response) => {
+          var data = response.data,
+            document = data.data,
+            i,
+            info;
+
+          if (data.totalCount > 0 && document !== []) {
+            this.dataIoDocuments.outputDocuments = [];
+            for (i = 0; i < data.totalCount; i += 1) {
+              info = {
+                title: document[i].TITLE,
+                extension: document[i].TITLE.split(".")[1],
+                onClick: document[i].DOWNLOAD_LINK,
+              };
+              this.dataIoDocuments.outputDocuments.push(info);
+            }
+          }
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    },
+    /**
+     * Get for user format name configured in Processmaker Environment Settings
+     *
+     * @param {string} name
+     * @param {string} lastName
+     * @param {string} userName
+     * @return {string} nameFormat
+     */
+    nameFormatCases(name, lastName, userName) {
+      let nameFormat = "";
+      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
+        return nameFormat;
+      }
+      if (this.nameFormat === "@firstName @lastName") {
+        nameFormat = name + " " + lastName;
+      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
+        nameFormat = name + " " + lastName + " (" + userName + ")";
+      } else if (this.nameFormat === "@userName") {
+        nameFormat = userName;
+      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
+        nameFormat = userName + " (" + name + " " + lastName + ")";
+      } else if (this.nameFormat === "@lastName @firstName") {
+        nameFormat = lastName + " " + name;
+      } else if (this.nameFormat === "@lastName, @firstName") {
+        nameFormat = lastName + ", " + name;
+      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
+        nameFormat = lastName + ", " + name + " (" + userName + ")";
+      } else {
+        nameFormat = name + " " + lastName;
+      }
+      return nameFormat;
+    },
+
+    getCasesNotes() {
+      let that = this;
+      Api.cases
+        .casenotes(this.dataCase)
+        .then((response) => {
+          that.formatResponseCaseNotes(response.data.notes);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    },
+    formatResponseCaseNotes(notes) {
+      let that = this,
+        notesArray = [];
+      _.each(notes, (n) => {
+        notesArray.push({
+          user: that.nameFormatCases(
+            n.USR_FIRSTNAME,
+            n.USR_LASTNAME,
+            n.USR_USERNAME
+          ),
+          date: n.NOTE_DATE,
+          comment: n.NOTE_CONTENT,
+          data: n,
+        });
+      });
+
+      this.dataComments.items = notesArray;
+    },
+  },
+};
+</script>
+<style>
+.v-container-case-detail {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 50px;
+  padding-right: 0px;
+}
+</style>

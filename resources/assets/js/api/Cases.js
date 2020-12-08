@@ -45,6 +45,48 @@ export let cases = {
             keys: {}
         });
     },
+    inputdocuments(data) {
+        var params = new FormData();
+        params.append('appUid', data.APP_UID);
+        params.append('delIndex', data.DEL_INDEX);
+        params.append('action', "getCasesInputDocuments");
+
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/cases_Ajax.php?action=getCasesInputDocuments`, params);
+    },
+    outputdocuments(data) {
+        var params = new FormData();
+        params.append('appUid', data.APP_UID);
+        params.append('delIndex', data.DEL_INDEX);
+        params.append('action', "getCasesOutputDocuments");
+
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/cases_Ajax.php?action=getCasesOutputDocuments`, params);
+    },
+    casesummary(data) {
+        var params = new FormData();
+        params.append('appUid', data.APP_UID);
+        params.append('delIndex', data.DEL_INDEX);
+        params.append('action', "todo");
+
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `appProxy/getSummary`, params);
+    },
+    casenotes(data) {
+        var params = new FormData();
+        params.append('appUid', data.APP_UID);
+        params.append('delIndex', data.DEL_INDEX);
+        params.append('pro', "6161281705fc91129328391060454559");
+        params.append('tas', "2076843175fc911573db050062710755");
+        params.append('start', "0");
+        params.append('limit', "30");
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `appProxy/getNotesList`, params);
+    },
     start(dt) {
         var params = new URLSearchParams();
         params.append('action', 'startCase');

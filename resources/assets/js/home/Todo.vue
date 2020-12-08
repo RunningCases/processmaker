@@ -9,6 +9,11 @@
       :options="options"
       ref="vueTable"
     >
+      <div slot="detail" slot-scope="props">
+        <div class="btn-default" @click="openCaseDetail(props.row)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
       <div slot="case_number" slot-scope="props">
         {{ props.row.CASE_NUMBER }}
       </div>
@@ -74,6 +79,7 @@ export default {
         },
       },
       columns: [
+        "detail",
         "case_number",
         "case_title",
         "process_name",
@@ -167,6 +173,8 @@ export default {
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE,
           PRIORITY: v.DEL_PRIORITY_LABEL,
+          DEL_INDEX: v.DEL_INDEX,
+          APP_UID: v.APP_UID,
         });
       });
       return data;
@@ -215,6 +223,18 @@ export default {
         ACTION: "todo",
       };
       this.$parent.page = "XCase";
+    },
+    /**
+     * Open case detail
+     *
+     * @param {object} item
+     */
+    openCaseDetail(item) {
+      this.$parent.dataCase = {
+        APP_UID: item.APP_UID,
+        DEL_INDEX: item.DEL_INDEX,
+      };
+      this.$parent.page = "case-detail";
     },
   },
 };
