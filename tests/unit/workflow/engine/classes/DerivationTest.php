@@ -144,6 +144,7 @@ class DerivationTest extends TestCase
         ];
         $appFields = [
             'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_INDEX' => $appDelegation->DEL_INDEX,
             'DEL_THREAD' => $appDelegation->DEL_THREAD,
             'PRO_UID' => $process->PRO_UID,
             'PRO_ID' => $process->PRO_ID,

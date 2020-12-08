@@ -262,10 +262,10 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
                 'APP_DELEGATION.DEL_TASK_DUE_DATE',
                 'APP_DELEGATION.DEL_PRIORITY',
                 'APP_DELEGATION.DEL_PREVIOUS',
+                'APP_DELEGATION.DEL_TITLE AS APP_TITLE',
                 // TASK table
                 'TASK.TAS_TITLE',
                 // APPLICATION table
-                'APPLICATION.APP_TITLE',
                 'APPLICATION.APP_UPDATE_DATE',
                 // PROCESS table
                 'PROCESS.PRO_TITLE'
@@ -274,7 +274,7 @@ class ListUnassigned extends BaseListUnassigned implements ListInterface
                 'APP_NUMBER' => 'APP_NUMBER',
                 'DEL_DUE_DATE' => 'DEL_TASK_DUE_DATE',
                 'DEL_DELEGATE_DATE' => 'DEL_DELEGATE_DATE',
-                'APP_TITLE' => 'APP_TITLE',
+                'APP_DELEGATION.DEL_TITLE AS APP_TITLE',
                 'APP_PRO_TITLE' => 'PRO_TITLE',
                 'APP_TAS_TITLE' => 'TAS_TITLE',
                 'DEL_PREVIOUS_USR_UID' => 'USR_ID'
