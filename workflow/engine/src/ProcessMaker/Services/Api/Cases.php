@@ -1538,6 +1538,39 @@ class Cases extends Api
     }
 
     /**
+     * Update a filter of the advanced search for the current user
+     *
+     * @url PUT /advanced-search/filter/:filterUid
+     *
+     * @param string $filterUid {@min 32}{@max 32}
+     * @param string $name
+     * @param string $filters
+     *
+     * @throws RestException
+     */
+    public function doPutAdvancedSearchFilter($filterUid, $name, $filters)
+    {
+        try {
+            // Create JSON object if is a serialized string
+            $filters = is_string($filters) ? json_decode($filters) : $filters;
+
+            // Get requested filter
+            $filter = Filter::getByUid($this->getUserId(), $filterUid);
+
+            // Update the requested filter if exists
+            if (!is_null($filter)) {
+                Filter::update($this->getUserId(), $filterUid, $name, $filters);
+            }
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        // If not exists the requested filter throw an 404 error
+        if (is_null($filter)) {
+            throw new RestException(404, "Filter with Uid '{$filterUid}'.");
+        }
+    }
+
+    /**
      * Delete a specific filter of the advanced search for the current user
      *
      * @url DELETE /advanced-search/filter/:filterUid

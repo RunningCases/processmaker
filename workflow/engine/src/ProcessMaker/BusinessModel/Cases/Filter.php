@@ -102,6 +102,29 @@ class Filter
     }
 
     /**
+     * Update a filter of the advanced search for the current user
+     *
+     * @param string $userUid
+     * @param string $filterUid
+     * @param string $name
+     * @param object $filters
+     */
+    public static function update($userUid, $filterUid, $name, $filters)
+    {
+        // Build object to serialize and save
+        $filter = new stdClass();
+        $filter->id = $filterUid;
+        $filter->name = $name;
+        $filter->filters = $filters;
+
+        // Update filter
+        Configuration::query()->where('CFG_UID', '=', self::ADVANCED_SEARCH_FILTER_KEY)
+            ->where('OBJ_UID', '=', $filterUid)
+            ->where('USR_UID', '=', $userUid)
+            ->update(['CFG_VALUE' => json_encode($filter)]);
+    }
+
+    /**
      * Delete a specific filter by filter Uid
      *
      * @param string $filterUid
