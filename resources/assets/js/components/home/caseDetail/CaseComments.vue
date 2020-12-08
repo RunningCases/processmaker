@@ -28,7 +28,7 @@
               <textarea
                 class="form-control"
                 name="comments"
-                id="comments"
+                ref="comment"
                 cols="80"
                 rows="5"
               ></textarea>
@@ -38,14 +38,14 @@
       </div>
       <div class="comment mb-2 row float-right">
         <div class="form-check v-check-comment">
-          <input type="checkbox" class="form-check-input" id="sendEmail" />
+          <input type="checkbox" class="form-check-input" ref="send" />
           <label class="form-check-label" for="sendEmail">
-            {{ $t("ID_SEND_EMAIL") }}</label
+            {{ $t("ID_SEND_EMAIL_CASE_PARTICIPANTS") }}</label
           >
         </div>
 
-        <button class="btn btn-secondary btn-sm">
-          {{ $t("ID_COMMENT") }}
+        <button class="btn btn-secondary btn-sm" @click="onClickComment">
+          {{ $t("ID_SEND") }}
         </button>
       </div>
     </div>
@@ -60,6 +60,7 @@ export default {
   props: {
     data: Object,
     onClick: Function,
+    postComment: Function,
   },
   components: {
     CaseComment,
@@ -73,6 +74,14 @@ export default {
     },
     classIcon(icon) {
       return this.icon[icon];
+    },
+    onClickComment() {
+      this.postComment(this.$refs["comment"].value, this.$refs["send"].checked);
+      this.resetComment();
+    },
+    resetComment() {
+      this.$refs["comment"].value = "";
+      this.$refs["send"].checked = false;
     },
   },
 };

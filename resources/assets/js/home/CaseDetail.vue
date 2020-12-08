@@ -59,7 +59,11 @@
 
     <div class="row">
       <div class="col-sm-8">
-        <case-comments :data="dataComments" :onClick="onClickComment" />
+        <case-comments
+          :data="dataComments"
+          :onClick="onClickComment"
+          :postComment="postComment"
+        />
       </div>
       <div class="col-sm4">
         <attached-documents :data="dataAttachedDocuments"></attached-documents>
@@ -182,6 +186,21 @@ export default {
     this.getCasesNotes();
   },
   methods: {
+    postComment(comment, send) {
+      let that = this;
+      Api.caseNotes
+        .post(
+          _.extend({}, this.dataCase, {
+            COMMENT: comment,
+            SEND_MAIL: send,
+          })
+        )
+        .then((response) => {
+          if (response.data.success === "success") {
+            that.getCasesNotes();
+          }
+        });
+    },
     onClickComment(data) {
       let att = [];
       this.dataAttachedDocuments.items = [];

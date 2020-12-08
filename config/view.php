@@ -1,5 +1,4 @@
 <?php
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -24,5 +23,5 @@ return [
     | directory. However, as usual, you are free to change this value.
     |
     */
-    'compiled' => base_path('bootstrap/cache/views')
+    'compiled' => realpath(PATH_TRUNK . 'bootstrap/cache/views')
 ];
