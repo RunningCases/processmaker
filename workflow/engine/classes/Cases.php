@@ -2151,7 +2151,6 @@ class Cases
                 $routing->setTasLastAssigned($tasUid, $usrUid);
 
                 // Execute Events
-                require_once 'classes/model/Event.php';
                 $event = new Event();
                 $event->createAppEvents($proUid, $appUid, $delIndex, $tasUid);
 
@@ -2182,7 +2181,7 @@ class Cases
                     $inbox->newRow($fields, $usrUid, $isSelfService);
                 }
                 /*----------------------------------********---------------------------------*/
-            } catch (exception $e) {
+            } catch (Exception $e) {
                 throw ($e);
             }
         } else {
