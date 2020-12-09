@@ -15,11 +15,11 @@ class AbstractCases implements CasesInterface
     const INBOX_STATUSES = ['ALL', 'READ', 'UNREAD'];
     const PARTICIPATED_STATUSES = ['ALL', 'STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
     const RISK_STATUSES = ['ALL', 'ON_TIME', 'AT_RISK', 'OVERDUE'];
-    const CASE_STATUSES = [0 => 'ALL', 1 => 'DRAFT', 2 => 'TO_DO', 3 => 'COMPLETED', 4 => 'CANCELED'];
+    const CASE_STATUSES = [1 => 'DRAFT', 2 => 'TO_DO', 3 => 'COMPLETED', 4 => 'CANCELED'];
     const ORDER_DIRECTIONS = ['DESC', 'ASC'];
     const CORRECT_CANCELED_STATUS = 'CANCELED';
     const INCORRECT_CANCELED_STATUS = 'CANCELLED';
-    const PRIORITIES = [0 => 'ALL', 1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
+    const PRIORITIES = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
     const TASK_COLORS = [1 => 'green', 2 => 'red', 3 => 'orange', 4 => 'blue', 5 => 'gray'];
     const COLOR_OVERDUE = 1;
     const COLOR_ON_TIME = 2;
@@ -1164,56 +1164,56 @@ class AbstractCases implements CasesInterface
         }
         /** Apply filters related to MY CASES */
         // My cases filter: started, in-progress, completed, supervising
-        if (!empty($properties['filter']) && get_class($this) === Participated::class) {
+        if (get_class($this) === Participated::class && !empty($properties['filter'])) {
             $this->setParticipatedStatus($properties['filter']);
         }
         // Filter by one case status
-        if (!empty($properties['caseStatus']) && get_class($this) === Participated::class) {
+        if (get_class($this) === Participated::class && !empty($properties['caseStatus'])) {
             $this->setCaseStatus($properties['caseStatus']);
         }
         // Filter date related to started date from
-        if (!empty($properties['startCaseFrom'] && (get_class($this) === Participated::class || get_class($this) === Supervising::class))) {
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['startCaseFrom'])) {
             $this->setStartCaseFrom($properties['startCaseFrom']);
         }
         // Filter date related to started date to
-        if (!empty($properties['startCaseTo']) && (get_class($this) === Participated::class || get_class($this) === Supervising::class)) {
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['startCaseTo'])) {
             $this->setStartCaseTo($properties['startCaseTo']);
         }
         // Filter date related to finish date from
-        if (!empty($properties['finishCaseFrom']) && (get_class($this) === Participated::class || get_class($this) === Supervising::class)) {
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['finishCaseFrom'])) {
             $this->setFinishCaseFrom($properties['finishCaseFrom']);
         }
         //  Filter date related to finish date to
-        if (!empty($properties['finishCaseTo']) && (get_class($this) === Participated::class || get_class($this) === Supervising::class)) {
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['finishCaseTo'])) {
             $this->setFinishCaseTo($properties['finishCaseTo']);
         }
         /** Apply filters related to SEARCH */
         // Add a filter with specific cases or range of cases like '1, 3-5, 8, 10-15'
-        if (!empty($properties['filterCases']) && get_class($this) === Search::class) {
+        if (get_class($this) === Search::class && !empty($properties['filterCases'])) {
             $this->setFilterCases($properties['filterCases']);
         }
         // Filter by more than one case statuses like ['DRAFT', 'TO_DO']
-        if (!empty($properties['caseStatuses']) && get_class($this) === Search::class) {
+        if (get_class($this) === Search::class && !empty($properties['caseStatuses'])) {
             $this->setCaseStatuses($properties['caseStatuses']);
         }
         // Filter by more than one priorities like ['VL', 'L', 'N']
-        if (!empty($properties['priorities']) && get_class($this) === Search::class) {
+        if (get_class($this) === Search::class && !empty($properties['priorities'])) {
             $this->setProperties($properties['priorities']);
         }
         // Filter date newest related to delegation/started date
-        if (!empty($properties['delegationDateFrom'] && get_class($this) === Search::class)) {
+        if (get_class($this) === Search::class && !empty($properties['delegationDateFrom'])) {
             $this->setDelegateFrom($properties['delegationDateFrom']);
         }
         // Filter date oldest related to delegation/started date
-        if (!empty($properties['delegationDateTo']) && get_class($this) === Search::class) {
+        if (get_class($this) === Search::class && !empty($properties['delegationDateTo'])) {
             $this->setDelegateTo($properties['delegationDateTo']);
         }
         // Filter date newest related to due date
-        if (!empty($properties['dueDateFrom']) && get_class($this) === Search::class) {
+        if (get_class($this) === Search::class && !empty($properties['dueDateFrom'])) {
             $this->setDueFrom($properties['dueDateFrom']);
         }
         // Filter date oldest related to due date
-        if (!empty($properties['dueDateTo']) && get_class($this) === Search::class) {
+        if (get_class($this) === Search::class && !empty($properties['dueDateTo'])) {
             $this->setDueTo($properties['dueDateTo']);
         }
         // Filter by case uid

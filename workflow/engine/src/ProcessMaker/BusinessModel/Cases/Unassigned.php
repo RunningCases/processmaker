@@ -24,6 +24,8 @@ class Unassigned extends AbstractCases
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
+        'APP_DELEGATION.PRO_UID', // Process Uid for Case notes
+        'APP_DELEGATION.TAS_UID', // Task Uid for Case notes
     ];
 
     /**

@@ -109,7 +109,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_delegate_date_from()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->delegateDateFrom($table->DEL_DELEGATE_DATE)->get());
+        $this->assertCount(1, $table->delegateDateFrom($table->DEL_DELEGATE_DATE->format("Y-m-d"))->get());
     }
 
     /**
@@ -121,7 +121,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_delegate_date_to()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->delegateDateTo($table->DEL_DELEGATE_DATE)->get());
+        $this->assertCount(1, $table->delegateDateTo($table->DEL_DELEGATE_DATE->format("Y-m-d"))->get());
     }
 
     /**

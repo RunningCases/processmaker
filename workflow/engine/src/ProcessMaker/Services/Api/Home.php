@@ -457,7 +457,8 @@ class Home extends Api
             $list->setProperties($properties);
             $result = [];
             $result['data'] = $list->getData();
-            $result['total'] = $list->getCounter();
+            // We will to enable always the pagination
+            $result['total'] = $list->getLimit() + 1;
             return $result;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
