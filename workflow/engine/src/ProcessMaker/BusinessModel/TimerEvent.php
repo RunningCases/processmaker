@@ -4,6 +4,7 @@ namespace ProcessMaker\BusinessModel;
 
 use Bootstrap;
 use Illuminate\Support\Facades\Log;
+use ProcessMaker\Model\Task;
 
 class TimerEvent
 {
@@ -748,6 +749,10 @@ class TimerEvent
             //Update
             $cnn = \Propel::getConnection("workflow");
 
+            $evnUid = $arrayData['EVN_UID'];
+            $caseTitle = $arrayData['CASETITLE'];
+            Task::setTaskDefTitle($evnUid, $caseTitle);
+            
             $arrayData = $this->unsetFields($arrayData);
 
             try {
@@ -851,6 +856,7 @@ class TimerEvent
 
                     throw new \Exception(\G::LoadTranslation("ID_REGISTRY_CANNOT_BE_UPDATED") . (($msg != "")? "\n" . $msg : ""));
                 }
+
             } catch (\Exception $e) {
                 $cnn->rollback();
 

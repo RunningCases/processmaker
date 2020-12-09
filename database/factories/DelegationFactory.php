@@ -18,6 +18,7 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
     return [
         'APP_UID' => $application->APP_UID,
         'DEL_INDEX' => 1,
+        'DELEGATION_ID' => $faker->unique()->randomNumber,
         'APP_NUMBER' => $application->APP_NUMBER,
         'DEL_PREVIOUS' => 0,
         'PRO_UID' => $process->PRO_UID,
@@ -31,10 +32,12 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
         'DEL_INIT_DATE' => $faker->dateTime(),
         'DEL_TASK_DUE_DATE' => $faker->dateTime(),
         'DEL_RISK_DATE' => $faker->dateTime(),
+        'DEL_LAST_INDEX' => 0,
         'USR_ID' => $user->USR_ID,
         'PRO_ID' => $process->PRO_ID,
         'TAS_ID' => $task->TAS_ID,
-        'DEL_DATA' => ''
+        'DEL_DATA' => '',
+        'DEL_TITLE' => $faker->word()
     ];
 });
 
@@ -77,7 +80,8 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
         'USR_ID' => $user->USR_ID,
         'PRO_ID' => $process->PRO_ID,
         'TAS_ID' => $task->TAS_ID,
-        'DEL_DATA' => ''
+        'DEL_DATA' => '',
+        'DEL_TITLE' => $faker->word()
     ];
 });
 

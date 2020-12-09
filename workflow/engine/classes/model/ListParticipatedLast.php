@@ -387,7 +387,7 @@ class ListParticipatedLast extends BaseListParticipatedLast implements ListInter
         $criteria->addSelectColumn(ListParticipatedLastPeer::TAS_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::PRO_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_NUMBER);
-        $criteria->addSelectColumn(ApplicationPeer::APP_TITLE);
+        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_PRO_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TAS_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);
@@ -405,7 +405,6 @@ class ListParticipatedLast extends BaseListParticipatedLast implements ListInter
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PRIORITY);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_THREAD_STATUS);
         $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid, Criteria::EQUAL);
-
         //Check if the user was participated in a specific case
         if ($appUid != '') {
             $criteria->add(ListParticipatedLastPeer::APP_UID, $appUid, Criteria::EQUAL);

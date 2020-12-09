@@ -1070,7 +1070,7 @@ class Derivation
                                  break;
                             default:
                                 $iNewDelIndex = $this->doDerivation($currentDelegation, $nextDel, $appFields, $aSP);
-                                //Load Case Data again because the information could be change in method "doDerivation"
+                                // Load Case Data again because the information could be change in method "doDerivation"
                                 $verifyApplication = $this->case->loadCase($currentDelegation['APP_UID']);
                                 $appFields['APP_DATA'] = $verifyApplication['APP_DATA'];
                                 //When the users route the case in the same time
@@ -1286,7 +1286,6 @@ class Derivation
                     $newDelegationUser,
                     $currentDelegation['DEL_INDEX'],
                     $nextDel['DEL_PRIORITY'],
-                    $delType,
                     $iAppThreadIndex,
                     $nextDel,
                     $this->flagControl,
@@ -2365,7 +2364,6 @@ class Derivation
                 (isset( $aValue['USR_UID'] ) ? $aValue['USR_UID'] : ''),
                 $currentDelegation['DEL_INDEX'],
                 $nextDel['DEL_PRIORITY'],
-                $delType,
                 $iNewAppThreadIndex,
                 $nextDel,
                 $appFields['APP_NUMBER'],
