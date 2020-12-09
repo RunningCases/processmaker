@@ -87,8 +87,8 @@ export let cases = {
         var params = new FormData();
         params.append('appUid', data.APP_UID);
         params.append('delIndex', data.DEL_INDEX);
-        params.append('pro', "6161281705fc91129328391060454559");
-        params.append('tas', "2076843175fc911573db050062710755");
+        params.append('pro', data.PRO_UID);
+        params.append('tas', data.TAS_UID);
         params.append('start', "0");
         params.append('limit', "30");
         return axios.post(window.config.SYS_SERVER +
@@ -103,6 +103,11 @@ export let cases = {
         return axios.post(window.config.SYS_SERVER +
             window.config.SYS_URI +
             `cases/casesStartPage_Ajax.php`, params);
+    },
+    open(data) {
+        return axios.get(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
     },
     //remove this section
     search(data) {
