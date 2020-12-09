@@ -1,6 +1,6 @@
 <template>
-  <div class="card v-pmase-summary-card">
-    <div class="card-body">
+  <div class="card v-pmcase-summary-card">
+    <div class="card-body" v-if="data">
       <div
         v-for="section in data"
         :key="section.title"
@@ -28,7 +28,7 @@
 export default {
   name: "CaseSummary",
   props: {
-    data: Object,
+    data: Array,
   },
   data() {
     return {};

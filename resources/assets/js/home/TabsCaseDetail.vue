@@ -5,8 +5,7 @@
         <PmCaseSummary :data="dataCaseSummary"> </PmCaseSummary>
       </tab>
       <tab name="Second tab">
-        <h2 class="page-subtitle">Second tab</h2>
-        This is the content of the second tab.
+        <ProcessMap :data="dataCase"> </ProcessMap>
       </tab>
       <tab name="Disabled tab" :is-disabled="true">
         <h2 class="page-subtitle">Disabled tab</h2>
@@ -32,6 +31,7 @@
 import Tabs from "./../components/tabs/Tabs.vue";
 import Tab from "./../components/tabs/Tab.vue";
 import PmCaseSummary from "./../components/home/caseDetail/PmCaseSummary.vue";
+import ProcessMap from "./../components/home/caseDetail/ProcessMap.vue";
 import Api from "../api/index";
 
 export default {
@@ -39,9 +39,11 @@ export default {
   components: {
     Tabs,
     Tab,
+    ProcessMap,
     PmCaseSummary,
   },
   props: {
+    dataCase: Object,
     dataCaseSummary: Array,
   },
   data() {
