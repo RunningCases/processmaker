@@ -7,7 +7,7 @@
       </p>
     </div>
     <div class="row">
-      <div class="col-sm-8">
+      <div class="col-sm-9">
         <div id="pending-task" ref="pending-task">
           <v-server-table
             :data="tableData"
@@ -40,9 +40,12 @@
             </div>
           </v-server-table>
         </div>
-        <TabsCaseDetail :dataCaseSummary="dataCaseSummaryTab"></TabsCaseDetail>
+        <TabsCaseDetail
+          :dataCaseSummary="dataCaseSummaryTab"
+          :dataCase="dataCase"
+        ></TabsCaseDetail>
       </div>
-      <div class="col-sm4">
+      <div class="col-sm-3">
         <case-summary
           v-if="dataCaseSummary"
           :data="dataCaseSummary"
@@ -58,14 +61,14 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-8">
+      <div class="col-sm-9">
         <case-comments
           :data="dataComments"
           :onClick="onClickComment"
           :postComment="postComment"
         />
       </div>
-      <div class="col-sm4">
+      <div class="col-sm-3">
         <attached-documents :data="dataAttachedDocuments"></attached-documents>
       </div>
     </div>

@@ -233,6 +233,7 @@ export default {
       this.$parent.dataCase = {
         APP_UID: item.APP_UID,
         DEL_INDEX: item.DEL_INDEX,
+        PRO_UID: "6161281705fc91129328391060454559",
       };
       this.$parent.page = "case-detail";
     },

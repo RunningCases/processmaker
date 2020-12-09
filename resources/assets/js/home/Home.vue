@@ -15,7 +15,7 @@
         @click="collapsed = true"
       />
 
-      <component v-bind:is="page"></component>
+      <component v-bind:is="page" ref="component"></component>
     </div>
   </div>
 </template> 
@@ -72,10 +72,11 @@ export default {
     /**
      * Update page component
      */
-    updatePage(data) {
-      if (data.component == "ModalNewRequest") {
-        this.data = data.page;
-        this.dataCase = data.dataCase;
+    updatePage(data, page, callback) {
+      this.dataCase = data;
+      this.page = page;
+      if (this.$refs["component"] && this.$refs["component"].update) {
+        this.$refs["component"].update(data, callback);
       }
     },
     onResize() {
