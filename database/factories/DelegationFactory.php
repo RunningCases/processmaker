@@ -16,9 +16,9 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
     ]);
     // Return with default values
     return [
+        'DELEGATION_ID' => $faker->unique()->numberBetween(5000),
         'APP_UID' => $application->APP_UID,
         'DEL_INDEX' => 1,
-        'DELEGATION_ID' => $faker->unique()->randomNumber,
         'APP_NUMBER' => $application->APP_NUMBER,
         'DEL_PREVIOUS' => 0,
         'PRO_UID' => $process->PRO_UID,
@@ -62,6 +62,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
 
     // Return with default values
     return [
+        'DELEGATION_ID' => $faker->unique()->numberBetween(5000),
         'APP_UID' => $application->APP_UID,
         'DEL_INDEX' => 1,
         'APP_NUMBER' => $application->APP_NUMBER,

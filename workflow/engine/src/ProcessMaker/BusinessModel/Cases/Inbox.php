@@ -11,7 +11,7 @@ class Inbox extends AbstractCases
     public $columnsView = [
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
-        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process
         'TASK.TAS_TITLE',  // Task
         'USERS.USR_USERNAME',  // Current UserName
@@ -51,7 +51,7 @@ class Inbox extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            // @todo: Filter by case title, pending from other PRD
+            $query->title($this->getCaseTitle());
         }
         // Specific process
         if ($this->getProcessId()) {

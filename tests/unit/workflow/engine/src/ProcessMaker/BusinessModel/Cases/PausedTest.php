@@ -3,6 +3,7 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Paused;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppDelay;
@@ -15,8 +16,7 @@ use Tests\TestCase;
 /**
  * Class PausedTest
  *
- * @coversDefaultClass ProcessMaker\BusinessModel\Cases\Paused
- * @package Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases
+ * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Paused
  */
 class PausedTest extends TestCase
 {
@@ -126,12 +126,12 @@ class PausedTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
      * @test
      */
-    public function it_should_test_get_data_method_without_filters()
+    public function it_get_result_without_filters()
     {
-
-        // Create factories related to the to_do cases
+        // Create factories related to the paused cases
         $cases = $this->createPaused();
         // Create new Paused object
         $paused = new Paused();
@@ -146,14 +146,16 @@ class PausedTest extends TestCase
     }
 
     /**
-     * It tests the getData method with app number filter
+     * It tests the getData method with case number filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
-    public function it_should_test_get_data_by_case_number()
+    public function it_filter_by_app_number()
     {
-        // Create factories related to the to_do cases
+        // Create factories related to the paused cases
         $cases = $this->createPaused();
         //Create new Paused object
         $paused = new Paused();
@@ -173,11 +175,13 @@ class PausedTest extends TestCase
      * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
-    public function it_should_test_get_data_by_task_filter()
+    public function it_filter_by_task()
     {
-        // Create factories related to the to_do cases
+        // Create factories related to the paused cases
         $cases = $this->createPaused();
         // Create new Paused object
         $paused = new Paused();
@@ -194,14 +198,16 @@ class PausedTest extends TestCase
     }
 
     /**
-     * It tests the getData method using OrderBy Case Number
+     * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
-    public function it_should_test_get_data_by_process_filter()
+    public function it_filter_by_process()
     {
-        // Create factories related to the to_do cases
+        // Create factories related to the paused cases
         $cases = $this->createPaused();
         // Create new Paused object
         $paused = new Paused();
@@ -210,25 +216,32 @@ class PausedTest extends TestCase
         // Set the user ID
         $paused->setUserId($cases->USR_ID);
         $paused->setProcessId($cases->PRO_ID);
-        // Call to getData method
+        // Get the data
         $res = $paused->getData();
+        // Asserts
         $this->assertNotEmpty($res);
     }
 
     /**
-     * It tests the getData method using OrderBy
+     * It tests the getData method with case title filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
-    public function it_should_test_get_data_by_case_title()
+    public function it_filter_by_thread_title()
     {
-        // Create factories related to the to_do cases
+        // Create factories related to the paused cases
         $cases = $this->createPaused();
-        // Create new Inbox object
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
+        // Create new Paused object
         $paused = new Paused();
         $paused->setUserUid($cases->USR_UID);
         $paused->setUserId($cases->USR_ID);
+        // Set the title
+        $paused->setCaseTitle($cases->DEL_TITLE);
         $res = $paused->getData();
         $this->assertNotEmpty($res);
     }

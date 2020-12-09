@@ -3,6 +3,7 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Inbox;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
@@ -37,12 +38,30 @@ class InboxTest extends TestCase
     }
 
     /**
+     * It tests the getCounter method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounter()
+     * @test
+     */
+    public function it_get_counter()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create the Inbox object
+        $inbox = new Inbox();
+        $inbox->setUserId($cases->USR_ID);
+        $res = $inbox->getCounter();
+        $this->assertTrue($res > 0);
+    }
+
+    /**
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
      * @test
      */
-    public function it_should_test_get_data_method_without_filters()
+    public function it_get_result_without_filters()
     {
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
@@ -59,12 +78,14 @@ class InboxTest extends TestCase
     }
 
     /**
-     * It tests the getData method with Process Filter
+     * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
-    public function it_should_test_get_data_by_process_filter()
+    public function it_filter_by_process()
     {
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
@@ -78,12 +99,14 @@ class InboxTest extends TestCase
     }
 
     /**
-     * It tests the getData method using OrderBy
+     * It tests the getData method with case number filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
-    public function it_should_test_get_data_by_case_number()
+    public function it_filter_by_app_number()
     {
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
@@ -97,12 +120,14 @@ class InboxTest extends TestCase
     }
 
     /**
-     * It tests the getData method using OrderBy
+     * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
-    public function it_should_test_get_data_by_task_filter()
+    public function it_filter_by_task()
     {
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
@@ -116,36 +141,57 @@ class InboxTest extends TestCase
     }
 
     /**
-     * It tests the getData method using OrderBy
+     * It tests the getData method with case title filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
-    public function it_should_test_get_data_by_case_title()
+    public function it_filter_by_thread_title()
     {
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
         // Create new Inbox object
         $inbox = new Inbox();
         $inbox->setUserId($cases->USR_ID);
+        // Set the title
+        $inbox->setCaseTitle($cases->DEL_TITLE);
+        // Get the data
         $res = $inbox->getData();
+        // Asserts
         $this->assertNotEmpty($res);
     }
 
     /**
-     * It tests the getCounter method
+     * It tests the getData method using order by column
      *
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounter()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
-    public function it_should_test_the_counter_for_inbox()
+    public function it_order_by_column()
     {
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
-        // Create the Inbox object
+        $columnsView = [
+            'APP_NUMBER',
+            'DEL_TITLE',
+            'PRO_TITLE',
+            'TAS_TITLE',
+            'DEL_TASK_DUE_DATE',
+            'DEL_DELEGATE_DATE'
+        ];
+        $index = array_rand($columnsView);
+        // Create new Inbox object
         $inbox = new Inbox();
         $inbox->setUserId($cases->USR_ID);
-        $res = $inbox->getCounter();
-        $this->assertTrue($res > 0);
+        // Define the column to order
+        $inbox->setOrderByColumn($columnsView[$index]);
+        $res = $inbox->getData();
+        $this->assertNotEmpty($res);
     }
 }

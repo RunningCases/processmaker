@@ -12,7 +12,7 @@ class Unassigned extends AbstractCases
     public $columnsView = [
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
-        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process
         'TASK.TAS_TITLE',  // Task
         'USERS.USR_USERNAME',  // Current UserName
@@ -52,7 +52,7 @@ class Unassigned extends AbstractCases
         }
         // Specific case title
         if ($this->getCaseTitle()) {
-            // @todo: Filter by case title, pending from other PRD
+            $query->title($this->getCaseTitle());
         }
         // Specific process
         if ($this->getProcessId()) {
@@ -88,7 +88,7 @@ class Unassigned extends AbstractCases
         }
         // Add join for application, for get the case title when the case status is TO_DO
         $query->joinApplication();
-        $query->status(Application::STATUS_TODO);
+        $query->status(self::STATUS_TODO);
         /** Apply filters */
         $this->filters($query);
         /** Apply order and pagination */

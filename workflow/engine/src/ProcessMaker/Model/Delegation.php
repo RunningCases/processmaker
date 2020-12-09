@@ -153,7 +153,19 @@ class Delegation extends Model
      */
     public function scopeCaseInProgress($query)
     {
-        return $query->where('APPLICATION.APP_STATUS_ID', 2);
+        return $query->statusIds([Application::STATUS_DRAFT, Application::STATUS_TODO]);
+    }
+
+    /**
+     * Scope a query to get the to_do cases
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCaseTodo($query)
+    {
+        return $query->where('APPLICATION.APP_STATUS_ID', Application::STATUS_TODO);
     }
 
     /**
@@ -165,7 +177,7 @@ class Delegation extends Model
      */
     public function scopeCaseCompleted($query)
     {
-        return $query->where('APPLICATION.APP_STATUS_ID', 3);
+        return $query->where('APPLICATION.APP_STATUS_ID', Application::STATUS_COMPLETED);
     }
 
     /**
@@ -371,6 +383,37 @@ class Delegation extends Model
     public function scopeCase($query, $appNumber)
     {
         return $query->where('APP_DELEGATION.APP_NUMBER', '=', $appNumber);
+    }
+
+    /**
+     * Scope a query to only include a specific case title
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string $search
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTitle($query, string $search)
+    {
+        $config = System::getSystemConfiguration();
+        if ((int)$config['disable_advanced_search_case_title_fulltext'] === 0) {
+            // Cleaning "fulltext" operators in order to avoid unexpected results
+            $search = str_replace(
+                ['-', '+', '<', '>', '(', ')', '~', '*', '"'],
+                ['', '', '', '', '', '', '', '', ''],
+                $search
+            );
+
+            // Build the "fulltext" expression
+            $search = '+"' . preg_replace('/\s+/', '" +"', addslashes($search)) . '"';
+            // Searching using "fulltext" index
+            $query->whereRaw("MATCH(APP_DELEGATION.DEL_TITLE) AGAINST('{$search}' IN BOOLEAN MODE)");
+        } else {
+            // Searching using "like" operator
+            $query->where('APP_DELEGATION.DEL_TITLE', 'LIKE', "%${$search}%");
+        }
+
+        return $query;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
@@ -188,7 +189,7 @@ class SupervisingTest extends TestCase
     /**
      * Tests the getData() method when the user belongs to a group supervisor
      * 
-     * covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
      * @test
      */
     public function it_should_test_the_get_data_method_when_the_user_belong_to_a_group_supervisor()
@@ -209,7 +210,7 @@ class SupervisingTest extends TestCase
     /**
      * Tests the getData() method when the user is not a supervisor neither belongs to a group supervisor 
      * 
-     * covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
      * @test
      */
     public function it_should_test_the_get_data_method_when_the_user_is_not_supervisor()
@@ -231,7 +232,7 @@ class SupervisingTest extends TestCase
     /**
      * Tests the getCounter() method
      * 
-     * covers \ProcessMaker\BusinessModel\Cases\Supervising::getCounter()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getCounter()
      * @test
      */
     public function it_should_count_the_data()
@@ -252,662 +253,137 @@ class SupervisingTest extends TestCase
     /**
      * Tests the filter by APP_NUMBER
      * 
-     * covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
      * @test
      */
-    public function it_filters_by_app_number()
+    public function it_filter_by_app_number()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $task2 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'NORMAL',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $app1 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app2 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app3 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        //Create the register in the ProcessUser table
-        factory(ProcessUser::class)->create(
-            [
-                'PRO_UID' => $process->PRO_UID,
-                'USR_UID' => $user->USR_UID,
-                'PU_TYPE' => 'SUPERVISOR'
-            ]
-        );
-
+        $cases = $this->createSupervising();
         // Instance the Supervising object
         $Supervising = new Supervising();
-
         //Set the user UID
-        $Supervising->setUserUid($user->USR_UID);
-
+        $Supervising->setUserUid($cases->USR_UID);
         //Set the user ID
-        $Supervising->setUserId($user->USR_ID);
-
-        $Supervising->setCaseNumber($app3['APP_NUMBER']);
-
+        $Supervising->setUserId($cases->USR_ID);
+        $Supervising->setCaseNumber($cases->APP_NUMBER);
         //Call the getData method
         $res = $Supervising->getData();
-
         // Asserts the result contains 3 registers
         $this->assertCount(1, $res);
         //Asserts that the result contains the app number searched
-        $this->assertContains($app3['APP_NUMBER'], $res[0]);
+        $this->assertContains($cases->APP_NUMBER, $res[0]);
     }
 
     /**
      * Tests the filter by process
      * 
-     * covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
      * @test
      */
-    public function it_filters_by_process()
+    public function it_filter_by_process()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $task2 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'NORMAL',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $app1 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app2 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app3 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        //Create the register in the ProcessUser table
-        factory(ProcessUser::class)->create(
-            [
-                'PRO_UID' => $process->PRO_UID,
-                'USR_UID' => $user->USR_UID,
-                'PU_TYPE' => 'SUPERVISOR'
-            ]
-        );
-
-        factory(ProcessUser::class)->create(
-            [
-                'PRO_UID' => $process2->PRO_UID,
-                'USR_UID' => $user->USR_UID,
-                'PU_TYPE' => 'SUPERVISOR'
-            ]
-        );
-
+        $cases = $this->createSupervising();
         // Instance the Supervising object
         $Supervising = new Supervising();
-
-        //Set the user UID
-        $Supervising->setUserUid($user->USR_UID);
-
-        //Set the user ID
-        $Supervising->setUserId($user->USR_ID);
-
-        //Set the process Id filter
-        $Supervising->setProcessId($process2['PRO_ID']);
-
-        //Call the getData method
+        // Set the user UID
+        $Supervising->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $Supervising->setUserId($cases->USR_ID);
+        // Set the process Id filter
+        $Supervising->setProcessId($cases->PRO_ID);
+        // Call the getData method
         $res = $Supervising->getData();
+        $this->assertCount(1, $res);
+    }
 
+    /**
+     * Tests the filter by process
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @test
+     */
+    public function it_filter_by_task()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $Supervising = new Supervising();
+        // Set the user UID
+        $Supervising->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $Supervising->setUserId($cases->USR_ID);
+        // Set the process Id filter
+        $Supervising->setProcessId($cases->TAS_ID);
+        // Call the getData method
+        $res = $Supervising->getData();
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getData method with case title filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @test
+     */
+    public function it_filter_by_thread_title()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createSupervising();
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
+        // Create new Inbox object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $supervising->setUserId($cases->USR_ID);
+        // Set the title
+        $supervising->setCaseTitle($cases->DEL_TITLE);
+        // Get the data
+        $res = $supervising->getData();
+        // Asserts
         $this->assertCount(1, $res);
     }
 
     /**
      * Tests the order by value
      * 
-     * covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
      * @test
      */
-    public function it_orders_the_query_by_column()
+    public function it_order_by_column()
     {
-        //Create process
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $task2 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'NORMAL',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $app1 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app2 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app3 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        //Create the register in the ProcessUser table
-        factory(ProcessUser::class)->create(
-            [
-                'PRO_UID' => $process->PRO_UID,
-                'USR_UID' => $user->USR_UID,
-                'PU_TYPE' => 'SUPERVISOR'
-            ]
-        );
-
-        factory(ProcessUser::class)->create(
-            [
-                'PRO_UID' => $process2->PRO_UID,
-                'USR_UID' => $user->USR_UID,
-                'PU_TYPE' => 'SUPERVISOR'
-            ]
-        );
-
+        // Create factories related to the supervising cases
+        $cases = $this->createSupervising();
+        $columnsView = [
+            'APP_NUMBER',
+            'DEL_TITLE',
+            'PRO_TITLE',
+            'TAS_TITLE',
+            'APP_CREATE_DATE',
+            'APP_FINISH_DATE'
+        ];
+        $index = array_rand($columnsView);
         // Instance the Supervising object
         $Supervising = new Supervising();
-
         //Set the user UID
-        $Supervising->setUserUid($user->USR_UID);
-
+        $Supervising->setUserUid($cases->USR_UID);
         //Set the user ID
-        $Supervising->setUserId($user->USR_ID);
-
-        //Set the orderby value
-        $Supervising->setOrderByColumn('APPLICATION.APP_NUMBER');
-
+        $Supervising->setUserId($cases->USR_ID);
+        //Set the order by value
+        $Supervising->setOrderByColumn($columnsView[$index]);
         //Call the getData method
         $res = $Supervising->getData();
-
         $this->assertCount(3, $res);
         $this->assertTrue($res[0]['APP_NUMBER'] > $res[1]['APP_NUMBER']);
-    }
-
-    /**
-     * Tests the limit in the order by clausule
-     * 
-     * covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
-     * @test
-     */
-    public function it_set_the_limit_in_the_order_by_clausule()
-    {
-        //Create process
-        $process = factory(Process::class)->create();
-        $process2 = factory(Process::class)->create();
-
-        //Create user
-        $user = factory(User::class)->create();
-
-        //Create a task
-        $task = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => '',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $task2 = factory(Task::class)->create([
-            'TAS_ASSIGN_TYPE' => 'NORMAL',
-            'TAS_GROUP_VARIABLE' => '',
-            'PRO_UID' => $process->PRO_UID,
-        ]);
-
-        $app1 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app2 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-        $app3 = factory(Application::class)->states('todo')->create([
-            'APP_STATUS' => 'TO_DO',
-            'APP_STATUS_ID' => 2,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_INIT_USER' => $user->USR_UID,
-            'APP_CUR_USER' => $user->USR_UID,
-        ]);
-
-        //Create the register in delegation
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app1['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app1['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app2['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process->PRO_ID,
-            'PRO_UID' => $process->PRO_UID,
-            'APP_NUMBER' => $app2['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task->TAS_ID,
-            'TAS_UID' => $task->TAS_UID,
-            'DEL_THREAD_STATUS' => 'CLOSED',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
-        ]);
-        factory(Delegation::class, 1)->create([
-            "APP_UID" => $app3['APP_UID'],
-            'TAS_ID' => $task2->TAS_ID,
-            'TAS_UID' => $task2->TAS_UID,
-            'DEL_THREAD_STATUS' => 'OPEN',
-            'USR_UID' => $user->USR_UID,
-            'USR_ID' => $user->USR_ID,
-            'PRO_ID' => $process2->PRO_ID,
-            'PRO_UID' => $process2->PRO_UID,
-            'APP_NUMBER' => $app3['APP_NUMBER'],
-            'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
-        ]);
-
-        //Create the register in the ProcessUser table
-        factory(ProcessUser::class)->create(
-            [
-                'PRO_UID' => $process->PRO_UID,
-                'USR_UID' => $user->USR_UID,
-                'PU_TYPE' => 'SUPERVISOR'
-            ]
-        );
-
-        factory(ProcessUser::class)->create(
-            [
-                'PRO_UID' => $process2->PRO_UID,
-                'USR_UID' => $user->USR_UID,
-                'PU_TYPE' => 'SUPERVISOR'
-            ]
-        );
-
-        // Instance the Supervising object
-        $Supervising = new Supervising();
-
-        //Set the user UID
-        $Supervising->setUserUid($user->USR_UID);
-
-        //Set the user ID
-        $Supervising->setUserId($user->USR_ID);
-
-        //Set the limit value
-        $Supervising->setLimit(1);
-
-        //Call the getData method
-        $res = $Supervising->getData();
-
-        $this->assertCount(1, $res);
     }
 }

@@ -11,7 +11,7 @@ class Supervising extends AbstractCases
     public $columnsView = [
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
-        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process Name
         'TASK.TAS_TITLE',  // Pending Task
         'APPLICATION.APP_STATUS',  // Status
@@ -49,7 +49,7 @@ class Supervising extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            // @todo: Filter by case title, pending from other PRD
+            $query->title($this->getCaseTitle());
         }
         // Scope to search for an specific process
         if ($this->getProcessId()) {
@@ -125,8 +125,8 @@ class Supervising extends AbstractCases
             $query->joinUser();
             // Join with application
             $query->joinApplication();
-            // Only cases in progress
-            $query->caseInProgress();
+            // Only cases in to_do
+            $query->caseTodo();
             // Scope that return the results for an specific user
             $query->userId($this->getUserId());
             // Scope the specific array of processes supervising
