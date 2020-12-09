@@ -3,6 +3,7 @@
 namespace ProcessMaker\Services\Api;
 
 use Exception;
+use G;
 use Luracast\Restler\RestException;
 use Menu;
 use ProcessMaker\BusinessModel\Cases\Draft;
@@ -359,30 +360,42 @@ class Home extends Api
     public function doGetCountMyCases()
     {
         try {
-            $filters = ['STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
-            $result = [];
-            foreach ($filters as $row) {
-                switch ($row) {
+            // Initializing variables
+            $participatedStatuses = ['STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
+            $participatedLabels = array_combine($participatedStatuses, ['ID_OPT_STARTED', 'ID_IN_PROGRESS', 'ID_COMPLETED', 'ID_SUPERVISING']);
+            $counters = [];
+
+            // Get counters
+            foreach ($participatedStatuses as $participatedStatus) {
+                // Initializing counter object
+                $counter = new stdClass();
+                $counter->id = $participatedStatus;
+                $counter->title = G::LoadTranslation($participatedLabels[$participatedStatus]);
+
+                // Get counter value according to the participated status
+                switch ($participatedStatus) {
                     case 'STARTED':
                     case 'IN_PROGRESS':
                     case 'COMPLETED':
-                        $list = new Participated();
-                        $list->setParticipatedStatus($row);
-                        $list->setUserId($this->getUserId());
-                        $result[strtolower($row)] = $list->getCounter();
+                        $participated = new Participated();
+                        $participated->setParticipatedStatus($participatedStatus);
+                        $participated->setUserId($this->getUserId());
+                        $counter->counter = $participated->getCounter();
                         break;
                     case 'SUPERVISING':
-                        // Scope that search for the SUPERVISING cases by specific user
-                        $list = new Supervising();
-                        $list->setUserId($this->getUserId());
-                        $result[strtolower($row)] = $list->getCounter();
+                        $supervising = new Supervising();
+                        $supervising->setUserUid($this->getUserId());
+                        $counter->counter = $supervising->getCounter();
                         break;
                     default:
-                        $result[strtolower($row)] = 0;
+                        $counter->counter = 0;
                 }
+                // Add counter
+                $counters[] = $counter;
             }
 
-            return $result;
+            // Return counters in the expected format
+            return $counters;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

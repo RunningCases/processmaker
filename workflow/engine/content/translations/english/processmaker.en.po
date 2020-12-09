@@ -24960,6 +24960,12 @@ msgid "Sun"
 msgstr "Sun"
 
 # TRANSLATION
+# LABEL/ID_SUPERVISING
+#: LABEL/ID_SUPERVISING
+msgid "Supervising"
+msgstr "Supervising"
+
+# TRANSLATION
 # LABEL/ID_SUPERVISOR
 #: LABEL/ID_SUPERVISOR
 msgid "Supervisor"

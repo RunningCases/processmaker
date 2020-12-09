@@ -32,6 +32,7 @@ class ParticipatedTest extends TestCase
             'DEL_INDEX' => 1,
         ]);
         $delegation2 = factory(Delegation::class)->states('last_thread')->create([
+            'APP_NUMBER' => $delegation->APP_NUMBER,
             'TAS_ID' => $delegation->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_UID' => $delegation->USR_UID,
@@ -217,6 +218,9 @@ class ParticipatedTest extends TestCase
         $participated->setUserUid($cases->USR_UID);
         // Set the user ID
         $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('IN_PROGRESS');
+        // Get result
         $res = $participated->getCounter();
         // Assert the result of getCounter method
         $this->assertEquals(1, $res);

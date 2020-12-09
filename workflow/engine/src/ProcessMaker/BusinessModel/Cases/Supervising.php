@@ -175,12 +175,15 @@ class Supervising extends AbstractCases
      */
     public function getCounter()
     {
+        // Get base query
         $query = Delegation::query()->select();
+        // Only distinct APP_NUMBER
+        $query->distinct();
         // Get the list of processes of the supervisor
         $processes = ProcessUser::getProcessesOfSupervisor($this->getUserUid());
         // Scope the specific array of processes supervising
         $query->processInList($processes);
-
-        return $query->count();
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
 }
