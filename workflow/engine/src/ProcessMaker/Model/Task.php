@@ -92,6 +92,27 @@ class Task extends Model
     }
 
     /**
+     * Get the title of the task
+     *
+     * @param string $tasUid
+     *
+     * @return string
+     */
+    public function taskCaseTitle(string $tasUid)
+    {
+        $query = Task::query()->select(['TAS_DEF_TITLE']);
+        $query->where('TAS_UID', $tasUid);
+        $query->limit(1);
+        $results = $query->get();
+        $title = '';
+        $results->each(function ($item) use (&$title) {
+            $title = $item->TAS_DEF_TITLE;
+        });
+
+        return $title;
+    }
+
+    /**
      * Get task data
      *
      * @param  string $tasUid
@@ -130,5 +151,44 @@ class Task extends Model
         $taskInfo['DURATION'] = !empty($dates['DEL_THREAD_DURATION']) ? $dates['DEL_THREAD_DURATION'] : G::LoadTranslation('ID_NOT_FINISHED');
 
         return $taskInfo;
+    }
+
+    /**
+     * Set the TAS_DEF_TITLE value
+     * 
+     * @param string $evnUid
+     * @param string $caseTitle
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function setTaskDefTitle($evnUid, $caseTitle)
+    {
+        $query = Task::select(['TASK.TAS_UID']);
+        $query->join('ELEMENT_TASK_RELATION', function ($join) use ($evnUid) {
+            $join->on('ELEMENT_TASK_RELATION.TAS_UID', '=', 'TASK.TAS_UID')
+            ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
+        });
+
+        $query->update(['TASK.TAS_DEF_TITLE' => $caseTitle]);
+        
+        return $query;
+    }
+
+    /**
+     * Get the TAS_DEF_TITLE value
+     * 
+     * @param string $evnUid
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function getTaskDefTitle($evnUid)
+    {
+        $query = Task::select(['TASK.TAS_DEF_TITLE']);
+        $query->join('ELEMENT_TASK_RELATION', function ($join) use ($evnUid) {
+            $join->on('ELEMENT_TASK_RELATION.TAS_UID', '=', 'TASK.TAS_UID')
+            ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
+        });
+
+        return $query->get()->values()->toArray()['0']['TAS_DEF_TITLE'];
     }
 }

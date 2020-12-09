@@ -5,6 +5,8 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\ElementTaskRelation;
+use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use Tests\TestCase;
 
@@ -123,5 +125,65 @@ class TaskTest extends TestCase
         $result .= ' 01 '. G::LoadTranslation('ID_MINUTE_ABBREVIATE');
         $result .= ' 01 '. G::LoadTranslation('ID_SECOND_ABBREVIATE');
         $this->assertEquals($taskInfo['DURATION'], $result);
+    }
+
+    /**
+     * It tests the setTaskDefTitle() method
+     * 
+     * @covers \ProcessMaker\Model\Task::setTaskDefTitle()
+     * @test
+     */
+    public function it_should_test_set_task_title_method()
+    {
+        $project = factory(Process::class)->create();
+        $task = factory(Task::class)->create([
+            'TAS_DEF_TITLE' => 'something'
+        ]);
+        $elementTask = factory(ElementTaskRelation::class)->create([
+            'PRJ_UID' => $project->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        
+        Task::setTaskDefTitle($elementTask->ELEMENT_UID, "Task title new");
+        $query = Task::query();
+        $query->select()->where('TASK.TAS_UID', $task->TAS_UID);
+        $res = $query->get()->values()->toArray();
+        $this->assertEquals($res[0]['TAS_DEF_TITLE'], 'Task title new');
+    }
+
+    /**
+     * It tests the getTaskDefTitle() method
+     * 
+     * @covers \ProcessMaker\Model\Task::getTaskDefTitle()
+     * @test
+     */
+    public function it_should_test_get_task_def_title_method()
+    {
+        $project = factory(Process::class)->create();
+        $task = factory(Task::class)->create([
+            'TAS_DEF_TITLE' => 'something'
+        ]);
+        $elementTask = factory(ElementTaskRelation::class)->create([
+            'PRJ_UID' => $project->PRO_UID,
+            'TAS_UID' => $task->TAS_UID,
+        ]);
+        
+        $res = Task::getTaskDefTitle($elementTask->ELEMENT_UID);
+        
+        $this->assertEquals($res, $task->TAS_DEF_TITLE);
+    }
+
+    /**
+     * It tests the get case title defined in the task
+     *
+     * @covers \ProcessMaker\Model\Task::taskCaseTitle()
+     * @test
+     */
+    public function it_get_case_title()
+    {
+        $task = factory(Task::class)->create();
+        $tas = new Task();
+        $result = $tas->taskCaseTitle($task->TAS_UID);
+        $this->assertNotEmpty($result);
     }
 }
