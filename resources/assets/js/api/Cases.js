@@ -118,6 +118,15 @@ export let cases = {
             window.config.SYS_URI +
             `cases/ajaxListener`, params);
     },
+    unpause(data) {
+        var params = new URLSearchParams();
+        params.append('action', 'unpauseCase');
+        params.append('sApplicationUID', data.APP_UID);
+        params.append('iIndex', data.DEL_INDEX);
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/cases_Ajax`, params);
+    },
     /**
      * Service to jump a case by it's number
      * @param {object} dt 
@@ -142,7 +151,7 @@ export let cases = {
             keys: {}
         })
     }
-            
+
 };
 
 export let casesHeader = {

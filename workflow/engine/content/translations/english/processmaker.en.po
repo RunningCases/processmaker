@@ -52126,5 +52126,14 @@ msgstr "Send email to participants"
 msgid "You are tying to cancel the current case. Please be aware this action cannot be undone"
 msgstr "You are tying to cancel the current case. Please be aware this action cannot be undone"
 
+# TRANSLATION
+# LABEL/ID_CONFIRMATION
+#: LABEL/ID_CONFIRMATION
+msgid "Confirmation"
+msgstr "Confirmation"
 
-
+# TRANSLATION
+# LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
+#: LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
+msgid "Are you sure want to unpause the task?"
+msgstr "Are you sure want to unpause the task?"
