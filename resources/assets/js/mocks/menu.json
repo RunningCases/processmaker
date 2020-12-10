@@ -11,9 +11,10 @@
   },
   {
     "href": "/advanced-search",
-    "id": "advanced-search",
+    "page": "advanced-search",
     "title": "Advanced Search",
-    "icon": "fas fa-search"
+    "icon": "fas fa-search",
+    "child": []
   },
   {
     "header": true,
@@ -28,7 +29,8 @@
       "text": "23",
       "class": "badge-custom"
     },
-    "id": "todo"
+    "id": "todo",
+    "page": "todo"
   },
   {
     "href": "/draft",
@@ -38,7 +40,8 @@
       "text": "1",
       "class": "badge-custom"
     },
-    "id": "draft"
+    "id": "draft",
+    "page": "draft"
   },
   {
     "href": "/paused",
@@ -48,7 +51,8 @@
       "text": "7",
       "class": "badge-custom"
     },
-    "id": "paused"
+    "id": "paused",
+    "page": "paused"
   },
   {
     "href": "/unassigned",
@@ -58,7 +62,8 @@
       "text": "99+",
       "class": "badge-custom"
     },
-    "id": "unassigned"
+    "id": "unassigned",
+    "page": "unassigned"
   },
   {
     "header": true,
@@ -69,6 +74,7 @@
     "href": "/batch-routing",
     "title": "Batch Routing",
     "id": "batch-routing",
+    "page": "batch-routing",
     "icon": "fas fa-bars",
     "disabled": false
   },
@@ -76,6 +82,7 @@
     "href": "/my-documents",
     "title": "My Documents",
     "id": "my-documents",
+    "page": "my-documents",
     "icon": "fas fa-bars",
     "disabled": false
   },
@@ -83,7 +90,9 @@
     "href": "/task-Reassignments",
     "title": "Task Reassignments",
     "icon": "fas fa-arrows-alt",
-    "id": "task-reassignments"
+    "id": "task-reassignments",
+    "page": "task-reassignments"
+    
   },
   {
     "href": "/page",

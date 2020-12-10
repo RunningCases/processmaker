@@ -1,6 +1,6 @@
 <template>
     <div>
-        <slot name="target-item">here component</slot>
+        <slot name="target-item"></slot>
 
         <b-popover
             :show.sync="popoverShow"
@@ -15,15 +15,13 @@
                         >&times;</span
                     >
                 </b-button>
-                &nbsp;
+                {{ title }}
             </template>
             <div>
-                <slot name="body">
-                    popover body
-                </slot>
+                <slot name="body"></slot>
                 <div class="float-right">
-                    <b-button @click="onClose" size="sm" variant="danger">Cancel</b-button>
-                    <b-button @click="onSave" size="sm" variant="primary">Save</b-button>
+                    <b-button @click="onClose" size="sm" variant="danger"> {{$t('ID_CANCEL')}}</b-button>
+                    <b-button @click="onSave" size="sm" variant="primary">{{$t('ID_SAVE')}}</b-button>
                 </div>
             </div>
         </b-popover>
@@ -31,25 +29,30 @@
 </template>
 <script>
 export default {
-    props: ['target'],
+    props: ['target', "title"],
     data() {
         return {
            popoverShow: false
         };
     },
     methods: {
+        /**
+         * Close buton click handler 
+         */
         onClose() {
             this.popoverShow = false;
             this.$emit('closePopover');
         },
+        /**
+         * Save button click handler 
+         */
         onSave() {
             this.$emit('savePopover');
-            this.onClose();
-        },
-    },
+        }
+    }
 };
 </script>
-</script>
+
 <style scoped>
 
 .popover {

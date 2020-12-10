@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import VueSidebarMenu from "vue-sidebar-menu";
 import VueI18n from 'vue-i18n';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
-import { ServerTable } from 'vue-tables-2';
+import { ServerTable, Event} from 'vue-tables-2';
 import "@fortawesome/fontawesome-free/css/all.css";
 import "@fortawesome/fontawesome-free/js/all.js";
 import 'bootstrap/dist/css/bootstrap-grid.css';

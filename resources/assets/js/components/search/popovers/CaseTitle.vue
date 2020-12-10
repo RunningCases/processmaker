@@ -4,6 +4,7 @@
             :target="tag"
             @closePopover="onClose"
             @savePopover="onOk"
+            :title="info.title"
         >
             <template v-slot:target-item>
                 <div @click="onClickTag(tag)" :id="tag">
@@ -12,14 +13,22 @@
                 </div>
             </template>
             <template v-slot:body>
-                <h6>Filter: Case Title</h6>
-                <input
-                    v-model="title"
-                    type="text"
-                    size="150"
-                    class="form-control"
-                    placeholder="Case Title Name"
-                />
+                <p>{{ info.detail }}</p>
+                <form ref="form" @submit.stop.prevent="handleSubmit">
+                    <b-form-group
+                        :state="valueState"
+                        label-for="name-input"
+                        :invalid-feedback="$t('ID_REQUIRED_FIELD')"
+                    >
+                        <b-form-input
+                            id="name-input"
+                            v-model="title"
+                            :placeholder="$t('ID_CASE_TITLE_NAME')"
+                            :state="valueState"
+                            required
+                        ></b-form-input>
+                    </b-form-group>
+                </form>
             </template>
         </SearchPopover>
     </div>
@@ -36,25 +45,50 @@ export default {
     data() {
         return {
             title: "",
+            valueState: null,
         };
     },
     computed: {
         tagText: function() {
-            return `Case: ${this.title}`;
+            return `${this.$i18n.t("ID_CASE_TITLE")}: ${this.title}`;
         },
     },
     methods: {
-        onClose() {
+        /**
+         * Check the form validations and requiered fields
+         */
+        checkFormValidity() {
+            const valid = this.$refs.form.checkValidity();
+            this.valueState = valid;
+            return valid;
         },
-        onOk() {
-            this.$emit("updateSearchTag", {
-                columnSearch: "APP_TITLE",
-                search: this.title,
+        /**
+         * Submit form handler
+         */
+        handleSubmit() {
+            let self = this;
+            // Exit when the form isn't valid
+            if (!this.checkFormValidity()) {
+                return;
+            }
+            this.$nextTick(() => {
+                this.$emit("updateSearchTag", {
+                    caseTitle: self.title,
+                });
+                self.$root.$emit("bv::hide::popover");
             });
         },
-        onRemoveTag() {},
+        /**
+         * On ok event handler
+         */
+        onOk() {
+            this.handleSubmit();
+        },
+        /**
+         * On ok event handler
+         */
         onClickTag(tag) {
-             this.$root.$emit("bv::hide::popover");
+            this.$root.$emit("bv::hide::popover");
         },
     },
 };
