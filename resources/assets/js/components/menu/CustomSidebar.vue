@@ -23,9 +23,9 @@
 import api from "./../../api/index";
 export default {
     name: "CustomSidebar",
+    props: ["menu"],
     data() {
         return {
-            menu: [],
             collapsed: false,
             isOnMobile: false,
             hideToggle: true,
@@ -43,14 +43,6 @@ export default {
     mounted() {
         this.onResize();
         window.addEventListener("resize", this.onResize);
-        api.menu
-            .get()
-            .then((response) => {
-                this.menu = this.mappingMenu(response.data);
-            })
-            .catch((e) => {
-                console.error(e);
-            });
     },
     methods: {
         /**
@@ -82,34 +74,6 @@ export default {
                 this.isOnMobile = false;
                 this.collapsed = false;
             }
-        },
-        /**
-         * Do a mapping of vue view for menus
-         * @returns array
-         */
-        mappingMenu(data) {
-            var i,
-                j,
-                newData = data,
-                auxId,
-                viewVue = {
-                    'CASES_MY_CASES': 'MyCases',
-                    'CASES_SEARCH': 'advanced-search',
-                    'CASES_INBOX': 'todo',
-                    'CASES_DRAFT': 'draft',
-                    'CASES_PAUSED': 'paused',
-                    'CASES_SELFSERVICE': 'unassigned',
-                    'CONSOLIDATED_CASES': 'batch-routing',
-                    'CASES_TO_REASSIGN': 'task-reassignments',
-                    'CASES_FOLDERS': 'my-documents'
-                };
-            for (i = 0; i < data.length; i += 1) {
-                auxId = data[i].id || '';
-                if (auxId !== '' && viewVue[auxId]) {
-                    newData[i].id = viewVue[auxId];
-                }
-            }
-            return newData;
         }
     },
 };

@@ -7,12 +7,6 @@
             @savePopover="onOk"
             :title="info.title"
         >
-            <template v-slot:target-item>
-                <div @click="onClickTag(tag)" :id="tag">
-                    <i class="fas fa-tags"></i>
-                    {{ tagText }}
-                </div>
-            </template>
             <template v-slot:body>
                 <p>{{ info.detail }}</p>
                 <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -23,7 +17,7 @@
                     >
                         <b-form-input
                             id="name-input"
-                            v-model="value"
+                            v-model="info.values.filterCases"
                             :placeholder="$t('ID_CASE_NUMBER_FILTER_EG')"
                             :state="valueState"
                             required
@@ -45,15 +39,9 @@ export default {
     props: ["tag", "info"],
     data() {
         return {
-            value: "",
             valueState: null,
             showPopover: false,
         };
-    },
-    computed: {
-        tagText: function() {
-            return `${this.$i18n.t("ID_IUD")}: ${this.value} `;
-        },
     },
     methods: {
         onClose() {
@@ -61,8 +49,8 @@ export default {
         },
         checkFormValidity() {
             const regex = /^((\d+?)|(\d+?)(?:\-(\d+?))?)(?:\, ((\d+?)|(\d+?)(?:\-(\d+?))?))*$/;
-            regex.test(this.value);
-            this.valueState = regex.test(this.value);
+            regex.test(this.info.values.filterCases);
+            this.valueState = regex.test(this.info.values.filterCases);
             return this.valueState;
         },
         handleSubmit() {
@@ -74,7 +62,9 @@ export default {
             // Hide the modal manually
             this.$nextTick(() => {
                 this.$emit("updateSearchTag", {
-                    filterCases: self.value.replace(/ /g, ""),
+                    CaseNumber: {
+                        filterCases: self.info.values.filterCases.replace(/ /g, ""),
+                    }
                 });
                 self.$root.$emit("bv::hide::popover");
             });
