@@ -1,6 +1,10 @@
 <template>
     <div id="">
-        <SearchPopover :target="tag" @savePopover="onOk" :title="info.title">
+        <SearchPopover
+            :target="tag"
+            @savePopover="onOk"
+            :title="info.title"
+        >
             <template v-slot:target-item>
                 <div @click="onClickTag(tag)" :id="tag">
                     <b-icon icon="tags-fill" font-scale="1"></b-icon>
@@ -20,9 +24,9 @@
                             id="name"
                             v-model="query"
                             :minMatchingChars="minMatchingChars"
-                            :data="process"
-                            :serializer="(item) => item.PRO_TITLE"
-                            @hit="selectedUser = $event"
+                            :data="users"
+                            :serializer="(item) => item.USR_FULLNAME"
+                   
                             :placeholder="info.placeholder"
                             required
                             :state="valueState"
@@ -42,33 +46,33 @@ import api from "./../../../api/index";
 export default {
     components: {
         SearchPopover,
-        VueBootstrapTypeahead,
+        VueBootstrapTypeahead
     },
     props: ["tag", "info"],
     data() {
         return {
             minMatchingChars: 1,
             query: "",
-            process: [],
-            valueState: null,
+            users: [],
+            valueState: null
         };
     },
     computed: {
         tagText: function() {
-            return `${this.$i18n.t("ID_PROCESS")}: ${this.query}`;
-        },
+            return `${this.$i18n.t('ID_USER')}: ${this.query}`;
+        }
     },
     watch: {
         query(newQuery) {
             api.filters
-                .processList(this.query)
+                .userValues(this.query)
                 .then((response) => {
-                    this.process = response.data;
+                    this.users = response.data;
                 })
                 .catch((e) => {
                     console.error(err);
                 });
-        },
+        }
     },
     methods: {
         /**
@@ -94,9 +98,9 @@ export default {
                 return;
             }
             this.$nextTick(() => {
-                let process = _.find(this.process, { PRO_TITLE: this.query });
+                let user = _.find(this.users, { USR_FULLNAME: this.query });
                 this.$emit("updateSearchTag", {
-                    process: process.PRO_ID,
+                    userId: user.USR_UID
                 });
                 this.$root.$emit("bv::hide::popover");
             });

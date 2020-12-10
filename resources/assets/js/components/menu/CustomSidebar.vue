@@ -20,13 +20,12 @@
 </template>
 
 <script>
-import api from "./../../api/index";
 
 export default {
     name: "CustomSidebar",
+    props: ['menu'],
     data() {
         return {
-            menu: [],
             collapsed: false,
             isOnMobile: false,
             hideToggle: true,
@@ -44,14 +43,7 @@ export default {
     mounted() {
         this.onResize();
         window.addEventListener("resize", this.onResize);
-        api.menu
-            .get()
-            .then((response) => {
-                this.menu = response;
-            })
-            .catch((e) => {
-                console.error(e);
-            });
+       
     },
     methods: {
         /**

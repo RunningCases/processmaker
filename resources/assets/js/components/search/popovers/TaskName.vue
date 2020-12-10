@@ -1,6 +1,10 @@
 <template>
     <div id="">
-        <SearchPopover :target="tag" @savePopover="onOk" :title="info.title">
+        <SearchPopover
+            :target="tag"
+            @savePopover="onOk"
+            :title="info.title" 
+        >
             <template v-slot:target-item>
                 <div @click="onClickTag(tag)" :id="tag">
                     <b-icon icon="tags-fill" font-scale="1"></b-icon>
@@ -13,14 +17,14 @@
                     <b-form-group
                         :state="valueState"
                         label-for="name"
-                        :invalid-feedback="$t('ID_PROCESS_IS_REQUIRED')"
+                        :invalid-feedback="$t('ID_REQUIRED_FIELD')"
                     >
                         <vue-bootstrap-typeahead
                             class="mb-4"
                             id="name"
                             v-model="query"
                             :minMatchingChars="minMatchingChars"
-                            :data="process"
+                            :data="tasks"
                             :serializer="(item) => item.PRO_TITLE"
                             @hit="selectedUser = $event"
                             :placeholder="info.placeholder"
@@ -33,7 +37,7 @@
         </SearchPopover>
     </div>
 </template>
-
+|
 <script>
 import SearchPopover from "./SearchPopover.vue";
 import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
@@ -42,20 +46,20 @@ import api from "./../../../api/index";
 export default {
     components: {
         SearchPopover,
-        VueBootstrapTypeahead,
+        VueBootstrapTypeahead
     },
     props: ["tag", "info"],
     data() {
         return {
             minMatchingChars: 1,
             query: "",
-            process: [],
-            valueState: null,
+            tasks: [],
+            valueState: null
         };
     },
     computed: {
         tagText: function() {
-            return `${this.$i18n.t("ID_PROCESS")}: ${this.query}`;
+            return `${this.$i18n.t("ID_TASK_NAME")}: ${this.query}`;
         },
     },
     watch: {
@@ -63,7 +67,7 @@ export default {
             api.filters
                 .processList(this.query)
                 .then((response) => {
-                    this.process = response.data;
+                    this.tasks = response.data;
                 })
                 .catch((e) => {
                     console.error(err);
@@ -71,7 +75,7 @@ export default {
         },
     },
     methods: {
-        /**
+         /**
          * Form validations review
          */
         checkFormValidity() {
@@ -94,9 +98,9 @@ export default {
                 return;
             }
             this.$nextTick(() => {
-                let process = _.find(this.process, { PRO_TITLE: this.query });
+                let task = _.find(this.tasks, { PRO_TITLE: this.query });
                 this.$emit("updateSearchTag", {
-                    process: process.PRO_ID,
+                    task: task.PRO_ID,
                 });
                 this.$root.$emit("bv::hide::popover");
             });

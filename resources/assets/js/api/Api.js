@@ -61,7 +61,10 @@ const services = {
     DRAFT_LIST: "/home/draft",
     PAUSED_LIST: "/home/paused",
     UNASSIGNED_LIST: "/home/unassigned",
-
+    MY_FILTERS: "/cases/advanced-search/filters",
+    POST_MY_FILTERS: "/cases/advanced-search/filter",
+    DELETE_MY_FILTERS: "/cases/advanced-search/filter/",
+    SEARCH: "/home/search",
 };
 
 export default {
@@ -129,6 +132,49 @@ export default {
             method: "get",
             url: url,
             params,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ` + credentials.accessToken
+            }
+        });
+    },
+    post(options) {
+        let service = options.service || "",
+            params = options.params || {},
+            data = options.data || {},
+            keys = options.keys || {},
+            url,
+            credentials = window.config.SYS_CREDENTIALS,
+            workspace = window.config.SYS_WORKSPACE,
+            server = window.config.SYS_SERVER;
+        url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
+
+        return axios({
+            method: "post",
+            url: url,
+            params,
+            data,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ` + credentials.accessToken
+            }
+        });
+    },
+    delete(options) {
+        let service = options.service || "",
+            id = options.id || {},
+            keys = options.keys || {},
+            url,
+            credentials = window.config.SYS_CREDENTIALS,
+            workspace = window.config.SYS_WORKSPACE,
+            server = window.config.SYS_SERVER;
+        url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
+
+        return axios({
+            method: "delete",
+            url: url + id,
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",

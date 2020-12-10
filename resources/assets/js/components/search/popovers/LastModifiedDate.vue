@@ -1,10 +1,6 @@
 <template>
     <div id="">
-        <SearchPopover
-            :target="tag"
-            @savePopover="onOk"
-            :title="info.title"
-        >
+        <SearchPopover :target="tag" @savePopover="onOk" :title="info.title">
             <template v-slot:target-item>
                 <div @click="onClickTag(tag)" :id="tag">
                     <b-icon icon="tags-fill" font-scale="1"></b-icon>
@@ -16,11 +12,11 @@
                 <form ref="form" @submit.stop.prevent="handleSubmit">
                     <div class="row">
                         <div class="col">
-                            <b-form-group >
+                            <b-form-group>
                                 <b-form-datepicker
                                     id="from"
                                     v-model="from"
-                                    :placeholder="$t('ID_FROM_DUE_DATE')"
+                                    :placeholder="$t('ID_FROM_LAST_MODIFIED_DATE')"
                                 ></b-form-datepicker>
                             </b-form-group>
                         </div>
@@ -29,7 +25,7 @@
                                 <b-form-datepicker
                                     id="to"
                                     v-model="to"
-                                    :placeholder="$t('ID_TO_DUE_DATE')"
+                                    :placeholder="$t('ID_TO_LAST_MODIFIED_DATE')"
                                 ></b-form-datepicker>
                             </b-form-group>
                         </div>
@@ -51,13 +47,13 @@ export default {
     data() {
         return {
             from: "",
-            to: ""
+            to: "",
         };
     },
     computed: {
         tagText: function() {
             return `${this.$i18n.t('ID_FROM')}: ${this.from} ${this.$i18n.t('ID_TO')}:  ${this.to}`;
-        }
+        },
     },
     methods: {
         /**
@@ -65,8 +61,8 @@ export default {
          */
         handleSubmit() {
             this.$emit("updateSearchTag", {
-                dueDateFrom: this.from,
-                dueDateTo: this.to,
+                delegationDateFrom: this.from,
+                delegationDateTo: this.to
             });
         },
         /**

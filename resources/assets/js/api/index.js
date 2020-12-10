@@ -4,6 +4,7 @@ import { cases, casesHeader } from "./Cases";
 
 import { caseNotes } from "./CaseNotes";
 import { process } from "./Process";
+import { filters } from "./Filters";
 
 
 export default {
@@ -11,5 +12,6 @@ export default {
     cases,
     casesHeader,
     process,
-    caseNotes
+    caseNotes,
+    filters
 };

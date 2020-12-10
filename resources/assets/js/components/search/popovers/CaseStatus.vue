@@ -2,8 +2,8 @@
     <div id="">
         <SearchPopover
             :target="tag"
-            @closePopover="onClose"
             @savePopover="onOk"
+            :title="info.title"
         >
             <template v-slot:target-item>
                 <div @click="onClickTag(tag)" :id="tag">
@@ -12,7 +12,7 @@
                 </div>
             </template>
             <template v-slot:body>
-                <h6>{{ info.title }}</h6>
+                <h6>{{ info.detail }}</h6>
                 <b-form-group :label="info.label">
                     <b-form-checkbox
                         v-for="option in info.options"
@@ -45,20 +45,34 @@ export default {
     },
     computed: {
         tagText: function() {
-            return `Case Status: `;
+            return `${this.$i18n.t('ID_STATUS')}: ${this.selected.join(",")}`;
         },
     },
     methods: {
-        onClose() {
-        },
+         /**
+         * Ok button handler
+         */
         onOk() {
-
+            this.handleSubmit();
         },
-        onRemoveTag() {},
+        /**
+         * Submit button handler
+         */
+        handleSubmit() {
+            this.$nextTick(() => {
+                this.$emit("updateSearchTag", {
+                    caseStatuses: this.selected.join(","),
+                });
+                this.$root.$emit("bv::hide::popover");
+            });
+        },
+        /**
+         * Tag Click handler
+         */
         onClickTag(tag) {
             this.$root.$emit("bv::hide::popover");
-        },
-    },
+        }
+    }
 };
 </script>
 <style scoped></style>

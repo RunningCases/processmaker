@@ -118,14 +118,31 @@ export let cases = {
             window.config.SYS_URI +
             `cases/ajaxListener`, params);
     },
-    //remove this section
-    search(data) {
-        return new Promise((resolutionFunc, rejectionFunc) => {
-
-            resolutionFunc(startedCasesFaker);
-
-        });
+    /**
+     * Service to jump a case by it's number
+     * @param {object} dt 
+     */
+    jump(dt) {
+        var params = new URLSearchParams();
+        params.append('action', 'previusJump');
+        params.append('appNumber', dt.APP_NUMBER);
+        params.append('actionFromList', dt.ACTION_FROM_LIST);
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/cases_Ajax.php`, params);
+    },
+    /**
+     * Make a search request to the Api service 
+     * @param {object} dt - filter parameters
+     */
+    search(dt) {
+        return Api.get({
+            service: "SEARCH",
+            params: dt,
+            keys: {}
+        })
     }
+            
 };
 
 export let casesHeader = {
