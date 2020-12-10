@@ -157,7 +157,6 @@ class Task extends Model
             $join->on('ELEMENT_TASK_RELATION.TAS_UID', '=', 'TASK.TAS_UID')
             ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
         });
-
         $query->update(['TASK.TAS_DEF_TITLE' => $caseTitle]);
         
         return $query;
@@ -178,6 +177,11 @@ class Task extends Model
             ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
         });
 
-        return $query->get()->values()->toArray()['0']['TAS_DEF_TITLE'];
+        $res = $query->first();
+        if(is_null($res)) {
+            return "";
+        } else {
+            return $res->TAS_DEF_TITLE;
+        }
     }
 }
