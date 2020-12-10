@@ -61077,6 +61077,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SUMMARY_FORM','en','Summary form','2014-08-21') ,
 ( 'LABEL','ID_SUMMARY_FORM_NO_PERMISSIONS','en','You do not have permission to access to the summary form','2014-10-21') ,
 ( 'LABEL','ID_SUN','en','Sun','2014-01-15') ,
+( 'LABEL','ID_SUPERVISING','en','Supervising','2020-12-09') ,
 ( 'LABEL','ID_SUPERVISOR','en','Supervisor','2014-01-15') ,
 ( 'LABEL','ID_SUPERVISOR_ASSIGNED','en','Supervisor has been successfully assigned to a Process','2014-01-15') ,
 ( 'LABEL','ID_SUPERVISOR_DOES_NOT_HAVE_DYNAFORMS','en','Supervisor does not have a permission for Dynaform(s).','2015-05-28') ,

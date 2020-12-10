@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Task;
 
@@ -214,16 +215,39 @@ class Participated extends AbstractCases
     }
 
     /**
-     * Get the number of rows corresponding to the Participate
+     * Get the number of rows corresponding to the Participated
      *
      * @return int
      */
     public function getCounter()
     {
+        // Get base query
         $query = Delegation::query()->select();
+        // Join with application
+        $query->joinApplication();
         // Scope that sets the queries for Participated
         $query->participated($this->getUserId());
+        // Get filter
+        $filter = $this->getParticipatedStatus();
+        switch ($filter) {
+            case 'STARTED':
+                // Scope that search for the STARTED by user
+                $query->caseStarted();
+                break;
+            case 'IN_PROGRESS':
+                // Only distinct APP_NUMBER
+                $query->distinct();
+                // Scope for in progress cases
+                $query->statusIds([Application::STATUS_DRAFT, Application::STATUS_TODO]);
+                break;
+            case 'COMPLETED':
+                // Scope that search for the COMPLETED
+                $query->caseCompleted();
+                // Scope to set the last thread
+                $query->lastThread();
+                break;
+        }
         // Return the number of rows
-        return $query->count();
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
 }
