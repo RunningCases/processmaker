@@ -44,6 +44,7 @@
           :dataCaseSummary="dataCaseSummaryTab"
           :dataCase="dataCase"
         ></TabsCaseDetail>
+        <ModalCancelCase ref="modal-cancel-case"></ModalCancelCase>
       </div>
       <div class="col-sm-3">
         <case-summary
@@ -82,6 +83,7 @@ import AttachedDocuments from "../components/home/caseDetail/AttachedDocuments.v
 import CaseComment from "../components/home/caseDetail/CaseComment";
 import CaseComments from "../components/home/caseDetail/CaseComments";
 import TabsCaseDetail from "../home/TabsCaseDetail.vue";
+import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 
 import Api from "../api/index";
 export default {
@@ -93,6 +95,7 @@ export default {
     AttachedDocuments,
     CaseComment,
     CaseComments,
+    ModalCancelCase,
   },
   props: {},
   data() {
@@ -199,11 +202,13 @@ export default {
           var data = response.data;
           this.formatCaseSummary(response.data);
           this.dataCaseSummary = {
-            title: "Case Summary",
-            titleActions: "Actions",
-            btnLabel: "Cancel Request",
+            title: this.$i18n.t("ID_SUMMARY"),
+            titleActions: this.$i18n.t("ID_ACTIONS"),
+            btnLabel: this.$i18n.t("ID_CANCEL_CASE"),
             btnType: false,
-            onClick: () => {},
+            onClick: () => {
+              that.$refs["modal-cancel-case"].show();
+            },
             label: {
               numberCase: data[2].label,
               process: data[0].label,
@@ -211,7 +216,7 @@ export default {
               caseTitle: data[1].label,
               created: data[6].label,
               delegationDate: response.data[11].label,
-              duration: "Duration",
+              duration: this.$i18n.t("ID_DURATION"),
             },
             text: {
               numberCase: data[2].value,

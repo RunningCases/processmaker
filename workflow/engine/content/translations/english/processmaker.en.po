@@ -52112,3 +52112,19 @@ msgstr "Duration"
 #: LABEL/ID_PENDING_TASKS
 msgid "Pending Tasks"
 msgstr "Pending Tasks"
+
+# TRANSLATION
+# LABEL/ID_SEND_EMAIL_TO_PARTICIPANTS
+#: LABEL/ID_SEND_EMAIL_TO_PARTICIPANTS
+msgid "Send email to participants"
+msgstr "Send email to participants"
+
+
+# TRANSLATION
+# LABEL/ID_TRYING_CANCEL
+#: LABEL/ID_TRYING_CANCEL
+msgid "You are tying to cancel the current case. Please be aware this action cannot be undone"
+msgstr "You are tying to cancel the current case. Please be aware this action cannot be undone"
+
+
+
