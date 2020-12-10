@@ -6,6 +6,7 @@ use DateTime;
 use G;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use ProcessMaker\BusinessModel\Cases\AbstractCases;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Task;
 
@@ -1807,5 +1808,46 @@ class Delegation extends Model
         $query = Delegation::select(['DEL_TITLE'])->where('APP_NUMBER', $appNumber)->where('DEL_INDEX', $delIndex);
         $res = $query->first();
         return $res->DEL_TITLE;
+    }
+
+    /**
+     * Return the pending task related to the appNumber
+     *
+     * @param int $appNumber
+     *
+     * @return array
+     */
+    public static function getPendingTask(int $appNumber)
+    {
+        $query = Delegation::query()->select([
+            'TASK.TAS_TITLE', // Task
+            'APP_DELEGATION.DEL_TITLE', // Thread title
+            'APP_DELEGATION.DEL_THREAD_STATUS', // Thread status
+            'APP_DELEGATION.USR_ID', // Current UserId
+            'USERS.USR_USERNAME', // Current UserName
+            'USERS.USR_FIRSTNAME', // Current User FirstName
+            'USERS.USR_LASTNAME', // Current User LastName
+            'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date
+            'APP_DELEGATION.APP_UID', // Case Uid for Open case
+            'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
+        ]);
+        // Join with task
+        $query->joinTask();
+        // Join with task
+        $query->joinUser();
+        // Get the open threads
+        $query->threadOpen();
+        // Related to the specific case number
+        $query->case($appNumber);
+        // Get the results
+        $results = $query->get();
+        $results->transform(function ($item) {
+            $abs = new AbstractCases();
+            $item['TAS_COLOR'] = $abs->getTaskColor($item['DEL_TASK_DUE_DATE']);
+            $item['TAS_COLOR_LABEL'] = AbstractCases::TASK_COLORS[$item['TAS_COLOR']];
+            return $item;
+        });
+
+        return $results;
     }
 }

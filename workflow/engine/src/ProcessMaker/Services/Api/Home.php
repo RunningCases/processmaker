@@ -13,6 +13,7 @@ use ProcessMaker\BusinessModel\Cases\Paused;
 use ProcessMaker\BusinessModel\Cases\Search;
 use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\User;
 use ProcessMaker\Services\Api;
 use RBAC;
@@ -534,5 +535,26 @@ class Home extends Api
 
         // Return menu
         return $menuHome;
+    }
+
+    /**
+     * Get the search cases
+     *
+     * @url GET /:app_number/pending-tasks
+     *
+     * @param int $app_number
+     *
+     * @return array
+     *
+     * @throws Exception
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getPendingTasks(int $app_number)
+    {
+        $result = Delegation::getPendingTask($app_number);
+
+        return $result;
     }
 }
