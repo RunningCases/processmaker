@@ -9,6 +9,11 @@
       :options="options"
       ref="vueTable"
     >
+      <div slot="detail" slot-scope="props">
+        <div class="btn-default" @click="openCaseDetail(props.row)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
       <div slot="case_number" slot-scope="props">
         {{ props.row.CASE_NUMBER }}
       </div>
@@ -57,6 +62,7 @@ export default {
         },
       },
       columns: [
+        "detail",
         "case_number",
         "case_title",
         "process_name",
@@ -73,6 +79,7 @@ export default {
           task: this.$i18n.t("ID_TASK"),
           priority: this.$i18n.t("ID_PRIORITY"),
           actions: "",
+          detail: "",
         },
         selectable: {
           mode: "single",
@@ -144,6 +151,10 @@ export default {
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE,
           PRIORITY: v.DEL_PRIORITY_LABEL,
+          PRO_UID: v.PRO_UID,
+          TAS_UID: v.TAS_UID,
+          DEL_INDEX: v.DEL_INDEX,
+          APP_UID: v.APP_UID,
         });
       });
       return data;
@@ -189,9 +200,27 @@ export default {
       this.$parent.dataCase = {
         APP_UID: item.APP_UID,
         DEL_INDEX: item.DEL_INDEX,
+        PRO_UID: item.PRO_UID,
+        TAS_UID: item.TAS_UID,
         ACTION: "draft",
       };
       this.$parent.page = "XCase";
+    },
+    /**
+     * Open case detail
+     *
+     * @param {object} item
+     */
+    openCaseDetail(item) {
+      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+        this.$parent.dataCase = {
+          APP_UID: item.APP_UID,
+          DEL_INDEX: item.DEL_INDEX,
+          PRO_UID: item.PRO_UID,
+          TAS_UID: item.TAS_UID,
+        };
+        this.$parent.page = "case-detail";
+      });
     },
   },
 };

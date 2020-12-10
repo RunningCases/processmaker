@@ -4,24 +4,14 @@
       <tab :name="$t('ID_SUMMARY')">
         <PmCaseSummary :data="dataCaseSummary"> </PmCaseSummary>
       </tab>
-      <tab name="Second tab">
+      <tab :name="$t('ID_PROCESS_MAP')">
         <ProcessMap :data="dataCase"> </ProcessMap>
       </tab>
-      <tab name="Disabled tab" :is-disabled="true">
-        <h2 class="page-subtitle">Disabled tab</h2>
-        This content will be unavailable while :is-disabled prop set to true
+      <tab :name="$t('ID_CASE_HISTORY')">
+        <CaseHistory :data="dataCase"> </CaseHistory>
       </tab>
-      <tab id="oh-hi-mark" name="Custom fragment">
-        <h2 class="page-subtitle">Custom fragment</h2>
-        The hash that is appended to the url can be customized.
-      </tab>
-      <tab
-        prefix="<span class='prefix'>→</span>"
-        name="Prefix and suffix"
-        suffix="<span class='suffix'>4</span>"
-      >
-        <h2 class="page-subtitle">Prefix and suffix</h2>
-        A prefix and a suffix can be added — HTML allowed.
+      <tab :name="$t('ID_DYNAFORM_HISTORY')">
+        <ChangeLog :data="dataCase"> </ChangeLog>
       </tab>
     </tabs>
   </div>
@@ -32,6 +22,8 @@ import Tabs from "./../components/tabs/Tabs.vue";
 import Tab from "./../components/tabs/Tab.vue";
 import PmCaseSummary from "./../components/home/caseDetail/PmCaseSummary.vue";
 import ProcessMap from "./../components/home/caseDetail/ProcessMap.vue";
+import CaseHistory from "./../components/home/caseDetail/CaseHistory.vue";
+import ChangeLog from "./../components/home/caseDetail/ChangeLog.vue";
 import Api from "../api/index";
 
 export default {
@@ -41,6 +33,8 @@ export default {
     Tab,
     ProcessMap,
     PmCaseSummary,
+    CaseHistory,
+    ChangeLog,
   },
   props: {
     dataCase: Object,

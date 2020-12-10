@@ -45,7 +45,7 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button class="settings-radio" @click="openCase(props)">
+        <button class="settings-radio" @click="openCase(props.row)">
           Continue
         </button>
       </div>
@@ -175,6 +175,8 @@ export default {
           PRIORITY: v.DEL_PRIORITY_LABEL,
           DEL_INDEX: v.DEL_INDEX,
           APP_UID: v.APP_UID,
+          PRO_UID: v.PRO_UID,
+          TAS_UID: v.TAS_UID,
         });
       });
       return data;
@@ -220,6 +222,8 @@ export default {
       this.$parent.dataCase = {
         APP_UID: item.APP_UID,
         DEL_INDEX: item.DEL_INDEX,
+        PRO_UID: item.PRO_UID,
+        TAS_UID: item.TAS_UID,
         ACTION: "todo",
       };
       this.$parent.page = "XCase";
@@ -230,12 +234,15 @@ export default {
      * @param {object} item
      */
     openCaseDetail(item) {
-      this.$parent.dataCase = {
-        APP_UID: item.APP_UID,
-        DEL_INDEX: item.DEL_INDEX,
-        PRO_UID: "6161281705fc91129328391060454559",
-      };
-      this.$parent.page = "case-detail";
+      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+        this.$parent.dataCase = {
+          APP_UID: item.APP_UID,
+          DEL_INDEX: item.DEL_INDEX,
+          PRO_UID: item.PRO_UID,
+          TAS_UID: item.TAS_UID,
+        };
+        this.$parent.page = "case-detail";
+      });
     },
   },
 };
