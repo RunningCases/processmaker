@@ -45,8 +45,8 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button class="settings-radio" @click="openCase(props.row)">
-          Continue
+        <button class="btn btn-success btn-sm" @click="openCase(props.row)">
+          {{ $t("ID_OPEN_CASE") }}
         </button>
       </div>
     </v-server-table>
@@ -219,14 +219,14 @@ export default {
      * @param {object} item
      */
     openCase(item) {
-      this.$parent.dataCase = {
+      this.$emit("onUpdateDataCase", {
         APP_UID: item.APP_UID,
         DEL_INDEX: item.DEL_INDEX,
         PRO_UID: item.PRO_UID,
         TAS_UID: item.TAS_UID,
         ACTION: "todo",
-      };
-      this.$parent.page = "XCase";
+      });
+      this.$emit("onUpdatePage", "XCase");
     },
     /**
      * Open case detail
@@ -234,14 +234,15 @@ export default {
      * @param {object} item
      */
     openCaseDetail(item) {
+      let that = this;
       api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
-        this.$parent.dataCase = {
+        that.$emit("onUpdateDataCase", {
           APP_UID: item.APP_UID,
           DEL_INDEX: item.DEL_INDEX,
           PRO_UID: item.PRO_UID,
           TAS_UID: item.TAS_UID,
-        };
-        this.$parent.page = "case-detail";
+        });
+        that.$emit("onUpdatePage", "case-detail");
       });
     },
   },

@@ -52137,3 +52137,9 @@ msgstr "Confirmation"
 #: LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
 msgid "Are you sure want to unpause the task?"
 msgstr "Are you sure want to unpause the task?"
+
+# TRANSLATION
+# LABEL/ID_ARE_YOU_SURE_CLAIM_TASK
+#: LABEL/ID_ARE_YOU_SURE_CLAIM_TASK
+msgid "Are you sure want to claim the task?"
+msgstr "Are you sure want to claim the task?"

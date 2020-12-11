@@ -45,7 +45,10 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button class="settings-radio" @click="showModalUnpauseCase(props.row)">
+        <button
+          class="btn btn-success btn-sm"
+          @click="showModalUnpauseCase(props.row)"
+        >
           {{ $t("ID_UNPAUSE") }}
         </button>
       </div>
@@ -223,14 +226,15 @@ export default {
      * @param {object} item
      */
     openCaseDetail(item) {
+      let that = this;
       api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
-        this.$parent.dataCase = {
+        that.$emit("onUpdateDataCase", {
           APP_UID: item.APP_UID,
           DEL_INDEX: item.DEL_INDEX,
           PRO_UID: item.PRO_UID,
           TAS_UID: item.TAS_UID,
-        };
-        this.$parent.page = "case-detail";
+        });
+        that.$emit("onUpdatePage", "case-detail");
       });
     },
     showModalUnpauseCase(item) {

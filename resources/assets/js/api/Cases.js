@@ -127,6 +127,12 @@ export let cases = {
             window.config.SYS_URI +
             `cases/cases_Ajax`, params);
     },
+    claim(data) {
+        var params = new URLSearchParams();
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/cases_CatchExecute`, params);
+    },
     /**
      * Service to jump a case by it's number
      * @param {object} dt 

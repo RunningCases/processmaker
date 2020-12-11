@@ -15,7 +15,7 @@
           <a href=""
             ><img
               class="mx-auto rounded-circle v-img-fluid"
-              src="http://demos.themes.guide/bodeo/assets/images/users/m103.jpg"
+              :src="pathImgOwner"
               alt="avatar"
           /></a>
         </div>
@@ -44,7 +44,7 @@
           >
         </div>
 
-        <button class="btn btn-secondary btn-sm" @click="onClickComment">
+        <button class="btn btn-success btn-sm" @click="onClickComment">
           {{ $t("ID_SEND") }}
         </button>
       </div>
@@ -68,6 +68,15 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    pathImgOwner() {
+      return (
+        window.config.SYS_SERVER +
+        window.config.SYS_URI +
+        `users/users_ViewPhotoGrid?pUID=${window.config.USR_UID}`
+      );
+    },
+  },
   methods: {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
@@ -90,5 +99,10 @@ export default {
 <style>
 .v-check-comment {
   padding-right: 20px;
+}
+
+.v-img-fluid {
+  max-width: 30px;
+  height: auto;
 }
 </style>

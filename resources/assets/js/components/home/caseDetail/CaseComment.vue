@@ -4,7 +4,7 @@
       <a href=""
         ><img
           class="mx-auto rounded-circle v-img-fluid"
-          src="http://demos.themes.guide/bodeo/assets/images/users/m103.jpg"
+          :src="path"
           alt="avatar"
       /></a>
     </div>
@@ -28,6 +28,18 @@ export default {
   },
   data() {
     return {};
+  },
+  computed: {
+    path() {
+      if (this.data) {
+        return (
+          window.config.SYS_SERVER +
+          window.config.SYS_URI +
+          `users/users_ViewPhotoGrid?pUID=${this.data.data.USR_UID}`
+        );
+      }
+      return "";
+    },
   },
   methods: {
     classBtn(cls) {

@@ -65,7 +65,7 @@
       <div v-else class="container v-case-summary-center">
         <button
           type="button"
-          class="btn btn-secondary btn-sm"
+          class="btn btn-success btn-sm"
           @click="data.onClick"
         >
           {{ data.btnLabel }}

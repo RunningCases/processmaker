@@ -1,10 +1,14 @@
 <template>
   <div id="case-detail" ref="case-detail" class="v-container-case-detail">
     <div>
-      <p class="mb-2">
-        <b-icon icon="arrow-left" @click="backSearch()"></b-icon
-        ><u>Back to Results</u>
+      <p class="">
+        <b-icon icon="arrow-left"></b-icon>
+        <button type="button" class="btn btn-link" @click="$emit('onLastPage')">
+          {{ $t("ID_BACK") }}
+        </button>
+        <button-fleft :data="newCase"></button-fleft>
       </p>
+      <modal-new-request ref="newRequest"></modal-new-request>
     </div>
     <div class="row">
       <div class="col-sm-9">
@@ -70,7 +74,10 @@
         />
       </div>
       <div class="col-sm-3">
-        <attached-documents :data="dataAttachedDocuments"></attached-documents>
+        <attached-documents
+          v-if="dataAttachedDocuments.items.length > 0"
+          :data="dataAttachedDocuments"
+        ></attached-documents>
       </div>
     </div>
   </div>
@@ -83,7 +90,9 @@ import AttachedDocuments from "../components/home/caseDetail/AttachedDocuments.v
 import CaseComment from "../components/home/caseDetail/CaseComment";
 import CaseComments from "../components/home/caseDetail/CaseComments";
 import TabsCaseDetail from "../home/TabsCaseDetail.vue";
+import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
+import ModalNewRequest from "./ModalNewRequest.vue";
 
 import Api from "../api/index";
 export default {
@@ -96,11 +105,20 @@ export default {
     CaseComment,
     CaseComments,
     ModalCancelCase,
+    ButtonFleft,
+    ModalNewRequest,
   },
   props: {},
   data() {
     return {
       dataCase: null,
+      newCase: {
+        title: this.$i18n.t("ID_NEW_CASE"),
+        class: "btn-success",
+        onClick: () => {
+          this.$refs["newRequest"].show();
+        },
+      },
       columns: [
         "task",
         "case_title",
@@ -374,6 +392,6 @@ export default {
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 50px;
-  padding-right: 0px;
+  padding-right: 20px;
 }
 </style>
