@@ -181,6 +181,18 @@ class Process extends Model
     }
 
     /**
+     * Scope a query to include a specific process status
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $status
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('PROCESS.PRO_STATUS', $status);
+    }
+
+    /**
      * Obtains the process list for an specific user and/or for the specific category
      *
      * @param string $categoryUid
@@ -389,5 +401,47 @@ class Process extends Model
         }
 
         return $query->count();
+    }
+
+    /**
+     * Get all processes, paged optionally, can be sent a string to filter results by "PRO_TITLE"
+     *
+     * @param string $text
+     * @param string $category
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return array
+     */
+    public static function getProcessesForHome($text = null, $category = null, $offset = null, $limit = null)
+    {
+        // Get base query
+        $query = Process::query()->select(['PRO_ID', 'PRO_TITLE']);
+
+        // Set "PRO_TITLE" condition if is sent
+        if (!is_null($text)) {
+            $query->title($text);
+        }
+
+        // Set "PRO_CATEGORY" condition if is sent
+        if (!is_null($category)) {
+            $query->category($category);
+        }
+
+        // Set "PRO_STATUS" condition
+        $query->status('ACTIVE');
+
+        // Set pagination if offset and limit are sent
+        if (!is_null($offset) && !is_null($limit)) {
+            $query->offset($offset);
+            $query->limit($limit);
+        }
+
+        // Order by "PRO_TITLE"
+        $query->orderBy('PRO_TITLE');
+
+        // Return processes
+        return $query->get()->toArray();
+
     }
 }

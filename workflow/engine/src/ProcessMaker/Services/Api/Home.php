@@ -15,6 +15,7 @@ use ProcessMaker\BusinessModel\Cases\Search;
 use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Process;
 use ProcessMaker\Model\User;
 use ProcessMaker\Services\Api;
 use RBAC;
@@ -569,5 +570,32 @@ class Home extends Api
         $result = Delegation::getPendingTask($app_number);
 
         return $result;
+    }
+
+    /**
+     * Get all processes, paged optionally, can be sent a text to filter results by "PRO_TITLE"
+     *
+     * @url GET /processes
+     *
+     * @param string $text
+     * @param string $category
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return array
+     *
+     * @throws Exception
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getProcesses($text = null, $category = null, $offset = null, $limit = null)
+    {
+        try {
+            $processes = Process::getProcessesForHome($text, $category, $offset, $limit);
+            return $processes;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
     }
 }
