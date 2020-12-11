@@ -789,7 +789,8 @@ class Delegation extends Model
     {
         // Add join for application, for get the case title when the case status is DRAFT
         $query->joinApplication();
-        $query->status(Application::STATUS_TODO);
+        $query->status(Application::STATUS_DRAFT);
+        $query->threadOpen();
         // Case assigned to the user
         $query->userId($user);
 
