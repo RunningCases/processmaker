@@ -73,6 +73,11 @@ task :build => [:required] do
     system "cp -Rf #{Dir.pwd}/vendor/colosa/taskscheduler/taskscheduler #{targetDir}/taskscheduler"
     system "cp  #{Dir.pwd}/vendor/colosa/taskscheduler/public/index.html #{targetDir}/taskscheduler"
 
+    puts "\n\n"
+    puts "Building: Authentication Sources".cyan
+    system "npm install --loglevel=error --prefix #{Dir.pwd}/workflow/engine/methods/authenticationSources"
+    system "npm run build --prefix #{Dir.pwd}/workflow/engine/methods/authenticationSources"
+
     hashVendors = pmuiHash+"-"+mafeHash
     ## Building minified JS Files
     puts "Building file: " + "/js/mafe-#{hashVendors}.js".cyan

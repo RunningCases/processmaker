@@ -71,7 +71,7 @@ Ext.onReady(function() {
 
                     handler: function ()
                     {
-                        redirectPage("authSources_List");
+                        location.href = "../authenticationSources/index";
                     }
                 });
             }

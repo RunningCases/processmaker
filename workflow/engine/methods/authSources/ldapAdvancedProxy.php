@@ -1,5 +1,9 @@
 <?php
 
+use ProcessMaker\Model\RbacAuthenticationSource;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
 $function = $_REQUEST['functionAccion'];
 
 switch ($function) {
@@ -62,10 +66,10 @@ switch ($function) {
 
             //Response
             $response["status"] = "OK";
-            $response["existsRecords"] = ($flagUser || $flagDepartment || $flagGroup)? 1 : 0;
+            $response["existsRecords"] = ($flagUser || $flagDepartment || $flagGroup) ? 1 : 0;
         } catch (Exception $e) {
             //Response
-            $response["status"]  = "ERROR";
+            $response["status"] = "ERROR";
             $response["message"] = $e->getMessage();
         }
 
@@ -93,7 +97,44 @@ switch ($function) {
             default:
                 break;
         }
-        echo G::json_encode(array('success'=> true, 'data' => $data, 'message'=>'Created Quote', 'total' => count($data)));
+        echo G::json_encode(array('success' => true, 'data' => $data, 'message' => 'Created Quote', 'total' => count($data)));
+        break;
+    case 'ldapVerifyName':
+        $authSourceName = empty($_REQUEST['AUTH_SOURCE_NAME']) ? '' : $_REQUEST['AUTH_SOURCE_NAME'];
+        $authenticationSource = RbacAuthenticationSource::query()
+            ->select(['AUTH_SOURCE_UID', 'AUTH_SOURCE_NAME'])
+            ->where('AUTH_SOURCE_NAME', '=', $authSourceName)
+            ->get()
+            ->first();
+        $row = false;
+        $suggestName = "";
+        if (!empty($authenticationSource)) {
+            $row = $authenticationSource;
+            $lastAuthenticationSource = RbacAuthenticationSource::query()
+                ->select(['AUTH_SOURCE_NAME'])
+                ->where('AUTH_SOURCE_NAME', 'LIKE', "%{$authSourceName}%")
+                ->orderBy('AUTH_SOURCE_NAME', 'desc')
+                ->get()
+                ->first();
+            if (!empty($lastAuthenticationSource)) {
+                $name = $lastAuthenticationSource->AUTH_SOURCE_NAME;
+                //get suggest name
+                $pieces = explode(" ", $name);
+                $last = array_pop($pieces);
+                $number = trim($last, "()");
+                if ("({$number})" === $last) {
+                    $number = intval($number) + 1;
+                    $suggestName = implode("", $pieces) . " ({$number})";
+                } else {
+                    $suggestName = $name . " (1)";
+                }
+            }
+        }
+        echo G::json_encode([
+            'success' => true,
+            'row' => $row,
+            'suggestName' => $suggestName
+        ]);
         break;
     case 'ldapSave':
         if (isset($_POST['AUTH_SOURCE_SHOWGRID-checkbox'])) {
@@ -102,7 +143,7 @@ switch ($function) {
                 $attributes = G::json_decode($_POST['AUTH_SOURCE_GRID_TEXT']);
                 $con = 1;
                 foreach ($attributes as $value) {
-                    $_POST['AUTH_SOURCE_GRID_ATTRIBUTE'][$con] = (array)$value;
+                    $_POST['AUTH_SOURCE_GRID_ATTRIBUTE'][$con] = (array) $value;
                     $con++;
                 }
             }
@@ -133,11 +174,11 @@ switch ($function) {
             unset($_POST['AUTH_SOURCE_GRID_TEXT']);
         }
 
-        $aCommonFields = array ('AUTH_SOURCE_UID','AUTH_SOURCE_NAME','AUTH_SOURCE_PROVIDER','AUTH_SOURCE_SERVER_NAME','AUTH_SOURCE_PORT','AUTH_SOURCE_ENABLED_TLS','AUTH_ANONYMOUS','AUTH_SOURCE_SEARCH_USER','AUTH_SOURCE_PASSWORD','AUTH_SOURCE_VERSION','AUTH_SOURCE_BASE_DN','AUTH_SOURCE_OBJECT_CLASSES','AUTH_SOURCE_ATTRIBUTES');
+        $aCommonFields = array('AUTH_SOURCE_UID', 'AUTH_SOURCE_NAME', 'AUTH_SOURCE_PROVIDER', 'AUTH_SOURCE_SERVER_NAME', 'AUTH_SOURCE_PORT', 'AUTH_SOURCE_ENABLED_TLS', 'AUTH_ANONYMOUS', 'AUTH_SOURCE_SEARCH_USER', 'AUTH_SOURCE_PASSWORD', 'AUTH_SOURCE_VERSION', 'AUTH_SOURCE_BASE_DN', 'AUTH_SOURCE_OBJECT_CLASSES', 'AUTH_SOURCE_ATTRIBUTES');
 
-        $aFields = $aData = array ();
+        $aFields = $aData = array();
         foreach ($_POST as $sField => $sValue) {
-            if (in_array( $sField, $aCommonFields )) {
+            if (in_array($sField, $aCommonFields)) {
                 $aFields[$sField] = $sValue;
             } else {
                 $aData[$sField] = $sValue;
@@ -168,11 +209,11 @@ switch ($function) {
 
         //Save
         if ($aFields['AUTH_SOURCE_UID'] == '') {
-            $RBAC->createAuthSource( $aFields );
+            $RBAC->createAuthSource($aFields);
         } else {
-            $RBAC->updateAuthSource( $aFields );
+            $RBAC->updateAuthSource($aFields);
         }
-        echo G::json_encode(array('success'=> true));
+        echo G::json_encode(array('success' => true));
         break;
     case "searchUsers":
         $response = array();
@@ -182,8 +223,8 @@ switch ($function) {
 
             $authenticationSourceUid = $_POST["sUID"];
             $keyword = $_POST["sKeyword"];
-            $start = (isset($_POST["start"]))? $_POST["start"]: 0;
-            $limit = (isset($_POST["limit"]))? $_POST["limit"]: $pageSize;
+            $start = (isset($_POST["start"])) ? $_POST["start"] : 0;
+            $limit = (isset($_POST["limit"])) ? $_POST["limit"] : $pageSize;
 
             //Get Users from Database
             $arrayUser = array();
@@ -217,7 +258,7 @@ switch ($function) {
                 if (!isset($arrayUser[strtolower($arrayUserData["sUsername"])])) {
                     $arrayUserData["STATUS"] = G::LoadTranslation("ID_NOT_IMPORTED");
                     $arrayUserData["IMPORT"] = 1;
-                } elseif($authenticationSourceUid === $arrayUser[strtolower($arrayUserData["sUsername"])]) {
+                } elseif ($authenticationSourceUid === $arrayUser[strtolower($arrayUserData["sUsername"])]) {
                     $arrayUserData["STATUS"] = G::LoadTranslation("ID_IMPORTED");
                     $arrayUserData["IMPORT"] = 0;
                 } else {
@@ -229,25 +270,25 @@ switch ($function) {
             }
 
             //Response
-            $response["status"]  = "OK";
+            $response["status"] = "OK";
             $response["success"] = true;
             $response["resultTotal"] = $result["numRecTotal"];
-            $response["resultRoot"]  = $arrayData;
+            $response["resultRoot"] = $arrayData;
         } catch (Exception $e) {
             //Response
-            $response["status"]  = "ERROR";
+            $response["status"] = "ERROR";
             $response["message"] = $e->getMessage();
         }
 
         echo G::json_encode($response);
         break;
     case 'importUsers':
-        $usersImport   = $_REQUEST['UsersImport'];
+        $usersImport = $_REQUEST['UsersImport'];
         $authSourceUid = $_REQUEST['AUTH_SOURCE_UID'];
 
         $aUsers = G::json_decode($usersImport);
         global $RBAC;
-        $aFields = $RBAC->getAuthSource( $authSourceUid );
+        $aFields = $RBAC->getAuthSource($authSourceUid);
         $aAttributes = array();
 
         if (isset($aFields['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])) {
@@ -258,46 +299,46 @@ switch ($function) {
         $countUsers = 0;
         //$usersImport
         foreach ($aUsers as $sUser) {
-            $aUser   = (array)$sUser;
+            $aUser = (array) $sUser;
             $matches = array();
-            $aData   = array();
-            $aData['USR_USERNAME'] = str_replace( "*", "'", $aUser['sUsername'] );
+            $aData = array();
+            $aData['USR_USERNAME'] = str_replace("*", "'", $aUser['sUsername']);
             $aData["USR_PASSWORD"] = "00000000000000000000000000000000";
             // note added by gustavo gustavo-at-colosa.com
             // asign the FirstName and LastName variables
             // add replace to change D*Souza to D'Souza by krlos
-            $aData['USR_FIRSTNAME'] = str_replace( "*", "'", $aUser['sFirstname'] );
-            $aData['USR_LASTNAME'] = str_replace( "*", "'", $aUser['sLastname'] );
+            $aData['USR_FIRSTNAME'] = str_replace("*", "'", $aUser['sFirstname']);
+            $aData['USR_LASTNAME'] = str_replace("*", "'", $aUser['sLastname']);
             $aData['USR_EMAIL'] = $aUser['sEmail'];
-            $aData['USR_DUE_DATE'] = date( 'Y-m-d', mktime( 0, 0, 0, date( 'm' ), date( 'd' ), date( 'Y' ) + 2 ) );
-            $aData['USR_CREATE_DATE'] = date( 'Y-m-d H:i:s' );
-            $aData['USR_UPDATE_DATE'] = date( 'Y-m-d H:i:s' );
-            $aData['USR_BIRTHDAY'] = date( 'Y-m-d' );
+            $aData['USR_DUE_DATE'] = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
+            $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
+            $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $aData['USR_BIRTHDAY'] = date('Y-m-d');
             $aData['USR_STATUS'] = (isset($aUser['USR_STATUS'])) ? (($aUser['USR_STATUS'] == 'ACTIVE') ? 1 : 0) : 1;
-            $aData['USR_AUTH_TYPE'] = strtolower( $aFields['AUTH_SOURCE_PROVIDER'] );
+            $aData['USR_AUTH_TYPE'] = strtolower($aFields['AUTH_SOURCE_PROVIDER']);
             $aData['UID_AUTH_SOURCE'] = $aFields['AUTH_SOURCE_UID'];
             // validating with regexp if there are some missing * inside the DN string
             // if it's so the is changed to the ' character
-            preg_match( '/[a-zA-Z]\*[a-zA-Z]/', $aUser['sDN'], $matches );
+            preg_match('/[a-zA-Z]\*[a-zA-Z]/', $aUser['sDN'], $matches);
 
             foreach ($matches as $key => $match) {
-                $newMatch = str_replace( '*', '\'', $match );
-                $aUser['sDN'] = str_replace( $match, $newMatch, $aUser['sDN'] );
+                $newMatch = str_replace('*', '\'', $match);
+                $aUser['sDN'] = str_replace($match, $newMatch, $aUser['sDN']);
             }
             $aData['USR_AUTH_USER_DN'] = $aUser['sDN'];
 
             try {
-                $sUserUID = $RBAC->createUser( $aData, 'PROCESSMAKER_OPERATOR', $aFields['AUTH_SOURCE_NAME']);
-                $usersCreated .= $aData['USR_USERNAME'].' ';
-                $countUsers ++;
+                $sUserUID = $RBAC->createUser($aData, 'PROCESSMAKER_OPERATOR', $aFields['AUTH_SOURCE_NAME']);
+                $usersCreated .= $aData['USR_USERNAME'] . ' ';
+                $countUsers++;
             } catch (Exception $oError) {
                 $G_PUBLISH = new Publisher();
-                $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', array ('MESSAGE' => $oError->getMessage()) );
+                $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', array('MESSAGE' => $oError->getMessage()));
                 G::RenderPage("publish", "blank");
                 die();
             }
 
-            $aData['USR_STATUS'] = (isset($aUser['USR_STATUS'])) ? $aUser['USR_STATUS'] :'ACTIVE';
+            $aData['USR_STATUS'] = (isset($aUser['USR_STATUS'])) ? $aUser['USR_STATUS'] : 'ACTIVE';
             $aData['USR_UID'] = $sUserUID;
             $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
 
@@ -307,7 +348,7 @@ switch ($function) {
             if (count($aAttributes)) {
                 foreach ($aAttributes as $value) {
                     if (isset($aUser[$value['attributeUser']])) {
-                        $aData[$value['attributeUser']] = str_replace( "*", "'", $aUser[$value['attributeUser']] );
+                        $aData[$value['attributeUser']] = str_replace("*", "'", $aUser[$value['attributeUser']]);
                         if ($value['attributeUser'] == 'USR_STATUS') {
                             $evalValue = $aData[$value['attributeUser']];
                             $statusValue = $aData['USR_STATUS'];
@@ -317,7 +358,7 @@ switch ($function) {
                 }
             }
             $oUser = new Users();
-            $oUser->create( $aData );
+            $oUser->create($aData);
         }
 
         $sClassName = strtolower($aFields['AUTH_SOURCE_PROVIDER']);
@@ -334,7 +375,7 @@ switch ($function) {
 
         $plugin->log($ldapcnn, "Users imported $countUsers: " . $usersCreated);
 
-        echo G::json_encode(array('success'=> true));
+        echo G::json_encode(array('success' => true));
         break;
     case "ldapTestConnection":
         $response = array();
@@ -357,7 +398,7 @@ switch ($function) {
             $response["status"] = "OK";
         } catch (Exception $e) {
             //Response
-            $response["status"]  = "ERROR";
+            $response["status"] = "ERROR";
             $response["message"] = $e->getMessage();
         }
 
