@@ -12,20 +12,26 @@ use ProcessMaker\Model\User;
 class AbstractCases implements CasesInterface
 {
     // Constants for validate values
-    const INBOX_STATUSES = ['ALL', 'READ', 'UNREAD'];
-    const PARTICIPATED_STATUSES = ['ALL', 'STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
-    const RISK_STATUSES = ['ALL', 'ON_TIME', 'AT_RISK', 'OVERDUE'];
+    const INBOX_STATUSES = ['READ', 'UNREAD'];
+    const PARTICIPATED_STATUSES = ['STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
+    const RISK_STATUSES = ['ON_TIME', 'AT_RISK', 'OVERDUE'];
     const CASE_STATUSES = [1 => 'DRAFT', 2 => 'TO_DO', 3 => 'COMPLETED', 4 => 'CANCELED'];
     const ORDER_DIRECTIONS = ['DESC', 'ASC'];
     const CORRECT_CANCELED_STATUS = 'CANCELED';
     const INCORRECT_CANCELED_STATUS = 'CANCELLED';
     const PRIORITIES = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
+    // Task Colors
     const TASK_COLORS = [1 => 'green', 2 => 'red', 3 => 'orange', 4 => 'blue', 5 => 'gray'];
     const COLOR_OVERDUE = 1;
     const COLOR_ON_TIME = 2;
     const COLOR_DRAFT = 3;
     const COLOR_PAUSED = 4;
     const COLOR_UNASSIGNED = 5;
+    // Status values
+    const STATUS_DRAFT = 1;
+    const STATUS_TODO = 2;
+    const STATUS_COMPLETED = 3;
+    const STATUS_CANCELED = 4;
 
     // Filter by category from a process, know as "$category" in the old lists classes
     private $categoryUid = '';
@@ -286,11 +292,6 @@ class AbstractCases implements CasesInterface
             throw new Exception("Inbox status '{$inboxStatus}' is not valid.");
         }
 
-        // If empty string is sent, use value 'ALL'
-        if ($inboxStatus === '') {
-            $inboxStatus = 'ALL';
-        }
-
         $this->inboxStatus = $inboxStatus;
     }
 
@@ -321,11 +322,6 @@ class AbstractCases implements CasesInterface
             throw new Exception("Participated status '{$participatedStatus}' is not valid.");
         }
 
-        // If empty string will not apply the filter
-        if ($participatedStatus === 'ALL') {
-            $participatedStatus = '';
-        }
-
         $this->participatedStatus = $participatedStatus;
     }
 
@@ -354,11 +350,6 @@ class AbstractCases implements CasesInterface
         // Validate the risk status
         if (!in_array($riskStatus, self::RISK_STATUSES)) {
             throw new Exception("Risk status '{$riskStatus}' is not valid.");
-        }
-
-        // If empty string will not apply the filter
-        if ($riskStatus === 'ALL') {
-            $riskStatus = '';
         }
 
         $this->riskStatus = $riskStatus;

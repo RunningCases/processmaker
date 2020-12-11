@@ -3,6 +3,7 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Search;
 use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
@@ -43,9 +44,10 @@ class SearchTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
      * @test
      */
-    public function it_should_test_get_data_method_without_filters()
+    public function it_get_result_without_filters()
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
@@ -60,9 +62,11 @@ class SearchTest extends TestCase
      * It tests the getData with case number
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
-    public function it_should_test_get_data_method_with_specific_case_number()
+    public function it_filter_by_app_number()
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
@@ -77,32 +81,14 @@ class SearchTest extends TestCase
     }
 
     /**
-     * It tests the getData with priority
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @test
-     */
-    public function it_should_test_get_data_method_with_specific_priority()
-    {
-        // Create factories related to the delegation cases
-        $cases = $this->createSearch();
-        // Create new Search object
-        $search = new Search();
-        $search->setPriority('N');
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
-        $result = $search->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertNotEmpty($result);
-    }
-
-    /**
      * It tests the getData with process
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
-    public function it_should_test_get_data_method_with_specific_process()
+    public function it_filter_by_process()
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
@@ -120,9 +106,11 @@ class SearchTest extends TestCase
      * It tests the getData with task
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
-    public function it_should_test_get_data_method_with_specific_task()
+    public function it_filter_by_task()
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
@@ -137,18 +125,67 @@ class SearchTest extends TestCase
     }
 
     /**
+     * It tests the getData method with case title filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @test
+     */
+    public function it_filter_by_thread_title()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createSearch();
+        $title = $cases->last()->DEL_TITLE;
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
+        // Create new Draft object
+        $search = new Search();
+        // Set the title
+        $search->setCaseTitle($title);
+        // Get the data
+        $res = $search->getData();
+        // Asserts
+        $this->assertNotEmpty($res);
+    }
+
+    /**
      * It tests the getData with user
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
-    public function it_should_test_get_data_method_with_specific_user()
+    public function it_filter_by_user()
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
         // Create new Search object
         $search = new Search();
         $search->setUserId($cases[0]->USR_ID);
+        // Set order by column value
+        $search->setOrderByColumn('APP_NUMBER');
+        $result = $search->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It tests the getData with priority
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @test
+     */
+    public function it_filter_by_priority()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $search->setPriority('N');
         // Set order by column value
         $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();

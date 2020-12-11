@@ -12,7 +12,7 @@ class Search extends AbstractCases
     public $columnsView = [
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
-        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process
         'TASK.TAS_TITLE',  // Task
         'APPLICATION.APP_STATUS',  // Status
@@ -61,7 +61,7 @@ class Search extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            // @todo: Filter by case title, pending from other PRD
+            $query->title($this->getCaseTitle());
         }
         // Filter by process
         if ($this->getProcessId()) {
@@ -103,7 +103,7 @@ class Search extends AbstractCases
             $casesOpen = [];
             $casesClosed = [];
             foreach ($statuses as $row) {
-                if ($row === Application::STATUS_DRAFT or $row === Application::STATUS_TODO) {
+                if ($row === self::STATUS_DRAFT or $row === self::STATUS_TODO) {
                     $casesOpen[] = $row;
                 } else {
                     $casesClosed[] = $row;

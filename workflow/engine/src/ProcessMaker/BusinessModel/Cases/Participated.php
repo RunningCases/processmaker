@@ -12,7 +12,7 @@ class Participated extends AbstractCases
     public $columnsView = [
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
-        'APP_DELEGATION.APP_NUMBER AS APP_TITLE', // Case Title @todo: Filter by case title, pending from other PRD
+        'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process Name
         'TASK.TAS_TITLE',  // Pending Task
         'APPLICATION.APP_STATUS',  // Status
@@ -51,7 +51,7 @@ class Participated extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            // @todo: Filter by case title, pending from other PRD
+            $query->title($this->getCaseTitle());
         }
         // Scope to search for an specific process
         if ($this->getProcessId()) {
@@ -164,10 +164,6 @@ class Participated extends AbstractCases
             $startDate = (string)$item['APP_CREATE_DATE'];
             $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
             $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
-            // Get the detail related to the open thread
-            if (!empty($item['PENDING'])) {
-                $item['PENDING'] = $this->prepareTaskPending($item['PENDING']);
-            }
             switch ($filter) {
                 case 'STARTED':
                     $result = [];
@@ -194,7 +190,10 @@ class Participated extends AbstractCases
                     }
                     break;
                 case 'IN_PROGRESS':
-                    $item['PENDING'] = $this->prepareTaskPending($item['PENDING']);
+                    // Get the detail related to the open thread
+                    if (!empty($item['PENDING'])) {
+                        $item['PENDING'] = $this->prepareTaskPending($item['PENDING']);
+                    }
                     break;
                 case 'COMPLETED':
                     $result = [];
@@ -238,7 +237,7 @@ class Participated extends AbstractCases
                 // Only distinct APP_NUMBER
                 $query->distinct();
                 // Scope for in progress cases
-                $query->statusIds([Application::STATUS_DRAFT, Application::STATUS_TODO]);
+                $query->statusIds([self::STATUS_DRAFT, self::STATUS_TODO]);
                 break;
             case 'COMPLETED':
                 // Scope that search for the COMPLETED

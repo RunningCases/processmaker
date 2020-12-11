@@ -3,6 +3,7 @@
 namespace Tests\unit\workflow\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
@@ -65,92 +66,138 @@ class DraftTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
      * @test
      */
-    public function it_should_test_get_data_method_without_filters()
+    public function it_get_result_without_filters()
     {
         // Create factories related to the draft cases
         $cases = $this->createDraft();
         // Create new Draft object
-        $inbox = new Inbox();
+        $draft = new Inbox();
         // Set the user ID
-        $inbox->setUserId($cases->USR_ID);
-        $inbox->setOrderByColumn('APP_NUMBER');
-        $res = $inbox->getData();
+        $draft->setUserId($cases->USR_ID);
+        $draft->setOrderByColumn('APP_NUMBER');
+        $res = $draft->getData();
         $this->assertNotEmpty($res);
     }
 
     /**
-     * It tests the getData method with Process Filter
+     * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
-    public function it_should_test_get_data_by_process_filter()
+    public function it_filter_by_process()
     {
         // Create factories related to the draft cases
         $cases = $this->createDraft();
         // Create new Draft object
-        $inbox = new Draft();
-        $inbox->setUserId($cases->USR_ID);
-        $inbox->setProcessId($cases->PRO_ID);
-        $inbox->setOrderByColumn('APP_NUMBER');
-        $res = $inbox->getData();
+        $draft = new Draft();
+        $draft->setUserId($cases->USR_ID);
+        $draft->setProcessId($cases->PRO_ID);
+        $draft->setOrderByColumn('APP_NUMBER');
+        $res = $draft->getData();
         $this->assertNotEmpty($res);
     }
 
     /**
-     * It tests the getData method using OrderBy
+     * It tests the getData method with case number filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
-    public function it_should_test_get_data_by_case_number()
+    public function it_filter_by_app_number()
     {
         // Create factories related to the draft cases
         $cases = $this->createDraft();
         // Create new Draft object
-        $inbox = new Draft();
-        $inbox->setUserId($cases->USR_ID);
-        $inbox->setCaseNumber($cases->APP_NUMBER);
-        $inbox->setOrderByColumn('APP_NUMBER');
-        $res = $inbox->getData();
+        $draft = new Draft();
+        $draft->setUserId($cases->USR_ID);
+        $draft->setCaseNumber($cases->APP_NUMBER);
+        $draft->setOrderByColumn('APP_NUMBER');
+        $res = $draft->getData();
         $this->assertNotEmpty($res);
     }
 
     /**
-     * It tests the getData method using OrderBy
+     * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
-    public function it_should_test_get_data_by_task_filter()
+    public function it_filter_by_task()
     {
         // Create factories related to the draft cases
         $cases = $this->createDraft();
         // Create new Draft object
-        $inbox = new Draft();
-        $inbox->setUserId($cases->USR_ID);
-        $inbox->setTaskId($cases->TAS_ID);
-        $res = $inbox->getData();
+        $draft = new Draft();
+        $draft->setUserId($cases->USR_ID);
+        $draft->setTaskId($cases->TAS_ID);
+        $res = $draft->getData();
         $this->assertNotEmpty($res);
 
     }
 
     /**
-     * It tests the getData method using OrderBy
+     * It tests the getData method with case title filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
-    public function it_should_test_get_data_by_case_title()
+    public function it_filter_by_thread_title()
     {
         // Create factories related to the to_do cases
         $cases = $this->createDraft();
+        $title = $cases->last()->DEL_TITLE;
+        // We need to commit the records inserted because is needed for the "fulltext" index
+        DB::commit();
         // Create new Draft object
-        $inbox = new Draft();
-        $inbox->setUserId($cases->USR_ID);
-        $res = $inbox->getData();
+        $draft = new Draft();
+        $draft->setUserId($cases->USR_ID);
+        // Set the title
+        $draft->setCaseTitle($cases->DEL_TITLE);
+        // Get the data
+        $res = $draft->getData();
+        // Asserts
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getData method using order by column
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
+     * @test
+     */
+    public function it_order_by_column()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createDraft();
+        $columnsView = [
+            'APP_NUMBER',
+            'DEL_TITLE',
+            'PRO_TITLE',
+            'TAS_TITLE',
+            'DEL_TASK_DUE_DATE',
+            'DEL_DELEGATE_DATE'
+        ];
+        $index = array_rand($columnsView);
+        // Create new Inbox object
+        $draft = new Draft();
+        $draft->setUserId($cases->USR_ID);
+        // Define the column to order
+        $draft->setOrderByColumn($columnsView[$index]);
+        $res = $draft->getData();
         $this->assertNotEmpty($res);
     }
 }
