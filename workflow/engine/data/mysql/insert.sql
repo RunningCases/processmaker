@@ -57196,6 +57196,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_APP_UID','en','App Uid','2015-09-15') ,
 ( 'LABEL','ID_ARE_YOU_SURE_RESEND','en','Are you sure that you want to resend this message','2014-01-15') ,
 ( 'LABEL','ID_ARE_YOU_SURE_UNPAUSE_TASK','en','Are you sure want to unpause the task?','2020-12-01') ,
+( 'LABEL','ID_ARE_YOU_SURE_CLAIM_TASK','en','Are you sure want to claim the task?','2020-12-01') ,
 ( 'LABEL','ID_ARRAY_VARIABLES_EMPTY','en','Array of variables is empty','2014-01-15') ,
 ( 'LABEL','ID_ASSIGN','en','Assign','2014-01-15') ,
 ( 'LABEL','ID_ASSIGNED_FIEDS','en','ASSIGNED FIELDS','2014-01-15') ,

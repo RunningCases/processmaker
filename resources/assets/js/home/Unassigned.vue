@@ -9,6 +9,11 @@
       :options="options"
       ref="vueTable"
     >
+      <div slot="detail" slot-scope="props">
+        <div class="btn-default" @click="openCaseDetail(props.row)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
       <div slot="case_number" slot-scope="props">
         {{ props.row.CASE_NUMBER }}
       </div>
@@ -40,9 +45,12 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button class="settings-radio" @click="openCase(props)">Claim Case</button>
+        <button class="btn btn-success btn-sm" @click="claimCase(props.row)">
+          {{ $t("ID_CLAIM_CASE") }}
+        </button>
       </div>
     </v-server-table>
+    <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
   </div>
 </template>
 
@@ -51,6 +59,7 @@ import HeaderCounter from "../components/home/HeaderCounter.vue";
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
+import ModalClaimCase from "./modal/ModalClaimCase.vue";
 import api from "./../api/index";
 
 export default {
@@ -60,6 +69,7 @@ export default {
     ButtonFleft,
     ModalNewRequest,
     TaskCell,
+    ModalClaimCase,
   },
   props: {},
   data() {
@@ -72,6 +82,7 @@ export default {
         },
       },
       columns: [
+        "detail",
         "case_number",
         "case_title",
         "process_name",
@@ -94,6 +105,7 @@ export default {
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY"),
           actions: "",
+          detail: "",
         },
         selectable: {
           mode: "single",
@@ -165,6 +177,10 @@ export default {
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE,
           PRIORITY: v.DEL_PRIORITY_LABEL,
+          PRO_UID: v.PRO_UID,
+          TAS_UID: v.TAS_UID,
+          DEL_INDEX: v.DEL_INDEX,
+          APP_UID: v.APP_UID,
         });
       });
       return data;
@@ -179,6 +195,10 @@ export default {
      */
     nameFormatCases(name, lastName, userName) {
       let nameFormat = "";
+      if (!(name && lastName && userName)) {
+        return "";
+      }
+
       if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
         return nameFormat;
       }
@@ -202,11 +222,34 @@ export default {
       return nameFormat;
     },
     /**
-     * Open selected cases in the inbox
+     * Claim case
      *
      * @param {object} item
      */
-    openCase(item) {},
+    claimCase(item) {
+      let that = this;
+      api.cases.open(_.extend({ ACTION: "unassigned" }, item)).then(() => {
+        that.$refs["modal-claim-case"].data = item;
+        that.$refs["modal-claim-case"].show();
+      });
+    },
+    /**
+     * Open case detail
+     *
+     * @param {object} item
+     */
+    openCaseDetail(item) {
+      let that = this;
+      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+        that.$emit("onUpdateDataCase", {
+          APP_UID: item.APP_UID,
+          DEL_INDEX: item.DEL_INDEX,
+          PRO_UID: item.PRO_UID,
+          TAS_UID: item.TAS_UID,
+        });
+        that.$emit("onUpdatePage", "case-detail");
+      });
+    },
   },
 };
 </script>

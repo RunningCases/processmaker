@@ -155,7 +155,6 @@ export default {
                     .search(that.jsonFilters)
                     .then((response) => {
                         dt = that.formatDataResponse(response.data.data);
-                        console.log(dt);
                         resolutionFunc({
                             data: dt,
                             count: response.data.total,

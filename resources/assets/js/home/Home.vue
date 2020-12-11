@@ -17,7 +17,6 @@
                 class="sidebar-overlay"
                 @click="collapsed = true"
             />
-
             <component
                 v-bind:is="page"
                 ref="component"
@@ -25,6 +24,9 @@
                 :name="pageName"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
+                @onUpdatePage="onUpdatePage"
+                @onUpdateDataCase="onUpdateDataCase"
+                @onLastPage="onLastPage" 
             ></component>
         </div>
     </div>
@@ -63,6 +65,7 @@ export default {
     },
     data() {
         return {
+            lastPage: "MyCases",
             page: "MyCases",
             menu: null,
             dataCase: {},
@@ -158,6 +161,17 @@ export default {
             this.page = "advanced-search";
             this.pageId = null;
             this.pageName = null;
+        },
+        onUpdatePage(page) {
+            this.lastPage = this.page;
+            this.page = page;
+        },
+        onUpdateDataCase(data) {
+            this.dataCase = data;
+        },
+        onLastPage(){
+            this.page = this.lastPage;
+            this.lastPage = "MyCases"
         },
         removeMenuSearchChild(id) {
             let newMenu = this.menu;
