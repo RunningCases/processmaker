@@ -31,13 +31,14 @@
       </div>
       <div slot="duration" slot-scope="props">{{ props.row.DURATION }}</div>
       <div slot="actions" slot-scope="props">
-        <div class="btn-default">
+        <div class="btn-default" @click="openComments(props.row)">
           <i class="fas fa-comments"></i>
           <span class="badge badge-light">9</span>
           <span class="sr-only">unread messages</span>
         </div>
       </div>
     </v-server-table>
+    <ModalComments ref="modal-comments"></ModalComments>
   </div>
 </template>
 
@@ -45,6 +46,7 @@
 import HeaderCounter from "../components/home/HeaderCounter.vue";
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
+import ModalComments from "./modal/ModalComments.vue";
 import GroupedCell from "../components/utils/GroupedCell.vue";
 import api from "./../api/index";
 
@@ -55,6 +57,7 @@ export default {
     ButtonFleft,
     ModalNewRequest,
     GroupedCell,
+    ModalComments,
   },
   props: {},
   data() {
@@ -188,6 +191,10 @@ export default {
           FINISH_DATE: v.APP_FINISH_DATE || "",
           PENDING_TASKS: [],
           DURATION: v.DURATION,
+          DEL_INDEX: v.DEL_INDEX,
+          APP_UID: v.APP_UID,
+          PRO_UID: v.PRO_UID,
+          TAS_UID: v.TAS_UID,
         });
       });
       return data;
@@ -366,6 +373,13 @@ export default {
         });
       });
       return data;
+    },
+    openComments(data) {
+      let that = this;
+      api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
+        that.$refs["modal-comments"].dataCase = data;
+        that.$refs["modal-comments"].show();
+      });
     },
   },
 };

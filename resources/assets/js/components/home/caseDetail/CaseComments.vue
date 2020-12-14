@@ -6,7 +6,12 @@
         <b>{{ data.title }}</b>
       </p>
       <div v-for="item in data.items" :key="item.date">
-        <case-comment :data="item" :onClick="onClick" />
+        <case-comment
+          :data="item"
+          :onClick="onClick"
+          :selected="item == itemSelected"
+          @onSelected="onSelected"
+        />
       </div>
     </div>
     <div class="comments col-md-12">
@@ -66,7 +71,9 @@ export default {
     CaseComment,
   },
   data() {
-    return {};
+    return {
+      itemSelected: null,
+    };
   },
   computed: {
     pathImgOwner() {
@@ -91,6 +98,9 @@ export default {
     resetComment() {
       this.$refs["comment"].value = "";
       this.$refs["send"].checked = false;
+    },
+    onSelected(item) {
+      this.itemSelected = item;
     },
   },
 };
