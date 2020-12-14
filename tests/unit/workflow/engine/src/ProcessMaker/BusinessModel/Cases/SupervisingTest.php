@@ -83,7 +83,7 @@ class SupervisingTest extends TestCase
             'PRO_UID' => $process->PRO_UID,
             'APP_NUMBER' => $app1['APP_NUMBER'],
             'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
+            'DEL_PREVIOUS' => 0
         ]);
         factory(Delegation::class, 1)->create([
             "APP_UID" => $app1['APP_UID'],
@@ -96,7 +96,7 @@ class SupervisingTest extends TestCase
             'PRO_UID' => $process->PRO_UID,
             'APP_NUMBER' => $app1['APP_NUMBER'],
             'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
+            'DEL_PREVIOUS' => 1
         ]);
 
         factory(Delegation::class, 1)->create([
@@ -110,7 +110,7 @@ class SupervisingTest extends TestCase
             'PRO_UID' => $process->PRO_UID,
             'APP_NUMBER' => $app2['APP_NUMBER'],
             'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
+            'DEL_PREVIOUS' => 0
         ]);
         factory(Delegation::class, 1)->create([
             "APP_UID" => $app2['APP_UID'],
@@ -123,7 +123,7 @@ class SupervisingTest extends TestCase
             'PRO_UID' => $process->PRO_UID,
             'APP_NUMBER' => $app2['APP_NUMBER'],
             'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
+            'DEL_PREVIOUS' => 1
         ]);
 
         factory(Delegation::class, 1)->create([
@@ -137,7 +137,7 @@ class SupervisingTest extends TestCase
             'PRO_UID' => $process->PRO_UID,
             'APP_NUMBER' => $app3['APP_NUMBER'],
             'DEL_INDEX' => 1,
-            'DEL_PREVIOUS' =>0
+            'DEL_PREVIOUS' => 0
         ]);
         $delegation = factory(Delegation::class)->create([
             "APP_UID" => $app3['APP_UID'],
@@ -150,7 +150,7 @@ class SupervisingTest extends TestCase
             'PRO_UID' => $process->PRO_UID,
             'APP_NUMBER' => $app3['APP_NUMBER'],
             'DEL_INDEX' => 2,
-            'DEL_PREVIOUS' =>1
+            'DEL_PREVIOUS' => 1
         ]);
 
         // Create the register in the ProcessUser table
@@ -163,6 +163,152 @@ class SupervisingTest extends TestCase
         );
 
         return $delegation;
+    }
+
+    /**
+     * Create many supervising cases for one user
+     * 
+     * @param int
+     * @return object
+     */
+    public function createMultipleSupervising($cases)
+    {
+        $user = factory(\ProcessMaker\Model\User::class)->create();
+
+        for ($i = 0; $i < $cases; $i = $i + 1) {
+            // Create process
+            $process = factory(Process::class)->create();
+
+            // Create user
+            $user = factory(User::class)->create();
+
+            // Create a task
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'NORMAL',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+            $task2 = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'NORMAL',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+            ]);
+
+            // Create 3 cases
+            $app1 = factory(Application::class)->states('todo')->create([
+                'APP_STATUS' => 'TO_DO',
+                'APP_STATUS_ID' => 2,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_INIT_USER' => $user->USR_UID,
+                'APP_CUR_USER' => $user->USR_UID,
+            ]);
+            $app2 = factory(Application::class)->states('todo')->create([
+                'APP_STATUS' => 'TO_DO',
+                'APP_STATUS_ID' => 2,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_INIT_USER' => $user->USR_UID,
+                'APP_CUR_USER' => $user->USR_UID,
+            ]);
+            $app3 = factory(Application::class)->states('todo')->create([
+                'APP_STATUS' => 'TO_DO',
+                'APP_STATUS_ID' => 2,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_INIT_USER' => $user->USR_UID,
+                'APP_CUR_USER' => $user->USR_UID,
+            ]);
+
+            // Create the registers in delegation
+            factory(Delegation::class)->create([
+                "APP_UID" => $app1['APP_UID'],
+                'TAS_ID' => $task->TAS_ID,
+                'TAS_UID' => $task->TAS_UID,
+                'DEL_THREAD_STATUS' => 'CLOSED',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_NUMBER' => $app1['APP_NUMBER'],
+                'DEL_INDEX' => 1,
+                'DEL_PREVIOUS' => 0
+            ]);
+            factory(Delegation::class, 1)->create([
+                "APP_UID" => $app1['APP_UID'],
+                'TAS_ID' => $task2->TAS_ID,
+                'TAS_UID' => $task2->TAS_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_NUMBER' => $app1['APP_NUMBER'],
+                'DEL_INDEX' => 2,
+                'DEL_PREVIOUS' => 1
+            ]);
+
+            factory(Delegation::class, 1)->create([
+                "APP_UID" => $app2['APP_UID'],
+                'TAS_ID' => $task->TAS_ID,
+                'TAS_UID' => $task->TAS_UID,
+                'DEL_THREAD_STATUS' => 'CLOSED',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_NUMBER' => $app2['APP_NUMBER'],
+                'DEL_INDEX' => 1,
+                'DEL_PREVIOUS' => 0
+            ]);
+            factory(Delegation::class, 1)->create([
+                "APP_UID" => $app2['APP_UID'],
+                'TAS_ID' => $task2->TAS_ID,
+                'TAS_UID' => $task2->TAS_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_NUMBER' => $app2['APP_NUMBER'],
+                'DEL_INDEX' => 2,
+                'DEL_PREVIOUS' => 1
+            ]);
+
+            factory(Delegation::class, 1)->create([
+                "APP_UID" => $app3['APP_UID'],
+                'TAS_ID' => $task->TAS_ID,
+                'TAS_UID' => $task->TAS_UID,
+                'DEL_THREAD_STATUS' => 'CLOSED',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_NUMBER' => $app3['APP_NUMBER'],
+                'DEL_INDEX' => 1,
+                'DEL_PREVIOUS' => 0
+            ]);
+            $delegation = factory(Delegation::class)->create([
+                "APP_UID" => $app3['APP_UID'],
+                'TAS_ID' => $task2->TAS_ID,
+                'TAS_UID' => $task2->TAS_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'PRO_UID' => $process->PRO_UID,
+                'APP_NUMBER' => $app3['APP_NUMBER'],
+                'DEL_INDEX' => 2,
+                'DEL_PREVIOUS' => 1
+            ]);
+
+            // Create the register in the ProcessUser table
+            factory(ProcessUser::class)->create(
+                [
+                    'PRO_UID' => $process->PRO_UID,
+                    'USR_UID' => $user->USR_UID,
+                    'PU_TYPE' => 'SUPERVISOR'
+                ]
+            );
+        }
+        return $user;
     }
 
     /**
@@ -290,14 +436,14 @@ class SupervisingTest extends TestCase
         // Instance the Supervising object
         $Supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
+        $Supervising->setUserUid($cases['USR_UID']);
         // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
+        $Supervising->setUserId($cases['USR_ID']);
         // Set the process Id filter
-        $Supervising->setProcessId($cases->PRO_ID);
+        $Supervising->setProcessId($cases['PRO_ID']);
         // Call the getData method
         $res = $Supervising->getData();
-        $this->assertCount(1, $res);
+        $this->assertCount(3, $res);
     }
 
     /**
@@ -314,14 +460,14 @@ class SupervisingTest extends TestCase
         // Instance the Supervising object
         $Supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
+        $Supervising->setUserUid($cases['USR_UID']);
         // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
+        $Supervising->setUserId($cases['USR_ID']);
         // Set the process Id filter
-        $Supervising->setProcessId($cases->TAS_ID);
+        $Supervising->setTaskId($cases['TAS_ID']);
         // Call the getData method
         $res = $Supervising->getData();
-        $this->assertCount(1, $res);
+        $this->assertCount(3, $res);
     }
 
     /**
@@ -376,14 +522,41 @@ class SupervisingTest extends TestCase
         // Instance the Supervising object
         $Supervising = new Supervising();
         //Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
+        $Supervising->setUserUid($cases['USR_UID']);
         //Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
+        $Supervising->setUserId($cases['USR_ID']);
         //Set the order by value
         $Supervising->setOrderByColumn($columnsView[$index]);
         //Call the getData method
         $res = $Supervising->getData();
         $this->assertCount(3, $res);
         $this->assertTrue($res[0]['APP_NUMBER'] > $res[1]['APP_NUMBER']);
+    }
+
+    /**
+     * It tests the getPagingCounters() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getPagingCounters()
+     * @test
+     */
+    public function it_should_test_get_paging_counters_method()
+    {
+        $cases = $this->createMultipleSupervising(3);
+        $supervising = new Supervising();
+        $supervising->setUserId($cases->USR_ID);
+        $supervising->setUserUid($cases->USR_UID);
+
+        $res = $supervising->getPagingCounters();
+        $this->assertEquals(3, $res);
+
+        $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
+
+        $supervising->setCaseNumber($delegation->APP_NUMBER);
+        $supervising->setProcessId($delegation->PRO_ID);
+        $supervising->setTaskId($delegation->TAS_ID);
+        $supervising->setCaseUid($delegation->APP_UID);
+
+        $res = $supervising->getPagingCounters();
+        $this->assertEquals(1, $res);
     }
 }

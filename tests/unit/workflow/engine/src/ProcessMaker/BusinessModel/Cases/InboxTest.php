@@ -38,6 +38,27 @@ class InboxTest extends TestCase
     }
 
     /**
+     * Create many inbox cases for one user
+     * 
+     * @param int
+     * @return object
+     */
+    public function createMultipleInbox($cases)
+    {
+        $user = factory(\ProcessMaker\Model\User::class)->create();
+        
+        for ($i = 0; $i < $cases; $i = $i + 1) {
+            factory(Delegation::class)->states('foreign_keys')->create([
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_INDEX' => 2,
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+            ]);
+        }
+        return $user;
+    }
+
+    /**
      * It tests the getCounter method
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounter()
@@ -156,9 +177,10 @@ class InboxTest extends TestCase
         DB::commit();
         // Create new Inbox object
         $inbox = new Inbox();
-        $inbox->setUserId($cases->USR_ID);
+        $inbox->setUserUid($cases['USR_UID']);
+        $inbox->setUserId($cases['USR_ID']);
         // Set the title
-        $inbox->setCaseTitle($cases->DEL_TITLE);
+        $inbox->setCaseTitle($cases['DEL_TITLE']);
         // Get the data
         $res = $inbox->getData();
         // Asserts
@@ -193,5 +215,32 @@ class InboxTest extends TestCase
         $inbox->setOrderByColumn($columnsView[$index]);
         $res = $inbox->getData();
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getPagingCounters() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getPagingCounters()
+     * @test
+     */
+    public function it_should_test_get_paging_counters_method()
+    {
+        $cases = $this->createMultipleInbox(3);
+        $inbox = new Inbox();
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setUserUid($cases->USR_UID);
+
+        $res = $inbox->getPagingCounters();
+        $this->assertEquals(3, $res);
+
+        $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
+
+        $inbox->setCaseNumber($delegation->APP_NUMBER);
+        $inbox->setProcessId($delegation->PRO_ID);
+        $inbox->setTaskId($delegation->TAS_ID);
+        $inbox->setCaseUid($delegation->APP_UID);
+
+        $res = $inbox->getPagingCounters();
+        $this->assertEquals(1, $res);
     }
 }

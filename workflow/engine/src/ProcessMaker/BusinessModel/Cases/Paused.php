@@ -109,7 +109,7 @@ class Paused extends AbstractCases
     }
 
     /**
-     * Get the total for the paused cases list
+     * Count how many cases the user has in PAUSED, does not apply filters
      * 
      * @return int
      */
@@ -118,7 +118,23 @@ class Paused extends AbstractCases
         $query = Delegation::query()->select();
         // Scope that set the paused cases
         $query->paused($this->getUserId(), $this->getTaskId(), $this->getCaseNumber());
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
 
-        return $query->count();
+    /**
+     * Count how many cases the user has in PAUSED, needs to apply filters
+     *
+     * @return int
+     */
+    public function getPagingCounters()
+    {
+        $query = Delegation::query()->select();
+        // Scope that set the paused cases
+        $query->paused($this->getUserId(), $this->getTaskId(), $this->getCaseNumber());
+        // Apply filters
+        $this->filters($query);
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
 }

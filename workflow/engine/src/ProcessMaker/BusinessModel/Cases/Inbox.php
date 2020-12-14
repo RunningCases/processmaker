@@ -114,18 +114,32 @@ class Inbox extends AbstractCases
     }
 
     /**
-     * Get the number of rows corresponding to the List Inbox
+     * Count how many cases the user has in TO_DO, does not apply filters
      *
      * @return int
      */
     public function getCounter()
     {
         $query = Delegation::query()->select();
-
         // Scope that sets the queries for List Inbox
         $query->inbox($this->getUserId());
-
         // Return the number of rows
-        return $query->count();
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
+
+    /**
+     * Count how many cases the user has in TO_DO, needs to apply filters
+     *
+     * @return int
+     */
+    public function getPagingCounters()
+    {
+        $query = Delegation::query()->select();
+        // Scope that sets the queries for List Inbox
+        $query->inbox($this->getUserId());
+        // Apply filters
+        $this->filters($query);
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
 }

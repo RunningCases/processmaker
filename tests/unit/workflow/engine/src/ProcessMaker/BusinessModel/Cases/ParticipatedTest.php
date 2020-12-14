@@ -46,6 +46,37 @@ class ParticipatedTest extends TestCase
     }
 
     /**
+     * Create many participated cases for one user
+     * 
+     * @param int
+     * @return object
+     */
+    public function createMultipleParticipated($cases)
+    {
+        $user = factory(\ProcessMaker\Model\User::class)->create();
+
+        for ($i = 0; $i < $cases; $i = $i + 1) {
+            $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+                'DEL_THREAD_STATUS' => 'CLOSED',
+                'DEL_INDEX' => 1,
+                'USR_UID' =>  $user->USR_UID,
+                'USR_ID' =>  $user->USR_ID,
+            ]);
+            factory(Delegation::class)->states('last_thread')->create([
+                'APP_UID' => $delegation->APP_UID,
+                'APP_NUMBER' => $delegation->APP_NUMBER,
+                'TAS_ID' => $delegation->TAS_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_UID' => $delegation->USR_UID,
+                'USR_ID' => $delegation->USR_ID,
+                'PRO_ID' => $delegation->PRO_ID,
+                'DEL_INDEX' => 2,
+            ]);
+        }
+        return $user;
+    }
+
+    /**
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
@@ -59,15 +90,15 @@ class ParticipatedTest extends TestCase
         // Create new Participated object
         $participated = new Participated();
         // Set the user UID
-        $participated->setUserUid($cases->USR_UID);
+        $participated->setUserUid($cases['USR_UID']);
         // Set the user ID
-        $participated->setUserId($cases->USR_ID);
+        $participated->setUserId($cases['USR_ID']);
         // Set OrderBYColumn value
         $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
-        $this->assertEquals(1, count($res));
+        $this->assertEquals(2, count($res));
     }
 
     /**
@@ -143,17 +174,17 @@ class ParticipatedTest extends TestCase
         // Set the filter
         $participated->setFilterCases('STARTED');
         // Set the user UID
-        $participated->setUserUid($cases->USR_UID);
+        $participated->setUserUid($cases['USR_UID']);
         // Set the user ID
-        $participated->setUserId($cases->USR_ID);
+        $participated->setUserId($cases['USR_ID']);
         // Set the process ID
-        $participated->setProcessId($cases->PRO_ID);
+        $participated->setProcessId($cases['PRO_ID']);
         // Set OrderBYColumn value
         $participated->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
-        $this->assertEquals(1, count($res));
+        $this->assertEquals(2, count($res));
     }
 
     /**
@@ -207,6 +238,34 @@ class ParticipatedTest extends TestCase
         // Get result
         $res = $participated->getCounter();
         // Assert the result of getCounter method
+        $this->assertEquals(1, $res);
+    }
+
+    /**
+     * It tests the getPagingCounters() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getPagingCounters()
+     * @test
+     */
+    public function it_should_test_get_paging_counters_method()
+    {
+        $cases = $this->createMultipleParticipated(3);
+        $participated = new Participated();
+        $participated->setUserId($cases->USR_ID);
+        $participated->setUserUid($cases->USR_UID);
+        $participated->setParticipatedStatus('STARTED');
+
+        $res = $participated->getPagingCounters();
+        $this->assertEquals(3, $res);
+
+        $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
+
+        $participated->setCaseNumber($delegation->APP_NUMBER);
+        $participated->setProcessId($delegation->PRO_ID);
+        $participated->setTaskId($delegation->TAS_ID);
+        $participated->setCaseUid($delegation->APP_UID);
+
+        $res = $participated->getPagingCounters();
         $this->assertEquals(1, $res);
     }
 }

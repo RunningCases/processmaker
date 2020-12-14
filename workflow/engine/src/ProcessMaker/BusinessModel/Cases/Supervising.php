@@ -169,7 +169,7 @@ class Supervising extends AbstractCases
     }
 
     /**
-     * Gets the total of Review cases
+     * Count how many cases the user has in Supervising, does not apply filters
      * 
      * @return int
      */
@@ -183,6 +183,27 @@ class Supervising extends AbstractCases
         $processes = ProcessUser::getProcessesOfSupervisor($this->getUserUid());
         // Scope the specific array of processes supervising
         $query->processInList($processes);
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
+
+    /**
+     * Count how many cases the user has in Supervising, needs to apply filters
+     *
+     * @return int
+     */
+    public function getPagingCounters()
+    {
+        // Get base query
+        $query = Delegation::query()->select();
+        // Only distinct APP_NUMBER
+        $query->distinct();
+        // Get the list of processes of the supervisor
+        $processes = ProcessUser::getProcessesOfSupervisor($this->getUserUid());
+        // Scope the specific array of processes supervising
+        $query->processInList($processes);
+        // Apply filters
+        $this->filters($query);
         // Return the number of rows
         return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }

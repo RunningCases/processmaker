@@ -123,6 +123,67 @@ class PausedTest extends TestCase
     }
 
     /**
+     * Create many paused cases for one user
+     * 
+     * @param int
+     * @return object
+     */
+    public function createMultiplePaused($cases)
+    {
+        $user = factory(\ProcessMaker\Model\User::class)->create();
+
+        for ($i = 0; $i < $cases; $i = $i + 1) {
+            $process1 = factory(Process::class)->create(
+                ['PRO_CATEGORY' => '1']
+            );
+
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => '',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process1->PRO_UID,
+                'TAS_TYPE' => 'NORMAL'
+            ]);
+
+            $application1 = factory(Application::class)->create();
+
+            factory(Delegation::class)->create([
+                'APP_UID' => $application1->APP_UID,
+                'APP_NUMBER' => $application1->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'DEL_THREAD_STATUS' => 'CLOSED',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process1->PRO_ID,
+                'PRO_UID' => $process1->PRO_UID,
+                'DEL_PREVIOUS' => 0,
+                'DEL_INDEX' => 1
+            ]);
+            $delegation1 = factory(Delegation::class)->create([
+                'APP_UID' => $application1->APP_UID,
+                'APP_NUMBER' => $application1->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_UID' => $user->USR_UID,
+                'USR_ID' => $user->USR_ID,
+                'PRO_ID' => $process1->PRO_ID,
+                'PRO_UID' => $process1->PRO_UID,
+                'DEL_PREVIOUS' => 1,
+                'DEL_INDEX' => 2
+            ]);
+
+            factory(AppDelay::class)->create([
+                'APP_DELEGATION_USER' => $user->USR_UID,
+                'PRO_UID' => $process1->PRO_UID,
+                'APP_NUMBER' => $delegation1->APP_NUMBER,
+                'APP_DEL_INDEX' => $delegation1->DEL_INDEX,
+                'APP_DISABLE_ACTION_USER' => 0,
+                'APP_TYPE' => 'PAUSE'
+            ]);
+        }
+        return $user;
+    }
+
+    /**
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
@@ -244,5 +305,32 @@ class PausedTest extends TestCase
         $paused->setCaseTitle($cases->DEL_TITLE);
         $res = $paused->getData();
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getPagingCounters() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getPagingCounters()
+     * @test
+     */
+    public function it_should_test_get_paging_counters_method()
+    {
+        $cases = $this->createMultiplePaused(3);
+        $paused = new Paused();
+        $paused->setUserId($cases->USR_ID);
+        $paused->setUserUid($cases->USR_UID);
+
+        $res = $paused->getPagingCounters();
+        $this->assertEquals(3, $res);
+
+        $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
+
+        $paused->setCaseNumber($delegation->APP_NUMBER);
+        $paused->setProcessId($delegation->PRO_ID);
+        $paused->setTaskId($delegation->TAS_ID);
+        $paused->setCaseUid($delegation->APP_UID);
+
+        $res = $paused->getPagingCounters();
+        $this->assertEquals(1, $res);
     }
 }
