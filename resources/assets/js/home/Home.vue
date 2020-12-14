@@ -98,9 +98,7 @@ export default {
                 });
         },
         OnClickSidebarItem(item) {
-            this.page = item.item.page || "MyCases";
-            this.pageId = item.item.id || null;
-            this.pageName = item.item.title || null;
+            this.page = item.item.id || "MyCases";
         },
         /**
          * Update page component
