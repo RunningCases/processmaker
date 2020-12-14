@@ -246,6 +246,7 @@ export default {
           DEL_INDEX: item.DEL_INDEX,
           PRO_UID: item.PRO_UID,
           TAS_UID: item.TAS_UID,
+          APP_NUMBER: item.CASE_NUMBER
         });
         that.$emit("onUpdatePage", "case-detail");
       });
