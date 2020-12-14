@@ -600,6 +600,32 @@ class Home extends Api
     }
 
     /**
+     * Get all users, paged optionally, can be sent a text to filter results by user information (first name, last name, username)
+     *
+     * @url GET /users
+     *
+     * @param string $text
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return array
+     *
+     * @throws Exception
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getUsers($text = null, $offset = null, $limit = null)
+    {
+        try {
+            $users = User::getUsersForHome($text, $offset, $limit);
+            return $users;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
      * Get the tasks counters for todo, draft, paused and unassigned
      * 
      * @url GET /tasks/counter
