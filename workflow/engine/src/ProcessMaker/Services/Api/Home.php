@@ -63,8 +63,8 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort ='APP_NUMBER,ASC'
-    ){
+        string $sort = 'APP_NUMBER,ASC'
+    ) {
         try {
             $list = new Draft();
             // Define the filters to apply
@@ -118,8 +118,8 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort ='APP_NUMBER,ASC'
-    ){
+        string $sort = 'APP_NUMBER,ASC'
+    ) {
         try {
             $list = new Inbox();
             // Define the filters to apply
@@ -173,8 +173,8 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort ='APP_NUMBER,ASC'
-    ){
+        string $sort = 'APP_NUMBER,ASC'
+    ) {
         try {
             $list = new Unassigned();
             // Define the filters to apply
@@ -230,8 +230,8 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort ='APP_NUMBER,ASC'
-    ){
+        string $sort = 'APP_NUMBER,ASC'
+    ) {
         try {
             $list = new Paused();
             // Define the filters to apply
@@ -295,8 +295,8 @@ class Home extends Api
         string $finishCaseFrom = '',
         string $finishCaseTo = '',
         string $paged = '0,15',
-        string $sort ='APP_NUMBER,ASC'
-    ){
+        string $sort = 'APP_NUMBER,ASC'
+    ) {
         // Define the filters to apply
         $properties = [];
         $properties['caseNumber'] = $caseNumber;
@@ -444,8 +444,8 @@ class Home extends Api
         string $delegationDateFrom = '',
         string $delegationDateTo = '',
         string $paged = '0,15',
-        string $sort ='APP_NUMBER,ASC'
-    ){
+        string $sort = 'APP_NUMBER,ASC'
+    ) {
         try {
             $list = new Search();
             // Define the filters to apply
@@ -597,5 +597,43 @@ class Home extends Api
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
+    }
+
+    /**
+     * Get the tasks counters for todo, draft, paused and unassigned
+     * 
+     * @url GET /tasks/counter
+     * @return array
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getTasksCounters()
+    {
+        $result = [];
+
+        $usrUid = $this->getUserId();
+        $usrId = User::find($usrUid)->first()->USR_ID;
+        $inbox = new Inbox();
+        $inbox->setUserUid($usrUid);
+        $inbox->setUserId($usrId);
+        $result['todo'] = $inbox->getCounter();
+
+        $draft = new Draft();
+        $draft->setUserUid($usrUid);
+        $draft->setUserId($usrId);
+        $result['draft'] = $draft->getCounter();
+
+        $paused = new Paused();
+        $paused->setUserUid($usrUid);
+        $paused->setUserId($usrId);
+        $result['paused'] = $paused->getCounter();
+
+
+        $unassigned = new Unassigned();
+        $unassigned->setUserUid($usrUid);
+        $unassigned->setUserId($usrId);
+        $result['unassigned'] = $unassigned->getCounter();
+
+        return $result;
     }
 }
