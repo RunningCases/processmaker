@@ -347,6 +347,7 @@ export default {
             this.$parent.dataCase = {
                 APP_UID: item.APP_UID,
                 DEL_INDEX: item.DEL_INDEX,
+                APP_NUMBER: item.CASE_NUMBER
             };
             this.$parent.page = "case-detail";
         },

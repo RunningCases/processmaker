@@ -17,11 +17,12 @@
             :data="tableData"
             :columns="columns"
             :options="options"
+            v-show="showTable"
             ref="vueTable"
             style="height: 120px"
           >
             <div slot="task" slot-scope="props">
-              {{ props.row.TASK }}
+              <TaskCell :data="props.row.TASK" />
             </div>
             <div slot="case_title" slot-scope="props">
               {{ props.row.CASE_TITLE }}
@@ -37,8 +38,6 @@
             </div>
             <div slot="actions">
               <div class="btn-default">
-                <i class="fas fa-comments"></i>
-                <span class="badge badge-light">9</span>
                 <span class="sr-only">Continue</span>
               </div>
             </div>
@@ -93,6 +92,7 @@ import TabsCaseDetail from "../home/TabsCaseDetail.vue";
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
+import TaskCell from "../components/vuetable/TaskCell.vue";
 
 import Api from "../api/index";
 export default {
@@ -107,6 +107,7 @@ export default {
     ModalCancelCase,
     ButtonFleft,
     ModalNewRequest,
+    TaskCell
   },
   props: {},
   data() {
@@ -127,15 +128,8 @@ export default {
         "due_date",
         "actions",
       ],
-      tableData: [
-        {
-          task: "Approve Art",
-          case_title: "Case Title A",
-          assignee: "User 1",
-          status: "To Do",
-          due_date: "3 days",
-        },
-      ],
+      showTable: true,
+      tableData: [],
       options: {
         headings: {
           task: this.$i18n.t("ID_TASK"),
@@ -154,6 +148,9 @@ export default {
           programmatic: false,
         },
         filterable: false,
+        requestFunction() {
+          return this.$parent.$parent.getCasesForVueTable();
+        },
       },
       dataCaseSummary: null,
       dataCaseSummaryTab: null,
@@ -384,6 +381,43 @@ export default {
 
       this.dataCaseSummaryTab = sections;
     },
+    getCasesForVueTable() {
+      let that = this,
+        dt;
+      return new Promise((resolutionFunc, rejectionFunc) => {
+        Api.cases
+        .pendingtask(that.$parent.dataCase)
+        .then((response) => {
+          dt = that.formatDataResponse(response.data);
+          resolutionFunc({
+            data: dt,
+            count: response.data.length
+          });
+          that.showTable = response.data.length > 0 ? true : false;
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+      });
+    },
+    formatDataResponse(response) {
+      let data = [];
+      _.forEach(response, (v) => {
+        data.push({
+          TASK: {
+            TITLE: v.TAS_TITLE,
+            CODE_COLOR: v.TAS_COLOR,
+            COLOR: v.TAS_COLOR_LABEL
+          },
+          CASE_TITLE: v.DEL_TITLE,
+          ASSIGNEE: v.USR_FIRSTNAME + " " + v.USR_LASTNAME,
+          STATUS: v.DEL_THREAD_STATUS,
+          DUE_DATE: v.DEL_TASK_DUE_DATE,
+          TASK_COLOR: v.TAS_COLOR_LABEL
+        });        
+      });
+      return data;
+    }
   },
 };
 </script>
