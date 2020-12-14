@@ -1,5 +1,5 @@
 <template>
-  <div class="comment mb-2 row" @click="onClick(data)">
+  <div :class="classSelected" @click="onSelected(data)">
     <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
       <a href=""
         ><img
@@ -25,6 +25,7 @@ export default {
   props: {
     data: Object,
     onClick: Function,
+    selected: Boolean,
   },
   data() {
     return {};
@@ -40,6 +41,12 @@ export default {
       }
       return "";
     },
+    classSelected() {
+      if (this.selected) {
+        return "v-comment-selected mb-2 row";
+      }
+      return "v-comment mb-2 row";
+    },
   },
   methods: {
     classBtn(cls) {
@@ -47,6 +54,10 @@ export default {
     },
     classIcon(icon) {
       return this.icon[icon];
+    },
+    onSelected() {
+      this.$emit("onSelected", this.data);
+      this.onClick(this.data);
     },
   },
 };
@@ -56,5 +67,9 @@ export default {
 .v-img-fluid {
   max-width: 30px;
   height: auto;
+}
+
+.v-comment-selected {
+  background-color: aliceblue;
 }
 </style>

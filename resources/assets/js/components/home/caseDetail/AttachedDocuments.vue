@@ -14,9 +14,13 @@
                 <i :class="classIcon(item.extension)"></i>
               </div>
               <div class="flex">
-                <div @click="item.onClick" class="v-item-except text-sm h-1x">
+                <a
+                  :href="href(item)"
+                  @click="item.onClick(item)"
+                  class="v-item-except text-sm h-1x"
+                >
                   {{ item.title }}
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -41,12 +45,20 @@ export default {
       },
     };
   },
+  computed: {},
   methods: {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
     },
     classIcon(icon) {
       return this.icon[icon];
+    },
+    href(item) {
+      return (
+        window.config.SYS_SERVER +
+        window.config.SYS_URI +
+        `cases/casesShowCaseNotes?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}`
+      );
     },
   },
 };
