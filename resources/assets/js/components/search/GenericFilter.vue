@@ -105,7 +105,7 @@
                                         v-for="tag in tags"
                                         @remove="customRemove(removeTag, tag)"
                                         :key="tag"
-                                        :title="tag"
+                                        :title="searchTagsModels[tag].tagText"
                                         :variant="tagVariant"
                                         class="mr-1"
                                     >   
@@ -173,6 +173,9 @@ import DueDate from "./popovers/DueDate.vue";
 import LastModifiedDate from "./popovers/LastModifiedDate.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
+import CasePriority from "./popovers/CasePriority.vue";
+import CaseStatus from "./popovers/CaseStatus.vue";
+import CurrentUser from "./popovers/CurrentUser.vue";
 import api from "./../../api/index";
 
 export default {
@@ -184,7 +187,10 @@ export default {
         DueDate,
         LastModifiedDate,
         CaseTitle,
-        ProcessName
+        ProcessName,
+        CasePriority,
+        CaseStatus,
+        CurrentUser
     },
     data() {
         return {
@@ -224,7 +230,6 @@ export default {
                     filterBy: ["caseTitle"],
                     values: {}
                 },
-                
                 ProcessName: {
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PROCESS_NAME')}`,
                     optionLabel: this.$i18n.t('ID_PROCESS_NAME'),
@@ -233,6 +238,45 @@ export default {
                     tagText: "",
                     filterBy: ["process", "processOption"],
                     processOption: {"PRO_TITLE": ""}
+                },
+                CasePriority: {
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PRIORITY')}`,
+                    optionLabel: this.$i18n.t('ID_PRIORITY'),
+                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_PRIORITY_FOR_THE_SEARCH'),
+                    options: [
+                        { text: this.$i18n.t('ID_VERY_LOW'), value: "VL" },
+                        { text: this.$i18n.t('ID_LOW'), value: "L" },
+                        { text: this.$i18n.t('ID_NORMAL'), value: "N" },
+                        { text: this.$i18n.t('ID_HIGH'), value: "H" },
+                        { text: this.$i18n.t('ID_VERY_HIGH'), value: "VH" }
+                    ],
+                    tagText: "",
+                    filterBy: ["priorities"],
+                    casePriorities: []
+                },
+                CaseStatus: {
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_STATUS')}`,
+                    optionLabel: this.$i18n.t('ID_STATUS'),
+                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH'),
+                    options: [
+                        { text: this.$i18n.t('ID_CASES_STATUS_DRAFT'), value: "DRAFT" },
+                        { text: this.$i18n.t('ID_CASES_STATUS_TO_DO'), value: "TO_DO" },
+                        { text: this.$i18n.t('ID_CASES_STATUS_COMPLETED'), value: "COMPLETED" },
+                        { text: this.$i18n.t('ID_CASES_STATUS_CANCELLED'), value: "CANCELLED" },
+                        { text: this.$i18n.t('ID_CASES_STATUS_PAUSED'), value: "PAUSED" },
+                    ],
+                    tagText: "",
+                    filterBy: ["caseStatuses"],
+                    caseStatuses: []
+                },
+                CurrentUser: {
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CURRENT_USER')}`,
+                    optionLabel: this.$i18n.t('ID_CURRENT_USER'),
+                    detail: "",
+                    placeholder: this.$i18n.t('ID_USER_NAME'),
+                    tagText: "",
+                    filterBy: ["userId", "selectedOption"],
+                    selectedOption: {"USR_FULLNAME": ""}
                 }
             },
             text: "",
@@ -295,32 +339,42 @@ export default {
             let label = "";
             switch (type) {
                 case "CaseNumber":
-                    label = `${this.$i18n.t("ID_IUD")}: ${params.filterCases}`
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_IUD")}: ${params.filterCases}`
                     this.searchTagsModels[type].values["filterCases"] =  params.filterCases;
                     break;
                 case "DueDate":
-                    label = `${this.$i18n.t('ID_FROM')}: ${params.dueDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.dueDateTo}`;
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_FROM')}: ${params.dueDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.dueDateTo}`;
                     this.searchTagsModels[type].values["dueDateFrom"] =  params.dueDateFrom;
                     this.searchTagsModels[type].values["dueDateTo"] =  params.dueDateTo;
                     break;
                 case "LastModifiedDate":
-                    label = `${this.$i18n.t('ID_FROM')}: ${params.delegationDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.delegationDateTo}`;
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_FROM')}: ${params.delegationDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.delegationDateTo}`;
                     this.searchTagsModels[type].values["delegationDateFrom"] =  params.delegationDateFrom;
                     this.searchTagsModels[type].values["delegationDateTo"] =  params.delegationDateTo;
                     break;
                 case "CaseTitle":
-                    label = `${this.$i18n.t("ID_CASE_TITLE")}: ${params.caseTitle}`;
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_CASE_TITLE")}: ${params.caseTitle}`;
                     this.searchTagsModels[type].values["caseTitle"] =  params.caseTitle;
                     break;
                 case "ProcessName":
-                    label = `${this.$i18n.t("ID_PROCESS")}: ${params.processOption.PRO_TITLE || ''}`;
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_PROCESS")}: ${params.processOption.PRO_TITLE || ''}`;
                     this.searchTagsModels[type].processOption =  params.processOption || null;
+                    break;
+                case "CasePriority":
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_PRIORITY')}: ${_.map(params.selectedOptions, 'text').join(",") || ''}`;
+                    this.searchTagsModels[type].casePriorities = _.map(params.selectedOptions, 'value');
+                    break;
+                 case "CaseStatus":
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_STATUS')}: ${_.map(params.selectedOptions, 'text').join(",") || ''}`;
+                    this.searchTagsModels[type].caseStatuses = _.map(params.selectedOptions, 'value');
+                    break;
+                case "CurrentUser":
+                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_USER")}: ${params.selectedOption.USR_FULLNAME || ''}`;
+                    this.searchTagsModels[type].selectedOption =  params.selectedOption || null;
                     break;
                 default:
                     break;
             }
-            this.searchTagsModels[type].tagText = label;
-           
         },
         cleanAllTags() {
             this.searchTags = [];
@@ -403,7 +457,7 @@ export default {
                 filters: this.filters
             });
         }
-    },
+    }
 };
 </script>
 <style scoped>
