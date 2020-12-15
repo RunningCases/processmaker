@@ -112,7 +112,7 @@ export default {
           programmatic: false,
         },
         requestFunction(data) {
-          return this.$parent.$parent.getCasesForVueTable();
+          return this.$parent.$parent.getCasesForVueTable(data);
         },
       },
       pmDateFormat: "Y-m-d H:i:s",
@@ -134,12 +134,18 @@ export default {
     /**
      * Get cases todo data
      */
-    getCasesForVueTable() {
+    getCasesForVueTable(data) {
       let that = this,
-        dt;
+        dt,
+        paged,
+        limit = data.limit,
+        start = data.page === 1 ? 0 : limit * (data.page - 1);
+      paged = start + ',' + limit;
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
-          .todo()
+          .todo({
+            paged: paged
+          })
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({

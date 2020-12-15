@@ -8,7 +8,8 @@ export let cases = {
         return Api.get({
             service: "MY_CASES",
             params: {
-                filter: data.filter
+                filter: data.filter,
+                paged: data.paged
             },
             keys: {}
         });
@@ -17,6 +18,7 @@ export let cases = {
         return Api.get({
             service: "TODO_LIST",
             params: {
+                paged: data.paged
             },
             keys: {}
         });
@@ -25,6 +27,7 @@ export let cases = {
         return Api.get({
             service: "DRAFT_LIST",
             params: {
+                paged: data.paged
             },
             keys: {}
         });
@@ -33,6 +36,7 @@ export let cases = {
         return Api.get({
             service: "PAUSED_LIST",
             params: {
+                paged: data.paged
             },
             keys: {}
         });
@@ -41,6 +45,7 @@ export let cases = {
         return Api.get({
             service: "UNASSIGNED_LIST",
             params: {
+                paged: data.paged
             },
             keys: {}
         });
@@ -164,7 +169,8 @@ export let cases = {
         return Api.get({
             service: "SEARCH",
             params: dt,
-            keys: {}
+            keys: {},
+            paged: dt.paged
         })
     }
 
