@@ -8,22 +8,29 @@
           :key="item.title"
           class="v-attached-block"
         >
-          <div class="v-list v-list-row block">
-            <div class="v-list-item">
-              <div class="v-attached-icon">
-                <i :class="classIcon(item.extension)"></i>
+          <span>
+            <div class="v-list v-list-row block">
+              <div
+                class="float-right text-md text-danger btn-default"
+                @click="removeDocument(item)"
+              >
+                <i class="fas fa-times-circle"></i>
               </div>
-              <div class="flex">
-                <a
-                  :href="href(item)"
-                  @click="item.onClick(item)"
-                  class="v-item-except text-sm h-1x"
-                >
-                  {{ item.title }}
-                </a>
+              <div class="v-list-item">
+                <div class="v-attached-icon">
+                  <i :class="classIcon(item.extension)"></i>
+                </div>
+                <div class="flex">
+                  <a
+                    @click="item.onClick(item)"
+                    class="v-item-except text-sm h-1x"
+                  >
+                    {{ item.title }}
+                  </a>
+                </div>
               </div>
-            </div>
-          </div>
+            </div></span
+          >
         </div>
       </div>
     </div>
@@ -32,9 +39,10 @@
 
 <script>
 export default {
-  name: "AttachedDocuments",
+  name: "AttachedDocumentsEdit",
   props: {
     data: Object,
+    onRemove: Function,
   },
   data() {
     return {
@@ -53,12 +61,17 @@ export default {
     classIcon(icon) {
       return this.icon[icon] ? this.icon[icon] : "fas fa-file-alt";
     },
-    href(item) {
-      return (
-        window.config.SYS_SERVER +
-        window.config.SYS_URI +
-        `cases/casesShowCaseNotes?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}`
-      );
+    /**
+     * Remove file from view and update the view
+     */
+    removeDocument(item) {
+      let dt = this.data.items;
+      _.remove(dt, function (n) {
+        return item.title == n.title;
+      });
+      this.data.items = dt;
+      this.$forceUpdate();
+      this.onRemove(item);
     },
   },
 };
@@ -101,5 +114,9 @@ export default {
 
 .v-attached-icon {
   font-size: 25px;
+}
+
+.text-md {
+  font-size: 20px;
 }
 </style>

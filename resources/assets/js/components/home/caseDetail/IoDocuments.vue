@@ -14,9 +14,13 @@
                 <i :class="classIcon(item.extension)"></i>
               </div>
               <div class="flex">
-                <div @click="item.onClick" class="v-item-except text-sm h-1x">
+                <a
+                  @click="item.onClick"
+                  :href="href(item)"
+                  class="v-item-except text-sm h-1x"
+                >
                   {{ item.title }}
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -36,9 +40,13 @@
                 <i :class="classIcon(item.extension)"></i>
               </div>
               <div class="flex">
-                <div @click="item.onClick" class="v-item-except text-sm h-1x">
+                <a
+                  @click="item.onClick"
+                  :href="hrefOutput(item)"
+                  class="v-item-except text-sm h-1x"
+                >
                   {{ item.title }}
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -68,7 +76,23 @@ export default {
       return "btn v-btn-request " + cls;
     },
     classIcon(icon) {
-      return this.icon[icon];
+      return this.icon[icon] ? this.icon[icon] : "fas fa-file-alt";
+    },
+    href(item) {
+      return (
+        window.config.SYS_SERVER +
+        window.config.SYS_URI +
+        `cases/cases_ShowDocument?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}`
+      );
+    },
+    hrefOutput(item) {
+      let random = _.random(0, 10000000),
+        cacheTime = Date.now();
+      return (
+        window.config.SYS_SERVER +
+        window.config.SYS_URI +
+        `cases/cases_ShowOutputDocument?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}&ext=doc&random=${random}&nocachetime=${cacheTime}`
+      );
     },
   },
 };
