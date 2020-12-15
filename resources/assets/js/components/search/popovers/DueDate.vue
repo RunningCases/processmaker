@@ -5,12 +5,6 @@
             @savePopover="onOk"
             :title="info.title"
         >
-            <template v-slot:target-item>
-                <div @click="onClickTag(tag)" :id="tag">
-                    <b-icon icon="tags-fill" font-scale="1"></b-icon>
-                    {{ tagText }}
-                </div>
-            </template>
             <template v-slot:body>
                 <p>{{ info.detail }}</p>
                 <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -19,7 +13,7 @@
                             <b-form-group >
                                 <b-form-datepicker
                                     id="from"
-                                    v-model="from"
+                                    v-model="info.values.dueDateFrom"
                                     :placeholder="$t('ID_FROM_DUE_DATE')"
                                 ></b-form-datepicker>
                             </b-form-group>
@@ -28,7 +22,7 @@
                             <b-form-group>
                                 <b-form-datepicker
                                     id="to"
-                                    v-model="to"
+                                    v-model="info.values.dueDateTo"
                                     :placeholder="$t('ID_TO_DUE_DATE')"
                                 ></b-form-datepicker>
                             </b-form-group>
@@ -48,26 +42,18 @@ export default {
         SearchPopover,
     },
     props: ["tag", "info"],
-    data() {
-        return {
-            from: "",
-            to: ""
-        };
-    },
-    computed: {
-        tagText: function() {
-            return `${this.$i18n.t('ID_FROM')}: ${this.from} ${this.$i18n.t('ID_TO')}:  ${this.to}`;
-        }
-    },
     methods: {
         /**
          * Submit form handler
          */
         handleSubmit() {
             this.$emit("updateSearchTag", {
-                dueDateFrom: this.from,
-                dueDateTo: this.to,
+                DueDate: {
+                    dueDateFrom: this.info.values.dueDateFrom,
+                    dueDateTo: this.info.values.dueDateTo
+                }
             });
+            this.$root.$emit("bv::hide::popover");
         },
         /**
          * On ok event handler

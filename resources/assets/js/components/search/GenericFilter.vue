@@ -1,15 +1,7 @@
 <template>
     <div>
         <b-container fluid class="bv-example-row" id="my-container">
-            <b-alert
-                :show="dismissCountDown"
-                dismissible
-                :variant="variant"
-                @dismissed="dismissCountDown = 0"
-                @dismiss-count-down="countDownChanged"
-            >
-                {{ message }}
-            </b-alert>
+          
             <b-row>
                 <b-col md="10"><h5>{{$t('ID_OPEN_SEARCH')}}</h5></b-col>
             </b-row>
@@ -116,7 +108,12 @@
                                         :title="tag"
                                         :variant="tagVariant"
                                         class="mr-1"
-                                    >
+                                    >   
+                                        
+                                        <div :id="tag">
+                                            <i class="fas fa-tags"></i>
+                                            {{ searchTagsModels[tag].tagText }}
+                                        </div>
                                         <component
                                             v-bind:is="tag"
                                             v-bind:info="searchTagsModels[tag]"
@@ -176,103 +173,67 @@ import DueDate from "./popovers/DueDate.vue";
 import LastModifiedDate from "./popovers/LastModifiedDate.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
-import ParticipatedLevel from "./popovers/ParticipatedLevel.vue";
-import CasePriority from "./popovers/CasePriority.vue";
-import TaskName from "./popovers/TaskName.vue";
-import CaseStatus from "./popovers/CaseStatus.vue";
-import CurrentUser from "./popovers/CurrentUser.vue";
 import api from "./../../api/index";
 
 export default {
     name: "GenericFilter",
-    props: ["id", "name"],
+    props: ["id", "name", "filters"],
     components: {
         SearchPopover,
         CaseNumber,
         DueDate,
         LastModifiedDate,
         CaseTitle,
-        ProcessName,
-        ParticipatedLevel,
-        TaskName,
-        CaseStatus,
-        CasePriority,
-        CurrentUser
+        ProcessName
     },
     data() {
         return {
             addSearchTitle: this.$i18n.t('ID_ADD_SEARCH_FILTER_CRITERIA'),
-            dismissSecs: 5,
-            dismissCountDown: 0,
-            message: "",
-            variant: "info",
+            
             searchTags: [],
             searchTagsModels: {
                 CaseNumber: {
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE')}${this.$i18n.t('ID_IUD')}`,
                     optionLabel: this.$i18n.t('ID_IUD'),
-                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_TO_CASES_TO_SEARCH')
+                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_TO_CASES_TO_SEARCH'),
+                    tagText: "",
+                    filterBy: ["filterCases"],
+                    values: {}
                 },
                 DueDate: {
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_DUE_DATE')}`,
                     optionLabel: this.$i18n.t('ID_DUE_DATE'),
-                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_CASES_DUE_DATE_TO_SEARCH')
+                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_CASES_DUE_DATE_TO_SEARCH'),
+                    tagText: "",
+                    filterBy: ["dueDateFrom", "dueDateTo"],
+                    values: {}
                 },
                 LastModifiedDate: {
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_LAST_MODIFIED_DATE')}`,
                     optionLabel: this.$i18n.t('ID_LAST_MODIFIED_DATE'),
-                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_LAST_MODIFIED_CASES_DATE_TO_SEARCH')
+                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_LAST_MODIFIED_CASES_DATE_TO_SEARCH'),
+                    tagText: "",
+                    filterBy: ["delegationDateFrom", "delegationDateTo"],
+                    values: {}
                 },
                 CaseTitle: {
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE_TITLE')}`,
                     optionLabel: this.$i18n.t('ID_CASE_TITLE'),
-                    detail: ""
+                    detail: "",
+                    tagText: "",
+                    filterBy: ["caseTitle"],
+                    values: {}
                 },
+                
                 ProcessName: {
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PROCESS_NAME')}`,
                     optionLabel: this.$i18n.t('ID_PROCESS_NAME'),
                     detail: "",
-                    placeholder: this.$i18n.t('ID_PROCESS_NAME')
-                },
-                CasePriority: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PRIORITY')}`,
-                    optionLabel: this.$i18n.t('ID_PRIORITY'),
-                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_PRIORITY_FOR_THE_SEARCH'),
-                    options: [
-                        { text: this.$i18n.t('ID_VERY_LOW'), value: "VL" },
-                        { text: this.$i18n.t('ID_LOW'), value: "L" },
-                        { text: this.$i18n.t('ID_NORMAL'), value: "N" },
-                        { text: this.$i18n.t('ID_HIGH'), value: "H" },
-                        { text: this.$i18n.t('ID_VERY_HIGH'), value: "VH" }
-                    ]
-                },
-                TaskName: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_TASK')}`,
-                    optionLabel: this.$i18n.t('ID_TASK'),
-                    detail: "",
-                    placeholder: this.$i18n.t('ID_TASK_NAME')
-                },
-                CaseStatus: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_STATUS')}`,
-                    optionLabel: this.$i18n.t('ID_STATUS'),
-                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH'),
-                    options: [
-                        { text: this.$i18n.t('ID_CASES_STATUS_DRAFT'), value: "DRAFT" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_TO_DO'), value: "TO_DO" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_COMPLETED'), value: "COMPLETED" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_CANCELLED'), value: "CANCELLED" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_PAUSED'), value: "PAUSED" },
-                    ]
-                },
-                CurrentUser: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CURRENT_USER')}`,
-                    optionLabel: this.$i18n.t('ID_CURRENT_USER'),
-                    detail: "",
-                    placeholder: this.$i18n.t('ID_USER_NAME'),
-                    default: {
-                        name: "",
-                    },
-                },
+                    placeholder: this.$i18n.t('ID_PROCESS_NAME'),
+                    tagText: "",
+                    filterBy: ["process", "processOption"],
+                    processOption: {"PRO_TITLE": ""}
+                }
             },
             text: "",
             selected: [],
@@ -280,9 +241,17 @@ export default {
             caseNumber: "",
             saveModalTitle: this.$i18n.t('ID_SAVE_SEARCH'),
             localName: "",
-            nameState: null,
+            nameState: null,        
         };
     },
+    watch: {
+        filters: function (filters) {
+          this.searchTags = [];
+          this.searchTags = [];
+          this.setFilters(filters);
+        }
+    },
+    
     computed: {
         filterOptions: function() {
             let options = [];
@@ -296,75 +265,96 @@ export default {
         },
     },
     methods: {
-        /**
-         * Updates the alert dismiss value to update
-         * dismissCountDown and decrease
-         * @param {mumber}
-         */
-        countDownChanged(dismissCountDown) {
-            this.dismissCountDown = dismissCountDown;
-        },
-        /**
-         * Show the alert message
-         * @param {string} message - message to be displayen in the body
-         * @param {string} type - alert type
-         */
-        showAlert(message, type) {
-            this.message = message;
-            this.variant = type || "info";
-            this.dismissCountDown = this.dismissSecs;
-        },
+       
         onClose() {
         },
+        setFilters(filters) {
+            let that = this;
+            _.forIn(filters, function(value, key) {
+                let temp = that.createTagText(key, value);
+                that.searchTags.push(key);
+                that.selected.push(key);
+            });
+        },
         onOk() {
+            let initialFilters = {};
             this.$root.$emit('bv::hide::popover');
-            this.searchTags = [...this.searchTags, ...this.selected];
+            for (var i = 0; i < this.selected.length; i++) {
+                let item = this.selected[i];
+                initialFilters[item] = {};
+                if(this.searchTagsModels[item].filterBy) {
+                    for (var j = 0; j < this.searchTagsModels[item].filterBy.length; j++) { 
+                        initialFilters[item][this.searchTagsModels[item].filterBy [j]] = "";
+                    }
+                }
+                
+            }
+            this.$emit("onUpdateFilters", initialFilters) 
+        },
+        createTagText(type, params) {
+            let label = "";
+            switch (type) {
+                case "CaseNumber":
+                    label = `${this.$i18n.t("ID_IUD")}: ${params.filterCases}`
+                    this.searchTagsModels[type].values["filterCases"] =  params.filterCases;
+                    break;
+                case "DueDate":
+                    label = `${this.$i18n.t('ID_FROM')}: ${params.dueDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.dueDateTo}`;
+                    this.searchTagsModels[type].values["dueDateFrom"] =  params.dueDateFrom;
+                    this.searchTagsModels[type].values["dueDateTo"] =  params.dueDateTo;
+                    break;
+                case "LastModifiedDate":
+                    label = `${this.$i18n.t('ID_FROM')}: ${params.delegationDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.delegationDateTo}`;
+                    this.searchTagsModels[type].values["delegationDateFrom"] =  params.delegationDateFrom;
+                    this.searchTagsModels[type].values["delegationDateTo"] =  params.delegationDateTo;
+                    break;
+                case "CaseTitle":
+                    label = `${this.$i18n.t("ID_CASE_TITLE")}: ${params.caseTitle}`;
+                    this.searchTagsModels[type].values["caseTitle"] =  params.caseTitle;
+                    break;
+                case "ProcessName":
+                    label = `${this.$i18n.t("ID_PROCESS")}: ${params.processOption.PRO_TITLE || ''}`;
+                    this.searchTagsModels[type].processOption =  params.processOption || null;
+                    break;
+                default:
+                    break;
+            }
+            this.searchTagsModels[type].tagText = label;
+           
         },
         cleanAllTags() {
             this.searchTags = [];
-            this.jsonFilter = {
-                search: "",
-            };
+            this.selected = [];
+            this.$emit("onUpdateFilters", {});
         },
         customRemove(removeTag, tag) {
+            let temp = { ...this.filters};
+            delete temp[tag];
             removeTag(tag);
-            this.jsonFilter = {
-                search: "",
-            };
+            this.$emit("onUpdateFilters", temp);
         },
         onSearch() {
-            this.$emit("onSearch", this.jsonFilter);
+            this.$emit("onSearch", this.filters);
         },
-        updateSearchTag(params) {
-            this.jsonFilter = { ...this.jsonFilter, ...params };
+        updateSearchTag(params) {          
+            this.$emit("onUpdateFilters", { ...this.filters, ...params });
         },
         onJumpCase() {
             this.$emit("onJumpCase",  this.caseNumber);
         },
         onClick() {
             if (this.id) {
-                this.updateData(this.name);
+                this.updateData(this.id);
             } else {
                 this.$refs['saveFilter'].show();
             }
             
         },
-
         /**
          * Delete Search handler
          */
         onDeleteSearch() {
-            api.filters
-                .delete({
-                    id: this.id,
-                })
-                .then((response) => {
-                    
-                    this.$emit("onRemoveFilter", this.id);
-                })
-                .catch((e) => {
-                    this.showAlert(e.message, "danger");
-                });
+             this.$emit("onRemoveFilter", this.id);
         },
         checkFormValidity() {
             const valid = this.$refs.form.checkValidity();
@@ -392,22 +382,26 @@ export default {
                 this.saveData(this.localName);
             });
         },
+        /**
+         * Save Data Handler
+         */ 
         saveData(name) {
-            api.filters
-            .post({
+            this.$emit("onSubmit", {
                 name: name,
-                filters: JSON.stringify({ uno: "first" }),
-            })
-            .then((response) => {
-                this.$emit("onSubmit", response.data);
-            })
-            .catch((e) => {
-                this.showAlert(e.message, "danger");
+                filters: this.filters
             });
         },
-        updateData() {
-            this.onDeleteSearch();
-            this.saveData(this.name);
+        /**
+         * Update Data Handler
+         * @param {string} id - filter id
+         */ 
+        updateData(id) {
+            this.$emit("onSubmit", {
+                type: "update",
+                id: id,
+                name: this.name,
+                filters: this.filters
+            });
         }
     },
 };

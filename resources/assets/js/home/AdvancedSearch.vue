@@ -1,13 +1,24 @@
 <template>
     <div id="v-mycases3" ref="v-mycases2" class="v-container-mycases">
+        <b-alert
+            :show="dismissCountDown"
+            dismissible
+            :variant="variant"
+            @dismissed="dismissCountDown = 0"
+            @dismiss-count-down="countDownChanged"
+        >
+            {{ message }}
+        </b-alert>
         <button-fleft :data="newCase"></button-fleft>
         <GenericFilter
             :id="id"
             :name="name"
+            :filters="filters"
             @onJumpCase="onJumpCase"
             @onSubmit="onSubmitFilter"
             @onRemoveFilter="onRemoveFilter"
             @onSearch="onSearch"
+            @onUpdateFilters="onUpdateFilters"
         />
 
         <modal-new-request ref="newRequest"></modal-new-request>
@@ -84,13 +95,17 @@ export default {
         ModalNewRequest,
         TaskCell
     },
-    props: ["id", "name"],
+    props: ["id", "name", "filters"],
     data() {
         return {
+            dismissSecs: 5,
+            dismissCountDown: 0,
+            message: "",
+            variant: "info",
             metrics: [],
             filter: "CASES_INBOX",
             allView: [],
-            jsonFilters: null,
+            filtersModel: {},
             filterHeader: "STARTED_BY_ME",
             headers: [],
             newCase: {
@@ -143,6 +158,11 @@ export default {
             pmDateFormat: "Y-m-d H:i:s",
         };
     },
+    watch: {
+        id: function() {
+            this.$refs.test.refresh();
+        },
+    },
     methods: {
         /**
          * Get cases data by header
@@ -151,8 +171,12 @@ export default {
             let that = this,
                 dt;
             return new Promise((resolutionFunc, rejectionFunc) => {
+                let filters = {};
+                _.forIn(this.filters, function(value, key) {
+                    filters = {...filters, ...value};
+                });
                 api.cases
-                    .search(that.jsonFilters)
+                    .search(filters)
                     .then((response) => {
                         dt = that.formatDataResponse(response.data.data);
                         resolutionFunc({
@@ -369,26 +393,83 @@ export default {
                 });
         },
         /**
+         * Updates the alert dismiss value to update
+         * dismissCountDown and decrease
+         * @param {mumber}
+         */
+        countDownChanged(dismissCountDown) {
+            this.dismissCountDown = dismissCountDown;
+        },
+        /**
+         * Show the alert message
+         * @param {string} message - message to be displayen in the body
+         * @param {string} type - alert type
+         */
+        showAlert(message, type) {
+            this.message = message;
+            this.variant = type || "info";
+            this.dismissCountDown = this.dismissSecs;
+        },
+        /**
          * Handler submit filter
          * @param {object} data - data returned from the server
          */
-        onSubmitFilter(data) {
-            this.$emit("onSubmitFilter", data);
+        onSubmitFilter(params) {
+            if (params.type === "update") {
+                api.filters
+                    .put({
+                        id: params.id,
+                        name: params.name,
+                        filters: JSON.stringify(params.filters),
+                    })
+                    .then((response) => {
+                        this.$emit("onSubmitFilter", params);
+                    })
+                    .catch((e) => {
+                        this.showAlert(e.message, "danger");
+                    });
+            } else {
+                api.filters
+                    .post({
+                        name: params.name,
+                        filters: JSON.stringify(params.filters),
+                    })
+                    .then((response) => {
+                        this.$emit("onSubmitFilter", response.data);
+                    })
+                    .catch((e) => {
+                        this.showAlert(e.message, "danger");
+                    });
+            }
         },
         /**
          * Handler on remove filter
          * @param {number} id - data returned fron the server
          */
         onRemoveFilter(id) {
-            this.$emit("onRemoveFilter", id);
+            api.filters
+                .delete({
+                    id: this.id,
+                })
+                .then((response) => {
+                    this.$emit("onUpdateFilters", {});
+                    this.$emit("onRemoveFilter", id);
+                })
+                .catch((e) => {
+                    this.showAlert(e.message, "danger");
+                });
         },
         /**
          * Handler on search filter
          * @param {number} id - data returned fron the server
          */
         onSearch(params) {
-            this.jsonFilters = params;
-            this.$refs.test.refresh();
+            this.$nextTick(() => {
+                this.$refs.test.refresh();
+            });
+        },
+        onUpdateFilters(params) {
+            this.$emit("onUpdateFilters", params);
         },
     },
 };
