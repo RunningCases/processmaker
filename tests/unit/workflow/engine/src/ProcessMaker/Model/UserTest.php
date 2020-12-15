@@ -71,4 +71,48 @@ class UserTest extends TestCase
         //Call the userFilters scope
         $userQuery->userFilters($filters);
     }
+
+    /**
+     * It test get users for the new home view
+     *
+     * @covers \ProcessMaker\Model\User::getUsersForHome()
+     * @test
+     */
+    public function it_should_test_get_users_for_home()
+    {
+        // Create five users (3 active, 1 on vacation, 1 inactive)
+        factory(User::class)->create([
+            'USR_USERNAME' => 'jsmith',
+            'USR_FIRSTNAME' => 'John',
+            'USR_LASTNAME' => 'Smith',
+        ]);
+        factory(User::class)->create([
+            'USR_USERNAME' => 'asmith',
+            'USR_FIRSTNAME' => 'Adam',
+            'USR_LASTNAME' => 'Smith',
+        ]);
+        factory(User::class)->create([
+            'USR_USERNAME' => 'wsmith',
+            'USR_FIRSTNAME' => 'Will',
+            'USR_LASTNAME' => 'Smith',
+        ]);
+        factory(User::class)->create([
+            'USR_USERNAME' => 'wwallace',
+            'USR_FIRSTNAME' => 'Williams',
+            'USR_LASTNAME' => 'Wallace',
+            'USR_STATUS' => 'VACATION',
+        ]);
+        factory(User::class)->create([
+            'USR_USERNAME' => 'msmith',
+            'USR_FIRSTNAME' => 'Marcus',
+            'USR_LASTNAME' => 'Smith',
+            'USR_STATUS' => 'INACTIVE',
+        ]);
+
+        // Assertions
+        $this->assertCount(4, User::getUsersForHome());
+        $this->assertCount(3, User::getUsersForHome('Smith'));
+        $this->assertCount(4, User::getUsersForHome(null, null, 2));
+        $this->assertCount(1, User::getUsersForHome(null, 2, 1));
+    }
 }
