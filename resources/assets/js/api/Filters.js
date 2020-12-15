@@ -60,6 +60,18 @@ export let filters = {
     /**
      * Service to get the users list
      */
+    userList(query) {
+        return Api.get({
+            service: "USERS",
+            params: {
+                text: query,
+            },
+            keys: {},
+        });
+    },
+    /**
+     * Service to get the users list
+     */
     userValues(query) {
         return axios.post(
             window.config.SYS_SERVER +
