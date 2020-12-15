@@ -361,15 +361,15 @@ export default {
         };
       _.forEach(response, (v) => {
         data.push({
-          title: v.name,
-          counter: v.count,
+          title: this.$i18n.t(v.id),
+          counter: v.counter,
           item: v.item,
-          icon: info[v.item].icon,
+          icon: info[v.id].icon,
           onClick: (obj) => {
             that.filterHeader = obj.item;
             that.$refs["vueTable"].getData();
           },
-          class: info[v.item].class,
+          class: info[v.id].class,
         });
       });
       return data;

@@ -51,7 +51,7 @@ export default {
 }
 
 .v-btn-texts-header {
-  font-size: 0.7vw;
+  font-size: 0.8vw;
 }
 .v-btn-header {
   min-width: 150px;
