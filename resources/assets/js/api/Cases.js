@@ -172,10 +172,13 @@ export let cases = {
 
 export let casesHeader = {
     get() {
-        return new Promise((resolutionFunc, rejectionFunc) => {
-            resolutionFunc({
-                data: headerData
-            });
+        return axios.get(window.config.SYS_SERVER +
+            '/api/1.0/' +
+            window.config.SYS_WORKSPACE +
+            '/home/counters', {
+            headers: {
+                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
+              }
         });
     }
-};
+}; 
