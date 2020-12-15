@@ -44,7 +44,7 @@ class SearchTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @test
      */
     public function it_get_result_without_filters()
@@ -62,7 +62,7 @@ class SearchTest extends TestCase
      * It tests the getData with case number
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
@@ -84,7 +84,7 @@ class SearchTest extends TestCase
      * It tests the getData with process
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
@@ -106,7 +106,7 @@ class SearchTest extends TestCase
      * It tests the getData with task
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
@@ -128,7 +128,7 @@ class SearchTest extends TestCase
      * It tests the getData method with case title filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
@@ -153,7 +153,7 @@ class SearchTest extends TestCase
      * It tests the getData with user
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
@@ -175,17 +175,17 @@ class SearchTest extends TestCase
      * It tests the getData with priority
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @test
      */
-    public function it_filter_by_priority()
+    public function it_filter_by_status()
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
         // Create new Search object
         $search = new Search();
-        $search->setPriority('N');
+        $search->setCaseStatuses(['TO_DO']);
         // Set order by column value
         $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();

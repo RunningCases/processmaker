@@ -5,6 +5,8 @@ namespace ProcessMaker\BusinessModel\Cases;
 use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Task;
+use ProcessMaker\Model\User;
 
 class Search extends AbstractCases
 {
@@ -14,14 +16,9 @@ class Search extends AbstractCases
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process
-        'TASK.TAS_TITLE',  // Task
         'APPLICATION.APP_STATUS',  // Status
-        'USERS.USR_USERNAME',  // Current UserName
-        'USERS.USR_FIRSTNAME',  // Current User FirstName
-        'USERS.USR_LASTNAME',  // Current User LastName
-        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date
-        'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
-        'APP_DELEGATION.DEL_PRIORITY',  // Priority
+        'APPLICATION.APP_CREATE_DATE',  // Case create date
+        'APPLICATION.APP_FINISH_DATE',  // Case finish date
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
@@ -75,25 +72,21 @@ class Search extends AbstractCases
         if ($this->getTaskId()) {
             $query->task($this->getTaskId());
         }
-        // Filter one or more priorities like ['VL', 'L', 'N']
-        if (!empty($this->getPriorities())) {
-            $query->priorities($this->getPriorities());
+        // Specific start case date from
+        if (!empty($this->getStartCaseFrom())) {
+            $query->startDateFrom($this->getStartCaseFrom());
         }
-        // Filter by delegate from
-        if (!empty($this->getDelegateFrom())) {
-            $query->delegateDateFrom($this->getDelegateFrom());
+        // Specific by start case date to
+        if (!empty($this->getStartCaseTo())) {
+            $query->startDateTo($this->getStartCaseTo());
         }
-        // Filter by delegate to
-        if (!empty($this->getDelegateTo())) {
-            $query->delegateDateTo($this->getDelegateTo());
+        // Specific finish case date from
+        if (!empty($this->getFinishCaseFrom())) {
+            $query->finishCaseFrom($this->getFinishCaseFrom());
         }
-        // Filter by due from
-        if (!empty($this->getDueFrom())) {
-            $query->dueFrom($this->getDueFrom());
-        }
-        // Filter by due to
-        if (!empty($this->getDueTo())) {
-            $query->dueTo($this->getDueTo());
+        // Filter by finish case date to
+        if (!empty($this->getFinishCaseTo())) {
+            $query->finishCaseTo($this->getFinishCaseTo());
         }
         /** This filter define the UNION */
 
@@ -141,14 +134,31 @@ class Search extends AbstractCases
     public function getData()
     {
         $query = Delegation::query()->select($this->getColumnsView());
+        $query->selectRaw(
+            'CONCAT(
+                \'[\',
+                    GROUP_CONCAT(
+                        CONCAT(
+                            \'{"tas_id":\',
+                            APP_DELEGATION.TAS_ID,
+                            \', "user_id":\',
+                            APP_DELEGATION.USR_ID,
+                            \', "del_id":\',
+                            APP_DELEGATION.DELEGATION_ID,
+                            \', "due_date":"\',
+                            APP_DELEGATION.DEL_TASK_DUE_DATE,
+                            \'"}\'
+                        )
+                    ),
+                \']\'
+            ) AS THREADS'
+        );
         // Join with process
         $query->joinProcess();
-        // Join with task
-        $query->joinTask();
-        // Join with users
-        $query->joinUser();
         // Join with application
         $query->joinApplication();
+        // Group by AppNumber
+        $query->groupBy('APP_NUMBER');
         /** Apply filters */
         $this->filters($query);
         /** Apply order and pagination */
@@ -160,15 +170,22 @@ class Search extends AbstractCases
         $results = $query->get();
         // Prepare the result
         $results->transform(function ($item, $key) {
-            // Get priority label
-            $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
-            $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
-            // Get task color label
-            $item['TAS_COLOR'] = $this->getTaskColor($item['DEL_TASK_DUE_DATE']);
-            $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
             // Apply the date format defined in environment
-            $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
-            $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
+            $item['APP_CREATE_DATE_LABEL'] = !empty($item['APP_CREATE_DATE']) ? applyMaskDateEnvironment($item['APP_CREATE_DATE']): null;
+            $item['APP_FINISH_DATE_LABEL'] = !empty($item['APP_FINISH_DATE']) ? applyMaskDateEnvironment($item['APP_FINISH_DATE']): null;
+            // Calculate duration
+            $startDate = (string)$item['APP_CREATE_DATE'];
+            $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
+            $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
+            // todo: we will to complete the real count with other ticket
+            $item['CASE_NOTES_COUNT'] = 0;
+            // Get the detail related to the open thread
+            if (!empty($item['THREADS'])) {
+                $result = $this->prepareTaskPending($item['THREADS'], false);
+                $item['THREAD_TASKS'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
+                $item['THREAD_USERS'] = !empty($result['THREAD_USERS']) ? $result['THREAD_USERS'] : [];
+                $item['THREAD_TITLES'] = !empty($result['THREAD_TITLES']) ? $result['THREAD_TITLES'] : [];
+            }
 
             return $item;
         });

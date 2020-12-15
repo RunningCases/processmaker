@@ -25,8 +25,9 @@ $factory->define(\ProcessMaker\Model\Application::class, function(Faker $faker) 
         'APP_CUR_USER' => $user->USR_UID,
         'APP_PIN' => G::generateUniqueID(),
         'APP_CREATE_DATE' => $faker->dateTime(),
-        'APP_UPDATE_DATE' => $faker->dateTime(),
         'APP_INIT_DATE' => $faker->dateTime(),
+        'APP_UPDATE_DATE' => $faker->dateTime(),
+        'APP_FINISH_DATE' => $faker->dateTime(),
         'APP_DATA' => serialize(['APP_NUMBER' => $appNumber])
     ];
 });
@@ -59,8 +60,9 @@ $factory->state(\ProcessMaker\Model\Application::class, 'foreign_keys', function
         'APP_CUR_USER' => $user->USR_UID,
         'APP_PIN' => G::generateUniqueID(),
         'APP_CREATE_DATE' => $faker->dateTime(),
-        'APP_UPDATE_DATE' => $faker->dateTime(),
         'APP_INIT_DATE' => $faker->dateTime(),
+        'APP_UPDATE_DATE' => $faker->dateTime(),
+        'APP_FINISH_DATE' => $faker->dateTime(),
         'APP_DATA' => serialize(['APP_NUMBER' => $appNumber])
     ];
 });

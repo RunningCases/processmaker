@@ -678,11 +678,8 @@ class AbstractCasesTest extends TestCase
             'caseNumber' => rand(),
             'caseTitle' => G::generateUniqueID(),
             // Home - Search
-            'priorities' => ['N'],
             'caseStatuses' => ['TO_DO','DRAFT'],
             'filterCases'=> '1,3-5,8,10-15',
-            'delegationDateFrom' => date('Y-m-d'),
-            'delegationDateTo' => date('Y-m-d'),
             // Home - My cases
             'filter'=> 'STARTED',
             'caseStatus' => 'TO_DO',
@@ -691,8 +688,6 @@ class AbstractCasesTest extends TestCase
             'finishCaseFrom' => date('Y-m-d'),
             'finishCaseTo' => date('Y-m-d'),
             // Other
-            'search' => G::generateUniqueID(),
-            'category' => G::generateUniqueID(),
             'caseLink' => G::generateUniqueID(),
             'appUidCheck' => [G::generateUniqueID()],
             'sort' => 'APP_NUMBER',
@@ -714,8 +709,6 @@ class AbstractCasesTest extends TestCase
         $actual = $absCases->getCaseTitle();
         $this->assertEquals($properties['caseTitle'], $actual);
         // Home - Search
-        $actual = $absCases->getPriorities();
-        $this->assertEmpty($actual);
         $actual = $absCases->getCaseStatuses();
         $this->assertNotEmpty($actual);
         $actual = $absCases->getFilterCases();
@@ -724,28 +717,28 @@ class AbstractCasesTest extends TestCase
         $this->assertEmpty($actual);
         $actual = $absCases->getRangeCasesFromTo();
         $this->assertEmpty($actual);
-        $actual = $absCases->getDelegateFrom();
+        $actual = $absCases->getStartCaseFrom();
         $this->assertEmpty($actual);
-        $actual = $absCases->getDelegateTo();
+        $actual = $absCases->getStartCaseTo();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getFinishCaseFrom();
+        $this->assertEmpty($actual);
+        $actual = $absCases->getFinishCaseTo();
         $this->assertEmpty($actual);
         // Home - My cases
         $actual = $absCases->getParticipatedStatus();
         $this->assertEmpty($actual);
         $actual = $absCases->getCaseStatus();
-        $this->assertEquals(2, $actual);
+        $this->assertEmpty($actual);
         $actual = $absCases->getStartCaseFrom();
-        $this->assertEquals($properties['startCaseFrom'], $actual);
+        $this->assertEmpty($actual);
         $actual = $absCases->getStartCaseTo();
-        $this->assertEquals($properties['startCaseTo'], $actual);
+        $this->assertEmpty($actual);
         $actual = $absCases->getFinishCaseFrom();
-        $this->assertEquals($properties['finishCaseFrom'], $actual);
+        $this->assertEmpty($actual);
         $actual = $absCases->getFinishCaseTo();
-        $this->assertEquals($properties['finishCaseTo'], $actual);
+        $this->assertEmpty($actual);
         // Other
-        $actual = $absCases->getValueToSearch();
-        $this->assertEquals($properties['search'], $actual);
-        $actual = $absCases->getCategoryUid();
-        $this->assertEquals($properties['category'], $actual);
         $actual = $absCases->getCaseUid();
         $this->assertEquals($properties['caseLink'], $actual);
         $actual = $absCases->getCasesUids();
