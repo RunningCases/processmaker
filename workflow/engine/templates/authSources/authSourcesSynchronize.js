@@ -38,7 +38,7 @@ Ext.onReady(function() {
       text : _('ID_BACK'),
       iconCls: "button_menu_ext ss_sprite ss_arrow_left",
       handler: function() {
-        location.href = '../authSources/authSources_List';
+        location.href = "../authenticationSources/index";
       }
     });
 
