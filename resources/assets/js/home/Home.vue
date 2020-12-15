@@ -20,13 +20,15 @@
             <component
                 v-bind:is="page"
                 ref="component"
+                :filters="filters"
                 :id="pageId"
                 :name="pageName"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
                 @onUpdateDataCase="onUpdateDataCase"
-                @onLastPage="onLastPage" 
+                @onLastPage="onLastPage"
+                @onUpdateFilters="onUpdateFilters"
             ></component>
         </div>
     </div>
@@ -67,7 +69,7 @@ export default {
         return {
             lastPage: "MyCases",
             page: "MyCases",
-            menu: null,
+            menu: [],
             dataCase: {},
             hideToggle: true,
             collapsed: false,
@@ -76,6 +78,7 @@ export default {
             sidebarWidth: "310px",
             pageId: null,
             pageName: null,
+            filters: {},
         };
     },
     mounted() {
@@ -91,14 +94,49 @@ export default {
             api.menu
                 .get()
                 .then((response) => {
-                    this.menu = response;
+                    this.menu = this.mappingMenu(response.data);
                 })
                 .catch((e) => {
                     console.error(e);
                 });
         },
+        /**
+         * Do a mapping of vue view for menus
+         * @returns array
+         */
+        mappingMenu(data) {
+            var i,
+                j,
+                newData = data,
+                auxId,
+                viewVue = {
+                    CASES_MY_CASES: "MyCases",
+                    CASES_SEARCH: "advanced-search",
+                    CASES_INBOX: "todo",
+                    CASES_DRAFT: "draft",
+                    CASES_PAUSED: "paused",
+                    CASES_SELFSERVICE: "unassigned",
+                    CONSOLIDATED_CASES: "batch-routing",
+                    CASES_TO_REASSIGN: "task-reassignments",
+                    CASES_FOLDERS: "my-documents",
+                };
+            for (i = 0; i < data.length; i += 1) {
+                auxId = data[i].id || "";
+                if (auxId !== "" && viewVue[auxId]) {
+                    newData[i].id = viewVue[auxId];
+                }
+            }
+            return newData;
+        },
         OnClickSidebarItem(item) {
-            this.page = item.item.id || "MyCases";
+            if (item.item.page && item.item.page === "/advanced-search") {
+                this.page = "advanced-search";
+                this.filters = item.item.filters;
+                this.pageId = item.item.id;
+                this.pageName = item.item.title;
+            } else {
+                this.page = item.item.id || "MyCases";
+            }
         },
         /**
          * Update page component
@@ -141,24 +179,38 @@ export default {
         addMenuSearchChild(data) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.href === "/advanced-search";
+                return o.id === "advanced-search";
             });
-            if (!advSearch.hasOwnProperty("child")) {
-                advSearch["child"] = [];
+            if (advSearch) {
+                const index = advSearch.child.findIndex(function(o) {
+                    return o.id === data.id;
+                });
+                if (index !== -1) {
+                    advSearch.child[index].filters = data.filters;
+                } else {
+                    if (!advSearch.hasOwnProperty("child")) {
+                        advSearch["child"] = [];
+                    }
+                    advSearch.child.push({
+                        filters: data.filters,
+                        href: "/advanced-search/" + data.id,
+                        title: data.name,
+                        icon: "fas fa-circle",
+                        id: data.id,
+                        page: "/advanced-search",
+                    });
+                }
             }
-            advSearch.child.push({
-                href: "/advanced-search/" + data.id,
-                title: data.name,
-                icon: "fas fa-circle",
-                id: data.id,
-                page: "advanced-search",
-            });
         },
         onRemoveFilter(id) {
             this.removeMenuSearchChild(id);
+            this.resetSettings();
+        },
+        resetSettings() {
             this.page = "advanced-search";
             this.pageId = null;
             this.pageName = null;
+            this.filters = {};
         },
         onUpdatePage(page) {
             this.lastPage = this.page;
@@ -167,20 +219,25 @@ export default {
         onUpdateDataCase(data) {
             this.dataCase = data;
         },
-        onLastPage(){
+        onLastPage() {
             this.page = this.lastPage;
-            this.lastPage = "MyCases"
+            this.lastPage = "MyCases";
         },
         removeMenuSearchChild(id) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.href === "/advanced-search";
+                return o.id === "advanced-search";
             });
-            const index = advSearch.child.findIndex(function(o) {
-                return o.id === id;
-            });
-            if (index !== -1) advSearch.child.splice(index, 1);
+            if (advSearch) {
+                const index = advSearch.child.findIndex(function(o) {
+                    return o.id === id;
+                });
+                if (index !== -1) advSearch.child.splice(index, 1);
+            }
         },
+        onUpdateFilters(filters) {
+            this.filters = filters;
+        }
     },
 };
 </script>

@@ -63,8 +63,10 @@ const services = {
     UNASSIGNED_LIST: "/home/unassigned",
     MY_FILTERS: "/cases/advanced-search/filters",
     POST_MY_FILTERS: "/cases/advanced-search/filter",
+    PUT_MY_FILTERS: "/cases/advanced-search/filter/",
     DELETE_MY_FILTERS: "/cases/advanced-search/filter/",
     SEARCH: "/home/search",
+    PROCESSES: "/home/processes"
 };
 
 export default {
@@ -162,6 +164,7 @@ export default {
             }
         });
     },
+    
     delete(options) {
         let service = options.service || "",
             id = options.id || {},
@@ -175,6 +178,30 @@ export default {
         return axios({
             method: "delete",
             url: url + id,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ` + credentials.accessToken
+            }
+        });
+    },
+    put(options) {
+        let service = options.service || "",
+            params = options.params || {},
+            data = options.data || {},
+            id = options.id || {},
+            keys = options.keys || {},
+            url,
+            credentials = window.config.SYS_CREDENTIALS,
+            workspace = window.config.SYS_WORKSPACE,
+            server = window.config.SYS_SERVER;
+        url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
+
+        return axios({
+            method: "put",
+            url: url + id,
+            params,
+            data,
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",

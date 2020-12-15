@@ -2,16 +2,10 @@
     <div id="">
         <SearchPopover
             :target="tag"
-            @closePopover="onClose"
             @savePopover="onOk"
             :title="info.title"
         >
-            <template v-slot:target-item>
-                <div @click="onClickTag(tag)" :id="tag">
-                    <b-icon icon="tags-fill" font-scale="1"></b-icon>
-                    {{ tagText }}
-                </div>
-            </template>
+        
             <template v-slot:body>
                 <p>{{ info.detail }}</p>
                 <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -22,7 +16,7 @@
                     >
                         <b-form-input
                             id="name-input"
-                            v-model="title"
+                            v-model="info.values.caseTitle"
                             :placeholder="$t('ID_CASE_TITLE_NAME')"
                             :state="valueState"
                             required
@@ -48,11 +42,6 @@ export default {
             valueState: null,
         };
     },
-    computed: {
-        tagText: function() {
-            return `${this.$i18n.t("ID_CASE_TITLE")}: ${this.title}`;
-        },
-    },
     methods: {
         /**
          * Check the form validations and requiered fields
@@ -73,7 +62,9 @@ export default {
             }
             this.$nextTick(() => {
                 this.$emit("updateSearchTag", {
-                    caseTitle: self.title,
+                    CaseTitle: {
+                        caseTitle: self.info.values.caseTitle,
+                    }
                 });
                 self.$root.$emit("bv::hide::popover");
             });

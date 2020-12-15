@@ -20,9 +20,15 @@ export let filters = {
     delete(data) {
         return Api.delete({
             service: "DELETE_MY_FILTERS",
-
             id: data.id,
-
+            keys: {},
+        });
+    },
+    put(data) {
+        return Api.put({
+            service: "PUT_MY_FILTERS",
+            id: data.id,
+            data,
             keys: {},
         });
     },
@@ -43,14 +49,13 @@ export let filters = {
      * Service to get the process list
      */
     processList(query) {
-        return axios.post(
-            window.config.SYS_SERVER +
-                window.config.SYS_URI +
-                `cases/casesList_Ajax?actionAjax=processListExtJs&action=search`,
-            {
-                query,
-            }
-        );
+        return Api.get({
+            service: "PROCESSES",
+            params: {
+                text: query,
+            },
+            keys: {},
+        });
     },
     /**
      * Service to get the users list
