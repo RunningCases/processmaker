@@ -1,5 +1,5 @@
 <template>
-    <div id="">
+    <div>
         <SearchPopover :target="tag" @savePopover="onOk" :title="info.title">
             <template v-slot:body>
                 <p>{{ info.detail }}</p>
@@ -8,18 +8,18 @@
                         label-for="name"
                         :invalid-feedback="$t('ID_PROCESS_IS_REQUIRED')"
                     >
-                        <multiselect 
-                            v-model="info.processOption" 
-                            :options="processes" 
-                            placeholder="Select one" 
-                            label="PRO_TITLE" 
+                        <multiselect
+                            v-model="info.processOption"
+                            :options="processes"
+                            placeholder="Select one"
+                            label="PRO_TITLE"
                             track-by="PRO_ID"
                             :show-no-results="false"
                             @search-change="asyncFind"
                             :loading="isLoading"
                             id="ajax"
                             :limit="10"
-                            :clear-on-select="true" 
+                            :clear-on-select="true"
                         >
                         </multiselect>
                     </b-form-group>
@@ -31,13 +31,13 @@
 
 <script>
 import SearchPopover from "./SearchPopover.vue";
-import Multiselect from 'vue-multiselect'
+import Multiselect from "vue-multiselect";
 import api from "./../../../api/index";
 
 export default {
     components: {
         SearchPopover,
-        Multiselect,
+        Multiselect
     },
     props: ["tag", "info"],
     data() {
@@ -50,15 +50,15 @@ export default {
         /**
          * Find asynchronously in the server
          * @param {string} query - string from the text field
-         */ 
-        asyncFind (query) {
-            this.isLoading = true
-               api.filters
+         */
+        asyncFind(query) {
+            this.isLoading = true;
+            api.filters
                 .processList(query)
                 .then((response) => {
                     this.processes = response.data;
-                    this.countries = response
-                    this.isLoading = false
+                    this.countries = response;
+                    this.isLoading = false;
                 })
                 .catch((e) => {
                     console.error(err);
@@ -82,13 +82,13 @@ export default {
          *  Form submit handler
          */
         handleSubmit() {
-                this.$emit("updateSearchTag", {
-                    ProcessName: {
-                        processOption: this.info.processOption,
-                        process: this.info.processOption.PRO_ID
-                    }
-                });
-                this.$root.$emit("bv::hide::popover");
+            this.$emit("updateSearchTag", {
+                ProcessName: {
+                    processOption: this.info.processOption,
+                    process: this.info.processOption.PRO_ID,
+                }
+            });
+            this.$root.$emit("bv::hide::popover");
         }
     }
 };

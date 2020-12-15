@@ -1,18 +1,12 @@
 <template>
-    <div id="">
+    <div>
         <SearchPopover :target="tag" @savePopover="onOk" :title="info.title">
-            <template v-slot:target-item>
-                <div @click="onClickTag(tag)" :id="tag">
-                    <b-icon icon="tags-fill" font-scale="1"></b-icon>
-                    {{ tagText }}
-                </div>
-            </template>
             <template v-slot:body>
                 <p>{{ info.detail }}</p>
                 <b-form-group :label="info.label">
                     <b-form-checkbox
                         v-for="option in info.options"
-                        v-model="selected"
+                        v-model="info.casePriorities"
                         :key="option.value"
                         :value="option.value"
                         name="flavour-2a"
@@ -31,19 +25,9 @@ import SearchPopover from "./SearchPopover.vue";
 
 export default {
     components: {
-        SearchPopover,
+        SearchPopover
     },
     props: ["tag", "info"],
-    data() {
-        return {
-            selected: [], // Must be an array reference!
-        };
-    },
-    computed: {
-        tagText: function() {
-            return `${this.$i18n.t('ID_PRIORITY')}: ${this.selected.join(",")}`;
-        },
-    },
     methods: {
         /**
          * Ok button handler
@@ -55,12 +39,22 @@ export default {
          * Submit button handler
          */
         handleSubmit() {
-            this.$nextTick(() => {
-                this.$emit("updateSearchTag", {
-                    priorities: this.selected.join(","),
-                });
-                this.$root.$emit("bv::hide::popover");
+            let selectedOptions = [];
+            let self = this;
+            _.forEach(this.info.casePriorities, function(value) {
+                selectedOptions.push(
+                    _.find(self.info.options, function(o) {
+                        return o.value === value;
+                    })
+                );
             });
+            this.$emit("updateSearchTag", {
+                CasePriority: {
+                    priorities: this.info.casePriorities.join(","),
+                    selectedOptions: selectedOptions,
+                },
+            });
+            this.$root.$emit("bv::hide::popover");
         },
         /**
          * Tag Click handler
