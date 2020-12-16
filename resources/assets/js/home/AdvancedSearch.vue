@@ -151,7 +151,7 @@ export default {
                     programmatic: false,
                 },
                 requestFunction(data) {
-                    return this.$parent.$parent.getCasesForVueTable();
+                    return this.$parent.$parent.getCasesForVueTable(data);
                 },
                 customFilters: ["myfilter"],
             },
@@ -167,16 +167,23 @@ export default {
         /**
          * Get cases data by header
          */
-        getCasesForVueTable() {
+        getCasesForVueTable(data) {
             let that = this,
-                dt;
+                dt,
+                paged,
+                limit = data.limit,
+                start = data.page === 1 ? 0 : limit * (data.page - 1);
+            paged = start + ',' + limit;
             return new Promise((resolutionFunc, rejectionFunc) => {
                 let filters = {};
                 _.forIn(this.filters, function(value, key) {
                     filters = {...filters, ...value};
                 });
                 api.cases
-                    .search(filters)
+                    .search({
+                        filters,
+                        paged:paged
+                    })
                     .then((response) => {
                         dt = that.formatDataResponse(response.data.data);
                         resolutionFunc({
