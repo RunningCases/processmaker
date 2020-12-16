@@ -63,7 +63,7 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort = 'APP_NUMBER,ASC'
+        string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
             $list = new Draft();
@@ -118,7 +118,7 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort = 'APP_NUMBER,ASC'
+        string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
             $list = new Inbox();
@@ -173,7 +173,7 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort = 'APP_NUMBER,ASC'
+        string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
             $list = new Unassigned();
@@ -230,7 +230,7 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $paged = '0,15',
-        string $sort = 'APP_NUMBER,ASC'
+        string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
             $list = new Paused();
@@ -269,11 +269,12 @@ class Home extends Api
      * @param int $process
      * @param int $task
      * @param string $caseTitle
+     * @param string $filter
+     * @param string $caseStatus
      * @param string $startCaseFrom
      * @param string $startCaseTo
      * @param string $finishCaseFrom
      * @param string $finishCaseTo
-     * @param string $filter
      * @param string $paged
      * @param string $sort
      *
@@ -290,12 +291,13 @@ class Home extends Api
         int $task = 0,
         string $caseTitle = '',
         string $filter = 'IN_PROGRESS',
+        string $caseStatus = '',
         string $startCaseFrom = '',
         string $startCaseTo = '',
         string $finishCaseFrom = '',
         string $finishCaseTo = '',
         string $paged = '0,15',
-        string $sort = 'APP_NUMBER,ASC'
+        string $sort = 'APP_NUMBER,DESC'
     ) {
         // Define the filters to apply
         $properties = [];
@@ -307,6 +309,7 @@ class Home extends Api
         $usrUid = $this->getUserId();
         $properties['user'] = User::find($usrUid)->first()->USR_ID;
         $properties['filter'] = $filter;
+        $properties['caseStatus'] = $caseStatus;
         $properties['startCaseFrom'] = $startCaseFrom;
         $properties['startCaseTo'] = $startCaseTo;
         $properties['finishCaseFrom'] = $finishCaseFrom;
@@ -413,13 +416,12 @@ class Home extends Api
      * @param int $task
      * @param int $user
      * @param string $caseTitle
-     * @param string $priorities
      * @param string $caseStatuses
      * @param string $filterCases
-     * @param string $dueDateFrom
-     * @param string $dueDateTo
-     * @param string $delegationDateFrom
-     * @param string $delegationDateTo
+     * @param string $startCaseFrom
+     * @param string $startCaseTo
+     * @param string $finishCaseFrom
+     * @param string $finishCaseTo
      * @param string $paged
      * @param string $sort
      *
@@ -436,15 +438,14 @@ class Home extends Api
         int $task = 0,
         int $user = 0,
         string $caseTitle = '',
-        string $priorities = '',
         string $caseStatuses = '',
         string $filterCases = '',
-        string $dueDateFrom = '',
-        string $dueDateTo = '',
-        string $delegationDateFrom = '',
-        string $delegationDateTo = '',
+        string $startCaseFrom = '',
+        string $startCaseTo = '',
+        string $finishCaseFrom = '',
+        string $finishCaseTo = '',
         string $paged = '0,15',
-        string $sort = 'APP_NUMBER,ASC'
+        string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
             $list = new Search();
@@ -455,13 +456,12 @@ class Home extends Api
             $properties['process'] = $process;
             $properties['task'] = $task;
             $properties['user'] = $user;
-            $properties['priorities'] = explode(',', $priorities);
             $properties['caseStatuses'] = explode(',', $caseStatuses);
             $properties['filterCases'] = $filterCases;
-            $properties['dueDateFrom'] = $dueDateFrom;
-            $properties['dueDateTo'] = $dueDateTo;
-            $properties['delegationDateFrom'] = $delegationDateFrom;
-            $properties['delegationDateTo'] = $delegationDateTo;
+            $properties['startCaseFrom'] = $startCaseFrom;
+            $properties['startCaseTo'] = $startCaseTo;
+            $properties['finishCaseFrom'] = $finishCaseFrom;
+            $properties['finishCaseTo'] = $finishCaseTo;
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);

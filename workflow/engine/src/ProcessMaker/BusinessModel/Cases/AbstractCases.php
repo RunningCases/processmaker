@@ -6,6 +6,7 @@ use Datetime;
 use Exception;
 use ProcessMaker\BusinessModel\Interfaces\CasesInterface;
 use ProcessMaker\BusinessModel\Validator;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 
@@ -1091,33 +1092,60 @@ class AbstractCases implements CasesInterface
     /**
      * Get task color according the due date
      *
-     * @param string $pending
+     * @param string $pendingJson
+     * @param bool $onlyTask
      *
      * @return int
      */
-    public function prepareTaskPending($pending)
+    public function prepareTaskPending($pendingJson, $onlyTask = true)
     {
-        $taskPending = json_decode($pending, true);
+        $taskPending = json_decode($pendingJson, true);
         $result = [];
+        $threadTasks = [];
+        $threadUsers = [];
+        $threadTitles = [];
         $i = 0;
         foreach ($taskPending as $thread) {
             foreach ($thread as $key => $row) {
-                if($key === 'tas_id') {
-                    $result[$i][$key] = $row;
-                    $result[$i]['tas_title'] = (!empty($row)) ? Task::where('TAS_ID', $row)->first()->TAS_TITLE : '';
+                // Thread tasks
+                if ($key === 'tas_id') {
+                    $threadTasks[$i][$key] = $row;
+                    $threadTasks[$i]['tas_title'] = (!empty($row)) ? Task::where('TAS_ID', $row)->first()->TAS_TITLE : '';
                 }
-                if($key === 'user_id') {
-                    $result[$i][$key] = $row;
-                }
-                if($key === 'due_date') {
-                    $result[$i][$key] = $row;
+                if ($key === 'due_date') {
+                    $threadTasks[$i][$key] = $row;
                     // Get task color label
-                    $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
-                    $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                    $threadTasks[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
+                    $threadTasks[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$threadTasks[$i]['tas_color']] : '';
+                }
+                // Review if require other information
+                if ($onlyTask) {
+                    // Thread tasks
+                    if($key === 'user_id') {
+                        $threadTasks[$i][$key] = $row;
+                    }
+                } else {
+                    // Thread users
+                    if ($key === 'user_id') {
+                        $threadUsers[$i][$key] = $row;
+                        $user = (!empty($row)) ? User::where('USR_ID', $row)->first(): null;
+                        $threadUsers[$i]['usr_username'] = $user ? $user->USR_USERNAME : '';
+                        $threadUsers[$i]['usr_lastname'] = $user ? $user->USR_LASTNAME : '';
+                        $threadUsers[$i]['usr_firstname'] = $user ? $user->USR_FIRSTNAME : '';
+                    }
+                    // Thread titles
+                    if ($key === 'del_id') {
+                        $threadTitles[$i][$key] = $row;
+                        $threadTitles[$i]['thread_title'] = (!empty($row)) ? Delegation::where('DELEGATION_ID', $row)->first()->DEL_TITLE : '';
+                    }
                 }
             }
             $i ++;
         }
+        // Define the array responses
+        $result['THREAD_TASKS'] = $threadTasks;
+        $result['THREAD_USERS'] = $threadUsers;
+        $result['THREAD_TITLES'] = $threadTitles;
 
         return $result;
     }
@@ -1187,25 +1215,21 @@ class AbstractCases implements CasesInterface
         if (get_class($this) === Search::class && !empty($properties['caseStatuses'])) {
             $this->setCaseStatuses($properties['caseStatuses']);
         }
-        // Filter by more than one priorities like ['VL', 'L', 'N']
-        if (get_class($this) === Search::class && !empty($properties['priorities'])) {
-            $this->setProperties($properties['priorities']);
+        // Filter date related to started date from
+        if (get_class($this) === Search::class && !empty($properties['startCaseFrom'])) {
+            $this->setStartCaseFrom($properties['startCaseFrom']);
         }
-        // Filter date newest related to delegation/started date
-        if (get_class($this) === Search::class && !empty($properties['delegationDateFrom'])) {
-            $this->setDelegateFrom($properties['delegationDateFrom']);
+        // Filter date related to started date to
+        if (get_class($this) === Search::class && !empty($properties['startCaseTo'])) {
+            $this->setStartCaseTo($properties['startCaseTo']);
         }
-        // Filter date oldest related to delegation/started date
-        if (get_class($this) === Search::class && !empty($properties['delegationDateTo'])) {
-            $this->setDelegateTo($properties['delegationDateTo']);
+        // Filter date related to finish date from
+        if (get_class($this) === Search::class && !empty($properties['finishCaseFrom'])) {
+            $this->setFinishCaseFrom($properties['finishCaseFrom']);
         }
-        // Filter date newest related to due date
-        if (get_class($this) === Search::class && !empty($properties['dueDateFrom'])) {
-            $this->setDueFrom($properties['dueDateFrom']);
-        }
-        // Filter date oldest related to due date
-        if (get_class($this) === Search::class && !empty($properties['dueDateTo'])) {
-            $this->setDueTo($properties['dueDateTo']);
+        // Filter date related to finish date to
+        if (get_class($this) === Search::class && !empty($properties['finishCaseTo'])) {
+            $this->setFinishCaseTo($properties['finishCaseTo']);
         }
         // Filter by case uid
         if (!empty($properties['caseLink'])) {

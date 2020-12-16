@@ -164,6 +164,9 @@ class Participated extends AbstractCases
             $startDate = (string)$item['APP_CREATE_DATE'];
             $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
             $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
+            // todo: we will to complete the real count with other ticket
+            $item['CASE_NOTES_COUNT'] = 0;
+            // Define data according to the filters
             switch ($filter) {
                 case 'STARTED':
                     $result = [];
@@ -192,7 +195,8 @@ class Participated extends AbstractCases
                 case 'IN_PROGRESS':
                     // Get the detail related to the open thread
                     if (!empty($item['PENDING'])) {
-                        $item['PENDING'] = $this->prepareTaskPending($item['PENDING']);
+                        $result = $this->prepareTaskPending($item['PENDING']);
+                        $item['PENDING'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
                     }
                     break;
                 case 'COMPLETED':

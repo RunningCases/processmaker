@@ -929,9 +929,9 @@ class UnassignedTest extends TestCase
     {
         // Create factories related to the unassigned cases
         $cases = $this->createSelfServiceUser();
-        $usrUid = $cases->last()->USR_UID;
-        $usrId = $cases->last()->USR_ID;
-        $title = $cases->last()->DEL_TITLE;
+        $usrUid = $cases['taskUser']->USR_UID;
+        $usrId = $cases['delegation']->USR_ID;
+        $title = $cases['delegation']->DEL_TITLE;
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
         // Create new Unassigned object
