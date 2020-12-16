@@ -86,6 +86,7 @@ export default {
         window.addEventListener("resize", this.onResize);
         this.getMenu();
         this.listenerIframe();
+        window.setInterval(this.setCounter, parseInt(window.config.FORMATS.casesListRefreshTime) * 1000);
     },
     methods: {
         /**
@@ -111,6 +112,7 @@ export default {
                 .get()
                 .then((response) => {
                     this.menu = this.mappingMenu(response.data);
+                    this.setCounter();
                 })
                 .catch((e) => {
                     console.error(e);
@@ -153,6 +155,28 @@ export default {
             } else {
                 this.filters = [];
                 this.page = item.item.id || "MyCases";
+            }
+        },
+        setCounter() {
+            let that = this,
+                counters = [];
+            if (that.menu.length > 0) {
+                api.menu
+                .getCounters()
+                .then((response) => {
+                    var i,
+                        j,
+                        data = response.data;
+                    that.counters = data;    
+                    for (i = 0; i < that.menu.length; i += 1) {
+                        if (that.menu[i].id && data[that.menu[i].id]) {
+                            that.menu[i].badge.text = data[that.menu[i].id];
+                        }
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
             }
         },
         /**

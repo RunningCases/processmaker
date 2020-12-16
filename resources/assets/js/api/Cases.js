@@ -1,6 +1,4 @@
 import axios from "axios";
-import headerData from "./../mocks/casesHeader.json";
-import startedCasesFaker from "./../mocks/startedCasesFaker.js";
 import Api from "./Api.js";
 
 export let cases = {
