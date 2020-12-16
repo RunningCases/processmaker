@@ -2110,8 +2110,8 @@ class Cases
         }
 
         $note_content = addslashes($note_content);
-        $appNote = new \AppNotes();
-        $appNote->addCaseNote($app_uid, $usr_uid, $note_content, intval($send_mail));
+        // Define the Case for register a case note
+        $response = $this->addNote($app_uid, $usr_uid, $note_content, intval($send_mail));
     }
 
     /**
@@ -3869,14 +3869,28 @@ class Cases
      * @param string $note
      * @param bool $sendMail
      * @param array $files
+     * @param int $appNUmber
+     *
+     * @see Ajax::cancelCase()
+     * @see Ajax::pauseCase()
+     * @see Ajax::reassignCase()
+     * @see AppProxy::postNote()
+     * @see WsBase::addCaseNote()
+     * @see Cases::saveCaseNote()
      *
      * @return array
      */
-    public function addNote($appUid, $userUid, $note, $sendMail = false, $files = [])
+    public function addNote($appUid, $userUid, $note, $sendMail = false, $files = [], $appNumber = 0)
     {
+        // Get the appNumber if was not send
+        if ($appNumber === 0) {
+            $appNumber = ModelApplication::getCaseNumber($appUid);
+        }
+
         // Register the note
         $attributes = [
             "APP_UID" => $appUid,
+            "APP_NUMBER" => $appNumber,
             "USR_UID" => $userUid,
             "NOTE_DATE" => date("Y-m-d H:i:s"),
             "NOTE_CONTENT" => $note,

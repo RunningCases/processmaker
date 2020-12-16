@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\ProcessUser;
 
@@ -154,8 +155,8 @@ class Supervising extends AbstractCases
                 $startDate = (string)$item['APP_CREATE_DATE'];
                 $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
                 $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
-                // todo: we will to complete the real count with other ticket
-                $item['CASE_NOTES_COUNT'] = 0;
+                // Get total case notes
+                $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
                 // Get the detail related to the open thread
                 if (!empty($item['PENDING'])) {
                     $result = $this->prepareTaskPending($item['PENDING']);

@@ -126,6 +126,27 @@ class Application extends Model
     }
 
     /**
+     * Get app number
+     *
+     * @param string $appUid
+     *
+     * @return int
+     */
+    public static function getCaseNumber($appUid)
+    {
+        $query = Application::query()->select(['APP_NUMBER'])
+            ->appUid($appUid)
+            ->limit(1);
+        $results = $query->get();
+        $caseNumber = 0;
+        $results->each(function ($item) use (&$caseNumber) {
+            $caseNumber = $item->APP_NUMBER;
+        });
+
+        return $caseNumber;
+    }
+
+    /**
      * Update properties
      *
      * @param string $appUid
@@ -164,6 +185,6 @@ class Application extends Model
             ->statusId($status)
             ->positivesCases();
 
-        return $query->get()->count();
+        return $query->get()->count(['APP_NUMBER']);
     }
 }
