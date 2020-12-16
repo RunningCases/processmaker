@@ -2,7 +2,7 @@
   <div>
     <h5>{{ data.title }}</h5>
     <div v-for="item in data.items" :key="item.title" class="v-inline">
-      <process-card :data="item" />
+      <process-card :data="item" :disable="disable" />
     </div>
   </div>
 </template>
@@ -16,6 +16,7 @@ export default {
   },
   props: {
     data: Object,
+    disable: Boolean,
   },
   data() {
     return {};

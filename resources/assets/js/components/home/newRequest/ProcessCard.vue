@@ -1,5 +1,5 @@
 <template>
-  <div class="v-inline v-process-card" @click="data.onClick(data)">
+  <div :class="classCard()" @click="clickCard(data)">
     <b-card
       :sub-title="data.title"
       class="overflow-hidden"
@@ -18,13 +18,22 @@ export default {
   name: "ProcessCard",
   props: {
     data: Object,
+    disable: Boolean,
   },
   data() {
     return {};
   },
   methods: {
-    classBtn(cls) {
-      return "btn v-btn-request " + cls;
+    classCard() {
+      if (this.disable) {
+        return "v-inline v-process-card v-disable";
+      }
+      return "v-inline v-process-card";
+    },
+    clickCard(data) {
+      if (!this.disable) {
+        this.data.onClick(data);
+      }
     },
   },
 };
@@ -33,6 +42,10 @@ export default {
 <style>
 .v-inline {
   display: inline-block;
+}
+
+.v-disable {
+  opacity: 0.2;
 }
 
 .v-process-card {
