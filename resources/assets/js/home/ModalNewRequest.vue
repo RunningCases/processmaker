@@ -23,7 +23,7 @@
         />
       </div>
       <div v-for="item in categoriesFiltered" :key="item.title">
-        <process-category :data="item" />
+        <process-category :data="item" :disable="disable" />
       </div>
     </b-modal>
   </div>
@@ -44,6 +44,7 @@ export default {
   mounted() {},
   data() {
     return {
+      disable: false,
       filter: "",
       categories: [],
       categoriesFiltered: [],
@@ -152,6 +153,7 @@ export default {
     },
     startNewCase(dt) {
       let self = this;
+      this.disable = true;
       api.cases
         .start(dt)
         .then(function (data) {
@@ -161,9 +163,11 @@ export default {
             DEL_INDEX: 1,
             ACTION: "draft",
           };
+          self.disable = false;
           self.$parent.$parent.page = "XCase";
         })
         .catch((err) => {
+          self.disable = false;
           throw new Error(err);
         });
     },

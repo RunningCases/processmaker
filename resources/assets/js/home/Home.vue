@@ -85,8 +85,24 @@ export default {
         this.onResize();
         window.addEventListener("resize", this.onResize);
         this.getMenu();
+        this.listenerIframe();
     },
     methods: {
+        /**
+         * Listener for iframes childs
+         */
+        listenerIframe(){
+            let that = this,
+                eventMethod = window.addEventListener? "addEventListener": "attachEvent",
+	            eventer = window[eventMethod],
+	            messageEvent = eventMethod === "attachEvent"? "onmessage": "message";
+
+            eventer(messageEvent, function (e) { 
+                if (e.data === "redirect=todo" || e.message === "redirect=todo"){ 
+                    that.page = "todo";
+                }
+            });
+        },
         /**
          * Gets the menu from the server
          */

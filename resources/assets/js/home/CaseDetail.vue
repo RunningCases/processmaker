@@ -1,6 +1,15 @@
 <template>
   <div id="case-detail" ref="case-detail" class="v-container-case-detail">
     <div>
+      <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+      >
+        {{ dataAlert.message }}
+      </b-alert>
       <p class="">
         <b-icon icon="arrow-left"></b-icon>
         <button type="button" class="btn btn-link" @click="$emit('onLastPage')">
@@ -121,6 +130,12 @@ export default {
   props: {},
   data() {
     return {
+      dataAlert: {
+        dismissSecs: 5,
+        dismissCountDown: 0,
+        message: "",
+        variant: "info",
+      },
       dataCase: null,
       newCase: {
         title: this.$i18n.t("ID_NEW_CASE"),
@@ -202,10 +217,16 @@ export default {
           })
         )
         .then((response) => {
-          if (response.data.success === "success") {
+          if (
+            response.data.success === "success" &&
+            response.data.message == ""
+          ) {
             that.attachDocuments = false;
-            this.dataAttachedDocuments.items = [];
+            that.dataAttachedDocuments.items = [];
             that.getCasesNotes();
+          } else {
+            that.showAlert(response.data.message, "danger");
+            that.dataAttachedDocuments.items = [];
           }
         });
     },
@@ -439,6 +460,24 @@ export default {
         });
       });
       return data;
+    },
+    /**
+     * Show the alert message
+     * @param {string} message - message to be displayen in the body
+     * @param {string} type - alert type
+     */
+    showAlert(message, type) {
+      this.dataAlert.message = message;
+      this.dataAlert.variant = type || "info";
+      this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+    },
+    /**
+     * Updates the alert dismiss value to update
+     * dismissCountDown and decrease
+     * @param {mumber}
+     */
+    countDownChanged(dismissCountDown) {
+      this.dataAlert.dismissCountDown = dismissCountDown;
     },
   },
 };

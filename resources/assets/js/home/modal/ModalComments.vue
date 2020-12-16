@@ -1,6 +1,15 @@
 <template>
   <div>
     <b-modal ref="modal-comments" hide-footer size="xl">
+      <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+      >
+        {{ dataAlert.message }}
+      </b-alert>
       <div class="row">
         <div class="col-sm-8">
           <case-comments
@@ -43,6 +52,12 @@ export default {
   mounted() {},
   data() {
     return {
+      dataAlert: {
+        dismissSecs: 5,
+        dismissCountDown: 0,
+        message: "",
+        variant: "info",
+      },
       dataCase: null,
       attachDocuments: false,
       dataComments: {
@@ -77,10 +92,16 @@ export default {
             })
           )
           .then((response) => {
-            if (response.data.success === "success") {
+            if (
+              response.data.success === "success" &&
+              response.data.message == ""
+            ) {
               that.attachDocuments = false;
-              this.dataAttachedDocuments.items = [];
+              that.dataAttachedDocuments.items = [];
               that.getCasesNotes();
+            } else {
+              that.showAlert(response.data.message, "danger");
+              that.dataAttachedDocuments.items = [];
             }
           });
       },
@@ -164,6 +185,24 @@ export default {
         nameFormat = name + " " + lastName;
       }
       return nameFormat;
+    },
+    /**
+     * Show the alert message
+     * @param {string} message - message to be displayen in the body
+     * @param {string} type - alert type
+     */
+    showAlert(message, type) {
+      this.dataAlert.message = message;
+      this.dataAlert.variant = type || "info";
+      this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+    },
+    /**
+     * Updates the alert dismiss value to update
+     * dismissCountDown and decrease
+     * @param {mumber}
+     */
+    countDownChanged(dismissCountDown) {
+      this.dataAlert.dismissCountDown = dismissCountDown;
     },
   },
 };

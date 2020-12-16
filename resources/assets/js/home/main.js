@@ -18,10 +18,6 @@ Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
 Vue.use(ServerTable, {}, false, 'bootstrap3', {});
-//TODO REMOVE THIS SECTION
-window.PMAPI2 = {
-    apiClient: require('axios')
-};
 window.ProcessMaker = {
     apiClient: require('axios')
 };
