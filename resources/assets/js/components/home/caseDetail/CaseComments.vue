@@ -14,7 +14,16 @@
         />
       </div>
     </div>
-    <div class="comments col-md-12">
+    <div class="v-comments col-md-12" @dragover="onDragOver">
+      <div
+        class="mask flex-center rgba-green-strong"
+        v-show="showMaskDrop"
+        @dragover="onDragOver"
+        @dragleave="onDragLeave"
+        @drop="onDropFile"
+      >
+        <p class="white-text">{{ $t("ID_UPLOAD_FILE") }}</p>
+      </div>
       <div class="comment mb-2 row">
         <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
           <a href=""
@@ -66,12 +75,15 @@ export default {
     data: Object,
     onClick: Function,
     postComment: Function,
+    dropFiles: Function,
   },
   components: {
     CaseComment,
   },
   data() {
     return {
+      showMaskDrop: false,
+      files: [],
       itemSelected: null,
     };
   },
@@ -92,15 +104,58 @@ export default {
       return this.icon[icon];
     },
     onClickComment() {
-      this.postComment(this.$refs["comment"].value, this.$refs["send"].checked);
+      let fls = this.files;
+      this.postComment(
+        this.$refs["comment"].value,
+        this.$refs["send"].checked,
+        fls
+      );
       this.resetComment();
     },
     resetComment() {
       this.$refs["comment"].value = "";
       this.$refs["send"].checked = false;
+      this.files = [];
     },
     onSelected(item) {
       this.itemSelected = item;
+    },
+    onDropFile(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      let that = this,
+        fls = [];
+      _.each(e.dataTransfer.files, (f) => {
+        that.files.push(f);
+      });
+
+      _.each(that.files, (f) => {
+        fls.push({
+          data: f,
+          title: f.name,
+          extension: f.name.split(".").pop(),
+          onClick: () => {},
+        });
+      });
+
+      this.dropFiles(fls);
+      this.showMaskDrop = false;
+    },
+    onDragOver(e) {
+      e.preventDefault();
+      if (!this.showMaskDrop) {
+        this.showMaskDrop = true;
+      }
+    },
+    onDragLeave(e) {
+      if (this.showMaskDrop) {
+        this.showMaskDrop = false;
+      }
+    },
+    removeFile(file) {
+      _.remove(this.files, function (n) {
+        return file.title == n.name;
+      });
     },
   },
 };
@@ -111,8 +166,47 @@ export default {
   padding-right: 20px;
 }
 
+.v-comments {
+  display: inline-block;
+}
+
+.mask {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-attachment: fixed;
+  outline: 5px dashed #2ba070;
+  outline-offset: -20px;
+}
+.flex-center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: 100%;
+}
+.rgba-green-strong,
+.rgba-green-strong:after {
+  background-color: rgba(76, 175, 80, 0.7);
+}
+
 .v-img-fluid {
   max-width: 30px;
   height: auto;
+}
+.white-text {
+  font-size: 32px;
+  color: antiquewhite;
 }
 </style>

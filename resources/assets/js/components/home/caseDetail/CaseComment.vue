@@ -11,6 +11,12 @@
     <div class="comment-content col-md-11 col-sm-10 v-comment">
       <div class="comment-meta">
         <a href="#">{{ data.user }}</a> {{ data.date }}
+        <div
+          class="btn-default float-right"
+          v-if="this.data.data.attachments.length > 0"
+        >
+          <i class="fas fa-paperclip"></i>
+        </div>
       </div>
       <div class="comment-body">
         <p>{{ data.comment }}</p>

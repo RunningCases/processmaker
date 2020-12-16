@@ -6,8 +6,16 @@ export let caseNotes = {
         params.append('appUid', data.APP_UID);
         params.append('noteText', data.COMMENT);
         params.append('swSendMail', data.SEND_MAIL ? 1 : 0);
+
+        _.each(data.FILES, (f) => {
+            params.append("filesToUpload[]", f);
+        })
         return axios.post(window.config.SYS_SERVER +
             window.config.SYS_URI +
-            `appProxy/postNote`, params);
-    }
+            `appProxy/postNote`, params, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    },
 };

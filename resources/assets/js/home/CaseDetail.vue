@@ -67,16 +67,23 @@
     <div class="row">
       <div class="col-sm-9">
         <case-comments
+          ref="case-comments"
           :data="dataComments"
           :onClick="onClickComment"
           :postComment="postComment"
+          :dropFiles="dropFiles"
         />
       </div>
       <div class="col-sm-3">
         <attached-documents
-          v-if="dataAttachedDocuments.items.length > 0"
+          v-if="dataAttachedDocuments.items.length > 0 && !attachDocuments"
           :data="dataAttachedDocuments"
         ></attached-documents>
+        <attached-documents-edit
+          v-if="dataAttachedDocuments.items.length > 0 && attachDocuments"
+          :data="dataAttachedDocuments"
+          :onRemove="onRemoveAttachedDocument"
+        ></attached-documents-edit>
       </div>
     </div>
   </div>
@@ -86,6 +93,7 @@
 import IoDocuments from "../components/home/caseDetail/IoDocuments.vue";
 import CaseSummary from "../components/home/caseDetail/CaseSummary.vue";
 import AttachedDocuments from "../components/home/caseDetail/AttachedDocuments.vue";
+import AttachedDocumentsEdit from "../components/home/caseDetail/AttachedDocumentsEdit.vue";
 import CaseComment from "../components/home/caseDetail/CaseComment";
 import CaseComments from "../components/home/caseDetail/CaseComments";
 import TabsCaseDetail from "../home/TabsCaseDetail.vue";
@@ -102,12 +110,13 @@ export default {
     IoDocuments,
     CaseSummary,
     AttachedDocuments,
+    AttachedDocumentsEdit,
     CaseComment,
     CaseComments,
     ModalCancelCase,
     ButtonFleft,
     ModalNewRequest,
-    TaskCell
+    TaskCell,
   },
   props: {},
   data() {
@@ -164,6 +173,7 @@ export default {
         title: "Attached Documents",
         items: [],
       },
+      attachDocuments: false,
       dataComments: {
         title: "Comments",
         items: [],
@@ -181,17 +191,20 @@ export default {
     this.getCasesNotes();
   },
   methods: {
-    postComment(comment, send) {
+    postComment(comment, send, files) {
       let that = this;
       Api.caseNotes
         .post(
           _.extend({}, this.dataCase, {
             COMMENT: comment,
             SEND_MAIL: send,
+            FILES: files,
           })
         )
         .then((response) => {
           if (response.data.success === "success") {
+            that.attachDocuments = false;
+            this.dataAttachedDocuments.items = [];
             that.getCasesNotes();
           }
         });
@@ -263,7 +276,8 @@ export default {
               info = {
                 title: document[i].TITLE,
                 extension: document[i].TITLE.split(".")[1],
-                onClick: document[i].DOWNLOAD_LINK,
+                onClick: () => {},
+                data: document[i],
               };
               this.dataIoDocuments.inputDocuments.push(info);
             }
@@ -288,7 +302,8 @@ export default {
               info = {
                 title: document[i].TITLE,
                 extension: document[i].TITLE.split(".")[1],
-                onClick: document[i].DOWNLOAD_LINK,
+                onClick: () => {},
+                data: document[i],
               };
               this.dataIoDocuments.outputDocuments.push(info);
             }
@@ -297,6 +312,13 @@ export default {
         .catch((err) => {
           throw new Error(err);
         });
+    },
+    dropFiles(files) {
+      this.attachDocuments = true;
+      this.dataAttachedDocuments.items = files;
+    },
+    onRemoveAttachedDocument(file) {
+      this.$refs["case-comments"].removeFile(file);
     },
     /**
      * Get for user format name configured in Processmaker Environment Settings
@@ -386,18 +408,18 @@ export default {
         dt;
       return new Promise((resolutionFunc, rejectionFunc) => {
         Api.cases
-        .pendingtask(that.$parent.dataCase)
-        .then((response) => {
-          dt = that.formatDataResponse(response.data);
-          resolutionFunc({
-            data: dt,
-            count: response.data.length
+          .pendingtask(that.$parent.dataCase)
+          .then((response) => {
+            dt = that.formatDataResponse(response.data);
+            resolutionFunc({
+              data: dt,
+              count: response.data.length,
+            });
+            that.showTable = response.data.length > 0 ? true : false;
+          })
+          .catch((err) => {
+            throw new Error(err);
           });
-          that.showTable = response.data.length > 0 ? true : false;
-        })
-        .catch((err) => {
-          throw new Error(err);
-        });
       });
     },
     formatDataResponse(response) {
@@ -407,17 +429,17 @@ export default {
           TASK: {
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
-            COLOR: v.TAS_COLOR_LABEL
+            COLOR: v.TAS_COLOR_LABEL,
           },
           CASE_TITLE: v.DEL_TITLE,
           ASSIGNEE: v.USR_FIRSTNAME + " " + v.USR_LASTNAME,
           STATUS: v.DEL_THREAD_STATUS,
           DUE_DATE: v.DEL_TASK_DUE_DATE,
-          TASK_COLOR: v.TAS_COLOR_LABEL
-        });        
+          TASK_COLOR: v.TAS_COLOR_LABEL,
+        });
       });
       return data;
-    }
+    },
   },
 };
 </script>

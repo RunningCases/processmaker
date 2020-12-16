@@ -4,15 +4,23 @@
       <div class="row">
         <div class="col-sm-8">
           <case-comments
+            ref="case-comments"
             :data="dataComments"
             :onClick="onClickComment"
             :postComment="postComment"
+            :dropFiles="dropFiles"
           />
         </div>
         <div class="col-sm-4">
           <attached-documents
+            v-if="dataAttachedDocuments.items.length > 0 && !attachDocuments"
             :data="dataAttachedDocuments"
           ></attached-documents>
+          <attached-documents-edit
+            v-if="dataAttachedDocuments.items.length > 0 && attachDocuments"
+            :data="dataAttachedDocuments"
+            :onRemove="onRemoveAttachedDocument"
+          ></attached-documents-edit>
         </div>
       </div>
     </b-modal>
@@ -23,17 +31,20 @@
 import Api from "./../../api/index";
 import CaseComments from "../../components/home/caseDetail/CaseComments.vue";
 import AttachedDocuments from "../../components/home/caseDetail/AttachedDocuments.vue";
+import AttachedDocumentsEdit from "../../components/home/caseDetail/AttachedDocumentsEdit.vue";
 export default {
   name: "ModalComments",
   components: {
     CaseComments,
     AttachedDocuments,
+    AttachedDocumentsEdit,
   },
   props: {},
   mounted() {},
   data() {
     return {
       dataCase: null,
+      attachDocuments: false,
       dataComments: {
         title: this.$i18n.t("ID_COMMENTS"),
         items: [],
@@ -55,17 +66,20 @@ export default {
         });
         this.dataAttachedDocuments.items = att;
       },
-      postComment: (comment, send) => {
+      postComment: (comment, send, files) => {
         let that = this;
         Api.caseNotes
           .post(
             _.extend({}, this.dataCase, {
               COMMENT: comment,
               SEND_MAIL: send,
+              FILES: files,
             })
           )
           .then((response) => {
             if (response.data.success === "success") {
+              that.attachDocuments = false;
+              this.dataAttachedDocuments.items = [];
               that.getCasesNotes();
             }
           });
@@ -94,6 +108,9 @@ export default {
           throw new Error(err);
         });
     },
+    onRemoveAttachedDocument(file) {
+      this.$refs["case-comments"].removeFile(file);
+    },
     formatResponseCaseNotes(notes) {
       let that = this,
         notesArray = [];
@@ -111,6 +128,10 @@ export default {
       });
 
       this.dataComments.items = notesArray;
+    },
+    dropFiles(files) {
+      this.attachDocuments = true;
+      this.dataAttachedDocuments.items = files;
     },
     /**
      * Get for user format name configured in Processmaker Environment Settings
