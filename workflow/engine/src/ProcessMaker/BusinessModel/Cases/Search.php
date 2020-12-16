@@ -177,15 +177,24 @@ class Search extends AbstractCases
     }
 
     /**
-     * Get the number of rows corresponding to the advanced search
+     * Count how many cases the user has in the advanced search, does not apply filters
      *
      * @return int
      */
     public function getCounter()
     {
-        $query = Delegation::query()->select();
+        // The search does not have a counters
+        return 0;
+    }
 
-        // Return the number of rows
-        return $query->count();
+    /**
+     * Get the number of rows corresponding to the advanced search, needs to apply filters
+     *
+     * @return int
+     */
+    public function getPagingCounters()
+    {
+        // The search always will enable the pagination
+        return 0;
     }
 }

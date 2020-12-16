@@ -86,7 +86,7 @@ class Home extends Api
             $list->setProperties($properties);
             $result = [];
             $result['data'] = $list->getData();
-            $result['total'] = $list->getCounter();
+            $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -141,7 +141,7 @@ class Home extends Api
             $list->setProperties($properties);
             $result = [];
             $result['data'] = $list->getData();
-            $result['total'] = $list->getCounter();
+            $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -198,7 +198,7 @@ class Home extends Api
             $list->setProperties($properties);
             $result = [];
             $result['data'] = $list->getData();
-            $result['total'] = $list->getCounter();
+            $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -253,7 +253,7 @@ class Home extends Api
             $list->setProperties($properties);
             $result = [];
             $result['data'] = $list->getData();
-            $result['total'] = $list->getCounter();
+            $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -329,14 +329,14 @@ class Home extends Api
                         $list->setParticipatedStatus($filter);
                         $list->setProperties($properties);
                         $result['data'] = $list->getData();
-                        $result['total'] = $list->getCounter();
+                        $result['total'] = $list->getPagingCounters();
                         break;
                     case 'SUPERVISING':
                         // Scope that search for the SUPERVISING cases by specific user
                         $list = new Supervising();
                         $list->setProperties($properties);
                         $result['data'] = $list->getData();
-                        $result['total'] = $list->getCounter();
+                        $result['total'] = $list->getPagingCounters();
                         break;
                 }
             }

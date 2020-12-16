@@ -22,7 +22,6 @@ class DraftTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->markTestIncomplete();
     }
 
     /**
@@ -46,6 +45,33 @@ class DraftTest extends TestCase
     }
 
     /**
+     * Create many draft cases for one user
+     * 
+     * @param int
+     * @return object
+     */
+    public function createManyDraft($cases)
+    {
+        $user = factory(\ProcessMaker\Model\User::class)->create();
+
+        for ($i = 0; $i < $cases; $i = $i + 1) {
+            $application = factory(Application::class)->states('draft')->create([
+                'APP_INIT_USER' => $user->USR_UID,
+                'APP_CUR_USER' => $user->USR_UID,
+            ]);
+            factory(Delegation::class)->states('foreign_keys')->create([
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_INDEX' => 1,
+                'APP_UID' => $application->APP_UID,
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'USR_ID' => $user->USR_ID
+            ]);
+        }
+
+        return $user;
+    }
+
+    /**
      * This checks the counters is working properly in draft
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCounter()
@@ -57,7 +83,7 @@ class DraftTest extends TestCase
         $cases = $this->createDraft();
         // Create new Draft object
         $draft = new Draft();
-        $draft->setUserId($cases->USR_ID);
+        $draft->setUserId($cases['USR_ID']);
         $result = $draft->getCounter();
         $this->assertTrue($result > 0);
     }
@@ -74,9 +100,9 @@ class DraftTest extends TestCase
         // Create factories related to the draft cases
         $cases = $this->createDraft();
         // Create new Draft object
-        $draft = new Inbox();
+        $draft = new Draft();
         // Set the user ID
-        $draft->setUserId($cases->USR_ID);
+        $draft->setUserId($cases['USR_ID']);
         $draft->setOrderByColumn('APP_NUMBER');
         $res = $draft->getData();
         $this->assertNotEmpty($res);
@@ -96,8 +122,8 @@ class DraftTest extends TestCase
         $cases = $this->createDraft();
         // Create new Draft object
         $draft = new Draft();
-        $draft->setUserId($cases->USR_ID);
-        $draft->setProcessId($cases->PRO_ID);
+        $draft->setUserId($cases['USR_ID']);
+        $draft->setProcessId($cases['PRO_ID']);
         $draft->setOrderByColumn('APP_NUMBER');
         $res = $draft->getData();
         $this->assertNotEmpty($res);
@@ -117,8 +143,8 @@ class DraftTest extends TestCase
         $cases = $this->createDraft();
         // Create new Draft object
         $draft = new Draft();
-        $draft->setUserId($cases->USR_ID);
-        $draft->setCaseNumber($cases->APP_NUMBER);
+        $draft->setUserId($cases['USR_ID']);
+        $draft->setCaseNumber($cases['APP_NUMBER']);
         $draft->setOrderByColumn('APP_NUMBER');
         $res = $draft->getData();
         $this->assertNotEmpty($res);
@@ -138,11 +164,10 @@ class DraftTest extends TestCase
         $cases = $this->createDraft();
         // Create new Draft object
         $draft = new Draft();
-        $draft->setUserId($cases->USR_ID);
-        $draft->setTaskId($cases->TAS_ID);
+        $draft->setUserId($cases['USR_ID']);
+        $draft->setTaskId($cases['TAS_ID']);
         $res = $draft->getData();
         $this->assertNotEmpty($res);
-
     }
 
     /**
@@ -157,14 +182,14 @@ class DraftTest extends TestCase
     {
         // Create factories related to the to_do cases
         $cases = $this->createDraft();
-        $title = $cases->last()->DEL_TITLE;
+        $title = $cases['DEL_TITLE'];
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
         // Create new Draft object
         $draft = new Draft();
-        $draft->setUserId($cases->USR_ID);
+        $draft->setUserId($cases['USR_ID']);
         // Set the title
-        $draft->setCaseTitle($cases->DEL_TITLE);
+        $draft->setCaseTitle($cases['DEL_TITLE']);
         // Get the data
         $res = $draft->getData();
         // Asserts
@@ -194,10 +219,39 @@ class DraftTest extends TestCase
         $index = array_rand($columnsView);
         // Create new Inbox object
         $draft = new Draft();
-        $draft->setUserId($cases->USR_ID);
+        $draft->setUserId($cases['USR_ID']);
         // Define the column to order
         $draft->setOrderByColumn($columnsView[$index]);
         $res = $draft->getData();
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getPagingCounters() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getPagingCounters()
+     * @test
+     */
+    public function it_should_test_get_paging_counters_method()
+    {
+        $cases = $this->createManyDraft(3);
+
+        $draft = new Draft();
+        $draft->setUserId($cases->USR_ID);
+        $draft->setUserUid($cases->USR_UID);
+
+        $res = $draft->getPagingCounters();
+        $this->assertEquals(3, $res);
+
+        $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
+
+        $draft->setCaseNumber($delegation->APP_NUMBER);
+        $draft->setProcessId($delegation->PRO_ID);
+        $draft->setTaskId($delegation->TAS_ID);
+        $draft->setCaseUid($delegation->APP_UID);
+
+        $res = $draft->getPagingCounters();
+
+        $this->assertEquals(1, $res);
     }
 }

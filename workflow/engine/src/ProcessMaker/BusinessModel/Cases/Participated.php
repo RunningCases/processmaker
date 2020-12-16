@@ -214,7 +214,7 @@ class Participated extends AbstractCases
     }
 
     /**
-     * Get the number of rows corresponding to the Participated
+     * Get the number of rows corresponding has Participation, does not apply filters
      *
      * @return int
      */
@@ -246,6 +246,45 @@ class Participated extends AbstractCases
                 $query->lastThread();
                 break;
         }
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
+
+    /**
+     * Count how many cases the user has Participation, needs to apply filters
+     *
+     * @return int
+     */
+    public function getPagingCounters()
+    {
+        // Get base query
+        $query = Delegation::query()->select();
+        // Join with application
+        $query->joinApplication();
+        // Scope that sets the queries for Participated
+        $query->participated($this->getUserId());
+        // Get filter
+        $filter = $this->getParticipatedStatus();
+        switch ($filter) {
+            case 'STARTED':
+                // Scope that search for the STARTED by user
+                $query->caseStarted();
+                break;
+            case 'IN_PROGRESS':
+                // Only distinct APP_NUMBER
+                $query->distinct();
+                // Scope for in progress cases
+                $query->statusIds([self::STATUS_DRAFT, self::STATUS_TODO]);
+                break;
+            case 'COMPLETED':
+                // Scope that search for the COMPLETED
+                $query->caseCompleted();
+                // Scope to set the last thread
+                $query->lastThread();
+                break;
+        }
+        // Apply filters
+        $this->filters($query);
         // Return the number of rows
         return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }

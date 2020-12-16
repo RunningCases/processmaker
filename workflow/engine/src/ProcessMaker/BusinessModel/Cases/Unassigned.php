@@ -119,15 +119,32 @@ class Unassigned extends AbstractCases
     }
 
     /**
-     * Count the self-services cases by user
+     * Count how many cases the user has in SELF_SERVICE, does not apply filters
      *
      * @return int
      */
     public function getCounter()
     {
         $query = Delegation::query()->select();
+        // Add the initial scope for self-service cases
         $query->selfService($this->getUserUid());
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
 
-        return $query->count();
+    /**
+     * Count how many cases the user has in SELF_SERVICE, needs to apply filters
+     *
+     * @return int
+     */
+    public function getPagingCounters()
+    {
+        $query = Delegation::query()->select();
+        // Add the initial scope for self-service cases
+        $query->selfService($this->getUserUid());
+        // Apply filters
+        $this->filters($query);
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
 }

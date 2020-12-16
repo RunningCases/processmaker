@@ -1256,4 +1256,14 @@ class AbstractCases implements CasesInterface
     {
         throw new Exception("Method '" . __FUNCTION__ . "' should be implemented in the extended class '" . get_class($this) . "'.");
     }
+
+    /**
+     * Get the list counter
+     *
+     * @throws Exception
+     */
+    public function getPagingCounters()
+    {
+        throw new Exception("Method '" . __FUNCTION__ . "' should be implemented in the extended class '" . get_class($this) . "'.");
+    }
 }

@@ -110,7 +110,7 @@ class Draft extends AbstractCases
     }
 
     /**
-     * Count the self-services cases by user
+     * Count how many cases the user has in DRAFT, does not apply filters
      *
      * @return int
      */
@@ -119,8 +119,23 @@ class Draft extends AbstractCases
         $query = Delegation::query()->select();
         // Add the initial scope for draft cases
         $query->draft($this->getUserId());
-        $this->filters($query);
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
 
-        return $query->count();
+    /**
+     * Count how many cases the user has in DRAFT, needs to apply filters
+     *
+     * @return int
+     */
+    public function getPagingCounters()
+    {
+        $query = Delegation::query()->select();
+        // Add the initial scope for draft cases
+        $query->draft($this->getUserId());
+        // Apply filters
+        $this->filters($query);
+        // Return the number of rows
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
 }

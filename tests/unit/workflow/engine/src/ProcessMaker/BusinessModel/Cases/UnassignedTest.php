@@ -75,6 +75,45 @@ class UnassignedTest extends TestCase
     }
 
     /**
+     * Create many unassigned cases for one user
+     * 
+     * @param int
+     * @return object
+     */
+    public function createMultipleUnassigned($cases)
+    {
+        $user = factory(\ProcessMaker\Model\User::class)->create();
+
+        for ($i = 0; $i < $cases; $i = $i + 1) {
+            $process = factory(Process::class)->create();
+            $application = factory(Application::class)->create([
+                'APP_STATUS_ID' => 2
+            ]);
+            $task = factory(Task::class)->create([
+                'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+                'TAS_GROUP_VARIABLE' => '',
+                'PRO_UID' => $process->PRO_UID,
+                'PRO_ID' => $process->PRO_ID,
+            ]);
+            factory(TaskUser::class)->create([
+                'TAS_UID' => $task->TAS_UID,
+                'USR_UID' => $user->USR_UID,
+                'TU_RELATION' => 1, //Related to the user
+                'TU_TYPE' => 1
+            ]);
+            factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'TAS_ID' => $task->TAS_ID,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'USR_ID' => 0,
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-$i year"))
+            ]);
+        }
+        return $user;
+    }
+
+    /**
      * This checks the counters is working properly in self-service user assigned
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounter()
@@ -905,5 +944,33 @@ class UnassignedTest extends TestCase
         $res = $unassigned->getData();
         // Asserts
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getPagingCounters() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getPagingCounters()
+     * @test
+     */
+    public function it_should_test_get_paging_counters_method()
+    {
+        $cases = $this->createMultipleUnassigned(3);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($cases->USR_ID);
+        $unassigned->setUserUid($cases->USR_UID);
+
+        $res = $unassigned->getPagingCounters();
+        
+        $this->assertEquals(3, $res);
+
+        $delegation = Delegation::select()->where('USR_ID', 0)->first();
+
+        $unassigned->setCaseNumber($delegation->APP_NUMBER);
+        $unassigned->setProcessId($delegation->PRO_ID);
+        $unassigned->setTaskId($delegation->TAS_ID);
+        $unassigned->setCaseUid($delegation->APP_UID);
+
+        $res = $unassigned->getPagingCounters();
+        $this->assertEquals(1, $res);
     }
 }
