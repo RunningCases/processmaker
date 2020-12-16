@@ -11,7 +11,7 @@
                         <b-form-group :label="$root.translation('ID_NAME')">
                             <b-form-input v-model="form.name"
                                           :state="validateState('name')"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_TYPE')">
@@ -28,13 +28,13 @@
                         <b-form-group :label="$root.translation('ID_SERVER_ADDRESS')">
                             <b-form-input v-model="form.serverAddress"
                                           :state="validateState('serverAddress')"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_PORT')">
                             <b-form-input v-model="form.port"
                                           :state="validateState('port')"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_ENABLE_AUTOMATIC_REGISTER')"
@@ -60,11 +60,12 @@
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_BASE_DN')">
                             <b-form-input v-model="form.baseDN"
-                                          placeholder="dc=business,dc=net"/>
+                                          placeholder="dc=business,dc=net"
+                                          autocomplete="off"/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_INACTIVE_USERS')">
                             <b-form-input v-model="form.inactiveUsers"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_ROLE')">
                             <b-form-select v-model="form.role"
@@ -81,40 +82,41 @@
                         <b-form-group :label="$root.translation('ID_USERNAME')">
                             <b-form-input v-model="form.userName"
                                           :state="validateState('userName')"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_PASSWORD')">
                             <b-form-input v-model="form.password"
                                           :state="validateState('password')"
-                                          type="password"/>
+                                          type="password"
+                                          autocomplete="off"/>
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_USER_IDENTIFIER')">
                             <b-form-input v-model="form.userIdentifier"
-                                          placeholder=""
+                                          autocomplete="off"
                                           readonly/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_GROUP_IDENTIFIER')">
                             <b-form-input v-model="form.groupIdentifier"
-                                          placeholder=""
+                                          autocomplete="off"
                                           readonly/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_FILTER_TO_SEARCH_USERS')">
                             <b-form-input v-model="form.filterToSearchUsers"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_USER_CLASS_IDENTIFIER')">
                             <b-form-input v-model="form.userClassIdentifier"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_GROUP_CLASS_IDENTIFIER')">
                             <b-form-input v-model="form.groupClassIdentifier"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_DEPARTMENT_CLASS_IDENTIFIER')">
                             <b-form-input v-model="form.departmentClassIdentifier"
-                                          placeholder=""/>
+                                          autocomplete="off"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -270,12 +272,12 @@
             test(form) {
                 let formDataForName = new FormData();
                 formDataForName.append("AUTH_SOURCE_NAME", form.name);
-                axios.post(this.$root.baseUrl() + "ldapAdvancedProxy.php?functionAccion=ldapVerifyName", formDataForName)
+                axios.post(this.$root.baseUrl() + "authSources/ldapAdvancedProxy.php?functionAccion=ldapVerifyName", formDataForName)
                         .then(response => {
                             //the name is valid
                             if (response.data.row === false || (this.form.uid !== "" && typeof this.form.uid === "string")) {
                                 let formData = this.formToFormData(form);
-                                axios.post(this.$root.baseUrl() + "ldapAdvancedProxy.php?functionAccion=ldapTestConnection", formData)
+                                axios.post(this.$root.baseUrl() + "authSources/ldapAdvancedProxy.php?functionAccion=ldapTestConnection", formData)
                                         .then(response => {
                                             //test is successful
                                             if (response.data.status === "OK") {
