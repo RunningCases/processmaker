@@ -17,7 +17,7 @@
  * long as it does not already exist in the output directory.
  *
  * @package    classes.model
- * @deprecated Method deprecated in Release 3.6.0
+ * @deprecated Class deprecated in Release 3.6.0
  */
 class ListCompletedPeer extends BaseListCompletedPeer {
 
