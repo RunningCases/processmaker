@@ -204,10 +204,10 @@ export default {
      */
     openCase(item) {
       this.$emit("onUpdateDataCase", {
-        APP_UID: item.APP_UID,
-        DEL_INDEX: item.DEL_INDEX,
-        PRO_UID: item.PRO_UID,
-        TAS_UID: item.TAS_UID,
+        APP_UID: item.row.APP_UID,
+        DEL_INDEX: item.row.DEL_INDEX,
+        PRO_UID: item.row.PRO_UID,
+        TAS_UID: item.row.TAS_UID,
         ACTION: "draft",
       });
       this.$emit("onUpdatePage", "XCase");
