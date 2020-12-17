@@ -17,6 +17,7 @@ use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\User;
+use ProcessMaker\Model\Task;
 use ProcessMaker\Services\Api;
 use RBAC;
 use stdClass;
@@ -661,5 +662,32 @@ class Home extends Api
         $result['unassigned'] = $unassigned->getCounter();
 
         return $result;
+    }
+
+    /**
+     * Get all tasks, paged optionally, can be sent a text to filter results by "TAS_TITLE"
+     *
+     * @url GET /tasks
+     *
+     * @param string $text
+     * @param string $proId
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return array
+     *
+     * @throws Exception
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getTasks($text = null, $proId = null, $offset = null, $limit = null)
+    {
+        try {
+            $tasks = Task::getTasksForHome($text, $proId, $offset, $limit);
+            return $tasks;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
     }
 }

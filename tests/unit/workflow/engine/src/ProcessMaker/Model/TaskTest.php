@@ -94,9 +94,9 @@ class TaskTest extends TestCase
         $taskInstance = new Task();
         $taskInfo = $taskInstance->information($del->APP_UID, $del->TAS_UID, $del->DEL_INDEX);
         $result = ' 4 ' . G::LoadTranslation('ID_DAY_DAYS');
-        $result .= ' 01 '. G::LoadTranslation('ID_HOUR_ABBREVIATE');
-        $result .= ' 01 '. G::LoadTranslation('ID_MINUTE_ABBREVIATE');
-        $result .= ' 01 '. G::LoadTranslation('ID_SECOND_ABBREVIATE');
+        $result .= ' 01 ' . G::LoadTranslation('ID_HOUR_ABBREVIATE');
+        $result .= ' 01 ' . G::LoadTranslation('ID_MINUTE_ABBREVIATE');
+        $result .= ' 01 ' . G::LoadTranslation('ID_SECOND_ABBREVIATE');
         $this->assertEquals($taskInfo['DURATION'], $result);
     }
 
@@ -121,9 +121,9 @@ class TaskTest extends TestCase
         $taskInstance = new Task();
         $taskInfo = $taskInstance->information($del->APP_UID, $del->TAS_UID, $del->DEL_INDEX);
         $result = ' 4 ' . G::LoadTranslation('ID_DAY_DAYS');
-        $result .= ' 01 '. G::LoadTranslation('ID_HOUR_ABBREVIATE');
-        $result .= ' 01 '. G::LoadTranslation('ID_MINUTE_ABBREVIATE');
-        $result .= ' 01 '. G::LoadTranslation('ID_SECOND_ABBREVIATE');
+        $result .= ' 01 ' . G::LoadTranslation('ID_HOUR_ABBREVIATE');
+        $result .= ' 01 ' . G::LoadTranslation('ID_MINUTE_ABBREVIATE');
+        $result .= ' 01 ' . G::LoadTranslation('ID_SECOND_ABBREVIATE');
         $this->assertEquals($taskInfo['DURATION'], $result);
     }
 
@@ -143,7 +143,7 @@ class TaskTest extends TestCase
             'PRJ_UID' => $project->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        
+
         Task::setTaskDefTitle($elementTask->ELEMENT_UID, "Task title new");
         $query = Task::query();
         $query->select()->where('TASK.TAS_UID', $task->TAS_UID);
@@ -167,9 +167,9 @@ class TaskTest extends TestCase
             'PRJ_UID' => $project->PRO_UID,
             'TAS_UID' => $task->TAS_UID,
         ]);
-        
+
         $res = Task::getTaskDefTitle($elementTask->ELEMENT_UID);
-        
+
         $this->assertEquals($res, $task->TAS_DEF_TITLE);
     }
 
@@ -185,5 +185,48 @@ class TaskTest extends TestCase
         $tas = new Task();
         $result = $tas->taskCaseTitle($task->TAS_UID);
         $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It test get tasks for the new home view
+     *
+     * @covers \ProcessMaker\Model\Task::getTasksForHome()
+     * @test
+     */
+    public function it_should_test_get_tasks_for_home_method()
+    {
+        Task::truncate();
+        Process::truncate();
+        
+        $process1 = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+
+        factory(Task::class)->create([
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TITLE' => 'Task 1'
+        ]);
+        factory(Task::class)->create([
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TITLE' => 'Task 2'
+        ]);
+        factory(Task::class)->create([
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TITLE' => 'Task 3'
+        ]);
+
+        factory(Task::class)->create([
+            'PRO_UID' => $process2->PRO_UID,
+            'TAS_TITLE' => 'Task 1'
+        ]);
+        factory(Task::class)->create([
+            'PRO_UID' => $process2->PRO_UID,
+            'TAS_TITLE' => 'Task 2'
+        ]);
+
+        $this->assertCount(5, Task::getTasksForHome());
+        $this->assertCount(2, Task::getTasksForHome('Task 1'));
+        $this->assertCount(3, Task::getTasksForHome(null, $process1->PRO_ID));
+        $this->assertCount(5, Task::getTasksForHome(null, null, null, 2));
+        $this->assertCount(1, Task::getTasksForHome(null, null, 2, 1));
     }
 }
