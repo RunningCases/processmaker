@@ -149,6 +149,7 @@ ScriptVariables::add('SYS_WORKSPACE', config("system.workspace"));
 ScriptVariables::add('SYS_URI', SYS_URI);
 ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
+ScriptVariables::add('FORMATS', $conf->getFormats());
 echo View::make('Views::home.home', compact("userCanAccess"))->render();
 
 /*----------------------------------********---------------------------------*/
