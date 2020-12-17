@@ -69,6 +69,7 @@
         mounted() {
             let promise = this.getRolesList();
             promise.then(response => {
+                response;
                 this.changeRoles();
             });
         },
