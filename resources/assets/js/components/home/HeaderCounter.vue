@@ -1,28 +1,26 @@
 <template>
-  <div class="row-cont">
-    <div class="text-center">
-      <button
-        type="button"
-        v-for="header in data"
-        :key="header.title"
-        @click="header.onClick(header)"
-        :class="classBtn(header.class)"
-      >
-        <div class="v-center-header">
-          <div class="v-btn-textm-header">
-            <span class="v-text2">
-              <i :class="header.icon"></i>
-            </span>
-            <span class="v-btn-textb-header float-right">
-              {{ header.counter }}
-            </span>
-          </div>
-          <span class="v-btn-texts-header">
-            {{ header.title }}
+  <div class="header-container">
+    <button
+      type="button"
+      v-for="header in data"
+      :key="header.title"
+      @click="header.onClick(header)"
+      :class="classBtn(header.class)"
+    >
+      <div class="v-center-header">
+        <div class="v-btn-textm-header">
+          <span class="v-text2">
+            <i :class="header.icon"></i>
+          </span>
+          <span class="v-btn-textb-header float-right">
+            {{ header.counter }}
           </span>
         </div>
-      </button>
-    </div>
+        <span class="v-btn-texts-header">
+          {{ header.title }}
+        </span>
+      </div>
+    </button>
   </div>
 </template>
 
@@ -54,15 +52,16 @@ export default {
 }
 
 .v-btn-texts-header {
+  display: inline-block;
   font-size: 1vw;
 }
 .v-btn-header {
-  min-width: 200px;
-  margin-left: 5px !important;
-  margin-right: 5px !important;
-  padding-bottom: 10px !important;
-  padding-top: 10px !important;
-  text-align: center;
+  padding: 20px;
+  flex: 2;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-right: 15px;
 }
 
 .v-center-header {
@@ -76,5 +75,9 @@ export default {
 .v-text2 {
   font-size: 2vw;
   float: left;
+}
+.header-container {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

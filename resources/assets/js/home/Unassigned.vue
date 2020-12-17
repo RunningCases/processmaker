@@ -170,7 +170,7 @@ export default {
       _.forEach(response, (v) => {
         data.push({
           CASE_NUMBER: v.APP_NUMBER,
-          CASE_TITLE: v.APP_TITLE,
+          CASE_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
           TASK: {
             TITLE: v.TAS_TITLE,

@@ -190,7 +190,7 @@ export default {
             _.forEach(response, (v) => {
                 data.push({
                     CASE_NUMBER: v.APP_NUMBER,
-                    CASE_TITLE: v.APP_TITLE,
+                    CASE_TITLE: v.DEL_TITLE,
                     PROCESS_NAME: v.PRO_TITLE,
                     STATUS: v.APP_STATUS,
                     START_DATE: v.APP_CREATE_DATE || "",
@@ -376,7 +376,6 @@ export default {
                         class: "btn-warning",
                     },
                 };
-            console.log(response);
             _.forEach(response, (v) => {
                 data.push({
                     title: v.title,
@@ -400,9 +399,7 @@ export default {
             });
         },
         onRemoveFilter(data) {
-            console.log(data);
         },
-
         onUpdateFilters(data) {
             this.$emit("onUpdateFilters", data.params);
             if (data.refresh) {
