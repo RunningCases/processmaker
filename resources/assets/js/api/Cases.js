@@ -7,10 +7,7 @@ export let cases = {
     myCases(data) {
         return Api.get({
             service: "MY_CASES",
-            params: {
-                filter: data.filter,
-                paged: data.paged
-            },
+            params: data,
             keys: {}
         });
     },

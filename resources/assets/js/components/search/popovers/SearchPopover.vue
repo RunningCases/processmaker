@@ -3,11 +3,12 @@
         <slot name="target-item"></slot>
 
         <b-popover
-            :show.sync="popoverShow"
+            :show="autoShow"
             :target="target"
+            ref="popover"
             triggers="click"
             placement="bottom"
-            class="popovercustom"
+            class="popovercustom" 
         >
             <template #title>
                 <b-button @click="onClose" class="close" aria-label="Close">
@@ -29,18 +30,14 @@
 </template>
 <script>
 export default {
-    props: ['target', "title"],
-    data() {
-        return {
-           popoverShow: false
-        };
-    },
+    props: ['target', "title", "autoShow"],
+
     methods: {
         /**
          * Close buton click handler 
          */
         onClose() {
-            this.popoverShow = false;
+            this.$refs.popover.$emit('close');
             this.$emit('closePopover');
         },
         /**

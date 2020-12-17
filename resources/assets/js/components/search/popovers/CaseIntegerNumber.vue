@@ -19,9 +19,10 @@
                         <b-form-input
                             id="name-input"
                             v-model="filter[0].value"
-                            :placeholder="$t('ID_CASE_NUMBER_FILTER_RANGE_EG')"
+                            :placeholder="$t('ID_CASE_NUMBER_FILTER_EG')"
                             :state="valueState"
                             required
+                            type="number"
                         ></b-form-input>
                     </b-form-group>
                 </form>
@@ -41,7 +42,7 @@ export default {
     data() {
         return {
             valueState: null,
-            showPopover: false
+            showPopover: false,
         };
     },
     methods: {
@@ -49,9 +50,8 @@ export default {
             this.showPopover = true;
         },
         checkFormValidity() {
-            const regex = /^((\d+?)|(\d+?)(?:\-(\d+?))?)(?:\,((\d+?)|(\d+?)(?:\-(\d+?))?))*$/;
-            regex.test(this.filter[0].value);
-            this.valueState = regex.test(this.filter[0].value);
+            const valid = this.$refs.form.checkValidity();
+            this.valueState = valid;
             return this.valueState;
         },
         handleSubmit() {
@@ -62,8 +62,9 @@ export default {
             }
             // Hide the modal manually
             this.$nextTick(() => {
+              
                 this.$emit("updateSearchTag", this.filter);
-                this.$root.$emit("bv::hide::popover");
+                self.$root.$emit("bv::hide::popover");
             });
         },
         onOk() {
@@ -71,7 +72,7 @@ export default {
         },
         onClickTag(tag) {
             this.$root.$emit("bv::hide::popover");
-        },
+        }
     },
 };
 </script>
