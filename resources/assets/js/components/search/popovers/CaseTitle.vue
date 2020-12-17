@@ -4,6 +4,7 @@
             :target="tag"
             @savePopover="onOk"
             :title="info.title"
+            :autoShow="info.autoShow || false"
         >
         
             <template v-slot:body>
@@ -16,7 +17,7 @@
                     >
                         <b-form-input
                             id="name-input"
-                            v-model="info.values.caseTitle"
+                            v-model="filter[0].value"
                             :placeholder="$t('ID_CASE_TITLE_NAME')"
                             :state="valueState"
                             required
@@ -35,7 +36,7 @@ export default {
     components: {
         SearchPopover,
     },
-    props: ["tag", "info"],
+    props: ["tag", "info", "filter"],
     data() {
         return {
             title: "",
@@ -61,11 +62,7 @@ export default {
                 return;
             }
             this.$nextTick(() => {
-                this.$emit("updateSearchTag", {
-                    CaseTitle: {
-                        caseTitle: self.info.values.caseTitle,
-                    }
-                });
+                this.$emit("updateSearchTag", this.filter);
                 self.$root.$emit("bv::hide::popover");
             });
         },

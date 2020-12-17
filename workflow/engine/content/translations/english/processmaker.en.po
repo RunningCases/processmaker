@@ -2000,6 +2000,12 @@ msgid "Add file"
 msgstr "Add file"
 
 # TRANSLATION
+# LABEL/ID_ADD_FILTER
+#: LABEL/ID_ADD_FILTER
+msgid "Add Filter"
+msgstr "Add Filter"
+
+# TRANSLATION
 # LABEL/ID_ADD_HORIZONTAL_LINE
 #: LABEL/ID_ADD_HORIZONTAL_LINE
 msgid "Add horizontal line"
@@ -2034,6 +2040,12 @@ msgstr "Add Permission To Role"
 #: LABEL/ID_ADD_ROW
 msgid "Add Row"
 msgstr "Add Row"
+
+# TRANSLATION
+# LABEL/ID_ADD_SEARCH_FILTER_CRITERIA
+#: LABEL/ID_ADD_SEARCH_FILTER_CRITERIA
+msgid "Add Search Filter Criteria"
+msgstr "Add Search Filter Criteria"
 
 # TRANSLATION
 # LABEL/ID_ADD_SUB_PROCESS
@@ -2974,6 +2986,48 @@ msgstr "Button"
 #: LABEL/ID_BUY_NOW
 msgid "Buy now"
 msgstr "Buy now"
+
+# TRANSLATION
+# LABEL/ID_BY_CASE_NUMBER
+#: LABEL/ID_BY_CASE_NUMBER
+msgid "By Case #"
+msgstr "By Case #"
+
+# TRANSLATION
+# LABEL/ID_BY_CASE_TITLE
+#: LABEL/ID_BY_CASE_TITLE
+msgid "By Case Title"
+msgstr "By Case Title"
+
+# TRANSLATION
+# LABEL/ID_BY_PROCESS_NAME
+#: LABEL/ID_BY_PROCESS_NAME
+msgid "By Process Name"
+msgstr "By Process Name"
+
+# TRANSLATION
+# LABEL/ID_BY_TASK
+#: LABEL/ID_BY_TASK
+msgid "By Task"
+msgstr "By Task"
+
+# TRANSLATION
+# LABEL/ID_BY_STATUS
+#: LABEL/ID_BY_STATUS
+msgid "By Status"
+msgstr "By Status"
+
+# TRANSLATION
+# LABEL/ID_BY_START_DATE
+#: LABEL/ID_BY_START_DATE
+msgid "By Start Date"
+msgstr "By Start Date"
+
+# TRANSLATION
+# LABEL/ID_BY_FINISH_DATE
+#: LABEL/ID_BY_FINISH_DATE
+msgid "By Finish Date"
+msgstr "By Finish Date"
 
 # TRANSLATION
 # LABEL/ID_CACHE_BTN_BUILD
@@ -3954,6 +4008,18 @@ msgid "Case Number"
 msgstr "Case Number"
 
 # TRANSLATION
+# LABEL/ID_CASE_NUMBER_FILTER_EG
+#: LABEL/ID_CASE_NUMBER_FILTER_EG
+msgid "e.g. 8"
+msgstr "e.g. 8"
+
+# TRANSLATION
+# LABEL/ID_CASE_NUMBER_FILTER_RANGE_EG
+#: LABEL/ID_CASE_NUMBER_FILTER_RANGE_EG
+msgid "e.g. 1-5, 8, 11-13"
+msgstr "e.g. 1-5, 8, 11-13"
+
+# TRANSLATION
 # LABEL/ID_CASE_OUTPUT_DOCUMENT_DOES_NOT_EXIST
 #: LABEL/ID_CASE_OUTPUT_DOCUMENT_DOES_NOT_EXIST
 msgid "This output document with {0}: {1} does not exist."
@@ -4060,6 +4126,12 @@ msgstr "The case has not stopped due to its trigger."
 #: LABEL/ID_CASE_TITLE
 msgid "Case Title"
 msgstr "Case Title"
+
+# TRANSLATION
+# LABEL/ID_CASE_TITLE_NAME
+#: LABEL/ID_CASE_TITLE_NAME
+msgid "Case Title Name"
+msgstr "Case Title Name"
 
 # TRANSLATION
 # LABEL/ID_CASE_TRACKERS
@@ -6052,6 +6124,12 @@ msgstr "Delete Role"
 #: LABEL/ID_DELETE_ROUTES
 msgid "Delete Routes"
 msgstr "Delete Routes"
+
+# TRANSLATION
+# LABEL/ID_DELETE_SEARCH
+#: LABEL/ID_DELETE_SEARCH
+msgid "Delete Search"
+msgstr "Delete Search"
 
 # TRANSLATION
 # LABEL/ID_DELETE_SELECTED_ITEMS
@@ -8724,10 +8802,22 @@ msgid "Sender Email"
 msgstr "Sender Email"
 
 # TRANSLATION
+# LABEL/ID_FROM_FINISH_DATE
+#: LABEL/ID_FROM_FINISH_DATE
+msgid "From Finish Date"
+msgstr "From Finish Date"
+
+# TRANSLATION
 # LABEL/ID_FROM_NAME
 #: LABEL/ID_FROM_NAME
 msgid "Sender Name"
 msgstr "Sender Name"
+
+# TRANSLATION
+# LABEL/ID_FROM_START_DATE
+#: LABEL/ID_FROM_START_DATE
+msgid "From Start Date"
+msgstr "From Start Date"
 
 # TRANSLATION
 # LABEL/ID_FTP_MONITOR_SETTINGS
@@ -9376,6 +9466,12 @@ msgstr "Hide Dirs"
 #: LABEL/ID_HIDE_PROCESS_INF
 msgid "Hide Process Information"
 msgstr "Hide Process Information"
+
+# TRANSLATION
+# LABEL/ID_HIGH
+#: LABEL/ID_HIGH
+msgid "High"
+msgstr "High"
 
 # TRANSLATION
 # LABEL/ID_HISTORY
@@ -10218,6 +10314,12 @@ msgid "Invalid Case Delegation index for this user"
 msgstr "Invalid Case Delegation index for this user"
 
 # TRANSLATION
+# LABEL/ID_INVALID_CASE_NUMBER_RANGE
+#: LABEL/ID_INVALID_CASE_NUMBER_RANGE
+msgid "Invalid case number range, use e.g. 1-5, 8, 11-13"
+msgstr "Invalid case number range, use e.g. 1-5, 8, 11-13"
+
+# TRANSLATION
 # LABEL/ID_INVALID_DATA
 #: LABEL/ID_INVALID_DATA
 msgid "Invalid data"
@@ -10638,6 +10740,12 @@ msgid "Last Login"
 msgstr "Last Login"
 
 # TRANSLATION
+# LABEL/ID_LAST_MODIFIED_DATE
+#: LABEL/ID_LAST_MODIFIED_DATE
+msgid "Last-Modified Date"
+msgstr "Last-Modified Date"
+
+# TRANSLATION
 # LABEL/ID_LAST_MODIFY
 #: LABEL/ID_LAST_MODIFY
 msgid "Last Modified"
@@ -10930,6 +11038,12 @@ msgstr "Case Scheduler Log"
 #: LABEL/ID_LOG_INFO
 msgid "Log Information"
 msgstr "Log Information"
+
+# TRANSLATION
+# LABEL/ID_LOW
+#: LABEL/ID_LOW
+msgid "Low"
+msgstr "Low"
 
 # TRANSLATION
 # LABEL/ID_MAFE_TRANSLATION_DIRECTORY
@@ -21012,10 +21126,40 @@ msgid "Please select a .po file"
 msgstr "Please select a .po file"
 
 # TRANSLATION
+# LABEL/ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH
+#: LABEL/ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH
+msgid "Please select the status for the search:"
+msgstr "Please select the status for the search:"
+
+# TRANSLATION
 # LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 #: LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 msgid "Please select the upgrade file"
 msgstr "Please select the upgrade file"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_SET_A_RANGE_OF_CASES_START_DATE_TO_SEARCH
+#: LABEL/ID_PLEASE_SET_A_RANGE_OF_CASES_START_DATE_TO_SEARCH
+msgid "Please set a range of cases Start Date to search:"
+msgstr "Please set a range of cases Start Date to search:"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_SET_A_RANGE_OF_CASES_FINISH_DATE_TO_SEARCH
+#: LABEL/ID_PLEASE_SET_A_RANGE_OF_CASES_FINISH_DATE_TO_SEARCH
+msgid "Please set a range of cases Finish Date to search:"
+msgstr "Please set a range of cases Finish Date to search:"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_SET_A_RANGE_TO_CASES_TO_SEARCH
+#: LABEL/ID_PLEASE_SET_A_RANGE_TO_CASES_TO_SEARCH
+msgid "Please set a range of cases to search:"
+msgstr "Please set a range of cases to search:"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED
+#: LABEL/ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED
+msgid "Please set the case number to be searched:"
+msgstr "Please set the case number to be searched:"
 
 # TRANSLATION
 # LABEL/ID_PLEASE_SET_VALUE_DAYS_EXECUTION_TIME_FIELD
@@ -23494,6 +23638,12 @@ msgstr "Save Line Position"
 #: LABEL/ID_SAVE_NEW_STEP
 msgid "Save New Step"
 msgstr "Save New Step"
+ 
+# TRANSLATION
+# LABEL/ID_SAVE_SEARCH
+#: LABEL/ID_SAVE_SEARCH
+msgid "Save Search"
+msgstr "Save Search"
 
 # TRANSLATION
 # LABEL/ID_SAVE_SETTINGS
@@ -23644,6 +23794,36 @@ msgstr "An unexpected error occurred while searching for your results. Please co
 #: LABEL/ID_SEARCH_ALSO_APP_UID
 msgid "Search also in the APP_UID field"
 msgstr "Search also in the APP_UID field"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_CASE_NUMBER
+#: LABEL/ID_SEARCH_BY_CASE_NUMBER
+msgid "Search by Case #:"
+msgstr "Search by Case #:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_CASE_TITLE
+#: LABEL/ID_SEARCH_BY_CASE_TITLE
+msgid "Search by Case Title:"
+msgstr "Search by Case Title:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_FINISH_DATE
+#: LABEL/ID_SEARCH_BY_FINISH_DATE
+msgid "Search by Finish Date:"
+msgstr "Search by Finish Date:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_PROCESS_NAME
+#: LABEL/ID_SEARCH_BY_PROCESS_NAME
+msgid "Search by Process Name:"
+msgstr "Search by Process Name:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_START_DATE
+#: LABEL/ID_SEARCH_BY_START_DATE
+msgid "Search by Start Date:"
+msgstr "Search by Start Date:"
 
 # TRANSLATION
 # LABEL/ID_SEARCH_FOR_USER
@@ -25230,6 +25410,12 @@ msgid "[LABEL/ID_TASK_IN_PROGRESS] Task in Progress"
 msgstr "Task in Progress"
 
 # TRANSLATION
+# LABEL/ID_TASK_NAME
+#: LABEL/ID_TASK_NAME
+msgid "Task Name"
+msgstr "Task Name"
+
+# TRANSLATION
 # LABEL/ID_TASK_NOT_EXIST
 #: LABEL/ID_TASK_NOT_EXIST
 msgid "The task with {0}: '{1}' does not exist."
@@ -25540,6 +25726,12 @@ msgstr "Thu"
 #: LABEL/ID_TIMER_EVENT
 msgid "Timer event"
 msgstr "Timer event"
+
+# TRANSLATION
+# LABEL/ID_CLEAN_ALL
+#: LABEL/ID_CLEAN_ALL
+msgid "Clean All"
+msgstr "Clean All"
 
 # TRANSLATION
 # LABEL/ID_CLEAN_WEBENTRIES
@@ -25865,6 +26057,13 @@ msgstr "Total Cases Reassigned"
 msgid "To do"
 msgstr "To do"
 
+
+# TRANSLATION
+# LABEL/ID_TO_FINISH_DATE
+#: LABEL/ID_TO_FINISH_DATE
+msgid "To Finish Date (Optional)"
+msgstr "To Finish Date (Optional)"
+
 # TRANSLATION
 # LABEL/ID_TO_FLOAT
 #: LABEL/ID_TO_FLOAT
@@ -25888,6 +26087,12 @@ msgstr "Reassign"
 #: LABEL/ID_TO_REVISE
 msgid "Review"
 msgstr "Review"
+
+# TRANSLATION
+# LABEL/ID_TO_START_DATE
+#: LABEL/ID_TO_START_DATE
+msgid "To Start Date (Optional)"
+msgstr "To Start Date (Optional)"
 
 # TRANSLATION
 # LABEL/ID_TO_STRING
@@ -27376,6 +27581,18 @@ msgstr "Version History"
 #: LABEL/ID_VERTICAL_LINE
 msgid "Vertical Line"
 msgstr "Vertical Line"
+
+# TRANSLATION
+# LABEL/ID_VERY_HIGH
+#: LABEL/ID_VERY_HIGH
+msgid "Very High"
+msgstr "Very High"
+
+# TRANSLATION
+# LABEL/ID_VERY_LOW
+#: LABEL/ID_VERY_LOW
+msgid "Very Low"
+msgstr "Very Low"
 
 # TRANSLATION
 # LABEL/ID_VIEW

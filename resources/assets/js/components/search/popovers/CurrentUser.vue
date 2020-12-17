@@ -9,7 +9,7 @@
                         :invalid-feedback="$t('ID_PROCESS_IS_REQUIRED')"
                     >
                         <multiselect
-                            v-model="info.selectedOption"
+                            v-model="filter[0].options"
                             :options="users"
                             placeholder="Sselect one"
                             label="USR_FULLNAME"
@@ -39,7 +39,7 @@ export default {
         SearchPopover,
         Multiselect
     },
-    props: ["tag", "info"],
+    props: ["tag", "info", "filter"],
     data() {
         return {
             users: [],
@@ -82,12 +82,9 @@ export default {
          *  Form submit handler
          */
         handleSubmit() {
-            this.$emit("updateSearchTag", {
-                CurrentUser: {
-                    selectedOption: this.info.selectedOption,
-                    userId: this.info.selectedOption.USR_ID
-                }
-            });
+            this.filter[0].value = this.filter[0].options.USR_ID;
+            this.filter[0].label = this.filter[0].options.USR_FULLNAME;
+            this.$emit("updateSearchTag", this.filter);
             this.$root.$emit("bv::hide::popover");
         }
     }

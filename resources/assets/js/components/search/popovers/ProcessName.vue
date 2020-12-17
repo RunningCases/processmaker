@@ -1,6 +1,11 @@
 <template>
     <div>
-        <SearchPopover :target="tag" @savePopover="onOk" :title="info.title">
+        <SearchPopover
+            :target="tag"
+            @savePopover="onOk"
+            :title="info.title"
+            :autoShow="info.autoShow || false"
+        >
             <template v-slot:body>
                 <p>{{ info.detail }}</p>
                 <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -9,11 +14,11 @@
                         :invalid-feedback="$t('ID_PROCESS_IS_REQUIRED')"
                     >
                         <multiselect
-                            v-model="info.processOption"
+                            v-model="filter[0].options"
                             :options="processes"
-                            placeholder="Select one"
-                            label="PRO_TITLE"
-                            track-by="PRO_ID"
+                            :placeholder="info.items[0].placeholder"
+                            label="label"
+                            track-by="value"
                             :show-no-results="false"
                             @search-change="asyncFind"
                             :loading="isLoading"
@@ -37,13 +42,13 @@ import api from "./../../../api/index";
 export default {
     components: {
         SearchPopover,
-        Multiselect
+        Multiselect,
     },
-    props: ["tag", "info"],
+    props: ["tag", "info", "filter"],
     data() {
         return {
             processes: [],
-            isLoading: false
+            isLoading: false,
         };
     },
     methods: {
@@ -52,12 +57,18 @@ export default {
          * @param {string} query - string from the text field
          */
         asyncFind(query) {
+            let self = this;
             this.isLoading = true;
+            self.processes = [];
             api.filters
                 .processList(query)
                 .then((response) => {
-                    this.processes = response.data;
-                    this.countries = response;
+                    _.forEach(response.data, function(elem, key) {
+                        self.processes.push({
+                            label: elem.PRO_TITLE,
+                            value: elem.PRO_ID,
+                        });
+                    });
                     this.isLoading = false;
                 })
                 .catch((e) => {
@@ -82,15 +93,11 @@ export default {
          *  Form submit handler
          */
         handleSubmit() {
-            this.$emit("updateSearchTag", {
-                ProcessName: {
-                    processOption: this.info.processOption,
-                    process: this.info.processOption.PRO_ID,
-                }
-            });
+            this.filter[0].value = this.filter[0].options.value;
+            this.$emit("updateSearchTag", this.filter);
             this.$root.$emit("bv::hide::popover");
-        }
-    }
+        },
+    },
 };
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

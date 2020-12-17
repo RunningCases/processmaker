@@ -10,7 +10,9 @@
             {{ message }}
         </b-alert>
         <button-fleft :data="newCase"></button-fleft>
-        <GenericFilter
+        <h5>{{$t('ID_ADVANCEDSEARCH')}}</h5>
+        
+        <AdvancedFilter
             :id="id"
             :name="name"
             :filters="filters"
@@ -82,7 +84,7 @@
 <script>
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
-import GenericFilter from "../components/search/GenericFilter";
+import AdvancedFilter from "../components/search/AdvancedFilter";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import api from "./../api/index";
 import { Event } from "vue-tables-2";
@@ -90,7 +92,7 @@ import { Event } from "vue-tables-2";
 export default {
     name: "AdvancedSearch",
     components: {
-        GenericFilter,
+        AdvancedFilter,
         ButtonFleft,
         ModalNewRequest,
         TaskCell
@@ -172,18 +174,16 @@ export default {
                 dt,
                 paged,
                 limit = data.limit,
+                filters = {},
                 start = data.page === 1 ? 0 : limit * (data.page - 1);
             paged = start + ',' + limit;
+            filters["paged"] = paged;
             return new Promise((resolutionFunc, rejectionFunc) => {
-                let filters = {};
-                _.forIn(this.filters, function(value, key) {
-                    filters = {...filters, ...value};
+                _.forIn(this.filters, function(item, key) {
+                    filters[item.filterVar] = item.value;
                 });
                 api.cases
-                    .search({
-                        filters,
-                        paged:paged
-                    })
+                    .search(filters)
                     .then((response) => {
                         dt = that.formatDataResponse(response.data.data);
                         resolutionFunc({
@@ -412,7 +412,7 @@ export default {
          * @param {string} message - message to be displayen in the body
          * @param {string} type - alert type
          */
-        showAlert(message, type) {
+        showAlert(message, type) {  
             this.message = message;
             this.variant = type || "info";
             this.dismissCountDown = this.dismissSecs;

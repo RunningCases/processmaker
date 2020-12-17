@@ -1,16 +1,11 @@
 <template>
     <div>
         <b-container fluid class="bv-example-row" id="my-container">
-          
-            <b-row>
-                <b-col md="10"><h5>{{$t('ID_OPEN_SEARCH')}}</h5></b-col>
-            </b-row>
             <b-row>
                 <b-col md="4">
                     <div class="d-flex flex-row">
                         <SearchPopover
                             target="popover-target-1"
-                            @closePopover="onClose"
                             @savePopover="onOk"
                             :title="addSearchTitle"
                         >
@@ -29,7 +24,9 @@
                                 <b-form-group>
                                     <b-form-checkbox-group
                                         v-model="selected"
-                                        :options="filterOptions"
+                                        :options="filterItems"
+                                        value-field="id"
+                                        text-field="optionLabel"
                                         name="flavour-2a"
                                         stacked
                                     ></b-form-checkbox-group>
@@ -105,19 +102,20 @@
                                         v-for="tag in tags"
                                         @remove="customRemove(removeTag, tag)"
                                         :key="tag"
-                                        :title="searchTagsModels[tag].tagText"
+                                        :title="tag"
                                         :variant="tagVariant"
                                         class="mr-1"
                                     >   
                                         
                                         <div :id="tag">
                                             <i class="fas fa-tags"></i>
-                                            {{ searchTagsModels[tag].tagText }}
+                                             {{ tagContent(tag) }}
                                         </div>
                                         <component
-                                            v-bind:is="tag"
-                                            v-bind:info="searchTagsModels[tag]"
+                                            v-bind:is="tagComponent(tag)"
+                                            v-bind:info="tagInfo(tag)"
                                             v-bind:tag="tag"
+                                            v-bind:filter="dataToFilter(tag)"
                                             @updateSearchTag="updateSearchTag"
                                         />
                                     </b-form-tag>
@@ -169,8 +167,8 @@
 <script>
 import SearchPopover from "./popovers/SearchPopover.vue";
 import CaseNumber from "./popovers/CaseNumber.vue";
-import DueDate from "./popovers/DueDate.vue";
-import LastModifiedDate from "./popovers/LastModifiedDate.vue";
+
+import DateFilter from "./popovers/DateFilter.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
 import CasePriority from "./popovers/CasePriority.vue";
@@ -179,109 +177,153 @@ import CurrentUser from "./popovers/CurrentUser.vue";
 import api from "./../../api/index";
 
 export default {
-    name: "GenericFilter",
+    name: "AdvancedFilter",
     props: ["id", "name", "filters"],
     components: {
         SearchPopover,
         CaseNumber,
-        DueDate,
-        LastModifiedDate,
         CaseTitle,
         ProcessName,
         CasePriority,
         CaseStatus,
-        CurrentUser
+        CurrentUser,
+        DateFilter,
     },
     data() {
         return {
             addSearchTitle: this.$i18n.t('ID_ADD_SEARCH_FILTER_CRITERIA'),
-            
             searchTags: [],
-            searchTagsModels: {
-                CaseNumber: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE')}${this.$i18n.t('ID_IUD')}`,
+            filterItems: [
+                {   
+                    type: "CaseNumber",
+                    id: "caseNumber",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_IUD')}`,
                     optionLabel: this.$i18n.t('ID_IUD'),
                     detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_TO_CASES_TO_SEARCH'),
                     tagText: "",
-                    filterBy: ["filterCases"],
-                    values: {}
+                    tagPrefix:  this.$i18n.t('ID_IUD'),
+                    items:[
+                        {
+                            id: "filterCases",
+                            value: ""
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                          return  `${params.tagPrefix}: ${data[0].value}`;
+                    }
                 },
-                DueDate: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_DUE_DATE')}`,
-                    optionLabel: this.$i18n.t('ID_DUE_DATE'),
-                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_CASES_DUE_DATE_TO_SEARCH'),
-                    tagText: "",
-                    filterBy: ["dueDateFrom", "dueDateTo"],
-                    values: {}
-                },
-                LastModifiedDate: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_LAST_MODIFIED_DATE')}`,
-                    optionLabel: this.$i18n.t('ID_LAST_MODIFIED_DATE'),
-                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_LAST_MODIFIED_CASES_DATE_TO_SEARCH'),
-                    tagText: "",
-                    filterBy: ["delegationDateFrom", "delegationDateTo"],
-                    values: {}
-                },
-                CaseTitle: {
+                {
+                    type: "CaseTitle",
+                    id: "caseTitle",
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE_TITLE')}`,
                     optionLabel: this.$i18n.t('ID_CASE_TITLE'),
+                    tagPrefix:  this.$i18n.t('ID_CASE_TITLE'),
                     detail: "",
                     tagText: "",
-                    filterBy: ["caseTitle"],
-                    values: {}
+                    items:[
+                        {
+                            id: "caseTitle",
+                            value: ""
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix}: ${data[0].value}`;
+                    }
                 },
-                ProcessName: {
+                {
+                    type: "ProcessName",
+                    id: "processName",
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PROCESS_NAME')}`,
                     optionLabel: this.$i18n.t('ID_PROCESS_NAME'),
                     detail: "",
-                    placeholder: this.$i18n.t('ID_PROCESS_NAME'),
                     tagText: "",
-                    filterBy: ["process", "processOption"],
-                    processOption: {"PRO_TITLE": ""}
-                },
-                CasePriority: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PRIORITY')}`,
-                    optionLabel: this.$i18n.t('ID_PRIORITY'),
-                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_PRIORITY_FOR_THE_SEARCH'),
-                    options: [
-                        { text: this.$i18n.t('ID_VERY_LOW'), value: "VL" },
-                        { text: this.$i18n.t('ID_LOW'), value: "L" },
-                        { text: this.$i18n.t('ID_NORMAL'), value: "N" },
-                        { text: this.$i18n.t('ID_HIGH'), value: "H" },
-                        { text: this.$i18n.t('ID_VERY_HIGH'), value: "VH" }
+                    tagPrefix:  this.$i18n.t('ID_PROCESS_NAME'),
+                    items:[
+                        {
+                            id: "process",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_PROCESS_NAME')
+                        }
                     ],
-                    tagText: "",
-                    filterBy: ["priorities"],
-                    casePriorities: []
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                    }
                 },
-                CaseStatus: {
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_STATUS')}`,
-                    optionLabel: this.$i18n.t('ID_STATUS'),
-                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH'),
-                    options: [
-                        { text: this.$i18n.t('ID_CASES_STATUS_DRAFT'), value: "DRAFT" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_TO_DO'), value: "TO_DO" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_COMPLETED'), value: "COMPLETED" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_CANCELLED'), value: "CANCELLED" },
-                        { text: this.$i18n.t('ID_CASES_STATUS_PAUSED'), value: "PAUSED" },
+                {
+                    type: "DateFilter",
+                    id: "startDate",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_START_DATE')}`,
+                    optionLabel: this.$i18n.t('ID_BY_START_DATE'),
+                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_CASES_START_DATE_TO_SEARCH'),
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_START_DATE'),
+                    items:[
+                        {
+                            id: "startCaseFrom",
+                            value: "",
+                            label: this.$i18n.t('ID_FROM_START_DATE')
+                        },
+                        {
+                            id: "startCaseTo",
+                            value: "",
+                            label: this.$i18n.t('ID_TO_START_DATE')
+                        }
                     ],
-                    tagText: "",
-                    filterBy: ["caseStatuses"],
-                    caseStatuses: []
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} ${data[0].value} - ${data[1].value}`;
+                    }
                 },
-                CurrentUser: {
+                {
+                    type: "DateFilter",
+                    id: "finishDate",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_FINISH_DATE')}`,
+                    optionLabel: this.$i18n.t('ID_FINISH_DATE'),
+                    detail: this.$i18n.t('Please set a range of cases Finish Date to search:'),
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_FINISH_DATE'),
+                    items:[
+                        {
+                            id: "finishCaseFrom",
+                            value: "",
+                            label: this.$i18n.t('ID_FROM_FINISH_DATE'),
+                        },
+                        {
+                            id: "finishCaseTo",
+                            value: "",
+                            label: this.$i18n.t('ID_TO_FINISH_DATE'),
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} ${data[0].value} - ${data[1].value}`;
+                    }
+                },
+                {
+                    type: "CurrentUser",
+                    id: "currentUser",
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CURRENT_USER')}`,
                     optionLabel: this.$i18n.t('ID_CURRENT_USER'),
                     detail: "",
                     placeholder: this.$i18n.t('ID_USER_NAME'),
                     tagText: "",
-                    filterBy: ["userId", "selectedOption"],
-                    selectedOption: {"USR_FULLNAME": ""}
-                }
-            },
-            text: "",
+                    tagPrefix:  this.$i18n.t('ID_USER'),
+                    items:[
+                        {
+                            id: "userId",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_USER_NAME')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} : ${data[0].label || ''}`;
+                    }
+                },
+            ],
+            selected: "",
+            itemModel: {},
+            filterModel: {},
             selected: [],
-            jsonFilter: {},
             caseNumber: "",
             saveModalTitle: this.$i18n.t('ID_SAVE_SEARCH'),
             localName: "",
@@ -289,109 +331,119 @@ export default {
         };
     },
     watch: {
-        filters: function (filters) {
-          this.searchTags = [];
-          this.searchTags = [];
-          this.setFilters(filters);
+        filters: { 
+            immediate: true, 
+            handler(newVal, oldVal) { 
+                this.searchTags = [];
+                this.selected = [];
+                this.setFilters(newVal);
+            },
         }
     },
     
-    computed: {
-        filterOptions: function() {
-            let options = [];
-            _.forIn(this.searchTagsModels, function(value, key) {
-                options.push({
-                    text: value.optionLabel,
-                    value: key,
-                });
-            });
-            return options;
-        },
-    },
+
     methods: {
-       
-        onClose() {
-        },
+        /**
+         * Set Filters and make the tag labels
+         * @param {object} filters json to manage the query 
+         */
         setFilters(filters) {
-            let that = this;
-            _.forIn(filters, function(value, key) {
-                let temp = that.createTagText(key, value);
-                that.searchTags.push(key);
-                that.selected.push(key);
+            let self = this;
+            _.forEach(filters, function(item, key) {
+                let component = _.find(self.filterItems, function(o) { return o.id === item.fieldId; });
+                if (component) {
+                    self.searchTags.push(component.id);
+                    self.selected.push(component.id);
+                    self.itemModel[component.id] = component;
+                }
             });
         },
+        dataToFilter(id) {
+            let data = [];
+            _.forEach(this.filters, function(item) { 
+                if (item.fieldId === id) {
+                    data.push(item);
+                }
+            });
+            return data;
+        },
+        /**
+         * 
+         */
+        tagContent(id) {
+            if (this.itemModel[id]  && typeof this.itemModel[id] .makeTagText === "function") {
+                return this.itemModel[id].makeTagText(this.itemModel[id],  this.dataToFilter(id));
+            }
+            return "";
+        },
+        tagComponent(id) {
+            if (this.itemModel[id]) {
+                return this.itemModel[id].type;
+            }
+            return null;
+        },
+    
+        tagInfo(id) {
+             if (this.itemModel[id]) {
+                 debugger;
+                return this.itemModel[id];
+            }
+            return null;
+        },
+
+         /**
+         * Add filter criteria save button handler
+         */
         onOk() {
-            let initialFilters = {};
-            this.$root.$emit('bv::hide::popover');
-            for (var i = 0; i < this.selected.length; i++) {
-                let item = this.selected[i];
-                initialFilters[item] = {};
-                if(this.searchTagsModels[item].filterBy) {
-                    for (var j = 0; j < this.searchTagsModels[item].filterBy.length; j++) { 
-                        initialFilters[item][this.searchTagsModels[item].filterBy [j]] = "";
-                    }
+            let self = this,
+                element,
+                tmp,
+                item,
+                initialFilters = [];
+            this.$root.$emit('bv::hide::popover');   
+            for (var i = 0; i < this.selected.length; i+=1) {
+                item = this.selected[i];
+                element = _.find(this.filterItems, function(o) { return o.id === item; });
+                if  (element) {
+                    _.forEach(element.items, function(value, key) {
+                        tmp = {
+                            filterVar: value.id,
+                            fieldId: item,
+                            value: '',
+                            label: "",
+                            options: []
+                        };
+                        initialFilters.push(tmp);
+                    });
                 }
                 
             }
-            this.$emit("onUpdateFilters", initialFilters) 
+            this.$emit("onUpdateFilters", initialFilters);
+            
+            
         },
-        createTagText(type, params) {
-            let label = "";
-            switch (type) {
-                case "CaseNumber":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_IUD")}: ${params.filterCases}`
-                    this.searchTagsModels[type].values["filterCases"] =  params.filterCases;
-                    break;
-                case "DueDate":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_FROM')}: ${params.dueDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.dueDateTo}`;
-                    this.searchTagsModels[type].values["dueDateFrom"] =  params.dueDateFrom;
-                    this.searchTagsModels[type].values["dueDateTo"] =  params.dueDateTo;
-                    break;
-                case "LastModifiedDate":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_FROM')}: ${params.delegationDateFrom} ${this.$i18n.t('ID_TO')}:  ${params.delegationDateTo}`;
-                    this.searchTagsModels[type].values["delegationDateFrom"] =  params.delegationDateFrom;
-                    this.searchTagsModels[type].values["delegationDateTo"] =  params.delegationDateTo;
-                    break;
-                case "CaseTitle":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_CASE_TITLE")}: ${params.caseTitle}`;
-                    this.searchTagsModels[type].values["caseTitle"] =  params.caseTitle;
-                    break;
-                case "ProcessName":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_PROCESS")}: ${params.processOption.PRO_TITLE || ''}`;
-                    this.searchTagsModels[type].processOption =  params.processOption || null;
-                    break;
-                case "CasePriority":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_PRIORITY')}: ${_.map(params.selectedOptions, 'text').join(",") || ''}`;
-                    this.searchTagsModels[type].casePriorities = _.map(params.selectedOptions, 'value');
-                    break;
-                 case "CaseStatus":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t('ID_STATUS')}: ${_.map(params.selectedOptions, 'text').join(",") || ''}`;
-                    this.searchTagsModels[type].caseStatuses = _.map(params.selectedOptions, 'value');
-                    break;
-                case "CurrentUser":
-                    this.searchTagsModels[type].tagText = `${this.$i18n.t("ID_USER")}: ${params.selectedOption.USR_FULLNAME || ''}`;
-                    this.searchTagsModels[type].selectedOption =  params.selectedOption || null;
-                    break;
-                default:
-                    break;
-            }
-        },
+
         cleanAllTags() {
             this.searchTags = [];
             this.selected = [];
             this.$emit("onUpdateFilters", {});
         },
         customRemove(removeTag, tag) {
-            let temp = { ...this.filters};
-            delete temp[tag];
-            removeTag(tag);
+            let temp = [];
+             _.forEach(this.filters, function(item, key) {
+                 if(item.fieldId !== tag) {
+                     temp.push(item);
+                 }
+             });
             this.$emit("onUpdateFilters", temp);
         },
         onSearch() {
             this.$emit("onSearch", this.filters);
         },
         updateSearchTag(params) {          
-            this.$emit("onUpdateFilters", { ...this.filters, ...params });
+            let temp = this.filters.concat(params);
+            temp = [...new Set([...this.filters,...params])]
+            this.$emit("onUpdateFilters", temp);
         },
         onJumpCase() {
             this.$emit("onJumpCase",  this.caseNumber);

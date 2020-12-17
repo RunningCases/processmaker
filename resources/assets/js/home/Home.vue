@@ -78,7 +78,7 @@ export default {
             sidebarWidth: "310px",
             pageId: null,
             pageName: null,
-            filters: {},
+            filters:  null,
         };
     },
     mounted() {
@@ -151,6 +151,7 @@ export default {
                 this.pageId = item.item.id;
                 this.pageName = item.item.title;
             } else {
+                this.filters = [];
                 this.page = item.item.id || "MyCases";
             }
         },
@@ -226,7 +227,7 @@ export default {
             this.page = "advanced-search";
             this.pageId = null;
             this.pageName = null;
-            this.filters = {};
+            this.filters = [];
         },
         onUpdatePage(page) {
             this.lastPage = this.page;
