@@ -7,7 +7,8 @@
                     <b-col>
                         <b-form-group :label="$root.translation('ID_ROLE')">
                             <b-form-select v-model="form.attributeRole"
-                                           :options="roles"/>
+                                           :options="roles"
+                                           @change="changeRoles"/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_PROCESSMAKER_USER_FIELD')" description="">
                             <b-form-select v-model="form.attributeUser"
@@ -15,8 +16,8 @@
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_LDAP_ATTRIBUTE')">
                             <b-form-input v-model="form.attributeLdap"
-                                          :state="validateState('attributeLdap')"
-                                          placeholder=""/>
+                                          :state="true"
+                                          autocomplete="off"/>
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -35,6 +36,7 @@
 </template>
 
 <script>
+    import axios from "axios"
     import { validationMixin } from "vuelidate"
     import { required } from "vuelidate/lib/validators"
     import titleSection from "./titleSection.vue"
@@ -56,37 +58,19 @@
                     index: null,
                     attributeLdap: "",
                     attributeRole: "",
-                    attributeUser: "USR_FIRSTNAME"
+                    attributeUser: ""
                 },
-                roles: [
-                    {value: "", text: "All"},
-                    {value: "PROCESSMAKER_ADMIN", text: this.$root.translation("ID_SYSTEM_ADMINISTRATOR")},
-                    {value: "PROCESSMAKER_MANAGER", text: this.$root.translation("ID_MANAGER")},
-                    {value: "PROCESSMAKER_OPERATOR", text: this.$root.translation("ID_OPERATOR")}
-                ],
-                userAttributes: [
-                    {value: "USR_FIRSTNAME", text: "USR_FIRSTNAME"},
-                    {value: "USR_LASTNAME", text: "USR_LASTNAME"},
-                    {value: "USR_EMAIL", text: "USR_EMAIL"},
-                    {value: "USR_DUE_DATE", text: "USR_DUE_DATE"},
-                    {value: "USR_STATUS", text: "USR_STATUS"},
-                    {value: "USR_STATUS_ID", text: "USR_STATUS_ID"},
-                    {value: "USR_ADDRESS", text: "USR_ADDRESS"},
-                    {value: "USR_PHONE", text: "USR_PHONE"},
-                    {value: "USR_FAX", text: "USR_FAX"},
-                    {value: "USR_CELLULAR", text: "USR_CELLULAR"},
-                    {value: "USR_ZIP_CODE", text: "USR_ZIP_CODE"},
-                    {value: "USR_POSITION", text: "USR_POSITION"},
-                    {value: "USR_BIRTHDAY", text: "USR_BIRTHDAY"},
-                    {value: "USR_COST_BY_HOUR", text: "USR_COST_BY_HOUR"},
-                    {value: "USR_UNIT_COST", text: "USR_UNIT_COST"},
-                    {value: "USR_PMDRIVE_FOLDER_UID", text: "USR_PMDRIVE_FOLDER_UID"},
-                    {value: "USR_BOOKMARK_START_CASES", text: "USR_BOOKMARK_START_CASES"},
-                    {value: "USR_TIME_ZONE", text: "USR_TIME_ZONE"},
-                    {value: "USR_DEFAULT_LANG", text: "USR_DEFAULT_LANG"},
-                    {value: "USR_LAST_LOGIN", text: "USR_LAST_LOGIN"}
-                ]
+                roles: [{
+                        value: "", text: "All"
+                    }],
+                userAttributes: []
             };
+        },
+        mounted() {
+            let promise = this.getRolesList();
+            promise.then(response => {
+                this.changeRoles();
+            });
         },
         methods: {
             validateState(name) {
@@ -111,8 +95,58 @@
                     index: null,
                     attributeLdap: "",
                     attributeRole: "",
-                    attributeUser: "USR_FIRSTNAME"
+                    attributeUser: ""
                 };
+            },
+            changeRoles() {
+                let formData = new FormData();
+                formData.append("option", "listByRol");
+                formData.append("rolCode", this.form.attributeRole);
+                return axios.post(this.$root.baseUrl() + "userExtendedAttributes/index", formData)
+                        .then(response => {
+                            response;
+                            let data = [{
+                                    value: "",
+                                    text: this.$root.translation('ID_SELECTED_FIELD')
+                                }];
+                            for (let i in response.data.data) {
+                                data.push({
+                                    value: response.data.data[i].value,
+                                    text: response.data.data[i].text
+                                });
+                            }
+                            this.userAttributes = data;
+                        })
+                        .catch(error => {
+                            error;
+                        })
+                        .finally(() => {
+                        });
+            },
+            getRolesList() {
+                let formData = new FormData();
+                formData.append("request", "allRoles");
+                return axios.post(this.$root.baseUrl() + "roles/roles_Ajax", formData)
+                        .then(response => {
+                            response;
+                            let data = [{
+                                    value: "",
+                                    text: this.$root.translation('ID_ALL')
+                                }];
+                            for (let i in response.data) {
+                                data.push({
+                                    value: response.data[i].ROL_CODE,
+                                    text: response.data[i].ROL_NAME
+                                });
+                            }
+                            this.roles = data;
+                        })
+                        .catch(error => {
+                            error;
+                        })
+                        .finally(() => {
+                        });
+
             }
         }
     }

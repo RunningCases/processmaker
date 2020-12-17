@@ -12,32 +12,20 @@
                         :data="rows">
             <div slot="icons"
                  slot-scope="props">
-                <b-button :id="'ma-b-button-tooltip-'+props.index"
-                          variant="light"
-                          size="sm" 
-                          class="mb-2">
-                    <b-icon icon="three-dots-vertical" aria-hidden="true"/>
-                </b-button>
-                <b-tooltip :target="'ma-b-button-tooltip-'+props.index" 
-                           triggers="hover focus click"
-                           custom-class="custom-tooltip"
-                           placement="left"
-                           variant="light">
-                    <b-button-group>
-                        <b-button @click="editAttribute(props.row,props.index)"
-                                   v-b-tooltip.hover 
-                                   :title="$root.translation('ID_EDIT_ATTRIBUTE')"
-                                   variant="light">
-                            <b-icon icon="pencil-fill" aria-hidden="true" variant="info"/>
-                        </b-button>
-                        <b-button @click="deleteAttribute(props.index,props.row)"
-                                   v-b-tooltip.hover 
-                                   :title="$root.translation('ID_DELETE_ATTRIBUTE')"
-                                   variant="light">
-                            <b-icon icon="trash" aria-hidden="true" variant="danger"/>
-                        </b-button>
-                    </b-button-group>                               
-                </b-tooltip>
+                <b-button-group>
+                    <b-button @click="editAttribute(props.row,props.index)"
+                               v-b-tooltip.hover 
+                               :title="$root.translation('ID_EDIT_ATTRIBUTE')"
+                               variant="light">
+                        <b-icon icon="pencil-fill" aria-hidden="true" variant="info"/>
+                    </b-button>
+                    <b-button @click="deleteAttribute(props.index,props.row)"
+                               v-b-tooltip.hover 
+                               :title="$root.translation('ID_DELETE_ATTRIBUTE')"
+                               variant="light">
+                        <b-icon icon="trash" aria-hidden="true" variant="danger"/>
+                    </b-button>
+                </b-button-group>
             </div>
         </v-client-table>
         <b-modal id="messageForDeleteAttribute"

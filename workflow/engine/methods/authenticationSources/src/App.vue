@@ -102,7 +102,7 @@
 
             saveNewConnection(form) {
                 let formData = this.$refs.newConnection.formToFormData(form);
-                axios.post(this.$root.baseUrl() + "ldapAdvancedProxy.php?functionAccion=ldapSave", formData)
+                axios.post(this.$root.baseUrl() + "authSources/ldapAdvancedProxy.php?functionAccion=ldapSave", formData)
                         .then(response => {
                             response;
                             this.$refs.authenticationSources.refresh();

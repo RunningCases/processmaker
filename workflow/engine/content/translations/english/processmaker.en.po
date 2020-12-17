@@ -2612,6 +2612,12 @@ msgid "Attached files"
 msgstr "Attached files"
 
 # TRANSLATION
+# LABEL/ID_ATTRIBUTE
+#: LABEL/ID_ATTRIBUTE
+msgid "Attribute"
+msgstr "Attribute"
+
+# TRANSLATION
 # LABEL/ID_ATTRIBUTES
 #: LABEL/ID_ATTRIBUTES
 msgid "Attributes"
@@ -2622,6 +2628,36 @@ msgstr "Attributes"
 #: LABEL/ID_ATTRIBUTE_HAS_INVALID_ELEMENT_KEY
 msgid "The attribute {0}, has an invalid element (incorrect keys)."
 msgstr "The attribute {0}, has an invalid element (incorrect keys)."
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_ID
+#: LABEL/ID_ATTRIBUTE_ID
+msgid "Attribute ID"
+msgstr "Attribute ID"
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_NAME
+#: LABEL/ID_ATTRIBUTE_NAME
+msgid "Attribute Name"
+msgstr "Attribute Name"
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_WILL_BE_HIDDEN_USING_PLACEHOLDER
+#: LABEL/ID_ATTRIBUTE_WILL_BE_HIDDEN_USING_PLACEHOLDER
+msgid "The new attribute value will be hidden using * placeholder instead of real value."
+msgstr "The new attribute value will be hidden using * placeholder instead of real value."
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_WILL_BE_REQUIRED_WHEN_EDITING_USER_SETTINGS
+#: LABEL/ID_ATTRIBUTE_WILL_BE_REQUIRED_WHEN_EDITING_USER_SETTINGS
+msgid "The new attribute will be required when editing user settings."
+msgstr "The new attribute will be required when editing user settings."
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_WONT_BE_SEEN_IN_USER_INFORMATION
+#: LABEL/ID_ATTRIBUTE_WONT_BE_SEEN_IN_USER_INFORMATION
+msgid "The new attribute won't be seen in the user information pages."
+msgstr "The new attribute won't be seen in the user information pages."
 
 # TRANSLATION
 # LABEL/ID_AT_RISK
@@ -2992,6 +3028,12 @@ msgstr "Button"
 #: LABEL/ID_BUY_NOW
 msgid "Buy now"
 msgstr "Buy now"
+
+# TRANSLATION
+# LABEL/ID_BY_ROLE
+#: LABEL/ID_BY_ROLE
+msgid "By Role"
+msgstr "By Role"
 
 # TRANSLATION
 # LABEL/ID_CACHE_BTN_BUILD
@@ -4294,6 +4336,12 @@ msgstr "Choose an option"
 #: LABEL/ID_CHOOSE_PROVIDER
 msgid "Please select provider"
 msgstr "Please select provider"
+
+# TRANSLATION
+# LABEL/ID_CITY
+#: LABEL/ID_CITY
+msgid "City"
+msgstr "City"
 
 # TRANSLATION
 # LABEL/ID_CLAIM
@@ -8160,6 +8208,12 @@ msgid "Export Table"
 msgstr "Export Table"
 
 # TRANSLATION
+# LABEL/ID_EXTENDED_ATTRIBUTES
+#: LABEL/ID_EXTENDED_ATTRIBUTES
+msgid "Extended Attributes"
+msgstr "Extended Attributes"
+
+# TRANSLATION
 # LABEL/ID_EXTENDED_FEATURES
 #: LABEL/ID_EXTENDED_FEATURES
 msgid "Extended Features"
@@ -9454,6 +9508,12 @@ msgstr "Heart beat has been enabled"
 #: LABEL/ID_HELP
 msgid "Help"
 msgstr "Help"
+
+# TRANSLATION
+# LABEL/ID_HIDDEN
+#: LABEL/ID_HIDDEN
+msgid "Hidden"
+msgstr "Hidden"
 
 # TRANSLATION
 # LABEL/ID_HIDE
@@ -19668,6 +19728,12 @@ msgid "New PM Table"
 msgstr "New PM Table"
 
 # TRANSLATION
+# LABEL/ID_NEW_ATTRIBUTE
+#: LABEL/ID_NEW_ATTRIBUTE
+msgid "New Attribute"
+msgstr "New Attribute"
+
+# TRANSLATION
 # LABEL/ID_NEW_AUTHENTICATION_SOURCES
 #: LABEL/ID_NEW_AUTHENTICATION_SOURCES
 msgid "New Authentication Sources"
@@ -19852,6 +19918,12 @@ msgstr "New Translation"
 #: LABEL/ID_NEW_TRIGGERS
 msgid "[LABEL/ID_NEW_TRIGGERS] New Trigger"
 msgstr "New Trigger"
+
+# TRANSLATION
+# LABEL/ID_NEW_USER_ATTRIBUTE
+#: LABEL/ID_NEW_USER_ATTRIBUTE
+msgid "New User Attribute"
+msgstr "New User Attribute"
 
 # TRANSLATION
 # LABEL/ID_NEW_VERSION
@@ -23190,6 +23262,12 @@ msgid "Require sign-in policy for LDAP"
 msgstr "Require sign-in policy for LDAP"
 
 # TRANSLATION
+# LABEL/ID_REQUIRED
+#: LABEL/ID_REQUIRED
+msgid "Required"
+msgstr "Required"
+
+# TRANSLATION
 # LABEL/ID_REQUIRED_FIELD
 #: LABEL/ID_REQUIRED_FIELD
 msgid "Required Field"
@@ -25584,6 +25662,12 @@ msgid "Error: The application {0} is not canceled."
 msgstr "Error: The application {0} is not canceled."
 
 # TRANSLATION
+# LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
+#: LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
+msgid "The attribute {0} will be deleted, please confirm."
+msgstr "The attribute {0} will be deleted, please confirm."
+
+# TRANSLATION
 # LABEL/ID_THE_DEFAULT_CONFIGURATION
 #: LABEL/ID_THE_DEFAULT_CONFIGURATION
 msgid "The default configuration was not defined"
@@ -25642,6 +25726,12 @@ msgstr "The report table is regenerating please come back in a few minutes."
 #: LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
 msgid "The upload of PHP files was disabled please contact the system administrator."
 msgstr "The upload of PHP files was disabled please contact the system administrator."
+
+# TRANSLATION
+# LABEL/ID_THE_USER_ROLES_FOR_ATTRIBUTE_HAS_BEEN_DELETED_PLEASE_CONFIRM
+#: LABEL/ID_THE_USER_ROLES_FOR_ATTRIBUTE_HAS_BEEN_DELETED_PLEASE_CONFIRM
+msgid "The user roles for attribute {0} has been modified, if you proceed to save this attribute, all information for users stored in the attribute will be deleted for the removed role, please confirm."
+msgstr "The user roles for attribute {0} has been modified, if you proceed to save this attribute, all information for users stored in the attribute will be deleted for the removed role, please confirm."
 
 # TRANSLATION
 # LABEL/ID_THE_USERNAME_EMAIL_IS_INCORRECT
@@ -26230,6 +26320,12 @@ msgstr "Tue"
 #: LABEL/ID_TYPE
 msgid "[LABEL/ID_TYPE] Type"
 msgstr "Type"
+
+# TRANSLATION
+# LABEL/ID_TYPE_PASSWORD
+#: LABEL/ID_TYPE_PASSWORD
+msgid "Type Password"
+msgstr "Type Password"
 
 # TRANSLATION
 # LABEL/ID_TYPE_PROCESS
@@ -27070,6 +27166,12 @@ msgstr "The user \"{0}\" does not have the activity \"{1}\" assigned."
 #: LABEL/ID_USER_EXPERIENCE
 msgid "User Experience"
 msgstr "User Experience"
+
+# TRANSLATION
+# LABEL/ID_USER_EXTENDED_ATTRIBUTES
+#: LABEL/ID_USER_EXTENDED_ATTRIBUTES
+msgid "User Extended Attributes"
+msgstr "User Extended Attributes"
 
 # TRANSLATION
 # LABEL/ID_USER_FIELD

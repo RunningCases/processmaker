@@ -141,7 +141,7 @@
                     //validation name
                     let formData = new FormData();
                     formData.append("AUTH_SOURCE_NAME", this.fileContent.AUTH_SOURCE_NAME);
-                    axios.post(this.$root.baseUrl() + "ldapAdvancedProxy.php?functionAccion=ldapVerifyName", formData)
+                    axios.post(this.$root.baseUrl() + "authSources/ldapAdvancedProxy.php?functionAccion=ldapVerifyName", formData)
                             .then(response => {
                                 this.newName = response.data.row === false;
                                 this.validationResult = response.data;

@@ -97,7 +97,7 @@
         },
         data() {
             return {
-                baseUrl: this.$root.baseUrl() + "/authSources_Ajax?action=authSourcesList",
+                baseUrl: this.$root.baseUrl() + "authSources/authSources_Ajax?action=authSourcesList",
                 columns: [
                     "AUTH_SOURCE_NAME",
                     "AUTH_SOURCE_PROVIDER",
@@ -140,7 +140,7 @@
                         noResults: this.$root.translation("ID_NO_MATCHING_RECORDS"),
                         loading: this.$root.translation("ID_LOADING_GRID")
                     },
-                    perPage: 5,
+                    perPage: "pageSize" in window ? window.pageSize : 5,
                     perPageValues: [],
                     sortIcon: {
                         is: "glyphicon-sort",
@@ -194,7 +194,7 @@
                     let formData = new FormData();
                     formData.append("action", "deleteAuthSource");
                     formData.append("auth_uid", row.AUTH_SOURCE_UID);
-                    axios.post(this.$root.baseUrl() + "authSources_Ajax", formData)
+                    axios.post(this.$root.baseUrl() + "authSources/authSources_Ajax", formData)
                             .then(response => {
                                 response;
                                 this.refresh();
@@ -253,11 +253,11 @@
             },
             syncGroups(row) {
                 //the return action is in: processmaker/workflow/engine/templates/authSources/authSourcesSynchronize.js
-                location.href = this.$root.baseUrl() + "authSourcesSynchronize?authUid=" + row.AUTH_SOURCE_UID + "&tab=synchronizeGroups";
+                location.href = this.$root.baseUrl() + "authSources/authSourcesSynchronize?authUid=" + row.AUTH_SOURCE_UID + "&tab=synchronizeGroups";
             },
             syncDepartments(row) {
                 //the return action is in: processmaker/workflow/engine/templates/authSources/authSourcesSynchronize.js
-                location.href = this.$root.baseUrl() + "authSourcesSynchronize?authUid=" + row.AUTH_SOURCE_UID + "&tab=synchronizeDepartments";
+                location.href = this.$root.baseUrl() + "authSources/authSourcesSynchronize?authUid=" + row.AUTH_SOURCE_UID + "&tab=synchronizeDepartments";
             },
             optionSaveButton(fileContent) {
                 this.$refs['as-b-modal-upload-file'].hide();
