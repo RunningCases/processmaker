@@ -10,8 +10,8 @@
             {{ message }}
         </b-alert>
         <button-fleft :data="newCase"></button-fleft>
-        <h5>{{$t('ID_ADVANCEDSEARCH')}}</h5>
-        
+        <h5>{{ $t("ID_ADVANCEDSEARCH") }}</h5>
+
         <AdvancedFilter
             :id="id"
             :name="name"
@@ -68,7 +68,7 @@
             <div slot="delegation_date" slot-scope="props">
                 {{ props.row.DELEGATION_DATE }}
             </div>
-            <div slot="priority" slot-scope="props">
+              <div slot="priority" slot-scope="props">
                 {{ props.row.PRIORITY }}
             </div>
             <div slot="actions" slot-scope="props">
@@ -176,7 +176,7 @@ export default {
                 limit = data.limit,
                 filters = {},
                 start = data.page === 1 ? 0 : limit * (data.page - 1);
-            paged = start + ',' + limit;
+            paged = start + "," + limit;
             filters["paged"] = paged;
             return new Promise((resolutionFunc, rejectionFunc) => {
                 _.forIn(this.filters, function(item, key) {
@@ -188,7 +188,10 @@ export default {
                         dt = that.formatDataResponse(response.data.data);
                         resolutionFunc({
                             data: dt,
-                            count: response.data.total,
+                            count:
+                                dt.length < data.limit
+                                    ? data.limit * data.page
+                                    : data.limit * data.page + 1,
                         });
                     })
                     .catch((e) => {
