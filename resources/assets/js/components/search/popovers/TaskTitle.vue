@@ -11,7 +11,7 @@
                         <multiselect
                             v-model="filter[0].options"
                             :options="taks"
-                            placeholder="Sselect one"
+                            :placeholder="$t('ID_TASK_TITLE')"
                             label="TAS_TITLE"
                             track-by="TAS_ID"
                             :show-no-results="false"
