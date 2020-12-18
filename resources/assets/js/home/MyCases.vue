@@ -55,7 +55,7 @@ import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import MyCasesFilter from "../components/search/MyCasesFilter";
 import ModalComments from "./modal/ModalComments.vue";
-import GroupedCell from "../components/utils/GroupedCell.vue";
+import GroupedCell from "../components/vuetable/GroupedCell.vue";
 import api from "./../api/index";
 
 export default {
@@ -186,7 +186,8 @@ export default {
          * Format Response API TODO to grid inbox and columns
          */
         formatDataResponse(response) {
-            let data = [];
+            let that = this,
+                data = [];
             _.forEach(response, (v) => {
                 data.push({
                     CASE_NUMBER: v.APP_NUMBER,
@@ -195,7 +196,7 @@ export default {
                     STATUS: v.APP_STATUS,
                     START_DATE: v.APP_CREATE_DATE || "",
                     FINISH_DATE: v.APP_FINISH_DATE || "",
-                    PENDING_TASKS: [],
+                    PENDING_TASKS: that.formantPendingTask(v.PENDING),
                     DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
                     APP_UID: v.APP_UID,
@@ -204,6 +205,23 @@ export default {
                 });
             });
             return data;
+        },
+        /**
+         * Format data for pending task.
+         */
+        formantPendingTask(data) {
+            var i,
+                dataFormat = [];
+            for (i = 0; i < data.length; i += 1) {
+                dataFormat.push(
+                    {
+                        TAS_NAME: data[i].tas_title,
+                        STATUS: data[i].tas_color,
+                        PENDING: ""
+                    }
+                );
+            }
+            return dataFormat;
         },
         /**
          * Get for user format name configured in Processmaker Environment Settings

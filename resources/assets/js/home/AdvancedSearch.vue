@@ -54,22 +54,20 @@
                 {{ props.row.STATUS }}
             </div>
             <div slot="current_user" slot-scope="props">
-                {{
-                    nameFormatCases(
-                        props.row.USR_FIRSTNAME,
-                        props.row.USR_LASTNAME,
-                        props.row.USR_USERNAME
-                    )
-                }}
+                <div class="v-user-cell" v-for="item in props.row.USER">
+                    <div class="col .v-user-cell-ellipsis">
+                        {{ item.USER_DATA }}
+                    </div>
+                </div>
             </div>
-            <div slot="due_date" slot-scope="props">
-                {{ props.row.DUE_DATE }}
+            <div slot="start_date" slot-scope="props">
+                {{ props.row.START_DATE }}
             </div>
-            <div slot="delegation_date" slot-scope="props">
-                {{ props.row.DELEGATION_DATE }}
+            <div slot="finish_date" slot-scope="props">
+                {{ props.row.FINISH_DATE }}
             </div>
-              <div slot="priority" slot-scope="props">
-                {{ props.row.PRIORITY }}
+              <div slot="duration" slot-scope="props">
+                {{ props.row.DURATION }}
             </div>
             <div slot="actions" slot-scope="props">
                 <div class="btn-default">
@@ -124,9 +122,9 @@ export default {
                 "process_name",
                 "task",
                 "current_user",
-                "due_date",
-                "delegation_date",
-                "priority",
+                "start_date",
+                "finish_date",
+                "duration",
                 "actions",
             ],
             tableData: [],
@@ -139,9 +137,9 @@ export default {
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     task: this.$i18n.t("ID_TASK"),
                     current_user: this.$i18n.t("ID_CURRENT_USER"),
-                    due_date: this.$i18n.t("ID_DUE_DATE"),
-                    delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
-                    priority: this.$i18n.t("ID_PRIORITY"),
+                    start_date: this.$i18n.t("ID_START_DATE"),
+                    finish_date: this.$i18n.t("ID_FINISH_DATE"),
+                    duration: this.$i18n.t("ID_DURATION"),
                     actions: "",
                 },
                 selectable: {
@@ -209,22 +207,44 @@ export default {
                     CASE_NUMBER: v.APP_NUMBER,
                     CASE_TITLE: v.DEL_TITLE,
                     PROCESS_NAME: v.PRO_TITLE,
-                    TASK: {
-                        TITLE: v.TAS_TITLE,
-                        CODE_COLOR: v.TAS_COLOR,
-                        COLOR: v.TAS_COLOR_LABEL,
-                    },
-                    USR_FIRSTNAME: v.USR_FIRSTNAME,
-                    USR_LASTNAME: v.USR_LASTNAME,
-                    USR_USERNAME: v.USR_USERNAME,
-                    DUE_DATE: v.DEL_TASK_DUE_DATE,
-                    DELEGATION_DATE: v.DEL_DELEGATE_DATE,
-                    PRIORITY: v.DEL_PRIORITY_LABEL,
+                    TASK: this.formatTasks(v.THREAD_TASKS),
+                    USER: this.formatUser(v.THREAD_USERS),
+                    START_DATE: v.APP_CREATE_DATE_LABEL,
+                    FINISH_DATE: v.APP_FINISH_DATE_LABEL,
+                    DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
                     APP_UID: v.APP_UID,
                 });
             });
             return data;
+        },
+        /**
+         * Format the data for the column task
+         */
+        formatTasks(data) {
+            var i,
+                dataFormat = [];
+            for (i = 0; i < data.length; i += 1) {
+                dataFormat.push({
+                    TITLE: data[i].tas_title,
+                    CODE_COLOR: data[i].tas_color,
+                });
+            }
+            return dataFormat;
+        },
+        formatUser(data) {
+            var i,
+                dataFormat = [];
+            for (i = 0; i < data.length; i += 1) {
+                dataFormat.push({
+                    USER_DATA: this.nameFormatCases(
+                        data[i].usr_firstname,
+                        data[i].usr_lastname,
+                        data[i].usr_username
+                    )
+                });
+            }
+            return dataFormat;
         },
         /**
          * Get for user format name configured in Processmaker Environment Settings
@@ -490,5 +510,14 @@ export default {
     padding-bottom: 20px;
     padding-left: 50px;
     padding-right: 50px;
+}
+.v-user-cell {
+  display: inline-block;
+}
+.v-user-cell-ellipsis {
+    white-space: nowrap;
+    width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
