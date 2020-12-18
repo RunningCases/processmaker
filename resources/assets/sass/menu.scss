@@ -31,7 +31,8 @@
 }
 
 .v-sidebar-menu .vsm--dropdown>.vsm--list {
-  padding: 5px
+  padding: 5px;
+  background-color: #0099dd;
 }
 
 .v-sidebar-menu .vsm--item {
@@ -178,7 +179,7 @@
 
 .v-sidebar-menu .vsm--toggle-btn:after {
   content: '\f337';
-  font-family: 'FontAwesome'
+  font-family: 'Font Awesome 5 Free';
 }
 
 .v-sidebar-menu .vsm--toggle-btn_slot:after {
@@ -314,7 +315,8 @@
 }
 
 .v-sidebar-menu .vsm--dropdown .vsm--link {
-  color: #fff
+  color: #fff;
+  background-color: #0099dd;
 }
 
 .vsm--link_level-2:hover .vsm--title,
@@ -365,7 +367,7 @@
 
 .v-sidebar-menu .vsm--dropdown>.vsm--list .vsm--link.vsm--link_level-2.vsm--item_open {
   color: #9ac5c7;
-  background-color: #EEEEEE;
+  background-color: #0099dd;
 }
 
 .bs-frame-ltr {

@@ -32,6 +32,7 @@
             >
               <b-icon icon="search"></b-icon
             ></span>
+              <b-tooltip target="popover-target-1">{{$t('ID_MY_CASES_SEARCH')}}</b-tooltip>
           </div>
           <b-form-tags input-id="tags-pills" v-model="searchTags">
             <template v-slot="{ tags, tagVariant, removeTag }">

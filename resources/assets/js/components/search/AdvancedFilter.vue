@@ -260,7 +260,6 @@ export default {
                     detail: "",
                     tagText: "",
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_TASK_NAME'),
-                    autoShow: true,
                     items:[
                         {
                             id: "task",
