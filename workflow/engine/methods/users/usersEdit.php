@@ -15,6 +15,7 @@ if (isset($_REQUEST['userInterface']) && $_REQUEST['userInterface'] === "v2") {
     $html = file_get_contents(PATH_HTML . "lib/userPersonalInformation/index.html");
     $html = str_replace("var USR_UID='';", "var USR_UID='{$_GET['USR_UID']}';", $html);
     $html = str_replace("translation.en.js", "translation.{$lang}.js", $html);
+    $html = str_replace("csrfToken", csrfToken(), $html);
     echo $html;
     exit();
 }

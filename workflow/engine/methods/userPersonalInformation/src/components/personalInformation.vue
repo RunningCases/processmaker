@@ -480,6 +480,7 @@
                 formData.append("USR_UID", this.form.USR_UID);
                 formData.append("USR_LOGGED_NEXT_TIME", this.form.USR_LOGGED_NEXT_TIME);
                 formData.append("USR_EXTENDED_ATTRIBUTES_DATA", JSON.stringify(extendedAttributes));
+                formData.append("_token", document.querySelector('meta[name="csrf-token"]').content);
                 axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;
