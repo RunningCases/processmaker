@@ -1872,8 +1872,11 @@ class Delegation extends Model
             'USERS.USR_FIRSTNAME', // Current User FirstName
             'USERS.USR_LASTNAME', // Current User LastName
             'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date
+            // Additional column for other functionalities
             'APP_DELEGATION.APP_UID', // Case Uid for Open case
             'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
+            'APP_DELEGATION.PRO_UID', // Process Uid for Case notes
+            'APP_DELEGATION.TAS_UID', // Task Uid for Case notes
         ]);
         // Join with task
         $query->joinTask();
