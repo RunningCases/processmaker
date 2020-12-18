@@ -345,15 +345,15 @@
                 validate: {
                     USR_USERNAME: {
                         message: "",
-                        state: true
+                        state: null
                     },
                     USR_NEW_PASS: {
                         message: "",
-                        state: true
+                        state: null
                     },
                     USR_CNF_PASS: {
                         message: "",
-                        state: true
+                        state: null
                     }
                 },
                 countryList: [{
