@@ -2,7 +2,11 @@
   <div id="v-unassigned" ref="v-unassigned" class="v-container-unassigned">
     <button-fleft :data="newCase"></button-fleft>
     <modal-new-request ref="newRequest"></modal-new-request>
-
+    <CasesFilter
+      :filters="filters"
+      @onRemoveFilter="onRemoveFilter"
+      @onUpdateFilters="onUpdateFilters"
+    />
     <v-server-table
       :data="tableData"
       :columns="columns"
@@ -59,6 +63,7 @@ import HeaderCounter from "../components/home/HeaderCounter.vue";
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
+import CasesFilter from "../components/search/CasesFilter";
 import ModalClaimCase from "./modal/ModalClaimCase.vue";
 import api from "./../api/index";
 
@@ -70,6 +75,7 @@ export default {
     ModalNewRequest,
     TaskCell,
     ModalClaimCase,
+    CasesFilter,
   },
   props: {},
   data() {
@@ -94,7 +100,9 @@ export default {
         "actions",
       ],
       tableData: [],
+      filters: {},
       options: {
+        filterable: false,
         headings: {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
@@ -143,13 +151,20 @@ export default {
         dt,
         paged,
         limit = data.limit,
-        start = data.page === 1 ? 0 : limit * (data.page - 1);
-      paged = start + ',' + limit;
+        start = data.page === 1 ? 0 : limit * (data.page - 1),
+        filters = {};
+      paged = start + "," + limit;
+
+      filters = {
+        paged: paged,
+      };
+
+      _.forIn(this.filters, function (item, key) {
+        filters[item.filterVar] = item.value;
+      });
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
-          .unassigned({
-            paged: paged
-          })
+          .unassigned(filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
@@ -252,10 +267,19 @@ export default {
           DEL_INDEX: item.DEL_INDEX,
           PRO_UID: item.PRO_UID,
           TAS_UID: item.TAS_UID,
-          APP_NUMBER: item.CASE_NUMBER
+          APP_NUMBER: item.CASE_NUMBER,
         });
         that.$emit("onUpdatePage", "case-detail");
       });
+    },
+    onRemoveFilter(data) {},
+    onUpdateFilters(data) {
+      this.filters = data.params;
+      if (data.refresh) {
+        this.$nextTick(() => {
+          this.$refs["vueTable"].getData();
+        });
+      }
     },
   },
 };

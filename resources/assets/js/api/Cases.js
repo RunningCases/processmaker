@@ -12,36 +12,28 @@ export let cases = {
     todo(data) {
         return Api.get({
             service: "TODO_LIST",
-            params: {
-                paged: data.paged
-            },
+            params: data,
             keys: {}
         });
     },
     draft(data) {
         return Api.get({
             service: "DRAFT_LIST",
-            params: {
-                paged: data.paged
-            },
+            params: data,
             keys: {}
         });
     },
     paused(data) {
         return Api.get({
             service: "PAUSED_LIST",
-            params: {
-                paged: data.paged
-            },
+            params: data,
             keys: {}
         });
     },
     unassigned(data) {
         return Api.get({
             service: "UNASSIGNED_LIST",
-            params: {
-                paged: data.paged
-            },
+            params: data,
             keys: {}
         });
     },
@@ -95,15 +87,15 @@ export let cases = {
             window.config.SYS_URI +
             `appProxy/getNotesList`, params);
     },
-    pendingtask(data){
+    pendingtask(data) {
         return axios.get(window.config.SYS_SERVER +
             '/api/1.0/' +
             window.config.SYS_WORKSPACE +
             '/home/' + data.APP_NUMBER + '/pending-tasks', {
-                headers: {
-                    'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
-                }
-            });
+            headers: {
+                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
+            }
+        });
     },
     start(dt) {
         var params = new URLSearchParams();
@@ -179,7 +171,7 @@ export let casesHeader = {
             '/home/counters', {
             headers: {
                 'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
-              }
+            }
         });
     }
 }; 
