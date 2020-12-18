@@ -11,6 +11,15 @@ class UserTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Set up function.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        User::query()->delete();
+    }
+
+    /**
      * Tests the users filters scope with the usr uid filter
      *
      * @test
@@ -110,9 +119,13 @@ class UserTest extends TestCase
         ]);
 
         // Assertions
-        $this->assertCount(4, User::getUsersForHome());
+        // Only will considerate the actives
+        $this->assertCount(3, User::getUsersForHome());
+        // Only will considerate the name Smith
         $this->assertCount(3, User::getUsersForHome('Smith'));
-        $this->assertCount(4, User::getUsersForHome(null, null, 2));
+        // Only will considerate by default the actives
+        $this->assertCount(3, User::getUsersForHome(null, null, 2));
+        // Only will considerate by default the actives and limit
         $this->assertCount(1, User::getUsersForHome(null, 2, 1));
     }
 }

@@ -19,6 +19,15 @@ class ApplicationTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Set up function.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Application::query()->delete();
+    }
+
+    /**
      * Test belongs to APP_CUR_USER
      *
      * @covers \ProcessMaker\Model\Application::currentUser()

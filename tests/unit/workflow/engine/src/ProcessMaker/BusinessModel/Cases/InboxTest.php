@@ -79,7 +79,7 @@ class InboxTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @test
      */
     public function it_get_result_without_filters()
@@ -102,7 +102,7 @@ class InboxTest extends TestCase
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
@@ -123,7 +123,7 @@ class InboxTest extends TestCase
      * It tests the getData method with case number filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
@@ -144,7 +144,7 @@ class InboxTest extends TestCase
      * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
@@ -165,7 +165,7 @@ class InboxTest extends TestCase
      * It tests the getData method with case title filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
@@ -173,25 +173,26 @@ class InboxTest extends TestCase
     {
         // Create factories related to the to_do cases
         $cases = $this->createInbox();
+        $usrId = $cases->USR_ID;
+        $title = $cases->DEL_TITLE;
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
         // Create new Inbox object
         $inbox = new Inbox();
-        $inbox->setUserUid($cases['USR_UID']);
-        $inbox->setUserId($cases['USR_ID']);
+        $inbox->setUserId($usrId);
         // Set the title
-        $inbox->setCaseTitle($cases['DEL_TITLE']);
+        $inbox->setCaseTitle($title);
         // Get the data
-        $res = $inbox->getData();
+        $result = $inbox->getData();
         // Asserts
-        $this->assertNotEmpty($res);
+        $this->assertNotEmpty($result);
     }
 
     /**
      * It tests the getData method using order by column
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
@@ -221,6 +222,7 @@ class InboxTest extends TestCase
      * It tests the getPagingCounters() method
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getPagingCounters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
      * @test
      */
     public function it_should_test_get_paging_counters_method()
