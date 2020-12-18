@@ -38,7 +38,7 @@ export default {
          * @return {string} - color atribute string
          */
         activeColor: function(codeColor) {
-            return this.colorMap[codeColor-1];
+            return this.colorMap[codeColor - 1];
         },
     }
 };
