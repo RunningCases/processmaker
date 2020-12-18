@@ -67,7 +67,8 @@ const services = {
     DELETE_MY_FILTERS: "/cases/advanced-search/filter/",
     SEARCH: "/home/search",
     PROCESSES: "/home/processes",
-    USERS: "/home/users"
+    USERS: "/home/users",
+    TASKS: "/home/tasks"
 };
 
 export default {

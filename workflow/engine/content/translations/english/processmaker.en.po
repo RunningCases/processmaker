@@ -23826,6 +23826,12 @@ msgid "Search by Start Date:"
 msgstr "Search by Start Date:"
 
 # TRANSLATION
+# LABEL/ID_SEARCH_BY_TASK_NAME
+#: LABEL/ID_SEARCH_BY_TASK_NAME
+msgid "Search by Task Name:"
+msgstr "Search by Task Name:"
+
+# TRANSLATION
 # LABEL/ID_SEARCH_FOR_USER
 #: LABEL/ID_SEARCH_FOR_USER
 msgid "Search for user"
@@ -25456,6 +25462,12 @@ msgstr "Task properties has been saved successfully"
 #: LABEL/ID_TASK_REASSIGNMENTS
 msgid "Task Reassignments"
 msgstr "Task Reassignments"
+
+# TRANSLATION
+# LABEL/ID_TASK_TITLE
+#: LABEL/ID_TASK_TITLE
+msgid "Task Title"
+msgstr "Task Title"
 
 # TRANSLATION
 # LABEL/ID_TASK_TRANSFER
