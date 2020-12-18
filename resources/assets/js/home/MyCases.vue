@@ -3,6 +3,7 @@
         <button-fleft :data="newCase"></button-fleft>
         <MyCasesFilter
             :filters="filters"
+            :title="$t('ID_MY_CASES')"
             @onRemoveFilter="onRemoveFilter"
             @onUpdateFilters="onUpdateFilters"
         />

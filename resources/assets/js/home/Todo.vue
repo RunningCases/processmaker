@@ -4,6 +4,7 @@
     <modal-new-request ref="newRequest"></modal-new-request>
     <CasesFilter
       :filters="filters"
+      :title="$t('ID_CASES_STATUS_TO_DO')"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
