@@ -168,7 +168,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_ROLE')">
                             <b-form-select v-model="form.USR_ROLE"
-                                           :options="rolesList"/>
+                                           :options="rolesList"
+                                           @change="changeRole"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -862,6 +863,7 @@
             getUserExtendedAttributesList() {
                 let formData = new FormData();
                 formData.append("option", "userExtendedAttributesList");
+                formData.append("roleCode", this.form.USR_ROLE);
                 return axios.post(this.$root.baseUrl() + "userExtendedAttributes/index", formData)
                         .then(response => {
                             response;
@@ -883,6 +885,9 @@
                 if (day.length < 2)
                     day = "0" + day;
                 return [year + 1, month, day].join("-");
+            },
+            changeRole() {
+                this.getUserExtendedAttributesList();
             }
         }
     }

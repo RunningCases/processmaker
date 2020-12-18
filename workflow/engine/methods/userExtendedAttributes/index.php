@@ -75,8 +75,11 @@ try {
             echo G::json_encode($result);
             break;
         case "userExtendedAttributesList":
+            $roleCode = empty($_REQUEST["roleCode"]) ? "" : $_REQUEST["roleCode"];
             $userExtendedAttributes = UserExtendedAttributes::query()
-                    ->orderBy('UEA_NAME')
+                    ->where("UEA_ROLES", "like", "%\"{$roleCode}\"%")
+                    ->orWhere("UEA_OPTION", "=", "allUser")
+                    ->orderBy("UEA_NAME")
                     ->get()
                     ->toArray();
             //change key names
