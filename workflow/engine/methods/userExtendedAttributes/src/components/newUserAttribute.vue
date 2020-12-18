@@ -212,6 +212,11 @@
                     this.statusAttributeIdMessage = this.$root.translation("ID_IS_REQUIRED");
                     return;
                 }
+                if (this.form.attributeId.length >= 50) {
+                    this.statusAttributeId = false;
+                    this.statusAttributeIdMessage = this.$root.translation("ID_INVALID_MAX_PERMITTED", [this.$root.translation('ID_ATTRIBUTE_ID'), '50']);
+                    return;
+                }
                 if (/^[a-zA-Z][_0-9a-zA-Z]+$/.test(this.form.attributeId) === false) {
                     this.statusAttributeId = false;
                     this.statusAttributeIdMessage = this.$root.translation("ID_INVALID_DATA");
