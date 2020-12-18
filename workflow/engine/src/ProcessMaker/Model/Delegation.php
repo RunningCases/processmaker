@@ -453,7 +453,6 @@ class Delegation extends Model
     public function scopeCasesTo($query, int $to)
     {
         return $query->where('APP_DELEGATION.APP_NUMBER', '<=', $to);
-
     }
 
     /**
@@ -969,7 +968,6 @@ class Delegation extends Model
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $userId
      * @param int $taskId
-     * @param int $caseNumber
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */

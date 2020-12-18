@@ -542,17 +542,17 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::RenderPage('publish', 'raw');
         break;
     case 'getCasesInputDocuments':
-        $arrayToTranslation = array(
+        $arrayToTranslation = [
             "INPUT" => G::LoadTranslation("ID_INPUT_DB"),
             "OUTPUT" => G::LoadTranslation("ID_OUTPUT_DB"),
             "ATTACHED" => G::LoadTranslation("ID_ATTACHED_DB")
-        );
-        $oCase = new Cases();
-        $fields = $oCase->loadCase($_POST['appUid']);
-        $sProcessUID = $fields['PRO_UID'];
-        $aProcesses = [];
-        $criteria = $oCase->getAllUploadedDocumentsCriteria(
-            $sProcessUID,
+        ];
+        $case = new Cases();
+        $fields = $case->loadCase($_POST['appUid']);
+        $proUid = $fields['PRO_UID'];
+        $processes = [];
+        $criteria = $case->getAllUploadedDocumentsCriteria(
+            $proUid,
             $_POST['appUid'],
             '',
             $_SESSION['USER_LOGGED'],
@@ -574,20 +574,20 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             $result = $rs->getRow();
             $result["TYPE"] = (array_key_exists($result["TYPE"], $arrayToTranslation)) ? $arrayToTranslation[$result["TYPE"]] : $result["TYPE"];
             $result['CREATE_DATE'] = DateTime::convertUtcToTimeZone($result['CREATE_DATE']);
-            $aProcesses[] = $result;
+            $processes[] = $result;
         }
         $r = new stdclass();
-        $r->data = $aProcesses;
+        $r->data = $processes;
         $r->totalCount = $totalCount;
         echo Bootstrap::json_encode($r);
         break;
     case 'getCasesOutputDocuments':
-        $oCase = new Cases();
-        $fields = $oCase->loadCase($_POST['appUid']);
-        $sProcessUID = $fields['PRO_UID'];
-        $aProcesses = array();
-        $c = $oCase->getAllGeneratedDocumentsCriteria(
-            $sProcessUID,
+        $case = new Cases();
+        $fields = $case->loadCase($_POST['appUid']);
+        $proUid = $fields['PRO_UID'];
+        $processes = [];
+        $c = $case->getAllGeneratedDocumentsCriteria(
+            $proUid,
             $_POST['appUid'],
             '',
             $_SESSION['USER_LOGGED'],
@@ -606,7 +606,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             $result["FILEPDFEXIST"] = ($result["FILEPDF"]);
             $result["DELETE_FILE"] = (isset($result['ID_DELETE']) && $result['ID_DELETE'] == 'Delete') ? true : false;
             $result['CREATE_DATE'] = DateTime::convertUtcToTimeZone($result['CREATE_DATE']);
-            $aProcesses[] = $result;
+            $processes[] = $result;
             $rs->next();
             $totalCount++;
         }
@@ -615,7 +615,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         try {
             $globaleneralConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
         } catch (Exception $e) {
-            $generalConfCasesList = array();
+            $generalConfCasesList = [];
         }
         $dateFormat = "";
         $varFlag = isset($generalConfCasesList['casesListDateFormat']);
@@ -623,7 +623,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             $dateFormat = $generalConfCasesList['casesListDateFormat'];
         }
         $r = new stdclass();
-        $r->data = $aProcesses;
+        $r->data = $processes;
         $r->totalCount = $totalCount;
         $r->dataFormat = $dateFormat;
         echo Bootstrap::json_encode($r);
