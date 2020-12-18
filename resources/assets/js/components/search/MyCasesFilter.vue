@@ -71,6 +71,7 @@ import CaseIntegerNumber from "./popovers/CaseIntegerNumber.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
 import DateFilter from "./popovers/DateFilter.vue";
+import TaskTitle from "./popovers/TaskTitle.vue";
 import api from "./../../api/index";
 
 export default { 
@@ -81,7 +82,8 @@ export default {
         CaseIntegerNumber,
         CaseTitle,
         ProcessName,
-        DateFilter
+        DateFilter,
+        TaskTitle
     },
     data() {
         return {
@@ -148,6 +150,27 @@ export default {
                     makeTagText: function (params, data) {
 
                         return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                    }
+                },
+                {
+                    type: "TaskTitle",
+                    id: "taskTitle",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_TASK')}`,
+                    optionLabel: this.$i18n.t('ID_BY_TASK'),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_TASK_TITLE'),
+                    autoShow: true,
+                    items:[
+                        {
+                            id: "task",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_TASK_NAME')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix} ${data[0].label || ''}`;
                     }
                 },
                 {
@@ -281,7 +304,6 @@ export default {
     
         tagInfo(id) {
              if (this.itemModel[id]) {
-                 debugger;
                 return this.itemModel[id];
             }
             return null;

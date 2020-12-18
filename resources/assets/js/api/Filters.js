@@ -72,6 +72,18 @@ export let filters = {
     /**
      * Service to get the users list
      */
+    taskList(query) {
+        return Api.get({
+            service: "TASKS",
+            params: {
+                text: query,
+            },
+            keys: {},
+        });
+    },
+    /**
+     * Service to get the users list
+     */
     userValues(query) {
         return axios.post(
             window.config.SYS_SERVER +
