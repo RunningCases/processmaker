@@ -2,6 +2,7 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
+use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Process;
@@ -52,6 +53,18 @@ class ApplicationTest extends TestCase
     /**
      * This checks if return the columns used
      *
+     * @covers \ProcessMaker\Model\Application::scopeStatusId()
+     * @test
+     */
+    public function it_return_cases_by_status_id()
+    {
+        $table = factory(Application::class)->create();
+        $this->assertCount(1, $table->statusId($table->APP_STATUS_ID)->get());
+    }
+
+    /**
+     * This checks if return the columns used
+     *
      * @covers \ProcessMaker\Model\Application::getByProUid()
      * @covers \ProcessMaker\Model\Application::scopeProUid()
      * @test
@@ -79,6 +92,24 @@ class ApplicationTest extends TestCase
         $result = Application::getCase($application->APP_UID);
         $this->assertArrayHasKey('APP_STATUS', $result);
         $this->assertArrayHasKey('APP_INIT_USER', $result);
+    }
+
+    /**
+     * This review if get the case number
+     *
+     * @covers \ProcessMaker\Model\Application::getCaseNumber()
+     * @test
+     */
+    public function it_get_case_number()
+    {
+        $application = factory(Application::class)->create();
+        $result = Application::getCaseNumber($application->APP_UID);
+        // When the application exist
+        $this->assertEquals($result, $application->APP_NUMBER);
+        // When the application does not exist
+        $appFake = G::generateUniqueID();
+        $result = Application::getCaseNumber($appFake);
+        $this->assertEquals($result, 0);
     }
 
     /**
@@ -110,4 +141,20 @@ class ApplicationTest extends TestCase
         $this->assertArrayHasKey('APP_CUR_USER', $result);
     }
 
+    /**
+     * Count cases per process
+     *
+     * @covers \ProcessMaker\Model\Application::getCountByProUid()
+     * @covers \ProcessMaker\Model\Application::scopeProUid()
+     * @covers \ProcessMaker\Model\Application::scopeStatusId()
+     * @covers \ProcessMaker\Model\Application::scopePositivesCases()
+     * @test
+     */
+    public function it_count_cases_by_process()
+    {
+        $process = factory(Process::class)->create();
+        factory(Application::class, 5)->create(['PRO_UID' => $process->PRO_UID]);
+        $result = Application::getCountByProUid($process->PRO_UID);
+        $this->assertEquals($result, 5);
+    }
 }

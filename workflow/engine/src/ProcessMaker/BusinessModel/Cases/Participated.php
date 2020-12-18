@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Task;
 
@@ -164,8 +165,8 @@ class Participated extends AbstractCases
             $startDate = (string)$item['APP_CREATE_DATE'];
             $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
             $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
-            // todo: we will to complete the real count with other ticket
-            $item['CASE_NOTES_COUNT'] = 0;
+            // Get total case notes
+            $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
             // Define data according to the filters
             switch ($filter) {
                 case 'STARTED':
@@ -178,8 +179,8 @@ class Participated extends AbstractCases
                             $result[$i]['tas_title'] = $thread['TAS_TITLE'];
                             $result[$i]['user_id'] = $thread['USR_ID'];
                             $result[$i]['due_date'] = $thread['DEL_TASK_DUE_DATE'];
-                            $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
-                            $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                            $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
+                            $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                             $i++;
                         }
                         $item['PENDING'] = $result;
@@ -187,8 +188,8 @@ class Participated extends AbstractCases
                         $result[$i]['tas_title'] = $item['TAS_TITLE'];
                         $result[$i]['user_id'] = $item['USR_ID'];
                         $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
-                        $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
-                        $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                        $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
+                        $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                         $item['PENDING'] = $result;
                     }
                     break;
@@ -205,8 +206,8 @@ class Participated extends AbstractCases
                     $result[$i]['tas_title'] = $item['TAS_TITLE'];
                     $result[$i]['user_id'] = $item['USR_ID'];
                     $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
-                    $result[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
-                    $result[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                    $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
+                    $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                     $item['PENDING'] = $result;
                     break;
             }

@@ -1590,6 +1590,7 @@ DROP TABLE IF EXISTS `APP_NOTES`;
 CREATE TABLE `APP_NOTES`
 (
 	`NOTE_ID` INTEGER  NOT NULL AUTO_INCREMENT,
+	`APP_NUMBER` INTEGER default 0,
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`NOTE_DATE` DATETIME  NOT NULL,
@@ -1602,7 +1603,8 @@ CREATE TABLE `APP_NOTES`
 	`NOTE_RECIPIENTS` MEDIUMTEXT,
 	UNIQUE KEY `NOTE_ID` (`NOTE_ID`),
 	KEY `indexAppNotesDate`(`APP_UID`, `NOTE_DATE`),
-	KEY `indexAppNotesUser`(`APP_UID`, `USR_UID`)
+	KEY `indexAppNotesUser`(`APP_UID`, `USR_UID`),
+	KEY `indexAppNumber`(`APP_NUMBER`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Application Notes';
 #-----------------------------------------------------------------------------
 #-- DASHLET

@@ -3475,7 +3475,7 @@ class WsBase
                 return $result;
             }
 
-            //Add note case
+            // Define the Case for register a case note
             $appNote = new BmCases();
             $response = $appNote->addNote($caseUid, $userUid, $note, $sendMail, $files);
 
