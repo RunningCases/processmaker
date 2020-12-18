@@ -19781,6 +19781,12 @@ msgid "My Cases"
 msgstr "My Cases"
 
 # TRANSLATION
+# LABEL/ID_MY_CASES_SEARCH
+#: LABEL/ID_MY_CASES_SEARCH
+msgid "My Cases search"
+msgstr "My Cases search"
+
+# TRANSLATION
 # LABEL/ID_MY_DOCUMENTS
 #: LABEL/ID_MY_DOCUMENTS
 msgid "My Documents"

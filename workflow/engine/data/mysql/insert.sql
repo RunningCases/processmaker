@@ -60190,6 +60190,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MYSQL_SUCCESS_CONNECT','en','Successfully connected to MySQL Server','2015-04-08') ,
 ( 'LABEL','ID_MY_ACCOUNT','en','My account','2014-01-15') ,
 ( 'LABEL','ID_MY_CASES','en','My Cases','2020-12-07') ,
+( 'LABEL','ID_MY_CASES_SEARCH','en','My Cases search','2020-12-07') ,
 ( 'LABEL','ID_MY_DOCUMENTS','en','My Documents','2014-12-07') ,
 ( 'LABEL','ID_MY_DRAFTS','en','My Drafts','2014-01-15') ,
 ( 'LABEL','ID_MY_INBOX','en','My inbox','2014-01-15') ,

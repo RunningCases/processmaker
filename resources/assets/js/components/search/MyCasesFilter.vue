@@ -22,9 +22,10 @@
         <div class="w-75 p-1">
 
             <b-input-group class="w-100 p-1">
-                <b-button pill variant="primary" id="popover-target-1" @click="searchClickHandler">
+                <b-button pill variant="primary" id="popover-target-1" @click="searchClickHandler" title="">
                     <b-icon icon="search"></b-icon>
                 </b-button>
+                <b-tooltip target="popover-target-1">{{$t('ID_MY_CASES_SEARCH')}}</b-tooltip>
                 <b-form-tags
                     input-id="tags-pills"
                     v-model="searchTags"
