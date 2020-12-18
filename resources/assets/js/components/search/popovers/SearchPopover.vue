@@ -20,9 +20,11 @@
             </template>
             <div>
                 <slot name="body"></slot>
-                <div class="float-right">
-                    <b-button @click="onClose" size="sm" variant="danger"> {{$t('ID_CANCEL')}}</b-button>
-                    <b-button @click="onSave" size="sm" variant="primary">{{$t('ID_SAVE')}}</b-button>
+                <div class="v-popover-footer">
+                    <div class="float-right">
+                        <b-button @click="onClose" size="sm" variant="danger"> {{$t('ID_CANCEL')}}</b-button>
+                        <b-button @click="onSave" size="sm" variant="success">{{$t('ID_SAVE')}}</b-button>
+                    </div>
                 </div>
             </div>
         </b-popover>
@@ -55,5 +57,9 @@ export default {
 .popover {
     max-width: 650px !important; 
     min-width: 400px !important;
+}
+
+.v-popover-footer{
+    display: flow-root;
 }
 </style>
