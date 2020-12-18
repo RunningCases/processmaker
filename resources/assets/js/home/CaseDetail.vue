@@ -45,10 +45,8 @@
             <div slot="due_date" slot-scope="props">
               {{ props.row.DUE_DATE }}
             </div>
-            <div slot="actions">
-              <div class="btn-default">
-                <span class="sr-only">Continue</span>
-              </div>
+            <div slot="actions" slot-scope="props">
+                <b-button v-if="props.row.STATUS === 'OPEN'" @click="onClick(props)" variant="outline-primary">{{$t("ID_CONTINUE")}}</b-button>
             </div>
           </v-server-table>
         </div>
@@ -457,6 +455,10 @@ export default {
           STATUS: v.DEL_THREAD_STATUS,
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           TASK_COLOR: v.TAS_COLOR_LABEL,
+          APP_UID: v.APP_UID,
+          DEL_INDEX: v.DEL_INDEX,
+          PRO_UID:v.PRO_UID,
+          TAS_UID:v.TAS_UID
         });
       });
       return data;
@@ -479,6 +481,16 @@ export default {
     countDownChanged(dismissCountDown) {
       this.dataAlert.dismissCountDown = dismissCountDown;
     },
+    onClick(data) {
+      this.$emit("onUpdateDataCase", {
+        APP_UID: data.row.APP_UID,
+        DEL_INDEX: data.row.DEL_INDEX,
+        PRO_UID: data.row.PRO_UID,
+        TAS_UID: data.row.TAS_UID,
+        ACTION: "todo",
+      });
+      this.$emit("onUpdatePage", "XCase");
+    }
   },
 };
 </script>
