@@ -222,7 +222,15 @@
                     this.statusAttributeIdMessage = this.$root.translation("ID_INVALID_DATA");
                     return;
                 }
-                this.saveForm();
+                let promise = this.validateName();
+                promise.then(response => {
+                    response;
+                    let promise2 = this.validateAttributeId();
+                    promise2.then(response2 => {
+                        response2;
+                        this.saveForm();
+                    });
+                });
             },
             validateName() {
                 this.statusValidation = false;
