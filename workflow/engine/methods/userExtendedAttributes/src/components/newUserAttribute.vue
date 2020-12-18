@@ -196,6 +196,8 @@
                     rol: "0"
                 };
                 this.statusValidation = true;
+                this.statusName = null;
+                this.statusAttributeId = null;
             },
             onsubmit() {
                 this.statusName = true;
