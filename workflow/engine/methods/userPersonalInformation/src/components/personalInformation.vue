@@ -409,20 +409,26 @@
                 if (this.$v.form.$anyError) {
                     return;
                 }
-                if (this.form.USR_UID === "") {
-                    if (this.form.USR_NEW_PASS === "") {
+                if (this.form.USR_UID.trim() === "") {
+                    if (this.form.USR_USERNAME.trim() === "") {
+                        this.validate.USR_USERNAME.message = this.$root.translation('ID_IS_REQUIRED');
+                        this.validate.USR_USERNAME.state = false;
+                        this.disableButtonSave = true;
+                        return;
+                    }
+                    if (this.form.USR_NEW_PASS.trim() === "") {
                         this.validate.USR_NEW_PASS.message = this.$root.translation('ID_IS_REQUIRED');
                         this.validate.USR_NEW_PASS.state = false;
                         this.disableButtonSave = true;
                         return;
                     }
-                    if (this.form.USR_CNF_PASS === "") {
+                    if (this.form.USR_CNF_PASS.trim() === "") {
                         this.validate.USR_CNF_PASS.message = this.$root.translation('ID_IS_REQUIRED');
                         this.validate.USR_CNF_PASS.state = false;
                         this.disableButtonSave = true;
                         return;
                     }
-                    if (this.form.USR_CNF_PASS !== this.form.USR_NEW_PASS) {
+                    if (this.form.USR_CNF_PASS.trim() !== this.form.USR_NEW_PASS.trim()) {
                         this.validate.USR_CNF_PASS.message = this.$root.translation("ID_NEW_PASS_SAME_OLD_PASS");
                         this.validate.USR_CNF_PASS.state = false;
                         this.disableButtonSave = true;
