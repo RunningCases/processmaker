@@ -126,7 +126,7 @@
 
 .v-sidebar-menu .vsm--arrow:after {
   content: '\f0a9';
-  font-family: 'FontAwesome'
+  font-family: 'Font Awesome 5 Free'
 }
 
 .v-sidebar-menu .vsm--arrow_open {
@@ -380,9 +380,9 @@
   float: left;
 }
 
-sidebar-menu .vsm--arrow-rtl:after {
-    content: '\F0A8' !important;
-    font-family: 'FontAwesome';
+.v-sidebar-menu .vsm--arrow-rtl:after {
+  content: '\f0a9' !important;
+  font-family: 'Font Awesome 5 Free'
 }
 
 .v-sidebar-menu .vsm--arrow.vsm--arrow_open-rtl {
