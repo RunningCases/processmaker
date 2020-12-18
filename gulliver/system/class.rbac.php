@@ -181,6 +181,7 @@ class RBAC
                 'historyDynaformGridPreview' => ['PM_CASES'],
             ],
             'usersAjax.php' => [
+                'timeZoneParameters' => ['PM_LOGIN'],
                 'countryList' => ['PM_LOGIN'],
                 'stateList' => ['PM_LOGIN'],
                 'locationList' => ['PM_LOGIN'],

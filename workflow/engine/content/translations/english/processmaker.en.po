@@ -1976,6 +1976,12 @@ msgid "Address"
 msgstr "Address"
 
 # TRANSLATION
+# LABEL/ID_ADD_ATTRIBUTE
+#: LABEL/ID_ADD_ATTRIBUTE
+msgid "Add Attribute"
+msgstr "Add Attribute"
+
+# TRANSLATION
 # LABEL/ID_ADD_CUSTOM_COLUMN
 #: LABEL/ID_ADD_CUSTOM_COLUMN
 msgid "Add Custom Column"
@@ -2354,6 +2360,18 @@ msgid "Are you sure that you want to resend this message"
 msgstr "Are you sure that you want to resend this message"
 
 # TRANSLATION
+# LABEL/ID_ARE_YOU_SURE_TO_DELETE_ATTRIBUTE_PLEASE_CONFIRM
+#: LABEL/ID_ARE_YOU_SURE_TO_DELETE_ATTRIBUTE_PLEASE_CONFIRM
+msgid "Are you sure to delete the matched attribute \"{0}\", please confirm?"
+msgstr "Are you sure to delete the matched attribute \"{0}\", please confirm?"
+
+# TRANSLATION
+# LABEL/ID_ARE_YOU_SURE_TO_DELETE_CONNECTION_PLEASE_CONFIRM
+#: LABEL/ID_ARE_YOU_SURE_TO_DELETE_CONNECTION_PLEASE_CONFIRM
+msgid "Are you sure to delete the connection \"{0}\", please confirm?"
+msgstr "Are you sure to delete the connection \"{0}\", please confirm?"
+
+# TRANSLATION
 # LABEL/ID_ARRAY_VARIABLES_EMPTY
 #: LABEL/ID_ARRAY_VARIABLES_EMPTY
 msgid "Array of variables is empty"
@@ -2606,6 +2624,12 @@ msgid "Attached files"
 msgstr "Attached files"
 
 # TRANSLATION
+# LABEL/ID_ATTRIBUTE
+#: LABEL/ID_ATTRIBUTE
+msgid "Attribute"
+msgstr "Attribute"
+
+# TRANSLATION
 # LABEL/ID_ATTRIBUTES
 #: LABEL/ID_ATTRIBUTES
 msgid "Attributes"
@@ -2616,6 +2640,36 @@ msgstr "Attributes"
 #: LABEL/ID_ATTRIBUTE_HAS_INVALID_ELEMENT_KEY
 msgid "The attribute {0}, has an invalid element (incorrect keys)."
 msgstr "The attribute {0}, has an invalid element (incorrect keys)."
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_ID
+#: LABEL/ID_ATTRIBUTE_ID
+msgid "Attribute ID"
+msgstr "Attribute ID"
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_NAME
+#: LABEL/ID_ATTRIBUTE_NAME
+msgid "Attribute Name"
+msgstr "Attribute Name"
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_WILL_BE_HIDDEN_USING_PLACEHOLDER
+#: LABEL/ID_ATTRIBUTE_WILL_BE_HIDDEN_USING_PLACEHOLDER
+msgid "The new attribute value will be hidden using * placeholder instead of real value."
+msgstr "The new attribute value will be hidden using * placeholder instead of real value."
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_WILL_BE_REQUIRED_WHEN_EDITING_USER_SETTINGS
+#: LABEL/ID_ATTRIBUTE_WILL_BE_REQUIRED_WHEN_EDITING_USER_SETTINGS
+msgid "The new attribute will be required when editing user settings."
+msgstr "The new attribute will be required when editing user settings."
+
+# TRANSLATION
+# LABEL/ID_ATTRIBUTE_WONT_BE_SEEN_IN_USER_INFORMATION
+#: LABEL/ID_ATTRIBUTE_WONT_BE_SEEN_IN_USER_INFORMATION
+msgid "The new attribute won't be seen in the user information pages."
+msgstr "The new attribute won't be seen in the user information pages."
 
 # TRANSLATION
 # LABEL/ID_AT_RISK
@@ -3000,6 +3054,12 @@ msgid "By Case Title"
 msgstr "By Case Title"
 
 # TRANSLATION
+# LABEL/ID_BY_FINISH_DATE
+#: LABEL/ID_BY_FINISH_DATE
+msgid "By Finish Date"
+msgstr "By Finish Date"
+
+# TRANSLATION
 # LABEL/ID_BY_PROCESS_NAME
 #: LABEL/ID_BY_PROCESS_NAME
 msgid "By Process Name"
@@ -3023,11 +3083,10 @@ msgstr "By Status"
 msgid "By Start Date"
 msgstr "By Start Date"
 
-# TRANSLATION
-# LABEL/ID_BY_FINISH_DATE
-#: LABEL/ID_BY_FINISH_DATE
-msgid "By Finish Date"
-msgstr "By Finish Date"
+# LABEL/ID_BY_ROLE
+#: LABEL/ID_BY_ROLE
+msgid "By Role"
+msgstr "By Role"
 
 # TRANSLATION
 # LABEL/ID_CACHE_BTN_BUILD
@@ -4332,6 +4391,12 @@ msgid "Check Workspace Configuration"
 msgstr "Check Workspace Configuration"
 
 # TRANSLATION
+# LABEL/ID_CHOOSE_A_FILE_OR_DROP_IT_HERE
+#: LABEL/ID_CHOOSE_A_FILE_OR_DROP_IT_HERE
+msgid "Choose a file or drop it here..."
+msgstr "Choose a file or drop it here..."
+
+# TRANSLATION
 # LABEL/ID_CHOOSE_OPTION
 #: LABEL/ID_CHOOSE_OPTION
 msgid "Choose an option"
@@ -4342,6 +4407,12 @@ msgstr "Choose an option"
 #: LABEL/ID_CHOOSE_PROVIDER
 msgid "Please select provider"
 msgstr "Please select provider"
+
+# TRANSLATION
+# LABEL/ID_CITY
+#: LABEL/ID_CITY
+msgid "City"
+msgstr "City"
 
 # TRANSLATION
 # LABEL/ID_CLAIM
@@ -4780,6 +4851,18 @@ msgstr "Connection Error: User \"{0}\" can't create databases and users. <br>Ple
 #: LABEL/ID_CONNECTION_ERROR_SECURITYADMIN
 msgid "Connection Error: User \"{0}\"  can't create databases and Users <br>Please provide an user with sysadmin role or dbcreator and securityadmin roles."
 msgstr "Connection Error: User \"{0}\"  can't create databases and Users <br>Please provide an user with sysadmin role or dbcreator and securityadmin roles."
+
+# TRANSLATION
+# LABEL/ID_CONNECTION_SETTINGS
+#: LABEL/ID_CONNECTION_SETTINGS
+msgid "Connection Settings"
+msgstr "Connection Settings"
+
+# TRANSLATION
+# LABEL/ID_CONNECTION_WITH_THE_SAME_NAME_PLEASE_SELECT_AN_OPTION
+#: LABEL/ID_CONNECTION_WITH_THE_SAME_NAME_PLEASE_SELECT_AN_OPTION
+msgid "You are about importing a connection with the same name \"{0}\" please select an option"
+msgstr "You are about importing a connection with the same name \"{0}\" please select an option"
 
 # TRANSLATION
 # LABEL/ID_CONNECT_HOST
@@ -5880,6 +5963,12 @@ msgid "Do you want to delete all report tables?"
 msgstr "Do you want to delete all report tables?"
 
 # TRANSLATION
+# LABEL/ID_DELETE_ATTRIBUTE
+#: LABEL/ID_DELETE_ATTRIBUTE
+msgid "Delete Attribute"
+msgstr "Delete Attribute"
+
+# TRANSLATION
 # LABEL/ID_DELETE_AUTH_SOURCE
 #: LABEL/ID_DELETE_AUTH_SOURCE
 msgid "Delete Authentication Source"
@@ -6144,6 +6233,12 @@ msgid "Do you want to delete the selected logo?"
 msgstr "Do you want to delete the selected logo?"
 
 # TRANSLATION
+# LABEL/ID_DELETE_SETTINGS
+#: LABEL/ID_DELETE_SETTINGS
+msgid "Delete Settings"
+msgstr "Delete Settings"
+
+# TRANSLATION
 # LABEL/ID_DELETE_SKIN
 #: LABEL/ID_DELETE_SKIN
 msgid "Delete Skin"
@@ -6280,6 +6375,12 @@ msgstr "Departments"
 #: LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
 msgid "It's necessary to check the parent-department: {0} for the sub-department: {1}"
 msgstr "It's necessary to check the parent-department: {0} for the sub-department: {1}"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_CLASS_IDENTIFIER
+#: LABEL/ID_DEPARTMENT_CLASS_IDENTIFIER
+msgid "Department Class Identifier"
+msgstr "Department Class Identifier"
 
 # TRANSLATION
 # LABEL/ID_DEPARTMENT_CREATED_SUCCESSFULLY
@@ -6732,6 +6833,12 @@ msgid "You can download it manually here"
 msgstr "You can download it manually here"
 
 # TRANSLATION
+# LABEL/ID_DOWNLOAD_SETTINGS
+#: LABEL/ID_DOWNLOAD_SETTINGS
+msgid "Download Settings"
+msgstr "Download Settings"
+
+# TRANSLATION
 # LABEL/ID_DOWN_TRIGGER
 #: LABEL/ID_DOWN_TRIGGER
 msgid "Down Trigger"
@@ -6754,6 +6861,12 @@ msgstr "When this option is enabled, all input, output and attached documents ge
 #: LABEL/ID_DROP_DATABASE_EXISTS
 msgid "Drop database if exists"
 msgstr "Drop database if exists"
+
+# TRANSLATION
+# LABEL/ID_DROP_FILE_HERE
+#: LABEL/ID_DROP_FILE_HERE
+msgid "Drop file here..."
+msgstr "Drop file here..."
 
 # TRANSLATION
 # LABEL/ID_DUE_DATE
@@ -6966,6 +7079,18 @@ msgid "Edit Action"
 msgstr "Edit Action"
 
 # TRANSLATION
+# LABEL/ID_EDIT_ATTRIBUTE
+#: LABEL/ID_EDIT_ATTRIBUTE
+msgid "Edit Attribute"
+msgstr "Edit Attribute"
+
+# TRANSLATION
+# LABEL/ID_EDIT_AUTHENTICATION_SOURCES
+#: LABEL/ID_EDIT_AUTHENTICATION_SOURCES
+msgid "Edit Authentication Sources"
+msgstr "Edit Authentication Sources"
+
+# TRANSLATION
 # LABEL/ID_EDIT_BPMN
 #: LABEL/ID_EDIT_BPMN
 msgid "Edit BPMN"
@@ -7060,6 +7185,12 @@ msgstr "Edit Report Table"
 #: LABEL/ID_EDIT_ROLE_TITLE
 msgid "Edit Role"
 msgstr "Edit Role"
+
+# TRANSLATION
+# LABEL/ID_EDIT_SETTINGS
+#: LABEL/ID_EDIT_SETTINGS
+msgid "Edit Settings"
+msgstr "Edit Settings"
 
 # TRANSLATION
 # LABEL/ID_EDIT_TRIGGERS
@@ -8152,6 +8283,12 @@ msgstr "Export Skin"
 #: LABEL/ID_EXPORT_TABLE
 msgid "Export Table"
 msgstr "Export Table"
+
+# TRANSLATION
+# LABEL/ID_EXTENDED_ATTRIBUTES
+#: LABEL/ID_EXTENDED_ATTRIBUTES
+msgid "Extended Attributes"
+msgstr "Extended Attributes"
 
 # TRANSLATION
 # LABEL/ID_EXTENDED_FEATURES
@@ -9270,6 +9407,12 @@ msgid "Group Chart"
 msgstr "Group Chart"
 
 # TRANSLATION
+# LABEL/ID_GROUP_CLASS_IDENTIFIER
+#: LABEL/ID_GROUP_CLASS_IDENTIFIER
+msgid "Group Class Identifier"
+msgstr "Group Class Identifier"
+
+# TRANSLATION
 # LABEL/ID_GROUP_CREATED_SUCCESSFULLY
 #: LABEL/ID_GROUP_CREATED_SUCCESSFULLY
 msgid "Group {GROUP_NAME} created successfully"
@@ -9280,6 +9423,12 @@ msgstr "Group {GROUP_NAME} created successfully"
 #: LABEL/ID_GROUP_DOES_NOT_EXIST
 msgid "The group with {0}: {1} does not exist."
 msgstr "The group with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_GROUP_IDENTIFIER
+#: LABEL/ID_GROUP_IDENTIFIER
+msgid "Group Identifier"
+msgstr "Group Identifier"
 
 # TRANSLATION
 # LABEL/ID_GROUP_INACTIVE
@@ -9448,6 +9597,12 @@ msgstr "Heart beat has been enabled"
 #: LABEL/ID_HELP
 msgid "Help"
 msgstr "Help"
+
+# TRANSLATION
+# LABEL/ID_HIDDEN
+#: LABEL/ID_HIDDEN
+msgid "Hidden"
+msgstr "Hidden"
 
 # TRANSLATION
 # LABEL/ID_HIDE
@@ -9744,6 +9899,12 @@ msgid "Import BPMN"
 msgstr "Import BPMN"
 
 # TRANSLATION
+# LABEL/ID_IMPORT_CONNECTION
+#: LABEL/ID_IMPORT_CONNECTION
+msgid "Import connection"
+msgstr "Import connection"
+
+# TRANSLATION
 # LABEL/ID_IMPORT_CSV
 #: LABEL/ID_IMPORT_CSV
 msgid "CSV Import"
@@ -9792,6 +9953,12 @@ msgid "Import Report Table"
 msgstr "Import Report Table"
 
 # TRANSLATION
+# LABEL/ID_IMPORT_SETTINGS
+#: LABEL/ID_IMPORT_SETTINGS
+msgid "Import Settings"
+msgstr "Import Settings"
+
+# TRANSLATION
 # LABEL/ID_IMPORT_SKIN
 #: LABEL/ID_IMPORT_SKIN
 msgid "Import Skin"
@@ -9820,6 +9987,12 @@ msgstr "in"
 #: LABEL/ID_INACTIVE
 msgid "[LABEL/ID_INACTIVE] Inactive"
 msgstr "Inactive"
+
+# TRANSLATION
+# LABEL/ID_INACTIVE_USERS
+#: LABEL/ID_INACTIVE_USERS
+msgid "Inactive Users"
+msgstr "Inactive Users"
 
 # TRANSLATION
 # LABEL/ID_INBOX
@@ -10780,6 +10953,12 @@ msgstr "The account is currently disabled."
 #: LABEL/ID_LDAP_ACCOUNT_EXPIRED
 msgid  "The user's account has expired."
 msgstr "The user's account has expired."
+
+# TRANSLATION
+# LABEL/ID_LDAP_ATTRIBUTE
+#: LABEL/ID_LDAP_ATTRIBUTE
+msgid "LDAP Attribute"
+msgstr "LDAP Attribute"
 
 # TRANSLATION
 # LABEL/ID_LDAP_ERROR_CONNECTION
@@ -18666,6 +18845,12 @@ msgid "Masks List"
 msgstr "Masks List"
 
 # TRANSLATION
+# LABEL/ID_MATCH_ATTRIBUTES
+#: LABEL/ID_MATCH_ATTRIBUTES
+msgid "Match Attributes"
+msgstr "Match Attributes"
+
+# TRANSLATION
 # LABEL/ID_MATCH_ATTRIBUTES_TO_SYNC
 #: LABEL/ID_MATCH_ATTRIBUTES_TO_SYNC
 msgid "Match attributes to sync"
@@ -19668,6 +19853,18 @@ msgid "New PM Table"
 msgstr "New PM Table"
 
 # TRANSLATION
+# LABEL/ID_NEW_ATTRIBUTE
+#: LABEL/ID_NEW_ATTRIBUTE
+msgid "New Attribute"
+msgstr "New Attribute"
+
+# TRANSLATION
+# LABEL/ID_NEW_AUTHENTICATION_SOURCES
+#: LABEL/ID_NEW_AUTHENTICATION_SOURCES
+msgid "New Authentication Sources"
+msgstr "New Authentication Sources"
+
+# TRANSLATION
 # LABEL/ID_NEW_BPMN_PROJECT
 #: LABEL/ID_NEW_BPMN_PROJECT
 msgid "New BPMN Project"
@@ -19710,6 +19907,12 @@ msgid "New Condition From Step"
 msgstr "New Condition From Step"
 
 # TRANSLATION
+# LABEL/ID_NEW_CONNECTION
+#: LABEL/ID_NEW_CONNECTION
+msgid "New connection"
+msgstr "New connection"
+
+# TRANSLATION
 # LABEL/ID_NEW_DEPARTMENT
 #: LABEL/ID_NEW_DEPARTMENT
 msgid "[LABEL/ID_NEW_DEPARTMENT] New"
@@ -19744,6 +19947,12 @@ msgstr "New"
 #: LABEL/ID_NEW_INPUTDOCS
 msgid "New Input Document"
 msgstr "New Input Document"
+
+# TRANSLATION
+# LABEL/ID_NEW_MATCHED_ATTRIBUTE
+#: LABEL/ID_NEW_MATCHED_ATTRIBUTE
+msgid "New Matched Attribute"
+msgstr "New Matched Attribute"
 
 # TRANSLATION
 # LABEL/ID_NEW_NOTE
@@ -19834,6 +20043,12 @@ msgstr "New Translation"
 #: LABEL/ID_NEW_TRIGGERS
 msgid "[LABEL/ID_NEW_TRIGGERS] New Trigger"
 msgstr "New Trigger"
+
+# TRANSLATION
+# LABEL/ID_NEW_USER_ATTRIBUTE
+#: LABEL/ID_NEW_USER_ATTRIBUTE
+msgid "New User Attribute"
+msgstr "New User Attribute"
 
 # TRANSLATION
 # LABEL/ID_NEW_VERSION
@@ -20196,6 +20411,12 @@ msgid "No Manager Selected"
 msgstr "No Manager Selected"
 
 # TRANSLATION
+# LABEL/ID_NO_MATCHING_RECORDS
+#: LABEL/ID_NO_MATCHING_RECORDS
+msgid "No matching records"
+msgstr "No matching records"
+
+# TRANSLATION
 # LABEL/ID_NO_MORE_APPLICATIONS
 #: LABEL/ID_NO_MORE_APPLICATIONS
 msgid "No more applications to show."
@@ -20470,6 +20691,12 @@ msgstr "Open With"
 #: LABEL/ID_OPERATING_SYSTEM
 msgid "Operating System"
 msgstr "Operating System"
+
+# TRANSLATION
+# LABEL/ID_OPERATOR
+#: LABEL/ID_OPERATOR
+msgid "Operator"
+msgstr "Operator"
 
 # TRANSLATION
 # LABEL/ID_OPTION
@@ -21046,6 +21273,12 @@ msgstr "The PIN is invalid"
 #: LABEL/ID_PLEASE
 msgid "please"
 msgstr "please"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_ADD_THE_FILE_SETTINGS_TO_BE_UPLOADED
+#: LABEL/ID_PLEASE_ADD_THE_FILE_SETTINGS_TO_BE_UPLOADED
+msgid "Please add the file settings to be uploaded"
+msgstr "Please add the file settings to be uploaded"
 
 # TRANSLATION
 # LABEL/ID_PLEASE_CHANGE_PASSWORD_POLICY
@@ -22018,6 +22251,12 @@ msgstr "ProcessMaker was successfully installed<br/>Workspace <b>\" {0} \" </b> 
 #: LABEL/ID_PROCESSMAKER_UI_NOT_INSTALL
 msgid "The new ProcessMaker UI couldn't be applied on installation. You can enable it afterwards in ADMIN > Settings > System."
 msgstr "The new ProcessMaker UI couldn't be applied on installation. You can enable it afterwards in ADMIN > Settings > System."
+
+# TRANSLATION
+# LABEL/ID_PROCESSMAKER_USER_FIELD
+#: LABEL/ID_PROCESSMAKER_USER_FIELD
+msgid "ProcessMaker User Field"
+msgstr "ProcessMaker User Field"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_VALIDATION
@@ -23170,6 +23409,18 @@ msgstr "Input Documents"
 #: LABEL/ID_REQUEST_SENT
 msgid "Request sent."
 msgstr "Request sent."
+
+# TRANSLATION
+# LABEL/ID_REQUIRE_SIGN_IN_POLICY_FOR_LDAP
+#: LABEL/ID_REQUIRE_SIGN_IN_POLICY_FOR_LDAP
+msgid "Require sign-in policy for LDAP"
+msgstr "Require sign-in policy for LDAP"
+
+# TRANSLATION
+# LABEL/ID_REQUIRED
+#: LABEL/ID_REQUIRED
+msgid "Required"
+msgstr "Required"
 
 # TRANSLATION
 # LABEL/ID_REQUIRED_FIELD
@@ -24414,6 +24665,12 @@ msgid "Return to Advanced Search"
 msgstr "Return to Advanced Search"
 
 # TRANSLATION
+# LABEL/ID_SHOWING_FROM_RECORDS_COUNT
+#: LABEL/ID_SHOWING_FROM_RECORDS_COUNT
+msgid "Showing {from} to {to} of {count} records|{count} records|One record"
+msgstr "Showing {from} to {to} of {count} records|{count} records|One record"
+
+# TRANSLATION
 # LABEL/ID_SIGN_IN
 #: LABEL/ID_SIGN_IN
 msgid "Sign In"
@@ -25218,6 +25475,12 @@ msgid "System"
 msgstr "System"
 
 # TRANSLATION
+# LABEL/ID_SYSTEM_ADMINISTRATOR
+#: LABEL/ID_SYSTEM_ADMINISTRATOR
+msgid "System Administrator"
+msgstr "System Administrator"
+
+# TRANSLATION
 # LABEL/ID_SYSTEM_INFO
 #: LABEL/ID_SYSTEM_INFO
 msgid "System information"
@@ -25626,6 +25889,12 @@ msgid "Error: The application {0} is not canceled."
 msgstr "Error: The application {0} is not canceled."
 
 # TRANSLATION
+# LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
+#: LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
+msgid "The attribute {0} will be deleted, please confirm."
+msgstr "The attribute {0} will be deleted, please confirm."
+
+# TRANSLATION
 # LABEL/ID_THE_DEFAULT_CONFIGURATION
 #: LABEL/ID_THE_DEFAULT_CONFIGURATION
 msgid "The default configuration was not defined"
@@ -25684,6 +25953,12 @@ msgstr "The report table is regenerating please come back in a few minutes."
 #: LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
 msgid "The upload of PHP files was disabled please contact the system administrator."
 msgstr "The upload of PHP files was disabled please contact the system administrator."
+
+# TRANSLATION
+# LABEL/ID_THE_USER_ROLES_FOR_ATTRIBUTE_HAS_BEEN_DELETED_PLEASE_CONFIRM
+#: LABEL/ID_THE_USER_ROLES_FOR_ATTRIBUTE_HAS_BEEN_DELETED_PLEASE_CONFIRM
+msgid "The user roles for attribute {0} has been modified, if you proceed to save this attribute, all information for users stored in the attribute will be deleted for the removed role, please confirm."
+msgstr "The user roles for attribute {0} has been modified, if you proceed to save this attribute, all information for users stored in the attribute will be deleted for the removed role, please confirm."
 
 # TRANSLATION
 # LABEL/ID_THE_USERNAME_EMAIL_IS_INCORRECT
@@ -26293,6 +26568,12 @@ msgid "[LABEL/ID_TYPE] Type"
 msgstr "Type"
 
 # TRANSLATION
+# LABEL/ID_TYPE_PASSWORD
+#: LABEL/ID_TYPE_PASSWORD
+msgid "Type Password"
+msgstr "Type Password"
+
+# TRANSLATION
 # LABEL/ID_TYPE_PROCESS
 #: LABEL/ID_TYPE_PROCESS
 msgid "Process Type"
@@ -26605,6 +26886,12 @@ msgid "Update Role"
 msgstr "Update Role"
 
 # TRANSLATION
+# LABEL/ID_UPDATE_SETTINGS
+#: LABEL/ID_UPDATE_SETTINGS
+msgid "Update Settings"
+msgstr "Update Settings"
+
+# TRANSLATION
 # LABEL/ID_UPDATE_SUB_DEPARTAMENT
 #: LABEL/ID_UPDATE_SUB_DEPARTAMENT
 msgid "Update Sub Department"
@@ -26753,6 +27040,12 @@ msgstr "Uploading the translation file..."
 #: LABEL/ID_UPLOAD_COMPLETE
 msgid "Upload complete"
 msgstr "Upload complete"
+
+# TRANSLATION
+# LABEL/ID_UPLOAD_CONNECTION_SETTINGS
+#: LABEL/ID_UPLOAD_CONNECTION_SETTINGS
+msgid "Upload Connection Settings"
+msgstr "Upload Connection Settings"
 
 # TRANSLATION
 # LABEL/ID_UPLOAD_ERR_CANT_WRITE
@@ -27067,6 +27360,12 @@ msgid "User can't start a case because doesn't have a starting task assigned"
 msgstr "User can't start a case because doesn't have a starting task assigned"
 
 # TRANSLATION
+# LABEL/ID_USER_CLASS_IDENTIFIER
+#: LABEL/ID_USER_CLASS_IDENTIFIER
+msgid "User Class Identifier"
+msgstr "User Class Identifier"
+
+# TRANSLATION
 # LABEL/ID_USER_CREATED_SUCCESSFULLY
 #: LABEL/ID_USER_CREATED_SUCCESSFULLY
 msgid "User {FIRSTNAME} {LASTNAME} [{USER_ID}] created successfully"
@@ -27113,6 +27412,12 @@ msgstr "The user \"{0}\" does not have the activity \"{1}\" assigned."
 #: LABEL/ID_USER_EXPERIENCE
 msgid "User Experience"
 msgstr "User Experience"
+
+# TRANSLATION
+# LABEL/ID_USER_EXTENDED_ATTRIBUTES
+#: LABEL/ID_USER_EXTENDED_ATTRIBUTES
+msgid "User Extended Attributes"
+msgstr "User Extended Attributes"
 
 # TRANSLATION
 # LABEL/ID_USER_FIELD

@@ -1789,6 +1789,7 @@
         <column name="USR_TIME_ZONE" type="VARCHAR" size="100" default=""/>
         <column name="USR_DEFAULT_LANG" type="VARCHAR" size="10" default=""/>
         <column name="USR_LAST_LOGIN" type="TIMESTAMP" required="false"/>
+        <column name="USR_EXTENDED_ATTRIBUTES_DATA" type="LONGVARCHAR" required="false"/>
         <unique name="INDEX_USR_ID">
             <unique-column name="USR_ID"/>
         </unique>
@@ -6077,5 +6078,21 @@
         <column name="enable" type="TINYINT"  size="3" required="false"/>
         <column name="creation_date" type="TIMESTAMP" required="false"/>
         <column name="last_update" type="TIMESTAMP" required="false"/>
+    </table>
+    <table name="USER_EXTENDED_ATTRIBUTES" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Collation" value="utf8"/>
+        </vendor>
+        <column name="UEA_ID" type="BIGINT" size="20" required="true" autoIncrement="true" primaryKey="true"/>
+        <column name="UEA_NAME" type="VARCHAR" size="255" required="false"/>
+        <column name="UEA_ATTRIBUTE_ID" type="VARCHAR" size="255" required="false"/>
+        <column name="UEA_HIDDEN" type="INTEGER" required="false"/>
+        <column name="UEA_REQUIRED" type="INTEGER" required="false"/>
+        <column name="UEA_PASSWORD" type="INTEGER" required="false"/>
+        <column name="UEA_OPTION" type="VARCHAR" size="255" required="false"/>
+        <column name="UEA_ROLES" type="LONGVARCHAR" required="false"/>
+        <column name="UEA_OWNER" type="BIGINT" size="20" required="false"/>
+        <column name="UEA_DATE_CREATE" type="TIMESTAMP" required="false"/>
     </table>
 </database>

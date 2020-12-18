@@ -607,6 +607,10 @@ class TimerEvent
             //Create
             $cnn = \Propel::getConnection("workflow");
 
+            $evnUid = $arrayData['EVN_UID'];
+            $caseTitle = $arrayData['CASETITLE'];
+            Task::setTaskDefTitle($evnUid, $caseTitle);
+
             $arrayData = $this->unsetFields($arrayData);
 
             try {
