@@ -574,11 +574,10 @@ class Ajax
                 $result->msg = $response->message;
                 // Register in cases notes
                 if (!empty($_POST['NOTE_REASON'])) {
-                    $appNotes = new AppNotes();
                     $noteContent = addslashes($_POST['NOTE_REASON']);
-                    $appNotes->postNewNote(
-                        $appUid, $usrUid, $noteContent, $_POST['NOTIFY_CANCEL']
-                    );
+                    // Define the Case for register a case note
+                    $cases = new BmCases();
+                    $response = $cases->addNote($appUid, $usrUid, $noteContent);
                 }
             } else {
                 $result->status = false;
@@ -634,6 +633,13 @@ class Ajax
         echo G::json_encode($response);
     }
 
+    /**
+     * Reassign case from actions menu
+     *
+     * @link https://wiki.processmaker.com/3.3/Cases/Actions#Reassign_2
+     *
+     * @return void
+     */
     public function reassignCase()
     {
         $cases = new Cases();
@@ -677,6 +683,7 @@ class Ajax
             if (!empty($_POST['NOTE_REASON'])) {
                 $noteContent = addslashes($_POST['NOTE_REASON']);
                 $notifyReassign = $_POST['NOTIFY_REASSIGN'] === 'true' ? true: false;
+                // Define the Case for register a case note
                 $cases = new BmCases();
                 $response = $cases->addNote($_SESSION['APPLICATION'], $_SESSION['USER_LOGGED'], $noteContent, $notifyReassign);
             }
@@ -688,36 +695,43 @@ class Ajax
         print G::json_encode($result);
     }
 
+    /**
+     * Pause case from actions menu
+     *
+     * @link https://wiki.processmaker.com/3.3/Cases/Actions#Pause
+     *
+     * @return void
+     */
     public function pauseCase()
     {
         $result = new stdclass();
         try {
             $unpauseDate = $_REQUEST['unpauseDate'] . ' '. $_REQUEST['unpauseTime'];
-            $oCase = new Cases();
+
             if (isset($_POST['APP_UID']) && isset($_POST['DEL_INDEX'])) {
-                $APP_UID = $_POST['APP_UID'];
-                $DEL_INDEX = $_POST['DEL_INDEX'];
+                $appUid = $_POST['APP_UID'];
+                $delIndex = $_POST['DEL_INDEX'];
             } elseif (isset($_POST['sApplicationUID']) && isset($_POST['iIndex'])) {
-                $APP_UID = $_POST['sApplicationUID'];
-                $DEL_INDEX = $_POST['iIndex'];
+                $appUid = $_POST['sApplicationUID'];
+                $delIndex = $_POST['iIndex'];
             } else {
-                $APP_UID = $_SESSION['APPLICATION'];
-                $DEL_INDEX = $_SESSION['INDEX'];
+                $appUid = $_SESSION['APPLICATION'];
+                $delIndex = $_SESSION['INDEX'];
             }
 
             // Save the note pause reason
             if ($_REQUEST['NOTE_REASON'] != '') {
-                require_once("classes/model/AppNotes.php");
-                $appNotes = new AppNotes();
                 $noteContent = addslashes($_REQUEST['NOTE_REASON']);
-                $appNotes->postNewNote($APP_UID, $_SESSION['USER_LOGGED'], $noteContent, $_REQUEST['NOTIFY_PAUSE']);
+                // Define the Case for register a case note
+                $cases = new BmCases();
+                $response = $cases->addNote($appUid, $_SESSION['USER_LOGGED'], $noteContent, $_REQUEST['NOTIFY_PAUSE']);
             }
             // End save
 
-
-            $oCase->pauseCase($APP_UID, $DEL_INDEX, $_SESSION['USER_LOGGED'], $unpauseDate);
+            $case = new Cases();
+            $case->pauseCase($appUid, $delIndex, $_SESSION['USER_LOGGED'], $unpauseDate);
             $app = new Application();
-            $caseData = $app->load($APP_UID);
+            $caseData = $app->load($appUid);
             $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
             $data['UNPAUSE_DATE'] = $unpauseDate;
 

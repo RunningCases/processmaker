@@ -24,6 +24,17 @@ class Task extends Model
         "WEBENTRYEVENT",
     ];
 
+    const DUMMY_TASKS = [
+        'END-EMAIL-EVENT',
+        'INTERMEDIATE-CATCH-TIMER-EVENT',
+        'INTERMEDIATE-THROW-EMAIL-EVENT',
+        'START-TIMER-EVENT',
+        'SCRIPT-TASK',
+        'WEBENTRYEVENT',
+        'END-MESSAGE-EVENT',
+        'GATEWAYTOGATEWAY'
+    ];
+
     public function process()
     {
         return $this->belongsTo(Process::class, 'PRO_UID', 'PRO_UID');
@@ -44,6 +55,36 @@ class Task extends Model
     {
         return $query->where('TAS_ASSIGN_TYPE', '=', 'SELF_SERVICE')
             ->where('TAS_GROUP_VARIABLE', '=', '');
+    }
+
+    /**
+     * Scope a query to specific title
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $title
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTitle($query, $title)
+    {
+        return $query->where('TAS_TITLE', 'LIKE', "%{$title}%");
+    }
+
+    /**
+     * Scope a query to include a specific process
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $category
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @todo Auto populate the PRO_ID in TASK table
+     */
+    public function scopeProcessId($query, $proId)
+    {
+        $query->join('PROCESS', function ($join) use ($proId) {
+            $join->on('TASK.PRO_UID', '=', 'PROCESS.PRO_UID')
+                ->where('PROCESS.PRO_ID', '=', $proId);
+        });
+
+        return $query;
     }
 
     /**
@@ -155,10 +196,10 @@ class Task extends Model
         $query = Task::select(['TASK.TAS_UID']);
         $query->join('ELEMENT_TASK_RELATION', function ($join) use ($evnUid) {
             $join->on('ELEMENT_TASK_RELATION.TAS_UID', '=', 'TASK.TAS_UID')
-            ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
+                ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
         });
         $query->update(['TASK.TAS_DEF_TITLE' => $caseTitle]);
-        
+
         return $query;
     }
 
@@ -174,7 +215,7 @@ class Task extends Model
         $query = Task::select(['TASK.TAS_DEF_TITLE']);
         $query->join('ELEMENT_TASK_RELATION', function ($join) use ($evnUid) {
             $join->on('ELEMENT_TASK_RELATION.TAS_UID', '=', 'TASK.TAS_UID')
-            ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
+                ->where('ELEMENT_TASK_RELATION.ELEMENT_UID', '=', $evnUid);
         });
 
         $res = $query->first();
@@ -183,5 +224,43 @@ class Task extends Model
         } else {
             return $res->TAS_DEF_TITLE;
         }
+    }
+
+    /**
+     * Get all tasks, paged optionally, can be sent a string to filter results by "TAS_TITLE"
+     *
+     * @param string $text
+     * @param string $proId
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return array
+     */
+    public static function getTasksForHome($text = null, $proId = null, $offset = null, $limit = null)
+    {
+        // Get base query
+        $query = Task::query()->select(['TAS_ID', 'TAS_TITLE']);
+
+        // Set "TAS_TITLE" condition if is sent
+        if (!is_null($text)) {
+            $query->title($text);
+        }
+
+        // Set "PRO_ID" condition if is sent
+        if (!is_null($proId)) {
+            $query->processId($proId);
+        }
+
+        // Set pagination if offset and limit are sent
+        if (!is_null($offset) && !is_null($limit)) {
+            $query->offset($offset);
+            $query->limit($limit);
+        }
+
+        // Order by "TAS_TITLE"
+        $query->orderBy('TAS_TITLE');
+
+        // Return tasks
+        return $query->get()->toArray();
     }
 }

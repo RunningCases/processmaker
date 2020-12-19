@@ -213,8 +213,10 @@ CREATE TABLE `CONFIGURATION`
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
-	PRIMARY KEY (`CFG_UID`,`OBJ_UID`,`PRO_UID`,`USR_UID`,`APP_UID`)
-)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Stores the users, processes and/or applications configuratio';
+	PRIMARY KEY (`CFG_UID`,`OBJ_UID`,`PRO_UID`,`USR_UID`,`APP_UID`),
+	KEY `INDEX_CFG_UID`(`CFG_UID`),
+	KEY `INDEX_USR_UID`(`USR_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Stores the users, processes and/or applications configuration';
 #-----------------------------------------------------------------------------
 #-- CONTENT
 #-----------------------------------------------------------------------------
@@ -1589,6 +1591,7 @@ DROP TABLE IF EXISTS `APP_NOTES`;
 CREATE TABLE `APP_NOTES`
 (
 	`NOTE_ID` INTEGER  NOT NULL AUTO_INCREMENT,
+	`APP_NUMBER` INTEGER default 0,
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`NOTE_DATE` DATETIME  NOT NULL,
@@ -1601,7 +1604,8 @@ CREATE TABLE `APP_NOTES`
 	`NOTE_RECIPIENTS` MEDIUMTEXT,
 	UNIQUE KEY `NOTE_ID` (`NOTE_ID`),
 	KEY `indexAppNotesDate`(`APP_UID`, `NOTE_DATE`),
-	KEY `indexAppNotesUser`(`APP_UID`, `USR_UID`)
+	KEY `indexAppNotesUser`(`APP_UID`, `USR_UID`),
+	KEY `indexAppNumber`(`APP_NUMBER`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Application Notes';
 #-----------------------------------------------------------------------------
 #-- DASHLET

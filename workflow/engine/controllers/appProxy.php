@@ -164,10 +164,10 @@ class AppProxy extends HttpProxyController
         //Disabling the controller response because we handle a special behavior
         $this->setSendResponse(false);
 
-        //Add note case
-        $cases = new BmCases();
         try {
             $sendMail = intval($httpData->swSendMail);
+            // Define the Case for register a case note
+            $cases = new BmCases();
             $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
         } catch (CaseNoteUploadFile $e) {
             $response = new stdclass();

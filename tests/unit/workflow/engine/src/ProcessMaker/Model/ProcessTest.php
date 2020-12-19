@@ -11,7 +11,9 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
- * @coversDefaultClass ProcessMaker\BusinessModel\Model\Process
+ * Class ProcessTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\Process
  */
 class ProcessTest extends TestCase
 {
@@ -338,5 +340,44 @@ class ProcessTest extends TestCase
         $process = factory(Process::class)->create();
         $total = Process::getCounter($process->PRO_CREATE_USER);
         $this->assertEquals(1, $total);
+    }
+
+    /**
+     * It test get processes for the new home view
+     *
+     * @covers \ProcessMaker\Model\Process::getProcessesForHome()
+     * @test
+     */
+    public function it_should_test_get_processes_for_home()
+    {
+        // Create a process category
+        $processCategory = factory(ProcessCategory::class)->create();
+
+        // Create five processes (4 active, 1 inactive)
+        factory(Process::class)->create([
+            'PRO_TITLE' => 'My Process 1',
+            'PRO_CATEGORY' => $processCategory->CATEGORY_UID
+        ]);
+        factory(Process::class)->create([
+            'PRO_TITLE' => 'My Process 2',
+            'PRO_CATEGORY' => $processCategory->CATEGORY_UID
+        ]);
+        factory(Process::class)->create([
+            'PRO_TITLE' => 'My Process 3',
+        ]);
+        factory(Process::class)->create([
+            'PRO_TITLE' => 'Another Process',
+        ]);
+        factory(Process::class)->create([
+            'PRO_TITLE' => 'Inactive Process',
+            'PRO_STATUS' => 'INACTIVE'
+        ]);
+
+        // Assertions
+        $this->assertCount(4, Process::getProcessesForHome());
+        $this->assertCount(3, Process::getProcessesForHome('My Process'));
+        $this->assertCount(2, Process::getProcessesForHome(null, $processCategory->CATEGORY_UID));
+        $this->assertCount(4, Process::getProcessesForHome(null, null, null, 2));
+        $this->assertCount(1, Process::getProcessesForHome(null, null, 2, 1));
     }
 }

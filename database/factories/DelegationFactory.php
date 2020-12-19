@@ -16,9 +16,9 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
     ]);
     // Return with default values
     return [
+        'DELEGATION_ID' => $faker->unique()->numberBetween(5000),
         'APP_UID' => $application->APP_UID,
         'DEL_INDEX' => 1,
-        'DELEGATION_ID' => $faker->unique()->randomNumber,
         'APP_NUMBER' => $application->APP_NUMBER,
         'DEL_PREVIOUS' => 0,
         'PRO_UID' => $process->PRO_UID,
@@ -45,7 +45,11 @@ $factory->define(\ProcessMaker\Model\Delegation::class, function(Faker $faker) {
 $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function (Faker $faker) {
     // Create values in the foreign key relations
     $user = factory(\ProcessMaker\Model\User::class)->create();
-    $process = factory(\ProcessMaker\Model\Process::class)->create();
+    $category = factory(\ProcessMaker\Model\ProcessCategory::class)->create();
+    $process = factory(\ProcessMaker\Model\Process::class)->create([
+        'PRO_CATEGORY' => $category->CATEGORY_UID,
+        'CATEGORY_ID' => $category->CATEGORY_ID
+    ]);
     $task = factory(\ProcessMaker\Model\Task::class)->create([
         'PRO_UID' => $process->PRO_UID,
         'PRO_ID' => $process->PRO_ID
@@ -58,6 +62,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
 
     // Return with default values
     return [
+        'DELEGATION_ID' => $faker->unique()->numberBetween(5000),
         'APP_UID' => $application->APP_UID,
         'DEL_INDEX' => 1,
         'APP_NUMBER' => $application->APP_NUMBER,
@@ -115,5 +120,12 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'closed', function (Faker
         'DEL_RISK_DATE' => $riskDate,
         'DEL_TASK_DUE_DATE' => $taskDueDate,
         'DEL_FINISH_DATE' => $finishDate
+    ];
+});
+
+// Create a last delegation
+$factory->state(\ProcessMaker\Model\Delegation::class, 'last_thread', function (Faker $faker) {
+    return [
+        'DEL_LAST_INDEX' => 1,
     ];
 });

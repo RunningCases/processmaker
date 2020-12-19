@@ -85,6 +85,7 @@ class WorkspaceTools
         'APP_DOCUMENT',
         'APP_HISTORY',
         'APP_MESSAGE',
+        'APP_NOTES',
         'GROUP_USER',
         'LOGIN_LOG'
     ];
@@ -4281,6 +4282,20 @@ class WorkspaceTools
                                     end)
                                     WHERE APP_MSG_TYPE in ('TEST', 'TRIGGER', 'DERIVATION', 'EXTERNAL_REGISTRATION') AND
                                     APP_MSG_TYPE_ID = 0");
+        $con->commit();
+
+        // Populating APP_NOTES.APP_NUMBER
+        CLI::logging("->   Populating APP_NOTES.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_NOTES AS AN
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AN.APP_UID = APP.APP_UID)
+                                   SET AN.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AN.APP_NUMBER = 0");
         $con->commit();
 
         // Populating TAS.TAS_TITLE with BPMN_EVENT.EVN_NAME

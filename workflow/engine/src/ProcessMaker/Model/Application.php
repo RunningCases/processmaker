@@ -12,6 +12,13 @@ class Application extends Model
     public $incrementing = false;
     // No timestamps
     public $timestamps = false;
+    // Status id
+    const STATUS_DRAFT = 1;
+    const STATUS_TODO = 2;
+    const STATUS_COMPLETED = 3;
+    const STATUS_CANCELED = 4;
+    // Status name and status id
+    public static $app_status_values = ['DRAFT' => 1, 'TO_DO' => 2, 'COMPLETED' => 3, 'CANCELLED' => 4];
 
     public function delegations()
     {
@@ -119,6 +126,27 @@ class Application extends Model
     }
 
     /**
+     * Get app number
+     *
+     * @param string $appUid
+     *
+     * @return int
+     */
+    public static function getCaseNumber($appUid)
+    {
+        $query = Application::query()->select(['APP_NUMBER'])
+            ->appUid($appUid)
+            ->limit(1);
+        $results = $query->get();
+        $caseNumber = 0;
+        $results->each(function ($item) use (&$caseNumber) {
+            $caseNumber = $item->APP_NUMBER;
+        });
+
+        return $caseNumber;
+    }
+
+    /**
      * Update properties
      *
      * @param string $appUid
@@ -157,6 +185,6 @@ class Application extends Model
             ->statusId($status)
             ->positivesCases();
 
-        return $query->get()->count();
+        return $query->get()->count(['APP_NUMBER']);
     }
 }

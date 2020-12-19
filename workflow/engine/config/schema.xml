@@ -467,6 +467,12 @@
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <index name="INDEX_CFG_UID">
+            <index-column name="CFG_UID"/>
+        </index>
+        <index name="INDEX_USR_UID">
+            <index-column name="USR_UID"/>
+        </index>
     </table>
     <table name="CONTENT">
         <vendor type="mysql">
@@ -3326,6 +3332,7 @@
             <parameter name="Comment" value="Application Notes"/>
         </vendor>
         <column name="NOTE_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
+        <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="NOTE_DATE" type="TIMESTAMP" required="true"/>
@@ -3358,6 +3365,9 @@
                 <parameter name="Key_name" value="indexAppNotesUser"/>
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
+        </index>
+        <index name="indexAppNumber">
+            <index-column name="APP_NUMBER"/>
         </index>
     </table>
     <table name="DASHLET">
