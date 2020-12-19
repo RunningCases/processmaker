@@ -51,7 +51,7 @@
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
         <button class="btn btn-success btn-sm" @click="claimCase(props.row)">
-          {{ $t("ID_CLAIM_CASE") }}
+          {{ $t("ID_CLAIM") }}
         </button>
       </div>
     </v-server-table>

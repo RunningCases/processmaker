@@ -102,7 +102,7 @@ export default {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                     case_title: this.$i18n.t("ID_CASE_TITLE"),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
-                    pending_taks: this.$i18n.t("PENDING_TASKS"),
+                    pending_taks: this.$i18n.t("ID_PENDING_TASKS"),
                     status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
                     start_date: this.$i18n.t("ID_START_DATE"),
                     finish_date: this.$i18n.t("ID_FINISH_DATE"),

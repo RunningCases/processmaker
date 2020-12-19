@@ -3083,6 +3083,7 @@ msgstr "By Status"
 msgid "By Start Date"
 msgstr "By Start Date"
 
+# TRANSLATION
 # LABEL/ID_BY_ROLE
 #: LABEL/ID_BY_ROLE
 msgid "By Role"
@@ -26350,13 +26351,6 @@ msgstr "Total Cases Reassigned"
 msgid "To do"
 msgstr "To do"
 
-
-# TRANSLATION
-# LABEL/ID_TO_FINISH_DATE
-#: LABEL/ID_TO_FINISH_DATE
-msgid "To Finish Date (Optional)"
-msgstr "To Finish Date (Optional)"
-
 # TRANSLATION
 # LABEL/ID_TO_FLOAT
 #: LABEL/ID_TO_FLOAT
@@ -26380,12 +26374,6 @@ msgstr "Reassign"
 #: LABEL/ID_TO_REVISE
 msgid "Review"
 msgstr "Review"
-
-# TRANSLATION
-# LABEL/ID_TO_START_DATE
-#: LABEL/ID_TO_START_DATE
-msgid "To Start Date (Optional)"
-msgstr "To Start Date (Optional)"
 
 # TRANSLATION
 # LABEL/ID_TO_STRING
@@ -52642,12 +52630,6 @@ msgid "Process Name"
 msgstr "Process Name"
 
 # TRANSLATION
-# LABEL/ID_DURATION
-#: LABEL/ID_DURATION
-msgid "Duration"
-msgstr "Duration"
-
-# TRANSLATION
 # LABEL/ID_PENDING_TASKS
 #: LABEL/ID_PENDING_TASKS
 msgid "Pending Tasks"
@@ -52665,12 +52647,6 @@ msgstr "Send email to participants"
 #: LABEL/ID_TRYING_CANCEL
 msgid "You are tying to cancel the current case. Please be aware this action cannot be undone"
 msgstr "You are tying to cancel the current case. Please be aware this action cannot be undone"
-
-# TRANSLATION
-# LABEL/ID_CONFIRMATION
-#: LABEL/ID_CONFIRMATION
-msgid "Confirmation"
-msgstr "Confirmation"
 
 # TRANSLATION
 # LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
