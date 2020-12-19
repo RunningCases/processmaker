@@ -19,50 +19,51 @@
             </template>
         </SearchPopover>
 
-        <div class="w-75 p-1">
+    <div class="p-1 v-flex">
+      <h5 class="v-search-title">{{ title }}</h5>
 
-            <b-input-group class="w-100 p-1">
-                <b-button pill variant="primary" id="popover-target-1" @click="searchClickHandler" title="">
-                    <b-icon icon="search"></b-icon>
-                </b-button>
-                <b-tooltip target="popover-target-1">{{$t('ID_MY_CASES_SEARCH')}}</b-tooltip>
-                <b-form-tags
-                    input-id="tags-pills"
-                    v-model="searchTags"
-                    size="sm"
+      <b-input-group class="w-75 p-1">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span
+              class="input-group-text bg-primary-pm text-white"
+              id="popover-target-1"
+              @click="searchClickHandler"
+            >
+              <b-icon icon="search"></b-icon
+            ></span>
+              <b-tooltip target="popover-target-1">{{$t('ID_MY_CASES_SEARCH')}}</b-tooltip>
+          </div>
+          <b-form-tags input-id="tags-pills" v-model="searchTags">
+            <template v-slot="{ tags, tagVariant, removeTag }">
+              <div class="d-inline-block" style="font-size: 1rem">
+                <b-form-tag
+                  v-for="tag in tags"
+                  @remove="customRemove(removeTag, tag)"
+                  :key="tag"
+                  :title="tag"
+                  :variant="tagVariant"
+                  class="mr-1 badge badge-light"
                 >
-                    <template v-slot="{ tags, tagVariant, removeTag }">
-                        <div
-                            class="d-inline-block"
-                            style="font-size: 1rem;"
-                        >
-                            <b-form-tag
-                                v-for="tag in tags"
-                                @remove="customRemove(removeTag, tag)"
-                                :key="tag"
-                                :title="tag"
-                                :variant="tagVariant"
-                                class="mr-1"
-                            >      
-                                <div :id="tag">
-                                    <i class="fas fa-tags"></i>
-                                    {{ tagContent(tag) }}
-                                </div>
+                  <div :id="tag">
+                    <i class="fas fa-tags"></i>
+                    {{ tagContent(tag) }}
+                  </div>
 
-                                <component
-                                    v-bind:is="tagComponent(tag)"
-                                    v-bind:info="tagInfo(tag)"
-                                    v-bind:tag="tag"
-                                    v-bind:filter="dataToFilter(tag)"
-                                    @updateSearchTag="updateSearchTag"
-                                />
-                                
-                            </b-form-tag>
-                        </div>
-                    </template>
-                </b-form-tags>              
-            </b-input-group>
+                  <component
+                    v-bind:is="tagComponent(tag)"
+                    v-bind:info="tagInfo(tag)"
+                    v-bind:tag="tag"
+                    v-bind:filter="dataToFilter(tag)"
+                    @updateSearchTag="updateSearchTag"
+                  />
+                </b-form-tag>
+              </div>
+            </template>
+          </b-form-tags>
         </div>
+      </b-input-group>
+    </div>
     </div>
 </template>
 
@@ -77,7 +78,7 @@ import api from "./../../api/index";
 
 export default { 
     name: "MyCasesFilter",
-    props: ["filters"],
+    props: ["filters","title"],
     components:{
         SearchPopover,
         CaseIntegerNumber,
@@ -342,11 +343,17 @@ export default {
 .bv-example-row-flex-cols .row {
     min-height: 10rem;
 }
+.bg-primary-pm {
+  background-color: #0099dd;
+}
+
+.v-flex {
+  display: flex;
+}
+
+.v-search-title {
+  padding-right: 20px;
+  line-height: 40px;
+}
 </style>
 
-    },
-};
-</script>
-<style scoped>
-
-</style>

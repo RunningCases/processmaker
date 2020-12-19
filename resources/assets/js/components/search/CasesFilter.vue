@@ -19,8 +19,10 @@
       </template>
     </SearchPopover>
 
-    <div class="w-75 p-1">
-      <b-input-group class="w-100 p-1">
+    <div class="p-1 v-flex">
+      <h5 class="v-search-title">{{ title }}</h5>
+
+      <b-input-group class="w-75 p-1">
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span
@@ -75,7 +77,7 @@ import api from "./../../api/index";
 
 export default {
   name: "Cases",
-  props: ["filters"],
+  props: ["filters", "title"],
   components: {
     SearchPopover,
     CaseIntegerNumber,
@@ -310,5 +312,14 @@ export default {
 
 .bg-primary-pm {
   background-color: #0099dd;
+}
+
+.v-flex {
+  display: flex;
+}
+
+.v-search-title {
+  padding-right: 20px;
+  line-height: 40px;
 }
 </style>
