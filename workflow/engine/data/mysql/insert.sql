@@ -60463,7 +60463,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PLEASE_SELECT_PLUGIN','en','Please select the plugin','2014-01-15') ,
 ( 'LABEL','ID_PLEASE_SELECT_PO_FILE','en','Please select a .po file','2014-01-15') ,
 ( 'LABEL','ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH','en','Please select the status for the search:','2020-12-16') ,
-( 'LABEL','ID_PLEASE_SELECT_UPGRADE_FILE','en','Please select the upgrade file','2014-01-15') ,º
+( 'LABEL','ID_PLEASE_SELECT_UPGRADE_FILE','en','Please select the upgrade file','2014-01-15') ,
 ( 'LABEL','ID_PLEASE_SET_A_RANGE_OF_CASES_START_DATE_TO_SEARCH','en','Please set a range of cases Start Date to search:','2020-12-16') ,
 ( 'LABEL','ID_PLEASE_SET_A_RANGE_OF_CASES_FINISH_DATE_TO_SEARCH','en','Please set a range of cases Finish Date to search:','2020-12-16') ,
 ( 'LABEL','ID_PLEASE_SET_A_RANGE_TO_CASES_TO_SEARCH','en','Please set a range of cases to search:','2020-12-16') ,
