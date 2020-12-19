@@ -81,6 +81,51 @@ class SearchTest extends TestCase
     }
 
     /**
+     * It tests the getData with specific case numbers
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @test
+     */
+    public function it_filter_by_specific_cases()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $search->setCasesNumbers([$cases[0]->APP_NUMBER]);
+        // Set order by column value
+        $search->setOrderByColumn('APP_NUMBER');
+        $result = $search->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEquals($cases[0]->APP_NUMBER, $result[0]['APP_NUMBER']);
+    }
+
+    /**
+     * It tests the getData with specific case numbers
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @test
+     */
+    public function it_filter_by_range_cases()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $rangeOfCases = $cases[0]->APP_NUMBER . "-" . $cases[0]->APP_NUMBER;
+        $search->setRangeCasesFromTo([$rangeOfCases]);
+        // Set order by column value
+        $search->setOrderByColumn('APP_NUMBER');
+        $result = $search->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * It tests the getData with process
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
@@ -199,7 +244,7 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getCounter()
      * @test
      */
-    public function it_should_test_the_counter_for_search()
+    public function it_get_counter()
     {
         // Create factories related to the delegation cases
         $cases = $this->createSearch();
@@ -208,6 +253,27 @@ class SearchTest extends TestCase
         // Set order by column value
         $search->setOrderByColumn('APP_NUMBER');
         $total = $search->getCounter();
-        $this->assertEquals(count($cases), $total);
+        // The count for search was disabled for performance issues
+        $this->assertEquals($total, 0);
+    }
+
+    /**
+     * It tests the getPagingCounters method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getPagingCounters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @test
+     */
+    public function it_should_test_the_counter_for_search()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        // Set order by column value
+        $search->setOrderByColumn('APP_NUMBER');
+        $total = $search->getPagingCounters();
+        // The count for search was disabled for performance issues
+        $this->assertEquals($total, 0);
     }
 }

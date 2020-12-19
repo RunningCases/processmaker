@@ -92,7 +92,7 @@ class DraftTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
      * @test
      */
     public function it_get_result_without_filters()
@@ -112,7 +112,7 @@ class DraftTest extends TestCase
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
@@ -133,7 +133,7 @@ class DraftTest extends TestCase
      * It tests the getData method with case number filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
@@ -154,7 +154,7 @@ class DraftTest extends TestCase
      * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
@@ -174,7 +174,7 @@ class DraftTest extends TestCase
      * It tests the getData method with case title filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
@@ -182,14 +182,15 @@ class DraftTest extends TestCase
     {
         // Create factories related to the to_do cases
         $cases = $this->createDraft();
+        $usrId = $cases['USR_ID'];
         $title = $cases['DEL_TITLE'];
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
         // Create new Draft object
         $draft = new Draft();
-        $draft->setUserId($cases['USR_ID']);
+        $draft->setUserId($usrId);
         // Set the title
-        $draft->setCaseTitle($cases['DEL_TITLE']);
+        $draft->setCaseTitle($title);
         // Get the data
         $res = $draft->getData();
         // Asserts
@@ -200,7 +201,7 @@ class DraftTest extends TestCase
      * It tests the getData method using order by column
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
@@ -230,6 +231,7 @@ class DraftTest extends TestCase
      * It tests the getPagingCounters() method
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getPagingCounters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
      * @test
      */
     public function it_should_test_get_paging_counters_method()

@@ -109,7 +109,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_delegate_date_from()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->delegateDateFrom($table->DEL_DELEGATE_DATE->format("Y-m-d"))->get());
+        $this->assertCount(1, $table->delegateDateFrom($table->DEL_DELEGATE_DATE->format("Y-m-d H:i:s"))->get());
     }
 
     /**
@@ -121,7 +121,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_delegate_date_to()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->delegateDateTo($table->DEL_DELEGATE_DATE->format("Y-m-d"))->get());
+        $this->assertCount(1, $table->delegateDateTo($table->DEL_DELEGATE_DATE->format("Y-m-d H:i:s"))->get());
     }
 
     /**
@@ -498,7 +498,7 @@ class DelegationTest extends TestCase
         // Get first page, the minor case title
         $results = Delegation::search(null, 0, 2, null, null, null, 'ASC', 'APP_TITLE');
         $this->assertCount(2, $results['data']);
-        $this->assertGreaterThan($results['data'][0]['APP_TITLE'], $results['data'][1]['APP_TITLE']);
+        $this->assertGreaterThanOrEqual($results['data'][0]['APP_TITLE'], $results['data'][1]['APP_TITLE']);
         // Get first page, the major case title
         $results = Delegation::search(null, 0, 2, null, null, null, 'DESC', 'APP_TITLE');
         $this->assertCount(2, $results['data']);

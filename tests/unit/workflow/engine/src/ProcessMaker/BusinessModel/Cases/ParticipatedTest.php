@@ -80,7 +80,7 @@ class ParticipatedTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @test
      */
     public function it_get_result_without_filters()
@@ -105,7 +105,7 @@ class ParticipatedTest extends TestCase
      * It tests the getData method with specific filter StartedByMe
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
      * @test
      */
@@ -133,7 +133,7 @@ class ParticipatedTest extends TestCase
      * It tests the getData method with specific filter CompletedByMe
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
      * @test
      */
@@ -161,7 +161,7 @@ class ParticipatedTest extends TestCase
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
      * @test
      */
@@ -191,7 +191,7 @@ class ParticipatedTest extends TestCase
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
      * @test
      */
@@ -245,6 +245,7 @@ class ParticipatedTest extends TestCase
      * It tests the getPagingCounters() method
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getPagingCounters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
      * @test
      */
     public function it_should_test_get_paging_counters_method()

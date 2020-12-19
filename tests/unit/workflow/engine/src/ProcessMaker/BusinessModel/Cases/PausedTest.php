@@ -308,9 +308,27 @@ class PausedTest extends TestCase
     }
 
     /**
+     * It tests the getCounter() method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCounter()
+     * @test
+     */
+    public function it_test_count()
+    {
+        $cases = $this->createMultiplePaused(3);
+        $paused = new Paused();
+        $paused->setUserId($cases->USR_ID);
+        $paused->setUserUid($cases->USR_UID);
+
+        $res = $paused->getCounter();
+        $this->assertEquals(3, $res);
+    }
+
+    /**
      * It tests the getPagingCounters() method
      * 
-     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getPagingCounters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getPagingCounters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
     public function it_should_test_get_paging_counters_method()
