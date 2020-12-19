@@ -946,7 +946,6 @@ class AbstractCases implements CasesInterface
         return $this->dueTo;
     }
 
-
     /**
      * Set order by column
      *

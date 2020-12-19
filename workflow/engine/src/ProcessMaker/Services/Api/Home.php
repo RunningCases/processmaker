@@ -561,8 +561,6 @@ class Home extends Api
      *
      * @return array
      *
-     * @throws Exception
-     *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -637,25 +635,24 @@ class Home extends Api
     public function getTasksCounters()
     {
         $result = [];
-
         $usrUid = $this->getUserId();
         $usrId = User::find($usrUid)->first()->USR_ID;
+        // For inbox
         $inbox = new Inbox();
         $inbox->setUserUid($usrUid);
         $inbox->setUserId($usrId);
         $result['todo'] = $inbox->getCounter();
-
+        // For draft
         $draft = new Draft();
         $draft->setUserUid($usrUid);
         $draft->setUserId($usrId);
         $result['draft'] = $draft->getCounter();
-
+        // For Paused
         $paused = new Paused();
         $paused->setUserUid($usrUid);
         $paused->setUserId($usrId);
         $result['paused'] = $paused->getCounter();
-
-
+        // For Unassigned
         $unassigned = new Unassigned();
         $unassigned->setUserUid($usrUid);
         $unassigned->setUserId($usrId);
