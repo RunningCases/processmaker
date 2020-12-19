@@ -118,10 +118,6 @@ if ($oServerConf->isRtl(SYS_LANG)) {
 }
 
 $urlProxy = 'casesMenuLoader?action=getAllCounters&r=';
-/*----------------------------------********---------------------------------*/
-$urlProxy = 'casesMenuLoader?action=getAllCountersEnterprise&r=';
-/*----------------------------------********---------------------------------*/
-
 $oHeadPublisher->assign('regionTreePanel', $regionTreePanel);
 $oHeadPublisher->assign('regionDebug', $regionDebug);
 $oHeadPublisher->assign('openCaseIE', $openCaseIE);
@@ -129,14 +125,6 @@ $oHeadPublisher->assign("defaultOption", $defaultOption); //User menu permission
 $oHeadPublisher->assign('urlProxy', $urlProxy); //sending the urlProxy to make
 $oHeadPublisher->assign("_nodeId", isset($confDefaultOption) ? $confDefaultOption : "PM_USERS"); //User menu permissions
 $oHeadPublisher->assign("FORMATS", $conf->getFormats());
-
-/*----------------------------------********---------------------------------*/
-// If the feature for highlight the home folders is enabled, set some javascript variables
-if (HIGHLIGHT_HOME_FOLDER_ENABLE) {
-    $oHeadPublisher->assign("highlightUrlProxy", "casesMenuHighlight?r=");
-    $oHeadPublisher->assign("highlightRefreshTime", HIGHLIGHT_HOME_FOLDER_REFRESH_TIME);
-}
-/*----------------------------------********-   --------------------------------*/
 
 
 $userCanAccess = 1;
@@ -151,41 +139,3 @@ ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
 ScriptVariables::add('FORMATS', $conf->getFormats());
 echo View::make('Views::home.home', compact("userCanAccess"))->render();
-
-/*----------------------------------********---------------------------------*/
-function getClientCredentials($clientId)
-{
-    $oauthQuery = new ProcessMaker\Services\OAuth2\PmPdo(getDsn());
-    return $oauthQuery->getClientDetails($clientId);
-}
-
-function getDsn()
-{
-    list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
-    $port = empty($port) ? '' : ";port=$port";
-    $dsn = DB_ADAPTER . ':host=' . $host . ';dbname=' . DB_NAME . $port;
-
-    return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
-}
-
-
-function getAuthorizationCode($client)
-{
-    \ProcessMaker\Services\OAuth2\Server::setDatabaseSource(getDsn());
-    \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
-
-    $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
-    $userId = $_SESSION['USER_LOGGED'];
-    $authorize = true;
-    $_GET = array_merge($_GET, array(
-        'response_type' => 'code',
-        'client_id' => $client['CLIENT_ID'],
-        'scope' => implode(' ', $oauthServer->getScope())
-    ));
-
-    $response = $oauthServer->postAuthorize($authorize, $userId, true);
-    $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
-
-    return $code;
-}
-/*----------------------------------********---------------------------------*/
