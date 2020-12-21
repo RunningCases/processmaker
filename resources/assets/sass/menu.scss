@@ -38,8 +38,10 @@
 .v-sidebar-menu .vsm--item {
   position: relative;
   display: block;
-  width: 90%;
   margin-left: 10px;
+}
+.vsm_collapsed .vsm--item {
+  margin-left: 0px;  
 }
 
 .v-sidebar-menu .vsm--link {
