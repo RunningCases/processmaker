@@ -8,7 +8,8 @@
             ref="popover"
             triggers="click"
             placement="bottom"
-            class="popovercustom" 
+            class="popovercustom"
+            @show="onshow"
         >
             <template #title>
                 <b-button @click="onClose" class="close" aria-label="Close">
@@ -47,6 +48,12 @@ export default {
          */
         onSave() {
             this.$emit('savePopover');
+        },
+        /**
+         * Show popover event handler
+         */
+        onshow() {
+            this.$root.$emit('bv::hide::popover');   
         }
     }
 };
