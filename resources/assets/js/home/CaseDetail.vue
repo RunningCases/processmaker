@@ -449,7 +449,7 @@ export default {
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
-          }]  ,
+          }],
           CASE_TITLE: v.DEL_TITLE,
           ASSIGNEE: v.USR_FIRSTNAME + " " + v.USR_LASTNAME,
           STATUS: v.DEL_THREAD_STATUS,

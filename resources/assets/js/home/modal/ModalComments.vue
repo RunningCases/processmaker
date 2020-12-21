@@ -99,6 +99,8 @@ export default {
               that.attachDocuments = false;
               that.dataAttachedDocuments.items = [];
               that.getCasesNotes();
+              this.$refs["modal-comments"].hide();
+              this.$emit("postNotes");
             } else {
               that.showAlert(response.data.message, "danger");
               that.dataAttachedDocuments.items = [];

@@ -154,6 +154,7 @@ export default {
                 this.pageName = item.item.title;
             } else {
                 this.filters = [];
+                this.pageId = null;
                 this.page = item.item.id || "MyCases";
             }
         },
