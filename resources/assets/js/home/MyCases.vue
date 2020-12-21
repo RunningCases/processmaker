@@ -203,6 +203,7 @@ export default {
                     APP_UID: v.APP_UID,
                     PRO_UID: v.PRO_UID,
                     TAS_UID: v.TAS_UID,
+                    CASE_NOTES_COUNT: v.CASE_NOTES_COUNT
                 });
             });
             return data;

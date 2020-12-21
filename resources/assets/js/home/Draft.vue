@@ -162,11 +162,11 @@ export default {
           CASE_NUMBER: v.APP_NUMBER,
           CASE_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
-          TASK: {
+          TASK: [{
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
-          },
+          }],
           USR_FIRSTNAME: v.USR_FIRSTNAME,
           USR_LASTNAME: v.USR_LASTNAME,
           USR_USERNAME: v.USR_USERNAME,
