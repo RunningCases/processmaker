@@ -104,6 +104,7 @@
                                         :key="tag"
                                         :title="tag"
                                         :variant="tagVariant"
+                                        @click="onClickTag"
                                         class="mr-1"
                                     >   
                                         
@@ -530,6 +531,12 @@ export default {
                 name: this.name,
                 filters: this.filters
             });
+        },
+        /**
+         * On click tag handler
+         */
+        onClickTag() {
+            this.$root.$emit('bv::hide::popover');   
         }
     }
 };
