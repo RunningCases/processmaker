@@ -41,7 +41,7 @@
             <div slot="actions" slot-scope="props">
                 <div class="btn-default" @click="openComments(props.row)">
                     <i class="fas fa-comments"></i>
-                    <span class="badge badge-light">9</span>
+                    <span class="badge badge-light">{{props.row.CASES_NOTES}}</span>
                     <span class="sr-only">unread messages</span>
                 </div>
             </div>
@@ -203,6 +203,7 @@ export default {
                     APP_UID: v.APP_UID,
                     PRO_UID: v.PRO_UID,
                     TAS_UID: v.TAS_UID,
+                    CASES_NOTES: v.CASE_NOTES_COUNT
                 });
             });
             return data;
