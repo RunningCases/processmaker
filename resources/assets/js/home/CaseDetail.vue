@@ -28,7 +28,6 @@
             :options="options"
             v-show="showTable"
             ref="vueTable"
-            style="height: 120px"
           >
             <div slot="task" slot-scope="props">
               <TaskCell :data="props.row.TASK" />
