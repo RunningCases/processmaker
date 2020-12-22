@@ -2,10 +2,16 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
+use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
 
+/**
+ * Class UserTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\User
+ */
 class UserTest extends TestCase
 {
     use DatabaseTransactions;
@@ -85,6 +91,8 @@ class UserTest extends TestCase
      * It test get users for the new home view
      *
      * @covers \ProcessMaker\Model\User::getUsersForHome()
+     * @covers \ProcessMaker\Model\User::scopeActive()
+     * @covers \ProcessMaker\Model\User::scopeWithoutGuest()
      * @test
      */
     public function it_should_test_get_users_for_home()
@@ -127,5 +135,23 @@ class UserTest extends TestCase
         $this->assertCount(3, User::getUsersForHome(null, null, 2));
         // Only will considerate by default the actives and limit
         $this->assertCount(1, User::getUsersForHome(null, 2, 1));
+    }
+
+    /**
+     * It test get the user Id
+     *
+     * @covers \ProcessMaker\Model\User::getId()
+     * @covers \ProcessMaker\Model\User::scopeUser()
+     * @test
+     */
+    public function it_get_usr_id()
+    {
+        $user = factory(User::class)->create();
+        // When the user exist
+        $results = User::getId($user->USR_UID);
+        $this->assertGreaterThan(0, $results);
+        // When the user does not exist
+        $results = User::getId(G::generateUniqueID());
+        $this->assertEquals(0, $results);
     }
 }
