@@ -27678,6 +27678,12 @@ msgid "Users with role"
 msgstr "Users with role"
 
 # TRANSLATION
+# LABEL/ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING
+#: LABEL/ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING
+msgid "Please just use alphanumeric characters including: {0}"
+msgstr "Please just use alphanumeric characters including: {0}"
+
+# TRANSLATION
 # LABEL/ID_USE_LANGUAGE_URL
 #: LABEL/ID_USE_LANGUAGE_URL
 msgid "Use the language of URL"
