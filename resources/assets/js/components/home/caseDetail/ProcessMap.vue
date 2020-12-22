@@ -15,7 +15,7 @@
 export default {
   name: "ProcessMap",
   props: {
-    data: Object,
+    data: Object
   },
   data() {
     return {
