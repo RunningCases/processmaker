@@ -58604,6 +58604,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_INVALID_APPLICATION_NUMBER','en','You have set a invalid Application Number','2014-01-15') ,
 ( 'LABEL','ID_INVALID_CASE_DELEGATION_INDEX','en','Invalid Case Delegation index for this user','2014-01-15') ,
 ( 'LABEL','ID_INVALID_CASE_NUMBER_RANGE','en','Invalid case number range, use e.g. 1-5, 8, 11-13','2020-12-16') ,
+( 'LABEL','ID_INVALID_CASE_NUMBER','en','Invalid case number','2020-12-22') ,
 ( 'LABEL','ID_INVALID_DATA','en','Invalid data','2014-01-15') ,
 ( 'LABEL','ID_INVALID_END_HOURS','en','The following end hours rows are invalid:','2014-01-15') ,
 ( 'LABEL','ID_INVALID_EXTENSION','en','Invalid file extension!','2014-01-15') ,
