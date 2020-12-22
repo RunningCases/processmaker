@@ -456,6 +456,18 @@ class Delegation extends Model
     }
 
     /**
+     * Scope for query to get the positive cases for avoid the web entry
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePositiveCases($query)
+    {
+        return $query->where('APP_DELEGATION.APP_NUMBER', '>', 0);
+    }
+
+    /**
      * Scope more than one range of cases
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query

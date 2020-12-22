@@ -162,6 +162,8 @@ class Search extends AbstractCases
         $query->groupBy('APP_NUMBER');
         /** Apply filters */
         $this->filters($query);
+        /** Exclude the web entries does not submitted */
+        $query->positiveCases($query);
         /** Apply order and pagination */
         // The order by clause
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());

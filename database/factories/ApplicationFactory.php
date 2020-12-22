@@ -67,6 +67,15 @@ $factory->state(\ProcessMaker\Model\Application::class, 'foreign_keys', function
     ];
 });
 
+$factory->state(\ProcessMaker\Model\Application::class, 'web_entry', function (Faker $faker) {
+    $appNumber = $faker->unique()->numberBetween(5000);
+    return [
+        'APP_NUMBER' => $appNumber * -1,
+        'APP_STATUS_ID' => 2,
+        'APP_STATUS' => 'TO_DO'
+    ];
+});
+
 $factory->state(\ProcessMaker\Model\Application::class, 'todo', function (Faker $faker) {
     return [
         'APP_NUMBER' => $faker->unique()->numberBetween(1000),
