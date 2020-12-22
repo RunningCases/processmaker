@@ -76,7 +76,7 @@ class Home extends Api
             $properties['task'] = $task;
             // Get the user that access to the API
             $usrUid = $this->getUserId();
-            $properties['user'] = User::find($usrUid)->first()->USR_ID;
+            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
@@ -131,7 +131,7 @@ class Home extends Api
             $properties['task'] = $task;
             // Get the user that access to the API
             $usrUid = $this->getUserId();
-            $properties['user'] = User::find($usrUid)->first()->USR_ID;
+            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
@@ -186,7 +186,7 @@ class Home extends Api
             $properties['task'] = $task;
             // Get the user that access to the API
             $usrUid = $this->getUserId();
-            $properties['user'] = User::find($usrUid)->first()->USR_ID;
+            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
@@ -243,7 +243,7 @@ class Home extends Api
             $properties['task'] = $task;
             // Get the user that access to the API
             $usrUid = $this->getUserId();
-            $properties['user'] = User::find($usrUid)->first()->USR_ID;
+            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
@@ -308,7 +308,7 @@ class Home extends Api
         $properties['task'] = $task;
         // Get the user that access to the API
         $usrUid = $this->getUserId();
-        $properties['user'] = User::find($usrUid)->first()->USR_ID;
+        $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
         $properties['filter'] = $filter;
         $properties['caseStatus'] = $caseStatus;
         $properties['startCaseFrom'] = $startCaseFrom;
@@ -370,7 +370,8 @@ class Home extends Api
             $participatedStatuses = ['STARTED', 'IN_PROGRESS', 'COMPLETED', 'SUPERVISING'];
             $participatedLabels = array_combine($participatedStatuses, ['ID_OPT_STARTED', 'ID_IN_PROGRESS', 'ID_COMPLETED', 'ID_SUPERVISING']);
             $counters = [];
-
+            // Get the user that access to the API
+            $usrUid = $this->getUserId();
             // Get counters
             foreach ($participatedStatuses as $participatedStatus) {
                 // Initializing counter object
@@ -385,12 +386,14 @@ class Home extends Api
                     case 'COMPLETED':
                         $participated = new Participated();
                         $participated->setParticipatedStatus($participatedStatus);
-                        $participated->setUserId($this->getUserId());
+                        $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
+                        $participated->setUserId($usrId);
                         $counter->counter = $participated->getCounter();
                         break;
                     case 'SUPERVISING':
                         $supervising = new Supervising();
-                        $supervising->setUserUid($this->getUserId());
+                        $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
+                        $supervising->setUserUid($usrId);
                         $counter->counter = $supervising->getCounter();
                         break;
                     default:
@@ -636,7 +639,7 @@ class Home extends Api
     {
         $result = [];
         $usrUid = $this->getUserId();
-        $usrId = User::find($usrUid)->first()->USR_ID;
+        $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
         // For inbox
         $inbox = new Inbox();
         $inbox->setUserUid($usrUid);

@@ -10,7 +10,7 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
- * Class DelegationTest
+ * Class ApplicationTest
  *
  * @coversDefaultClass \ProcessMaker\Model\Application
  */
