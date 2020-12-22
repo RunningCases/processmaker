@@ -1829,7 +1829,11 @@ class Delegation extends Model
             // If is empty get the previous title
             if ($delIndexPrevious > 0) {
                 $thread = self::getThreadInfo($appNumber, $delIndexPrevious);
-                $threadTitle = $thread['DEL_TITLE'];
+                if(empty($thread['DEL_TITLE'])) {
+                    $threadTitle = '# '. $appNumber;
+                } else {
+                    $threadTitle = $thread['DEL_TITLE'];
+                }
             } else {
                 $threadTitle = '# '. $appNumber;
             }
