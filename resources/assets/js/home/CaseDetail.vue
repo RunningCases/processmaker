@@ -377,6 +377,7 @@ export default {
         .casenotes(this.dataCase)
         .then((response) => {
           that.formatResponseCaseNotes(response.data.notes);
+          that.dataComments.noPerms = response.data.noPerms || 0;
         })
         .catch((err) => {
           throw new Error(err);

@@ -58,7 +58,7 @@
           >
         </div>
 
-        <button class="btn btn-success btn-sm" @click="onClickComment">
+        <button class="btn btn-success btn-sm" @click="onClickComment" :disabled="data.noPerms === 1">
           {{ $t("ID_SEND") }}
         </button>
       </div>
