@@ -12,6 +12,19 @@ use WebEntryPeer;
 
 class WebEntry
 {
+    const UPDATE_QUERY_V1_TO_V2 = "
+        UPDATE
+            `WEB_ENTRY`
+        LEFT JOIN
+            `BPMN_PROCESS`
+        ON
+            (`WEB_ENTRY`.`PRO_UID` = `BPMN_PROCESS`.`PRJ_UID`)
+        SET
+            `WEB_ENTRY`.`DYN_UID` = '', `WEB_ENTRY`.`WE_TYPE` = 'MULTIPLE'
+        WHERE
+            `WE_TYPE` = 'SINGLE' AND `WE_AUTHENTICATION` = 'ANONYMOUS' AND
+            `WE_CALLBACK` = 'PROCESSMAKER' AND `BPMN_PROCESS`.`PRJ_UID` IS NOT NULL";
+
     private $arrayFieldDefinition = array(
         "WE_UID"                   => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "webEntryUid"),
 
@@ -1174,21 +1187,8 @@ class WebEntry
      */
     public static function convertFromV1ToV2()
     {
-        // Build query
-        $query = "UPDATE
-                      `WEB_ENTRY`
-                  LEFT JOIN
-                      `BPMN_PROCESS`
-                  ON
-                      (`WEB_ENTRY`.`PRO_UID` = `BPMN_PROCESS`.`PRJ_UID`)
-                  SET
-                      `WEB_ENTRY`.`DYN_UID` = '', `WEB_ENTRY`.`WE_TYPE` = 'MULTIPLE'
-                  WHERE
-                      `WE_TYPE` = 'SINGLE' AND `WE_AUTHENTICATION` = 'ANONYMOUS' AND
-                      `WE_CALLBACK` = 'PROCESSMAKER' AND `BPMN_PROCESS`.`PRJ_UID` IS NOT NULL";
-
         // Execute query
-        DB::connection('workflow')->statement($query);
+        DB::connection('workflow')->statement(self::UPDATE_QUERY_V1_TO_V2);
     }
 
     /**
