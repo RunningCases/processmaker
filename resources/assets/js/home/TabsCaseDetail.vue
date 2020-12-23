@@ -1,11 +1,12 @@
 <template>
   <div>
-    <tabs>
+    <tabs @changed="changed">
       <tab :name="$t('ID_SUMMARY')">
         <PmCaseSummary :data="dataCaseSummary"> </PmCaseSummary>
       </tab>
       <tab :name="$t('ID_PROCESS_MAP')">
-        <ProcessMap :data="dataCase"> </ProcessMap>
+        <ProcessMap :data="dataCase" v-if="currentTab == $t('ID_PROCESS_MAP')">
+        </ProcessMap>
       </tab>
       <tab :name="$t('ID_CASE_HISTORY')">
         <CaseHistory :data="dataCase"> </CaseHistory>
@@ -41,11 +42,20 @@ export default {
     dataCaseSummary: Array,
   },
   data() {
-    return {};
+    return {
+      currentTab: ""
+    };
   },
 
   mounted() {},
-  methods: {},
+  methods: {
+    /**
+     * When change the tab selection
+     **/
+    changed(selectedTab) {
+      this.currentTab = selectedTab.tab.name;
+    }
+  }
 };
 </script>
 <style>
