@@ -456,6 +456,18 @@ class Delegation extends Model
     }
 
     /**
+     * Scope for query to get the positive cases for avoid the web entry
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePositiveCases($query)
+    {
+        return $query->where('APP_DELEGATION.APP_NUMBER', '>', 0);
+    }
+
+    /**
      * Scope more than one range of cases
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -1594,7 +1606,7 @@ class Delegation extends Model
             }
             $items = $query->get();
             $items->each(function ($item) use (&$data) {
-                $data[] = get_object_vars($item);
+                $data[] = $item->toArray();
             });
         } else {
             // Set offset and limit if were sent
@@ -1829,7 +1841,11 @@ class Delegation extends Model
             // If is empty get the previous title
             if ($delIndexPrevious > 0) {
                 $thread = self::getThreadInfo($appNumber, $delIndexPrevious);
-                $threadTitle = $thread['DEL_TITLE'];
+                if(empty($thread['DEL_TITLE'])) {
+                    $threadTitle = '# '. $appNumber;
+                } else {
+                    $threadTitle = $thread['DEL_TITLE'];
+                }
             } else {
                 $threadTitle = '# '. $appNumber;
             }

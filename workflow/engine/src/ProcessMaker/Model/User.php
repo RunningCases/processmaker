@@ -32,6 +32,20 @@ class User extends Model
     }
 
     /**
+     * Scope for query to get the user by USR_UID
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $usrUid
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUser($query, string $usrUid)
+    {
+        $result = $query->where('USR_UID', '=', $usrUid);
+        return $result;
+    }
+
+    /**
      * Return the groups from a user
      *
      * @param boolean $usrUid
@@ -156,5 +170,25 @@ class User extends Model
         } catch (Exception $e) {
             throw new Exception("Error getting the users: {$e->getMessage()}.");
         }
+    }
+    /**
+     * Get the user id
+     *
+     * @param string $usrUid
+     *
+     * @return int
+     */
+    public static function getId($usrUid)
+    {
+        $query = User::query()->select(['USR_ID'])
+            ->user($usrUid)
+            ->limit(1);
+        $results = $query->get();
+        $id = 0;
+        $results->each(function ($item) use (&$id) {
+            $id = $item->USR_ID;
+        });
+
+        return $id;
     }
 }

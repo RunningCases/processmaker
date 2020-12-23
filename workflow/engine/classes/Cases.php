@@ -798,7 +798,7 @@ class Cases
             }
 
             // Update case title
-            if (!empty($appUid) && !empty($appFields['APP_NUMBER']) && !empty($appFields['DEL_INDEX'])) {
+            if (!empty($appUid) && !empty($appFields['APP_NUMBER']) && $appFields['APP_NUMBER'] > 0 && !empty($appFields['DEL_INDEX'])) {
                 $this->updateThreadTitle($appUid, $appFields['APP_NUMBER'], $appFields['DEL_INDEX'], $appFields['APP_DATA']);
             }
 
@@ -903,7 +903,7 @@ class Cases
                 $this->appSolr->updateApplicationSearchIndex($appUid);
             }
 
-            if ($Fields["APP_STATUS"] == "COMPLETED") {
+            if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
                 //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
                 $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
                 $appAssignSelfServiceValue->remove($appUid);
@@ -1650,7 +1650,11 @@ class Cases
             $user = UsersPeer::retrieveByPK($usrUid);
             // Create new delegation
             $delegation = new AppDelegation();
-            $delegation->setDelTitle($threadTitle);
+            if ($appNumber > 0) {
+                $delegation->setDelTitle($threadTitle);
+            } else {
+                $delegation->setDelTitle("");
+            }
             $result = $delegation->createAppDelegation(
                 $proUid,
                 $appUid,

@@ -249,7 +249,7 @@
             },
             importUsers(row) {
                 //the return action is in: processmaker/workflow/engine/templates/ldapAdvanced/ldapAdvancedSearch.js
-                location.href = this.$root.baseUrl() + 'authSources_SearchUsers?sUID=' + row.AUTH_SOURCE_UID;
+                location.href = this.$root.baseUrl() + "authSources/authSources_SearchUsers?sUID=" + row.AUTH_SOURCE_UID;
             },
             syncGroups(row) {
                 //the return action is in: processmaker/workflow/engine/templates/authSources/authSourcesSynchronize.js

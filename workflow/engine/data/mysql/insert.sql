@@ -61575,6 +61575,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_USER_TO_REASSIGN','en','Reassign to:','2014-01-15') ,
 ( 'LABEL','ID_USER_UID_DOESNT_EXIST','en','The row ''{USR_UID}'' in table USER doesn''t exist!','2014-01-15') ,
 ( 'LABEL','ID_USER_WITH_ROLE','en','Users with role','2014-01-15') ,
+( 'LABEL','ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING','en','Please just use alphanumeric characters including: {0}','2020-12-22') ,
 ( 'LABEL','ID_USE_LANGUAGE_URL','en','Use the language of URL','2014-08-08') ,
 ( 'LABEL','ID_UXS_NORMAL','en','Normal','2014-01-15') ,
 ( 'LABEL','ID_UXS_SIMPLIFIED','en','Mobile','2014-01-15') ,
