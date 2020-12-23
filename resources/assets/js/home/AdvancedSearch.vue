@@ -535,6 +535,9 @@ export default {
 };
 </script>
 <style>
+.VuePagination__count {
+    display: none;
+}
 .v-container-mycases {
     padding-top: 20px;
     padding-bottom: 20px;
