@@ -9,14 +9,14 @@
                 <h6>{{ info.detail }}</h6>
                 <b-form-group :label="info.label">
                     <b-form-checkbox
-                        v-for="option in info.options"
-                        v-model="info.caseStatuses"
+                        v-for="option in info.items[0].options"
+                        v-model="filter[0].options"
                         :key="option.value"
                         :value="option.value"
                         name="flavour-2a"
                         stacked
                     >
-                        {{ option.text }}
+                        {{ option.label }}
                     </b-form-checkbox>
                 </b-form-group>
             </template>
@@ -31,7 +31,7 @@ export default {
     components: {
         SearchPopover
     },
-    props: ["tag", "info"],
+    props: ["tag", "info", "filter"],
     methods: {
          /**
          * Ok button handler
@@ -43,17 +43,18 @@ export default {
          * Submit button handler
          */
         handleSubmit() {
-            let selectedOptions = [];
-            let self = this;
-            _.forEach(this.info.caseStatuses, function(value) {
-                selectedOptions.push(_.find(self.info.options, function(o) { return o.value === value; }));
-            });
-            this.$emit("updateSearchTag", {
-                CaseStatus: {
-                    caseStatuses: this.info.caseStatuses.join(","),
-                    selectedOptions: selectedOptions
+            let selectedLabels = [],
+                self = this,
+                item;
+            this.filter[0].value=this.filter[0].options.join(",");
+            _.forEach(this.filter[0].options, function(value) {
+                item = _.find(self.info.items[0].options, function(o) { return o.value === value; });
+                if (item) {
+                    selectedLabels.push(item.label);
                 }
             });
+            this.filter[0].label=selectedLabels.join(",");
+            this.$emit("updateSearchTag", this.filter);
             this.$root.$emit("bv::hide::popover")
         },
         /**

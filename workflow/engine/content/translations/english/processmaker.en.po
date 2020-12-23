@@ -4176,6 +4176,12 @@ msgid "Start Case"
 msgstr "Start Case"
 
 # TRANSLATION
+# LABEL/ID_CASE_STATUS
+#: LABEL/ID_CASE_STATUS
+msgid "Case Status"
+msgstr "Case Status"
+
+# TRANSLATION
 # LABEL/ID_CASE_STOPPED_TRIGGER
 #: LABEL/ID_CASE_STOPPED_TRIGGER
 msgid "The case has not stopped due to its trigger."
@@ -24082,6 +24088,12 @@ msgstr "Search by Process Name:"
 #: LABEL/ID_SEARCH_BY_START_DATE
 msgid "Search by Start Date:"
 msgstr "Search by Start Date:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_STATUS
+#: LABEL/ID_SEARCH_BY_STATUS
+msgid "Search by Status:"
+msgstr "Search by Status:"
 
 # TRANSLATION
 # LABEL/ID_SEARCH_BY_TASK_NAME
