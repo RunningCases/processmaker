@@ -423,12 +423,16 @@ export default {
             let self = this;
             api.cases
                 .jump(params)
-                .then(function(data) {
-                    self.$parent.dataCase = params;
-                    self.$parent.page = "XCase";
+                .then(function(response) {
+                    if (response.data.exists) {
+                        self.$parent.dataCase = params;
+                        self.$parent.page = "XCase";
+                    } else {
+                        self.showAlert(response.data.message, "danger");                     
+                    }
                 })
                 .catch((err) => {
-                    throw new Error(err);
+                    self.showAlert(err.message, "danger");          
                 });
         },
         /**

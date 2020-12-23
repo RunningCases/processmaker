@@ -74,13 +74,21 @@
                             </b-button>
                         </div>
                         <div class="p-2">
-                            <input
-                                v-model="caseNumber"
-                                size="1"
-                                class="form-control"
-                                :placeholder="$t('ID_CASE_NUMBER_CAPITALIZED')"
-                                type="number"
-                            />
+                            <form ref="jump" @submit.stop.prevent="handleJumpTo">
+                                <b-form-group
+                                    :state="caseNumberState"
+                                    :invalid-feedback="$t('ID_INVALID_APPLICATION_NUMBER')"
+                                >
+                                    <b-form-input
+                                        id="case-number-input"
+                                        v-model="caseNumber"
+                                        :state="caseNumberState"
+                                        :placeholder="$t('ID_CASE_NUMBER_CAPITALIZED')"
+                                        required
+                                        type="number"
+                                    ></b-form-input>
+                                </b-form-group>
+                            </form>
                         </div>
                     </div>
                 </b-col>
@@ -351,7 +359,8 @@ export default {
             caseNumber: "",
             saveModalTitle: this.$i18n.t('ID_SAVE_SEARCH'),
             localName: "",
-            nameState: null,        
+            nameState: null,
+            caseNumberState: null
         };
     },
     watch: {
@@ -361,12 +370,11 @@ export default {
                 this.searchTags = [];
                 this.selected = [];
                 this.setFilters(newVal);
-            },
+            }
         }
     },
-    
-
     methods: {
+     
         /**
          * Set Filters and make the tag labels
          * @param {object} filters json to manage the query 
@@ -468,8 +476,25 @@ export default {
             temp = [...new Set([...this.filters,...params])]
             this.$emit("onUpdateFilters", temp);
         },
+        /**
+         * Jump To action handler
+         * Validates the form input
+         */
+        handleJumpTo() {
+            const valid = this.$refs.jump.checkValidity() && parseInt(this.caseNumber) > 0;
+            this.caseNumberState = valid;
+             if (!valid) {
+                return;
+            }
+            this.$nextTick(() => {
+                this.$emit("onJumpCase",  this.caseNumber);
+            });
+        },
+        /**
+         * Click evemt hamdler for "Jump To" button
+         */
         onJumpCase() {
-            this.$emit("onJumpCase",  this.caseNumber);
+            this.handleJumpTo();
         },
         onClick() {
             if (this.id) {
