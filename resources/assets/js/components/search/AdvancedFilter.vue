@@ -113,7 +113,7 @@
                                         :title="tag"
                                         :variant="tagVariant"
                                         @click="onClickTag"
-                                        class="mr-1"
+                                        class="mr-1 badge badge-light"
                                     >   
                                         
                                         <div :id="tag">
@@ -239,6 +239,42 @@ export default {
                     ],
                     makeTagText: function (params, data) {
                         return  `${this.tagPrefix}: ${data[0].value}`;
+                    }
+                },
+                {
+                    type: "caseStatus",
+                    id: "CaseStatus",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE_STATUS')}`,
+                    optionLabel: this.$i18n.t('ID_STATUS'),
+                    detail: "ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_STATUS'),
+                    items:[
+                        {
+                            id: "caseStatuses",
+                            value: "",
+                            options: [
+                                {
+                                    value: "DRAFT",
+                                    label: this.$i18n.t('ID_DRAFT')
+                                },
+                                {
+                                    value: "TO_DO",
+                                    label: this.$i18n.t('ID_TO_DO')
+                                },
+                                {
+                                    value: "COMPLETED",
+                                    label: this.$i18n.t('ID_COMPLETED')
+                                },
+                                {
+                                    value: "CANCELED",
+                                    label: this.$i18n.t('ID_CANCELLED')
+                                }
+                            ]
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix}: ${data[0].label || ''}`;
                     }
                 },
                 {
