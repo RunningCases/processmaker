@@ -216,11 +216,7 @@
                     {value: "ldap", text: "Open LDAP"},
                     {value: "ds", text: "389 DS"}
                 ],
-                roles: [
-                    {value: "PROCESSMAKER_ADMIN", text: this.$root.translation("ID_SYSTEM_ADMINISTRATOR")},
-                    {value: "PROCESSMAKER_MANAGER", text: this.$root.translation("ID_MANAGER")},
-                    {value: "PROCESSMAKER_OPERATOR", text: this.$root.translation("ID_OPERATOR")}
-                ],
+                roles: [],
                 show: true
             };
         },
@@ -427,6 +423,27 @@
                     this.form.groupIdentifier = "uniquemember";
                     this.form.signInPolicyForLDAP = "0";
                 }
+            },
+            getRolesList() {
+                let formData = new FormData();
+                formData.append("action", "rolesList");
+                return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
+                        .then(response => {
+                            response;
+                            let data = [];
+                            for (let i in response.data) {
+                                data.push({
+                                    value: response.data[i].ROL_UID,
+                                    text: response.data[i].ROL_CODE
+                                });
+                            }
+                            this.roles = data;
+                        })
+                        .catch(error => {
+                            error;
+                        })
+                        .finally(() => {
+                        });
             }
         },
         watch: {
@@ -438,6 +455,11 @@
                 },
                 deep: true
             }
+        },
+        mounted() {
+            this.$nextTick(function () {
+                this.getRolesList();
+            });
         }
     }
 </script>

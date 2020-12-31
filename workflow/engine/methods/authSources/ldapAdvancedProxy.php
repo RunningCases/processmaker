@@ -341,6 +341,9 @@ switch ($function) {
             $aData['USR_STATUS'] = (isset($aUser['USR_STATUS'])) ? $aUser['USR_STATUS'] : 'ACTIVE';
             $aData['USR_UID'] = $sUserUID;
             $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
+            if (isset($aFields['AUTH_SOURCE_DATA']['USR_ROLE'])) {
+                $aData['USR_ROLE'] = $aFields['AUTH_SOURCE_DATA']['USR_ROLE'];
+            }
 
             $calendarObj = new Calendar();
             $calendarObj->assignCalendarTo($sUserUID, '00000000000000000000000000000001', 'USER');
