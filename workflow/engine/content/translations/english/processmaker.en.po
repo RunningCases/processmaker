@@ -25374,6 +25374,12 @@ msgid "Successful connection"
 msgstr "Successful connection"
 
 # TRANSLATION
+# LABEL/ID_SUCCESSFUL_TEST_CONNECTION
+#: LABEL/ID_SUCCESSFUL_TEST_CONNECTION
+msgid "Successful Test Connection"
+msgstr "Successful Test Connection"
+
+# TRANSLATION
 # LABEL/ID_SUCCESS_DIRECTORIES_WRITABLE
 #: LABEL/ID_SUCCESS_DIRECTORIES_WRITABLE
 msgid "Success, all required directories are writable."

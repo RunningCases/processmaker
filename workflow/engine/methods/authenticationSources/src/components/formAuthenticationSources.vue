@@ -283,6 +283,13 @@
                                             if (response.data.status === "OK") {
                                                 this.testStatus = true;
                                                 this.buttonLabel = this.$root.translation("ID_SAVE");
+                                                this.$bvModal.msgBoxOk(this.$root.translation('ID_SUCCESSFUL_TEST_CONNECTION'), {
+                                                    title: " ", //is important because title disappear
+                                                    hideHeaderClose: false,
+                                                    okTitle: this.$root.translation('ID_OK'),
+                                                    okVariant: "success",
+                                                    okOnly: true
+                                                });
                                                 return;
                                             }
                                             //test fail
