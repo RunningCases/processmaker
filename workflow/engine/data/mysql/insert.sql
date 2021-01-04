@@ -61275,6 +61275,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_THERE_MUST__LEAST_HOLIDAY','en','There must be at least a holiday','2014-01-15') ,
 ( 'LABEL','ID_THERE_PROBLEM_SENDING_EMAIL','en','There was a problem sending the email to','2016-04-08') ,
 ( 'LABEL','ID_THE_APPLICATION_IS_NOT_CANCELED','en','Error: The application {0} is not canceled.','2016-06-15') ,
+( 'LABEL','ID_THE_ATTRIBUTE_HAS_ALREADY_INFORMATION_STORED_FOR_USERS_PLEASE_CONFIRM_THE_DELETE','en','The attribute {0} has already information stored for users, if you proceed to delete this attribute all information for users stored in the attribute will be deleted, please confirm.','2020-12-15') ,
 ( 'LABEL','ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM','en','The attribute {0} will be deleted, please confirm.','2020-12-15') ,
 ( 'LABEL','ID_THE_DEFAULT_CONFIGURATION','en','The default configuration was not defined','2016-11-16') ,
 ( 'LABEL','ID_THE_FILE_COULDNT_BE_UPLOADED','en','The file couldn’t be uploaded please review the allowed files or contact your System Administrator.','2020-06-12') ,
