@@ -330,7 +330,7 @@
             },
             optionSaveButton(row) {
                 this.$refs['fas-b-modal-upload-file'].hide();
-                row.AUTH_SOURCE_UID = "";
+                row.AUTH_SOURCE_UID = this.form.uid;
                 let form = this.rowToForm(row);
                 this.load(form);
             },
