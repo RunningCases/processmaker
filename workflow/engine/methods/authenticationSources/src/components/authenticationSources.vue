@@ -22,15 +22,16 @@
                           variant="light"
                           size="sm" 
                           class="mb-2"
-                          @mousedown="$root.$emit('bv::hide::tooltip');"
-                          @mouseup="$root.$emit('bv::show::tooltip','as-b-button-tooltip-'+props.index);">
+                          @mousedown="$root.$emit('bv::hide::tooltip');$root.$emit('bv::show::tooltip','as-b-button-tooltip-'+props.index);"
+                          @mouseup="$root.$emit('bv::hide::tooltip');$root.$emit('bv::show::tooltip','as-b-button-tooltip-'+props.index);">
                     <b-icon icon="three-dots-vertical" aria-hidden="true"/>
                 </b-button>
                 <b-tooltip :target="'as-b-button-tooltip-'+props.index" 
-                           triggers="hover click focus"
+                           triggers="hover"
                            custom-class="custom-tooltip"
                            placement="left"
-                           variant="light">
+                           variant="light"
+                           no-fade>
                     <b-button-group>
                         <b-button @click="importUsers(props.row)"
                                    v-b-tooltip.hover 
