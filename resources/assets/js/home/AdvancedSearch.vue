@@ -159,7 +159,7 @@ export default {
                 },
                 customFilters: ["myfilter"],
             },
-            pmDateFormat: "Y-m-d H:i:s",
+            pmDateFormat: window.config.FORMATS.dateFormat
         };
     },
     watch: {

@@ -121,7 +121,7 @@ export default {
                 },
             },
             translations: null,
-            pmDateFormat: "Y-m-d H:i:s",
+            pmDateFormat: window.config.FORMATS.dateFormat
         };
     },
     mounted() {
@@ -194,8 +194,8 @@ export default {
                     CASE_TITLE: v.DEL_TITLE,
                     PROCESS_NAME: v.PRO_TITLE,
                     STATUS: v.APP_STATUS,
-                    START_DATE: v.APP_CREATE_DATE || "",
-                    FINISH_DATE: v.APP_FINISH_DATE || "",
+                    START_DATE: v.APP_CREATE_DATE_LABEL || "",
+                    FINISH_DATE: v.APP_FINISH_DATE_LABEL || "",
                     PENDING_TASKS: that.formantPendingTask(v.PENDING),
                     DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
