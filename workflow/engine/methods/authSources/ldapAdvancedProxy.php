@@ -395,10 +395,14 @@ switch ($function) {
             //Test connection
             $ldapAdvanced = new LdapAdvanced();
 
-            $ldapcnn = $ldapAdvanced->ldapConnection($arrayAuthenticationSourceData);
+            $resultLDAPStartTLS = true;
+            $ldapcnn = $ldapAdvanced->ldapConnection($arrayAuthenticationSourceData, $resultLDAPStartTLS);
 
             //Response
             $response["status"] = "OK";
+            if ($resultLDAPStartTLS === false) {
+                $response["message"] = G::LoadTranslation("ID_TLS_CERTIFICATE_IS_NOT_INSTALLED_IN_THE_SERVER");
+            }
         } catch (Exception $e) {
             //Response
             $response["status"] = "ERROR";

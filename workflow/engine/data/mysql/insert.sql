@@ -61343,6 +61343,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TITLE_REQUIRED','en','Title is required.','2014-10-22') ,
 ( 'LABEL','ID_TITLE_START_CASE','en','Start Case','2014-01-15') ,
 ( 'LABEL','ID_TITLE_UNASSIGNED','en','Unassigned','2014-01-15') ,
+( 'LABEL','ID_TLS_CERTIFICATE_IS_NOT_INSTALLED_IN_THE_SERVER','en','TLS certificate is not installed in the server.','2020-12-30') ,
 ( 'LABEL','ID_TO','en','To','2014-01-15') ,
 ( 'LABEL','ID_TODAY','en','Today','2014-01-15') ,
 ( 'LABEL','ID_TOOLS','en','Tools','2014-01-15') ,
