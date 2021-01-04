@@ -25908,6 +25908,12 @@ msgid "Error: The application {0} is not canceled."
 msgstr "Error: The application {0} is not canceled."
 
 # TRANSLATION
+# LABEL/ID_THE_ATTRIBUTE_HAS_ALREADY_INFORMATION_STORED_FOR_USERS_PLEASE_CONFIRM_THE_DELETE
+#: LABEL/ID_THE_ATTRIBUTE_HAS_ALREADY_INFORMATION_STORED_FOR_USERS_PLEASE_CONFIRM_THE_DELETE
+msgid "The attribute {0} has already information stored for users, if you proceed to delete this attribute all information for users stored in the attribute will be deleted, please confirm."
+msgstr "The attribute {0} has already information stored for users, if you proceed to delete this attribute all information for users stored in the attribute will be deleted, please confirm."
+
+# TRANSLATION
 # LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
 #: LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
 msgid "The attribute {0} will be deleted, please confirm."

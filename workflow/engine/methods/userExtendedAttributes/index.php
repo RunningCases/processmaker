@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Role;
+use ProcessMaker\Model\User;
 use ProcessMaker\Model\UserExtendedAttributes;
 
 global $G_PUBLISH;
@@ -212,6 +213,25 @@ try {
             $result = [
                 "valid" => empty($userExtendedAttributes),
                 "message" => empty($userExtendedAttributes) ? "" : G::loadTranslation("ID_EXIST")
+            ];
+            echo G::json_encode($result);
+            break;
+        case "verifyAttributeUse":
+            $name = empty($_REQUEST["name"]) ? "" : $_REQUEST["name"];
+            $attributeId = empty($_REQUEST["attributeId"]) ? "" : $_REQUEST["attributeId"];
+            $user = User::query()
+                    ->where("USR_EXTENDED_ATTRIBUTES_DATA", "LIKE", "%\"{$attributeId}\"%")
+                    ->get()
+                    ->first();
+            $isUsed = false;
+            $message = "";
+            if (!empty($user)) {
+                $isUsed = true;
+                $message = G::loadTranslation("ID_THE_ATTRIBUTE_HAS_ALREADY_INFORMATION_STORED_FOR_USERS_PLEASE_CONFIRM_THE_DELETE", [$name]);
+            }
+            $result = [
+                "isUsed" => $isUsed,
+                "message" => $message
             ];
             echo G::json_encode($result);
             break;

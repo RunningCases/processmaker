@@ -137,33 +137,52 @@
                 this.$emit("editAttribute", row);
             },
             deleteAttribute(row) {
-                this.$bvModal.msgBoxConfirm(this.$root.translation('ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM', [row.name]), {
-                    title: " ", //is important because title disappear
-                    hideHeaderClose: false,
-                    okTitle: this.$root.translation('ID_CONFIRM'),
-                    okVariant: "success",
-                    cancelTitle: this.$root.translation('ID_CANCEL'),
-                    cancelVariant: "danger"
-                }).then(value => {
-                    if (value === false) {
-                        return;
-                    }
-                    let formData = new FormData();
-                    formData.append("option", "delete");
-                    formData.append("id", row.id);
-                    axios.post(this.$root.baseUrl() + "userExtendedAttributes/index", formData)
-                            .then(response => {
-                                response;
-                                this.refresh();
-                            })
-                            .catch(error => {
-                                error;
-                            })
-                            .finally(() => {
+                let formData = new FormData();
+                formData.append("option", "verifyAttributeUse");
+                formData.append("name", row.name);
+                formData.append("attributeId", row.attributeId);
+                axios.post(this.$root.baseUrl() + "userExtendedAttributes/index", formData)
+                        .then(response => {
+                            response;
+                            let message = this.$root.translation('ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM', [row.name]);
+                            if ("isUsed" in response.data && "message" in response.data) {
+                                if (response.data.isUsed === true) {
+                                    message = response.data.message;
+                                }
+                            }
+                            this.$bvModal.msgBoxConfirm(message, {
+                                title: " ", //is important because title disappear
+                                hideHeaderClose: false,
+                                okTitle: this.$root.translation('ID_CONFIRM'),
+                                okVariant: "success",
+                                cancelTitle: this.$root.translation('ID_CANCEL'),
+                                cancelVariant: "danger"
+                            }).then(value => {
+                                if (value === false) {
+                                    return;
+                                }
+                                let formData = new FormData();
+                                formData.append("option", "delete");
+                                formData.append("id", row.id);
+                                axios.post(this.$root.baseUrl() + "userExtendedAttributes/index", formData)
+                                        .then(response => {
+                                            response;
+                                            this.refresh();
+                                        })
+                                        .catch(error => {
+                                            error;
+                                        })
+                                        .finally(() => {
+                                        });
+                            }).catch(err => {
+                                err;
                             });
-                }).catch(err => {
-                    err;
-                });
+                        })
+                        .catch(error => {
+                            error;
+                        })
+                        .finally(() => {
+                        });
             },
             refresh() {
                 this.$refs.vServerTable1.refresh();
