@@ -61149,6 +61149,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SUCCESSFULLY_CONNECTED','en','Successfully connected','2015-09-15') ,
 ( 'LABEL','ID_SUCCESSFULLY_UPLOADED','en','Successfully uploaded.','2014-09-18') ,
 ( 'LABEL','ID_SUCCESSFUL_CONNECTION','en','Successful connection','2014-01-15') ,
+( 'LABEL','ID_SUCCESSFUL_TEST_CONNECTION','en','Successful Test Connection','2020-12-30') ,
 ( 'LABEL','ID_SUCCESS_DIRECTORIES_WRITABLE','en','Success, all required directories are writable.','2014-01-15') ,
 ( 'LABEL','ID_SUCCESS_RECORD','en','Success Records:','2014-01-15') ,
 ( 'LABEL','ID_SUCESSFUL','en','Sucessful','2014-01-15') ,
