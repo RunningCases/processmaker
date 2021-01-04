@@ -8,8 +8,10 @@
                         <b-form-group :label="$root.translation('ID_FIRSTNAME')+' (*)'">
                             <b-form-input v-model="form.USR_FIRSTNAME"
                                           autocomplete="off"
-                                          :state="validateState('USR_FIRSTNAME')"></b-form-input>
-                            <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
+                                          :state="validate.USR_FIRSTNAME.state"
+                                          @keyup="validateFirstName"
+                                          :disabled="disabled"></b-form-input>
+                            <b-form-invalid-feedback>{{validate.USR_FIRSTNAME.message}}</b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -18,18 +20,23 @@
                         <b-form-group :label="$root.translation('ID_LASTNAME')+' (*)'">
                             <b-form-input v-model="form.USR_LASTNAME"
                                           autocomplete="off"
-                                          :state="validateState('USR_LASTNAME')"></b-form-input>
-                            <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
+                                          :state="validate.USR_LASTNAME.state"
+                                          @keyup="validateLastName"
+                                          :disabled="disabled"></b-form-input>
+                            <b-form-invalid-feedback>{{validate.USR_LASTNAME.message}}</b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
                     </b-col>
                     <b-col cols="3">
                         <b-avatar rounded 
+                                  ref="userAvatar"
                                   size="5rem" 
                                   button
+                                  @click="avatarClick"
                                   badge-variant="light"
-                                  style="position: absolute;right:30px;">
+                                  :src="urlImage"
+                                  :disabled="disabled">
                         </b-avatar>
                     </b-col>
                 </b-row>
@@ -37,7 +44,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_ADDRESS')">
                             <b-form-input v-model="form.USR_ADDRESS"
-                                          autocomplete="off"/>
+                                          autocomplete="off"
+                                          :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -45,7 +53,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_ZIP_CODE')">
                             <b-form-input v-model="form.USR_ZIP_CODE"
-                                          autocomplete="off"/>
+                                          autocomplete="off"
+                                          :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -55,7 +64,8 @@
                             <b-form-input v-model="form.USR_USERNAME"
                                           autocomplete="off"
                                           :state="validate.USR_USERNAME.state"
-                                          @keyup="validateUserName"></b-form-input>
+                                          @keyup="validateUserName"
+                                          :disabled="disabled"></b-form-input>
                             <b-form-valid-feedback><span v-html="validate.USR_USERNAME.message"></span></b-form-valid-feedback>
                             <b-form-invalid-feedback><span v-html="validate.USR_USERNAME.message"></span></b-form-invalid-feedback>
                         </b-form-group>
@@ -66,20 +76,23 @@
                         <b-form-group :label="$root.translation('ID_COUNTRY')">
                             <b-form-select v-model="form.USR_COUNTRY"
                                            :options="countryList"
-                                           @change="getStateList"/>
+                                           @change="getStateList"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
                         <b-form-group :label="$root.translation('ID_STATE_REGION')">
                             <b-form-select v-model="form.USR_CITY"
                                            :options="stateList"
-                                           @change="getLocationList"/>
+                                           @change="getLocationList"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_CITY')">
                             <b-form-select v-model="form.USR_LOCATION"
-                                           :options="locationList"/>
+                                           :options="locationList"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -88,8 +101,10 @@
                         <b-form-group :label="$root.translation('ID_EMAIL')+' (*)'">
                             <b-form-input v-model="form.USR_EMAIL"
                                           autocomplete="off"
-                                          :state="validateState('USR_EMAIL')"></b-form-input>
-                            <b-form-invalid-feedback>{{$root.translation('ID_EMAIL_ENTER_VALID')}}</b-form-invalid-feedback>
+                                          :state="validate.USR_EMAIL.state"
+                                          @keyup="validateEmail"
+                                          :disabled="disabled"></b-form-input>
+                            <b-form-invalid-feedback>{{validate.USR_EMAIL.message}}</b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -97,7 +112,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_PHONE')">
                             <b-form-input v-model="form.USR_PHONE"
-                                          autocomplete="off"/>
+                                          autocomplete="off"
+                                          :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -105,7 +121,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_POSITION')">
                             <b-form-input v-model="form.USR_POSITION"
-                                          autocomplete="off"/>
+                                          autocomplete="off"
+                                          :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -113,30 +130,33 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_STATUS')">
                             <b-form-select v-model="form.USR_STATUS"
-                                           :options="userStatus"/>
+                                           :options="userStatus"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col cols="3">
+                    <b-col cols="5">
                         <b-form-group :label="$root.translation('ID_REPLACED_BY')">
                             <b-input-group>
                                 <b-input-group-prepend class="w-25">
                                     <b-form-input v-model="filterUser"
                                                   autocomplete="off"
                                                   @keyup="getUsersList"
-                                                  placeholder="search"></b-form-input>
+                                                  placeholder="search"
+                                                  :disabled="disabled"></b-form-input>
                                 </b-input-group-prepend>
                                 <b-form-select v-model="form.USR_REPLACED_BY"
-                                               :options="usersList"></b-form-select>
+                                               :options="usersList"
+                                               :disabled="disabled"></b-form-select>
                             </b-input-group>
                         </b-form-group>
                     </b-col>
-                    <b-col cols="2"></b-col>
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_CALENDAR')">
                             <b-form-select v-model="form.USR_CALENDAR"
-                                           :options="availableCalendars"/>
+                                           :options="availableCalendars"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -144,7 +164,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_EXPIRATION_DATE')">
                             <b-form-datepicker v-model="form.USR_DUE_DATE"
-                                               :date-format-options="{year:'numeric',month:'numeric',day:'numeric'}"/>
+                                               :date-format-options="{year:'numeric',month:'numeric',day:'numeric'}"
+                                               :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -152,7 +173,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_TIME_ZONE')">
                             <b-form-select v-model="form.USR_TIME_ZONE"
-                                           :options="timeZoneList"/>
+                                           :options="timeZoneList"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -160,7 +182,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_DEFAULT_LANGUAGE')">
                             <b-form-select v-model="form.USR_DEFAULT_LANG"
-                                           :options="languagesList"/>
+                                           :options="languagesList"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -169,7 +192,8 @@
                         <b-form-group :label="$root.translation('ID_ROLE')">
                             <b-form-select v-model="form.USR_ROLE"
                                            :options="rolesList"
-                                           @change="changeRole"/>
+                                           @change="changeRole"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -177,7 +201,8 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_DEFAULT_MAIN_MENU_OPTION')">
                             <b-form-select v-model="form.PREF_DEFAULT_MENUSELECTED"
-                                           :options="defaultMainMenuOptionList"/>
+                                           :options="defaultMainMenuOptionList"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -185,18 +210,22 @@
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_DEFAULT_CASES_MENU_OPTION')">
                             <b-form-select v-model="form.PREF_DEFAULT_CASES_MENUSELECTED"
-                                           :options="defaultCasesMenuOptionList"/>
+                                           :options="defaultCasesMenuOptionList"
+                                           :disabled="disabled"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
                     </b-col>
                     <b-col cols="3">
-                        <b-form-group :label="$root.translation('ID_NEW_PASSWORD')+' (*)'">
+                        <b-form-group :label="$root.translation('ID_NEW_PASSWORD')+' (*)'"
+                                      :class="classCustom">
                             <b-form-input v-model="form.USR_NEW_PASS"
                                           autocomplete="off"
                                           :state="validate.USR_NEW_PASS.state"
                                           type="password"
-                                          @keyup="validatePassword"></b-form-input>
+                                          @keyup="validatePassword"
+                                          @change="editing=false;"
+                                          :disabled="disabled"></b-form-input>
                             <b-form-valid-feedback><span v-html="validate.USR_NEW_PASS.message"></span></b-form-valid-feedback>
                             <b-form-invalid-feedback><span v-html="validate.USR_NEW_PASS.message"></span></b-form-invalid-feedback>
                         </b-form-group>
@@ -208,12 +237,15 @@
                     <b-col cols="3"></b-col>
                     <b-col cols="1"></b-col>
                     <b-col cols="3">
-                        <b-form-group :label="$root.translation('ID_CONFIRM_PASSWORD')+' (*)'">
+                        <b-form-group :label="$root.translation('ID_CONFIRM_PASSWORD')+' (*)'"
+                                      :class="classCustom">
                             <b-form-input v-model="form.USR_CNF_PASS"
                                           autocomplete="off"
                                           :state="validate.USR_CNF_PASS.state"
                                           type="password"
-                                          @keyup="validateConfirmationPassword"></b-form-input>
+                                          @keyup="validateConfirmationPassword"
+                                          @change="editing=false;"
+                                          :disabled="disabled"></b-form-input>
                             <b-form-invalid-feedback><span v-html="validate.USR_CNF_PASS.message"></span></b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -232,7 +264,8 @@
                                                 <b-form-input v-model="form.USR_EXTENDED_ATTRIBUTES_DATA[userExtendedAttribute.attributeId]"
                                                               autocomplete="off"
                                                               :type="userExtendedAttribute.password===1?'password':'text'"
-                                                              :state="validateExtendedAttribute(userExtendedAttribute)"></b-form-input>
+                                                              :state="validateExtendedAttribute(userExtendedAttribute)"
+                                                              :disabled="disabled"></b-form-input>
                                                 <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                                             </b-form-group>
                                         </div>
@@ -247,28 +280,32 @@
                             <b-form-group :label="$root.translation('ID_COST_BY_HOUR')">
                                 <b-form-input v-model="form.USR_COST_BY_HOUR"
                                               autocomplete="off"
-                                              :state="validateState('USR_COST_BY_HOUR')"></b-form-input>
-                                <b-form-invalid-feedback>{{$root.translation('ID_INVALID_VALUE',[$root.translation('ID_COST_BY_HOUR')])}}</b-form-invalid-feedback>
+                                              :state="validate.USR_COST_BY_HOUR.state"
+                                              @keyup="validateCostByHour"
+                                              :disabled="disabled"></b-form-input>
+                                <b-form-invalid-feedback>{{validate.USR_COST_BY_HOUR.message}}</b-form-invalid-feedback>
                             </b-form-group>
                             <b-form-group :label="$root.translation('ID_UNITS')">
                                 <b-form-input v-model="form.USR_UNIT_COST"
-                                              autocomplete="off"/>
+                                              autocomplete="off"
+                                              :disabled="disabled"/>
                             </b-form-group>
                         </fieldset>
                     </b-col>
                 </b-row>
-                <b-row>
+                <b-row :class="classCustom">
                     <b-col cols="12">
                         <b-form-group class="mt-4">
                             <b-form-checkbox v-model="form.USR_LOGGED_NEXT_TIME"
                                              value="1"
-                                             unchecked-value="0">
+                                             unchecked-value="0"
+                                             :disabled="disabled">
                                 {{$root.translation('ID_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON')}}
                             </b-form-checkbox>
                         </b-form-group>
                     </b-col>
                 </b-row>
-                <b-row>
+                <b-row :class="classCustom">
                     <b-col cols="12">
                         <b-form-group class="mt-4 float-right">
                             <b-button variant="danger"
@@ -276,6 +313,14 @@
                             <b-button type="submit" 
                                       variant="success"
                                       :disabled="disableButtonSave">{{$root.translation('ID_SAVE')}}</b-button>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
+                <b-row :class="classCustom2">
+                    <b-col cols="12">
+                        <b-form-group class="mt-4 float-right">
+                            <b-button variant="success"
+                                      @click="editPersonalInformation">{{$root.translation('ID_EDIT')}}</b-button>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -287,29 +332,9 @@
 <script>
     import titleSection from "./titleSection.vue"
     import axios from "axios"
-    import { validationMixin } from "vuelidate"
-    import { required, numeric, email } from "vuelidate/lib/validators"
     export default {
-        mixins: [validationMixin],
         components: {
             titleSection
-        },
-        validations: {
-            form: {
-                USR_FIRSTNAME: {
-                    required
-                },
-                USR_LASTNAME: {
-                    required
-                },
-                USR_EMAIL: {
-                    required,
-                    email
-                },
-                USR_COST_BY_HOUR: {
-                    numeric
-                }
-            }
         },
         data() {
             return {
@@ -340,11 +365,23 @@
                     USR_NEW_PASS: "",
                     USR_CNF_PASS: "",
                     USR_LOGGED_NEXT_TIME: "0",
-                    //
-                    USR_EXTENDED_ATTRIBUTES_DATA: []
+                    USR_EXTENDED_ATTRIBUTES_DATA: [],
+                    USR_PHOTO: ""
                 },
                 validate: {
+                    USR_FIRSTNAME: {
+                        message: "",
+                        state: null
+                    },
+                    USR_LASTNAME: {
+                        message: "",
+                        state: null
+                    },
                     USR_USERNAME: {
+                        message: "",
+                        state: null
+                    },
+                    USR_EMAIL: {
                         message: "",
                         state: null
                     },
@@ -353,6 +390,10 @@
                         state: null
                     },
                     USR_CNF_PASS: {
+                        message: "",
+                        state: null
+                    },
+                    USR_COST_BY_HOUR: {
                         message: "",
                         state: null
                     }
@@ -384,66 +425,97 @@
                 rolesList: [],
                 userExtendedAttributesList: [],
                 disableButtonSave: false,
-                editing: false
+                editing: false,
+                urlImage: "",
+                disabled: false,
+                classCustom: "",
+                classCustom2: ""
             };
         },
         mounted() {
             this.$nextTick(function () {
                 let promise = null;
                 if ("USR_UID" in window && window.USR_UID !== "") {
+                    this.editing = true;
                     promise = this.load();
                     promise.then(response => {
                         response;
                         this.loadServices();
                     });
                 } else {
+                    this.editing = false;
                     this.loadServices();
+                }
+                //additional modes
+                if (this.$root.modeOfForm() === 1) {
+                    this.disabled = false;
+                    this.classCustom = "";
+                    this.classCustom2 = "sr-only sr-only-focusable";
+                }
+                if (this.$root.modeOfForm() === 2) {
+                    this.disabled = true;
+                    this.classCustom = "sr-only sr-only-focusable";
+                    this.classCustom2 = "";
+                }
+                if (this.$root.canEdit() === false) {
+                    this.classCustom2 = "sr-only sr-only-focusable";
                 }
             });
         },
         methods: {
+            editPersonalInformation() {
+                this.classCustom = "";
+                this.classCustom2 = "sr-only sr-only-focusable";
+                this.disabled = false;
+            },
             cancel() {
-                window.location = this.$root.baseUrl() + "users/users_List";
+                if (this.$root.modeOfForm() === 1) {
+                    window.location = this.$root.baseUrl() + "users/users_List";
+                }
+                if (this.$root.modeOfForm() === 2) {
+                    this.classCustom = "sr-only sr-only-focusable";
+                    this.classCustom2 = "";
+                    this.disabled = true;
+                    for (let i in this.validate) {
+                        this.validate[i].state = null;
+                    }
+                }
             },
             onsubmit() {
-                this.$v.form.$touch();
-                if (this.$v.form.$anyError) {
-                    return;
-                }
-                if (this.form.USR_UID.trim() === "") {
-                    if (this.form.USR_USERNAME.trim() === "") {
-                        this.validate.USR_USERNAME.message = this.$root.translation('ID_IS_REQUIRED');
-                        this.validate.USR_USERNAME.state = false;
-                        this.disableButtonSave = true;
-                        return;
-                    }
-                    if (this.form.USR_NEW_PASS.trim() === "") {
-                        this.validate.USR_NEW_PASS.message = this.$root.translation('ID_IS_REQUIRED');
-                        this.validate.USR_NEW_PASS.state = false;
-                        this.disableButtonSave = true;
-                        return;
-                    }
-                    if (this.form.USR_CNF_PASS.trim() === "") {
-                        this.validate.USR_CNF_PASS.message = this.$root.translation('ID_IS_REQUIRED');
-                        this.validate.USR_CNF_PASS.state = false;
-                        this.disableButtonSave = true;
-                        return;
-                    }
-                    if (this.form.USR_CNF_PASS.trim() !== this.form.USR_NEW_PASS.trim()) {
-                        this.validate.USR_CNF_PASS.message = this.$root.translation("ID_NEW_PASS_SAME_OLD_PASS");
-                        this.validate.USR_CNF_PASS.state = false;
-                        this.disableButtonSave = true;
-                        return;
-                    }
-                }
-                for (let i in this.userExtendedAttributesList) {
-                    let status = this.validateExtendedAttribute(this.userExtendedAttributesList[i]);
-                    if (this.userExtendedAttributesList[i].required === 1) {
-                        if (status === null || status === false) {
+                this.validateFirstName();
+                this.validateLastName();
+                let promise = this.validateUserName();
+                promise.then(response => {
+                    response;
+                    this.validateEmail();
+                    let promise2 = this.validatePassword();
+                    promise2.then(response2 => {
+                        response2;
+                        this.validateConfirmationPassword();
+                        this.validateCostByHour();
+                        if (this.validate.USR_FIRSTNAME.state === false ||
+                                this.validate.USR_LASTNAME.state === false ||
+                                this.validate.USR_USERNAME.state === false ||
+                                this.validate.USR_EMAIL.state === false ||
+                                this.validate.USR_NEW_PASS.state === false ||
+                                this.validate.USR_CNF_PASS.state === false ||
+                                this.validate.USR_COST_BY_HOUR.state === false
+                                ) {
                             return;
                         }
-                    }
-                }
+                        for (let i in this.userExtendedAttributesList) {
+                            let status = this.validateExtendedAttribute(this.userExtendedAttributesList[i]);
+                            if (this.userExtendedAttributesList[i].required === 1) {
+                                if (status === null || status === false) {
+                                    return;
+                                }
+                            }
+                        }
+                        this.save();
+                    });
+                });
+            },
+            save() {
                 //get form data
                 let extendedAttributes = {};
                 for (let i in this.userExtendedAttributesList) {
@@ -453,9 +525,7 @@
                         extendedAttributes[attributeId] = value;
                     }
                 }
-
                 let formData = new FormData();
-                formData.append("_token", "EE2sNzIAdIYNLJE8UQY2Qj7CyewqtPkMRusDviix");
                 formData.append("USR_FIRSTNAME", this.form.USR_FIRSTNAME);
                 formData.append("USR_LASTNAME", this.form.USR_LASTNAME);
                 formData.append("USR_USERNAME", this.form.USR_USERNAME);
@@ -480,7 +550,7 @@
                 formData.append("currentPassword", "");
                 formData.append("USR_NEW_PASS", this.form.USR_NEW_PASS);
                 formData.append("USR_CNF_PASS", this.form.USR_CNF_PASS);
-                formData.append("USR_PHOTO", "");
+                formData.append("USR_PHOTO", this.form.USR_PHOTO);
                 formData.append("PREF_DEFAULT_MENUSELECTED", this.form.PREF_DEFAULT_MENUSELECTED);
                 formData.append("PREF_DEFAULT_CASES_MENUSELECTED", this.form.PREF_DEFAULT_CASES_MENUSELECTED);
                 formData.append("action", "saveUser");
@@ -488,7 +558,7 @@
                 formData.append("USR_LOGGED_NEXT_TIME", this.form.USR_LOGGED_NEXT_TIME);
                 formData.append("USR_EXTENDED_ATTRIBUTES_DATA", JSON.stringify(extendedAttributes));
                 formData.append("_token", document.querySelector('meta[name="csrf-token"]').content);
-                axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
+                return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;
                             if ("error" in response.data && response.data.error !== "") {
@@ -505,8 +575,19 @@
                                 }).catch(err => {
                                     err;
                                 });
+                            } else {
+                                if (this.$root.modeOfForm() === 1) {
+                                    window.location = this.$root.baseUrl() + "users/users_List";
+                                }
+                                if (this.$root.modeOfForm() === 2) {
+                                    this.classCustom = "sr-only sr-only-focusable";
+                                    this.classCustom2 = "";
+                                    this.disabled = true;
+                                    for (let i in this.validate) {
+                                        this.validate[i].state = null;
+                                    }
+                                }
                             }
-                            window.location = this.$root.baseUrl() + "users/users_List";
                         })
                         .catch(error => {
                             error;
@@ -514,11 +595,30 @@
                         .finally(() => {
                         });
             },
-            validateState(name) {
-                const {$dirty, $error} = this.$v.form[name];
-                return $dirty ? !$error : null;
+            validateFirstName() {
+                this.validate.USR_FIRSTNAME.state = true;
+                if (this.form.USR_FIRSTNAME.trim() === "") {
+                    this.validate.USR_FIRSTNAME.state = false;
+                    this.validate.USR_FIRSTNAME.message = this.$root.translation('ID_IS_REQUIRED');
+                }
+            },
+            validateLastName() {
+                this.validate.USR_LASTNAME.state = true;
+                if (this.form.USR_LASTNAME.trim() === "") {
+                    this.validate.USR_LASTNAME.state = false;
+                    this.validate.USR_LASTNAME.message = this.$root.translation('ID_IS_REQUIRED');
+                }
             },
             validateUserName() {
+                this.validate.USR_USERNAME.state = true;
+                if (this.form.USR_USERNAME.trim() === "") {
+                    this.validate.USR_USERNAME.state = false;
+                    this.validate.USR_USERNAME.message = this.$root.translation('ID_IS_REQUIRED');
+                    return new Promise((resolve, reject) => {
+                        resolve();
+                        reject;
+                    });
+                }
                 this.disableButtonSave = true;
                 let formData = new FormData();
                 formData.append("action", "testUsername");
@@ -527,14 +627,13 @@
                 return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;
+                            this.disableButtonSave = false;
                             this.validate.USR_USERNAME.message = response.data.descriptionText;
                             if (response.data.exists === false) {
                                 this.validate.USR_USERNAME.state = true;
-                                this.disableButtonSave = false;
                                 return;
                             }
                             this.validate.USR_USERNAME.state = false;
-                            this.disableButtonSave = true;
                         })
                         .catch(error => {
                             error;
@@ -542,7 +641,34 @@
                         .finally(() => {
                         });
             },
+            validateEmail() {
+                this.validate.USR_EMAIL.state = true;
+                if (this.form.USR_EMAIL.trim() === "") {
+                    this.validate.USR_EMAIL.state = false;
+                    this.validate.USR_EMAIL.message = this.$root.translation('ID_IS_REQUIRED');
+                    return;
+                }
+                if (/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4}))|((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$/i.test(this.form.USR_EMAIL) === false) {
+                    this.validate.USR_EMAIL.state = false;
+                    this.validate.USR_EMAIL.message = this.$root.translation('ID_INVALID_VALUE', [this.$root.translation('ID_EMAIL')]);
+                }
+            },
             validatePassword() {
+                this.validate.USR_NEW_PASS.state = true;
+                if (this.editing === true) {
+                    return new Promise((resolve, reject) => {
+                        resolve();
+                        reject;
+                    });
+                }
+                if (this.form.USR_NEW_PASS.trim() === "") {
+                    this.validate.USR_NEW_PASS.state = false;
+                    this.validate.USR_NEW_PASS.message = this.$root.translation('ID_IS_REQUIRED');
+                    return new Promise((resolve, reject) => {
+                        resolve();
+                        reject;
+                    });
+                }
                 this.disableButtonSave = true;
                 let formData = new FormData();
                 formData.append("action", "testPassword");
@@ -550,14 +676,10 @@
                 return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;
+                            this.disableButtonSave = false;
+                            let status = (response.data.STATUS === true);
+                            this.validate.USR_NEW_PASS.state = status;
                             this.validate.USR_NEW_PASS.message = response.data.DESCRIPTION;
-                            if (response.data.STATUS === true) {
-                                this.validate.USR_NEW_PASS.state = true;
-                                this.disableButtonSave = false;
-                                return;
-                            }
-                            this.validate.USR_NEW_PASS.state = false;
-                            this.disableButtonSave = true;
                         })
                         .catch(error => {
                             error;
@@ -566,15 +688,35 @@
                         });
             },
             validateConfirmationPassword() {
-                this.disableButtonSave = true;
-                this.validate.USR_CNF_PASS.message = this.$root.translation("ID_NEW_PASS_SAME_OLD_PASS");
-                if (this.form.USR_CNF_PASS === this.form.USR_NEW_PASS) {
-                    this.validate.USR_CNF_PASS.state = true;
-                    this.disableButtonSave = false;
+                this.validate.USR_CNF_PASS.state = true;
+                if (this.editing === true) {
+                    return new Promise((resolve, reject) => {
+                        resolve();
+                        reject;
+                    });
+                }
+                if (this.form.USR_CNF_PASS.trim() === "") {
+                    this.validate.USR_CNF_PASS.state = false;
+                    this.validate.USR_CNF_PASS.message = this.$root.translation('ID_IS_REQUIRED');
                     return;
                 }
-                this.validate.USR_CNF_PASS.state = false;
-                this.disableButtonSave = true;
+                if (this.form.USR_CNF_PASS !== this.form.USR_NEW_PASS) {
+                    this.validate.USR_CNF_PASS.state = false;
+                    this.validate.USR_CNF_PASS.message = this.$root.translation("ID_NEW_PASS_SAME_OLD_PASS");
+                }
+            },
+            validateCostByHour() {
+                this.validate.USR_COST_BY_HOUR.state = true;
+                this.form.USR_COST_BY_HOUR = this.form.USR_COST_BY_HOUR.toString();
+                if (this.form.USR_COST_BY_HOUR.trim() === "") {
+                    this.validate.USR_COST_BY_HOUR.state = false;
+                    this.validate.USR_COST_BY_HOUR.message = this.$root.translation('ID_IS_REQUIRED');
+                    return;
+                }
+                if (/^[0-9]/i.test(this.form.USR_COST_BY_HOUR) === false) {
+                    this.validate.USR_COST_BY_HOUR.state = false;
+                    this.validate.USR_COST_BY_HOUR.message = this.$root.translation('ID_INVALID_VALUE', [this.$root.translation('ID_COST_BY_HOUR')]);
+                }
             },
             validateExtendedAttribute(obj) {
                 let value = this.form.USR_EXTENDED_ATTRIBUTES_DATA[obj.attributeId];
@@ -587,6 +729,7 @@
                 return null;
             },
             load() {
+                this.urlImage = this.$root.baseUrl() + 'users/users_ViewPhotoGrid?pUID=' + window.USR_UID + '&h=' + Math.random();
                 let formData = new FormData();
                 formData.append("action", "userData");
                 formData.append("USR_UID", window.USR_UID);
@@ -885,6 +1028,43 @@
                 if (day.length < 2)
                     day = "0" + day;
                 return [year + 1, month, day].join("-");
+            },
+            avatarClick() {
+                let form = document.createElement('form');
+                var input = document.createElement("input");
+                input.type = "file";
+                form.appendChild(input);
+                form.style.display = "none";
+                document.body.appendChild(form);
+                let that = this;
+                input.onchange = function () {
+                    var file = input.files[0];
+                    //validate file extension
+                    if (/(\.jpg|\.jpeg|\.png|\.gif)$/i.test(file.name) === false) {
+                        that.$bvModal.msgBoxOk(that.$root.translation('ID_INVALID_EXTENSION'), {
+                            title: " ", //is important because title disappear
+                            hideHeaderClose: false,
+                            okTitle: that.$root.translation('ID_OK'),
+                            okVariant: "success",
+                            okOnly: true
+                        }).then(value => {
+                            if (value === false) {
+                                return;
+                            }
+                        }).catch(err => {
+                            err;
+                        });
+                        return;
+                    }
+                    that.form.USR_PHOTO = file;
+                    //preview
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        that.urlImage = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                };
+                input.click();
             },
             changeRole() {
                 this.getUserExtendedAttributesList();
