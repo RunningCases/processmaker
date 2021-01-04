@@ -504,7 +504,7 @@ class LdapAdvanced
      * @param Array $aAuthSource the authsource data
      * @return Object A object with the resulting ldap bind
      */
-    public function ldapConnection($aAuthSource)
+    public function ldapConnection($aAuthSource, &$resultLDAPStartTLS = false)
     {
         $pass = explode("_", $aAuthSource["AUTH_SOURCE_PASSWORD"]);
 
@@ -522,7 +522,7 @@ class LdapAdvanced
         ldap_set_option($ldapcnn, LDAP_OPT_REFERRALS, 0);
 
         if (isset($aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) && $aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) {
-            @ldap_start_tls($ldapcnn);
+            $resultLDAPStartTLS = @ldap_start_tls($ldapcnn);
             $ldapServer = "TLS " . $ldapServer;
             //$this->log($ldapcnn, "start tls");
         }

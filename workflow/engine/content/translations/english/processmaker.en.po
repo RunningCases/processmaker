@@ -26322,6 +26322,12 @@ msgid "Unassigned"
 msgstr "Unassigned"
 
 # TRANSLATION
+# LABEL/ID_TLS_CERTIFICATE_IS_NOT_INSTALLED_IN_THE_SERVER
+#: LABEL/ID_TLS_CERTIFICATE_IS_NOT_INSTALLED_IN_THE_SERVER
+msgid "TLS certificate is not installed in the server."
+msgstr "TLS certificate is not installed in the server."
+
+# TRANSLATION
 # LABEL/ID_TO
 #: LABEL/ID_TO
 msgid "[LABEL/ID_TO] To"
