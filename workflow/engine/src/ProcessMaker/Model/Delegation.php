@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use Cases;
 use DateTime;
 use G;
 use Illuminate\Database\Eloquent\Model;
@@ -1831,6 +1832,13 @@ class Delegation extends Model
      */
     public static function getThreadTitle(string $tasUid, int $appNumber, int $delIndexPrevious, $caseData = [])
     {
+        $cases = new Cases;
+        if (!is_array($caseData)) {
+            $r = $cases->unserializeData($caseData);
+            if($r !== false) {
+                $caseData = $r;
+            }
+        }
         // Get task title defined
         $task = new Task();
         $taskTitle = $task->taskCaseTitle($tasUid);
