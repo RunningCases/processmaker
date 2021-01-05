@@ -33,6 +33,12 @@ switch ($sort) {
     case 'PRO_CATEGORY_LABEL':
         $sort = 'PRO_CATEGORY';
         break;
+    case 'PRO_CREATE_DATE_LABEL':
+        $sort = 'PRO_CREATE_DATE';
+        break;
+    case 'PRO_UPDATE_DATE_LABEL':
+        $sort = 'PRO_UPDATE_DATE';
+        break;
     default:
         // keep the sort value
 }
