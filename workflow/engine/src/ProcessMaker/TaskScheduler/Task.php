@@ -23,6 +23,7 @@ use ProcessMaker\BusinessModel\Light\PushMessageAndroid;
 use ProcessMaker\BusinessModel\Light\PushMessageIOS;
 use ProcessMaker\BusinessModel\MessageApplication;
 use ProcessMaker\BusinessModel\TimerEvent;
+use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Plugins\PluginRegistry;
 use Propel;
@@ -679,6 +680,22 @@ class Task
         $job = function() use ($datetime, $frontEnd, $scheduledTaskIdentifier) {
             $timerEvent = new TimerEvent();
             $timerEvent->startContinueCaseByTimerEvent($datetime, $frontEnd);
+
+            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+        };
+        $this->runTask($job);
+    }
+
+    /**
+     * Deleting web entry cases created one week ago or more
+     */
+    public function webEntriesCron()
+    {
+        $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
+        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+
+        $job = function() use ($scheduledTaskIdentifier) {
+            WebEntry::deleteOldWebEntries();
 
             Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };

@@ -14,13 +14,11 @@
  */
 
 use Illuminate\Foundation\Http\Kernel;
-use ProcessMaker\BusinessModel\Cases;
 
 require_once __DIR__ . '/../../../gulliver/system/class.g.php';
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
 require_once __DIR__ . '/../../../bootstrap/app.php';
 
-use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -349,9 +347,8 @@ try {
                     }
                     break;
                 case 'webentriescron':
-                    setExecutionMessage('Deleting web entry cases created one week ago or more');
-                    WebEntry::deleteOldWebEntries();
-                    setExecutionResultMessage('FINISHED');
+                    $task = new Task($asynchronous, $sObject);
+                    $task->webEntriesCron();
                     break;
                 /*----------------------------------********---------------------------------*/
                 case 'actionsByEmailEmailResponse':
