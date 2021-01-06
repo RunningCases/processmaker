@@ -395,6 +395,18 @@ try {
                         break;
                 }
             }
+            //remove duplicate elements
+            foreach ($rows as &$row) {
+                $row = json_encode($row);
+            }
+            $rows = array_unique($rows);
+            foreach ($rows as &$row) {
+                $row = json_decode($row);
+            }
+            //sort items by name for pretty view
+            usort($rows, function($a, $b) {
+                return $a->name > $b->name;
+            });
             print(G::json_encode($rows));
             break;
         case 'defaultCasesMenuOptionList':
