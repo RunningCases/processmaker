@@ -72,6 +72,7 @@ class LdapAdvanced
      */
     public function __construct()
     {
+        
     }
 
     /**
@@ -298,8 +299,8 @@ class LdapAdvanced
     public function progressBar($total, $count)
     {
         try {
-            $p = (int)(($count * 100) / $total);
-            $n = (int)($p / 2);
+            $p = (int) (($count * 100) / $total);
+            $n = (int) ($p / 2);
 
             return "[" . str_repeat("|", $n) . str_repeat(" ", 50 - $n) . "] $p%";
         } catch (Exception $e) {
@@ -454,7 +455,6 @@ class LdapAdvanced
      */
     public function log($link, $text)
     {
-        //$serverAddr = $_SERVER["SERVER_ADDR"];
         $logFile = PATH_DATA . "log/ldapAdvanced.log";
 
         if (!file_exists($logFile) || is_writable($logFile)) {
@@ -515,16 +515,19 @@ class LdapAdvanced
         }
 
         $ldapcnn = ldap_connect($aAuthSource['AUTH_SOURCE_SERVER_NAME'], $aAuthSource['AUTH_SOURCE_PORT']);
+        $this->stdLog($ldapcnn, "ldap_connect", $aAuthSource);
 
         $ldapServer = $aAuthSource["AUTH_SOURCE_SERVER_NAME"] . ":" . $aAuthSource["AUTH_SOURCE_PORT"];
 
         ldap_set_option($ldapcnn, LDAP_OPT_PROTOCOL_VERSION, 3);
+        $this->stdLog($ldapcnn, "ldap_set_option", $aAuthSource);
         ldap_set_option($ldapcnn, LDAP_OPT_REFERRALS, 0);
+        $this->stdLog($ldapcnn, "ldap_set_option", $aAuthSource);
 
         if (isset($aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) && $aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) {
             $resultLDAPStartTLS = @ldap_start_tls($ldapcnn);
+            $this->stdLog($ldapcnn, "ldap_start_tls", $aAuthSource);
             $ldapServer = "TLS " . $ldapServer;
-            //$this->log($ldapcnn, "start tls");
         }
 
         if ($aAuthSource["AUTH_ANONYMOUS"] == "1") {
@@ -534,6 +537,7 @@ class LdapAdvanced
             $bBind = @ldap_bind($ldapcnn, $aAuthSource['AUTH_SOURCE_SEARCH_USER'], $aAuthSource['AUTH_SOURCE_PASSWORD']);
             $this->log($ldapcnn, "bind $ldapServer with user " . $aAuthSource["AUTH_SOURCE_SEARCH_USER"]);
         }
+        $this->stdLog($ldapcnn, "ldap_bind", $aAuthSource);
         $this->getDiagnosticMessage($ldapcnn);
         if (!$bBind) {
             throw new Exception("Unable to bind to server: $ldapServer . " . "LDAP-Errno: " . ldap_errno($ldapcnn) . " : " . ldap_error($ldapcnn) . " \n");
@@ -582,6 +586,7 @@ class LdapAdvanced
         ];
         $message = '';
         ldap_get_option($linkIdentifier, LDAP_OPT_DIAGNOSTIC_MESSAGE, $messageError);
+        $this->stdLog($linkIdentifier, "ldap_get_option", ["error" => $messageError]);
         foreach ($keysError as $key => $value) {
             if (strpos($messageError, (string) $value['code']) !== false) {
                 $message = $value['message'];
@@ -613,8 +618,10 @@ class LdapAdvanced
             $arrayAttributes = array();
 
             $arrayAttributes['dn'] = ldap_get_dn($ldapcnn, $entry);
+            $this->stdLog($ldapcnn, "ldap_get_dn");
 
             $arrayAux = ldap_get_attributes($ldapcnn, $entry);
+            $this->stdLog($ldapcnn, "ldap_get_attributes");
 
             for ($i = 0; $i <= $arrayAux["count"] - 1; $i++) {
                 $key = strtolower($arrayAux[$i]);
@@ -667,6 +674,7 @@ class LdapAdvanced
                 $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromDepartmentSearchResult() > ldap_list > OK");
 
                 $numEntries = ldap_count_entries($ldapcnn, $searchResult);
+                $this->stdLog($ldapcnn, "ldap_count_entries");
 
                 $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromDepartmentSearchResult() > ldap_list > OK > \$numEntries ----> $numEntries");
 
@@ -676,6 +684,7 @@ class LdapAdvanced
                     $this->log($ldapcnn, "Search $dn accounts with identifier = $uidUserIdentifier");
 
                     $entry = ldap_first_entry($ldapcnn, $searchResult);
+                    $this->stdLog($ldapcnn, "ldap_first_entry");
 
                     do {
                         $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
@@ -773,8 +782,10 @@ class LdapAdvanced
 
             do {
                 ldap_control_paged_result($ldapcnn, $limit, true, $cookie);
+                $this->stdLog($ldapcnn, "ldap_control_paged_result", ["limit" => $limit]);
 
                 $searchResult = @ldap_list($ldapcnn, $dn, $filter, $this->arrayAttributesForUser);
+                $this->stdLog($ldapcnn, "ldap_list", ["filter" => $filter, "attributes" => $this->arrayAttributesForUser]);
 
                 if ($error = ldap_errno($ldapcnn)) {
                     $flagError = true;
@@ -793,6 +804,7 @@ class LdapAdvanced
 
                 if (!$flagError) {
                     ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                    $this->stdLog($ldapcnn, "ldap_control_paged_result_response");
                 }
             } while (($cookie !== null && $cookie != '') && !$flagError);
 
@@ -811,6 +823,7 @@ class LdapAdvanced
                     $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromDepartment() > \$filter ----> $filter");
 
                     $searchResult = @ldap_list($ldapcnn, $dn, $filter, $this->arrayAttributesForUser);
+                    $this->stdLog($ldapcnn, "ldap_list", ["attributes" => $this->arrayAttributesForUser]);
 
                     if ($error = ldap_errno($ldapcnn)) {
                         $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromDepartment() > ldap_list > ERROR > \$error ---->\n" . print_r($error, true));
@@ -891,13 +904,21 @@ class LdapAdvanced
                     $member = $value; //User DN
 
                     $searchResult = @ldap_search($ldapcnn, $member, $filter, $this->arrayAttributesForUser);
+                    $context = [
+                        "baseDN" => $member,
+                        "filter" => $filter,
+                        "attributes" => $this->arrayAttributesForUser
+                    ];
+                    $this->stdLog($ldapcnn, "ldap_search", $context);
 
                     if ($error = ldap_errno($ldapcnn)) {
                         //
                     } else {
                         if ($searchResult) {
                             if (ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                                $this->stdLog($ldapcnn, "ldap_count_entries");
                                 $entry = ldap_first_entry($ldapcnn, $searchResult);
+                                $this->stdLog($ldapcnn, "ldap_first_entry");
 
                                 $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
@@ -972,6 +993,12 @@ class LdapAdvanced
             $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > \$filter ----> $filter");
 
             $searchResult = @ldap_search($ldapcnn, $dn, $filter, array($memberAttribute));
+            $context = [
+                "baseDN" => $dn,
+                "filter" => $filter,
+                "attributes" => [$memberAttribute]
+            ];
+            $this->stdLog($ldapcnn, "ldap_search", $context);
 
             if ($error = ldap_errno($ldapcnn)) {
                 $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > ERROR > \$error ---->\n" . print_r($error, true));
@@ -982,11 +1009,13 @@ class LdapAdvanced
                     $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2");
 
                     $numEntries = ldap_count_entries($ldapcnn, $searchResult);
+                    $this->stdLog($ldapcnn, "ldap_count_entries");
 
                     $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2 > \$numEntries ----> $numEntries");
 
                     if ($numEntries > 0) {
                         $entry = ldap_first_entry($ldapcnn, $searchResult);
+                        $this->stdLog($ldapcnn, "ldap_first_entry");
 
                         $arrayGroupLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
@@ -1027,13 +1056,21 @@ class LdapAdvanced
                                 $memberAttribute2 = $memberAttribute . ';range=' . $start . '-' . $end;
 
                                 $searchResult = @ldap_search($ldapcnn, $dn, $filter, [$memberAttribute2]);
+                                $context = [
+                                    "baseDN" => $dn,
+                                    "filter" => $filter,
+                                    "attributes" => [$memberAttribute2]
+                                ];
+                                $this->stdLog($ldapcnn, "ldap_search", $context);
 
                                 if ($error = ldap_errno($ldapcnn)) {
                                     break;
                                 } else {
                                     if ($searchResult) {
                                         if (ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                                            $this->stdLog($ldapcnn, "ldap_count_entries");
                                             $entry = ldap_first_entry($ldapcnn, $searchResult);
+                                            $this->stdLog($ldapcnn, "ldap_first_entry");
 
                                             $arrayGroupLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
@@ -1347,16 +1384,24 @@ class LdapAdvanced
         $filter = "(&$filter(|(dn=$keyword)(uid=$keyword)(samaccountname=$keyword)(givenname=$keyword)(sn=$keyword)(cn=$keyword)(mail=$keyword)(userprincipalname=$keyword)))";
 
         $oSearch = @ldap_search($ldapcnn, $arrayAuthenticationSourceData["AUTH_SOURCE_BASE_DN"], $filter, array_merge($this->arrayAttributesForUser, $attributeSetAdd));
+        $context = [
+            "baseDN" => $arrayAuthenticationSourceData["AUTH_SOURCE_BASE_DN"],
+            "filter" => $filter,
+            "attribute" => array_merge($this->arrayAttributesForUser, $attributeSetAdd)
+        ];
+        $this->stdLog($ldapcnn, "ldap_search", $context);
 
         if ($oError = ldap_errno($ldapcnn)) {
             $this->log($ldapcnn, "Error in Search users");
         } else {
             if ($oSearch) {
                 $entries = ldap_count_entries($ldapcnn, $oSearch);
+                $this->stdLog($ldapcnn, "ldap_count_entries");
                 $totalUser = $entries;
 
                 if ($entries > 0) {
                     $oEntry = ldap_first_entry($ldapcnn, $oSearch);
+                    $this->stdLog($ldapcnn, "ldap_first_entry");
 
                     $countEntries = 0;
 
@@ -1508,6 +1553,12 @@ class LdapAdvanced
             $filter = "(&(" . $this->arrayObjectClassFilter["user"] . ")(|($uidUserIdentifier=$keyword)$filter2))";
 
             $searchResult = @ldap_search($ldapcnn, $arrayAuthenticationSourceData["AUTH_SOURCE_BASE_DN"], $filter, array_merge($this->arrayAttributesForUser, $attributeSetAdd));
+            $context = [
+                "baseDN" => $arrayAuthenticationSourceData["AUTH_SOURCE_BASE_DN"],
+                "filter" => $filter,
+                "attribute" => array_merge($this->arrayAttributesForUser, $attributeSetAdd)
+            ];
+            $this->stdLog($ldapcnn, "ldap_search", $context);
 
             if ($error = ldap_errno($ldapcnn)) {
                 $messageError = ldap_err2str($error);
@@ -1516,9 +1567,11 @@ class LdapAdvanced
             } else {
                 if ($searchResult) {
                     $numEntries = ldap_count_entries($ldapcnn, $searchResult);
+                    $this->stdLog($ldapcnn, "ldap_count_entries");
 
                     if ($numEntries > 0) {
                         $entry = ldap_first_entry($ldapcnn, $searchResult);
+                        $this->stdLog($ldapcnn, "ldap_first_entry");
 
                         $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
@@ -1702,8 +1755,15 @@ class LdapAdvanced
 
             do {
                 ldap_control_paged_result($ldapcnn, $limit, true, $cookie);
+                $this->stdLog($ldapcnn, "ldap_control_paged_result", ["pageSize" => $limit, "isCritical" => true]);
 
                 $searchResult = @ldap_search($ldapcnn, $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'], $filter, ['dn', 'ou']);
+                $context = [
+                    "baseDN" => $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
+                    "filter" => $filter,
+                    "attributes" => ['dn', 'ou']
+                ];
+                $this->stdLog($ldapcnn, "ldap_search", $context);
 
                 if ($error = ldap_errno($ldapcnn)) {
                     $this->log($ldapcnn, 'Error in Search');
@@ -1723,7 +1783,9 @@ class LdapAdvanced
 
                         //Get departments from the ldap entries
                         if (ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                            $this->stdLog($ldapcnn, "ldap_count_entries");
                             $entry = ldap_first_entry($ldapcnn, $searchResult);
+                            $this->stdLog($ldapcnn, "ldap_first_entry", $context);
 
                             do {
                                 $arrayEntryData = $this->ldapGetAttributes($ldapcnn, $entry);
@@ -1752,6 +1814,7 @@ class LdapAdvanced
 
                 if (!$flagError) {
                     ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                    $this->stdLog($ldapcnn, "ldap_control_paged_result_response", $context);
                 }
             } while (($cookie !== null && $cookie != '') && !$flagError);
 
@@ -1791,6 +1854,12 @@ class LdapAdvanced
         $ldapcnn = $this->ldapcnn;
 
         $oSearch = @ldap_search($ldapcnn, $aAuthSource["AUTH_SOURCE_BASE_DN"], $dFilter, $this->arrayAttributesForUser);
+        $context = [
+            "baseDN" => $aAuthSource["AUTH_SOURCE_BASE_DN"],
+            "filter" => $dFilter,
+            "attributes" => $this->arrayAttributesForUser
+        ];
+        $this->stdLog($ldapcnn, "ldap_search", $context);
 
         if ($oError = ldap_errno($ldapcnn)) {
             return $aUsers;
@@ -1798,7 +1867,9 @@ class LdapAdvanced
             if ($oSearch) {
                 //get the departments from the ldap entries
                 if (ldap_count_entries($ldapcnn, $oSearch) > 0) {
+                    $this->stdLog($ldapcnn, "ldap_count_entries");
                     $oEntry = ldap_first_entry($ldapcnn, $oSearch);
+                    $this->stdLog($ldapcnn, "ldap_first_entry");
 
                     do {
                         $aAttr = $this->ldapGetAttributes($ldapcnn, $oEntry);
@@ -1886,7 +1957,6 @@ class LdapAdvanced
 
         return $terminated;
     }
-
     /* activate an user previously deactivated
       if user is now in another department, we need the second parameter, the depUid
 
@@ -2326,8 +2396,15 @@ class LdapAdvanced
 
             do {
                 ldap_control_paged_result($ldapcnn, $limit, true, $cookie);
+                $this->stdLog($ldapcnn, "ldap_control_paged_result", ["pageSize" => $limit, "isCritical" => true]);
 
                 $searchResult = @ldap_search($ldapcnn, $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'], $filter, ['dn', 'cn']);
+                $context = [
+                    "baseDN" => $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
+                    "filter" => $filter,
+                    "attributes" => ['dn', 'cn']
+                ];
+                $this->stdLog($ldapcnn, "ldap_search", $context);
 
                 if ($error = ldap_errno($ldapcnn)) {
                     $this->log($ldapcnn, 'Error in Search');
@@ -2337,9 +2414,11 @@ class LdapAdvanced
                     if ($searchResult) {
                         //Get groups from the ldap entries
                         $countEntries = ldap_count_entries($ldapcnn, $searchResult);
+                        $this->stdLog($ldapcnn, "ldap_count_entries");
 
                         if ($countEntries > 0) {
                             $entry = ldap_first_entry($ldapcnn, $searchResult);
+                            $this->stdLog($ldapcnn, "ldap_first_entry");
 
                             do {
                                 $arrayEntryData = $this->ldapGetAttributes($ldapcnn, $entry);
@@ -2358,6 +2437,7 @@ class LdapAdvanced
 
                 if (!$flagError) {
                     ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                    $this->stdLog($ldapcnn, "ldap_control_paged_result_response");
                 }
             } while (($cookie !== null && $cookie != '') && !$flagError);
 
@@ -2513,14 +2593,15 @@ class LdapAdvanced
     {
         $dn = trim($dn, ',');
         $result = ldap_explode_dn($dn, 0);
+        $this->stdLog(null, "ldap_explode_dn", ["dn" => $dn]);
 
         if (is_array($result)) {
             unset($result['count']);
 
             foreach ($result as $key => $value) {
-                $result[$key] = addcslashes(preg_replace_callback("/\\\([0-9A-Fa-f]{2})/", function ($m)  {
-                    return chr(hexdec($m[1]));
-                }, $value), '<>,"');
+                $result[$key] = addcslashes(preg_replace_callback("/\\\([0-9A-Fa-f]{2})/", function ($m) {
+                        return chr(hexdec($m[1]));
+                    }, $value), '<>,"');
             }
         }
 
@@ -2777,12 +2858,20 @@ class LdapAdvanced
             $arrayAttribute = array_merge($this->arrayAttributesForUser, array_values($arrayAttributesToSync));
 
             $searchResult = @ldap_search($ldapcnn, $userDn, '(objectclass=*)', $arrayAttribute);
+            $context = [
+                "baseDN" => $userDn,
+                "filter" => "(objectclass=*)",
+                "attributes" => $arrayAttribute
+            ];
+            $this->stdLog($ldapcnn, "ldap_search", $context);
 
             if ($error = ldap_errno($ldapcnn)) {
                 //
             } else {
                 if ($searchResult && ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                    $this->stdLog($ldapcnn, "ldap_count_entries");
                     $entry = ldap_first_entry($ldapcnn, $searchResult);
+                    $this->stdLog($ldapcnn, "ldap_first_entry", $context);
 
                     $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
@@ -2873,11 +2962,18 @@ class LdapAdvanced
             $filter = '(&(' . $this->arrayObjectClassFilter['user'] . ')(|' . $filterUsers . '))';
 
             $searchResult = @ldap_search($ldapcnn, $arrayAuthSourceData['AUTH_SOURCE_BASE_DN'], $filter, $this->arrayAttributesForUser);
+            $context = [
+                "baseDN" => $arrayAuthSourceData['AUTH_SOURCE_BASE_DN'],
+                "filter" => $filter,
+                "attributes" => $this->arrayAttributesForUser
+            ];
+            $this->stdLog($ldapcnn, "ldap_search", $context);
 
             if ($error = ldap_errno($ldapcnn)) {
                 //
             } else {
                 if ($searchResult && ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                    $this->stdLog($ldapcnn, "ldap_count_entries");
                     //Get Users from DB
                     $arrayUser = [];
 
@@ -2897,14 +2993,15 @@ class LdapAdvanced
 
                     //Get Users from LDAP Server
                     $entry = ldap_first_entry($ldapcnn, $searchResult);
+                    $this->stdLog($ldapcnn, "ldap_first_entry");
 
                     do {
                         if ($this->ldapUserUpdateByDnAndData(
-                            $ldapcnn,
-                            $arrayAuthSourceData,
-                            ldap_get_dn($ldapcnn, $entry),
-                            $arrayUser
-                        )
+                                $ldapcnn,
+                                $arrayAuthSourceData,
+                                ldap_get_dn($ldapcnn, $entry),
+                                $arrayUser
+                            )
                         ) {
                             $countUser++;
 
@@ -3031,9 +3128,16 @@ class LdapAdvanced
             }
 
             $searchResult = @ldap_search($ldapcnn, $baseDn, '(|(objectclass=*))', ['dn']);
+            $context = [
+                "baseDN" => $baseDn,
+                "filter" => "(|(objectclass=*))",
+                "attributes" => ['dn']
+            ];
+            $this->stdLog($ldapcnn, "ldap_search", $context);
 
             if ($searchResult) {
                 $countEntries = ldap_count_entries($ldapcnn, $searchResult);
+                $this->stdLog($ldapcnn, "ldap_count_entries");
 
                 if ($countEntries > 0) {
                     $limit = ($countEntries > $limit) ? $limit : $countEntries;
@@ -3043,6 +3147,37 @@ class LdapAdvanced
             return $limit;
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Standard log
+     * @param resource $link
+     * @param string $message
+     * @param array $context
+     * @param string $level
+     */
+    public function stdLog($link, $message = "", $context = [], $level = "info")
+    {
+        if (empty($link)) {
+            switch ($level) {
+                case "error":
+                    Log::channel(':ldapAdvanced')->error($message, Bootstrap::context($context));
+                    break;
+                case "info":
+                default:
+                    Log::channel(':ldapAdvanced')->info($message, Bootstrap::context($context));
+                    break;
+            }
+            return;
+        }
+        $code = ldap_errno($link);
+        $detail = ldap_err2str($code);
+        $context["detail"] = $detail;
+        if ($code === 0) {
+            Log::channel(':ldapAdvanced')->info($message, Bootstrap::context($context));
+        } else {
+            Log::channel(':ldapAdvanced')->error($message, Bootstrap::context($context));
         }
     }
 }
