@@ -274,7 +274,7 @@ export default {
                         }
                     ],
                     makeTagText: function (params, data) {
-                        return  `${this.tagPrefix}: ${data[0].label || ''}`;
+                        return  `${this.tagPrefix} ${data[0].label || ''}`;
                     }
                 },
                 {
@@ -314,7 +314,7 @@ export default {
                         }
                     ],
                     makeTagText: function (params, data) {
-                        return  `${this.tagPrefix}: ${data[0].label || ''}`;
+                        return  `${this.tagPrefix} ${data[0].label || ''}`;
                     }
                 },
                 {
@@ -464,30 +464,31 @@ export default {
         onOk() {
             let self = this,
                 element,
-                tmp,
                 item,
+                filter,
                 initialFilters = [];
-            this.$root.$emit('bv::hide::popover');   
+            this.$root.$emit('bv::hide::popover');
             for (var i = 0; i < this.selected.length; i+=1) {
                 item = this.selected[i];
                 element = _.find(this.filterItems, function(o) { return o.id === item; });
                 if  (element) {
-                    _.forEach(element.items, function(value, key) {
-                        tmp = {
-                            filterVar: value.id,
-                            fieldId: item,
-                            value: '',
-                            label: "",
-                            options: []
-                        };
-                        initialFilters.push(tmp);
+                    _.forEach(element.items, function(value, key) {                       
+                        filter = _.find(self.filters, function(o) { return o.filterVar === value.id; });
+                        if (filter) {
+                            initialFilters.push(filter);
+                        } else {
+                            initialFilters.push({
+                                filterVar: value.id,
+                                fieldId: item,
+                                value: '',
+                                label: "",
+                                options: []
+                            });
+                        }
                     });
                 }
-                
             }
             this.$emit("onUpdateFilters", initialFilters);
-            
-            
         },
 
         cleanAllTags() {
