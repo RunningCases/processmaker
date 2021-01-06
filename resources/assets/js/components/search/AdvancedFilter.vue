@@ -10,15 +10,17 @@
                             :title="addSearchTitle"
                         >
                             <template v-slot:target-item>
-                                <b-button
-                                    id="popover-target-1"
-                                    variant="success"
-                                    size="sm"
-                                    href="#"
-                                    tabindex="0"
-                                >
-                                    <b-icon icon="plus"></b-icon>{{$t('ID_ADD_FILTER')}}
-                                </b-button>
+                                <div class="p-2">
+                                    <b-button
+                                        id="popover-target-1"
+                                        variant="success"
+                                        size="sm"
+                                        href="#"
+                                        tabindex="0"
+                                    >
+                                        <b-icon icon="plus"></b-icon>{{$t('ID_ADD_FILTER')}}
+                                    </b-button>
+                                </div>
                             </template>
                             <template v-slot:body>
                                 <b-form-group>
@@ -33,12 +35,14 @@
                                 </b-form-group>
                             </template>
                         </SearchPopover>
-                        <b-button
-                            size="sm"
-                            @click="cleanAllTags"
-                            variant="danger"
-                            >{{$t('ID_CLEAN_ALL')}}</b-button
-                        >
+                        <div class="p-2">
+                            <b-button
+                                size="sm"
+                                @click="cleanAllTags"
+                                variant="danger"
+                                >{{$t('ID_CLEAN_ALL')}}
+                            </b-button>
+                        </div>
                     </div>
                 </b-col>
 
@@ -96,51 +100,57 @@
             <b-row>
                 <b-col>
                     <div class="d-flex flex-row">
-                        <b-form-tags
-                            input-id="tags-pills"
-                            v-model="searchTags"
-                            size="sm"
-                        >
-                            <template v-slot="{ tags, tagVariant, removeTag }">
-                                <div
-                                    class="d-inline-block"
-                                    style="font-size: 1rem;"
+                        <div class="tag row">
+                            <div class="col-11">
+                                <b-form-tags
+                                    input-id="tags-pills"
+                                    v-model="searchTags"
+                                    size="sm"
                                 >
-                                    <b-form-tag
-                                        v-for="tag in tags"
-                                        @remove="customRemove(removeTag, tag)"
-                                        :key="tag"
-                                        :title="tag"
-                                        :variant="tagVariant"
-                                        @click="onClickTag"
-                                        class="mr-1 badge badge-light"
-                                    >   
-                                        
-                                        <div :id="tag">
-                                            <i class="fas fa-tags"></i>
-                                             {{ tagContent(tag) }}
+                                    <template v-slot="{ tags, tagVariant, removeTag }">
+                                        <div
+                                            class="d-inline-block"
+                                            style="font-size: 1rem;"
+                                        >
+                                            <b-form-tag
+                                                v-for="tag in tags"
+                                                @remove="customRemove(removeTag, tag)"
+                                                :key="tag"
+                                                :title="tag"
+                                                :variant="tagVariant"
+                                                @click="onClickTag"
+                                                class="mr-1 badge badge-light"
+                                            >   
+                                                
+                                                <div :id="tag" class="p-2">
+                                                    <i class="fas fa-tags"></i>
+                                                    {{ tagContent(tag) }}
+                                                </div>
+                                                <component
+                                                    v-bind:is="tagComponent(tag)"
+                                                    v-bind:info="tagInfo(tag)"
+                                                    v-bind:tag="tag"
+                                                    v-bind:filter="dataToFilter(tag)"
+                                                    @updateSearchTag="updateSearchTag"
+                                                />
+                                            </b-form-tag>
                                         </div>
-                                        <component
-                                            v-bind:is="tagComponent(tag)"
-                                            v-bind:info="tagInfo(tag)"
-                                            v-bind:tag="tag"
-                                            v-bind:filter="dataToFilter(tag)"
-                                            @updateSearchTag="updateSearchTag"
-                                        />
-                                    </b-form-tag>
-                                </div>
-                            </template>
-                        </b-form-tags>
-                        <b-input-group-append>
-                            <b-button
-                                pill
-                                variant="outline-secondary"
-                                class="pull-right"
-                                @click="onSearch"
-                            >
-                                <b-icon icon="search"></b-icon>
-                            </b-button>
-                        </b-input-group-append>
+                                    </template>
+                                </b-form-tags>
+                            </div>
+                            <div class="col-1">
+                                <b-input-group-append>
+                                    <b-button
+                                        pill
+                                        variant="outline-secondary"
+                                        class="pull-right"
+                                        @click="onSearch"
+                                    >
+                                    <b-icon icon="search"></b-icon>
+                                    </b-button>
+                                </b-input-group-append>
+                            </div>
+                        </div>
                     </div>
                 </b-col>
             </b-row>
@@ -623,5 +633,9 @@ export default {
 
 .bv-example-row-flex-cols .row {
     min-height: 10rem;
+}
+
+.tag {
+    width: 100%;
 }
 </style>
