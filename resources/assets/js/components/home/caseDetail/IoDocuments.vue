@@ -5,7 +5,7 @@
       <div class="card-text">
         <div
           v-for="item in data.inputDocuments"
-          :key="item.title"
+          :key="item.data.APP_DOC_UID"
           class="v-attached-block"
         >
           <div class="v-list v-list-row block">
@@ -79,6 +79,13 @@ export default {
       return this.icon[icon] ? this.icon[icon] : "fas fa-file-alt";
     },
     href(item) {
+      if (item.data.DOWNLOAD_LINK) {
+        return (
+          window.config.SYS_SERVER +
+          window.config.SYS_URI +
+          `cases/${item.data.DOWNLOAD_LINK}`
+        );
+      }
       return (
         window.config.SYS_SERVER +
         window.config.SYS_URI +
