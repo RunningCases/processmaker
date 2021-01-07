@@ -131,6 +131,8 @@ $userCanAccess = 1;
 global $translation;
 
 $pmDynaform = new PmDynaform();
+ScriptVariables::add('defaultOption', $defaultOption);
+ScriptVariables::add('_nodeId', isset($confDefaultOption) ? $confDefaultOption : "PM_USERS");
 ScriptVariables::add('SYS_CREDENTIALS', $pmDynaform->getCredentials());
 ScriptVariables::add('SYS_SERVER', System::getHttpServerHostnameRequestsFrontEnd());
 ScriptVariables::add('SYS_WORKSPACE', config("system.workspace"));
