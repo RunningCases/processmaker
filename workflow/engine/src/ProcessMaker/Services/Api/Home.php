@@ -330,6 +330,8 @@ class Home extends Api
                     case 'IN_PROGRESS':
                     case 'COMPLETED':
                         $list = new Participated();
+                        // todo: some queries related to the PROCESS_USER are using the USR_UID
+                        $list->setUserUid($usrUid);
                         $list->setParticipatedStatus($filter);
                         $list->setProperties($properties);
                         $result['data'] = $list->getData();
@@ -338,6 +340,8 @@ class Home extends Api
                     case 'SUPERVISING':
                         // Scope that search for the SUPERVISING cases by specific user
                         $list = new Supervising();
+                        // todo: some queries related to the PROCESS_USER are using the USR_UID
+                        $list->setUserUid($usrUid);
                         $list->setProperties($properties);
                         $result['data'] = $list->getData();
                         $result['total'] = $list->getPagingCounters();
@@ -388,12 +392,16 @@ class Home extends Api
                         $participated->setParticipatedStatus($participatedStatus);
                         $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
                         $participated->setUserId($usrId);
+                        // todo: some queries related to the PROCESS_USER are using the USR_UID
+                        $participated->setUserUid($usrUid);
                         $counter->counter = $participated->getCounter();
                         break;
                     case 'SUPERVISING':
                         $supervising = new Supervising();
                         $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
-                        $supervising->setUserUid($usrId);
+                        $supervising->setUserId($usrId);
+                        // todo: some queries related to the PROCESS_USER are using the USR_UID
+                        $supervising->setUserUid($usrUid);
                         $counter->counter = $supervising->getCounter();
                         break;
                     default:
