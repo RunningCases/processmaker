@@ -156,6 +156,9 @@ export default {
                 this.filters = [];
                 this.pageId = null;
                 this.page = item.item.id || "MyCases";
+                if (this.$refs["component"] && this.$refs["component"].updateView) {
+                    this.$refs["component"].updateView();
+                }
             }
         },
         setCounter() {
@@ -178,16 +181,6 @@ export default {
                 .catch((e) => {
                     console.error(e);
                 });
-            }
-        },
-        /**
-         * Update page component
-         */
-        updatePage(data, page, callback) {
-            this.dataCase = data;
-            this.page = page;
-            if (this.$refs["component"] && this.$refs["component"].update) {
-                this.$refs["component"].update(data, callback);
             }
         },
         onResize() {
@@ -257,6 +250,9 @@ export default {
         onUpdatePage(page) {
             this.lastPage = this.page;
             this.page = page;
+            if (this.$refs["component"] && this.$refs["component"].updateView) {
+                this.$refs["component"].updateView();
+            }
         },
         onUpdateDataCase(data) {
             this.dataCase = data;
