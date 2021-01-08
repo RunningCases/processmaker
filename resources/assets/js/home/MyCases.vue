@@ -126,6 +126,11 @@ export default {
     },
     mounted() {
         this.getHeaders();
+        // force to open start cases modal
+        // if the user has start case as a default case menu option
+        if (window.config._nodeId === "CASES_START_CASE") {
+            this.$refs["newRequest"].show();
+        }
     },
     watch: {},
     computed: {
