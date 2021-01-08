@@ -131,21 +131,21 @@ export default {
         categories = [];
       _.each(data, (o) => {
         index = _.findIndex(categories, (c) => {
-          return c.id == o.categoryId;
+          return c.id == o.pro_category;
         });
         if (index == -1) {
           categories.push({
-            id: o.categoryId,
-            title: o.categoryName,
+            id: o.pro_category,
+            title: o.category_name,
             items: [],
           });
           index = categories.length - 1;
         }
         categories[index].items.push({
-          title: o.text,
-          description: o.text,
-          task_uid: o.taskId,
-          pro_uid: o.processId,
+          title: o.pro_title,
+          description: o.pro_description,
+          task_uid: o.tas_uid,
+          pro_uid: o.pro_uid,
           onClick: that.startNewCase,
         });
       });
