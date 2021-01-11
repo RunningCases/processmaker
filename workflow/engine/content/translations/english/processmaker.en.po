@@ -4176,6 +4176,12 @@ msgid "Start Case"
 msgstr "Start Case"
 
 # TRANSLATION
+# LABEL/ID_CASE_STATUS
+#: LABEL/ID_CASE_STATUS
+msgid "Case Status"
+msgstr "Case Status"
+
+# TRANSLATION
 # LABEL/ID_CASE_STOPPED_TRIGGER
 #: LABEL/ID_CASE_STOPPED_TRIGGER
 msgid "The case has not stopped due to its trigger."
@@ -10486,6 +10492,12 @@ msgstr "You have set a invalid Application Number"
 #: LABEL/ID_INVALID_CASE_DELEGATION_INDEX
 msgid "Invalid Case Delegation index for this user"
 msgstr "Invalid Case Delegation index for this user"
+
+# TRANSLATION
+# LABEL/ID_INVALID_CASE_NUMBER
+#: LABEL/ID_INVALID_CASE_NUMBER
+msgid "Invalid case number"
+msgstr "Invalid case number"
 
 # TRANSLATION
 # LABEL/ID_INVALID_CASE_NUMBER_RANGE
@@ -24084,6 +24096,12 @@ msgid "Search by Start Date:"
 msgstr "Search by Start Date:"
 
 # TRANSLATION
+# LABEL/ID_SEARCH_BY_STATUS
+#: LABEL/ID_SEARCH_BY_STATUS
+msgid "Search by Status:"
+msgstr "Search by Status:"
+
+# TRANSLATION
 # LABEL/ID_SEARCH_BY_TASK_NAME
 #: LABEL/ID_SEARCH_BY_TASK_NAME
 msgid "Search by Task Name:"
@@ -25362,6 +25380,12 @@ msgid "Successful connection"
 msgstr "Successful connection"
 
 # TRANSLATION
+# LABEL/ID_SUCCESSFUL_TEST_CONNECTION
+#: LABEL/ID_SUCCESSFUL_TEST_CONNECTION
+msgid "Successful Test Connection"
+msgstr "Successful Test Connection"
+
+# TRANSLATION
 # LABEL/ID_SUCCESS_DIRECTORIES_WRITABLE
 #: LABEL/ID_SUCCESS_DIRECTORIES_WRITABLE
 msgid "Success, all required directories are writable."
@@ -25896,6 +25920,12 @@ msgid "Error: The application {0} is not canceled."
 msgstr "Error: The application {0} is not canceled."
 
 # TRANSLATION
+# LABEL/ID_THE_ATTRIBUTE_HAS_ALREADY_INFORMATION_STORED_FOR_USERS_PLEASE_CONFIRM_THE_DELETE
+#: LABEL/ID_THE_ATTRIBUTE_HAS_ALREADY_INFORMATION_STORED_FOR_USERS_PLEASE_CONFIRM_THE_DELETE
+msgid "The attribute {0} has already information stored for users, if you proceed to delete this attribute all information for users stored in the attribute will be deleted, please confirm."
+msgstr "The attribute {0} has already information stored for users, if you proceed to delete this attribute all information for users stored in the attribute will be deleted, please confirm."
+
+# TRANSLATION
 # LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
 #: LABEL/ID_THE_ATTRIBUTE_WILL_BE_DELETED_PLEASE_CONFIRM
 msgid "The attribute {0} will be deleted, please confirm."
@@ -26302,6 +26332,12 @@ msgstr "Start Case"
 #: LABEL/ID_TITLE_UNASSIGNED
 msgid "Unassigned"
 msgstr "Unassigned"
+
+# TRANSLATION
+# LABEL/ID_TLS_CERTIFICATE_IS_NOT_INSTALLED_IN_THE_SERVER
+#: LABEL/ID_TLS_CERTIFICATE_IS_NOT_INSTALLED_IN_THE_SERVER
+msgid "TLS certificate is not installed in the server."
+msgstr "TLS certificate is not installed in the server."
 
 # TRANSLATION
 # LABEL/ID_TO
@@ -27676,6 +27712,12 @@ msgstr "The row '{USR_UID}' in table USER doesn't exist!"
 #: LABEL/ID_USER_WITH_ROLE
 msgid "Users with role"
 msgstr "Users with role"
+
+# TRANSLATION
+# LABEL/ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING
+#: LABEL/ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING
+msgid "Please just use alphanumeric characters including: {0}"
+msgstr "Please just use alphanumeric characters including: {0}"
 
 # TRANSLATION
 # LABEL/ID_USE_LANGUAGE_URL

@@ -200,40 +200,35 @@
                 this.statusAttributeId = null;
             },
             onsubmit() {
-                this.statusName = true;
-                if (this.form.name.trim() === "") {
-                    this.statusName = false;
-                    this.statusNameMessage = this.$root.translation("ID_IS_REQUIRED");
-                    return;
-                }
-                this.statusAttributeId = true;
-                if (this.form.attributeId.trim() === "") {
-                    this.statusAttributeId = false;
-                    this.statusAttributeIdMessage = this.$root.translation("ID_IS_REQUIRED");
-                    return;
-                }
-                if (this.form.attributeId.length >= 50) {
-                    this.statusAttributeId = false;
-                    this.statusAttributeIdMessage = this.$root.translation("ID_INVALID_MAX_PERMITTED", [this.$root.translation('ID_ATTRIBUTE_ID'), '50']);
-                    return;
-                }
-                if (/^[a-zA-Z][_0-9a-zA-Z]+$/.test(this.form.attributeId) === false) {
-                    this.statusAttributeId = false;
-                    this.statusAttributeIdMessage = this.$root.translation("ID_INVALID_DATA");
-                    return;
-                }
                 let promise = this.validateName();
                 promise.then(response => {
                     response;
                     let promise2 = this.validateAttributeId();
                     promise2.then(response2 => {
                         response2;
-                        this.saveForm();
+                        if (this.statusName === true && this.statusAttributeId === true) {
+                            this.saveForm();
+                        }
                     });
                 });
             },
             validateName() {
-                this.statusValidation = false;
+                this.statusName = true;
+                if (this.form.name.trim() === "") {
+                    this.statusName = false;
+                    this.statusNameMessage = this.$root.translation("ID_IS_REQUIRED");
+                    return;
+                }
+                if (this.form.name.length >= 50) {
+                    this.statusName = false;
+                    this.statusNameMessage = this.$root.translation("ID_INVALID_MAX_PERMITTED", [this.$root.translation('ID_ATTRIBUTE_NAME'), '50']);
+                    return;
+                }
+                if (/^[a-zA-Z][-_0-9a-zA-Z]+$/.test(this.form.name) === false) {
+                    this.statusName = false;
+                    this.statusNameMessage = this.$root.translation("ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING", ["- _"]);
+                    return;
+                }
                 let formData = new FormData();
                 formData.append("id", this.form.id);
                 formData.append("name", this.form.name);
@@ -245,7 +240,6 @@
                                 this.statusNameMessage = response.data.message;
                             } else {
                                 this.statusName = true;
-                                this.statusValidation = true;
                             }
                         })
                         .catch(error => {
@@ -255,10 +249,20 @@
                         });
             },
             validateAttributeId() {
-                this.statusValidation = false;
-                if (/^[a-zA-Z][_0-9a-zA-Z]+$/.test(this.form.attributeId) === false) {
+                this.statusAttributeId = true;
+                if (this.form.attributeId.trim() === "") {
                     this.statusAttributeId = false;
-                    this.statusAttributeIdMessage = this.$root.translation("ID_INVALID_DATA");
+                    this.statusAttributeIdMessage = this.$root.translation("ID_IS_REQUIRED");
+                    return;
+                }
+                if (this.form.attributeId.length >= 250) {
+                    this.statusAttributeId = false;
+                    this.statusAttributeIdMessage = this.$root.translation("ID_INVALID_MAX_PERMITTED", [this.$root.translation('ID_ATTRIBUTE_ID'), '250']);
+                    return;
+                }
+                if (/^[a-zA-Z][-_.0-9a-zA-Z]+$/.test(this.form.attributeId) === false) {
+                    this.statusAttributeId = false;
+                    this.statusAttributeIdMessage = this.$root.translation("ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING", [". - _"]);
                     return;
                 }
                 let formData = new FormData();
@@ -272,7 +276,6 @@
                                 this.statusAttributeIdMessage = response.data.message;
                             } else {
                                 this.statusAttributeId = true;
-                                this.statusValidation = true;
                             }
                         })
                         .catch(error => {

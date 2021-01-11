@@ -557,4 +557,33 @@ class TaskTest extends TestCase
             Queue::assertPushed(TaskScheduler::class);
         }
     }
+
+    /**
+     * Tests the webEntriesCron method with jobs in the task scheduler
+     *
+     * @test
+     * @covers ProcessMaker\TaskScheduler\Task::runTask()
+     * @covers ProcessMaker\TaskScheduler\Task::webEntriesCron()
+     * @dataProvider asynchronousCases
+     */
+    public function it_should_test_webEntriesCron_method($asynchronous)
+    {
+        $task = new Task($asynchronous, '');
+
+        //assert synchronous for cron file
+        if ($asynchronous === false) {
+            ob_start();
+            $task->webEntriesCron();
+            $printing = ob_get_clean();
+            $this->assertEmpty($printing);
+        }
+
+        //assert asynchronous for job process
+        if ($asynchronous === true) {
+            Queue::fake();
+            Queue::assertNothingPushed();
+            $task->webEntriesCron();
+            Queue::assertPushed(TaskScheduler::class);
+        }
+    }
 }

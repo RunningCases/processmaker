@@ -216,11 +216,7 @@
                     {value: "ldap", text: "Open LDAP"},
                     {value: "ds", text: "389 DS"}
                 ],
-                roles: [
-                    {value: "PROCESSMAKER_ADMIN", text: this.$root.translation("ID_SYSTEM_ADMINISTRATOR")},
-                    {value: "PROCESSMAKER_MANAGER", text: this.$root.translation("ID_MANAGER")},
-                    {value: "PROCESSMAKER_OPERATOR", text: this.$root.translation("ID_OPERATOR")}
-                ],
+                roles: [],
                 show: true
             };
         },
@@ -283,6 +279,22 @@
                                             if (response.data.status === "OK") {
                                                 this.testStatus = true;
                                                 this.buttonLabel = this.$root.translation("ID_SAVE");
+                                                if ("message" in response.data) {
+                                                    this.$bvModal.msgBoxOk(response.data.message, {
+                                                        title: " ", //is important because title disappear
+                                                        hideHeaderClose: false,
+                                                        okTitle: this.$root.translation('ID_OK'),
+                                                        okVariant: "success",
+                                                        okOnly: true
+                                                    });
+                                                }
+                                                this.$bvModal.msgBoxOk(this.$root.translation('ID_SUCCESSFUL_TEST_CONNECTION'), {
+                                                    title: " ", //is important because title disappear
+                                                    hideHeaderClose: false,
+                                                    okTitle: this.$root.translation('ID_OK'),
+                                                    okVariant: "success",
+                                                    okOnly: true
+                                                });
                                                 return;
                                             }
                                             //test fail
@@ -330,7 +342,7 @@
             },
             optionSaveButton(row) {
                 this.$refs['fas-b-modal-upload-file'].hide();
-                row.AUTH_SOURCE_UID = "";
+                row.AUTH_SOURCE_UID = this.form.uid;
                 let form = this.rowToForm(row);
                 this.load(form);
             },
@@ -427,6 +439,27 @@
                     this.form.groupIdentifier = "uniquemember";
                     this.form.signInPolicyForLDAP = "0";
                 }
+            },
+            getRolesList() {
+                let formData = new FormData();
+                formData.append("action", "rolesList");
+                return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
+                        .then(response => {
+                            response;
+                            let data = [];
+                            for (let i in response.data) {
+                                data.push({
+                                    value: response.data[i].ROL_UID,
+                                    text: response.data[i].ROL_CODE
+                                });
+                            }
+                            this.roles = data;
+                        })
+                        .catch(error => {
+                            error;
+                        })
+                        .finally(() => {
+                        });
             }
         },
         watch: {
@@ -438,6 +471,11 @@
                 },
                 deep: true
             }
+        },
+        mounted() {
+            this.$nextTick(function () {
+                this.getRolesList();
+            });
         }
     }
 </script>

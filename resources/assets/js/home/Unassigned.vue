@@ -188,16 +188,16 @@ export default {
           CASE_NUMBER: v.APP_NUMBER,
           CASE_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
-          TASK: {
+          TASK: [{
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
-          },
+          }],
           USR_FIRSTNAME: v.USR_FIRSTNAME,
           USR_LASTNAME: v.USR_LASTNAME,
           USR_USERNAME: v.USR_USERNAME,
-          DUE_DATE: v.DEL_TASK_DUE_DATE,
-          DELEGATION_DATE: v.DEL_DELEGATE_DATE,
+          DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
+          DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
           PRIORITY: v.DEL_PRIORITY_LABEL,
           PRO_UID: v.PRO_UID,
           TAS_UID: v.TAS_UID,
@@ -262,7 +262,7 @@ export default {
      */
     openCaseDetail(item) {
       let that = this;
-      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+      api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
         that.$emit("onUpdateDataCase", {
           APP_UID: item.APP_UID,
           DEL_INDEX: item.DEL_INDEX,

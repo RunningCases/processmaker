@@ -29,7 +29,7 @@
             :data="tableData"
             :columns="columns"
             :options="options"
-            ref="test"
+            ref="vueTable"
         >
             <div slot="info" slot-scope="props">
                 <b-icon
@@ -66,17 +66,19 @@
             <div slot="finish_date" slot-scope="props">
                 {{ props.row.FINISH_DATE }}
             </div>
-              <div slot="duration" slot-scope="props">
+            <div slot="duration" slot-scope="props">
                 {{ props.row.DURATION }}
             </div>
-            <div slot="actions" slot-scope="props">
-                <div class="btn-default">
-                    <i class="fas fa-comments"></i>
-                    <span class="badge badge-light">9</span>
-                    <span class="sr-only">unread messages</span>
+              <div slot="actions" slot-scope="props">
+                <div class="btn-default"  v-bind:style="{ color: props.row.MESSAGE_COLOR}" @click="openComments(props.row)">
+                    <span class="fas fa-comments"></span>
                 </div>
             </div>
         </v-server-table>
+        <ModalComments
+            ref="modal-comments"
+            @postNotes="onPostNotes"
+        ></ModalComments>
     </div>
 </template>
 <script>
@@ -84,6 +86,7 @@ import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import AdvancedFilter from "../components/search/AdvancedFilter";
 import TaskCell from "../components/vuetable/TaskCell.vue";
+import ModalComments from "./modal/ModalComments.vue";
 import api from "./../api/index";
 import { Event } from "vue-tables-2";
 
@@ -93,7 +96,8 @@ export default {
         AdvancedFilter,
         ButtonFleft,
         ModalNewRequest,
-        TaskCell
+        TaskCell,
+        ModalComments
     },
     props: ["id", "name", "filters"],
     data() {
@@ -155,12 +159,12 @@ export default {
                 },
                 customFilters: ["myfilter"],
             },
-            pmDateFormat: "Y-m-d H:i:s",
+            pmDateFormat: window.config.FORMATS.dateFormat
         };
     },
     watch: {
         id: function() {
-            this.$refs.test.refresh();
+            this.$refs.vueTable.refresh();
         },
     },
     methods: {
@@ -198,7 +202,7 @@ export default {
             });
         },
         /**
-         * Format Response API TODO to grid todo and columns
+         * Format the service response
          */
         formatDataResponse(response) {
             let data = [];
@@ -214,6 +218,9 @@ export default {
                     DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
                     APP_UID: v.APP_UID,
+                    PRO_UID: v.PRO_UID,
+                    TAS_UID: v.TAS_UID,
+                    MESSAGE_COLOR: v.CASE_NOTES_COUNT > 0 ? "black":"silver"
                 });
             });
             return data;
@@ -401,6 +408,8 @@ export default {
             this.$parent.dataCase = {
                 APP_UID: item.APP_UID,
                 DEL_INDEX: item.DEL_INDEX,
+                PRO_UID: item.PRO_UID,
+                TAS_UID: item.TAS_UID,
                 APP_NUMBER: item.CASE_NUMBER
             };
             this.$parent.page = "case-detail";
@@ -414,12 +423,16 @@ export default {
             let self = this;
             api.cases
                 .jump(params)
-                .then(function(data) {
-                    self.$parent.dataCase = params;
-                    self.$parent.page = "XCase";
+                .then(function(response) {
+                    if (response.data.exists) {
+                        self.$parent.dataCase = params;
+                        self.$parent.page = "XCase";
+                    } else {
+                        self.showAlert(response.data.message, "danger");                     
+                    }
                 })
                 .catch((err) => {
-                    throw new Error(err);
+                    self.showAlert(err.message, "danger");          
                 });
         },
         /**
@@ -435,7 +448,7 @@ export default {
          * @param {string} message - message to be displayen in the body
          * @param {string} type - alert type
          */
-        showAlert(message, type) {  
+        showAlert(message, type) {
             this.message = message;
             this.variant = type || "info";
             this.dismissCountDown = this.dismissSecs;
@@ -495,16 +508,36 @@ export default {
          */
         onSearch(params) {
             this.$nextTick(() => {
-                this.$refs.test.refresh();
+                this.$refs.vueTable.refresh();
             });
         },
         onUpdateFilters(params) {
             this.$emit("onUpdateFilters", params);
         },
+        /**
+         * Open the case notes modal
+         * @param {object} data - needed to create the data
+         */
+        openComments(data) {
+            let that = this;
+            api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
+                that.$refs["modal-comments"].dataCase = data;
+                that.$refs["modal-comments"].show();
+            });
+        },
+        /**
+         * Post notes event handler
+         */
+        onPostNotes() {
+            this.$refs["vueTable"].getData();
+        },
     },
 };
 </script>
 <style>
+.VuePagination__count {
+    display: none;
+}
 .v-container-mycases {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -512,7 +545,7 @@ export default {
     padding-right: 50px;
 }
 .v-user-cell {
-  display: inline-block;
+    display: inline-block;
 }
 .v-user-cell-ellipsis {
     white-space: nowrap;

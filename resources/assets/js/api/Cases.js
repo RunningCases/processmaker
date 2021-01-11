@@ -111,6 +111,11 @@ export let cases = {
             window.config.SYS_URI +
             `cases/open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
     },
+    cases_open(data) {
+        return axios.get(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/cases_Open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
+    },
     cancel(data) {
         var params = new URLSearchParams();
         params.append('action', 'cancelCase');

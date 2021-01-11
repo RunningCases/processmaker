@@ -14,7 +14,7 @@
                     <b-form-group
                         :state="valueState"
                         label-for="name-input"
-                        :invalid-feedback="$t('ID_INVALID_CASE_NUMBER_RANGE')"
+                        :invalid-feedback="$t('ID_INVALID_CASE_NUMBER')"
                     >
                         <b-form-input
                             id="name-input"

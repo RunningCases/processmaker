@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\Model;
 
+use Cases;
 use DateTime;
 use G;
 use Illuminate\Database\Eloquent\Model;
@@ -453,6 +454,18 @@ class Delegation extends Model
     public function scopeCasesTo($query, int $to)
     {
         return $query->where('APP_DELEGATION.APP_NUMBER', '<=', $to);
+    }
+
+    /**
+     * Scope for query to get the positive cases for avoid the web entry
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePositiveCases($query)
+    {
+        return $query->where('APP_DELEGATION.APP_NUMBER', '>', 0);
     }
 
     /**
@@ -1594,7 +1607,7 @@ class Delegation extends Model
             }
             $items = $query->get();
             $items->each(function ($item) use (&$data) {
-                $data[] = get_object_vars($item);
+                $data[] = $item->toArray();
             });
         } else {
             // Set offset and limit if were sent
@@ -1819,6 +1832,13 @@ class Delegation extends Model
      */
     public static function getThreadTitle(string $tasUid, int $appNumber, int $delIndexPrevious, $caseData = [])
     {
+        $cases = new Cases;
+        if (!is_array($caseData)) {
+            $r = $cases->unserializeData($caseData);
+            if($r !== false) {
+                $caseData = $r;
+            }
+        }
         // Get task title defined
         $task = new Task();
         $taskTitle = $task->taskCaseTitle($tasUid);
@@ -1829,7 +1849,11 @@ class Delegation extends Model
             // If is empty get the previous title
             if ($delIndexPrevious > 0) {
                 $thread = self::getThreadInfo($appNumber, $delIndexPrevious);
-                $threadTitle = $thread['DEL_TITLE'];
+                if(empty($thread['DEL_TITLE'])) {
+                    $threadTitle = '# '. $appNumber;
+                } else {
+                    $threadTitle = $thread['DEL_TITLE'];
+                }
             } else {
                 $threadTitle = '# '. $appNumber;
             }

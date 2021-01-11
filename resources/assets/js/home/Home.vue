@@ -22,6 +22,7 @@
                 ref="component"
                 :filters="filters"
                 :id="pageId"
+                :pageUri="pageUri"
                 :name="pageName"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
@@ -46,6 +47,7 @@ import CaseDetail from "./CaseDetail";
 import XCase from "./XCase";
 import TaskReassignments from "./TaskReassignments";
 import AdvancedSearch from "./AdvancedSearch";
+import LegacyFrame from "./LegacyFrame";
 
 import api from "./../api/index";
 
@@ -64,6 +66,7 @@ export default {
         Paused,
         Unassigned,
         CaseDetail,
+        LegacyFrame
     },
     data() {
         return {
@@ -78,7 +81,19 @@ export default {
             sidebarWidth: "310px",
             pageId: null,
             pageName: null,
-            filters:  null,
+            pageUri: null,
+            filters: null,
+            menuMap: {
+                CASES_MY_CASES: "MyCases",
+                CASES_SEARCH: "advanced-search",
+                CASES_INBOX: "todo",
+                CASES_DRAFT: "draft",
+                CASES_PAUSED: "paused",
+                CASES_SELFSERVICE: "unassigned",
+                CONSOLIDATED_CASES: "batch-routing",
+                CASES_TO_REASSIGN: "task-reassignments",
+                CASES_FOLDERS: "my-documents"
+            }
         };
     },
     mounted() {
@@ -86,20 +101,29 @@ export default {
         window.addEventListener("resize", this.onResize);
         this.getMenu();
         this.listenerIframe();
-        window.setInterval(this.setCounter, parseInt(window.config.FORMATS.casesListRefreshTime) * 1000);
+        window.setInterval(
+            this.setCounter,
+            parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
+        );
     },
     methods: {
         /**
          * Listener for iframes childs
          */
-        listenerIframe(){
+        listenerIframe() {
             let that = this,
-                eventMethod = window.addEventListener? "addEventListener": "attachEvent",
-	            eventer = window[eventMethod],
-	            messageEvent = eventMethod === "attachEvent"? "onmessage": "message";
+                eventMethod = window.addEventListener
+                    ? "addEventListener"
+                    : "attachEvent",
+                eventer = window[eventMethod],
+                messageEvent =
+                    eventMethod === "attachEvent" ? "onmessage" : "message";
 
-            eventer(messageEvent, function (e) { 
-                if (e.data === "redirect=todo" || e.message === "redirect=todo"){ 
+            eventer(messageEvent, function(e) {
+                if (
+                    e.data === "redirect=todo" ||
+                    e.message === "redirect=todo"
+                ) {
                     that.page = "todo";
                 }
             });
@@ -111,12 +135,25 @@ export default {
             api.menu
                 .get()
                 .then((response) => {
+                    this.setDefaultCasesMenu(response.data);
                     this.menu = this.mappingMenu(response.data);
                     this.setCounter();
                 })
                 .catch((e) => {
                     console.error(e);
                 });
+        },
+        /**
+         * Set default cases menu option
+         */
+        setDefaultCasesMenu(data) {
+            let menuItem = _.find(data, function(o) {
+                return o.id === window.config._nodeId;
+            });
+            if (menuItem && menuItem.href) {
+                this.page = this.menuMap[window.config._nodeId] || "MyCases";
+                this.$router.push(menuItem.href);
+            }
         },
         /**
          * Do a mapping of vue view for menus
@@ -126,22 +163,13 @@ export default {
             var i,
                 j,
                 newData = data,
-                auxId,
-                viewVue = {
-                    CASES_MY_CASES: "MyCases",
-                    CASES_SEARCH: "advanced-search",
-                    CASES_INBOX: "todo",
-                    CASES_DRAFT: "draft",
-                    CASES_PAUSED: "paused",
-                    CASES_SELFSERVICE: "unassigned",
-                    CONSOLIDATED_CASES: "batch-routing",
-                    CASES_TO_REASSIGN: "task-reassignments",
-                    CASES_FOLDERS: "my-documents",
-                };
+                auxId;
             for (i = 0; i < data.length; i += 1) {
                 auxId = data[i].id || "";
-                if (auxId !== "" && viewVue[auxId]) {
-                    newData[i].id = viewVue[auxId];
+                if (auxId !== "" && this.menuMap[auxId]) {
+                    newData[i].id = this.menuMap[auxId];
+                } else if (newData[i].href) {
+                    newData[i].id  = "LegacyFrame";
                 }
             }
             return newData;
@@ -151,10 +179,16 @@ export default {
                 this.page = "advanced-search";
                 this.filters = item.item.filters;
                 this.pageId = item.item.id;
+                this.pageUri = item.item.href;
                 this.pageName = item.item.title;
             } else {
                 this.filters = [];
+                this.pageId = null;
+                this.pageUri = item.item.href;
                 this.page = item.item.id || "MyCases";
+                if (this.$refs["component"] && this.$refs["component"].updateView) {
+                    this.$refs["component"].updateView();
+                }
             }
         },
         setCounter() {
@@ -167,7 +201,7 @@ export default {
                     var i,
                         j,
                         data = response.data;
-                    that.counters = data;    
+                    that.counters = data;
                     for (i = 0; i < that.menu.length; i += 1) {
                         if (that.menu[i].id && data[that.menu[i].id]) {
                             that.menu[i].badge.text = data[that.menu[i].id];
@@ -177,16 +211,6 @@ export default {
                 .catch((e) => {
                     console.error(e);
                 });
-            }
-        },
-        /**
-         * Update page component
-         */
-        updatePage(data, page, callback) {
-            this.dataCase = data;
-            this.page = page;
-            if (this.$refs["component"] && this.$refs["component"].update) {
-                this.$refs["component"].update(data, callback);
             }
         },
         onResize() {
@@ -256,6 +280,9 @@ export default {
         onUpdatePage(page) {
             this.lastPage = this.page;
             this.page = page;
+            if (this.$refs["component"] && this.$refs["component"].updateView) {
+                this.$refs["component"].updateView();
+            }
         },
         onUpdateDataCase(data) {
             this.dataCase = data;
@@ -279,7 +306,7 @@ export default {
         onUpdateFilters(filters) {
             this.filters = filters;
         }
-    },
+    }
 };
 </script>
 

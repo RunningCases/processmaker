@@ -28,7 +28,6 @@
             :options="options"
             v-show="showTable"
             ref="vueTable"
-            style="height: 120px"
           >
             <div slot="task" slot-scope="props">
               <TaskCell :data="props.row.TASK" />
@@ -378,6 +377,7 @@ export default {
         .casenotes(this.dataCase)
         .then((response) => {
           that.formatResponseCaseNotes(response.data.notes);
+          that.dataComments.noPerms = response.data.noPerms || 0;
         })
         .catch((err) => {
           throw new Error(err);
@@ -445,11 +445,11 @@ export default {
       let data = [];
       _.forEach(response, (v) => {
         data.push({
-          TASK: {
+          TASK: [{
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
-          },
+          }],
           CASE_TITLE: v.DEL_TITLE,
           ASSIGNEE: v.USR_FIRSTNAME + " " + v.USR_LASTNAME,
           STATUS: v.DEL_THREAD_STATUS,

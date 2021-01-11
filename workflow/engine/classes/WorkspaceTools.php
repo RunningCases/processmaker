@@ -2251,9 +2251,9 @@ class WorkspaceTools
 
                 CLI::logging("* Start Converting Web Entries v1.0 to v2.0 for BPMN processes...\n");
                 $start = microtime(true);
-                Bootstrap::setConstantsRelatedWs($workspace);
-                Propel::init(PATH_CONFIG . 'databases.php');
-                WebEntry::convertFromV1ToV2();
+                $workspace->initPropel(true);
+                $statement = Propel::getConnection('workflow')->createStatement();
+                $statement->executeQuery(WebEntry::UPDATE_QUERY_V1_TO_V2);
                 CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
 
                 CLI::logging("* Start migrating case title...\n");
@@ -5180,28 +5180,35 @@ class WorkspaceTools
      */
     public function migrateCaseTitleToThreads($args)
     {
+        // Define the main query
+        $query = "
+            UPDATE
+                `APP_DELEGATION`
+            LEFT JOIN
+                `APPLICATION` ON `APP_DELEGATION`.`APP_NUMBER` = `APPLICATION`.`APP_NUMBER`
+            SET
+                `APP_DELEGATION`.`DEL_TITLE` = `APPLICATION`.`APP_TITLE`
+            WHERE
+                (`APPLICATION`.`APP_STATUS_ID` IN (2) OR
+                (`APPLICATION`.`APP_STATUS_ID` IN (3, 4) AND
+                `APP_DELEGATION`.`DEL_LAST_INDEX` = 1))";
+
+        // Add additional filters
+        if (!empty($args[1]) && is_numeric($args[1])) {
+            $query .= " AND `APP_DELEGATION`.`APP_NUMBER` >= {$args[1]}";
+        }
+        if (!empty($args[2]) && is_numeric($args[2])) {
+            $query .= " AND `APP_DELEGATION`.`APP_NUMBER` <= {$args[2]}";
+        }
         try {
             if (!empty($args)) {
                 // Set workspace constants and initialize DB connection
                 Bootstrap::setConstantsRelatedWs($args[0]);
                 Propel::init(PATH_CONFIG . 'databases.php');
-                $query = Delegation::leftJoin('APPLICATION', function ($leftJoin) {
-                    $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
-                });
-                $query->where(function ($query) {
-                    $query->whereIn('APPLICATION.APP_STATUS_ID', [2]);
-                    $query->orWhere(function ($query) {
-                        $query->whereIn('APPLICATION.APP_STATUS_ID', [3, 4]);
-                        $query->where('APP_DELEGATION.DEL_LAST_INDEX', '=', 1);
-                    });
-                });
-                if (!empty($args[1]) && is_numeric($args[1])) {
-                    $query->where('APP_DELEGATION.APP_NUMBER', '>=', $args[1]);
-                }
-                if (!empty($args[2]) && is_numeric($args[2])) {
-                    $query->where('APP_DELEGATION.APP_NUMBER', '<=', $args[2]);
-                }
-                $query->update(['APP_DELEGATION.DEL_TITLE' => DB::raw('APPLICATION.APP_TITLE')]);
+
+                // Execute the query
+                $statement = Propel::getConnection('workflow')->createStatement();
+                $statement->executeQuery($query);
 
                 CLI::logging("The Case Title has been updated successfully in APP_DELEGATION table." . PHP_EOL);
             } else {

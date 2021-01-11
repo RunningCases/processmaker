@@ -10,15 +10,17 @@
                             :title="addSearchTitle"
                         >
                             <template v-slot:target-item>
-                                <b-button
-                                    id="popover-target-1"
-                                    variant="success"
-                                    size="sm"
-                                    href="#"
-                                    tabindex="0"
-                                >
-                                    <b-icon icon="plus"></b-icon>{{$t('ID_ADD_FILTER')}}
-                                </b-button>
+                                <div class="p-2">
+                                    <b-button
+                                        id="popover-target-1"
+                                        variant="success"
+                                        size="sm"
+                                        href="#"
+                                        tabindex="0"
+                                    >
+                                        <b-icon icon="plus"></b-icon>{{$t('ID_ADD_FILTER')}}
+                                    </b-button>
+                                </div>
                             </template>
                             <template v-slot:body>
                                 <b-form-group>
@@ -33,12 +35,14 @@
                                 </b-form-group>
                             </template>
                         </SearchPopover>
-                        <b-button
-                            size="sm"
-                            @click="cleanAllTags"
-                            variant="danger"
-                            >{{$t('ID_CLEAN_ALL')}}</b-button
-                        >
+                        <div class="p-2">
+                            <b-button
+                                size="sm"
+                                @click="cleanAllTags"
+                                variant="danger"
+                                >{{$t('ID_CLEAN_ALL')}}
+                            </b-button>
+                        </div>
                     </div>
                 </b-col>
 
@@ -74,13 +78,21 @@
                             </b-button>
                         </div>
                         <div class="p-2">
-                            <input
-                                v-model="caseNumber"
-                                size="1"
-                                class="form-control"
-                                :placeholder="$t('ID_CASE_NUMBER_CAPITALIZED')"
-                                type="number"
-                            />
+                            <form ref="jump" @submit.stop.prevent="handleJumpTo">
+                                <b-form-group
+                                    :state="caseNumberState"
+                                    :invalid-feedback="$t('ID_INVALID_APPLICATION_NUMBER')"
+                                >
+                                    <b-form-input
+                                        id="case-number-input"
+                                        v-model="caseNumber"
+                                        :state="caseNumberState"
+                                        :placeholder="$t('ID_CASE_NUMBER_CAPITALIZED')"
+                                        required
+                                        type="number"
+                                    ></b-form-input>
+                                </b-form-group>
+                            </form>
                         </div>
                     </div>
                 </b-col>
@@ -88,50 +100,57 @@
             <b-row>
                 <b-col>
                     <div class="d-flex flex-row">
-                        <b-form-tags
-                            input-id="tags-pills"
-                            v-model="searchTags"
-                            size="sm"
-                        >
-                            <template v-slot="{ tags, tagVariant, removeTag }">
-                                <div
-                                    class="d-inline-block"
-                                    style="font-size: 1rem;"
+                        <div class="tag row">
+                            <div class="col-11">
+                                <b-form-tags
+                                    input-id="tags-pills"
+                                    v-model="searchTags"
+                                    size="sm"
                                 >
-                                    <b-form-tag
-                                        v-for="tag in tags"
-                                        @remove="customRemove(removeTag, tag)"
-                                        :key="tag"
-                                        :title="tag"
-                                        :variant="tagVariant"
-                                        class="mr-1"
-                                    >   
-                                        
-                                        <div :id="tag">
-                                            <i class="fas fa-tags"></i>
-                                             {{ tagContent(tag) }}
+                                    <template v-slot="{ tags, tagVariant, removeTag }">
+                                        <div
+                                            class="d-inline-block"
+                                            style="font-size: 1rem;"
+                                        >
+                                            <b-form-tag
+                                                v-for="tag in tags"
+                                                @remove="customRemove(removeTag, tag)"
+                                                :key="tag"
+                                                :title="tag"
+                                                :variant="tagVariant"
+                                                @click="onClickTag"
+                                                class="mr-1 badge badge-light"
+                                            >   
+                                                
+                                                <div :id="tag" class="p-2">
+                                                    <i class="fas fa-tags"></i>
+                                                    {{ tagContent(tag) }}
+                                                </div>
+                                                <component
+                                                    v-bind:is="tagComponent(tag)"
+                                                    v-bind:info="tagInfo(tag)"
+                                                    v-bind:tag="tag"
+                                                    v-bind:filter="dataToFilter(tag)"
+                                                    @updateSearchTag="updateSearchTag"
+                                                />
+                                            </b-form-tag>
                                         </div>
-                                        <component
-                                            v-bind:is="tagComponent(tag)"
-                                            v-bind:info="tagInfo(tag)"
-                                            v-bind:tag="tag"
-                                            v-bind:filter="dataToFilter(tag)"
-                                            @updateSearchTag="updateSearchTag"
-                                        />
-                                    </b-form-tag>
-                                </div>
-                            </template>
-                        </b-form-tags>
-                        <b-input-group-append>
-                            <b-button
-                                pill
-                                variant="outline-secondary"
-                                class="pull-right"
-                                @click="onSearch"
-                            >
-                                <b-icon icon="search"></b-icon>
-                            </b-button>
-                        </b-input-group-append>
+                                    </template>
+                                </b-form-tags>
+                            </div>
+                            <div class="col-1">
+                                <b-input-group-append>
+                                    <b-button
+                                        pill
+                                        variant="outline-secondary"
+                                        class="pull-right"
+                                        @click="onSearch"
+                                    >
+                                    <b-icon icon="search"></b-icon>
+                                    </b-button>
+                                </b-input-group-append>
+                            </div>
+                        </div>
                     </div>
                 </b-col>
             </b-row>
@@ -233,6 +252,42 @@ export default {
                     }
                 },
                 {
+                    type: "caseStatus",
+                    id: "CaseStatus",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE_STATUS')}`,
+                    optionLabel: this.$i18n.t('ID_STATUS'),
+                    detail: "ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_STATUS'),
+                    items:[
+                        {
+                            id: "caseStatuses",
+                            value: "",
+                            options: [
+                                {
+                                    value: "DRAFT",
+                                    label: this.$i18n.t('ID_DRAFT')
+                                },
+                                {
+                                    value: "TO_DO",
+                                    label: this.$i18n.t('ID_TO_DO')
+                                },
+                                {
+                                    value: "COMPLETED",
+                                    label: this.$i18n.t('ID_COMPLETED')
+                                },
+                                {
+                                    value: "CANCELED",
+                                    label: this.$i18n.t('ID_CANCELLED')
+                                }
+                            ]
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix} ${data[0].label || ''}`;
+                    }
+                },
+                {
                     type: "ProcessName",
                     id: "processName",
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PROCESS_NAME')}`,
@@ -269,7 +324,7 @@ export default {
                         }
                     ],
                     makeTagText: function (params, data) {
-                        return  `${this.tagPrefix}: ${data[0].label || ''}`;
+                        return  `${this.tagPrefix} ${data[0].label || ''}`;
                     }
                 },
                 {
@@ -350,7 +405,8 @@ export default {
             caseNumber: "",
             saveModalTitle: this.$i18n.t('ID_SAVE_SEARCH'),
             localName: "",
-            nameState: null,        
+            nameState: null,
+            caseNumberState: null
         };
     },
     watch: {
@@ -360,12 +416,11 @@ export default {
                 this.searchTags = [];
                 this.selected = [];
                 this.setFilters(newVal);
-            },
+            }
         }
     },
-    
-
     methods: {
+     
         /**
          * Set Filters and make the tag labels
          * @param {object} filters json to manage the query 
@@ -419,30 +474,31 @@ export default {
         onOk() {
             let self = this,
                 element,
-                tmp,
                 item,
+                filter,
                 initialFilters = [];
-            this.$root.$emit('bv::hide::popover');   
+            this.$root.$emit('bv::hide::popover');
             for (var i = 0; i < this.selected.length; i+=1) {
                 item = this.selected[i];
                 element = _.find(this.filterItems, function(o) { return o.id === item; });
                 if  (element) {
-                    _.forEach(element.items, function(value, key) {
-                        tmp = {
-                            filterVar: value.id,
-                            fieldId: item,
-                            value: '',
-                            label: "",
-                            options: []
-                        };
-                        initialFilters.push(tmp);
+                    _.forEach(element.items, function(value, key) {                       
+                        filter = _.find(self.filters, function(o) { return o.filterVar === value.id; });
+                        if (filter) {
+                            initialFilters.push(filter);
+                        } else {
+                            initialFilters.push({
+                                filterVar: value.id,
+                                fieldId: item,
+                                value: '',
+                                label: "",
+                                options: []
+                            });
+                        }
                     });
                 }
-                
             }
             this.$emit("onUpdateFilters", initialFilters);
-            
-            
         },
 
         cleanAllTags() {
@@ -467,8 +523,25 @@ export default {
             temp = [...new Set([...this.filters,...params])]
             this.$emit("onUpdateFilters", temp);
         },
+        /**
+         * Jump To action handler
+         * Validates the form input
+         */
+        handleJumpTo() {
+            const valid = this.$refs.jump.checkValidity() && parseInt(this.caseNumber) > 0;
+            this.caseNumberState = valid;
+             if (!valid) {
+                return;
+            }
+            this.$nextTick(() => {
+                this.$emit("onJumpCase",  this.caseNumber);
+            });
+        },
+        /**
+         * Click evemt hamdler for "Jump To" button
+         */
         onJumpCase() {
-            this.$emit("onJumpCase",  this.caseNumber);
+            this.handleJumpTo();
         },
         onClick() {
             if (this.id) {
@@ -530,6 +603,12 @@ export default {
                 name: this.name,
                 filters: this.filters
             });
+        },
+        /**
+         * On click tag handler
+         */
+        onClickTag() {
+            this.$root.$emit('bv::hide::popover');   
         }
     }
 };
@@ -554,5 +633,9 @@ export default {
 
 .bv-example-row-flex-cols .row {
     min-height: 10rem;
+}
+
+.tag {
+    width: 100%;
 }
 </style>

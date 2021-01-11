@@ -38,8 +38,10 @@
 .v-sidebar-menu .vsm--item {
   position: relative;
   display: block;
-  width: 90%;
   margin-left: 10px;
+}
+.vsm_collapsed .vsm--item {
+  margin-left: 0px;  
 }
 
 .v-sidebar-menu .vsm--link {
@@ -107,6 +109,10 @@
   float: left;
   line-height: 30px;
   margin-right: 10px
+}
+
+.vsm--link_level-2>.vsm--icon {
+  margin-top: 8px;
 }
 
 .v-sidebar-menu .vsm--arrow {
@@ -270,7 +276,13 @@
 }
 
 .v-sidebar-menu {
-  background-color: #0099dd
+  background-color: #0099dd;
+}
+
+.v-sidebar-menu .vsm--scroll-wrapper {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .v-sidebar-menu .vsm--link {
@@ -390,4 +402,8 @@
 .v-sidebar-menu .vsm--arrow.vsm--arrow_open-rtl {
     -webkit-transform: translateY(-50%) rotate(90deg);
     transform: translateY(-50%) rotate(270deg) !important;
+}
+
+.vsm--mobile-item {
+  max-width: 200px !important;
 }

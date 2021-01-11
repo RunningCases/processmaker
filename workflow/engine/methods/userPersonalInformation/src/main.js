@@ -28,6 +28,20 @@ new Vue({
         },
         baseUrl() {
             return "../";
+        },
+        canEdit() {
+            let canEdit = true;
+            if ("canEdit" in window) {
+                canEdit = window.canEdit;
+            }
+            return canEdit;
+        },
+        modeOfForm() {
+            let modeOfForm = 1;
+            if ("modeOfForm" in window) {
+                modeOfForm = window.modeOfForm;
+            }
+            return modeOfForm;
         }
     }
 }).$mount('#app');

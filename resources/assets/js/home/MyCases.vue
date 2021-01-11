@@ -3,7 +3,7 @@
         <button-fleft :data="newCase"></button-fleft>
         <MyCasesFilter
             :filters="filters"
-            :title="$t('ID_MY_CASES')"
+            :title="title"
             @onRemoveFilter="onRemoveFilter"
             @onUpdateFilters="onUpdateFilters"
         />
@@ -39,14 +39,12 @@
                 {{ props.row.DURATION }}
             </div>
             <div slot="actions" slot-scope="props">
-                <div class="btn-default" @click="openComments(props.row)">
-                    <i class="fas fa-comments"></i>
-                    <span class="badge badge-light">9</span>
-                    <span class="sr-only">unread messages</span>
+                <div class="btn-default"  v-bind:style="{ color: props.row.MESSAGE_COLOR}" @click="openComments(props.row)">
+                    <span class="fas fa-comments"></span>
                 </div>
             </div>
         </v-server-table>
-        <ModalComments ref="modal-comments"></ModalComments>
+        <ModalComments ref="modal-comments" @postNotes="onPostNotes"></ModalComments>
     </div>
 </template>
 
@@ -73,6 +71,7 @@ export default {
     data() {
         return {
             metrics: [],
+            title: this.$i18n.t('ID_MY_CASES'),
             filter: "CASES_INBOX",
             allView: [],
             filterHeader: "STARTED",
@@ -122,11 +121,16 @@ export default {
                 },
             },
             translations: null,
-            pmDateFormat: "Y-m-d H:i:s",
+            pmDateFormat: window.config.FORMATS.dateFormat
         };
     },
     mounted() {
         this.getHeaders();
+        // force to open start cases modal
+        // if the user has start case as a default case menu option
+        if (window.config._nodeId === "CASES_START_CASE") {
+            this.$refs["newRequest"].show();
+        }
     },
     watch: {},
     computed: {
@@ -195,14 +199,15 @@ export default {
                     CASE_TITLE: v.DEL_TITLE,
                     PROCESS_NAME: v.PRO_TITLE,
                     STATUS: v.APP_STATUS,
-                    START_DATE: v.APP_CREATE_DATE || "",
-                    FINISH_DATE: v.APP_FINISH_DATE || "",
+                    START_DATE: v.APP_CREATE_DATE_LABEL || "",
+                    FINISH_DATE: v.APP_FINISH_DATE_LABEL || "",
                     PENDING_TASKS: that.formantPendingTask(v.PENDING),
                     DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
                     APP_UID: v.APP_UID,
                     PRO_UID: v.PRO_UID,
                     TAS_UID: v.TAS_UID,
+                    MESSAGE_COLOR: v.CASE_NOTES_COUNT > 0 ? "black":"silver"
                 });
             });
             return data;
@@ -402,6 +407,7 @@ export default {
                     item: v.id,
                     icon: info[v.id].icon,
                     onClick: (obj) => {
+                        that.title = obj.title;
                         that.filterHeader = obj.item;
                         that.$refs["vueTable"].getData();
                     },
@@ -410,6 +416,10 @@ export default {
             });
             return data;
         },
+        /**
+         * Open the case notes modal
+         * @param {object} data - needed to create the data
+         */
         openComments(data) {
             let that = this;
             api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
@@ -427,6 +437,12 @@ export default {
                 });
             }
         },
+        /**
+         * Post notes event handler
+         */
+        onPostNotes() {
+            this.$refs["vueTable"].getData();
+        }
     },
 };
 </script>

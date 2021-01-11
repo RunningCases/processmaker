@@ -65,7 +65,7 @@ $G_TMP_MENU->AddIdRawOption(
 $G_TMP_MENU->AddIdRawOption(
     'CASES_SENT',
     'casesListExtJs?action=sent',
-    G::LoadTranslation('ID_SENT'),
+    G::LoadTranslation('ID_MY_CASES'),
     'icon-cases-outbox.png'
 );
 $G_TMP_MENU->AddIdRawOption(

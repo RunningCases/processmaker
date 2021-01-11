@@ -5,6 +5,11 @@ namespace ProcessMaker\BusinessModel;
 use Exception;
 use Tests\TestCase;
 
+/**
+ * Class GroupTest
+ *
+ * @coversDefaultClass \ProcessMaker\BusinessModel\Group
+ */
 class GroupTest extends TestCase
 {
     /**

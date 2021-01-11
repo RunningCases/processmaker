@@ -150,7 +150,7 @@ Ext.onReady(function(){
         {name : 'PRO_TITLE'},
         {name : 'PRO_STATUS'},
         {name : 'PRO_STATUS_LABEL'},
-        {name : 'PRO_CREATE_DATE'},
+        {name : 'PRO_CREATE_DATE_LABEL'},
         {name : 'PRO_DEBUG'},
         {name : 'PRO_DEBUG_LABEL'},
         {name : 'PRO_CREATE_USER_LABEL'},
@@ -163,7 +163,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{name : "PRO_TYPE_PROCESS", type: "string"}
         /*----------------------------------********---------------------------------*/
-        ,{name : "PRO_UPDATE_DATE"}
+        ,{name : "PRO_UPDATE_DATE_LABEL"}
       ]
     }),
 
@@ -410,7 +410,7 @@ Ext.onReady(function(){
           return String.format("<font color='{0}'>{1}</font>", color, v);
         }}
         ,{header: _('ID_OWNER'), dataIndex: 'PRO_CREATE_USER_LABEL', width: 90}
-        ,{header: _('ID_PRO_CREATE_DATE'), dataIndex: 'PRO_CREATE_DATE', width: 90}
+        ,{header: _('ID_PRO_CREATE_DATE'), dataIndex: 'PRO_CREATE_DATE_LABEL', width: 90}
         ,{header: _('ID_INBOX'), dataIndex: 'CASES_COUNT_TO_DO', width: 50, align:'right', sortable: false}
         ,{header: _('ID_DRAFT'), dataIndex: 'CASES_COUNT_DRAFT', width: 50, align:'right', sortable: false}
         ,{header: _('ID_COMPLETED'), dataIndex: 'CASES_COUNT_COMPLETED', width: 50, align:'right', sortable: false}
@@ -420,7 +420,7 @@ Ext.onReady(function(){
         /*----------------------------------********---------------------------------*/
         ,{header: _("ID_TYPE_PROCESS"), dataIndex: "PRO_TYPE_PROCESS", width: 70}
         /*----------------------------------********---------------------------------*/
-        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE", width: 90}
+        ,{header: _("ID_LAN_UPDATE_DATE"), dataIndex: "PRO_UPDATE_DATE_LABEL", width: 90}
       ]
     }),
     sm: proSelModel,

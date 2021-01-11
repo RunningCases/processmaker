@@ -239,6 +239,27 @@ class SearchTest extends TestCase
     }
 
     /**
+     * It tests web entry with negative appNumbers
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @test
+     */
+    public function it_get_web_entry_not_submitted()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        $casesNotSubmitted = factory(Delegation::class, 5)->states('web_entry')->create();
+        // Create new Search object
+        $search = new Search();
+        // Set order by column value
+        $search->setOrderByColumn('APP_NUMBER');
+        $result = $search->getData();
+        // Review if the cases not submitted are not considered
+        $this->assertNotEmpty($result);
+        $this->assertEquals(count($result) , count($cases));
+    }
+
+    /**
      * It tests the getCounter method
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getCounter()

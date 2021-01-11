@@ -33,8 +33,8 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button class="btn btn-success btn-sm" @click="openCase(props)">
-          Continue
+        <button class="btn btn-success btn-sm" @click="openCase(props.row)">
+          {{ $t("ID_OPEN_CASE") }}
         </button>
       </div>
     </v-server-table>
@@ -69,13 +69,13 @@ export default {
         },
       },
       columns: [
-        "detail",
+       "detail",
         "case_number",
         "case_title",
         "process_name",
         "task",
         "priority",
-        "actions",
+        "actions"
       ],
       tableData: [],
       filters: {},
@@ -86,9 +86,7 @@ export default {
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
-          priority: this.$i18n.t("ID_PRIORITY"),
-          actions: "",
-          detail: "",
+          actions: ""
         },
         selectable: {
           mode: "single",
@@ -162,56 +160,19 @@ export default {
           CASE_NUMBER: v.APP_NUMBER,
           CASE_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
-          TASK: {
+          TASK: [{
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
-          },
-          USR_FIRSTNAME: v.USR_FIRSTNAME,
-          USR_LASTNAME: v.USR_LASTNAME,
-          USR_USERNAME: v.USR_USERNAME,
-          DUE_DATE: v.DEL_TASK_DUE_DATE,
-          DELEGATION_DATE: v.DEL_DELEGATE_DATE,
+          }],
           PRIORITY: v.DEL_PRIORITY_LABEL,
           PRO_UID: v.PRO_UID,
           TAS_UID: v.TAS_UID,
           DEL_INDEX: v.DEL_INDEX,
-          APP_UID: v.APP_UID,
+          APP_UID: v.APP_UID
         });
       });
       return data;
-    },
-    /**
-     * Get for user format name configured in Processmaker Environment Settings
-     *
-     * @param {string} name
-     * @param {string} lastName
-     * @param {string} userName
-     * @return {string} nameFormat
-     */
-    nameFormatCases(name, lastName, userName) {
-      let nameFormat = "";
-      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-        return nameFormat;
-      }
-      if (this.nameFormat === "@firstName @lastName") {
-        nameFormat = name + " " + lastName;
-      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-        nameFormat = name + " " + lastName + " (" + userName + ")";
-      } else if (this.nameFormat === "@userName") {
-        nameFormat = userName;
-      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-        nameFormat = userName + " (" + name + " " + lastName + ")";
-      } else if (this.nameFormat === "@lastName @firstName") {
-        nameFormat = lastName + " " + name;
-      } else if (this.nameFormat === "@lastName, @firstName") {
-        nameFormat = lastName + ", " + name;
-      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
-        nameFormat = lastName + ", " + name + " (" + userName + ")";
-      } else {
-        nameFormat = name + " " + lastName;
-      }
-      return nameFormat;
     },
     /**
      * Open selected cases in the inbox
@@ -220,22 +181,22 @@ export default {
      */
     openCase(item) {
       this.$emit("onUpdateDataCase", {
-        APP_UID: item.row.APP_UID,
-        DEL_INDEX: item.row.DEL_INDEX,
-        PRO_UID: item.row.PRO_UID,
-        TAS_UID: item.row.TAS_UID,
+        APP_UID: item.APP_UID,
+        DEL_INDEX: item.DEL_INDEX,
+        PRO_UID: item.PRO_UID,
+        TAS_UID: item.TAS_UID,
         ACTION: "draft",
       });
       this.$emit("onUpdatePage", "XCase");
     },
     /**
-     * Open case detail
+     * Open case detail from draft
      *
      * @param {object} item
      */
     openCaseDetail(item) {
       let that = this;
-      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+      api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
         that.$emit("onUpdateDataCase", {
           APP_UID: item.APP_UID,
           DEL_INDEX: item.DEL_INDEX,
