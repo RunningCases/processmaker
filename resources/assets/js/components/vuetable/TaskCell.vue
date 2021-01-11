@@ -1,6 +1,6 @@
 <template>
   <div class="v-task-cell">
-    <div v-for="item in data" class="d-flex mb-3">
+    <div v-for="item in data" v-bind:key="item.TITLE" class="d-flex mb-3">
       <div v-bind:style="{ color: activeColor(item.CODE_COLOR) }">
         <i class="fas fa-square"></i>
       </div>

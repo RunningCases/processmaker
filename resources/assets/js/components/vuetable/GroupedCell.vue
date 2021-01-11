@@ -1,6 +1,6 @@
 <template>
     <div v-if="data.length" class="grouped-cell">
-        <div v-for="item in data" class="d-flex mb-3">
+        <div v-for="item in data" v-bind:key="item.TITLE" class="d-flex mb-3">
             <div
                 v-bind:style="{ color: activeColor(item.STATUS) }"
                 v-b-popover.hover.top="item.DELAYED_MSG"
