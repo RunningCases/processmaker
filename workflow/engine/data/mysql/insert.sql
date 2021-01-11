@@ -58597,6 +58597,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ISSUED_TO','en','Issued to','2014-09-18') ,
 ( 'LABEL','ID_IS_NOT_REGISTERED','en','is not registered!','2014-01-15') ,
 ( 'LABEL','ID_IS_REQUIRED','en','is required','2014-01-15') ,
+( 'LABEL','ID_IT_WAS_IDENTIFIED_DUPLICATED_GROUPS_PLEASE_REMOVE_THESE_GROUPS','en','It was identified in the workspace duplicated groups, please remove manually these groups.','2020-12-02') ,
 ( 'LABEL','ID_IUD','en','#','2014-01-15') ,
 ( 'LABEL','ID_JAVASCRIPTS','en','JavaScripts','2014-01-15') ,
 ( 'LABEL','ID_JAVASCRIPT_CACHE','en','Javascript cache','2014-01-15') ,

@@ -164,63 +164,58 @@ try {
             $ldapAdvanced = getLDAPAdvanceInstance($_REQUEST["authUid"]);
 
             foreach ($groupsToCheck as $groupDN) {
-                //$baseDN = str_replace($authenticationSource["AUTH_SOURCE_BASE_DN"], "", $groupDN);
                 $ous = custom_ldap_explode_dn($groupDN);
                 $currentGroup = array_shift($ous);
-                //$parentDN = implode(",", $ous);
-                //$ous = custom_ldap_explode_dn($baseDN);
-                //$currentGroup = array_shift($ous);
-
-                foreach ($ous as $key => $val) {
-                    $aux = explode("=", $val);
-
-                    if (isset($aux[0]) && strtolower(trim($aux[0]) != "ou")) {
-                        unset($ous[$key]);
-                    }
-                }
-
                 $groupAux = explode("=", $currentGroup);
                 $groupTitle = isset($groupAux[1]) ? trim($groupAux[1]) : "";
-                $groupUID = $ldapAdvanced->getGrpUidIfExistsDN($groupDN);
-
-                if ($groupUID == "") {
-                    $group = new Groupwf();
-                    $row["GRP_TITLE"] = stripslashes($groupTitle);
-                    $row["GRP_LDAP_DN"] = $groupDN;
-                    $groupUID = $group->create($row);
-
-                    if ($groupUID == false) {
-                        $response = new stdclass();
-                        $response->status = "ERROR";
-                        $response->message = "Error creating group";
-                        die($json->encode($response));
-                    }
+                $groupTitle = stripslashes($groupTitle);
+                if (empty($groupTitle)) {
+                    continue;
+                }
+                $groupUid = $ldapAdvanced->getGroupUidByTitle($groupTitle);
+                $groupwf = new Groupwf();
+                if ($groupUid === "") {
+                    $group = [
+                        "GRP_TITLE" => $groupTitle,
+                        "GRP_LDAP_DN" => $groupDN
+                    ];
+                    $groupwf->create($group);
+                } else {
+                    $group = $groupwf->Load($groupUid);
+                    $group["GRP_LDAP_DN"] = $groupDN;
+                    $groupwf->update($group);
                 }
             }
 
             if (count($groupsToUncheck) > 0) {
                 foreach ($groupsToUncheck as $groupDN) {
-                    $groupUID = $ldapAdvanced->getGrpUidIfExistsDN($groupDN);
-
-                    if ($groupUID != "") {
-                        $group = new Groupwf();
-                        $groupInfo = $group->Load($groupUID);
-                        $groupInfo["GRP_LDAP_DN"] = "";
-                        $group->update($groupInfo);
-
+                    $ous = custom_ldap_explode_dn($groupDN);
+                    $currentGroup = array_shift($ous);
+                    $groupAux = explode("=", $currentGroup);
+                    $groupTitle = isset($groupAux[1]) ? trim($groupAux[1]) : "";
+                    $groupTitle = stripslashes($groupTitle);
+                    if (empty($groupTitle)) {
+                        continue;
+                    }
+                    $groupUid = $ldapAdvanced->getGroupUidByTitle($groupTitle);
+                    if ($groupUid != "") {
+                        $groupwf = new Groupwf();
+                        $group = $groupwf->Load($groupUid);
+                        $group["GRP_LDAP_DN"] = "";
+                        $groupwf->update($group);
                         if (!isset($authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"])) {
                             $authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"] = array();
                         }
-
-                        $authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"][] = $groupUID;
+                        $authenticationSource["AUTH_SOURCE_DATA"]["GROUPS_TO_UNASSIGN"][] = $groupUid;
                     }
                 }
-
                 $RBAC->authSourcesObj->update($authenticationSource);
             }
-
             $response = new stdclass();
             $response->status = "OK";
+            if ($ldapAdvanced->checkDuplicateTitles()) {
+                $response->warning = G::LoadTranslation("ID_IT_WAS_IDENTIFIED_DUPLICATED_GROUPS_PLEASE_REMOVE_THESE_GROUPS");
+            }
             die($json->encode($response));
             break;
     }
