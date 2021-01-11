@@ -31,21 +31,6 @@
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
-      <div slot="current_user" slot-scope="props">
-        {{
-          nameFormatCases(
-            props.row.USR_FIRSTNAME,
-            props.row.USR_LASTNAME,
-            props.row.USR_USERNAME
-          )
-        }}
-      </div>
-      <div slot="due_date" slot-scope="props">
-        {{ props.row.DUE_DATE }}
-      </div>
-      <div slot="delegation_date" slot-scope="props">
-        {{ props.row.DELEGATION_DATE }}
-      </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
         <button class="btn btn-success btn-sm" @click="openCase(props.row)">
@@ -89,11 +74,8 @@ export default {
         "case_title",
         "process_name",
         "task",
-        "current_user",
-        "due_date",
-        "delegation_date",
         "priority",
-        "actions",
+        "actions"
       ],
       tableData: [],
       filters: {},
@@ -104,11 +86,7 @@ export default {
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
-          current_user: this.$i18n.t("ID_CURRENT_USER"),
-          due_date: this.$i18n.t("ID_DUE_DATE"),
-          delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
-          priority: this.$i18n.t("ID_PRIORITY"),
-          actions: "",
+          actions: ""
         },
         selectable: {
           mode: "single",
@@ -187,51 +165,14 @@ export default {
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
           }],
-          USR_FIRSTNAME: v.USR_FIRSTNAME,
-          USR_LASTNAME: v.USR_LASTNAME,
-          USR_USERNAME: v.USR_USERNAME,
-          DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
-          DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
           PRIORITY: v.DEL_PRIORITY_LABEL,
           PRO_UID: v.PRO_UID,
           TAS_UID: v.TAS_UID,
           DEL_INDEX: v.DEL_INDEX,
-          APP_UID: v.APP_UID,
+          APP_UID: v.APP_UID
         });
       });
       return data;
-    },
-    /**
-     * Get for user format name configured in Processmaker Environment Settings
-     *
-     * @param {string} name
-     * @param {string} lastName
-     * @param {string} userName
-     * @return {string} nameFormat
-     */
-    nameFormatCases(name, lastName, userName) {
-      let nameFormat = "";
-      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-        return nameFormat;
-      }
-      if (this.nameFormat === "@firstName @lastName") {
-        nameFormat = name + " " + lastName;
-      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-        nameFormat = name + " " + lastName + " (" + userName + ")";
-      } else if (this.nameFormat === "@userName") {
-        nameFormat = userName;
-      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-        nameFormat = userName + " (" + name + " " + lastName + ")";
-      } else if (this.nameFormat === "@lastName @firstName") {
-        nameFormat = lastName + " " + name;
-      } else if (this.nameFormat === "@lastName, @firstName") {
-        nameFormat = lastName + ", " + name;
-      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
-        nameFormat = lastName + ", " + name + " (" + userName + ")";
-      } else {
-        nameFormat = name + " " + lastName;
-      }
-      return nameFormat;
     },
     /**
      * Open selected cases in the inbox
