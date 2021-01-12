@@ -128,8 +128,6 @@ class Supervising extends AbstractCases
             $query->joinApplication();
             // Only cases in to_do
             $query->caseTodo();
-            // Scope that return the results for an specific user
-            $query->userId($this->getUserId());
             // Scope the specific array of processes supervising
             $query->processInList($processes);
             // Group by appNumber
