@@ -224,7 +224,7 @@
                     this.statusNameMessage = this.$root.translation("ID_INVALID_MAX_PERMITTED", [this.$root.translation('ID_ATTRIBUTE_NAME'), '50']);
                     return;
                 }
-                if (/^[a-zA-Z][-_0-9a-zA-Z]+$/.test(this.form.name) === false) {
+                if (/^[a-zA-Z][-_0-9a-zA-Z\s]+$/.test(this.form.name) === false) {
                     this.statusName = false;
                     this.statusNameMessage = this.$root.translation("ID_USE_ALPHANUMERIC_CHARACTERS_INCLUDING", ["- _"]);
                     return;
@@ -360,7 +360,7 @@
             formToFormData(form) {
                 let formData = new FormData();
                 formData.append("UEA_ID", form.id);
-                formData.append("UEA_NAME", form.name);
+                formData.append("UEA_NAME", form.name.trim());
                 formData.append("UEA_ATTRIBUTE_ID", form.attributeId);
                 formData.append("UEA_HIDDEN", form.hidden);
                 formData.append("UEA_REQUIRED", form.required);
