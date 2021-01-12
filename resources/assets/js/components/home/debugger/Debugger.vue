@@ -12,7 +12,6 @@
       <button
         type="button"
         class="btn btn-secondary"
-       
         data-toggle="tooltip"
         data-placement="bottom"
         title="CLOSE"
@@ -20,10 +19,8 @@
         <i class="fa fa-x2 fa-times"></i>
       </button>
       <button
-
         type="button"
         class="btn btn-secondary"
-
         data-toggle="tooltip"
         data-placement="bottom"
         title="HIDE_INBOX"
@@ -31,10 +28,8 @@
         <i class="fa fa-outdent"></i>
       </button>
       <button
-
         type="button"
         class="btn btn-secondary"
-      
         data-toggle="tooltip"
         data-placement="bottom"
         title="language.ID_INBOX_SHOW_INBOX"
@@ -44,7 +39,6 @@
       <button
         type="button"
         class="btn btn-secondary"
-
         data-toggle="tooltip"
         data-placement="bottom"
         title="language.ID_INBOX_FULL_SCREEN"
@@ -52,25 +46,29 @@
         <i class="fa fa-window-maximize"></i>
       </button>
       <button
-     
         type="button"
         class="btn btn-secondary"
-
         data-toggle="modal"
         data-placement="bottom"
         data-target="#debugModal"
+        @click="showDebugger"
       >
         <i class="fa fa-bug"></i>
       </button>
     </div>
+    <ModalDebugger ref="modal-debugger" />
   </div>
 </template>
 
 <script>
+import ModalDebugger from "./ModalDebugger.vue";
 export default {
   name: "ButtonFleft",
   props: {
     data: Object,
+  },
+  components: {
+    ModalDebugger,
   },
   data() {
     return {
@@ -81,6 +79,9 @@ export default {
   methods: {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
+    },
+    showDebugger() {
+      this.$refs["modal-debugger"].show();
     },
   },
 };
@@ -237,5 +238,108 @@ export default {
   position: absolute;
   clip: rect(0, 0, 0, 0);
   pointer-events: none;
+}
+
+.hiddencon {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  right: -37px;
+  top: 10px;
+  opacity: 0.9;
+}
+
+.hiddencon-rtl {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  left: -37px;
+  top: 10px;
+  opacity: 0.9;
+}
+
+.hiddencon2 {
+  top: auto;
+  bottom: 10px;
+}
+
+.hiddencon:hover {
+  right: 0;
+}
+
+.hiddencon-rtl:hover {
+  left: 0;
+}
+
+.hiddencon-label {
+  margin-top: -40px;
+  margin-left: -23px;
+  padding: 4px;
+  position: absolute;
+  top: 50%;
+  display: inline-block;
+  color: white;
+  background: #626262;
+  font-size: 14px;
+  border-radius: 20px 0 0 20px;
+}
+
+.hiddencon-label-rtl {
+  margin-top: -40px;
+  margin-right: -23px;
+  padding: 4px;
+  position: absolute;
+  top: 50%;
+  display: inline-block;
+  color: white;
+  background: #626262;
+  font-size: 14px;
+  border-radius: 0 20px 20px 0;
+}
+
+.hiddencon,
+.hiddencon-label {
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.hiddencon p,
+.hiddencon ul {
+  margin: 0;
+  padding: 0;
+  border: 8px solid #798189;
+  border-right: 0;
+  color: #fff;
+  background-color: #000;
+  text-align: center;
+  vertical-align: center;
+  border-radius: 10px 0 0 10px;
+}
+
+.hiddencon ul {
+  margin: 0;
+  overflow: auto;
+}
+
+.hiddencon li {
+  display: block;
+}
+
+.hiddencon li a {
+  display: block;
+  padding: 10px;
+  border-bottom: 1px solid #333;
+  color: #ddd;
+  -webkit-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+}
+
+.hiddencon li:last-child a {
+  border-bottom: 0;
+}
+
+.hiddencon li a:hover {
+  background-color: #333;
+  text-decoration: none;
 }
 </style>
