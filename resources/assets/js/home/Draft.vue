@@ -13,6 +13,7 @@
       :columns="columns"
       :options="options"
       ref="vueTable"
+      @row-click="onRowClick"
     >
       <div slot="detail" slot-scope="props">
         <div class="btn-default" @click="openCaseDetail(props.row)">
@@ -101,6 +102,8 @@ export default {
         },
       },
       pmDateFormat: "Y-m-d H:i:s",
+      clickCount: 0,
+      singleClickTimer: null
     };
   },
   mounted() {},
@@ -116,6 +119,23 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
+    /**
+     * On row click event handler
+     * @param {object} event
+     */
+    onRowClick(event) {
+        let self = this;
+        self.clickCount += 1;
+        if (self.clickCount === 1) {
+            self.singleClickTimer = setTimeout(function() {
+                self.clickCount = 0;            
+            }, 400);
+        } else if (self.clickCount === 2) {
+            clearTimeout(self.singleClickTimer);
+            self.clickCount = 0;
+            self.openCase(event.row);
+        }
+    },
     /**
      * Get cases todo data
      */
