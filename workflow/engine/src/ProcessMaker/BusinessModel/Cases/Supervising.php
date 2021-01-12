@@ -19,6 +19,12 @@ class Supervising extends AbstractCases
         'APPLICATION.APP_CREATE_DATE',  // Start Date
         'APPLICATION.APP_FINISH_DATE',  // Finish Date
         'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date related to the colors
+        'USERS.USR_ID',  // Current UserId
+        // Information for the user tooltip
+        'USERS.USR_USERNAME',  // UserName
+        'USERS.USR_FIRSTNAME',  // FirstName
+        'USERS.USR_LASTNAME',  // LastName
+        'USERS.USR_EMAIL',  // Mail
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
