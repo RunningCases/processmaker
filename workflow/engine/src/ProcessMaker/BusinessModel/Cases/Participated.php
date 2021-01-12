@@ -179,6 +179,7 @@ class Participated extends AbstractCases
                             $result[$i]['tas_title'] = $thread['TAS_TITLE'];
                             $result[$i]['user_id'] = $thread['USR_ID'];
                             $result[$i]['due_date'] = $thread['DEL_TASK_DUE_DATE'];
+                            $result[$i]['delay'] = getDiffBetweenDates($thread['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                             $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
                             $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                             $i++;
@@ -188,6 +189,7 @@ class Participated extends AbstractCases
                         $result[$i]['tas_title'] = $item['TAS_TITLE'];
                         $result[$i]['user_id'] = $item['USR_ID'];
                         $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
+                        $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                         $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                         $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                         $item['PENDING'] = $result;
@@ -206,6 +208,7 @@ class Participated extends AbstractCases
                     $result[$i]['tas_title'] = $item['TAS_TITLE'];
                     $result[$i]['user_id'] = $item['USR_ID'];
                     $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
+                    $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                     $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                     $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                     $item['PENDING'] = $result;

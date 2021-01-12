@@ -1113,6 +1113,7 @@ class AbstractCases implements CasesInterface
                 }
                 if ($key === 'due_date') {
                     $threadTasks[$i][$key] = $row;
+                    $threadTasks[$i]['delay'] = getDiffBetweenDates($row,  date("Y-m-d H:i:s"));
                     // Get task color label
                     $threadTasks[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
                     $threadTasks[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$threadTasks[$i]['tas_color']] : '';
