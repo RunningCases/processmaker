@@ -64,8 +64,10 @@ export default {
       api.process.list
         .start()
         .then((response) => {
-          that.categories = that.formatCategories(response.data);
-          that.categoriesFiltered = that.categories;
+            if (response.data && response.data.success !== "failure") {
+                that.categories = that.formatCategories(response.data);
+                that.categoriesFiltered = that.categories;
+            }
         })
         .catch((e) => {
           console.error(e);
