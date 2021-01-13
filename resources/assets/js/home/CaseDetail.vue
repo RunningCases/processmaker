@@ -387,6 +387,7 @@ export default {
       let that = this,
         notesArray = [];
       _.each(notes, (n) => {
+        n.id = _.random(1000000);
         notesArray.push({
           user: that.nameFormatCases(
             n.USR_FIRSTNAME,

@@ -1,5 +1,14 @@
 <template>
     <div id="v-mycases" ref="v-mycases" class="v-container-mycases">
+      <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+      >
+        {{ dataAlert.message }}
+      </b-alert>
         <button-fleft :data="newCase"></button-fleft>
         <MyCasesFilter
             :filters="filters"
@@ -75,6 +84,12 @@ export default {
     props: ["filters"],
     data() {
         return {
+            dataAlert: {
+              dismissSecs: 5,
+              dismissCountDown: 0,
+              message: "",
+              variant: "info"
+            },
             metrics: [],
             title: this.$i18n.t('ID_MY_CASES'),
             filter: "CASES_INBOX",
@@ -466,7 +481,25 @@ export default {
          */
         onPostNotes() {
             this.$refs["vueTable"].getData();
-        }
+        },
+        /**
+         * Show the alert message
+         * @param {string} message - message to be displayen in the body
+         * @param {string} type - alert type
+         */
+        showAlert(message, type) {
+          this.dataAlert.message = message;
+          this.dataAlert.variant = type || "info";
+          this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+        },
+        /**
+         * Updates the alert dismiss value to update
+         * dismissCountDown and decrease
+         * @param {mumber}
+         */
+        countDownChanged(dismissCountDown) {
+          this.dataAlert.dismissCountDown = dismissCountDown;
+        },
     },
 };
 </script>
