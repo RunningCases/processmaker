@@ -301,7 +301,8 @@ export default {
                     {
                         TAS_NAME: data[i].tas_title,
                         STATUS: data[i].tas_color,
-                        PENDING: ""
+                        PENDING: "",
+                        DELAYED_MSG: data[i].delay
                     }
                 );
             }
