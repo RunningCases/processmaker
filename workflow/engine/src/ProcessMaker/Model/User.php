@@ -46,6 +46,19 @@ class User extends Model
     }
 
     /**
+     * Scope for query to get the user by USR_ID
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $usrId
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUserId($query, string $usrId)
+    {
+        return $query->where('USR_ID', '=', $usrId);
+    }
+
+    /**
      * Return the groups from a user
      *
      * @param boolean $usrUid
@@ -171,6 +184,7 @@ class User extends Model
             throw new Exception("Error getting the users: {$e->getMessage()}.");
         }
     }
+
     /**
      * Get the user id
      *
@@ -190,5 +204,34 @@ class User extends Model
         });
 
         return $id;
+    }
+
+    /**
+     * Get user information for the tooltip
+     *
+     * @param int $usrId
+     *
+     * @return array
+     */
+    public static function getInformation($usrId)
+    {
+        $query = User::query()->select([
+            'USR_USERNAME',
+            'USR_FIRSTNAME',
+            'USR_LASTNAME',
+            'USR_EMAIL',
+        ])
+            ->userId($usrId)
+            ->limit(1);
+        $results = $query->get();
+        $info = [];
+        $results->each(function ($item) use (&$info) {
+            $info['usr_username'] = $item->USR_USERNAME;
+            $info['usr_firstname'] = $item->USR_FIRSTNAME;
+            $info['usr_lastname'] = $item->USR_LASTNAME;
+            $info['usr_email'] = $item->USR_EMAIL;
+        });
+
+        return $info;
     }
 }
