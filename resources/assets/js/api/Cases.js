@@ -125,6 +125,14 @@ export let cases = {
             window.config.SYS_URI +
             `cases/ajaxListener`, params);
     },
+    actions(data) {
+        var params = new URLSearchParams();
+        params.append('action', 'getCaseMenu');
+        params.append('app_status', 'TO_DO');
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/ajaxListener`, params);
+    },
     unpause(data) {
         var params = new URLSearchParams();
         params.append('action', 'unpauseCase');

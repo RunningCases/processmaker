@@ -249,15 +249,17 @@ export default {
      */
     openCaseDetail(item) {
       let that = this;
-      api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
-        that.$emit("onUpdateDataCase", {
-          APP_UID: item.APP_UID,
-          DEL_INDEX: item.DEL_INDEX,
-          PRO_UID: item.PRO_UID,
-          TAS_UID: item.TAS_UID,
-          APP_NUMBER: item.CASE_NUMBER,
+      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+        api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$emit("onUpdateDataCase", {
+            APP_UID: item.APP_UID,
+            DEL_INDEX: item.DEL_INDEX,
+            PRO_UID: item.PRO_UID,
+            TAS_UID: item.TAS_UID,
+            APP_NUMBER: item.CASE_NUMBER,
+          });
+          that.$emit("onUpdatePage", "case-detail");
         });
-        that.$emit("onUpdatePage", "case-detail");
       });
     },
     showModalUnpauseCase(item) {
