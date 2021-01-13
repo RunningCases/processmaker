@@ -190,7 +190,25 @@ export default {
             let that = this;
             api.casesHeader.get().then((response) => {
                 that.headers = that.formatCasesHeaders(response.data);
+                that.setFilterHeader();
             });
+        },
+        /**
+         * Set a filter in the header from Default Cases Menu option
+         */
+        setFilterHeader() {
+            let header = window.config._nodeId,
+                filters = this.headers,
+                filter,
+                i;
+            if (header === "CASES_TO_REVISE") {
+                filter = "SUPERVISING";
+            }
+            for (i = 0; i < filters.length; i += 1) {
+                if (filters[i].item === filter) {
+                    filters[i].onClick(filters[i]);
+                }
+            }
         },
         /**
          * Get cases data by header
