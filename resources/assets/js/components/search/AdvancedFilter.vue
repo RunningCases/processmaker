@@ -256,7 +256,7 @@ export default {
                     id: "CaseStatus",
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE_STATUS')}`,
                     optionLabel: this.$i18n.t('ID_STATUS'),
-                    detail: "ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH",
+                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH'),
                     tagText: "",
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_STATUS'),
                     items:[
