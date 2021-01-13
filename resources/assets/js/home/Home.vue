@@ -98,7 +98,6 @@ export default {
     },
     mounted() {
         this.onResize();
-        window.addEventListener("resize", this.onResize);
         this.getMenu();
         this.listenerIframe();
         window.setInterval(
