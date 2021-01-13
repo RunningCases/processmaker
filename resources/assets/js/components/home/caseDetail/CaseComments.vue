@@ -123,18 +123,22 @@ export default {
     onDropFile(e) {
       e.preventDefault();
       e.stopPropagation();
+      if(this.data.noPerms === 1){
+        return;
+      }
       let that = this,
         fls = [];
       _.each(e.dataTransfer.files, (f) => {
         that.files.push(f);
       });
-
+      that.files = that.files.slice(0,5);
       _.each(that.files, (f) => {
         fls.push({
           data: f,
           title: f.name,
           extension: f.name.split(".").pop(),
           onClick: () => {},
+          id: _.random(1000000)
         });
       });
 
@@ -143,6 +147,9 @@ export default {
     },
     onDragOver(e) {
       e.preventDefault();
+      if(this.data.noPerms === 1){
+        return;
+      }
       if (!this.showMaskDrop) {
         this.showMaskDrop = true;
       }

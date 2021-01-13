@@ -5,7 +5,7 @@
       <div class="card-text">
         <div
           v-for="item in data.items"
-          :key="item.title"
+          :key="item.data.id"
           class="v-attached-block"
         >
           <div class="v-list v-list-row block">
