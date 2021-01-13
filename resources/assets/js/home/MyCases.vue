@@ -24,6 +24,7 @@
             :columns="columns"
             :options="options"
             ref="vueTable"
+            @row-click="onRowClick"
         >
             <div slot="detail" slot-scope="props">
                 <div class="btn-default" @click="openCaseDetail(props.row)">
@@ -104,7 +105,6 @@ export default {
                 },
             },
             columns: [
-                "detail",
                 "case_number",
                 "case_title",
                 "process_name",
@@ -142,7 +142,9 @@ export default {
                 },
             },
             translations: null,
-            pmDateFormat: window.config.FORMATS.dateFormat
+            pmDateFormat: window.config.FORMATS.dateFormat,
+            clickCount: 0,
+            singleClickTimer: null
         };
     },
     mounted() {
@@ -165,6 +167,23 @@ export default {
     updated() {},
     beforeCreate() {},
     methods: {
+        /**
+         * Row click event handler
+         * @param {object} event
+         */
+        onRowClick(event) {
+            let self = this;
+            self.clickCount += 1;
+            if (self.clickCount === 1) {
+                self.singleClickTimer = setTimeout(function() {
+                    self.clickCount = 0;            
+                }, 400);
+            } else if (self.clickCount === 2) {
+                clearTimeout(self.singleClickTimer);
+                self.clickCount = 0;
+                self.openCaseDetail(event.row);
+            }
+        },
         /**
          * Open case detail
          *
@@ -407,32 +426,6 @@ export default {
                 );
             }
             return dateToConvert;
-        },
-        /**
-         * Open selected cases in the inbox
-         *
-         * @param {object} item
-         */
-        openCase(item) {
-            const action = "todo";
-            if (this.isIE) {
-                window.open(
-                    "../../../cases/open?APP_UID=" +
-                        item.row.APP_UID +
-                        "&DEL_INDEX=" +
-                        item.row.DEL_INDEX +
-                        "&action=" +
-                        action
-                );
-            } else {
-                window.location.href =
-                    "../../../cases/open?APP_UID=" +
-                    item.row.APP_UID +
-                    "&DEL_INDEX=" +
-                    item.row.DEL_INDEX +
-                    "&action=" +
-                    action;
-            }
         },
         /**
          * Format Response from HEADERS

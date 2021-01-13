@@ -30,6 +30,7 @@
             :columns="columns"
             :options="options"
             ref="vueTable"
+            @row-click="onRowClick"
         >
             <div slot="info" slot-scope="props">
                 <b-icon
@@ -88,7 +89,6 @@ import AdvancedFilter from "../components/search/AdvancedFilter";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import ModalComments from "./modal/ModalComments.vue";
 import api from "./../api/index";
-import { Event } from "vue-tables-2";
 
 export default {
     name: "AdvancedSearch",
@@ -120,7 +120,6 @@ export default {
                 },
             },
             columns: [
-                "info",
                 "case_number",
                 "case_title",
                 "process_name",
@@ -159,7 +158,9 @@ export default {
                 },
                 customFilters: ["myfilter"],
             },
-            pmDateFormat: window.config.FORMATS.dateFormat
+            pmDateFormat: window.config.FORMATS.dateFormat,
+            clickCount: 0,
+            singleClickTimer: null
         };
     },
     watch: {
@@ -168,6 +169,23 @@ export default {
         },
     },
     methods: {
+        /**
+         * Row click event handler
+         * @param {object} event
+         */
+        onRowClick(event) {
+            let self = this;
+            self.clickCount += 1;
+            if (self.clickCount === 1) {
+                self.singleClickTimer = setTimeout(function() {
+                    self.clickCount = 0;            
+                }, 400);
+            } else if (self.clickCount === 2) {
+                clearTimeout(self.singleClickTimer);
+                self.clickCount = 0;
+                self.openCaseDetail(event.row);
+            }
+        },
         /**
          * Get cases data by header
          */
