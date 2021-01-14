@@ -845,10 +845,14 @@
                         });
             },
             getUsersList() {
+                if(this.filterUser.trim() === ""){
+                    this.usersList = [];
+                    return null;
+                }
                 let formData = new FormData();
                 formData.append("action", "usersList");
                 formData.append("USR_UID", this.form.USR_UID);
-                formData.append("filter", this.filterUser);
+                formData.append("filter", this.filterUser.trim());
                 return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;
