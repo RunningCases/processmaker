@@ -220,6 +220,7 @@ class User extends Model
             'USR_FIRSTNAME',
             'USR_LASTNAME',
             'USR_EMAIL',
+            'USR_POSITION'
         ])
             ->userId($usrId)
             ->limit(1);
@@ -230,6 +231,7 @@ class User extends Model
             $info['usr_firstname'] = $item->USR_FIRSTNAME;
             $info['usr_lastname'] = $item->USR_LASTNAME;
             $info['usr_email'] = $item->USR_EMAIL;
+            $info['usr_position'] = $item->USR_POSITION;
         });
 
         return $info;
