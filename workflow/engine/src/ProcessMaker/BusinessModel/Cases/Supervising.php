@@ -131,6 +131,8 @@ class Supervising extends AbstractCases
             $query->caseTodo();
             // Scope the specific array of processes supervising
             $query->processInList($processes);
+            // Only open threads
+            $query->isThreadOpen();
             // Group by appNumber
             $query->groupBy('APP_NUMBER');
             /** Apply filters */
