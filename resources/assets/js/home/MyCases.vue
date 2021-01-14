@@ -431,18 +431,21 @@ export default {
                     },
                 };
             _.forEach(response, (v) => {
-                data.push({
-                    title: v.title,
-                    counter: v.counter,
-                    item: v.id,
-                    icon: info[v.id].icon,
-                    onClick: (obj) => {
-                        that.title = obj.title;
-                        that.filterHeader = obj.item;
-                        that.$refs["vueTable"].getData();
-                    },
-                    class: info[v.id].class,
-                });
+                //Hack for display the SUPERVISING CARD
+                if(!(v.id === "SUPERVISING" && v.counter === 0)){
+                    data.push({
+                        title: v.title,
+                        counter: v.counter,
+                        item: v.id,
+                        icon: info[v.id].icon,
+                        onClick: (obj) => {
+                            that.title = obj.title;
+                            that.filterHeader = obj.item;
+                            that.$refs["vueTable"].getData();
+                        },
+                        class: info[v.id].class
+                    });
+                }
             });
             return data;
         },
