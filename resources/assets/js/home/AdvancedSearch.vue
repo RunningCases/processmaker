@@ -89,6 +89,7 @@ import AdvancedFilter from "../components/search/AdvancedFilter";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import ModalComments from "./modal/ModalComments.vue";
 import api from "./../api/index";
+import utils from "./../utils/utils";
 
 export default {
     name: "AdvancedSearch",
@@ -262,48 +263,15 @@ export default {
                 dataFormat = [];
             for (i = 0; i < data.length; i += 1) {
                 dataFormat.push({
-                    USER_DATA: this.nameFormatCases(
-                        data[i].usr_firstname,
-                        data[i].usr_lastname,
-                        data[i].usr_username
-                    )
+                    USER_DATA: utils.userNameDisplayFormat({
+                        userName: data[i].usr_firstname,
+                        firstName: data[i].usr_lastname,
+                        lastName: data[i].usr_username,
+                        format: window.config.FORMATS.format || null
+                    }),
                 });
             }
             return dataFormat;
-        },
-        /**
-         * Get for user format name configured in Processmaker Environment Settings
-         *
-         * @param {string} name
-         * @param {string} lastName
-         * @param {string} userName
-         * @return {string} nameFormat
-         */
-        nameFormatCases(name, lastName, userName) {
-            let nameFormat = "";
-            if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-                return nameFormat;
-            }
-            if (this.nameFormat === "@firstName @lastName") {
-                nameFormat = name + " " + lastName;
-            } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-                nameFormat = name + " " + lastName + " (" + userName + ")";
-            } else if (this.nameFormat === "@userName") {
-                nameFormat = userName;
-            } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-                nameFormat = userName + " (" + name + " " + lastName + ")";
-            } else if (this.nameFormat === "@lastName @firstName") {
-                nameFormat = lastName + " " + name;
-            } else if (this.nameFormat === "@lastName, @firstName") {
-                nameFormat = lastName + ", " + name;
-            } else if (
-                this.nameFormat === "@lastName, @firstName (@userName)"
-            ) {
-                nameFormat = lastName + ", " + name + " (" + userName + ")";
-            } else {
-                nameFormat = name + " " + lastName;
-            }
-            return nameFormat;
         },
         /**
          * Convert string to date format

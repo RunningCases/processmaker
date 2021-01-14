@@ -34,15 +34,8 @@
         <TaskCell :data="props.row.TASK" />
       </div>
       <div slot="current_user" slot-scope="props">
-        {{
-          nameFormatCases(
-            props.row.USR_FIRSTNAME,
-            props.row.USR_LASTNAME,
-            props.row.USR_USERNAME
-          )
-        }}
+        {{ props.row.USERNAME_DISPLAY_FORMAT}}
       </div>
-
       <div slot="due_date" slot-scope="props">
         {{ props.row.DUE_DATE }}
       </div>
@@ -66,6 +59,7 @@ import ModalNewRequest from "./ModalNewRequest.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import CasesFilter from "../components/search/CasesFilter";
 import api from "./../api/index";
+import utils from "./../utils/utils";
 
 export default {
   name: "Todo",
@@ -208,9 +202,12 @@ export default {
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
           }],
-          USR_FIRSTNAME: v.USR_FIRSTNAME,
-          USR_LASTNAME: v.USR_LASTNAME,
-          USR_USERNAME: v.USR_USERNAME,
+          USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
+              userName: v.USR_LASTNAME,
+              firstName: v.USR_LASTNAME,
+              lastName: v.USR_LASTNAME,
+              format: window.config.FORMATS.format || null
+          }),
           DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
           PRIORITY: v.DEL_PRIORITY_LABEL,
@@ -221,38 +218,6 @@ export default {
         });
       });
       return data;
-    },
-    /**
-     * Get for user format name configured in Processmaker Environment Settings
-     *
-     * @param {string} name
-     * @param {string} lastName
-     * @param {string} userName
-     * @return {string} nameFormat
-     */
-    nameFormatCases(name, lastName, userName) {
-      let nameFormat = "";
-      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-        return nameFormat;
-      }
-      if (this.nameFormat === "@firstName @lastName") {
-        nameFormat = name + " " + lastName;
-      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-        nameFormat = name + " " + lastName + " (" + userName + ")";
-      } else if (this.nameFormat === "@userName") {
-        nameFormat = userName;
-      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-        nameFormat = userName + " (" + name + " " + lastName + ")";
-      } else if (this.nameFormat === "@lastName @firstName") {
-        nameFormat = lastName + " " + name;
-      } else if (this.nameFormat === "@lastName, @firstName") {
-        nameFormat = lastName + ", " + name;
-      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
-        nameFormat = lastName + ", " + name + " (" + userName + ")";
-      } else {
-        nameFormat = name + " " + lastName;
-      }
-      return nameFormat;
     },
     /**
      * Open selected cases in the inbox

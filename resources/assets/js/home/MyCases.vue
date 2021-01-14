@@ -71,6 +71,7 @@ import MyCasesFilter from "../components/search/MyCasesFilter";
 import ModalComments from "./modal/ModalComments.vue";
 import GroupedCell from "../components/vuetable/GroupedCell.vue";
 import api from "./../api/index";
+import utils from "./../utils/utils";
 
 export default {
     name: "MyCases",
@@ -301,46 +302,22 @@ export default {
                     {
                         TAS_NAME: data[i].tas_title,
                         STATUS: data[i].tas_color,
-                        PENDING: "",
-                        DELAYED_MSG: data[i].delay
+                        DELAYED_MSG: data[i].delay,
+                        AVATAR: window.config.SYS_SERVER +
+                                window.config.SYS_URI +
+                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`,
+                        USERNAME: utils.userNameDisplayFormat({
+                            userName: data[i].user_tooltip.usr_username,
+                            firstName: data[i].user_tooltip.usr_firstname,
+                            lastName: data[i].user_tooltip.usr_lastname,
+                            format: window.config.FORMATS.format || null
+                        }),
+                        POSITION: data[i].user_tooltip.usr_position,
+                        EMAIL: data[i].user_tooltip.usr_email
                     }
                 );
             }
             return dataFormat;
-        },
-        /**
-         * Get for user format name configured in Processmaker Environment Settings
-         *
-         * @param {string} name
-         * @param {string} lastName
-         * @param {string} userName
-         * @return {string} nameFormat
-         */
-        nameFormatCases(name, lastName, userName) {
-            let nameFormat = "";
-            if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-                return nameFormat;
-            }
-            if (this.nameFormat === "@firstName @lastName") {
-                nameFormat = name + " " + lastName;
-            } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-                nameFormat = name + " " + lastName + " (" + userName + ")";
-            } else if (this.nameFormat === "@userName") {
-                nameFormat = userName;
-            } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-                nameFormat = userName + " (" + name + " " + lastName + ")";
-            } else if (this.nameFormat === "@lastName @firstName") {
-                nameFormat = lastName + " " + name;
-            } else if (this.nameFormat === "@lastName, @firstName") {
-                nameFormat = lastName + ", " + name;
-            } else if (
-                this.nameFormat === "@lastName, @firstName (@userName)"
-            ) {
-                nameFormat = lastName + ", " + name + " (" + userName + ")";
-            } else {
-                nameFormat = name + " " + lastName;
-            }
-            return nameFormat;
         },
         /**
          * Convert string to date format
