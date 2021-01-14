@@ -155,7 +155,7 @@ export default {
         headings: {
           task: this.$i18n.t("ID_TASK"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
-          assignee: this.$i18n.t("ID_ASSIGNEE"),
+          assignee: this.$i18n.t("ID_CURRENT_USER"),
           status: this.$i18n.t("ID_STATUS"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           actions: this.$i18n.t("ID_ACTIONS"),
