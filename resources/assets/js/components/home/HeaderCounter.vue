@@ -80,4 +80,16 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
+.btn-warning {
+    color: white;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-warning:hover {
+    color: white;
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
 </style>
