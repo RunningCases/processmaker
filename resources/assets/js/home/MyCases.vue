@@ -1,5 +1,14 @@
 <template>
     <div id="v-mycases" ref="v-mycases" class="v-container-mycases">
+      <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+      >
+        {{ dataAlert.message }}
+      </b-alert>
         <button-fleft :data="newCase"></button-fleft>
         <MyCasesFilter
             :filters="filters"
@@ -15,7 +24,13 @@
             :columns="columns"
             :options="options"
             ref="vueTable"
+            @row-click="onRowClick"
         >
+            <div slot="detail" slot-scope="props">
+                <div class="btn-default" @click="openCaseDetail(props.row)">
+                <i class="fas fa-info-circle"></i>
+                </div>
+            </div>
             <div slot="case_number" slot-scope="props">
                 {{ props.row.CASE_NUMBER }}
             </div>
@@ -56,6 +71,7 @@ import MyCasesFilter from "../components/search/MyCasesFilter";
 import ModalComments from "./modal/ModalComments.vue";
 import GroupedCell from "../components/vuetable/GroupedCell.vue";
 import api from "./../api/index";
+import utils from "./../utils/utils";
 
 export default {
     name: "MyCases",
@@ -70,6 +86,12 @@ export default {
     props: ["filters"],
     data() {
         return {
+            dataAlert: {
+              dismissSecs: 5,
+              dismissCountDown: 0,
+              message: "",
+              variant: "info"
+            },
             metrics: [],
             title: this.$i18n.t('ID_MY_CASES'),
             filter: "CASES_INBOX",
@@ -121,11 +143,18 @@ export default {
                 },
             },
             translations: null,
-            pmDateFormat: window.config.FORMATS.dateFormat
+            pmDateFormat: window.config.FORMATS.dateFormat,
+            clickCount: 0,
+            singleClickTimer: null
         };
     },
     mounted() {
         this.getHeaders();
+        // force to open start cases modal
+        // if the user has start case as a default case menu option
+        if (window.config._nodeId === "CASES_START_CASE") {
+            this.$refs["newRequest"].show();
+        }
     },
     watch: {},
     computed: {
@@ -140,13 +169,68 @@ export default {
     beforeCreate() {},
     methods: {
         /**
+         * Row click event handler
+         * @param {object} event
+         */
+        onRowClick(event) {
+            let self = this;
+            self.clickCount += 1;
+            if (self.clickCount === 1) {
+                self.singleClickTimer = setTimeout(function() {
+                    self.clickCount = 0;            
+                }, 400);
+            } else if (self.clickCount === 2) {
+                clearTimeout(self.singleClickTimer);
+                self.clickCount = 0;
+                self.openCaseDetail(event.row);
+            }
+        },
+        /**
+         * Open case detail
+         *
+         * @param {object} item
+         */
+        openCaseDetail(item) {
+            let that = this;
+            api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+                api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+                    that.$emit("onUpdateDataCase", {
+                    APP_UID: item.APP_UID,
+                    DEL_INDEX: item.DEL_INDEX,
+                    PRO_UID: item.PRO_UID,
+                    TAS_UID: item.TAS_UID,
+                    APP_NUMBER: item.CASE_NUMBER,
+                    });
+                    that.$emit("onUpdatePage", "case-detail");
+                });
+            });
+        },
+        /**
          * Get Cases Headers from BE
          */
         getHeaders() {
             let that = this;
             api.casesHeader.get().then((response) => {
                 that.headers = that.formatCasesHeaders(response.data);
+                that.setFilterHeader();
             });
+        },
+        /**
+         * Set a filter in the header from Default Cases Menu option
+         */
+        setFilterHeader() {
+            let header = window.config._nodeId,
+                filters = this.headers,
+                filter,
+                i;
+            if (header === "CASES_TO_REVISE") {
+                filter = "SUPERVISING";
+            }
+            for (i = 0; i < filters.length; i += 1) {
+                if (filters[i].item === filter) {
+                    filters[i].onClick(filters[i]);
+                }
+            }
         },
         /**
          * Get cases data by header
@@ -218,45 +302,22 @@ export default {
                     {
                         TAS_NAME: data[i].tas_title,
                         STATUS: data[i].tas_color,
-                        PENDING: ""
+                        DELAYED_MSG: data[i].delay,
+                        AVATAR: window.config.SYS_SERVER +
+                                window.config.SYS_URI +
+                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`,
+                        USERNAME: utils.userNameDisplayFormat({
+                            userName: data[i].user_tooltip.usr_username,
+                            firstName: data[i].user_tooltip.usr_firstname,
+                            lastName: data[i].user_tooltip.usr_lastname,
+                            format: window.config.FORMATS.format || null
+                        }),
+                        POSITION: data[i].user_tooltip.usr_position,
+                        EMAIL: data[i].user_tooltip.usr_email
                     }
                 );
             }
             return dataFormat;
-        },
-        /**
-         * Get for user format name configured in Processmaker Environment Settings
-         *
-         * @param {string} name
-         * @param {string} lastName
-         * @param {string} userName
-         * @return {string} nameFormat
-         */
-        nameFormatCases(name, lastName, userName) {
-            let nameFormat = "";
-            if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-                return nameFormat;
-            }
-            if (this.nameFormat === "@firstName @lastName") {
-                nameFormat = name + " " + lastName;
-            } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-                nameFormat = name + " " + lastName + " (" + userName + ")";
-            } else if (this.nameFormat === "@userName") {
-                nameFormat = userName;
-            } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-                nameFormat = userName + " (" + name + " " + lastName + ")";
-            } else if (this.nameFormat === "@lastName @firstName") {
-                nameFormat = lastName + " " + name;
-            } else if (this.nameFormat === "@lastName, @firstName") {
-                nameFormat = lastName + ", " + name;
-            } else if (
-                this.nameFormat === "@lastName, @firstName (@userName)"
-            ) {
-                nameFormat = lastName + ", " + name + " (" + userName + ")";
-            } else {
-                nameFormat = name + " " + lastName;
-            }
-            return nameFormat;
         },
         /**
          * Convert string to date format
@@ -345,32 +406,6 @@ export default {
             return dateToConvert;
         },
         /**
-         * Open selected cases in the inbox
-         *
-         * @param {object} item
-         */
-        openCase(item) {
-            const action = "todo";
-            if (this.isIE) {
-                window.open(
-                    "../../../cases/open?APP_UID=" +
-                        item.row.APP_UID +
-                        "&DEL_INDEX=" +
-                        item.row.DEL_INDEX +
-                        "&action=" +
-                        action
-                );
-            } else {
-                window.location.href =
-                    "../../../cases/open?APP_UID=" +
-                    item.row.APP_UID +
-                    "&DEL_INDEX=" +
-                    item.row.DEL_INDEX +
-                    "&action=" +
-                    action;
-            }
-        },
-        /**
          * Format Response from HEADERS
          * @param {*} response
          */
@@ -396,18 +431,21 @@ export default {
                     },
                 };
             _.forEach(response, (v) => {
-                data.push({
-                    title: v.title,
-                    counter: v.counter,
-                    item: v.id,
-                    icon: info[v.id].icon,
-                    onClick: (obj) => {
-                        that.title = obj.title;
-                        that.filterHeader = obj.item;
-                        that.$refs["vueTable"].getData();
-                    },
-                    class: info[v.id].class,
-                });
+                //Hack for display the SUPERVISING CARD
+                if(!(v.id === "SUPERVISING" && v.counter === 0)){
+                    data.push({
+                        title: v.title,
+                        counter: v.counter,
+                        item: v.id,
+                        icon: info[v.id].icon,
+                        onClick: (obj) => {
+                            that.title = obj.title;
+                            that.filterHeader = obj.item;
+                            that.$refs["vueTable"].getData();
+                        },
+                        class: info[v.id].class
+                    });
+                }
             });
             return data;
         },
@@ -437,7 +475,25 @@ export default {
          */
         onPostNotes() {
             this.$refs["vueTable"].getData();
-        }
+        },
+        /**
+         * Show the alert message
+         * @param {string} message - message to be displayen in the body
+         * @param {string} type - alert type
+         */
+        showAlert(message, type) {
+          this.dataAlert.message = message;
+          this.dataAlert.variant = type || "info";
+          this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+        },
+        /**
+         * Updates the alert dismiss value to update
+         * dismissCountDown and decrease
+         * @param {mumber}
+         */
+        countDownChanged(dismissCountDown) {
+          this.dataAlert.dismissCountDown = dismissCountDown;
+        },
     },
 };
 </script>

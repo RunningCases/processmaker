@@ -1113,6 +1113,7 @@ class AbstractCases implements CasesInterface
                 }
                 if ($key === 'due_date') {
                     $threadTasks[$i][$key] = $row;
+                    $threadTasks[$i]['delay'] = getDiffBetweenDates($row,  date("Y-m-d H:i:s"));
                     // Get task color label
                     $threadTasks[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
                     $threadTasks[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$threadTasks[$i]['tas_color']] : '';
@@ -1122,15 +1123,18 @@ class AbstractCases implements CasesInterface
                     // Thread tasks
                     if($key === 'user_id') {
                         $threadTasks[$i][$key] = $row;
+                        // Get the user tooltip information
+                        $threadTasks[$i]['user_tooltip']  = User::getInformation($row);
                     }
                 } else {
                     // Thread users
                     if ($key === 'user_id') {
                         $threadUsers[$i][$key] = $row;
-                        $user = (!empty($row)) ? User::where('USR_ID', $row)->first(): null;
-                        $threadUsers[$i]['usr_username'] = $user ? $user->USR_USERNAME : '';
-                        $threadUsers[$i]['usr_lastname'] = $user ? $user->USR_LASTNAME : '';
-                        $threadUsers[$i]['usr_firstname'] = $user ? $user->USR_FIRSTNAME : '';
+                        // Get user information
+                        $userInfo = User::getInformation($row);
+                        $threadUsers[$i]['usr_username'] = !empty($userInfo) ? $userInfo['usr_username'] : '';
+                        $threadUsers[$i]['usr_lastname'] = !empty($userInfo) ? $userInfo['usr_lastname'] : '';
+                        $threadUsers[$i]['usr_firstname'] = !empty($userInfo) ? $userInfo['usr_firstname'] : '';
                     }
                     // Thread titles
                     if ($key === 'del_id') {

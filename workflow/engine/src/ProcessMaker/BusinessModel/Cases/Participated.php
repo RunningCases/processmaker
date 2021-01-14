@@ -6,6 +6,7 @@ use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Task;
+use ProcessMaker\Model\User;
 
 class Participated extends AbstractCases
 {
@@ -19,8 +20,8 @@ class Participated extends AbstractCases
         'APPLICATION.APP_STATUS',  // Status
         'APPLICATION.APP_CREATE_DATE',  // Start Date
         'APPLICATION.APP_FINISH_DATE',  // Finish Date
-        'USERS.USR_ID',  // Current UserId
         'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date related to the colors
+        'USERS.USR_ID',  // Current UserId
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
@@ -179,8 +180,11 @@ class Participated extends AbstractCases
                             $result[$i]['tas_title'] = $thread['TAS_TITLE'];
                             $result[$i]['user_id'] = $thread['USR_ID'];
                             $result[$i]['due_date'] = $thread['DEL_TASK_DUE_DATE'];
+                            $result[$i]['delay'] = getDiffBetweenDates($thread['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                             $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
                             $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                            // Get the user tooltip information
+                            $result[$i]['user_tooltip'] = User::getInformation($thread['USR_ID']);
                             $i++;
                         }
                         $item['PENDING'] = $result;
@@ -188,8 +192,11 @@ class Participated extends AbstractCases
                         $result[$i]['tas_title'] = $item['TAS_TITLE'];
                         $result[$i]['user_id'] = $item['USR_ID'];
                         $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
+                        $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                         $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                         $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                        // Get the user tooltip information
+                        $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
                         $item['PENDING'] = $result;
                     }
                     break;
@@ -206,8 +213,11 @@ class Participated extends AbstractCases
                     $result[$i]['tas_title'] = $item['TAS_TITLE'];
                     $result[$i]['user_id'] = $item['USR_ID'];
                     $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
+                    $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                     $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                     $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                    // Get the user tooltip information
+                    $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
                     $item['PENDING'] = $result;
                     break;
             }

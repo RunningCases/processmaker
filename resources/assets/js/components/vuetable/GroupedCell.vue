@@ -1,6 +1,6 @@
 <template>
     <div v-if="data.length" class="grouped-cell">
-        <div v-for="item in data" class="d-flex mb-3">
+        <div v-for="item in data" v-bind:key="item.TITLE" class="d-flex mb-3">
             <div
                 v-bind:style="{ color: activeColor(item.STATUS) }"
                 v-b-popover.hover.top="item.DELAYED_MSG"
@@ -10,13 +10,34 @@
             <div class="col ellipsis" v-b-popover.hover.top="item.TAS_NAME">
                 {{ item.TAS_NAME }}
             </div>
-            <div class="avatar">
+            <div class="avatar" :id="id">
                 <b-avatar
                     variant="info"
                     :src="item.AVATAR"
-                    size="1.2em"
+                    size="2em"
                 ></b-avatar>
             </div>
+            <b-popover
+                :target="id"
+                placement="top"
+                ref="popover"
+                triggers="hover"    
+            >
+                <b-row >
+                    <b-col md="3">
+                        <b-avatar
+                            variant="info"
+                            :src="item.AVATAR"
+                            size="4em"
+                        ></b-avatar>
+                    </b-col>    
+                    <b-col md="9">
+                        <div class="font-weight-bold">{{item.USERNAME}}</div>
+                        <div v-if="item.POSITION !== ''">{{item.POSITION}}</div>
+                        <b-link :href="mailto(item.EMAIL)" >{{item.EMAIL}}</b-link>
+                    </b-col>
+                </b-row>
+            </b-popover>
         </div>
     </div>
 </template>
@@ -29,6 +50,7 @@ export default {
         return {
             //Color map for ["In Progress", "overdue", "inDraft", "paused", "unnasigned"]
             colorMap: ["green", "red", "orange", "aqua", "silver"],
+            id: "avatar-" + _.random(1000000)
         };
     },
     methods: {
@@ -40,13 +62,20 @@ export default {
         activeColor: function(codeColor) {
             return this.colorMap[codeColor - 1];
         },
+        mailto: function(email) {
+            return "mailto:" + email;
+        }
     }
 };
 </script>
 
-<style>
+<style> 
+.popover {
+    max-width: 600px !important; 
+    min-width: 200px !important;
+}
 .grouped-cell {
-    font-size: smaller;
+    font-size: small;
 }
 
 .ellipsis {
@@ -55,9 +84,7 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .color {
-  
     color: red;
 }
 .avatar {

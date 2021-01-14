@@ -111,11 +111,24 @@ export let cases = {
             window.config.SYS_URI +
             `cases/open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
     },
+    cases_open(data) {
+        return axios.get(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/cases_Open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
+    },
     cancel(data) {
         var params = new URLSearchParams();
         params.append('action', 'cancelCase');
         params.append('NOTE_REASON', data.COMMENT);
         params.append('NOTIFY_CANCEL', data.SEND);
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/ajaxListener`, params);
+    },
+    actions(data) {
+        var params = new URLSearchParams();
+        params.append('action', 'getCaseMenu');
+        params.append('app_status', 'TO_DO');
         return axios.post(window.config.SYS_SERVER +
             window.config.SYS_URI +
             `cases/ajaxListener`, params);

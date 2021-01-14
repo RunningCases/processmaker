@@ -14,7 +14,7 @@ const services = {
     GET_LISTS_COMPLETED: "/light/completed",
     GET_USERS_PICTURES: "/light/users/data",
     FORMS_ARRAY: "/light/project/{pro_uid}/activity/{act_uid}/steps",
-    GET_NEW_CASES: "/light/start-case",
+    GET_NEW_CASES: "/case/start-cases?type_view=category",
     GET_HISTORY_CASES: "/light/history/{app_uid}",
     LOGOUT_USER: "/light/logout",
     UPLOAD_LOCATION: "/light/case/{app_uid}/upload/location",

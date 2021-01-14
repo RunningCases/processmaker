@@ -10494,6 +10494,12 @@ msgid "Invalid Case Delegation index for this user"
 msgstr "Invalid Case Delegation index for this user"
 
 # TRANSLATION
+# LABEL/ID_INVALID_CASE_NUMBER
+#: LABEL/ID_INVALID_CASE_NUMBER
+msgid "Invalid case number"
+msgstr "Invalid case number"
+
+# TRANSLATION
 # LABEL/ID_INVALID_CASE_NUMBER_RANGE
 #: LABEL/ID_INVALID_CASE_NUMBER_RANGE
 msgid "Invalid case number range, use e.g. 1-5, 8, 11-13"

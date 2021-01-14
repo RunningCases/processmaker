@@ -37,7 +37,13 @@ if (isset($_GET['ux'])) {
         echo '} else { window.parent.location.href = \''.$pathDerivateGmail.'\'; }';
     } else {
         /*----------------------------------********---------------------------------*/
-        echo '} else { window.parent.location.href = \'casesListExtJs\'; }';
+        echo '} else { 
+                if (parent.parent.postMessage) {
+                    parent.parent.postMessage("redirect=todo","*");
+                } else {
+                    window.parent.location.href = \'casesListExtJs\';
+                }
+            }';
         /*----------------------------------********---------------------------------*/
     }
     /*----------------------------------********---------------------------------*/

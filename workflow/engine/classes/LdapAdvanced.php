@@ -927,9 +927,14 @@ class LdapAdvanced
                                 $arrayData['countUser']++;
 
                                 if ((is_array($username) && !empty($username)) || trim($username) != '') {
+                                    $dataUserLdap = $this->getUserDataFromAttribute($username, $arrayUserLdap);
+                                    $dataUserLdap["usrRole"] = "";
+                                    if (!empty($arrayAuthSourceData['AUTH_SOURCE_DATA']['USR_ROLE'])) {
+                                        $dataUserLdap["usrRole"] = $arrayAuthSourceData['AUTH_SOURCE_DATA']['USR_ROLE'];
+                                    }
                                     $arrayData = $this->groupSynchronizeUser(
                                         $groupUid,
-                                        $this->getUserDataFromAttribute($username, $arrayUserLdap),
+                                        $dataUserLdap,
                                         $arrayData
                                     );
                                 }
@@ -1631,7 +1636,14 @@ class LdapAdvanced
         }
     }
 
-    public function automaticRegister($aAuthSource, $strUser, $strPass)
+    /**
+     * Automatic register.
+     * @param array $authSource
+     * @param string $strUser
+     * @param string $strPass
+     * @return bool
+     */
+    public function automaticRegister($authSource, $strUser, $strPass)
     {
         $rbac = RBAC::getSingleton();
 
@@ -1645,52 +1657,56 @@ class LdapAdvanced
 
         $user = $this->searchUserByUid($strUser);
 
-        $res = 0;
+        $result = 0;
 
         if (!empty($user)) {
             if ($this->VerifyLogin($user['sUsername'], $strPass) === true) {
-                $res = 1;
+                $result = 1;
             }
 
-            if ($res == 0 && $this->VerifyLogin($user['sDN'], $strPass) === true) {
-                $res = 1;
+            if ($result == 0 && $this->VerifyLogin($user['sDN'], $strPass) === true) {
+                $result = 1;
             }
         } else {
-            return $res;
+            return $result;
         }
 
-        if ($res == 0) {
-            $aAuthSource = $rbac->authSourcesObj->load($this->sAuthSource);
-            $aAttributes = array();
+        if ($result == 0) {
+            $authSource = $rbac->authSourcesObj->load($this->sAuthSource);
+            $attributes = [];
 
-            if (isset($aAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])) {
-                $aAttributes = $aAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'];
+            if (isset($authSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])) {
+                $attributes = $authSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'];
             }
 
-            $aData = array();
-            $aData['USR_USERNAME'] = $user['sUsername'];
-            $aData["USR_PASSWORD"] = "00000000000000000000000000000000";
-            $aData['USR_FIRSTNAME'] = $user['sFirstname'];
-            $aData['USR_LASTNAME'] = $user['sLastname'];
-            $aData['USR_EMAIL'] = $user['sEmail'];
-            $aData['USR_DUE_DATE'] = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
-            $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
-            $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            $aData['USR_BIRTHDAY'] = date('Y-m-d');
-            $aData['USR_STATUS'] = (isset($user['USR_STATUS'])) ? (($user['USR_STATUS'] == 'ACTIVE') ? 1 : 0) : 1;
-            $aData['USR_AUTH_TYPE'] = strtolower($aAuthSource['AUTH_SOURCE_PROVIDER']);
-            $aData['UID_AUTH_SOURCE'] = $aAuthSource['AUTH_SOURCE_UID'];
-            $aData['USR_AUTH_USER_DN'] = $user['sDN'];
-            $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
+            $usrRole = 'PROCESSMAKER_OPERATOR';
+            if (!empty($authSource['AUTH_SOURCE_DATA']['USR_ROLE'])) {
+                $usrRole = $authSource['AUTH_SOURCE_DATA']['USR_ROLE'];
+            }
+            $data = [];
+            $data['USR_USERNAME'] = $user['sUsername'];
+            $data["USR_PASSWORD"] = "00000000000000000000000000000000";
+            $data['USR_FIRSTNAME'] = $user['sFirstname'];
+            $data['USR_LASTNAME'] = $user['sLastname'];
+            $data['USR_EMAIL'] = $user['sEmail'];
+            $data['USR_DUE_DATE'] = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
+            $data['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
+            $data['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $data['USR_BIRTHDAY'] = date('Y-m-d');
+            $data['USR_STATUS'] = (isset($user['USR_STATUS'])) ? (($user['USR_STATUS'] == 'ACTIVE') ? 1 : 0) : 1;
+            $data['USR_AUTH_TYPE'] = strtolower($authSource['AUTH_SOURCE_PROVIDER']);
+            $data['UID_AUTH_SOURCE'] = $authSource['AUTH_SOURCE_UID'];
+            $data['USR_AUTH_USER_DN'] = $user['sDN'];
+            $data['USR_ROLE'] = $usrRole;
 
-            if (!empty($aAttributes)) {
-                foreach ($aAttributes as $value) {
+            if (!empty($attributes)) {
+                foreach ($attributes as $value) {
                     if (isset($user[$value['attributeUser']])) {
-                        $aData[$value['attributeUser']] = str_replace("*", "'", $user[$value['attributeUser']]);
+                        $data[$value['attributeUser']] = str_replace("*", "'", $user[$value['attributeUser']]);
                         if ($value['attributeUser'] == 'USR_STATUS') {
-                            $evalValue = $aData[$value['attributeUser']];
+                            $evalValue = $data[$value['attributeUser']];
                             $statusValue = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] : 'ACTIVE';
-                            $aData[$value['attributeUser']] = $statusValue;
+                            $data[$value['attributeUser']] = $statusValue;
                         }
                     }
                 }
@@ -1698,23 +1714,23 @@ class LdapAdvanced
 
             //req - accountexpires
             if (isset($user["USR_DUE_DATE"]) && $user["USR_DUE_DATE"] != '') {
-                $aData["USR_DUE_DATE"] = $this->convertDateADtoPM($user["USR_DUE_DATE"]);
+                $data["USR_DUE_DATE"] = $this->convertDateADtoPM($user["USR_DUE_DATE"]);
             }
             //end
 
-            $sUserUID = $rbac->createUser($aData, 'PROCESSMAKER_OPERATOR');
-            $aData['USR_UID'] = $sUserUID;
+            $userUid = $rbac->createUser($data, $usrRole);
+            $data['USR_UID'] = $userUid;
 
             require_once 'classes/model/Users.php';
 
-            $oUser = new Users();
-            $aData['USR_STATUS'] = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] : 'ACTIVE';
-            $oUser->create($aData);
+            $users = new Users();
+            $data['USR_STATUS'] = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] : 'ACTIVE';
+            $users->create($data);
             $this->log(null, "Automatic Register for user $strUser ");
-            $res = 1;
+            $result = 1;
         }
 
-        return $res;
+        return $result;
     }
 
     /**
@@ -2260,15 +2276,15 @@ class LdapAdvanced
     }
 
     /**
-     * creates an users using the data send in the array $aUsers
+     * creates an users using the data send in the array $user
      * and then add the user to specific department
      * this function is used in cron only
      *
-     * @param array $aUser info taken from ldap
+     * @param array $user info taken from ldap
      * @param string $depUid the department UID
      * @return boolean
      */
-    public function createUserAndActivate($aUser, $depUid)
+    public function createUserAndActivate($user, $depUid)
     {
         $rbac = RBAC::getSingleton();
 
@@ -2284,41 +2300,42 @@ class LdapAdvanced
             $rbac->usersRolesObj = new UsersRoles();
         }
 
-        $sUsername = $aUser['sUsername'];
-        $sFullname = $aUser['sFullname'];
-        $sFirstname = $aUser['sFirstname'];
-        $sLastname = $aUser['sLastname'];
-        $sEmail = $aUser['sEmail'];
-        $sDn = $aUser['sDN'];
+        $sUsername = $user['sUsername'];
+        $sFullname = $user['sFullname'];
+        $sFirstname = $user['sFirstname'];
+        $sLastname = $user['sLastname'];
+        $sEmail = $user['sEmail'];
+        $sDn = $user['sDN'];
+        $usrRole = empty($user['usrRole']) ? 'PROCESSMAKER_OPERATOR' : $user['usrRole'];
 
-        $aData = array();
-        $aData['USR_USERNAME'] = $sUsername;
-        $aData["USR_PASSWORD"] = "00000000000000000000000000000000";
-        $aData['USR_FIRSTNAME'] = $sFirstname;
-        $aData['USR_LASTNAME'] = $sLastname;
-        $aData['USR_EMAIL'] = $sEmail;
-        $aData['USR_DUE_DATE'] = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
-        $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
-        $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
-        $aData['USR_BIRTHDAY'] = date('Y-m-d');
-        $aData['USR_STATUS'] = 1;
-        $aData['USR_AUTH_TYPE'] = 'ldapadvanced';
-        $aData['UID_AUTH_SOURCE'] = $this->sAuthSource;
-        $aData['USR_AUTH_USER_DN'] = $sDn;
+        $data = [];
+        $data['USR_USERNAME'] = $sUsername;
+        $data["USR_PASSWORD"] = "00000000000000000000000000000000";
+        $data['USR_FIRSTNAME'] = $sFirstname;
+        $data['USR_LASTNAME'] = $sLastname;
+        $data['USR_EMAIL'] = $sEmail;
+        $data['USR_DUE_DATE'] = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') + 2));
+        $data['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
+        $data['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
+        $data['USR_BIRTHDAY'] = date('Y-m-d');
+        $data['USR_STATUS'] = 1;
+        $data['USR_AUTH_TYPE'] = 'ldapadvanced';
+        $data['UID_AUTH_SOURCE'] = $this->sAuthSource;
+        $data['USR_AUTH_USER_DN'] = $sDn;
 
-        $sUserUID = $rbac->createUser($aData, "PROCESSMAKER_OPERATOR");
+        $userUid = $rbac->createUser($data, $usrRole);
 
-        $aData['USR_STATUS'] = 'ACTIVE';
-        $aData['USR_UID'] = $sUserUID;
-        $aData['DEP_UID'] = $depUid;
-        $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
+        $data['USR_STATUS'] = 'ACTIVE';
+        $data['USR_UID'] = $userUid;
+        $data['DEP_UID'] = $depUid;
+        $data['USR_ROLE'] = $usrRole;
 
         require_once 'classes/model/Users.php';
 
-        $oUser = new Users();
-        $oUser->create($aData);
+        $users = new Users();
+        $users->create($data);
 
-        return $sUserUID;
+        return $userUid;
     }
 
     public function synchronizeManagers($managersHierarchy)

@@ -620,6 +620,8 @@ function applyMaskDateEnvironment(string $date, $mask = '')
     if (!empty($date)) {
         $date = new DateTime($date);
         $result = $date->format($mask);
+    } else {
+        $result = $date;
     }
 
     return $result;

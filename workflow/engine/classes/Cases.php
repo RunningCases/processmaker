@@ -228,9 +228,9 @@ class Cases
      */
     public function getStartCasesPerType($sUIDUser = '', $typeView = null)
     {
-        $rows[] = array('uid' => 'char', 'value' => 'char');
-        $tasks = array();
-        $arrayTaskTypeToExclude = array(
+        $rows[] = ['uid' => 'char', 'value' => 'char'];
+        $tasks = [];
+        $arrayTaskTypeToExclude = [
             "WEBENTRYEVENT",
             "END-MESSAGE-EVENT",
             "START-MESSAGE-EVENT",
@@ -239,11 +239,11 @@ class Cases
             "SCRIPT-TASK",
             "START-TIMER-EVENT",
             "INTERMEDIATE-CATCH-TIMER-EVENT"
-        );
+        ];
         $webEntryEvent = new WebEntryEvent();
-        $arrayWebEntryEvent = array();
-        //Set the parameter $considerShowInCase=true, to consider the WE_SHOW_IN_CASE
-        //configuration to filter the Start events with WebEntry.
+        $arrayWebEntryEvent = [];
+        // Set the parameter $considerShowInCase=true, to consider the WE_SHOW_IN_CASE
+        // configuration to filter the Start events with WebEntry.
         $allWebEntryEvents = $webEntryEvent->getAllWebEntryEvents(true);
         foreach ($allWebEntryEvents as $webEntryEvents) {
             $arrayWebEntryEvent[] = $webEntryEvents["ACT_UID"];
@@ -300,16 +300,17 @@ class Cases
         $c->addSelectColumn(TaskPeer::TAS_TITLE);
         $c->addSelectColumn(TaskPeer::PRO_UID);
         $c->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $c->addSelectColumn(ProcessPeer::PRO_DESCRIPTION);
         if ($typeView == 'category') {
             $c->addAsColumn('PRO_CATEGORY', 'PCS.PRO_CATEGORY');
             $c->addAsColumn('CATEGORY_NAME', 'PCSCAT.CATEGORY_NAME');
             $c->addAlias('PCS', 'PROCESS');
             $c->addAlias('PCSCAT', 'PROCESS_CATEGORY');
-            $aConditions = array();
-            $aConditions[] = array(TaskPeer::PRO_UID, 'PCS.PRO_UID');
+            $aConditions = [];
+            $aConditions[] = [TaskPeer::PRO_UID, 'PCS.PRO_UID'];
             $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-            $aConditions = array();
-            $aConditions[] = array('PCS.PRO_CATEGORY', 'PCSCAT.CATEGORY_UID');
+            $aConditions = [];
+            $aConditions[] = ['PCS.PRO_CATEGORY', 'PCSCAT.CATEGORY_UID'];
             $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         }
         $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
@@ -333,19 +334,21 @@ class Cases
                 $row['TAS_TITLE'] = $taskTitle->getTasTitle();
                 $row['CATEGORY_NAME'] = ($row['CATEGORY_NAME'] == '') ?
                         G::LoadTranslation('ID_PROCESS_NOCATEGORY') : $row['CATEGORY_NAME'];
-                $rows[] = array(
+                $rows[] = [
                     'uid' => $row['TAS_UID'],
                     'value' => $row['PRO_TITLE'] . ' (' . $taskTitleLabel . ')',
                     'pro_uid' => $row['PRO_UID'],
+                    'pro_description' => $row['PRO_DESCRIPTION'],
                     'cat' => $row['PRO_CATEGORY'],
                     'catname' => $row['CATEGORY_NAME']
-                );
+                ];
             } else {
-                $rows[] = array(
+                $rows[] = [
                     'uid' => $row['TAS_UID'],
                     'value' => $row['PRO_TITLE'] . ' (' . $taskTitleLabel . ')',
-                    'pro_uid' => $row['PRO_UID']
-                );
+                    'pro_uid' => $row['PRO_UID'],
+                    'pro_description' => $row['PRO_DESCRIPTION']
+                ];
             }
             $rs->next();
             $row = $rs->getRow();
@@ -7344,24 +7347,26 @@ class Cases
 
         $canStart = $this->canStartCase($usrUid);
         if ($canStart) {
-            $processList = array();
+            $processList = [];
             $list = $this->getStartCasesPerType($usrUid, $typeView);
             foreach ($list as $index => $row) {
                 if (!empty($row['pro_uid'])) {
                     if ($typeView == 'category') {
-                        $processList[] = array(
+                        $processList[] = [
                             'tas_uid' => $row['uid'],
                             'pro_title' => $row['value'],
                             'pro_uid' => $row['pro_uid'],
+                            'pro_description' => $row['pro_description'],
                             'pro_category' => $row['cat'],
                             'category_name' => $row['catname']
-                        );
+                        ];
                     } else {
-                        $processList[] = array(
+                        $processList[] = [
                             'tas_uid' => $row['uid'],
                             'pro_title' => $row['value'],
-                            'pro_uid' => $row['pro_uid']
-                        );
+                            'pro_uid' => $row['pro_uid'],
+                            'pro_description' => $row['pro_description']
+                        ];
                     }
                 }
             }

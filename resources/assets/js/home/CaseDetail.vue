@@ -155,7 +155,7 @@ export default {
         headings: {
           task: this.$i18n.t("ID_TASK"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
-          assignee: this.$i18n.t("ID_ASSIGNEE"),
+          assignee: this.$i18n.t("ID_CURRENT_USER"),
           status: this.$i18n.t("ID_STATUS"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           actions: this.$i18n.t("ID_ACTIONS"),
@@ -241,7 +241,9 @@ export default {
       this.dataAttachedDocuments.items = att;
     },
     getDataCaseSummary() {
-      let that = this;
+      let action,
+          option, 
+          that = this;
       Api.cases
         .casesummary(this.dataCase)
         .then((response) => {
@@ -252,9 +254,7 @@ export default {
             titleActions: this.$i18n.t("ID_ACTIONS"),
             btnLabel: this.$i18n.t("ID_CANCEL_CASE"),
             btnType: false,
-            onClick: () => {
-              that.$refs["modal-cancel-case"].show();
-            },
+            onClick: null,
             label: {
               numberCase: data[2].label,
               process: data[0].label,
@@ -274,6 +274,19 @@ export default {
               duration: response.data[11].value.split(" ")[1],
             },
           };
+          // Hack for identify the cancel case button
+          Api.cases
+            .actions(this.dataCase).then((response)=>{
+              action = _.find(response.data, function(o) { return o.id == "ACTIONS"; });
+              if(action){
+                option = _.find(action.options, function(o) { return o.fn == "cancelCase"; });
+                if(!option.hide){
+                  that.dataCaseSummary.onClick = () => {
+                    that.$refs["modal-cancel-case"].show();
+                  };      
+                }
+              }
+            });
         })
         .catch((err) => {
           throw new Error(err);
@@ -387,6 +400,7 @@ export default {
       let that = this,
         notesArray = [];
       _.each(notes, (n) => {
+        n.id = _.random(1000000);
         notesArray.push({
           user: that.nameFormatCases(
             n.USR_FIRSTNAME,
