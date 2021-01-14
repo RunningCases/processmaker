@@ -184,7 +184,7 @@ class Participated extends AbstractCases
                             $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
                             $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                             // Get the user tooltip information
-                            $result[$i] = User::getInformation($thread['USR_ID']);
+                            $result[$i]['user_tooltip'] = User::getInformation($thread['USR_ID']);
                             $i++;
                         }
                         $item['PENDING'] = $result;
@@ -196,7 +196,7 @@ class Participated extends AbstractCases
                         $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                         $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                         // Get the user tooltip information
-                        $result[$i] = User::getInformation($item['USR_ID']);
+                        $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
                         $item['PENDING'] = $result;
                     }
                     break;
@@ -217,7 +217,7 @@ class Participated extends AbstractCases
                     $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                     $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
                     // Get the user tooltip information
-                    $result[$i] = User::getInformation($item['USR_ID']);
+                    $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
                     $item['PENDING'] = $result;
                     break;
             }

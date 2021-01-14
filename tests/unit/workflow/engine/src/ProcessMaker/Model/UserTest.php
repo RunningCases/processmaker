@@ -172,5 +172,6 @@ class UserTest extends TestCase
         $this->assertArrayHasKey('usr_firstname', $results);
         $this->assertArrayHasKey('usr_lastname', $results);
         $this->assertArrayHasKey('usr_email', $results);
+        $this->assertArrayHasKey('usr_position', $results);
     }
 }
