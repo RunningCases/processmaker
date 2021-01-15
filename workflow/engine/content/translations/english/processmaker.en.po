@@ -4644,6 +4644,12 @@ msgid "Confirm"
 msgstr "Confirm"
 
 # TRANSLATION
+# LABEL/ID_CONFIRMATION
+#: LABEL/ID_CONFIRMATION
+msgid "Confirmation"
+msgstr "Confirmation"
+
+# TRANSLATION
 # LABEL/ID_CONFIRM_ADHOCUSER_CASE
 #: LABEL/ID_CONFIRM_ADHOCUSER_CASE
 msgid "[LABEL/ID_CONFIRM_ADHOCUSER_CASE] Are you sure you want to do it?"

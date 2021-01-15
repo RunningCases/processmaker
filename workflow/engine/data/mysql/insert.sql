@@ -57593,6 +57593,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CONFIGURE','en','Configure','2014-01-15') ,
 ( 'LABEL','ID_CONFIG_DIRECTORY','en','Config Directory','2014-01-15') ,
 ( 'LABEL','ID_CONFIRM','en','Confirm','2014-01-15') ,
+( 'LABEL','ID_CONFIRMATION','en','Confirmation','2020-01-15') ,
 ( 'LABEL','ID_CONFIRM_ADHOCUSER_CASE','en','Are you sure you want to do it?','2014-01-15') ,
 ( 'LABEL','ID_CONFIRM_ASSIGNED_GRID','en','Do you want to delete the data in the row you just created?','2015-01-16') ,
 ( 'LABEL','ID_CONFIRM_CANCEL_CASE','en','Are you sure you want to cancel this case?','2014-01-15') ,
