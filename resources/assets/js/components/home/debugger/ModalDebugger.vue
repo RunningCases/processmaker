@@ -7,65 +7,60 @@
           role="toolbar"
           aria-label="Toolbar with button groups"
         >
-          <div
-            class="btn-group"
-            role="group"
-            aria-label="Basic radio toggle button group"
-          >
-            <input
-              type="radio"
-              class="btn-check"
-              name="btnradio"
-              id="btnradio1"
-              autocomplete="off"
-              checked
-            />
-            <label class="btn btn-outline-secondary" for="btnradio1"
-              >Radio 1</label
-            >
+          <b-form-radio-group
+            @change="changeOption"
+            v-model="optionsDebugVars.selected"
+            :options="optionsDebugVars.options"
+            button-variant="outline-secondary"
+            name="radio-btn-outline"
+            size="sm"
+            buttons
+          ></b-form-radio-group>
+        </div>
 
-            <input
-              type="radio"
-              class="btn-check"
-              name="btnradio"
-              id="btnradio2"
-              autocomplete="off"
-            />
-            <label class="btn btn-outline-secondary" for="btnradio2"
-              >Radio 2</label
-            >
-
-            <input
-              type="radio"
-              class="btn-check"
-              name="btnradio"
-              id="btnradio3"
-              autocomplete="off"
-            />
-            <label class="btn btn-outline-secondary" for="btnradio3"
-              >Radio 3</label
-            >
-          </div>
-          <div class="input-group">
-            <div class="input-group-text" id="btnGroupAddon2">@</div>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Input group example"
-              aria-label="Input group example"
-              aria-describedby="btnGroupAddon2"
-            />
-          </div>
+        <div>
+          <v-client-table
+            @row-click="onRowClicked"
+            :data="dataTable"
+            :columns="columns"
+            :options="options"
+            ref="vueTable"
+          />
         </div>
       </tab>
-      <tab name="Triggers"> </tab>
+      <tab name="Triggers">
+        <div>
+          <v-client-table
+            :data="dataTableTriggers"
+            :columns="columns"
+            :options="options"
+            ref="vueTableTriggers"
+          />
+        </div>
+      </tab>
     </tabs>
+    <br />
+    <div class="card">
+      <div class="container">
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label"
+            >Example textarea</label
+          >
+          <textarea
+            class="form-control"
+            id="exampleFormControlTextarea1"
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+    </div>
   </b-modal>
 </template>
 
 <script>
 import Tabs from "../../../components/tabs/Tabs.vue";
 import Tab from "../../../components/tabs/Tab.vue";
+import api from "../../../api/index";
 export default {
   name: "ModalDebugger",
   components: {
@@ -85,6 +80,33 @@ export default {
       variableTabs: [],
       debugSearch: "",
       isRTL: false,
+      dataTable: [],
+      dataTableTriggers: [],
+      columns: ["key", "value"],
+      options: {
+        selectable: {
+          mode: "single", // or 'multiple'
+          only: function (row) {
+            console.log("asd jonas");
+            return true; // any condition
+          },
+          selectAllMode: "all", // or 'page'
+          programmatic: false,
+        },
+        filterable: false,
+        headings: {
+          key: this.$i18n.t("ID_NAME"),
+          value: this.$i18n.t("ID_VALUE"),
+        },
+      },
+      optionsDebugVars: {
+        selected: "all",
+        options: [
+          { text: this.$i18n.t("ID_OPT_ALL"), value: "all" },
+          { text: this.$i18n.t("ID_DYNAFORM"), value: "dyn" },
+          { text: this.$i18n.t("ID_SYSTEM"), value: "sys" },
+        ],
+      },
     };
   },
   methods: {
@@ -92,45 +114,51 @@ export default {
       return "btn v-btn-request " + cls;
     },
     show() {
+      this.getDebugVars({ filter: "all" });
+      this.getDebugVarsTriggers();
       this.$refs["modal-debugger"].show();
     },
     cancel() {
       this.$refs["modal-debugger"].hide();
     },
-    unpauseCase() {},
+    getDebugVars(data) {
+      let that = this,
+        dt = [];
+      api.cases.debugVars(data).then((response) => {
+        _.forIn(response.data.data[0], function (value, key) {
+          dt.push({
+            key,
+            value,
+          });
+        });
+        this.dataTable = dt;
+      });
+    },
+    getDebugVarsTriggers(data) {
+      let that = this,
+        dt = [];
+      api.cases.debugVarsTriggers(data).then((response) => {
+        console.log("asdasd");
+        if (response.data.length > 0) {
+          _.forIn(response.data.data[0], function (value, key) {
+            dt.push({
+              key,
+              value,
+            });
+          });
+          this.dataTableTriggers = dt;
+        }
+      });
+    },
+
     /**
-     * Initializate debug menu
+     * Change Radio option [All, Dynaform, System]
      */
-    initializeDebugTab() {
-      this.debugTabs = [
-        {
-          id: "this.language.ID_VARIABLES",
-          title: "this.language.ID_VARIABLES",
-          function: "",
-        },
-        {
-          id: "this.language.ID_TRIGGERS",
-          title: "this.language.ID_TRIGGERS",
-          function: "",
-        },
-      ];
-      this.variableTabs = [
-        {
-          id: "this.language.ID_ALL",
-          title: "this.language.ID_ALL",
-          function: "",
-        },
-        {
-          id: "this.language.ID_DYNAFORMS",
-          title: "this.language.ID_DYNAFORMS",
-          function: "",
-        },
-        {
-          id: "this.language.ID_SYSTEM",
-          title: "this.language.ID_SYSTEM",
-          function: "",
-        },
-      ];
+    changeOption(opt) {
+      this.getDebugVars({ filter: opt });
+    },
+    onRowClicked() {
+      console.log("asdsa sad aslllllllll");
     },
   },
 };
@@ -227,6 +255,12 @@ input[type="radio"] {
   box-sizing: border-box;
   padding: 0;
   display: none;
+}
+
+.btn-outline-secondary-active {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
 }
 </style>
 

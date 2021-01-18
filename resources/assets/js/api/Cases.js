@@ -172,8 +172,28 @@ export let cases = {
             keys: {},
             paged: dt.paged
         })
-    }
-
+    },
+    debugVars(data) {
+        var params;
+        if (data.filter === "all") {
+            return axios.get(window.config.SYS_SERVER +
+                window.config.SYS_URI +
+                `cases/debug_vars`);
+        } else {
+            params = new URLSearchParams();
+            params.append('filter', data.filter);
+            return axios.post(window.config.SYS_SERVER +
+                window.config.SYS_URI +
+                `cases/debug_vars`, params);
+        }
+    },
+    debugVarsTriggers(data) {
+        let dc = _.random(0, 10000000000),
+            r = _.random(1.0, 100.0);
+        return axios.get(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/debug_triggers?r=${r}&_dc=${dc}`);
+    },
 };
 
 export let casesHeader = {
