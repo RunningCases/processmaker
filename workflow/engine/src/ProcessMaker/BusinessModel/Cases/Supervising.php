@@ -182,6 +182,12 @@ class Supervising extends AbstractCases
     {
         // Get base query
         $query = Delegation::query()->select();
+        // Join with application
+        $query->joinApplication();
+        // Only cases in to_do
+        $query->caseTodo();
+        // Only open threads
+        $query->isThreadOpen();
         // Only distinct APP_NUMBER
         $query->distinct();
         // Get the list of processes of the supervisor
@@ -201,6 +207,12 @@ class Supervising extends AbstractCases
     {
         // Get base query
         $query = Delegation::query()->select();
+        // Join with application
+        $query->joinApplication();
+        // Only cases in to_do
+        $query->caseTodo();
+        // Only open threads
+        $query->isThreadOpen();
         // Only distinct APP_NUMBER
         $query->distinct();
         // Get the list of processes of the supervisor
