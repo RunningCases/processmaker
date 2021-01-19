@@ -550,15 +550,5 @@ class SupervisingTest extends TestCase
 
         $res = $supervising->getPagingCounters();
         $this->assertEquals(3, $res);
-
-        $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
-
-        $supervising->setCaseNumber($delegation->APP_NUMBER);
-        $supervising->setProcessId($delegation->PRO_ID);
-        $supervising->setTaskId($delegation->TAS_ID);
-        $supervising->setCaseUid($delegation->APP_UID);
-
-        $res = $supervising->getPagingCounters();
-        $this->assertEquals(1, $res);
     }
 }
