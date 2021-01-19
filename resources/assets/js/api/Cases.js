@@ -45,6 +45,16 @@ export let cases = {
             keys: {}
         });
     },
+    openSummary(data) {
+        var params = new FormData();
+        params.append('appUid', data.APP_UID);
+        params.append('delIndex', data.DEL_INDEX);
+        params.append('action', 'todo');
+
+        return axios.post(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `appProxy/requestOpenSummary`, params);
+    },
     inputdocuments(data) {
         var params = new FormData();
         params.append('appUid', data.APP_UID);
@@ -73,7 +83,11 @@ export let cases = {
 
         return axios.post(window.config.SYS_SERVER +
             window.config.SYS_URI +
-            `appProxy/getSummary`, params);
+            `appProxy/getSummary`, params, {
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            });
     },
     casenotes(data) {
         var params = new FormData();
