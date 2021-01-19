@@ -106,8 +106,9 @@ class Unassigned extends AbstractCases
             $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
             $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
             // Get task color label
-            $item['TAS_COLOR'] = 1; // green - onTime
+            $item['TAS_COLOR'] = $this->getTaskColor($item['DEL_TASK_DUE_DATE']);
             $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
+            $item['TAS_STATUS'] = self::TASK_STATUS[$item['TAS_COLOR']];
             // Apply the date format defined in environment
             $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
             $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);

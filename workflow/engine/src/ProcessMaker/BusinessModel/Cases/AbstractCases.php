@@ -23,11 +23,12 @@ class AbstractCases implements CasesInterface
     const PRIORITIES = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
     // Task Colors
     const TASK_COLORS = [1 => 'green', 2 => 'red', 3 => 'orange', 4 => 'blue', 5 => 'gray'];
-    const COLOR_OVERDUE = 1;
-    const COLOR_ON_TIME = 2;
-    const COLOR_DRAFT = 3;
-    const COLOR_PAUSED = 4;
-    const COLOR_UNASSIGNED = 5;
+    const TASK_STATUS = [1 => 'ON_TIME', 2 => 'OVERDUE', 3 => 'DRAFT', 4 => 'PAUSED', 5 => 'UNASSIGNED'];
+    const COLOR_ON_TIME = 1; // green
+    const COLOR_OVERDUE = 2; // red
+    const COLOR_DRAFT = 3; // orange
+    const COLOR_PAUSED = 4; // blue
+    const COLOR_UNASSIGNED = 5; // gray
     // Status values
     const STATUS_DRAFT = 1;
     const STATUS_TODO = 2;
@@ -1070,9 +1071,11 @@ class AbstractCases implements CasesInterface
     {
         $currentDate = new DateTime('now');
         $dueDate = new DateTime($dueDate);
-        if ($dueDate > $currentDate) {
+        if ($currentDate > $dueDate) {
+            // Overdue: When the current date is mayor to the due date of the case
             $taskColor = self::COLOR_OVERDUE;
         } else {
+            // OnTime
             $taskColor = self::COLOR_ON_TIME;
             if (get_class($this) === Draft::class) {
                 $taskColor = self::COLOR_DRAFT;
@@ -1117,6 +1120,7 @@ class AbstractCases implements CasesInterface
                     // Get task color label
                     $threadTasks[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
                     $threadTasks[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$threadTasks[$i]['tas_color']] : '';
+                    $threadTasks[$i]['tas_status'] = self::TASK_STATUS[$threadTasks[$i]['tas_color']];
                 }
                 // Review if require other information
                 if ($onlyTask) {
