@@ -183,6 +183,7 @@ class Participated extends AbstractCases
                             $result[$i]['delay'] = getDiffBetweenDates($thread['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                             $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
                             $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                            $result[$i]['tas_status'] = self::TASK_STATUS[$result[$i]['tas_color']];
                             // Get the user tooltip information
                             $result[$i]['user_tooltip'] = User::getInformation($thread['USR_ID']);
                             $i++;
@@ -195,6 +196,7 @@ class Participated extends AbstractCases
                         $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                         $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                         $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                        $result[$i]['tas_status'] = self::TASK_STATUS[$result[$i]['tas_color']];
                         // Get the user tooltip information
                         $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
                         $item['PENDING'] = $result;
@@ -216,6 +218,7 @@ class Participated extends AbstractCases
                     $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
                     $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
                     $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
+                    $result[$i]['tas_status'] = self::TASK_STATUS[$result[$i]['tas_color']];
                     // Get the user tooltip information
                     $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
                     $item['PENDING'] = $result;
