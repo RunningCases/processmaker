@@ -127,6 +127,7 @@
                                                     {{ tagContent(tag) }}
                                                 </div>
                                                 <component
+                                                    :filters="filters"
                                                     v-bind:is="tagComponent(tag)"
                                                     v-bind:info="tagInfo(tag)"
                                                     v-bind:tag="tag"
