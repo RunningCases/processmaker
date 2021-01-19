@@ -114,7 +114,7 @@ class Participated extends AbstractCases
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
-                // Scope that search for the STARTED by user
+                // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
@@ -136,8 +136,8 @@ class Participated extends AbstractCases
                                         \']\'
                                   ) AS PENDING'
                 );
-                // Only cases in progress
-                $query->caseInProgress();
+                // Only cases in progress: TO_DO without DRAFT
+                $query->caseTodo();
                 // Group by AppNumber
                 $query->groupBy('APP_NUMBER');
                 break;
@@ -248,14 +248,14 @@ class Participated extends AbstractCases
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
-                // Scope that search for the STARTED by user
+                // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
                 // Only distinct APP_NUMBER
                 $query->distinct();
-                // Scope for in progress cases
-                $query->statusIds([self::STATUS_DRAFT, self::STATUS_TODO]);
+                // Scope for in progress: TO_DO without DRAFT
+                $query->caseTodo();
                 break;
             case 'COMPLETED':
                 // Scope that search for the COMPLETED
@@ -285,14 +285,14 @@ class Participated extends AbstractCases
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
-                // Scope that search for the STARTED by user
+                // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
                 // Only distinct APP_NUMBER
                 $query->distinct();
-                // Scope for in progress cases
-                $query->statusIds([self::STATUS_DRAFT, self::STATUS_TODO]);
+                // Scope for in progress: TO_DO without DRAFT
+                $query->caseTodo();
                 break;
             case 'COMPLETED':
                 // Scope that search for the COMPLETED
