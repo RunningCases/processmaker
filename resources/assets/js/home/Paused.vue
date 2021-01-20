@@ -92,7 +92,6 @@ export default {
         "case_title",
         "process_name",
         "task",
-        "current_user",
         "due_date",
         "delegation_date",
         "priority",
