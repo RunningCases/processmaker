@@ -107,8 +107,9 @@ import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
-
+import utils from "./../utils/utils";
 import Api from "../api/index";
+
 export default {
   name: "CaseDetail",
   components: {
@@ -466,7 +467,13 @@ export default {
             COLOR: v.TAS_COLOR_LABEL,
           }],
           CASE_TITLE: v.DEL_TITLE,
-          ASSIGNEE: v.USR_FIRSTNAME + " " + v.USR_LASTNAME,
+          ASSIGNEE: v.USR_ID !== 0 ?
+            utils.userNameDisplayFormat({
+              userName: v.USR_USERNAME,
+              firstName: v.USR_LASTNAME,
+              lastName: v.USR_LASTNAME,
+              format: window.config.FORMATS.format || null
+            }) : this.$i18n.t("ID_UNASSIGNED"),
           STATUS: v.DEL_THREAD_STATUS,
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           TASK_COLOR: v.TAS_COLOR_LABEL,
