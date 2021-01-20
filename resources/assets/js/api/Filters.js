@@ -72,11 +72,12 @@ export let filters = {
     /**
      * Service to get the users list
      */
-    taskList(query) {
+    taskList(params) {
         return Api.get({
             service: "TASKS",
             params: {
-                text: query,
+                text: params.query,
+                proId: params.proId
             },
             keys: {},
         });
