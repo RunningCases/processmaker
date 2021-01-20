@@ -1080,26 +1080,39 @@ Ext.onReady(function(){
                                       var data = Ext.util.JSON.decode(result.responseText);
                                       if (data.status == true) {
                                           if (!isBrowserIE()) {
+                                            if (typeof parent.notify !== "undefined") { 
                                               // The case was cancelled
                                               parent.notify('', _("ID_CASE_CANCELLED", stringReplace("\\: ", "", _APP_NUM)));
+                                            }
+                                            if (typeof parent.updateCasesTree !== "undefined") { 
                                               parent.updateCasesTree();
+                                            }
+                                            if (typeof parent.highlightCasesTree !== "undefined") { 
                                               parent.highlightCasesTree();
+                                            }
                                           }
                                       } else {
                                           if (!isBrowserIE()) {
-                                              // The case wasn't cancel
-                                              parent.notify('', data.msg);
+                                              if (typeof parent.notify !== "undefined") {
+                                                  // The case wasn't cancel
+                                                  parent.notify('', data.msg);
+                                              }
                                           }
                                       }
                                   } catch (e) {
                                       if (isBrowserIE()) {
                                           Ext.MessageBox.alert(_('ID_FAILED'), _('ID_SOMETHING_WRONG'));
                                       } else {
-                                          parent.notify('', _('ID_SOMETHING_WRONG'));
+                                          if (typeof parent.notify !== "undefined") {
+                                              parent.notify('', _('ID_SOMETHING_WRONG'));
+                                          }
                                       }
-
                                   }
-                                  location.href = 'casesListExtJs';
+                                  if (typeof parent.postMessage !== "undefined") {
+                                    parent.postMessage("redirect=todo","*");
+                                  } else {
+                                    location.href = 'casesListExtJs';
+                                  }
                               },
                               failure: function (result, request) {
                                   Ext.MessageBox.alert(_('ID_FAILED'), result.responseText);
@@ -1361,13 +1374,22 @@ Ext.onReady(function(){
             var data = Ext.util.JSON.decode(result.responseText);
             if( data.status == 0 ) {
               try {
-                parent.notify('', data.msg);
-                parent.updateCasesTree();
-                parent.highlightCasesTree();
+                  if (typeof parent.notify !== "undefined") {
+                      parent.notify('', data.msg);
+                  }
+                  if (typeof parent.updateCasesTree !== "undefined") {
+                      parent.updateCasesTree();
+                  }
+                  if (typeof parent.highlightCasesTree !== "undefined") {
+                      parent.highlightCasesTree();
+                  }
+            } catch (e) {
+            }
+              if (typeof parent.postMessage !== "undefined") {
+                parent.postMessage("redirect=todo", "*");
+              } else {
+                location.href = 'casesListExtJs';
               }
-              catch (e) {
-              }
-              location.href = 'casesListExtJs';
             } else {
               alert(data.msg);
             }
@@ -1562,12 +1584,22 @@ Ext.onReady(function(){
                 success : function(res, req) {
                   if(req.result.success) {
                     try {
-                      parent.notify('PAUSE CASE', req.result.msg);
-                      parent.updateCasesTree();
-                      parent.highlightCasesTree();
-                    }catch (e) {
+                      if (typeof parent.notify !== "undefined") {
+                        parent.notify('PAUSE CASE', req.result.msg);
+                      }
+                      if (typeof parent.updateCasesTree !== "undefined") {
+                        parent.updateCasesTree();
+                      }
+                      if (typeof parent.highlightCasesTree !== "undefined") {
+                          parent.highlightCasesTree();
+                      }
+                    } catch (e) {
                     }
-                    location.href = urlToRedirectAfterPause;
+                    if (typeof parent.postMessage !== "undefined") {
+                      parent.postMessage("redirect=todo", "*");
+                    } else {
+                      location.href = urlToRedirectAfterPause;
+                    }
                   } else {
                     PMExt.error(_('ID_ERROR'), req.result.msg);
                   }
@@ -1656,14 +1688,23 @@ Ext.onReady(function(){
 				loadMask.hide();
 				var data = Ext.util.JSON.decode(result.responseText);
 				if( data.success ) {
-					try {
-					   parent.PMExt.notify(_('ID_DELETE_ACTION'), data.msg);
-					   parent.updateCasesTree();
-					   parent.highlightCasesTree();
-					}
-					catch (e) {
-					}
-					location.href = 'casesListExtJs';
+                      try {
+                          if (typeof parent.PMExt.updateCasesTree !== "undefined") {
+                              parent.PMExt.notify(_('ID_DELETE_ACTION'), data.msg);
+                          }
+                          if (typeof parent.updateCasesTree !== "undefined") {
+                              parent.updateCasesTree();
+                          }
+                          if (typeof parent.highlightCasesTree !== "undefined") {
+                            parent.highlightCasesTree();
+                          }
+					  } catch (e) {
+					  }
+                      if (typeof parent.postMessage !== "undefined") {
+                        parent.postMessage("redirect=todo", "*");
+                      } else {
+                          location.href = 'casesListExtJs';
+                      }
 				} else {
 				    PMExt.error(_('ID_ERROR'), data.msg);
 				}
