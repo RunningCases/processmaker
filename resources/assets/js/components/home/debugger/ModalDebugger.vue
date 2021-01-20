@@ -1,9 +1,9 @@
 <template>
-  <b-modal ref="modal-debugger" hide-footer size="xl">
+  <b-modal ref="modal-debugger" hide-footer size="xl" class="modal-debugger">
     <tabs>
       <tab name="Variables">
         <div
-          class="btn-toolbar justify-content-between"
+          class="btn-toolbar justify-content-between float-right"
           role="toolbar"
           aria-label="Toolbar with button groups"
         >
@@ -17,7 +17,7 @@
             buttons
           ></b-form-radio-group>
         </div>
-
+        <br />
         <div>
           <v-client-table
             @row-click="onRowClicked"
@@ -39,21 +39,6 @@
         </div>
       </tab>
     </tabs>
-    <br />
-    <div class="card">
-      <div class="container">
-        <div class="mb-3">
-          <label for="exampleFormControlTextarea1" class="form-label"
-            >Example textarea</label
-          >
-          <textarea
-            class="form-control"
-            id="exampleFormControlTextarea1"
-            rows="3"
-          ></textarea>
-        </div>
-      </div>
-    </div>
   </b-modal>
 </template>
 
@@ -68,9 +53,7 @@ export default {
     Tab,
   },
   props: {},
-  mounted() {
-    this.initializeDebugTab();
-  },
+  mounted() {},
   data() {
     return {
       data: null,
@@ -84,16 +67,7 @@ export default {
       dataTableTriggers: [],
       columns: ["key", "value"],
       options: {
-        selectable: {
-          mode: "single", // or 'multiple'
-          only: function (row) {
-            console.log("asd jonas");
-            return true; // any condition
-          },
-          selectAllMode: "all", // or 'page'
-          programmatic: false,
-        },
-        filterable: false,
+        filterable: true,
         headings: {
           key: this.$i18n.t("ID_NAME"),
           value: this.$i18n.t("ID_VALUE"),
@@ -113,14 +87,23 @@ export default {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
     },
+    /**
+     * Show action in modal
+     */
     show() {
       this.getDebugVars({ filter: "all" });
       this.getDebugVarsTriggers();
       this.$refs["modal-debugger"].show();
     },
+    /**
+     * Cancel button action
+     */
     cancel() {
       this.$refs["modal-debugger"].hide();
     },
+    /**
+     * Get debug variables
+     */
     getDebugVars(data) {
       let that = this,
         dt = [];
@@ -134,11 +117,13 @@ export default {
         this.dataTable = dt;
       });
     },
+    /**
+     * Get trigger variables
+     */
     getDebugVarsTriggers(data) {
       let that = this,
         dt = [];
       api.cases.debugVarsTriggers(data).then((response) => {
-        console.log("asdasd");
         if (response.data.length > 0) {
           _.forIn(response.data.data[0], function (value, key) {
             dt.push({
@@ -150,15 +135,11 @@ export default {
         }
       });
     },
-
     /**
      * Change Radio option [All, Dynaform, System]
      */
     changeOption(opt) {
       this.getDebugVars({ filter: opt });
-    },
-    onRowClicked() {
-      console.log("asdsa sad aslllllllll");
     },
   },
 };
@@ -261,6 +242,19 @@ input[type="radio"] {
   color: #fff;
   background-color: #6c757d;
   border-color: #6c757d;
+}
+
+.VueTables__search-field > label {
+  display: none;
+}
+
+.VueTables.VueTables--client .row {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-right: 0px;
+  margin-left: 0px;
 }
 </style>
 

@@ -4,50 +4,16 @@
     v-if="openCaseState"
   >
     <div
+      data-target="#debugModal"
+      @click="showDebugger"
       v-bind:class="{ 'hiddencon-label': !isRtl, 'hiddencon-label-rtl': isRtl }"
     >
-      <i class="fa fa-th"></i>
+      <i class="fa fa-bug"></i>
     </div>
-    <div class="btn-group-vertical">
+    <div class="btn-group-vertical btn-container">
       <button
         type="button"
-        class="btn btn-secondary"
-        data-toggle="tooltip"
-        data-placement="bottom"
-        title="CLOSE"
-      >
-        <i class="fa fa-x2 fa-times"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        data-toggle="tooltip"
-        data-placement="bottom"
-        title="HIDE_INBOX"
-      >
-        <i class="fa fa-outdent"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        data-toggle="tooltip"
-        data-placement="bottom"
-        title="language.ID_INBOX_SHOW_INBOX"
-      >
-        <i class="fa fa-columns"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        data-toggle="tooltip"
-        data-placement="bottom"
-        title="language.ID_INBOX_FULL_SCREEN"
-      >
-        <i class="fa fa-window-maximize"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
+        class="btn btn-pm-primary"
         data-toggle="modal"
         data-placement="bottom"
         data-target="#debugModal"
@@ -245,7 +211,7 @@ export default {
   padding: 0;
   position: fixed;
   right: -37px;
-  top: 10px;
+  top: 0px;
   opacity: 0.9;
 }
 
@@ -264,7 +230,8 @@ export default {
 }
 
 .hiddencon:hover {
-  right: 0;
+  cursor: pointer;
+  opacity: 0.6;
 }
 
 .hiddencon-rtl:hover {
@@ -272,16 +239,16 @@ export default {
 }
 
 .hiddencon-label {
-  margin-top: -40px;
+  margin-top: 0px;
   margin-left: -23px;
-  padding: 4px;
+  padding: 7px;
   position: absolute;
   top: 50%;
   display: inline-block;
   color: white;
-  background: #626262;
+  background: #0099dd;
   font-size: 14px;
-  border-radius: 20px 0 0 20px;
+  border-radius: 5px 0 0 5px;
 }
 
 .hiddencon-label-rtl {
@@ -292,7 +259,7 @@ export default {
   top: 50%;
   display: inline-block;
   color: white;
-  background: #626262;
+  background: #0099dd;
   font-size: 14px;
   border-radius: 0 20px 20px 0;
 }
@@ -307,7 +274,7 @@ export default {
 .hiddencon ul {
   margin: 0;
   padding: 0;
-  border: 8px solid #798189;
+  border: 8px solid #0099dd;
   border-right: 0;
   color: #fff;
   background-color: #000;
@@ -341,5 +308,15 @@ export default {
 .hiddencon li a:hover {
   background-color: #333;
   text-decoration: none;
+}
+
+.btn-container {
+  top: 17px;
+}
+
+.btn-pm-primary {
+  color: #fff;
+  background-color: #0099dd;
+  border-color: #0099dd;
 }
 </style>
