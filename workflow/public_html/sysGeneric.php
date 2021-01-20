@@ -342,6 +342,7 @@ define('HIGHLIGHT_HOME_FOLDER_ENABLE', $config['highlight_home_folder_enable'] =
 define('HIGHLIGHT_HOME_FOLDER_REFRESH_TIME', $config['highlight_home_folder_refresh_time']);
 define('HIGHLIGHT_HOME_FOLDER_SCOPE', $config['highlight_home_folder_scope']);
 /*----------------------------------********---------------------------------*/
+define('DISABLE_TASK_MANAGER_ROUTING_ASYNC', $config['disable_task_manager_routing_async'] === "1");
 
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];

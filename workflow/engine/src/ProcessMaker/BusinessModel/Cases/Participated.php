@@ -17,6 +17,7 @@ class Participated extends AbstractCases
         'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process Name
         'TASK.TAS_TITLE',  // Pending Task
+        'TASK.TAS_ASSIGN_TYPE', // Task assign rule
         'APPLICATION.APP_STATUS',  // Status
         'APPLICATION.APP_CREATE_DATE',  // Start Date
         'APPLICATION.APP_FINISH_DATE',  // Finish Date
@@ -114,30 +115,12 @@ class Participated extends AbstractCases
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
-                // Scope that search for the STARTED by user
+                // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
-                // Scope that search for the TO_DO
-                $query->selectRaw(
-                    'CONCAT(
-                                        \'[\',
-                                        GROUP_CONCAT(
-                                            CONCAT(
-                                                \'{"tas_id":\',
-                                                APP_DELEGATION.TAS_ID,
-                                                \', "user_id":\',
-                                                APP_DELEGATION.USR_ID,
-                                                \', "due_date":"\',
-                                                APP_DELEGATION.DEL_TASK_DUE_DATE,
-                                                \'"}\'
-                                            )
-                                        ),
-                                        \']\'
-                                  ) AS PENDING'
-                );
-                // Only cases in progress
-                $query->caseInProgress();
+                // Only cases in progress: TO_DO without DRAFT
+                $query->caseTodo();
                 // Group by AppNumber
                 $query->groupBy('APP_NUMBER');
                 break;
@@ -168,56 +151,36 @@ class Participated extends AbstractCases
             $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
             // Get total case notes
             $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
+            // Define the thread information
+            $thread = [];
+            $thread['TAS_TITLE'] = $item['TAS_TITLE'];
+            $thread['USR_ID'] = $item['USR_ID'];
+            $thread['DEL_TASK_DUE_DATE'] = $item['DEL_TASK_DUE_DATE'];
+            $thread['TAS_ASSIGN_TYPE'] = $item['TAS_ASSIGN_TYPE'];
+            $thread['APP_STATUS'] = $item['APP_STATUS'];
             // Define data according to the filters
             switch ($filter) {
                 case 'STARTED':
+                case 'IN_PROGRESS':
                     $result = [];
                     $i = 0;
                     if ($item['APP_STATUS'] === 'TO_DO') {
                         $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
                         foreach ($taskPending as $thread) {
-                            // todo this need to review
-                            $result[$i]['tas_title'] = $thread['TAS_TITLE'];
-                            $result[$i]['user_id'] = $thread['USR_ID'];
-                            $result[$i]['due_date'] = $thread['DEL_TASK_DUE_DATE'];
-                            $result[$i]['delay'] = getDiffBetweenDates($thread['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
-                            $result[$i]['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE']) : '';
-                            $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
-                            // Get the user tooltip information
-                            $result[$i]['user_tooltip'] = User::getInformation($thread['USR_ID']);
+                            $thread['APP_STATUS'] = $item['APP_STATUS'];
+                            $result[$i] = $this->threadInformation($thread);
                             $i++;
                         }
                         $item['PENDING'] = $result;
                     } else {
-                        $result[$i]['tas_title'] = $item['TAS_TITLE'];
-                        $result[$i]['user_id'] = $item['USR_ID'];
-                        $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
-                        $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
-                        $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
-                        $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
-                        // Get the user tooltip information
-                        $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
+                        $result[$i] = $this->threadInformation($thread);
                         $item['PENDING'] = $result;
-                    }
-                    break;
-                case 'IN_PROGRESS':
-                    // Get the detail related to the open thread
-                    if (!empty($item['PENDING'])) {
-                        $result = $this->prepareTaskPending($item['PENDING']);
-                        $item['PENDING'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
                     }
                     break;
                 case 'COMPLETED':
                     $result = [];
                     $i = 0;
-                    $result[$i]['tas_title'] = $item['TAS_TITLE'];
-                    $result[$i]['user_id'] = $item['USR_ID'];
-                    $result[$i]['due_date'] = $item['DEL_TASK_DUE_DATE'];
-                    $result[$i]['delay'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
-                    $result[$i]['tas_color'] = (!empty($item['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($item['DEL_TASK_DUE_DATE']) : '';
-                    $result[$i]['tas_color_label'] = (!empty($result[$i]['tas_color'])) ? self::TASK_COLORS[$result[$i]['tas_color']] : '';
-                    // Get the user tooltip information
-                    $result[$i]['user_tooltip'] = User::getInformation($item['USR_ID']);
+                    $result[$i] = $this->threadInformation($thread);
                     $item['PENDING'] = $result;
                     break;
             }
@@ -233,6 +196,7 @@ class Participated extends AbstractCases
      *
      * @return int
      */
+
     public function getCounter()
     {
         // Get base query
@@ -245,14 +209,14 @@ class Participated extends AbstractCases
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
-                // Scope that search for the STARTED by user
+                // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
                 // Only distinct APP_NUMBER
                 $query->distinct();
-                // Scope for in progress cases
-                $query->statusIds([self::STATUS_DRAFT, self::STATUS_TODO]);
+                // Scope for in progress: TO_DO without DRAFT
+                $query->caseTodo();
                 break;
             case 'COMPLETED':
                 // Scope that search for the COMPLETED
@@ -282,14 +246,14 @@ class Participated extends AbstractCases
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
-                // Scope that search for the STARTED by user
+                // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
                 // Only distinct APP_NUMBER
                 $query->distinct();
-                // Scope for in progress cases
-                $query->statusIds([self::STATUS_DRAFT, self::STATUS_TODO]);
+                // Scope for in progress: TO_DO without DRAFT
+                $query->caseTodo();
                 break;
             case 'COMPLETED':
                 // Scope that search for the COMPLETED

@@ -221,8 +221,10 @@ export default {
     claimCase(item) {
       let that = this;
       api.cases.open(_.extend({ ACTION: "unassigned" }, item)).then(() => {
-        that.$refs["modal-claim-case"].data = item;
-        that.$refs["modal-claim-case"].show();
+        api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$refs["modal-claim-case"].data = item;
+          that.$refs["modal-claim-case"].show();
+        });
       });
     },
     /**

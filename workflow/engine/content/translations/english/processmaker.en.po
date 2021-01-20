@@ -4644,6 +4644,12 @@ msgid "Confirm"
 msgstr "Confirm"
 
 # TRANSLATION
+# LABEL/ID_CONFIRMATION
+#: LABEL/ID_CONFIRMATION
+msgid "Confirmation"
+msgstr "Confirmation"
+
+# TRANSLATION
 # LABEL/ID_CONFIRM_ADHOCUSER_CASE
 #: LABEL/ID_CONFIRM_ADHOCUSER_CASE
 msgid "[LABEL/ID_CONFIRM_ADHOCUSER_CASE] Are you sure you want to do it?"
@@ -6898,6 +6904,12 @@ msgstr "Duplicate category name."
 #: LABEL/ID_DUPLICATE_ENTRY_PRIMARY_KEY
 msgid "Duplicate entry for primary key"
 msgstr "Duplicate entry for primary key"
+
+# TRANSLATION
+# LABEL/ID_DURATION
+#: LABEL/ID_DURATION
+msgid "Duration"
+msgstr "Duration"
 
 # TRANSLATION
 # LABEL/ID_DYANFORM_CREATED

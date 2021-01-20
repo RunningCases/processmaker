@@ -158,24 +158,35 @@
         components: {
             formUploadSource
         },
-        validations: {
-            form: {
-                name: {
-                    required
-                },
-                serverAddress: {
-                    required
-                },
-                port: {
-                    required
-                },
-                userName: {
-                    required
-                },
-                password: {
-                    required
+        validations() {
+            let fields = {
+                form: {
+                    name: {
+                        required
+                    },
+                    serverAddress: {
+                        required
+                    },
+                    port: {
+                        required
+                    }
                 }
+            };
+            if (this.form.anonymous === '1') {
+                fields.form.userName = {
+                };
+                fields.form.password = {
+                };
             }
+            if (this.form.anonymous === '0') {
+                fields.form.userName = {
+                    required
+                };
+                fields.form.password = {
+                    required
+                };
+            }
+            return fields;
         },
         data() {
             return {

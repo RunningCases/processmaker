@@ -1805,6 +1805,7 @@ class Delegation extends Model
     {
         $query = Delegation::query()->select([
             'TASK.TAS_TITLE',
+            'TASK.TAS_ASSIGN_TYPE',
             'APP_DELEGATION.USR_ID',
             'APP_DELEGATION.DEL_TASK_DUE_DATE'
         ]);
@@ -1887,6 +1888,7 @@ class Delegation extends Model
     {
         $query = Delegation::query()->select([
             'TASK.TAS_TITLE', // Task
+            'TASK.TAS_ASSIGN_TYPE', // Task assign rule
             'APP_DELEGATION.DEL_TITLE', // Thread title
             'APP_DELEGATION.DEL_THREAD_STATUS', // Thread status
             'APP_DELEGATION.USR_ID', // Current UserId
@@ -1914,6 +1916,7 @@ class Delegation extends Model
             $abs = new AbstractCases();
             $item['TAS_COLOR'] = $abs->getTaskColor($item['DEL_TASK_DUE_DATE']);
             $item['TAS_COLOR_LABEL'] = AbstractCases::TASK_COLORS[$item['TAS_COLOR']];
+            $item['UNASSIGNED'] = ($item['TAS_ASSIGN_TYPE'] === 'SELF_SERVICE' ? true : false);
             return $item;
         });
 

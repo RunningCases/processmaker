@@ -61,7 +61,13 @@ if ($featureEnable) {
             $cases = new Cases();
             $cases->routeCaseActionByEmail($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files);
         };
-        JobsManager::getSingleton()->dispatch(ActionByEmail::class, $closure);
+        if (!DISABLE_TASK_MANAGER_ROUTING_ASYNC) {
+            // Routing the case asynchronically
+            JobsManager::getSingleton()->dispatch(ActionByEmail::class, $closure);
+        } else {
+            // Routing the case synchronically
+            $closure();
+        }
 
         $message = [];
         $message['MESSAGE'] = '<strong>' . G::loadTranslation('ID_ABE_INFORMATION_SUBMITTED') . '</strong>';
