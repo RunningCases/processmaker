@@ -30,7 +30,7 @@ export default {
             isOnMobile: false,
             hideToggle: true,
             selectedTheme: "",
-            sidebarWidth: "310px",
+            sidebarWidth: "260px",
         };
     },
     computed: {

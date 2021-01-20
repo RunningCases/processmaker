@@ -78,7 +78,7 @@ export default {
             collapsed: false,
             selectedTheme: "",
             isOnMobile: false,
-            sidebarWidth: "310px",
+            sidebarWidth: "260px",
             pageId: null,
             pageName: null,
             pageUri: null,
@@ -311,7 +311,7 @@ export default {
 
 <style lang="scss">
 #home {
-    padding-left: 310px;
+    padding-left: 260px;
     transition: 0.3s;
 }
 #home.collapsed {
