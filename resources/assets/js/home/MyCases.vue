@@ -441,6 +441,7 @@ export default {
                         onClick: (obj) => {
                             that.title = obj.title;
                             that.filterHeader = obj.item;
+                            that.$refs["vueTable"].setPage(1); // Reset the page when change the header filter
                             that.$refs["vueTable"].getData();
                         },
                         class: info[v.id].class
