@@ -1,6 +1,6 @@
 <template>
     <div v-if="data.length" class="grouped-cell">
-        <div v-for="item in data" v-bind:key="item.TITLE" class="d-flex mb-3">
+        <div v-for="(item, index) in data" v-bind:key="item.TITLE" class="d-flex mb-3">
             <div
                 v-bind:style="{ color: activeColor(item.STATUS) }"
                 v-b-popover.hover.top="item.DELAYED_MSG"
@@ -10,7 +10,7 @@
             <div class="col ellipsis" v-b-popover.hover.top="item.TAS_NAME">
                 {{ item.TAS_NAME }}
             </div>
-            <div class="avatar" :id="id">
+            <div class="avatar" :id="id + index">
                 <b-avatar
                     variant="info"
                     :src="item.AVATAR"
@@ -18,7 +18,7 @@
                 ></b-avatar>
             </div>
             <b-popover
-                :target="id"
+                :target="id + index"
                 placement="top"
                 ref="popover"
                 triggers="hover"    
