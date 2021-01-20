@@ -280,7 +280,7 @@ export default {
               action = _.find(response.data, function(o) { return o.id == "ACTIONS"; });
               if(action){
                 option = _.find(action.options, function(o) { return o.fn == "cancelCase"; });
-                if(!option.hide){
+                if(option && !option.hide){
                   that.dataCaseSummary.onClick = () => {
                     that.$refs["modal-cancel-case"].show();
                   };      
