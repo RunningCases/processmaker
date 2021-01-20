@@ -57980,6 +57980,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DUPLICATE_CASE_SCHEDULER_NAME','en','Duplicate Case Scheduler name.','2014-01-15') ,
 ( 'LABEL','ID_DUPLICATE_CATEGORY_NAME','en','Duplicate category name.','2014-01-15') ,
 ( 'LABEL','ID_DUPLICATE_ENTRY_PRIMARY_KEY','en','Duplicate entry for primary key','2014-01-15') ,
+( 'LABEL','ID_DURATION','en','Duration','2021-01-20') ,
 ( 'LABEL','ID_DYANFORM_CREATED','en','Dynaform has been created successfully','2014-01-15') ,
 ( 'LABEL','ID_DYANFORM_REMOVE','en','Dynaform has been removed successfully from Process','2014-01-15') ,
 ( 'LABEL','ID_DYNADOC','en','My Case Forms and Documents','2014-01-15') ,
