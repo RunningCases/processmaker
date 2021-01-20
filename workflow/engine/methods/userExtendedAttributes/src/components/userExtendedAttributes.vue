@@ -13,7 +13,7 @@
                         :options="options">
             <div slot="roles"
                  slot-scope="props">
-                {{formatingRoles(props.row.rolesLabel)}}
+                {{formatingRoles(props.row)}}
             </div>
             <div slot="owner"
                  slot-scope="props">
@@ -187,8 +187,14 @@
             refresh() {
                 this.$refs.vServerTable1.refresh();
             },
-            formatingRoles(rolesLabel) {
-                return rolesLabel.join(", ");
+            formatingRoles(row) {
+                if (row.option === "allUser") {
+                    return this.$root.translation("ID_ALL_USERS");
+                }
+                if (row.option === "byRol") {
+                    return row.rolesLabel.join(", ");
+                }
+                return "";
             }
         }
     }
