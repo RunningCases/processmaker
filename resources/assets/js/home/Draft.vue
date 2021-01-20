@@ -129,7 +129,6 @@ export default {
         let params;
         if(this.defaultOption) {
             params = utils.getAllUrlParams(this.defaultOption);
-            console.log(params);
             if (params && params.app_uid && params.del_index) {
                 this.openCase({
                     APP_UID: params.app_uid,

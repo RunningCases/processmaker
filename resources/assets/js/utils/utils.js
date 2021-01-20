@@ -19,6 +19,11 @@ export default {
         aux = aux.replace('@lastName',defaultValues.lastName);
         return aux;
     },
+    /**
+     * Parse an url string and prepare an object of the parameters
+     * @param {string} url 
+     * @returns {object} 
+     */
     getAllUrlParams(url) {
 
         // get query string from url (optional) or window
