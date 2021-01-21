@@ -200,6 +200,10 @@ export let cases = {
             },
         })
     },
+    /**
+     * Get debug Vars in ajax service
+     * @param {*} data 
+     */
     debugVars(data) {
         var params;
         if (data.filter === "all") {
@@ -214,6 +218,10 @@ export let cases = {
                 `cases/debug_vars`, params);
         }
     },
+    /**
+     * Get triggers debug Vars in ajax service
+     * @param {*} data 
+     */
     debugVarsTriggers(data) {
         let dc = _.random(0, 10000000000),
             r = _.random(1.0, 100.0);
