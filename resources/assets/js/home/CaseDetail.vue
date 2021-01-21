@@ -201,6 +201,7 @@ export default {
     this.getInputDocuments();
     this.getOutputDocuments();
     this.getCasesNotes();
+    this.requestOpenSummary();
   },
   methods: {
     postComment(comment, send, files) {
@@ -280,7 +281,7 @@ export default {
               action = _.find(response.data, function(o) { return o.id == "ACTIONS"; });
               if(action){
                 option = _.find(action.options, function(o) { return o.fn == "cancelCase"; });
-                if(!option.hide){
+                if(option && !option.hide){
                   that.dataCaseSummary.onClick = () => {
                     that.$refs["modal-cancel-case"].show();
                   };      
@@ -504,7 +505,24 @@ export default {
         ACTION: "todo",
       });
       this.$emit("onUpdatePage", "XCase");
-    }
+    },
+    /**
+     * Verify if the case has the permission Summary Form
+     * to add dynUid in dataCase
+     */
+    requestOpenSummary() {
+      Api.cases
+        .openSummary(this.dataCase)
+        .then((response) => {
+          var data = response.data;
+          if (data.dynUid !== "") {
+            this.dataCase.DYN_UID = data.dynUid;
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
   },
 };
 </script>

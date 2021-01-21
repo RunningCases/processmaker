@@ -24,6 +24,7 @@
                 :id="pageId"
                 :pageUri="pageUri"
                 :name="pageName"
+                :defaultOption="defaultOption"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
@@ -78,7 +79,7 @@ export default {
             collapsed: false,
             selectedTheme: "",
             isOnMobile: false,
-            sidebarWidth: "310px",
+            sidebarWidth: "260px",
             pageId: null,
             pageName: null,
             pageUri: null,
@@ -93,7 +94,8 @@ export default {
                 CONSOLIDATED_CASES: "batch-routing",
                 CASES_TO_REASSIGN: "task-reassignments",
                 CASES_FOLDERS: "my-documents"
-            }
+            },
+            defaultOption: window.config.defaultOption || ''
         };
     },
     mounted() {
@@ -311,7 +313,7 @@ export default {
 
 <style lang="scss">
 #home {
-    padding-left: 310px;
+    padding-left: 260px;
     transition: 0.3s;
 }
 #home.collapsed {

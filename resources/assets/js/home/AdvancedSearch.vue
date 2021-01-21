@@ -55,11 +55,7 @@
                 {{ props.row.STATUS }}
             </div>
             <div slot="current_user" slot-scope="props">
-                <div class="v-user-cell" v-for="item in props.row.USER">
-                    <div class="col .v-user-cell-ellipsis">
-                        {{ item.USER_DATA }}
-                    </div>
-                </div>
+                <CurrentUserCell :data="props.row.USER_DATA" />
             </div>
             <div slot="start_date" slot-scope="props">
                 {{ props.row.START_DATE }}
@@ -87,6 +83,7 @@ import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import AdvancedFilter from "../components/search/AdvancedFilter";
 import TaskCell from "../components/vuetable/TaskCell.vue";
+import CurrentUserCell from "../components/vuetable/CurrentUserCell.vue";
 import ModalComments from "./modal/ModalComments.vue";
 import api from "./../api/index";
 import utils from "./../utils/utils";
@@ -98,6 +95,7 @@ export default {
         ButtonFleft,
         ModalNewRequest,
         TaskCell,
+        CurrentUserCell,
         ModalComments
     },
     props: ["id", "name", "filters"],
@@ -231,7 +229,7 @@ export default {
                     CASE_TITLE: v.DEL_TITLE,
                     PROCESS_NAME: v.PRO_TITLE,
                     TASK: this.formatTasks(v.THREAD_TASKS),
-                    USER: this.formatUser(v.THREAD_USERS),
+                    USER_DATA: this.formatUser(v.THREAD_USERS),
                     START_DATE: v.APP_CREATE_DATE_LABEL,
                     FINISH_DATE: v.APP_FINISH_DATE_LABEL,
                     DURATION: v.DURATION,
@@ -263,12 +261,17 @@ export default {
                 dataFormat = [];
             for (i = 0; i < data.length; i += 1) {
                 dataFormat.push({
-                    USER_DATA: utils.userNameDisplayFormat({
+                    USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
                         userName: data[i].usr_firstname,
                         firstName: data[i].usr_lastname,
                         lastName: data[i].usr_username,
                         format: window.config.FORMATS.format || null
                     }),
+                    EMAIL: data[i].usr_email,
+                    POSITION: data[i].usr_position,
+                    AVATAR: window.config.SYS_SERVER +
+                                window.config.SYS_URI +
+                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`
                 });
             }
             return dataFormat;
