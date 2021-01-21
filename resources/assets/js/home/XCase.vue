@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex">
     <iframe
       :width="width"
       ref="xIFrame"
@@ -7,13 +7,15 @@
       :src="path"
       :height="height"
       allowfullscreen
+      @load="onLoadIframe"
     ></iframe>
-    <Debugger />
+    <Debugger v-if="openDebug === true" :style="'height:' + height + 'px'" />
   </div>
 </template>
 
 <script>
-import Debugger from '../components/home/debugger/Debugger.vue';
+import Debugger from "../components/home/debugger/Debugger.vue";
+import api from "../api/index";
 export default {
   name: "XCase",
   components: {
@@ -22,12 +24,8 @@ export default {
   props: {
     data: Object,
   },
-  data() {
-    return {
-      openCaseState:true
-    };
-  },
   mounted() {
+    let that = this;
     this.height = window.innerHeight - this.diffHeight;
     this.dataCase = this.$parent.dataCase;
     if (this.dataCase.ACTION == "jump") {
@@ -41,13 +39,22 @@ export default {
         window.config.SYS_URI +
         `cases/open?APP_UID=${this.dataCase.APP_UID}&DEL_INDEX=${this.dataCase.DEL_INDEX}&action=${this.dataCase.ACTION}`;
     }
+
+    setTimeout(() => {
+      api.cases.debugStatus(this.dataCase).then((response) => {
+        if (response.data) {
+          that.openDebug = true;
+        }
+      });
+    }, 2000);
   },
   data() {
     return {
+      openDebug: false,
+      dataCase: null,
       height: "100%",
       width: "100%",
       diffHeight: 10,
-      dataCase: null,
       path: "",
     };
   },
@@ -55,9 +62,13 @@ export default {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
     },
+    onLoadIframe() {},
   },
 };
 </script>
 
 <style>
+.debugger-inline-cont {
+  overflow: hidden;
+}
 </style>

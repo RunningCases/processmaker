@@ -12,6 +12,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Home from "./Home";
 
+import VueSplit from 'vue-split-panel'
+Vue.use(VueSplit);
+
 Vue.use(VueRouter);
 Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);

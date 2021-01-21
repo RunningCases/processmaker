@@ -1,46 +1,93 @@
 <template>
-  <div
-    v-bind:class="{ hiddencon: !isRtl, 'hiddencon-rtl': isRtl }"
-    v-if="openCaseState"
-  >
-    <div
-      data-target="#debugModal"
-      @click="showDebugger"
-      v-bind:class="{ 'hiddencon-label': !isRtl, 'hiddencon-label-rtl': isRtl }"
-    >
-      <i class="fa fa-bug"></i>
-    </div>
-    <div class="btn-group-vertical btn-container">
-      <button
-        type="button"
-        class="btn btn-pm-primary"
-        data-toggle="modal"
-        data-placement="bottom"
-        data-target="#debugModal"
-        @click="showDebugger"
-      >
-        <i class="fa fa-bug"></i>
-      </button>
-    </div>
-    <ModalDebugger ref="modal-debugger" />
+  <div class="debugger-container">
+    <tabs>
+      <tab name="Variables">
+        <div
+          class="btn-toolbar justify-content-between"
+          role="toolbar"
+          aria-label="Toolbar with button groups"
+        >
+          <b-form-radio-group
+            @change="changeOption"
+            v-model="optionsDebugVars.selected"
+            :options="optionsDebugVars.options"
+            button-variant="outline-secondary"
+            name="radio-btn-outline"
+            size="sm"
+            buttons
+          ></b-form-radio-group>
+        </div>
+        <div style="padding-top: 10px">
+          <v-client-table
+            :data="dataTable"
+            :columns="columns"
+            :options="options"
+            ref="vueTable"
+          />
+        </div>
+      </tab>
+      <tab name="Triggers">
+        <div>
+          <v-client-table
+            :data="dataTableTriggers"
+            :columns="columns"
+            :options="options"
+            ref="vueTableTriggers"
+          />
+        </div>
+      </tab>
+    </tabs>
   </div>
 </template>
 
 <script>
-import ModalDebugger from "./ModalDebugger.vue";
+import Tabs from "../../../components/tabs/Tabs.vue";
+import Tab from "../../../components/tabs/Tab.vue";
+import api from "../../../api/index";
 export default {
   name: "ButtonFleft",
   props: {
-    data: Object,
+    data: Object
   },
   components: {
-    ModalDebugger,
+    Tabs,
+    Tab,
   },
   data() {
     return {
-      openCaseState: true,
-      isRtl: false,
+      debugFullPage: false,
+      debugTabs: [],
+      activetab: 1,
+      variableTabs: [],
+      debugSearch: "",
+      isRTL: false,
+      dataTable: [],
+      dataTableTriggers: [],
+      columns: ["key", "value"],
+      options: {
+        perPage: 200,
+        filterable: true,
+        pagination: {
+          show: false,
+        },
+        headings: {
+          key: this.$i18n.t("ID_NAME"),
+          value: this.$i18n.t("ID_VALUE"),
+        },
+      },
+      optionsDebugVars: {
+        selected: "all",
+        options: [
+          { text: this.$i18n.t("ID_OPT_ALL"), value: "all" },
+          { text: this.$i18n.t("ID_DYNAFORM"), value: "dyn" },
+          { text: this.$i18n.t("ID_SYSTEM"), value: "sys" },
+        ],
+      },
     };
+  },
+  mounted() {
+    this.getDebugVars({ filter: "all" });
+    this.getDebugVarsTriggers();
   },
   methods: {
     classBtn(cls) {
@@ -49,274 +96,205 @@ export default {
     showDebugger() {
       this.$refs["modal-debugger"].show();
     },
+    /**
+     * Get debug variables
+     */
+    getDebugVars(data) {
+      let that = this,
+        dt = [];
+      api.cases.debugVars(data).then((response) => {
+        _.forIn(response.data.data[0], function (value, key) {
+          dt.push({
+            key,
+            value,
+          });
+        });
+        this.dataTable = dt;
+      });
+    },
+    /**
+     * Get trigger variables
+     */
+    getDebugVarsTriggers(data) {
+      let that = this,
+        dt = [];
+      api.cases.debugVarsTriggers(data).then((response) => {
+        if (response.data.length > 0) {
+          _.forIn(response.data.data[0], function (value, key) {
+            dt.push({
+              key,
+              value,
+            });
+          });
+          this.dataTableTriggers = dt;
+        }
+      });
+    },
+    /**
+     * Change Radio option [All, Dynaform, System]
+     */
+    changeOption(opt) {
+      this.getDebugVars({ filter: opt });
+    },
   },
 };
 </script>
 
 <style>
-.btn-group,
-.btn-group-vertical {
-  position: relative;
-  display: -webkit-inline-box;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  vertical-align: middle;
+.debugger-container {
+  overflow: auto;
+  max-width: 25%;
+  min-width: 25%;
+  padding: 0.1rem;
+  margin-right: 0;
+  margin-left: 0;
+  border-width: 1px;
+  border-top-left-radius: 0.1rem;
+  border-top-right-radius: 0.1rem;
 }
 
-.btn-group > .btn,
-.btn-group-vertical > .btn {
-  position: relative;
-  -webkit-box-flex: 0;
-  -ms-flex: 0 1 auto;
-  flex: 0 1 auto;
+.tabs-component {
+  margin: 0 0;
 }
 
-.btn-group > .btn:hover,
-.btn-group-vertical > .btn:hover {
-  z-index: 1;
+.tabs-component-tabs {
+  border: solid 1px #ddd;
+  border-radius: 6px;
+  margin-bottom: 5px;
 }
 
-.btn-group > .btn:focus,
-.btn-group > .btn:active,
-.btn-group > .btn.active,
-.btn-group-vertical > .btn:focus,
-.btn-group-vertical > .btn:active,
-.btn-group-vertical > .btn.active {
-  z-index: 1;
+@media (min-width: 700px) {
+  .tabs-component-tabs {
+    border: 0;
+    align-items: stretch;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: -1px;
+  }
 }
 
-.btn-group .btn + .btn,
-.btn-group .btn + .btn-group,
-.btn-group .btn-group + .btn,
-.btn-group .btn-group + .btn-group,
-.btn-group-vertical .btn + .btn,
-.btn-group-vertical .btn + .btn-group,
-.btn-group-vertical .btn-group + .btn,
-.btn-group-vertical .btn-group + .btn-group {
-  margin-left: -1px;
+.tabs-component-tab {
+  color: #999;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 0;
+  list-style: none;
 }
 
-.btn-toolbar {
-  display: -webkit-box;
+.tabs-component-tab:not(:last-child) {
+  border-bottom: dotted 1px #ddd;
+}
+
+.tabs-component-tab:hover {
+  color: #666;
+}
+
+.tabs-component-tab.is-active {
+  color: #000;
+}
+
+.tabs-component-tab.is-disabled * {
+  color: #cdcdcd;
+  cursor: not-allowed !important;
+}
+
+@media (min-width: 700px) {
+  .tabs-component-tab {
+    background-color: #fff;
+    border: solid 1px #ddd;
+    border-radius: 3px 3px 0 0;
+    margin-right: 0.5em;
+    transform: translateY(2px);
+    transition: transform 0.3s ease;
+  }
+
+  .tabs-component-tab.is-active {
+    border-bottom: solid 1px #fff;
+    z-index: 2;
+    transform: translateY(0);
+  }
+}
+
+.tabs-component-tab-a {
+  align-items: center;
+  color: inherit;
+  display: flex;
+  padding: 0.75em 1em;
+  text-decoration: none;
+}
+
+.tabs-component-panels {
+  padding: 4em 0;
+}
+
+@media (min-width: 700px) {
+  .tabs-component-panels {
+    border-top-left-radius: 0;
+    background-color: #fff;
+    border: solid 1px #ddd;
+    border-radius: 0 6px 6px 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    padding: 0.5em 0.5em;
+  }
+}
+
+.btn-group > input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+  display: none;
+}
+
+.btn-outline-secondary-active {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.VueTables__search-field > label {
+  display: none;
+}
+
+.VueTables.VueTables--client .row {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  -webkit-box-pack: start;
-  -ms-flex-pack: start;
-  justify-content: flex-start;
+  margin-right: 0px;
+  margin-left: 0px;
 }
 
-.btn-toolbar .input-group {
-  width: auto;
+.debugger-container .VueTables.VueTables--client > * {
+  font-size: smaller;
 }
 
-.btn-group > .btn:first-child {
-  margin-left: 0;
+.debugger-container .VueTables.VueTables--client .table td,
+.table th {
+  padding: 0.3rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
 }
 
-.btn-group > .btn:not(:last-child):not(.dropdown-toggle),
-.btn-group > .btn-group:not(:last-child) > .btn {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.btn-group > .btn:not(:first-child),
-.btn-group > .btn-group:not(:first-child) > .btn {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.dropdown-toggle-split {
-  padding-right: 0.5625rem;
-  padding-left: 0.5625rem;
-}
-
-.dropdown-toggle-split::after,
-.dropup .dropdown-toggle-split::after,
-.dropright .dropdown-toggle-split::after {
-  margin-left: 0;
-}
-
-.dropleft .dropdown-toggle-split::before {
-  margin-right: 0;
-}
-
-.btn-sm + .dropdown-toggle-split,
-.btn-group-sm > .btn + .dropdown-toggle-split {
-  padding-right: 0.375rem;
-  padding-left: 0.375rem;
-}
-
-.btn-lg + .dropdown-toggle-split,
-.btn-group-lg > .btn + .dropdown-toggle-split {
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
-}
-
-.btn-group-vertical {
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: start;
-  -ms-flex-align: start;
-  align-items: flex-start;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-}
-
-.btn-group-vertical .btn,
-.btn-group-vertical .btn-group {
+.debugger-container .form-control {
+  display: block;
   width: 100%;
+  height: 30px;
+  padding: 0.5rem 0.5rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.btn-group-vertical > .btn + .btn,
-.btn-group-vertical > .btn + .btn-group,
-.btn-group-vertical > .btn-group + .btn,
-.btn-group-vertical > .btn-group + .btn-group {
-  margin-top: -1px;
-  margin-left: 0;
-}
-
-.btn-group-vertical > .btn:not(:last-child):not(.dropdown-toggle),
-.btn-group-vertical > .btn-group:not(:last-child) > .btn {
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.btn-group-vertical > .btn:not(:first-child),
-.btn-group-vertical > .btn-group:not(:first-child) > .btn {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-.btn-group-toggle > .btn,
-.btn-group-toggle > .btn-group > .btn {
-  margin-bottom: 0;
-}
-
-.btn-group-toggle > .btn input[type="radio"],
-.btn-group-toggle > .btn input[type="checkbox"],
-.btn-group-toggle > .btn-group > .btn input[type="radio"],
-.btn-group-toggle > .btn-group > .btn input[type="checkbox"] {
-  position: absolute;
-  clip: rect(0, 0, 0, 0);
-  pointer-events: none;
-}
-
-.hiddencon {
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  right: -37px;
-  top: 0px;
-  opacity: 0.9;
-}
-
-.hiddencon-rtl {
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  left: -37px;
-  top: 10px;
-  opacity: 0.9;
-}
-
-.hiddencon2 {
-  top: auto;
-  bottom: 10px;
-}
-
-.hiddencon:hover {
-  cursor: pointer;
-  opacity: 0.6;
-}
-
-.hiddencon-rtl:hover {
-  left: 0;
-}
-
-.hiddencon-label {
-  margin-top: 0px;
-  margin-left: -23px;
-  padding: 7px;
-  position: absolute;
-  top: 50%;
-  display: inline-block;
-  color: white;
-  background: #0099dd;
-  font-size: 14px;
-  border-radius: 5px 0 0 5px;
-}
-
-.hiddencon-label-rtl {
-  margin-top: -40px;
-  margin-right: -23px;
-  padding: 4px;
-  position: absolute;
-  top: 50%;
-  display: inline-block;
-  color: white;
-  background: #0099dd;
-  font-size: 14px;
-  border-radius: 0 20px 20px 0;
-}
-
-.hiddencon,
-.hiddencon-label {
-  -webkit-transition: all 0.4s ease-in-out;
-  transition: all 0.4s ease-in-out;
-}
-
-.hiddencon p,
-.hiddencon ul {
-  margin: 0;
-  padding: 0;
-  border: 8px solid #0099dd;
-  border-right: 0;
-  color: #fff;
-  background-color: #000;
-  text-align: center;
-  vertical-align: center;
-  border-radius: 10px 0 0 10px;
-}
-
-.hiddencon ul {
-  margin: 0;
-  overflow: auto;
-}
-
-.hiddencon li {
-  display: block;
-}
-
-.hiddencon li a {
-  display: block;
-  padding: 10px;
-  border-bottom: 1px solid #333;
-  color: #ddd;
-  -webkit-transition: all 0.4s linear;
-  transition: all 0.4s linear;
-}
-
-.hiddencon li:last-child a {
-  border-bottom: 0;
-}
-
-.hiddencon li a:hover {
-  background-color: #333;
-  text-decoration: none;
-}
-
-.btn-container {
-  top: 17px;
-}
-
-.btn-pm-primary {
-  color: #fff;
-  background-color: #0099dd;
-  border-color: #0099dd;
+.debugger-container .col-md-12 {
+  position: relative;
+  width: 100%;
+  padding-right: 0;
+  padding-left: 0;
 }
 </style>

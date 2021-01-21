@@ -84,10 +84,10 @@ export let cases = {
         return axios.post(window.config.SYS_SERVER +
             window.config.SYS_URI +
             `appProxy/getSummary`, params, {
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            });
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
     },
     casenotes(data) {
         var params = new FormData();
@@ -185,6 +185,19 @@ export let cases = {
             params: dt,
             keys: {},
             paged: dt.paged
+        })
+    },
+    /**
+     * Make a search request to the Api service 
+     * @param {object} dt - filter parameters
+     */
+    debugStatus(dt) {
+        return Api.get({
+            service: "DEBUG_STATUS",
+            params: {},
+            keys: {
+                prj_uid: dt.PRO_UID
+            },
         })
     },
     debugVars(data) {

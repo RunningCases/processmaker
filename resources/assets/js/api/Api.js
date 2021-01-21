@@ -68,7 +68,8 @@ const services = {
     SEARCH: "/home/search",
     PROCESSES: "/home/processes",
     USERS: "/home/users",
-    TASKS: "/home/tasks"
+    TASKS: "/home/tasks",
+    DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}"
 };
 
 export default {
