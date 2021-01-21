@@ -137,7 +137,7 @@ export default {
                 .get()
                 .then((response) => {
                     this.setDefaultCasesMenu(response.data);
-                    this.menu = this.mappingMenu(response.data);
+                    this.menu = this.mappingMenu(this.setDefaultIcon(response.data));
                     this.setCounter();
                 })
                 .catch((e) => {
@@ -174,6 +174,19 @@ export default {
                 }
             }
             return newData;
+        },
+        /**
+         * Set a default icon if the item doesn't have one
+         */
+        setDefaultIcon(data){
+            var i,
+                auxData = data;
+            for (i = 0; i < auxData.length; i += 1) {
+                if (auxData[i].icon !== undefined && auxData[i].icon === "") {
+                    auxData[i].icon = "fas fa-bars";
+                }
+            }
+            return auxData;
         },
         OnClickSidebarItem(item) {
             if (item.item.page && item.item.page === "/advanced-search") {

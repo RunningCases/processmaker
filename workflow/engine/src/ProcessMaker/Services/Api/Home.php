@@ -554,7 +554,9 @@ class Home extends Api
                 // Adding filters to the "Advanced Search" option
                 $option->child = $child;
             }
-
+            if ($menuInstance->Id[$i] === 'ID_CASE_ARCHIVE_SEARCH') {
+                $option->icon = "fas fa-archive";
+            }
             // Add option to the menu
             $menuHome[] = $option;
         }
