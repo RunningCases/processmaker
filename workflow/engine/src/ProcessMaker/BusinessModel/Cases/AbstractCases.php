@@ -1129,7 +1129,7 @@ class AbstractCases implements CasesInterface
                     if($key === 'user_id') {
                         $threadTasks[$i][$key] = $row;
                         // Get the user tooltip information
-                        $threadTasks[$i]['user_tooltip']  = User::getInformation($row);
+                        $threadTasks[$i]['user_tooltip'] = User::getInformation($row);
                     }
                 } else {
                     // Thread users
@@ -1140,6 +1140,7 @@ class AbstractCases implements CasesInterface
                         $threadUsers[$i]['usr_username'] = !empty($userInfo) ? $userInfo['usr_username'] : '';
                         $threadUsers[$i]['usr_lastname'] = !empty($userInfo) ? $userInfo['usr_lastname'] : '';
                         $threadUsers[$i]['usr_firstname'] = !empty($userInfo) ? $userInfo['usr_firstname'] : '';
+                        $threadUsers[$i]['user_tooltip'] = User::getInformation($row);
                     }
                     // Thread titles
                     if ($key === 'del_id') {

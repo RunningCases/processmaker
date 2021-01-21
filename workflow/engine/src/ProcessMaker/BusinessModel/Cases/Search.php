@@ -122,6 +122,8 @@ class Search extends AbstractCases
                     $query->casesDone($casesClosed);
                 }
             }
+        } else {
+            $query->isThreadOpen();
         }
 
         return $query;
