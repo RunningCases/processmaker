@@ -159,7 +159,14 @@ export default {
             },
             pmDateFormat: window.config.FORMATS.dateFormat,
             clickCount: 0,
-            singleClickTimer: null
+            singleClickTimer: null,
+            statusTitle: {
+                "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
+                "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
+                "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
+                "PAUSED": this.$i18n.t("ID_PAUSED"),
+                "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
+            }
         };
     },
     watch: {
@@ -252,9 +259,14 @@ export default {
                 dataFormat.push({
                     TITLE: data[i].tas_title,
                     CODE_COLOR: data[i].tas_color,
+                    DELAYED_TITLE: data[i].tas_status === "OVERDUE" ?
+                            this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data[i].tas_status],
+                    DELAYED_MSG: data[i].tas_status === "OVERDUE" ? data[i].delay : ""
+
                 });
             }
             return dataFormat;
+            
         },
         formatUser(data) {
             var i,
@@ -267,8 +279,8 @@ export default {
                         lastName: data[i].usr_username,
                         format: window.config.FORMATS.format || null
                     }),
-                    EMAIL: data[i].usr_email,
-                    POSITION: data[i].usr_position,
+                    EMAIL: data[i].user_tooltip.usr_email,
+                    POSITION: data[i].user_tooltip.usr_position,
                     AVATAR: window.config.SYS_SERVER +
                                 window.config.SYS_URI +
                                 `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`
