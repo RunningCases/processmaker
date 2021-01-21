@@ -145,7 +145,14 @@ export default {
             translations: null,
             pmDateFormat: window.config.FORMATS.dateFormat,
             clickCount: 0,
-            singleClickTimer: null
+            singleClickTimer: null,
+            statusTitle: {
+                "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
+                "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
+                "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
+                "PAUSED": this.$i18n.t("ID_PAUSED"),
+                "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
+            }
         };
     },
     mounted() {
@@ -302,7 +309,9 @@ export default {
                     {
                         TAS_NAME: data[i].tas_title,
                         STATUS: data[i].tas_color,
-                        DELAYED_MSG: data[i].delay,
+                        DELAYED_TITLE: data[i].tas_status === "OVERDUE" ?
+                            this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data[i].tas_status],
+                        DELAYED_MSG: data[i].tas_status === "OVERDUE" ? data[i].delay : "",
                         AVATAR: window.config.SYS_SERVER +
                                 window.config.SYS_URI +
                                 `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`,
