@@ -1889,7 +1889,10 @@ class LdapAdvanced
 
                     do {
                         $aAttr = $this->ldapGetAttributes($ldapcnn, $oEntry);
-                        $aUsers[] = $this->ldapGetUsersFromDepartment("GET", $aAttr["dn"]);
+                        $result = $this->ldapGetUsersFromDepartment("GET", $aAttr["dn"]);
+                        foreach ($result as $item) {
+                            $aUsers[] = $item;
+                        }
                     } while ($oEntry = ldap_next_entry($ldapcnn, $oEntry));
                 }
             }
