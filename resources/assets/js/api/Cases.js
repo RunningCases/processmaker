@@ -84,10 +84,10 @@ export let cases = {
         return axios.post(window.config.SYS_SERVER +
             window.config.SYS_URI +
             `appProxy/getSummary`, params, {
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            });
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
     },
     casenotes(data) {
         var params = new FormData();
@@ -186,8 +186,49 @@ export let cases = {
             keys: {},
             paged: dt.paged
         })
-    }
-
+    },
+    /**
+     * Make a search request to the Api service 
+     * @param {object} dt - filter parameters
+     */
+    debugStatus(dt) {
+        return Api.get({
+            service: "DEBUG_STATUS",
+            params: {},
+            keys: {
+                prj_uid: dt.PRO_UID
+            }
+        })
+    },
+    /**
+     * Get debug Vars in ajax service
+     * @param {*} data 
+     */
+    debugVars(data) {
+        var params;
+        if (data.filter === "all") {
+            return axios.get(window.config.SYS_SERVER +
+                window.config.SYS_URI +
+                `cases/debug_vars`);
+        } else {
+            params = new URLSearchParams();
+            params.append('filter', data.filter);
+            return axios.post(window.config.SYS_SERVER +
+                window.config.SYS_URI +
+                `cases/debug_vars`, params);
+        }
+    },
+    /**
+     * Get triggers debug Vars in ajax service
+     * @param {*} data 
+     */
+    debugVarsTriggers(data) {
+        let dc = _.random(0, 10000000000),
+            r = _.random(1.0, 100.0);
+        return axios.get(window.config.SYS_SERVER +
+            window.config.SYS_URI +
+            `cases/debug_triggers?r=${r}&_dc=${dc}`);
+    },
 };
 
 export let casesHeader = {
