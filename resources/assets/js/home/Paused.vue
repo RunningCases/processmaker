@@ -127,7 +127,14 @@ export default {
       },
       pmDateFormat: "Y-m-d H:i:s",
       clickCount: 0,
-      singleClickTimer: null
+      singleClickTimer: null,
+      statusTitle: {
+          "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
+          "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
+          "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
+          "PAUSED": this.$i18n.t("ID_PAUSED"),
+          "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
+      }
     };
   },
   mounted() {},
@@ -208,6 +215,9 @@ export default {
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
+            DELAYED_TITLE: v.TAS_STATUS === "OVERDUE" ?
+              this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
+            DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
           }],
           USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
               userName: v.USR_LASTNAME,
