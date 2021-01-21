@@ -5916,6 +5916,12 @@ msgid "Delay Field"
 msgstr "Delay Field"
 
 # TRANSLATION
+# LABEL/ID_DELAYED
+#: LABEL/ID_DELAYED
+msgid "Delayed"
+msgstr "Delayed"
+
+# TRANSLATION
 # LABEL/ID_DELEGATE_DATE_FROM
 #: LABEL/ID_DELEGATE_DATE_FROM
 msgid "Date from"
@@ -10720,6 +10726,12 @@ msgstr "Invalid value for '{0}'. It must be a string."
 #: LABEL/ID_INVALID_VALUE_THIS_MUST_BE_ARRAY
 msgid "Invalid value for \"{0}\". This value must be an array."
 msgstr "Invalid value for \"{0}\". This value must be an array."
+
+# TRANSLATION
+# LABEL/ID_IN_DRAFT
+#: LABEL/ID_IN_DRAFT
+msgid "In Draft"
+msgstr "In Draft"
 
 # TRANSLATION
 # LABEL/ID_IN_PROGRESS

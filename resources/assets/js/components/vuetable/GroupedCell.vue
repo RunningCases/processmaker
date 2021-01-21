@@ -3,10 +3,13 @@
         <div v-for="(item, index) in data" v-bind:key="item.TITLE" class="d-flex mb-3">
             <div
                 v-bind:style="{ color: activeColor(item.STATUS) }"
-                v-b-popover.hover.top="item.DELAYED_MSG"
+                :id="statusId + index"
             >
                 <i class="fas fa-square"></i>
             </div>
+            <b-popover :target="statusId + index" triggers="hover" placement="top">
+                <b> {{ item.DELAYED_TITLE }} </b> {{ item.DELAYED_MSG }}
+            </b-popover>
             <div class="col ellipsis" v-b-popover.hover.top="item.TAS_NAME">
                 {{ item.TAS_NAME }}
             </div>
@@ -50,7 +53,8 @@ export default {
         return {
             //Color map for ["In Progress", "overdue", "inDraft", "paused", "unnasigned"]
             colorMap: ["green", "red", "orange", "aqua", "silver"],
-            id: "avatar-" + _.random(1000000)
+            id: "avatar-" + _.random(1000000),
+            statusId: "status-" + _.random(1000000)
         };
     },
     methods: {
