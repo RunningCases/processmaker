@@ -197,7 +197,7 @@ export let cases = {
             params: {},
             keys: {
                 prj_uid: dt.PRO_UID
-            },
+            }
         })
     },
     /**

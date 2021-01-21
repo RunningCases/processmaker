@@ -19,16 +19,16 @@ import api from "../api/index";
 export default {
   name: "XCase",
   components: {
-    Debugger,
+    Debugger
   },
   props: {
-    data: Object,
+    data: Object
   },
   mounted() {
     let that = this;
     this.height = window.innerHeight - this.diffHeight;
     this.dataCase = this.$parent.dataCase;
-    if (this.dataCase.ACTION == "jump") {
+    if (this.dataCase.ACTION === "jump") {
       this.path =
         window.config.SYS_SERVER +
         window.config.SYS_URI +
