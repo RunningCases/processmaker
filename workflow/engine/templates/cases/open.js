@@ -1040,7 +1040,7 @@ Ext.onReady(function(){
                   border: false,
                   frame: true,
                   items: [{
-                          html: '<div align="center" style="font: 14px tahoma,arial,helvetica,sans-serif">' + _('ID_CONFIRM_CANCEL_CASE') + '? </div> <br/>'
+                          html: '<div align="center" style="font: 14px tahoma,arial,helvetica,sans-serif">' + _('ID_CONFIRM_CANCEL_CASE') + '</div> <br/>'
                       },
                       {
                           xtype: 'textarea',
