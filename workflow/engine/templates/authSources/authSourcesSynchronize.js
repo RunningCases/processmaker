@@ -143,6 +143,7 @@ Ext.onReady(function() {
               var response = Ext.util.JSON.decode(r.responseText);
               if (response.status == 'OK') {
                 treeGroups.getLoader().load(treeGroups.root);
+                treeGroups.responseMessage = response;
               }
               else {
                 alert(response.message);
@@ -164,7 +165,18 @@ Ext.onReady(function() {
           msg: 'All changes have been saved.',
           icon: Ext.Msg.INFO,
           minWidth: 200,
-          buttons: Ext.Msg.OK
+          buttons: Ext.Msg.OK,
+          fn: function (btn) {
+            if (btn == 'ok' && treeGroups.responseMessage && treeGroups.responseMessage.warning) {
+              Ext.Msg.show({
+                title: _('ID_WARNING'),
+                msg: treeGroups.responseMessage.warning,
+                icon: Ext.Msg.INFO,
+                minWidth: 200,
+                buttons: Ext.Msg.OK
+              });
+            }
+          }
         });
       }
     });

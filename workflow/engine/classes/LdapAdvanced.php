@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\User;
+use ProcessMaker\Model\Groupwf;
 
 /**
  * class.ldapAdvanced.php
@@ -2496,6 +2498,47 @@ class LdapAdvanced
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Get group Uid by title.
+     * @param string $title
+     * @return string
+     */
+    public function getGroupUidByTitle(string $title): string
+    {
+        try {
+            $groupWf = Groupwf::query()
+                ->where('GRP_STATUS', '=', 'ACTIVE')
+                ->where('GRP_TITLE', '=', $title)
+                ->orderBy('GRP_ID', 'ASC')
+                ->get()
+                ->first();
+            if (!empty($groupWf)) {
+                return $groupWf->GRP_UID;
+            }
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            Log::channel(':ldapSynchronizeGroups')->error($message, Bootstrap::context());
+        }
+        return "";
+    }
+
+    /**
+     * Check duplicate titles in GROUPWF table.
+     * @return bool
+     */
+    public function checkDuplicateTitles(): bool
+    {
+        $sql = ""
+            . "select GRP_TITLE,count(GRP_TITLE) "
+            . "from GROUPWF "
+            . "group by GRP_TITLE having count(GRP_TITLE)>1";
+        $results = DB::select(DB::raw($sql));
+        if (empty($results)) {
+            return false;
+        }
+        return true;
     }
 
     /**
