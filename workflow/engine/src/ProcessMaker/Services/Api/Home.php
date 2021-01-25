@@ -554,7 +554,9 @@ class Home extends Api
                 // Adding filters to the "Advanced Search" option
                 $option->child = $child;
             }
-
+            if ($menuInstance->Id[$i] === 'ID_CASE_ARCHIVE_SEARCH') {
+                $option->icon = "fas fa-archive";
+            }
             // Add option to the menu
             $menuHome[] = $option;
         }
@@ -696,6 +698,37 @@ class Home extends Api
             return $tasks;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get the process debug status
+     *
+     * @url GET /process-debug-status
+     *
+     * @param string $processUid
+     *
+     * @return bool
+     *
+     * @throws Exception
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getProcessDebugStatus($processUid)
+    {
+        try {
+            // Get the process requested
+            $process = Process::query()->select(['PRO_DEBUG'])->where('PRO_UID', '=', $processUid)->first();
+            if (!is_null($process)) {
+                return $process->PRO_DEBUG === 1;
+            }
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        // If not exists the requested process throw an 404 error
+        if (is_null($process)) {
+            throw new RestException(404, "Process with Uid '{$processUid}'.");
         }
     }
 }

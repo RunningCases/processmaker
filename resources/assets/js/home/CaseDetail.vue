@@ -107,8 +107,9 @@ import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
-
+import utils from "./../utils/utils";
 import Api from "../api/index";
+
 export default {
   name: "CaseDetail",
   components: {
@@ -155,7 +156,7 @@ export default {
         headings: {
           task: this.$i18n.t("ID_TASK"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
-          assignee: this.$i18n.t("ID_ASSIGNEE"),
+          assignee: this.$i18n.t("ID_CURRENT_USER"),
           status: this.$i18n.t("ID_STATUS"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           actions: this.$i18n.t("ID_ACTIONS"),
@@ -201,6 +202,7 @@ export default {
     this.getInputDocuments();
     this.getOutputDocuments();
     this.getCasesNotes();
+    this.requestOpenSummary();
   },
   methods: {
     postComment(comment, send, files) {
@@ -241,7 +243,9 @@ export default {
       this.dataAttachedDocuments.items = att;
     },
     getDataCaseSummary() {
-      let that = this;
+      let action,
+          option, 
+          that = this;
       Api.cases
         .casesummary(this.dataCase)
         .then((response) => {
@@ -252,9 +256,7 @@ export default {
             titleActions: this.$i18n.t("ID_ACTIONS"),
             btnLabel: this.$i18n.t("ID_CANCEL_CASE"),
             btnType: false,
-            onClick: () => {
-              that.$refs["modal-cancel-case"].show();
-            },
+            onClick: null,
             label: {
               numberCase: data[2].label,
               process: data[0].label,
@@ -274,6 +276,19 @@ export default {
               duration: response.data[11].value.split(" ")[1],
             },
           };
+          // Hack for identify the cancel case button
+          Api.cases
+            .actions(this.dataCase).then((response)=>{
+              action = _.find(response.data, function(o) { return o.id == "ACTIONS"; });
+              if(action){
+                option = _.find(action.options, function(o) { return o.fn == "cancelCase"; });
+                if(option && !option.hide){
+                  that.dataCaseSummary.onClick = () => {
+                    that.$refs["modal-cancel-case"].show();
+                  };      
+                }
+              }
+            });
         })
         .catch((err) => {
           throw new Error(err);
@@ -387,6 +402,7 @@ export default {
       let that = this,
         notesArray = [];
       _.each(notes, (n) => {
+        n.id = _.random(1000000);
         notesArray.push({
           user: that.nameFormatCases(
             n.USR_FIRSTNAME,
@@ -451,7 +467,13 @@ export default {
             COLOR: v.TAS_COLOR_LABEL,
           }],
           CASE_TITLE: v.DEL_TITLE,
-          ASSIGNEE: v.USR_FIRSTNAME + " " + v.USR_LASTNAME,
+          ASSIGNEE: v.USR_ID !== 0 ?
+            utils.userNameDisplayFormat({
+              userName: v.USR_USERNAME,
+              firstName: v.USR_LASTNAME,
+              lastName: v.USR_LASTNAME,
+              format: window.config.FORMATS.format || null
+            }) : this.$i18n.t("ID_UNASSIGNED"),
           STATUS: v.DEL_THREAD_STATUS,
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           TASK_COLOR: v.TAS_COLOR_LABEL,
@@ -490,7 +512,24 @@ export default {
         ACTION: "todo",
       });
       this.$emit("onUpdatePage", "XCase");
-    }
+    },
+    /**
+     * Verify if the case has the permission Summary Form
+     * to add dynUid in dataCase
+     */
+    requestOpenSummary() {
+      Api.cases
+        .openSummary(this.dataCase)
+        .then((response) => {
+          var data = response.data;
+          if (data.dynUid !== "") {
+            this.dataCase.DYN_UID = data.dynUid;
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
   },
 };
 </script>

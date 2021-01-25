@@ -10,7 +10,7 @@
                                           autocomplete="off"
                                           :state="validate.USR_FIRSTNAME.state"
                                           @keyup="validateFirstName"
-                                          :disabled="disabled"></b-form-input>
+                                          :disabled="disabledField.USR_FIRSTNAME"></b-form-input>
                             <b-form-invalid-feedback>{{validate.USR_FIRSTNAME.message}}</b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -22,7 +22,7 @@
                                           autocomplete="off"
                                           :state="validate.USR_LASTNAME.state"
                                           @keyup="validateLastName"
-                                          :disabled="disabled"></b-form-input>
+                                          :disabled="disabledField.USR_LASTNAME"></b-form-input>
                             <b-form-invalid-feedback>{{validate.USR_LASTNAME.message}}</b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -36,7 +36,7 @@
                                   @click="avatarClick"
                                   badge-variant="light"
                                   :src="urlImage"
-                                  :disabled="disabled">
+                                  :disabled="disabledField.USR_PHOTO">
                         </b-avatar>
                     </b-col>
                 </b-row>
@@ -45,7 +45,7 @@
                         <b-form-group :label="$root.translation('ID_ADDRESS')">
                             <b-form-input v-model="form.USR_ADDRESS"
                                           autocomplete="off"
-                                          :disabled="disabled"/>
+                                          :disabled="disabledField.USR_ADDRESS"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -54,7 +54,7 @@
                         <b-form-group :label="$root.translation('ID_ZIP_CODE')">
                             <b-form-input v-model="form.USR_ZIP_CODE"
                                           autocomplete="off"
-                                          :disabled="disabled"/>
+                                          :disabled="disabledField.USR_ZIP_CODE"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -65,7 +65,7 @@
                                           autocomplete="off"
                                           :state="validate.USR_USERNAME.state"
                                           @keyup="validateUserName"
-                                          :disabled="disabled"></b-form-input>
+                                          :disabled="disabledField.USR_USERNAME"></b-form-input>
                             <b-form-valid-feedback><span v-html="validate.USR_USERNAME.message"></span></b-form-valid-feedback>
                             <b-form-invalid-feedback><span v-html="validate.USR_USERNAME.message"></span></b-form-invalid-feedback>
                         </b-form-group>
@@ -77,7 +77,7 @@
                             <b-form-select v-model="form.USR_COUNTRY"
                                            :options="countryList"
                                            @change="getStateList"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_COUNTRY"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -85,14 +85,14 @@
                             <b-form-select v-model="form.USR_CITY"
                                            :options="stateList"
                                            @change="getLocationList"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_CITY"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="3">
                         <b-form-group :label="$root.translation('ID_CITY')">
                             <b-form-select v-model="form.USR_LOCATION"
                                            :options="locationList"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_LOCATION"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -103,7 +103,7 @@
                                           autocomplete="off"
                                           :state="validate.USR_EMAIL.state"
                                           @keyup="validateEmail"
-                                          :disabled="disabled"></b-form-input>
+                                          :disabled="disabledField.USR_EMAIL"></b-form-input>
                             <b-form-invalid-feedback>{{validate.USR_EMAIL.message}}</b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -113,7 +113,7 @@
                         <b-form-group :label="$root.translation('ID_PHONE')">
                             <b-form-input v-model="form.USR_PHONE"
                                           autocomplete="off"
-                                          :disabled="disabled"/>
+                                          :disabled="disabledField.USR_PHONE"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -122,7 +122,7 @@
                         <b-form-group :label="$root.translation('ID_POSITION')">
                             <b-form-input v-model="form.USR_POSITION"
                                           autocomplete="off"
-                                          :disabled="disabled"/>
+                                          :disabled="disabledField.USR_POSITION"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -131,7 +131,7 @@
                         <b-form-group :label="$root.translation('ID_STATUS')">
                             <b-form-select v-model="form.USR_STATUS"
                                            :options="userStatus"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_STATUS"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -148,7 +148,7 @@
                                 </b-input-group-prepend>
                                 <b-form-select v-model="form.USR_REPLACED_BY"
                                                :options="usersList"
-                                               :disabled="disabled"></b-form-select>
+                                               :disabled="disabledField.USR_REPLACED_BY"></b-form-select>
                             </b-input-group>
                         </b-form-group>
                     </b-col>
@@ -156,7 +156,7 @@
                         <b-form-group :label="$root.translation('ID_CALENDAR')">
                             <b-form-select v-model="form.USR_CALENDAR"
                                            :options="availableCalendars"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_CALENDAR"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -165,7 +165,7 @@
                         <b-form-group :label="$root.translation('ID_EXPIRATION_DATE')">
                             <b-form-datepicker v-model="form.USR_DUE_DATE"
                                                :date-format-options="{year:'numeric',month:'numeric',day:'numeric'}"
-                                               :disabled="disabled"/>
+                                               :disabled="disabledField.USR_DUE_DATE"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -174,7 +174,7 @@
                         <b-form-group :label="$root.translation('ID_TIME_ZONE')">
                             <b-form-select v-model="form.USR_TIME_ZONE"
                                            :options="timeZoneList"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_TIME_ZONE"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -183,7 +183,7 @@
                         <b-form-group :label="$root.translation('ID_DEFAULT_LANGUAGE')">
                             <b-form-select v-model="form.USR_DEFAULT_LANG"
                                            :options="languagesList"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_DEFAULT_LANG"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -193,7 +193,7 @@
                             <b-form-select v-model="form.USR_ROLE"
                                            :options="rolesList"
                                            @change="changeRole"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.USR_ROLE"/>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -202,7 +202,7 @@
                         <b-form-group :label="$root.translation('ID_DEFAULT_MAIN_MENU_OPTION')">
                             <b-form-select v-model="form.PREF_DEFAULT_MENUSELECTED"
                                            :options="defaultMainMenuOptionList"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.PREF_DEFAULT_MENUSELECTED"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -211,7 +211,7 @@
                         <b-form-group :label="$root.translation('ID_DEFAULT_CASES_MENU_OPTION')">
                             <b-form-select v-model="form.PREF_DEFAULT_CASES_MENUSELECTED"
                                            :options="defaultCasesMenuOptionList"
-                                           :disabled="disabled"/>
+                                           :disabled="disabledField.PREF_DEFAULT_CASES_MENUSELECTED"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -225,7 +225,7 @@
                                           type="password"
                                           @keyup="validatePassword"
                                           @change="editing=false;"
-                                          :disabled="disabled"></b-form-input>
+                                          :disabled="disabledField.USR_NEW_PASS"></b-form-input>
                             <b-form-valid-feedback><span v-html="validate.USR_NEW_PASS.message"></span></b-form-valid-feedback>
                             <b-form-invalid-feedback><span v-html="validate.USR_NEW_PASS.message"></span></b-form-invalid-feedback>
                         </b-form-group>
@@ -245,7 +245,7 @@
                                           type="password"
                                           @keyup="validateConfirmationPassword"
                                           @change="editing=false;"
-                                          :disabled="disabled"></b-form-input>
+                                          :disabled="disabledField.USR_CNF_PASS"></b-form-input>
                             <b-form-invalid-feedback><span v-html="validate.USR_CNF_PASS.message"></span></b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -282,24 +282,24 @@
                                               autocomplete="off"
                                               :state="validate.USR_COST_BY_HOUR.state"
                                               @keyup="validateCostByHour"
-                                              :disabled="disabled"></b-form-input>
+                                              :disabled="disabledField.USR_COST_BY_HOUR"></b-form-input>
                                 <b-form-invalid-feedback>{{validate.USR_COST_BY_HOUR.message}}</b-form-invalid-feedback>
                             </b-form-group>
                             <b-form-group :label="$root.translation('ID_UNITS')">
                                 <b-form-input v-model="form.USR_UNIT_COST"
                                               autocomplete="off"
-                                              :disabled="disabled"/>
+                                              :disabled="disabledField.USR_UNIT_COST"/>
                             </b-form-group>
                         </fieldset>
                     </b-col>
                 </b-row>
-                <b-row :class="classCustom">
+                <b-row>
                     <b-col cols="12">
                         <b-form-group class="mt-4">
                             <b-form-checkbox v-model="form.USR_LOGGED_NEXT_TIME"
                                              value="1"
                                              unchecked-value="0"
-                                             :disabled="disabled">
+                                             :disabled="disabledField.USR_LOGGED_NEXT_TIME">
                                 {{$root.translation('ID_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON')}}
                             </b-form-checkbox>
                         </b-form-group>
@@ -428,6 +428,35 @@
                 editing: false,
                 urlImage: "",
                 disabled: false,
+                disabledField: {
+                    USR_FIRSTNAME: false,
+                    USR_LASTNAME: false,
+                    USR_ADDRESS: false,
+                    USR_ZIP_CODE: false,
+                    USR_COUNTRY: false,
+                    USR_CITY: false,
+                    USR_LOCATION: false,
+                    USR_USERNAME: false,
+                    USR_PHONE: false,
+                    USR_POSITION: false,
+                    USR_EMAIL: false,
+                    USR_REPLACED_BY: false,
+                    USR_CALENDAR: false,
+                    USR_STATUS: false,
+                    USR_TIME_ZONE: false,
+                    USR_DEFAULT_LANG: false,
+                    USR_DUE_DATE: false,
+                    PREF_DEFAULT_MENUSELECTED: false,
+                    PREF_DEFAULT_CASES_MENUSELECTED: false,
+                    USR_ROLE: false,
+                    USR_COST_BY_HOUR: false,
+                    USR_UNIT_COST: false,
+                    USR_NEW_PASS: false,
+                    USR_CNF_PASS: false,
+                    USR_LOGGED_NEXT_TIME: false,
+                    USR_PHOTO: false
+                },
+                permission: {},
                 classCustom: "",
                 classCustom2: ""
             };
@@ -449,11 +478,17 @@
                 //additional modes
                 if (this.$root.modeOfForm() === 1) {
                     this.disabled = false;
+                    for (let i in this.disabledField) {
+                        this.disabledField[i] = false;
+                    }
                     this.classCustom = "";
                     this.classCustom2 = "sr-only sr-only-focusable";
                 }
                 if (this.$root.modeOfForm() === 2) {
                     this.disabled = true;
+                    for (let i in this.disabledField) {
+                        this.disabledField[i] = true;
+                    }
                     this.classCustom = "sr-only sr-only-focusable";
                     this.classCustom2 = "";
                 }
@@ -467,6 +502,14 @@
                 this.classCustom = "";
                 this.classCustom2 = "sr-only sr-only-focusable";
                 this.disabled = false;
+                for (let i in this.disabledField) {
+                    this.disabledField[i] = false;
+                }
+                for (let i in this.permission) {
+                    if (i in this.disabledField) {
+                        this.disabledField[i] = true;
+                    }
+                }
             },
             cancel() {
                 if (this.$root.modeOfForm() === 1) {
@@ -476,6 +519,9 @@
                     this.classCustom = "sr-only sr-only-focusable";
                     this.classCustom2 = "";
                     this.disabled = true;
+                    for (let i in this.disabledField) {
+                        this.disabledField[i] = true;
+                    }
                     for (let i in this.validate) {
                         this.validate[i].state = null;
                     }
@@ -583,6 +629,9 @@
                                     this.classCustom = "sr-only sr-only-focusable";
                                     this.classCustom2 = "";
                                     this.disabled = true;
+                                    for (let i in this.disabledField) {
+                                        this.disabledField[i] = true;
+                                    }
                                     for (let i in this.validate) {
                                         this.validate[i].state = null;
                                     }
@@ -627,6 +676,24 @@
                 return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;
+                            if ("error" in response.data && response.data.error !== "") {
+                                this.$bvModal.msgBoxOk(this.$root.translation(response.data.error), {
+                                    title: " ", //is important because title disappear
+                                    hideHeaderClose: false,
+                                    okTitle: this.$root.translation('ID_OK'),
+                                    okVariant: "success",
+                                    okOnly: true
+                                }).then(value => {
+                                    if (value === false) {
+                                        return;
+                                    }
+                                }).catch(err => {
+                                    err;
+                                });
+                                this.disableButtonSave = false;
+                                this.validate.USR_USERNAME.state = true;
+                                return;
+                            }
                             this.disableButtonSave = false;
                             this.validate.USR_USERNAME.message = response.data.descriptionText;
                             if (response.data.exists === false) {
@@ -736,6 +803,17 @@
                 return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;
+                            if ("permission" in response.data) {
+                                this.permission = response.data.permission;
+                                //match attribute
+                                if ("USR_REGION" in this.permission) {
+                                    this.permission.USR_CITY = this.permission.USR_REGION;
+                                    delete this.permission.USR_REGION;
+                                }
+                                if ("USR_CUR_PASS" in this.permission) {
+                                    delete this.permission.USR_CUR_PASS;
+                                }
+                            }
                             if ("user" in response.data) {
                                 for (let i in this.form) {
                                     if (i in response.data.user) {
@@ -845,10 +923,14 @@
                         });
             },
             getUsersList() {
+                if (this.filterUser.trim() === "") {
+                    this.usersList = [];
+                    return null;
+                }
                 let formData = new FormData();
                 formData.append("action", "usersList");
                 formData.append("USR_UID", this.form.USR_UID);
-                formData.append("filter", this.filterUser);
+                formData.append("filter", this.filterUser.trim());
                 return axios.post(this.$root.baseUrl() + "users/usersAjax", formData)
                         .then(response => {
                             response;

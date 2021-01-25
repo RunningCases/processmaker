@@ -154,4 +154,24 @@ class UserTest extends TestCase
         $results = User::getId(G::generateUniqueID());
         $this->assertEquals(0, $results);
     }
+
+    /**
+     * It test get the user information
+     *
+     * @covers \ProcessMaker\Model\User::scopeUserId()
+     * @covers \ProcessMaker\Model\User::getInformation()
+     * @test
+     */
+    public function it_get_information()
+    {
+        $user = factory(User::class)->create();
+        // When the user exist
+        $results = User::getInformation($user->USR_ID);
+        $this->assertNotEmpty($results);
+        $this->assertArrayHasKey('usr_username', $results);
+        $this->assertArrayHasKey('usr_firstname', $results);
+        $this->assertArrayHasKey('usr_lastname', $results);
+        $this->assertArrayHasKey('usr_email', $results);
+        $this->assertArrayHasKey('usr_position', $results);
+    }
 }

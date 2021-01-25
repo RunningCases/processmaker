@@ -32,10 +32,26 @@
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_PORT')">
-                            <b-form-input v-model="form.port"
-                                          :state="validateState('port')"
-                                          autocomplete="off"/>
-                            <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
+                            <b-input-group>
+                                <template #append>
+                                    <b-input-group-text class="p-0">
+                                        <b-button size="md"
+                                                  variant="outline-light"
+                                                  class="border-0"
+                                                  @click="disabledField.port=!disabledField.port;">
+                                            <b-icon icon="pencil-fill" 
+                                                    aria-hidden="true" 
+                                                    variant="primary">
+                                            </b-icon>
+                                        </b-button>
+                                    </b-input-group-text>
+                                </template>
+                                <b-form-input v-model="form.port"
+                                              :state="validateState('port')"
+                                              :disabled="disabledField.port"
+                                              autocomplete="off"/>
+                                <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
+                            </b-input-group>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_ENABLE_AUTOMATIC_REGISTER')"
                                       label-cols-lg="8">
@@ -93,30 +109,108 @@
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_USER_IDENTIFIER')">
-                            <b-form-input v-model="form.userIdentifier"
-                                          autocomplete="off"
-                                          readonly/>
+                            <b-input-group>
+                                <template #append>
+                                    <b-input-group-text class="p-0">
+                                        <b-button size="md"
+                                                  variant="outline-light"
+                                                  class="border-0"
+                                                  @click="disabledField.userIdentifier=!disabledField.userIdentifier;">
+                                            <b-icon icon="pencil-fill" 
+                                                    aria-hidden="true" 
+                                                    variant="primary">
+                                            </b-icon>
+                                        </b-button>
+                                    </b-input-group-text>
+                                </template>
+                                <b-form-input v-model="form.userIdentifier"
+                                              autocomplete="off"
+                                              :disabled="disabledField.userIdentifier"/>
+                            </b-input-group>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_GROUP_IDENTIFIER')">
-                            <b-form-input v-model="form.groupIdentifier"
-                                          autocomplete="off"
-                                          readonly/>
+                            <b-input-group>
+                                <template #append>
+                                    <b-input-group-text class="p-0">
+                                        <b-button size="md"
+                                                  variant="outline-light"
+                                                  class="border-0"
+                                                  @click="disabledField.groupIdentifier=!disabledField.groupIdentifier;">
+                                            <b-icon icon="pencil-fill" 
+                                                    aria-hidden="true" 
+                                                    variant="primary">
+                                            </b-icon>
+                                        </b-button>
+                                    </b-input-group-text>
+                                </template>
+                                <b-form-input v-model="form.groupIdentifier"
+                                              autocomplete="off"
+                                              :disabled="disabledField.groupIdentifier"/>
+                            </b-input-group>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_FILTER_TO_SEARCH_USERS')">
                             <b-form-input v-model="form.filterToSearchUsers"
                                           autocomplete="off"/>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_USER_CLASS_IDENTIFIER')">
-                            <b-form-input v-model="form.userClassIdentifier"
-                                          autocomplete="off"/>
+                            <b-input-group>
+                                <template #append>
+                                    <b-input-group-text class="p-0">
+                                        <b-button size="md"
+                                                  variant="outline-light"
+                                                  class="border-0"
+                                                  @click="disabledField.userClassIdentifier=!disabledField.userClassIdentifier;">
+                                            <b-icon icon="pencil-fill" 
+                                                    aria-hidden="true" 
+                                                    variant="primary">
+                                            </b-icon>
+                                        </b-button>
+                                    </b-input-group-text>
+                                </template>
+                                <b-form-input v-model="form.userClassIdentifier"
+                                              :disabled="disabledField.userClassIdentifier"
+                                              autocomplete="off"/>
+                            </b-input-group>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_GROUP_CLASS_IDENTIFIER')">
-                            <b-form-input v-model="form.groupClassIdentifier"
-                                          autocomplete="off"/>
+                            <b-input-group>
+                                <template #append>
+                                    <b-input-group-text class="p-0">
+                                        <b-button size="md"
+                                                  variant="outline-light"
+                                                  class="border-0"
+                                                  @click="disabledField.groupClassIdentifier=!disabledField.groupClassIdentifier;">
+                                            <b-icon icon="pencil-fill" 
+                                                    aria-hidden="true" 
+                                                    variant="primary">
+                                            </b-icon>
+                                        </b-button>
+                                    </b-input-group-text>
+                                </template>
+                                <b-form-input v-model="form.groupClassIdentifier"
+                                              :disabled="disabledField.groupClassIdentifier"
+                                              autocomplete="off"/>
+                            </b-input-group>
                         </b-form-group>
                         <b-form-group :label="$root.translation('ID_DEPARTMENT_CLASS_IDENTIFIER')">
-                            <b-form-input v-model="form.departmentClassIdentifier"
-                                          autocomplete="off"/>
+                            <b-input-group>
+                                <template #append>
+                                    <b-input-group-text class="p-0">
+                                        <b-button size="md"
+                                                  variant="outline-light"
+                                                  class="border-0"
+                                                  @click="disabledField.departmentClassIdentifier=!disabledField.departmentClassIdentifier;">
+                                            <b-icon icon="pencil-fill" 
+                                                    aria-hidden="true" 
+                                                    variant="primary">
+                                            </b-icon>
+                                        </b-button>
+                                    </b-input-group-text>
+                                </template>
+                                <b-form-input v-model="form.departmentClassIdentifier"
+                                              :disabled="disabledField.departmentClassIdentifier"
+                                              autocomplete="off"/>
+                            </b-input-group>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -158,24 +252,35 @@
         components: {
             formUploadSource
         },
-        validations: {
-            form: {
-                name: {
-                    required
-                },
-                serverAddress: {
-                    required
-                },
-                port: {
-                    required
-                },
-                userName: {
-                    required
-                },
-                password: {
-                    required
+        validations() {
+            let fields = {
+                form: {
+                    name: {
+                        required
+                    },
+                    serverAddress: {
+                        required
+                    },
+                    port: {
+                        required
+                    }
                 }
+            };
+            if (this.form.anonymous === '1') {
+                fields.form.userName = {
+                };
+                fields.form.password = {
+                };
             }
+            if (this.form.anonymous === '0') {
+                fields.form.userName = {
+                    required
+                };
+                fields.form.password = {
+                    required
+                };
+            }
+            return fields;
         },
         data() {
             return {
@@ -217,7 +322,14 @@
                     {value: "ds", text: "389 DS"}
                 ],
                 roles: [],
-                show: true
+                disabledField: {
+                    port: true,
+                    userIdentifier: true,
+                    groupIdentifier: true,
+                    userClassIdentifier: true,
+                    groupClassIdentifier: true,
+                    departmentClassIdentifier: true
+                }
             };
         },
         methods: {

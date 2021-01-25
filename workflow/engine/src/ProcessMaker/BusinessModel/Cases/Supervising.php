@@ -19,6 +19,7 @@ class Supervising extends AbstractCases
         'APPLICATION.APP_CREATE_DATE',  // Start Date
         'APPLICATION.APP_FINISH_DATE',  // Finish Date
         'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date related to the colors
+        'USERS.USR_ID',  // Current UserId
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
@@ -128,10 +129,10 @@ class Supervising extends AbstractCases
             $query->joinApplication();
             // Only cases in to_do
             $query->caseTodo();
-            // Scope that return the results for an specific user
-            $query->userId($this->getUserId());
             // Scope the specific array of processes supervising
             $query->processInList($processes);
+            // Only open threads
+            $query->isThreadOpen();
             // Group by appNumber
             $query->groupBy('APP_NUMBER');
             /** Apply filters */
@@ -181,6 +182,12 @@ class Supervising extends AbstractCases
     {
         // Get base query
         $query = Delegation::query()->select();
+        // Join with application
+        $query->joinApplication();
+        // Only cases in to_do
+        $query->caseTodo();
+        // Only open threads
+        $query->isThreadOpen();
         // Only distinct APP_NUMBER
         $query->distinct();
         // Get the list of processes of the supervisor
@@ -200,6 +207,12 @@ class Supervising extends AbstractCases
     {
         // Get base query
         $query = Delegation::query()->select();
+        // Join with application
+        $query->joinApplication();
+        // Only cases in to_do
+        $query->caseTodo();
+        // Only open threads
+        $query->isThreadOpen();
         // Only distinct APP_NUMBER
         $query->distinct();
         // Get the list of processes of the supervisor

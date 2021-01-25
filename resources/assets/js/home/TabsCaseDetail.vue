@@ -4,6 +4,10 @@
       <tab :name="$t('ID_SUMMARY')">
         <PmCaseSummary :data="dataCaseSummary"> </PmCaseSummary>
       </tab>
+      <tab :name="$t('ID_MORE_INFORMATION')">
+        <MoreInformation :data="dataCase" v-if="currentTab == $t('ID_MORE_INFORMATION')">
+        </MoreInformation>
+      </tab>
       <tab :name="$t('ID_PROCESS_MAP')">
         <ProcessMap :data="dataCase" v-if="currentTab == $t('ID_PROCESS_MAP')">
         </ProcessMap>
@@ -25,6 +29,7 @@ import PmCaseSummary from "./../components/home/caseDetail/PmCaseSummary.vue";
 import ProcessMap from "./../components/home/caseDetail/ProcessMap.vue";
 import CaseHistory from "./../components/home/caseDetail/CaseHistory.vue";
 import ChangeLog from "./../components/home/caseDetail/ChangeLog.vue";
+import MoreInformation from './../components/home/caseDetail/MoreInformation.vue';
 import Api from "../api/index";
 
 export default {
@@ -36,6 +41,7 @@ export default {
     PmCaseSummary,
     CaseHistory,
     ChangeLog,
+    MoreInformation
   },
   props: {
     dataCase: Object,

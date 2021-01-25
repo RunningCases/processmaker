@@ -39,7 +39,7 @@ export default {
         SearchPopover,
         Multiselect
     },
-    props: ["tag", "info", "filter"],
+    props: ["tag", "info", "filters", "filter"],
     data() {
         return {
             taks: [],
@@ -53,9 +53,12 @@ export default {
          */
 
         asyncFind(query) {
-            this.isLoading = true;
+            let params = {};
+            this.isLoading = true;   
+            params.proId = this.getProcess();
+            params.query = query;
             api.filters
-                .taskList(query)
+                .taskList(params)
                 .then((response) => {
                     this.taks = response.data;
                     this.isLoading = false;
@@ -63,6 +66,13 @@ export default {
                 .catch((e) => {
                     console.error(err);
                 });
+        },
+        /**
+         * Get the process id to manage the dependency
+         */
+        getProcess() {
+            let component = _.find(this.filters, function(o) { return o.fieldId === "processName"; });
+            return component ? component.value : null;
         },
         /**
          * Form validations review

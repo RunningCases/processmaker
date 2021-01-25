@@ -30,6 +30,7 @@
             :columns="columns"
             :options="options"
             ref="vueTable"
+            @row-click="onRowClick"
         >
             <div slot="info" slot-scope="props">
                 <b-icon
@@ -54,11 +55,7 @@
                 {{ props.row.STATUS }}
             </div>
             <div slot="current_user" slot-scope="props">
-                <div class="v-user-cell" v-for="item in props.row.USER">
-                    <div class="col .v-user-cell-ellipsis">
-                        {{ item.USER_DATA }}
-                    </div>
-                </div>
+                <CurrentUserCell :data="props.row.USER_DATA" />
             </div>
             <div slot="start_date" slot-scope="props">
                 {{ props.row.START_DATE }}
@@ -86,9 +83,10 @@ import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import AdvancedFilter from "../components/search/AdvancedFilter";
 import TaskCell from "../components/vuetable/TaskCell.vue";
+import CurrentUserCell from "../components/vuetable/CurrentUserCell.vue";
 import ModalComments from "./modal/ModalComments.vue";
 import api from "./../api/index";
-import { Event } from "vue-tables-2";
+import utils from "./../utils/utils";
 
 export default {
     name: "AdvancedSearch",
@@ -97,6 +95,7 @@ export default {
         ButtonFleft,
         ModalNewRequest,
         TaskCell,
+        CurrentUserCell,
         ModalComments
     },
     props: ["id", "name", "filters"],
@@ -120,7 +119,6 @@ export default {
                 },
             },
             columns: [
-                "info",
                 "case_number",
                 "case_title",
                 "process_name",
@@ -159,7 +157,16 @@ export default {
                 },
                 customFilters: ["myfilter"],
             },
-            pmDateFormat: window.config.FORMATS.dateFormat
+            pmDateFormat: window.config.FORMATS.dateFormat,
+            clickCount: 0,
+            singleClickTimer: null,
+            statusTitle: {
+                "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
+                "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
+                "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
+                "PAUSED": this.$i18n.t("ID_PAUSED"),
+                "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
+            }
         };
     },
     watch: {
@@ -168,6 +175,23 @@ export default {
         },
     },
     methods: {
+        /**
+         * Row click event handler
+         * @param {object} event
+         */
+        onRowClick(event) {
+            let self = this;
+            self.clickCount += 1;
+            if (self.clickCount === 1) {
+                self.singleClickTimer = setTimeout(function() {
+                    self.clickCount = 0;            
+                }, 400);
+            } else if (self.clickCount === 2) {
+                clearTimeout(self.singleClickTimer);
+                self.clickCount = 0;
+                self.openCaseDetail(event.row);
+            }
+        },
         /**
          * Get cases data by header
          */
@@ -212,7 +236,7 @@ export default {
                     CASE_TITLE: v.DEL_TITLE,
                     PROCESS_NAME: v.PRO_TITLE,
                     TASK: this.formatTasks(v.THREAD_TASKS),
-                    USER: this.formatUser(v.THREAD_USERS),
+                    USER_DATA: this.formatUser(v.THREAD_USERS),
                     START_DATE: v.APP_CREATE_DATE_LABEL,
                     FINISH_DATE: v.APP_FINISH_DATE_LABEL,
                     DURATION: v.DURATION,
@@ -235,57 +259,34 @@ export default {
                 dataFormat.push({
                     TITLE: data[i].tas_title,
                     CODE_COLOR: data[i].tas_color,
+                    DELAYED_TITLE: data[i].tas_status === "OVERDUE" ?
+                            this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data[i].tas_status],
+                    DELAYED_MSG: data[i].tas_status === "OVERDUE" ? data[i].delay : ""
+
                 });
             }
             return dataFormat;
+            
         },
         formatUser(data) {
             var i,
                 dataFormat = [];
             for (i = 0; i < data.length; i += 1) {
                 dataFormat.push({
-                    USER_DATA: this.nameFormatCases(
-                        data[i].usr_firstname,
-                        data[i].usr_lastname,
-                        data[i].usr_username
-                    )
+                    USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
+                        userName: data[i].usr_firstname,
+                        firstName: data[i].usr_lastname,
+                        lastName: data[i].usr_username,
+                        format: window.config.FORMATS.format || null
+                    }),
+                    EMAIL: data[i].user_tooltip.usr_email,
+                    POSITION: data[i].user_tooltip.usr_position,
+                    AVATAR: window.config.SYS_SERVER +
+                                window.config.SYS_URI +
+                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`
                 });
             }
             return dataFormat;
-        },
-        /**
-         * Get for user format name configured in Processmaker Environment Settings
-         *
-         * @param {string} name
-         * @param {string} lastName
-         * @param {string} userName
-         * @return {string} nameFormat
-         */
-        nameFormatCases(name, lastName, userName) {
-            let nameFormat = "";
-            if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-                return nameFormat;
-            }
-            if (this.nameFormat === "@firstName @lastName") {
-                nameFormat = name + " " + lastName;
-            } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-                nameFormat = name + " " + lastName + " (" + userName + ")";
-            } else if (this.nameFormat === "@userName") {
-                nameFormat = userName;
-            } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-                nameFormat = userName + " (" + name + " " + lastName + ")";
-            } else if (this.nameFormat === "@lastName @firstName") {
-                nameFormat = lastName + " " + name;
-            } else if (this.nameFormat === "@lastName, @firstName") {
-                nameFormat = lastName + ", " + name;
-            } else if (
-                this.nameFormat === "@lastName, @firstName (@userName)"
-            ) {
-                nameFormat = lastName + ", " + name + " (" + userName + ")";
-            } else {
-                nameFormat = name + " " + lastName;
-            }
-            return nameFormat;
         },
         /**
          * Convert string to date format

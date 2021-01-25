@@ -13,7 +13,7 @@
                             </b-form-file>
                             <b-form-invalid-feedback>{{$root.translation('ID_IS_REQUIRED')}}</b-form-invalid-feedback>
                         </b-form-group>
-                        <b-form-group :label="$root.translation('ID_CONNECTION_WITH_THE_SAME_NAME_PLEASE_SELECT_AN_OPTION')" v-else>
+                        <b-form-group :label="$root.translation('ID_CONNECTION_WITH_THE_SAME_NAME_PLEASE_SELECT_AN_OPTION',[fileContent.AUTH_SOURCE_NAME])" v-else>
                             <b-form-file v-model="form.connectionSettings"
                                          @change="change"
                                          :state="validateState('connectionSettings')"

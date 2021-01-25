@@ -617,9 +617,11 @@ function applyMaskDateEnvironment(string $date, $mask = '')
         $systemConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
         $mask = isset($systemConf->aConfig['dateFormat']) ? $systemConf->aConfig['dateFormat'] : '';
     }
-    if (!empty($date)) {
+    if (!empty($date) && !empty($mask)) {
         $date = new DateTime($date);
         $result = $date->format($mask);
+    } else {
+        $result = $date;
     }
 
     return $result;

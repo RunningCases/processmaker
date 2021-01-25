@@ -4644,6 +4644,12 @@ msgid "Confirm"
 msgstr "Confirm"
 
 # TRANSLATION
+# LABEL/ID_CONFIRMATION
+#: LABEL/ID_CONFIRMATION
+msgid "Confirmation"
+msgstr "Confirmation"
+
+# TRANSLATION
 # LABEL/ID_CONFIRM_ADHOCUSER_CASE
 #: LABEL/ID_CONFIRM_ADHOCUSER_CASE
 msgid "[LABEL/ID_CONFIRM_ADHOCUSER_CASE] Are you sure you want to do it?"
@@ -5910,6 +5916,12 @@ msgid "Delay Field"
 msgstr "Delay Field"
 
 # TRANSLATION
+# LABEL/ID_DELAYED
+#: LABEL/ID_DELAYED
+msgid "Delayed"
+msgstr "Delayed"
+
+# TRANSLATION
 # LABEL/ID_DELEGATE_DATE_FROM
 #: LABEL/ID_DELEGATE_DATE_FROM
 msgid "Date from"
@@ -6898,6 +6910,12 @@ msgstr "Duplicate category name."
 #: LABEL/ID_DUPLICATE_ENTRY_PRIMARY_KEY
 msgid "Duplicate entry for primary key"
 msgstr "Duplicate entry for primary key"
+
+# TRANSLATION
+# LABEL/ID_DURATION
+#: LABEL/ID_DURATION
+msgid "Duration"
+msgstr "Duration"
 
 # TRANSLATION
 # LABEL/ID_DYANFORM_CREATED
@@ -10708,6 +10726,12 @@ msgstr "Invalid value for '{0}'. It must be a string."
 #: LABEL/ID_INVALID_VALUE_THIS_MUST_BE_ARRAY
 msgid "Invalid value for \"{0}\". This value must be an array."
 msgstr "Invalid value for \"{0}\". This value must be an array."
+
+# TRANSLATION
+# LABEL/ID_IN_DRAFT
+#: LABEL/ID_IN_DRAFT
+msgid "In Draft"
+msgstr "In Draft"
 
 # TRANSLATION
 # LABEL/ID_IN_PROGRESS

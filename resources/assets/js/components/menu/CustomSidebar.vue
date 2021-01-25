@@ -30,7 +30,7 @@ export default {
             isOnMobile: false,
             hideToggle: true,
             selectedTheme: "",
-            sidebarWidth: "310px",
+            sidebarWidth: "260px",
         };
     },
     computed: {
@@ -42,7 +42,6 @@ export default {
     },
     mounted() {
         this.onResize();
-        window.addEventListener("resize", this.onResize);
     },
     methods: {
         /**

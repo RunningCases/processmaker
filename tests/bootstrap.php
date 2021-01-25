@@ -63,6 +63,9 @@ $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int) (env('MAIN_SYSTEM_UTC_TIME_ZONE', 
 ini_set('date.timezone', $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] ? 'UTC' : env('MAIN_TIME_ZONE', 'America/New_York'));
 define('TIME_ZONE', ini_get('date.timezone'));
 
+// Only test async routing
+define('DISABLE_TASK_MANAGER_ROUTING_ASYNC', false);
+
 //This path includes PM tables model classes
 set_include_path(get_include_path() . PATH_SEPARATOR . PATH_DB . SYS_SYS . "/");
 

@@ -52,6 +52,7 @@ export default {
   mounted() {},
   data() {
     return {
+      permission: true,
       dataAlert: {
         dismissSecs: 5,
         dismissCountDown: 0,
@@ -114,18 +115,33 @@ export default {
       return "btn v-btn-request " + cls;
     },
     show() {
-      this.getCasesNotes();
-      this.$refs["modal-comments"].show();
+      let that = this;
+      //Clean the data attached documents for ever
+      this.dataAttachedDocuments.items = [];
+      this.getCasesNotes((response) => {
+        if (that.permission) {
+          that.$refs["modal-comments"].show();
+        } else {
+          that.$parent.showAlert(
+            that.$i18n.t("ID_CASES_NOTES_NO_PERMISSIONS"),
+            "danger"
+          );
+        }
+      });
     },
     cancel() {
       this.$refs["modal-comments"].hide();
     },
-    getCasesNotes() {
+    getCasesNotes(callback) {
       let that = this;
       Api.cases
         .casenotes(this.dataCase)
         .then((response) => {
           that.formatResponseCaseNotes(response.data.notes);
+          that.permission = response.data.noPerms == 1 ? false : true;
+          if (_.isFunction(callback)) {
+            callback(response);
+          }
         })
         .catch((err) => {
           throw new Error(err);
@@ -138,6 +154,7 @@ export default {
       let that = this,
         notesArray = [];
       _.each(notes, (n) => {
+        n.id = _.random(1000000);
         notesArray.push({
           user: that.nameFormatCases(
             n.USR_FIRSTNAME,
@@ -154,6 +171,7 @@ export default {
     },
     dropFiles(files) {
       this.attachDocuments = true;
+      this.dataAttachedDocuments.items = [];
       this.dataAttachedDocuments.items = files;
     },
     /**

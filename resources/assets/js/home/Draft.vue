@@ -13,6 +13,7 @@
       :columns="columns"
       :options="options"
       ref="vueTable"
+      @row-click="onRowClick"
     >
       <div slot="detail" slot-scope="props">
         <div class="btn-default" @click="openCaseDetail(props.row)">
@@ -48,6 +49,7 @@ import ModalNewRequest from "./ModalNewRequest.vue";
 import CasesFilter from "../components/search/CasesFilter";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import api from "./../api/index";
+import utils from "./../utils/utils";
 
 export default {
   name: "Draft",
@@ -58,7 +60,7 @@ export default {
     TaskCell,
     CasesFilter,
   },
-  props: {},
+  props: ["defaultOption"],
   data() {
     return {
       newCase: {
@@ -101,9 +103,20 @@ export default {
         },
       },
       pmDateFormat: "Y-m-d H:i:s",
+      clickCount: 0,
+      singleClickTimer: null,
+      statusTitle: {
+          "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
+          "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
+          "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
+          "PAUSED": this.$i18n.t("ID_PAUSED"),
+          "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
+      }
     };
   },
-  mounted() {},
+  mounted() {
+    this.openDefaultCase();
+  },
   watch: {},
   computed: {
     /**
@@ -116,6 +129,38 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
+    /**
+     * Open a case when the component was mounted
+     */
+    openDefaultCase() {
+        let params;
+        if(this.defaultOption) {
+            params = utils.getAllUrlParams(this.defaultOption);
+            if (params && params.app_uid && params.del_index) {
+                this.openCase({
+                    APP_UID: params.app_uid,
+                    DEL_INDEX: params.del_index
+                });
+            }
+        }
+    },
+    /**
+     * On row click event handler
+     * @param {object} event
+     */
+    onRowClick(event) {
+        let self = this;
+        self.clickCount += 1;
+        if (self.clickCount === 1) {
+            self.singleClickTimer = setTimeout(function() {
+                self.clickCount = 0;            
+            }, 400);
+        } else if (self.clickCount === 2) {
+            clearTimeout(self.singleClickTimer);
+            self.clickCount = 0;
+            self.openCase(event.row);
+        }
+    },
     /**
      * Get cases todo data
      */
@@ -164,6 +209,9 @@ export default {
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
+            DELAYED_TITLE: v.TAS_STATUS === "OVERDUE" ?
+              this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
+            DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
           }],
           PRIORITY: v.DEL_PRIORITY_LABEL,
           PRO_UID: v.PRO_UID,
@@ -196,15 +244,17 @@ export default {
      */
     openCaseDetail(item) {
       let that = this;
-      api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
-        that.$emit("onUpdateDataCase", {
-          APP_UID: item.APP_UID,
-          DEL_INDEX: item.DEL_INDEX,
-          PRO_UID: item.PRO_UID,
-          TAS_UID: item.TAS_UID,
-          APP_NUMBER: item.CASE_NUMBER,
+      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+        api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$emit("onUpdateDataCase", {
+            APP_UID: item.APP_UID,
+            DEL_INDEX: item.DEL_INDEX,
+            PRO_UID: item.PRO_UID,
+            TAS_UID: item.TAS_UID,
+            APP_NUMBER: item.CASE_NUMBER,
+          });
+          that.$emit("onUpdatePage", "case-detail");
         });
-        that.$emit("onUpdatePage", "case-detail");
       });
     },
     onRemoveFilter(data) {},

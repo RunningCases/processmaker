@@ -23,11 +23,12 @@ class AbstractCases implements CasesInterface
     const PRIORITIES = [1 => 'VL', 2 => 'L', 3 => 'N', 4 => 'H', 5 => 'VH'];
     // Task Colors
     const TASK_COLORS = [1 => 'green', 2 => 'red', 3 => 'orange', 4 => 'blue', 5 => 'gray'];
-    const COLOR_OVERDUE = 1;
-    const COLOR_ON_TIME = 2;
-    const COLOR_DRAFT = 3;
-    const COLOR_PAUSED = 4;
-    const COLOR_UNASSIGNED = 5;
+    const TASK_STATUS = [1 => 'ON_TIME', 2 => 'OVERDUE', 3 => 'DRAFT', 4 => 'PAUSED', 5 => 'UNASSIGNED'];
+    const COLOR_ON_TIME = 1; // green
+    const COLOR_OVERDUE = 2; // red
+    const COLOR_DRAFT = 3; // orange
+    const COLOR_PAUSED = 4; // blue
+    const COLOR_UNASSIGNED = 5; // gray
     // Status values
     const STATUS_DRAFT = 1;
     const STATUS_TODO = 2;
@@ -1063,24 +1064,27 @@ class AbstractCases implements CasesInterface
      * Get task color according the due date
      *
      * @param string $dueDate
+     * @param string $statusThread
      *
      * @return int
      */
-    public function getTaskColor(string $dueDate)
+    public function getTaskColor(string $dueDate, string $statusThread = '')
     {
         $currentDate = new DateTime('now');
         $dueDate = new DateTime($dueDate);
-        if ($dueDate > $currentDate) {
+        if ($currentDate > $dueDate) {
+            // Overdue: When the current date is mayor to the due date of the case
             $taskColor = self::COLOR_OVERDUE;
         } else {
+            // OnTime
             $taskColor = self::COLOR_ON_TIME;
-            if (get_class($this) === Draft::class) {
+            if (get_class($this) === Draft::class || $statusThread === self::TASK_STATUS[3]) {
                 $taskColor = self::COLOR_DRAFT;
             }
-            if (get_class($this) === Paused::class) {
+            if (get_class($this) === Paused::class || $statusThread === self::TASK_STATUS[4]) {
                 $taskColor = self::COLOR_PAUSED;
             }
-            if (get_class($this) === Unassigned::class) {
+            if (get_class($this) === Unassigned::class || $statusThread === self::TASK_STATUS[5]) {
                 $taskColor = self::COLOR_UNASSIGNED;
             }
         }
@@ -1113,24 +1117,30 @@ class AbstractCases implements CasesInterface
                 }
                 if ($key === 'due_date') {
                     $threadTasks[$i][$key] = $row;
+                    $threadTasks[$i]['delay'] = getDiffBetweenDates($row,  date("Y-m-d H:i:s"));
                     // Get task color label
                     $threadTasks[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
                     $threadTasks[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$threadTasks[$i]['tas_color']] : '';
+                    $threadTasks[$i]['tas_status'] = self::TASK_STATUS[$threadTasks[$i]['tas_color']];
                 }
                 // Review if require other information
                 if ($onlyTask) {
                     // Thread tasks
                     if($key === 'user_id') {
                         $threadTasks[$i][$key] = $row;
+                        // Get the user tooltip information
+                        $threadTasks[$i]['user_tooltip'] = User::getInformation($row);
                     }
                 } else {
                     // Thread users
                     if ($key === 'user_id') {
                         $threadUsers[$i][$key] = $row;
-                        $user = (!empty($row)) ? User::where('USR_ID', $row)->first(): null;
-                        $threadUsers[$i]['usr_username'] = $user ? $user->USR_USERNAME : '';
-                        $threadUsers[$i]['usr_lastname'] = $user ? $user->USR_LASTNAME : '';
-                        $threadUsers[$i]['usr_firstname'] = $user ? $user->USR_FIRSTNAME : '';
+                        // Get user information
+                        $userInfo = User::getInformation($row);
+                        $threadUsers[$i]['usr_username'] = !empty($userInfo) ? $userInfo['usr_username'] : '';
+                        $threadUsers[$i]['usr_lastname'] = !empty($userInfo) ? $userInfo['usr_lastname'] : '';
+                        $threadUsers[$i]['usr_firstname'] = !empty($userInfo) ? $userInfo['usr_firstname'] : '';
+                        $threadUsers[$i]['user_tooltip'] = User::getInformation($row);
                     }
                     // Thread titles
                     if ($key === 'del_id') {
@@ -1145,6 +1155,39 @@ class AbstractCases implements CasesInterface
         $result['THREAD_TASKS'] = $threadTasks;
         $result['THREAD_USERS'] = $threadUsers;
         $result['THREAD_TITLES'] = $threadTitles;
+
+        return $result;
+    }
+
+    /**
+     * Get the thread information
+     *
+     * @param array $thread
+     *
+     * @return array
+     */
+    public function threadInformation(array $thread)
+    {
+        $result = [];
+        $status = '';
+        // Define the task status
+        if ($thread['TAS_ASSIGN_TYPE'] === 'SELF_SERVICE') {
+            $status = 'UNASSIGNED';
+        }
+        if ($thread['APP_STATUS'] === 'DRAFT') {
+            $status = 'DRAFT';
+        }
+        // Define the thread information
+        $result['tas_title'] = $thread['TAS_TITLE'];
+        $result['user_id'] = $thread['USR_ID'];
+        $result['due_date'] = $thread['DEL_TASK_DUE_DATE'];
+        $result['delay'] = getDiffBetweenDates($thread['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
+        $result['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE'], $status) : '';
+        $result['tas_color_label'] = (!empty($result['tas_color'])) ? self::TASK_COLORS[$result['tas_color']] : '';
+        $result['tas_status'] = self::TASK_STATUS[$result['tas_color']];
+        $result['unassigned'] = ($status === 'UNASSIGNED' ? true : false);
+        // Get the user tooltip information
+        $result['user_tooltip'] = User::getInformation($thread['USR_ID']);
 
         return $result;
     }

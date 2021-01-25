@@ -52,8 +52,9 @@
         </div>
       </div>
       <br />
+      <div v-if="data.onClick">
       <h6 class="card-subtitle mb-2 text-muted">{{ data.titleActions }}</h6>
-      <div v-if="data.btnType" class="container v-case-summary-center">
+      <div class="container v-case-summary-center">
         <button
           type="button"
           class="btn btn-success btn-sm"
@@ -62,14 +63,6 @@
           {{ data.btnLabel }}
         </button>
       </div>
-      <div v-else class="container v-case-summary-center">
-        <button
-          type="button"
-          class="btn btn-success btn-sm"
-          @click="data.onClick"
-        >
-          {{ data.btnLabel }}
-        </button>
       </div>
     </div>
   </div>

@@ -13,6 +13,7 @@
       :columns="columns"
       :options="options"
       ref="vueTable"
+      @row-click="onRowClick"
     >
       <div slot="detail" slot-scope="props">
         <div class="btn-default" @click="openCaseDetail(props.row)">
@@ -33,15 +34,8 @@
         <TaskCell :data="props.row.TASK" />
       </div>
       <div slot="current_user" slot-scope="props">
-        {{
-          nameFormatCases(
-            props.row.USR_FIRSTNAME,
-            props.row.USR_LASTNAME,
-            props.row.USR_USERNAME
-          )
-        }}
+        {{ props.row.USERNAME_DISPLAY_FORMAT}}
       </div>
-
       <div slot="due_date" slot-scope="props">
         {{ props.row.DUE_DATE }}
       </div>
@@ -65,6 +59,7 @@ import ModalNewRequest from "./ModalNewRequest.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import CasesFilter from "../components/search/CasesFilter";
 import api from "./../api/index";
+import utils from "./../utils/utils";
 
 export default {
   name: "Todo",
@@ -75,6 +70,7 @@ export default {
     TaskCell,
     CasesFilter,
   },
+  props: ["defaultOption"],
   data() {
     return {
       newCase: {
@@ -90,7 +86,6 @@ export default {
         "case_title",
         "process_name",
         "task",
-        "current_user",
         "due_date",
         "delegation_date",
         "priority",
@@ -124,6 +119,15 @@ export default {
         },
       },
       pmDateFormat: "Y-m-d H:i:s",
+      clickCount: 0,
+      singleClickTimer: null,
+      statusTitle: {
+          "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
+          "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
+          "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
+          "PAUSED": this.$i18n.t("ID_PAUSED"),
+          "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
+      }
     };
   },
   mounted() {},
@@ -139,6 +143,38 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
+    /**
+     * Open a case when the component was mounted
+     */
+    openDefaultCase() {
+        let params;
+        if(this.defaultOption) {
+            params = utils.getAllUrlParams(this.defaultOption);
+            if (params && params.app_uid && params.del_index) {
+                this.openCase({
+                    APP_UID: params.app_uid,
+                    DEL_INDEX: params.del_index
+                });
+            }
+        }
+    },
+    /**
+     * On row click event handler
+     * @param {object} event
+     */
+    onRowClick(event) {
+        let self = this;
+        self.clickCount += 1;
+        if (self.clickCount === 1) {
+            self.singleClickTimer = setTimeout(function() {
+                self.clickCount = 0;            
+            }, 400);
+        } else if (self.clickCount === 2) {
+            clearTimeout(self.singleClickTimer);
+            self.clickCount = 0;
+            self.openCase(event.row);
+        }
+    },
     /**
      * Get cases todo data
      */
@@ -187,10 +223,16 @@ export default {
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,
             COLOR: v.TAS_COLOR_LABEL,
+            DELAYED_TITLE: v.TAS_STATUS === "OVERDUE" ?
+              this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
+            DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
           }],
-          USR_FIRSTNAME: v.USR_FIRSTNAME,
-          USR_LASTNAME: v.USR_LASTNAME,
-          USR_USERNAME: v.USR_USERNAME,
+          USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
+              userName: v.USR_LASTNAME,
+              firstName: v.USR_LASTNAME,
+              lastName: v.USR_LASTNAME,
+              format: window.config.FORMATS.format || null
+          }),
           DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
           PRIORITY: v.DEL_PRIORITY_LABEL,
@@ -201,38 +243,6 @@ export default {
         });
       });
       return data;
-    },
-    /**
-     * Get for user format name configured in Processmaker Environment Settings
-     *
-     * @param {string} name
-     * @param {string} lastName
-     * @param {string} userName
-     * @return {string} nameFormat
-     */
-    nameFormatCases(name, lastName, userName) {
-      let nameFormat = "";
-      if (/^\s*$/.test(name) && /^\s*$/.test(lastName)) {
-        return nameFormat;
-      }
-      if (this.nameFormat === "@firstName @lastName") {
-        nameFormat = name + " " + lastName;
-      } else if (this.nameFormat === "@firstName @lastName (@userName)") {
-        nameFormat = name + " " + lastName + " (" + userName + ")";
-      } else if (this.nameFormat === "@userName") {
-        nameFormat = userName;
-      } else if (this.nameFormat === "@userName (@firstName @lastName)") {
-        nameFormat = userName + " (" + name + " " + lastName + ")";
-      } else if (this.nameFormat === "@lastName @firstName") {
-        nameFormat = lastName + " " + name;
-      } else if (this.nameFormat === "@lastName, @firstName") {
-        nameFormat = lastName + ", " + name;
-      } else if (this.nameFormat === "@lastName, @firstName (@userName)") {
-        nameFormat = lastName + ", " + name + " (" + userName + ")";
-      } else {
-        nameFormat = name + " " + lastName;
-      }
-      return nameFormat;
     },
     /**
      * Open selected cases in the inbox
@@ -256,16 +266,18 @@ export default {
      */
     openCaseDetail(item) {
       let that = this;
-      api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
-        that.$emit("onUpdateDataCase", {
-          APP_UID: item.APP_UID,
-          DEL_INDEX: item.DEL_INDEX,
-          PRO_UID: item.PRO_UID,
-          TAS_UID: item.TAS_UID,
-          APP_NUMBER: item.CASE_NUMBER,
+      api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
+        api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$emit("onUpdateDataCase", {
+            APP_UID: item.APP_UID,
+            DEL_INDEX: item.DEL_INDEX,
+            PRO_UID: item.PRO_UID,
+            TAS_UID: item.TAS_UID,
+            APP_NUMBER: item.CASE_NUMBER,
+          });
+          that.$emit("onUpdatePage", "case-detail");
         });
-        that.$emit("onUpdatePage", "case-detail");
-      });
+      });  
     },
     onRemoveFilter(data) {},
     onUpdateFilters(data) {

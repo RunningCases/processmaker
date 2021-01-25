@@ -24,6 +24,7 @@
                 :id="pageId"
                 :pageUri="pageUri"
                 :name="pageName"
+                :defaultOption="defaultOption"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
@@ -78,7 +79,7 @@ export default {
             collapsed: false,
             selectedTheme: "",
             isOnMobile: false,
-            sidebarWidth: "310px",
+            sidebarWidth: "260px",
             pageId: null,
             pageName: null,
             pageUri: null,
@@ -93,12 +94,12 @@ export default {
                 CONSOLIDATED_CASES: "batch-routing",
                 CASES_TO_REASSIGN: "task-reassignments",
                 CASES_FOLDERS: "my-documents"
-            }
+            },
+            defaultOption: window.config.defaultOption || ''
         };
     },
     mounted() {
         this.onResize();
-        window.addEventListener("resize", this.onResize);
         this.getMenu();
         this.listenerIframe();
         window.setInterval(
@@ -136,7 +137,7 @@ export default {
                 .get()
                 .then((response) => {
                     this.setDefaultCasesMenu(response.data);
-                    this.menu = this.mappingMenu(response.data);
+                    this.menu = this.mappingMenu(this.setDefaultIcon(response.data));
                     this.setCounter();
                 })
                 .catch((e) => {
@@ -173,6 +174,19 @@ export default {
                 }
             }
             return newData;
+        },
+        /**
+         * Set a default icon if the item doesn't have one
+         */
+        setDefaultIcon(data){
+            var i,
+                auxData = data;
+            for (i = 0; i < auxData.length; i += 1) {
+                if (auxData[i].icon !== undefined && auxData[i].icon === "") {
+                    auxData[i].icon = "fas fa-bars";
+                }
+            }
+            return auxData;
         },
         OnClickSidebarItem(item) {
             if (item.item.page && item.item.page === "/advanced-search") {
@@ -312,7 +326,7 @@ export default {
 
 <style lang="scss">
 #home {
-    padding-left: 310px;
+    padding-left: 260px;
     transition: 0.3s;
 }
 #home.collapsed {
