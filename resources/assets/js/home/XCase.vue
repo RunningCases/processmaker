@@ -37,7 +37,7 @@ export default {
       this.path =
         window.config.SYS_SERVER +
         window.config.SYS_URI +
-        `cases/open?APP_UID=${this.dataCase.APP_UID}&DEL_INDEX=${this.dataCase.DEL_INDEX}&action=${this.dataCase.ACTION}`;
+        `cases/open?APP_UID=${this.dataCase.APP_UID}&DEL_INDEX=${this.dataCase.DEL_INDEX}&TAS_UID=${this.dataCase.TAS_UID}&action=${this.dataCase.ACTION}`;
     }
 
     setTimeout(() => {

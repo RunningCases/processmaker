@@ -509,7 +509,7 @@ export default {
         DEL_INDEX: data.row.DEL_INDEX,
         PRO_UID: data.row.PRO_UID,
         TAS_UID: data.row.TAS_UID,
-        ACTION: "todo",
+        ACTION: this.dataCase.ACTION || "todo"
       });
       this.$emit("onUpdatePage", "XCase");
     },
