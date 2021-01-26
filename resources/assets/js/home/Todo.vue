@@ -274,6 +274,7 @@ export default {
             PRO_UID: item.PRO_UID,
             TAS_UID: item.TAS_UID,
             APP_NUMBER: item.CASE_NUMBER,
+            ACTION: "todo"
           });
           that.$emit("onUpdatePage", "case-detail");
         });
