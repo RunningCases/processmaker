@@ -11,7 +11,7 @@
                         <multiselect
                             v-model="filter[0].options"
                             :options="users"
-                            placeholder="Sselect one"
+                            :placeholder="$t('ID_USER_NAME')"
                             label="USR_FULLNAME"
                             track-by="USR_ID"
                             :show-no-results="false"
