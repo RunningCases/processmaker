@@ -19,6 +19,7 @@ use ProcessMaker\Model\Process;
 use ProcessMaker\Model\User;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Services\Api;
+use ProcessMaker\Util\DateTime;
 use RBAC;
 use stdClass;
 
@@ -86,7 +87,7 @@ class Home extends Api
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
             $result = [];
-            $result['data'] = $list->getData();
+            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
             $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
@@ -141,7 +142,7 @@ class Home extends Api
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
             $result = [];
-            $result['data'] = $list->getData();
+            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
             $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
@@ -198,7 +199,7 @@ class Home extends Api
             $list->setUserUid($usrUid);
             $list->setProperties($properties);
             $result = [];
-            $result['data'] = $list->getData();
+            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
             $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
@@ -253,7 +254,7 @@ class Home extends Api
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
             $result = [];
-            $result['data'] = $list->getData();
+            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
             $result['total'] = $list->getPagingCounters();
             return $result;
         } catch (Exception $e) {
@@ -334,7 +335,7 @@ class Home extends Api
                         $list->setUserUid($usrUid);
                         $list->setParticipatedStatus($filter);
                         $list->setProperties($properties);
-                        $result['data'] = $list->getData();
+                        $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
                         $result['total'] = $list->getPagingCounters();
                         break;
                     case 'SUPERVISING':
@@ -343,7 +344,7 @@ class Home extends Api
                         // todo: some queries related to the PROCESS_USER are using the USR_UID
                         $list->setUserUid($usrUid);
                         $list->setProperties($properties);
-                        $result['data'] = $list->getData();
+                        $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
                         $result['total'] = $list->getPagingCounters();
                         break;
                 }
@@ -483,7 +484,7 @@ class Home extends Api
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
             $result = [];
-            $result['data'] = $list->getData();
+            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
             // We will to enable always the pagination
             $result['total'] = $list->getCounter();
             return $result;
