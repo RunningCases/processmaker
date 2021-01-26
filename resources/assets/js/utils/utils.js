@@ -17,7 +17,7 @@ export default {
         aux = aux.replace('@userName',defaultValues.userName);
         aux = aux.replace('@firstName',defaultValues.firstName);
         aux = aux.replace('@lastName',defaultValues.lastName);
-        return aux;
+        return aux.trim();
     },
     /**
      * Parse an url string and prepare an object of the parameters
