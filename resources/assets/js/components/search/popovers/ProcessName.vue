@@ -63,6 +63,7 @@ export default {
             api.filters
                 .processList(query)
                 .then((response) => {
+                    self.processes = [];
                     _.forEach(response.data, function(elem, key) {
                         self.processes.push({
                             label: elem.PRO_TITLE,
