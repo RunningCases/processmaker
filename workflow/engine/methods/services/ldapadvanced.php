@@ -111,7 +111,6 @@ class ldapadvancedClassCron
 
                 //Get all users from Removed OU
                 $this->usersRemovedOu = $plugin->getUsersFromRemovedOu($arrayAuthenticationSourceData);
-                $plugin->deactiveArrayOfUsers($this->usersRemovedOu);
 
                 //Variables
                 $this->deletedRemoved = count($this->usersRemovedOu);
@@ -427,6 +426,7 @@ class ldapadvancedClassCron
 
                 //Update Users data based on the LDAP Server
                 $plugin->usersUpdateData($arrayAuthenticationSourceData["AUTH_SOURCE_UID"]);
+                $plugin->deactiveArrayOfUsers($this->usersRemovedOu);
             } catch (Exception $e) {
                 $plugin = new LdapAdvanced();
                 $message = $e->getMessage();
