@@ -156,6 +156,7 @@ class Participated extends AbstractCases
             $thread['TAS_TITLE'] = $item['TAS_TITLE'];
             $thread['USR_ID'] = $item['USR_ID'];
             $thread['DEL_TASK_DUE_DATE'] = $item['DEL_TASK_DUE_DATE'];
+            $thread['APP_FINISH_DATE'] = $item['APP_FINISH_DATE'];
             $thread['TAS_ASSIGN_TYPE'] = $item['TAS_ASSIGN_TYPE'];
             $thread['APP_STATUS'] = $item['APP_STATUS'];
             // Define data according to the filters

@@ -207,6 +207,7 @@ export default {
                     PRO_UID: item.PRO_UID,
                     TAS_UID: item.TAS_UID,
                     APP_NUMBER: item.CASE_NUMBER,
+                    ACTION: that.filterHeader === "SUPERVISING" ? "to_revise": "todo"
                     });
                     that.$emit("onUpdatePage", "case-detail");
                 });

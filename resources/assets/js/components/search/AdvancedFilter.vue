@@ -339,7 +339,7 @@ export default {
                     tagPrefix:  this.$i18n.t('ID_USER'),
                     items:[
                         {
-                            id: "userId",
+                            id: "user",
                             value: "",
                             options: [],
                             placeholder: this.$i18n.t('ID_USER_NAME')

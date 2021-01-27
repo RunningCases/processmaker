@@ -181,12 +181,13 @@ class Search extends AbstractCases
             // Calculate duration
             $startDate = (string)$item['APP_CREATE_DATE'];
             $endDate = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
+            $dateToCompare = !empty($item['APP_FINISH_DATE']) ? $item['APP_FINISH_DATE'] : 'now';
             $item['DURATION'] = getDiffBetweenDates($startDate, $endDate);
             // Get total case notes
             $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
             // Get the detail related to the open thread
             if (!empty($item['THREADS'])) {
-                $result = $this->prepareTaskPending($item['THREADS'], false);
+                $result = $this->prepareTaskPending($item['THREADS'], false, $item['APP_STATUS'], $dateToCompare);
                 $item['THREAD_TASKS'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
                 $item['THREAD_USERS'] = !empty($result['THREAD_USERS']) ? $result['THREAD_USERS'] : [];
                 $item['THREAD_TITLES'] = !empty($result['THREAD_TITLES']) ? $result['THREAD_TITLES'] : [];

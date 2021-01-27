@@ -2354,6 +2354,12 @@ msgid "App Uid"
 msgstr "App Uid"
 
 # TRANSLATION
+# LABEL/ID_ARE_YOU_SURE_CLAIM_TASK
+#: LABEL/ID_ARE_YOU_SURE_CLAIM_TASK
+msgid "Are you sure want to claim the task?"
+msgstr "Are you sure want to claim the task?"
+
+# TRANSLATION
 # LABEL/ID_ARE_YOU_SURE_RESEND
 #: LABEL/ID_ARE_YOU_SURE_RESEND
 msgid "Are you sure that you want to resend this message"
@@ -2370,6 +2376,12 @@ msgstr "Are you sure to delete the matched attribute \"{0}\", please confirm?"
 #: LABEL/ID_ARE_YOU_SURE_TO_DELETE_CONNECTION_PLEASE_CONFIRM
 msgid "Are you sure to delete the connection \"{0}\", please confirm?"
 msgstr "Are you sure to delete the connection \"{0}\", please confirm?"
+
+# TRANSLATION
+# LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
+#: LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
+msgid "Are you sure want to unpause the task?"
+msgstr "Are you sure want to unpause the task?"
 
 # TRANSLATION
 # LABEL/ID_ARRAY_VARIABLES_EMPTY
@@ -19406,8 +19418,8 @@ msgstr "More Info"
 # TRANSLATION
 # LABEL/ID_MORE_INFORMATION
 #: LABEL/ID_MORE_INFORMATION
-msgid "more information"
-msgstr "more information"
+msgid "More Information"
+msgstr "More Information"
 
 # TRANSLATION
 # LABEL/ID_MORE_THAN
@@ -52713,21 +52725,8 @@ msgstr "Pending Tasks"
 msgid "Send email to participants"
 msgstr "Send email to participants"
 
-
 # TRANSLATION
 # LABEL/ID_TRYING_CANCEL
 #: LABEL/ID_TRYING_CANCEL
 msgid "You are tying to cancel the current case. Please be aware this action cannot be undone"
 msgstr "You are tying to cancel the current case. Please be aware this action cannot be undone"
-
-# TRANSLATION
-# LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
-#: LABEL/ID_ARE_YOU_SURE_UNPAUSE_TASK
-msgid "Are you sure want to unpause the task?"
-msgstr "Are you sure want to unpause the task?"
-
-# TRANSLATION
-# LABEL/ID_ARE_YOU_SURE_CLAIM_TASK
-#: LABEL/ID_ARE_YOU_SURE_CLAIM_TASK
-msgid "Are you sure want to claim the task?"
-msgstr "Are you sure want to claim the task?"

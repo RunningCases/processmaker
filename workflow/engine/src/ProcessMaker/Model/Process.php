@@ -375,8 +375,11 @@ class Process extends Model
 
             // Apply the date format defined in environment
             if (!empty($mask)) {
-                $item['PRO_CREATE_DATE_LABEL'] = $item['PRO_CREATE_DATE']->format($mask);
-                $item['PRO_UPDATE_DATE_LABEL'] = $item['PRO_UPDATE_DATE']->format($mask);
+                $item['PRO_CREATE_DATE_LABEL'] = !empty($item['PRO_CREATE_DATE']) ? $item['PRO_CREATE_DATE']->format($mask) : '';
+                $item['PRO_UPDATE_DATE_LABEL'] = !empty($item['PRO_UPDATE_DATE']) ? $item['PRO_UPDATE_DATE']->format($mask) : '';
+            } else {
+                $item['PRO_CREATE_DATE_LABEL'] = !empty($item['PRO_CREATE_DATE']) ? $item['PRO_CREATE_DATE']->format('Y-m-d H:i:s') : '';
+                $item['PRO_UPDATE_DATE_LABEL'] = !empty($item['PRO_UPDATE_DATE']) ? $item['PRO_UPDATE_DATE']->format('Y-m-d H:i:s') : '';
             }
 
             return $item;

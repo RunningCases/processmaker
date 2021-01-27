@@ -270,20 +270,23 @@ export default {
         },
         formatUser(data) {
             var i,
-                dataFormat = [];
+                dataFormat = [],
+                userDataFormat;
             for (i = 0; i < data.length; i += 1) {
-                dataFormat.push({
-                    USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
+                userDataFormat = utils.userNameDisplayFormat({
                         userName: data[i].usr_firstname,
                         firstName: data[i].usr_lastname,
                         lastName: data[i].usr_username,
                         format: window.config.FORMATS.format || null
-                    }),
+                    });
+                dataFormat.push({
+                    USERNAME_DISPLAY_FORMAT: userDataFormat !== "" ? userDataFormat : this.$i18n.t("ID_UNASSIGNED"),
                     EMAIL: data[i].user_tooltip.usr_email,
                     POSITION: data[i].user_tooltip.usr_position,
-                    AVATAR: window.config.SYS_SERVER +
+                    AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER +
                                 window.config.SYS_URI +
-                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`
+                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}` : "",
+                    UNASSIGNED: userDataFormat !== "" ? true : false
                 });
             }
             return dataFormat;

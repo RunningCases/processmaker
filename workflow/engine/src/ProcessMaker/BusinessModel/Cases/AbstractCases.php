@@ -1065,12 +1065,13 @@ class AbstractCases implements CasesInterface
      *
      * @param string $dueDate
      * @param string $statusThread
+     * @param string $dateToCompare
      *
      * @return int
      */
-    public function getTaskColor(string $dueDate, string $statusThread = '')
+    public function getTaskColor(string $dueDate, string $statusThread = '', $dateToCompare = 'now')
     {
-        $currentDate = new DateTime('now');
+        $currentDate = new DateTime($dateToCompare);
         $dueDate = new DateTime($dueDate);
         if ($currentDate > $dueDate) {
             // Overdue: When the current date is mayor to the due date of the case
@@ -1097,10 +1098,12 @@ class AbstractCases implements CasesInterface
      *
      * @param string $pendingJson
      * @param bool $onlyTask
+     * @param string $statusThread
+     * @param string $dateToCompare
      *
      * @return int
      */
-    public function prepareTaskPending($pendingJson, $onlyTask = true)
+    public function prepareTaskPending($pendingJson, $onlyTask = true, $statusThread = '', $dateToCompare = '')
     {
         $taskPending = json_decode($pendingJson, true);
         $result = [];
@@ -1117,9 +1120,11 @@ class AbstractCases implements CasesInterface
                 }
                 if ($key === 'due_date') {
                     $threadTasks[$i][$key] = $row;
-                    $threadTasks[$i]['delay'] = getDiffBetweenDates($row,  date("Y-m-d H:i:s"));
+                    // Get the end date for calculate the delay
+                    $endDate = ($dateToCompare !== 'now') ? $endDate = $dateToCompare : date("Y-m-d H:i:s");
+                    $threadTasks[$i]['delay'] = getDiffBetweenDates($row, $endDate);
                     // Get task color label
-                    $threadTasks[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row) : '';
+                    $threadTasks[$i]['tas_color'] = (!empty($row)) ? $this->getTaskColor($row, $statusThread, $dateToCompare) : '';
                     $threadTasks[$i]['tas_color_label'] = (!empty($row)) ? self::TASK_COLORS[$threadTasks[$i]['tas_color']] : '';
                     $threadTasks[$i]['tas_status'] = self::TASK_STATUS[$threadTasks[$i]['tas_color']];
                 }
@@ -1170,6 +1175,8 @@ class AbstractCases implements CasesInterface
     {
         $result = [];
         $status = '';
+        $finishDate = 'now';
+        $dateToCompare = date("Y-m-d H:i:s");
         // Define the task status
         if ($thread['TAS_ASSIGN_TYPE'] === 'SELF_SERVICE') {
             $status = 'UNASSIGNED';
@@ -1177,12 +1184,16 @@ class AbstractCases implements CasesInterface
         if ($thread['APP_STATUS'] === 'DRAFT') {
             $status = 'DRAFT';
         }
+        if ($thread['APP_STATUS'] === 'COMPLETED') {
+            $finishDate = $thread['APP_FINISH_DATE'];
+            $dateToCompare = $finishDate;
+        }
         // Define the thread information
         $result['tas_title'] = $thread['TAS_TITLE'];
         $result['user_id'] = $thread['USR_ID'];
         $result['due_date'] = $thread['DEL_TASK_DUE_DATE'];
-        $result['delay'] = getDiffBetweenDates($thread['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
-        $result['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE'], $status) : '';
+        $result['delay'] = getDiffBetweenDates($thread['DEL_TASK_DUE_DATE'], $dateToCompare);
+        $result['tas_color'] = (!empty($thread['DEL_TASK_DUE_DATE'])) ? $this->getTaskColor($thread['DEL_TASK_DUE_DATE'], $status, $finishDate) : '';
         $result['tas_color_label'] = (!empty($result['tas_color'])) ? self::TASK_COLORS[$result['tas_color']] : '';
         $result['tas_status'] = self::TASK_STATUS[$result['tas_color']];
         $result['unassigned'] = ($status === 'UNASSIGNED' ? true : false);
