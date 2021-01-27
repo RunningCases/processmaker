@@ -577,7 +577,7 @@ class Ajax
                     $noteContent = addslashes($_POST['NOTE_REASON']);
                     // Define the Case for register a case note
                     $cases = new BmCases();
-                    $response = $cases->addNote($appUid, $usrUid, $noteContent);
+                    $response = $cases->addNote($appUid, $usrUid, $noteContent, $_POST['NOTIFY_CANCEL']);
                 }
             } else {
                 $result->status = false;
