@@ -142,7 +142,8 @@ export default {
 
 <style>
 .debugger-container {
-  overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   max-width: 25%;
   min-width: 25%;
   padding: 0.1rem;
@@ -173,9 +174,9 @@ export default {
   }
 }
 
-.tabs-component-tab {
+.debugger-container .tabs-component-tab {
   color: #999;
-  font-size: 14px;
+  font-size: 0.6rem;
   font-weight: 600;
   margin-right: 0;
   list-style: none;
@@ -265,7 +266,7 @@ input[type="radio"] {
 }
 
 .debugger-container .VueTables.VueTables--client > * {
-  font-size: smaller;
+  font-size: 10px;
 }
 
 .debugger-container .VueTables.VueTables--client .table td,
@@ -280,7 +281,7 @@ input[type="radio"] {
   width: 100%;
   height: 30px;
   padding: 0.5rem 0.5rem;
-  font-size: 1rem;
+  font-size: 0.6rem;
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
@@ -296,5 +297,12 @@ input[type="radio"] {
   width: 100%;
   padding-right: 0;
   padding-left: 0;
+}
+
+.debugger-container .btn-group-sm>.btn, .btn-sm {
+    padding: .25rem .5rem;
+    font-size: .6rem;
+    line-height: 1.5;
+    border-radius: .2rem;
 }
 </style>
