@@ -304,8 +304,15 @@ export default {
          */
         formantPendingTask(data) {
             var i,
+                userDataFormat,
                 dataFormat = [];
             for (i = 0; i < data.length; i += 1) {
+                userDataFormat = utils.userNameDisplayFormat({
+                        userName: data[i].user_tooltip.usr_username || "",
+                        firstName: data[i].user_tooltip.usr_firstname || "",
+                        lastName: data[i].user_tooltip.usr_lastname || "",
+                        format: window.config.FORMATS.format || null
+                    });
                 dataFormat.push(
                     {
                         TAS_NAME: data[i].tas_title,
@@ -313,17 +320,13 @@ export default {
                         DELAYED_TITLE: data[i].tas_status === "OVERDUE" ?
                             this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data[i].tas_status],
                         DELAYED_MSG: data[i].tas_status === "OVERDUE" ? data[i].delay : "",
-                        AVATAR: window.config.SYS_SERVER +
+                        AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER +
                                 window.config.SYS_URI +
-                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`,
-                        USERNAME: utils.userNameDisplayFormat({
-                            userName: data[i].user_tooltip.usr_username,
-                            firstName: data[i].user_tooltip.usr_firstname,
-                            lastName: data[i].user_tooltip.usr_lastname,
-                            format: window.config.FORMATS.format || null
-                        }),
+                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}` : "",
+                        USERNAME: userDataFormat !== "" ? userDataFormat : this.$i18n.t("ID_UNASSIGNED"),
                         POSITION: data[i].user_tooltip.usr_position,
-                        EMAIL: data[i].user_tooltip.usr_email
+                        EMAIL: data[i].user_tooltip.usr_email,
+                        UNASSIGNED: userDataFormat !== "" ? true : false
                     }
                 );
             }
