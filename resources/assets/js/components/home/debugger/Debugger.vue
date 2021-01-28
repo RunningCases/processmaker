@@ -94,7 +94,7 @@ export default {
           { text: this.$i18n.t("ID_DYNAFORM"), value: "dyn" },
           { text: this.$i18n.t("ID_SYSTEM"), value: "sys" }
         ]
-      },
+      }
     };
   },
   mounted() {
@@ -141,7 +141,7 @@ export default {
           _.each(response.data.data, function (o) {
             dt.push({
               name: o.name,
-              execution: o.execution_time,
+              execution: o.execution_time
             });
           });
           this.dataTableTriggers = dt;
