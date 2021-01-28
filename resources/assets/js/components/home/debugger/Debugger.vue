@@ -33,7 +33,12 @@
             :columns="columnsTriggers"
             :options="optionsTriggers"
             ref="vueTableTriggers"
-          />
+          >
+          <span 
+            slot="code"
+            v-html="props.row.code"
+            slot-scope="props">{{props.row.code}}</span>
+          </v-client-table>
         </div>
       </tab>
     </tabs>
@@ -64,7 +69,7 @@ export default {
       dataTable: [],
       dataTableTriggers: [],
       columns: ["key", "value"],
-      columnsTriggers: ["name", "execution"],
+      columnsTriggers: ["name", "execution","code"],
       options: {
         perPage: 200,
         filterable: true,
@@ -84,7 +89,8 @@ export default {
         },
         headings: {
           name: this.$i18n.t("ID_NAME"),
-          execution: this.$i18n.t("ID_EXECUTION")
+          execution: this.$i18n.t("ID_EXECUTION"),
+          code: this.$i18n.t("ID_EXECUTION"),
         }
       },
       optionsDebugVars: {
@@ -141,7 +147,8 @@ export default {
           _.each(response.data.data, function (o) {
             dt.push({
               name: o.name,
-              execution: o.execution_time
+              execution: o.execution_time,
+              code: o.code
             });
           });
           this.dataTableTriggers = dt;
@@ -322,5 +329,17 @@ input[type="radio"] {
     font-size: .6rem;
     line-height: 1.5;
     border-radius: .2rem;
+}
+
+.debugger-container .php{
+    font-family: Consolas, monospace;
+    color: #000;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background: #fff;
+     border-radius: 0px; 
+     padding: 0px; 
+     line-height: 1.5; 
+    overflow: auto;
 }
 </style>
