@@ -90,7 +90,7 @@ export default {
         headings: {
           name: this.$i18n.t("ID_NAME"),
           execution: this.$i18n.t("ID_EXECUTION"),
-          code: this.$i18n.t("ID_EXECUTION"),
+          code: this.$i18n.t("ID_CAPTCHA_CODE"),
         }
       },
       optionsDebugVars: {
