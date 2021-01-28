@@ -31,6 +31,7 @@
                 @onUpdateDataCase="onUpdateDataCase"
                 @onLastPage="onLastPage"
                 @onUpdateFilters="onUpdateFilters"
+                @cleanDefaultOption="cleanDefaultOption"
             ></component>
         </div>
     </div>
@@ -72,7 +73,7 @@ export default {
     data() {
         return {
             lastPage: "MyCases",
-            page: "MyCases",
+            page: null,
             menu: [],
             dataCase: {},
             hideToggle: true,
@@ -86,6 +87,7 @@ export default {
             filters: null,
             menuMap: {
                 CASES_MY_CASES: "MyCases",
+                CASES_SENT: "MyCases",
                 CASES_SEARCH: "advanced-search",
                 CASES_INBOX: "todo",
                 CASES_DRAFT: "draft",
@@ -156,6 +158,8 @@ export default {
             if (menuItem && menuItem.href) {
                 this.page = this.menuMap[window.config._nodeId] || "MyCases";
                 this.$router.push(menuItem.href);
+            } else {
+                this.page = "MyCases";
             }
         },
         /**
@@ -189,6 +193,12 @@ export default {
                 }
             }
             return auxData;
+        },
+        /**
+         * Clean the default option property
+         */
+        cleanDefaultOption() {
+            this.defaultOption = "";
         },
         OnClickSidebarItem(item) {
             if (item.item.page && item.item.page === "/advanced-search") {
