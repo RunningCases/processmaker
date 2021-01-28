@@ -47,11 +47,11 @@ import api from "../../../api/index";
 export default {
   name: "ButtonFleft",
   props: {
-    data: Object,
+    data: Object
   },
   components: {
     Tabs,
-    Tab,
+    Tab
   },
   data() {
     return {
@@ -69,31 +69,31 @@ export default {
         perPage: 200,
         filterable: true,
         pagination: {
-          show: false,
+          show: false
         },
         headings: {
           key: this.$i18n.t("ID_NAME"),
-          value: this.$i18n.t("ID_FIELD_DYNAFORM_TEXT"),
-        },
+          value: this.$i18n.t("ID_FIELD_DYNAFORM_TEXT")
+        }
       },
       optionsTriggers: {
         perPage: 200,
         filterable: true,
         pagination: {
-          show: false,
+          show: false
         },
         headings: {
           name: this.$i18n.t("ID_NAME"),
-          execution: this.$i18n.t("ID_EXECUTION"),
-        },
+          execution: this.$i18n.t("ID_EXECUTION")
+        }
       },
       optionsDebugVars: {
         selected: "all",
         options: [
           { text: this.$i18n.t("ID_OPT_ALL"), value: "all" },
           { text: this.$i18n.t("ID_DYNAFORM"), value: "dyn" },
-          { text: this.$i18n.t("ID_SYSTEM"), value: "sys" },
-        ],
+          { text: this.$i18n.t("ID_SYSTEM"), value: "sys" }
+        ]
       },
     };
   },
@@ -124,7 +124,7 @@ export default {
         _.forIn(response.data.data[0], function (value, key) {
           dt.push({
             key,
-            value,
+            value
           });
         });
         this.dataTable = dt;
@@ -153,8 +153,8 @@ export default {
      */
     changeOption(opt) {
       this.getDebugVars({ filter: opt });
-    },
-  },
+    }
+  }
 };
 </script>
 
