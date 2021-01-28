@@ -30,10 +30,15 @@
         <div>
           <v-client-table
             :data="dataTableTriggers"
-            :columns="columns"
-            :options="options"
+            :columns="columnsTriggers"
+            :options="optionsTriggers"
             ref="vueTableTriggers"
-          />
+          >
+          <span 
+            slot="code"
+            v-html="props.row.code"
+            slot-scope="props">{{props.row.code}}</span>
+          </v-client-table>
         </div>
       </tab>
     </tabs>
@@ -51,7 +56,7 @@ export default {
   },
   components: {
     Tabs,
-    Tab,
+    Tab
   },
   data() {
     return {
@@ -64,6 +69,7 @@ export default {
       dataTable: [],
       dataTableTriggers: [],
       columns: ["key", "value"],
+      columnsTriggers: ["name", "execution","code"],
       options: {
         perPage: 200,
         filterable: true,
@@ -73,7 +79,19 @@ export default {
         headings: {
           key: this.$i18n.t("ID_NAME"),
           value: this.$i18n.t("ID_FIELD_DYNAFORM_TEXT")
+        }
+      },
+      optionsTriggers: {
+        perPage: 200,
+        filterable: true,
+        pagination: {
+          show: false
         },
+        headings: {
+          name: this.$i18n.t("ID_NAME"),
+          execution: this.$i18n.t("ID_EXECUTION"),
+          code: this.$i18n.t("ID_CAPTCHA_CODE"),
+        }
       },
       optionsDebugVars: {
         selected: "all",
@@ -86,8 +104,7 @@ export default {
     };
   },
   mounted() {
-    this.getDebugVars({ filter: "all" });
-    this.getDebugVarsTriggers();
+    this.loadData();
   },
   methods: {
     classBtn(cls) {
@@ -95,6 +112,13 @@ export default {
     },
     showDebugger() {
       this.$refs["modal-debugger"].show();
+    },
+    /**
+     * Load the data for debugger
+     */
+    loadData() {
+      this.getDebugVars({ filter: "all" });
+      this.getDebugVarsTriggers();
     },
     /**
      * Get debug variables
@@ -119,11 +143,12 @@ export default {
       let that = this,
         dt = [];
       api.cases.debugVarsTriggers(data).then((response) => {
-        if (response.data.length > 0) {
-          _.forIn(response.data.data[0], function (value, key) {
+        if (response.data.data.length > 0) {
+          _.each(response.data.data, function (o) {
             dt.push({
-              key,
-              value
+              name: o.name,
+              execution: o.execution_time,
+              code: o.code
             });
           });
           this.dataTableTriggers = dt;
@@ -136,7 +161,7 @@ export default {
     changeOption(opt) {
       this.getDebugVars({ filter: opt });
     }
-  },
+  }
 };
 </script>
 
@@ -304,5 +329,17 @@ input[type="radio"] {
     font-size: .6rem;
     line-height: 1.5;
     border-radius: .2rem;
+}
+
+.debugger-container .php{
+    font-family: Consolas, monospace;
+    color: #000;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background: #fff;
+     border-radius: 0px; 
+     padding: 0px; 
+     line-height: 1.5; 
+    overflow: auto;
 }
 </style>

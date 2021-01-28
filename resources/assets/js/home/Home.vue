@@ -121,11 +121,13 @@ export default {
                     eventMethod === "attachEvent" ? "onmessage" : "message";
 
             eventer(messageEvent, function(e) {
-                if (
-                    e.data === "redirect=todo" ||
-                    e.message === "redirect=todo"
-                ) {
+                if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
                     that.page = "todo";
+                }
+                if ( e.data === "update=debugger" || e.message === "update=debugger"){
+                    if(that.$refs["component"].updateView){
+                        that.$refs["component"].updateView();
+                    }
                 }
             });
         },
