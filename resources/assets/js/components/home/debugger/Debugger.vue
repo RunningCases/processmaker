@@ -30,8 +30,8 @@
         <div>
           <v-client-table
             :data="dataTableTriggers"
-            :columns="columns"
-            :options="options"
+            :columns="columnsTriggers"
+            :options="optionsTriggers"
             ref="vueTableTriggers"
           />
         </div>
@@ -47,7 +47,7 @@ import api from "../../../api/index";
 export default {
   name: "ButtonFleft",
   props: {
-    data: Object
+    data: Object,
   },
   components: {
     Tabs,
@@ -64,15 +64,27 @@ export default {
       dataTable: [],
       dataTableTriggers: [],
       columns: ["key", "value"],
+      columnsTriggers: ["name", "execution"],
       options: {
         perPage: 200,
         filterable: true,
         pagination: {
-          show: false
+          show: false,
         },
         headings: {
           key: this.$i18n.t("ID_NAME"),
-          value: this.$i18n.t("ID_FIELD_DYNAFORM_TEXT")
+          value: this.$i18n.t("ID_FIELD_DYNAFORM_TEXT"),
+        },
+      },
+      optionsTriggers: {
+        perPage: 200,
+        filterable: true,
+        pagination: {
+          show: false,
+        },
+        headings: {
+          name: this.$i18n.t("ID_NAME"),
+          execution: this.$i18n.t("ID_EXECUTION"),
         },
       },
       optionsDebugVars: {
@@ -80,14 +92,13 @@ export default {
         options: [
           { text: this.$i18n.t("ID_OPT_ALL"), value: "all" },
           { text: this.$i18n.t("ID_DYNAFORM"), value: "dyn" },
-          { text: this.$i18n.t("ID_SYSTEM"), value: "sys" }
-        ]
-      }
+          { text: this.$i18n.t("ID_SYSTEM"), value: "sys" },
+        ],
+      },
     };
   },
   mounted() {
-    this.getDebugVars({ filter: "all" });
-    this.getDebugVarsTriggers();
+    this.loadData();
   },
   methods: {
     classBtn(cls) {
@@ -95,6 +106,13 @@ export default {
     },
     showDebugger() {
       this.$refs["modal-debugger"].show();
+    },
+    /**
+     * Load the data for debugger
+     */
+    loadData() {
+      this.getDebugVars({ filter: "all" });
+      this.getDebugVarsTriggers();
     },
     /**
      * Get debug variables
@@ -106,7 +124,7 @@ export default {
         _.forIn(response.data.data[0], function (value, key) {
           dt.push({
             key,
-            value
+            value,
           });
         });
         this.dataTable = dt;
@@ -119,11 +137,11 @@ export default {
       let that = this,
         dt = [];
       api.cases.debugVarsTriggers(data).then((response) => {
-        if (response.data.length > 0) {
-          _.forIn(response.data.data[0], function (value, key) {
+        if (response.data.data.length > 0) {
+          _.each(response.data.data, function (o) {
             dt.push({
-              key,
-              value
+              name: o.name,
+              execution: o.execution_time,
             });
           });
           this.dataTableTriggers = dt;
@@ -135,14 +153,15 @@ export default {
      */
     changeOption(opt) {
       this.getDebugVars({ filter: opt });
-    }
+    },
   },
 };
 </script>
 
 <style>
 .debugger-container {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   max-width: 25%;
   min-width: 25%;
   padding: 0.1rem;
@@ -296,5 +315,13 @@ input[type="radio"] {
   width: 100%;
   padding-right: 0;
   padding-left: 0;
+}
+
+.debugger-container .btn-group-sm > .btn,
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.6rem;
+  line-height: 1.5;
+  border-radius: 0.2rem;
 }
 </style>

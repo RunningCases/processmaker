@@ -598,6 +598,14 @@ Ext.onReady(function(){
   Ext.getCmp('actionMenu').hide();
   Ext.getCmp('returnButton').hide();
 
+  document.getElementById("openCaseFrame").onload = function ()
+  {
+      if(window.parent){
+        window.parent.postMessage("update=debugger","*");
+      }
+  };
+  
+
   hideCaseNavigatorPanel();
   if(typeof appStatus !== "undefined") {
       showCaseNavigatorPanel(appStatus);
