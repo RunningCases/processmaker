@@ -18,6 +18,7 @@
                     variant="info"
                     :src="item.AVATAR"
                     size="2em"
+                    v-show="item.UNASSIGNED"
                 ></b-avatar>
             </div>
             <b-popover
@@ -32,6 +33,7 @@
                             variant="info"
                             :src="item.AVATAR"
                             size="4em"
+                            v-show="item.UNASSIGNED"
                         ></b-avatar>
                     </b-col>    
                     <b-col md="9">
