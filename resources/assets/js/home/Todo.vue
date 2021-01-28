@@ -130,7 +130,10 @@ export default {
       }
     };
   },
-  mounted() {},
+  mounted() {
+    // force to open case
+    this.openDefaultCase();
+  },
   watch: {},
   computed: {
     /**

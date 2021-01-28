@@ -137,7 +137,10 @@ export default {
       }
     };
   },
-  mounted() {},
+  mounted() {
+    // force to open case
+    this.openDefaultCase();
+  },
   watch: {},
   computed: {
     /**
@@ -150,7 +153,22 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
-   /**
+    /**
+     * Open a case when the component was mounted
+     */
+    openDefaultCase() {
+        let params;
+        if(this.defaultOption) {
+            params = utils.getAllUrlParams(this.defaultOption);
+            if (params && params.app_uid && params.del_index) {
+                this.openCase({
+                    APP_UID: params.app_uid,
+                    DEL_INDEX: params.del_index
+                });
+            }
+        }
+    },
+    /**
      * On row click event handler
      * @param {object} event
      */
