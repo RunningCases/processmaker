@@ -1273,6 +1273,7 @@ class LdapAdvanced
                 $c1 = new Criteria("rbac");
                 $c1->add(RbacUsersPeer::UID_AUTH_SOURCE, $arrayAuthSource["AUTH_SOURCE_UID"]);
                 $c1->add(RbacUsersPeer::USR_AUTH_USER_DN, $strUser);
+                $c1->add(RbacUsersPeer::USR_STATUS, 1);
                 // update set
                 $c2 = new Criteria("rbac");
                 $c2->add(RbacUsersPeer::USR_AUTH_USER_DN, $userDn);
