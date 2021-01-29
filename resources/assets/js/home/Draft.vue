@@ -143,6 +143,23 @@ export default {
                 });
               this.$emit("cleanDefaultOption");
             }
+            //force to search in the parallel tasks
+            if (params && params.openapplicationuid) {
+                this.onUpdateFilters({
+                        params: [
+                            {
+                                fieldId: "caseNumber",
+                                filterVar: "caseNumber",
+                                label: "",
+                                options:[],
+                                value: params.openapplicationuid,
+                                autoShow: false
+                            }
+                        ],
+                        refresh: true
+                });
+                this.$emit("cleanDefaultOption");                
+            }
         }
     },
     /**
@@ -234,7 +251,7 @@ export default {
         DEL_INDEX: item.DEL_INDEX,
         PRO_UID: item.PRO_UID,
         TAS_UID: item.TAS_UID,
-        ACTION: "draft",
+        ACTION: "draft"
       });
       this.$emit("onUpdatePage", "XCase");
     },

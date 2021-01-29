@@ -70,7 +70,7 @@ export default {
     ModalClaimCase,
     CasesFilter,
   },
-  props: {},
+  props: ["defaultOption"],
   data() {
     return {
       newCase: {
@@ -160,6 +160,23 @@ export default {
                     DEL_INDEX: params.del_index
                 });
                 this.$emit("cleanDefaultOption");
+            }
+            //force to search in the parallel tasks
+            if (params && params.openapplicationuid) {
+                this.onUpdateFilters({
+                        params: [
+                            {
+                                fieldId: "caseNumber",
+                                filterVar: "caseNumber",
+                                label: "",
+                                options:[],
+                                value: params.openapplicationuid,
+                                autoShow: false
+                            }
+                        ],
+                        refresh: true
+                });
+                this.$emit("cleanDefaultOption");                
             }
         }
     },
@@ -256,6 +273,21 @@ export default {
           that.$refs["modal-claim-case"].show();
         });
       });
+    },
+    /**
+     * Open selected cases in the inbox
+     *
+     * @param {object} item
+     */
+    openCase(item) {
+      this.$emit("onUpdateDataCase", {
+        APP_UID: item.APP_UID,
+        DEL_INDEX: item.DEL_INDEX,
+        PRO_UID: item.PRO_UID,
+        TAS_UID: item.TAS_UID,
+        ACTION: "todo"
+      });
+      this.$emit("onUpdatePage", "XCase");
     },
     /**
      * Open case detail
