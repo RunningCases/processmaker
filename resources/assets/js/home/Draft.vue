@@ -141,6 +141,7 @@ export default {
                     APP_UID: params.app_uid,
                     DEL_INDEX: params.del_index
                 });
+              this.$emit("cleanDefaultOption");
             }
         }
     },

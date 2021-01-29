@@ -83,7 +83,7 @@ export default {
         GroupedCell,
         ModalComments,
     },
-    props: ["filters"],
+    props: ["filters", "defaultOption"],
     data() {
         return {
             dataAlert: {
@@ -157,6 +157,7 @@ export default {
     },
     mounted() {
         this.getHeaders();
+        this.openDefaultCase();
         // force to open start cases modal
         // if the user has start case as a default case menu option
         if (window.config._nodeId === "CASES_START_CASE") {
@@ -176,6 +177,22 @@ export default {
     beforeCreate() {},
     methods: {
         /**
+         * Open a case when the component was mounted
+         */
+        openDefaultCase() {
+            let params;
+            if(this.defaultOption) {
+                params = utils.getAllUrlParams(this.defaultOption);
+                if (params && params.app_uid && params.del_index) {
+                    this.openCase({
+                        APP_UID: params.app_uid,
+                        DEL_INDEX: params.del_index
+                    });
+                    this.$emit("cleanDefaultOption");
+                }
+            }
+        },
+        /**
          * Row click event handler
          * @param {object} event
          */
@@ -191,6 +208,21 @@ export default {
                 self.clickCount = 0;
                 self.openCaseDetail(event.row);
             }
+        },
+        /**
+         * Open selected case
+         *
+         * @param {object} item
+         */
+        openCase(item) {
+            this.$emit("onUpdateDataCase", {
+                APP_UID: item.APP_UID,
+                DEL_INDEX: item.DEL_INDEX,
+                PRO_UID: item.PRO_UID,
+                TAS_UID: item.TAS_UID,
+                ACTION: "todo"
+            });
+            this.$emit("onUpdatePage", "XCase");
         },
         /**
          * Open case detail
