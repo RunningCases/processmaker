@@ -5058,15 +5058,13 @@ class WorkspaceTools
                     foreach ($fieldTypes as $key => $fieldType) {
                         foreach ($fieldType as $fieldTypeKey => $fieldTypeValue) {
                             if (strtoupper($appDataKey) == $fieldTypeKey) {
-                                $appData[$appDataKey] = validateType($appDataValue, $fieldTypeValue);
+                                $appDataValue = validateType($appDataValue, $fieldTypeValue);
                                 unset($fieldTypeKey);
                             }
                         }
                     }
                     // normal fields
-                    if (trim($appDataValue) === '') {
-                        $appData[$appDataKey] = null;
-                    }
+                    $appData[$appDataKey] = $appDataValue === '' ? null : $appDataValue;
                 } else {
                     // grids
                     if (is_array($appData[$appDataKey])) {
