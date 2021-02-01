@@ -3,6 +3,7 @@
 use Eusebiu\JavaScript\Facades\ScriptVariables;
 use Illuminate\Support\Facades\View;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\Application;
 
 $conf = new Configurations();
 
@@ -95,8 +96,9 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
         $openCaseIE = true;
         $defaultOption = '../cases/open?APP_UID=' . $openAppUid . '&DEL_INDEX=' . $arrayDelIndex[0] . '&action=' . $action;
     } else {
+        $appNumber = Application::getCaseNumber($openAppUid);
         //We will to show the list: more than one thread
-        $defaultOption = '../cases/casesListExtJs?action=' . $action . '&openApplicationUid=' . $openAppUid;
+        $defaultOption = '../cases/casesListExtJs?action=' . $action . '&openApplicationUid=' . $appNumber;
     }
 } else {
     if (isset($_GET['id'])) {

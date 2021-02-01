@@ -130,7 +130,10 @@ export default {
       }
     };
   },
-  mounted() {},
+  mounted() {
+    // force to open case
+    this.openDefaultCase();
+  },
   watch: {},
   computed: {
     /**
@@ -155,6 +158,24 @@ export default {
                     APP_UID: params.app_uid,
                     DEL_INDEX: params.del_index
                 });
+                this.$emit("cleanDefaultOption");
+            }
+            //force to search in the parallel tasks
+            if (params && params.openapplicationuid) {
+                this.onUpdateFilters({
+                        params: [
+                            {
+                                fieldId: "caseNumber",
+                                filterVar: "caseNumber",
+                                label: "",
+                                options:[],
+                                value: params.openapplicationuid,
+                                autoShow: false
+                            }
+                        ],
+                        refresh: true
+                });
+                this.$emit("cleanDefaultOption");                
             }
         }
     },
@@ -255,7 +276,7 @@ export default {
         DEL_INDEX: item.DEL_INDEX,
         PRO_UID: item.PRO_UID,
         TAS_UID: item.TAS_UID,
-        ACTION: "todo",
+        ACTION: "todo"
       });
       this.$emit("onUpdatePage", "XCase");
     },

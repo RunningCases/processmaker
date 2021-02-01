@@ -5,19 +5,21 @@ export default {
      * @param {object} params
      */
     userNameDisplayFormat(params) {
-        let aux;
-        let defaultValues = {
+        let aux = "",
+            defaultValues = {
                 userName: '',
                 firstName: '',
                 lastName: '',
                 format: '(@lastName, @firstName) @userName'
             };
         _.assignIn(defaultValues, params);
-        aux = defaultValues.format;
-        aux = aux.replace('@userName',defaultValues.userName);
-        aux = aux.replace('@firstName',defaultValues.firstName);
-        aux = aux.replace('@lastName',defaultValues.lastName);
-        return aux.trim();
+        if (defaultValues.userName !== "" || defaultValues.firstName !== "" || defaultValues.lastName !== "") {
+            aux = defaultValues.format;
+            aux = aux.replace('@userName',defaultValues.userName);
+            aux = aux.replace('@firstName',defaultValues.firstName);
+            aux = aux.replace('@lastName',defaultValues.lastName);
+        }
+        return aux;
     },
     /**
      * Parse an url string and prepare an object of the parameters

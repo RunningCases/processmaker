@@ -83,7 +83,7 @@ export default {
         GroupedCell,
         ModalComments,
     },
-    props: ["filters"],
+    props: ["filters", "defaultOption"],
     data() {
         return {
             dataAlert: {
@@ -157,6 +157,7 @@ export default {
     },
     mounted() {
         this.getHeaders();
+        this.openDefaultCase();
         // force to open start cases modal
         // if the user has start case as a default case menu option
         if (window.config._nodeId === "CASES_START_CASE") {
@@ -176,6 +177,22 @@ export default {
     beforeCreate() {},
     methods: {
         /**
+         * Open a case when the component was mounted
+         */
+        openDefaultCase() {
+            let params;
+            if(this.defaultOption) {
+                params = utils.getAllUrlParams(this.defaultOption);
+                if (params && params.app_uid && params.del_index) {
+                    this.openCase({
+                        APP_UID: params.app_uid,
+                        DEL_INDEX: params.del_index
+                    });
+                    this.$emit("cleanDefaultOption");
+                }
+            }
+        },
+        /**
          * Row click event handler
          * @param {object} event
          */
@@ -191,6 +208,21 @@ export default {
                 self.clickCount = 0;
                 self.openCaseDetail(event.row);
             }
+        },
+        /**
+         * Open selected case
+         *
+         * @param {object} item
+         */
+        openCase(item) {
+            this.$emit("onUpdateDataCase", {
+                APP_UID: item.APP_UID,
+                DEL_INDEX: item.DEL_INDEX,
+                PRO_UID: item.PRO_UID,
+                TAS_UID: item.TAS_UID,
+                ACTION: "todo"
+            });
+            this.$emit("onUpdatePage", "XCase");
         },
         /**
          * Open case detail
@@ -304,8 +336,15 @@ export default {
          */
         formantPendingTask(data) {
             var i,
+                userDataFormat,
                 dataFormat = [];
             for (i = 0; i < data.length; i += 1) {
+                userDataFormat = utils.userNameDisplayFormat({
+                        userName: data[i].user_tooltip.usr_username || "",
+                        firstName: data[i].user_tooltip.usr_firstname || "",
+                        lastName: data[i].user_tooltip.usr_lastname || "",
+                        format: window.config.FORMATS.format || null
+                    });
                 dataFormat.push(
                     {
                         TAS_NAME: data[i].tas_title,
@@ -313,17 +352,13 @@ export default {
                         DELAYED_TITLE: data[i].tas_status === "OVERDUE" ?
                             this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data[i].tas_status],
                         DELAYED_MSG: data[i].tas_status === "OVERDUE" ? data[i].delay : "",
-                        AVATAR: window.config.SYS_SERVER +
+                        AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER +
                                 window.config.SYS_URI +
-                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`,
-                        USERNAME: utils.userNameDisplayFormat({
-                            userName: data[i].user_tooltip.usr_username,
-                            firstName: data[i].user_tooltip.usr_firstname,
-                            lastName: data[i].user_tooltip.usr_lastname,
-                            format: window.config.FORMATS.format || null
-                        }),
+                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}` : "",
+                        USERNAME: userDataFormat !== "" ? userDataFormat : this.$i18n.t("ID_UNASSIGNED"),
                         POSITION: data[i].user_tooltip.usr_position,
-                        EMAIL: data[i].user_tooltip.usr_email
+                        EMAIL: data[i].user_tooltip.usr_email,
+                        UNASSIGNED: userDataFormat !== "" ? true : false
                     }
                 );
             }

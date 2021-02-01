@@ -164,6 +164,7 @@ export default {
             APP_UID: data.data.APPLICATION,
             DEL_INDEX: 1,
             ACTION: "draft",
+            PRO_UID: data.data.PROCESS
           };
           self.disable = false;
           self.$parent.$parent.page = "XCase";

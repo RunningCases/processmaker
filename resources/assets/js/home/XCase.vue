@@ -9,7 +9,7 @@
       allowfullscreen
       @load="onLoadIframe"
     ></iframe>
-    <Debugger v-if="openDebug === true" :style="'height:' + height + 'px'" />
+    <Debugger v-if="openDebug === true" :style="'height:' + height + 'px'" ref="debugger"/>
   </div>
 </template>
 
@@ -61,6 +61,14 @@ export default {
   methods: {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
+    },
+    /**
+     * update view in component
+     */
+    updateView(){
+      if(this.openDebug){
+        this.$refs["debugger"].loadData();
+      }
     },
     onLoadIframe() {},
   },

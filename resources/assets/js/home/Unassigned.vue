@@ -58,6 +58,7 @@ import TaskCell from "../components/vuetable/TaskCell.vue";
 import CasesFilter from "../components/search/CasesFilter";
 import ModalClaimCase from "./modal/ModalClaimCase.vue";
 import api from "./../api/index";
+import utils from "./../utils/utils";
 
 export default {
   name: "Paused",
@@ -69,7 +70,7 @@ export default {
     ModalClaimCase,
     CasesFilter,
   },
-  props: {},
+  props: ["defaultOption"],
   data() {
     return {
       newCase: {
@@ -130,7 +131,10 @@ export default {
       }
     };
   },
-  mounted() {},
+  mounted() {
+    // force to open case
+    this.openDefaultCase();
+  },
   watch: {},
   computed: {
     /**
@@ -143,6 +147,39 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
+    /**
+     * Open a case when the component was mounted
+     */
+    openDefaultCase() {
+        let params;
+        if(this.defaultOption) {
+            params = utils.getAllUrlParams(this.defaultOption);
+            if (params && params.app_uid && params.del_index) {
+                this.openCase({
+                    APP_UID: params.app_uid,
+                    DEL_INDEX: params.del_index
+                });
+                this.$emit("cleanDefaultOption");
+            }
+            //force to search in the parallel tasks
+            if (params && params.openapplicationuid) {
+                this.onUpdateFilters({
+                        params: [
+                            {
+                                fieldId: "caseNumber",
+                                filterVar: "caseNumber",
+                                label: "",
+                                options:[],
+                                value: params.openapplicationuid,
+                                autoShow: false
+                            }
+                        ],
+                        refresh: true
+                });
+                this.$emit("cleanDefaultOption");                
+            }
+        }
+    },
     /**
      * On row click event handler
      * @param {object} event
@@ -236,6 +273,21 @@ export default {
           that.$refs["modal-claim-case"].show();
         });
       });
+    },
+    /**
+     * Open selected cases in the inbox
+     *
+     * @param {object} item
+     */
+    openCase(item) {
+      this.$emit("onUpdateDataCase", {
+        APP_UID: item.APP_UID,
+        DEL_INDEX: item.DEL_INDEX,
+        PRO_UID: item.PRO_UID,
+        TAS_UID: item.TAS_UID,
+        ACTION: "todo"
+      });
+      this.$emit("onUpdatePage", "XCase");
     },
     /**
      * Open case detail
