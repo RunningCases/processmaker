@@ -137,6 +137,9 @@ export default {
       }
     };
   },
+  created() {
+    this.initFilters();
+  },
   mounted() {
     // force to open case
     this.openDefaultCase();
@@ -153,6 +156,27 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
+    /**
+     * Initialize filters
+     */
+    initFilters() {
+       let params;
+        if(this.defaultOption) {
+            params = utils.getAllUrlParams(this.defaultOption);
+              if (params && params.openapplicationuid) {
+                this.filters =  [
+                    {
+                        fieldId: "caseNumber",
+                        filterVar: "caseNumber",
+                        label: "",
+                        options:[],
+                        value: params.openapplicationuid,
+                        autoShow: false
+                    }
+                ];
+              }
+        }
+    },
     /**
      * Open a case when the component was mounted
      */
@@ -180,7 +204,7 @@ export default {
                                 autoShow: false
                             }
                         ],
-                        refresh: true
+                        refresh: false
                 });
                 this.$emit("cleanDefaultOption");                
             }
