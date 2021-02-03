@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
+use ProcessMaker\BusinessModel\Light\NotificationDevice;
 use ProcessMaker\BusinessModel\Task as BusinessModelTask;
 use ProcessMaker\BusinessModel\User as BusinessModelUser;
 use ProcessMaker\BusinessModel\WebEntryEvent;
@@ -5720,159 +5721,52 @@ class Cases
         }
     }
 
-    public function getTo($taskUid, $userUid, $arrayData)
+    /**
+     * Get the to email
+     *
+     * @param string $taskUid
+     * @param string $userUid
+     * @param array $caseData
+     *
+     * @return array
+    */
+    public function getTo($taskUid, $userUid, $caseData)
     {
-        $to = null;
-        $cc = null;
-        $arrayResp = array();
-        $tasks = new Tasks();
-        $group = new Groups();
-        $oUser = new Users();
-
+        $response = [];
+        $to = '';
+        $cc = '';
         $task = TaskPeer::retrieveByPK($taskUid);
-
         switch ($task->getTasAssignType()) {
             case 'SELF_SERVICE':
-                $to = '';
-                $cc = '';
-
-                //Query
-                $criteria = new Criteria('workflow');
-
-                $criteria->addSelectColumn(UsersPeer::USR_UID);
-                $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
-                $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-                $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-                $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
-
-                $criteria->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
-
-                $rsCriteria = null;
-
-                if (trim($task->getTasGroupVariable()) != '') {
-                    //SELF_SERVICE_VALUE
-                    $variable = trim($task->getTasGroupVariable(), ' @#%?$=');
-
-                    //Query
-                    if (isset($arrayData[$variable])) {
-                        $data = $arrayData[$variable];
-
-                        switch (gettype($data)) {
-                            case 'string':
-                                $criteria->addJoin(GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-
-                                $criteria->add(GroupUserPeer::GRP_UID, $data, Criteria::EQUAL);
-
-                                $rsCriteria = GroupUserPeer::doSelectRS($criteria);
-                                break;
-                            case 'array':
-                                $criteria->add(UsersPeer::USR_UID, $data, Criteria::IN);
-
-                                $rsCriteria = UsersPeer::doSelectRS($criteria);
-                                break;
-                        }
-                    }
-                } else {
-                    //SELF_SERVICE
-                    $arrayTaskUser = [];
-
-                    $arrayAux1 = $tasks->getGroupsOfTask($taskUid, 1);
-
-                    foreach ($arrayAux1 as $arrayGroup) {
-                        $arrayAux2 = $group->getUsersOfGroup($arrayGroup['GRP_UID']);
-
-                        foreach ($arrayAux2 as $arrayUser) {
-                            $arrayTaskUser [] = $arrayUser ['USR_UID'];
-                        }
-                    }
-
-                    $arrayAux1 = $tasks->getUsersOfTask($taskUid, 1);
-                    foreach ($arrayAux1 as $arrayUser) {
-                        $arrayTaskUser[] = $arrayUser['USR_UID'];
-                    }
-
-
-                    //Query
-                    $criteria->add(UsersPeer::USR_UID, $arrayTaskUser, Criteria::IN);
-
-                    $rsCriteria = UsersPeer::doSelectRS($criteria);
-                }
-
-                if (!is_null($rsCriteria)) {
-                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                    while ($rsCriteria->next()) {
-                        $record = $rsCriteria->getRow();
-
-                        $toAux = (($record['USR_FIRSTNAME'] != '' || $record['USR_LASTNAME'] != '') ? $record['USR_FIRSTNAME'] . ' ' . $record['USR_LASTNAME'] . ' ' : '') . '<' . $record['USR_EMAIL'] . '>';
-
-                        if ($to == '') {
-                            $to = $toAux;
-                        } else {
-                            $to .= ',' . $toAux;
-                        }
+                // Load the user that can claim the case
+                $light = new NotificationDevice();
+                $userUids = $light->getTaskUserSelfService($taskUid, $caseData);
+                // Get the user information for send the email
+                foreach ($userUids as $userUid) {
+                    $u = new Users();
+                    $user = $u->load($userUid);
+                    $toAux = ((!empty($user['USR_FIRSTNAME']) || !empty($user['USR_LASTNAME'])) ? $user['USR_FIRSTNAME'] . ' ' . $user['USR_LASTNAME'] . ' ' : '') . '<' . $user['USR_EMAIL'] . '>';
+                    if (empty($to)) {
+                        $to = $toAux;
+                    } else {
+                        $to .= ',' . $toAux;
                     }
                 }
-
-                $arrayResp['to'] = $to;
-                $arrayResp['cc'] = $cc;
-                break;
-            case "MULTIPLE_INSTANCE":
-                $to = null;
-                $cc = null;
-                $sw = 1;
-                $oDerivation = new Derivation();
-                $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($taskUid));
-                if (isset($userFields)) {
-                    foreach ($userFields as $row) {
-                        $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
-                        if ($sw == 1) {
-                            $to = $toAux;
-                            $sw = 0;
-                        } else {
-                            $to .= ',' . $toAux;
-                        }
-                    }
-                    $arrayResp ['to'] = $to;
-                    $arrayResp ['cc'] = $cc;
-                }
-                break;
-            case "MULTIPLE_INSTANCE_VALUE_BASED":
-                $oTask = new Task();
-                $aTaskNext = $oTask->load($taskUid);
-                if (isset($aTaskNext ["TAS_ASSIGN_VARIABLE"]) && !empty($aTaskNext ["TAS_ASSIGN_VARIABLE"])) {
-                    $to = null;
-                    $cc = null;
-                    $sw = 1;
-                    $nextTaskAssignVariable = trim($aTaskNext ["TAS_ASSIGN_VARIABLE"], " @#");
-                    $arrayUsers = $arrayData [$nextTaskAssignVariable];
-                    $oDerivation = new Derivation();
-                    $userFields = $oDerivation->getUsersFullNameFromArray($arrayUsers);
-
-                    foreach ($userFields as $row) {
-                        $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
-                        if ($sw == 1) {
-                            $to = $toAux;
-                            $sw = 0;
-                        } else {
-                            $to .= ',' . $toAux;
-                        }
-                    }
-                    $arrayResp ['to'] = $to;
-                    $arrayResp ['cc'] = $cc;
-                }
+                $response ['to'] = $to;
+                $response ['cc'] = '';
                 break;
             default:
-                if (isset($userUid) && !empty($userUid)) {
-                    $aUser = $oUser->load($userUid);
-
-                    $to = ((($aUser ["USR_FIRSTNAME"] != "") || ($aUser ["USR_LASTNAME"] != "")) ? $aUser ["USR_FIRSTNAME"] . " " . $aUser ["USR_LASTNAME"] . " " : "") . "<" . $aUser ["USR_EMAIL"] . ">";
+                // Load the user assigned for send the email
+                if (!empty($userUid)) {
+                    $u = new Users();
+                    $user = $u->load($userUid);
+                    $to = ((!empty($user['USR_FIRSTNAME']) || !empty($user['USR_LASTNAME'])) ? $user['USR_FIRSTNAME'] . ' ' . $user['USR_LASTNAME'] . ' ' : '') . '<' . $user['USR_EMAIL'] . '>';
                 }
-                $arrayResp ['to'] = $to;
-                $arrayResp ['cc'] = '';
+                $response ['to'] = $to;
+                $response ['cc'] = '';
                 break;
         }
-        return $arrayResp;
+        return $response;
     }
 
     /**
