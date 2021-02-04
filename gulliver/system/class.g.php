@@ -379,12 +379,12 @@ class G
      * @param string $string
      * @param string $key
      * @param bool $urlSafe if it is used in url
-     *
+     * @param bool $verifyPipe
      * @return string
      */
-    public static function encrypt($string, $key, $urlSafe = false)
+    public static function encrypt($string, $key, $urlSafe = false, $verifyPipe = true)
     {
-        if (strpos($string, '|', 0) !== false) {
+        if ($verifyPipe === true && strpos($string, '|', 0) !== false) {
             return $string;
         }
         $result = '';

@@ -230,7 +230,7 @@ class ExecuteQueryTest extends TestCase
             'DBS_SERVER' => env('DB_HOST'),
             'DBS_DATABASE_NAME' => $dbName,
             'DBS_USERNAME' => env('DB_USERNAME'),
-            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), $dbName) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), $dbName, false, false) . "_2NnV3ujj3w",
             'DBS_PORT' => '3306',
         ]);
 
@@ -259,7 +259,7 @@ class ExecuteQueryTest extends TestCase
             'DBS_SERVER' => 'localhost',
             'DBS_DATABASE_NAME' => $dbName,
             'DBS_USERNAME' => env('DB_USERNAME'),
-            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), $dbName) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), $dbName, false, false) . "_2NnV3ujj3w",
             'DBS_PORT' => '1521',
         ]);
 

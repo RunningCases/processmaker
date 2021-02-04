@@ -141,7 +141,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_SERVER' => env('DB_HOST'),
             'DBS_DATABASE_NAME' => env('DB_DATABASE'),
             'DBS_USERNAME' => env('DB_USERNAME'),
-            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), env('DB_DATABASE')) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), env('DB_DATABASE'), false, false) . "_2NnV3ujj3w",
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
@@ -159,7 +159,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_SERVER' => config('database.connections.testexternal.host'),
             'DBS_DATABASE_NAME' => config('database.connections.testexternal.database'),
             'DBS_USERNAME' => config('database.connections.testexternal.username'),
-            'DBS_PASSWORD' => G::encrypt(config('database.connections.testexternal.password'), config('database.connections.testexternal.database')) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => G::encrypt(config('database.connections.testexternal.password'), config('database.connections.testexternal.database'), false, false) . "_2NnV3ujj3w",
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
@@ -232,7 +232,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_SERVER' => env('DB_HOST'),
             'DBS_DATABASE_NAME' => env('DB_DATABASE'),
             'DBS_USERNAME' => env('DB_USERNAME'),
-            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), env('DB_DATABASE')) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => G::encrypt(env('DB_PASSWORD'), env('DB_DATABASE'), false, false) . "_2NnV3ujj3w",
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
@@ -250,7 +250,7 @@ class AdditionalTablesTest extends TestCase
             'DBS_SERVER' => config('database.connections.testexternal.host'),
             'DBS_DATABASE_NAME' => config('database.connections.testexternal.database'),
             'DBS_USERNAME' => config('database.connections.testexternal.username'),
-            'DBS_PASSWORD' => G::encrypt(config('database.connections.testexternal.password'), config('database.connections.testexternal.database')) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => G::encrypt(config('database.connections.testexternal.password'), config('database.connections.testexternal.database'), false, false) . "_2NnV3ujj3w",
             'DBS_PORT' => '3306',
             'DBS_CONNECTION_TYPE' => 'NORMAL'
         ]);
