@@ -1762,6 +1762,7 @@ class RBAC
         $dataCase['AUTH_SOURCE_PASSWORD'] = G::encrypt(
                 $dataCase['AUTH_SOURCE_PASSWORD'],
                 $dataCase['AUTH_SOURCE_SERVER_NAME']
+                ,false, false
             ) . "_2NnV3ujj3w";
         $this->authSourcesObj->create($dataCase);
     }
@@ -1780,6 +1781,7 @@ class RBAC
         $dataCase['AUTH_SOURCE_PASSWORD'] = G::encrypt(
                 $dataCase['AUTH_SOURCE_PASSWORD'],
                 $dataCase['AUTH_SOURCE_SERVER_NAME']
+                , false, false
             ) . "_2NnV3ujj3w";
         $this->authSourcesObj->update($dataCase);
     }

@@ -63,7 +63,7 @@ class DBQueryTest extends TestCase
             'DBS_PORT' => '3306',
             'DBS_USERNAME' => config('database.connections.testexternal.username'),
             // Remember, we have to do some encryption here @see DbSourceFactory.php
-            'DBS_PASSWORD' => \G::encrypt(env('DB_PASSWORD'), config('database.connections.testexternal.database')) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => \G::encrypt(env('DB_PASSWORD'), config('database.connections.testexternal.database'), false, false) . "_2NnV3ujj3w",
             'DBS_DATABASE_NAME' => config('database.connections.testexternal.database'),
             'PRO_UID' => $process->PRO_UID
         ]);
@@ -98,7 +98,7 @@ class DBQueryTest extends TestCase
             'DBS_TYPE' => 'mssql',
             'DBS_USERNAME' => env('MSSQL_USERNAME'),
             // Remember, we have to do some encryption here @see DbSourceFactory.php
-            'DBS_PASSWORD' => \G::encrypt(env('MSSQL_PASSWORD'), env('MSSQL_DATABASE')) . "_2NnV3ujj3w",
+            'DBS_PASSWORD' => \G::encrypt(env('MSSQL_PASSWORD'), env('MSSQL_DATABASE'), false, false) . "_2NnV3ujj3w",
             'DBS_DATABASE_NAME' => env('MSSQL_DATABASE'),
             'PRO_UID' => $process->PRO_UID
         ]);
