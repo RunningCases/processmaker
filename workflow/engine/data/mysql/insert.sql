@@ -61360,6 +61360,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TOTAL_CASES_REASSIGNED','en','Total Cases Reassigned','2014-01-15') ,
 ( 'LABEL','ID_TO_DO','en','To do','2014-01-15') ,
 ( 'LABEL','ID_TO_FLOAT','en','Replace the value converted to float','2014-01-15') ,
+( 'LABEL','ID_TO_FINISH_DATE','en','To Finish Date','2021-02-08') ,
 ( 'LABEL','ID_TO_INTEGER','en','Replace the value converted to integer','2014-01-15') ,
 ( 'LABEL','ID_TO_REASSIGN','en','Reassign','2014-01-15') ,
 ( 'LABEL','ID_TO_REVISE','en','Review','2014-01-15') ,

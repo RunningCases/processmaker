@@ -26436,6 +26436,12 @@ msgid "Replace the value converted to float"
 msgstr "Replace the value converted to float"
 
 # TRANSLATION
+# LABEL/ID_TO_FINISH_DATE
+#: LABEL/ID_TO_FINISH_DATE
+msgid "To Finish Date"
+msgstr "To Finish Date"
+
+# TRANSLATION
 # LABEL/ID_TO_INTEGER
 #: LABEL/ID_TO_INTEGER
 msgid "Replace the value converted to integer"
