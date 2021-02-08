@@ -61363,6 +61363,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TO_INTEGER','en','Replace the value converted to integer','2014-01-15') ,
 ( 'LABEL','ID_TO_REASSIGN','en','Reassign','2014-01-15') ,
 ( 'LABEL','ID_TO_REVISE','en','Review','2014-01-15') ,
+( 'LABEL','ID_TO_START_DATE','en','To Start Date','2021-02-08') ,
 ( 'LABEL','ID_TO_STRING','en','Replace the value in quotes','2014-01-15') ,
 ( 'LABEL','ID_TO_URL','en','Replace the value with URL encoding','2014-01-15') ,
 ( 'LABEL','ID_TRANSFER_HISTORY','en','Transfer History','2014-01-15') ,
