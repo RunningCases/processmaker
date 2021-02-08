@@ -26466,6 +26466,12 @@ msgid "Review"
 msgstr "Review"
 
 # TRANSLATION
+# LABEL/ID_TO_START_DATE
+#: LABEL/ID_TO_START_DATE
+msgid "To Start Date"
+msgstr "To Start Date"
+
+# TRANSLATION
 # LABEL/ID_TO_STRING
 #: LABEL/ID_TO_STRING
 msgid "Replace the value in quotes"
