@@ -40,7 +40,7 @@
                                 size="sm"
                                 @click="cleanAllTags"
                                 variant="danger"
-                                >{{$t('ID_CLEAN_ALL')}}
+                                >{{$t('ID_CLEAR_ALL')}}
                             </b-button>
                         </div>
                     </div>

@@ -57557,6 +57557,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CLASS_TABLE_DOESNT_EXIST','en','This Class Table doesn''t exist!','2014-01-15') ,
 ( 'LABEL','ID_CLEAR','en','Clear','2014-01-15') ,
 ( 'LABEL','ID_CLEAN_ALL','en','Clean All','2020-12-16') ,
+( 'LABEL','ID_CLEAR_ALL','en','Clear All','2021-02-05') ,
 ( 'LABEL','ID_CLEAN_WEBENTRIES','en','Clean web-entries','2020-11-10') ,
 ( 'LABEL','ID_CLEAN_WEBENTRIES_DESC','en','Clean web-entries','2020-11-10') ,
 ( 'LABEL','ID_CLEAR_CACHE','en','Clear Cache','2014-01-15') ,

@@ -26100,6 +26100,12 @@ msgid "Clean All"
 msgstr "Clean All"
 
 # TRANSLATION
+# LABEL/ID_CLEAR_ALL
+#: LABEL/ID_CLEAR_ALL
+msgid "Clear All"
+msgstr "Clear All"
+
+# TRANSLATION
 # LABEL/ID_CLEAN_WEBENTRIES
 #: LABEL/ID_CLEAN_WEBENTRIES
 msgid "Clean web-entries"
