@@ -14,9 +14,27 @@ $filter = new InputFilter();
    }
   </style>
   <body onresize="autoResizeScreen()" onload="autoResizeScreen()">
+<?php
+/*----------------------------------********---------------------------------*/
+if (true) {
+    //In enterprise version this snippet of code should be always be executed
+    //In community version this snippet of code is deleted and is executed the next snippet of code
+?>
   <iframe name="casesFrame" id="casesFrame" src ="<?php echo $cd; ?>../cases/viena_init<?php echo $filter->xssFilterHard($_POST['qs']); ?>" width="99%" height="768" frameborder="0">
       <p>Your browser does not support iframes.</p>
   </iframe>
+<?php
+} else {
+/*----------------------------------********---------------------------------*/
+?>
+  <iframe name="casesFrame" id="casesFrame" src ="<?php echo $cd; ?>../cases/main_init<?php echo $filter->xssFilterHard($_POST['qs']); ?>" width="99%" height="768" frameborder="0">
+      <p>Your browser does not support iframes.</p>
+  </iframe>
+<?php
+/*----------------------------------********---------------------------------*/
+}
+/*----------------------------------********---------------------------------*/
+?>
   </body>
   <script>
     if ( document.getElementById('pm_submenu') )
