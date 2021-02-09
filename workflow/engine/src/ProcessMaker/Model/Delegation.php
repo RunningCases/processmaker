@@ -1822,6 +1822,33 @@ class Delegation extends Model
     }
 
     /**
+     * Return the last thread created
+     *
+     * @param int $appNumber
+     *
+     * @return array
+     */
+    public static function getLastThread(int $appNumber)
+    {
+        $query = Delegation::query()->select([
+            'TASK.TAS_TITLE',
+            'TASK.TAS_ASSIGN_TYPE',
+            'APP_DELEGATION.USR_ID',
+            'APP_DELEGATION.DEL_TASK_DUE_DATE'
+        ]);
+        // Join with task
+        $query->joinTask();
+        // Get the last thread created
+        $query->lastThread();
+        // Related to the specific case number
+        $query->case($appNumber);
+        // Get the results
+        $results = $query->get()->values()->toArray();
+
+        return $results;
+    }
+
+    /**
      * Get the thread title related to the delegation
      *
      * @param string $tasUid
