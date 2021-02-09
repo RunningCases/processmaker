@@ -165,17 +165,33 @@ class Participated extends AbstractCases
                 case 'IN_PROGRESS':
                     $result = [];
                     $i = 0;
-                    if ($item['APP_STATUS'] === 'TO_DO') {
-                        $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
-                        foreach ($taskPending as $thread) {
+                    switch ($item['APP_STATUS']) {
+                        case 'TO_DO':
+                            // Get the pending task
+                            $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
+                            foreach ($taskPending as $thread) {
+                                $thread['APP_STATUS'] = $item['APP_STATUS'];
+                                // Get the thread information
+                                $result[$i] = $this->threadInformation($thread);
+                                $i++;
+                            }
+                            $item['PENDING'] = $result;
+                            break;
+                        case 'COMPLETED':
+                            // Get the last thread
+                            $taskPending = Delegation::getLastThread($item['APP_NUMBER']);
+                            // Get the head of array
+                            $thread = head($taskPending);
+                            // Define some values required for define the color status
                             $thread['APP_STATUS'] = $item['APP_STATUS'];
+                            $thread['APP_FINISH_DATE'] = $item['APP_FINISH_DATE'];
+                            // Get the thread information
                             $result[$i] = $this->threadInformation($thread);
-                            $i++;
-                        }
-                        $item['PENDING'] = $result;
-                    } else {
-                        $result[$i] = $this->threadInformation($thread);
-                        $item['PENDING'] = $result;
+                            $item['PENDING'] = $result;
+                            break;
+                        default: // Other status
+                            $result[$i] = $this->threadInformation($thread);
+                            $item['PENDING'] = $result;
                     }
                     break;
                 case 'COMPLETED':
