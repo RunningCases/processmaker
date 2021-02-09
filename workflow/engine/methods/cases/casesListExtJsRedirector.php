@@ -30,21 +30,37 @@ if (isset($_GET['ux'])) {
 if (isset($_GET['ux'])) {
     echo 'if (typeof window.parent.ux_env != \'undefined\') {';
 }
-echo '  parent.parent.postMessage("redirect=todo","*");';
+/*----------------------------------********---------------------------------*/
+if (true) {
+    echo '  parent.parent.postMessage("redirect=todo","*");';
+} else {
+/*----------------------------------********---------------------------------*/
+    echo "  window.parent.location.href = '$url';";
+/*----------------------------------********---------------------------------*/
+}
+/*----------------------------------********---------------------------------*/
 if (isset($_GET['ux'])) {
     /*----------------------------------********---------------------------------*/
     if (PMLicensedFeatures::getSingleton()->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') && $statusPMGmail) {
         echo '} else { window.parent.location.href = \''.$pathDerivateGmail.'\'; }';
     } else {
+    /*----------------------------------********---------------------------------*/
         /*----------------------------------********---------------------------------*/
-        echo '} else { 
-                if (parent.parent.postMessage) {
-                    parent.parent.postMessage("redirect=todo","*");
-                } else {
-                    window.parent.location.href = \'casesListExtJs\';
-                }
-            }';
+        if (true) {
+            echo '} else { 
+                    if (parent.parent.postMessage) {
+                        parent.parent.postMessage("redirect=todo","*");
+                    } else {
+                        window.parent.location.href = \'casesListExtJs\';
+                    }
+                }';
+        } else {
         /*----------------------------------********---------------------------------*/
+            echo '} else { window.parent.location.href = \'casesListExtJs\'; }';
+        /*----------------------------------********---------------------------------*/
+        }
+        /*----------------------------------********---------------------------------*/
+    /*----------------------------------********---------------------------------*/
     }
     /*----------------------------------********---------------------------------*/
 }
