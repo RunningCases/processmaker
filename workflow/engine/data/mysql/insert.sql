@@ -60339,7 +60339,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_OK','en','Ok','2015-09-17') ,
 ( 'LABEL','ID_OLD_VERSION','en','old version','2014-01-15') ,
 ( 'LABEL','ID_ON','en','On','2014-01-15') ,
-( 'LABEL','ID_ON_TIME','en','On Time','2014-01-15') ,
+( 'LABEL','ID_ON_TIME','en','On-time','2014-01-15') ,
 ( 'LABEL','ID_ONCE_PER_DAY','en','Once per day','2015-03-10') ,
 ( 'LABEL','ID_OPEN','en','Open','2014-01-15') ,
 ( 'LABEL','ID_OPENSSL_OPTIONAL','en','OpenSSL is optional.','2014-01-15') ,

@@ -320,7 +320,7 @@ export default {
                     STATUS: v.APP_STATUS,
                     START_DATE: v.APP_CREATE_DATE_LABEL || "",
                     FINISH_DATE: v.APP_FINISH_DATE_LABEL || "",
-                    PENDING_TASKS: that.formantPendingTask(v.PENDING),
+                    PENDING_TASKS: that.formantPendingTask(v.PENDING, v.APP_STATUS),
                     DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
                     APP_UID: v.APP_UID,
@@ -334,7 +334,7 @@ export default {
         /**
          * Format data for pending task.
          */
-        formantPendingTask(data) {
+        formantPendingTask(data, status) {
             var i,
                 userDataFormat,
                 dataFormat = [];
@@ -349,9 +349,8 @@ export default {
                     {
                         TAS_NAME: data[i].tas_title,
                         STATUS: data[i].tas_color,
-                        DELAYED_TITLE: data[i].tas_status === "OVERDUE" ?
-                            this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data[i].tas_status],
-                        DELAYED_MSG: data[i].tas_status === "OVERDUE" ? data[i].delay : "",
+                        DELAYED_TITLE: this.delayedTitle(data[i], status),
+                        DELAYED_MSG: data[i].tas_status === "OVERDUE" && status !== "COMPLETED" ? data[i].delay : "",
                         AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER +
                                 window.config.SYS_URI +
                                 `users/users_ViewPhotoGrid?pUID=${data[i].user_id}` : "",
@@ -363,6 +362,23 @@ export default {
                 );
             }
             return dataFormat;
+        },
+        /**
+         * Prepare the delayed title
+         * @param {object} data
+         * @param {string} status
+         * @returns {string} 
+         */
+        delayedTitle(data, status) {
+            let title = "";
+            if (status === "COMPLETED") {
+                title = this.$i18n.t("ID_COMPLETED") + ": ";
+                title += data.tas_status === "ON_TIME" ? this.$i18n.t("ID_ON_TIME"): this.$i18n.t("ID_TASK_OVERDUE");
+            } else {
+                title = data.tas_status === "OVERDUE" ?
+                this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data.tas_status];
+            }
+            return title;
         },
         /**
          * Convert string to date format

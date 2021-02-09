@@ -20684,8 +20684,8 @@ msgstr "On"
 # TRANSLATION
 # LABEL/ID_ON_TIME
 #: LABEL/ID_ON_TIME
-msgid "On Time"
-msgstr "On Time"
+msgid "On-time"
+msgstr "On-time"
 
 # TRANSLATION
 # LABEL/ID_OPEN
