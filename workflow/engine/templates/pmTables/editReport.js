@@ -955,9 +955,6 @@ Ext.onReady(function () {
     });
 
     var items = new Array();
-    if (PRO_UID === false) {
-        items.push(processComboBox);
-    }
 
     items.push({
         id: 'REP_TAB_NAME',
@@ -974,6 +971,11 @@ Ext.onReady(function () {
             }
         }
     });
+
+    if (PRO_UID === false) {
+        items.push(processComboBox);
+    }
+    
     items.push({
         id: 'REP_TAB_DSC',
         fieldLabel: _("ID_DESCRIPTION"),
@@ -1115,6 +1117,19 @@ function createReportTable()
     var tableName = Ext.getCmp('REP_TAB_NAME').getValue().trim();
     var tableDescription = Ext.getCmp('REP_TAB_DSC').getValue().trim();
 
+    PRO_UID = (PRO_UID !== false && PRO_UID !== "") ? PRO_UID : ((Ext.getCmp('PROCESS').getValue().trim() != '') ? Ext.getCmp('PROCESS').getValue().trim() : '');
+    
+    //validate table name and process
+    if (Ext.getCmp('REP_TAB_NAME').getValue().trim() == '' && PRO_UID == '') {
+        Ext.getCmp('PROCESS').focus();
+        Ext.getCmp('REP_TAB_NAME').focus();
+        PMExt.error(_('ID_ERROR'), _('ID_TABLE_AND_PROCESS_NAME_ARE_REQUIRED'), function () {
+            Ext.getCmp('PROCESS').focus();
+            Ext.getCmp('REP_TAB_NAME').focus();
+        });
+        return false;
+    }
+
     //validate table name
     if (Ext.getCmp('REP_TAB_NAME').getValue().trim() == '') {
         Ext.getCmp('REP_TAB_NAME').focus();
@@ -1125,7 +1140,6 @@ function createReportTable()
     }
 
     //validate process
-    PRO_UID = (PRO_UID !== false && PRO_UID !== "") ? PRO_UID : ((Ext.getCmp('PROCESS').getValue().trim() != '') ? Ext.getCmp('PROCESS').getValue().trim() : '');
     if (PRO_UID == '') {
         Ext.getCmp('PROCESS').focus();
         PMExt.error(_('ID_ERROR'), _('ID_PROCESS_IS_REQUIRED'), function () {

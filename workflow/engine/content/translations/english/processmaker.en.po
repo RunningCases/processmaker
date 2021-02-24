@@ -25620,6 +25620,12 @@ msgid "[LABEL/ID_TABLE_NAME_IS_REQUIRED] Table Name is required."
 msgstr "Table Name is required."
 
 # TRANSLATION
+# LABEL/ID_TABLE_AND_PROCESS_NAME_ARE_REQUIRED
+#: LABEL/ID_TABLE_AND_PROCESS_NAME_ARE_REQUIRED
+msgid "Table and Process Name are required."
+msgstr "Table and Process Name are required."
+
+# TRANSLATION
 # LABEL/ID_TABLE_NAME_TOO_SHORT
 #: LABEL/ID_TABLE_NAME_TOO_SHORT
 msgid "The table name is too short, it should have at least 4 characters."

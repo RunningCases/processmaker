@@ -61189,6 +61189,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TABLE_INVALID_SYNTAX','en','Invalid syntax','2014-01-15') ,
 ( 'LABEL','ID_TABLE_NAME','en','Table Name','2014-01-15') ,
 ( 'LABEL','ID_TABLE_NAME_IS_REQUIRED','en','Table Name is required.','2014-01-15') ,
+( 'LABEL','ID_TABLE_AND_PROCESS_NAME_ARE_REQUIRED','en','Table and Process Name are required.','2021-02-24') ,
 ( 'LABEL','ID_TABLE_NAME_TOO_SHORT','en','The table name is too short, it should have at least 4 characters.','2014-01-15') ,
 ( 'LABEL','ID_TABLE_NOT_EXIST_SKIPPED','en','Table does not exist... skipped!','2014-01-15') ,
 ( 'LABEL','ID_TABLE_NOT_FOUND','en','Table Not found','2014-01-15') ,
