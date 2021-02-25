@@ -15,7 +15,6 @@ class CliWorkspacesTest extends TestCase
 
     protected function setUp()
     {
-        $this->markTestIncomplete();//@todo: Please correct this unit test
     }
 
     /**
@@ -149,10 +148,13 @@ class CliWorkspacesTest extends TestCase
 
     /**
      * Test the queries incompatibilities in dynaforms
+     * 
+     * @covers WorkspaceTools::check_queries_incompatibilities
      * @test
      */
     public function it_should_test_the_incompatibilities_in_the_dynaforms_queries()
     {
+        $this->markTestIncomplete();//This can't be tested due to the db.php invocation
         config(["system.workspace" => 'workflow']);
 
         $process = factory(Process::class, 2)->create();
@@ -171,27 +173,6 @@ class CliWorkspacesTest extends TestCase
             ]
         );
 
-        check_queries_incompatibilities('workflow');
-
-        $result = ob_get_contents();
-
-        // This assert that the message contains the second process name
-        $this->assertRegExp('/'.$process[1]['PRO_TITLE'].'/',$result);
-
-        // This assert that the message contains the second dynaform with the UNION query
-        $this->assertRegExp('/'.$dynaform['DYN_TITLE'].'/',$result);
-    }
-
-    /**
-     * Test the queries incompatibilities in variables
-     * @test
-     */
-    public function it_should_test_the_incompatibilities_in_the_variables_queries()
-    {
-        config(["system.workspace" => 'workflow']);
-
-        $process = factory(Process::class, 2)->create();
-
         $variables = factory(ProcessVariables::class)->create(
             [
                 'PRJ_UID' => $process[0]['PRO_UID'],
@@ -199,33 +180,6 @@ class CliWorkspacesTest extends TestCase
             ]
         );
 
-        factory(ProcessVariables::class)->create(
-            [
-                'PRJ_UID' => $process[1]['PRO_UID'],
-                'VAR_SQL' => ''
-            ]
-        );
-
-        check_queries_incompatibilities('workflow');
-
-        $result = ob_get_contents();
-
-        // This assert that the message contains the first process name
-        $this->assertRegExp('/'.$process[0]['PRO_TITLE'].'/',$result);
-
-        // This assert that the message contains the first dynaform with the UNION query
-        $this->assertRegExp('/'.$variables['VAR_TITLE'].'/',$result);
-    }
-
-    /**
-     * Test the queries incompatibilities in triggers
-     * @test
-     */
-    public function it_should_test_the_incompatibilities_in_the_triggers_queries()
-    {
-        config(["system.workspace" => 'workflow']);
-
-        $process = factory(Process::class, 3)->create();
         $trigger = factory(Triggers::class)->create(
             [
                 'PRO_UID' => $process[0]['PRO_UID'],
@@ -253,22 +207,21 @@ class CliWorkspacesTest extends TestCase
             ]
         );
 
-        factory(Triggers::class)->create(
-            [
-                'PRO_UID' => $process[1]['PRO_UID'],
-                'TRI_WEBBOT' => 'die();'
-            ]
-        );
-
-        factory(Triggers::class)->create(
-            [
-                'PRO_UID' => $process[2]['PRO_UID'],
-                'TRI_WEBBOT' => 'executeQuery("select * from USERS");'
-            ]
-        );
-
         check_queries_incompatibilities('workflow');
+
         $result = ob_get_contents();
+
+        // This assert that the message contains the second process name
+        $this->assertRegExp('/'.$process[1]['PRO_TITLE'].'/',$result);
+
+        // This assert that the message contains the second dynaform with the UNION query
+        $this->assertRegExp('/'.$dynaform['DYN_TITLE'].'/',$result);
+
+        // This assert that the message contains the first process name
+        $this->assertRegExp('/'.$process[0]['PRO_TITLE'].'/',$result);
+
+        // This assert that the message contains the first dynaform with the UNION query
+        $this->assertRegExp('/'.$variables['VAR_TITLE'].'/',$result);
 
         // This assert that the message contains the first process name
         $this->assertRegExp('/'.$process[0]['PRO_TITLE'].'/',$result);
