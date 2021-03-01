@@ -97,7 +97,7 @@ if ($RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
     $G_TMP_MENU->AddIdRawOption(
         'CASES_TO_REVISE',
         'casesListExtJs?action=to_revise',
-        G::LoadTranslation('ID_TO_REVISE'),
+        G::LoadTranslation('ID_SUPERVISING'),
         'document-review.png'
     );
 }
