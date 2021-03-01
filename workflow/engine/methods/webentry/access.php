@@ -25,6 +25,8 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
         <title><?php echo htmlentities($webEntryModel->getWeCustomTitle()); ?></title>
         <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
         <META HTTP-EQUIV="Expires" CONTENT="-1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <script src="/js/bluebird/bluebird.min.js"></script>
         <?php
             $oHeadPublisher = headPublisher::getSingleton();
