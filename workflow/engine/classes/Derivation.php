@@ -614,15 +614,25 @@ class Derivation
                 break;
             case "MULTIPLE_INSTANCE_VALUE_BASED":
                 $arrayApplicationData = $this->case->loadCase($tasInfo["APP_UID"]);
-
                 $nextTaskAssignVariable = trim($nextAssignedTask["TAS_ASSIGN_VARIABLE"], " @#");
-
-                if ($nextTaskAssignVariable != "" &&
-                    isset($arrayApplicationData["APP_DATA"][$nextTaskAssignVariable]) && !empty($arrayApplicationData["APP_DATA"][$nextTaskAssignVariable]) && is_array($arrayApplicationData["APP_DATA"][$nextTaskAssignVariable])
+                // Verify the variable defined
+                if (
+                    !empty($nextTaskAssignVariable)
+                    && isset($arrayApplicationData["APP_DATA"][$nextTaskAssignVariable])
+                    && !empty($arrayApplicationData["APP_DATA"][$nextTaskAssignVariable])
                 ) {
+                    if (is_array($arrayApplicationData["APP_DATA"][$nextTaskAssignVariable])) {
+                        $listUsers = $arrayApplicationData["APP_DATA"][$nextTaskAssignVariable];
+                        // Check if the array does not have an empty value
+                        foreach ($listUsers as $user) {
+                            if (empty($user)) {
+                                throw new Exception(G::LoadTranslation("ID_ACTIVITY_INVALID_USER_DATA_VARIABLE_FOR_MULTIPLE_INSTANCE_ACTIVITY", [strtolower("ACT_UID"), $nextAssignedTask["TAS_UID"], $nextTaskAssignVariable]));
+                            }
+                        }
+                    }
                     $userFields = $this->getUsersFullNameFromArray($arrayApplicationData["APP_DATA"][$nextTaskAssignVariable]);
                 } else {
-                    throw new Exception(G::LoadTranslation("ID_ACTIVITY_INVALID_USER_DATA_VARIABLE_FOR_MULTIPLE_INSTANCE_ACTIVITY", array(strtolower("ACT_UID"), $nextAssignedTask["TAS_UID"], $nextTaskAssignVariable)));
+                    throw new Exception(G::LoadTranslation("ID_ACTIVITY_INVALID_USER_DATA_VARIABLE_FOR_MULTIPLE_INSTANCE_ACTIVITY", [strtolower("ACT_UID"), $nextAssignedTask["TAS_UID"], $nextTaskAssignVariable]));
                 }
                 break;
             default:
