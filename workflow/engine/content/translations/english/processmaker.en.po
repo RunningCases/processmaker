@@ -4932,6 +4932,12 @@ msgid "Continue with option"
 msgstr "Continue with option"
 
 # TRANSLATION
+# LABEL/ID_CONTINUE_WITH_THE_SESSION
+#: LABEL/ID_CONTINUE_WITH_THE_SESSION
+msgid "continue with the session"
+msgstr "continue with the session"
+
+# TRANSLATION
 # LABEL/ID_CONVERT_NATIVE_REP_TABLE
 #: LABEL/ID_CONVERT_NATIVE_REP_TABLE
 msgid "Convert to native Report Table"
@@ -9558,6 +9564,12 @@ msgid "Has been deleted"
 msgstr "Has been deleted"
 
 # TRANSLATION
+# LABEL/ID_HAVE_AN_ACTIVE_SESSION_PLEASE_SELECT_ONE_OPTION
+#: LABEL/ID_HAVE_AN_ACTIVE_SESSION_PLEASE_SELECT_ONE_OPTION
+msgid "You have an active ProcessMaker session with user \"{0}\". Please select one of the options:"
+msgstr "You have an active ProcessMaker session with user \"{0}\". Please select one of the options:"
+
+# TRANSLATION
 # LABEL/ID_HEADER_ALIGN
 #: LABEL/ID_HEADER_ALIGN
 msgid "Align"
@@ -11248,6 +11260,12 @@ msgstr "Logo"
 #: LABEL/ID_LOGOUT
 msgid "Logout"
 msgstr "Logout"
+
+# TRANSLATION
+# LABEL/ID_LOGOUT_FROM_THE_ACTIVE_SESSION
+#: LABEL/ID_LOGOUT_FROM_THE_ACTIVE_SESSION
+msgid "logout from the active session"
+msgstr "logout from the active session"
 
 # TRANSLATION
 # LABEL/ID_LOGS
@@ -20812,6 +20830,12 @@ msgstr "Started by Me"
 #: LABEL/ID_OPT_UNREAD
 msgid "Unread"
 msgstr "Unread"
+
+# TRANSLATION
+# LABEL/ID_OR
+#: LABEL/ID_OR
+msgid "or"
+msgstr "or"
 
 # TRANSLATION
 # LABEL/ID_ORIENTATION
