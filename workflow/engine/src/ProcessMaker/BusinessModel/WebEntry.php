@@ -4,9 +4,11 @@ namespace ProcessMaker\BusinessModel;
 use AppSequence;
 use Cases;
 use Criteria;
+use G;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
+use Publisher;
 use ResultSet;
 use WebEntryPeer;
 
@@ -1099,6 +1101,15 @@ class WebEntry
      */
     public function isWebEntryOne($weUid)
     {
+        if (!empty($_SESSION['USER_LOGGED']) && empty($_SESSION['__WEBENTRYCONTINUE__'])) {
+            global $G_PUBLISH;
+            $G_PUBLISH = new Publisher();
+            $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/checkContinueOrCloseSession', '', [], SYS_URI . 'login/checkContinueOrCloseSession');
+            G::RenderPage('publish', 'blank');
+            exit();
+        }
+        unset($_SESSION['__WEBENTRYCONTINUE__']);
+
         $webEntry = WebEntryPeer::retrieveByPK($weUid);
         return $webEntry->getWeType() === 'SINGLE'
             && $webEntry->getWeAuthentication() === 'ANONYMOUS'
