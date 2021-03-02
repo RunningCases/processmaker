@@ -266,6 +266,9 @@ export default {
             if (header === "CASES_TO_REVISE") {
                 filter = "SUPERVISING";
             }
+            if (header === "CASES_SENT") {
+                filter = "STARTED";
+            }
             for (i = 0; i < filters.length; i += 1) {
                 if (filters[i].item === filter) {
                     filters[i].onClick(filters[i]);
