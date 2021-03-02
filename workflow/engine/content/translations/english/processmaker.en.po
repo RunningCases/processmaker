@@ -26052,6 +26052,12 @@ msgid "The username or email is incorrect"
 msgstr "The username or email is incorrect"
 
 # TRANSLATION
+# LABEL/ID_THE_WEBSITE_CAN_NOT_BE_REACHED
+#: LABEL/ID_THE_WEBSITE_CAN_NOT_BE_REACHED
+msgid "The website can not be reached"
+msgstr "The website can not be reached"
+
+# TRANSLATION
 # LABEL/ID_THIS_MONTH
 #: LABEL/ID_THIS_MONTH
 msgid "This Month"

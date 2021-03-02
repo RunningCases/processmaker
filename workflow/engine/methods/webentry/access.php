@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Model\Process;
+
 /**
  * This page is the WebEntry Access Point.
  */
@@ -18,6 +21,14 @@ $configuration = $conf->getConfiguration(
 $userInformationFormat = isset($outResult['format']) ? $outResult['format'] :
     '@lastName, @firstName (@userName)';
 $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
+if (!Process::isActive($webEntryModel->getProUid(), 'PRO_UID')) {
+    $G_PUBLISH = new Publisher();
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', [
+        'MESSAGE' => G::LoadTranslation('ID_THE_WEBSITE_CAN_NOT_BE_REACHED')
+    ]);
+    G::RenderPage('publish', 'blank');
+    exit();
+}
 ?>
 <html>
     <head>

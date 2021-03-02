@@ -61297,6 +61297,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED','en','The upload of PHP files was disabled please contact the system administrator.','2018-04-20') ,
 ( 'LABEL','ID_THE_USER_ROLES_FOR_ATTRIBUTE_HAS_BEEN_DELETED_PLEASE_CONFIRM','en','The user roles for attribute {0} has been modified, if you proceed to save this attribute, all information for users stored in the attribute will be deleted for the removed role, please confirm.','2020-12-15') ,
 ( 'LABEL','ID_THE_USERNAME_EMAIL_IS_INCORRECT','en','The username or email is incorrect','2018-01-18') ,
+( 'LABEL','ID_THE_WEBSITE_CAN_NOT_BE_REACHED','en','The website can not be reached','2020-03-02') ,
 ( 'LABEL','ID_THIS_MONTH','en','This Month','2014-01-15') ,
 ( 'LABEL','ID_THIS_QUARTER','en','This quarter','2014-01-15') ,
 ( 'LABEL','ID_THIS_WEEK','en','This Week','2014-01-15') ,
