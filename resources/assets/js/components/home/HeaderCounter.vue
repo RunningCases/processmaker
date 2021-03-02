@@ -82,13 +82,13 @@ export default {
 }
 
 .btn-warning {
-    color: white;
+    color: white !important;
     background-color: #ffc107;
     border-color: #ffc107;
 }
 
 .btn-warning:hover {
-    color: white;
+    color: white !important;
     background-color: #e0a800;
     border-color: #d39e00;
 }
