@@ -8,20 +8,16 @@ use G;
 use Illuminate\Database\Eloquent\Model;
 use RBAC;
 
-/**
- * Class Process
- * @package ProcessMaker\Model
- *
- * Represents a business process object in the system.
- */
 class Process extends Model
 {
     // Set our table name
     protected $table = 'PROCESS';
     protected $primaryKey = 'PRO_ID';
+
     // Our custom timestamp columns
     const CREATED_AT = 'PRO_CREATE_DATE';
     const UPDATED_AT = 'PRO_UPDATE_DATE';
+
     // Columns to see in the process list
     public $listColumns = [
         'PRO_UID',
@@ -244,10 +240,10 @@ class Process extends Model
 
         $processes = array_column($privateProcesses, 'PRO_ID');
         Process::whereIn('PRO_ID', $processes)
-                ->update(['PRO_TYPE_PROCESS' => 'PUBLIC']);
+            ->update(['PRO_TYPE_PROCESS' => 'PUBLIC']);
 
         Process::where('PRO_CREATE_USER', $userUid)
-                ->update(['PRO_CREATE_USER' => $admin]);
+            ->update(['PRO_CREATE_USER' => $admin]);
     }
 
     /**
@@ -278,11 +274,12 @@ class Process extends Model
         $sort = 'PRO_CREATE_DATE',
         $counterByProcess = true,
         $subProcess = false
-    ) {
+    )
+    {
         $process = new Process();
         $rows = $process->getListColumns();
         if (!in_array($sort, $rows)) {
-            throw new Exception('The column ' .  $sort . ' does not exist');
+            throw new Exception('The column ' . $sort . ' does not exist');
         }
         // Select rows
         $query = Process::query()->select($rows)->noStatus();
@@ -340,7 +337,7 @@ class Process extends Model
         $mask = isset($systemConf->aConfig['dateFormat']) ? $systemConf->aConfig['dateFormat'] : '';
 
         // Prepare the final result
-        $results->transform(function ($item, $key) use ($counterByProcess, $systemConf, $mask){
+        $results->transform(function ($item, $key) use ($counterByProcess, $systemConf, $mask) {
             // Get the counter related to the status
             // todo: those counters needs to remove when the PMCORE-2314 was implemented
             $item['CASES_COUNT_DRAFT'] = $counterByProcess ? Application::getCountByProUid($item['PRO_UID'], 1) : 0;
@@ -358,7 +355,7 @@ class Process extends Model
             $item['PROJECT_TYPE'] = ($bpmnProcess) ? 'bpmn' : 'classic';
 
             // Get the process type: PUBLIC or PRIVATE
-            $item['PRO_TYPE_PROCESS'] = ($item['PRO_TYPE_PROCESS'] == 'PUBLIC') ? G::LoadTranslation("ID_PUBLIC") : G::LoadTranslation("ID_PRIVATE");;
+            $item['PRO_TYPE_PROCESS'] = ($item['PRO_TYPE_PROCESS'] == 'PUBLIC') ? G::LoadTranslation("ID_PUBLIC") : G::LoadTranslation("ID_PRIVATE");
 
             // Get information about the owner, with the format defined
             $creatorOwner = $systemConf->usersNameFormat($item['USR_USERNAME'], $item['USR_FIRSTNAME'], $item['USR_LASTNAME']);
@@ -445,6 +442,21 @@ class Process extends Model
 
         // Return processes
         return $query->get()->toArray();
+    }
 
+    /**
+     * Return true if process is active, false otherwise.
+     * @param int|string $proId
+     * @param string $key
+     * @return bool
+     */
+    public static function isActive($proId, string $key = 'PRO_ID'): bool
+    {
+        $process = Process::query()
+            ->where($key, $proId)
+            ->where('PRO_STATUS', 'ACTIVE')
+            ->get()
+            ->first();
+        return !empty($process);
     }
 }
