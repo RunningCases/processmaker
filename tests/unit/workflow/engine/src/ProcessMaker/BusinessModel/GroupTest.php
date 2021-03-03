@@ -99,13 +99,13 @@ class GroupTest extends TestCase
     public function testGetUsersAvailable($groupUid)
     {
         $result = \ProcessMaker\Model\User::where('USERS.USR_STATUS', '<>', 'CLOSED')
-                ->whereNotIn('USERS.USR_UID', function($query) {
-                    $query->select('GROUP_USER.USR_UID')
-                    ->from('GROUP_USER');
-                })
-                ->whereNotIn('USERS.USR_UID', ['00000000000000000000000000000002'])
-                ->get()
-                ->toArray();
+        ->whereNotIn('USERS.USR_UID', ['00000000000000000000000000000002'])
+        ->leftJoin('GROUP_USER', function($query) { 
+            $query->on('GROUP_USER.USR_UID', '=', 'USERS.USR_UID');
+        })
+        ->get()
+        ->toArray();
+
         $response = $this->getInstanceGroup()->getUsers('AVAILABLE-USERS', $groupUid);
         $this->assertCount(count($result), $response);
     }
