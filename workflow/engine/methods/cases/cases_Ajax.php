@@ -669,7 +669,10 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         while ($rs->next()) {
             $result = $rs->getRow();
             $result["TYPE"] = (array_key_exists($result["TYPE"], $arrayToTranslation)) ? $arrayToTranslation[$result["TYPE"]] : $result["TYPE"];
-            $result['CREATE_DATE'] = DateTime::convertUtcToTimeZone($result['CREATE_DATE']);
+            // Apply mask
+            $dateLabel = applyMaskDateEnvironment($result['CREATE_DATE'], '', false);
+            // Apply the timezone
+            $result['CREATE_DATE_LABEL'] = DateTime::convertUtcToTimeZone($dateLabel);
             $aProcesses[] = $result;
         }
 
@@ -711,7 +714,10 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             $result["FILEDOCEXIST"] = ($result["FILEDOC"]);
             $result["FILEPDFEXIST"] = ($result["FILEPDF"]);
             $result["DELETE_FILE"] = (isset($result['ID_DELETE']) && $result['ID_DELETE'] == 'Delete') ? true : false;
-            $result['CREATE_DATE'] = DateTime::convertUtcToTimeZone($result['CREATE_DATE']);
+            // Apply mask
+            $dateLabel = applyMaskDateEnvironment($result['CREATE_DATE'],'', false);
+            // Apply the timezone
+            $result['CREATE_DATE_LABEL'] = DateTime::convertUtcToTimeZone($dateLabel);
             $aProcesses[] = $result;
 
             $rs->next();

@@ -606,16 +606,23 @@ function getMysqlVersion()
  *
  * @param string $date in the format <Y-m-d H:m:d>
  * @param string $mask
+ * @param bool $caseListSetting
  *
  * @return string
  */
-function applyMaskDateEnvironment(string $date, $mask = '')
+function applyMaskDateEnvironment(string $date, $mask = '', $caseListSetting = true)
 {
     $result = '';
     if (empty($mask)) {
         $systemConf = new Configurations();
         $systemConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
-        $mask = isset($systemConf->aConfig['dateFormat']) ? $systemConf->aConfig['dateFormat'] : '';
+        if ($caseListSetting) {
+            // Format defined in Cases list: Date Format
+            $mask = isset($systemConf->aConfig['casesListDateFormat']) ? $systemConf->aConfig['casesListDateFormat'] : '';
+        } else {
+            // Format defined in Regional Settings: Global Date Format
+            $mask = isset($systemConf->aConfig['dateFormat']) ? $systemConf->aConfig['dateFormat'] : '';
+        }
     }
     if (!empty($date) && !empty($mask)) {
         $date = new DateTime($date);

@@ -767,8 +767,8 @@ Ext.onReady(function(){
 				items : [
 				{fieldLabel: _('ID_TITLE'), text: data.TAS_TITLE},
 				{fieldLabel: _('ID_DESCRIPTION'), text: data.TAS_DESCRIPTION},
-				{fieldLabel: _('ID_INIT_DATE'), text: data.INIT_DATE},
-				{fieldLabel: _('ID_DUE_DATE'), text: data.DUE_DATE},
+				{fieldLabel: _('ID_INIT_DATE'), text: data.INIT_DATE_LABEL},
+				{fieldLabel: _('ID_DUE_DATE'), text: data.DUE_DATE_LABEL},
 				{fieldLabel: _('ID_FINISH_DATE'), text: data.FINISH},
 				{fieldLabel: _('ID_TASK_DURATION'), text: data.DURATION}
 				]

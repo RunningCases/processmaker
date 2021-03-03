@@ -5,6 +5,7 @@ namespace ProcessMaker\ChangeLog;
 use Cases;
 use G;
 use ProcessMaker\ChangeLog\LogStruct;
+use ProcessMaker\Util\DateTime;
 use Propel;
 
 class ChangeLogResult
@@ -149,12 +150,16 @@ class ChangeLogResult
             $count = 0;
             foreach ($appData as $key => $value) {
                 if ($hasPermission && (!isset($values[$key]) || $values[$key] !== $value)) {
+                    // Apply mask
+                    $dateLabel = applyMaskDateEnvironment($row['DATE'],'', false);
+                    // Apply the timezone
+                    $dateLabel = DateTime::convertUtcToTimeZone($dateLabel);
 
                     $previousValue = !isset($values[$key]) ? null : $values[$key];
                     $record = ''
                             . G::LoadTranslation('ID_TASK') . ': ' . $row['TAS_TITLE'] . ' / '
                             . G::LoadTranslation('ID_DYNAFORM') . ': ' . $row['DYN_TITLE'] . ' / '
-                            . G::LoadTranslation('ID_LAN_UPDATE_DATE') . ': ' . $row['DATE'] . ' / '
+                            . G::LoadTranslation('ID_LAN_UPDATE_DATE') . ': ' . $dateLabel . ' / '
                             . G::LoadTranslation('ID_USER') . ': ' . $row['USR_USERNAME'] . ' / '
                             . G::LoadTranslation('ID_FROM') . ': ' . ChangeLog::getChangeLog()->getApplicationNameById($row['SOURCE_ID']);
 
