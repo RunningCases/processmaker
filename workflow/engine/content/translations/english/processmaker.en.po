@@ -4038,6 +4038,12 @@ msgid "Show more notes"
 msgstr "Show more notes"
 
 # TRANSLATION
+# LABEL/ID_CASE_NOT_ALLOW_TO_BE_CREATED_DUE_TO_THE_PROCESS_IS_INACTIVE
+#: LABEL/ID_CASE_NOT_ALLOW_TO_BE_CREATED_DUE_TO_THE_PROCESS_IS_INACTIVE
+msgid "Case not allow to be created due to the process is inactive"
+msgstr "Case not allow to be created due to the process is inactive"
+
+# TRANSLATION
 # LABEL/ID_CASE_NOT_EXISTS
 #: LABEL/ID_CASE_NOT_EXISTS
 msgid "The case does not exist"

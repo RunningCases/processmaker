@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Model\Process as ProcessModel;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\DateTime;
 
@@ -73,28 +74,6 @@ if ($delegation->alreadyRouted($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
             . '</script>');
     }
 }
-/**
- * cases_Step.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- */
 
 /* Permissions */
 switch ($RBAC->userCanAccess('PM_CASES')) {
@@ -163,6 +142,16 @@ $oStep = new Step();
 $bmWebEntry = new \ProcessMaker\BusinessModel\WebEntry;
 
 $Fields = $oCase->loadCase($_SESSION['APPLICATION']);
+
+if (!ProcessModel::isActive($Fields['PRO_UID'], 'PRO_UID')) {
+    $G_PUBLISH = new Publisher();
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', [
+        'MESSAGE' => G::LoadTranslation('ID_CASE_NOT_ALLOW_TO_BE_CREATED_DUE_TO_THE_PROCESS_IS_INACTIVE')
+    ]);
+    G::RenderPage('publish', 'blank');
+    exit();
+}
+
 $Fields['APP_DATA'] = array_merge($Fields['APP_DATA'], G::getSystemConstants());
 $sStatus = $Fields['APP_STATUS'];
 
