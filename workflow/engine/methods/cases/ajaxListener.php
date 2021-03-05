@@ -395,10 +395,11 @@ class Ajax
         } catch (Exception $oError) {
             $processData['PRO_AUTHOR'] = '(USER DELETED)';
         }
+        // Apply mask
+        $dateLabel = applyMaskDateEnvironment($processData['PRO_CREATE_DATE'],'', false);
+        // Apply the timezone
+        $processData['PRO_CREATE_DATE'] = DateTime::convertUtcToTimeZone($dateLabel);
 
-        $conf = new Configurations();
-        $conf->getFormats();
-        $processData['PRO_CREATE_DATE'] = $conf->getSystemDate($processData['PRO_CREATE_DATE']);
         print(G::json_encode($processData));
     }
 
@@ -432,6 +433,12 @@ class Ajax
 
         $task = new ModelTask();
         $taskData = $task->information($_SESSION['APPLICATION'], $taskUid, $_SESSION['INDEX']);
+        // Apply mask
+        $dateInitLabel = applyMaskDateEnvironment($taskData['INIT_DATE'],'', false);
+        $dateDueLabel = applyMaskDateEnvironment($taskData['DUE_DATE'],'', false);
+        // Apply the timezone
+        $taskData['INIT_DATE_LABEL'] = DateTime::convertUtcToTimeZone($dateInitLabel);
+        $taskData['DUE_DATE_LABEL'] = DateTime::convertUtcToTimeZone($dateDueLabel);
         $taskData = DateTime::convertUtcToTimeZone($taskData);
 
         print(G::json_encode($taskData));
