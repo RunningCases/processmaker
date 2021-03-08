@@ -57484,6 +57484,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_CASE_NOTES_MORE','en','Show more notes','2014-01-15') ,
+( 'LABEL','ID_CASE_NOT_ALLOW_TO_BE_CREATED_DUE_TO_THE_PROCESS_IS_INACTIVE','en','Case not allow to be created due to the process is inactive','2021-03-05') ,
 ( 'LABEL','ID_CASE_NOT_EXISTS','en','The case does not exist','2014-01-15') ,
 ( 'LABEL','ID_CASE_NOT_OPEN','en','This case is not open','2014-01-15') ,
 ( 'LABEL','ID_CASE_NOT_PAUSED','en','Case with "{0}" not paused.','2015-08-14') ,
