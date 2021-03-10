@@ -409,14 +409,14 @@ export default {
          * @param {object} item
          */
         openCaseDetail(item) {
-            this.$parent.dataCase = {
+            this.$emit("onUpdateDataCase", {
                 APP_UID: item.APP_UID,
                 DEL_INDEX: item.DEL_INDEX,
                 PRO_UID: item.PRO_UID,
                 TAS_UID: item.TAS_UID,
                 APP_NUMBER: item.CASE_NUMBER
-            };
-            this.$parent.page = "case-detail";
+            });
+            this.$emit("onUpdatePage", "case-detail");
         },
         onJumpCase(caseNumber) {
             const params = {
