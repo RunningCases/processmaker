@@ -610,7 +610,7 @@ function getMysqlVersion()
  *
  * @return string
  */
-function applyMaskDateEnvironment(string $date, $mask = '', $caseListSetting = true)
+function applyMaskDateEnvironment($date, $mask = '', $caseListSetting = true)
 {
     $result = '';
     if (empty($mask)) {
