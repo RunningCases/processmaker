@@ -950,6 +950,11 @@ Ext.onReady(function () {
                 } else {
                     loadFieldNormal();
                 }
+            },
+            invalid: function () {
+                PRO_UID = '';
+                Ext.getCmp('assignedGrid').store.removeAll();
+                storeA.removeAll();
             }
         }
     });
