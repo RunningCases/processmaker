@@ -92,6 +92,7 @@
         ></attached-documents-edit>
       </div>
     </div>
+    <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
   </div>
 </template>
 
@@ -106,6 +107,7 @@ import TabsCaseDetail from "../home/TabsCaseDetail.vue";
 import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
+import ModalClaimCase from "./modal/ModalClaimCase.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import utils from "./../utils/utils";
 import Api from "../api/index";
@@ -123,6 +125,7 @@ export default {
     ModalCancelCase,
     ButtonFleft,
     ModalNewRequest,
+    ModalClaimCase,
     TaskCell,
   },
   props: {},
@@ -503,15 +506,38 @@ export default {
     countDownChanged(dismissCountDown) {
       this.dataAlert.dismissCountDown = dismissCountDown;
     },
+    /**
+     * Click handler
+     *
+     * @param {object} data
+     */
     onClick(data) {
-      this.$emit("onUpdateDataCase", {
-        APP_UID: data.row.APP_UID,
-        DEL_INDEX: data.row.DEL_INDEX,
-        PRO_UID: data.row.PRO_UID,
-        TAS_UID: data.row.TAS_UID,
-        ACTION: this.dataCase.ACTION || "todo"
+      if (data.row.ASSIGNEE === "Unassigned") {
+          this.claimCase(data.row);
+      } else {
+          this.$emit("onUpdateDataCase", {
+              APP_UID: data.row.APP_UID,
+              DEL_INDEX: data.row.DEL_INDEX,
+              PRO_UID: data.row.PRO_UID,
+              TAS_UID: data.row.TAS_UID,
+              ACTION: this.dataCase.ACTION || "todo"
+          });
+          this.$emit("onUpdatePage", "XCase");
+      }
+    },
+    /**
+     * Claim case
+     *
+     * @param {object} item
+     */
+    claimCase(item) {
+      let that = this;
+      Api.cases.open(_.extend({ ACTION: "unassigned" }, item)).then(() => {
+        Api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$refs["modal-claim-case"].data = item;
+          that.$refs["modal-claim-case"].show();
+        });
       });
-      this.$emit("onUpdatePage", "XCase");
     },
     /**
      * Verify if the case has the permission Summary Form
