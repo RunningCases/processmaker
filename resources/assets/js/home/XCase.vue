@@ -47,6 +47,7 @@ export default {
         }
       });
     }, 2000);
+    window.addEventListener("resize", this.handleIframeResize);
   },
   data() {
     return {
@@ -71,6 +72,13 @@ export default {
       }
     },
     onLoadIframe() {},
+    /**
+     * Resize event Handler
+     * @param {object} e
+     */
+    handleIframeResize(e) {
+      this.height = window.innerHeight - this.diffHeight;
+    }
   },
 };
 </script>
