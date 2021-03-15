@@ -73,16 +73,32 @@ class Task extends Model
      * Scope a query to include a specific process
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param string $category
+     * @param int $proId
      * @return \Illuminate\Database\Eloquent\Builder
      * @todo Auto populate the PRO_ID in TASK table
      */
-    public function scopeProcessId($query, $proId)
+    public function scopeProcess($query, $proId = '')
     {
         $query->join('PROCESS', function ($join) use ($proId) {
-            $join->on('TASK.PRO_UID', '=', 'PROCESS.PRO_UID')
-                ->where('PROCESS.PRO_ID', '=', $proId);
+            $join->on('TASK.PRO_UID', '=', 'PROCESS.PRO_UID');
+            if (!empty($proId)) {
+                $join->where('PROCESS.PRO_ID', '=', $proId);
+            }
         });
+
+        return $query;
+    }
+
+    /**
+     * Scope a query to exclude determined tasks types
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExcludedTasks($query)
+    {
+        $query->whereNotIn('TAS_TYPE', Task::$typesRunAutomatically)
+        ->whereNotIn('TAS_TYPE', Task::DUMMY_TASKS);
 
         return $query;
     }
@@ -239,17 +255,22 @@ class Task extends Model
     public static function getTasksForHome($text = null, $proId = null, $offset = null, $limit = null)
     {
         // Get base query
-        $query = Task::query()->select(['TAS_ID', 'TAS_TITLE']);
+        $query = Task::query()->selectRaw("
+            TAS_ID,
+            TAS_TITLE,
+            CONCAT(TAS_TITLE,' - ',PRO_TITLE) AS TAS_PROCESS
+            ");
 
         // Set "TAS_TITLE" condition if is sent
         if (!is_null($text)) {
             $query->title($text);
         }
 
-        // Set "PRO_ID" condition if is sent
-        if (!is_null($proId)) {
-            $query->processId($proId);
-        }
+        // Join with process
+        $query->process($proId);
+
+        // Exclude the determined tasks
+        $query->excludedTasks();
 
         // Set pagination if offset and limit are sent
         if (!is_null($offset) && !is_null($limit)) {

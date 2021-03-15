@@ -12,7 +12,7 @@
                             v-model="filter[0].options"
                             :options="taks"
                             :placeholder="$t('ID_TASK_TITLE')"
-                            label="TAS_TITLE"
+                            label="TAS_PROCESS"
                             track-by="TAS_ID"
                             :show-no-results="false"
                             @search-change="asyncFind"
@@ -20,6 +20,7 @@
                             id="ajax"
                             :limit="10"
                             :clear-on-select="true"
+                            :select-label="''"
                         >
                         </multiselect>
                     </b-form-group>
