@@ -32,6 +32,49 @@ class User extends Model
     }
 
     /**
+     * Creates a user
+     * 
+     * @param array $data
+     * 
+     * @return integer
+     * @throws Exception
+     */
+    public static function createUser($data)
+    {
+        try {
+            $usrData = [
+                'USR_UID' => $data['USR_UID'],
+                'USR_USERNAME' => $data['USR_USERNAME'],
+                'USR_PASSWORD' => $data['USR_PASSWORD'],
+                'USR_FIRSTNAME' => $data['USR_FIRSTNAME'],
+                'USR_LASTNAME' => $data['USR_LASTNAME'],
+                'USR_EMAIL' => $data['USR_EMAIL'],
+                'USR_DUE_DATE' => $data['USR_DUE_DATE'],
+                'USR_CREATE_DATE' => $data['USR_CREATE_DATE'],
+                'USR_UPDATE_DATE' => $data['USR_UPDATE_DATE'],
+                'USR_STATUS' => $data['USR_STATUS'],
+                'USR_STATUS_ID' => $data['USR_STATUS_ID'],
+                'USR_COUNTRY' => $data['USR_COUNTRY'],
+                'USR_CITY' => $data['USR_CITY'],
+                'USR_LOCATION' => $data['USR_LOCATION'],
+                'USR_ADDRESS' => $data['USR_ADDRESS'],
+                'USR_PHONE' => $data['USR_PHONE'],
+                'USR_FAX' => $data['USR_FAX'],
+                'USR_CELLULAR' => $data['USR_CELLULAR'],
+                'USR_ZIP_CODE' => $data['USR_ZIP_CODE'],
+                'DEP_UID' => $data['DEP_UID'],
+                'USR_POSITION' => $data['USR_POSITION'],
+                'USR_RESUME' => $data['USR_RESUME'],
+                'USR_ROLE' => $data['ROL_CODE']
+            ];
+            $usrId = User::insertGetId($usrData);
+            return $usrId;
+        } catch(Exception $e) {
+            throw new Exception("Error: {$e->getMessage()}.");
+        }
+    }
+
+    /**
      * Scope for query to get the user by USR_UID
      *
      * @param \Illuminate\Database\Eloquent\Builder $query

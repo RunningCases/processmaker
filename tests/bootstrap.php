@@ -85,6 +85,7 @@ define("PATH_DATA_MAILTEMPLATES", PATH_DATA_SITE . "mailTemplates/");
 define("PATH_DATA_PUBLIC", PATH_DATA_SITE . "public/");
 define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
 define("PATH_SKIN_ENGINE", PATH_CORE . "skinEngine" . PATH_SEP);
+define("PATH_IMAGES_ENVIRONMENT_USERS", PATH_DATA_SITE . "usersPhotographies" . PATH_SEP);
 G::defineConstants();
 
 /**

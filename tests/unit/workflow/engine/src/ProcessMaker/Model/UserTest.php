@@ -189,4 +189,39 @@ class UserTest extends TestCase
         $results = User::getAllInformation($user->USR_ID);
         $this->assertNotEmpty($results);
     }
+    /**
+     * It test get the createUser() method
+     *
+     * @covers \ProcessMaker\Model\User::createUser()
+     * @test
+     */
+    public function it_should_test_the_create_user_method()
+    {
+        $usrData = [
+            'USR_UID' => G::generateUniqueID(),
+            'USR_USERNAME' => 'test',
+            'USR_PASSWORD' => 'sample',
+            'USR_FIRSTNAME' => 'test',
+            'USR_LASTNAME' => 'test',
+            'USR_EMAIL' => 'test@sample.com',
+            'USR_DUE_DATE' => '2021-12-12',
+            'USR_CREATE_DATE' => '2021-12-12',
+            'USR_UPDATE_DATE' => '2021-12-12',
+            'USR_STATUS' => 'ACTIVE',
+            'USR_STATUS_ID' => 1,
+            'USR_COUNTRY' => '',
+            'USR_CITY' => '',
+            'USR_LOCATION' => '',
+            'USR_ADDRESS' => '',
+            'USR_PHONE' => '',
+            'USR_FAX' => '',
+            'USR_CELLULAR' => '',
+            'USR_ZIP_CODE' => '',
+            'DEP_UID' => '',
+            'USR_POSITION' => '',
+            'USR_RESUME' => ''
+        ];
+        $res = User::createUser($usrData);
+        $this->assertInternalType('integer', $res);
+    }
 }
