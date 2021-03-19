@@ -827,6 +827,14 @@
                                         this.form[i] = value;
                                     }
                                 }
+                                //other
+                                if ("REPLACED_NAME" in response.data.user &&
+                                        "USR_REPLACED_BY" in response.data.user) {
+                                    this.usersList = [{
+                                            value: response.data.user.USR_REPLACED_BY,
+                                            text: response.data.user.REPLACED_NAME
+                                        }];
+                                }
                             }
                         })
                         .catch(error => {
