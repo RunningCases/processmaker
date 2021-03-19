@@ -643,20 +643,23 @@ class Cases
      * @param int $delIndex
      * @param array $caseData
      *
-     * @return void
+     * @return array
      *
      * @see Cases::updateCase()
      */
     public function updateThreadTitle(string $appUid, int $appNumber, int $delIndex, $caseData = [])
     {
-        $threadTitle = $this->getCaseTitle();
-        if (empty($threadTitle) && !empty($appNumber) && !empty($delIndex)) {
+        $threadTitle = '';
+        $threadDescription = '';
+        if (!empty($appNumber) && !empty($delIndex)) {
             $thread = Delegation::getThreadInfo($appNumber, $delIndex);
             $previous = $thread['DEL_PREVIOUS'];
             $appNumber = $thread['APP_NUMBER'];
             $tasUid = $thread['TAS_UID'];
             if (!empty($tasUid)) {
-                $threadTitle = Delegation::getThreadTitle($tasUid, $appNumber, $previous, $caseData);
+                $response = Delegation::getThreadTitle($tasUid, $appNumber, $previous, $caseData);
+                $threadTitle = $response['title'];
+                $threadDescription = $response['description'];
             }
         }
         // Update thread title
@@ -666,6 +669,11 @@ class Cases
         $rows['DEL_TITLE'] = $threadTitle;
         $delegation = new AppDelegation();
         $delegation->update($rows);
+
+        return [
+            'title' => $threadTitle,
+            'description' => $threadDescription,
+        ];
     }
 
     /**
@@ -803,10 +811,12 @@ class Cases
 
             // Update case title
             if (!empty($appUid) && !empty($appFields['APP_NUMBER']) && $appFields['APP_NUMBER'] > 0 && !empty($appFields['DEL_INDEX'])) {
-                $this->updateThreadTitle($appUid, $appFields['APP_NUMBER'], $appFields['DEL_INDEX'], $appFields['APP_DATA']);
+                $threadInfo = $this->updateThreadTitle($appUid, $appFields['APP_NUMBER'], $appFields['DEL_INDEX'], $appFields['APP_DATA']);
+                $Fields['APP_TITLE'] = $threadInfo['title'];
+                $Fields['APP_DESCRIPTION'] = $threadInfo['description'];
             }
 
-            //Start: Save History --By JHL
+            // Start: Save History --By JHL
             if (isset($Fields['CURRENT_DYNAFORM'])) {
                 //only when that variable is set.. from Save
                 $FieldsBefore = $this->loadCase($appUid);
@@ -833,7 +843,7 @@ class Cases
                     } catch (Exception $e) {
                         $currentDynaform["DYN_CONTENT"] = "";
                     }
-                    //There are changes
+                    // There are changes
                     $Fields['APP_STATUS'] = (isset($Fields['APP_STATUS'])) ? $Fields['APP_STATUS'] : $FieldsBefore['APP_STATUS'];
                     $appHistory = new AppHistory();
                     $aFieldsHistory = $Fields;
@@ -856,28 +866,20 @@ class Cases
                     /*----------------------------------********---------------------------------*/
                 }
             }
-            //End Save History
-
-            //We are removing the app_title and app_description because they already be updated in newRefreshCaseTitleAndDescription function
-            if (isset($Fields['APP_TITLE'])) {
-                unset($Fields['APP_TITLE']);
-            }
-            if (isset($Fields['APP_DESCRIPTION'])) {
-                unset($Fields['APP_DESCRIPTION']);
-            }
+            // End Save History
             if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
                 if (isset($Fields['CURRENT_USER_UID'])) {
                     $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
                 }
-                //Will be update the status in the list Participated
+                // Will be update the status in the list Participated
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refreshStatus($Fields['APP_UID'], 'COMPLETED');
             }
 
-            /** Update case*/
+            /** Update case */
             $app->update($Fields);
 
-            //Update the reportTables and tables related to the case, only for applications with positive application number
+            // Update the reportTables and tables related to the case, only for applications with positive application number
             if ($appFields['APP_NUMBER'] > 0) {
                 require_once 'classes/model/AdditionalTables.php';
                 $reportTables = new ReportTables();
@@ -896,19 +898,19 @@ class Cases
                 );
             }
 
-            //Update the priority related to the task
+            // Update the priority related to the task
             $delIndex = isset($Fields['DEL_INDEX']) ? trim($Fields['DEL_INDEX']) : '';
             $tasUid = isset($Fields['TAS_UID']) ? trim($Fields['TAS_UID']) : '';
             $appDel = new AppDelegation;
             $appDel->updatePriority($delIndex, $tasUid, $appUid, $appData);
 
-            //Update Solr Index
+            // Update Solr Index
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($appUid);
             }
 
             if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
-                //Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
+                // Delete records of the table APP_ASSIGN_SELF_SERVICE_VALUE
                 $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
                 $appAssignSelfServiceValue->remove($appUid);
             }
@@ -923,7 +925,6 @@ class Cases
             $inbox->update($Fields);
             /*----------------------------------********---------------------------------*/
 
-            //Return
             return $Fields;
         } catch (Exception $e) {
             throw ($e);
@@ -1648,7 +1649,8 @@ class Cases
             // Get case title
             $threadTitle = $this->getCaseTitle();
             if (empty($threadTitle)) {
-                $threadTitle = Delegation::getThreadTitle($tasUid, $appNumber, $previous, $caseData);
+                $response = Delegation::getThreadTitle($tasUid, $appNumber, $previous, $caseData);
+                $threadTitle = $response['title'];
             }
 
             $user = UsersPeer::retrieveByPK($usrUid);

@@ -45,12 +45,17 @@
               {{ props.row.DUE_DATE }}
             </div>
             <div slot="actions" slot-scope="props">
-                <b-button v-if="props.row.STATUS === 'OPEN'" @click="onClick(props)" variant="outline-primary">{{$t("ID_CONTINUE")}}</b-button>
+              <b-button
+                v-if="props.row.STATUS === 'OPEN'"
+                @click="onClick(props)"
+                variant="outline-primary"
+                >{{ $t("ID_CONTINUE") }}</b-button
+              >
             </div>
           </v-server-table>
         </div>
         <TabsCaseDetail
-          :dataCaseSummary="dataCaseSummaryTab"
+          :dataCaseStatus="dataCaseStatusTab"
           :dataCase="dataCase"
         ></TabsCaseDetail>
         <ModalCancelCase ref="modal-cancel-case"></ModalCancelCase>
@@ -178,7 +183,7 @@ export default {
         },
       },
       dataCaseSummary: null,
-      dataCaseSummaryTab: null,
+      dataCaseStatusTab: null,
       dataIoDocuments: {
         titleInput: this.$i18n.t("ID_REQUEST_DOCUMENTS"),
         titleOutput: this.$i18n.t("ID_OUTPUT_DOCUMENTS"),
@@ -247,13 +252,25 @@ export default {
     },
     getDataCaseSummary() {
       let action,
-          option, 
-          that = this;
+        option,
+        that = this;
       Api.cases
         .casesummary(this.dataCase)
         .then((response) => {
-          var data = response.data;
-          this.formatCaseSummary(response.data);
+          var data = response.data.summary;
+          this.dataCaseStatusTab = [];
+          this.dataCaseStatusTab.push({
+            title: null,
+            items: response.data.caseProperties,
+          });
+
+          _.each(response.data.taskProperties, (o) => {
+            this.dataCaseStatusTab.push({
+              title: null,
+              items: _.isArray(o) ? o : [o],
+            });
+          });
+
           this.dataCaseSummary = {
             title: this.$i18n.t("ID_SUMMARY"),
             titleActions: this.$i18n.t("ID_ACTIONS"),
@@ -261,37 +278,42 @@ export default {
             btnType: false,
             onClick: null,
             label: {
-              numberCase: data[2].label,
-              process: data[0].label,
-              status: data[3].label,
-              caseTitle: data[1].label,
-              created: data[6].label,
-              delegationDate: response.data[11].label,
+              process: data[1].label,
+              processDescription: data[2].label,
+              caseNumber: data[3].label,
+              caseTitle: data[4].label,
+              status: data[5].label,
+              create: data[6].label,
+              delegationDate: this.$i18n.t("ID_TASK_DELEGATE_DATE"),
               duration: this.$i18n.t("ID_DURATION"),
             },
             text: {
-              numberCase: data[2].value,
-              process: data[0].value,
-              status: data[3].value,
-              caseTitle: data[1].value,
-              created: data[6].value,
-              delegationDate: response.data[11].value.split(" ")[0],
-              duration: response.data[11].value.split(" ")[1],
+              process: data[1].value,
+              processDescription: data[2].value,
+              caseNumber: data[3].value,
+              caseTitle: data[4].value,
+              status: data[5].value,
+              create: data[6].value,
+              delegationDate: data[7] ? data[7].value : "",
+              duration: data[8] ? data[8].value : "",
             },
           };
           // Hack for identify the cancel case button
-          Api.cases
-            .actions(this.dataCase).then((response)=>{
-              action = _.find(response.data, function(o) { return o.id == "ACTIONS"; });
-              if(action){
-                option = _.find(action.options, function(o) { return o.fn == "cancelCase"; });
-                if(option && !option.hide){
-                  that.dataCaseSummary.onClick = () => {
-                    that.$refs["modal-cancel-case"].show();
-                  };      
-                }
-              }
+          Api.cases.actions(this.dataCase).then((response) => {
+            action = _.find(response.data, function (o) {
+              return o.id == "ACTIONS";
             });
+            if (action) {
+              option = _.find(action.options, function (o) {
+                return o.fn == "cancelCase";
+              });
+              if (option && !option.hide) {
+                that.dataCaseSummary.onClick = () => {
+                  that.$refs["modal-cancel-case"].show();
+                };
+              }
+            }
+          });
         })
         .catch((err) => {
           throw new Error(err);
@@ -420,10 +442,10 @@ export default {
 
       this.dataComments.items = notesArray;
     },
-    formatCaseSummary(data) {
+    formatCaseProperties(data) {
       let index,
         sections = [];
-      this.dataCaseSummaryTab = [];
+      this.dataCaseStatusTab = [];
       _.each(data, (o) => {
         if (
           (index = _.findIndex(sections, (s) => {
@@ -439,7 +461,7 @@ export default {
         sections[index].items.push(o);
       });
 
-      this.dataCaseSummaryTab = sections;
+      this.dataCaseStatusTab = sections;
     },
     getCasesForVueTable() {
       let that = this,
@@ -464,26 +486,30 @@ export default {
       let data = [];
       _.forEach(response, (v) => {
         data.push({
-          TASK: [{
-            TITLE: v.TAS_TITLE,
-            CODE_COLOR: v.TAS_COLOR,
-            COLOR: v.TAS_COLOR_LABEL,
-          }],
+          TASK: [
+            {
+              TITLE: v.TAS_TITLE,
+              CODE_COLOR: v.TAS_COLOR,
+              COLOR: v.TAS_COLOR_LABEL,
+            },
+          ],
           CASE_TITLE: v.DEL_TITLE,
-          ASSIGNEE: v.USR_ID !== 0 ?
-            utils.userNameDisplayFormat({
-              userName: v.USR_USERNAME,
-              firstName: v.USR_LASTNAME,
-              lastName: v.USR_LASTNAME,
-              format: window.config.FORMATS.format || null
-            }) : this.$i18n.t("ID_UNASSIGNED"),
+          ASSIGNEE:
+            v.USR_ID !== 0
+              ? utils.userNameDisplayFormat({
+                  userName: v.USR_USERNAME,
+                  firstName: v.USR_LASTNAME,
+                  lastName: v.USR_LASTNAME,
+                  format: window.config.FORMATS.format || null,
+                })
+              : this.$i18n.t("ID_UNASSIGNED"),
           STATUS: v.DEL_THREAD_STATUS,
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           TASK_COLOR: v.TAS_COLOR_LABEL,
           APP_UID: v.APP_UID,
           DEL_INDEX: v.DEL_INDEX,
-          PRO_UID:v.PRO_UID,
-          TAS_UID:v.TAS_UID
+          PRO_UID: v.PRO_UID,
+          TAS_UID: v.TAS_UID,
         });
       });
       return data;
@@ -513,16 +539,16 @@ export default {
      */
     onClick(data) {
       if (data.row.ASSIGNEE === "Unassigned") {
-          this.claimCase(data.row);
+        this.claimCase(data.row);
       } else {
-          this.$emit("onUpdateDataCase", {
-              APP_UID: data.row.APP_UID,
-              DEL_INDEX: data.row.DEL_INDEX,
-              PRO_UID: data.row.PRO_UID,
-              TAS_UID: data.row.TAS_UID,
-              ACTION: this.dataCase.ACTION || "todo"
-          });
-          this.$emit("onUpdatePage", "XCase");
+        this.$emit("onUpdateDataCase", {
+          APP_UID: data.row.APP_UID,
+          DEL_INDEX: data.row.DEL_INDEX,
+          PRO_UID: data.row.PRO_UID,
+          TAS_UID: data.row.TAS_UID,
+          ACTION: this.dataCase.ACTION || "todo",
+        });
+        this.$emit("onUpdatePage", "XCase");
       }
     },
     /**

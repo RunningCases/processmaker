@@ -143,6 +143,27 @@ class Task extends Model
     }
 
     /**
+     * Get the description of the task
+     *
+     * @param string $tasUid
+     *
+     * @return string
+     */
+    public function taskCaseDescription(string $tasUid)
+    {
+        $query = Task::query()->select(['TAS_DEF_DESCRIPTION']);
+        $query->where('TAS_UID', $tasUid);
+        $query->limit(1);
+        $results = $query->get();
+        $title = '';
+        $results->each(function ($item) use (&$title) {
+            $title = $item->TAS_DEF_DESCRIPTION;
+        });
+
+        return $title;
+    }
+
+    /**
      * Get task data
      *
      * @param  string $tasUid
