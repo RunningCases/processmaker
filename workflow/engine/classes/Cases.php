@@ -2601,7 +2601,7 @@ class Cases
 
         //Order by
         $c->clearOrderByColumns();
-        $c->addAscendingOrderByColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
+        $c->addAscendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
 
         return $c;
     }
