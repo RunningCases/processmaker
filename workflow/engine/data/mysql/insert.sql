@@ -57371,6 +57371,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CANNOT_IMPORT','en','CANNOT IMPORT','2017-10-03') ,
 ( 'LABEL','ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT','en','You can not delete the template {0} because it has a relationship with Email Event','2016-07-05') ,
 ( 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_CHILDREN','en','It is not possible to delete the department because it has subdepartments.','2014-10-21') ,
+( 'LABEL','ID_CANT_DELETE_SUB_PROCESS_PARENT_HAS_ACTIVE_CASES','en','Is not possible to delete sub-process cases, while the master process has active cases.','2021-03-23') ,
 ( 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_USERS','en','Department cannot be deleted while it has assigned users.','2015-03-23') ,
 ( 'LABEL','ID_CANT_RESOLVE_APPLICATION','en','Can''t resolve the Aplication ID for this request.','2014-01-15') ,
 ( 'LABEL','ID_CANT_SAVE_TRIGGER','en','A trigger with the same name already exists in this process.','2014-05-29') ,
