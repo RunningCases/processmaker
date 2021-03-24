@@ -283,7 +283,7 @@ export default {
                     USERNAME_DISPLAY_FORMAT: userDataFormat !== "" ? userDataFormat : this.$i18n.t("ID_UNASSIGNED"),
                     EMAIL: data[i].user_tooltip.usr_email,
                     POSITION: data[i].user_tooltip.usr_position,
-                    AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER +
+                    AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
                                 window.config.SYS_URI +
                                 `users/users_ViewPhotoGrid?pUID=${data[i].user_id}` : "",
                     UNASSIGNED: userDataFormat !== "" ? true : false

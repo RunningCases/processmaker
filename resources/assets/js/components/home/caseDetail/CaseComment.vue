@@ -40,7 +40,7 @@ export default {
     path() {
       if (this.data) {
         return (
-          window.config.SYS_SERVER +
+          window.config.SYS_SERVER_AJAX +
           window.config.SYS_URI +
           `users/users_ViewPhotoGrid?pUID=${this.data.data.USR_UID}`
         );

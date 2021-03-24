@@ -30,12 +30,12 @@ export default {
     this.dataCase = this.$parent.dataCase;
     if (this.dataCase.ACTION === "jump") {
       this.path =
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         `cases/open?APP_NUMBER=${this.dataCase.APP_NUMBER}&action=${this.dataCase.ACTION}&actionFromList=${this.dataCase.ACTION_FROM_LIST}`;
     } else {
       this.path =
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         `cases/open?APP_UID=${this.dataCase.APP_UID}&DEL_INDEX=${this.dataCase.DEL_INDEX}&TAS_UID=${this.dataCase.TAS_UID}&action=${this.dataCase.ACTION}`;
     }

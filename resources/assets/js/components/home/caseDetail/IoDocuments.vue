@@ -81,13 +81,13 @@ export default {
     href(item) {
       if (item.data.DOWNLOAD_LINK) {
         return (
-          window.config.SYS_SERVER +
+          window.config.SYS_SERVER_AJAX +
           window.config.SYS_URI +
           `cases/${item.data.DOWNLOAD_LINK}`
         );
       }
       return (
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         `cases/cases_ShowDocument?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}`
       );
@@ -96,7 +96,7 @@ export default {
       let random = _.random(0, 10000000),
         cacheTime = Date.now();
       return (
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         `cases/cases_ShowOutputDocument?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}&ext=doc&random=${random}&nocachetime=${cacheTime}`
       );

@@ -90,7 +90,7 @@ export default {
   computed: {
     pathImgOwner() {
       return (
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         `users/users_ViewPhotoGrid?pUID=${window.config.USR_UID}`
       );

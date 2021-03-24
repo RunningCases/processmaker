@@ -354,7 +354,7 @@ export default {
                         STATUS: data[i].tas_color,
                         DELAYED_TITLE: this.delayedTitle(data[i], status),
                         DELAYED_MSG: data[i].tas_status === "OVERDUE" && status !== "COMPLETED" ? data[i].delay : "",
-                        AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER +
+                        AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
                                 window.config.SYS_URI +
                                 `users/users_ViewPhotoGrid?pUID=${data[i].user_id}` : "",
                         USERNAME: userDataFormat !== "" ? userDataFormat : this.$i18n.t("ID_UNASSIGNED"),
