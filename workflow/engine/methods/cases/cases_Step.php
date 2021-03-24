@@ -1053,7 +1053,7 @@ try {
                     // Swap temporary APP_NUMBER
                     $newAppNumber = $bmWebEntry->swapTemporaryAppNumber($caseId);
                     $Fields['APP_NUMBER'] = $Fields['APP_DATA']['APP_NUMBER'] = $newAppNumber;
-                    $derivationResponse = PMFDerivateCase($caseId, $delIndex, true);
+                    $derivationResponse = PMFDerivateCase($caseId, $delIndex, false);
                     if ($derivationResponse) {
                         $webEntryUrl = $bmWebEntry->getCallbackUrlByTask($currentTask['TAS_UID']);
                         $delegationData = $Fields['APP_DATA'];
