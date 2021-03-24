@@ -41,8 +41,7 @@ class User extends Model
      */
     public function scopeUser($query, string $usrUid)
     {
-        $result = $query->where('USR_UID', '=', $usrUid);
-        return $result;
+        return $query->where('USR_UID', '=', $usrUid);
     }
 
     /**
