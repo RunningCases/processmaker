@@ -29,7 +29,7 @@ export default {
       let url = "";
       if (this.data && this.data.PRO_UID) {
         url =
-          window.config.SYS_SERVER +
+          window.config.SYS_SERVER_AJAX +
           window.config.SYS_URI +
           `designer?prj_uid=${this.data.PRO_UID}&prj_readonly=true&app_uid=${this.data.APP_UID}`;
         return url;

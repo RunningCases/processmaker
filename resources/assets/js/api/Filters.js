@@ -39,7 +39,7 @@ export let filters = {
         var params = new URLSearchParams();
         params.append("action", "startCase");
         return axios.post(
-            window.config.SYS_SERVER +
+            window.config.SYS_SERVER_AJAX +
                 window.config.SYS_URI +
                 `cases/casesStartPage_Ajax.php`,
             params
@@ -87,7 +87,7 @@ export let filters = {
      */
     userValues(query) {
         return axios.post(
-            window.config.SYS_SERVER +
+            window.config.SYS_SERVER_AJAX +
                 window.config.SYS_URI +
                 `cases/casesList_Ajax?actionAjax=userValues&action=search`,
             {

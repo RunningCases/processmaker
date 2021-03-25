@@ -51,7 +51,7 @@ export let cases = {
         params.append('delIndex', data.DEL_INDEX);
         params.append('action', 'todo');
 
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `appProxy/requestOpenSummary`, params);
     },
@@ -61,7 +61,7 @@ export let cases = {
         params.append('delIndex', data.DEL_INDEX);
         params.append('action', "getCasesInputDocuments");
 
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/cases_Ajax.php?action=getCasesInputDocuments`, params);
     },
@@ -71,7 +71,7 @@ export let cases = {
         params.append('delIndex', data.DEL_INDEX);
         params.append('action', "getCasesOutputDocuments");
 
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/cases_Ajax.php?action=getCasesOutputDocuments`, params);
     },
@@ -81,7 +81,7 @@ export let cases = {
         params.append('delIndex', data.DEL_INDEX);
         params.append('action', "todo");
 
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `appProxy/getSummary`, params, {
             headers: {
@@ -97,12 +97,12 @@ export let cases = {
         params.append('tas', data.TAS_UID);
         params.append('start', "0");
         params.append('limit', "30");
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `appProxy/getNotesList`, params);
     },
     pendingtask(data) {
-        return axios.get(window.config.SYS_SERVER +
+        return axios.get(window.config.SYS_SERVER_API +
             '/api/1.0/' +
             window.config.SYS_WORKSPACE +
             '/home/' + data.APP_NUMBER + '/pending-tasks', {
@@ -116,17 +116,17 @@ export let cases = {
         params.append('action', 'startCase');
         params.append('processId', dt.pro_uid);
         params.append('taskId', dt.task_uid);
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/casesStartPage_Ajax.php`, params);
     },
     open(data) {
-        return axios.get(window.config.SYS_SERVER +
+        return axios.get(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
     },
     cases_open(data) {
-        return axios.get(window.config.SYS_SERVER +
+        return axios.get(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/cases_Open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
     },
@@ -135,7 +135,7 @@ export let cases = {
         params.append('action', 'cancelCase');
         params.append('NOTE_REASON', data.COMMENT);
         params.append('NOTIFY_CANCEL', data.SEND);
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/ajaxListener`, params);
     },
@@ -143,7 +143,7 @@ export let cases = {
         var params = new URLSearchParams();
         params.append('action', 'getCaseMenu');
         params.append('app_status', 'TO_DO');
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/ajaxListener`, params);
     },
@@ -152,13 +152,13 @@ export let cases = {
         params.append('action', 'unpauseCase');
         params.append('sApplicationUID', data.APP_UID);
         params.append('iIndex', data.DEL_INDEX);
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/cases_Ajax`, params);
     },
     claim(data) {
         var params = new URLSearchParams();
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/cases_CatchExecute`, params);
     },
@@ -171,7 +171,7 @@ export let cases = {
         params.append('action', 'previusJump');
         params.append('appNumber', dt.APP_NUMBER);
         params.append('actionFromList', dt.ACTION_FROM_LIST);
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/cases_Ajax.php`, params);
     },
@@ -207,13 +207,13 @@ export let cases = {
     debugVars(data) {
         var params;
         if (data.filter === "all") {
-            return axios.get(window.config.SYS_SERVER +
+            return axios.get(window.config.SYS_SERVER_AJAX +
                 window.config.SYS_URI +
                 `cases/debug_vars`);
         } else {
             params = new URLSearchParams();
             params.append('filter', data.filter);
-            return axios.post(window.config.SYS_SERVER +
+            return axios.post(window.config.SYS_SERVER_AJAX +
                 window.config.SYS_URI +
                 `cases/debug_vars`, params);
         }
@@ -225,7 +225,7 @@ export let cases = {
     debugVarsTriggers(data) {
         let dc = _.random(0, 10000000000),
             r = _.random(1.0, 100.0);
-        return axios.get(window.config.SYS_SERVER +
+        return axios.get(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/debug_triggers?r=${r}&_dc=${dc}`);
     },
@@ -233,7 +233,7 @@ export let cases = {
 
 export let casesHeader = {
     get() {
-        return axios.get(window.config.SYS_SERVER +
+        return axios.get(window.config.SYS_SERVER_API +
             '/api/1.0/' +
             window.config.SYS_WORKSPACE +
             '/home/counters', {

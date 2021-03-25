@@ -27,7 +27,7 @@ export default {
       width: "100%",
       diffHeight: 10,
       path:
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         "cases/casesConsolidatedListExtJs?action=consolidated",
     };

@@ -108,7 +108,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
-            server = window.config.SYS_SERVER,
+            server = window.config.SYS_SERVER_API,
             method = options.method || "get";
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
@@ -130,7 +130,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
-            server = window.config.SYS_SERVER;
+            server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
         return axios({
@@ -152,7 +152,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
-            server = window.config.SYS_SERVER;
+            server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
         return axios({
@@ -175,7 +175,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
-            server = window.config.SYS_SERVER;
+            server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
         return axios({
@@ -197,7 +197,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
-            server = window.config.SYS_SERVER;
+            server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
         return axios({

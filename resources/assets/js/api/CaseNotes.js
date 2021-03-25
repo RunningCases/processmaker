@@ -10,7 +10,7 @@ export let caseNotes = {
         _.each(data.FILES, (f) => {
             params.append("filesToUpload[]", f);
         })
-        return axios.post(window.config.SYS_SERVER +
+        return axios.post(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `appProxy/postNote`, params, {
             headers: {
