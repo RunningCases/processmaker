@@ -29,16 +29,21 @@ class AuditLog
         $this->columns = ['date', 'workspace', 'ip', 'id', 'user', 'action', 'description'];
 
         $this->actions = [
+            // User
             "CreateUser" => G::LoadTranslation("ID_CREATE_USER"),
             "UpdateUser" => G::LoadTranslation("ID_UPDATE_USER"),
             "DeleteUser" => G::LoadTranslation("ID_DELETE_USER"),
             "EnableUser" => G::LoadTranslation("ID_ENABLE_USER"),
             "DisableUser" => G::LoadTranslation("ID_DISABLE_USER"),
-            "AssignAuthenticationSource" => G::LoadTranslation("ID_ASSIGN_AUTHENTICATION_SOURCE"),
             "AssignUserToGroup" => G::LoadTranslation("ID_ASSIGN_USER_TO_GROUP"),
+            "RemoveUser" => G::LoadTranslation("ID_REMOVE_USER"),
+            // Authentication
+            "AssignAuthenticationSource" => G::LoadTranslation("ID_ASSIGN_AUTHENTICATION_SOURCE"),
             "CreateAuthSource" => G::LoadTranslation("ID_CREATE_AUTH_SOURCE"),
             "UpdateAuthSource" => G::LoadTranslation("ID_UPDATE_AUTH_SOURCE"),
             "DeleteAuthSource" => G::LoadTranslation("ID_DELETE_AUTH_SOURCE"),
+            // Role
+            "AssignRole" => G::LoadTranslation("ID_ASSIGN_ROLE"),
             "CreateRole" => G::LoadTranslation("ID_CREATE_ROLE"),
             "UpdateRole" => G::LoadTranslation("ID_UPDATE_ROLE"),
             "DeleteRole" => G::LoadTranslation("ID_DELETE_ROLE"),
@@ -46,70 +51,83 @@ class AuditLog
             "DeleteUserToRole" => G::LoadTranslation("ID_DELETE_USER_TO_ROLE"),
             "AddPermissionToRole" => G::LoadTranslation("ID_ADD_PERMISSION_TO_ROLE"),
             "DeletePermissionToRole" => G::LoadTranslation("ID_DELETE_PERMISSION_TO_ROLE"),
+            // Skin
             "CreateSkin" => G::LoadTranslation("ID_CREATE_SKIN"),
             "ImportSkin" => G::LoadTranslation("ID_IMPORT_SKIN"),
             "ExportSkin" => G::LoadTranslation("ID_EXPORT_SKIN"),
             "DeleteSkin" => G::LoadTranslation("ID_DELETE_SKIN"),
+            // Group
             "CreateGroup" => G::LoadTranslation("ID_CREATE_GROUP"),
             "UpdateGroup" => G::LoadTranslation("ID_UPDATE_GROUP"),
             "DeleteGroup" => G::LoadTranslation("ID_DELETE_GROUP"),
+            // Category
             "CreateCategory" => G::LoadTranslation("ID_CREATE_CATEGORY"),
             "UpdateCategory" => G::LoadTranslation("ID_UPDATE_CATEGORY"),
             "DeleteCategory" => G::LoadTranslation("ID_DELETE_CATEGORY"),
+            // Cache
             "BuildCache" => G::LoadTranslation("ID_BUILD_CACHE"),
             "ClearCache" => G::LoadTranslation("ID_CLEAR_CACHE"),
+            // Cron
             "ClearCron" => G::LoadTranslation("ID_CLEAR_CRON"),
             "UpdateEnvironmentSettings" => G::LoadTranslation("ID_UPDATE_ENVIRONMENT_SETTINGS"),
             "UpdateLoginSettings" => G::LoadTranslation("ID_UPDATE_LOGIN_SETTINGS"),
             "EnableHeartBeat" => G::LoadTranslation("ID_ENABLE_HEART_BEAT"),
             "DisableHeartBeat" => G::LoadTranslation("ID_DISABLE_HEART_BEAT"),
+            // PmTables
             "CreatePmtable" => G::LoadTranslation("ID_CREATE_PMTABLE"),
             "UpdatePmtable" => G::LoadTranslation("ID_UPDATE_PMTABLE"),
             "DeletePmtable" => G::LoadTranslation("ID_DELETE_PMTABLE"),
             "AddDataPmtable" => G::LoadTranslation("ID_ADD_DATA_PMTABLE"),
             "UpdateDataPmtable" => G::LoadTranslation("ID_UPDATE_DATA_PMTABLE"),
             "DeleteDataPmtable" => G::LoadTranslation("ID_DELETE_DATA_PMTABLE"),
-            "ImportTable" => G::LoadTranslation("ID_IMPORT_TABLE"),
-            "ExportTable" => G::LoadTranslation("ID_EXPORT_TABLE"),
+            "ImportPmTable" => G::LoadTranslation("ID_IMPORT_TABLE"),
+            "ExportPmTable" => G::LoadTranslation("ID_EXPORT_TABLE"),
+            // Calendar
             "CreateCalendar" => G::LoadTranslation("ID_CREATE_CALENDAR"),
             "UpdateCalendar" => G::LoadTranslation("ID_UPDATE_CALENDAR"),
             "DeleteCalendar" => G::LoadTranslation("ID_DELETE_CALENDAR"),
+            // Dashlet
             "CreateDashletInstance" => G::LoadTranslation("ID_CREATE_DASHLET_INSTANCE"),
             "UpdateDashletInstance" => G::LoadTranslation("ID_UPDATE_DASHLET_INSTANCE"),
             "DeleteDashletInstance" => G::LoadTranslation("ID_DELETE_DASHLET_INSTANCE"),
-            "CreateDepartament" => G::LoadTranslation("ID_CREATE_DEPARTAMENT"),
-            "CreateSubDepartament" => G::LoadTranslation("ID_CREATE_SUB_DEPARTAMENT"),
-            "UpdateDepartament" => G::LoadTranslation("ID_UPDATE_DEPARTAMENT"),
-            "UpdateSubDepartament" => G::LoadTranslation("ID_UPDATE_SUB_DEPARTAMENT"),
-            "DeleteDepartament" => G::LoadTranslation("ID_DELETE_DEPARTAMENT"),
-            "AssignManagerToDepartament" => G::LoadTranslation("ID_ASSIGN_MANAGER_TO_DEPARTAMENT"),
-            "AssignUserToDepartament" => G::LoadTranslation("ID_ASSIGN_USER_TO_DEPARTAMENT"),
-            "RemoveUsersFromDepartament" => G::LoadTranslation("ID_REMOVE_USERS_FROM_DEPARTAMENT"),
-            "AssignUserToGroup" => G::LoadTranslation("ID_ASSIGN_USER_TO_GROUP"),
+            // Department
+            "CreateDepartment" => G::LoadTranslation("ID_CREATE_DEPARTAMENT"),
+            "CreateSubDepartment" => G::LoadTranslation("ID_CREATE_SUB_DEPARTAMENT"),
+            "UpdateDepartment" => G::LoadTranslation("ID_UPDATE_DEPARTAMENT"),
+            "UpdateSubDepartment" => G::LoadTranslation("ID_UPDATE_SUB_DEPARTAMENT"),
+            "DeleteDepartment" => G::LoadTranslation("ID_DELETE_DEPARTAMENT"),
+            "AssignManagerToDepartment" => G::LoadTranslation("ID_ASSIGN_MANAGER_TO_DEPARTAMENT"),
+            "AssignUserToDepartment" => G::LoadTranslation("ID_ASSIGN_USER_TO_DEPARTAMENT"),
+            "RemoveUsersFromDepartment" => G::LoadTranslation("ID_REMOVE_USERS_FROM_DEPARTAMENT"),
+            // Language
             "UploadLanguage" => G::LoadTranslation("ID_UPLOAD_LANGUAGE"),
             "ExportLanguage" => G::LoadTranslation("ID_EXPORT_LANGUAGE"),
             "DeleteLanguage" => G::LoadTranslation("ID_DELETE_LAGUAGE"),
+            // Settings
             "UploadSystemSettings" => G::LoadTranslation("ID_UPLOAD_SYSTEM_SETTINGS"),
             "UpdateEmailSettings" => G::LoadTranslation("ID_UPDATE_EMAIL_SETTINGS"),
             "CreateEmailSettings" => G::LoadTranslation("ID_CREATE_EMAIL_SETTINGS"),
+            // Logo
             "UploadLogo" => G::LoadTranslation("ID_UPLOAD_LOGO"),
             "DeleteLogo" => G::LoadTranslation("ID_DELETE_LOGO"),
             "RestoreLogo" => G::LoadTranslation("ID_RESTORE_LOGO"),
             "ReplaceLogo" => G::LoadTranslation("ID_REPLACE_LOGO"),
+            // Plugin
             "InstallPlugin" => G::LoadTranslation("ID_INSTALL_PLUGIN"),
             "EnablePlugin" => G::LoadTranslation("ID_ENABLE_PLUGIN"),
             "DisablePlugin" => G::LoadTranslation("ID_DISABLE_PLUGIN"),
             "RemovePlugin" => G::LoadTranslation("ID_REMOVE_PLUGIN"),
-            "SetColumns" => G::LoadTranslation("ID_SET_COLUMNS"),
+            // AuditLog
             "EnableAuditLog" => G::LoadTranslation("ID_ENABLE_AUDIT_LOG"),
             "DisableAuditLog" => G::LoadTranslation("ID_DISABLE_AUDIT_LOG"),
+            // Process
             "EditProcess" => G::LoadTranslation("ID_EDIT_PROCESS"),
             "ExportProcess" => G::LoadTranslation("ID_EXPORT_PROCESS"),
+            "ImportProcess" => G::LoadTranslation("ID_IMPORT_PROCESS"),
+            "DeleteProcess" => G::LoadTranslation("ID_DELETE_PROCESS"),
+            // Web entry
             "WebEntry" => G::LoadTranslation("ID_WEB_ENTRY"),
-            "AssignRole" => G::LoadTranslation("ID_ASSIGN_ROLE"),
-            "RemoveUser" => G::LoadTranslation("ID_REMOVE_USER"),
-            "AddTask" => G::LoadTranslation("ID_ADD_TASK"),
-            "AddSubProcess" => G::LoadTranslation("ID_ADD_SUB_PROCESS"),
+            // Diagram
             "SaveTaskPosition" => G::LoadTranslation("ID_SAVE_TASK_POSITION"),
             "AddHorizontalLine" => G::LoadTranslation("ID_ADD_HORIZONTAL_LINE"),
             "AddVerticalLine" => G::LoadTranslation("ID_ADD_VERTICAL_LINE"),
@@ -120,60 +138,75 @@ class AuditLog
             "UpdateText" => G::LoadTranslation("ID_UPDATE_TEXT"),
             "SaveTextPosition" => G::LoadTranslation("ID_SAVE_TEXT_POSITION"),
             "DeleteText" => G::LoadTranslation("ID_DELETE_TEXT"),
+            "EditEvent" => G::LoadTranslation("ID_EDIT_EVENT"),
+            "DeleteEvent" => G::LoadTranslation("ID_EVENT_DELETED"),
+            // File Manager
             "ProcessFileManager" => G::LoadTranslation("ID_PROCESS_FILE_MANAGER"),
+            // Process Permission
             "ProcessPermissions" => G::LoadTranslation("ID_PROCESS_PERMISSIONS"),
             "DeletePermissions" => G::LoadTranslation("ID_DELETE_PERMISSIONS"),
+            // Supervising
             "AssignSupervisorDynaform" => G::LoadTranslation("ID_ASSIGN_SUPERVISOR_DYNAFORM"),
             "RemoveSupervisorDynaform" => G::LoadTranslation("ID_REMOVE_SUPERVISOR_DYNAFORM"),
             "AssignSupervisorInput" => G::LoadTranslation("ID_ASSIGN_SUPERVISOR_INPUT"),
             "RemoveSupervisorInput" => G::LoadTranslation("ID_REMOVE_SUPERVISOR_INPUT"),
+            // Case Tracker
             "CaseTrackers" => G::LoadTranslation("ID_CASE_TRACKERS"),
-            "EditEvent" => G::LoadTranslation("ID_EDIT_EVENT"),
-            "DeleteEvent" => G::LoadTranslation("ID_EVENT_DELETED"),
+            // Dynaform
             "CreateDynaform" => G::LoadTranslation("ID_CREATE_DYNAFORM"),
             "UpdateDynaform" => G::LoadTranslation("ID_UPDATE_DYNAFORM"),
             "DeleteDynaform" => G::LoadTranslation("ID_DELETE_DYNAFORM"),
             "ConditionsEditorDynaform" => G::LoadTranslation("ID_CONDITIONS_EDITOR_DYNAFORM"),
+            "SetColumns" => G::LoadTranslation("ID_SET_COLUMNS"),
+            // Case Scheduler
             "CreateCaseScheduler" => G::LoadTranslation("ID_CREATE_CASE_SCHEDULER"),
             "UpdateCaseScheduler" => G::LoadTranslation("ID_UPDATE_CASE_SCHEDULER"),
             "DeleteCaseScheduler" => G::LoadTranslation("ID_DELETE_CASE_SCHEDULER"),
+            // Database Connection
             "CreateDatabaseConnection" => G::LoadTranslation("ID_CREATE_DATABASE_CONNECTION"),
             "UpdateDatabaseConnection" => G::LoadTranslation("ID_UPDATE_DATABASE_CONNECTION"),
             "DeleteDatabaseConnection" => G::LoadTranslation("ID_DELETE_DATABASE_CONNECTION"),
+            // Input Document
             "CreateInputDocument" => G::LoadTranslation("ID_CREATE_INPUT_DOCUMENT"),
             "UpdateInputDocument" => G::LoadTranslation("ID_UPDATE_INPUT_DOCUMENT"),
             "DeleteInputDocument" => G::LoadTranslation("ID_DELETE_INPUT_DOCUMENT"),
+            // Output Document
             "CreateOutputDocument" => G::LoadTranslation("ID_CREATE_OUTPUT_DOCUMENT"),
             "UpdateOutputDocument" => G::LoadTranslation("ID_UPDATE_OUTPUT_DOCUMENT"),
             "DeleteOutputDocument" => G::LoadTranslation("ID_DELETE_OUTPUT_DOCUMENT"),
+            // Trigger
             "CreateTrigger" => G::LoadTranslation("ID_CREATE_TRIGGER"),
             "UpdateTrigger" => G::LoadTranslation("ID_UPDATE_TRIGGER"),
             "DeleteTrigger" => G::LoadTranslation("ID_DELETE_TRIGGER"),
-            "DerivationRule" => G::LoadTranslation("ID_DERIVATION_RULE"),
-            "DeleteTask" => G::LoadTranslation("ID_DELETE_TASK"),
-            "DeleteSubProcess" => G::LoadTranslation("ID_DELETE_SUB_PROCESS"),
-            "OptionsMenuTask" => G::LoadTranslation("ID_OPTIONS_MENU_TASK"),
-            "SaveTaskProperties" => G::LoadTranslation("ID_SAVE_TASK_PROPERTIES"),
-            "DeleteRoutes" => G::LoadTranslation("ID_DELETE_ROUTES"),
-            "NewConditionFromStep" => G::LoadTranslation("ID_NEW_CONDITION_FROM_STEP"),
             "AssignTrigger" => G::LoadTranslation("ID_ASSIGN_TRIGGER"),
             "UpTrigger" => G::LoadTranslation("ID_UP_TRIGGER"),
             "DownTrigger" => G::LoadTranslation("ID_DOWN_TRIGGER"),
+            "DerivationRule" => G::LoadTranslation("ID_DERIVATION_RULE"),
+            "OptionsMenuTask" => G::LoadTranslation("ID_OPTIONS_MENU_TASK"),
+            "DeleteRoutes" => G::LoadTranslation("ID_DELETE_ROUTES"),
+            // Steps
+            "NewConditionFromStep" => G::LoadTranslation("ID_NEW_CONDITION_FROM_STEP"),
             "StepDelete" => G::LoadTranslation("ID_STEP_DELETE"),
             "StepUp" => G::LoadTranslation("ID_STEP_UP"),
             "StepDown" => G::LoadTranslation("ID_STEP_DOWN"),
             "SaveNewStep" => G::LoadTranslation("ID_SAVE_NEW_STEP"),
+            // Task
+            "AddTask" => G::LoadTranslation("ID_ADD_TASK"),
+            "AddSubProcess" => G::LoadTranslation("ID_ADD_SUB_PROCESS"),
             "AssignUserTask" => G::LoadTranslation("ID_ASSIGN_USER_TASK"),
             "AssignGroupTask" => G::LoadTranslation("ID_ASSIGN_GROUP_TASK"),
             "DeleteUserTask" => G::LoadTranslation("ID_DELETE_USER_TASK"),
             "DeleteGroupTask" => G::LoadTranslation("ID_DELETE_GROUP_TASK"),
-            "ImportProcess" => G::LoadTranslation("ID_IMPORT_PROCESS"),
-            "DeleteProcess" => G::LoadTranslation("ID_DELETE_PROCESS"),
+            "DeleteTask" => G::LoadTranslation("ID_DELETE_TASK"),
+            "DeleteSubProcess" => G::LoadTranslation("ID_DELETE_SUB_PROCESS"),
+            "SaveTaskProperties" => G::LoadTranslation("ID_SAVE_TASK_PROPERTIES"),
+            // GSuite
             "GSuiteConfigurationSaved" => G::LoadTranslation("ID_G_SUITE_CONFIGURATION_SAVED"),
             "GSuiteConnect" => G::LoadTranslation("ID_G_SUITE_CONNECT"),
             "GSuiteDisconnect" => G::LoadTranslation("ID_G_SUITE_DISCONNECT"),
             "GSuiteLoadGroups" => G::LoadTranslation("ID_G_SUITE_LOAD_GROUPS"),
             "GSuiteSyncUsers" => G::LoadTranslation("ID_G_SUITE_SYNC_USERS"),
+            // Saml
             "SamlEnable" => G::LoadTranslation("ID_SAML_ENABLE"),
             "SamlProvider" => G::LoadTranslation("ID_SAML_PROVIDER")
         ];

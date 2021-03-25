@@ -29,5 +29,18 @@ class Groupwf extends Model
     {
         return $this->belongsTo(GroupUser::class, 'GRP_ID', 'GRP_ID');
     }
+
+    /**
+     * Scope for query to get the group uid
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $uid
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGroup($query, $uid)
+    {
+        return $query->where('GRP_UID', $uid);
+    }
 }
 
