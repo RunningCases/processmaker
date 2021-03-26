@@ -834,9 +834,9 @@ class Delegation extends Model
      */
     public function scopeJoinPreviousIndex($query)
     {
-        $query->leftJoin('APP_DELEGATION AS AD', function( $leftJoin) {
+        $query->leftJoin('APP_DELEGATION AS AD', function ($leftJoin) {
             $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'AD.APP_NUMBER')
-            ->on('APP_DELEGATION.DEL_PREVIOUS', '=', 'AD.DEL_INDEX');
+                ->on('APP_DELEGATION.DEL_PREVIOUS', '=', 'AD.DEL_INDEX');
         });
 
         return $query;
@@ -1863,7 +1863,7 @@ class Delegation extends Model
         $cases = new Cases;
         if (!is_array($caseData)) {
             $r = $cases->unserializeData($caseData);
-            if($r !== false) {
+            if ($r !== false) {
                 $caseData = $r;
             }
         }
@@ -1877,13 +1877,13 @@ class Delegation extends Model
             // If is empty get the previous title
             if ($delIndexPrevious > 0) {
                 $thread = self::getThreadInfo($appNumber, $delIndexPrevious);
-                if(empty($thread['DEL_TITLE'])) {
-                    $threadTitle = '# '. $appNumber;
+                if (empty($thread['DEL_TITLE'])) {
+                    $threadTitle = '# ' . $appNumber;
                 } else {
                     $threadTitle = $thread['DEL_TITLE'];
                 }
             } else {
-                $threadTitle = '# '. $appNumber;
+                $threadTitle = '# ' . $appNumber;
             }
         }
 
@@ -1948,5 +1948,25 @@ class Delegation extends Model
         });
 
         return $results;
+    }
+
+    /**
+     * Check if a subprocess has active parent cases
+     * 
+     * @param array $parents
+     * @return bool
+     */
+    public static function hasActiveParentsCases($parents)
+    {
+        foreach ($parents as $parent) {
+            $query = Delegation::select()->where('PRO_UID', $parent['PRO_PARENT'])
+                ->where('TAS_UID', $parent['TAS_PARENT'])->where('DEL_THREAD_STATUS', 'OPEN')
+                ->limit(1);
+            $res = $query->get()->values()->toArray();
+            if (!empty($res)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

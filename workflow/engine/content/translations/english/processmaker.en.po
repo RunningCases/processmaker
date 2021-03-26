@@ -3384,6 +3384,12 @@ msgid "It is not possible to delete the department because it has subdepartments
 msgstr "It is not possible to delete the department because it has subdepartments."
 
 # TRANSLATION
+# LABEL/ID_CANT_DELETE_SUB_PROCESS_PARENT_HAS_ACTIVE_CASES
+#: LABEL/ID_CANT_DELETE_SUB_PROCESS_PARENT_HAS_ACTIVE_CASES
+msgid "Is not possible to delete sub-process cases, while the master process has active cases."
+msgstr "Is not possible to delete sub-process cases, while the master process has active cases."
+
+# TRANSLATION
 # LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_USERS
 #: LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_USERS
 msgid "Department cannot be deleted while it has assigned users."
