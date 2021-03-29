@@ -4275,7 +4275,7 @@ class Cases
         $query->where('APPLICATION.APP_UID', '=', $appUid);
 
         // Filter by source task
-        if ($caseStatus != 'COMPLETED' && $sourceTask != '' && (int)$sourceTask != 0) {
+        if (!empty($sourceTask) && (int)$sourceTask != 0) {
             $query->where('STEP.TAS_UID', '=', $sourceTask);
         }
 
