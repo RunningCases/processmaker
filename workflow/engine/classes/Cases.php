@@ -5876,11 +5876,11 @@ class Cases
             $opObjUid = $row['OP_OBJ_UID'];
             $obCaseStatus = $row['OP_CASE_STATUS'];
 
-            //The values of obCaseStatus is [ALL, COMPLETED, DRAFT, TO_DO, PAUSED]
-            //If the case is todo and we need the participate
-            //but we did not participated did not validate nothing and return array empty
+            // The values of obCaseStatus is [ALL, COMPLETED, DRAFT, TO_DO, PAUSED]
+            // If the case is todo and we need the participate
+            // but we did not participated did not validate nothing and return array empty
             $swParticipate = false; // must be false for default
-            if ($obCaseStatus != 'COMPLETED' && $opParticipated == 1) {
+            if ($opParticipated === 1) {
                 $criteria = new Criteria('workflow');
                 $criteria->add(AppDelegationPeer::USR_UID, $usrUid);
                 $criteria->add(AppDelegationPeer::APP_UID, $appUid);
