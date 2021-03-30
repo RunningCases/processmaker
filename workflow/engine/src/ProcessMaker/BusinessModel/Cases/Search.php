@@ -6,6 +6,7 @@ use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 
@@ -14,17 +15,15 @@ class Search extends AbstractCases
     // Columns to see in the cases list
     public $columnsView = [
         // Columns view in the cases list
-        'APP_DELEGATION.APP_NUMBER', // Case #
-        'APP_DELEGATION.DEL_TITLE', // Case Title
+        'APPLICATION.APP_NUMBER', // Case #
+        'APPLICATION.APP_TITLE AS DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process
         'APPLICATION.APP_STATUS',  // Status
         'APPLICATION.APP_CREATE_DATE',  // Case create date
         'APPLICATION.APP_FINISH_DATE',  // Case finish date
         // Additional column for other functionalities
-        'APP_DELEGATION.APP_UID', // Case Uid for Open case
-        'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
-        'APP_DELEGATION.PRO_UID', // Process Uid for Case notes
-        'APP_DELEGATION.TAS_UID', // Task Uid for Case notes
+        'APPLICATION.APP_UID', // Case Uid for Open case
+        'APPLICATION.PRO_UID', // Process Uid for Case notes
     ];
 
     /**
@@ -59,19 +58,35 @@ class Search extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            $query->title($this->getCaseTitle());
+            // Join with delegation
+            $query->joinDelegation();
+            // Add the filter
+            // $query->title($this->getCaseTitle());
         }
         // Filter by process
         if ($this->getProcessId()) {
-            $query->processId($this->getProcessId());
+            $result = Process::query()->select(['PRO_UID'])
+                ->where('PRO_ID', '=', $this->getProcessId())->get()->toArray();
+            $result = head($result);
+            $query->proUid($result['PRO_UID']);
         }
         // Filter by user
         if ($this->getUserId()) {
+            // Join with delegation
+            $query->joinDelegation();
+            // Add the filter
             $query->userId($this->getUserId());
+            // Get only the open threads related to the user
+            $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
         }
         // Filter by task
         if ($this->getTaskId()) {
+            // Join with delegation
+            $query->joinDelegation();
+            // Add the filter
             $query->task($this->getTaskId());
+            // Get only the open threads related to the task
+            $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
         }
         // Specific start case date from
         if (!empty($this->getStartCaseFrom())) {
@@ -89,41 +104,9 @@ class Search extends AbstractCases
         if (!empty($this->getFinishCaseTo())) {
             $query->finishCaseTo($this->getFinishCaseTo());
         }
-        /** This filter define the UNION */
-
         // Filter related to the case status like ['DRAFT', 'TO_DO']
         if (!empty($this->getCaseStatuses())) {
-            $statuses = $this->getCaseStatuses();
-            $casesOpen = [];
-            $casesClosed = [];
-            foreach ($statuses as $row) {
-                if ($row === self::STATUS_DRAFT or $row === self::STATUS_TODO) {
-                    $casesOpen[] = $row;
-                } else {
-                    $casesClosed[] = $row;
-                }
-            }
-            if (!empty($casesOpen) && !empty($casesClosed)) {
-                // Only in this case need to clone the same query for the union
-                $cloneQuery = clone $query;
-                // Get the open threads
-                $query->casesInProgress($casesOpen);
-                // Get the last thread
-                $cloneQuery->casesDone($casesClosed);
-                // Union
-                $query->union($cloneQuery);
-            } else {
-                if (!empty($casesOpen)) {
-                    // Get the open thread
-                    $query->casesInProgress($casesOpen);
-                }
-                if (!empty($casesClosed)) {
-                    // Get the last thread
-                    $query->casesDone($casesClosed);
-                }
-            }
-        } else {
-            $query->isThreadOpen();
+            $query->statusIds($this->getCaseStatuses());
         }
 
         return $query;
@@ -136,32 +119,9 @@ class Search extends AbstractCases
      */
     public function getData()
     {
-        $query = Delegation::query()->select($this->getColumnsView());
-        $query->selectRaw(
-            'CONCAT(
-                \'[\',
-                    GROUP_CONCAT(
-                        CONCAT(
-                            \'{"tas_id":\',
-                            APP_DELEGATION.TAS_ID,
-                            \', "user_id":\',
-                            APP_DELEGATION.USR_ID,
-                            \', "del_id":\',
-                            APP_DELEGATION.DELEGATION_ID,
-                            \', "due_date":"\',
-                            APP_DELEGATION.DEL_TASK_DUE_DATE,
-                            \'"}\'
-                        )
-                    ),
-                \']\'
-            ) AS THREADS'
-        );
+        $query = Application::query()->select($this->getColumnsView());
         // Join with process
         $query->joinProcess();
-        // Join with application
-        $query->joinApplication();
-        // Group by AppNumber
-        $query->groupBy('APP_NUMBER');
         /** Apply filters */
         $this->filters($query);
         /** Exclude the web entries does not submitted */
@@ -186,12 +146,36 @@ class Search extends AbstractCases
             // Get total case notes
             $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
             // Get the detail related to the open thread
-            if (!empty($item['THREADS'])) {
-                $result = $this->prepareTaskPending($item['THREADS'], false, $item['APP_STATUS'], $dateToCompare);
-                $item['THREAD_TASKS'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
-                $item['THREAD_USERS'] = !empty($result['THREAD_USERS']) ? $result['THREAD_USERS'] : [];
-                $item['THREAD_TITLES'] = !empty($result['THREAD_TITLES']) ? $result['THREAD_TITLES'] : [];
+            $taskPending = [];
+            $status = $item['APP_STATUS'];
+            switch ($status) {
+                case 'DRAFT':
+                case 'TO_DO':
+                    $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
+                    break;
+                case 'COMPLETED':
+                case 'CANCELLED':
+                    $taskPending = Delegation::getLastThread($item['APP_NUMBER']);
+                    break;
             }
+            $i = 0;
+            $result = [];
+            foreach ($taskPending as $thread) {
+                $thread['APP_STATUS'] = $item['APP_STATUS'];
+                $information = $this->threadInformation($thread, true, true);
+                $result['THREAD_TASKS'][$i] = $information['THREAD_TASK'];
+                $result['THREAD_USERS'][$i] = $information['THREAD_USER'];
+                $result['THREAD_TITLES'][$i] = $information['THREAD_TITLE'];
+                $i++;
+                // Del Index for Open case
+                $item['DEL_INDEX'] = $information['THREAD_TITLE']['del_index'];
+                // Task Uid for Case notes
+                $item['TAS_UID'] = $information['THREAD_TASK']['tas_uid'];
+            }
+
+            $item['THREAD_TASKS'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
+            $item['THREAD_USERS'] = !empty($result['THREAD_USERS']) ? $result['THREAD_USERS'] : [];
+            $item['THREAD_TITLES'] = !empty($result['THREAD_TITLES']) ? $result['THREAD_TITLES'] : [];
 
             return $item;
         });

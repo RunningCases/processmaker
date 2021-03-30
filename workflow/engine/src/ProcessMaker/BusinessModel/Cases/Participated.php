@@ -232,7 +232,7 @@ class Participated extends AbstractCases
             case 'IN_PROGRESS':
                 // Only distinct APP_NUMBER
                 $query->distinct();
-                // Scope for in progress: TO_DO without DRAFT
+                // Scope for only TO_DO cases
                 $query->caseTodo();
                 break;
             case 'COMPLETED':

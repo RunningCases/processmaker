@@ -78,6 +78,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
         'DEL_INIT_DATE' => $faker->dateTime(),
         'DEL_TASK_DUE_DATE' => $faker->dateTime(),
         'DEL_RISK_DATE' => $faker->dateTime(),
+        'DEL_LAST_INDEX' => 1,
         'USR_ID' => $user->USR_ID,
         'PRO_ID' => $process->PRO_ID,
         'TAS_ID' => $task->TAS_ID,

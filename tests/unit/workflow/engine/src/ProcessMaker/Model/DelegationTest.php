@@ -34,7 +34,72 @@ class DelegationTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Application::truncate();
         Delegation::truncate();
+    }
+
+    /**
+     * Test belongs to APP_UID
+     *
+     * @covers \ProcessMaker\Model\Delegation::application()
+     * @test
+     */
+    public function it_has_an_application()
+    {
+        $delegation = factory(Delegation::class)->create([
+            'APP_UID' => function () {
+                return factory(Application::class)->create()->APP_UID;
+            }
+        ]);
+        $this->assertInstanceOf(Application::class, $delegation->application);
+    }
+
+    /**
+     * Test belongs to USR_ID
+     *
+     * @covers \ProcessMaker\Model\Delegation::user()
+     * @test
+     */
+    public function it_has_an_user()
+    {
+        $delegation = factory(Delegation::class)->create([
+            'USR_ID' => function () {
+                return factory(User::class)->create()->USR_ID;
+            }
+        ]);
+        $this->assertInstanceOf(User::class, $delegation->user);
+    }
+
+    /**
+     * Test belongs to TAS_ID
+     *
+     * @covers \ProcessMaker\Model\Delegation::task()
+     * @test
+     */
+    public function it_has_a_task()
+    {
+        $delegation = factory(Delegation::class)->create([
+            'TAS_ID' => function () {
+                return factory(Task::class)->create()->TAS_ID;
+            }
+        ]);
+        $this->assertInstanceOf(Task::class, $delegation->task);
+    }
+
+    /**
+     * Test belongs to PRO_ID
+     *
+     * @covers \ProcessMaker\Model\Delegation::process()
+     * @test
+     */
+    public function it_has_a_process()
+    {
+        $delegation = factory(Delegation::class)->create([
+            'PRO_ID' => function () {
+                return factory(Process::class)->create()->PRO_ID;
+            }
+        ]);
+        $this->assertInstanceOf(Process::class, $delegation->process);
     }
 
     /**
@@ -50,15 +115,27 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This test scopeIndex
+     * This test scopePriorities
      *
-     * @covers \ProcessMaker\Model\Delegation::scopeIndex()
+     * @covers \ProcessMaker\Model\Delegation::scopePriorities()
      * @test
      */
-    public function it_return_scope_index()
+    public function it_return_scope_priorities()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->index($table->DEL_INDEX)->get());
+        $this->assertCount(1, $table->priorities([$table->DEL_PRIORITY])->get());
+    }
+
+    /**
+     * This test scopeThreadOpen
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeThreadOpen()
+     * @test
+     */
+    public function it_return_scope_thread_open()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->threadOpen()->get());
     }
 
     /**
@@ -74,15 +151,55 @@ class DelegationTest extends TestCase
     }
 
     /**
-     * This test scopeCaseInProgress
+     * This test scopeCasesInProgress
      *
-     * @covers \ProcessMaker\Model\Delegation::scopeCaseInProgress()
+     * @covers \ProcessMaker\Model\Delegation::scopeCasesInProgress()
      * @test
      */
     public function it_return_scope_case_in_progress()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->joinApplication()->caseInProgress()->get());
+        $this->assertCount(1, $table->joinApplication()->casesInProgress([2])->get());
+    }
+
+    /**
+     * This test scopeCasesDone
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCasesDone()
+     * @test
+     */
+    public function it_return_scope_case_done()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->joinApplication()->casesDone([2])->get());
+    }
+
+    /**
+     * This test scopeIndex
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeIndex()
+     * @test
+     */
+    public function it_return_scope_index()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->index($table->DEL_INDEX)->get());
+    }
+
+    /**
+     * This test scopeCaseTodo
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCaseTodo()
+     * @test
+     */
+    public function it_return_scope_case_to_do()
+    {
+        $application = factory(Application::class)->states('todo')->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $this->assertCount(1, $table->joinApplication()->caseTodo()->get());
     }
 
     /**
@@ -91,7 +208,7 @@ class DelegationTest extends TestCase
      * @covers \ProcessMaker\Model\Delegation::scopeCaseCompleted()
      * @test
      */
-    public function it_return_scope_case_in_completed()
+    public function it_return_scope_case_completed()
     {
         $application = factory(Application::class)->states('completed')->create();
         $table = factory(Delegation::class)->states('foreign_keys')->create([
@@ -99,6 +216,38 @@ class DelegationTest extends TestCase
             'APP_UID' => $application->APP_UID,
         ]);
         $this->assertCount(1, $table->joinApplication()->caseCompleted()->get());
+    }
+
+    /**
+     * This test scopeStatus
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeStatus()
+     * @test
+     */
+    public function it_return_scope_status()
+    {
+        $application = factory(Application::class)->states('todo')->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $this->assertCount(1, $table->joinApplication()->status($application->APP_STATUS_ID)->get());
+    }
+
+    /**
+     * This test scopeStatusIds
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeStatusIds()
+     * @test
+     */
+    public function it_return_scope_status_ids()
+    {
+        $application = factory(Application::class)->states('todo')->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $this->assertCount(1, $table->joinApplication()->statusIds([$application->APP_STATUS_ID])->get());
     }
 
     /**
@@ -126,6 +275,66 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeFinishDateFrom
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeFinishDateFrom()
+     * @test
+     */
+    public function it_return_scope_finish_date_from()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->finishDateFrom($table->DEL_FINISH_DATE)->get());
+    }
+
+    /**
+     * This test scopeFinishDateTo
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeFinishDateTo()
+     * @test
+     */
+    public function it_return_scope_finish_date_to()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->finishDateTo($table->DEL_FINISH_DATE)->get());
+    }
+
+    /**
+     * This test scopeDueFrom
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeDueFrom()
+     * @test
+     */
+    public function it_return_scope_due_date_from()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->dueFrom($table->DEL_TASK_DUE_DATE)->get());
+    }
+
+    /**
+     * This test scopeDueTo
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeDueTo()
+     * @test
+     */
+    public function it_return_scope_due_date_to()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->dueTo($table->DEL_TASK_DUE_DATE)->get());
+    }
+
+    /**
+     * This test scopeCase
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCase()
+     * @test
+     */
+    public function it_return_scope_case()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->case($table->APP_NUMBER)->get());
+    }
+
+    /**
      * This test scopeSpecificCases
      *
      * @covers \ProcessMaker\Model\Delegation::scopeSpecificCases()
@@ -135,6 +344,102 @@ class DelegationTest extends TestCase
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
         $this->assertCount(1, $table->specificCases([$table->APP_NUMBER])->get());
+    }
+
+    /**
+     * This test scopeCasesFrom
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCasesFrom()
+     * @test
+     */
+    public function it_return_scope_cases_from()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->casesFrom($table->APP_NUMBER)->get());
+    }
+
+    /**
+     * This test scopeCasesTo
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCasesTo()
+     * @test
+     */
+    public function it_return_scope_cases_to()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->casesTo($table->APP_NUMBER)->get());
+    }
+
+    /**
+     * This test scopePositiveCases
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopePositiveCases()
+     * @test
+     */
+    public function it_return_scope_positive_cases()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->positiveCases()->get());
+    }
+
+    /**
+     * This test scopeRangeOfCases
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeRangeOfCases()
+     * @test
+     */
+    public function it_return_scope_range_of_cases()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->rangeOfCases([$table->APP_NUMBER.'-'.$table->APP_NUMBER])->get());
+    }
+
+    /**
+     * This test scopeAppUid
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeAppUid()
+     * @test
+     */
+    public function it_return_scope_app_uid()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->appUid($table->APP_UID)->get());
+    }
+
+    /**
+     * This test scopeLastThread
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeLastThread()
+     * @test
+     */
+    public function it_return_scope_last_thread()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->lastThread()->get());
+    }
+
+    /**
+     * This test scopeSpecificCasesByUid
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeSpecificCasesByUid()
+     * @test
+     */
+    public function it_return_scope_specific_cases_uid()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->specificCasesByUid([$table->APP_UID])->get());
+    }
+
+    /**
+     * This test scopeUserId
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeUserId()
+     * @test
+     */
+    public function it_return_scope_user_id()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->userId($table->USR_ID)->get());
     }
 
     /**
@@ -152,6 +457,18 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeProcessId
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeProcessId()
+     * @test
+     */
+    public function it_return_scope_process_id()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->processId($table->PRO_ID)->get());
+    }
+
+    /**
      * This test scopeTask
      *
      * @covers \ProcessMaker\Model\Delegation::scopeTask()
@@ -160,7 +477,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_task()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->task()->get());
+        $this->assertCount(1, $table->task($table->TAS_ID)->get());
     }
 
     /**
@@ -173,6 +490,60 @@ class DelegationTest extends TestCase
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
         $this->assertCount(1, $table->specificTasks([$table->TAS_ID])->get());
+    }
+
+    /**
+     * This test scopeTaskAssignType
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeTaskAssignType()
+     * @test
+     */
+    public function it_return_scope_assign_type()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->taskAssignType('NORMAL')->get());
+    }
+
+    /**
+     * This test scopeExcludeTaskTypes
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeExcludeTaskTypes()
+     * @test
+     */
+    public function it_return_scope_exclude_tas_types()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(0, $table->excludeTaskTypes(['NORMAL'])->get());
+    }
+
+    /**
+     * This test scopeSpecificTaskTypes
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeSpecificTaskTypes()
+     * @test
+     */
+    public function it_return_scope_specific_tas_types()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->specificTaskTypes(['NORMAL'])->get());
+    }
+
+    /**
+     * This test scopeAppStatusId
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeAppStatusId()
+     * @test
+     */
+    public function it_return_scope_status_id()
+    {
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2,
+            'APP_STATUS' => 'TO_DO'
+        ]);
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER
+        ]);
+        $this->assertCount(1, $table->appStatusId()->get());
     }
 
     /**
@@ -412,22 +783,19 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_and_filter_by_app_title()
     {
-        $delegations = factory(Delegation::class, 1)
-                ->states('foreign_keys')
-                ->create();
-        $title = $delegations->last()
-                ->DEL_TITLE;
+        $delegations = factory(Delegation::class, 1)->states('foreign_keys')->create();
+        $title = $delegations->last()->DEL_TITLE;
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
 
         // Searching by a existent case title, result ordered by APP_NUMBER, filter by APP_NUMBER in DESC mode
         $results = Delegation::search(null, 0, 10, $title, null, null, 'DESC',
-                        'APP_NUMBER', null, null, null, 'APP_TITLE');
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
         $this->assertEquals($title, $results['data'][0]['APP_TITLE']);
         // Searching by a existent case title, result ordered by APP_NUMBER, filter by APP_NUMBER in ASC mode
         $results = Delegation::search(null, 0, 10, $title, null, null, 'ASC',
-                        'APP_NUMBER', null, null, null, 'APP_TITLE');
+            'APP_NUMBER', null, null, null, 'APP_TITLE');
         $this->assertCount(1, $results['data']);
         $this->assertEquals($title, $results['data'][0]['APP_TITLE']);
     }

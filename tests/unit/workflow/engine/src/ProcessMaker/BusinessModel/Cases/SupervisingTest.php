@@ -22,6 +22,14 @@ class SupervisingTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Method set up.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
+    /**
      * Create supervising cases factories
      *
      * @param string
