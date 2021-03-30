@@ -801,9 +801,11 @@ class Derivation
      * @param bool  $removeList
      *
      * @return void
+     * @deprecated function deprecated in Release 3.6.x
      */
     private function updateList(array $arrayCurrentDelegationData, array $arrayNextDelegationData, $taskNextDelegation, array $arrayApplicationData, $delIndexNew, $aSp, $removeList)
     {
+        return;
         /*----------------------------------********---------------------------------*/
         try {
             if ($arrayNextDelegationData["TAS_UID"] != "-1") {
