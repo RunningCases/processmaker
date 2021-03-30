@@ -45,13 +45,13 @@ switch ($req) {
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_SEND_DATE);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_SHOW_MESSAGE);
         $criteria->addSelectColumn(AppMessagePeer::APP_MSG_ERROR);
-        $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
+        /*$criteria->addSelectColumn(ApplicationPeer::PRO_UID);
         $criteria->addSelectColumn(ApplicationPeer::APP_TITLE);
-        $criteria->addSelectColumn(ApplicationPeer::APP_NUMBER);
+        $criteria->addSelectColumn(ApplicationPeer::APP_NUMBER);*/
         $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
-        $criteria->addSelectColumn(TaskPeer::TAS_TITLE);
-        $criteria->addJoin(AppMessagePeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
-        $criteria->addJoin(AppMessagePeer::TAS_ID, TaskPeer::TAS_ID, Criteria::LEFT_JOIN);
+        //$criteria->addSelectColumn(TaskPeer::TAS_TITLE);
+        //$criteria->addJoin(AppMessagePeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
+        //$criteria->addJoin(AppMessagePeer::TAS_ID, TaskPeer::TAS_ID, Criteria::LEFT_JOIN);
         $criteria->addJoin(AppMessagePeer::PRO_ID, ProcessPeer::PRO_ID, Criteria::LEFT_JOIN);
 
         //Status can be: All, Participated, Pending, Failed
@@ -115,7 +115,7 @@ switch ($req) {
                 $criteria->addDescendingOrderByColumn($sort);
             }
         } else {
-            $oCriteria->addDescendingOrderByColumn(AppMessagePeer::APP_MSG_SEND_DATE);
+            $oCriteria->addDescendingOrderByColumn(AppMessagePeer::APP_MSG_ID);
         }
         if (!empty($limit)) {
             $criteria->setLimit($limit);

@@ -366,6 +366,7 @@
             <parameter name="Create_options" value=""/>
             <parameter name="Comment" value="Messages in an Application"/>
         </vendor>
+        <column name="APP_MSG_ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
         <column name="APP_MSG_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
         <column name="MSG_UID" type="VARCHAR" size="32"/>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
@@ -389,6 +390,9 @@
         <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
         <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
         <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
+        <index name="indexAppMsgId">
+            <index-column name="APP_MSG_ID"/>
+        </index>
         <index name="indexForAppUid">
             <index-column name="APP_UID"/>
         </index>
@@ -405,7 +409,7 @@
             <index-column name="APP_NUMBER"/>
         </index>
         <index name="INDEX_APP_MSG_TYPE_ID">
-            <index-column name="APP_MSG_STATUS_ID"/>
+            <index-column name="APP_MSG_TYPE_ID"/>
         </index>
         <index name="INDEX_APP_MSG_STATUS_ID">
             <index-column name="APP_MSG_STATUS_ID"/>
