@@ -30,7 +30,7 @@ export default {
             let url = "";
             if (this.data && this.data.DYN_UID) {
                 url =
-                    window.config.SYS_SERVER +
+                    window.config.SYS_SERVER_AJAX +
                     window.config.SYS_URI +
                     '/cases/summary?APP_UID='+this.data.APP_UID +
                     '&DEL_INDEX=' + this.data.DEL_INDEX +

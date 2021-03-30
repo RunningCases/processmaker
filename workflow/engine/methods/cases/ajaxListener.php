@@ -246,7 +246,17 @@ class Ajax
                     || in_array($appUid, $userAuthorization['objectPermissions']['REASSIGN_MY_CASES'])
                 ) {
                     if (!AppDelay::isPaused($appUid, $index)) {
-                        $options[] = ['text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign'];
+                        $subprocess = SubProcess::getSubProcessConfiguration(
+                            $proUid,
+                            $_SESSION['CURRENT_TASK']
+                        );
+                        if (empty($subprocess)) {
+                            $options[] = ['text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign'];
+                        } else {
+                            if ($subprocess['SP_SYNCHRONOUS'] == 0) {
+                                $options[] = ['text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign'];
+                            }
+                        }
                     }
                 }
                 break;

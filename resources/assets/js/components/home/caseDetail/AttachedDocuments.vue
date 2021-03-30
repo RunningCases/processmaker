@@ -55,7 +55,7 @@ export default {
     },
     href(item) {
       return (
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         `cases/casesShowCaseNotes?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}`
       );

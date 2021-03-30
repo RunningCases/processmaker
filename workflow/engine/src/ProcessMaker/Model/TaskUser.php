@@ -11,6 +11,20 @@ class TaskUser extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'TAS_UID',
+        'TAS_ID',
+        'USR_UID',
+        'TU_TYPE',
+        'TU_RELATION',
+        'ASSIGNED_ID',
+    ];
+
+    /**
      * Return the task this belongs to
      */
     public function task()
@@ -24,6 +38,21 @@ class TaskUser extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'USR_UID', 'USR_UID');
+    }
+
+    /**
+     * Scope for query to get the assigment
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $tasUid
+     * @param string $usrUid
+     * @param integer $type
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAssigment($query, $tasUid, $usrUid, $type = 1)
+    {
+        return $query->where('TAS_UID', $tasUid)->where('USR_UID', $usrUid)->where('TU_TYPE', $type);
     }
 
     /**
@@ -68,5 +97,23 @@ class TaskUser extends Model
         $tasks = $query->get()->values()->toArray();
 
         return $tasks;
+    }
+
+    /**
+     * Get the specific assigment related to the task, by default the normal assigment
+     *
+     * @param string $tasUid
+     * @param string $uid
+     * @param integer $type, can be 1 = Normal or 2 = Ad-hoc
+     *
+     * @return array
+     */
+    public static function getAssigment($tasUid, $uid, $type = 1)
+    {
+        $query = TaskUser::query()->select()
+            ->assigment($tasUid, $uid, $type);
+        $result = $query->get()->toArray();
+
+        return head($result);
     }
 }

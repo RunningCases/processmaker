@@ -27,7 +27,7 @@ export default {
   computed: {
     path() {
       let url =
-        window.config.SYS_SERVER +
+        window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
         `cases/ajaxListener?action=caseHistory`;
       return url;

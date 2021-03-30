@@ -13,6 +13,7 @@ use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessCategory;
+use ProcessMaker\Model\SubProcess;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Model\TaskUser;
 use ProcessMaker\Model\User;
@@ -2537,5 +2538,42 @@ class DelegationTest extends TestCase
         $result = Delegation::getDeltitle($delegation->APP_NUMBER, $delegation->DEL_INDEX);
         $this->assertNotEmpty($result);
         $this->assertEquals($result, $delegation->DEL_TITLE);
+    }
+
+    /**
+     * It should test the hasActiveParentsCases() method
+     * 
+     * @covers \ProcessMaker\Model\Delegation::hasActiveParentsCases()
+     * @test
+     */
+    public function it_should_test_the_has_active_parents_cases_method()
+    {
+        $process = factory(Process::class)->create();
+        $processParent = factory(Process::class, 3)->create();
+        factory(SubProcess::class)->create([
+            'PRO_UID' => $process['PRO_UID'],
+            'PRO_PARENT' => $processParent[0]['PRO_UID']
+        ]);
+        factory(SubProcess::class)->create([
+            'PRO_UID' => $process['PRO_UID'],
+            'PRO_PARENT' => $processParent[1]['PRO_UID']
+        ]);
+        factory(SubProcess::class)->create([
+            'PRO_UID' => $process['PRO_UID'],
+            'PRO_PARENT' => $processParent[2]['PRO_UID']
+        ]);
+
+        $parents = SubProcess::getProParents($process['PRO_UID']);
+
+        factory(Delegation::class)->create([
+            'PRO_UID' => $parents[0]['PRO_PARENT'],
+            'TAS_UID' => $parents[0]['TAS_PARENT'],
+            'DEL_THREAD_STATUS' => 'OPEN'
+        ]);
+
+        $res = Delegation::hasActiveParentsCases($parents);
+
+        // Assert the result is true
+        $this->assertTrue($res);
     }
 }
