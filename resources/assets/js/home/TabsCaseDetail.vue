@@ -45,7 +45,7 @@ export default {
   },
   props: {
     dataCase: Object,
-    dataCaseStatus: Array,
+    dataCaseStatus: Array
   },
   data() {
     return {

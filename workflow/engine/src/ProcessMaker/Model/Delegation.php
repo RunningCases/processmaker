@@ -1900,7 +1900,7 @@ class Delegation extends Model
 
         return [
             'title' => $threadTitle,
-            'description' => $threadDescription,
+            'description' => $threadDescription
         ];
     }
 

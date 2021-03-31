@@ -672,7 +672,7 @@ class Cases
 
         return [
             'title' => $threadTitle,
-            'description' => $threadDescription,
+            'description' => $threadDescription
         ];
     }
 

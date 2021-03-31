@@ -364,7 +364,6 @@ class AppProxy extends HttpProxyController
         ];
         // Get the pending threads
         $delegation = new Delegation();
-        $threads = [];
         $threads = $delegation::getPendingThreads($appFields['APP_NUMBER']);
         $i = 0;
         $taskProperties[$i] = [

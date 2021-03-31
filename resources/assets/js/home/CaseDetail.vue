@@ -131,7 +131,7 @@ export default {
     ButtonFleft,
     ModalNewRequest,
     ModalClaimCase,
-    TaskCell,
+    TaskCell
   },
   props: {},
   data() {
@@ -140,7 +140,7 @@ export default {
         dismissSecs: 5,
         dismissCountDown: 0,
         message: "",
-        variant: "info",
+        variant: "info"
       },
       dataCase: null,
       newCase: {
@@ -156,7 +156,7 @@ export default {
         "assignee",
         "status",
         "due_date",
-        "actions",
+        "actions"
       ],
       showTable: true,
       tableData: [],
@@ -167,7 +167,7 @@ export default {
           assignee: this.$i18n.t("ID_CURRENT_USER"),
           status: this.$i18n.t("ID_STATUS"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
-          actions: this.$i18n.t("ID_ACTIONS"),
+          actions: this.$i18n.t("ID_ACTIONS")
         },
         selectable: {
           mode: "single", // or 'multiple'
@@ -188,17 +188,17 @@ export default {
         titleInput: this.$i18n.t("ID_REQUEST_DOCUMENTS"),
         titleOutput: this.$i18n.t("ID_OUTPUT_DOCUMENTS"),
         inputDocuments: [],
-        outputDocuments: [],
+        outputDocuments: []
       },
       dataAttachedDocuments: {
         title: "Attached Documents",
-        items: [],
+        items: []
       },
       attachDocuments: false,
       dataComments: {
         title: "Comments",
-        items: [],
-      },
+        items: []
+      }
     };
   },
 
@@ -220,7 +220,7 @@ export default {
           _.extend({}, this.dataCase, {
             COMMENT: comment,
             SEND_MAIL: send,
-            FILES: files,
+            FILES: files
           })
         )
         .then((response) => {
@@ -261,13 +261,13 @@ export default {
           this.dataCaseStatusTab = [];
           this.dataCaseStatusTab.push({
             title: null,
-            items: response.data.caseProperties,
+            items: response.data.caseProperties
           });
 
           _.each(response.data.taskProperties, (o) => {
             this.dataCaseStatusTab.push({
               title: null,
-              items: _.isArray(o) ? o : [o],
+              items: _.isArray(o) ? o : [o]
             });
           });
 
@@ -285,7 +285,7 @@ export default {
               status: data[5].label,
               create: data[6].label,
               delegationDate: this.$i18n.t("ID_TASK_DELEGATE_DATE"),
-              duration: this.$i18n.t("ID_DURATION"),
+              duration: this.$i18n.t("ID_DURATION")
             },
             text: {
               process: data[1].value,
@@ -295,17 +295,17 @@ export default {
               status: data[5].value,
               create: data[6].value,
               delegationDate: data[7] ? data[7].value : "",
-              duration: data[8] ? data[8].value : "",
-            },
+              duration: data[8] ? data[8].value : ""
+            }
           };
           // Hack for identify the cancel case button
           Api.cases.actions(this.dataCase).then((response) => {
             action = _.find(response.data, function (o) {
-              return o.id == "ACTIONS";
+              return o.id === "ACTIONS";
             });
             if (action) {
               option = _.find(action.options, function (o) {
-                return o.fn == "cancelCase";
+                return o.fn === "cancelCase";
               });
               if (option && !option.hide) {
                 that.dataCaseSummary.onClick = () => {
@@ -335,7 +335,7 @@ export default {
                 title: document[i].TITLE,
                 extension: document[i].TITLE.split(".")[1],
                 onClick: () => {},
-                data: document[i],
+                data: document[i]
               };
               this.dataIoDocuments.inputDocuments.push(info);
             }
@@ -361,7 +361,7 @@ export default {
                 title: document[i].TITLE,
                 extension: document[i].TITLE.split(".")[1],
                 onClick: () => {},
-                data: document[i],
+                data: document[i]
               };
               this.dataIoDocuments.outputDocuments.push(info);
             }
@@ -436,7 +436,7 @@ export default {
           ),
           date: n.NOTE_DATE,
           comment: n.NOTE_CONTENT,
-          data: n,
+          data: n
         });
       });
 
@@ -454,7 +454,7 @@ export default {
         ) {
           sections.push({
             title: o.section,
-            items: [],
+            items: []
           });
           index = 0;
         }
@@ -490,7 +490,7 @@ export default {
             {
               TITLE: v.TAS_TITLE,
               CODE_COLOR: v.TAS_COLOR,
-              COLOR: v.TAS_COLOR_LABEL,
+              COLOR: v.TAS_COLOR_LABEL
             },
           ],
           CASE_TITLE: v.DEL_TITLE,
@@ -500,7 +500,7 @@ export default {
                   userName: v.USR_USERNAME,
                   firstName: v.USR_LASTNAME,
                   lastName: v.USR_LASTNAME,
-                  format: window.config.FORMATS.format || null,
+                  format: window.config.FORMATS.format || null
                 })
               : this.$i18n.t("ID_UNASSIGNED"),
           STATUS: v.DEL_THREAD_STATUS,
@@ -509,7 +509,7 @@ export default {
           APP_UID: v.APP_UID,
           DEL_INDEX: v.DEL_INDEX,
           PRO_UID: v.PRO_UID,
-          TAS_UID: v.TAS_UID,
+          TAS_UID: v.TAS_UID
         });
       });
       return data;
@@ -546,7 +546,7 @@ export default {
           DEL_INDEX: data.row.DEL_INDEX,
           PRO_UID: data.row.PRO_UID,
           TAS_UID: data.row.TAS_UID,
-          ACTION: this.dataCase.ACTION || "todo",
+          ACTION: this.dataCase.ACTION || "todo"
         });
         this.$emit("onUpdatePage", "XCase");
       }
