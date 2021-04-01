@@ -1,11 +1,11 @@
 <template>
   <div>
     <tabs @changed="changed">
-      <tab :name="$t('ID_SUMMARY')">
-        <PmCaseSummary :data="dataCaseSummary"> </PmCaseSummary>
+      <tab :name="$t('ID_STATUS')">
+        <CaseStatus :data="dataCaseStatus"> </CaseStatus>
       </tab>
-      <tab :name="$t('ID_MORE_INFORMATION')">
-        <MoreInformation :data="dataCase" v-if="currentTab == $t('ID_MORE_INFORMATION')">
+      <tab :name="$t('ID_CUSTOM_INFORMATION')">
+        <MoreInformation :data="dataCase" v-if="currentTab == $t('ID_CUSTOM_INFORMATION')">
         </MoreInformation>
       </tab>
       <tab :name="$t('ID_PROCESS_MAP')">
@@ -25,7 +25,7 @@
 <script>
 import Tabs from "./../components/tabs/Tabs.vue";
 import Tab from "./../components/tabs/Tab.vue";
-import PmCaseSummary from "./../components/home/caseDetail/PmCaseSummary.vue";
+import CaseStatus from "./../components/home/caseDetail/CaseStatus.vue";
 import ProcessMap from "./../components/home/caseDetail/ProcessMap.vue";
 import CaseHistory from "./../components/home/caseDetail/CaseHistory.vue";
 import ChangeLog from "./../components/home/caseDetail/ChangeLog.vue";
@@ -38,14 +38,14 @@ export default {
     Tabs,
     Tab,
     ProcessMap,
-    PmCaseSummary,
+    CaseStatus,
     CaseHistory,
     ChangeLog,
     MoreInformation
   },
   props: {
     dataCase: Object,
-    dataCaseSummary: Array,
+    dataCaseStatus: Array
   },
   data() {
     return {

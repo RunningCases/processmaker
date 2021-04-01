@@ -13,7 +13,7 @@
             :key="item.title"
             class="v-attached-block"
           >
-            <span> {{ item.label }} </span>:<span class="font-weight-bold">
+            <span> {{ item.label }} </span><span class="font-weight-bold">
               {{ item.value }}</span
             >
           </div>
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  name: "CaseSummary",
+  name: "CaseStatus",
   props: {
     data: Array,
   },
