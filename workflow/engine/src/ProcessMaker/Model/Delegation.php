@@ -1807,6 +1807,9 @@ class Delegation extends Model
             'TASK.TAS_TITLE',
             'TASK.TAS_ASSIGN_TYPE',
             'APP_DELEGATION.USR_ID',
+            'APP_DELEGATION.DEL_DELEGATE_DATE',
+            'APP_DELEGATION.DEL_FINISH_DATE',
+            'APP_DELEGATION.DEL_INIT_DATE',
             'APP_DELEGATION.DEL_TASK_DUE_DATE'
         ]);
         // Join with task
@@ -1867,9 +1870,12 @@ class Delegation extends Model
                 $caseData = $r;
             }
         }
-        // Get task title defined
+        //
         $task = new Task();
+        // Get case title defined
         $taskTitle = $task->taskCaseTitle($tasUid);
+        // Get case description defined
+        $taskDescription = $task->taskCaseDescription($tasUid);
         // If exist we will to replace the variables data
         if (!empty($taskTitle)) {
             $threadTitle = G::replaceDataField($taskTitle, $caseData, 'mysql', false);
@@ -1886,8 +1892,16 @@ class Delegation extends Model
                 $threadTitle = '# ' . $appNumber;
             }
         }
+        // If exist we will to replace the variables data
+        $threadDescription = '';
+        if (!empty($taskDescription)) {
+            $threadDescription = G::replaceDataField($taskDescription, $caseData, 'mysql', false);
+        }
 
-        return $threadTitle;
+        return [
+            'title' => $threadTitle,
+            'description' => $threadDescription
+        ];
     }
 
     /**

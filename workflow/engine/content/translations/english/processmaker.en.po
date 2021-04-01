@@ -4128,6 +4128,12 @@ msgid "Reason to pause the case"
 msgstr "Reason to pause the case"
 
 # TRANSLATION
+# LABEL/ID_CASE_PROPERTIES
+#: LABEL/ID_CASE_PROPERTIES
+msgid "Case Properties"
+msgstr "Case Properties"
+
+# TRANSLATION
 # LABEL/ID_CASE_PROPERTIES_SAVE
 #: LABEL/ID_CASE_PROPERTIES_SAVE
 msgid "Case Tracker Properties Saved Successfully"
@@ -5244,6 +5250,12 @@ msgid "Creating workspace {0}"
 msgstr "Creating workspace {0}"
 
 # TRANSLATION
+# LABEL/ID_CREATOR
+#: LABEL/ID_CREATOR
+msgid "Creator"
+msgstr "Creator"
+
+# TRANSLATION
 # LABEL/ID_CREDENTIAL_ERROR
 #: LABEL/ID_CREDENTIAL_ERROR
 msgid "Credentials Error"
@@ -5328,9 +5340,15 @@ msgid "Current license"
 msgstr "Current license"
 
 # TRANSLATION
+# LABEL/ID_CURRENT_TASKS
+#: LABEL/ID_CURRENT_TASKS
+msgid "Current Task(s) Properties"
+msgstr "Current Task(s) Properties"
+
+# TRANSLATION
 # LABEL/ID_CURRENT_USER
 #: LABEL/ID_CURRENT_USER
-msgid "[LABEL/ID_CURRENT_USER] Current User"
+msgid "Current User"
 msgstr "Current User"
 
 # TRANSLATION
@@ -5362,6 +5380,12 @@ msgstr "Current Workspace"
 #: LABEL/ID_CUSTOM_CASES_LISTS
 msgid "Custom Case List"
 msgstr "Custom Case List"
+
+# TRANSLATION
+# LABEL/ID_CUSTOM_INFORMATION
+#: LABEL/ID_CUSTOM_INFORMATION
+msgid "Custom Information"
+msgstr "Custom Information"
 
 # TRANSLATION
 # LABEL/ID_CUSTOM_TRIGGER
@@ -25298,7 +25322,7 @@ msgstr "Static Partial Join for Multiple Instance"
 # TRANSLATION
 # LABEL/ID_STATUS
 #: LABEL/ID_STATUS
-msgid "[LABEL/ID_STATUS] Status"
+msgid "Status"
 msgstr "Status"
 
 # TRANSLATION
@@ -25752,6 +25776,12 @@ msgid "You can't delete the task \"{0}\" because it has {1} cases."
 msgstr "You can't delete the task \"{0}\" because it has {1} cases."
 
 # TRANSLATION
+# LABEL/ID_TASK_DELEGATE_DATE
+#: LABEL/ID_TASK_DELEGATE_DATE
+msgid "Task Delegate Date"
+msgstr "Task Delegate Date"
+
+# TRANSLATION
 # LABEL/ID_TASK_DEFINED_MANUAL_ASSIGNMENT
 #: LABEL/ID_TASK_DEFINED_MANUAL_ASSIGNMENT
 msgid "The task is defined for Manual assignment"
@@ -25770,6 +25800,12 @@ msgid "Task Duration"
 msgstr "Task Duration"
 
 # TRANSLATION
+# LABEL/ID_TASK_DUE_DATE
+#: LABEL/ID_TASK_DUE_DATE
+msgid "Task Due Date"
+msgstr "Task Due Date"
+
+# TRANSLATION
 # LABEL/ID_TASK_ID
 #: LABEL/ID_TASK_ID
 msgid "Task ID"
@@ -25780,6 +25816,12 @@ msgstr "Task ID"
 #: LABEL/ID_TASK_INFORMATION
 msgid "[LABEL/ID_TASK_INFORMATION] Task Information"
 msgstr "Task Information"
+
+# TRANSLATION
+# LABEL/ID_TASK_INIT_DATE
+#: LABEL/ID_TASK_INIT_DATE
+msgid "Task Init Date"
+msgstr "Task Init Date"
 
 # TRANSLATION
 # LABEL/ID_TASK_INVALID_USER_NOT_ASSIGNED_TASK

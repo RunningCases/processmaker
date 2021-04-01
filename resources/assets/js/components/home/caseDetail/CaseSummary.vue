@@ -4,13 +4,6 @@
       <h6 class="card-subtitle mb-2 text-muted">{{ data.title }}</h6>
       <div class="card-text v-case-summary-card-body">
         <div>
-          <span> {{ data.label.numberCase }} </span>:<span
-            class="font-weight-bold"
-          >
-            {{ data.text.numberCase }}</span
-          >
-        </div>
-        <div>
           <span> {{ data.label.process }} </span>:<span
             class="font-weight-bold"
           >
@@ -18,8 +11,15 @@
           >
         </div>
         <div>
-          <span> {{ data.label.status }} </span>:<span class="font-weight-bold">
-            {{ data.text.status }}</span
+          <span> {{ data.label.processDescription }} </span>:<span
+            class="font-weight-bold"
+          >
+            {{ data.text.processDescription }}</span
+          >
+        </div>
+        <div>
+          <span> {{ data.label.caseNumber }} </span>:<span class="font-weight-bold">
+            {{ data.text.caseNumber }}</span
           >
         </div>
         <div>
@@ -30,10 +30,17 @@
           >
         </div>
         <div>
-          <span> {{ data.label.created }} </span>:<span
+          <span> {{ data.label.status }} </span>:<span
             class="font-weight-bold"
           >
-            {{ data.text.created }}</span
+            {{ data.text.status }}</span
+          >
+        </div>
+        <div>
+          <span> {{ data.label.create }} </span>:<span
+            class="font-weight-bold"
+          >
+            {{ data.text.create }}</span
           >
         </div>
         <div>
