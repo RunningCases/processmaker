@@ -3498,6 +3498,12 @@ msgid "The Case was deleted successfully."
 msgstr "The Case was deleted successfully."
 
 # TRANSLATION
+# LABEL/ID_CASE_UID
+#: LABEL/ID_CASE_UID
+msgid "Case Uid"
+msgstr "Case Uid"
+
+# TRANSLATION
 # LABEL/ID_CASES
 #: LABEL/ID_CASES
 msgid "HOME"
@@ -11008,6 +11014,12 @@ msgstr "Last Name"
 #: LABEL/ID_LAST_EMPLOYEE
 msgid "Last Employee"
 msgstr "Last Employee"
+
+# TRANSLATION
+# LABEL/ID_LAST_DATE
+#: LABEL/ID_LAST_DATE
+msgid "Last Update"
+msgstr "Last Update"
 
 # TRANSLATION
 # LABEL/ID_LAST_LOGIN
