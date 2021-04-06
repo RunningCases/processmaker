@@ -76,7 +76,7 @@ export default {
     ModalUnpauseCase,
     CasesFilter,
   },
-  props: ["defaultOption"],
+  props: ["defaultOption", "filters"],
   data() {
     return {
       newCase: {
@@ -98,7 +98,6 @@ export default {
         "actions",
       ],
       tableData: [],
-      filters: {},
       options: {
         filterable: false,
         headings: {
@@ -164,7 +163,7 @@ export default {
         if(this.defaultOption) {
             params = utils.getAllUrlParams(this.defaultOption);
               if (params && params.openapplicationuid) {
-                this.filters =  [
+                this.$emit("onUpdateFilters",[
                     {
                         fieldId: "caseNumber",
                         filterVar: "caseNumber",
@@ -173,7 +172,7 @@ export default {
                         value: params.openapplicationuid,
                         autoShow: false
                     }
-                ];
+                ]);
               }
         }
     },
@@ -337,7 +336,7 @@ export default {
     },
     onRemoveFilter(data) {},
     onUpdateFilters(data) {
-      this.filters = data.params;
+      this.$emit("onUpdateFilters", data.params);
       if (data.refresh) {
         this.$nextTick(() => {
           this.$refs["vueTable"].getData();
