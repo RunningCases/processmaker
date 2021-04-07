@@ -343,6 +343,12 @@ export default {
         });
       }
     },
+    /**
+     * update view in component
+     */
+    updateView(){
+      this.$refs["vueTable"].getData();
+    }
   },
 };
 </script>
