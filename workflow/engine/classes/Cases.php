@@ -5872,7 +5872,13 @@ class Cases
         foreach ($permissions as $row) {
             $userUid = $row['USR_UID'];
             $opUserRelation = $row['OP_USER_RELATION'];
-            $opTaskSource = $row['OP_TASK_SOURCE'];
+            $originTask = $row['OP_TASK_SOURCE']; // We can see the steps related to this task
+            $targetTask = $row['TAS_UID']; // We can see the steps related to this task if is the current task
+            if (!empty($targetTask)) {
+                $opTaskSource = $targetTask;
+            } else {
+                $opTaskSource = $originTask;
+            }
             $opParticipated = (int) $row['OP_PARTICIPATE'];
             $opType = $row['OP_OBJ_TYPE'];
             $opObjUid = $row['OP_OBJ_UID'];
