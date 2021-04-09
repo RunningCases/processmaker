@@ -115,9 +115,7 @@ class Delegation extends Model
      */
     public function scopeCasesDone($query, array $ids)
     {
-        $query->lastThread()->statusIds($ids);
-
-        return $query;
+        return $query->lastThread()->statusIds($ids);
     }
 
     /**
@@ -635,7 +633,7 @@ class Delegation extends Model
      */
     public function scopeTaskAssignType($query, $taskType = 'SELF_SERVICE')
     {
-        $query->join('TASK', function ($join) use ($taskType) {
+        $query->leftJoin('TASK', function ($join) use ($taskType) {
             $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
                 ->where('TASK.TAS_ASSIGN_TYPE', '=', $taskType);
         });
@@ -656,7 +654,7 @@ class Delegation extends Model
      */
     public function scopeExcludeTaskTypes($query, array $taskTypes)
     {
-        $query->join('TASK', function ($join) use ($taskTypes) {
+        $query->leftJoin('TASK', function ($join) use ($taskTypes) {
             $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
                 ->whereNotIn('TASK.TAS_TYPE', $taskTypes);
         });
@@ -675,7 +673,7 @@ class Delegation extends Model
      */
     public function scopeSpecificTaskTypes($query, array $taskTypes)
     {
-        $query->join('TASK', function ($join) use ($taskTypes) {
+        $query->leftJoin('TASK', function ($join) use ($taskTypes) {
             $join->on('APP_DELEGATION.TAS_ID', '=', 'TASK.TAS_ID')
                 ->whereIn('TASK.TAS_TYPE', $taskTypes);
         });
@@ -693,7 +691,7 @@ class Delegation extends Model
      */
     public function scopeAppStatusId($query, $statusId = 2)
     {
-        $query->join('APPLICATION', function ($join) use ($statusId) {
+        $query->leftJoin('APPLICATION', function ($join) use ($statusId) {
             $join->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER')
                 ->where('APPLICATION.APP_STATUS_ID', $statusId);
         });
@@ -711,7 +709,7 @@ class Delegation extends Model
      */
     public function scopeJoinCategoryProcess($query, $category = '')
     {
-        $query->join('PROCESS', function ($join) use ($category) {
+        $query->leftJoin('PROCESS', function ($join) use ($category) {
             $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
             if ($category) {
                 $join->where('PROCESS.PRO_CATEGORY', $category);
@@ -733,16 +731,12 @@ class Delegation extends Model
     {
         // This scope is for the join with the APP_DELEGATION table
         $query->joinApplication();
+        // Filter the status to_do
         $query->status(Application::STATUS_TODO);
-
-        // Scope for the restriction of the task that must not be searched for
-        $query->excludeTaskTypes(Task::DUMMY_TASKS);
-
-        // Scope that establish that the DEL_THREAD_STATUS must be OPEN
-        $query->threadOpen();
-
         // Scope that return the results for an specific user
         $query->userId($userId);
+        // Scope that establish that the DEL_THREAD_STATUS must be OPEN
+        $query->threadOpen();
 
         return $query;
     }
@@ -759,10 +753,8 @@ class Delegation extends Model
         // This scope is for the join with the APP_DELEGATION table
         $query->joinApplication();
         $query->status(Application::STATUS_TODO);
-
         // Scope for the restriction of the task that must not be searched for
         $query->excludeTaskTypes(Task::DUMMY_TASKS);
-
         // Scope that establish that the DEL_THREAD_STATUS must be OPEN
         $query->threadOpen();
 
@@ -918,6 +910,8 @@ class Delegation extends Model
         $query->leftJoin('APPLICATION', function ($leftJoin) {
             $leftJoin->on('APP_DELEGATION.APP_NUMBER', '=', 'APPLICATION.APP_NUMBER');
         });
+
+        return $query;
     }
 
     /**
@@ -930,8 +924,7 @@ class Delegation extends Model
      */
     public function scopeProcessInList($query, array $processes)
     {
-        $query->whereIn('APP_DELEGATION.PRO_ID', $processes);
-        return $query;
+        return $query->whereIn('APP_DELEGATION.PRO_ID', $processes);
     }
 
     /**
@@ -948,7 +941,6 @@ class Delegation extends Model
             $leftJoin->on('APP_DELAY.APP_NUMBER', '=', 'APP_DELEGATION.APP_NUMBER')
                 ->on('APP_DELEGATION.DEL_INDEX', '=', 'APP_DELAY.APP_DEL_INDEX');
         });
-
         $query->where('APP_DELAY.APP_DISABLE_ACTION_USER', '=', '0');
         $query->where('APP_DELAY.APP_TYPE', '=', $type);
 
@@ -968,10 +960,11 @@ class Delegation extends Model
         $query->leftJoin('USERS', function ($leftJoin) {
             $leftJoin->on('APP_DELAY.APP_DELEGATION_USER', '=', 'USERS.USR_UID');
         });
-
-        if ($userId) {
+        // Add filter related to the user
+        if (!empty($userId)) {
             $query->where('USERS.USR_ID', $userId);
         }
+
         return $query;
     }
 
@@ -980,21 +973,17 @@ class Delegation extends Model
      * 
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $userId
-     * @param int $taskId
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePaused($query, int $userId, int $taskId)
+    public function scopePaused($query, int $userId)
     {
+        // This scope is for the join with the APP_DELAY and considerate only the PAUSE
         $query->joinAppDelay('PAUSE');
+        // This scope is for the join with the APP_DELAY with USERS table
         $query->joinAppDelayUsers($userId);
+        // This scope is for the join with the APP_DELEGATION table
         $query->joinApplication();
-        // Exclude some specific task
-        $query->excludeTaskTypes(Task::DUMMY_TASKS);
-        // Specific task
-        if (!empty($taskId)) {
-            $query->task($taskId);
-        }
 
         return $query;
     }
@@ -1009,25 +998,24 @@ class Delegation extends Model
      */
     public function casesUnassigned(&$query, $usrUid)
     {
-        //Get the task self services related to the user
+        // Get the task self services related to the user
         $taskSelfService = TaskUser::getSelfServicePerUser($usrUid);
-        //Get the task self services value based related to the user
+        // Get the task self services value based related to the user
         $selfServiceValueBased = AppAssignSelfServiceValue::getSelfServiceCasesByEvaluatePerUser($usrUid);
-
-        //Get the cases unassigned
+        // Get the cases unassigned
         if (!empty($selfServiceValueBased)) {
             $query->where(function ($query) use ($selfServiceValueBased, $taskSelfService) {
-                //Get the cases related to the task self service
+                // Get the cases related to the task self service
                 $query->specificTasks($taskSelfService);
                 foreach ($selfServiceValueBased as $case) {
-                    //Get the cases related to the task self service value based
+                    // Get the cases related to the task self service value based
                     $query->orWhere(function ($query) use ($case) {
                         $query->case($case['APP_NUMBER'])->index($case['DEL_INDEX'])->task($case['TAS_ID']);
                     });
                 }
             });
         } else {
-            //Get the cases related to the task self service
+            // Get the cases related to the task self service
             $query->specificTasks($taskSelfService);
         }
 
@@ -1804,8 +1792,12 @@ class Delegation extends Model
     public static function getPendingThreads(int $appNumber)
     {
         $query = Delegation::query()->select([
+            'TASK.TAS_UID',
             'TASK.TAS_TITLE',
             'TASK.TAS_ASSIGN_TYPE',
+            'APP_DELEGATION.DELEGATION_ID',
+            'APP_DELEGATION.DEL_INDEX',
+            'APP_DELEGATION.DEL_TITLE',
             'APP_DELEGATION.USR_ID',
             'APP_DELEGATION.DEL_DELEGATE_DATE',
             'APP_DELEGATION.DEL_FINISH_DATE',
@@ -1834,17 +1826,21 @@ class Delegation extends Model
     public static function getLastThread(int $appNumber)
     {
         $query = Delegation::query()->select([
+            'TASK.TAS_UID',
             'TASK.TAS_TITLE',
             'TASK.TAS_ASSIGN_TYPE',
+            'APP_DELEGATION.DELEGATION_ID',
+            'APP_DELEGATION.DEL_INDEX',
+            'APP_DELEGATION.DEL_TITLE',
             'APP_DELEGATION.USR_ID',
             'APP_DELEGATION.DEL_TASK_DUE_DATE'
         ]);
         // Join with task
         $query->joinTask();
-        // Get the last thread created
-        $query->lastThread();
         // Related to the specific case number
         $query->case($appNumber);
+        // Get the last thread created
+        $query->lastThread();
         // Get the results
         $results = $query->get()->values()->toArray();
 

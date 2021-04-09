@@ -20,6 +20,14 @@ class ParticipatedTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Method set up.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
+    /**
      * Create participated cases factories
      *
      * @param string

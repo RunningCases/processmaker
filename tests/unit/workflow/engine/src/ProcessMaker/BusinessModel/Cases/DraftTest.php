@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
@@ -34,9 +35,12 @@ class DraftTest extends TestCase
     public function createDraft()
     {
         $application = factory(Application::class)->states('draft')->create();
+        $usrId = User::getId($application['APP_INIT_USER']);
         $delegation = factory(Delegation::class)->states('foreign_keys')->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
+            'USR_UID' => $application->APP_INIT_USER,
+            'USR_ID' => $usrId,
             'APP_UID' => $application->APP_UID,
             'APP_NUMBER' => $application->APP_NUMBER,
         ]);
@@ -84,6 +88,7 @@ class DraftTest extends TestCase
         // Create new Draft object
         $draft = new Draft();
         $draft->setUserId($cases['USR_ID']);
+        $draft->setUserUid($cases['USR_UID']);
         $result = $draft->getCounter();
         $this->assertTrue($result > 0);
     }

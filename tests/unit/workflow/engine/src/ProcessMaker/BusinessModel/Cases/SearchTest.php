@@ -5,6 +5,7 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Search;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
@@ -23,6 +24,7 @@ class SearchTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Application::truncate();
         Delegation::truncate();
     }
 

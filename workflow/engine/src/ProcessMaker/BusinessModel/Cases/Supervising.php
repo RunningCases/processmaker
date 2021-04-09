@@ -102,39 +102,20 @@ class Supervising extends AbstractCases
         if (!empty($processes)) {
             // Start the query for get the cases related to the user
             $query = Delegation::query()->select($this->getColumnsView());
-            $query->selectRaw(
-                'CONCAT(
-                                        \'[\',
-                                        GROUP_CONCAT(
-                                            CONCAT(
-                                                \'{"tas_id":\',
-                                                APP_DELEGATION.TAS_ID,
-                                                \', "user_id":\',
-                                                APP_DELEGATION.USR_ID,
-                                                \', "due_date":"\',
-                                                APP_DELEGATION.DEL_TASK_DUE_DATE,
-                                                \'"}\'
-                                            )
-                                        ),
-                                        \']\'
-                                  ) AS PENDING'
-            );
+            // Join with application
+            $query->joinApplication();
             // Join with process
             $query->joinProcess();
             // Join with task
             $query->joinTask();
             // Join with users
             $query->joinUser();
-            // Join with application
-            $query->joinApplication();
-            // Only cases in to_do
+            // Only cases in TO_DO
             $query->caseTodo();
             // Scope the specific array of processes supervising
             $query->processInList($processes);
-            // Only open threads
-            $query->isThreadOpen();
-            // Group by appNumber
-            $query->groupBy('APP_NUMBER');
+            // Get only the last thread
+            $query->lastThread();
             /** Apply filters */
             $this->filters($query);
             /** Apply order and pagination */
@@ -159,10 +140,13 @@ class Supervising extends AbstractCases
                 // Get total case notes
                 $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
                 // Get the detail related to the open thread
-                if (!empty($item['PENDING'])) {
-                    $result = $this->prepareTaskPending($item['PENDING']);
-                    $item['PENDING'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
+                $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
+                $information = [];
+                foreach ($taskPending as $thread) {
+                    $thread['APP_STATUS'] = $item['APP_STATUS'];
+                    $information[] = $this->threadInformation($thread);
                 }
+                $item['PENDING'] = $information;
 
                 return $item;
             });
@@ -188,7 +172,7 @@ class Supervising extends AbstractCases
         $query->caseTodo();
         // Only open threads
         $query->isThreadOpen();
-        // Only distinct APP_NUMBER
+        // For parallel threads the distinct by APP_NUMBER is important
         $query->distinct();
         // Get the list of processes of the supervisor
         $processes = ProcessUser::getProcessesOfSupervisor($this->getUserUid());
@@ -213,7 +197,7 @@ class Supervising extends AbstractCases
         $query->caseTodo();
         // Only open threads
         $query->isThreadOpen();
-        // Only distinct APP_NUMBER
+        // For parallel threads the distinct by APP_NUMBER is important
         $query->distinct();
         // Get the list of processes of the supervisor
         $processes = ProcessUser::getProcessesOfSupervisor($this->getUserUid());
