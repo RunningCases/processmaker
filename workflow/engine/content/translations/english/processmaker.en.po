@@ -14676,12 +14676,6 @@ msgid "Error Update File"
 msgstr "Error Update File"
 
 # TRANSLATION
-# LABEL/ID_MAFE_7215ee9c7d9dc229d2921a40e899ec5f
-#: LABEL/ID_MAFE_7215ee9c7d9dc229d2921a40e899ec5f
-msgid "[LABEL/ID_MAFE_7215ee9c7d9dc229d2921a40e899ec5f] "
-msgstr ""
-
-# TRANSLATION
 # LABEL/ID_MAFE_725255d7ccc0cf426c1da6abe0afe7e4
 #: LABEL/ID_MAFE_725255d7ccc0cf426c1da6abe0afe7e4
 msgid "SDV"
