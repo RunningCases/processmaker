@@ -23,6 +23,14 @@ class PausedTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Method set up.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
+    /**
      * Create paused cases factories
      *
      * @param string

@@ -230,6 +230,16 @@ export default {
             itemModel: {}
         };
     },
+    mounted() {
+        // Force to load filters when mounted the component
+        let fils= this.filters;
+        if(_.isArray(this.filters)){
+            _.forEach(fils,(o)=>{
+                o.autoShow = false;
+            });
+            this.setFilters(fils);
+        }
+  },
     watch: {
         filters: function (filters) {
             this.searchTags = [];
@@ -276,6 +286,7 @@ export default {
                     self.searchTags.push(component.id);
                     self.selected = component.id;
                     self.itemModel[component.id] = component;
+                    self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true;
                 }
             });
         },

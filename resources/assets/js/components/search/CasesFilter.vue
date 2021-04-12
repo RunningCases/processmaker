@@ -188,6 +188,16 @@ export default {
       itemModel: {},
     };
   },
+  mounted() {
+    // Force to load filters when mounted the component
+    let fils= this.filters;
+    if(_.isArray(this.filters)){
+      _.forEach(fils,(o)=>{
+        o.autoShow = false;
+      });
+      this.setFilters(fils);
+    }
+  },
   watch: {
     filters: function (filters) {
       this.searchTags = [];

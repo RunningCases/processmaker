@@ -5,6 +5,7 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Inbox;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
@@ -19,6 +20,14 @@ use Tests\TestCase;
 class InboxTest extends TestCase
 {
     use DatabaseTransactions;
+
+    /**
+     * Method set up.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
 
     /**
      * Create inbox cases factories

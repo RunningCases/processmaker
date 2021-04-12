@@ -90,13 +90,12 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
             exit();
         }
     }
-
+    $appNumber = Application::getCaseNumber($openAppUid);
     if (count($arrayDelIndex) === 1) {
         //We will to open the case: one thread
         $openCaseIE = true;
-        $defaultOption = '../cases/open?APP_UID=' . $openAppUid . '&DEL_INDEX=' . $arrayDelIndex[0] . '&action=' . $action;
+        $defaultOption = '../cases/open?APP_UID=' . $openAppUid . '&DEL_INDEX=' . $arrayDelIndex[0] . '&action=' . $action . '&openApplicationUid=' . $appNumber;
     } else {
-        $appNumber = Application::getCaseNumber($openAppUid);
         //We will to show the list: more than one thread
         $defaultOption = '../cases/casesListExtJs?action=' . $action . '&openApplicationUid=' . $appNumber;
     }

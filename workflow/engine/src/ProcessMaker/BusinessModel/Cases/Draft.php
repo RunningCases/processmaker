@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use G;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 
 class Draft extends AbstractCases
@@ -120,11 +121,13 @@ class Draft extends AbstractCases
      */
     public function getCounter()
     {
-        $query = Delegation::query()->select();
+        $query = Application::query()->select();
         // Add the initial scope for draft cases
-        $query->draft($this->getUserId());
+        $query->statusId(Application::STATUS_DRAFT);
+        // Filter the creator
+        $query->creator($this->getUserUid());
         // Return the number of rows
-        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+        return $query->count(['APPLICATION.APP_NUMBER']);
     }
 
     /**

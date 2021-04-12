@@ -66,28 +66,27 @@ class TaskUser extends Model
     {
         //Get the groups related to the user
         $groups = GroupUser::getGroups($usrUid, 'GRP_UID');
-
         // Build query
         $query = Task::query()->select('TASK.TAS_ID');
-        //Add Join with process filtering only the active process
-        $query->join('PROCESS', function ($join) {
+        // Add Join with process filtering only the active process
+        $query->leftJoin('PROCESS', function ($join) {
             $join->on('PROCESS.PRO_UID', '=', 'TASK.PRO_UID')
                 ->where('PROCESS.PRO_STATUS', 'ACTIVE');
         });
-        //Add join with with the task users
-        $query->join('TASK_USER', function ($join) {
+        // Add join with with the task users
+        $query->leftJoin('TASK_USER', function ($join) {
             $join->on('TASK.TAS_UID', '=', 'TASK_USER.TAS_UID')
-                //We not considered the Ad-hoc
+                // We not considered the Ad-hoc
                 ->where('TASK_USER.TU_TYPE', '=', 1);
         });
-        //Filtering only the task self-service
+        // Filtering only the task self-service
         $query->isSelfService();
-        //Filtering the task related to the user
+        // Filtering the task related to the user
         $query->where(function ($query) use ($usrUid, $groups) {
-            //Filtering the user assigned in the task
+            // Filtering the user assigned in the task
             $query->where('TASK_USER.USR_UID', '=', $usrUid);
             if (!empty($groups)) {
-                //Consider the group related to the user
+                // Consider the group related to the user
                 $query->orWhere(function ($query) use ($groups) {
                     $query->whereIn('TASK_USER.USR_UID', $groups);
                 });

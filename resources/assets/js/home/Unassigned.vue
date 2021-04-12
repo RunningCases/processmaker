@@ -61,7 +61,7 @@ import api from "./../api/index";
 import utils from "./../utils/utils";
 
 export default {
-  name: "Paused",
+  name: "Unassigned",
   components: {
     HeaderCounter,
     ButtonFleft,
@@ -70,7 +70,7 @@ export default {
     ModalClaimCase,
     CasesFilter,
   },
-  props: ["defaultOption"],
+  props: ["defaultOption", "filters"],
   data() {
     return {
       newCase: {
@@ -92,9 +92,9 @@ export default {
         "actions",
       ],
       tableData: [],
-      filters: {},
       options: {
         filterable: false,
+        sendInitialRequest: false,
         headings: {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
@@ -131,12 +131,8 @@ export default {
       }
     };
   },
-  created() {
-    this.initFilters();
-  },
   mounted() {
-    // force to open case
-    this.openDefaultCase();
+    this.initFilters();
   },
   watch: {},
   computed: {
@@ -152,57 +148,31 @@ export default {
   methods: {
     /**
      * Initialize filters
+     * updates the filters if there is an appUid parameter
      */
     initFilters() {
-       let params;
+       let params,
+       filter = {refresh: true};
         if(this.defaultOption) {
             params = utils.getAllUrlParams(this.defaultOption);
-              if (params && params.openapplicationuid) {
-                this.filters =  [
-                    {
-                        fieldId: "caseNumber",
-                        filterVar: "caseNumber",
-                        label: "",
-                        options:[],
-                        value: params.openapplicationuid,
-                        autoShow: false
-                    }
-                ];
-              }
-        }
-    },
-    /**
-     * Open a case when the component was mounted
-     */
-    openDefaultCase() {
-        let params;
-        if(this.defaultOption) {
-            params = utils.getAllUrlParams(this.defaultOption);
-            if (params && params.app_uid && params.del_index) {
-                this.openCase({
-                    APP_UID: params.app_uid,
-                    DEL_INDEX: params.del_index
-                });
-                this.$emit("cleanDefaultOption");
-            }
-            //force to search in the parallel tasks
             if (params && params.openapplicationuid) {
-                this.onUpdateFilters({
-                        params: [
-                            {
-                                fieldId: "caseNumber",
-                                filterVar: "caseNumber",
-                                label: "",
-                                options:[],
-                                value: params.openapplicationuid,
-                                autoShow: false
-                            }
-                        ],
-                        refresh: false
-                });
-                this.$emit("cleanDefaultOption");                
+                filter = {
+                    params: [
+                        {
+                            fieldId: "caseNumber",
+                            filterVar: "caseNumber",
+                            label: "",
+                            options:[],
+                            value: params.openapplicationuid,
+                            autoShow: false
+                        }
+                    ],
+                    refresh: true
+                };
             }
+            this.$emit("cleanDefaultOption");
         }
+        this.onUpdateFilters(filter);
     },
     /**
      * On row click event handler
@@ -237,7 +207,7 @@ export default {
         paged: paged,
       };
 
-      _.forIn(this.filters, function (item, key) {
+      _.forIn(this.$parent.filters, function (item, key) {
         filters[item.filterVar] = item.value;
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
@@ -335,13 +305,21 @@ export default {
     },
     onRemoveFilter(data) {},
     onUpdateFilters(data) {
-      this.filters = data.params;
+      if (data.params) {
+        this.$emit("onUpdateFilters", data.params);
+      }
       if (data.refresh) {
         this.$nextTick(() => {
           this.$refs["vueTable"].getData();
         });
       }
     },
+    /**
+     * update view in component
+     */
+    updateView(){
+      this.$refs["vueTable"].getData();
+    }
   },
 };
 </script>
