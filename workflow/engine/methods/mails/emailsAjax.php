@@ -113,7 +113,7 @@ switch ($req) {
                 $criteria->addDescendingOrderByColumn($sort);
             }
         } else {
-            $oCriteria->addDescendingOrderByColumn(AppMessagePeer::APP_MSG_ID);
+            $oCriteria->addDescendingOrderByColumn(AppMessagePeer::APP_MSG_DATE);
         }
         if (!empty($limit)) {
             $criteria->setLimit($limit);
