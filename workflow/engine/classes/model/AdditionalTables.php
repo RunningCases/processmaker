@@ -452,7 +452,7 @@ class AdditionalTables extends BaseAdditionalTables
         if ($filter != '' && is_string($filter)) {
             $stringOr = '';
             $closure = '';
-            $types = array('INTEGER', 'BIGINT', 'SMALLINT', 'TINYINT', 'DECIMAL', 'DOUBLE', 'FLOAT', 'REAL');
+            $types = ['INTEGER', 'BIGINT', 'SMALLINT', 'TINYINT', 'DECIMAL', 'DOUBLE', 'FLOAT', 'REAL', 'BOOLEAN'];
             foreach ($aData['FIELDS'] as $aField) {
                 if (($appUid == false && $aField['FLD_NAME'] != 'APP_UID') || ($appUid == true)) {
                     if (in_array($aField['FLD_TYPE'], $types)) {
