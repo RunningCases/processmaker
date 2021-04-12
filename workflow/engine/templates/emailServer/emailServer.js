@@ -637,11 +637,9 @@ emailServer.application = {
         var txtPort = new Ext.form.NumberField({
             id: "txtPort",
             name: "txtPort",
-
             fieldLabel: _("PORT_DEFAULT"), //Port (default 25)
-
-            anchor: "36%",
-            maxLength: 3,
+            anchor: "40%",
+            maxLength: 4,
             emptyText: null
         });
 
@@ -655,11 +653,9 @@ emailServer.application = {
         var txtIncomingPort = new Ext.form.NumberField({
             id: "txtIncomingPort",
             name: "txtIncomingPort",
-
             fieldLabel: _("INCOMING_PORT_DEFAULT"), //Port (default 993)
-
-            anchor: "36%",
-            maxLength: 3,
+            anchor: "40%",
+            maxLength: 4,
             emptyText: null
         });
 
