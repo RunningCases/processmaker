@@ -31,22 +31,22 @@ Ext.onReady(function(){
     );
     var columnRenderer = function(data, metadata, record, rowIndex,columnIndex, store) {
         if(metadata.id == PMExt.emailConst.taskColumn.name){
-            if((PMExt.emailConst.appMsgTypeWithoutTask.includes(record.data.APP_MSG_TYPE)) || (PMExt.emailConst.appMsgTypeWithConditionalTask.includes(record.data.APP_MSG_TYPE) && record.data.DEL_INDEX == 0)){
+            if (record.data.TAS_ID == '0') {
                 data = PMExt.emailConst.taskColumn.defaultValue;
             }
         }
         if(metadata.id == PMExt.emailConst.caseColumn.name){
-            if(PMExt.emailConst.appMsgTypeWithoutCase.includes(record.data.APP_MSG_TYPE)){
+            if (record.data.APP_NUMBER == '0') {
                 data = PMExt.emailConst.caseColumn.defaultValue;
             }
         }
-        if(metadata.id == PMExt.emailConst.processColumn.name){
-            if(PMExt.emailConst.appMsgTypeWithoutProcess.includes(record.data.APP_MSG_TYPE)){
+        if(metadata.id == PMExt.emailConst.processColumn.name) {
+            if (record.data.PRO_ID == '0') {
                 data = PMExt.emailConst.processColumn.defaultValue;
             }
         }
         if(metadata.id == PMExt.emailConst.numberColumn.name){
-            if(PMExt.emailConst.appMsgTypeWithoutNumber.includes(record.data.APP_MSG_TYPE)){
+            if (record.data.APP_NUMBER == '0') {
                 data = PMExt.emailConst.numberColumn.defaultValue;
             }
         }
@@ -288,8 +288,8 @@ Ext.onReady(function(){
             {name : 'APP_MSG_UID'},
             {name : 'APP_UID'},
             {name : 'DEL_INDEX'},
-            {name : 'PRO_UID'},
-            {name : 'TAS_UID'},
+            {name : 'PRO_ID'},
+            {name : 'TAS_ID'},
             {name : 'APP_NUMBER'},
             {name : 'PRO_TITLE'},
             {name : 'TAS_TITLE'},
