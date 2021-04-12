@@ -79,8 +79,10 @@ class Paused extends AbstractCases
         $query = Delegation::query()->select($this->getColumnsView());
         // Join with process
         $query->joinProcess();
+        // Join with task
+        $query->JoinTask();
         // Scope that set the paused cases
-        $query->paused($this->getUserId(), $this->getTaskId());
+        $query->paused($this->getUserId());
         /** Apply filters */
         $this->filters($query);
         /** Apply order and pagination */
@@ -121,7 +123,7 @@ class Paused extends AbstractCases
     {
         $query = Delegation::query()->select();
         // Scope that set the paused cases
-        $query->paused($this->getUserId(), $this->getTaskId(), $this->getCaseNumber());
+        $query->paused($this->getUserId());
         // Return the number of rows
         return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
@@ -135,7 +137,7 @@ class Paused extends AbstractCases
     {
         $query = Delegation::query()->select();
         // Scope that set the paused cases
-        $query->paused($this->getUserId(), $this->getTaskId(), $this->getCaseNumber());
+        $query->paused($this->getUserId());
         // Apply filters
         $this->filters($query);
         // Return the number of rows

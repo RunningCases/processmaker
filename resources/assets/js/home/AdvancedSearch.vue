@@ -45,6 +45,9 @@
             <div slot="case_title" slot-scope="props">
                 {{ props.row.CASE_TITLE }}
             </div>
+            <div slot="case_status" slot-scope="props">
+                {{ props.row.APP_STATUS }}
+            </div>
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
             </div>
@@ -121,6 +124,7 @@ export default {
             columns: [
                 "case_number",
                 "case_title",
+                "status",
                 "process_name",
                 "task",
                 "current_user",
@@ -136,6 +140,7 @@ export default {
                     info: "",
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                     case_title: this.$i18n.t("ID_CASE_TITLE"),
+                    status: this.$i18n.t("ID_STATUS"),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     task: this.$i18n.t("ID_TASK"),
                     current_user: this.$i18n.t("ID_CURRENT_USER"),
@@ -242,6 +247,7 @@ export default {
                     DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
                     APP_UID: v.APP_UID,
+                    STATUS: this.$i18n.t("ID_CASES_STATUS_"+ v.APP_STATUS.toUpperCase()),
                     PRO_UID: v.PRO_UID,
                     TAS_UID: v.TAS_UID,
                     MESSAGE_COLOR: v.CASE_NOTES_COUNT > 0 ? "black":"silver"

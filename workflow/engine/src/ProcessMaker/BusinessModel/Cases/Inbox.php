@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use G;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 
 class Inbox extends AbstractCases
@@ -82,6 +83,8 @@ class Inbox extends AbstractCases
         $query->joinProcess();
         // Join with users
         $query->joinUser();
+        // Join with task
+        $query->JoinTask();
         // Join with application for add the initial scope for TO_DO cases
         $query->inbox($this->getUserId());
         /** Apply filters */

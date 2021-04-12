@@ -161,6 +161,7 @@ export default {
             } else {
                 this.page = "MyCases";
             }
+            this.lastPage = this.page;
         },
         /**
          * Do a mapping of vue view for menus
@@ -212,9 +213,12 @@ export default {
                 this.pageId = null;
                 this.pageUri = item.item.href;
                 this.page = item.item.id || "MyCases";
-                if (this.$refs["component"] && this.$refs["component"].updateView) {
+                if (this.page === this.lastPage 
+                    && this.$refs["component"] 
+                    && this.$refs["component"].updateView) {
                     this.$refs["component"].updateView();
                 }
+                this.lastPage = this.page;
             }
         },
         setCounter() {

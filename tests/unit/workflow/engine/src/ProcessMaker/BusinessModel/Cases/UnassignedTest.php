@@ -25,6 +25,14 @@ class UnassignedTest extends TestCase
     use DatabaseTransactions;
 
     /**
+     * Method set up.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
+    /**
      * Create unassigned cases factories
      *
      * @param int $relation, [1 = user assigned, 2 = group assigned]
