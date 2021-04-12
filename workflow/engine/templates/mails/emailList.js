@@ -306,7 +306,7 @@ Ext.onReady(function(){
         ]
       })
     });
-    store.setDefaultSort('APP_MSG_ID', 'desc');
+    store.setDefaultSort('APP_MSG_DATE', 'desc');
 
     var expander = new Ext.ux.grid.RowExpander({
         tpl : new Ext.Template(
@@ -345,7 +345,7 @@ Ext.onReady(function(){
             {id: "PRO_TITLE", header: _('ID_PROCESS'), dataIndex: 'PRO_TITLE', width: 100, hidden: false,renderer: columnRenderer, sortable: false},
             {id: "TAS_TITLE", header: _('ID_TASK'), dataIndex: 'TAS_TITLE', width: 100, hidden: false,renderer: columnRenderer, sortable: false},
             {id: "APP_MSG_TYPE", header: _('ID_TYPE'), dataIndex: 'APP_MSG_TYPE', width: 50,  hidden: false,renderer: columnRenderer, sortable: true},
-            {id: "APP_MSG_DATE", header: _('ID_DATE_LABEL'), dataIndex: 'APP_MSG_DATE', width: 80, hidden: false, renderer: columnRenderer, sortable: false},
+            {id: "APP_MSG_DATE", header: _('ID_DATE_LABEL'), dataIndex: 'APP_MSG_DATE', width: 80, hidden: false, renderer: columnRenderer, sortable: true},
             {id: "APP_MSG_SUBJECT", header: _('ID_SUBJECT'), dataIndex: 'APP_MSG_SUBJECT', width: 80, hidden: false, renderer: columnRenderer, sortable: false},
             {id: "APP_MSG_FROM", header: _('ID_FROM'), dataIndex: 'APP_MSG_FROM', width: 80, hidden: false,renderer: columnRenderer, sortable: true},
             {id: "APP_MSG_TO", header: _('ID_TO'), dataIndex: 'APP_MSG_TO', width: 80, hidden: false,renderer: columnRenderer, sortable: true},
