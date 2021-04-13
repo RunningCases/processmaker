@@ -24600,6 +24600,12 @@ msgid "Server Address"
 msgstr "Server Address"
 
 # TRANSLATION
+# LABEL/ID_SERVER_API
+#: LABEL/ID_SERVER_API
+msgid "Server API"
+msgstr "Server API"
+
+# TRANSLATION
 # LABEL/ID_SERVER_COMMUNICATION_ERROR
 #: LABEL/ID_SERVER_COMMUNICATION_ERROR
 msgid "Failed to connect to the server"
