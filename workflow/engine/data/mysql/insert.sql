@@ -57718,7 +57718,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CURRENT_VERSION','en','Current version','2014-09-18') ,
 ( 'LABEL','ID_CURRENT_WORKSPACE','en','Current Workspace','2014-01-15') ,
 ( 'LABEL','ID_CUSTOM_CASES_LISTS','en','Custom Case List','2017-02-21') ,
-( 'LABEL','ID_CUSTOM_INFORMATION','en','Custom Case List','2021-03-20') ,
+( 'LABEL','ID_CUSTOM_INFORMATION','en','Custom Information','2021-03-20') ,
 ( 'LABEL','ID_CUSTOM_TRIGGER','en','Custom Trigger','2014-01-15') ,
 ( 'LABEL','ID_CUSTOM_TRIGGER_DESCRIPTION','en','Custom Trigger','2014-01-15') ,
 ( 'LABEL','ID_CUSTOM_SCHEDULE_SETTINGS','en','Custom schedule settings','2014-01-15') ,
