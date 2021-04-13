@@ -274,45 +274,10 @@ class AppProxy extends HttpProxyController
         // Apply mask
         $createDateLabel = applyMaskDateEnvironment($appFields['CREATE_DATE'],'', false);
         $updateDateLabel = applyMaskDateEnvironment($appFields['UPDATE_DATE'],'', false);
-        // Get summary
-        $i = 0;
-        $summary = [
-            $i++ => [
-                'id' => 'TITLE',
-                'label' => G::LoadTranslation('ID_SUMMARY'),
-                'value' => '',
-            ],
-            $i++ => [ // Process
-                'id' => 'PRO_TITLE',
-                'label' => G::LoadTranslation('ID_PROCESS_NAME') . ': ',
-                'value' => $processInfo['PRO_TITLE'],
-            ],
-            $i++ => [ // Process description
-                'id' => 'PRO_DESCRIPTION',
-                'label' => G::LoadTranslation('ID_PRO_DESCRIPTION') . ': ',
-                'value' => $processInfo['PRO_DESCRIPTION'],
-            ],
-            $i++ => [ // Case Number
-                'id' => 'APP_NUMBER',
-                'label' => G::LoadTranslation('ID_CASE_NUMBER') . ': ',
-                'value' => $appFields['APP_NUMBER'],
-            ],
-            $i++ => [ // Case Title
-                'id' => 'CASE_TITLE',
-                'label' => G::LoadTranslation('ID_CASE_TITLE') . ': ',
-                'value' => $appFields['TITLE'],
-            ],
-            $i++ => [ // Case Status
-                'id' => 'CASE_STATUS',
-                'label' => G::LoadTranslation('ID_CASE_STATUS') . ': ',
-                'value' => $appFields['STATUS'],
-            ],
-            $i++ => [ // Create Date
-                'id' => 'CREATE_DATE',
-                'label' => G::LoadTranslation('ID_CREATE_DATE') . ': ',
-                'value' => DateTime::convertUtcToTimeZone($createDateLabel),
-            ],
-        ];
+        $delegateDateLabel = applyMaskDateEnvironment($appFields['DEL_DELEGATE_DATE'],'', false);
+        // Get the duration
+        $endDate = !empty($appFields['APP_FINISH_DATE']) ? $appFields['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
+        $threadDuration = getDiffBetweenDates($appFields['DEL_DELEGATE_DATE'], $endDate);
         // Get case properties
         $i = 0;
         $caseProperties = [
@@ -373,9 +338,13 @@ class AppProxy extends HttpProxyController
         ];
         foreach ($threads as $row) {
             $j = 0;
-            $delegateDateLabel = applyMaskDateEnvironment($appFields['DEL_DELEGATE_DATE'],'', false);
-            $initDateLabel = applyMaskDateEnvironment($appFields['DEL_INIT_DATE'],'', false);
-            $dueDateLabel = applyMaskDateEnvironment($appFields['DEL_TASK_DUE_DATE'],'', false);
+            $delegateDateLabel = applyMaskDateEnvironment($row['DEL_DELEGATE_DATE'],'', false);
+            $initDateLabel = applyMaskDateEnvironment($row['DEL_INIT_DATE'],'', false);
+            $dueDateLabel = applyMaskDateEnvironment($row['DEL_TASK_DUE_DATE'],'', false);
+            // Get thread duration
+            $endDate = !empty($appFields['APP_FINISH_DATE']) ? $appFields['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
+            $threadDuration = getDiffBetweenDates($appFields['DEL_DELEGATE_DATE'], $endDate);
+            // Get user information
             if (!empty($row['USR_ID'])) {
                 $userInfo = User::getInformation($row['USR_ID']);
                 $currentUser = $userInfo['usr_lastname'] .' '. $userInfo['usr_firstname'];
@@ -411,6 +380,55 @@ class AppProxy extends HttpProxyController
             ];
             $taskProperties[++$i] = $threadProperties;
         }
+        // Get summary
+        $i = 0;
+        $summary = [
+            $i++ => [
+                'id' => 'TITLE',
+                'label' => G::LoadTranslation('ID_SUMMARY'),
+                'value' => '',
+            ],
+            $i++ => [ // Process
+                'id' => 'PRO_TITLE',
+                'label' => G::LoadTranslation('ID_PROCESS_NAME') . ': ',
+                'value' => $processInfo['PRO_TITLE'],
+            ],
+            $i++ => [ // Process description
+                'id' => 'PRO_DESCRIPTION',
+                'label' => G::LoadTranslation('ID_PRO_DESCRIPTION') . ': ',
+                'value' => $processInfo['PRO_DESCRIPTION'],
+            ],
+            $i++ => [ // Case Number
+                'id' => 'APP_NUMBER',
+                'label' => G::LoadTranslation('ID_CASE_NUMBER') . ': ',
+                'value' => $appFields['APP_NUMBER'],
+            ],
+            $i++ => [ // Case Title
+                'id' => 'CASE_TITLE',
+                'label' => G::LoadTranslation('ID_CASE_TITLE') . ': ',
+                'value' => $appFields['TITLE'],
+            ],
+            $i++ => [ // Case Status
+                'id' => 'CASE_STATUS',
+                'label' => G::LoadTranslation('ID_CASE_STATUS') . ': ',
+                'value' => $appFields['STATUS'],
+            ],
+            $i++ => [ // Create Date
+                'id' => 'CREATE_DATE',
+                'label' => G::LoadTranslation('ID_CREATE_DATE') . ': ',
+                'value' => DateTime::convertUtcToTimeZone($createDateLabel),
+            ],
+            $i++ => [ // Delegate Date
+                'id' => 'DEL_DELEGATE_DATE',
+                'label' => G::LoadTranslation('DEL_DELEGATE_DATE') . ': ',
+                'value' => DateTime::convertUtcToTimeZone($delegateDateLabel),
+            ],
+            $i++ => [ // Duration
+                'id' => 'DURATION',
+                'label' => G::LoadTranslation('ID_DURATION') . ': ',
+                'value' => $threadDuration,
+            ]
+        ];
         // Prepare the result
         $data = [];
         $data['summary'] = $summary;
