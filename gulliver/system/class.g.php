@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
+use PHPMailer\PHPMailer\PHPMailer;
 use ProcessMaker\Core\System;
 use ProcessMaker\Log\AuditLog;
 use ProcessMaker\Plugins\PluginRegistry;
