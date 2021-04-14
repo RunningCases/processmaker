@@ -265,24 +265,11 @@ class Ajax
                 break;
         }
 
-        if ($_SESSION["TASK"] != "" && $_SESSION["TASK"] != "-1") {
-            $task = new Task();
-            $tasksInParallel = explode('|', $_SESSION['TASK']);
-            $tasksInParallel = array_filter($tasksInParallel, function ($value) {
-                return !empty($value);
-            });
-            $nTasksInParallel = count($tasksInParallel);
-
-            if ($nTasksInParallel > 1) {
-                $taskProperties = $task->load($tasksInParallel[$nTasksInParallel - 1]);
-            } else {
-                $taskProperties = $task->load($_SESSION['TASK']);
-            }
-
-            if ($taskProperties['TAS_TYPE'] == 'ADHOC') {
-                $options[] = ['text' => G::LoadTranslation('ID_ADHOC_ASSIGNMENT'), 'fn' => 'adhocAssignmentUsers'];
-            }
-        }
+        /**
+         * The menu ID_ADHOC_ASSIGNMENT was deprecated because it's possible to reassign a case from the options reassign
+         * 
+         * @link https://wiki.processmaker.com/3.6/Cases/Actions#Reassign_2
+         */
 
         return $options;
     }
