@@ -145,13 +145,9 @@ class RBAC
                 'DEL' => ['PM_SETUP'],
                 'LST' => ['PM_SETUP'],
                 'TEST' => ['PM_SETUP'],
-                'createAuthUrl' => ['PM_SETUP'],
-                'createAuthUrlOffice365' => ['PM_SETUP']
+                'createAuthUrl' => ['PM_SETUP']
             ],
             'emailServerGmailOAuth.php' => [
-                'code' => ['PM_SETUP']
-            ],
-            'emailServerOffice365OAuth.php' => [
                 'code' => ['PM_SETUP']
             ],
             'processes_GetFile.php' => [
