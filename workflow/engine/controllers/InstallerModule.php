@@ -13,8 +13,8 @@ include PATH_LANGUAGECONT . "translation." . SYS_LANG;
 class InstallerModule extends Controller
 {
     const MYSQL_VERSION_MAXIMUM_SUPPORTED = "5.7";
-    const PHP_VERSION_MINIMUM_SUPPORTED = "7.1";
-    const PHP_VERSION_NOT_SUPPORTED = "7.4";
+    const PHP_VERSION_MINIMUM_SUPPORTED = "7.3";
+    const PHP_VERSION_NOT_SUPPORTED = "8";
     public $path_config;
     public $path_languages;
     public $path_plugins;
@@ -618,10 +618,14 @@ class InstallerModule extends Controller
         try {
             $host = $host === 'localhost' || $host === '127.0.0.1' ? 'localhost' : '%';
 
-            $query = "GRANT ALL PRIVILEGES ON `$psDatabase`.* TO $psUser@'$host' IDENTIFIED BY '$psPassword' WITH GRANT OPTION";
+            $query = "CREATE USER '$psUser'@'$host' IDENTIFIED WITH mysql_native_password BY '$psPassword'";
             DB::connection(self::CONNECTION_INSTALL)
                 ->statement($query);
 
+            $query = "GRANT ALL PRIVILEGES ON `$psDatabase`.* TO '$psUser'@'$host' WITH GRANT OPTION";
+            DB::connection(self::CONNECTION_INSTALL)
+                ->statement($query);
+            
             $this->installLog($query);
 
         } catch (QueryException $e) {
