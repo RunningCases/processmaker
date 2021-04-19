@@ -61015,7 +61015,6 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SENT_BY','en','Sent By','2014-01-15') ,
 ( 'LABEL','ID_SERVER','en','Server','2014-01-15') ,
 ( 'LABEL','ID_SERVER_ADDRESS','en','Server Address','2015-09-14') ,
-( 'LABEL','ID_SERVER_API','en','Server API','2021-03-29') ,
 ( 'LABEL','ID_SERVER_COMMUNICATION_ERROR','en','Failed to connect to the server','2014-01-15') ,
 ( 'LABEL','ID_SERVER_ERROR','en','Server error','2014-09-18') ,
 ( 'LABEL','ID_SERVER_IP','en','Server IP Address','2014-01-15') ,
