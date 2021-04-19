@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Log;
-use PHPMailer\PHPMailer\OAuth;
-use PHPMailer\PHPMailer\PHPMailer;
 use ProcessMaker\Core\System;
 
 /**
@@ -521,18 +519,18 @@ class SpoolRun
                     case 'PHPMAILER':
                     case 'IMAP':
                     case 'GMAILAPI':
-                    case 'OFFICE365API':
-                        $phpMailer = new PHPMailer();
                         switch ($this->config['MESS_ENGINE']) {
                             case 'MAIL':
+                                $phpMailer = new PHPMailer();
                                 $phpMailer->Mailer = 'mail';
                                 break;
                             case 'IMAP':
                             case 'PHPMAILER':
+                                $phpMailer = new PHPMailer(true);
                                 $phpMailer->Mailer = 'smtp';
                                 break;
                             case 'GMAILAPI':
-                            case 'OFFICE365API':
+                                $phpMailer = new PHPMailerOAuth();
                                 $phpMailer->AuthType = 'XOAUTH2';
                                 $phpMailer->isSMTP();
                                 break;
@@ -546,7 +544,6 @@ class SpoolRun
                             case 'IMAP':
                             case 'PHPMAILER':
                             case 'GMAILAPI':
-                            case 'OFFICE365API':
                                 //Posible Options for SMTPSecure are: "", "ssl" or "tls"
                                 if (isset($this->config['SMTPSecure']) && preg_match('/^(ssl|tls)$/', $this->config['SMTPSecure'])) {
                                     $phpMailer->SMTPSecure = $this->config['SMTPSecure'];
@@ -561,42 +558,14 @@ class SpoolRun
                             $phpMailer->Encoding = "8bit";
                             $phpMailer->Host = $this->config['MESS_SERVER'];
                             $phpMailer->Port = $this->config['MESS_PORT'];
-                            if (!in_array($this->config['MESS_ENGINE'], ['GMAILAPI', 'OFFICE365API'])) {
+                            if ($this->config['MESS_ENGINE'] !== 'GMAILAPI') {
                                 $phpMailer->Username = $this->config['MESS_ACCOUNT'];
                                 $phpMailer->Password = $this->config['MESS_PASSWORD'];
                             } else {
-                                // Get provider
-                                switch ($this->config['MESS_ENGINE']) {
-                                    case 'GMAILAPI':
-                                        $providerClass = '\League\OAuth2\Client\Provider\Google';
-                                        break;
-                                    case 'OFFICE365API':
-                                        $providerClass = '\Stevenmaguire\OAuth2\Client\Provider\Microsoft';
-                                        break;
-                                    default:
-                                        throw new Exception('Only Google and Microsoft OAuth2 providers are currently supported.');
-                                        break;
-                                }
-                                $provider = new $providerClass(
-                                    [
-                                        'clientId' => $this->config['OAUTH_CLIENT_ID'],
-                                        'clientSecret' => $this->config['OAUTH_CLIENT_SECRET'],
-                                        'accessType' => 'offline'
-                                    ]
-                                );
-
-                                // Set OAuth to use
-                                $phpMailer->setOAuth(
-                                    new OAuth(
-                                        [
-                                            'provider' => $provider,
-                                            'clientId' => $this->config['OAUTH_CLIENT_ID'],
-                                            'clientSecret' => $this->config['OAUTH_CLIENT_SECRET'],
-                                            'refreshToken' => $this->config['OAUTH_REFRESH_TOKEN'],
-                                            'userName' => $this->config['MESS_ACCOUNT']
-                                        ]
-                                    )
-                                );
+                                $phpMailer->oauthUserEmail = $this->config['MESS_ACCOUNT'];
+                                $phpMailer->oauthClientId = $this->config['OAUTH_CLIENT_ID'];
+                                $phpMailer->oauthClientSecret = $this->config['OAUTH_CLIENT_SECRET'];
+                                $phpMailer->oauthRefreshToken = $this->config['OAUTH_REFRESH_TOKEN'];
                             }
 
                             //From
