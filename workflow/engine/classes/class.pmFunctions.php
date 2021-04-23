@@ -1,38 +1,11 @@
 <?php
-/**
- * class.pmFunctions.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- */
-////////////////////////////////////////////////////
-// PM Functions
-//
-// Copyright (C) 2007 COLOSA
-//
-// License: LGPL, see LICENSE
-////////////////////////////////////////////////////
+
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\ElementTranslation;
+use ProcessMaker\Validation\SqlBlacklist;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -241,101 +214,60 @@ function literalDate ($date, $lang = 'en')
  * @throws SQLException
  *
  */
-function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter = array())
+function executeQuery($sqlStatement, $dbConnectionUID = 'workflow', $parameters = [])
 {
     // This means the DBConnectionUID is not loaded yet, so we'll force DbConnections::loadAdditionalConnections
-    if (is_null(config('database.connections.' . $DBConnectionUID . '.driver'))) {
+    if (is_null(config('database.connections.' . $dbConnectionUID . '.driver'))) {
         // Force to load the external connections
         DbConnections::loadAdditionalConnections();
     }
 
-    if (config('database.connections.' . $DBConnectionUID . '.driver') !== 'oracle') {
+    if (config('database.connections.' . $dbConnectionUID . '.driver') !== 'oracle') {
         // If the connections drivers are "mysql", "pgsql" or "sqlsrv" we're using Laravel
-        $con = DB::connection($DBConnectionUID);
+        $con = DB::connection($dbConnectionUID);
         $con->beginTransaction();
     } else {
         // If the connection driver is "oracle" we are using the native oci8 functions
-        $con = Propel::getConnection($DBConnectionUID);
+        $con = Propel::getConnection($dbConnectionUID);
         $con->begin();
     }
-
-    $blackList = System::getQueryBlackList();
-    $listQueries = explode('|', isset($blackList['queries']) ? $blackList['queries'] : '');
-    $aListAllTables = explode(
-        '|',
-        ((isset($blackList['tables']))? $blackList['tables'] : '') .
-        ((isset($blackList['pmtables']))? $blackList['pmtables'] : '')
-    );
-    $parseSqlStm = new PHPSQLParser($SqlStatement);
+    
     try {
-        //Parsing queries and check the blacklist
-        foreach ($parseSqlStm as $key => $value) {
-            if($key === 'parsed'){
-                $aParseSqlStm = $value;
-                continue;
-            }
-        }
-        $nameOfTable = '';
-        $arrayOfTables = array();
-        foreach ($aParseSqlStm as $key => $value) {
-            if(in_array($key, $listQueries)){
-                if(isset($value['table'])){
-                    $nameOfTable = $value['table'];
-                } else {
-                    foreach ($value as $valueTab) {
-                        if(is_array($valueTab)){
-                            $arrayOfTables = $valueTab;
-                        } else {
-                            $nameOfTable = $valueTab;
-                        }
-                    }
-                }
-                if(isset($nameOfTable) && $nameOfTable !== ''){
-                    if(in_array($nameOfTable,$aListAllTables)){
-                        G::SendTemporalMessage( G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)), 'error', 'labels' );
-                        throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)));
-                    }
-                }
-                if (is_array($arrayOfTables)){
-                    foreach ($arrayOfTables as $row){
-                        if(!empty($row)){
-                            if(in_array($row, $aListAllTables)){
-                                G::SendTemporalMessage(G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)), 'error', 'labels' );
-                                throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)));
-                            }
-                        }
-                    }
-                }
-            }
+        try {
+            (new SqlBlacklist($sqlStatement))->validate();
+        } catch (Exception $e) {
+            G::SendTemporalMessage($e->getMessage(), 'error', 'labels');
+            throw new SQLException($e->getMessage());
         }
 
-        $statement = trim( $SqlStatement );
-        $statement = str_replace( '(', '', $statement );
+        $statement = trim($sqlStatement);
+        $statement = str_replace('(', '', $statement);
 
         $result = false;
-
         // Check to see if we're not running oracle, which is usually a safe default
-        if (config('database.connections.' . $DBConnectionUID . '.driver') != 'oracle') {
+        if (config('database.connections.' . $dbConnectionUID . '.driver') != 'oracle') {
             try {
                 switch (true) {
-                    case preg_match( "/^(SELECT|EXECUTE|EXEC|SHOW|DESCRIBE|EXPLAIN|BEGIN)\s/i", $statement ):
-                        $result = $con->select( $SqlStatement );
+                    case preg_match("/^(SELECT|EXECUTE|EXEC|SHOW|DESCRIBE|EXPLAIN|BEGIN)\s/i", $statement):
+                        $result = $con->select($sqlStatement);
                         // Convert to 1 index key array of array results
-                        $result = collect($result)->map(function($x) { return (array)$x; })->toArray();
+                        $result = collect($result)->map(function ($x) {
+                                return (array) $x;
+                            })->toArray();
                         array_unshift($result, []);
                         unset($result[0]);
                         break;
-                    case preg_match( "/^INSERT\s/i", $statement ):
-                        $result = $con->insert( $SqlStatement );
+                    case preg_match("/^INSERT\s/i", $statement):
+                        $result = $con->insert($sqlStatement);
                         break;
-                    case preg_match( "/^REPLACE\s/i", $statement ):
-                        $result = $con->update( $SqlStatement );
+                    case preg_match("/^REPLACE\s/i", $statement):
+                        $result = $con->update($sqlStatement);
                         break;
-                    case preg_match( "/^UPDATE\s/i", $statement ):
-                        $result = $con->update( $SqlStatement );
+                    case preg_match("/^UPDATE\s/i", $statement):
+                        $result = $con->update($sqlStatement);
                         break;
-                    case preg_match( "/^DELETE\s/i", $statement ):
-                        $result = $con->delete( $SqlStatement );
+                    case preg_match("/^DELETE\s/i", $statement):
+                        $result = $con->delete($sqlStatement);
                         break;
                 }
                 $con->commit();
@@ -347,21 +279,19 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
             $dataEncode = $con->getDSN();
 
             if (isset($dataEncode["encoding"]) && $dataEncode["encoding"] != "") {
-                $result = executeQueryOci($SqlStatement, $con, $aParameter, $dataEncode["encoding"]);
+                $result = executeQueryOci($sqlStatement, $con, $parameters, $dataEncode["encoding"]);
             } else {
-                $result = executeQueryOci($SqlStatement, $con, $aParameter);
+                $result = executeQueryOci($sqlStatement, $con, $parameters);
             }
         }
-        //Logger
         $message = 'Sql Execution';
         $context = [
             'action' => 'execute-query',
-            'sql' => $SqlStatement
+            'sql' => $sqlStatement
         ];
         Log::channel(':sqlExecution')->info($message, Bootstrap::context($context));
         return $result;
     } catch (SQLException $sqle) {
-        //Logger
         $message = 'Sql Execution';
         $context = [
             'action' => 'execute-query',

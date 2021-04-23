@@ -1253,6 +1253,7 @@ class System
      * @access public
      * @param string $globalIniFile
      * @return array of execute query Black list
+     * @deprecated since version 3.6.4
      */
     public static function getQueryBlackList($globalIniFile = '')
     {
