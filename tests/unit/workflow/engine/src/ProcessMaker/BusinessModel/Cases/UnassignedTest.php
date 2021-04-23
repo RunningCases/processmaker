@@ -319,6 +319,7 @@ class UnassignedTest extends TestCase
      * This ensures get data from self-service-user-assigned without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
+     * @covers \ProcessMaker\Model\Delegation::scopeSelfService()
      * @test
      */
     public function it_test_unassigned_by_user_without_filters()

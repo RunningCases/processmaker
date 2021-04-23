@@ -98,6 +98,7 @@ class DraftTest extends TestCase
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
+     * @covers \ProcessMaker\Model\Delegation::scopeDraft()
      * @test
      */
     public function it_get_result_without_filters()
