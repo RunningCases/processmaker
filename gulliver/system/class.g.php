@@ -785,12 +785,6 @@ class G
      */
     public static function parseURI($uri, $isRestRequest = false)
     {
-        //*** process the $_POST with magic_quotes enabled
-        // The magic_quotes_gpc feature has been DEPRECATED as of PHP 5.3.0.
-        if (get_magic_quotes_gpc() === 1) {
-            $_POST = G::strip_slashes($_POST);
-        }
-
         $aRequestUri = explode('/', $uri);
         if ($isRestRequest) {
             $args = self::parseRestUri($aRequestUri);
@@ -2604,7 +2598,7 @@ class G
             }
         }
         $dirArray[] = $uid;
-        $newfileStructure = implode($dirArray, '/');
+        $newfileStructure = implode('/', $dirArray);
         return $newfileStructure;
     }
 
@@ -2666,7 +2660,7 @@ class G
                     $fileUid = substr($fileUid, $splitSize, $len);
                 }
             }
-            $response[] = implode($dirArray, '/') . '/';
+            $response[] = implode('/', $dirArray) . '/';
             $response[] = $fileUid;
         } else {
             $response[] = '';
