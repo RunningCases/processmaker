@@ -362,12 +362,6 @@ class Bootstrap
      */
     public static function parseURI($uri, array $arrayFriendlyUri = null)
     {
-        // *** process the $_POST with magic_quotes enabled
-        // The magic_quotes_gpc feature has been DEPRECATED as of PHP 5.3.0.
-        if (get_magic_quotes_gpc() === 1) {
-            $_POST = g::strip_slashes($_POST);
-        }
-
         $aRequestUri = explode('/', $uri);
         $args = self::parseNormalUri($aRequestUri, $arrayFriendlyUri);
 
