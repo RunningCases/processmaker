@@ -729,9 +729,10 @@ class InstallerModule extends Controller
             $dbText .= sprintf("  define ('DB_REPORT_USER', '%s' );\n", $wfGrantUser);
             $dbText .= sprintf("  define ('DB_REPORT_PASS', '%s' );\n", $wfPass);
 
-            if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
+            $requestFlag = $_REQUEST['PARTNER_FLAG'];
+            if (defined('PARTNER_FLAG') || isset($requestFlag])) {
                 $dbText .= "\n";
-                $dbText .= "  define ('PARTNER_FLAG', " . (defined('PARTNER_FLAG') ? PARTNER_FLAG : isset($_REQUEST['PARTNER_FLAG']) ? $_REQUEST['PARTNER_FLAG'] : 'false') . ");\n";
+                $dbText .= " (define('PARTNER_FLAG', " . (defined('PARTNER_FLAG') ? PARTNER_FLAG : isset(requestFlag)) ? $requestFlag : 'false') . ");\n";
                 if (!empty($this->systemName)) {
                     $dbText .= "  define ('SYSTEM_NAME', '" . $this->systemName . "');\n";
                 }
