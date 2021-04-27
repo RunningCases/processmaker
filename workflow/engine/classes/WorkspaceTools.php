@@ -4167,6 +4167,21 @@ class WorkspaceTools
                                     APP_STATUS_ID = 0");
         $con->commit();
 
+        // Populating APPLICATION.APP_FINISH_DATE
+        CLI::logging("->   Populating APPLICATION.APP_FINISH_DATE \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APPLICATION AS AP
+                                   INNER JOIN (
+                                       SELECT APP_DELEGATION.APP_NUMBER, APP_DELEGATION.DEL_FINISH_DATE
+                                       FROM APP_DELEGATION
+                                       ORDER BY DEL_FINISH_DATE DESC
+                                   ) AS DEL
+                                   ON (AP.APP_NUMBER = DEL.APP_NUMBER)
+                                   SET AP.APP_FINISH_DATE = DEL.DEL_FINISH_DATE
+                                   WHERE AP.APP_FINISH_DATE IS NULL AND AP.APP_STATUS_ID = 3");
+        $con->commit();
+
         // Populating APP_DELAY.USR_ID
         CLI::logging("->   Populating APP_DELAY.USR_ID \n");
         $con->begin();
