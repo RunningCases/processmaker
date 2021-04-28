@@ -994,10 +994,8 @@ emailServer.application = {
 
         var btnNew = new Ext.Action({
             id: "btnNew",
-
             text: _("ID_NEW"),
-            iconCls: "button_menu_ext ss_sprite ss_add",
-
+            icon: '/images/add_18.png',
             handler: function ()
             {
                 EMAILSERVEROPTION = "INS";
@@ -1011,10 +1009,8 @@ emailServer.application = {
 
         var btnEdit = new Ext.Action({
             id: "btnEdit",
-
             text: _("ID_EDIT"),
-            iconCls: "button_menu_ext ss_sprite ss_pencil",
-
+            icon: '/images/pencil.png',
             handler: function ()
             {
                 var record = grdpnlMain.getSelectionModel().getSelected();
@@ -1032,10 +1028,8 @@ emailServer.application = {
 
         var btnDelete = new Ext.Action({
             id: "btnDelete",
-
             text: _("ID_DELETE"),
-            iconCls: "button_menu_ext ss_sprite ss_cross",
-
+            icon: '/images/delete-16x16.gif',
             handler: function ()
             {
                 var record = grdpnlMain.getSelectionModel().getSelected();
