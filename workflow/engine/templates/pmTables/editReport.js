@@ -995,14 +995,8 @@ Ext.onReady(function () {
         name: 'REP_TAB_GRID',
         value: 'GridComments-463650787492db06640c904001904930'
     });
-    items.push({
-        xtype: 'compositefield',
-        fieldLabel: _("ID_TYPE"),
-        msgTarget: 'side',
-        anchor: '-20',
-        defaults: {flex: 1},
-        items: [comboReport, comboGridsList]
-    });
+    items.push(comboReport);
+    items.push(comboGridsList);
     items.push(comboDbConnections);
 
 
