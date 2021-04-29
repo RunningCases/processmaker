@@ -805,7 +805,6 @@ class Derivation
      */
     private function updateList(array $arrayCurrentDelegationData, array $arrayNextDelegationData, $taskNextDelegation, array $arrayApplicationData, $delIndexNew, $aSp, $removeList)
     {
-        return;
         /*----------------------------------********---------------------------------*/
         try {
             if ($arrayNextDelegationData["TAS_UID"] != "-1") {
@@ -826,6 +825,10 @@ class Derivation
 
                         $arrayApplicationData2["REMOVED_LIST"] = $removeList;
 
+                        // Force to delete the row for avoid problems with duplicate key insert
+                        $inbox = new ListInbox();
+                        $inbox->remove($arrayApplicationData2['APP_UID'], $arrayApplicationData2['DEL_INDEX']);
+                        // Update the new row
                         $inbox = new ListInbox();
                         $inbox->newRow($arrayApplicationData2, $arrayApplicationData["CURRENT_USER_UID"], (($arrayNextDelegationData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE")? true : false));
                     }

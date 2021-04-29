@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Model\Application as ModelApplication;
 use ProcessMaker\Model\Process as ProcessModel;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\DateTime;
@@ -233,18 +234,19 @@ if (isset($_GET['breakpoint'])) {
 }
 #end trigger debug session.......
 
-//Save data - Start
+// Save data - Start
 unset($Fields['APP_STATUS']);
 unset($Fields['APP_PROC_STATUS']);
 unset($Fields['APP_PROC_CODE']);
 unset($Fields['APP_PIN']);
+unset($Fields['APP_FINISH_DATE']);
 
 $Fields["USER_UID"] = $_SESSION["USER_LOGGED"];
 $Fields["CURRENT_DYNAFORM"] = $_GET["UID"];
 $Fields["OBJECT_TYPE"] = ($_GET["UID"] == "-1") ? "ASSIGN_TASK" : $_GET["TYPE"];
 
 $oCase->updateCase($_SESSION['APPLICATION'], $Fields);
-//Save data - End
+// Save data - End
 
 //Obtain previous and next step - Start
 try {
