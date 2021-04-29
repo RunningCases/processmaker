@@ -12,6 +12,7 @@ use ProcessMaker\Model\Groupwf;
  */
 class LdapAdvanced
 {
+
     /**
      * The authsource id
      * @var String
@@ -783,10 +784,18 @@ class LdapAdvanced
             $cookie = '';
 
             do {
-                ldap_control_paged_result($ldapcnn, $limit, true, $cookie);
-                $this->stdLog($ldapcnn, "ldap_control_paged_result", ["limit" => $limit]);
-
-                $searchResult = @ldap_list($ldapcnn, $dn, $filter, $this->arrayAttributesForUser);
+                $searchResult = @ldap_list(
+                        $ldapcnn,
+                        $dn,
+                        $filter,
+                        $this->arrayAttributesForUser,
+                        0,
+                        -1,
+                        -1,
+                        LDAP_DEREF_NEVER,
+                        [['oid' => LDAP_CONTROL_PAGEDRESULTS, 'value' => ['size' => $limit, 'cookie' => $cookie]]]
+                );
+                ldap_parse_result($ldapcnn, $searchResult, $errcode, $matcheddn, $errmsg, $referrals, $controls);
                 $this->stdLog($ldapcnn, "ldap_list", ["filter" => $filter, "attributes" => $this->arrayAttributesForUser]);
 
                 if ($error = ldap_errno($ldapcnn)) {
@@ -805,10 +814,15 @@ class LdapAdvanced
                 }
 
                 if (!$flagError) {
-                    ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
-                    $this->stdLog($ldapcnn, "ldap_control_paged_result_response");
+                    if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
+                        // You need to pass the cookie from the last call to the next one
+                        $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
+                    } else {
+                        $cookie = '';
+                    }
                 }
-            } while (($cookie !== null && $cookie != '') && !$flagError);
+                // Empty cookie means last page
+            } while (!empty($cookie) && !$flagError);
 
             //Get Users //2
             if ($flagError) {
@@ -1773,10 +1787,20 @@ class LdapAdvanced
             $cookie = '';
 
             do {
-                ldap_control_paged_result($ldapcnn, $limit, true, $cookie);
-                $this->stdLog($ldapcnn, "ldap_control_paged_result", ["pageSize" => $limit, "isCritical" => true]);
+                $searchResult = @ldap_search(
+                        $ldapcnn,
+                        $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
+                        $filter,
+                        ['dn', 'ou'],
+                        0,
+                        -1,
+                        -1,
+                        LDAP_DEREF_NEVER,
+                        [['oid' => LDAP_CONTROL_PAGEDRESULTS, 'value' => ['size' => $limit, 'cookie' => $cookie]]]
+                );
+                ldap_parse_result($ldapcnn, $searchResult, $errcode, $matcheddn, $errmsg, $referrals, $controls);
+                $this->stdLog($ldapcnn, "ldap_search", ["filter" => $filter, "attributes" => ['dn', 'ou']]);
 
-                $searchResult = @ldap_search($ldapcnn, $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'], $filter, ['dn', 'ou']);
                 $context = [
                     "baseDN" => $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
                     "filter" => $filter,
@@ -1832,10 +1856,15 @@ class LdapAdvanced
                 }
 
                 if (!$flagError) {
-                    ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
-                    $this->stdLog($ldapcnn, "ldap_control_paged_result_response", $context);
+                    if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
+                        // You need to pass the cookie from the last call to the next one
+                        $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
+                    } else {
+                        $cookie = '';
+                    }
                 }
-            } while (($cookie !== null && $cookie != '') && !$flagError);
+                // Empty cookie means last page
+            } while (!empty($cookie) && !$flagError);
 
             $str = '';
 
@@ -1979,6 +2008,7 @@ class LdapAdvanced
 
         return $terminated;
     }
+
     /* activate an user previously deactivated
       if user is now in another department, we need the second parameter, the depUid
 
@@ -2418,10 +2448,20 @@ class LdapAdvanced
             $cookie = '';
 
             do {
-                ldap_control_paged_result($ldapcnn, $limit, true, $cookie);
-                $this->stdLog($ldapcnn, "ldap_control_paged_result", ["pageSize" => $limit, "isCritical" => true]);
+                $searchResult = @ldap_search(
+                        $ldapcnn,
+                        $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
+                        $filter,
+                        ['dn', 'cn'],
+                        0,
+                        -1,
+                        -1,
+                        LDAP_DEREF_NEVER,
+                        [['oid' => LDAP_CONTROL_PAGEDRESULTS, 'value' => ['size' => $limit, 'cookie' => $cookie]]]
+                );
+                ldap_parse_result($ldapcnn, $searchResult, $errcode, $matcheddn, $errmsg, $referrals, $controls);
+                $this->stdLog($ldapcnn, "ldap_search", ["filter" => $filter, "attributes" => ['dn', 'cn']]);
 
-                $searchResult = @ldap_search($ldapcnn, $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'], $filter, ['dn', 'cn']);
                 $context = [
                     "baseDN" => $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN'],
                     "filter" => $filter,
@@ -2459,10 +2499,15 @@ class LdapAdvanced
                 }
 
                 if (!$flagError) {
-                    ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
-                    $this->stdLog($ldapcnn, "ldap_control_paged_result_response");
+                    if (isset($controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'])) {
+                        // You need to pass the cookie from the last call to the next one
+                        $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
+                    } else {
+                        $cookie = '';
+                    }
                 }
-            } while (($cookie !== null && $cookie != '') && !$flagError);
+                // Empty cookie means last page
+            } while (!empty($cookie) && !$flagError);
 
             $str = '';
 
@@ -3244,4 +3289,5 @@ class LdapAdvanced
             Log::channel(':ldapAdvanced')->error($message, Bootstrap::context($context));
         }
     }
+
 }
