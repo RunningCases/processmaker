@@ -3,6 +3,7 @@
 use App\Jobs\EmailEvent;
 use Illuminate\Support\Facades\Crypt;
 use ProcessMaker\BusinessModel\Cases as BmCases;
+use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\BusinessModel\EmailServer;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\ChangeLog\ChangeLog;
@@ -541,41 +542,33 @@ class WsBase
     /**
      * Get unassigned case list
      *
-     * @param string $userId
+     * @param string $userUid
      *
      * @return $result will return an object
      */
-    public function unassignedCaseList($userId)
+    public function unassignedCaseList($userUid)
     {
         try {
             $result = [];
-            $oAppCache = new AppCacheView();
-            $Criteria = $oAppCache->getUnassignedListCriteria($userId);
-            $oDataset = AppCacheViewPeer::doSelectRS($Criteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-
-            while ($aRow = $oDataset->getRow()) {
-                $result[] = array(
-                    'guid' => $aRow['APP_UID'],
-                    'name' => $aRow['APP_NUMBER'],
-                    'delIndex' => $aRow['DEL_INDEX'],
-                    'processId' => $aRow['PRO_UID']
-                );
-
-                $oDataset->next();
+            $unassigned = new Unassigned();
+            $unassigned->setUserUid($userUid);
+            $data = $unassigned->getData();
+            foreach ($data as $var) {
+                array_push($result, [
+                    'guid' => $var['APP_UID'],
+                    'name' => $var['APP_NUMBER'],
+                    'delIndex' => $var['DEL_INDEX'],
+                    'processId' => $var['PRO_UID']
+                ]);
             }
-
             return $result;
         } catch (Exception $e) {
-            $result[] = array(
+            $result[] = [
                 'guid' => $e->getMessage(),
                 'name' => $e->getMessage(),
                 'status' => $e->getMessage(),
-                'status' => $e->getMessage(),
                 'processId' => $e->getMessage()
-            );
-
+            ];
             return $result;
         }
     }
