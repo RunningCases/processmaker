@@ -10,6 +10,7 @@ use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\EmailServerModel;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
+use ProcessMaker\Model\TaskUser;
 use ProcessMaker\Model\User;
 use ProcessMaker\Model\UserReporting;
 use Tests\TestCase;
@@ -167,14 +168,14 @@ class WsBaseTest extends TestCase
     private function createDefaultHtmlContent($content = '')
     {
         $string = ''
-                . '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-                . '<html>'
-                . '<head>'
-                . '</head>'
-                . '<body>'
-                . $content
-                . '</body>'
-                . '</html>';
+            . '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+            . '<html>'
+            . '<head>'
+            . '</head>'
+            . '<body>'
+            . $content
+            . '</body>'
+            . '</html>';
         return $string;
     }
 
@@ -493,48 +494,48 @@ class WsBaseTest extends TestCase
 
         //Create the application factory
         $application1 = factory(Application::class)->create(
-                [
-                    'APP_STATUS' => 'TO_DO',
-                    'APP_TITLE' => 'Title1'
-                ]
+            [
+                'APP_STATUS' => 'TO_DO',
+                'APP_TITLE' => 'Title1'
+            ]
         );
         $application2 = factory(Application::class)->create(
-                [
-                    'APP_STATUS' => 'DRAFT',
-                    'APP_TITLE' => 'Title2'
-                ]
+            [
+                'APP_STATUS' => 'DRAFT',
+                'APP_TITLE' => 'Title2'
+            ]
         );
 
         //Create the delegation factory
         $delegation1 = factory(Delegation::class)->create(
-                [
-                    'USR_UID' => $user->USR_UID,
-                    'DEL_THREAD_STATUS' => 'OPEN',
-                    'DEL_FINISH_DATE' => null,
-                    'APP_NUMBER' => $application1->APP_NUMBER
-                ]
+            [
+                'USR_UID' => $user->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application1->APP_NUMBER
+            ]
         );
         $delegation2 = factory(Delegation::class)->create(
-                [
-                    'USR_UID' => $user->USR_UID,
-                    'DEL_THREAD_STATUS' => 'OPEN',
-                    'DEL_FINISH_DATE' => null,
-                    'APP_NUMBER' => $application2->APP_NUMBER
-                ]
+            [
+                'USR_UID' => $user->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application2->APP_NUMBER
+            ]
         );
 
         //Create app thread factory
         factory(AppThread::class)->create(
-                [
-                    'APP_THREAD_STATUS' => 'OPEN',
-                    'APP_UID' => $delegation1->APP_UID
-                ]
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation1->APP_UID
+            ]
         );
         factory(AppThread::class)->create(
-                [
-                    'APP_THREAD_STATUS' => 'OPEN',
-                    'APP_UID' => $delegation2->APP_UID
-                ]
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation2->APP_UID
+            ]
         );
 
         //Instance the object
@@ -568,48 +569,48 @@ class WsBaseTest extends TestCase
 
         //Create the application factory
         $application1 = factory(Application::class)->create(
-                [
-                    'APP_STATUS' => 'TO_DO',
-                    'APP_TITLE' => 'Title1'
-                ]
+            [
+                'APP_STATUS' => 'TO_DO',
+                'APP_TITLE' => 'Title1'
+            ]
         );
         $application2 = factory(Application::class)->create(
-                [
-                    'APP_STATUS' => 'DRAFT',
-                    'APP_TITLE' => 'Title2'
-                ]
+            [
+                'APP_STATUS' => 'DRAFT',
+                'APP_TITLE' => 'Title2'
+            ]
         );
 
         //Create the delegation factory
         $delegation1 = factory(Delegation::class)->create(
-                [
-                    'USR_UID' => $user1->USR_UID,
-                    'DEL_THREAD_STATUS' => 'OPEN',
-                    'DEL_FINISH_DATE' => null,
-                    'APP_NUMBER' => $application1->APP_NUMBER
-                ]
+            [
+                'USR_UID' => $user1->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application1->APP_NUMBER
+            ]
         );
         $delegation2 = factory(Delegation::class)->create(
-                [
-                    'USR_UID' => $user1->USR_UID,
-                    'DEL_THREAD_STATUS' => 'OPEN',
-                    'DEL_FINISH_DATE' => null,
-                    'APP_NUMBER' => $application2->APP_NUMBER
-                ]
+            [
+                'USR_UID' => $user1->USR_UID,
+                'DEL_THREAD_STATUS' => 'OPEN',
+                'DEL_FINISH_DATE' => null,
+                'APP_NUMBER' => $application2->APP_NUMBER
+            ]
         );
 
         //Create app thread factory
         factory(AppThread::class)->create(
-                [
-                    'APP_THREAD_STATUS' => 'OPEN',
-                    'APP_UID' => $delegation1->APP_UID
-                ]
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation1->APP_UID
+            ]
         );
         factory(AppThread::class)->create(
-                [
-                    'APP_THREAD_STATUS' => 'OPEN',
-                    'APP_UID' => $delegation2->APP_UID
-                ]
+            [
+                'APP_THREAD_STATUS' => 'OPEN',
+                'APP_UID' => $delegation2->APP_UID
+            ]
         );
 
         //Instance the object
@@ -1121,5 +1122,141 @@ class WsBaseTest extends TestCase
         $response = (object) $ws->cancelCase($fakeApp, $delegation->DEL_INDEX, $delegation->USR_UID);
         $this->assertEquals($response->status_code, 100);
         $this->assertContains($fakeApp, $response->message);
+    }
+
+    /**
+     * Test the unassigned case list method with unassigned cases
+     *
+     * @test
+     * @covers WsBase::unassignedCaseList()
+     */
+    public function it_should_test_the_unassigned_case_list_method_with_unassigned_cases()
+    {
+        //Create process
+        $process1 = factory(Process::class)->create([
+            'PRO_TITLE' => 'China Supplier Payment Proposal'
+        ]);
+        $process2 = factory(Process::class)->create([
+            'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
+        ]);
+        //Create application
+        $application1 = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a task self service
+        $task1 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        //Assign a user in the task
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task1->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1, //Related to the user
+            'TU_TYPE' => 1
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1, //Related to the user
+            'TU_TYPE' => 1
+        ]);
+        //Create the register in delegation relate to self-service
+        factory(Delegation::class, 2)->create([
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task1->TAS_ID,
+            'PRO_ID' => $process1->id,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+        ]);
+        factory(Delegation::class, 2)->create([
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->id,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+        ]);
+
+        $wsBase = new WsBase();
+        $res = $wsBase->unassignedCaseList($user->USR_UID);
+        //Assert the expected number of unassigned cases
+        $this->assertCount(4, $res);
+    }
+
+    /**
+     * Test the unassigned case list method without unassigned cases
+     *
+     * @test
+     * @covers WsBase::unassignedCaseList()
+     */
+    public function it_should_test_the_unassigned_case_list_method_without_unassigned_cases()
+    {
+        //Create process
+        $process1 = factory(Process::class)->create([
+            'PRO_TITLE' => 'China Supplier Payment Proposal'
+        ]);
+        $process2 = factory(Process::class)->create([
+            'PRO_TITLE' => 'Egypt Supplier Payment Proposal'
+        ]);
+        //Create application
+        $application1 = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        //Create user
+        $user = factory(User::class)->create();
+        //Create a task self service
+        $task1 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        //Assign a user in the task
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task1->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1, //Related to the user
+            'TU_TYPE' => 1
+        ]);
+        //Assign a user in the task
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1, //Related to the user
+            'TU_TYPE' => 1
+        ]);
+        //Create the register in delegation relate to self-service
+        factory(Delegation::class, 2)->create([
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task1->TAS_ID,
+            'PRO_ID' => $process1->id,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 5,
+        ]);
+        factory(Delegation::class, 2)->create([
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->id,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 3,
+        ]);
+
+        $wsBase = new WsBase();
+        $res = $wsBase->unassignedCaseList($user->USR_UID);
+
+        //Assert the expected number of unassigned cases
+        $this->assertCount(0, $res);
     }
 }
