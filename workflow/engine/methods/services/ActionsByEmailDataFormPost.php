@@ -5,6 +5,7 @@
  * @link https://wiki.processmaker.com/3.3/Actions_by_Email#Link_to_Fill_a_Form
  */
 use App\Jobs\ActionByEmail;
+use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Validation\ValidationUploadedFiles;
 
@@ -55,6 +56,15 @@ if ($featureEnable) {
         $forms = isset($_REQUEST['form']) ? $_REQUEST['form'] : [];
         $remoteAddr = $_SERVER['REMOTE_ADDR'];
         $files = $_FILES;
+
+        // Delete the MultipleFile
+        if (array_key_exists('__VARIABLE_DOCUMENT_DELETE__', $_POST['form'])) {
+            if (is_array($_POST['form']['__VARIABLE_DOCUMENT_DELETE__']) && !empty($_POST['form']['__VARIABLE_DOCUMENT_DELETE__'])) {
+                $documentsToDelete = $_POST['form']['__VARIABLE_DOCUMENT_DELETE__'];
+                $case = new BmCases();
+                $case->deleteMultipleFile($appUid, $documentsToDelete);
+            }
+        }
 
         //Now we dispatch the derivation of the case through Jobs Laravel.
         $closure = function() use ($appUid, $delIndex, $aber, $dynUid, $forms, $remoteAddr, $files) {
