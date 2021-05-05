@@ -121,8 +121,8 @@ class SqlBlacklist extends Parser
 
         //verify system tables
         $tables = $config['tables'];
-        $fn($this->statements, function ($table) use ($tables) {
-            if (in_array($table, $tables)) {
+        $fn($this->statements, function ($table) use ($tables, $notExecuteQuery) {
+            if (in_array($table, $tables) && $notExecuteQuery) {
                 throw new Exception(G::loadTranslation('ID_NOT_EXECUTE_QUERY', [$table]));
             }
         });
