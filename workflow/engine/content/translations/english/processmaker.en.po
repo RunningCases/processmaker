@@ -22352,8 +22352,8 @@ msgstr "Open SSL is optional"
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_PHP
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_PHP
-msgid "PHP recommended version 7.3, we maintain compatibility starting with PHP 7.1"
-msgstr "PHP recommended version 7.3, we maintain compatibility starting with PHP 7.1"
+msgid "PHP recommended version 7.4, we maintain compatibility starting with PHP 7.3"
+msgstr "PHP recommended version 7.4, we maintain compatibility starting with PHP 7.3"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_SOAP
@@ -24598,6 +24598,12 @@ msgstr "Server"
 #: LABEL/ID_SERVER_ADDRESS
 msgid "Server Address"
 msgstr "Server Address"
+
+# TRANSLATION
+# LABEL/ID_SERVER_API
+#: LABEL/ID_SERVER_API
+msgid "Server API"
+msgstr "Server API"
 
 # TRANSLATION
 # LABEL/ID_SERVER_COMMUNICATION_ERROR

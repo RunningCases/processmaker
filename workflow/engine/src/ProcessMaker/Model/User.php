@@ -235,4 +235,21 @@ class User extends Model
 
         return $info;
     }
+
+    /**
+     * Get user information
+     *
+     * @param int $usrId
+     *
+     * @return array
+     */
+    public static function getAllInformation($usrId)
+    {
+        $query = User::query()->select()
+            ->userId($usrId)
+            ->limit(1);
+        $result = $query->get()->values()->toArray();
+
+        return $result;
+    }
 }
