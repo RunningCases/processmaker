@@ -38,11 +38,10 @@ class ProcessUser extends Model
      */
     public function scopeProcessGroupSupervisor($query, $userUid)
     {
-        $query->where('PU_TYPE', 'GROUP_SUPERVISOR');
-        $query->leftJoin('GROUP_USER', function ($leftJoin) use ($userUid) {
-            $leftJoin->on('PROCESS_USER.USR_UID', '=', 'GROUP_USER.GRP_UID')
-                ->where('GROUP_USER.USR_UID', $userUid);
-        });
+        // Ge the groups related to the user, Todo, implement the field PROCESS_USER.GRP_ID
+        $groups = GroupUser::getGroups($userUid, 'GRP_UID');
+        $query->where('PROCESS_USER.PU_TYPE', 'GROUP_SUPERVISOR');
+        $query->whereIn('PROCESS_USER.USR_UID', $groups);
         $query->joinProcess();
 
         return $query;
