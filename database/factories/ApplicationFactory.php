@@ -100,6 +100,14 @@ $factory->state(\ProcessMaker\Model\Application::class, 'completed', function (F
     ];
 });
 
+$factory->state(\ProcessMaker\Model\Application::class, 'canceled', function (Faker $faker) {
+    return [
+        'APP_NUMBER' => $faker->unique()->numberBetween(1000),
+        'APP_STATUS_ID' => 4,
+        'APP_STATUS' => 'CANCELLED'
+    ];
+});
+
 $factory->state(\ProcessMaker\Model\Application::class, 'draft_minor_case', function (Faker $faker) {
     $caseNumber = $faker->unique()->numberBetween(1, 1000);
     return [

@@ -89,6 +89,7 @@ class InboxTest extends TestCase
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
+     * @covers \ProcessMaker\Model\Delegation::scopeInbox()
      * @test
      */
     public function it_get_result_without_filters()
