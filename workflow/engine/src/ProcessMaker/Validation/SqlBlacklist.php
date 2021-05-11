@@ -100,6 +100,10 @@ class SqlBlacklist extends Parser
             $signed = get_class($statement);
             foreach (Parser::$STATEMENT_PARSERS as $key => $value) {
                 if ($signed === $value && in_array(strtoupper($key), $config['statements'])) {
+                    //SHOW statement is a special case, it does not require a table name
+                    if (strtoupper($key) === 'SHOW') {
+                        throw new Exception(G::loadTranslation('ID_INVALID_QUERY'));
+                    }
                     $notExecuteQuery = true;
                     break;
                 }
@@ -116,13 +120,16 @@ class SqlBlacklist extends Parser
                 if ($key === 'table' && is_string($value)) {
                     $callback($value);
                 }
+                if ($key === 'token' && is_string($value)) {
+                    $callback($value);
+                }
             }
         };
 
         //verify system tables
         $tables = $config['tables'];
-        $fn($this->statements, function ($table) use ($tables) {
-            if (in_array($table, $tables)) {
+        $fn($this->statements, function ($table) use ($tables, $notExecuteQuery) {
+            if (in_array($table, $tables) && $notExecuteQuery) {
                 throw new Exception(G::loadTranslation('ID_NOT_EXECUTE_QUERY', [$table]));
             }
         });
