@@ -39,6 +39,7 @@ use InputDocument;
 use InvalidIndexSearchTextException;
 use PmDynaform;
 use PmTable;
+use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\BusinessModel\ProcessSupervisor as BmProcessSupervisor;
 use ProcessMaker\BusinessModel\Task as BmTask;
 use ProcessMaker\BusinessModel\User as BmUser;
@@ -912,12 +913,12 @@ class Cases
      * @access public
      * @param string $appUid, Uid for case
      * @param string $usrUid, Uid for user
-     * @param bool|string $delIndex
+     * @param interger $delIndex
      *
      * @return void
      * @throws Exception
      */
-    public function putCancelCase($appUid, $usrUid, $delIndex = false)
+    public function putCancelCase($appUid, $usrUid, $delIndex = null, $reason = '', $sendMail = false)
     {
         Validator::isString($appUid, '$app_uid');
         Validator::appUid($appUid, '$app_uid');
@@ -929,7 +930,7 @@ class Cases
         $supervisor = new BmProcessSupervisor();
         $isSupervisor = $supervisor->isUserProcessSupervisor($fields['PRO_UID'], $usrUid);
 
-        if ($delIndex === false) {
+        if (is_null($delIndex)) {
             $u = new ModelUsers();
             $usrId = $u->load($usrUid)['USR_ID'];
 
@@ -955,6 +956,13 @@ class Cases
         $result = (object)$result;
         if ($result->status_code !== 0) {
             throw new Exception($result->message);
+        }
+        /** Add the note */
+        if (!empty($reason)) {
+            $noteContent = $reason;
+            // Define the Case for register a case note
+            $cases = new BmCases();
+            $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
         }
     }
 
@@ -1074,6 +1082,39 @@ class Cases
 
         $case = new ClassesCases();
         $case->unpauseCase($app_uid, $del_index, $usr_uid);
+    }
+
+    /**
+     * Put claim case
+     *
+     * @param string $appUid
+     * @param integer $index
+     * @param string $userUid
+     *
+     * @return void
+     * @throws Exception
+     *
+     * @access public
+     */
+    public function putClaimCase($appUid, $index, $userUid)
+    {
+        // Validate the parameters
+        Validator::isString($appUid, '$appUid');
+        Validator::isString($userUid, '$userUid');
+        Validator::isInteger($index, '$index');
+        Validator::appUid($appUid, '$appUid');
+        Validator::usrUid($userUid, '$userUid');
+
+        // Review if the user can claim the case
+        $appDelegation = new AppDelegation();
+        $delegation = $appDelegation->load($appUid, $index);
+        if (empty($delegation['USR_UID'])) {
+            $case = new ClassesCases();
+            $case->loadCase($appUid);
+            $case->setCatchUser($appUid, $index, $userUid);
+        } else {
+            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CLAIM_CASE", [$userUid]));
+        }
     }
 
     /**
@@ -1977,98 +2018,89 @@ class Cases
     /**
      * Get Case Notes
      *
-     * @access public
-     * @param string $app_uid , Uid for case
+     * @param string $appUid
+     * @param string $usrUid
+     * @param array $parameters
      *
      * @return array
-     * @throws Exception
+     * @throws \PropelException
+     * @access public
      */
-    public function getCaseNotes($app_uid, $usr_uid, $data_get)
+    public function getCaseNotes($appUid, $usrUid, $parameters = [])
     {
-        Validator::isString($app_uid, '$app_uid');
-        Validator::appUid($app_uid, '$app_uid');
-        Validator::isString($usr_uid, '$usr_uid');
-        Validator::usrUid($usr_uid, '$usr_uid');
-        Validator::isArray($data_get, '$data_get');
-
-        Validator::isArray($data_get, '$data_get');
-        $start = isset($data_get["start"]) ? $data_get["start"] : "0";
-        $limit = isset($data_get["limit"]) ? $data_get["limit"] : "";
-        $sort = isset($data_get["sort"]) ? $data_get["sort"] : "APP_NOTES.NOTE_DATE";
-        $dir = isset($data_get["dir"]) ? $data_get["dir"] : "DESC";
-        $user = isset($data_get["user"]) ? $data_get["user"] : "";
-        $dateFrom = (!empty($data_get["dateFrom"])) ? substr($data_get["dateFrom"], 0, 10) : "";
-        $dateTo = (!empty($data_get["dateTo"])) ? substr($data_get["dateTo"], 0, 10) : "";
-        $search = isset($data_get["search"]) ? $data_get["search"] : "";
-        $paged = isset($data_get["paged"]) ? $data_get["paged"] : true;
-
-        $case = new ClassesCases();
-        $caseLoad = $case->loadCase($app_uid);
-        $pro_uid = $caseLoad['PRO_UID'];
-        $tas_uid = AppDelegation::getCurrentTask($app_uid);
-        $respView = $case->getAllObjectsFrom($pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW');
-        $respBlock = $case->getAllObjectsFrom($pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK');
-        if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
-            throw (new Exception(G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS")));
-        }
-
-        if ($sort != 'APP_NOTE.NOTE_DATE') {
-            $sort = G::toUpper($sort);
-            $columnsAppCacheView = AppNotesPeer::getFieldNames(BasePeer::TYPE_FIELDNAME);
-            if (!(in_array($sort, $columnsAppCacheView))) {
-                $sort = 'APP_NOTES.NOTE_DATE';
-            } else {
-                $sort = 'APP_NOTES.' . $sort;
-            }
-        }
-        if ((int)$start == 1 || (int)$start == 0) {
-            $start = 0;
-        }
-        $dir = G::toUpper($dir);
-        if (!($dir == 'DESC' || $dir == 'ASC')) {
-            $dir = 'DESC';
-        }
-        if ($user != '') {
+        // Validate parameters
+        Validator::isString($appUid, '$app_uid');
+        Validator::appUid($appUid, '$app_uid');
+        Validator::isString($usrUid, '$usr_uid');
+        Validator::usrUid($usrUid, '$usr_uid');
+        Validator::isArray($parameters, '$parameters');
+        Validator::isArray($parameters, '$parameters');
+        $start = isset($parameters["start"]) ? $parameters["start"] : "0";
+        $limit = isset($parameters["limit"]) ? $parameters["limit"] : "";
+        $sort = isset($parameters["sort"]) ? $parameters["sort"] : "NOTE_DATE";
+        $dir = isset($parameters["dir"]) ? $parameters["dir"] : "DESC";
+        $user = isset($parameters["user"]) ? $parameters["user"] : "";
+        $dateFrom = (!empty($parameters["dateFrom"])) ? substr($parameters["dateFrom"], 0, 10) : "";
+        $dateTo = (!empty($parameters["dateTo"])) ? substr($parameters["dateTo"], 0, 10) : "";
+        $search = isset($parameters["search"]) ? $parameters["search"] : "";
+        $paged = isset($parameters["paged"]) ? $parameters["paged"] : true;
+        $files = isset($parameters["files"]) ? $parameters["files"] : false;
+        if (!empty($user)) {
             Validator::usrUid($user, '$usr_uid');
         }
-        if ($dateFrom != '') {
+        if (!empty($dateFrom)) {
             Validator::isDate($dateFrom, 'Y-m-d', '$date_from');
         }
-        if ($dateTo != '') {
+        if (!empty($dateTo)) {
             Validator::isDate($dateTo, 'Y-m-d', '$date_to');
         }
-
-        $appNote = new \AppNotes();
-        $note_data = $appNote->getNotesList($app_uid, $user, $start, $limit, $sort, $dir, $dateFrom, $dateTo, $search);
-        $response = array();
-        if ($paged === true) {
-            $response['total'] = $note_data['array']['totalCount'];
-            $response['start'] = $start;
-            $response['limit'] = $limit;
-            $response['sort'] = $sort;
-            $response['dir'] = $dir;
-            $response['usr_uid'] = $user;
-            $response['date_to'] = $dateTo;
-            $response['date_from'] = $dateFrom;
-            $response['search'] = $search;
-            $response['data'] = array();
-            $con = 0;
-            foreach ($note_data['array']['notes'] as $value) {
-                $response['data'][$con]['app_uid'] = $value['APP_UID'];
-                $response['data'][$con]['usr_uid'] = $value['USR_UID'];
-                $response['data'][$con]['note_date'] = $value['NOTE_DATE'];
-                $response['data'][$con]['note_content'] = $value['NOTE_CONTENT'];
-                $con++;
+        // Review the process permissions
+        $case = new ClassesCases();
+        $caseLoad = $case->loadCase($appUid);
+        $proUid = $caseLoad['PRO_UID'];
+        $tasUid = AppDelegation::getCurrentTask($appUid);
+        $respView = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'VIEW');
+        $respBlock = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'BLOCK');
+        if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
+            throw new Exception(G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS"));
+        }
+        // Get the notes
+        $appNote = new Notes();
+        $notes = $appNote->getNotes($appUid, $start, $limit, $dir);
+        $notes = AppNotes::applyHtmlentitiesInNotes($notes);
+        // Add a the notes the files related
+        $documents = new Documents();
+        $iterator = 0;
+        $data = [];
+        foreach ($notes['notes'] as $value) {
+            $data[$iterator] = array_change_key_case($value, CASE_LOWER);
+            $data[$iterator]['note_date'] = UtilDateTime::convertUtcToTimeZone($value['NOTE_DATE']);
+            if ($files) {
+                $data[$iterator]['attachments'] = $documents->getFiles($value['NOTE_ID']);
             }
+            $iterator++;
+        }
+        // If is paged will add the filters used
+        $filters = [];
+        if ($paged) {
+            $total = $appNote->getTotal($appUid);
+            $filters['total'] = $total;
+            $filters['start'] = $start;
+            $filters['limit'] = $limit;
+            $filters['sort'] = $sort;
+            $filters['dir'] = $dir;
+            $filters['usr_uid'] = $user;
+            $filters['date_to'] = $dateTo;
+            $filters['date_from'] = $dateFrom;
+            $filters['search'] = $search;
+        }
+        // Prepare the response
+        $response = [];
+        if ($paged) {
+            $response = $filters;
+            $response['data'] = $data;
         } else {
-            $con = 0;
-            foreach ($note_data['array']['notes'] as $value) {
-                $response[$con]['app_uid'] = $value['APP_UID'];
-                $response[$con]['usr_uid'] = $value['USR_UID'];
-                $response[$con]['note_date'] = $value['NOTE_DATE'];
-                $response[$con]['note_content'] = $value['NOTE_CONTENT'];
-                $con++;
-            }
+            $response = $data;
         }
 
         return $response;
@@ -2078,40 +2110,37 @@ class Cases
      * Save new case note
      *
      * @access public
-     * @param string $app_uid , Uid for case
-     * @param array $app_data , Data for case variables
+     * @param string $appUid, Uid for case
+     * @param string $usrUid, Uid for user
+     * @param string $noteContent
+     * @param boolean $sendMail
      *
      * @return void
      * @throws Exception
      */
-    public function saveCaseNote($app_uid, $usr_uid, $note_content, $send_mail = false)
+    public function saveCaseNote($appUid, $usrUid, $noteContent, $sendMail = false)
     {
-        Validator::isString($app_uid, '$app_uid');
-        Validator::appUid($app_uid, '$app_uid');
-
-        Validator::isString($usr_uid, '$usr_uid');
-        Validator::usrUid($usr_uid, '$usr_uid');
-
-        Validator::isString($note_content, '$note_content');
-        if (strlen($note_content) > 500) {
-            throw (new Exception(G::LoadTranslation("ID_INVALID_MAX_PERMITTED", array($note_content, '500'))));
+        Validator::isString($appUid, '$app_uid');
+        Validator::appUid($appUid, '$app_uid');
+        Validator::isString($usrUid, '$usr_uid');
+        Validator::usrUid($usrUid, '$usr_uid');
+        Validator::isString($noteContent, '$note_content');
+        if (strlen($noteContent) > 500) {
+            throw (new Exception(G::LoadTranslation("ID_INVALID_MAX_PERMITTED", [$noteContent, '500'])));
         }
-
-        Validator::isBoolean($send_mail, '$send_mail');
-
+        Validator::isBoolean($sendMail, '$send_mail');
+        // Review the process permissions
         $case = new ClassesCases();
-        $caseLoad = $case->loadCase($app_uid);
-        $pro_uid = $caseLoad['PRO_UID'];
-        $tas_uid = AppDelegation::getCurrentTask($app_uid);
-        $respView = $case->getAllObjectsFrom($pro_uid, $app_uid, $tas_uid, $usr_uid, 'VIEW');
-        $respBlock = $case->getAllObjectsFrom($pro_uid, $app_uid, $tas_uid, $usr_uid, 'BLOCK');
+        $caseLoad = $case->loadCase($appUid);
+        $proUid = $caseLoad['PRO_UID'];
+        $tasUid = AppDelegation::getCurrentTask($appUid);
+        $respView = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'VIEW');
+        $respBlock = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'BLOCK');
         if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
             throw (new Exception(G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS")));
         }
-
-        $note_content = addslashes($note_content);
-        // Define the Case for register a case note
-        $response = $this->addNote($app_uid, $usr_uid, $note_content, intval($send_mail));
+        // Save the notes
+        $response = $this->addNote($appUid, $usrUid, $noteContent, intval($sendMail));
     }
 
     /**
@@ -3988,7 +4017,7 @@ class Cases
             }
         }
 
-        //rules validation
+        // Rules validation
         foreach ($files as $key => $value) {
             $entry = [
                 "filename" => $value['name'],
