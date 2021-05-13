@@ -15,7 +15,6 @@ class TimerEvent extends Api
     private $timerEvent;
 
     private $arrayFieldIso8601 = [
-        'tmrevn_next_run_date',
         'tmrevn_last_run_date',
         'tmrevn_last_execution_date'
     ];
