@@ -58,7 +58,7 @@
           :dataCaseStatus="dataCaseStatusTab"
           :dataCase="dataCase"
         ></TabsCaseDetail>
-        <ModalCancelCase ref="modal-cancel-case"></ModalCancelCase>
+        <ModalCancelCase ref="modal-cancel-case" :dataCase="dataCase"></ModalCancelCase>
       </div>
       <div class="col-sm-3">
         <case-summary

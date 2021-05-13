@@ -135,9 +135,14 @@ export let cases = {
         params.append('action', 'cancelCase');
         params.append('NOTE_REASON', data.COMMENT);
         params.append('NOTIFY_CANCEL', data.SEND);
-        return axios.post(window.config.SYS_SERVER_AJAX +
-            window.config.SYS_URI +
-            `cases/ajaxListener`, params);
+
+        return Api.put({
+            service: "REQUEST_CANCEL_CASE",
+            params: {},
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
     },
     actions(data) {
         var params = new URLSearchParams();
@@ -152,9 +157,14 @@ export let cases = {
         params.append('action', 'unpauseCase');
         params.append('sApplicationUID', data.APP_UID);
         params.append('iIndex', data.DEL_INDEX);
-        return axios.post(window.config.SYS_SERVER_AJAX +
-            window.config.SYS_URI +
-            `cases/cases_Ajax`, params);
+
+        return Api.put({
+            service: "REQUEST_UNPAUSE_CASE",
+            params: {},
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
     },
     claim(data) {
         var params = new URLSearchParams();

@@ -51,7 +51,7 @@ export default {
   name: "ModalCancelCase",
   components: {},
   props: {
-    data: Object,
+    dataCase: Object,
   },
   mounted() {},
   data() {
@@ -75,10 +75,10 @@ export default {
     cancelCase() {
       let that = this;
       api.cases
-        .cancel({
+        .cancel(_.extend({}, this.dataCase, {
           COMMENT: this.$refs["comment"].value,
           SEND: this.$refs["send"].checked ? 1 : 0,
-        })
+        }))
         .then((response) => {
           if (response.data && response.data.status) {
             that.$refs["modal-cancel-case"].hide();

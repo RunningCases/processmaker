@@ -1,4 +1,5 @@
 import axios from "axios";
+import Api from "./Api.js";
 
 export let caseNotes = {
     post(data) {
@@ -10,12 +11,16 @@ export let caseNotes = {
         _.each(data.FILES, (f) => {
             params.append("filesToUpload[]", f);
         })
-        return axios.post(window.config.SYS_SERVER_AJAX +
-            window.config.SYS_URI +
-            `appProxy/postNote`, params, {
-            headers: {
-                "Content-Type": "multipart/form-data",
+
+        return Api.post({
+            service: "ADD_NOTE",
+            data:{
+                note_content: data.COMMENT,
+                send_mail: data.SEND_MAIL ? 1 : 0
             },
+            keys: {
+                app_uid: data.APP_UID
+            }
         });
     },
 };

@@ -22,15 +22,15 @@ const services = {
     UPLOAD_FILE: "/light/case/{app_uid}/upload/{app_doc_uid}",
     GET_CASE_INFO: "/light/{type}/case/{app_uid}",
     REQUEST_PAUSE_CASE: "/light/cases/{app_uid}/pause",
-    REQUEST_UNPAUSE_CASE: "/light/cases/{app_uid}/unpause",
-    REQUEST_CANCEL_CASE: "/light/cases/{app_uid}/cancel",
+    REQUEST_UNPAUSE_CASE: "/cases/{app_uid}/unpause",
+    REQUEST_CANCEL_CASE: "/cases/{app_uid}/cancel",
     REQUEST_SYS_CONFIG: "/light/config",
     REQUEST_SYS_CONFIG_V2: "/light/config?fileLimit=true",
     ROUTE_CASE: "/light/cases/{app_uid}/route-case",
     CLAIM_CASE: "/light/case/{app_uid}/claim",
     GET_FILE_VERSIONS: "/cases/{app_uid}/input-document/{app_doc_uid}/versions",
     REGISTER: "https:trial32.processmaker.com/syscolosa/en/neoclassic_pro/9893000714bdb2d52ecc317052629917/Trial_RequestPostMobile.php",
-    ADD_NOTE: "/light/case/{app_uid}/note",
+    ADD_NOTE: "/case/{app_uid}/note",
     LAST_OPEN_INDEX: "/light/lastopenindex/case/{app_uid}",
     REGISTER_WITH_GOOGLE_FAKE_URL: "fakeurl",
     SIGN_IN_TO_PM_WITH_GOOGLE: "/authentication/gmail",
@@ -166,8 +166,7 @@ export default {
                 "Authorization": `Bearer ` + credentials.accessToken
             }
         });
-    },
-    
+    },   
     delete(options) {
         let service = options.service || "",
             id = options.id || {},
@@ -202,7 +201,7 @@ export default {
 
         return axios({
             method: "put",
-            url: url + id,
+            url: url,
             params,
             data,
             headers: {
