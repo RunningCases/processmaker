@@ -4262,8 +4262,14 @@ msgstr "The Case {APP_NUMBER} was unpaused successfully!"
 # TRANSLATION
 # LABEL/ID_CASE_USER_INVALID_CANCEL_CASE
 #: LABEL/ID_CASE_USER_INVALID_CANCEL_CASE
-msgid "The user with \"{0}\" is invalid to cancel the Case."
-msgstr "The user with \"{0}\" is invalid to cancel the Case."
+msgid "The user with \"{0}\" is invalid to cancel the case."
+msgstr "The user with \"{0}\" is invalid to cancel the case."
+
+# TRANSLATION
+# LABEL/ID_CASE_USER_INVALID_CLAIM_CASE
+#: LABEL/ID_CASE_USER_INVALID_CLAIM_CASE
+msgid "The user with \"{0}\" is invalid to claim the case."
+msgstr "The user with \"{0}\" is invalid to claim the case."
 
 # TRANSLATION
 # LABEL/ID_CASE_USER_INVALID_PAUSED_CASE
@@ -4274,8 +4280,8 @@ msgstr "The user with \"{0}\" is invalid to pause the case."
 # TRANSLATION
 # LABEL/ID_CASE_USER_INVALID_UNPAUSE_CASE
 #: LABEL/ID_CASE_USER_INVALID_UNPAUSE_CASE
-msgid "The user with \"{0}\" is invalid to Unpause the Case."
-msgstr "The user with \"{0}\" is invalid to Unpause the Case."
+msgid "The user with \"{0}\" is invalid to Unpause the case."
+msgstr "The user with \"{0}\" is invalid to Unpause the case."
 
 # TRANSLATION
 # LABEL/ID_CASE_USER_NOT_HAVE_PERMISSION
