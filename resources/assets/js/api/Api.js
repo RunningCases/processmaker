@@ -30,11 +30,7 @@ const services = {
     CLAIM_CASE: "/case/{app_uid}/claim",
     GET_FILE_VERSIONS: "/cases/{app_uid}/input-document/{app_doc_uid}/versions",
     REGISTER: "https:trial32.processmaker.com/syscolosa/en/neoclassic_pro/9893000714bdb2d52ecc317052629917/Trial_RequestPostMobile.php",
-<<<<<<< HEAD
-    ADD_NOTE: "/case/{app_uid}/note",
-=======
     POST_NOTE: "/case/{app_uid}/note",
->>>>>>> 032cd35bb... PMCORE-3017
     LAST_OPEN_INDEX: "/light/lastopenindex/case/{app_uid}",
     REGISTER_WITH_GOOGLE_FAKE_URL: "fakeurl",
     SIGN_IN_TO_PM_WITH_GOOGLE: "/authentication/gmail",
@@ -195,12 +191,8 @@ export default {
                 "Authorization": `Bearer ` + credentials.accessToken
             }, headers)
         });
-<<<<<<< HEAD
-    },   
-=======
     },
 
->>>>>>> 032cd35bb... PMCORE-3017
     delete(options) {
         let service = options.service || "",
             id = options.id || {},

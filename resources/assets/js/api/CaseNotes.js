@@ -5,8 +5,8 @@ export let caseNotes = {
     post(data) {
         var params = new FormData();
         params.append('appUid', data.APP_UID);
-        params.append('noteText', data.COMMENT);
-        params.append('swSendMail', data.SEND_MAIL ? 1 : 0);
+        params.append('note_content', data.COMMENT);
+        params.append('send_mail', data.SEND_MAIL ? 1 : 0);
 
         _.each(data.FILES, (f) => {
             params.append("filesToUpload[]", f);
@@ -14,11 +14,7 @@ export let caseNotes = {
 
         return Api.postFiles({
             service: "POST_NOTE",
-            data: {
-                note_content: data.COMMENT,
-                send_mail: data.SEND_MAIL
-            },
-            params,
+            data: params,
             headers:{
                 'Content-Type': 'multipart/form-data'
             },

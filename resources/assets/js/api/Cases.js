@@ -131,23 +131,12 @@ export let cases = {
             `cases/cases_Open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
     },
     cancel(data) {
-<<<<<<< HEAD
-        var params = new URLSearchParams();
-        params.append('action', 'cancelCase');
-        params.append('NOTE_REASON', data.COMMENT);
-        params.append('NOTIFY_CANCEL', data.SEND);
-
-        return Api.put({
-            service: "REQUEST_CANCEL_CASE",
-            params: {},
-=======
         return Api.update({
             service: "CANCEL_CASE",
             data: {
                 reason: data.COMMENT,
                 sendMail: data.SEND
             },
->>>>>>> 032cd35bb... PMCORE-3017
             keys: {
                 app_uid: data.APP_UID
             }

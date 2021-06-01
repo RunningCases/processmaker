@@ -80,7 +80,7 @@ export default {
           SEND: this.$refs["send"].checked ? 1 : 0,
         }))
         .then((response) => {
-          if (response.data && response.data.status) {
+          if (response.status === 200) {
             that.$refs["modal-cancel-case"].hide();
             that.$parent.$parent.page = "todo";
           }
