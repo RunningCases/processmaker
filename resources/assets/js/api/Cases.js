@@ -131,6 +131,7 @@ export let cases = {
             `cases/cases_Open?APP_UID=${data.APP_UID}&DEL_INDEX=${data.DEL_INDEX}&action=${data.ACTION}`);
     },
     cancel(data) {
+<<<<<<< HEAD
         var params = new URLSearchParams();
         params.append('action', 'cancelCase');
         params.append('NOTE_REASON', data.COMMENT);
@@ -139,6 +140,14 @@ export let cases = {
         return Api.put({
             service: "REQUEST_CANCEL_CASE",
             params: {},
+=======
+        return Api.update({
+            service: "CANCEL_CASE",
+            data: {
+                reason: data.COMMENT,
+                sendMail: data.SEND
+            },
+>>>>>>> 032cd35bb... PMCORE-3017
             keys: {
                 app_uid: data.APP_UID
             }
@@ -152,25 +161,35 @@ export let cases = {
             window.config.SYS_URI +
             `cases/ajaxListener`, params);
     },
+    /**
+     * Unpause case with endpoint
+     * @param {*} data 
+     * @returns 
+     */
     unpause(data) {
-        var params = new URLSearchParams();
-        params.append('action', 'unpauseCase');
-        params.append('sApplicationUID', data.APP_UID);
-        params.append('iIndex', data.DEL_INDEX);
-
-        return Api.put({
-            service: "REQUEST_UNPAUSE_CASE",
-            params: {},
+        return Api.update({
+            service: "UNPAUSE_CASE",
+            data: {},
             keys: {
                 app_uid: data.APP_UID
             }
         });
     },
+    /**
+     * Claim case with endpoint
+     * @param {*} data 
+     * @returns 
+     */
     claim(data) {
-        var params = new URLSearchParams();
-        return axios.post(window.config.SYS_SERVER_AJAX +
-            window.config.SYS_URI +
-            `cases/cases_CatchExecute`, params);
+        return Api.update({
+            service: "CLAIM_CASE",
+            data: {
+                index: data.DEL_INDEX
+            },
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
     },
     /**
      * Service to jump a case by it's number

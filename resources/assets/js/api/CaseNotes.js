@@ -12,15 +12,40 @@ export let caseNotes = {
             params.append("filesToUpload[]", f);
         })
 
-        return Api.post({
-            service: "ADD_NOTE",
-            data:{
+        return Api.postFiles({
+            service: "POST_NOTE",
+            data: {
                 note_content: data.COMMENT,
-                send_mail: data.SEND_MAIL ? 1 : 0
+                send_mail: data.SEND_MAIL
+            },
+            params,
+            headers:{
+                'Content-Type': 'multipart/form-data'
             },
             keys: {
                 app_uid: data.APP_UID
             }
         });
     },
+    get(data) {
+        var params = new FormData();
+        params.append('appUid', data.APP_UID);
+        params.append('delIndex', data.DEL_INDEX);
+        params.append('pro', data.PRO_UID);
+        params.append('tas', data.TAS_UID);
+        params.append('start', "0");
+        params.append('limit', "30");
+        
+        return Api.get({
+            service: "GET_NOTES",
+            params:{
+                start: "0",
+                limit: "30",
+                files: true
+            },
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
+    }
 };

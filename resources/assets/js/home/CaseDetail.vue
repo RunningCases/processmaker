@@ -413,8 +413,8 @@ export default {
 
     getCasesNotes() {
       let that = this;
-      Api.cases
-        .casenotes(this.dataCase)
+      Api.caseNotes
+        .get(this.dataCase)
         .then((response) => {
           that.formatResponseCaseNotes(response.data.notes);
           that.dataComments.noPerms = response.data.noPerms || 0;
