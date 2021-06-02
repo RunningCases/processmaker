@@ -115,7 +115,7 @@ export default {
             filterHeader: "STARTED_BY_ME",
             headers: [],
             newCase: {
-                title: "New Case",
+                title: this.$i18n.t("ID_NEW_CASE"),
                 class: "btn-success",
                 onClick: () => {
                     this.$refs["newRequest"].show();
@@ -148,6 +148,15 @@ export default {
                     finish_date: this.$i18n.t("ID_FINISH_DATE"),
                     duration: this.$i18n.t("ID_DURATION"),
                     actions: "",
+                },
+                texts: {
+                    count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
+                    first: this.$i18n.t("ID_FIRST"),
+                    last: this.$i18n.t("ID_LAST"),
+                    filter: this.$i18n.t("ID_FILTER") + ":",
+                    limit: this.$i18n.t("ID_RECORDS") + ":",
+                    page: this.$i18n.t("ID_PAGE") + ":",
+                    noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
                 },
                 selectable: {
                     mode: "single",

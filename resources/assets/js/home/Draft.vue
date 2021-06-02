@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       newCase: {
-        title: "New Case",
+        title: this.$i18n.t("ID_NEW_CASE"),
         class: "btn-success",
         onClick: () => {
           this.$refs["newRequest"].show();
@@ -83,6 +83,7 @@ export default {
       options: {
         filterable: false,
         headings: {
+          detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
@@ -100,9 +101,18 @@ export default {
         requestFunction(data) {
           return this.$parent.$parent.getCasesForVueTable(data);
         },
+        texts: {
+            count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
+            first: this.$i18n.t("ID_FIRST"),
+            last: this.$i18n.t("ID_LAST"),
+            filter: this.$i18n.t("ID_FILTER") + ":",
+            limit: this.$i18n.t("ID_RECORDS") + ":",
+            page: this.$i18n.t("ID_PAGE") + ":",
+            noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
+        }
       },
       pmDateFormat: "Y-m-d H:i:s",
-      clickCount: 0,
+      clickCount: 0,  
       singleClickTimer: null,
       statusTitle: {
           "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
