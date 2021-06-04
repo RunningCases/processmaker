@@ -1,3 +1,7 @@
+<script language="Javascript">
+    function ajax_function(ajax_server, funcion, parameters, method){
+    }
+</script>
 <?php
 try {
     global $G_PUBLISH;
