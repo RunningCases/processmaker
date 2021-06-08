@@ -196,6 +196,7 @@ class PausedTest extends TestCase
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\Model\Delegation::scopePaused()
      * @test
      */
     public function it_get_result_without_filters()

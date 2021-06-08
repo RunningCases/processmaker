@@ -5,7 +5,6 @@ namespace ProcessMaker\TaskScheduler;
 use Application;
 use AppAssignSelfServiceValueGroupPeer;
 use AppAssignSelfServiceValuePeer;
-use AppCacheView;
 use AppDelegation;
 use App\Jobs\TaskScheduler;
 use Bootstrap;
@@ -26,6 +25,7 @@ use ProcessMaker\BusinessModel\TimerEvent;
 use ProcessMaker\BusinessModel\WebEntry;
 use ProcessMaker\Core\JobsManager;
 use ProcessMaker\Plugins\PluginRegistry;
+use ProcessMaker\Report\Reporting;
 use Propel;
 use ResultSet;
 use SpoolRun;
@@ -493,11 +493,11 @@ class Task
 
                 $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
 
-                $appCacheView = new AppCacheView();
-                $appCacheView->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
+                $reporting = new Reporting();
+                $reporting->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
                 $this->setExecutionMessage("Calculating data to fill the 'User Reporting'...");
-                $appCacheView->fillReportByUser($dateInit, $dateFinish);
-                setExecutionResultMessage("DONE");
+                $reporting->fillReportByUser($dateInit, $dateFinish);
+                $this->setExecutionResultMessage("DONE");
             } catch (Exception $e) {
                 $this->setExecutionResultMessage("WITH ERRORS", "error");
                 if ($this->asynchronous === false) {
@@ -537,11 +537,11 @@ class Task
             try {
 
                 $dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
-                $appcv = new AppCacheView();
-                $appcv->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
 
+                $reporting = new Reporting();
+                $reporting->setPathToAppCacheFiles(PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP);
                 $this->setExecutionMessage("Calculating data to fill the 'Process Reporting'...");
-                $appcv->fillReportByProcess($dateInit, $dateFinish);
+                $reporting->fillReportByProcess($dateInit, $dateFinish);
                 $this->setExecutionResultMessage("DONE");
             } catch (Exception $e) {
                 $this->setExecutionResultMessage("WITH ERRORS", "error");

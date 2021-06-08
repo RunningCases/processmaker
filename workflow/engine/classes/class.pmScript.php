@@ -270,19 +270,19 @@ class PMScript
     {
         switch ($stepType) {
             case 'DYNAFORM':
-                $executedOn = $triggerType === 'BEFORE' ? self::BEFORE_DYNAFORM : $triggerType === 'AFTER' ?
+                $executedOn = ($triggerType === 'BEFORE' ? self::BEFORE_DYNAFORM : $triggerType === 'AFTER') ?
                     self::AFTER_DYNAFORM : self::UNDEFINED_ORIGIN;
                 break;
             case 'INPUT_DOCUMENT':
-                $executedOn = $triggerType === 'BEFORE' ? self::BEFORE_INPUT_DOCUMENT : $triggerType === 'AFTER' ?
+                $executedOn = ($triggerType === 'BEFORE' ? self::BEFORE_INPUT_DOCUMENT : $triggerType === 'AFTER') ?
                     self::AFTER_INPUT_DOCUMENT : self::UNDEFINED_ORIGIN;
                 break;
             case 'OUTPUT_DOCUMENT':
-                $executedOn = $triggerType === 'BEFORE' ? self::BEFORE_OUTPUT_DOCUMENT : $triggerType === 'AFTER' ?
+                $executedOn = ($triggerType === 'BEFORE' ? self::BEFORE_OUTPUT_DOCUMENT : $triggerType === 'AFTER') ?
                     self::AFTER_OUTPUT_DOCUMENT : self::UNDEFINED_ORIGIN;
                 break;
             case 'EXTERNAL':
-                $executedOn = $triggerType === 'BEFORE' ? self::BEFORE_EXTERNAL_STEP : $triggerType === 'AFTER' ?
+                $executedOn = ($triggerType === 'BEFORE' ? self::BEFORE_EXTERNAL_STEP : $triggerType === 'AFTER') ?
                     self::AFTER_EXTERNAL_STEP : self::UNDEFINED_ORIGIN;
                 break;
             case 'ASSIGN_TASK':

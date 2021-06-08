@@ -358,10 +358,7 @@ class WorkspaceTools
         $this->upgradeSchema($systemSchema);
         CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-        CLI::logging("* Start migrating to new list tables...\n");
-        $start = microtime(true);
-        $this->migrateList(true, $lang);
-        CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+        // The list tables was deprecated, the migration is not required
 
         CLI::logging("* Start updating MySQL triggers...\n");
         $start = microtime(true);
@@ -2234,10 +2231,7 @@ class WorkspaceTools
                 $workspace->upgradeSchema($systemSchema);
                 CLI::logging("* End adding/replenishing all indexes...(Completed on " . (microtime(true) - $start) . " seconds)\n");
 
-                CLI::logging("* Start migrating to new list tables...\n");
-                $start = microtime(true);
-                $workspace->migrateList(true, $lang);
-                CLI::logging("* End migrating to new list tables...(Completed on " . (microtime(true) - $start) . " seconds)\n");
+                // The list tables was deprecated, the migration is not required
 
                 CLI::logging("* Start updating MySQL triggers...\n");
                 $start = microtime(true);
@@ -2558,6 +2552,7 @@ class WorkspaceTools
      * @see \WorkspaceTools->restore
      * @see workflow/engine/bin/tasks/cliWorkspaces.php:migrate_new_cases_lists()
      * @link https://wiki.processmaker.com/3.3/processmaker_command#migrate-new-cases-lists
+     * @deprecated Class deprecated in Release 3.6.x
      */
     public function migrateList($flagReinsert = false, $lang = 'en')
     {

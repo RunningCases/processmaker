@@ -418,6 +418,9 @@
             <index-column name="APP_UID"/>
             <index-column name="APP_MSG_SEND_DATE"/>
         </index>
+        <index name="indexAppMsgDate">
+            <index-column name="APP_MSG_DATE"/>
+        </index>
     </table>
     <table name="APP_OWNER">
         <vendor type="mysql">
@@ -5067,7 +5070,7 @@
         <column name="MESS_DEFAULT" type="INTEGER" required="true" default="0"/>
         <column name="OAUTH_CLIENT_ID" type="VARCHAR" size="512" required="true" default=""/>
         <column name="OAUTH_CLIENT_SECRET" type="VARCHAR" size="512" required="true" default=""/>
-        <column name="OAUTH_REFRESH_TOKEN" type="VARCHAR" size="512" required="true" default=""/>
+        <column name="OAUTH_REFRESH_TOKEN" type="LONGVARCHAR" required="false"/>
     </table>
 
     <table name="WEB_ENTRY_EVENT">

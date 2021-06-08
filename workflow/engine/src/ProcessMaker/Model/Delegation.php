@@ -180,6 +180,18 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to get the canceled by me
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCaseCanceled($query)
+    {
+        return $query->where('APPLICATION.APP_STATUS_ID', Application::STATUS_CANCELED);
+    }
+
+    /**
      * Scope a query to get specific status
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -700,23 +712,16 @@ class Delegation extends Model
     }
 
     /**
-     * Scope a join with APPLICATION with specific app status
+     * Scope the Process is in list
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $category
+     * @param array $processes
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeJoinCategoryProcess($query, $category = '')
+    public function scopeProcessInList($query, array $processes)
     {
-        $query->leftJoin('PROCESS', function ($join) use ($category) {
-            $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
-            if ($category) {
-                $join->where('PROCESS.PRO_CATEGORY', $category);
-            }
-        });
-
-        return $query;
+        return $query->whereIn('APP_DELEGATION.PRO_ID', $processes);
     }
 
     /**
@@ -835,16 +840,20 @@ class Delegation extends Model
     }
 
     /**
-     * Scope join with user for get the previous user
+     * Scope a join with APPLICATION with specific app status
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $category
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeJoinPreviousUser($query)
+    public function scopeJoinCategoryProcess($query, $category = '')
     {
-        $query->leftJoin('USERS AS PREVIOUS', function ($leftJoin) {
-            $leftJoin->on('AD.USR_UID', '=', 'PREVIOUS.USR_UID');
+        $query->leftJoin('PROCESS', function ($join) use ($category) {
+            $join->on('APP_DELEGATION.PRO_ID', '=', 'PROCESS.PRO_ID');
+            if ($category) {
+                $join->where('PROCESS.PRO_CATEGORY', $category);
+            }
         });
 
         return $query;
@@ -912,19 +921,6 @@ class Delegation extends Model
         });
 
         return $query;
-    }
-
-    /**
-     * Scope the Process is in list
-     * 
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param array $processes
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeProcessInList($query, array $processes)
-    {
-        return $query->whereIn('APP_DELEGATION.PRO_ID', $processes);
     }
 
     /**

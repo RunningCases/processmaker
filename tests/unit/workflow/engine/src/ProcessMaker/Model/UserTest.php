@@ -174,4 +174,19 @@ class UserTest extends TestCase
         $this->assertArrayHasKey('usr_email', $results);
         $this->assertArrayHasKey('usr_position', $results);
     }
+
+    /**
+     * It test get the user information
+     *
+     * @covers \ProcessMaker\Model\User::scopeUserId()
+     * @covers \ProcessMaker\Model\User::getAllInformation()
+     * @test
+     */
+    public function it_get_all_information()
+    {
+        $user = factory(User::class)->create();
+        // When the user exist
+        $results = User::getAllInformation($user->USR_ID);
+        $this->assertNotEmpty($results);
+    }
 }

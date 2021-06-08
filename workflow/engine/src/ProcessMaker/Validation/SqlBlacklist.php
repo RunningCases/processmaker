@@ -95,30 +95,51 @@ class SqlBlacklist extends Parser
         $config = $this->getConfigValues();
 
         //verify statements
+        $notExecuteQuery = false;
         foreach ($this->statements as $statement) {
             $signed = get_class($statement);
             foreach (Parser::$STATEMENT_PARSERS as $key => $value) {
                 if ($signed === $value && in_array(strtoupper($key), $config['statements'])) {
-                    throw new Exception(G::loadTranslation('ID_INVALID_QUERY'));
+                    //SHOW statement is a special case, it does not require a table name
+                    if (strtoupper($key) === 'SHOW') {
+                        throw new Exception(G::loadTranslation('ID_INVALID_QUERY'));
+                    }
+                    $notExecuteQuery = true;
+                    break;
                 }
             }
         }
 
         //verify tables
         //tokens are formed multidimensionally, it is necessary to recursively traverse the multidimensional object.
-        $listTables = array_merge($config['tables'], $config['pmtables']);
-        $fn = function ($object) use (&$fn, $listTables) {
+        $fn = function ($object, $callback) use (&$fn) {
             foreach ($object as $key => $value) {
                 if (is_array($value) || is_object($value)) {
-                    $fn($value);
+                    $fn($value, $callback);
                 }
                 if ($key === 'table' && is_string($value)) {
-                    if (in_array($value, $listTables)) {
-                        throw new Exception(G::loadTranslation('ID_NOT_EXECUTE_QUERY', [$value]));
-                    }
+                    $callback($value);
+                }
+                if ($key === 'token' && is_string($value)) {
+                    $callback($value);
                 }
             }
         };
-        $fn($this->statements);
+
+        //verify system tables
+        $tables = $config['tables'];
+        $fn($this->statements, function ($table) use ($tables, $notExecuteQuery) {
+            if (in_array($table, $tables) && $notExecuteQuery) {
+                throw new Exception(G::loadTranslation('ID_NOT_EXECUTE_QUERY', [$table]));
+            }
+        });
+
+        //verify pmtables
+        $pmtables = $config['pmtables'];
+        $fn($this->statements, function ($table) use ($pmtables, $notExecuteQuery) {
+            if (in_array($table, $pmtables) && $notExecuteQuery) {
+                throw new Exception(G::loadTranslation('ID_NOT_EXECUTE_QUERY', [$table]));
+            }
+        });
     }
 }

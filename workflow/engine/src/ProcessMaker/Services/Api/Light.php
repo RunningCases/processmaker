@@ -12,6 +12,7 @@ use Luracast\Restler\RestException;
 use PmDynaform;
 use Process as ModelProcess;
 use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
+use ProcessMaker\BusinessModel\Cases\CasesList;
 use ProcessMaker\BusinessModel\DynaForm as BusinessModelDynaForm;
 use ProcessMaker\BusinessModel\Light as BusinessModelLight;
 use ProcessMaker\BusinessModel\Lists;
@@ -108,35 +109,20 @@ class Light extends Api
 
     /**
      * Get list counters
-     * @return array
-     *
-     * @copyright Colosa - Bolivia
      *
      * @url GET /counters
+     * @status 200
+     *
+     * @return array
      */
     public function countersCases()
     {
         try {
-            $userId = $this->getUserId();
+            $usrUid = $this->getUserId();
+            $count = new CasesList();
+            $result = $count->getAllCounters($usrUid);
+            $result = $this->parserCountersCases($result);
 
-            /*----------------------------------********---------------------------------*/
-            if (true) {
-                //In enterprise version this block of code should always be executed
-                //In community version this block of code is deleted and is executed the other
-                $list = new Lists();
-                $arrayListCounter = $list->getCounters($userId);
-            } else {
-                /*----------------------------------********---------------------------------*/
-                $case = new BusinessModelCases();
-                $arrayListCounter = $case->getListCounters(
-                    $userId,
-                    ['to_do', 'draft', 'sent', 'selfservice', 'paused', 'completed', 'cancelled']
-                );
-                /*----------------------------------********---------------------------------*/
-            }
-            /*----------------------------------********---------------------------------*/
-
-            $result = $this->parserCountersCases($arrayListCounter);
         } catch (Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
