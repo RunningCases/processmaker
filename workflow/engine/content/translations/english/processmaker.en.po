@@ -24078,6 +24078,12 @@ msgid "Saving process"
 msgstr "Saving process"
 
 # TRANSLATION
+# LABEL/ID_SCHEDULE_TIME
+#: LABEL/ID_SCHEDULE_TIME
+msgid "New cases scheduler"
+msgstr "New cases scheduler"
+
+# TRANSLATION
 # LABEL/ID_SCHEDULER_LIST
 #: LABEL/ID_SCHEDULER_LIST
 msgid "New cases scheduler"

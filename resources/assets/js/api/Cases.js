@@ -107,7 +107,8 @@ export let cases = {
             window.config.SYS_WORKSPACE +
             '/home/' + data.APP_NUMBER + '/pending-tasks', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
+                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                "Accept-Language": window.config.SYS_LANG
             }
         });
     },
@@ -238,7 +239,8 @@ export let casesHeader = {
             window.config.SYS_WORKSPACE +
             '/home/counters', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
+                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                "Accept-Language": window.config.SYS_LANG
             }
         });
     }

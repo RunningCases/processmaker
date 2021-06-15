@@ -169,6 +169,15 @@ export default {
           due_date: this.$i18n.t("ID_DUE_DATE"),
           actions: this.$i18n.t("ID_ACTIONS")
         },
+        texts: {
+            count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
+            first: this.$i18n.t("ID_FIRST"),
+            last: this.$i18n.t("ID_LAST"),
+            filter: this.$i18n.t("ID_FILTER") + ":",
+            limit: this.$i18n.t("ID_RECORDS") + ":",
+            page: this.$i18n.t("ID_PAGE") + ":",
+            noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
+        },
         selectable: {
           mode: "single", // or 'multiple'
           only: function (row) {
