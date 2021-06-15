@@ -109,6 +109,7 @@ export default {
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             server = window.config.SYS_SERVER_API,
+            lang = window.config.SYS_LANG,
             method = options.method || "get";
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
@@ -119,7 +120,8 @@ export default {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ` + credentials.accessToken
+                "Authorization": `Bearer ` + credentials.accessToken,
+                "Accept-Language": lang
             }
         });
     },
@@ -130,6 +132,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
+            lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
@@ -140,7 +143,8 @@ export default {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ` + credentials.accessToken
+                "Authorization": `Bearer ` + credentials.accessToken,
+                "Accept-Language": lang
             }
         });
     },
@@ -152,6 +156,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
+            lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
@@ -163,7 +168,8 @@ export default {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ` + credentials.accessToken
+                "Authorization": `Bearer ` + credentials.accessToken,
+                "Accept-Language": lang
             }
         });
     },
@@ -175,6 +181,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
+            lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
@@ -184,7 +191,8 @@ export default {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ` + credentials.accessToken
+                "Authorization": `Bearer ` + credentials.accessToken,
+                "Accept-Language": lang
             }
         });
     },
@@ -197,6 +205,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
+            lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
@@ -208,7 +217,8 @@ export default {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ` + credentials.accessToken
+                "Authorization": `Bearer ` + credentials.accessToken,
+                "Accept-Language": lang
             }
         });
     }

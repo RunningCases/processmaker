@@ -8,7 +8,8 @@ export let menu = {
             window.config.SYS_WORKSPACE +
             '/home/menu', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
+                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                "Accept-Language": window.config.SYS_LANG
               }
         });
         
@@ -20,7 +21,8 @@ export let menu = {
             window.config.SYS_WORKSPACE +
             '/home/tasks/counter', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken
+                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                "Accept-Language": window.config.SYS_LANG
               }
         });
     }
