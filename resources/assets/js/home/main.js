@@ -4,6 +4,7 @@ import VueSidebarMenu from "vue-sidebar-menu";
 import VueI18n from 'vue-i18n';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import { ServerTable, Event, ClientTable} from 'vue-tables-2';
+import Sortable from 'sortablejs';
 import "@fortawesome/fontawesome-free/css/all.css";
 import "@fortawesome/fontawesome-free/js/all.js";
 import 'bootstrap/dist/css/bootstrap-grid.css';
@@ -16,6 +17,7 @@ Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
+
 Vue.use(ServerTable, {}, false, 'bootstrap3', {});
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
 window.ProcessMaker = {
