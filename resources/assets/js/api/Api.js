@@ -5,7 +5,7 @@ const services = {
     AUTHENTICATE_USER: "/oauth2/token",
     USER_DATA: "/light/user/data",
     GET_MAIN_MENU_COUNTERS: "/light/counters",
-    GET_CASE_NOTES_LIST: "/light/case/{app_uid}/notes",
+    GET_NOTES: "/cases/{app_uid}/notes/paged?files={files}",
     GET_PROCESS_MAP: "/light/project/{prj_uid}/case/{app_uid}",
     GET_LIST_UNASSIGNED: "/light/unassigned{suffix}",
     GET_LISTS_PARTICIPATED: "/light/participated{suffix}",
@@ -22,15 +22,15 @@ const services = {
     UPLOAD_FILE: "/light/case/{app_uid}/upload/{app_doc_uid}",
     GET_CASE_INFO: "/light/{type}/case/{app_uid}",
     REQUEST_PAUSE_CASE: "/light/cases/{app_uid}/pause",
-    REQUEST_UNPAUSE_CASE: "/light/cases/{app_uid}/unpause",
-    REQUEST_CANCEL_CASE: "/light/cases/{app_uid}/cancel",
+    UNPAUSE_CASE: "/cases/{app_uid}/unpause",
+    CANCEL_CASE: "/cases/{app_uid}/cancel",
     REQUEST_SYS_CONFIG: "/light/config",
     REQUEST_SYS_CONFIG_V2: "/light/config?fileLimit=true",
     ROUTE_CASE: "/light/cases/{app_uid}/route-case",
-    CLAIM_CASE: "/light/case/{app_uid}/claim",
+    CLAIM_CASE: "/case/{app_uid}/claim",
     GET_FILE_VERSIONS: "/cases/{app_uid}/input-document/{app_doc_uid}/versions",
     REGISTER: "https:trial32.processmaker.com/syscolosa/en/neoclassic_pro/9893000714bdb2d52ecc317052629917/Trial_RequestPostMobile.php",
-    ADD_NOTE: "/light/case/{app_uid}/note",
+    POST_NOTE: "/case/{app_uid}/note",
     LAST_OPEN_INDEX: "/light/lastopenindex/case/{app_uid}",
     REGISTER_WITH_GOOGLE_FAKE_URL: "fakeurl",
     SIGN_IN_TO_PM_WITH_GOOGLE: "/authentication/gmail",
@@ -153,6 +153,7 @@ export default {
             params = options.params || {},
             data = options.data || {},
             keys = options.keys || {},
+            headers = options.headers || {},
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
@@ -165,15 +166,39 @@ export default {
             url: url,
             params,
             data,
-            headers: {
+            headers: _.extend({
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ` + credentials.accessToken,
                 "Accept-Language": lang
-            }
+            }, headers)
         });
     },
-    
+
+    postFiles(options) {
+        let service = options.service || "",
+            params = options.params || {},
+            data = options.data || {},
+            keys = options.keys || {},
+            headers = options.headers || {},
+            url,
+            credentials = window.config.SYS_CREDENTIALS,
+            workspace = window.config.SYS_WORKSPACE,
+            server = window.config.SYS_SERVER_API;
+        url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
+
+        return axios({
+            method: "post",
+            url: url,
+            params,
+            data,
+            headers: _.extend({
+                "Accept": "application/json",
+                "Authorization": `Bearer ` + credentials.accessToken
+            }, headers)
+        });
+    },
+
     delete(options) {
         let service = options.service || "",
             id = options.id || {},
@@ -211,7 +236,35 @@ export default {
 
         return axios({
             method: "put",
-            url: url + id,
+            url: url,
+            params,
+            data,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ` + credentials.accessToken
+            }
+        });
+    },
+    /**
+     * Put action in AXIOS
+     * @param {*} options 
+     * @returns 
+     */
+    update(options) {
+        let service = options.service || "",
+            params = options.params || {},
+            data = options.data || {},
+            keys = options.keys || {},
+            url,
+            credentials = window.config.SYS_CREDENTIALS,
+            workspace = window.config.SYS_WORKSPACE,
+            server = window.config.SYS_SERVER_API;
+        url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
+
+        return axios({
+            method: "put",
+            url: url,
             params,
             data,
             headers: {
