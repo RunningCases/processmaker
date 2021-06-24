@@ -60925,6 +60925,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SAVING_ENVIRONMENT_SETTINGS','en','Saving Environment Settings','2014-01-15') ,
 ( 'LABEL','ID_SAVING_LABEL','en','Saving','2014-01-15') ,
 ( 'LABEL','ID_SAVING_PROCESS','en','Saving process','2014-01-15') ,
+( 'LABEL','ID_SCHEDULE_TIME','en','Schedule time','2021-05-02') ,
 ( 'LABEL','ID_SCHEDULER_LIST','en','New cases scheduler','2014-01-15') ,
 ( 'LABEL','ID_SCHEDULER_LOG','en','Cases Scheduler Logs','2014-01-15') ,
 ( 'LABEL','ID_SCHEDULER_SUCCESS_CHANGE_STATUS','en','Case Scheduler status has been changed correctly.','2014-01-15') ,

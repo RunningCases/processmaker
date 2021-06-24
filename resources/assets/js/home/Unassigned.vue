@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       newCase: {
-        title: "New Case",
+        title: this.$i18n.t("ID_NEW_CASE"),
         class: "btn-success",
         onClick: () => {
           this.$refs["newRequest"].show();
@@ -106,6 +106,15 @@ export default {
           priority: this.$i18n.t("ID_PRIORITY"),
           actions: "",
           detail: "",
+        },
+        texts: {
+            count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
+            first: this.$i18n.t("ID_FIRST"),
+            last: this.$i18n.t("ID_LAST"),
+            filter: this.$i18n.t("ID_FILTER") + ":",
+            limit: this.$i18n.t("ID_RECORDS") + ":",
+            page: this.$i18n.t("ID_PAGE") + ":",
+            noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
         },
         selectable: {
           mode: "single",
