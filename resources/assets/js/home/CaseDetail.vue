@@ -58,7 +58,7 @@
           :dataCaseStatus="dataCaseStatusTab"
           :dataCase="dataCase"
         ></TabsCaseDetail>
-        <ModalCancelCase ref="modal-cancel-case"></ModalCancelCase>
+        <ModalCancelCase ref="modal-cancel-case" :dataCase="dataCase"></ModalCancelCase>
       </div>
       <div class="col-sm-3">
         <case-summary
@@ -233,10 +233,7 @@ export default {
           })
         )
         .then((response) => {
-          if (
-            response.data.success === "success" &&
-            response.data.message == ""
-          ) {
+          if (response.status === 200 ) {
             that.attachDocuments = false;
             that.dataAttachedDocuments.items = [];
             that.getCasesNotes();
@@ -422,10 +419,10 @@ export default {
 
     getCasesNotes() {
       let that = this;
-      Api.cases
-        .casenotes(this.dataCase)
+      Api.caseNotes
+        .get(this.dataCase)
         .then((response) => {
-          that.formatResponseCaseNotes(response.data.notes);
+          that.formatResponseCaseNotes(response.data.data);
           that.dataComments.noPerms = response.data.noPerms || 0;
         })
         .catch((err) => {
@@ -439,12 +436,12 @@ export default {
         n.id = _.random(1000000);
         notesArray.push({
           user: that.nameFormatCases(
-            n.USR_FIRSTNAME,
-            n.USR_LASTNAME,
-            n.USR_USERNAME
+            n.usr_firstname,
+            n.usr_lastname,
+            n.usr_username
           ),
-          date: n.NOTE_DATE,
-          comment: n.NOTE_CONTENT,
+          date: n.note_date,
+          comment: n.note_content,
           data: n
         });
       });

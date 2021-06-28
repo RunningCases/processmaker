@@ -33,7 +33,9 @@ import api from "./../../api/index";
 export default {
   name: "ModalClaimCase",
   components: {},
-  props: {},
+  props: {
+    dataCase: Object,
+  },
   mounted() {},
   data() {
     return {
@@ -53,7 +55,7 @@ export default {
     claimCase() {
       let that = this;
       api.cases.claim(this.data).then((response) => {
-        if (response.statusText == "OK") {
+        if (response.status === 200) {
           that.$refs["modal-claim-case"].hide();
           that.$parent.$emit("onUpdateDataCase", {
             APP_UID: this.data.APP_UID,
