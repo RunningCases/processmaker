@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Core\System;
+
 // Auto loader
 require_once __DIR__ . '/../../../bootstrap/autoload.php';
 
