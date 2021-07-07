@@ -8,6 +8,7 @@
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
+    <multiview-header/>
     <v-server-table
       :data="tableData"
       :columns="columns"
@@ -60,6 +61,7 @@ import TaskCell from "../components/vuetable/TaskCell.vue";
 import CasesFilter from "../components/search/CasesFilter";
 import api from "./../api/index";
 import utils from "./../utils/utils";
+import MultiviewHeader from "./../components/headers/MultiviewHeader.vue";
 
 export default {
   name: "Todo",
@@ -69,6 +71,7 @@ export default {
     ModalNewRequest,
     TaskCell,
     CasesFilter,
+    MultiviewHeader
   },
   props: ["defaultOption", "filters"],
   data() {
