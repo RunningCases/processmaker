@@ -3388,5 +3388,19 @@ CREATE TABLE `USER_EXTENDED_ATTRIBUTES`
 	`UEA_DATE_CREATE` DATETIME,
 	PRIMARY KEY (`UEA_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- USER_CONFIG
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `USER_CONFIG`;
+
+
+CREATE TABLE `USER_CONFIG`
+(
+	`USR_ID` BIGINT(20)  NOT NULL,
+	`USC_NAME` VARCHAR(255)  NOT NULL,
+	`USC_SETTING` MEDIUMTEXT  NOT NULL,
+	PRIMARY KEY (`USR_ID`,`USC_NAME`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

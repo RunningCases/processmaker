@@ -17,6 +17,7 @@ use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\User;
+use ProcessMaker\Model\UserConfig;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Util\DateTime;
@@ -731,5 +732,67 @@ class Home extends Api
         if (is_null($process)) {
             throw new RestException(404, "Process with Uid '{$processUid}'.");
         }
+    }
+
+    /**
+     * Get user setting.
+     * @params int $id
+     * @params string $name
+     * @url GET /config
+     * @return array
+     * @throws Exception
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doGetConfig(int $id, string $name)
+    {
+        return UserConfig::getSetting($id, $name);
+    }
+
+    /**
+     * Add user setting.
+     * @params int $id
+     * @params string $name
+     * @params string $setting
+     * @url POST /config
+     * @return array
+     * @throws Exception
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doPostConfig(int $id, string $name, string $setting)
+    {
+        return UserConfig::addSetting($id, $name, $setting);
+    }
+
+    /**
+     * Update user setting.
+     * @params int $id
+     * @params string $name
+     * @params string $setting
+     * @url PUT /config
+     * @return array
+     * @throws Exception
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doPutConfig(int $id, string $name, string $setting)
+    {
+        return UserConfig::editSetting($id, $name, $setting);
+    }
+
+    /**
+     * Delete user setting.
+     * @params int $id
+     * @params string $name
+     * @url DELETE /config
+     * @return array
+     * @throws Exception
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doDeleteConfig(int $id, string $name)
+    {
+        return UserConfig::deleteSetting($id, $name);
     }
 }
