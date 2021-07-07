@@ -6102,4 +6102,13 @@
         <column name="UEA_OWNER" type="BIGINT" size="20" required="false"/>
         <column name="UEA_DATE_CREATE" type="TIMESTAMP" required="false"/>
     </table>
+    <table name="USER_CONFIG" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Collation" value="utf8"/>
+        </vendor>
+        <column name="USR_ID" type="BIGINT" size="20" required="true" primaryKey="true"/>
+        <column name="USC_NAME" type="VARCHAR" size="255" required="true" primaryKey="true"/>
+        <column name="USC_SETTING" type="LONGVARCHAR" required="true"/>
+    </table>
 </database>
