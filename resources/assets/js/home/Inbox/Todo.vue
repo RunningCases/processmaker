@@ -8,8 +8,9 @@
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
-    <multiview-header/>
+    <multiview-header :data="dataMultiviewHeader" />
     <v-server-table
+      v-if="typeView === 'GRID'"
       :data="tableData"
       :columns="columns"
       :options="options"
@@ -35,7 +36,7 @@
         <TaskCell :data="props.row.TASK" />
       </div>
       <div slot="current_user" slot-scope="props">
-        {{ props.row.USERNAME_DISPLAY_FORMAT}}
+        {{ props.row.USERNAME_DISPLAY_FORMAT }}
       </div>
       <div slot="due_date" slot-scope="props">
         {{ props.row.DUE_DATE }}
@@ -50,28 +51,35 @@
         </button>
       </div>
     </v-server-table>
+    <VueCardView v-if="typeView === 'CARD'" :data="tableData">
+
+    </VueCardView>
   </div>
 </template>
 
 <script>
-import HeaderCounter from "../components/home/HeaderCounter.vue";
-import ButtonFleft from "../components/home/ButtonFleft.vue";
-import ModalNewRequest from "./ModalNewRequest.vue";
-import TaskCell from "../components/vuetable/TaskCell.vue";
-import CasesFilter from "../components/search/CasesFilter";
-import api from "./../api/index";
-import utils from "./../utils/utils";
-import MultiviewHeader from "./../components/headers/MultiviewHeader.vue";
+import HeaderCounter from "../../components/home/HeaderCounter.vue";
+import ButtonFleft from "../../components/home/ButtonFleft.vue";
+import ModalNewRequest from "../ModalNewRequest.vue";
+import TaskCell from "../../components/vuetable/TaskCell.vue";
+import CasesFilter from "../../components/search/CasesFilter";
+import api from "../../api/index";
+import utils from "../../utils/utils";
+import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
+import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue";
+import defaultMixins from "./defaultMixins";
 
 export default {
   name: "Todo",
+  mixins: [defaultMixins],
   components: {
     HeaderCounter,
     ButtonFleft,
     ModalNewRequest,
     TaskCell,
     CasesFilter,
-    MultiviewHeader
+    MultiviewHeader,
+    VueCardView,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -110,13 +118,13 @@ export default {
           actions: "",
         },
         texts: {
-            count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
-            first: this.$i18n.t("ID_FIRST"),
-            last: this.$i18n.t("ID_LAST"),
-            filter: this.$i18n.t("ID_FILTER") + ":",
-            limit: this.$i18n.t("ID_RECORDS") + ":",
-            page: this.$i18n.t("ID_PAGE") + ":",
-            noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
+          count: this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
+          first: this.$i18n.t("ID_FIRST"),
+          last: this.$i18n.t("ID_LAST"),
+          filter: this.$i18n.t("ID_FILTER") + ":",
+          limit: this.$i18n.t("ID_RECORDS") + ":",
+          page: this.$i18n.t("ID_PAGE") + ":",
+          noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS"),
         },
         selectable: {
           mode: "single",
@@ -134,12 +142,12 @@ export default {
       clickCount: 0,
       singleClickTimer: null,
       statusTitle: {
-          "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
-          "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
-          "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
-          "PAUSED": this.$i18n.t("ID_PAUSED"),
-          "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
-      }
+        ON_TIME: this.$i18n.t("ID_IN_PROGRESS"),
+        OVERDUE: this.$i18n.t("ID_TASK_OVERDUE"),
+        DRAFT: this.$i18n.t("ID_IN_DRAFT"),
+        PAUSED: this.$i18n.t("ID_PAUSED"),
+        UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
+      },
     };
   },
   created() {
@@ -165,72 +173,72 @@ export default {
      * Initialize filters
      */
     initFilters() {
-       let params;
-        if(this.defaultOption) {
-            params = utils.getAllUrlParams(this.defaultOption);
-              if (params && params.openapplicationuid) {
-                this.$emit("onUpdateFilters", [
-                    {
-                        fieldId: "caseNumber",
-                        filterVar: "caseNumber",
-                        label: "",
-                        options:[],
-                        value: params.openapplicationuid,
-                        autoShow: false
-                    }
-                ]);
-              }
+      let params;
+      if (this.defaultOption) {
+        params = utils.getAllUrlParams(this.defaultOption);
+        if (params && params.openapplicationuid) {
+          this.$emit("onUpdateFilters", [
+            {
+              fieldId: "caseNumber",
+              filterVar: "caseNumber",
+              label: "",
+              options: [],
+              value: params.openapplicationuid,
+              autoShow: false,
+            },
+          ]);
         }
+      }
     },
     /**
      * Open a case when the component was mounted
      */
     openDefaultCase() {
-        let params;
-        if(this.defaultOption) {
-            params = utils.getAllUrlParams(this.defaultOption);
-            if (params && params.app_uid && params.del_index) {
-                this.openCase({
-                    APP_UID: params.app_uid,
-                    DEL_INDEX: params.del_index
-                });
-                this.$emit("cleanDefaultOption");
-            }
-            //force to search in the parallel tasks
-            if (params && params.openapplicationuid) {
-                this.onUpdateFilters({
-                    params: [
-                        {
-                            fieldId: "caseNumber",
-                            filterVar: "caseNumber",
-                            label: "",
-                            options:[],
-                            value: params.openapplicationuid,
-                            autoShow: false
-                        }
-                    ],
-                    refresh: false
-                });
-                this.$emit("cleanDefaultOption");                
-            }
+      let params;
+      if (this.defaultOption) {
+        params = utils.getAllUrlParams(this.defaultOption);
+        if (params && params.app_uid && params.del_index) {
+          this.openCase({
+            APP_UID: params.app_uid,
+            DEL_INDEX: params.del_index,
+          });
+          this.$emit("cleanDefaultOption");
         }
+        //force to search in the parallel tasks
+        if (params && params.openapplicationuid) {
+          this.onUpdateFilters({
+            params: [
+              {
+                fieldId: "caseNumber",
+                filterVar: "caseNumber",
+                label: "",
+                options: [],
+                value: params.openapplicationuid,
+                autoShow: false,
+              },
+            ],
+            refresh: false,
+          });
+          this.$emit("cleanDefaultOption");
+        }
+      }
     },
     /**
      * On row click event handler
      * @param {object} event
      */
     onRowClick(event) {
-        let self = this;
-        self.clickCount += 1;
-        if (self.clickCount === 1) {
-            self.singleClickTimer = setTimeout(function() {
-                self.clickCount = 0;            
-            }, 400);
-        } else if (self.clickCount === 2) {
-            clearTimeout(self.singleClickTimer);
-            self.clickCount = 0;
-            self.openCase(event.row);
-        }
+      let self = this;
+      self.clickCount += 1;
+      if (self.clickCount === 1) {
+        self.singleClickTimer = setTimeout(function () {
+          self.clickCount = 0;
+        }, 400);
+      } else if (self.clickCount === 2) {
+        clearTimeout(self.singleClickTimer);
+        self.clickCount = 0;
+        self.openCase(event.row);
+      }
     },
     /**
      * Get cases todo data
@@ -276,19 +284,23 @@ export default {
           CASE_NUMBER: v.APP_NUMBER,
           CASE_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
-          TASK: [{
-            TITLE: v.TAS_TITLE,
-            CODE_COLOR: v.TAS_COLOR,
-            COLOR: v.TAS_COLOR_LABEL,
-            DELAYED_TITLE: v.TAS_STATUS === "OVERDUE" ?
-              this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
-            DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
-          }],
+          TASK: [
+            {
+              TITLE: v.TAS_TITLE,
+              CODE_COLOR: v.TAS_COLOR,
+              COLOR: v.TAS_COLOR_LABEL,
+              DELAYED_TITLE:
+                v.TAS_STATUS === "OVERDUE"
+                  ? this.$i18n.t("ID_DELAYED") + ":"
+                  : this.statusTitle[v.TAS_STATUS],
+              DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : "",
+            },
+          ],
           USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
-              userName: v.USR_LASTNAME,
-              firstName: v.USR_LASTNAME,
-              lastName: v.USR_LASTNAME,
-              format: window.config.FORMATS.format || null
+            userName: v.USR_LASTNAME,
+            firstName: v.USR_LASTNAME,
+            lastName: v.USR_LASTNAME,
+            format: window.config.FORMATS.format || null,
           }),
           DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
@@ -312,7 +324,7 @@ export default {
         DEL_INDEX: item.DEL_INDEX,
         PRO_UID: item.PRO_UID,
         TAS_UID: item.TAS_UID,
-        ACTION: "todo"
+        ACTION: "todo",
       });
       this.$emit("onUpdatePage", "XCase");
     },
@@ -331,11 +343,11 @@ export default {
             PRO_UID: item.PRO_UID,
             TAS_UID: item.TAS_UID,
             APP_NUMBER: item.CASE_NUMBER,
-            ACTION: "todo"
+            ACTION: "todo",
           });
           that.$emit("onUpdatePage", "case-detail");
         });
-      });  
+      });
     },
     onRemoveFilter(data) {},
     onUpdateFilters(data) {
@@ -349,9 +361,9 @@ export default {
     /**
      * update view in component
      */
-    updateView(){
+    updateView() {
       this.$refs["vueTable"].getData();
-    }
+    },
   },
 };
 </script>
