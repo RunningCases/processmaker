@@ -488,18 +488,49 @@ class Delegation extends Model
      */
     public function scopeRangeOfCases($query, array $rangeCases)
     {
-        foreach ($rangeCases as $fromTo) {
-            $fromTo = explode("-", $fromTo);
-            if (count($fromTo) === 2) {
-                $from = $fromTo[0];
-                $to = $fromTo[1];
-                if ($to > $from) {
-                    $query->orWhere(function ($query) use ($from, $to) {
-                        $query->casesFrom($from)->casesTo($to);
-                    });
+        $query->where(function ($query) use ($rangeCases) {
+            foreach ($rangeCases as $fromTo) {
+                $fromTo = explode("-", $fromTo);
+                if (count($fromTo) === 2) {
+                    $from = $fromTo[0];
+                    $to = $fromTo[1];
+                    if ($to > $from) {
+                        $query->orWhere(function ($query) use ($from, $to) {
+                            $query->casesFrom($from)->casesTo($to);
+                        });
+                    }
                 }
             }
-        }
+        });
+    }
+
+    /**
+     * Scope more than one range of cases
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $cases
+     * @param  array $rangeCases
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCasesOrRangeOfCases($query, array $cases, array $rangeCases)
+    {
+        $query->where(function ($query) use ($cases, $rangeCases) {
+            // Get the cases related to the task self service
+            $query->specificCases($cases);
+            foreach ($rangeCases as $fromTo) {
+                $fromTo = explode("-", $fromTo);
+                if (count($fromTo) === 2) {
+                    $from = $fromTo[0];
+                    $to = $fromTo[1];
+                    if ($to > $from) {
+                        $query->orWhere(function ($query) use ($from, $to) {
+                            $query->casesFrom($from)->casesTo($to);
+                        });
+                    }
+                }
+            }
+        });
     }
 
     /**

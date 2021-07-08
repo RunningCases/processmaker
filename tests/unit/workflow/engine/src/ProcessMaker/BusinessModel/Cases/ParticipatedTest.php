@@ -116,6 +116,7 @@ class ParticipatedTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCaseStatus()
      * @test
      */
     public function it_filter_by_started_by_me()
@@ -128,6 +129,8 @@ class ParticipatedTest extends TestCase
         $participated->setUserUid($cases->USR_UID);
         // Set the user ID
         $participated->setUserId($cases->USR_ID);
+        // Get only the TO_DO
+        $participated->setCaseStatus(2);
         // Set the filter STARTED
         $participated->setParticipatedStatus('STARTED');
         // Set OrderBYColumn value
@@ -172,6 +175,7 @@ class ParticipatedTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setProcessId()
      * @test
      */
     public function it_filter_by_process()
@@ -197,11 +201,75 @@ class ParticipatedTest extends TestCase
     }
 
     /**
+     * It tests the getData method with case number filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCasesNumbers()
+     * @test
+     */
+    public function it_filter_by_specific_cases()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the case numbers
+        $participated->setCasesNumbers([$cases['APP_NUMBER']]);
+        // Set OrderBYColumn value
+        $participated->setOrderByColumn('APP_NUMBER');
+        // Call to getData method
+        $res = $participated->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEquals(2, count($res));
+    }
+
+    /**
+     * It tests the getData method with case number filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setRangeCasesFromTo()
+     * @test
+     */
+    public function it_filter_by_range_cases()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the range of case numbers
+        $rangeOfCases = $cases['APP_NUMBER'] . "-" . $cases['APP_NUMBER'];
+        $participated->setRangeCasesFromTo([$rangeOfCases]);
+        // Set OrderBYColumn value
+        $participated->setOrderByColumn('APP_NUMBER');
+        // Call to getData method
+        $res = $participated->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEquals(2, count($res));
+    }
+
+    /**
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCaseTitle()
      * @test
      */
     public function it_filter_by_thread_title()

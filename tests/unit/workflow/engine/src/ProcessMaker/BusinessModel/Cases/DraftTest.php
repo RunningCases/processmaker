@@ -157,6 +157,49 @@ class DraftTest extends TestCase
     }
 
     /**
+     * It tests the getData method with case number filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
+     * @test
+     */
+    public function it_filter_by_specific_cases()
+    {
+        // Create factories related to the draft cases
+        $cases = $this->createDraft();
+        // Create new Draft object
+        $draft = new Draft();
+        $draft->setUserId($cases['USR_ID']);
+        $draft->setCasesNumbers([$cases['APP_NUMBER']]);
+        $draft->setOrderByColumn('APP_NUMBER');
+        $res = $draft->getData();
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getData method with case number filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
+     * @test
+     */
+    public function it_filter_by_range_cases()
+    {
+        // Create factories related to the draft cases
+        $cases = $this->createDraft();
+        // Create new Draft object
+        $draft = new Draft();
+        $draft->setUserId($cases['USR_ID']);
+        $rangeOfCases = $cases['APP_NUMBER'] . "-" . $cases['APP_NUMBER'];
+        $draft->setRangeCasesFromTo([$rangeOfCases]);
+        $draft->setOrderByColumn('APP_NUMBER');
+        $res = $draft->getData();
+        $this->assertNotEmpty($res);
+    }
+
+    /**
      * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()

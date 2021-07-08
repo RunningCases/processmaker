@@ -151,6 +151,49 @@ class InboxTest extends TestCase
     }
 
     /**
+     * It tests the getData method with case number filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @test
+     */
+    public function it_filter_by_specific_cases()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
+        $inbox = new Inbox();
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setCasesNumbers([$cases->APP_NUMBER]);
+        $inbox->setOrderByColumn('APP_NUMBER');
+        $res = $inbox->getData();
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getData method with case number filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @test
+     */
+    public function it_filter_by_range_cases()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
+        $inbox = new Inbox();
+        $inbox->setUserId($cases->USR_ID);
+        $rangeOfCases = $cases->APP_NUMBER . "-" . $cases->APP_NUMBER;
+        $inbox->setRangeCasesFromTo([$rangeOfCases]);
+        $inbox->setOrderByColumn('APP_NUMBER');
+        $res = $inbox->getData();
+        $this->assertNotEmpty($res);
+    }
+
+    /**
      * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
