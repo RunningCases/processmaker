@@ -44,12 +44,9 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button
-          class="btn btn-success btn-sm"
-          @click="showModalUnpauseCase(props.row)"
-        >
-          {{ $t("ID_UNPAUSE") }}
-        </button>
+        <div @click="updateDataEllipsis(props.row)">
+          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+        </div>
       </div>
     </v-server-table>
     <ModalUnpauseCase ref="modal-unpause-case"></ModalUnpauseCase>
@@ -65,6 +62,7 @@ import TaskCell from "../components/vuetable/TaskCell.vue";
 import ModalUnpauseCase from "./modal/ModalUnpauseCase.vue";
 import api from "./../api/index";
 import utils from "./../utils/utils";
+import Ellipsis from '../components/utils/ellipsis.vue';
 
 export default {
   name: "Paused",
@@ -75,6 +73,7 @@ export default {
     TaskCell,
     ModalUnpauseCase,
     CasesFilter,
+    Ellipsis,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -142,7 +141,8 @@ export default {
           "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
           "PAUSED": this.$i18n.t("ID_PAUSED"),
           "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
-      }
+      },
+      dataEllipsis: null,
     };
   },
   created() {
@@ -151,6 +151,7 @@ export default {
   mounted() {
     // force to open case
     this.openDefaultCase();
+    this.setDataEllipsis();
   },
   watch: {},
   computed: {
@@ -357,6 +358,34 @@ export default {
      */
     updateView(){
       this.$refs["vueTable"].getData();
+    },
+    /**
+     * set data by default in the ellipsis component 
+     */
+    setDataEllipsis() {
+      this.dataEllipsis = {
+        showNote: false,
+        showReassign: false,
+        showPause: false,
+        showPlay: false,
+        showOpen: false,
+        showClaim: false
+      }
+    },
+    /**
+     * 
+     */
+    updateDataEllipsis(data) {
+      this.dataEllipsis = {
+        APP_UID: data.APP_UID || "",
+        PRO_UID: data.PRO_UID || "",
+        showOpen: false,
+        showNote: true,
+        showPlay: true,
+        showReassign: true,
+        showPause: false,
+        showClaim: false
+      };
     }
   },
 };
