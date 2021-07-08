@@ -1,3 +1,4 @@
+import api from "../../api/index";
 export default {
   data() {
     let that = this;
@@ -30,6 +31,35 @@ export default {
             icon: "fas fa-th",
           },
         ],
+      },
+      optionsVueCardView: {
+        limit: 10,
+        headings: {
+          detail: "",
+          case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
+          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          process_name: this.$i18n.t("ID_PROCESS_NAME"),
+          task: this.$i18n.t("ID_TASK"),
+          current_user: this.$i18n.t("ID_CURRENT_USER"),
+          due_date: this.$i18n.t("ID_DUE_DATE"),
+          delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
+          priority: this.$i18n.t("ID_PRIORITY"),
+          actions: "",
+        },
+        columns: [
+          "detail",
+          "case_number",
+          "case_title",
+          "process_name",
+          "task",
+          "due_date",
+          "delegation_date",
+          "priority",
+          "actions",
+        ],
+        requestFunction(data){
+          return that.getCasesVueCarView(data);
+        }
       }
     }
   },
@@ -37,7 +67,37 @@ export default {
 
   },
   methods: {
+    /**
+    * Get cases for Vue Card View
+    */
+    getCasesVueCarView(data) {
+      let that = this,
+        dt,
+        start = 0,
+        limit = data.limit,
+        filters = {};
+      filters = {
+        paged: "0," + limit,
+      };
 
+      _.forIn(this.filters, function (item, key) {
+        filters[item.filterVar] = item.value;
+      });
+      return new Promise((resolutionFunc, rejectionFunc) => {
+        api.cases
+          .todo(filters)
+          .then((response) => {
+            dt = that.formatDataResponse(response.data.data);
+            resolutionFunc({
+              data: dt,
+              count: response.data.total,
+            });
+          })
+          .catch((e) => {
+            rejectionFunc(e);
+          });
+      });
+    },
   }
 }
 

@@ -51,7 +51,20 @@
         </button>
       </div>
     </v-server-table>
-    <VueCardView v-if="typeView === 'CARD'" :data="tableData">
+    <VueCardView v-if="typeView === 'CARD'" :options="optionsVueCardView">
+      <div slot="case_number" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light">{{ props["item"]["CASE_NUMBER"]}} </span>
+      </div>
+      <div slot="case_title" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light">{{ props["item"]["CASE_TITLE"]}} </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light">{{ props["item"]["PROCESS_NAME"]}} </span>
+      </div>
+      <div slot="task" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light"> <TaskCell :data="props.item.TASK" /> </span>
+      </div>
+      
 
     </VueCardView>
   </div>
@@ -376,5 +389,23 @@ export default {
 }
 .VueTables__limit {
   display: none;
+}
+
+.v-card-text-dark{
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  display: inline-block;
+}
+
+.v-card-text-light{
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  display: inline-block;
+}
+
+.v-card-text{
+  line-height: 0;
 }
 </style>

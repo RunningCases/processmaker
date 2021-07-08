@@ -1,8 +1,16 @@
 <template>
   <div class="pm-vue-card-view">
     <div class="pm-vue-card-view-container">
-      <div v-for="item in data" :columns="columns" :key="item" :data="item">
-        asdasd {{item}}
+      <div>
+        <vue-card v-for="item in data" :key="item.id">
+          <slot
+            v-for="column in options.columns"
+            :name="column"
+            :item="item"
+            :column="column"
+            :headings="options.headings"
+          ></slot>
+        </vue-card>
       </div>
     </div>
   </div>
@@ -10,29 +18,21 @@
 
 <script>
 import VueCard from "./VueCard.vue";
+import DefaultMixins from "./VueCardViewMixins";
 export default {
   name: "VueCardView",
+  mixins: [DefaultMixins],
   components: {
     VueCard,
   },
-  props: ["data"],
+  props: ["options"],
   data() {
     return {
-      columns: [
-        "detail",
-        "case_number",
-        "case_title",
-        "process_name",
-        "task",
-        "due_date",
-        "delegation_date",
-        "priority",
-        "actions",
-      ],
+ 
     };
   },
-  mounted(){
-    console.log(this.data);
+  mounted() {
+
   },
   methods: {
     classBtn(cls) {
