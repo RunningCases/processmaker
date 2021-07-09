@@ -82,8 +82,8 @@ class Home extends Api
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
+            $properties['start'] = (int)$paged[0];
+            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -137,8 +137,8 @@ class Home extends Api
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
+            $properties['start'] = (int)$paged[0];
+            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -192,8 +192,8 @@ class Home extends Api
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
+            $properties['start'] = (int)$paged[0];
+            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             // todo: some queries related to the unassigned are using the USR_UID
@@ -249,8 +249,8 @@ class Home extends Api
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
+            $properties['start'] = (int)$paged[0];
+            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -320,8 +320,8 @@ class Home extends Api
         // Set the pagination parameters
         $paged = explode(',', $paged);
         $sort = explode(',', $sort);
-        $properties['start'] = $paged[0];
-        $properties['limit'] = $paged[1];
+        $properties['start'] = (int)$paged[0];
+        $properties['limit'] = (int)$paged[1];
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
         $result = [];
@@ -479,8 +479,8 @@ class Home extends Api
             // Set the pagination parameters
             $paged = explode(',', $paged);
             $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
+            $properties['start'] = (int)$paged[0];
+            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
