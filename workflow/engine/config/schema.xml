@@ -44,6 +44,8 @@
         <column name="APP_DELAY_DURATION" type="DOUBLE" default="0"/>
         <column name="APP_DRIVE_FOLDER_UID" type="VARCHAR" size="128" default="" required="false"/>
         <column name="APP_ROUTING_DATA" type="LONGVARCHAR"/>
+        <column name="PRO_ID" type="INTEGER" required="true" default="0"/>
+        <column name="APP_INIT_USER_ID" type="INTEGER" required="true" default="0"/>
         <validator column="APP_STATUS">
             <rule name="validValues" value="DRAFT|TO_DO|PAUSED|COMPLETED|CANCELLED"
                   message="Please select a valid status."/>
@@ -171,6 +173,7 @@
         <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
         <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
         <column name="DEL_TITLE" type="VARCHAR" size="999" required="true"/>
+        <column name="DEL_THREAD_STATUS_ID" type="INTEGER" required="true" default="0"/>
         <unique name="DELEGATION_ID">
             <unique-column name="DELEGATION_ID"/>
         </unique>
@@ -390,6 +393,9 @@
         <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
         <column name="TAS_ID" type="INTEGER" required="false" default="0"/>
         <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
+        <unique name="APP_MSG_ID">
+            <unique-column name="APP_MSG_ID"/>
+        </unique>
         <index name="indexAppMsgId">
             <index-column name="APP_MSG_ID"/>
         </index>
@@ -466,7 +472,7 @@
             <parameter name="Collation" value="utf8_general_ci"/>
             <parameter name="Checksum" value=""/>
             <parameter name="Create_options" value=""/>
-            <parameter name="Comment" value="Stores the users, processes and/or applications configuratio"/>
+            <parameter name="Comment" value="Stores the users, processes and/or applications configuration"/>
         </vendor>
         <column name="CFG_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="OBJ_UID" type="VARCHAR" size="128" required="true" primaryKey="true" default=""/>
