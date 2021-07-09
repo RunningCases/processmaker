@@ -44,9 +44,9 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button class="btn btn-success btn-sm" @click="openCase(props.row)">
-          {{ $t("ID_OPEN_CASE") }}
-        </button>
+        <div @click="updateDataEllipsis(props.row)">
+          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+        </div>
       </div>
     </v-server-table>
   </div>
@@ -60,6 +60,7 @@ import TaskCell from "../components/vuetable/TaskCell.vue";
 import CasesFilter from "../components/search/CasesFilter";
 import api from "./../api/index";
 import utils from "./../utils/utils";
+import Ellipsis from '../components/utils/ellipsis.vue';
 
 export default {
   name: "Todo",
@@ -69,6 +70,7 @@ export default {
     ModalNewRequest,
     TaskCell,
     CasesFilter,
+    Ellipsis,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -136,7 +138,8 @@ export default {
           "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
           "PAUSED": this.$i18n.t("ID_PAUSED"),
           "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
-      }
+      },
+      dataEllipsis: null
     };
   },
   created() {
@@ -145,6 +148,7 @@ export default {
   mounted() {
     // force to open case
     this.openDefaultCase();
+    this.setDataEllipsis();
   },
   watch: {},
   computed: {
@@ -348,6 +352,34 @@ export default {
      */
     updateView(){
       this.$refs["vueTable"].getData();
+    },
+    /**
+     * set data by default in the ellipsis component 
+     */
+    setDataEllipsis() {
+      this.dataEllipsis = {
+        showNote: false,
+        showReassign: false,
+        showPause: false,
+        showPlay: false,
+        showOpen: false,
+        showClaim: false
+      }
+    },
+    /**
+     * 
+     */
+    updateDataEllipsis(data) {
+      this.dataEllipsis = {
+        APP_UID: data.APP_UID || "",
+        PRO_UID: data.PRO_UID || "",
+        showOpen: true,
+        showNote: true,
+        showPlay: false,
+        showReassign: true,
+        showPause: true,
+        showClaim: false
+      };
     }
   },
 };
