@@ -57,7 +57,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
-        $this->assertEquals(count($cases), count($result));
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -66,6 +66,8 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setOrderByColumn()
      * @test
      */
     public function it_filter_by_app_number()
@@ -88,6 +90,7 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setCasesNumbers()
      * @test
      */
     public function it_filter_by_specific_cases()
@@ -97,8 +100,6 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         $search->setCasesNumbers([$cases[0]->APP_NUMBER]);
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals($cases[0]->APP_NUMBER, $result[0]['APP_NUMBER']);
@@ -110,6 +111,7 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setRangeCasesFromTo()
      * @test
      */
     public function it_filter_by_range_cases()
@@ -120,8 +122,6 @@ class SearchTest extends TestCase
         $search = new Search();
         $rangeOfCases = $cases[0]->APP_NUMBER . "-" . $cases[0]->APP_NUMBER;
         $search->setRangeCasesFromTo([$rangeOfCases]);
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -133,6 +133,7 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setProcessId()
      * @test
      */
     public function it_filter_by_process()
@@ -142,8 +143,6 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         $search->setProcessId($cases[0]->PRO_ID);
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -155,6 +154,7 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setTaskId()
      * @test
      */
     public function it_filter_by_task()
@@ -164,8 +164,6 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         $search->setTaskId($cases[0]->TAS_ID);
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -177,6 +175,7 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setCaseTitle()
      * @test
      */
     public function it_filter_by_thread_title()
@@ -202,6 +201,7 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setUserId()
      * @test
      */
     public function it_filter_by_user()
@@ -211,19 +211,42 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         $search->setUserId($cases[0]->USR_ID);
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
     }
 
     /**
-     * It tests the getData with priority
+     * It tests the getData with user
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setStartCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setStartCaseTo()
+     * @test
+     */
+    public function it_filter_by_start_date()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $date = date('Y-m-d');
+        $search->setStartCaseFrom($date);
+        $search->setStartCaseTo($date);
+        $result = $search->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * It tests the getData with status
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setCaseStatuses()
      * @test
      */
     public function it_filter_by_status()
@@ -233,8 +256,6 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         $search->setCaseStatuses(['TO_DO']);
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($result);
@@ -253,12 +274,9 @@ class SearchTest extends TestCase
         $casesNotSubmitted = factory(Delegation::class, 5)->states('web_entry')->create();
         // Create new Search object
         $search = new Search();
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
         // Review if the cases not submitted are not considered
         $this->assertNotEmpty($result);
-        $this->assertEquals(count($result) , count($cases));
     }
 
     /**
@@ -273,8 +291,6 @@ class SearchTest extends TestCase
         $cases = $this->createSearch();
         // Create new Search object
         $search = new Search();
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $total = $search->getCounter();
         // The count for search was disabled for performance issues
         $this->assertEquals($total, 0);
@@ -293,8 +309,6 @@ class SearchTest extends TestCase
         $cases = $this->createSearch();
         // Create new Search object
         $search = new Search();
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $total = $search->getPagingCounters();
         // The count for search was disabled for performance issues
         $this->assertEquals($total, 0);

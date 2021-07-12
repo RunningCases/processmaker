@@ -43,7 +43,7 @@ class Application extends Model
      * @param int $user
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeUserId($query, $user)
+    public function scopeUserId($query, int $user)
     {
         return $query->where('APP_DELEGATION.USR_ID', '=', $user);
     }
