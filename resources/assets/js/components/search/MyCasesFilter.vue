@@ -16,6 +16,14 @@
                         stacked
                     ></b-form-radio-group>
                 </b-form-group>
+                <b-form-checkbox
+                    id="checkbox-1"
+                    v-model="byProcessName"
+                    name="checkbox-1"
+                    value="processName"
+                >
+                    {{$t('ID_BY_PROCESS_NAME') }}
+                </b-form-checkbox>
             </template>
         </SearchPopover>
 
@@ -69,7 +77,7 @@
 
 <script>
 import SearchPopover from "./popovers/SearchPopover.vue";
-import CaseIntegerNumber from "./popovers/CaseIntegerNumber.vue";
+import CaseNumber from "./popovers/CaseNumber.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
 import DateFilter from "./popovers/DateFilter.vue";
@@ -81,7 +89,7 @@ export default {
     props: ["filters","title"],
     components:{
         SearchPopover,
-        CaseIntegerNumber,
+        CaseNumber,
         CaseTitle,
         ProcessName,
         DateFilter,
@@ -92,10 +100,9 @@ export default {
             searchLabel: this.$i18n.t('ID_SEARCH'),
             addSearchTitle: this.$i18n.t('ID_ADD_SEARCH_FILTER_CRITERIA'),
             searchTags: [],
-        
             filterItems: [
                 {   
-                    type: "CaseIntegerNumber",
+                    type: "CaseNumber",
                     id: "caseNumber",
                     title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_CASE_NUMBER')}`,
                     optionLabel: this.$i18n.t('ID_BY_CASE_NUMBER'),
@@ -104,7 +111,7 @@ export default {
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CASE_NUMBER'),
                     items:[
                         {
-                            id: "caseNumber",
+                            id: "filterCases",
                             value: ""
                         }
                     ],
@@ -131,29 +138,7 @@ export default {
                     makeTagText: function (params, data) {
                         return  `${this.tagPrefix} ${data[0].value}`;
                     }
-                },
-                {
-                    type: "ProcessName",
-                    id: "processName",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
-                    optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
-                    detail: "",
-                    tagText: "",
-                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
-                    autoShow: true,
-                    items:[
-                        {
-                            id: "process",
-                            value: "",
-                            options: [],
-                            placeholder: this.$i18n.t('ID_PROCESS_NAME')
-                        }
-                    ],
-                    makeTagText: function (params, data) {
-
-                        return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
-                    }
-                },
+                }, 
                 {
                     type: "TaskTitle",
                     id: "taskTitle",
@@ -226,8 +211,31 @@ export default {
                     }
                 },
             ],
+            processName: {
+                type: "ProcessName",
+                id: "processName",
+                title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
+                optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
+                detail: "",
+                tagText: "",
+                tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
+                autoShow: false,
+                items:[
+                    {
+                        id: "process",
+                        value: "",
+                        options: [],
+                        placeholder: this.$i18n.t('ID_PROCESS_NAME')
+                    }
+                ],
+                makeTagText: function (params, data) {
+
+                    return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                }
+            },
             selected: "",
-            itemModel: {}
+            itemModel: {},
+            byProcessName: ""
         };
     },
     mounted() {
@@ -241,14 +249,17 @@ export default {
         }
   },
     watch: {
-        filters: function (filters) {
-            this.searchTags = [];
-            this.selected = "";
-            this.setFilters(filters);
-            
+        filters: { 
+            immediate: true, 
+            handler(newVal, oldVal) { 
+                this.searchTags = [];
+                this.selected = [];
+                this.setFilters(newVal);
+            }
         }
     },
     methods: {
+        
         /**
          * Add filter criteria save button handler
          */
@@ -257,22 +268,42 @@ export default {
                 element,
                 initialFilters = [],
                 item;
-                // element = _.find(this.filterItems, function(o) { return o.id === self.selected; });
             this.$root.$emit('bv::hide::popover');
             element = _.find(this.filterItems, function(o) { return o.id === self.selected; });
-                if  (element) {
-                    _.forEach(element.items, function(value, key) {
-                        item = {
-                            filterVar: value.id,
-                            fieldId: self.selected,
-                            value:  '',
-                            label: "",
-                            options: []
-                        };
-                        initialFilters.push(item);
-                    });
-                }
+            if  (element) {
+                initialFilters = this.prepareFilterItems(element.items, this.selected, true);
+            }
+            //adding process name filter
+            initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
             this.$emit("onUpdateFilters", {params: initialFilters, refresh: false}); 
+        },
+        /**
+         * Prepare the filter items
+         * @param {array} items
+         * @param {id} string
+         * @param {boolean} restore
+         */
+        prepareFilterItems(items, id, restore){
+            let initialFilters = [],
+                self = this,
+                filter,
+                item;
+            _.forEach(items, function(value, key) {
+                filter = _.find(self.filters, function(o) { return o.filterVar === value.id; });
+                if (filter && restore) {
+                    initialFilters.push(filter);
+                } else {
+                    item = {
+                        filterVar: value.id,
+                        fieldId: id,
+                        value:  '',
+                        label: "",
+                        options: []
+                    };
+                    initialFilters.push(item);
+                }
+            });
+            return initialFilters;
         },
         /**
          * Set Filters and make the tag labels
@@ -287,6 +318,12 @@ export default {
                     self.selected = component.id;
                     self.itemModel[component.id] = component;
                     self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true;
+                }
+                if(item.fieldId === "processName") {
+                    self.searchTags.push(self.processName.id);
+                    self.byProcessName = self.processName.id;
+                    self.itemModel[self.processName.id] = self.processName;
+                    self.itemModel[self.processName.id].autoShow = typeof self.processName.autoShow !== "undefined" ? self.processName.autoShow  : true;
                 }
             });
         },
@@ -327,15 +364,23 @@ export default {
          * @param {string} tag filter identifier
          */
         customRemove(removeTag, tag) {
-            this.selected = "";
-            this.$emit("onUpdateFilters",  {params: [], refresh: true});
+            let temp = [];
+            _.forEach(this.filters, function(item, key) {
+                if(item.fieldId !== tag) { 
+                    temp.push(item);   
+                }
+            });
+            if (tag === "processName") {
+                this.byProcessName = "";
+            }
+            this.$emit("onUpdateFilters", {params: temp, refresh: true});
         },
         /**
          * Update the filter model this is fired from filter popaver save action
          * @param {object} params - arrives the settings
          * @param {string} tag filter identifier
          */
-        updateSearchTag(params) {          
+        updateSearchTag(params) {      
             let temp = this.filters.concat(params);
             temp = [...new Set([...this.filters,...params])]
             this.$emit("onUpdateFilters",  {params: temp, refresh: true});
