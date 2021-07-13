@@ -45,9 +45,11 @@ export default {
 
         });
     },
+    /**
+     * Return the height for Vue Card View body
+     */
     getBodyHeight() {
       this.height = window.innerHeight - this.$root.$el.clientHeight;
     }
   }
 }
-

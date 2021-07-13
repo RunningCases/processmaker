@@ -162,7 +162,5 @@ export default {
           });
       });
     },
-
   }
 }
-
