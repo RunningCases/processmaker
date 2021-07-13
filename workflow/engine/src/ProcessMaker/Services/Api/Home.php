@@ -109,6 +109,8 @@ class Home extends Api
      * @param int $process
      * @param int $task
      * @param string $caseTitle
+     * @param string $delegateFrom
+     * @param string $delegateTo
      * @param string $filterCases
      * @param string $paged
      * @param string $sort
@@ -125,6 +127,8 @@ class Home extends Api
         int $process = 0,
         int $task = 0,
         string $caseTitle = '',
+        string $delegateFrom = '',
+        string $delegateTo = '',
         string $filterCases = '',
         string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
@@ -135,6 +139,8 @@ class Home extends Api
             $properties = [];
             $properties['caseNumber'] = $caseNumber;
             $properties['caseTitle'] = $caseTitle;
+            $properties['delegateFrom'] = $delegateFrom;
+            $properties['delegateTo'] = $delegateTo;
             $properties['filterCases'] = $filterCases;
             $properties['process'] = $process;
             $properties['task'] = $task;
@@ -167,6 +173,8 @@ class Home extends Api
      * @param int $process
      * @param int $task
      * @param string $caseTitle
+     * @param string $delegateFrom
+     * @param string $delegateTo
      * @param string $filterCases
      * @param string $paged
      * @param string $sort
@@ -183,6 +191,8 @@ class Home extends Api
         int $process = 0,
         int $task = 0,
         string $caseTitle = '',
+        string $delegateFrom = '',
+        string $delegateTo = '',
         string $filterCases = '',
         string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
@@ -193,6 +203,8 @@ class Home extends Api
             $properties = [];
             $properties['caseNumber'] = $caseNumber;
             $properties['caseTitle'] = $caseTitle;
+            $properties['delegateFrom'] = $delegateFrom;
+            $properties['delegateTo'] = $delegateTo;
             $properties['filterCases'] = $filterCases;
             $properties['process'] = $process;
             $properties['task'] = $task;
@@ -227,6 +239,8 @@ class Home extends Api
      * @param int $process
      * @param int $task
      * @param string $caseTitle
+     * @param string $delegateFrom
+     * @param string $delegateTo
      * @param string $filterCases
      * @param string $paged
      * @param string $sort
@@ -243,6 +257,8 @@ class Home extends Api
         int $process = 0,
         int $task = 0,
         string $caseTitle = '',
+        string $delegateFrom = '',
+        string $delegateTo = '',
         string $filterCases = '',
         string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
@@ -253,6 +269,8 @@ class Home extends Api
             $properties = [];
             $properties['caseNumber'] = $caseNumber;
             $properties['caseTitle'] = $caseTitle;
+            $properties['delegateFrom'] = $delegateFrom;
+            $properties['delegateTo'] = $delegateTo;
             $properties['filterCases'] = $filterCases;
             $properties['process'] = $process;
             $properties['task'] = $task;
