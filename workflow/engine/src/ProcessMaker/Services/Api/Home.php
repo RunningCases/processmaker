@@ -585,18 +585,19 @@ class Home extends Api
     /**
      * Get the search cases
      *
-     * @url GET /:app_number/pending-tasks
+     * @url GET /:appNumber/pending-tasks
      *
-     * @param int $app_number
+     * @param int $appNumber
      *
      * @return array
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getPendingTasks(int $app_number)
+    public function getPendingTasks(int $appNumber)
     {
-        $result = Delegation::getPendingTask($app_number);
+        // Get the pending task
+        $result = Delegation::getPendingTask($appNumber);
 
         return $result;
     }

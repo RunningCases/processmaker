@@ -1955,10 +1955,8 @@ class Delegation extends Model
             'TASK.TAS_ASSIGN_TYPE', // Task assign rule
             'APP_DELEGATION.DEL_TITLE', // Thread title
             'APP_DELEGATION.DEL_THREAD_STATUS', // Thread status
+            'APP_DELEGATION.USR_UID', // Current UserUid
             'APP_DELEGATION.USR_ID', // Current UserId
-            'USERS.USR_USERNAME', // Current UserName
-            'USERS.USR_FIRSTNAME', // Current User FirstName
-            'USERS.USR_LASTNAME', // Current User LastName
             'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date
             // Additional column for other functionalities
             'APP_DELEGATION.APP_UID', // Case Uid for Open case
@@ -1968,8 +1966,6 @@ class Delegation extends Model
         ]);
         // Join with task
         $query->joinTask();
-        // Join with task
-        $query->joinUser();
         // Get the open threads
         $query->threadOpen();
         // Related to the specific case number
@@ -1981,6 +1977,12 @@ class Delegation extends Model
             $item['TAS_COLOR'] = $abs->getTaskColor($item['DEL_TASK_DUE_DATE']);
             $item['TAS_COLOR_LABEL'] = AbstractCases::TASK_COLORS[$item['TAS_COLOR']];
             $item['UNASSIGNED'] = ($item['TAS_ASSIGN_TYPE'] === 'SELF_SERVICE' ? true : false);
+            $userInfo = User::getInformation($item['USR_ID']);
+            $item['user_tooltip'] = $userInfo;
+            $item['USR_USERNAME'] = !empty($userInfo['usr_username']) ? $userInfo['usr_username'] : '';
+            $item['USR_LASTNAME'] = !empty($userInfo['usr_lastname']) ? $userInfo['usr_lastname'] : '';
+            $item['USR_FIRSTNAME'] = !empty($userInfo['usr_firstname']) ? $userInfo['usr_firstname'] : '';
+
             return $item;
         });
 
