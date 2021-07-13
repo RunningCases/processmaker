@@ -140,12 +140,14 @@ export default {
           "PAUSED": this.$i18n.t("ID_PAUSED"),
           "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
       },
-      dataEllipsis: null,
+      dataEllipsis: {
+        buttons: {}
+      },
+      showEllipsis: false
     };
   },
   mounted() {
     this.initFilters();
-    this.setDataEllipsis();
   },
   watch: {},
   computed: {
@@ -338,29 +340,39 @@ export default {
      */
     setDataEllipsis() {
       this.dataEllipsis = {
-        showNote: false,
-        showReassign: false,
-        showPause: false,
-        showPlay: false,
-        showOpen: false,
-        showClaim: false
+        showNote: true,
+        showPause: true,
+        showClaim: true
       }
     },
     /**
-     * 
+     * Show options in the ellipsis 
      */
     updateDataEllipsis(data) {
-      this.dataEllipsis = {
-        APP_UID: data.APP_UID || "",
-        PRO_UID: data.PRO_UID || "",
-        showOpen: false,
-        showNote: true,
-        showPlay: false,
-        showReassign: false,
-        showPause: true,
-        showClaim: true
-      };
-    }
+      let that = this;
+      this.showEllipsis = !this.showEllipsis;
+      if (this.showEllipsis) {
+        this.dataEllipsis = {
+          buttons: {
+            note: {
+              name: "case note",
+              icon: "far fa-comments",
+              fn: function() {console.log("comments");}
+            },
+            pause: {
+              name: "pause case",
+              icon: "far fa-pause-circle",
+              fn: function() {console.log("pause case");}
+            },
+            claim: {
+              name: "claim case",
+              icon: "fas fa-briefcase",
+              fn: function() {console.log("claim case");}
+            }
+          }
+        }
+      }
+    },
   },
 };
 </script>
