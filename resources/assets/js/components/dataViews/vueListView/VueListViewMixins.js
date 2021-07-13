@@ -1,0 +1,55 @@
+export default {
+  data() {
+    let that = this;
+    return {
+      height: 0,
+      config: {
+        page: 1
+      },
+      data: []
+    }
+  },
+  mounted: function () {
+    this.getData();
+    this.getBodyHeight();
+  },
+  methods: {
+    /**
+     * Get data similar to vue Table
+     */
+    getData() {
+      let options = _.extend({}, this.config, this.options),
+        that = this;
+      this.options.requestFunction(options)
+        .then((data) => {
+          that.data = data.data;
+        })
+        .catch(() => {
+
+        });
+    },
+    /**
+     * Get data when press the button more view
+     */
+    viewMore() {
+      let options = _.extend({}, this.config, this.options, { page: this.config.page + 1 }),
+        that = this;
+      this.options.requestFunctionViewMore(options)
+        .then((data) => {
+          if (data.data && data.data.length != 0) {
+            that.data = that.data.concat(data.data);
+            that.config.page += 1;
+          }
+        })
+        .catch(() => {
+
+        });
+    },
+    /**
+     * Return the height for Vue list View body
+     */
+    getBodyHeight() {
+      this.height = window.innerHeight - this.$root.$el.clientHeight;
+    }
+  }
+}
