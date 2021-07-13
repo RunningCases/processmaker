@@ -21,9 +21,11 @@
 
 <script>
 import api from "./../../api/index";
+import CustomSidebarMenuItem from "./CustomSidebarMenuItem";
 export default {
     name: "CustomSidebar",
     props: ["menu"],
+
     data() {
         return {
             collapsed: false,
@@ -61,8 +63,8 @@ export default {
         onItemClick(event, item, node) {
             this.$emit("OnClickSidebarItem", { item });
         },
-         /**
-         * On resize event handler id the windows is resized 
+        /**
+         * On resize event handler id the windows is resized
          * collase and isMobile proerty will be updated
          */
         onResize() {
@@ -74,7 +76,7 @@ export default {
                 this.collapsed = false;
             }
         }
-    },
+    }
 };
 </script>
 
