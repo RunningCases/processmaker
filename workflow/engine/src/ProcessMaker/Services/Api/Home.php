@@ -16,6 +16,7 @@ use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
 use ProcessMaker\Model\UserConfig;
 use ProcessMaker\Model\Task;
@@ -810,5 +811,31 @@ class Home extends Api
     public function doDeleteConfig(int $id, string $name)
     {
         return UserConfig::deleteSetting($id, $name);
+    }
+
+    /**
+     * Get all process categories
+     *
+     * @url GET /categories
+     *
+     * @param string $name
+     * @param int $start
+     * @param int $limit
+     *
+     * @return array
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getCategories($name = null, $start = null, $limit = null)
+    {
+        try {
+            $categories = ProcessCategory::getProcessCategories($name, $start, $limit);
+            return $categories;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
     }
 }

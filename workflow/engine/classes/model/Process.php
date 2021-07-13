@@ -143,6 +143,7 @@ class Process extends BaseProcess
             $this->setProShowDelegate('');
             $this->setProShowDynaform('');
             $this->setProCategory((isset($aData["PRO_CATEGORY"]))? $aData["PRO_CATEGORY"]: "");
+            $this->setCategoryId((isset($aData["CATEGORY_ID"])) ? $aData["CATEGORY_ID"]: 0);
             $this->setProSubCategory('');
             $this->setProIndustry('');
             $this->setProCreateDate(date("Y-m-d H:i:s"));
