@@ -142,7 +142,10 @@ export default {
           "PAUSED": this.$i18n.t("ID_PAUSED"),
           "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
       },
-      dataEllipsis: null,
+      dataEllipsis: {
+        buttons: {}
+      },
+      showEllipsis: false
     };
   },
   created() {
@@ -151,7 +154,6 @@ export default {
   mounted() {
     // force to open case
     this.openDefaultCase();
-    this.setDataEllipsis();
   },
   watch: {},
   computed: {
@@ -360,33 +362,33 @@ export default {
       this.$refs["vueTable"].getData();
     },
     /**
-     * set data by default in the ellipsis component 
-     */
-    setDataEllipsis() {
-      this.dataEllipsis = {
-        showNote: false,
-        showReassign: false,
-        showPause: false,
-        showPlay: false,
-        showOpen: false,
-        showClaim: false
-      }
-    },
-    /**
-     * 
+     * Show options in the ellipsis 
      */
     updateDataEllipsis(data) {
-      this.dataEllipsis = {
-        APP_UID: data.APP_UID || "",
-        PRO_UID: data.PRO_UID || "",
-        showOpen: false,
-        showNote: true,
-        showPlay: true,
-        showReassign: true,
-        showPause: false,
-        showClaim: false
-      };
-    }
+      let that = this;
+      this.showEllipsis = !this.showEllipsis;
+      if (this.showEllipsis) {
+        this.dataEllipsis = {
+          buttons: {
+            note: {
+              name: "case note",
+              icon: "far fa-comments",
+              fn: function() {console.log("comments");}
+            },
+            play: {
+              name: "play case",
+              icon: "far fa-play-circle",
+              fn: function() {console.log("play case");}
+            },
+            reassign: {
+              name: "reassign case",
+              icon: "fas fa-redo",
+              fn: function() {console.log("reassign case");}
+            }
+          }
+        }
+      }
+    },
   },
 };
 </script>

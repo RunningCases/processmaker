@@ -5,48 +5,14 @@
                 class="v-inline"
                 v-show="showActions"
             >
-                <div class="buttonGroup" @focus="hidebuttonsAction()">
+                <div class="buttonGroup">
                     <b-button
-                        v-if="data.showClaim"
+                        v-for="item in data.buttons"
+                        :key="item.name"
                         variant="outline-info"
-                        @click="claimCase"
+                        @click="executeFunction(item.fn)"
                     >
-                        <i class="fas fa-briefcase"></i>
-                    </b-button>
-                    <b-button
-                        v-if="data.showOpen"
-                        variant="outline-info"
-                        @click="openCase"
-                    >
-                        <i class="far fa-edit"></i>
-                    </b-button>
-                    <b-button
-                        v-show="data.showPlay"
-                        variant="outline-info"
-                        @click="unPauseCase"
-                    >
-                        <i class="far fa-play-circle"></i>
-                    </b-button>
-                    <b-button
-                        v-show="data.showPause"
-                        variant="outline-info"
-                        @click="pauseCase"
-                    >
-                        <i class="far fa-pause-circle"></i>
-                    </b-button>
-                    <b-button
-                        v-show="data.showReassign"
-                        variant="outline-info"
-                        @click="reassingCase"
-                    >
-                        <i class="fas fa-redo"></i>
-                    </b-button>
-                    <b-button
-                        v-show="data.showNote"
-                        variant="outline-info"
-                        @click="openCaseNote"
-                    >
-                        <i class="far fa-comments"></i>
+                        <i :class="item.icon"></i>
                     </b-button>
                 </div>
             </div>
@@ -72,6 +38,14 @@ export default {
     },
     methods: {
         /**
+         * Callback function from parent
+         */
+        executeFunction(fn) {
+            if (fn) {
+                fn();
+            }
+        },
+        /**
          * Show the action buttons by row
          */
         showActionButtons() {
@@ -95,54 +69,6 @@ export default {
                     this.$parent.$parent.$parent.$children[i].$el.style.opacity = 1
                 }
         },
-        /**
-         * Call the event to reassign a case
-         */
-        reassingCase() {
-            this.hideActionButtons();
-            console.log("Action Reassing Case");
-            console.log(this.data);
-        },
-        /**
-         * Call the event to open a case
-         */
-        openCase() {
-            this.hideActionButtons();
-            console.log("Action Open Case");
-            console.log(this.data);
-        },
-        /**
-         * Call the event to unpause a case
-         */
-        unPauseCase() {
-            this.hideActionButtons();
-            console.log("Action Unpause Case");
-            console.log(this.data);
-        },
-        /**
-         * Call the event to pause a case
-         */
-        pauseCase() {
-            this.hideActionButtons();
-            console.log("Action Pause Case");
-            console.log(this.data);
-        },
-        /**
-         * Call the event to open case note
-         */
-        openCaseNote() {
-            this.hideActionButtons();
-            console.log("Action Case Note");
-            console.log(this.data);
-        },
-        /**
-         * Call the event to claim a case
-         */
-        claimCase() {
-            this.hideActionButtons();
-            console.log("Action Claim Case");
-            console.log(this.data);
-        }
     }
 }
 </script>
