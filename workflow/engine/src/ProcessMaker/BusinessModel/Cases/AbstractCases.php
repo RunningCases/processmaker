@@ -34,6 +34,8 @@ class AbstractCases implements CasesInterface
     const STATUS_TODO = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
+    // Order by column allowed
+    const ORDER_BY_COLUMN_ALLOWED = ['APP_NUMBER', 'DEL_TITLE', 'PRO_TITLE'];
 
     // Filter by category from a process, know as "$category" in the old lists classes
     private $categoryUid = '';
@@ -956,6 +958,11 @@ class AbstractCases implements CasesInterface
     {
         // Convert the value to upper case
         $orderByColumn = strtoupper($orderByColumn);
+
+        // Validate the order by column
+        if (!in_array($orderByColumn, self::ORDER_BY_COLUMN_ALLOWED)) {
+            throw new Exception("Order by column '{$orderByColumn}' is not valid.");
+        }
 
         $this->orderByColumn = $orderByColumn;
     }
