@@ -45,7 +45,7 @@ $G_TMP_MENU->AddIdRawOption(
     'CASES_SELFSERVICE',
     'casesListExtJs?action=selfservice',
     G::LoadTranslation('ID_UNASSIGNED'),
-    'fas fa-crosshairs'
+    'fas fa-users'
 );
 
 
