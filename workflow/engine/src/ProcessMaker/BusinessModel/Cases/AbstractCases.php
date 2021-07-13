@@ -1260,6 +1260,10 @@ class AbstractCases implements CasesInterface
         if (!empty($properties['caseNumber'])) {
             $this->setCaseNumber($properties['caseNumber']);
         }
+        // Add a filter with specific cases or range of cases like '1, 3-5, 8, 10-15'
+        if (!empty($properties['filterCases'])) {
+            $this->setFilterCases($properties['filterCases']);
+        }
         // Filter by case title
         if (!empty($properties['caseTitle'])) {
             $this->setCaseTitle($properties['caseTitle']);
@@ -1290,10 +1294,6 @@ class AbstractCases implements CasesInterface
             $this->setFinishCaseTo($properties['finishCaseTo']);
         }
         /** Apply filters related to SEARCH */
-        // Add a filter with specific cases or range of cases like '1, 3-5, 8, 10-15'
-        if (get_class($this) === Search::class && !empty($properties['filterCases'])) {
-            $this->setFilterCases($properties['filterCases']);
-        }
         // Filter by more than one case statuses like ['DRAFT', 'TO_DO']
         if (get_class($this) === Search::class && !empty($properties['caseStatuses'])) {
             $this->setCaseStatuses($properties['caseStatuses']);

@@ -242,6 +242,32 @@ class PausedTest extends TestCase
     }
 
     /**
+     * It tests the getData method with case number filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
+     * @test
+     */
+    public function it_filter_by_specific_cases()
+    {
+        // Create factories related to the paused cases
+        $cases = $this->createPaused();
+        //Create new Paused object
+        $paused = new Paused();
+        //Set the user UID
+        $paused->setUserUid($cases->USR_UID);
+        //Set the user ID
+        $paused->setUserId($cases->USR_ID);
+        //Set app number
+        $paused->setCasesNumbers([$cases->APP_NUMBER]);
+        //Call to getData method
+        $res = $paused->getData();
+        //This asserts there are results for the filtered app number
+        $this->assertNotEmpty($res);
+    }
+
+    /**
      * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()

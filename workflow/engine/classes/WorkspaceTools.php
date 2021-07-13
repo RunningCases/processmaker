@@ -4368,6 +4368,21 @@ class WorkspaceTools
         $con->commit();
         CLI::logging("-> Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID  Done \n");
 
+        // Populating PROCESS.CATEGORY_ID
+        CLI::logging("->   Populating PROCESS.CATEGORY_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE PROCESS
+                                   INNER JOIN (
+                                       SELECT PROCESS_CATEGORY.CATEGORY_UID, PROCESS_CATEGORY.CATEGORY_ID
+                                       FROM PROCESS_CATEGORY
+                                   ) AS CAT
+                                   ON (PROCESS.PRO_CATEGORY = CAT.CATEGORY_UID)
+                                   SET PROCESS.CATEGORY_ID = CAT.CATEGORY_ID
+                                   WHERE PROCESS.CATEGORY_ID = 0");
+        $con->commit();
+        CLI::logging("-> Populating PROCESS.CATEGORY_ID  Done \n");
+
         // Populating PROCESS_VARIABLES.PRO_ID
         CLI::logging("->   Populating PROCESS_VARIABLES.PRO_ID \n");
         $con->begin();

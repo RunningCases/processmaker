@@ -48,13 +48,17 @@ class Search extends AbstractCases
         if ($this->getCaseNumber()) {
             $query->case($this->getCaseNumber());
         }
-        // Filter cases by specific cases like [1,3,5]
-        if (!empty($this->getCasesNumbers())) {
+        // Filter only cases by specific cases like [1,3,5]
+        if (!empty($this->getCasesNumbers()) && empty($this->getRangeCasesFromTo())) {
             $query->specificCases($this->getCasesNumbers());
         }
-        // Filter cases by range of cases like ['1-5', '10-15']
-        if (!empty($this->getRangeCasesFromTo())) {
+        // Filter only cases by range of cases like ['1-5', '10-15']
+        if (!empty($this->getRangeCasesFromTo()) && empty($this->getCasesNumbers())) {
             $query->rangeOfCases($this->getRangeCasesFromTo());
+        }
+        // Filter cases mixed by range of cases and specific cases like '1,3-5,8'
+        if (!empty($this->getCasesNumbers()) && !empty($this->getRangeCasesFromTo())) {
+            $query->casesOrRangeOfCases($this->getCasesNumbers(), $this->getRangeCasesFromTo());
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
