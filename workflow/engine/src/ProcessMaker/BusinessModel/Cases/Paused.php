@@ -94,7 +94,7 @@ class Paused extends AbstractCases
 
     /**
      * Gets the data for the paused cases list
-     * 
+     *
      * @return array
      */
     public function getData()
@@ -126,7 +126,7 @@ class Paused extends AbstractCases
             // Get task status
             $item['TAS_STATUS'] = self::TASK_STATUS[$item['TAS_COLOR']];
             // Get delay
-            $item['DELAY'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'],  date("Y-m-d H:i:s"));
+            $item['DELAY'] = getDiffBetweenDates($item['DEL_TASK_DUE_DATE'], date("Y-m-d H:i:s"));
             // Apply the date format defined in environment
             $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
             $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
@@ -146,7 +146,7 @@ class Paused extends AbstractCases
 
     /**
      * Count how many cases the user has in PAUSED, does not apply filters
-     * 
+     *
      * @return int
      */
     public function getCounter()
