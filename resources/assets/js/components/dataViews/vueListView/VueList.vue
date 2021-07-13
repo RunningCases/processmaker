@@ -1,6 +1,6 @@
 <template>
-  <div class="pm-vue-card">
-    <div class="card pm-vue-card-inside" style="width: 20rem">
+  <div class="pm-vue-list">
+    <div class="card pm-vue-list-inside">
       <div class="card-body">
         <slot> </slot>
       </div>
@@ -24,17 +24,16 @@ export default {
 </script>
 
 <style>
-.pm-vue-card {
-  display: inline-block;
-  padding: 0.7rem;
+.pm-vue-list {
+  padding: 0.7rem 0.7rem 0rem 0.7rem;
 }
-.pm-vue-card-inside {
+.pm-vue-list-inside {
   border-left: solid lightseagreen;
   color: #212529;
   background-color: #f8f9fa;
 }
 
-.pm-vue-card-inside:hover {
+.pm-vue-list-inside:hover {
   background-color: #cfd9e4;
 }
 </style>

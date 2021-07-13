@@ -1,10 +1,10 @@
 <template>
-  <div id="v-unassigned" ref="v-unassigned" class="v-container-unassigned">
+  <div id="v-todo" ref="v-todo" class="v-container-todo">
     <button-fleft :data="newCase"></button-fleft>
     <modal-new-request ref="newRequest"></modal-new-request>
     <CasesFilter
       :filters="filters"
-      :title="$t('ID_UNASSIGNED')"
+      :title="$t('ID_CASES_STATUS_TO_DO')"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -33,6 +33,9 @@
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
+      <div slot="current_user" slot-scope="props">
+        {{ props.row.USERNAME_DISPLAY_FORMAT}}
+      </div>
       <div slot="due_date" slot-scope="props">
         {{ props.row.DUE_DATE }}
       </div>
@@ -46,7 +49,6 @@
         </div>
       </div>
     </v-server-table>
-    <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
   </div>
 </template>
 
@@ -56,19 +58,17 @@ import ButtonFleft from "../components/home/ButtonFleft.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
 import CasesFilter from "../components/search/CasesFilter";
-import ModalClaimCase from "./modal/ModalClaimCase.vue";
 import api from "./../api/index";
 import utils from "./../utils/utils";
 import Ellipsis from '../components/utils/ellipsis.vue';
 
 export default {
-  name: "Unassigned",
+  name: "Todo",
   components: {
     HeaderCounter,
     ButtonFleft,
     ModalNewRequest,
     TaskCell,
-    ModalClaimCase,
     CasesFilter,
     Ellipsis,
   },
@@ -96,8 +96,8 @@ export default {
       tableData: [],
       options: {
         filterable: false,
-        sendInitialRequest: false,
         headings: {
+          detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
@@ -107,7 +107,6 @@ export default {
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY"),
           actions: "",
-          detail: "",
         },
         texts: {
             count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
@@ -140,11 +139,15 @@ export default {
           "PAUSED": this.$i18n.t("ID_PAUSED"),
           "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
       },
-      dataEllipsis: null,
+      dataEllipsis: null
     };
   },
-  mounted() {
+  created() {
     this.initFilters();
+  },
+  mounted() {
+    // force to open case
+    this.openDefaultCase();
     this.setDataEllipsis();
   },
   watch: {},
@@ -161,15 +164,42 @@ export default {
   methods: {
     /**
      * Initialize filters
-     * updates the filters if there is an appUid parameter
      */
     initFilters() {
-       let params,
-       filter = {refresh: true};
+       let params;
         if(this.defaultOption) {
             params = utils.getAllUrlParams(this.defaultOption);
+              if (params && params.openapplicationuid) {
+                this.$emit("onUpdateFilters", [
+                    {
+                        fieldId: "caseNumber",
+                        filterVar: "caseNumber",
+                        label: "",
+                        options:[],
+                        value: params.openapplicationuid,
+                        autoShow: false
+                    }
+                ]);
+              }
+        }
+    },
+    /**
+     * Open a case when the component was mounted
+     */
+    openDefaultCase() {
+        let params;
+        if(this.defaultOption) {
+            params = utils.getAllUrlParams(this.defaultOption);
+            if (params && params.app_uid && params.del_index) {
+                this.openCase({
+                    APP_UID: params.app_uid,
+                    DEL_INDEX: params.del_index
+                });
+                this.$emit("cleanDefaultOption");
+            }
+            //force to search in the parallel tasks
             if (params && params.openapplicationuid) {
-                filter = {
+                this.onUpdateFilters({
                     params: [
                         {
                             fieldId: "caseNumber",
@@ -180,12 +210,11 @@ export default {
                             autoShow: false
                         }
                     ],
-                    refresh: true
-                };
+                    refresh: false
+                });
+                this.$emit("cleanDefaultOption");                
             }
-            this.$emit("cleanDefaultOption");
         }
-        this.onUpdateFilters(filter);
     },
     /**
      * On row click event handler
@@ -201,11 +230,11 @@ export default {
         } else if (self.clickCount === 2) {
             clearTimeout(self.singleClickTimer);
             self.clickCount = 0;
-            self.claimCase(event.row);
+            self.openCase(event.row);
         }
     },
     /**
-     * Get cases unassigned data
+     * Get cases todo data
      */
     getCasesForVueTable(data) {
       let that = this,
@@ -220,12 +249,12 @@ export default {
         paged: paged,
       };
 
-      _.forIn(this.$parent.filters, function (item, key) {
+      _.forIn(this.filters, function (item, key) {
         filters[item.filterVar] = item.value;
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
-          .unassigned(filters)
+          .todo(filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
@@ -256,30 +285,22 @@ export default {
               this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
             DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
           }],
+          USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
+              userName: v.USR_LASTNAME,
+              firstName: v.USR_LASTNAME,
+              lastName: v.USR_LASTNAME,
+              format: window.config.FORMATS.format || null
+          }),
           DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
           PRIORITY: v.DEL_PRIORITY_LABEL,
-          PRO_UID: v.PRO_UID,
-          TAS_UID: v.TAS_UID,
           DEL_INDEX: v.DEL_INDEX,
           APP_UID: v.APP_UID,
+          PRO_UID: v.PRO_UID,
+          TAS_UID: v.TAS_UID,
         });
       });
       return data;
-    },
-    /**
-     * Claim case
-     *
-     * @param {object} item
-     */
-    claimCase(item) {
-      let that = this;
-      api.cases.open(_.extend({ ACTION: "unassigned" }, item)).then(() => {
-        api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
-          that.$refs["modal-claim-case"].data = item;
-          that.$refs["modal-claim-case"].show();
-        });
-      });
     },
     /**
      * Open selected cases in the inbox
@@ -311,16 +332,15 @@ export default {
             PRO_UID: item.PRO_UID,
             TAS_UID: item.TAS_UID,
             APP_NUMBER: item.CASE_NUMBER,
+            ACTION: "todo"
           });
           that.$emit("onUpdatePage", "case-detail");
         });
-      });
+      });  
     },
     onRemoveFilter(data) {},
     onUpdateFilters(data) {
-      if (data.params) {
-        this.$emit("onUpdateFilters", data.params);
-      }
+      this.$emit("onUpdateFilters", data.params);
       if (data.refresh) {
         this.$nextTick(() => {
           this.$refs["vueTable"].getData();
@@ -353,22 +373,25 @@ export default {
       this.dataEllipsis = {
         APP_UID: data.APP_UID || "",
         PRO_UID: data.PRO_UID || "",
-        showOpen: false,
+        showOpen: true,
         showNote: true,
         showPlay: false,
-        showReassign: false,
+        showReassign: true,
         showPause: true,
-        showClaim: true
+        showClaim: false
       };
     }
   },
 };
 </script>
 <style>
-.v-container-unassigned {
+.v-container-todo {
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 50px;
   padding-right: 50px;
+}
+.VueTables__limit {
+  display: none;
 }
 </style>

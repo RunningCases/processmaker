@@ -43,22 +43,53 @@ export default {
           current_user: this.$i18n.t("ID_CURRENT_USER"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
-          priority: this.$i18n.t("ID_PRIORITY"),
-          actions: "",
+          priority: this.$i18n.t("ID_PRIORITY")
         },
         columns: [
           "detail",
           "case_number",
           "case_title",
           "process_name",
-          "task",
           "due_date",
           "delegation_date",
           "priority",
-          "actions",
+          "task"
         ],
-        requestFunction(data){
-          return that.getCasesVueCarView(data);
+        requestFunction(data) {
+          return that.getCasesVueCard(data);
+        },
+        requestFunctionViewMore(data) {
+          return that.getCasesVueCardViewMore(data);
+        }
+      },
+      optionsVueListView: {
+        limit: 10,
+        headings: {
+          detail: "",
+          case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
+          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          process_name: this.$i18n.t("ID_PROCESS_NAME"),
+          task: this.$i18n.t("ID_TASK"),
+          current_user: this.$i18n.t("ID_CURRENT_USER"),
+          due_date: this.$i18n.t("ID_DUE_DATE"),
+          delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
+          priority: this.$i18n.t("ID_PRIORITY")
+        },
+        columns: [
+          "detail",
+          "case_number",
+          "case_title",
+          "process_name",
+          "due_date",
+          "delegation_date",
+          "priority",
+          "task"
+        ],
+        requestFunction(data) {
+          return that.getCasesVueCard(data);
+        },
+        requestFunctionViewMore(data) {
+          return that.getCasesVueCardViewMore(data);
         }
       }
     }
@@ -70,7 +101,7 @@ export default {
     /**
     * Get cases for Vue Card View
     */
-    getCasesVueCarView(data) {
+    getCasesVueCard(data) {
       let that = this,
         dt,
         start = 0,
@@ -98,6 +129,40 @@ export default {
           });
       });
     },
+    /**
+    * Get cases for Vue Card View
+    */
+    getCasesVueCardViewMore(data) {
+      let that = this,
+        dt,
+        paged,
+        limit = data.limit,
+        start = data.page === 1 ? 0 : limit * (data.page - 1),
+        filters = {};
+      paged = start + "," + limit;
+
+      filters = {
+        paged: paged,
+      };
+      _.forIn(this.filters, function (item, key) {
+        filters[item.filterVar] = item.value;
+      });
+      return new Promise((resolutionFunc, rejectionFunc) => {
+        api.cases
+          .todo(filters)
+          .then((response) => {
+            dt = that.formatDataResponse(response.data.data);
+            resolutionFunc({
+              data: dt,
+              count: response.data.total,
+            });
+          })
+          .catch((e) => {
+            rejectionFunc(e);
+          });
+      });
+    },
+
   }
 }
 

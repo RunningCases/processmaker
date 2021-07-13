@@ -51,22 +51,119 @@
         </button>
       </div>
     </v-server-table>
-    <VueCardView v-if="typeView === 'CARD'" :options="optionsVueCardView">
+    <VueCardView
+      v-if="typeView === 'CARD'"
+      :options="optionsVueCardView"
+      ref="vueCardView"
+    >
+      <div slot="detail" slot-scope="props">
+        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light">{{ props["item"]["CASE_NUMBER"]}} </span>
+        <span class="v-card-text-highlight"
+          >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
+        >
       </div>
       <div slot="case_title" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light">{{ props["item"]["CASE_TITLE"]}} </span>
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["CASE_TITLE"] }}
+        </span>
       </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light">{{ props["item"]["PROCESS_NAME"]}} </span>
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="due_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DUE_DATE"] }}
+        </span>
+      </div>
+      <div slot="delegation_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DELEGATION_DATE"] }}
+        </span>
       </div>
       <div slot="task" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark">{{ props["headings"][props.column]}} :</span> <span class="v-card-text-light"> <TaskCell :data="props.item.TASK" /> </span>
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <TaskCell :data="props.item.TASK" />
+        </span>
       </div>
-      
 
     </VueCardView>
+    <VueListView
+      v-if="typeView === 'LIST'"
+      :options="optionsVueListView"
+      ref="vueListView"
+    >
+      <div slot="detail" slot-scope="props">
+        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
+      <div slot="case_number" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-highlight"
+          >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
+        >
+      </div>
+      <div slot="case_title" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["CASE_TITLE"] }}
+        </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="due_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DUE_DATE"] }}
+        </span>
+      </div>
+      <div slot="delegation_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DELEGATION_DATE"] }}
+        </span>
+      </div>
+      <div slot="task" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+    </VueListView>
   </div>
 </template>
 
@@ -80,6 +177,7 @@ import api from "../../api/index";
 import utils from "../../utils/utils";
 import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
 import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue";
+import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
 import defaultMixins from "./defaultMixins";
 
 export default {
@@ -93,6 +191,7 @@ export default {
     CasesFilter,
     MultiviewHeader,
     VueCardView,
+    VueListView
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -367,7 +466,15 @@ export default {
       this.$emit("onUpdateFilters", data.params);
       if (data.refresh) {
         this.$nextTick(() => {
-          this.$refs["vueTable"].getData();
+          if (this.typeView === "GRID") {
+            this.$refs["vueTable"].getData();
+          }
+          if (this.typeView === "CARD") {
+            this.$refs["vueCardView"].getData();
+          }
+          if (this.typeView === "LIST") {
+            this.$refs["vueListView"].getData();
+          }
         });
       }
     },
@@ -391,21 +498,25 @@ export default {
   display: none;
 }
 
-.v-card-text-dark{
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
+.v-card-text-dark {
+  color: #343944;
   display: inline-block;
 }
 
-.v-card-text-light{
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
+.v-card-text-highlight {
+  color: #313541;
   display: inline-block;
 }
 
-.v-card-text{
-  line-height: 0;
+.v-card-text-light {
+  color: #313541;
+  display: inline-block;
+}
+
+.v-card-text {
+}
+
+.v-pm-card-info{
+  float: right;
 }
 </style>

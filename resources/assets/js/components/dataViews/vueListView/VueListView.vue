@@ -1,11 +1,11 @@
 <template>
-  <div class="pm-vue-card-view" :height="height">
-    <div class="pm-vue-card-view-container">
+  <div class="pm-vue-list-view" :height="height">
+    <div class="pm-vue-list-view-container">
       <div
-        class="pm-vue-card-view-body"
+        class="pm-vue-list-view-body"
         :style="{height: height + 'px'}"
       >
-        <vue-card v-for="item in data" :key="item.id">
+        <vue-list v-for="item in data" :key="item.id">
           <slot
             v-for="column in options.columns"
             :name="column"
@@ -13,10 +13,10 @@
             :column="column"
             :headings="options.headings"
           ></slot>
-        </vue-card>
+        </vue-list>
       </div>
 
-      <div class="pm-vue-card-view-footer">
+      <div class="pm-vue-list-view-footer">
         <a @click="viewMore" class="list-group-item">View more</a>
       </div>
     </div>
@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import VueCard from "./VueCard.vue";
-import DefaultMixins from "./VueCardViewMixins";
+import VueList from "./VueList.vue";
+import DefaultMixins from "./VueListViewMixins";
 export default {
-  name: "VueCardView",
+  name: "VueListView",
   mixins: [DefaultMixins],
   components: {
-    VueCard,
+    VueList,
   },
   props: ["options"],
   data() {
@@ -49,19 +49,19 @@ export default {
 </script>
 
 <style>
-.pm-vue-card-view {
+.pm-vue-list-view {
   font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.9rem;
 }
 
-.pm-vue-card-view-body {
+.pm-vue-list-view-body {
   border: 1px solid rgba(0, 0, 0, 0.125);
   padding-bottom: 5px;
   margin-top: 5px;
   overflow-y: auto;
 }
 
-.pm-vue-card-view-footer {
+.pm-vue-list-view-footer {
   text-align: center;
   line-height: 1.25;
 }
