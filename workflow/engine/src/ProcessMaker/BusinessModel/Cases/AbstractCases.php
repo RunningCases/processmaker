@@ -37,6 +37,9 @@ class AbstractCases implements CasesInterface
     // Order by column allowed
     const ORDER_BY_COLUMN_ALLOWED = ['APP_NUMBER', 'DEL_TITLE', 'PRO_TITLE'];
 
+    // Filter by category using the Id field
+    private $categoryId = 0;
+
     // Filter by category from a process, know as "$category" in the old lists classes
     private $categoryUid = '';
 
@@ -138,6 +141,26 @@ class AbstractCases implements CasesInterface
 
     // Number of rows to return
     private $limit = 15;
+
+    /**
+     * Set Category Uid value
+     *
+     * @param int $category
+     */
+    public function setCategoryId(int $category)
+    {
+        $this->categoryId = $category;
+    }
+
+    /**
+     * Get Category Id value
+     *
+     * @return string
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
 
     /**
      * Set Category Uid value
@@ -1247,10 +1270,6 @@ class AbstractCases implements CasesInterface
      */
     public function setProperties(array $properties)
     {
-        // Filter by category
-        if (!empty($properties['category'])) {
-            $this->setCategoryUid($properties['category']);
-        }
         // Filter by process
         if (!empty($properties['process'])) {
             $this->setProcessId($properties['process']);
@@ -1301,6 +1320,10 @@ class AbstractCases implements CasesInterface
             $this->setFinishCaseTo($properties['finishCaseTo']);
         }
         /** Apply filters related to SEARCH */
+        // Filter by category
+        if (get_class($this) === Search::class && !empty($properties['category'])) {
+            $this->setCategoryId($properties['category']);
+        }
         // Filter by more than one case statuses like ['DRAFT', 'TO_DO']
         if (get_class($this) === Search::class && !empty($properties['caseStatuses'])) {
             $this->setCaseStatuses($properties['caseStatuses']);
