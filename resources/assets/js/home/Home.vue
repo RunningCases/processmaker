@@ -41,7 +41,7 @@ import CustomSidebar from "./../components/menu/CustomSidebar";
 import MyCases from "./MyCases";
 import MyDocuments from "./MyDocuments";
 import Todo from "./Inbox/Todo.vue";
-import Draft from "./Draft";
+import Draft from "./Draft/Draft.vue";
 import Paused from "./Paused";
 import Unassigned from "./Unassigned";
 import BatchRouting from "./BatchRouting";

@@ -1,14 +1,16 @@
 <template>
-  <div id="v-todo" ref="v-todo" class="v-container-todo">
+  <div id="v-draft" ref="v-draft" class="v-container-draft">
     <button-fleft :data="newCase"></button-fleft>
     <modal-new-request ref="newRequest"></modal-new-request>
     <CasesFilter
       :filters="filters"
-      :title="$t('ID_CASES_STATUS_TO_DO')"
+      :title="$t('ID_DRAFT')"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
+    <multiview-header :data="dataMultiviewHeader" />
     <v-server-table
+      v-if="typeView === 'GRID'"
       :data="tableData"
       :columns="columns"
       :options="options"
@@ -29,18 +31,8 @@
       <div slot="process_name" slot-scope="props">
         {{ props.row.PROCESS_NAME }}
       </div>
-
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
-      </div>
-      <div slot="current_user" slot-scope="props">
-        {{ props.row.USERNAME_DISPLAY_FORMAT}}
-      </div>
-      <div slot="due_date" slot-scope="props">
-        {{ props.row.DUE_DATE }}
-      </div>
-      <div slot="delegation_date" slot-scope="props">
-        {{ props.row.DELEGATION_DATE }}
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
@@ -49,21 +41,139 @@
         </div>
       </div>
     </v-server-table>
+        <VueCardView
+      v-if="typeView === 'CARD'"
+      :options="optionsVueCardView"
+      ref="vueCardView"
+    >
+      <div slot="detail" slot-scope="props">
+        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
+      <div slot="case_number" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-highlight"
+          >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
+        >
+      </div>
+      <div slot="case_title" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["CASE_TITLE"] }}
+        </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="due_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DUE_DATE"] }}
+        </span>
+      </div>
+      <div slot="delegation_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DELEGATION_DATE"] }}
+        </span>
+      </div>
+      <div slot="task" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+
+    </VueCardView>
+    <VueListView
+      v-if="typeView === 'LIST'"
+      :options="optionsVueCardView"
+      ref="vueListView"
+    >
+      <div slot="detail" slot-scope="props">
+        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
+      <div slot="case_number" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-highlight"
+          >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
+        >
+      </div>
+      <div slot="case_title" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["CASE_TITLE"] }}
+        </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="due_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DUE_DATE"] }}
+        </span>
+      </div>
+      <div slot="delegation_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DELEGATION_DATE"] }}
+        </span>
+      </div>
+      <div slot="task" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+    </VueListView>
   </div>
 </template>
 
 <script>
-import HeaderCounter from "../components/home/HeaderCounter.vue";
-import ButtonFleft from "../components/home/ButtonFleft.vue";
-import ModalNewRequest from "./ModalNewRequest.vue";
-import TaskCell from "../components/vuetable/TaskCell.vue";
-import CasesFilter from "../components/search/CasesFilter";
-import api from "./../api/index";
-import utils from "./../utils/utils";
-import Ellipsis from '../components/utils/ellipsis.vue';
+import HeaderCounter from "../../components/home/HeaderCounter.vue";
+import ButtonFleft from "../../components/home/ButtonFleft.vue";
+import ModalNewRequest from "../ModalNewRequest.vue";
+import CasesFilter from "../../components/search/CasesFilter";
+import TaskCell from "../../components/vuetable/TaskCell.vue";
+import api from "../../api/index";
+import utils from "../../utils/utils";
+import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
+import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue";
+import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
+import defaultMixins from "./defaultMixins";
+import Ellipsis from '../../components/utils/ellipsis.vue';
 
 export default {
-  name: "Todo",
+  name: "Draft",
+  mixins: [defaultMixins],
   components: {
     HeaderCounter,
     ButtonFleft,
@@ -71,6 +181,9 @@ export default {
     TaskCell,
     CasesFilter,
     Ellipsis,
+    MultiviewHeader,
+    VueCardView,
+    VueListView
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -83,15 +196,13 @@ export default {
         },
       },
       columns: [
-        "detail",
+       "detail",
         "case_number",
         "case_title",
         "process_name",
         "task",
-        "due_date",
-        "delegation_date",
         "priority",
-        "actions",
+        "actions"
       ],
       tableData: [],
       options: {
@@ -102,20 +213,7 @@ export default {
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
-          current_user: this.$i18n.t("ID_CURRENT_USER"),
-          due_date: this.$i18n.t("ID_DUE_DATE"),
-          delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
-          priority: this.$i18n.t("ID_PRIORITY"),
-          actions: "",
-        },
-        texts: {
-            count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
-            first: this.$i18n.t("ID_FIRST"),
-            last: this.$i18n.t("ID_LAST"),
-            filter: this.$i18n.t("ID_FILTER") + ":",
-            limit: this.$i18n.t("ID_RECORDS") + ":",
-            page: this.$i18n.t("ID_PAGE") + ":",
-            noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
+          actions: ""
         },
         selectable: {
           mode: "single",
@@ -128,9 +226,18 @@ export default {
         requestFunction(data) {
           return this.$parent.$parent.getCasesForVueTable(data);
         },
+        texts: {
+            count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
+            first: this.$i18n.t("ID_FIRST"),
+            last: this.$i18n.t("ID_LAST"),
+            filter: this.$i18n.t("ID_FILTER") + ":",
+            limit: this.$i18n.t("ID_RECORDS") + ":",
+            page: this.$i18n.t("ID_PAGE") + ":",
+            noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
+        }
       },
       pmDateFormat: "Y-m-d H:i:s",
-      clickCount: 0,
+      clickCount: 0,  
       singleClickTimer: null,
       statusTitle: {
           "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
@@ -149,7 +256,6 @@ export default {
     this.initFilters();
   },
   mounted() {
-    // force to open case
     this.openDefaultCase();
   },
   watch: {},
@@ -172,7 +278,7 @@ export default {
         if(this.defaultOption) {
             params = utils.getAllUrlParams(this.defaultOption);
               if (params && params.openapplicationuid) {
-                this.$emit("onUpdateFilters", [
+                this.$emit("onUpdateFilters",[
                     {
                         fieldId: "caseNumber",
                         filterVar: "caseNumber",
@@ -197,22 +303,22 @@ export default {
                     APP_UID: params.app_uid,
                     DEL_INDEX: params.del_index
                 });
-                this.$emit("cleanDefaultOption");
+              this.$emit("cleanDefaultOption");
             }
             //force to search in the parallel tasks
             if (params && params.openapplicationuid) {
                 this.onUpdateFilters({
-                    params: [
-                        {
-                            fieldId: "caseNumber",
-                            filterVar: "caseNumber",
-                            label: "",
-                            options:[],
-                            value: params.openapplicationuid,
-                            autoShow: false
-                        }
-                    ],
-                    refresh: false
+                        params: [
+                            {
+                                fieldId: "caseNumber",
+                                filterVar: "caseNumber",
+                                label: "",
+                                options:[],
+                                value: params.openapplicationuid,
+                                autoShow: false
+                            }
+                        ],
+                        refresh: false
                 });
                 this.$emit("cleanDefaultOption");                
             }
@@ -256,7 +362,7 @@ export default {
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
-          .todo(filters)
+          .draft(filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
@@ -287,19 +393,11 @@ export default {
               this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
             DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
           }],
-          USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
-              userName: v.USR_LASTNAME,
-              firstName: v.USR_LASTNAME,
-              lastName: v.USR_LASTNAME,
-              format: window.config.FORMATS.format || null
-          }),
-          DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
-          DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
           PRIORITY: v.DEL_PRIORITY_LABEL,
-          DEL_INDEX: v.DEL_INDEX,
-          APP_UID: v.APP_UID,
           PRO_UID: v.PRO_UID,
           TAS_UID: v.TAS_UID,
+          DEL_INDEX: v.DEL_INDEX,
+          APP_UID: v.APP_UID
         });
       });
       return data;
@@ -315,12 +413,12 @@ export default {
         DEL_INDEX: item.DEL_INDEX,
         PRO_UID: item.PRO_UID,
         TAS_UID: item.TAS_UID,
-        ACTION: "todo"
+        ACTION: "draft"
       });
       this.$emit("onUpdatePage", "XCase");
     },
     /**
-     * Open case detail
+     * Open case detail from draft
      *
      * @param {object} item
      */
@@ -334,18 +432,26 @@ export default {
             PRO_UID: item.PRO_UID,
             TAS_UID: item.TAS_UID,
             APP_NUMBER: item.CASE_NUMBER,
-            ACTION: "todo"
+            ACTION: "draft"
           });
           that.$emit("onUpdatePage", "case-detail");
         });
-      });  
+      });
     },
     onRemoveFilter(data) {},
     onUpdateFilters(data) {
       this.$emit("onUpdateFilters", data.params);
       if (data.refresh) {
         this.$nextTick(() => {
-          this.$refs["vueTable"].getData();
+          if (this.typeView === "GRID") {
+            this.$refs["vueTable"].getData();
+          }
+          if (this.typeView === "CARD") {
+            this.$refs["vueCardView"].getData();
+          }
+          if (this.typeView === "LIST") {
+            this.$refs["vueListView"].getData();
+          }
         });
       }
     },
@@ -374,11 +480,6 @@ export default {
               icon: "far fa-comments",
               fn: function() {console.log("comments");}
             },
-            pause: {
-              name: "pause case",
-              icon: "far fa-pause-circle",
-              fn: function() {console.log("pause case");}
-            }
           }
         }
       }
@@ -387,13 +488,11 @@ export default {
 };
 </script>
 <style>
-.v-container-todo {
+.v-container-draft {
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 50px;
   padding-right: 50px;
 }
-.VueTables__limit {
-  display: none;
-}
+
 </style>
