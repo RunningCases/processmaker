@@ -15,12 +15,13 @@
                 name="flavour-2a"
                 stacked
             ></b-form-radio-group>
+        <b-form-group>
+        </b-form-group>
             <b-form-checkbox
                 id="checkbox-1"
                 v-model="byProcessName"
                 name="checkbox-1"
                 value="processName"
-
             >
                 {{$t('ID_BY_PROCESS_NAME') }}
             </b-form-checkbox>
