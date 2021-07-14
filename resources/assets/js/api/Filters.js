@@ -83,6 +83,18 @@ export let filters = {
         });
     },
     /**
+     * Service to get the categories list
+     */
+    categories(query) {
+        return Api.get({
+            service: "CATEGORIES",
+            params: {
+                name: query,
+            },
+            keys: {},
+        });
+    },
+    /**
      * Service to get the users list
      */
     userValues(query) {

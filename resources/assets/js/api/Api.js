@@ -69,6 +69,7 @@ const services = {
     PROCESSES: "/home/processes",
     USERS: "/home/users",
     TASKS: "/home/tasks",
+    CATEGORIES: "/home/categories",
     DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}"
 };
 

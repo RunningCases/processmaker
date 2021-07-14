@@ -3066,10 +3066,28 @@ msgid "By Case Title"
 msgstr "By Case Title"
 
 # TRANSLATION
+# LABEL/ID_BY_CURRENT_USER
+#: LABEL/ID_BY_CURRENT_USER
+msgid "By Current User"
+msgstr "By Current User"
+
+# TRANSLATION
 # LABEL/ID_BY_FINISH_DATE
 #: LABEL/ID_BY_FINISH_DATE
 msgid "By Finish Date"
 msgstr "By Finish Date"
+
+# TRANSLATION
+# LABEL/ID_BY_PARTICIPATION
+#: LABEL/ID_BY_PARTICIPATION
+msgid "By Participation"
+msgstr "By Participation"
+
+# TRANSLATION
+# LABEL/ID_BY_PROCESS_CATEGORY
+#: LABEL/ID_BY_PROCESS_CATEGORY
+msgid "By Process Category"
+msgstr "By Process Category"
 
 # TRANSLATION
 # LABEL/ID_BY_PROCESS_NAME
@@ -4416,6 +4434,12 @@ msgid "Please check the fields marked in red."
 msgstr "Please check the fields marked in red."
 
 # TRANSLATION
+# LABEL/ID_CHECK_ONE_OPTION_ENABLE_SEARCH
+#: LABEL/ID_CHECK_ONE_OPTION_ENABLE_SEARCH
+msgid "Please check one option to be enabled for search."
+msgstr "Please check one option to be enabled for search."
+
+# TRANSLATION
 # LABEL/ID_CHECK_PORT
 #: LABEL/ID_CHECK_PORT
 msgid "Checking port"
@@ -4618,6 +4642,12 @@ msgstr "Comments"
 #: LABEL/ID_COMPLETED
 msgid "[LABEL/ID_COMPLETED] Completed"
 msgstr "Completed"
+
+# TRANSLATION
+# LABEL/ID_COMPLETED_BY
+#: LABEL/ID_COMPLETED_BY
+msgid "Completed By:"
+msgstr "Completed By:"
 
 # TRANSLATION
 # LABEL/ID_COMPLETED_BY_USER
@@ -24198,10 +24228,28 @@ msgid "Search by Case Title:"
 msgstr "Search by Case Title:"
 
 # TRANSLATION
+# LABEL/ID_SEARCH_BY_CURRENT_USER
+#: LABEL/ID_SEARCH_BY_CURRENT_USER
+msgid "Search by Current User:"
+msgstr "Search by Current User:"
+
+# TRANSLATION
 # LABEL/ID_SEARCH_BY_FINISH_DATE
 #: LABEL/ID_SEARCH_BY_FINISH_DATE
 msgid "Search by Finish Date:"
 msgstr "Search by Finish Date:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_PARTICIPATION
+#: LABEL/ID_SEARCH_BY_PARTICIPATION
+msgid "Search by Participation:"
+msgstr "Search by Participation:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_PROCESS_CATEGORY
+#: LABEL/ID_SEARCH_BY_PROCESS_CATEGORY
+msgid "Search by Process Category:"
+msgstr "Search by Process Category:"
 
 # TRANSLATION
 # LABEL/ID_SEARCH_BY_PROCESS_NAME
@@ -25246,6 +25294,12 @@ msgstr "Stages"
 #: LABEL/ID_STANDARD_LOGGING
 msgid "Log Files"
 msgstr "Log Files"
+
+# TRANSLATION
+# LABEL/ID_STARTED_BY
+#: LABEL/ID_STARTED_BY
+msgid "Started By:"
+msgstr "Started By:"
 
 # TRANSLATION
 # LABEL/ID_STARTED_CASES
