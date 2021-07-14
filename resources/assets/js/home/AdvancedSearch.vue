@@ -218,10 +218,12 @@ export default {
                 start = data.page === 1 ? 0 : limit * (data.page - 1);
             paged = start + "," + limit;
             filters["paged"] = paged;
-            return new Promise((resolutionFunc, rejectionFunc) => {
-                _.forIn(this.filters, function(item, key) {
+            _.forIn(this.filters, function (item, key) {
+                if(filters && item.value) {
                     filters[item.filterVar] = item.value;
-                });
+                }
+            });
+            return new Promise((resolutionFunc, rejectionFunc) => {
                 api.cases
                     .search(filters)
                     .then((response) => {

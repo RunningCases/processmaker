@@ -43,6 +43,23 @@ class CompletedTest extends TestCase
     }
 
     /**
+     * This test the extended function, currently are not implemented
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Completed::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Completed::getData()
+     * @test
+     */
+    public function it_test_extended_methods()
+    {
+        // Create new batch Completed object
+        $consolidated = new Completed();
+        $result = $consolidated->getColumnsView();
+        $this->assertEmpty($result);
+        $result = $consolidated->getData();
+        $this->assertEmpty($result);
+    }
+
+    /**
      * This checks the counters is working properly in completed
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Completed::getCounter()

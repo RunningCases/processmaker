@@ -364,8 +364,8 @@ class TaskTest extends TestCase
     public function it_should_test_fillReportByUser_method($asynchronous)
     {
         $task = new Task($asynchronous, '');
-        $dateInit = $this->faker->dateTime;
-        $dateFinish = $this->faker->dateTime;
+        $dateInit = $this->faker->dateTime->format("Y-m-d H:i:s");
+        $dateFinish = $this->faker->dateTime->format("Y-m-d H:i:s");
 
         //assert synchronous for cron file
         if ($asynchronous === false) {
@@ -394,8 +394,8 @@ class TaskTest extends TestCase
     public function it_should_test_fillReportByProcess_method($asynchronous)
     {
         $task = new Task($asynchronous, '');
-        $dateInit = $this->faker->dateTime;
-        $dateFinish = $this->faker->dateTime;
+        $dateInit = $this->faker->dateTime->format("Y-m-d H:i:s");
+        $dateFinish = $this->faker->dateTime->format("Y-m-d H:i:s");
 
         //assert synchronous for cron file
         if ($asynchronous === false) {

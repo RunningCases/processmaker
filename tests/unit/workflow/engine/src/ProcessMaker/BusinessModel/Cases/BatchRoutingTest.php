@@ -40,6 +40,23 @@ class BatchRoutingTest extends TestCase
     }
 
     /**
+     * This test the extended function, currently are not implemented
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\BatchRouting::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\BatchRouting::getData()
+     * @test
+     */
+    public function it_test_extended_methods()
+    {
+        // Create new BatchRouting object
+        $consolidated = new BatchRouting();
+        $result = $consolidated->getColumnsView();
+        $this->assertEmpty($result);
+        $result = $consolidated->getData();
+        $this->assertEmpty($result);
+    }
+
+    /**
      * This checks the counters is working properly in batch routing
      *
      * @covers \ProcessMaker\BusinessModel\Cases\BatchRouting::getCounter()
@@ -49,7 +66,7 @@ class BatchRoutingTest extends TestCase
     {
         // Create factories related to the consolidated cases
         $cases = $this->createConsolidated();
-        // Create new Draft object
+        // Create new batch routing object
         $consolidated = new BatchRouting();
         $consolidated->setUserId($cases['USR_ID']);
         $consolidated->setUserUid($cases['USR_UID']);

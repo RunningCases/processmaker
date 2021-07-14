@@ -67,6 +67,11 @@ class Search extends AbstractCases
             // Add the filter
             // $query->title($this->getCaseTitle());
         }
+        // Filter by category
+        if ($this->getCategoryId()) {
+            // This filter require a join with the process table
+            $query->category($this->getCategoryId());
+        }
         // Filter by process
         if ($this->getProcessId()) {
             $result = Process::query()->select(['PRO_UID'])

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
-use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessUser;
 use ProcessMaker\Model\Task;
@@ -323,48 +322,54 @@ class SupervisingTest extends TestCase
      * Tests the getData() method when the user is a supervisor of the process(es)
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
      * @test
      */
     public function it_should_test_the_get_data_method_when_the_user_is_supervisor()
     {
         $cases = $this->createSupervising();
         // Instance the Supervising class
-        $Supervising = new Supervising();
+        $supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
-        // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
-        // Call the getData method
-        $res = $Supervising->getData();
+        $supervising->setUserUid($cases->USR_UID);
+        // Set the user
+        $supervising->setUserId($cases->USR_ID);
+        // Get the data
+        $result = $supervising->getData();
         // Asserts the result contains 3 registers
-        $this->assertCount(3, $res);
+        $this->assertCount(3, $result);
     }
 
     /**
      * Tests the getData() method when the user belongs to a group supervisor
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
      * @test
      */
     public function it_should_test_the_get_data_method_when_the_user_belong_to_a_group_supervisor()
     {
         $cases = $this->createSupervising();
         // Instance the Supervising object
-        $Supervising = new Supervising();
+        $supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
+        $supervising->setUserUid($cases->USR_UID);
         // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
-        // Call the getData method
-        $res = $Supervising->getData();
+        $supervising->setUserId($cases->USR_ID);
+        // Get the data
+        $result = $supervising->getData();
         // Asserts the result contains 3 registers
-        $this->assertCount(3, $res);
+        $this->assertCount(3, $result);
     }
 
     /**
      * Tests the getData() method when the user is not a supervisor neither belongs to a group supervisor 
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
      * @test
      */
     public function it_should_test_the_get_data_method_when_the_user_is_not_supervisor()
@@ -372,44 +377,25 @@ class SupervisingTest extends TestCase
         $user = factory(User::class)->create();
         $cases = $this->createSupervising();
         // Instance the Supervising object
-        $Supervising = new Supervising();
+        $supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($user->USR_UID);
-        // Set the user ID
-        $Supervising->setUserId($user->USR_ID);
-        // Call the getData method
-        $res = $Supervising->getData();
+        $supervising->setUserUid($user->USR_UID);
+        // Set the user
+        $supervising->setUserId($user->USR_ID);
+        // Get the data
+        $result = $supervising->getData();
         // Asserts the result
-        $this->assertEmpty($res);
+        $this->assertEmpty($result);
     }
 
     /**
-     * Tests the getCounter() method
-     * 
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getCounter()
-     * @test
-     */
-    public function it_should_count_the_data()
-    {
-        $cases = $this->createSupervising();
-        // Instance the Supervising object
-        $Supervising = new Supervising();
-        // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
-        // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
-        // Call the getCounter method
-        $res = $Supervising->getCounter();
-        // Assert the counter
-        $this->assertEquals(3, $res);
-    }
-
-    /**
-     * Tests the filter by APP_NUMBER
+     * Tests the specific filter setCaseNumber
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setCaseNumber()
      * @test
      */
@@ -417,55 +403,59 @@ class SupervisingTest extends TestCase
     {
         $cases = $this->createSupervising();
         // Instance the Supervising object
-        $Supervising = new Supervising();
+        $supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
-        // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
+        $supervising->setUserUid($cases->USR_UID);
+        // Set the user
+        $supervising->setUserId($cases->USR_ID);
         // Set the case number
-        $Supervising->setCaseNumber($cases->APP_NUMBER);
-        // Call the getData method
-        $res = $Supervising->getData();
+        $supervising->setCaseNumber($cases->APP_NUMBER);
+        // Get the data
+        $result = $supervising->getData();
         // Asserts the result contains 3 registers
-        $this->assertCount(1, $res);
+        $this->assertCount(1, $result);
         // Asserts that the result contains the app number searched
-        $this->assertContains($cases->APP_NUMBER, $res[0]);
+        $this->assertContains($cases->APP_NUMBER, $result[0]);
     }
 
     /**
-     * Tests the filter by APP_NUMBER
+     * Tests the specific filter setCasesNumbers
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setCasesNumbers()
      * @test
      */
     public function it_filter_by_specific_cases()
     {
         $cases = $this->createSupervising();
         // Instance the Supervising object
-        $Supervising = new Supervising();
+        $supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
-        // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
+        $supervising->setUserUid($cases->USR_UID);
+        // Set the user
+        $supervising->setUserId($cases->USR_ID);
         // Set the case numbers
-        $Supervising->setCasesNumbers([$cases->APP_NUMBER]);
-        // Call the getData method
-        $res = $Supervising->getData();
+        $supervising->setCasesNumbers([$cases->APP_NUMBER]);
+        // Get the data
+        $result = $supervising->getData();
         // Asserts the result contains 3 registers
-        $this->assertCount(1, $res);
+        $this->assertCount(1, $result);
         // Asserts that the result contains the app number searched
-        $this->assertContains($cases->APP_NUMBER, $res[0]);
+        $this->assertContains($cases->APP_NUMBER, $result[0]);
     }
 
     /**
-     * Tests the filter by APP_NUMBER
+     * Tests the specific filter setRangeCasesFromTo
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setRangeCasesFromTo()
      * @test
      */
@@ -473,78 +463,30 @@ class SupervisingTest extends TestCase
     {
         $cases = $this->createSupervising();
         // Instance the Supervising object
-        $Supervising = new Supervising();
+        $supervising = new Supervising();
         // Set the user UID
-        $Supervising->setUserUid($cases->USR_UID);
+        $supervising->setUserUid($cases->USR_UID);
         // Set the user ID
-        $Supervising->setUserId($cases->USR_ID);
+        $supervising->setUserId($cases->USR_ID);
         // Set the range of case numbers
         $rangeOfCases = $cases->APP_NUMBER . "-" . $cases->APP_NUMBER;
-        $Supervising->setRangeCasesFromTo([$rangeOfCases]);
-        // Call the getData method
-        $res = $Supervising->getData();
+        $supervising->setRangeCasesFromTo([$rangeOfCases]);
+        // Get the data
+        $result = $supervising->getData();
         // Asserts the result contains 3 registers
-        $this->assertCount(1, $res);
+        $this->assertCount(1, $result);
         // Asserts that the result contains the app number searched
-        $this->assertContains($cases->APP_NUMBER, $res[0]);
+        $this->assertContains($cases->APP_NUMBER, $result[0]);
     }
 
     /**
-     * Tests the filter by process
-     * 
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setProcessId()
-     * @test
-     */
-    public function it_filter_by_process()
-    {
-        $cases = $this->createSupervising();
-        // Instance the Supervising object
-        $Supervising = new Supervising();
-        // Set the user UID
-        $Supervising->setUserUid($cases['USR_UID']);
-        // Set the user ID
-        $Supervising->setUserId($cases['USR_ID']);
-        // Set the process Id filter
-        $Supervising->setProcessId($cases['PRO_ID']);
-        // Call the getData method
-        $res = $Supervising->getData();
-        $this->assertCount(3, $res);
-    }
-
-    /**
-     * Tests the filter by process
+     * Tests the specific filter caseTitle
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setTaskId()
-     * @test
-     */
-    public function it_filter_by_task()
-    {
-        $cases = $this->createSupervising();
-        // Instance the Supervising object
-        $Supervising = new Supervising();
-        // Set the user UID
-        $Supervising->setUserUid($cases['USR_UID']);
-        // Set the user ID
-        $Supervising->setUserId($cases['USR_ID']);
-        // Set the process Id filter
-        $Supervising->setTaskId($cases['TAS_ID']);
-        // Call the getData method
-        $res = $Supervising->getData();
-        $this->assertCount(3, $res);
-    }
-
-    /**
-     * It tests the getData method with case title filter
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
-     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setCaseTitle()
      * @test
      */
@@ -566,9 +508,152 @@ class SupervisingTest extends TestCase
         // Set the title
         $supervising->setCaseTitle($title);
         // Get the data
-        $res = $supervising->getData();
+        $result = $supervising->getData();
         // Asserts
-        $this->assertCount(1, $res);
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Tests the specific filter process
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setProcessId()
+     * @test
+     */
+    public function it_filter_by_process()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $supervising->setUserId($cases['USR_ID']);
+        // Set the process
+        $supervising->setProcessId($cases['PRO_ID']);
+        // Get the data
+        $result = $supervising->getData();
+        $this->assertCount(3, $result);
+    }
+
+    /**
+     * Tests the specific filter task
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setTaskId()
+     * @test
+     */
+    public function it_filter_by_task()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $supervising->setUserId($cases['USR_ID']);
+        // Set the task
+        $supervising->setTaskId($cases['TAS_ID']);
+        // Get the data
+        $result = $supervising->getData();
+        $this->assertCount(3, $result);
+    }
+
+    /**
+     * Tests the specific filter status
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setCaseStatus()
+     * @test
+     */
+    public function it_filter_by_status()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $supervising->setUserId($cases['USR_ID']);
+        // Set the task
+        $supervising->setCaseStatus('TO_DO');
+        // Get the data
+        $result = $supervising->getData();
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It tests the getData the specific filter setStartCaseFrom and getStartCaseTo
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setStartCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setStartCaseTo()
+     * @test
+     */
+    public function it_filter_by_start_date()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $supervising->setUserId($cases['USR_ID']);
+        // Set the range of dates
+        $date = date('Y-m-d');
+        $supervising->setStartCaseFrom($date);
+        $supervising->setStartCaseTo($date);
+        // Get the data
+        $result = $supervising->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * It tests the getData the specific filter setFinishCaseFrom and setFinishCaseTo
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setFinishCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setFinishCaseTo()
+     * @test
+     */
+    public function it_filter_by_finish_date()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $supervising->setUserId($cases['USR_ID']);
+        // Set the range of dates
+        $date = date('Y-m-d');
+        $supervising->setFinishCaseFrom($date);
+        $supervising->setFinishCaseTo($date);
+        // Get the data
+        $result = $supervising->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($result);
     }
 
     /**
@@ -578,6 +663,8 @@ class SupervisingTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
      * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setOrderByColumn()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
      * @test
      */
     public function it_order_by_column()
@@ -594,16 +681,39 @@ class SupervisingTest extends TestCase
         ];
         $index = array_rand($columnsView);
         // Instance the Supervising object
-        $Supervising = new Supervising();
-        //Set the user UID
-        $Supervising->setUserUid($cases['USR_UID']);
-        //Set the user ID
-        $Supervising->setUserId($cases['USR_ID']);
-        //Set the order by value
-        $Supervising->setOrderByColumn($columnsView[$index]);
-        //Call the getData method
-        $result = $Supervising->getData();
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $supervising->setUserId($cases['USR_ID']);
+        // Set the order by value
+        $supervising->setOrderByColumn($columnsView[$index]);
+        // Get the data
+        $result = $supervising->getData();
         $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Tests the getCounter() method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getCounter()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @test
+     */
+    public function it_should_count_the_data()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases->USR_UID);
+        // Set the user
+        $supervising->setUserId($cases->USR_ID);
+        // Get the data
+        $result = $supervising->getCounter();
+        // Assert the counter
+        $this->assertEquals(3, $result);
     }
 
     /**
@@ -618,8 +728,8 @@ class SupervisingTest extends TestCase
         $supervising = new Supervising();
         $supervising->setUserId($cases->USR_ID);
         $supervising->setUserUid($cases->USR_UID);
-
-        $res = $supervising->getPagingCounters();
-        $this->assertEquals(3, $res);
+        // Get the count
+        $result = $supervising->getPagingCounters();
+        $this->assertEquals(3, $result);
     }
 }

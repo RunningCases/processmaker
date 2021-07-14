@@ -43,6 +43,23 @@ class CanceledTest extends TestCase
     }
 
     /**
+     * This test the extended function, currently are not implemented
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Canceled::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Canceled::getData()
+     * @test
+     */
+    public function it_test_extended_methods()
+    {
+        // Create new batch Canceled object
+        $consolidated = new Canceled();
+        $result = $consolidated->getColumnsView();
+        $this->assertEmpty($result);
+        $result = $consolidated->getData();
+        $this->assertEmpty($result);
+    }
+
+    /**
      * This checks the counters is working properly in canceled
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Canceled::getCounter()

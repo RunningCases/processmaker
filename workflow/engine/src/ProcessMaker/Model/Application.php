@@ -43,7 +43,7 @@ class Application extends Model
      * @param int $user
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeUserId($query, $user)
+    public function scopeUserId($query, int $user)
     {
         return $query->where('APP_DELEGATION.USR_ID', '=', $user);
     }
@@ -230,6 +230,19 @@ class Application extends Model
     public function scopeStatusIds($query, array $statuses)
     {
         return $query->whereIn('APPLICATION.APP_STATUS_ID', $statuses);
+    }
+
+    /**
+     * Scope a query to only include specific category
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $category
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategory($query, $category)
+    {
+        return $query->where('PROCESS.CATEGORY_ID', $category);
     }
 
     /**

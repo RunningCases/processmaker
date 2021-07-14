@@ -7,7 +7,6 @@ $factory->define(\ProcessMaker\Model\Application::class, function(Faker $faker) 
     $appNumber = $faker->unique()->numberBetween(1000);
     // APP_TITLE field is used in 'MYSQL: MATCH() AGAINST()' function, string size should not be less than 3.
     $appTitle = $faker->lexify(str_repeat('?', rand(3, 5)) . ' ' . str_repeat('?', rand(3, 5)));
-
     return [
         'APP_UID' => G::generateUniqueID(),
         'APP_TITLE' => $appTitle,
@@ -24,10 +23,10 @@ $factory->define(\ProcessMaker\Model\Application::class, function(Faker $faker) 
         'APP_INIT_USER' => $user->USR_UID,
         'APP_CUR_USER' => $user->USR_UID,
         'APP_PIN' => G::generateUniqueID(),
-        'APP_CREATE_DATE' => $faker->dateTime(),
-        'APP_INIT_DATE' => $faker->dateTime(),
-        'APP_UPDATE_DATE' => $faker->dateTime(),
-        'APP_FINISH_DATE' => $faker->dateTime(),
+        'APP_CREATE_DATE' => $faker->dateTimeBetween('now', '+30 minutes'),
+        'APP_INIT_DATE' => $faker->dateTimeBetween('now', '+30 minutes'),
+        'APP_UPDATE_DATE' => $faker->dateTimeBetween('now', '+30 minutes'),
+        'APP_FINISH_DATE' => $faker->dateTimeBetween('now', '+30 minutes'),
         'APP_DATA' => serialize(['APP_NUMBER' => $appNumber])
     ];
 });

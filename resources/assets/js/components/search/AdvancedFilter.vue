@@ -195,6 +195,8 @@ import CasePriority from "./popovers/CasePriority.vue";
 import CaseStatus from "./popovers/CaseStatus.vue";
 import CurrentUser from "./popovers/CurrentUser.vue";
 import TaskTitle from "./popovers/TaskTitle.vue";
+import Participation from "./popovers/Participation.vue";
+import ProcessCategory from "./popovers/ProcessCategory.vue";
 import api from "./../../api/index";
 
 export default {
@@ -209,7 +211,9 @@ export default {
         CaseStatus,
         CurrentUser,
         DateFilter,
-        TaskTitle
+        TaskTitle,
+        Participation,
+        ProcessCategory
     },
     data() {
         return {
@@ -219,11 +223,11 @@ export default {
                 {   
                     type: "CaseNumber",
                     id: "caseNumber",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_IUD')}`,
-                    optionLabel: this.$i18n.t('ID_IUD'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_CASE_NUMBER')}`,
+                    optionLabel: this.$i18n.t('ID_BY_CASE_NUMBER'),
                     detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_TO_CASES_TO_SEARCH'),
                     tagText: "",
-                    tagPrefix:  this.$i18n.t('ID_IUD'),
+                    tagPrefix: this.$i18n.t('ID_SEARCH_BY_CASE_NUMBER'),
                     items:[
                         {
                             id: "filterCases",
@@ -231,15 +235,15 @@ export default {
                         }
                     ],
                     makeTagText: function (params, data) {
-                          return  `${params.tagPrefix}: ${data[0].value}`;
+                          return  `${params.tagPrefix} ${data[0].value}`;
                     }
                 },
                 {
                     type: "CaseTitle",
                     id: "caseTitle",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE_TITLE')}`,
-                    optionLabel: this.$i18n.t('ID_CASE_TITLE'),
-                    tagPrefix:  this.$i18n.t('ID_CASE_TITLE'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_CASE_TITLE')}`,
+                    optionLabel: this.$i18n.t('ID_BY_CASE_TITLE'),
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CASE_TITLE'),
                     detail: "",
                     tagText: "",
                     items:[
@@ -249,14 +253,14 @@ export default {
                         }
                     ],
                     makeTagText: function (params, data) {
-                        return  `${this.tagPrefix}: ${data[0].value}`;
+                        return  `${this.tagPrefix} ${data[0].value}`;
                     }
                 },
                 {
                     type: "caseStatus",
                     id: "CaseStatus",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CASE_STATUS')}`,
-                    optionLabel: this.$i18n.t('ID_STATUS'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_STATUS')}`,
+                    optionLabel: this.$i18n.t('ID_BY_STATUS'),
                     detail: this.$i18n.t('ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH'),
                     tagText: "",
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_STATUS'),
@@ -291,11 +295,11 @@ export default {
                 {
                     type: "ProcessName",
                     id: "processName",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_PROCESS_NAME')}`,
-                    optionLabel: this.$i18n.t('ID_PROCESS_NAME'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
                     detail: "",
                     tagText: "",
-                    tagPrefix:  this.$i18n.t('ID_PROCESS_NAME'),
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
                     items:[
                         {
                             id: "process",
@@ -311,8 +315,8 @@ export default {
                 {
                     type: "TaskTitle",
                     id: "taskTitle",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_TASK_NAME')}`,
-                    optionLabel: this.$i18n.t('ID_TASK'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_TASK')}`,
+                    optionLabel: this.$i18n.t('ID_BY_TASK'),
                     detail: "",
                     tagText: "",
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_TASK_NAME'),
@@ -331,12 +335,12 @@ export default {
                 {
                     type: "CurrentUser",
                     id: "currentUser",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_CURRENT_USER')}`,
-                    optionLabel: this.$i18n.t('ID_CURRENT_USER'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_CURRENT_USER')}`,
+                    optionLabel: this.$i18n.t('ID_BY_CURRENT_USER'),
                     detail: "",
                     placeholder: this.$i18n.t('ID_USER_NAME'),
                     tagText: "",
-                    tagPrefix:  this.$i18n.t('ID_USER'),
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CURRENT_USER'),
                     items:[
                         {
                             id: "user",
@@ -376,9 +380,9 @@ export default {
                 {
                     type: "DateFilter",
                     id: "finishDate",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_FINISH_DATE')}`,
-                    optionLabel: this.$i18n.t('ID_FINISH_DATE'),
-                    detail: this.$i18n.t('Please set a range of cases Finish Date to search:'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_FINISH_DATE')}`,
+                    optionLabel: this.$i18n.t('ID_BY_FINISH_DATE'),
+                    detail: this.$i18n.t('ID_PLEASE_SET_A_RANGE_OF_CASES_FINISH_DATE_TO_SEARCH'),
                     tagText: "",
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_FINISH_DATE'),
                     items:[
@@ -396,8 +400,66 @@ export default {
                     makeTagText: function (params, data) {
                         return  `${params.tagPrefix} ${data[0].value} - ${data[1].value}`;
                     }
+                },
+                {
+                    type: "Participation",
+                    id: "participation",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PARTICIPATION')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PARTICIPATION'),
+                    detail: this.$i18n.t('ID_CHECK_ONE_OPTION_ENABLE_SEARCH'),
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PARTICIPATION'),
+                    items:[
+                        {
+                            id: "startedBy",
+                            value: "",
+                            options: [],
+                            placeholder: "",
+                            status: "not_accepted",
+                            title: this.$i18n.t("ID_STARTED_BY")
+                        },
+                        {
+                            id: "completedBy",
+                            value: "",
+                            options: [],
+                            placeholder: "",
+                            disabled: true,
+                            status: "not_accepted",
+                            title: this.$i18n.t("ID_COMPLETED_BY")
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        let text = data && (data[0].value || data[1].value) ? "": data[0].title;
+                        if(data && data[0].value){
+                            text += data[0].title + ": " + data[0].label;
+                            text +=  data && data[1].value ? "; ": "";
+                        }
+                        if(data && data[1].value){
+                             text += data[1].title + ": " + data[1].label;
+                        }
+                        return text;
+                    }
+                },
+                {
+                    type: "ProcessCategory",
+                    id: "processCategory",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_CATEGORY')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PROCESS_CATEGORY'),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_CATEGORY'),
+                    items:[
+                        {
+                            id: "category",
+                            value: "",
+                            options: [],
+                            placeholder: ""
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix}:  ${data[0].label || ''}`;
+                    }
                 }
-              
             ],
             selected: "",
             itemModel: {},
@@ -492,8 +554,9 @@ export default {
                                 filterVar: value.id,
                                 fieldId: item,
                                 value: '',
-                                label: "",
-                                options: []
+                                label: value.label,
+                                options: [],
+                                title: value.title
                             });
                         }
                     });

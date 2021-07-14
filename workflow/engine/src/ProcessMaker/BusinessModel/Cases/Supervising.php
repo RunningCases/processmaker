@@ -5,6 +5,7 @@ namespace ProcessMaker\BusinessModel\Cases;
 use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\ProcessUser;
+use ProcessMaker\Model\User;
 
 class Supervising extends AbstractCases
 {
@@ -14,11 +15,12 @@ class Supervising extends AbstractCases
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process Name
-        'TASK.TAS_TITLE',  // Pending Task
-        'APPLICATION.APP_STATUS',  // Status
-        'APPLICATION.APP_CREATE_DATE',  // Start Date
-        'APPLICATION.APP_FINISH_DATE',  // Finish Date
-        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date related to the colors
+        'TASK.TAS_TITLE', // Pending Task
+        'APPLICATION.APP_STATUS', // Status
+        'APPLICATION.APP_CREATE_DATE', // Start Date
+        'APPLICATION.APP_FINISH_DATE', // Finish Date
+        'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date related to the colors
+        'APP_DELEGATION.DEL_PREVIOUS', // Previous
         'USERS.USR_ID',  // Current UserId
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
@@ -159,6 +161,13 @@ class Supervising extends AbstractCases
                     $information[] = $this->threadInformation($thread);
                 }
                 $item['PENDING'] = $information;
+                // Get the send by related to the previous index
+                $previousThread = Delegation::getThreadInfo($item['APP_NUMBER'], $item['DEL_PREVIOUS']);
+                $userInfo = !empty($previousThread) ? User::getInformation($previousThread['USR_ID']) : [];
+                $result = [];
+                $result['del_previous'] = $item['DEL_PREVIOUS'];
+                $result['user_tooltip'] = $userInfo;
+                $item['SEND_BY_INFO'] = $result;
 
                 return $item;
             });
