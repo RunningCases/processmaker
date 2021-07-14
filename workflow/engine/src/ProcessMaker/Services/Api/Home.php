@@ -460,6 +460,7 @@ class Home extends Api
      * @url GET /search
      *
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $user
@@ -482,6 +483,7 @@ class Home extends Api
      */
     public function doGetSearchCases(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $user = 0,
@@ -500,6 +502,7 @@ class Home extends Api
             // Define the filters to apply
             $properties = [];
             $properties['caseNumber'] = $caseNumber;
+            $properties['category'] = $category;
             $properties['caseTitle'] = $caseTitle;
             $properties['process'] = $process;
             $properties['task'] = $task;

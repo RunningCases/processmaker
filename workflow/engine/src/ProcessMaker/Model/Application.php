@@ -233,6 +233,19 @@ class Application extends Model
     }
 
     /**
+     * Scope a query to only include specific category
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $category
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategory($query, $category)
+    {
+        return $query->where('PROCESS.CATEGORY_ID', $category);
+    }
+
+    /**
      * Scope for query to get the applications by PRO_UID.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
