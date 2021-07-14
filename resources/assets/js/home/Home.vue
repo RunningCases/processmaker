@@ -42,7 +42,7 @@ import MyCases from "./MyCases";
 import MyDocuments from "./MyDocuments";
 import Todo from "./Inbox/Todo.vue";
 import Draft from "./Draft";
-import Paused from "./Paused";
+import Paused from "./Paused/Paused.vue";
 import Unassigned from "./Unassigned";
 import BatchRouting from "./BatchRouting";
 import CaseDetail from "./CaseDetail";
