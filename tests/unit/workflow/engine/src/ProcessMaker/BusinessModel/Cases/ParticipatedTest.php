@@ -5,9 +5,7 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Participated;
-use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
-use ProcessMaker\Model\Process;
 use Tests\TestCase;
 
 /**
@@ -59,7 +57,7 @@ class ParticipatedTest extends TestCase
      * @param int
      * @return object
      */
-    public function createMultipleParticipated($cases)
+    public function createMultipleParticipated($cases = 2)
     {
         $user = factory(\ProcessMaker\Model\User::class)->create();
 
@@ -85,11 +83,13 @@ class ParticipatedTest extends TestCase
     }
 
     /**
-     * It tests the getData method without filters
+     * It tests the getData without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
-     * @covers \ProcessMaker\Model\Delegation::scopeParticipated()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setOrderByColumn()
      * @test
      */
     public function it_get_result_without_filters()
@@ -104,19 +104,22 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases['USR_ID']);
         // Set OrderBYColumn value
         $participated->setOrderByColumn('APP_NUMBER');
-        // Call to getData method
+        // Get the data
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals(2, count($res));
     }
 
     /**
-     * It tests the getData method with specific filter StartedByMe
+     * It tests the getData the specific filter StartedByMe
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCaseStatus()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
      * @test
      */
     public function it_filter_by_started_by_me()
@@ -130,23 +133,24 @@ class ParticipatedTest extends TestCase
         // Set the user ID
         $participated->setUserId($cases->USR_ID);
         // Get only the TO_DO
-        $participated->setCaseStatus(2);
+        $participated->setCaseStatus('TO_DO');
         // Set the filter STARTED
         $participated->setParticipatedStatus('STARTED');
-        // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_NUMBER');
-        // Call to getData method
+        // Get the data
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals(1, count($res));
     }
 
     /**
-     * It tests the getData method with specific filter CompletedByMe
+     * It tests the getData the specific filter CompletedByMe
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
      * @test
      */
     public function it_filter_by_completed_by_me()
@@ -161,20 +165,21 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases->USR_ID);
         // Set the filter COMPLETED
         $participated->setParticipatedStatus('COMPLETED');
-        // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_NUMBER');
-        // Call to getData method
+        // Get the data
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals(0, count($res));
     }
 
     /**
-     * It tests the getData method with processId filter
+     * It tests the getData the specific filter setProcessId
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::setProcessId()
      * @test
      */
@@ -190,11 +195,9 @@ class ParticipatedTest extends TestCase
         $participated->setUserUid($cases['USR_UID']);
         // Set the user ID
         $participated->setUserId($cases['USR_ID']);
-        // Set the process ID
+        // Set the process
         $participated->setProcessId($cases['PRO_ID']);
-        // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_NUMBER');
-        // Call to getData method
+        // Get the data
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals(2, count($res));
@@ -223,9 +226,7 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases['USR_ID']);
         // Set the case numbers
         $participated->setCasesNumbers([$cases['APP_NUMBER']]);
-        // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_NUMBER');
-        // Call to getData method
+        // Get the data
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals(2, count($res));
@@ -255,20 +256,21 @@ class ParticipatedTest extends TestCase
         // Set the range of case numbers
         $rangeOfCases = $cases['APP_NUMBER'] . "-" . $cases['APP_NUMBER'];
         $participated->setRangeCasesFromTo([$rangeOfCases]);
-        // Set OrderBYColumn value
-        $participated->setOrderByColumn('APP_NUMBER');
-        // Call to getData method
+        // Get the data
         $res = $participated->getData();
         // This assert that the expected numbers of results are returned
         $this->assertEquals(2, count($res));
     }
 
     /**
-     * It tests the getData method with processId filter
+     * It tests the getData the specific filter setCaseTitle
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCaseTitle()
      * @test
      */
@@ -295,9 +297,165 @@ class ParticipatedTest extends TestCase
     }
 
     /**
-     * It tests the getCounter method
+     * It tests the getData the specific filter status
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCaseStatus()
+     * @test
+     */
+    public function it_filter_by_status()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the case status
+        $participated->setCaseStatus('TO_DO');
+        // Get the data
+        $result = $participated->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It tests the getData the specific filter setStartCaseFrom and getStartCaseTo
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setStartCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setStartCaseTo()
+     * @test
+     */
+    public function it_filter_by_start_date()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the range of dates
+        $date = date('Y-m-d');
+        $participated->setStartCaseFrom($date);
+        $participated->setStartCaseTo($date);
+        // Get the data
+        $result = $participated->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * It tests the getData the specific filter setFinishCaseFrom and setFinishCaseTo
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFinishCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFinishCaseTo()
+     * @test
+     */
+    public function it_filter_by_finish_date()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the range of dates
+        $date = date('Y-m-d');
+        $participated->setFinishCaseFrom($date);
+        $participated->setFinishCaseTo($date);
+        // Get the data
+        $result = $participated->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * It tests the specific filter setParticipatedStatus = IN_PROGRESS
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
+     * @test
+     */
+    public function it_get_status_in_progress()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the user UID
+        $participated->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('IN_PROGRESS');
+        // Get result
+        $result = $participated->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertNotEmpty($result);
+    }
+    /**
+     * It tests the specific filter setParticipatedStatus = COMPLETED
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
+     * @test
+     */
+    public function it_get_status_completed()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the user UID
+        $participated->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('COMPLETED');
+        // Get result
+        $result = $participated->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * It tests the getCounter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getCounter()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
      * @test
      */
     public function it_get_counter()
@@ -319,7 +477,7 @@ class ParticipatedTest extends TestCase
     }
 
     /**
-     * It tests the getPagingCounters() method
+     * It tests the getPagingCounters
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getPagingCounters()
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
@@ -332,17 +490,14 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases->USR_ID);
         $participated->setUserUid($cases->USR_UID);
         $participated->setParticipatedStatus('STARTED');
-
         $res = $participated->getPagingCounters();
         $this->assertEquals(3, $res);
 
         $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
-
         $participated->setCaseNumber($delegation->APP_NUMBER);
         $participated->setProcessId($delegation->PRO_ID);
         $participated->setTaskId($delegation->TAS_ID);
         $participated->setCaseUid($delegation->APP_UID);
-
         $res = $participated->getPagingCounters();
         $this->assertEquals(1, $res);
     }

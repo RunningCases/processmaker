@@ -5,6 +5,7 @@ namespace ProcessMaker\BusinessModel\Cases;
 use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\User;
 
 class Unassigned extends AbstractCases
 {
@@ -14,13 +15,14 @@ class Unassigned extends AbstractCases
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process
-        'TASK.TAS_TITLE',  // Task
-        'USERS.USR_USERNAME',  // Current UserName
-        'USERS.USR_FIRSTNAME',  // Current User FirstName
-        'USERS.USR_LASTNAME',  // Current User LastName
-        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date
-        'APP_DELEGATION.DEL_DELEGATE_DATE',  // Delegate Date
-        'APP_DELEGATION.DEL_PRIORITY',  // Priority
+        'TASK.TAS_TITLE', // Task
+        'USERS.USR_USERNAME', // Current UserName
+        'USERS.USR_FIRSTNAME', // Current User FirstName
+        'USERS.USR_LASTNAME', // Current User LastName
+        'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date
+        'APP_DELEGATION.DEL_DELEGATE_DATE', // Delegate Date
+        'APP_DELEGATION.DEL_PRIORITY', // Priority
+        'APP_DELEGATION.DEL_PREVIOUS', // Previous
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
         'APP_DELEGATION.DEL_INDEX', // Del Index for Open case
@@ -136,6 +138,13 @@ class Unassigned extends AbstractCases
             // Apply the date format defined in environment
             $item['DEL_TASK_DUE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_TASK_DUE_DATE']);
             $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
+            // Get the send by related to the previous index
+            $previousThread = Delegation::getThreadInfo($item['APP_NUMBER'], $item['DEL_PREVIOUS']);
+            $userInfo = !empty($previousThread) ? User::getInformation($previousThread['USR_ID']) : [];
+            $result = [];
+            $result['del_previous'] = $item['DEL_PREVIOUS'];
+            $result['user_tooltip'] = $userInfo;
+            $item['SEND_BY_INFO'] = $result;
 
             return $item;
         });

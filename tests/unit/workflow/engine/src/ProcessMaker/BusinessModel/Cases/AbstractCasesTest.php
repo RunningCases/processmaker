@@ -2,10 +2,12 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
+use Exception;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\AbstractCases;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\Task;
@@ -132,6 +134,19 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This test the exception setPriorities
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPriorities()
+     * @test
+     */
+    public function it_return_exception_priorities()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setPriorities(['INVALID_VALUE']);
+    }
+
+    /**
      * This check the getter and setter related to the case number
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseNumber()
@@ -209,6 +224,19 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This test the exception setInboxStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setInboxStatus()
+     * @test
+     */
+    public function it_return_exception_inbox_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setInboxStatus('INVALID_VALUE');
+    }
+
+    /**
      * This check the getter and setter related to the participated status
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setParticipatedStatus()
@@ -223,6 +251,19 @@ class AbstractCasesTest extends TestCase
         $absCases->setParticipatedStatus($arguments[$index]);
         $actual = $absCases->getParticipatedStatus();
         $this->assertEquals($arguments[$index], $actual);
+    }
+
+    /**
+     * This test the exception setParticipatedStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setParticipatedStatus()
+     * @test
+     */
+    public function it_return_exception_participated_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setParticipatedStatus('INVALID_VALUE');
     }
 
     /**
@@ -243,6 +284,19 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This test the exception setRiskStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setRiskStatus()
+     * @test
+     */
+    public function it_return_exception_risk_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setRiskStatus('INVALID_VALUE');
+    }
+
+    /**
      * This check the getter and setter related to the case status
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatus()
@@ -258,9 +312,22 @@ class AbstractCasesTest extends TestCase
         $actual = $absCases->getCaseStatus();
         $this->assertEquals($index, $actual);
         // Incorrect canceled status
-        $absCases->setCaseStatuses(['CANCELLED']);
-        $actual = $absCases->getCaseStatuses();
-        $this->assertEquals([4], $actual);
+        $absCases->setCaseStatus('CANCELLED');
+        $actual = $absCases->getCaseStatus();
+        $this->assertEquals($index, $actual);
+    }
+
+    /**
+     * This test the exception setCaseStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatus()
+     * @test
+     */
+    public function it_return_exception_case_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setCaseStatus('INVALID_VALUE');
     }
 
     /**
@@ -282,6 +349,19 @@ class AbstractCasesTest extends TestCase
         $absCases->setCaseStatuses(['CANCELLED']);
         $actual = $absCases->getCaseStatuses();
         $this->assertNotEmpty($actual);
+    }
+
+    /**
+     * This test the exception setCaseStatuses
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatuses()
+     * @test
+     */
+    public function it_return_exception_case_statuses()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setCaseStatuses(['INVALID_VALUE']);
     }
 
     /**
@@ -530,6 +610,19 @@ class AbstractCasesTest extends TestCase
         $absCases->setOrderDirection($arguments[$index]);
         $actual = $absCases->getOrderDirection();
         $this->assertEquals($arguments[$index], $actual);
+    }
+
+    /**
+     * This test the exception setOrderDirection
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOrderDirection()
+     * @test
+     */
+    public function it_return_exception_order_direction()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setOrderDirection('INVALID_VALUE');
     }
 
     /**
@@ -783,7 +876,29 @@ class AbstractCasesTest extends TestCase
             {"tas_id":'.$task[0]->TAS_ID.', "user_id":1, "due_date":"2020-12-04 19:11:14"},
             {"tas_id":'.$task[1]->TAS_ID.', "user_id":2, "due_date":"2020-12-04 19:12:45"}
         ]';
+        // Default values
         $result = $absCases->prepareTaskPending($pending);
         $this->assertNotEmpty($result);
+        // Thread users
+        $result = $absCases->prepareTaskPending($pending, false);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * This get thread information
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::threadInformation()
+     * @test
+     */
+    public function it_return_thread_information()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $taskPending = Delegation::getLastThread($delegation->APP_NUMBER);
+        $absCases = new AbstractCases();
+        foreach ($taskPending as $thread) {
+            $thread['APP_STATUS'] = 'TO_DO';
+            $result = $absCases->threadInformation($thread, true, true);
+            $this->assertNotEmpty($result);
+        }
     }
 }

@@ -90,6 +90,7 @@ class ExecuteQueryTest extends TestCase
      */
     public function it_should_insert_a_record_in_the_category_table_using_the_execute_query_method()
     {
+        $this->expectException(SQLException::class);
         $database = env('DB_DATABASE');
         $faker = Factory::create();
         $uid = G::generateUniqueID();
@@ -132,6 +133,7 @@ class ExecuteQueryTest extends TestCase
      */
     public function it_should_replace_a_record_in_the_category_table_using_the_execute_query_method()
     {
+        $this->expectException(SQLException::class);
         $database = env('DB_DATABASE');
         $faker = Factory::create();
         $id = $faker->unique()->numberBetween(1, 10000000);
@@ -168,6 +170,7 @@ class ExecuteQueryTest extends TestCase
      */
     public function it_should_update_a_record_in_the_category_table_using_the_execute_query_method()
     {
+        $this->expectException(SQLException::class);
         $database = env('DB_DATABASE');
         $faker = Factory::create();
         $id = $faker->unique()->numberBetween(1, 10000000);
@@ -200,7 +203,7 @@ class ExecuteQueryTest extends TestCase
      */
     public function it_should_delete_a_record_in_the_category_table_using_the_execute_query_method()
     {
-
+        $this->expectException(SQLException::class);
         $database = env('DB_DATABASE');
         $category = factory(ProcessCategory::class)->create();
 

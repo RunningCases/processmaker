@@ -611,7 +611,7 @@ class Delegation extends Model
      * @param int $user
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeUserId($query, $user)
+    public function scopeUserId($query, int $user)
     {
         return $query->where('APP_DELEGATION.USR_ID', '=', $user);
     }
@@ -1751,7 +1751,7 @@ class Delegation extends Model
      */
     public static function getThreadInfo(int $appNumber, int $index)
     {
-        $query = Delegation::query()->select(['APP_NUMBER', 'TAS_UID', 'TAS_ID', 'DEL_PREVIOUS', 'DEL_TITLE']);
+        $query = Delegation::query()->select(['APP_NUMBER', 'TAS_UID', 'TAS_ID', 'DEL_PREVIOUS', 'DEL_TITLE', 'USR_ID']);
         $query->where('APP_NUMBER', $appNumber);
         $query->where('DEL_INDEX', $index);
         $query->limit(1);
