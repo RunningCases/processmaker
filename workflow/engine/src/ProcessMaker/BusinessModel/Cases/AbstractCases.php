@@ -1275,6 +1275,34 @@ class AbstractCases implements CasesInterface
         if (!empty($properties['caseTitle'])) {
             $this->setCaseTitle($properties['caseTitle']);
         }
+        /** Apply filters related to INBOX */
+        // Filter date related to delegate from
+        if (get_class($this) === Inbox::class && !empty($properties['delegateFrom'])) {
+            $this->setDelegateFrom($properties['delegateFrom']);
+        }
+        // Filter date related to delegate to
+        if (get_class($this) === Inbox::class && !empty($properties['delegateTo'])) {
+            $this->setDelegateTo($properties['delegateTo']);
+        }
+        /** Apply filters related to PAUSED */
+        // Filter date related to delegate from
+        if (get_class($this) === Paused::class && !empty($properties['delegateFrom'])) {
+            $this->setDelegateFrom($properties['delegateFrom']);
+        }
+        // Filter date related to delegate to
+        if (get_class($this) === Paused::class && !empty($properties['delegateTo'])) {
+            $this->setDelegateTo($properties['delegateTo']);
+        }
+        /** Apply filters related to UNASSIGNED */
+        // Filter date related to delegate from
+        if (get_class($this) === Unassigned::class && !empty($properties['delegateFrom'])) {
+            $this->setDelegateFrom($properties['delegateFrom']);
+        }
+        // Filter date related to delegate to
+        if (get_class($this) === Unassigned::class && !empty($properties['delegateTo'])) {
+            $this->setDelegateTo($properties['delegateTo']);
+        }
+
         /** Apply filters related to MY CASES */
         // My cases filter: started, in-progress, completed, supervising
         if (get_class($this) === Participated::class && !empty($properties['filter'])) {

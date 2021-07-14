@@ -78,6 +78,15 @@ class Paused extends AbstractCases
             $query->appUid($this->getCaseUid());
         }
 
+        // Specific delegate date from
+        if (!empty($this->getDelegateFrom())) {
+            $query->delegateDateFrom($this->getDelegateFrom());
+        }
+        // Specific delegate date to
+        if (!empty($this->getDelegateTo())) {
+            $query->delegateDateTo($this->getDelegateTo());
+        }
+
         return $query;
     }
 
