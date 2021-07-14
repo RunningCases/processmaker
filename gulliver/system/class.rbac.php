@@ -628,6 +628,11 @@ class RBAC
                 'PER_UID' => '00000000000000000000000000000069',
                 'PER_CODE' => 'PM_TASK_SCHEDULER_ADMIN',
                 'PER_NAME' => 'View Task Scheduler'
+            ],
+            [
+                'PER_UID' => '00000000000000000000000000000070',
+                'PER_CODE' => 'TASK_METRICS_VIEW',
+                'PER_NAME' => 'Task Metrics View'
             ]
         ];
 
