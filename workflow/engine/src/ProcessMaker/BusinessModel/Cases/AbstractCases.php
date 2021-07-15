@@ -642,10 +642,10 @@ class AbstractCases implements CasesInterface
         $specificCases = [];
         $rangeCases = [];
         foreach ($rangeOfCases as $cases) {
-            if(is_numeric($cases)) {
-                array_push($specificCases,$cases);
+            if (is_numeric($cases)) {
+                array_push($specificCases, $cases);
             } else {
-                array_push($rangeCases,$cases);
+                array_push($rangeCases, $cases);
             }
         }
         $this->setCasesNumbers($specificCases);
@@ -1161,7 +1161,7 @@ class AbstractCases implements CasesInterface
                 // Review if require other information
                 if ($onlyTask) {
                     // Thread tasks
-                    if($key === 'user_id') {
+                    if ($key === 'user_id') {
                         $threadTasks[$i][$key] = $row;
                         // Get the user tooltip information
                         $threadTasks[$i]['user_tooltip'] = User::getInformation($row);
@@ -1184,7 +1184,7 @@ class AbstractCases implements CasesInterface
                     }
                 }
             }
-            $i ++;
+            $i++;
         }
         // Define the array responses
         $result['THREAD_TASKS'] = $threadTasks;
@@ -1430,5 +1430,48 @@ class AbstractCases implements CasesInterface
     public function getPagingCounters()
     {
         throw new Exception("Method '" . __FUNCTION__ . "' should be implemented in the extended class '" . get_class($this) . "'.");
+    }
+
+    /**
+     * Count how many cases has each process
+     * 
+     * @param string $list
+     * @param int $category
+     * @param bool $topTen
+     * @param array $processes
+     * 
+     * @return array
+     */
+    public function getCountersByProcesses($category = null, $topTen = false, $processes = [])
+    {
+        $query = Delegation::selectRaw('count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE')
+            ->groupBy('APP_DELEGATION.PRO_UID');
+        $listArray = explode("\\", get_class($this));
+        $list = end($listArray);
+        switch ($list) {
+            case 'Inbox':
+                $query->inbox($this->getUserId());
+                break;
+            case 'Draft':
+                $query->draft($this->getUserId());
+                break;
+            case 'Paused':
+                $query->paused($this->getUserId());
+                break;
+            case 'Unassigned':
+                $query->selfService($this->getUserUid());
+                break;
+        }
+        $query->joinProcess();
+        if (!is_null($category)) {
+            $query->categoryId($category);
+        }
+        if ($topTen) {
+            $query->topTen('TOTAL', 'DESC');
+        }
+        if (!empty($processes)) {
+            $query->inProcesses($processes);
+        }
+        return $query->get()->values()->toArray();
     }
 }

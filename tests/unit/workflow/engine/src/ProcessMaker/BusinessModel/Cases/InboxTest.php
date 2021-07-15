@@ -55,7 +55,7 @@ class InboxTest extends TestCase
     public function createMultipleInbox($cases)
     {
         $user = factory(\ProcessMaker\Model\User::class)->create();
-        
+
         for ($i = 0; $i < $cases; $i = $i + 1) {
             factory(Delegation::class)->states('foreign_keys')->create([
                 'DEL_THREAD_STATUS' => 'OPEN',
@@ -211,7 +211,6 @@ class InboxTest extends TestCase
         $inbox->setTaskId($cases->TAS_ID);
         $res = $inbox->getData();
         $this->assertNotEmpty($res);
-
     }
 
     /**
@@ -297,5 +296,274 @@ class InboxTest extends TestCase
 
         $res = $inbox->getPagingCounters();
         $this->assertEquals(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method without filters
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_no_filter()
+    {
+        $user = factory(User::class)->create();
+        $process = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCountersByProcesses();
+        $this->assertCount(2, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the category filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_category()
+    {
+        $user = factory(User::class)->create();
+        $process = factory(Process::class)->create([
+            'CATEGORY_ID' => 1
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCountersByProcesses(2);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the top ten filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_top_ten()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        $process3 = factory(Process::class)->create();
+        $process4 = factory(Process::class)->create();
+        $process5 = factory(Process::class)->create();
+        $process6 = factory(Process::class)->create();
+        $process7 = factory(Process::class)->create();
+        $process8 = factory(Process::class)->create();
+        $process9 = factory(Process::class)->create();
+        $process10 = factory(Process::class)->create();
+        $process11 = factory(Process::class)->create();
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process3->PRO_ID,
+            'PRO_UID' => $process3->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process4->PRO_ID,
+            'PRO_UID' => $process4->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process5->PRO_ID,
+            'PRO_UID' => $process5->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process6->PRO_ID,
+            'PRO_UID' => $process6->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process7->PRO_ID,
+            'PRO_UID' => $process7->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process8->PRO_ID,
+            'PRO_UID' => $process8->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process9->PRO_ID,
+            'PRO_UID' => $process9->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process10->PRO_ID,
+            'PRO_UID' => $process10->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process11->PRO_ID,
+            'PRO_UID' => $process11->PRO_UID
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCountersByProcesses(null, true);
+        $this->assertCount(10, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the processes filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_processes()
+    {
+        $user = factory(User::class)->create();
+        $process = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCountersByProcesses(null, false, [$process->PRO_ID]);
+        $this->assertCount(1, $res);
     }
 }

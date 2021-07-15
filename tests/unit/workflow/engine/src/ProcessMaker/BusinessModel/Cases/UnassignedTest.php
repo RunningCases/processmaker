@@ -88,7 +88,6 @@ class UnassignedTest extends TestCase
             'taskUser' => $taskUser,
             'delegation' => $delegation
         ];
-
     }
 
     /**
@@ -135,7 +134,7 @@ class UnassignedTest extends TestCase
             $selfValueGroup = factory(AppAssignSelfServiceValueGroup::class)->create([
                 'ID' => $appSelfValueUser->ID,
                 'GRP_UID' => $user->USR_UID,
-                'ASSIGNEE_ID' => ($userAssignee) ? $user->USR_ID: $group->GRP_ID,
+                'ASSIGNEE_ID' => ($userAssignee) ? $user->USR_ID : $group->GRP_ID,
                 'ASSIGNEE_TYPE' => $relation
             ]);
             //Create the register in delegation relate to self-service
@@ -417,5 +416,167 @@ class UnassignedTest extends TestCase
         // Get the total for the pagination with some filters
         $res = $unassigned->getPagingCounters();
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method without filters
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_no_filter()
+    {
+        $cases = $this->createMultipleUnassigned(3);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($cases->USR_ID);
+        $unassigned->setUserUid($cases->USR_UID);
+        $res = $unassigned->getCountersByProcesses();
+        $this->assertCount(3, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the category filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_category()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 3
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process2->PRO_UID,
+            'PRO_ID' => $process2->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-2 year"))
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+        $res = $unassigned->getCountersByProcesses(2);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the top ten filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_top_ten()
+    {
+        $cases = $this->createMultipleUnassigned(20);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($cases->USR_ID);
+        $unassigned->setUserUid($cases->USR_UID);
+        $res = $unassigned->getCountersByProcesses(null, true);
+        $this->assertCount(10, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the processes filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_processes()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 3
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process2->PRO_UID,
+            'PRO_ID' => $process2->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-2 year"))
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+        $res = $unassigned->getCountersByProcesses(null, false, [$process1->PRO_ID]);
+        $this->assertCount(1, $res);
     }
 }
