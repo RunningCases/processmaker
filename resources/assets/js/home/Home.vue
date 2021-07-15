@@ -43,7 +43,7 @@ import MyDocuments from "./MyDocuments";
 import Todo from "./Inbox/Todo.vue";
 import Draft from "./Draft/Draft.vue";
 import Paused from "./Paused";
-import Unassigned from "./Unassigned";
+import Unassigned from "./Unassigned/Unassigned.vue";
 import BatchRouting from "./BatchRouting";
 import CaseDetail from "./CaseDetail";
 import XCase from "./XCase";
