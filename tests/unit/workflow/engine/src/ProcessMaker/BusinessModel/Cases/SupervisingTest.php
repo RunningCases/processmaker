@@ -675,9 +675,6 @@ class SupervisingTest extends TestCase
             'APP_NUMBER',
             'DEL_TITLE',
             'PRO_TITLE',
-            'TAS_TITLE',
-            'APP_CREATE_DATE',
-            'APP_FINISH_DATE'
         ];
         $index = array_rand($columnsView);
         // Instance the Supervising object

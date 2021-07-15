@@ -88,6 +88,18 @@ class Search extends AbstractCases
             // Get only the open threads related to the user
             $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
         }
+        // Filter by user who started
+        if ($this->getUserStartedId()) {
+            // Get the case numbers related to this filter
+            $result = Delegation::casesStartedBy($this->getUserStartedId(), $this->getOffset(), $this->getLimit());
+            $query->specificCases($result);
+        }
+        // Filter by user who completed
+        if ($this->getUserCompletedId()) {
+            // Get the case numbers related to this filter
+            $result = Delegation::casesCompletedBy($this->getUserCompletedId(), $this->getOffset(), $this->getLimit());
+            $query->specificCases($result);
+        }
         // Filter by task
         if ($this->getTaskId()) {
             // Join with delegation

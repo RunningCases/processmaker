@@ -464,6 +464,20 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeCasesOrRangeOfCases
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCasesOrRangeOfCases()
+     * @test
+     */
+    public function it_return_scope_cases_and_range_of_cases()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $cases = [$table->APP_NUMBER];
+        $rangeCases = [$table->APP_NUMBER.'-'.$table->APP_NUMBER];
+        $this->assertCount(1, $table->casesOrRangeOfCases($cases, $rangeCases)->get());
+    }
+
+    /**
      * This test scopeRangeOfCases
      *
      * @covers \ProcessMaker\Model\Delegation::scopeRangeOfCases()
@@ -555,6 +569,18 @@ class DelegationTest extends TestCase
      * @covers \ProcessMaker\Model\Delegation::scopeTask()
      * @test
      */
+    public function it_return_scope_task_id()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->task($table->TAS_ID)->get());
+    }
+
+    /**
+     * This test scopeTask
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeTask()
+     * @test
+     */
     public function it_return_scope_task()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
@@ -637,6 +663,18 @@ class DelegationTest extends TestCase
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
         $this->assertCount(1, $table->processInList([$table->PRO_ID])->get());
+    }
+
+    /**
+     * This test scopeParticipated
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeParticipated()
+     * @test
+     */
+    public function it_return_scope_participated()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->participated($table->USR_ID)->get());
     }
 
     /**
@@ -3207,5 +3245,31 @@ class DelegationTest extends TestCase
 
         // Assert the result is true
         $this->assertTrue($res);
+    }
+
+    /**
+     * This check the return cases completed by specific user
+     *
+     * @covers \ProcessMaker\Model\Delegation::casesCompletedBy()
+     * @test
+     */
+    public function it_get_cases_completed_by_specific_user()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $result = Delegation::casesCompletedBy($delegation->USR_ID);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * This check the return cases completed by specific user
+     *
+     * @covers \ProcessMaker\Model\Delegation::casesStartedBy()
+     * @test
+     */
+    public function it_get_cases_started_by_specific_user()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $result = Delegation::casesStartedBy($delegation->USR_ID);
+        $this->assertNotEmpty($result);
     }
 }

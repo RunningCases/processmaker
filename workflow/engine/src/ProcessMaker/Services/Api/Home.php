@@ -464,6 +464,8 @@ class Home extends Api
      * @param int $process
      * @param int $task
      * @param int $user
+     * @param int $userCompleted
+     * @param int $userStarted
      * @param string $caseTitle
      * @param string $caseStatuses
      * @param string $filterCases
@@ -487,6 +489,8 @@ class Home extends Api
         int $process = 0,
         int $task = 0,
         int $user = 0,
+        int $userCompleted = 0,
+        int $userStarted = 0,
         string $caseTitle = '',
         string $caseStatuses = '',
         string $filterCases = '',
@@ -507,6 +511,8 @@ class Home extends Api
             $properties['process'] = $process;
             $properties['task'] = $task;
             $properties['user'] = $user;
+            $properties['userCompleted'] = $userCompleted;
+            $properties['userStarted'] = $userStarted;
             $properties['caseStatuses'] = explode(',', $caseStatuses);
             $properties['filterCases'] = $filterCases;
             $properties['startCaseFrom'] = $startCaseFrom;
