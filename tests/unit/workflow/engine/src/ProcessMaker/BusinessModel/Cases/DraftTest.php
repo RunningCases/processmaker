@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Process;
 use ProcessMaker\Model\User;
 use Tests\TestCase;
 
@@ -304,5 +305,340 @@ class DraftTest extends TestCase
         $res = $draft->getPagingCounters();
 
         $this->assertEquals(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method without filters
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_no_filter()
+    {
+        $process = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $application1 = factory(Application::class)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        $application2 = factory(Application::class)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application1->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application2->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application2->APP_UID,
+            'APP_NUMBER' => $application2->APP_NUMBER,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+        $res = $draft->getCountersByProcesses();
+        $this->assertCount(2, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the category filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_category()
+    {
+        $process = factory(Process::class)->create([
+            'CATEGORY_ID' => 1
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $user = factory(User::class)->create();
+        $application = factory(Application::class, 5)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[0]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[0]->APP_UID,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[1]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[1]->APP_UID,
+            'APP_NUMBER' => $application[1]->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[2]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[2]->APP_UID,
+            'APP_NUMBER' => $application[2]->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[3]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[3]->APP_UID,
+            'APP_NUMBER' => $application[3]->APP_NUMBER,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[4]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[4]->APP_UID,
+            'APP_NUMBER' => $application[4]->APP_NUMBER,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+        $res = $draft->getCountersByProcesses(2);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the top ten filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_top_ten()
+    {
+        $process1 = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        $process3 = factory(Process::class)->create();
+        $process4 = factory(Process::class)->create();
+        $process5 = factory(Process::class)->create();
+        $process6 = factory(Process::class)->create();
+        $process7 = factory(Process::class)->create();
+        $process8 = factory(Process::class)->create();
+        $process9 = factory(Process::class)->create();
+        $process10 = factory(Process::class)->create();
+        $process11 = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $application = factory(Application::class, 14)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[0]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[0]->APP_UID,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[1]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[1]->APP_UID,
+            'APP_NUMBER' => $application[1]->APP_NUMBER,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[2]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[2]->APP_UID,
+            'APP_NUMBER' => $application[2]->APP_NUMBER,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[3]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[3]->APP_UID,
+            'APP_NUMBER' => $application[3]->APP_NUMBER,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[4]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[4]->APP_UID,
+            'APP_NUMBER' => $application[4]->APP_NUMBER,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[5]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[5]->APP_UID,
+            'APP_NUMBER' => $application[5]->APP_NUMBER,
+            'PRO_ID' => $process3->PRO_ID,
+            'PRO_UID' => $process3->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[6]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[6]->APP_UID,
+            'APP_NUMBER' => $application[6]->APP_NUMBER,
+            'PRO_ID' => $process4->PRO_ID,
+            'PRO_UID' => $process4->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[7]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[7]->APP_UID,
+            'APP_NUMBER' => $application[7]->APP_NUMBER,
+            'PRO_ID' => $process5->PRO_ID,
+            'PRO_UID' => $process5->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[8]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[8]->APP_UID,
+            'APP_NUMBER' => $application[8]->APP_NUMBER,
+            'PRO_ID' => $process6->PRO_ID,
+            'PRO_UID' => $process6->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[9]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[9]->APP_UID,
+            'APP_NUMBER' => $application[9]->APP_NUMBER,
+            'PRO_ID' => $process7->PRO_ID,
+            'PRO_UID' => $process7->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[10]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[10]->APP_UID,
+            'APP_NUMBER' => $application[10]->APP_NUMBER,
+            'PRO_ID' => $process8->PRO_ID,
+            'PRO_UID' => $process8->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[11]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[11]->APP_UID,
+            'APP_NUMBER' => $application[11]->APP_NUMBER,
+            'PRO_ID' => $process9->PRO_ID,
+            'PRO_UID' => $process9->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[12]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[12]->APP_UID,
+            'APP_NUMBER' => $application[12]->APP_NUMBER,
+            'PRO_ID' => $process10->PRO_ID,
+            'PRO_UID' => $process10->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[13]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[13]->APP_UID,
+            'APP_NUMBER' => $application[13]->APP_NUMBER,
+            'PRO_ID' => $process11->PRO_ID,
+            'PRO_UID' => $process11->PRO_UID
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+        $res = $draft->getCountersByProcesses(null, true);
+        $this->assertCount(10, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the processes filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_processes()
+    {
+        $process = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $application = factory(Application::class, 14)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[0]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[0]->APP_UID,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[1]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[1]->APP_UID,
+            'APP_NUMBER' => $application[1]->APP_NUMBER,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+        $res = $draft->getCountersByProcesses(null, false, [$process->PRO_ID]);
+        $this->assertCount(1, $res);
     }
 }

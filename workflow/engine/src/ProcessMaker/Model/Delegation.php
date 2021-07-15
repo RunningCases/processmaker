@@ -1016,6 +1016,49 @@ class Delegation extends Model
     }
 
     /**
+     * Scope process category id
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $category
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategoryId($query, $category)
+    {
+        $query->where('PROCESS.CATEGORY_ID', $category);
+        return $query;
+    }
+
+    /**
+     * Scope top ten
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $column
+     * @param string $order
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTopTen($query, $column, $order)
+    {
+        $query->orderBy($column, $order)->limit(10);
+        return $query;
+    }
+
+    /**
+     * Scope where in processes
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $processes
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInProcesses($query, $processes)
+    {
+        $query->whereIn('PROCESS.PRO_ID', $processes);
+        return $query;
+    }
+
+    /**
      * Get specific cases unassigned that the user can view
      *
      * @param \Illuminate\Database\Eloquent\Builder $query

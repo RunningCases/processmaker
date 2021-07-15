@@ -136,13 +136,15 @@ class PausedTest extends TestCase
      * @param int
      * @return object
      */
-    public function createMultiplePaused($cases)
+    public function createMultiplePaused($cases, $category = 1, $user = null)
     {
-        $user = factory(\ProcessMaker\Model\User::class)->create();
+        if (is_null($user)) {
+            $user = factory(User::class)->create();
+        }
 
         for ($i = 0; $i < $cases; $i = $i + 1) {
             $process1 = factory(Process::class)->create(
-                ['PRO_CATEGORY' => '1']
+                ['PRO_CATEGORY' => 1, 'CATEGORY_ID' => $category]
             );
 
             $task = factory(Task::class)->create([
@@ -385,5 +387,117 @@ class PausedTest extends TestCase
 
         $res = $paused->getPagingCounters();
         $this->assertEquals(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method without filters
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_no_filter()
+    {
+        $cases = $this->createMultiplePaused(2);
+        $paused = new Paused();
+        $paused->setUserId($cases->USR_ID);
+        $paused->setUserUid($cases->USR_ID);
+        $res = $paused->getCountersByProcesses();
+        $this->assertCount(2, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the category filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_category()
+    {
+        $user = factory(User::class)->create();
+        $this->createMultiplePaused(3, 2, $user);
+        $this->createMultiplePaused(2, 3, $user);
+        $paused = new Paused();
+        $paused->setUserId($user->USR_ID);
+        $paused->setUserUid($user->USR_ID);
+        $res = $paused->getCountersByProcesses(2);
+        $this->assertCount(3, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the top ten filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_top_ten()
+    {
+        $user = factory(User::class)->create();
+        $this->createMultiplePaused(20, 2, $user);
+        $paused = new Paused();
+        $paused->setUserId($user->USR_ID);
+        $paused->setUserUid($user->USR_UID);
+        $res = $paused->getCountersByProcesses(null, true);
+        $this->assertCount(10, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the processes filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_processes_filter()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create();
+
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => '',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TYPE' => 'NORMAL'
+        ]);
+
+        $application1 = factory(Application::class)->create();
+
+        factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 0,
+            'DEL_INDEX' => 1
+        ]);
+        $delegation1 = factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2
+        ]);
+
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $user->USR_UID,
+            'PRO_UID' => $process1->PRO_UID,
+            'APP_NUMBER' => $delegation1->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation1->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+        $this->createMultiplePaused(3, 2, $user);
+        $paused = new Paused();
+        $paused->setUserId($user->USR_ID);
+        $paused->setUserUid($user->USR_UID);
+        $res = $paused->getCountersByProcesses(null, false, [$process1->PRO_ID]);
+        $this->assertCount(1, $res);
     }
 }

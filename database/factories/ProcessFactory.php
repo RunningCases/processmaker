@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Model factory for a process
  */
+
 use Faker\Generator as Faker;
 
-$factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
+$factory->define(\ProcessMaker\Model\Process::class, function (Faker $faker) {
 
     return [
         'PRO_UID' => G::generateUniqueID(),
@@ -24,9 +26,10 @@ $factory->define(\ProcessMaker\Model\Process::class, function(Faker $faker) {
         'PRO_DYNAFORMS' => serialize([]),
         'PRO_ITEE' => 1,
         'PRO_ACTION_DONE' => serialize([]),
-        'PRO_CATEGORY' => function() {
+        'PRO_CATEGORY' => function () {
             return factory(\ProcessMaker\Model\ProcessCategory::class)->create()->CATEGORY_UID;
         },
+        'CATEGORY_ID' => 0
     ];
 });
 
@@ -53,7 +56,7 @@ $factory->state(\ProcessMaker\Model\Process::class, 'foreign_keys', function (Fa
         'PRO_DYNAFORMS' => serialize([]),
         'PRO_ITEE' => 1,
         'PRO_ACTION_DONE' => serialize([]),
-        'PRO_CATEGORY' => function() {
+        'PRO_CATEGORY' => function () {
             return factory(\ProcessMaker\Model\ProcessCategory::class)->create()->CATEGORY_UID;
         },
     ];
