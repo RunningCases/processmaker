@@ -7,6 +7,7 @@ use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\BusinessModel\Cases\Inbox;
 use ProcessMaker\BusinessModel\Cases\Paused;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
+use ProcessMaker\Model\User;
 use ProcessMaker\Services\Api;
 use RBAC;
 
@@ -102,6 +103,51 @@ class Metrics extends Api
                     break;
             }
             $result = $list->getCountersByRange($processId, $dateFrom, $dateTo, $groupBy);
+            return $result;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get total of cases per list
+     * 
+     * @url /list-total-cases
+     * 
+     * @return array
+     * 
+     * @throws RestException
+     */
+    public function getCountersList()
+    {
+        try {
+            $usrUid = $this->getUserId();
+            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
+
+            $listInbox = new Inbox();
+            $listInbox->setProperties($properties);
+
+            $listDraft = new Draft();
+            $listDraft->setProperties($properties);
+
+            $listPaused = new Paused();
+            $listPaused->setProperties($properties);
+
+            $listUnassigned = new Unassigned();
+            $listUnassigned->setProperties($properties);
+
+            $casesInbox = $listInbox->getCounter();
+            $casesDraft = $listDraft->getCounter();
+            $casesPaused = $listPaused->getCounter();
+            $casesUnassigned = $listUnassigned->getCounter();
+
+            $result = [
+                ['List Name' => 'Inbox', 'Total' => $casesInbox, 'Color' => 'green'],
+                ['List Name' => 'Draft', 'Total' => $casesDraft, 'Color' => 'yellow'],
+                ['List Name' => 'Paused', 'Total' => $casesPaused, 'Color' => 'blue'],
+                ['List Name' => 'Unassigned', 'Total' => $casesUnassigned, 'Color' => 'gray']
+            ];
+
             return $result;
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
