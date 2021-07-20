@@ -49,7 +49,7 @@
   display: block;
   font-size: 14px;
   font-weight: 400;
-  padding: 8px;
+  padding: 8px 8px 8px 0px;
   line-height: 30px;
   text-decoration: none;
   -webkit-user-select: none;
@@ -88,12 +88,12 @@
 }
 
 .v-sidebar-menu .vsm--link_mobile-item {
-  background-color: transparent
+  background-color: #3397E1;
 }
 
 .v-sidebar-menu .vsm--link_mobile-item.vsm--link_hover,
 .v-sidebar-menu .vsm--link_mobile-item:hover {
-  background-color: transparent !important
+  background-color: #5aa4c4 !important;
 }
 
 .v-sidebar-menu .vsm--title {

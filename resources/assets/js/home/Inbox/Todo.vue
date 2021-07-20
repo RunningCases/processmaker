@@ -2,6 +2,8 @@
   <div id="v-todo" ref="v-todo" class="v-container-todo">
     <button-fleft :data="newCase"></button-fleft>
     <modal-new-request ref="newRequest"></modal-new-request>
+    <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
+    <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
     <CasesFilter
       :filters="filters"
       :title="$t('ID_CASES_STATUS_TO_DO')"
@@ -48,9 +50,9 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <button class="btn btn-success btn-sm" @click="openCase(props.row)">
-          {{ $t("ID_OPEN_CASE") }}
-        </button>
+        <div @click="updateDataEllipsis(props.row)">
+          <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+        </div>
       </div>
     </v-server-table>
     <VueCardView
@@ -59,8 +61,8 @@
       ref="vueCardView"
     >
       <div slot="detail" slot-scope="props">
-        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
-          <i class="fas fa-info-circle"></i>
+        <div @click="updateDataEllipsis(props.row)">
+          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
         </div>
       </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
@@ -181,6 +183,10 @@ import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
 import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue";
 import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
 import defaultMixins from "./defaultMixins";
+import Ellipsis from '../../components/utils/ellipsis.vue';
+import ModalPauseCase from '../modal/ModalPauseCase.vue';
+import ModalReassignCase from '../modal/ModalReassignCase.vue';
+
 
 export default {
   name: "Todo",
@@ -193,7 +199,10 @@ export default {
     CasesFilter,
     MultiviewHeader,
     VueCardView,
-    VueListView
+    VueListView,
+    Ellipsis,
+    ModalPauseCase,
+    ModalReassignCase,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -273,6 +282,10 @@ export default {
         PAUSED: this.$i18n.t("ID_PAUSED"),
         UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
       },
+      dataEllipsis: {
+        buttons: {}
+      },
+      showEllipsis: false
     };
   },
   created() {
@@ -507,6 +520,64 @@ export default {
         this.$refs["vueListView"].getData();
       }
     },
+    /**
+     * Show modal to pause a case
+     * @param {objec} data
+     */
+    showModalPause(data) {
+      this.$refs["modal-pause-case"].data = data;
+      this.$refs["modal-pause-case"].show();
+    },
+    /**
+     * Show modal to reassign a case
+     * @param {objec} data
+     */
+    showModalReassign(data) {
+      this.$refs["modal-reassign-case"].data = data;
+      this.$refs["modal-reassign-case"].show();
+    },
+    /**
+     * Show options in the ellipsis 
+     * @param {objec} data
+     */
+    updateDataEllipsis(data) {
+        let that = this;
+        this.showEllipsis = !this.showEllipsis;
+        if (this.showEllipsis) {
+          this.dataEllipsis = {
+            buttons: {
+              open: {
+                name: "open",
+                icon: "far fa-edit",
+                fn: function() {
+                  that.openCase(data)
+                }
+              },
+              note: {
+                name: "case note",
+                icon: "far fa-comments",
+                fn: function() {
+                  that.openCaseDetail(data);
+                }
+              },
+              reassign: {
+                name: "reassign case",
+                icon: "fas fa-undo",
+                fn: function() {
+                  that.showModalReassign(data);
+                }
+              },
+              pause: {
+                name: "pause case",
+                icon: "far fa-pause-circle",
+                fn: function() {
+                  that.showModalPause(data);
+                }
+              }
+            }
+          }
+        }
+      },
   },
 };
 </script>

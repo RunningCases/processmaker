@@ -4,6 +4,7 @@
             <div
                 class="v-inline"
                 v-show="showActions"
+                ref="ellipsis"
             >
                 <div class="buttonGroup">
                     <b-button
@@ -91,7 +92,7 @@ export default {
         position: relative;
         flex-direction: row-reverse;
         width: 0px;
-        z-index: 999999;
+        z-index: 999;
         display: inline-flex !important;
     }
     .btn-outline-info {

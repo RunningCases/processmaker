@@ -24564,6 +24564,12 @@ msgid "Select a template file"
 msgstr "Select a template file"
 
 # TRANSLATION
+# LABEL/ID_SELECT_USER
+#: LABEL/ID_SELECT_USER
+msgid "Select a User"
+msgstr "Select a User"
+
+# TRANSLATION
 # LABEL/ID_SELECT_USER_OR_GROUP
 #: LABEL/ID_SELECT_USER_OR_GROUP
 msgid "Please select the name of a user or a group in the Group or User field"

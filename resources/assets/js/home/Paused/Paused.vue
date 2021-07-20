@@ -2,6 +2,7 @@
   <div id="v-paused" ref="v-paused" class="v-container-paused">
     <button-fleft :data="newCase"></button-fleft>
     <modal-new-request ref="newRequest"></modal-new-request>
+    <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
     <CasesFilter
       :filters="filters"
       :title="$t('ID_PAUSED')"
@@ -184,6 +185,7 @@ import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue"
 import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
 import defaultMixins from "./defaultMixins";
 import Ellipsis from '../../components/utils/ellipsis.vue';
+import ModalReassignCase from '../modal/ModalReassignCase.vue';
 
 export default {
   name: "Paused",
@@ -198,7 +200,8 @@ export default {
     Ellipsis,
     MultiviewHeader,
     VueCardView,
-    VueListView
+    VueListView,
+    ModalReassignCase,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -516,7 +519,16 @@ export default {
       }
     },
     /**
+     * Show modal to reassign a case
+     * @param {object} data
+     */
+    showModalReassign(data) {
+      this.$refs["modal-reassign-case"].data = data;
+      this.$refs["modal-reassign-case"].show();
+    },
+    /**
      * Show options in the ellipsis 
+     * @param {object} data
      */
     updateDataEllipsis(data) {
       let that = this;
@@ -527,17 +539,23 @@ export default {
             note: {
               name: "case note",
               icon: "far fa-comments",
-              fn: function() {console.log("comments");}
+              fn: function() {
+                that.openCaseDetail(data);
+              }
             },
             play: {
               name: "play case",
               icon: "far fa-play-circle",
-              fn: function() {console.log("play case");}
+              fn: function() {
+                that.showModalUnpauseCase(data);
+              }
             },
             reassign: {
               name: "reassign case",
-              icon: "fas fa-redo",
-              fn: function() {console.log("reassign case");}
+              icon: "fas fa-undo",
+              fn: function() {
+                that.showModalReassign(data);
+              }
             }
           }
         }

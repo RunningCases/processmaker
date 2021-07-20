@@ -152,6 +152,26 @@ export let cases = {
             `cases/ajaxListener`, params);
     },
     /**
+     * Pause case with endpoint
+     * @param {*} data 
+     * @returns 
+     */
+    pauseCase(data) {
+        return Api.update({
+            service: "PAUSE_CASE",
+            data: {
+                unpaused_date: data.unpausedDate,
+                unpaused_time: data.unpausedTime,
+                index: data.DEL_INDEX,
+                reason: data.reasonPause,
+                sendMail: data.notifyUser
+            },
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
+    },
+    /**
      * Unpause case with endpoint
      * @param {*} data 
      * @returns 
@@ -160,6 +180,29 @@ export let cases = {
         return Api.update({
             service: "UNPAUSE_CASE",
             data: {},
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
+    },
+    getUserReassign(data) {
+        return Api.get({
+            service: "REASSIGN_USERS",
+            data: {},
+            keys: {
+                task_uid: data.TAS_UID
+            }
+        });
+    },
+    reassingCase(data) {
+        return Api.update({
+            service: "REASSIGN_CASE",
+            data: {
+                usr_uid_target: data.userSelected,
+                del_index: data.DEL_INDEX,
+                reason: data.reasonReassign,
+                sendMail: data.notifyUser
+            },
             keys: {
                 app_uid: data.APP_UID
             }

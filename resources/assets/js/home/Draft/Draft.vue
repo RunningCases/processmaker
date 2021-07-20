@@ -486,7 +486,8 @@ export default {
       }
     },
     /**
-     * Show options in the ellipsis 
+     * Show options in the ellipsis
+     * @param {object} data
      */
     updateDataEllipsis(data) {
       let that = this;
@@ -497,12 +498,16 @@ export default {
             open: {
               name: "open",
               icon: "far fa-edit",
-              fn: function() {console.log(data.APP_UID);}
+              fn: function() {
+                that.openCase(data);
+              }
             },
             note: {
               name: "case note",
               icon: "far fa-comments",
-              fn: function() {console.log("comments");}
+              fn: function() {
+                that.openCaseDetail(data);
+              }
             },
           }
         }

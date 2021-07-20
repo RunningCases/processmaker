@@ -162,6 +162,7 @@
       </div>
     </VueListView>
     <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
+    <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
   </div>
 </template>
 
@@ -179,6 +180,7 @@ import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
 import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue";
 import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
 import defaultMixins from "./defaultMixins";
+import ModalPauseCase from '../modal/ModalPauseCase.vue';
 
 export default {
   name: "Unassigned",
@@ -193,7 +195,8 @@ export default {
     Ellipsis,
     MultiviewHeader,
     VueCardView,
-    VueListView
+    VueListView,
+    ModalPauseCase,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -486,17 +489,16 @@ export default {
       }
     },
     /**
-     * set data by default in the ellipsis component 
+     * Show modal to pause a case
+     * @param {objec} data
      */
-    setDataEllipsis() {
-      this.dataEllipsis = {
-        showNote: true,
-        showPause: true,
-        showClaim: true
-      }
+    showModalPause(data) {
+      this.$refs["modal-pause-case"].data = data;
+      this.$refs["modal-pause-case"].show();
     },
     /**
      * Show options in the ellipsis 
+     * @param {object} data
      */
     updateDataEllipsis(data) {
       let that = this;
@@ -507,17 +509,23 @@ export default {
             note: {
               name: "case note",
               icon: "far fa-comments",
-              fn: function() {console.log("comments");}
+              fn: function() {
+                that.openCaseDetail(data);
+              }
             },
             pause: {
               name: "pause case",
               icon: "far fa-pause-circle",
-              fn: function() {console.log("pause case");}
+              fn: function() {
+                that.showModalPause(data);
+              }
             },
             claim: {
               name: "claim case",
               icon: "fas fa-briefcase",
-              fn: function() {console.log("claim case");}
+              fn: function() {
+                that.claimCase(data);
+              }
             }
           }
         }

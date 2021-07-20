@@ -70,7 +70,10 @@ const services = {
     USERS: "/home/users",
     TASKS: "/home/tasks",
     CATEGORIES: "/home/categories",
-    DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}"
+    DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}",
+    PAUSE_CASE: "/cases/{app_uid}/pause",
+    REASSIGN_CASE: "/cases/{app_uid}/reassign-case",
+    REASSIGN_USERS: "/light/userstoreassign/{task_uid}"
 };
 
 export default {
@@ -260,6 +263,7 @@ export default {
             url,
             credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
+            lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
 
