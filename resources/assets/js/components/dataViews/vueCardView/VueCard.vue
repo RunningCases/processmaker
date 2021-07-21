@@ -1,6 +1,6 @@
 <template>
   <div class="pm-vue-card">
-    <div class="card pm-vue-card-inside" style="width: 20rem">
+    <div class="card pm-vue-card-inside" style="width: 20rem" @dblclick="dblClick">
       <div class="card-body">
         <slot> </slot>
       </div>
@@ -11,7 +11,7 @@
 <script>
 export default {
   name: "VueCardView",
-  props: ["columns", "item"],
+  props: ["options", "item"],
   data() {
     return {};
   },
@@ -19,6 +19,9 @@ export default {
     classBtn(cls) {
       return "btn btn-slim btn-force-radius v-btn-header " + cls;
     },
+    dblClick(event){
+      this.options.dblClick(event, this.item, this.options);
+    }
   },
 };
 </script>
