@@ -256,9 +256,6 @@ class InboxTest extends TestCase
             'APP_NUMBER',
             'DEL_TITLE',
             'PRO_TITLE',
-            'TAS_TITLE',
-            'DEL_TASK_DUE_DATE',
-            'DEL_DELEGATE_DATE'
         ];
         $index = array_rand($columnsView);
         // Create new Inbox object
