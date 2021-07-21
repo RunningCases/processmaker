@@ -58,6 +58,12 @@ class AbstractCases implements CasesInterface
     // Filter by user using the Id field
     private $userId = 0;
 
+    // Filter by user who completed using the Id field
+    private $userCompleted = 0;
+
+    // Filter by user who started using the Id field
+    private $userStarted = 0;
+
     // Value to search, can be a text or an application number, know as "$search" in the old lists classes
     private $valueToSearch = '';
 
@@ -280,6 +286,46 @@ class AbstractCases implements CasesInterface
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * Set User Id value
+     *
+     * @param int $userId
+     */
+    public function setUserCompletedId(int $userId)
+    {
+        $this->userCompleted = $userId;
+    }
+
+    /**
+     * Get User Id value
+     *
+     * @return int
+     */
+    public function getUserCompletedId()
+    {
+        return $this->userCompleted;
+    }
+
+    /**
+     * Set User Id value
+     *
+     * @param int $userId
+     */
+    public function setUserStartedId(int $userId)
+    {
+        $this->userStarted = $userId;
+    }
+
+    /**
+     * Get User Id value
+     *
+     * @return int
+     */
+    public function getUserStartedId()
+    {
+        return $this->userStarted;
     }
 
     /**
@@ -1294,6 +1340,34 @@ class AbstractCases implements CasesInterface
         if (!empty($properties['caseTitle'])) {
             $this->setCaseTitle($properties['caseTitle']);
         }
+        // Filter by case uid
+        if (!empty($properties['caseLink'])) {
+            $this->setCaseUid($properties['caseLink']);
+        }
+        // Filter by array of case uids
+        if (!empty($properties['appUidCheck'])) {
+            $this->setCasesUids($properties['appUidCheck']);
+        }
+        // Sort column
+        if (!empty($properties['sort'])) {
+            $this->setOrderByColumn($properties['sort']);
+        }
+        // Direction column
+        if (!empty($properties['dir'])) {
+            $this->setOrderDirection($properties['dir']);
+        }
+        // Paged
+        if (!empty($properties['paged'])) {
+            $this->setPaged($properties['paged']);
+        }
+        // Start
+        if (!empty($properties['start'])) {
+            $this->setOffset($properties['start']);
+        }
+        // Limit
+        if (!empty($properties['limit'])) {
+            $this->setLimit($properties['limit']);
+        }
         /** Apply filters related to INBOX */
         // Filter date related to delegate from
         if (get_class($this) === Inbox::class && !empty($properties['delegateFrom'])) {
@@ -1372,33 +1446,13 @@ class AbstractCases implements CasesInterface
         if (get_class($this) === Search::class && !empty($properties['finishCaseTo'])) {
             $this->setFinishCaseTo($properties['finishCaseTo']);
         }
-        // Filter by case uid
-        if (!empty($properties['caseLink'])) {
-            $this->setCaseUid($properties['caseLink']);
+        // Filter date related to user who started
+        if (get_class($this) === Search::class && !empty($properties['userCompleted'])) {
+            $this->setUserCompletedId($properties['userCompleted']);
         }
-        // Filter by array of case uids
-        if (!empty($properties['appUidCheck'])) {
-            $this->setCasesUids($properties['appUidCheck']);
-        }
-        // Sort column
-        if (!empty($properties['sort'])) {
-            $this->setOrderByColumn($properties['sort']);
-        }
-        // Direction column
-        if (!empty($properties['dir'])) {
-            $this->setOrderDirection($properties['dir']);
-        }
-        // Paged
-        if (!empty($properties['paged'])) {
-            $this->setPaged($properties['paged']);
-        }
-        // Start
-        if (!empty($properties['start'])) {
-            $this->setOffset($properties['start']);
-        }
-        // Limit
-        if (!empty($properties['limit'])) {
-            $this->setLimit($properties['limit']);
+        // Filter date related to user who completed
+        if (get_class($this) === Search::class && !empty($properties['userStarted'])) {
+            $this->setUserStartedId($properties['userStarted']);
         }
     }
 
