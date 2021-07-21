@@ -66,4 +66,45 @@ class Metrics extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * Get total cases by range
+     * 
+     * @url /process-total-cases
+     * 
+     * @param string $caseList
+     * @param int $processId
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @param string $groupBy
+     * 
+     * @return array
+     * 
+     * @throws RestException
+     * 
+     * @class AccessControl {@permission TASK_METRICS_VIEW}
+     */
+    public function getTotalCasesByRange($caseList, $processId = null, $dateFrom = null, $dateTo = null, $groupBy = 'day')
+    {
+        try {
+            switch ($caseList) {
+                case 'inbox':
+                    $list = new Inbox();
+                    break;
+                case 'draft':
+                    $list = new Draft();
+                    break;
+                case 'paused':
+                    $list = new Paused();
+                    break;
+                case 'unassigned':
+                    $list = new Unassigned();
+                    break;
+            }
+            $result = $list->getCountersByRange($processId, $dateFrom, $dateTo, $groupBy);
+            return $result;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 }

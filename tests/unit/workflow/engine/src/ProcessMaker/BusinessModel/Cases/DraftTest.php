@@ -641,4 +641,83 @@ class DraftTest extends TestCase
         $res = $draft->getCountersByProcesses(null, false, [$process->PRO_ID]);
         $this->assertCount(1, $res);
     }
+
+    /**
+     * It tests the getCountersByRange() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByRange()
+     * @test
+     */
+    public function it_should_test_get_counters_by_range_method()
+    {
+        $process1 = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $application = factory(Application::class, 4)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[0]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[0]->APP_UID,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_DELEGATE_DATE' => '2021-05-20 09:52:32'
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[1]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[1]->APP_UID,
+            'APP_NUMBER' => $application[1]->APP_NUMBER,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_DELEGATE_DATE' => '2021-05-21 09:52:32'
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[2]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[2]->APP_UID,
+            'APP_NUMBER' => $application[2]->APP_NUMBER,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_DELEGATE_DATE' => '2021-05-22 00:00:00'
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[3]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[3]->APP_UID,
+            'APP_NUMBER' => $application[3]->APP_NUMBER,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID,
+            'DEL_DELEGATE_DATE' => '2021-05-23 09:52:32'
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+
+        $res = $draft->getCountersByRange();
+        $this->assertCount(4, $res);
+
+        $res = $draft->getCountersByRange(null, null, null, 'month');
+        $this->assertCount(1, $res);
+
+        $res = $draft->getCountersByRange(null, null, null, 'year');
+        $this->assertCount(1, $res);
+
+        $res = $draft->getCountersByRange($process2->PRO_ID);
+        $this->assertCount(1, $res);
+
+        $res = $draft->getCountersByRange(null, '2021-05-20', '2021-05-22');
+        $this->assertCount(3, $res);
+    }
 }
