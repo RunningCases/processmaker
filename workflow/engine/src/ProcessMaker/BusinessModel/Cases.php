@@ -53,6 +53,8 @@ use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
 use ProcessMaker\Model\ListUnassigned;
 use ProcessMaker\Model\Triggers;
+use ProcessMaker\Model\ProcessUser;
+use ProcessMaker\Model\User;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services\OAuth2\Server;
 use ProcessMaker\Util\DateTime as UtilDateTime;
@@ -60,7 +62,6 @@ use ProcessMaker\Validation\ExceptionRestApi;
 use ProcessMaker\Validation\ValidationUploadedFiles;
 use ProcessMaker\Validation\Validator as FileValidator;
 use ProcessPeer;
-use ProcessUser;
 use ProcessUserPeer;
 use RBAC;
 use ResultSet;
@@ -868,39 +869,72 @@ class Cases
             throw $e;
         }
     }
+    /**
+     * This function check if some user has participation over the case
+     *
+     * @param string $usrUid
+     * @param int $caseNumber
+     * @param int $index
+     *
+     * @return bool
+    */
+    public function participation($usrUid, $caseNumber, $index)
+    {
+        $userId = User::getId($usrUid);
+        $query = Delegation::query()->select(['APP_NUMBER'])->case($caseNumber)->index($index)->isThreadOpen();
+        $query1 = clone $query;
+        $result = $query->userId($userId)->limit(1)->get()->values()->toArray();
+        $permission = empty($result) ? false : true;
+        // Review if the user is supervisor
+        if (empty($result)) {
+            $processes = ProcessUser::getProcessesOfSupervisor($usrUid);
+            $query1->processInList($processes);
+            $result = $query1->get()->values()->toArray();
+            $permission = empty($result) ? false : true;
+        }
+
+        return $permission;
+    }
 
     /**
      * Reassign Case
      *
-     * @param string $applicationUid Unique id of Case
-     * @param string $userUid Unique id of User
-     * @param string $delIndex
-     * @param string $userUidSource Unique id of User Source
-     * @param string $userUid $userUidTarget id of User Target
+     * @param string $appUid Unique id of Case
+     * @param string $usrUid Unique id of User
+     * @param int $delIndex
+     * @param string $userSource Unique id of User Source
+     * @param string $userTarget $userUidTarget id of User Target
+     * @param string $reason
+     * @param boolean $sendMail
      *
      * @return void
      * @throws Exception
      */
-    public function updateReassignCase($applicationUid, $userUid, $delIndex, $userUidSource, $userUidTarget)
+    public function updateReassignCase($appUid, $usrUid, $delIndex, $userSource, $userTarget, $reason = '', $sendMail = false)
     {
         try {
             if (!$delIndex) {
-                $delIndex = AppDelegation::getCurrentIndex($applicationUid);
+                $delIndex = AppDelegation::getCurrentIndex($appUid);
             }
 
+            /** Reassign case */
             $ws = new WsBase();
-            $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidSource, $userUidTarget);
-            $array = json_decode(json_encode($fields), true);
-            if (array_key_exists("status_code", $array)) {
-                if ($array ["status_code"] != 0) {
-                    throw (new Exception($array ["message"]));
-                } else {
-                    unset($array['status_code']);
-                    unset($array['message']);
-                    unset($array['timestamp']);
+            $result = $ws->reassignCase($usrUid, $appUid, $delIndex, $userSource, $userTarget);
+            $result = (object)$result;
+            if (isset($result->status_code)) {
+                if ($result->status_code !== 0) {
+                    throw new Exception($result->message);
                 }
             } else {
-                throw new Exception(G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", array($applicationUid)));
+                throw new Exception(G::LoadTranslation("ID_CASES_INCORRECT_INFORMATION", [$appUid]));
+            }
+
+            /** Add the note */
+            if (!empty($reason)) {
+                $noteContent = $reason;
+                // Define the Case for register a case note
+                $cases = new BmCases();
+                $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
             }
         } catch (Exception $e) {
             throw $e;
@@ -970,66 +1004,60 @@ class Cases
      * Put pause case
      *
      * @access public
-     * @param string $app_uid , Uid for case
-     * @param string $usr_uid , Uid for user
-     * @param bool|string $del_index
-     * @param null|string $unpaused_date , Date for unpaused
+     * @param string $appUid , Uid for case
+     * @param string $usrUid , Uid for user
+     * @param bool|string $index
+     * @param null|string $date , Date for unpaused
+     * @param string $time , Time for unpaused
+     * @param string $reason
+     * @param bool $sendMail
      *
      * @return void
      * @throws Exception
      */
-    public function putPauseCase($app_uid, $usr_uid, $del_index = false, $unpaused_date = null)
+    public function putPauseCase($appUid, $usrUid, $index = 0, $date = null, $time = '00:00', $reason = '', $sendMail = false)
     {
-        Validator::isString($app_uid, '$app_uid');
-        Validator::isString($usr_uid, '$usr_uid');
-
-        Validator::appUid($app_uid, '$app_uid');
-        Validator::usrUid($usr_uid, '$usr_uid');
-
-        if ($del_index === false) {
-            $del_index = AppDelegation::getCurrentIndex($app_uid);
+        Validator::isString($appUid, '$app_uid');
+        Validator::isString($usrUid, '$usr_uid');
+        Validator::appUid($appUid, '$app_uid');
+        Validator::usrUid($usrUid, '$usr_uid');
+        Validator::isInteger($index, '$del_index');
+        // Get the last index
+        if ($index === 0) {
+            $index = AppDelegation::getCurrentIndex($appUid);
         }
-
-        Validator::isInteger($del_index, '$del_index');
-
+        // Get the case status
         $case = new ClassesCases();
-        $fields = $case->loadCase($app_uid);
+        $fields = $case->loadCase($appUid);
+        $caseNumber = $fields['APP_NUMBER'];
         if ($fields['APP_STATUS'] == 'CANCELLED') {
-            throw (new Exception(G::LoadTranslation("ID_CASE_IS_CANCELED", array($app_uid))));
+            throw new Exception(G::LoadTranslation("ID_CASE_IS_CANCELED", [$appUid]));
+        }
+        // Check if the case was not paused
+        $delay = new AppDelay();
+        if ($delay->isPaused($appUid, $index)) {
+            throw new Exception(G::LoadTranslation("ID_CASE_PAUSED", [$appUid]));
+        }
+        // Review if the user has participation or is supervisor
+        $permission = $this->participation($usrUid, $caseNumber, $index);
+        if (!$permission) {
+            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_PAUSED_CASE", [$usrUid]));
         }
 
-        $oDelay = new AppDelay();
-
-        if ($oDelay->isPaused($app_uid, $del_index)) {
-            throw (new Exception(G::LoadTranslation("ID_CASE_PAUSED", array($app_uid))));
+        if ($date != null) {
+            Validator::isDate($date, 'Y-m-d', '$unpaused_date');
         }
 
-        $processUser = new ProcessUser();
-        $arrayProcess = $processUser->getProUidSupervisor($usr_uid);
+        /** Pause case */
+        $case->pauseCase($appUid, $index, $usrUid, $date . ' ' . $time);
 
-        $criteria = new Criteria("workflow");
-
-        $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
-        $criteria->add(AppDelegationPeer::APP_UID, $app_uid, Criteria::EQUAL);
-        $criteria->add(AppDelegationPeer::DEL_INDEX, $del_index, Criteria::EQUAL);
-        $criteria->add(
-            $criteria->getNewCriterion(AppDelegationPeer::USR_UID, $usr_uid, Criteria::EQUAL)->addOr(
-                $criteria->getNewCriterion(AppDelegationPeer::PRO_UID, $arrayProcess, Criteria::IN))
-        );
-        $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN", Criteria::EQUAL);
-        $criteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
-
-        $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
-
-        if (!$rsCriteria->next()) {
-            throw (new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_PAUSED_CASE", array($usr_uid))));
+        /** Add the note */
+        if (!empty($reason)) {
+            $noteContent = $reason;
+            // Define the Case for register a case note
+            $cases = new BmCases();
+            $response = $cases->addNote($appUid, $usrUid, $noteContent, $sendMail);
         }
-
-        if ($unpaused_date != null) {
-            Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
-        }
-
-        $case->pauseCase($app_uid, $del_index, $usr_uid, $unpaused_date);
     }
 
     /**
@@ -1043,45 +1071,33 @@ class Cases
      * @return void
      * @throws Exception
      */
-    public function putUnpauseCase($app_uid, $usr_uid, $del_index = false)
+    public function putUnpauseCase($appUid, $usrUid, $index = false)
     {
-        Validator::isString($app_uid, '$app_uid');
-        Validator::isString($usr_uid, '$usr_uid');
+        Validator::isString($appUid, '$app_uid');
+        Validator::isString($usrUid, '$usr_uid');
+        Validator::appUid($appUid, '$app_uid');
+        Validator::usrUid($usrUid, '$usr_uid');
 
-        Validator::appUid($app_uid, '$app_uid');
-        Validator::usrUid($usr_uid, '$usr_uid');
-
-        if ($del_index === false) {
-            $del_index = AppDelegation::getCurrentIndex($app_uid);
+        if ($index === false) {
+            $index = AppDelegation::getCurrentIndex($appUid);
         }
-        Validator::isInteger($del_index, '$del_index');
+        Validator::isInteger($index, '$del_index');
 
-        $oDelay = new AppDelay();
-
-        if (!$oDelay->isPaused($app_uid, $del_index)) {
-            throw (new Exception(G::LoadTranslation("ID_CASE_NOT_PAUSED", array($app_uid))));
+        $delay = new AppDelay();
+        if (!$delay->isPaused($appUid, $index)) {
+            throw new Exception(G::LoadTranslation("ID_CASE_NOT_PAUSED", [$appUid]));
         }
 
-        $processUser = new ProcessUser();
-        $arrayProcess = $processUser->getProUidSupervisor($usr_uid);
-
-        $criteria = new Criteria("workflow");
-        $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
-        $criteria->add(AppDelegationPeer::APP_UID, $app_uid, Criteria::EQUAL);
-        $criteria->add(AppDelegationPeer::DEL_INDEX, $del_index, Criteria::EQUAL);
-        $criteria->add(
-            $criteria->getNewCriterion(AppDelegationPeer::USR_UID, $usr_uid, Criteria::EQUAL)->addOr(
-                $criteria->getNewCriterion(AppDelegationPeer::PRO_UID, $arrayProcess, Criteria::IN))
-        );
-
-        $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
-
-        if (!$rsCriteria->next()) {
-            throw (new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_UNPAUSE_CASE", array($usr_uid))));
+        // Review if the user has participation or is supervisor
+        $caseNumber = ModelApplication::getCaseNumber($appUid);
+        $permission = $this->participation($usrUid, $caseNumber, $index);
+        if (!$permission) {
+            throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_UNPAUSE_CASE", [$usrUid]));
         }
 
+        /** Unpause case */
         $case = new ClassesCases();
-        $case->unpauseCase($app_uid, $del_index, $usr_uid);
+        $case->unpauseCase($appUid, $index, $usrUid);
     }
 
     /**
@@ -1946,27 +1962,18 @@ class Cases
         $arrayResult = $this->getStatusInfo($app_uid);
 
         if ($arrayResult["APP_STATUS"] == "CANCELLED") {
-            throw new Exception(G::LoadTranslation("ID_CASE_CANCELLED", array($app_uid)));
+            throw new Exception(G::LoadTranslation("ID_CASE_CANCELLED", [$app_uid]));
         }
 
         if ($arrayResult["APP_STATUS"] == "COMPLETED") {
-            throw new Exception(G::LoadTranslation("ID_CASE_IS_COMPLETED", array($app_uid)));
+            throw new Exception(G::LoadTranslation("ID_CASE_IS_COMPLETED", [$app_uid]));
         }
 
-        $processUser = new ProcessUser();
-        $listProcess = $processUser->getProUidSupervisor($usr_uid);
-        $criteria = new Criteria("workflow");
-        $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
-        $criteria->add(AppDelegationPeer::APP_UID, $app_uid, Criteria::EQUAL);
-        $criteria->add(AppDelegationPeer::USR_UID, $usr_uid, Criteria::EQUAL);
-        $criteria->add(
-            $criteria->getNewCriterion(AppDelegationPeer::USR_UID, $usr_uid, Criteria::EQUAL)->addOr(
-                $criteria->getNewCriterion(AppDelegationPeer::PRO_UID, $listProcess, Criteria::IN))
-        );
-        $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
-
-        if (!$rsCriteria->next()) {
-            throw (new Exception(G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED", array($usr_uid))));
+        // Review if the user has participation or is supervisor
+        $caseNumber = ModelApplication::getCaseNumber($app_uid);
+        $permission = $this->participation($usr_uid, $caseNumber, $del_index);
+        if (!$permission) {
+            throw new Exception(G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED", [$usr_uid]));
         }
 
         $_SESSION['APPLICATION'] = $app_uid;

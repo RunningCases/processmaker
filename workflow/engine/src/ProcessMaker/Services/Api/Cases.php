@@ -134,7 +134,7 @@ class Cases extends Api
                     }
                     break;
                 case 'doPutReassignCase':
-                    $appUid = $this->parameters[$arrayArgs['app_uid']];
+                    $appUid = $this->parameters[$arrayArgs['appUid']];
                     $usrUid = $this->getUserId();
                     $case = new BmCases();
                     $user = new BmUser();
@@ -877,19 +877,21 @@ class Cases extends Api
      * @param string $appUid {@min 32}{@max 32}
      * @param string $usr_uid_source {@from body} {@min 32}{@max 32}
      * @param string $usr_uid_target {@from body} {@min 32}{@max 32}
-     * @param string $del_index {@from body}
+     * @param int $del_index {@from body}
+     * @param string $reason {@from body}
+     * @param boolean $sendMail {@from body}
      *
      * @throws RestException
      *
      * @access protected
      * @class AccessControl {@className \ProcessMaker\Services\Api\Cases}
      */
-    public function doPutReassignCase($appUid, $usr_uid_source, $usr_uid_target, $del_index = null)
+    public function doPutReassignCase($appUid, $usr_uid_source, $usr_uid_target, $del_index = null, $reason = '', $sendMail = false)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new BmCases();
-            $cases->updateReassignCase($appUid, $userUid, $del_index, $usr_uid_source, $usr_uid_target);
+            $cases->updateReassignCase($appUid, $userUid, $del_index, $usr_uid_source, $usr_uid_target, $reason, $sendMail);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -953,22 +955,22 @@ class Cases extends Api
      *
      * @param string $appUid {@min 1}{@max 32}
      * @param string $unpaused_date {@from body}
+     * @param string $unpaused_time {@from body}
+     * @param int $index {@from body}
+     * @param string $reason {@from body}
+     * @param boolean $sendMail {@from body}
      *
      * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPutPauseCase($appUid, $unpaused_date = null)
+    public function doPutPauseCase($appUid, $unpaused_date = null, $unpaused_time = '00:00', $index = 0, $reason = '', $sendMail = false)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new BmCases();
-            if ($unpaused_date == null) {
-                $cases->putPauseCase($appUid, $userUid);
-            } else {
-                $cases->putPauseCase($appUid, $userUid, false, $unpaused_date);
-            }
+            $cases->putPauseCase($appUid, $userUid, $index, $unpaused_date, $unpaused_time, $reason, $sendMail);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

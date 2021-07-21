@@ -42,6 +42,7 @@ class CasesTest extends TestCase
      * This checks the delete case
      *
      * @covers \ProcessMaker\BusinessModel\Cases::deleteCase()
+     *
      * @test
      * @expectedException Exception
      */
@@ -63,6 +64,7 @@ class CasesTest extends TestCase
      * This checks the delete case
      *
      * @covers \ProcessMaker\BusinessModel\Cases::deleteCase()
+     *
      * @test
      * @expectedException Exception
      */
@@ -84,6 +86,7 @@ class CasesTest extends TestCase
      * This checks the delete case
      *
      * @covers \ProcessMaker\BusinessModel\Cases::deleteCase()
+     *
      * @test
      * @expectedException Exception
      */
