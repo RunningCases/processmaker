@@ -20688,6 +20688,30 @@ msgid "Number cases"
 msgstr "Number cases"
 
 # TRANSLATION
+# LABEL/ID_NUMBER_OF_CASES_DRAFT
+#: LABEL/ID_NUMBER_OF_CASES_DRAFT
+msgid "Number of Tasks in the Draft Folder: "
+msgstr "Number of Tasks in the Draft Folder: "
+
+# TRANSLATION
+# LABEL/ID_NUMBER_OF_CASES_INBOX
+#: LABEL/ID_NUMBER_OF_CASES_INBOX
+msgid "Number of Tasks in the Inbox Folder: "
+msgstr "Number of Tasks in the Inbox Folder: "
+
+# TRANSLATION
+# LABEL/ID_NUMBER_OF_CASES_PAUSED
+#: LABEL/ID_NUMBER_OF_CASES_PAUSED
+msgid "Number of Tasks in the Paused Folder: "
+msgstr "Number of Tasks in the Paused Folder: "
+
+# TRANSLATION
+# LABEL/ID_NUMBER_OF_CASES_UNASSIGNED
+#: LABEL/ID_NUMBER_OF_CASES_UNASSIGNED
+msgid "Number of Tasks in the Unassigned Folder: "
+msgstr "Number of Tasks in the Unassigned Folder: "
+
+# TRANSLATION
 # LABEL/ID_OBJECT
 #: LABEL/ID_OBJECT
 msgid "[LABEL/ID_OBJECT] Object"
