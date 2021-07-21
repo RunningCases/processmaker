@@ -6117,4 +6117,22 @@
         <column name="USC_NAME" type="VARCHAR" size="255" required="true" primaryKey="true"/>
         <column name="USC_SETTING" type="LONGVARCHAR" required="true"/>
     </table>
+    <table name="CASE_LIST" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Engine" value="InnoDB"/>
+            <parameter name="Collation" value="utf8"/>
+        </vendor>
+        <column name="CAL_ID" type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
+        <column name="CAL_TYPE" type="VARCHAR" size="255" required="true"/>
+        <column name="CAL_NAME" type="VARCHAR" size="255" required="true"/>
+        <column name="CAL_DESCRIPTION" type="LONGVARCHAR"/>
+        <column name="ADD_TAB_UID" type="VARCHAR" size="32" required="true"/>
+        <column name="CAL_COLUMNS" type="LONGVARCHAR"/>
+        <column name="USR_ID" type="BIGINT" size="20" required="true"/>
+        <column name="CAL_ICON_LIST" type="LONGVARCHAR"/>
+        <column name="CAL_ICON_COLOR" type="VARCHAR" size="255"/>
+        <column name="CAL_ICON_COLOR_SCREEN" type="VARCHAR" size="255"/>
+        <column name="CAL_CREATE_DATE" type="TIMESTAMP" required="true"/>
+        <column name="CAL_UPDATE_DATE" type="TIMESTAMP" required="true"/>
+    </table>
 </database>
