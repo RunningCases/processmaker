@@ -685,6 +685,51 @@ class Home extends Api
 
     /**
      * Get the tasks counters for todo, draft, paused and unassigned
+     *
+     * @url GET /:task/counter
+     *
+     * @return array
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getSpecificTaskCounter($task)
+    {
+        $result = [];
+        $usrUid = $this->getUserId();
+        $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
+        switch ($task) {
+            case 'inbox':
+                $taskList = new Inbox();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_INBOX');
+                break;
+            case 'draft':
+                $taskList = new Draft();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_DRAFT');
+                break;
+            case 'paused':
+                $taskList = new Paused();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_PAUSED');
+                break;
+            case 'unassigned':
+                $taskList = new Unassigned();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_UNASSIGNED');
+                break;
+            default:
+              return [];
+        }
+        $taskList->setUserUid($usrUid);
+        $taskList->setUserId($usrId);
+        $count = $taskList->getCounter();
+        $result = [];
+        $result['label'] = $text . $count;
+        $result['total'] = $count;
+
+        return $result;
+    }
+
+    /**
+     * Get the tasks counters for todo, draft, paused and unassigned
      * 
      * @url GET /tasks/counter
      * @return array
