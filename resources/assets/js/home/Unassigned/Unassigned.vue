@@ -8,8 +8,9 @@
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
+    <multiview-header :data="dataMultiviewHeader" />
     <v-server-table
-      :data="tableData"
+      v-if="typeView === 'GRID'"
       :columns="columns"
       :options="options"
       ref="vueTable"
@@ -46,23 +47,140 @@
         </div>
       </div>
     </v-server-table>
+    <VueCardView
+      v-if="typeView === 'CARD'"
+      :options="optionsVueList"
+      ref="vueCardView"
+    >
+      <div slot="detail" slot-scope="props">
+        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
+      <div slot="case_number" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-highlight"
+          >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
+        >
+      </div>
+      <div slot="case_title" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["CASE_TITLE"] }}
+        </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="due_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DUE_DATE"] }}
+        </span>
+      </div>
+      <div slot="delegation_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DELEGATION_DATE"] }}
+        </span>
+      </div>
+      <div slot="task" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+    </VueCardView>
+    <VueListView
+      v-if="typeView === 'LIST'"
+      :options="optionsVueList"
+      ref="vueListView"
+    >
+      <div slot="detail" slot-scope="props">
+        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+          <i class="fas fa-info-circle"></i>
+        </div>
+      </div>
+      <div slot="case_number" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-highlight"
+          >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
+        >
+      </div>
+      <div slot="case_title" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["CASE_TITLE"] }}
+        </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="due_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DUE_DATE"] }}
+        </span>
+      </div>
+      <div slot="delegation_date" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["DELEGATION_DATE"] }}
+        </span>
+      </div>
+      <div slot="task" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+    </VueListView>
     <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
   </div>
 </template>
 
 <script>
-import HeaderCounter from "../components/home/HeaderCounter.vue";
-import ButtonFleft from "../components/home/ButtonFleft.vue";
-import ModalNewRequest from "./ModalNewRequest.vue";
-import TaskCell from "../components/vuetable/TaskCell.vue";
-import CasesFilter from "../components/search/CasesFilter";
-import ModalClaimCase from "./modal/ModalClaimCase.vue";
-import api from "./../api/index";
-import utils from "./../utils/utils";
-import Ellipsis from '../components/utils/ellipsis.vue';
+import HeaderCounter from "../../components/home/HeaderCounter.vue";
+import ButtonFleft from "../../components/home/ButtonFleft.vue";
+import ModalNewRequest from "../ModalNewRequest.vue";
+import TaskCell from "../../components/vuetable/TaskCell.vue";
+import CasesFilter from "../../components/search/CasesFilter";
+import ModalClaimCase from "../modal/ModalClaimCase.vue";
+import api from "../../api/index";
+import utils from "../../utils/utils";
+import Ellipsis from '../../components/utils/ellipsis.vue';
+import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
+import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue";
+import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
+import defaultMixins from "./defaultMixins";
 
 export default {
   name: "Unassigned",
+  mixins: [defaultMixins],
   components: {
     HeaderCounter,
     ButtonFleft,
@@ -71,6 +189,9 @@ export default {
     ModalClaimCase,
     CasesFilter,
     Ellipsis,
+    MultiviewHeader,
+    VueCardView,
+    VueListView
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -93,10 +214,8 @@ export default {
         "priority",
         "actions",
       ],
-      tableData: [],
       options: {
         filterable: false,
-        sendInitialRequest: false,
         headings: {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
@@ -327,7 +446,15 @@ export default {
       }
       if (data.refresh) {
         this.$nextTick(() => {
-          this.$refs["vueTable"].getData();
+          if (this.typeView === "GRID") {
+            this.$refs["vueTable"].getData();
+          }
+          if (this.typeView === "CARD") {
+            this.$refs["vueCardView"].getData();
+          }
+          if (this.typeView === "LIST") {
+            this.$refs["vueListView"].getData();
+          }
         });
       }
     },
