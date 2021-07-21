@@ -19,6 +19,9 @@ export default {
     classBtn(cls) {
       return "btn btn-slim btn-force-radius v-btn-header " + cls;
     },
+    /**
+     * Event handler dbl click
+     */
     dblClick(event){
       this.options.dblClick(event, this.item, this.options);
     }
