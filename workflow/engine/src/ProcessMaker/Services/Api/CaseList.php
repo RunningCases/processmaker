@@ -1,0 +1,148 @@
+<?php
+
+namespace ProcessMaker\Services\Api;
+
+use Exception;
+use G;
+use Luracast\Restler\RestException;
+use ProcessMaker\Model\CaseList as CaseListBusinessModel;
+use ProcessMaker\Services\Api;
+use RBAC;
+
+class CaseList extends Api
+{
+
+    /**
+     * Constructor of the class.
+     * @global object $RBAC
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        global $RBAC;
+        if (!isset($RBAC)) {
+            $RBAC = RBAC::getSingleton(PATH_DATA, session_id());
+            $RBAC->sSystem = 'PROCESSMAKER';
+            $RBAC->initRBAC();
+            $RBAC->loadUserRolePermission($RBAC->sSystem, $this->getUserId());
+        }
+    }
+
+    /**
+     * Create the Case List setting.
+     * @url POST
+     * @param array $request_data
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @return array
+     */
+    public function doPost(array $request_data)
+    {
+        $caseList = CaseListBusinessModel::createSetting($request_data);
+        $caseList = CaseListBusinessModel::getAliasFromColumnName($caseList->toArray());
+        return $caseList;
+    }
+
+    /**
+     * Update the Case List setting.
+     * @url PUT /:id
+     * @param string $id
+     * @param array $request_data
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @throws RestException
+     * @return array
+     */
+    public function doPut(int $id, array $request_data)
+    {
+        $caseList = CaseListBusinessModel::updateSetting($id, $request_data);
+        if (is_null($caseList)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        $caseList = CaseListBusinessModel::getAliasFromColumnName($caseList->toArray());
+        return $caseList;
+    }
+
+    /**
+     * Delete the Case List setting.
+     * @url DELETE /:id
+     * @param string $id
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @throws RestException
+     * @return array
+     */
+    public function doDelete(int $id)
+    {
+        try {
+            $caseList = CaseListBusinessModel::deleteSetting($id);
+            if (is_null($caseList)) {
+                throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+            }
+            $caseList = CaseListBusinessModel::getAliasFromColumnName($caseList->toArray());
+            return $caseList;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get inbox Case List settings.
+     * @url GET /inbox
+     * @param string $search
+     * @param string $offset
+     * @param string $limit
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @return array
+     */
+    public function doGetInbox(string $search = '', int $offset = 0, int $limit = 10)
+    {
+        return CaseListBusinessModel::getSetting('inbox', $search, $offset, $limit);
+    }
+
+    /**
+     * Get draft Case List settings.
+     * @url GET /draft
+     * @param string $search
+     * @param string $offset
+     * @param string $limit
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @return array
+     */
+    public function doGetDraft(string $search = '', int $offset = 0, int $limit = 10)
+    {
+        return CaseListBusinessModel::getSetting('draft', $search, $offset, $limit);
+    }
+
+    /**
+     * Get paused Case List settings.
+     * @url GET /paused
+     * @param string $search
+     * @param string $offset
+     * @param string $limit
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @return array
+     */
+    public function doGetPaused(string $search = '', int $offset = 0, int $limit = 10)
+    {
+        return CaseListBusinessModel::getSetting('paused', $search, $offset, $limit);
+    }
+
+    /**
+     * Get unassigned Case List settings.
+     * @url GET /unassigned
+     * @param string $search
+     * @param string $offset
+     * @param string $limit
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @return array
+     */
+    public function doGetUnassigned(string $search, int $offset, int $limit)
+    {
+        return CaseListBusinessModel::getSetting('unassigned', $search, $offset, $limit);
+    }
+}
