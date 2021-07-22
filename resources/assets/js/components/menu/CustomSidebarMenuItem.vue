@@ -34,7 +34,7 @@
                         "
                     >
                         <span class="vsm--title">
-                            {{ item.title }}
+                            <custom-tooltip :data="item"></custom-tooltip>
                             <b-icon
                                 v-if="item.sortable"
                                 :icon="item.sortIcon"
@@ -139,7 +139,7 @@
                     </div>
                 </draggable>
 
-                <template #modal-footer="{ ok, cancel, hide }">
+                <template #modal-footer="{ cancel }">
                     <b-button size="sm" variant="danger" @click="cancel()">
                         Cancel
                     </b-button>
@@ -153,6 +153,8 @@
 import draggable from "vuedraggable";
 import CustomSidebarMenuLink from "./CustomSidebarMenuLink";
 import CustomSidebarMenuIcon from "./CustomSidebarMenuIcon";
+import CustomTooltip from "./../utils/CustomTooltip.vue";
+
 export default {
     name: "CustomSidebarMenuItem",
     props: {
@@ -201,6 +203,7 @@ export default {
         draggable,
         CustomSidebarMenuLink,
         CustomSidebarMenuIcon,
+        CustomTooltip
     },
     data() {
         return {
@@ -210,6 +213,7 @@ export default {
             itemHover: false,
             exactActive: false,
             active: false,
+            titleHover: '',
         };
     },
     computed: {
