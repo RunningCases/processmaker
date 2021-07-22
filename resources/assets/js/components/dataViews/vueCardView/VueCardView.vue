@@ -5,7 +5,7 @@
         class="pm-vue-card-view-body"
         :style="{height: height + 'px'}"
       >
-        <vue-card v-for="item in data" :key="item.id">
+        <vue-card v-for="item in data" :key="item.id" :item="item" :options="options">
           <slot
             v-for="column in options.columns"
             :name="column"
