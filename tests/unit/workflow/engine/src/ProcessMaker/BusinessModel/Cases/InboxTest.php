@@ -563,4 +563,52 @@ class InboxTest extends TestCase
         $res = $inbox->getCountersByProcesses(null, false, [$process->PRO_ID]);
         $this->assertCount(1, $res);
     }
+
+    /**
+     * It tests the getCountersByRange() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCountersByRange()
+     * @test
+     */
+    public function it_should_test_get_counters_by_range_method()
+    {
+        $user = factory(User::class)->create();
+        $process = factory(Process::class)->create();
+        $process2 = factory(Process::class)->create();
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID,
+            'DEL_DELEGATE_DATE' => '2021-05-20 09:52:32'
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'PRO_UID' => $process2->PRO_UID,
+            'DEL_DELEGATE_DATE' => '2021-05-25 09:52:32'
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCountersByRange();
+        $this->assertCount(2, $res);
+
+        $res = $inbox->getCountersByRange(null, null, null, 'month');
+        $this->assertCount(1, $res);
+
+        $res = $inbox->getCountersByRange(null, null, null, 'year');
+        $this->assertCount(1, $res);
+
+        $res = $inbox->getCountersByRange($process2->PRO_ID);
+        $this->assertCount(1, $res);
+
+        $res = $inbox->getCountersByRange(null, '2021-05-20', '2021-05-23');
+        $this->assertCount(1, $res);
+    }
 }

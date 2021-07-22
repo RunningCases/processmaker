@@ -500,4 +500,110 @@ class PausedTest extends TestCase
         $res = $paused->getCountersByProcesses(null, false, [$process1->PRO_ID]);
         $this->assertCount(1, $res);
     }
+
+    /**
+     * It tests the getCountersByRange() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCountersByRange()
+     * @test
+     */
+    public function it_should_test_get_counters_by_range_method()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create();
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => '',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TYPE' => 'NORMAL'
+        ]);
+
+        $application1 = factory(Application::class)->create();
+        factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 0,
+            'DEL_INDEX' => 1
+        ]);
+        $delegation1 = factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2,
+            'DEL_DELEGATE_DATE' => '2021-05-23 00:00:00'
+        ]);
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $user->USR_UID,
+            'PRO_UID' => $process1->PRO_UID,
+            'APP_NUMBER' => $delegation1->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation1->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+
+        $application2 = factory(Application::class)->create();
+        factory(Delegation::class)->create([
+            'APP_UID' => $application2->APP_UID,
+            'APP_NUMBER' => $application2->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 0,
+            'DEL_INDEX' => 1
+        ]);
+        $delegation2 = factory(Delegation::class)->create([
+            'APP_UID' => $application2->APP_UID,
+            'APP_NUMBER' => $application2->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2,
+            'DEL_DELEGATE_DATE' => '2021-05-24 09:52:32'
+        ]);
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $user->USR_UID,
+            'PRO_UID' => $process1->PRO_UID,
+            'APP_NUMBER' => $delegation2->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation2->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+        $paused = new Paused();
+        $paused->setUserId($user->USR_ID);
+        $paused->setUserUid($user->USR_UID);
+
+        $res = $paused->getCountersByRange();
+        $this->assertCount(2, $res);
+
+        $res = $paused->getCountersByRange(null, null, null, 'month');
+        $this->assertCount(1, $res);
+
+        $res = $paused->getCountersByRange(null, null, null, 'year');
+        $this->assertCount(1, $res);
+
+        $res = $paused->getCountersByRange($process1->PRO_ID);
+        $this->assertCount(2, $res);
+
+        $res = $paused->getCountersByRange(null, '2021-05-20', '2021-05-23');
+        $this->assertCount(1, $res);
+    }
 }

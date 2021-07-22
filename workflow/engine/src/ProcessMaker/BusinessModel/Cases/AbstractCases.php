@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use Datetime;
+use DB;
 use Exception;
 use ProcessMaker\BusinessModel\Interfaces\CasesInterface;
 use ProcessMaker\BusinessModel\Validator;
@@ -1525,6 +1526,58 @@ class AbstractCases implements CasesInterface
         }
         if (!empty($processes)) {
             $query->inProcesses($processes);
+        }
+        return $query->get()->values()->toArray();
+    }
+
+    /**
+     * Count how many cases has each process by range of dates
+     * 
+     * @param int $processId
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @param string $groupBy
+     * 
+     * @return array
+     */
+    public function getCountersByRange($processId = null, $dateFrom = null, $dateTo = null, $groupBy = 'day')
+    {
+        $rawQuery = 'count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE, DATE(APP_DELEGATION.DEL_DELEGATE_DATE) as dateGroup';
+        switch ($groupBy) {
+            case 'month':
+                $rawQuery = 'count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE, EXTRACT(YEAR_MONTH From APP_DELEGATION.DEL_DELEGATE_DATE) as dateGroup';
+                break;
+            case 'year':
+                $rawQuery = 'count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE, YEAR(APP_DELEGATION.DEL_DELEGATE_DATE) as dateGroup';
+                break;
+        }
+        $query = Delegation::selectRaw($rawQuery);
+        $query->groupBy('dateGroup');
+        $listArray = explode("\\", get_class($this));
+        $list = end($listArray);
+        switch ($list) {
+            case 'Inbox':
+                $query->inbox($this->getUserId());
+                break;
+            case 'Draft':
+                $query->draft($this->getUserId());
+                break;
+            case 'Paused':
+                $query->paused($this->getUserId());
+                break;
+            case 'Unassigned':
+                $query->selfService($this->getUserUid());
+                break;
+        }
+        $query->joinProcess();
+        if (!is_null($processId)) {
+            $query->inProcesses([$processId]);
+        }
+        if (!is_null($dateFrom)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);
+        }
+        if (!is_null($dateTo)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
         }
         return $query->get()->values()->toArray();
     }

@@ -579,4 +579,82 @@ class UnassignedTest extends TestCase
         $res = $unassigned->getCountersByProcesses(null, false, [$process1->PRO_ID]);
         $this->assertCount(1, $res);
     }
+
+    /**
+     * It tests the getCountersByRange() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByRange()
+     * @test
+     */
+    public function it_should_test_get_counters_by_range_method()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 3
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => '2021-05-21 09:52:32'
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process2->PRO_UID,
+            'PRO_ID' => $process2->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => '2021-05-24 09:52:32'
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCountersByRange();
+        $this->assertCount(2, $res);
+
+        $res = $unassigned->getCountersByRange(null, null, null, 'month');
+        $this->assertCount(1, $res);
+
+        $res = $unassigned->getCountersByRange(null, null, null, 'year');
+        $this->assertCount(1, $res);
+
+        $res = $unassigned->getCountersByRange($process1->PRO_ID);
+        $this->assertCount(1, $res);
+
+        $res = $unassigned->getCountersByRange(null, '2021-05-20', '2021-05-23');
+        $this->assertCount(1, $res);
+    }
 }
