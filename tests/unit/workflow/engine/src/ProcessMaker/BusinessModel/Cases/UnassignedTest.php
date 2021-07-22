@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\unit\workflow\src\ProcessMaker\BusinessModel\Cases;
+namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
