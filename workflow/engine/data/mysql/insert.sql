@@ -60954,7 +60954,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SEARCH_ALSO_APP_UID','en','Search also in the APP_UID field','2014-10-30') ,
 ( 'LABEL','ID_SEARCH_BY_CASE_NUMBER','en','Search by Case #:','2020-12-16') ,
 ( 'LABEL','ID_SEARCH_BY_CASE_TITLE','en','Search by Case Title:','2020-12-16') ,
-( 'LABEL','ID_SEARCH_BY_CURRENT_USER','en','Search by Current User:','2021-07-13')
+( 'LABEL','ID_SEARCH_BY_CURRENT_USER','en','Search by Current User:','2021-07-13') ,
 ( 'LABEL','ID_SEARCH_BY_FINISH_DATE','en','Search by Finish Date:','2020-12-16') ,
 ( 'LABEL','ID_SEARCH_BY_PARTICIPATION','en','Search by Participation:','2021-07-13') ,
 ( 'LABEL','ID_SEARCH_BY_PROCESS_CATEGORY','en','Search by Process Category:','2021-07-13') ,
