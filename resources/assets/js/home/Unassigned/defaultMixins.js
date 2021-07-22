@@ -145,7 +145,8 @@ export default {
             res.push({value,key});
         }
       });
-      return res;    },
+      return res;
+    },
     /**
      * Formating the columns selected
      * @param {*} columns 
