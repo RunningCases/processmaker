@@ -3,7 +3,9 @@ import VueRouter from "vue-router";
 import VueSidebarMenu from "vue-sidebar-menu";
 import VueI18n from 'vue-i18n';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
-import { ServerTable, Event, ClientTable} from 'vue-tables-2';
+import { ServerTable, Event, ClientTable } from 'vue-tables-2';
+import VtTableHeadingCustom from './../components/vuetable/extends/VtTableHeadingCustom';
+import SettingsPopover from "../components/vuetable/SettingsPopover.vue";
 import Sortable from 'sortablejs';
 import "@fortawesome/fontawesome-free/css/all.css";
 import "@fortawesome/fontawesome-free/js/all.js";
@@ -18,8 +20,11 @@ Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
 
-Vue.use(ServerTable, {}, false, 'bootstrap3', {});
+Vue.use(ServerTable, {}, false, 'bootstrap3', {
+    tableHeading: VtTableHeadingCustom
+});
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
+Vue.component('settings-popover', SettingsPopover);
 window.ProcessMaker = {
     apiClient: require('axios')
 };
