@@ -33,8 +33,11 @@ export default {
           },
         ],
       },
-      optionsVueCardView: {
+      optionsVueView: {
         limit: 10,
+        dblClick:(event, item, options)=>{
+          this.openCase(item);
+        },
         headings: {
           detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
@@ -57,10 +60,10 @@ export default {
           "task"
         ],
         requestFunction(data) {
-          return that.getCasesVueList(data);
+          return that.getCases(data);
         },
         requestFunctionViewMore(data) {
-          return that.getCasesVueListViewMore(data);
+          return that.getCasesViewMore(data);
         }
       }
     }
@@ -72,7 +75,7 @@ export default {
     /**
     * Get cases for Vue Card View
     */
-    getCasesVueList(data) {
+    getCases(data) {
       let that = this,
         dt,
         start = 0,
@@ -105,7 +108,7 @@ export default {
     /**
     * Get cases for Vue Card View
     */
-    getCasesVueListViewMore(data) {
+    getCasesViewMore(data) {
       let that = this,
         dt,
         paged,

@@ -55,7 +55,7 @@
     </v-server-table>
     <VueCardView
       v-if="typeView === 'CARD'"
-      :options="optionsVueCardView"
+      :options="optionsVueView"
       ref="vueCardView"
     >
       <div slot="detail" slot-scope="props">
@@ -112,7 +112,7 @@
     </VueCardView>
     <VueListView
       v-if="typeView === 'LIST'"
-      :options="optionsVueCardView"
+      :options="optionsVueView"
       ref="vueListView"
     >
       <div slot="detail" slot-scope="props">
@@ -505,7 +505,15 @@ export default {
      * update view in component
      */
     updateView(){
-      this.$refs["vueTable"].getData();
+      if (this.typeView === "GRID") {
+        this.$refs["vueTable"].getData();
+      }
+      if (this.typeView === "CARD") {
+        this.$refs["vueCardView"].getData();
+      }
+      if (this.typeView === "LIST") {
+        this.$refs["vueListView"].getData();
+      }
     },
     /**
      * Show options in the ellipsis 

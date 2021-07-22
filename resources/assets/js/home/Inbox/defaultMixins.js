@@ -34,8 +34,11 @@ export default {
           },
         ],
       },
-      optionsVueCardView: {
+      optionsVueView: {
         limit: 10,
+        dblClick:(event, item, options)=>{
+          this.openCase(item);
+        },
         headings: {
           detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
@@ -58,40 +61,10 @@ export default {
           "task"
         ],
         requestFunction(data) {
-          return that.getCasesVueCard(data);
+          return that.getCases(data);
         },
         requestFunctionViewMore(data) {
-          return that.getCasesVueCardViewMore(data);
-        }
-      },
-      optionsVueListView: {
-        limit: 10,
-        headings: {
-          detail: "",
-          case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-          case_title: this.$i18n.t("ID_CASE_TITLE"),
-          process_name: this.$i18n.t("ID_PROCESS_NAME"),
-          task: this.$i18n.t("ID_TASK"),
-          current_user: this.$i18n.t("ID_CURRENT_USER"),
-          due_date: this.$i18n.t("ID_DUE_DATE"),
-          delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
-          priority: this.$i18n.t("ID_PRIORITY")
-        },
-        columns: [
-          "detail",
-          "case_number",
-          "case_title",
-          "process_name",
-          "due_date",
-          "delegation_date",
-          "priority",
-          "task"
-        ],
-        requestFunction(data) {
-          return that.getCasesVueCard(data);
-        },
-        requestFunctionViewMore(data) {
-          return that.getCasesVueCardViewMore(data);
+          return that.getCasesViewMore(data);
         }
       }
     }
@@ -103,7 +76,7 @@ export default {
     /**
     * Get cases for Vue Card View
     */
-    getCasesVueCard(data) {
+    getCases(data) {
       let that = this,
         dt,
         start = 0,
@@ -134,7 +107,7 @@ export default {
     /**
     * Get cases for Vue Card View
     */
-    getCasesVueCardViewMore(data) {
+    getCasesViewMore(data) {
       let that = this,
         dt,
         paged,

@@ -475,7 +475,15 @@ export default {
      * update view in component
      */
     updateView(){
-      this.$refs["vueTable"].getData();
+      if (this.typeView === "GRID") {
+        this.$refs["vueTable"].getData();
+      }
+      if (this.typeView === "CARD") {
+        this.$refs["vueCardView"].getData();
+      }
+      if (this.typeView === "LIST") {
+        this.$refs["vueListView"].getData();
+      }
     },
     /**
      * set data by default in the ellipsis component 

@@ -35,6 +35,9 @@ export default {
       },
       optionsVueList: {
         limit: 10,
+        dblClick:(event, item, options)=>{
+          this.openCase(item);
+        },
         headings: {
           detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
