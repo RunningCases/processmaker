@@ -2,6 +2,8 @@
 
 namespace ProcessMaker\Model;
 
+use Exception;
+use G;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\User;
@@ -98,12 +100,14 @@ class CaseList extends Model
     /**
      * Create and save this model from array values.
      * @param array $values
+     * @param int $ownerId
      * @return object
      */
-    public static function createSetting(array $values)
+    public static function createSetting(array $values, int $ownerId)
     {
         $attributes = CaseList::getColumnNameFromAlias($values);
 
+        $attributes['USR_ID'] = $ownerId;
         $attributes['CAL_CREATE_DATE'] = date("Y-m-d H:i:s");
         $attributes['CAL_UPDATE_DATE'] = date("Y-m-d H:i:s");
         if (empty($attributes['CAL_COLUMNS'])) {
@@ -120,12 +124,14 @@ class CaseList extends Model
      * Update and save this model from array values.
      * @param int $id
      * @param array $values
+     * @param int $ownerId
      * @return object
      */
-    public static function updateSetting(int $id, array $values)
+    public static function updateSetting(int $id, array $values, int $ownerId)
     {
         $attributes = CaseList::getColumnNameFromAlias($values);
 
+        $attributes['USR_ID'] = $ownerId;
         $attributes['CAL_UPDATE_DATE'] = date("Y-m-d H:i:s");
         if (empty($attributes['CAL_COLUMNS'])) {
             $attributes['CAL_COLUMNS'] = [];
@@ -211,5 +217,67 @@ class CaseList extends Model
             'total' => $count,
             'data' => $data
         ];
+    }
+
+    /**
+     * The export creates a temporary file with record data in json format.
+     * @param int $id
+     * @throws Exception
+     */
+    public static function export(int $id)
+    {
+        $model = CaseList::where('CAL_ID', '=', $id)
+            ->leftJoin('USERS', 'USERS.USR_ID', '=', 'CASE_LIST.USR_ID')
+            ->leftJoin('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
+            ->select([
+                'CASE_LIST.*'
+            ])
+            ->get()
+            ->first();
+        if (empty($model)) {
+            throw new Exception(G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+
+        $result = CaseList::getAliasFromColumnName($model->toArray());
+        $result['columns'] = json_decode($result['columns']);
+
+        //clean invalid items
+        unset($result['id']);
+        unset($result['userId']);
+        unset($result['createDate']);
+        unset($result['updateDate']);
+
+        //random name to distinguish the different sessions
+        $filename = sys_get_temp_dir() . "/pm" . random_int(10000, 99999);
+        file_put_contents($filename, json_encode($result));
+        return [
+            'filename' => $filename,
+            'downloadFilename' => $result['name'] . ' ' . date('Y-m-d H:i:s') . '.json',
+            'data' => $result
+        ];
+    }
+
+    /**
+     * The import requires a $ _FILES content in json format to create a record.
+     * @param array $request_data
+     * @param int $ownerId
+     * @return array
+     * @throws Exception
+     */
+    public static function import(array $request_data, int $ownerId)
+    {
+        if ($_FILES['file_content']['error'] !== UPLOAD_ERR_OK ||
+            $_FILES['file_content']['tmp_name'] === '') {
+            throw new Exception(G::LoadTranslation('ID_ERROR_UPLOADING_FILENAME'));
+        }
+        $content = file_get_contents($_FILES['file_content']['tmp_name']);
+        try {
+            $array = json_decode($content, true);
+            $caseList = CaseList::createSetting($array, $ownerId);
+            $result = CaseList::getAliasFromColumnName($caseList->toArray());
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 }

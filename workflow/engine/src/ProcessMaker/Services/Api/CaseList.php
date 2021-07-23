@@ -38,7 +38,8 @@ class CaseList extends Api
      */
     public function doPost(array $request_data)
     {
-        $caseList = CaseListBusinessModel::createSetting($request_data);
+        $ownerId = $this->getUserId();
+        $caseList = CaseListBusinessModel::createSetting($request_data, $ownerId);
         $caseList = CaseListBusinessModel::getAliasFromColumnName($caseList->toArray());
         return $caseList;
     }
@@ -55,7 +56,8 @@ class CaseList extends Api
      */
     public function doPut(int $id, array $request_data)
     {
-        $caseList = CaseListBusinessModel::updateSetting($id, $request_data);
+        $ownerId = $this->getUserId();
+        $caseList = CaseListBusinessModel::updateSetting($id, $request_data, $ownerId);
         if (is_null($caseList)) {
             throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
         }
@@ -144,5 +146,41 @@ class CaseList extends Api
     public function doGetUnassigned(string $search, int $offset, int $limit)
     {
         return CaseListBusinessModel::getSetting('unassigned', $search, $offset, $limit);
+    }
+
+    /**
+     * Get unassigned Case List settings.
+     * @url GET /:id/export
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @throws RestException
+     */
+    public function doExport(int $id)
+    {
+        try {
+            $result = CaseListBusinessModel::export($id);
+            G::streamFile($result['filename'], true, $result['downloadFilename']);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get unassigned Case List settings.
+     * @url POST /import
+     * @param array $request_data
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @throws RestException
+     * @return array
+     */
+    public function doImport(array $request_data)
+    {
+        try {
+            $ownerId = $this->getUserId();
+            return CaseListBusinessModel::import($request_data, $ownerId);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
     }
 }
