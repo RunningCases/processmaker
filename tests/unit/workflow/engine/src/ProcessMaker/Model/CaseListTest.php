@@ -120,7 +120,7 @@ class CaseListTest extends TestCase
             'createDate' => date('Y-m-d H:m:s'),
             'updateDate' => date('Y-m-d H:m:s')
         ];
-        $caseList = CaseList::createSetting($data);
+        $caseList = CaseList::createSetting($data, $data['userId']);
 
         //asserts
         $this->assertEquals($data['type'], $caseList->CAL_TYPE);
@@ -154,7 +154,7 @@ class CaseListTest extends TestCase
             'createDate' => date('Y-m-d H:m:s'),
             'updateDate' => date('Y-m-d H:m:s')
         ];
-        $model = CaseList::createSetting($data);
+        $model = CaseList::createSetting($data, $data['userId']);
 
         $id = $model->CAL_ID;
         $data2 = [
@@ -162,7 +162,7 @@ class CaseListTest extends TestCase
             'name' => 'new name',
             'description' => 'new deescription',
         ];
-        $caseList = CaseList::updateSetting($id, $data2);
+        $caseList = CaseList::updateSetting($id, $data2, $data['userId']);
 
         //asserts
         $this->assertEquals($data2['type'], $caseList->CAL_TYPE);
@@ -196,7 +196,7 @@ class CaseListTest extends TestCase
             'createDate' => date('Y-m-d H:m:s'),
             'updateDate' => date('Y-m-d H:m:s')
         ];
-        $model = CaseList::createSetting($data);
+        $model = CaseList::createSetting($data, $data['userId']);
 
         $id = $model->CAL_ID;
         $caseList = CaseList::deleteSetting($id);
@@ -233,10 +233,10 @@ class CaseListTest extends TestCase
             'iconColor' => 'red',
             'iconColorScreen' => 'blue'
         ];
-        $model1 = CaseList::createSetting($data);
-        $model2 = CaseList::createSetting($data);
-        $model3 = CaseList::createSetting($data);
-        $model4 = CaseList::createSetting($data);
+        $model1 = CaseList::createSetting($data, $data['userId']);
+        $model2 = CaseList::createSetting($data, $data['userId']);
+        $model3 = CaseList::createSetting($data, $data['userId']);
+        $model4 = CaseList::createSetting($data, $data['userId']);
 
         //assert total
         $result = CaseList::getSetting('inbox', '', 0, 10);
@@ -271,5 +271,81 @@ class CaseListTest extends TestCase
         $this->assertArrayHasKey("data", $result);
         $this->assertEquals(0, $result['total']);
         $this->assertEquals(0, count($result['data']));
+    }
+
+    /**
+     * This tests the import method.
+     * @test
+     * @covers  \ProcessMaker\Model\CaseList::import()
+     */
+    public function it_should_test_import()
+    {
+        $data = [
+            'type' => 'inbox',
+            'name' => 'test1',
+            'description' => 'my description',
+            'tableUid' => '',
+            'columns' => [],
+            'iconList' => 'deafult.png',
+            'iconColor' => 'red',
+            'iconColorScreen' => 'blue'
+        ];
+        $json = json_encode($data);
+        $tempFile = sys_get_temp_dir() . '/test_' . random_int(10000, 99999);
+        file_put_contents($tempFile, $json);
+        $_FILES = [
+            'file_content' => [
+                'tmp_name' => $tempFile,
+                'error' => 0
+            ]
+        ];
+        $request_data = [];
+        $ownerId = 1;
+        $result = CaseList::import($request_data, $ownerId);
+
+        //assert
+        $this->assertArrayHasKey('type', $result);
+        $this->assertArrayHasKey('name', $result);
+        $this->assertArrayHasKey('description', $result);
+
+        $this->assertEquals($data['type'], $result['type']);
+        $this->assertEquals($data['name'], $result['name']);
+        $this->assertEquals($data['description'], $result['description']);
+    }
+
+    /**
+     * This tests the export method.
+     * @test
+     * @covers  \ProcessMaker\Model\CaseList::export()
+     */
+    public function it_should_test_export()
+    {
+        CaseList::truncate();
+        $data = [
+            'type' => 'inbox',
+            'name' => 'test export',
+            'description' => 'my description',
+            'tableUid' => '',
+            'columns' => [],
+            'userId' => 1,
+            'iconList' => 'deafult.png',
+            'iconColor' => 'red',
+            'iconColorScreen' => 'blue'
+        ];
+        CaseList::createSetting($data, $data['userId']);
+
+        $result = CaseList::export($data['userId']);
+
+        //assert
+        $this->assertArrayHasKey('type', $result['data']);
+        $this->assertArrayHasKey('name', $result['data']);
+        $this->assertArrayHasKey('description', $result['data']);
+
+        $this->assertEquals($data['type'], $result['data']['type']);
+        $this->assertEquals($data['name'], $result['data']['name']);
+        $this->assertEquals($data['description'], $result['data']['description']);
+
+        //assert file export
+        $this->assertFileExists($result['filename']);
     }
 }
