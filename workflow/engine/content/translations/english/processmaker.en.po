@@ -5676,6 +5676,12 @@ msgid "DATE"
 msgstr "DATE"
 
 # TRANSLATION
+# LABEL/ID_DATE_CREATED
+#: LABEL/ID_DATE_CREATED
+msgid "Date Created"
+msgstr "Date Created"
+
+# TRANSLATION
 # LABEL/ID_DATE_FORMAT
 #: LABEL/ID_DATE_FORMAT
 msgid "[LABEL/ID_DATE_FORMAT] Date Format"
@@ -5794,6 +5800,12 @@ msgstr "Date"
 #: LABEL/ID_DATE_NOT_VALID
 msgid "The value '{0}' is not a valid date for the format '{1}'."
 msgstr "The value '{0}' is not a valid date for the format '{1}'."
+
+# TRANSLATION
+# LABEL/ID_DATE_UPDATED
+#: LABEL/ID_DATE_UPDATED    
+msgid "Date Created"
+msgstr "Date Created"
 
 # TRANSLATION
 # LABEL/ID_DAY
