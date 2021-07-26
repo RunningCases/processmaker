@@ -9,6 +9,7 @@
       @onUpdateFilters="onUpdateFilters"
     />
     <multiview-header :data="dataMultiviewHeader" />
+    <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
     <v-server-table
       v-if="typeView === 'GRID'"
       :data="tableData"
@@ -16,6 +17,7 @@
       :options="options"
       ref="vueTable"
       @row-click="onRowClick"
+      :key="random"
     >
       <div slot="detail" slot-scope="props">
         <div class="btn-default" @click="openCaseDetail(props.row)">
@@ -200,6 +202,7 @@ export default {
   },
   props: ["defaultOption", "filters"],
   data() {
+    let that = this;
     return {
       newCase: {
         title: this.$i18n.t("ID_NEW_CASE"),
@@ -223,16 +226,15 @@ export default {
       options: {
         filterable: false,
         headings: {
+          detail: this.$i18n.t("ID_DETAIL_CASE"),
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
-          current_user: this.$i18n.t("ID_CURRENT_USER"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY"),
-          actions: "",
-          detail: "",
+          actions: ""
         },
         texts: {
             count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
@@ -253,6 +255,17 @@ export default {
         },
         requestFunction(data) {
           return this.$parent.$parent.getCasesForVueTable(data);
+        },
+        settings: {
+          "actions":{
+              class: "fas fa-cog",
+              id:"pm-dr-column-settings",
+              events:{ 
+                  click(){
+                      that.$root.$emit('bv::show::popover', 'pm-dr-column-settings')
+                  }
+              }
+          }
         },
       },
       pmDateFormat: "Y-m-d H:i:s",

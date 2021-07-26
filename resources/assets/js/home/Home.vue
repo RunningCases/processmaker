@@ -38,7 +38,7 @@
 </template>
 <script>
 import CustomSidebar from "./../components/menu/CustomSidebar";
-import MyCases from "./MyCases";
+import MyCases from "./MyCases/MyCases.vue";
 import MyDocuments from "./MyDocuments";
 import Todo from "./Inbox/Todo.vue";
 import Paused from "./Paused/Paused.vue";
@@ -48,7 +48,7 @@ import BatchRouting from "./BatchRouting";
 import CaseDetail from "./CaseDetail";
 import XCase from "./XCase";
 import TaskReassignments from "./TaskReassignments";
-import AdvancedSearch from "./AdvancedSearch";
+import AdvancedSearch from "./AdvancedSearch/AdvancedSearch.vue";
 import LegacyFrame from "./LegacyFrame";
 
 import api from "./../api/index";

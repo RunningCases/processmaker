@@ -24,13 +24,14 @@
         />
 
         <modal-new-request ref="newRequest"></modal-new-request>
-
+        <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
         <v-server-table
             :data="tableData"
             :columns="columns"
             :options="options"
             ref="vueTable"
             @row-click="onRowClick"
+            :key="random"
         >
             <div slot="info" slot-scope="props">
                 <b-icon
@@ -82,17 +83,19 @@
     </div>
 </template>
 <script>
-import ButtonFleft from "../components/home/ButtonFleft.vue";
-import ModalNewRequest from "./ModalNewRequest.vue";
-import AdvancedFilter from "../components/search/AdvancedFilter";
-import TaskCell from "../components/vuetable/TaskCell.vue";
-import CurrentUserCell from "../components/vuetable/CurrentUserCell.vue";
-import ModalComments from "./modal/ModalComments.vue";
-import api from "./../api/index";
-import utils from "./../utils/utils";
+import ButtonFleft from "../../components/home/ButtonFleft.vue";
+import ModalNewRequest from "../ModalNewRequest.vue";
+import AdvancedFilter from "../../components/search/AdvancedFilter";
+import TaskCell from "../../components/vuetable/TaskCell.vue";
+import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
+import ModalComments from "../modal/ModalComments.vue";
+import api from "../../api/index";
+import utils from "../../utils/utils";
+import defaultMixin from "./defaultMixins.js";
 
 export default {
     name: "AdvancedSearch",
+    mixins: [defaultMixin],
     components: {
         AdvancedFilter,
         ButtonFleft,
@@ -103,6 +106,7 @@ export default {
     },
     props: ["id", "name", "filters"],
     data() {
+        let that = this;
         return {
             dismissSecs: 5,
             dismissCountDown: 0,
@@ -137,7 +141,6 @@ export default {
             options: {
                 filterable: false,
                 headings: {
-                    info: "",
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                     case_title: this.$i18n.t("ID_CASE_TITLE"),
                     status: this.$i18n.t("ID_STATUS"),
@@ -170,6 +173,17 @@ export default {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
                 customFilters: ["myfilter"],
+                settings: {
+                    "actions":{
+                        class: "fas fa-cog",
+                        id:"pm-dr-column-settings",
+                        events:{ 
+                            click(){
+                                that.$root.$emit('bv::show::popover', 'pm-dr-column-settings')
+                            }
+                        }
+                    }
+                }
             },
             pmDateFormat: window.config.FORMATS.dateFormat,
             clickCount: 0,

@@ -18,13 +18,14 @@
         />
         <header-counter :data="headers"> </header-counter>
         <modal-new-request ref="newRequest"></modal-new-request>
-
+        <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
         <v-server-table
             :data="tableData"
             :columns="columns"
             :options="options"
             ref="vueTable"
             @row-click="onRowClick"
+            :key="random"
         >
             <div slot="detail" slot-scope="props">
                 <div class="btn-default" @click="openCaseDetail(props.row)">
@@ -64,17 +65,19 @@
 </template>
 
 <script>
-import HeaderCounter from "../components/home/HeaderCounter.vue";
-import ButtonFleft from "../components/home/ButtonFleft.vue";
-import ModalNewRequest from "./ModalNewRequest.vue";
-import MyCasesFilter from "../components/search/MyCasesFilter";
-import ModalComments from "./modal/ModalComments.vue";
-import GroupedCell from "../components/vuetable/GroupedCell.vue";
-import api from "./../api/index";
-import utils from "./../utils/utils";
+import HeaderCounter from "../../components/home/HeaderCounter.vue";
+import ButtonFleft from "../../components/home/ButtonFleft.vue";
+import ModalNewRequest from "../ModalNewRequest.vue";
+import MyCasesFilter from "../../components/search/MyCasesFilter";
+import ModalComments from "../modal/ModalComments.vue";
+import GroupedCell from "../../components/vuetable/GroupedCell.vue";
+import api from "../../api/index";
+import utils from "../../utils/utils";
+import defaultMixins from "./defaultMixins";
 
 export default {
     name: "MyCases",
+    mixins: [defaultMixins],
     components: {
         MyCasesFilter,
         HeaderCounter,
@@ -85,6 +88,7 @@ export default {
     },
     props: ["filters", "defaultOption"],
     data() {
+        let that = this;
         return {
             dataAlert: {
               dismissSecs: 5,
@@ -150,6 +154,17 @@ export default {
                 requestFunction(data) {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
+                settings: {
+                    "actions":{
+                        class: "fas fa-cog",
+                        id:"pm-dr-column-settings",
+                        events:{ 
+                            click(){
+                                that.$root.$emit('bv::show::popover', 'pm-dr-column-settings')
+                            }
+                        }
+                    }
+                }
             },
             translations: null,
             pmDateFormat: window.config.FORMATS.dateFormat,
