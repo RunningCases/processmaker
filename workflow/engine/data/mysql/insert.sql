@@ -61008,6 +61008,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SELECT_STATUS','en','Select status...','2014-01-15') ,
 ( 'LABEL','ID_SELECT_TABLE','en','Please select a table to export.','2014-01-15') ,
 ( 'LABEL','ID_SELECT_TEMPLATE_FILE','en','Select a template file','2014-01-15') ,
+( 'LABEL','ID_SELECT_USER','en','Select a User','2021-07-23') ,
 ( 'LABEL','ID_SELECT_USER_OR_GROUP','en','Please select the name of a user or a group in the Group or User field','2017-10-19') ,
 ( 'LABEL','ID_SELECT_VARIABLE','en','Select Variable','2017-10-27') ,
 ( 'LABEL','ID_SELECT_WORKSPACE','en','Select a workspace','2014-01-15') ,
