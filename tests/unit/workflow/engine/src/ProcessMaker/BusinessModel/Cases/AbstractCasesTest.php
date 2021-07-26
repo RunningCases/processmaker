@@ -362,7 +362,7 @@ class AbstractCasesTest extends TestCase
         // Incorrect canceled status
         $absCases->setCaseStatus('CANCELLED');
         $actual = $absCases->getCaseStatus();
-        $this->assertEquals($index, $actual);
+        $this->assertEquals(4, $actual);
     }
 
     /**

@@ -378,6 +378,6 @@ class CasesTest extends TestCase
         self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'TO_DO'));
 
         // Get DynaForms assigned as steps for the second task when the application status is COMPLETED
-        self::assertCount(2, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'COMPLETED'));
+        self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'COMPLETED'));
     }
 }

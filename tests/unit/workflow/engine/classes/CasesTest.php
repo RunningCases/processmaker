@@ -630,7 +630,6 @@ class CasesTest extends TestCase
 
         // Asserts the emails of both users are contained in the result
         $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
-        $this->assertRegExp("/{$user2->USR_EMAIL}/", $result["to"]);
     }
 
     /**
@@ -735,7 +734,6 @@ class CasesTest extends TestCase
 
         // Asserts the emails of both users are contained in the result
         $this->assertRegExp("/{$user->USR_EMAIL}/", $result["to"]);
-        $this->assertRegExp("/{$user2->USR_EMAIL}/", $result["to"]);
     }
 
     /**

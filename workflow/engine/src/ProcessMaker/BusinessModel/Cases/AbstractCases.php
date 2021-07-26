@@ -1262,6 +1262,9 @@ class AbstractCases implements CasesInterface
         if ($thread['APP_STATUS'] === 'DRAFT') {
             $status = 'DRAFT';
         }
+        if (isset($thread['DEL_THREAD_STATUS']) && $thread['DEL_THREAD_STATUS'] === 'PAUSED') {
+            $status = 'PAUSED';
+        }
         if ($thread['APP_STATUS'] === 'COMPLETED') {
             $finishDate = !empty($thread['APP_FINISH_DATE']) ? $thread['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
             $dateToCompare = $finishDate;

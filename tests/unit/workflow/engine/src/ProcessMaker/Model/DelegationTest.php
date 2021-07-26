@@ -140,6 +140,29 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeThreadPause
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeThreadPause()
+     * @test
+     */
+    public function it_return_scope_thread_pause()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(0, $table->threadPause()->get());
+    }
+    /**
+     * This test scopeOpenAndPause
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeOpenAndPause()
+     * @test
+     */
+    public function it_return_scope_thread_open_and_pause()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->openAndPause()->get());
+    }
+
+    /**
      * This test scopeCaseStarted
      *
      * @covers \ProcessMaker\Model\Delegation::scopeCaseStarted()
@@ -661,8 +684,11 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_process_in_list()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->processInList([$table->PRO_ID])->get());
+        $process = factory(Process::class)->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'PRO_ID' => $process->PRO_ID
+        ]);
+        $this->assertCount(1, $table->joinProcess()->processInList([$table->PRO_ID])->get());
     }
 
     /**
@@ -675,6 +701,21 @@ class DelegationTest extends TestCase
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
         $this->assertCount(1, $table->participated($table->USR_ID)->get());
+    }
+
+    /**
+     * This test scopeCategoryId
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCategoryId()
+     * @test
+     */
+    public function it_return_scope_category()
+    {
+        $process = factory(Process::class)->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'PRO_ID' => $process->PRO_ID
+        ]);
+        $this->assertCount(1, $table->joinProcess()->categoryId($process->CATEGORY_ID)->get());
     }
 
     /**
