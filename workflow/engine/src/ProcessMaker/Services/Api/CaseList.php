@@ -92,8 +92,8 @@ class CaseList extends Api
      * Get inbox Case List settings.
      * @url GET /inbox
      * @param string $search
-     * @param string $offset
-     * @param string $limit
+     * @param int $offset
+     * @param int $limit
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      * @return array
@@ -107,8 +107,8 @@ class CaseList extends Api
      * Get draft Case List settings.
      * @url GET /draft
      * @param string $search
-     * @param string $offset
-     * @param string $limit
+     * @param int $offset
+     * @param int $limit
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      * @return array
@@ -122,8 +122,8 @@ class CaseList extends Api
      * Get paused Case List settings.
      * @url GET /paused
      * @param string $search
-     * @param string $offset
-     * @param string $limit
+     * @param int $offset
+     * @param int $limit
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      * @return array
@@ -137,13 +137,13 @@ class CaseList extends Api
      * Get unassigned Case List settings.
      * @url GET /unassigned
      * @param string $search
-     * @param string $offset
-     * @param string $limit
+     * @param int $offset
+     * @param int $limit
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      * @return array
      */
-    public function doGetUnassigned(string $search, int $offset, int $limit)
+    public function doGetUnassigned(string $search = '', int $offset = 0, int $limit = 10)
     {
         return CaseListBusinessModel::getSetting('unassigned', $search, $offset, $limit);
     }

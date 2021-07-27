@@ -62,7 +62,8 @@ class CaseList extends Model
         'USR_FIRSTNAME' => 'userFirstname',
         'USR_LASTNAME' => 'userLastname',
         'USR_EMAIL' => 'userEmail',
-        'ADD_TAB_NAME' => 'tableName'
+        'ADD_TAB_NAME' => 'tableName',
+        'PRO_TITLE' => 'process'
     ];
 
     /**
@@ -180,19 +181,18 @@ class CaseList extends Model
         $model = CaseList::where('CAL_TYPE', '=', $type)
             ->leftJoin('USERS', 'USERS.USR_ID', '=', 'CASE_LIST.USR_ID')
             ->leftJoin('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
+            ->leftJoin('PROCESS', 'PROCESS.PRO_UID', '=', 'ADDITIONAL_TABLES.PRO_UID')
             ->select([
                 'CASE_LIST.*',
-                'USERS.USR_UID', 'USERS.USR_USERNAME', 'USERS.USR_FIRSTNAME', 'USERS.USR_LASTNAME', 'USERS.USR_EMAIL',
-                'ADDITIONAL_TABLES.ADD_TAB_NAME'
+                'PROCESS.PRO_TITLE',
+                'ADDITIONAL_TABLES.ADD_TAB_NAME',
+                'USERS.USR_UID', 'USERS.USR_USERNAME', 'USERS.USR_FIRSTNAME', 'USERS.USR_LASTNAME', 'USERS.USR_EMAIL'
             ])
             ->where(function ($query) use ($search) {
                 $query
                 ->orWhere('CASE_LIST.CAL_NAME', 'like', '%' . $search . '%')
-                ->orWhere('CASE_LIST.CAL_DESCRIPTION', 'like', '%' . $search . '%')
-                ->orWhere('USERS.USR_USERNAME', 'like', '%' . $search . '%')
-                ->orWhere('USERS.USR_FIRSTNAME', 'like', '%' . $search . '%')
-                ->orWhere('USERS.USR_LASTNAME', 'like', '%' . $search . '%')
-                ->orWhere('USERS.USR_EMAIL', 'like', '%' . $search . '%');
+                ->orWhere('PROCESS.PRO_TITLE', 'like', '%' . $search . '%')
+                ->orWhere('ADDITIONAL_TABLES.ADD_TAB_NAME', 'like', '%' . $search . '%');
             })
             ->orderBy('CASE_LIST.CAL_NAME', $order);
 
