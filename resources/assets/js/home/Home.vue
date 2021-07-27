@@ -25,6 +25,7 @@
                 :pageUri="pageUri"
                 :name="pageName"
                 :defaultOption="defaultOption"
+                :settings="config[page]"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
@@ -32,7 +33,8 @@
                 @onLastPage="onLastPage"
                 @onUpdateFilters="onUpdateFilters"
                 @cleanDefaultOption="cleanDefaultOption"
-            ></component>
+                @updateUserSettings="updateUserSettings"
+            ></component>   
         </div>
     </div>
 </template>
@@ -85,6 +87,11 @@ export default {
             pageName: null,
             pageUri: null,
             filters: null,
+            config: {},
+            configParams: {
+                id: window.config.userId || "1",
+                name: "home"
+            },
             menuMap: {
                 CASES_MY_CASES: "MyCases",
                 CASES_SENT: "MyCases",
@@ -103,6 +110,7 @@ export default {
     mounted() {
         this.onResize();
         this.getMenu();
+        this.getUserSettings();
         this.listenerIframe();
         window.setInterval(
             this.setCounter,
@@ -143,6 +151,62 @@ export default {
                     this.setDefaultCasesMenu(response.data);
                     this.menu = this.mappingMenu(this.setDefaultIcon(response.data));
                     this.setCounter();
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+        },
+        /**
+         * Gets the user config
+         */
+        getUserSettings() {
+            api.config
+                .get(this.configParams)
+                .then((response) => {
+                    if (response.data) {
+                        this.config = response.data;
+                    } else {
+                        this.createUserSettings();
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+        },
+        /**
+         * Creates the user config service
+         */
+        createUserSettings() {
+            api.config
+                .post({
+                    ...this.configParams,
+                    ...{setting: '{}'}
+                })
+                .then((response) => {
+                    if (response.data) {
+                        this.config = response.data;
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+        },
+        /**
+         * Update the user config service
+         */
+        updateUserSettings(prop, data) {
+            if (!this.config.setting[this.page]) {
+                this.config.setting[this.page] = {};
+            }
+            this.config.setting[this.page][prop] = data;
+            api.config
+                .put(this.config)
+                .then((response) => {
+                    if (response.data) {
+                        // this.settings = response.data;
+                        console.log("Udated")
+                        console.log(this.config);
+                    }
                 })
                 .catch((e) => {
                     console.error(e);
@@ -335,7 +399,8 @@ export default {
         },
         onUpdateFilters(filters) {
             this.filters = filters;
-        }
+        },
+       
     }
 };
 </script>

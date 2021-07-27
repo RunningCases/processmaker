@@ -86,7 +86,7 @@ export default {
         GroupedCell,
         ModalComments,
     },
-    props: ["filters", "defaultOption"],
+    props: ["filters", "defaultOption", "settings"],
     data() {
         let that = this;
         return {
@@ -102,6 +102,11 @@ export default {
             allView: [],
             filterHeader: "STARTED",
             headers: [],
+            columMap: {
+                case_number: "APP_NUMBER",
+                case_title: "DEL_TITLE",
+                process_name: "PRO_TITLE"
+            },
             newCase: {
                 title: this.$i18n.t("ID_NEW_CASE"),
                 class: "btn-success",
@@ -151,6 +156,8 @@ export default {
                     selectAllMode: "page",
                     programmatic: false,
                 },
+                sortable: ['case_number'],
+                orderBy: this.settings && this.settings.orderBy ?  this.settings.orderBy: {},
                 requestFunction(data) {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
@@ -304,13 +311,14 @@ export default {
          */
         getCasesForVueTable(data) {
             let that = this,
-                dt,
+                dt, 
                 paged,
                 limit = data.limit,
                 start = data.page === 1 ? 0 : limit * (data.page - 1),
-                filters = {};
-                paged = start + "," + limit;
-                
+                filters = {},
+                sort = "";
+            paged = start + "," + limit;
+            debugger;
             filters = {
                 filter: that.filterHeader,
                 paged: paged,
@@ -320,11 +328,20 @@ export default {
                     filters[item.filterVar] = item.value;
                 }
             });
+            sort = that.prepareSortString(data);
+            if (sort) {
+                filters["sort"] = sort;
+                that.$emit("updateUserSettings", "orderBy", {
+                    column: data.orderBy,
+                    ascending: data.ascending === 1 ? true: false
+                });
+            } 
             return new Promise((resolutionFunc, rejectionFunc) => {
                 api.cases
                     .myCases(filters)
                     .then((response) => {
                         dt = that.formatDataResponse(response.data.data);
+
                         resolutionFunc({
                             data: dt,
                             count: response.data.total,
@@ -334,6 +351,18 @@ export default {
                         rejectionFunc(e);
                     });
             });
+        },
+        /**
+         * Prepare sort string to be sended in the service
+         * @param {object} data
+         * @returns {string}
+         */
+        prepareSortString(data){
+            let sort = "";
+            if (data.orderBy && this.columMap[data.orderBy]) {
+                sort  =  `${this.columMap[data.orderBy]},${data.ascending === 1 ? "ASC": "DESC"}`;
+            }
+            return sort;
         },
         /**
          * Format Response API TODO to grid inbox and columns

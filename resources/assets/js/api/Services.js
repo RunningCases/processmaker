@@ -67,5 +67,6 @@
     USERS: "/home/users",
     TASKS: "/home/tasks",
     CATEGORIES: "/home/categories",
-    DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}"
+    DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}",
+    CONFIG: "/home/config"
 };
