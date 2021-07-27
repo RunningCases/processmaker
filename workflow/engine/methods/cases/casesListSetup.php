@@ -1,4 +1,9 @@
 <?php
+use Eusebiu\JavaScript\Facades\ScriptVariables;
+use Illuminate\Support\Facades\View;
+use ProcessMaker\Core\System;
+
+global $translation;
 global $RBAC;
 
 if ($RBAC->userCanAccess("PM_SETUP") != 1 || $RBAC->userCanAccess("PM_SETUP_ADVANCE") != 1) {
@@ -15,4 +20,14 @@ $oHeadPublisher->addContent('cases/casesListSetup'); //adding a html file  .html
 $oHeadPublisher->assignNumber("pageSize", 20); //sending the page size
 $oHeadPublisher->assignNumber("availableFields", G::json_encode($availableFields));
 
-G::RenderPage("publish", "extJs");
+$userCanAccess = 1;
+
+$pmDynaform = new PmDynaform();
+ScriptVariables::add('SYS_CREDENTIALS', $pmDynaform->getCredentials());
+ScriptVariables::add('SYS_SERVER_API', System::getHttpServerHostnameRequestsFrontEnd());
+ScriptVariables::add('SYS_SERVER_AJAX', System::getServerProtocolHost());
+ScriptVariables::add('SYS_WORKSPACE', config("system.workspace"));
+ScriptVariables::add('SYS_URI', SYS_URI);
+ScriptVariables::add('SYS_LANG', SYS_LANG);
+ScriptVariables::add('TRANSLATIONS', $translation);
+echo View::make('Views::admin.settings.customCasesList', compact("userCanAccess"))->render();

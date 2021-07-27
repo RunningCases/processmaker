@@ -1,4 +1,6 @@
-import Api from "./Api.js";
+import ApiInstance from "./Api.js";
+import Services from "./Services";
+let Api = new ApiInstance( Services );
 
 export let process = {
     list: {

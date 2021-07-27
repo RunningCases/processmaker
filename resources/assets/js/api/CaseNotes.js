@@ -1,6 +1,7 @@
 import axios from "axios";
-import Api from "./Api.js";
-
+import ApiInstance from "./Api.js";
+import Services from "./Services";
+let Api = new ApiInstance( Services );
 export let caseNotes = {
     post(data) {
         var params = new FormData();
