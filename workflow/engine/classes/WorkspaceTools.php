@@ -4147,6 +4147,22 @@ class WorkspaceTools
                                    WHERE AD.TAS_ID = 0");
         $con->commit();
 
+        // Populating APP_DELEGATION.DEL_THREAD_STATUS_ID with paused threads
+        CLI::logging("->   Populating APP_DELEGATION.DEL_THREAD_STATUS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT APP_DELAY.APP_NUMBER, APP_DELAY.APP_DEL_INDEX
+                                       FROM APP_DELAY
+                                       WHERE APP_TYPE = 'PAUSE' AND APP_DELAY.APP_DISABLE_ACTION_USER = '0'
+                                   ) AS DELAY
+                                   ON (AD.APP_NUMBER = DELAY.APP_NUMBER AND AD.DEL_INDEX = DELAY.APP_DEL_INDEX)
+                                   SET AD.DEL_THREAD_STATUS_ID = 3, 
+                                       AD.DEL_THREAD_STATUS = 'PAUSED'
+                                   WHERE AD.DEL_THREAD_STATUS_ID = 0");
+        $con->commit();
+
         // Populating APPLICATION.APP_STATUS_ID
         CLI::logging("->   Populating APPLICATION.APP_STATUS_ID \n");
         $con->begin();

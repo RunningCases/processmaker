@@ -11,7 +11,10 @@ use ProcessMaker\Cases\CasesTrait;
 use ProcessMaker\ChangeLog\ChangeLog;
 /*----------------------------------********---------------------------------*/
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\AppDelay as Delay;
+use ProcessMaker\Model\AppThread as Thread;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\User;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\DateTime;
 
@@ -1913,6 +1916,7 @@ class Cases
             $data = [];
             foreach ($rowObj as $appDel) {
                 $appDel->setDelThreadStatus('CLOSED');
+                $appDel->setDelThreadStatusId(Delegation::$thread_status['CLOSED']);
                 $appDel->setDelFinishDate('now');
                 if ($appDel->Validate()) {
                     $appDel->Save();
@@ -1952,11 +1956,13 @@ class Cases
      *
      * @param string $appUid
      * @param string $delIndex
+     * @param string $status
+     * @param int $statusId
      *
      * @return void
      * @throws Exception
      */
-    public function CloseCurrentDelegation($appUid, $delIndex)
+    public function CloseCurrentDelegation($appUid, $delIndex, string $status = 'CLOSED', int $statusId = 0)
     {
         try {
             $criteria = new Criteria();
@@ -1965,7 +1971,8 @@ class Cases
             $rowObj = AppDelegationPeer::doSelect($criteria);
             $user = '';
             foreach ($rowObj as $appDel) {
-                $appDel->setDelThreadStatus('CLOSED');
+                $appDel->setDelThreadStatus($status);
+                $appDel->setDelThreadStatusId($statusId);
                 $appDel->setDelFinishDate('now');
                 $user = $appDel->getUsrUid();
                 if ($appDel->Validate()) {
@@ -1991,7 +1998,7 @@ class Cases
             $listParticipatedLast->refresh($data);
             /*----------------------------------********---------------------------------*/
 
-            /** Update searchindex */
+            /** Update search index */
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($appUid);
             }
@@ -2019,6 +2026,7 @@ class Cases
             $rowObj = AppDelegationPeer::doSelect($c);
             foreach ($rowObj as $appDel) {
                 $appDel->setDelThreadStatus('OPEN');
+                $appDel->setDelThreadStatusId(Delegation::$thread_status['OPEN']);
                 $appDel->setDelFinishDate(null);
                 if ($appDel->Validate()) {
                     $appDel->Save();
@@ -4097,77 +4105,75 @@ class Cases
     }
 
     /**
-     * pause a Case
+     * Pause a Case
      *
-     * @name pauseCase
-     * @param string $sApplicationUID
-     * @param string $iDelegation
-     * @param string $sUserUID
-     * @param string $sUnpauseDate
+     * @param string $appUid
+     * @param int $index
+     * @param string $usrUid
+     * @param string $unpauseDate
+     * @param string $appTitle
+     *
      * @return object
      */
-    public function pauseCase($sApplicationUID, $iDelegation, $sUserUID, $sUnpauseDate = null, $appTitle = null)
+    public function pauseCase($appUid, $index, $usrUid, $unpauseDate = null, $appTitle = null)
     {
-        // Check if the case is unassigned
-        if ($this->isUnassignedPauseCase($sApplicationUID, $iDelegation)) {
-            throw new Exception(G::LoadTranslation("ID_CASE_NOT_PAUSED", array(G::LoadTranslation("ID_UNASSIGNED_STATUS"))));
-        }
-
-        $oApplication = new Application();
-        $aFields = $oApplication->Load($sApplicationUID);
-        //get the appthread row id ( APP_THREAD_INDEX' )
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->clearSelectColumns();
-        $oCriteria->addSelectColumn(AppThreadPeer::APP_THREAD_INDEX);
-        $oCriteria->add(AppThreadPeer::APP_UID, $sApplicationUID);
-        $oCriteria->add(AppThreadPeer::DEL_INDEX, $iDelegation);
-        $oDataset = AppThreadPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        if ($oDataset->next()) {
-            $aRow = $oDataset->getRow();
-        } else {
+        $application = new Application();
+        $fields = $application->Load($appUid);
+        $appNumber = $application->getAppNumber();
+        // Get the index of appThread
+        $appThread = Thread::getThread($appUid, $index);
+        $appThread = head($appThread);
+        $threadIndex = $appThread['APP_THREAD_INDEX'];
+        if (empty($threadIndex)) {
             throw new Exception(G::LoadTranslation("ID_CASE_STOPPED_TRIGGER"));
         }
+        /** Close the index for pause */
+        $this->CloseCurrentDelegation($appUid, $index, 'PAUSED', Delegation::$thread_status['PAUSED']);
 
-        $this->CloseCurrentDelegation($sApplicationUID, $iDelegation);
-        //now create a row in APP_DELAY with type PAUSE
-        $aData['PRO_UID'] = $aFields['PRO_UID'];
-        $aData['APP_UID'] = $sApplicationUID;
-        $aData['APP_THREAD_INDEX'] = $aRow['APP_THREAD_INDEX'];
-        $aData['APP_DEL_INDEX'] = $iDelegation;
-        $aData['APP_TYPE'] = 'PAUSE';
-        $aData['APP_STATUS'] = $aFields['APP_STATUS'];
-        $aData['APP_DELEGATION_USER'] = $sUserUID;
-        $aData['APP_ENABLE_ACTION_USER'] = $sUserUID;
-        $aData['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
-        $aData['APP_DISABLE_ACTION_DATE'] = $sUnpauseDate;
-        $aData['APP_NUMBER'] = $oApplication->getAppNumber();
-        $oAppDelay = new AppDelay();
-        $oAppDelay->create($aData);
+        // Prepare the data for pause
+        $attributes = [
+            'APP_DELAY_UID' => G::generateUniqueID(),
+            'PRO_UID' => $application->getProUid(),
+            'PRO_ID' => $application->getProId(),
+            'APP_UID' => $appUid,
+            'APP_NUMBER' => $appNumber,
+            'APP_THREAD_INDEX' => $threadIndex,
+            'APP_DEL_INDEX' => $index,
+            'APP_TYPE' => 'PAUSE',
+            'APP_STATUS' => $application->getAppStatus(),
+            'APP_DELEGATION_USER' => $usrUid,
+            'APP_DELEGATION_USER_ID' => User::getId($usrUid),
+            'APP_ENABLE_ACTION_USER' => $usrUid,
+            'APP_ENABLE_ACTION_DATE' => date('Y-m-d H:i:s'),
+            'APP_DISABLE_ACTION_DATE' => $unpauseDate,
+        ];
 
-        $oApplication->update($aFields);
+        /** Register the pause case */
+        Delay::create($attributes);
 
-        //update searchindex
+        /** Update the application case */
+        $application->update($fields);
+
+        /** Update search index */
         if ($this->appSolr != null) {
-            $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
+            $this->appSolr->updateApplicationSearchIndex($appUid);
         }
 
-        $this->getExecuteTriggerProcess($sApplicationUID, 'PAUSED');
+        /** Execute the trigger */
+        $this->getExecuteTriggerProcess($appUid, 'PAUSED');
 
         /*----------------------------------********---------------------------------*/
-        $threadTitle = Delegation::getDeltitle($aData['APP_NUMBER'], $aData['APP_DEL_INDEX']);
-        $data = array(
-            'APP_UID' => $sApplicationUID,
-            'DEL_INDEX' => $iDelegation,
-            'USR_UID' => $sUserUID,
-            'APP_RESTART_DATE' => $sUnpauseDate,
+        $threadTitle = Delegation::getDeltitle($appNumber, $index);
+        $data = [
+            'APP_UID' => $appUid,
+            'DEL_INDEX' => $index,
+            'USR_UID' => $usrUid,
+            'APP_RESTART_DATE' => $unpauseDate,
             'APP_TITLE' => $threadTitle,
-        );
-        $data = array_merge($aFields, $data);
-
-        $oListPaused = new ListPaused();
-        $oListPaused->create($data);
+        ];
+        $data = array_merge($fields, $data);
+        $listPaused = new ListPaused();
+        $listPaused->create($data);
         /*----------------------------------********---------------------------------*/
     }
 

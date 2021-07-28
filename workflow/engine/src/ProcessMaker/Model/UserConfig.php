@@ -45,21 +45,17 @@ class UserConfig extends Model
      * Add user setting.
      * @param int $id
      * @param string $name
-     * @param string $setting
+     * @param array $setting
      * @return mix array|null
      */
-    public static function addSetting(int $id, string $name, string $setting)
+    public static function addSetting(int $id, string $name, array $setting)
     {
+        $model = new UserConfig();
+        $model->USR_ID = $id;
+        $model->USC_NAME = $name;
+        $model->USC_SETTING = json_encode($setting);
+        $model->save();
         $userConfig = UserConfig::getSetting($id, $name);
-        if (empty($userConfig)) {
-            $model = new UserConfig();
-            $model->USR_ID = $id;
-            $model->USC_NAME = $name;
-            $model->USC_SETTING = $setting;
-            $model->save();
-
-            $userConfig = UserConfig::getSetting($id, $name);
-        }
         return $userConfig;
     }
 
@@ -67,14 +63,14 @@ class UserConfig extends Model
      * Edit user setting.
      * @param int $id
      * @param string $name
-     * @param string $setting
+     * @param array $setting
      * @return mix array|null
      */
-    public static function editSetting(int $id, string $name, string $setting)
+    public static function editSetting(int $id, string $name, array $setting)
     {
         UserConfig::where('USR_ID', '=', $id)
             ->where('USC_NAME', '=', $name)
-            ->update(["USC_SETTING" => $setting]);
+            ->update(["USC_SETTING" => json_encode($setting)]);
 
         return UserConfig::getSetting($id, $name);
     }

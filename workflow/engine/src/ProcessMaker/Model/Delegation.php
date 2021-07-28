@@ -24,6 +24,8 @@ class Delegation extends Model
     // Static properties to preserve values
     public static $usrUid = '';
     public static $groups = [];
+    // Status name and status id
+    public static $thread_status = ['CLOSED' => 0, 'OPEN' => 1, 'PAUSED' => 3];
 
     /**
      * Returns the application this delegation belongs to
@@ -93,6 +95,34 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a query to only include pause threads
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeThreadPause($query)
+    {
+        return $query->where('APP_DELEGATION.DEL_THREAD_STATUS_ID', '=', 3);
+    }
+
+    /**
+     * Scope a query to only include open and pause threads
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOpenAndPause($query)
+    {
+        $query->where(function ($query) {
+            $query->threadOpen();
+            $query->orWhere(function ($query) {
+                $query->threadPause();
+            });
+        });
+        return $query;
+    }
+
+    /**
      * Scope to use when the case is IN_PROGRESS like DRAFT or TO_DO
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -101,7 +131,7 @@ class Delegation extends Model
      */
     public function scopeCasesInProgress($query, array $ids)
     {
-        $query->isThreadOpen()->statusIds($ids);
+        $query->threadOpen()->statusIds($ids);
 
         return $query;
     }
@@ -547,17 +577,6 @@ class Delegation extends Model
     }
 
     /**
-     * Scope a query to only include open threads
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeIsThreadOpen($query)
-    {
-        return $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
-    }
-
-    /**
      * Scope a query to get the last thread
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -756,6 +775,19 @@ class Delegation extends Model
     }
 
     /**
+     * Scope where in processes
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $processes
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInProcesses($query, array $processes)
+    {
+        return $query->whereIn('PROCESS.PRO_ID', $processes);
+    }
+
+    /**
      * Scope the Inbox cases
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -851,6 +883,33 @@ class Delegation extends Model
         $query->userId($user);
 
         return $query;
+    }
+
+    /**
+     * Scope process category id
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $category
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategoryId($query, int $category)
+    {
+        return $query->where('PROCESS.CATEGORY_ID', $category);
+    }
+
+    /**
+     * Scope top ten
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $column
+     * @param string $order
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTopTen($query, $column, $order)
+    {
+        return $query->orderBy($column, $order)->limit(10);
     }
 
     /**
@@ -1012,49 +1071,6 @@ class Delegation extends Model
         // This scope is for the join with the APP_DELEGATION table
         $query->joinApplication();
 
-        return $query;
-    }
-
-    /**
-     * Scope process category id
-     * 
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $category
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeCategoryId($query, $category)
-    {
-        $query->where('PROCESS.CATEGORY_ID', $category);
-        return $query;
-    }
-
-    /**
-     * Scope top ten
-     * 
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $column
-     * @param string $order
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeTopTen($query, $column, $order)
-    {
-        $query->orderBy($column, $order)->limit(10);
-        return $query;
-    }
-
-    /**
-     * Scope where in processes
-     * 
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param array $processes
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeInProcesses($query, $processes)
-    {
-        $query->whereIn('PROCESS.PRO_ID', $processes);
         return $query;
     }
 
@@ -1562,7 +1578,7 @@ class Delegation extends Model
             // Start the second query
             $query2 = Delegation::query()->select($selectedColumns);
             $query2->tasksIn($selfServiceTasks);
-            $query2->isThreadOpen();
+            $query2->threadOpen();
             $query2->noUserInThread();
 
             // Add join clause with the previous APP_DELEGATION record if required
@@ -1856,10 +1872,11 @@ class Delegation extends Model
      * Return the open thread related to the task
      *
      * @param int $appNumber
+     * @param bool $onlyOpen
      *
      * @return array
      */
-    public static function getPendingThreads(int $appNumber)
+    public static function getPendingThreads(int $appNumber, $onlyOpen = true)
     {
         $query = Delegation::query()->select([
             'TASK.TAS_UID',
@@ -1869,6 +1886,7 @@ class Delegation extends Model
             'APP_DELEGATION.DEL_INDEX',
             'APP_DELEGATION.DEL_TITLE',
             'APP_DELEGATION.USR_ID',
+            'APP_DELEGATION.DEL_THREAD_STATUS',
             'APP_DELEGATION.DEL_DELEGATE_DATE',
             'APP_DELEGATION.DEL_FINISH_DATE',
             'APP_DELEGATION.DEL_INIT_DATE',
@@ -1877,7 +1895,11 @@ class Delegation extends Model
         // Join with task
         $query->joinTask();
         // Get the open threads
-        $query->threadOpen();
+        if ($onlyOpen) {
+            $query->threadOpen();
+        } else {
+            $query->openAndPause();
+        }
         // Related to the specific case number
         $query->case($appNumber);
         // Get the results
