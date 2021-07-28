@@ -87,6 +87,11 @@ class ApplicationTest extends TestCase
     {
         $table = factory(Application::class)->states('foreign_keys')->create();
         $usrId = User::getId($table->APP_INIT_USER);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_UID' => $table->APP_UID,
+            'APP_NUMBER' => $table->APP_NUMBER,
+            'USR_ID' => $usrId,
+        ]);
         $this->assertCount(1, $table->joinDelegation()->userId($usrId)->get());
     }
 
@@ -160,6 +165,20 @@ class ApplicationTest extends TestCase
     {
         $table = factory(Application::class)->states('foreign_keys')->create();
         $this->assertCount(1, $table->rangeOfCases([$table->APP_NUMBER.'-'.$table->APP_NUMBER])->get());
+    }
+
+    /**
+     * This test scopeCasesOrRangeOfCases
+     *
+     * @covers \ProcessMaker\Model\Application::scopeCasesOrRangeOfCases()
+     * @test
+     */
+    public function it_return_scope_cases_or_range_of_cases()
+    {
+        $table = factory(Application::class)->states('foreign_keys')->create();
+        $cases = [$table->APP_NUMBER];
+        $rangeCases = [$table->APP_NUMBER.'-'.$table->APP_NUMBER];
+        $this->assertCount(1, $table->casesOrRangeOfCases($cases, $rangeCases)->get());
     }
 
     /**

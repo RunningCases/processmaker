@@ -181,7 +181,7 @@ class Participated extends AbstractCases
                     switch ($item['APP_STATUS']) {
                         case 'TO_DO':
                             // Get the pending task
-                            $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
+                            $taskPending = Delegation::getPendingThreads($item['APP_NUMBER'], false);
                             foreach ($taskPending as $thread) {
                                 $thread['APP_STATUS'] = $item['APP_STATUS'];
                                 // Get the thread information

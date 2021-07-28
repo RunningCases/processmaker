@@ -881,7 +881,7 @@ class Cases
     public function participation($usrUid, $caseNumber, $index)
     {
         $userId = User::getId($usrUid);
-        $query = Delegation::query()->select(['APP_NUMBER'])->case($caseNumber)->index($index)->isThreadOpen();
+        $query = Delegation::query()->select(['APP_NUMBER'])->case($caseNumber)->index($index)->threadOpen();
         $query1 = clone $query;
         $result = $query->userId($userId)->limit(1)->get()->values()->toArray();
         $permission = empty($result) ? false : true;
@@ -1046,6 +1046,11 @@ class Cases
 
         if ($date != null) {
             Validator::isDate($date, 'Y-m-d', '$unpaused_date');
+        }
+
+        // Check if the case is unassigned
+        if ($this->isUnassignedPauseCase($appUid, $index)) {
+            throw new Exception(G::LoadTranslation("ID_CASE_NOT_PAUSED", [G::LoadTranslation("ID_UNASSIGNED_STATUS")]));
         }
 
         /** Pause case */

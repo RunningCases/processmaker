@@ -25,6 +25,7 @@
  *
  */
 
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -195,6 +196,7 @@ class AppDelegation extends BaseAppDelegation
         $this->setDelPriority(($iPriority != '' ? $iPriority : '3'));
         $this->setDelThread($sAppThread);
         $this->setDelThreadStatus($theadStatus);
+        $this->setDelThreadStatusId(Delegation::$thread_status[$theadStatus]);
         $this->setDelDelegateDate('now');
         $this->setAppNumber($appNumber);
         $this->setTasId($taskId);
