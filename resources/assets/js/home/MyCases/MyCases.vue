@@ -24,6 +24,7 @@
             :columns="columns"
             :options="options"
             ref="vueTable"
+            name="mycases" 
             @row-click="onRowClick"
             :key="random"
         >
@@ -74,6 +75,8 @@ import GroupedCell from "../../components/vuetable/GroupedCell.vue";
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import defaultMixins from "./defaultMixins";
+import { Event } from 'vue-tables-2';
+
 
 export default {
     name: "MyCases",
@@ -187,6 +190,7 @@ export default {
         };
     },
     mounted() {
+        let that = this;
         this.getHeaders();
         this.openDefaultCase();
         // force to open start cases modal
@@ -194,8 +198,19 @@ export default {
         if (window.config._nodeId === "CASES_START_CASE") {
             this.$refs["newRequest"].show();
         }
+        // define sort event
+        Event.$on('vue-tables.mycases.sorted', function (data) {
+            that.$emit("updateUserSettings", "orderBy", data);
+        });
     },
-    watch: {},
+    watch: {
+        columns: function (val) {
+            this.$emit("updateUserSettings", "columns", val);
+        },
+        filters: function (val) {
+            this.$emit("updateUserSettings", "filters", val);
+        },
+    },
     computed: {
         /**
          * Build our ProcessMaker apiClient
@@ -331,10 +346,6 @@ export default {
             sort = that.prepareSortString(data);
             if (sort) {
                 filters["sort"] = sort;
-                that.$emit("updateUserSettings", "orderBy", {
-                    column: data.orderBy,
-                    ascending: data.ascending === 1 ? true: false
-                });
             } 
             return new Promise((resolutionFunc, rejectionFunc) => {
                 api.cases
@@ -584,6 +595,7 @@ export default {
         },
         onUpdateFilters(data) {
             this.$emit("onUpdateFilters", data.params);
+
             if (data.refresh) {
                 this.$nextTick(() => {
                     this.$refs["vueTable"].getData();

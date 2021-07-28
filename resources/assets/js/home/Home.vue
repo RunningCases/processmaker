@@ -117,6 +117,7 @@ export default {
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
     },
+   
     methods: {
         /**
          * Listener for iframes childs
@@ -199,12 +200,13 @@ export default {
                 this.config.setting[this.page] = {};
             }
             this.config.setting[this.page][prop] = data;
+            console.log(this.config);
             api.config
                 .put(this.config)
                 .then((response) => {
                     if (response.data) {
                         // this.settings = response.data;
-                        console.log("Udated")
+                        console.log("Updated")
                         console.log(this.config);
                     }
                 })
