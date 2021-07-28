@@ -829,64 +829,80 @@ class Home extends Api
 
     /**
      * Get user setting.
-     * @params int $id
-     * @params string $name
-     * @url GET /config
+     * @url GET /config/:id/:name
+     * @param int $id
+     * @param string $name
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
     public function doGetConfig(int $id, string $name)
     {
-        return UserConfig::getSetting($id, $name);
+        $setting = UserConfig::getSetting($id, $name);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
     }
 
     /**
      * Add user setting.
-     * @params int $id
-     * @params string $name
-     * @params string $setting
      * @url POST /config
+     * @param int $id
+     * @param string $name
+     * @param array $setting
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPostConfig(int $id, string $name, string $setting)
+    public function doPostConfig(int $id, string $name, array $setting)
     {
-        return UserConfig::addSetting($id, $name, $setting);
+        try {
+            return UserConfig::addSetting($id, $name, $setting);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_EXIST'));
+        }
     }
 
     /**
      * Update user setting.
-     * @params int $id
-     * @params string $name
-     * @params string $setting
      * @url PUT /config
+     * @param int $id
+     * @param string $name
+     * @param array $setting
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPutConfig(int $id, string $name, string $setting)
+    public function doPutConfig(int $id, string $name, array $setting)
     {
-        return UserConfig::editSetting($id, $name, $setting);
+        $setting = UserConfig::editSetting($id, $name, $setting);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
     }
 
     /**
      * Delete user setting.
-     * @params int $id
-     * @params string $name
-     * @url DELETE /config
+     * @url DELETE /config/:id/:name
+     * @param int $id
+     * @param string $name
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
     public function doDeleteConfig(int $id, string $name)
     {
-        return UserConfig::deleteSetting($id, $name);
+        $setting = UserConfig::deleteSetting($id, $name);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
     }
 
     /**
