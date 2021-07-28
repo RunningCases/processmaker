@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\Model\Application as ModelApplication;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\SubApplication as ModelSubApplication;
 
 class Derivation
