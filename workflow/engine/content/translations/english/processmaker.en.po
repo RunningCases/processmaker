@@ -148,7 +148,7 @@ msgstr "TESTING SERVER CONNECTION"
 # TRANSLATION
 # JAVASCRIPT/DBCONNECTIOS_MSG1
 #: JAVASCRIPT/DBCONNECTIOS_MSG1
-msgid "[JAVASCRIPT/DBCONNECTIOS_MSG1] DONE"
+msgid "DONE"
 msgstr "DONE"
 
 # TRANSLATION
@@ -766,7 +766,7 @@ msgstr "Do you want to remove this task?"
 # TRANSLATION
 # JAVASCRIPT/ID_MSG_CONFIRM_REMOVE_TRIGGER
 #: JAVASCRIPT/ID_MSG_CONFIRM_REMOVE_TRIGGER
-msgid "[JAVASCRIPT/ID_MSG_CONFIRM_REMOVE_TRIGGER] Are you sure you want to remove this trigger?"
+msgid "Are you sure you want to remove this trigger?"
 msgstr "Are you sure you want to remove this trigger?"
 
 # TRANSLATION
@@ -898,7 +898,7 @@ msgstr "Are you sure you want to delete this calendar?"
 # TRANSLATION
 # JAVASCRIPT/ID_PROCESSMAP_CANCEL
 #: JAVASCRIPT/ID_PROCESSMAP_CANCEL
-msgid "[JAVASCRIPT/ID_PROCESSMAP_CANCEL] Cancel"
+msgid "Cancel"
 msgstr "Cancel"
 
 # TRANSLATION
@@ -958,7 +958,7 @@ msgstr "Delete line"
 # TRANSLATION
 # JAVASCRIPT/ID_PROCESSMAP_DELETE_LINE
 #: JAVASCRIPT/ID_PROCESSMAP_DELETE_LINE
-msgid "[JAVASCRIPT/ID_PROCESSMAP_DELETE_LINE] Delete line"
+msgid "Delete line"
 msgstr "Delete line"
 
 # TRANSLATION
@@ -994,7 +994,7 @@ msgstr "Edit"
 # TRANSLATION
 # JAVASCRIPT/ID_PROCESSMAP_EDIT_PROCESS
 #: JAVASCRIPT/ID_PROCESSMAP_EDIT_PROCESS
-msgid "[JAVASCRIPT/ID_PROCESSMAP_EDIT_PROCESS] Edit process"
+msgid " Edit process"
 msgstr "Edit process"
 
 # TRANSLATION
@@ -1084,7 +1084,7 @@ msgstr "Rename to:"
 # TRANSLATION
 # JAVASCRIPT/ID_PROCESSMAP_PROPERTIES
 #: JAVASCRIPT/ID_PROCESSMAP_PROPERTIES
-msgid "[JAVASCRIPT/ID_PROCESSMAP_PROPERTIES] Properties"
+msgid "Properties"
 msgstr "Properties"
 
 # TRANSLATION
@@ -1132,13 +1132,13 @@ msgstr "Save"
 # TRANSLATION
 # JAVASCRIPT/ID_PROCESSMAP_SUPERVISORS_DYNAFORMS
 #: JAVASCRIPT/ID_PROCESSMAP_SUPERVISORS_DYNAFORMS
-msgid "[JAVASCRIPT/ID_PROCESSMAP_SUPERVISORS_DYNAFORMS] DynaForms"
+msgid "DynaForms"
 msgstr "DynaForms"
 
 # TRANSLATION
 # JAVASCRIPT/ID_PROCESSMAP_SUPERVISORS_INPUTS
 #: JAVASCRIPT/ID_PROCESSMAP_SUPERVISORS_INPUTS
-msgid "[JAVASCRIPT/ID_PROCESSMAP_SUPERVISORS_INPUTS] Input Documents"
+msgid "Input Documents"
 msgstr "Input Documents"
 
 # TRANSLATION
@@ -1270,7 +1270,7 @@ msgstr "Process Map"
 # TRANSLATION
 # JAVASCRIPT/ID_REASSIGN_BYUSER
 #: JAVASCRIPT/ID_REASSIGN_BYUSER
-msgid "[JAVASCRIPT/ID_REASSIGN_BYUSER] At least one item from the list must be selected."
+msgid "At least one item from the list must be selected."
 msgstr "At least one item from the list must be selected."
 
 # TRANSLATION
@@ -1390,7 +1390,7 @@ msgstr "Time cannot exceed 23:59"
 # TRANSLATION
 # JAVASCRIPT/ID_SERVER_REQUIRED
 #: JAVASCRIPT/ID_SERVER_REQUIRED
-msgid "[JAVASCRIPT/ID_SERVER_REQUIRED] You must specify a server!"
+msgid "You must specify a server!"
 msgstr "You must specify a server!"
 
 # TRANSLATION
@@ -1612,7 +1612,7 @@ msgstr "Date"
 # TRANSLATION
 # LABEL/DBCONNECTIONS_MSGR
 #: LABEL/DBCONNECTIONS_MSGR
-msgid "[LABEL/DBCONNECTIONS_MSGR] Server Response"
+msgid "Server Response"
 msgstr "Server Response"
 
 # TRANSLATION
@@ -1792,7 +1792,7 @@ msgstr "The response has already been sent."
 # TRANSLATION
 # LABEL/ID_ACCEPT
 #: LABEL/ID_ACCEPT
-msgid "[LABEL/ID_ACCEPT] Accept"
+msgid "Accept"
 msgstr "Accept"
 
 # TRANSLATION
@@ -1828,7 +1828,7 @@ msgstr "Action"
 # TRANSLATION
 # LABEL/ID_ACTIONS
 #: LABEL/ID_ACTIONS
-msgid "[LABEL/ID_ACTIONS] Actions"
+msgid "Actions"
 msgstr "Actions"
 
 # TRANSLATION
@@ -1954,7 +1954,7 @@ msgstr "The actor was assigned to task <b>\"{tas_title}\"</b> successfully!"
 # TRANSLATION
 # LABEL/ID_ADD
 #: LABEL/ID_ADD
-msgid "[LABEL/ID_ADD] Add"
+msgid "Add"
 msgstr "Add"
 
 # TRANSLATION
@@ -2056,7 +2056,7 @@ msgstr "Add Search Filter Criteria"
 # TRANSLATION
 # LABEL/ID_ADD_SUB_PROCESS
 #: LABEL/ID_ADD_SUB_PROCESS
-msgid "[LABEL/ID_ADD_SUB_PROCESS] Add Sub-Process"
+msgid "Add Sub-Process"
 msgstr "Add Sub-Process"
 
 # TRANSLATION
@@ -2092,7 +2092,7 @@ msgstr "Add Vertical Line"
 # TRANSLATION
 # LABEL/ID_ADHOC_ASSIGNMENT
 #: LABEL/ID_ADHOC_ASSIGNMENT
-msgid "[LABEL/ID_ADHOC_ASSIGNMENT] Ad Hoc Assignment"
+msgid "Ad Hoc Assignment"
 msgstr "Ad Hoc Assignment"
 
 # TRANSLATION
@@ -2152,7 +2152,7 @@ msgstr "Admin Username"
 # TRANSLATION
 # LABEL/ID_ADVANCEDSEARCH
 #: LABEL/ID_ADVANCEDSEARCH
-msgid "[LABEL/ID_ADVANCEDSEARCH] Advanced Search"
+msgid "Advanced Search"
 msgstr "Advanced Search"
 
 # TRANSLATION
@@ -2764,7 +2764,7 @@ msgstr "Authentication Source Information"
 # TRANSLATION
 # LABEL/ID_AUTHENTICATION_SOURCE_INF_TITLE
 #: LABEL/ID_AUTHENTICATION_SOURCE_INF_TITLE
-msgid "[LABEL/ID_AUTHENTICATION_SOURCE_INF_TITLE] Authentication Source Information"
+msgid "Authentication Source Information"
 msgstr "Authentication Source Information"
 
 # TRANSLATION
@@ -2980,7 +2980,7 @@ msgstr "Blank Dynaform"
 # TRANSLATION
 # LABEL/ID_BLOCK
 #: LABEL/ID_BLOCK
-msgid "[LABEL/ID_BLOCK] Block"
+msgid "Block"
 msgstr "Block"
 
 # TRANSLATION
@@ -3122,7 +3122,7 @@ msgstr "By Role"
 # TRANSLATION
 # LABEL/ID_CACHE_BTN_BUILD
 #: LABEL/ID_CACHE_BTN_BUILD
-msgid "[LABEL/ID_CACHE_BTN_BUILD] Build Cache"
+msgid "Build Cache"
 msgstr "Build Cache"
 
 # TRANSLATION
@@ -3236,7 +3236,7 @@ msgstr "Host"
 # TRANSLATION
 # LABEL/ID_CACHE_LANGUAGE
 #: LABEL/ID_CACHE_LANGUAGE
-msgid "[LABEL/ID_CACHE_LANGUAGE] Language"
+msgid "Language"
 msgstr "Language"
 
 # TRANSLATION
@@ -3338,13 +3338,13 @@ msgstr "Your calendar has been updated successfully"
 # TRANSLATION
 # LABEL/ID_CANCEL
 #: LABEL/ID_CANCEL
-msgid "[LABEL/ID_CANCEL] Cancel"
+msgid "Cancel"
 msgstr "Cancel"
 
 # TRANSLATION
 # LABEL/ID_CANCELLED
 #: LABEL/ID_CANCELLED
-msgid "[LABEL/ID_CANCELLED] Canceled"
+msgid "Canceled"
 msgstr "Canceled"
 
 # TRANSLATION
@@ -3530,7 +3530,7 @@ msgstr "HOME"
 # TRANSLATION
 # LABEL/ID_CASES1
 #: LABEL/ID_CASES1
-msgid "[LABEL/ID_CASES1] Cases"
+msgid "Cases"
 msgstr "Cases"
 
 # TRANSLATION
@@ -3542,7 +3542,7 @@ msgstr "All Cases were deleted successfully."
 # TRANSLATION
 # LABEL/ID_CASESLIST_APP_CURRENT_USER
 #: LABEL/ID_CASESLIST_APP_CURRENT_USER
-msgid "[LABEL/ID_CASESLIST_APP_CURRENT_USER] Current User"
+msgid "Current User"
 msgstr "Current User"
 
 # TRANSLATION
@@ -3584,7 +3584,7 @@ msgstr "Status"
 # TRANSLATION
 # LABEL/ID_CASESLIST_APP_TAS_TITLE
 #: LABEL/ID_CASESLIST_APP_TAS_TITLE
-msgid "[LABEL/ID_CASESLIST_APP_TAS_TITLE] Task"
+msgid "Task"
 msgstr "Task"
 
 # TRANSLATION
@@ -3596,7 +3596,7 @@ msgstr "Thread Index"
 # TRANSLATION
 # LABEL/ID_CASESLIST_APP_TITLE
 #: LABEL/ID_CASESLIST_APP_TITLE
-msgid "[LABEL/ID_CASESLIST_APP_TITLE] Case"
+msgid "Case"
 msgstr "Case"
 
 # TRANSLATION
@@ -3734,7 +3734,7 @@ msgstr "Process Supervisor"
 # TRANSLATION
 # LABEL/ID_CASES_MENU_FOLDERS
 #: LABEL/ID_CASES_MENU_FOLDERS
-msgid "[LABEL/ID_CASES_MENU_FOLDERS] Cases"
+msgid "Cases"
 msgstr "Cases"
 
 # TRANSLATION
@@ -3806,7 +3806,7 @@ msgstr "You can't start a case because you don't have a starting task assigned"
 # TRANSLATION
 # LABEL/ID_CASES_NUM
 #: LABEL/ID_CASES_NUM
-msgid "[LABEL/ID_CASES_NUM] # Cases"
+msgid "# Cases"
 msgstr "# Cases"
 
 # TRANSLATION
@@ -3830,13 +3830,13 @@ msgstr "Start Pages"
 # TRANSLATION
 # LABEL/ID_CASES_STATUS_CANCELLED
 #: LABEL/ID_CASES_STATUS_CANCELLED
-msgid "[LABEL/ID_CASES_STATUS_CANCELLED] Canceled"
+msgid "Canceled"
 msgstr "Canceled"
 
 # TRANSLATION
 # LABEL/ID_CASES_STATUS_COMPLETED
 #: LABEL/ID_CASES_STATUS_COMPLETED
-msgid "[LABEL/ID_CASES_STATUS_COMPLETED] Completed"
+msgid "Completed"
 msgstr "Completed"
 
 # TRANSLATION
@@ -3992,7 +3992,7 @@ msgstr "Case Field"
 # TRANSLATION
 # LABEL/ID_CASE_HISTORY
 #: LABEL/ID_CASE_HISTORY
-msgid "[LABEL/ID_CASE_HISTORY] Case History"
+msgid "Case History"
 msgstr "Case History"
 
 # TRANSLATION
@@ -4022,7 +4022,7 @@ msgstr "The case is currently opened by another user"
 # TRANSLATION
 # LABEL/ID_CASE_LABELS
 #: LABEL/ID_CASE_LABELS
-msgid "[LABEL/ID_CASE_LABELS] Case Labels"
+msgid "Case Labels"
 msgstr "Case Labels"
 
 # TRANSLATION
@@ -4424,7 +4424,7 @@ msgstr "Check again"
 # TRANSLATION
 # LABEL/ID_CHECK_ALL
 #: LABEL/ID_CHECK_ALL
-msgid "[LABEL/ID_CHECK_ALL] Check All"
+msgid "Check All"
 msgstr "Check All"
 
 # TRANSLATION
@@ -4592,7 +4592,7 @@ msgstr "Close Editor"
 # TRANSLATION
 # LABEL/ID_CODE
 #: LABEL/ID_CODE
-msgid "[LABEL/ID_CODE] Code"
+msgid "Code"
 msgstr "Code"
 
 # TRANSLATION
@@ -4640,7 +4640,7 @@ msgstr "Comments"
 # TRANSLATION
 # LABEL/ID_COMPLETED
 #: LABEL/ID_COMPLETED
-msgid "[LABEL/ID_COMPLETED] Completed"
+msgid "Completed"
 msgstr "Completed"
 
 # TRANSLATION
@@ -4724,7 +4724,7 @@ msgstr "Confirmation"
 # TRANSLATION
 # LABEL/ID_CONFIRM_ADHOCUSER_CASE
 #: LABEL/ID_CONFIRM_ADHOCUSER_CASE
-msgid "[LABEL/ID_CONFIRM_ADHOCUSER_CASE] Are you sure you want to do it?"
+msgid "Are you sure you want to do it?"
 msgstr "Are you sure you want to do it?"
 
 # TRANSLATION
@@ -4736,7 +4736,7 @@ msgstr "Do you want to delete the data in the row you just created?"
 # TRANSLATION
 # LABEL/ID_CONFIRM_CANCEL_CASE
 #: LABEL/ID_CONFIRM_CANCEL_CASE
-msgid "[LABEL/ID_CONFIRM_CANCEL_CASE] Are you sure you want to cancel this case?"
+msgid "Are you sure you want to cancel this case?"
 msgstr "Are you sure you want to cancel this case?"
 
 # TRANSLATION
@@ -4754,7 +4754,7 @@ msgstr "Do you want to delete the selected calendar?"
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_CASE
 #: LABEL/ID_CONFIRM_DELETE_CASE
-msgid "[LABEL/ID_CONFIRM_DELETE_CASE] Are you sure you want to delete this case?"
+msgid "Are you sure you want to delete this case?"
 msgstr "Are you sure you want to delete this case?"
 
 # TRANSLATION
@@ -4814,7 +4814,7 @@ msgstr "Do you want to delete the selected Input Document?"
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_PLUGIN
 #: LABEL/ID_CONFIRM_DELETE_PLUGIN
-msgid "[LABEL/ID_CONFIRM_DELETE_PLUGIN] Are you sure that you want to remove this plugin?"
+msgid "Are you sure that you want to remove this plugin?"
 msgstr "Are you sure that you want to remove this plugin?"
 
 # TRANSLATION
@@ -4862,7 +4862,7 @@ msgstr "Confirm Password"
 # TRANSLATION
 # LABEL/ID_CONFIRM_REACTIVATE_CASE
 #: LABEL/ID_CONFIRM_REACTIVATE_CASE
-msgid "[LABEL/ID_CONFIRM_REACTIVATE_CASE] Are you sure you want to reactivate this case?"
+msgid "Are you sure you want to reactivate this case?"
 msgstr "Are you sure you want to reactivate this case?"
 
 # TRANSLATION
@@ -5066,7 +5066,7 @@ msgstr "Count Days by"
 # TRANSLATION
 # LABEL/ID_CREATE
 #: LABEL/ID_CREATE
-msgid "[LABEL/ID_CREATE] Create"
+msgid "Create"
 msgstr "Create"
 
 # TRANSLATION
@@ -5180,7 +5180,7 @@ msgstr "Create New Group"
 # TRANSLATION
 # LABEL/ID_CREATE_GROUP_TITLE
 #: LABEL/ID_CREATE_GROUP_TITLE
-msgid "[LABEL/ID_CREATE_GROUP_TITLE] Create New Group"
+msgid "Create New Group"
 msgstr "Create New Group"
 
 # TRANSLATION
@@ -5246,7 +5246,7 @@ msgstr "Create New Role"
 # TRANSLATION
 # LABEL/ID_CREATE_ROLE_TITLE
 #: LABEL/ID_CREATE_ROLE_TITLE
-msgid "[LABEL/ID_CREATE_ROLE_TITLE] Create New Role"
+msgid " Create New Role"
 msgstr "Create New Role"
 
 # TRANSLATION
@@ -5342,7 +5342,7 @@ msgstr "Cron status"
 # TRANSLATION
 # LABEL/ID_CRON_STATUS_ACTIVE
 #: LABEL/ID_CRON_STATUS_ACTIVE
-msgid "[LABEL/ID_CRON_STATUS_ACTIVE] Active"
+msgid "Active"
 msgstr "Active"
 
 # TRANSLATION
@@ -5438,7 +5438,7 @@ msgstr "Custom Trigger"
 # TRANSLATION
 # LABEL/ID_CUSTOM_TRIGGER_DESCRIPTION
 #: LABEL/ID_CUSTOM_TRIGGER_DESCRIPTION
-msgid "[LABEL/ID_CUSTOM_TRIGGER_DESCRIPTION] Custom Trigger"
+msgid "Custom Trigger"
 msgstr "Custom Trigger"
 
 # TRANSLATION
@@ -5600,7 +5600,7 @@ msgstr "Group or user efficiency in the current month."
 # TRANSLATION
 # LABEL/ID_DASH_HELP_IND_VALUE
 #: LABEL/ID_DASH_HELP_IND_VALUE
-msgid "[LABEL/ID_DASH_HELP_IND_VALUE] Indicator's value in the current month."
+msgid "Indicator's value in the current month."
 msgstr "Indicator's value in the current month."
 
 # TRANSLATION
@@ -5684,7 +5684,7 @@ msgstr "Date Created"
 # TRANSLATION
 # LABEL/ID_DATE_FORMAT
 #: LABEL/ID_DATE_FORMAT
-msgid "[LABEL/ID_DATE_FORMAT] Date Format"
+msgid "Date Format"
 msgstr "Date Format"
 
 # TRANSLATION
@@ -5792,7 +5792,7 @@ msgstr "D M j G:i:s T Y"
 # TRANSLATION
 # LABEL/ID_DATE_LABEL
 #: LABEL/ID_DATE_LABEL
-msgid "[LABEL/ID_DATE_LABEL] Date"
+msgid "Date"
 msgstr "Date"
 
 # TRANSLATION
@@ -5894,7 +5894,7 @@ msgstr "Connection Tested Successfully"
 # TRANSLATION
 # LABEL/ID_DBS_EDIT
 #: LABEL/ID_DBS_EDIT
-msgid "[LABEL/ID_DBS_EDIT] Edit the current Database Source"
+msgid "Edit the current Database Source"
 msgstr "Edit the current Database Source"
 
 # TRANSLATION
@@ -6014,7 +6014,7 @@ msgstr "Default Skin"
 # TRANSLATION
 # LABEL/ID_DEFINITION
 #: LABEL/ID_DEFINITION
-msgid "[LABEL/ID_DEFINITION] Definition"
+msgid "Definition"
 msgstr "Definition"
 
 # TRANSLATION
@@ -6242,7 +6242,7 @@ msgstr "Delete Language"
 # TRANSLATION
 # LABEL/ID_DELETE_LANGUAGE
 #: LABEL/ID_DELETE_LANGUAGE
-msgid "[LABEL/ID_DELETE_LANGUAGE] Remove"
+msgid "Remove"
 msgstr "Remove"
 
 # TRANSLATION
@@ -6374,7 +6374,7 @@ msgstr "Delete Skin"
 # TRANSLATION
 # LABEL/ID_DELETE_SUB_PROCESS
 #: LABEL/ID_DELETE_SUB_PROCESS
-msgid "[LABEL/ID_DELETE_SUB_PROCESS] Delete Sub-Process"
+msgid "Delete Sub-Process"
 msgstr "Delete Sub-Process"
 
 # TRANSLATION
@@ -6458,7 +6458,7 @@ msgstr "Delimited by"
 # TRANSLATION
 # LABEL/ID_DEL_INDEX
 #: LABEL/ID_DEL_INDEX
-msgid "[LABEL/ID_DEL_INDEX] Del Index"
+msgid "Del Index"
 msgstr "Del Index"
 
 # TRANSLATION
@@ -6476,13 +6476,13 @@ msgstr "Departments"
 # TRANSLATION
 # LABEL/ID_DEPARTMENT
 #: LABEL/ID_DEPARTMENT
-msgid "[LABEL/ID_DEPARTMENT] Department"
+msgid "Department"
 msgstr "Department"
 
 # TRANSLATION
 # LABEL/ID_DEPARTMENTS
 #: LABEL/ID_DEPARTMENTS
-msgid "[LABEL/ID_DEPARTMENTS] Departments"
+msgid "Departments"
 msgstr "Departments"
 
 # TRANSLATION
@@ -6494,7 +6494,7 @@ msgstr "Synchronize Departments"
 # TRANSLATION
 # LABEL/ID_DEPARTMENTS_USERS
 #: LABEL/ID_DEPARTMENTS_USERS
-msgid "[LABEL/ID_DEPARTMENTS_USERS] Departments"
+msgid "Departments"
 msgstr "Departments"
 
 # TRANSLATION
@@ -6662,7 +6662,7 @@ msgstr "Details"
 # TRANSLATION
 # LABEL/ID_DETAILS_WEBSERVICES
 #: LABEL/ID_DETAILS_WEBSERVICES
-msgid "[LABEL/ID_DETAILS_WEBSERVICES] Details"
+msgid "Details"
 msgstr "Details"
 
 # TRANSLATION
@@ -6674,7 +6674,7 @@ msgstr "Detail Case"
 # TRANSLATION
 # LABEL/ID_DE_ASSIGN
 #: LABEL/ID_DE_ASSIGN
-msgid "[LABEL/ID_DE_ASSIGN] Remove"
+msgid "Remove"
 msgstr "Remove"
 
 # TRANSLATION
@@ -6974,7 +6974,7 @@ msgstr "Down Trigger"
 # TRANSLATION
 # LABEL/ID_DRAFT
 #: LABEL/ID_DRAFT
-msgid "[LABEL/ID_DRAFT] Draft"
+msgid "Draft"
 msgstr "Draft"
 
 # TRANSLATION
@@ -6998,7 +6998,7 @@ msgstr "Drop file here..."
 # TRANSLATION
 # LABEL/ID_DUE_DATE
 #: LABEL/ID_DUE_DATE
-msgid "[LABEL/ID_DUE_DATE] Due Date"
+msgid "Due Date"
 msgstr "Due Date"
 
 # TRANSLATION
@@ -7010,7 +7010,7 @@ msgstr "Duplicate Case Scheduler name."
 # TRANSLATION
 # LABEL/ID_DUPLICATE_CATEGORY_NAME
 #: LABEL/ID_DUPLICATE_CATEGORY_NAME
-msgid "[LABEL/ID_DUPLICATE_CATEGORY_NAME] Duplicate category name."
+msgid "Duplicate category name."
 msgstr "Duplicate category name."
 
 # TRANSLATION
@@ -7052,7 +7052,7 @@ msgstr "DynaForm"
 # TRANSLATION
 # LABEL/ID_DYNAFORMS
 #: LABEL/ID_DYNAFORMS
-msgid "[LABEL/ID_DYNAFORMS] DynaForms"
+msgid "DynaForms"
 msgstr "DynaForms"
 
 # TRANSLATION
@@ -7166,7 +7166,7 @@ msgstr "Dynaform has been removed successfully"
 # TRANSLATION
 # LABEL/ID_DYNAFORM_SAVE_CHANGES
 #: LABEL/ID_DYNAFORM_SAVE_CHANGES
-msgid "[LABEL/ID_DYNAFORM_SAVE_CHANGES] Do you want to save changes?"
+msgid "Do you want to save changes?"
 msgstr "Do you want to save changes?"
 
 # TRANSLATION
@@ -7196,7 +7196,7 @@ msgstr "eastPanel"
 # TRANSLATION
 # LABEL/ID_EDIT
 #: LABEL/ID_EDIT
-msgid "[LABEL/ID_EDIT] Edit"
+msgid "Edit"
 msgstr "Edit"
 
 # TRANSLATION
@@ -7424,7 +7424,7 @@ msgstr "This email is assigned to more than one user. Please contact your admini
 # TRANSLATION
 # LABEL/ID_EMAIL_MORE_USER
 #: LABEL/ID_EMAIL_MORE_USER
-msgid "[LABEL/ID_EMAIL_MORE_USER] This email is assigned to more than one user. Please contact your administrator."
+msgid "This email is assigned to more than one user. Please contact your administrator."
 msgstr "This email is assigned to more than one user. Please contact your administrator."
 
 # TRANSLATION
@@ -7466,7 +7466,7 @@ msgstr "Delete data..."
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE
 #: LABEL/ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE
-msgid "[LABEL/ID_EMAIL_SERVER_DELETE_WARNING_MESSAGE] Are you sure you want to delete this Email Server? the components that were using it will now use the default email server."
+msgid "Are you sure you want to delete this Email Server? the components that were using it will now use the default email server."
 msgstr "Are you sure you want to delete this Email Server? the components that were using it will now use the default email server."
 
 # TRANSLATION
@@ -7580,7 +7580,7 @@ msgstr "Email Servers"
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_TITLE_TESTING
 #: LABEL/ID_EMAIL_SERVER_TITLE_TESTING
-msgid "[LABEL/ID_EMAIL_SERVER_TITLE_TESTING] Testing Email Server"
+msgid "Testing Email Server"
 msgstr "Testing Email Server"
 
 # TRANSLATION
@@ -7820,7 +7820,7 @@ msgstr "End Message Event (Message Event)"
 # TRANSLATION
 # LABEL/ID_END_OF_PROCESS
 #: LABEL/ID_END_OF_PROCESS
-msgid "[LABEL/ID_END_OF_PROCESS] End of process"
+msgid "End of process"
 msgstr "End of process"
 
 # TRANSLATION
@@ -7880,7 +7880,7 @@ msgstr "Environment"
 # TRANSLATION
 # LABEL/ID_ENVIRONMENT_SETTINGS
 #: LABEL/ID_ENVIRONMENT_SETTINGS
-msgid "[LABEL/ID_ENVIRONMENT_SETTINGS] Environment"
+msgid "Environment"
 msgstr "Environment"
 
 # TRANSLATION
@@ -8054,7 +8054,7 @@ msgstr "Error uploading the plugin"
 # TRANSLATION
 # LABEL/ID_ERROR_UPLOADING_PLUGIN_FILENAME
 #: LABEL/ID_ERROR_UPLOADING_PLUGIN_FILENAME
-msgid "[LABEL/ID_ERROR_UPLOADING_PLUGIN_FILENAME] There was an error uploading the file. The file size is probably greater than the upload_max_filesize parameter in php.ini. Please check this parameter and try again."
+msgid "There was an error uploading the file. The file size is probably greater than the upload_max_filesize parameter in php.ini. Please check this parameter and try again."
 msgstr "There was an error uploading the file. The file size is probably greater than the upload_max_filesize parameter in php.ini. Please check this parameter and try again."
 
 # TRANSLATION
@@ -8120,7 +8120,7 @@ msgstr "[Success] Evaluation result"
 # TRANSLATION
 # LABEL/ID_EVENTS
 #: LABEL/ID_EVENTS
-msgid "[LABEL/ID_EVENTS] Events"
+msgid "Events"
 msgstr "Events"
 
 # TRANSLATION
@@ -8372,7 +8372,7 @@ msgstr "Expires in"
 # TRANSLATION
 # LABEL/ID_EXPORT
 #: LABEL/ID_EXPORT
-msgid "[LABEL/ID_EXPORT] Export"
+msgid "Export"
 msgstr "Export"
 
 # TRANSLATION
@@ -8396,7 +8396,7 @@ msgstr "Export Language"
 # TRANSLATION
 # LABEL/ID_EXPORT_PROCESS
 #: LABEL/ID_EXPORT_PROCESS
-msgid "[LABEL/ID_EXPORT_PROCESS] Export Process"
+msgid "Export Process"
 msgstr "Export Process"
 
 # TRANSLATION
@@ -8450,7 +8450,7 @@ msgstr "The plugin related to the step <b>{plugin}</b> was removed or disabled. 
 # TRANSLATION
 # LABEL/ID_FAILED
 #: LABEL/ID_FAILED
-msgid "[LABEL/ID_FAILED] Failed"
+msgid "Failed"
 msgstr "Failed"
 
 # TRANSLATION
@@ -8498,13 +8498,13 @@ msgstr "Failed Validation in class"
 # TRANSLATION
 # LABEL/ID_FAILED_VALIDATION_IN_CLASS
 #: LABEL/ID_FAILED_VALIDATION_IN_CLASS
-msgid "[LABEL/ID_FAILED_VALIDATION_IN_CLASS] Failed Validation in class"
+msgid "Failed Validation in class"
 msgstr "Failed Validation in class"
 
 # TRANSLATION
 # LABEL/ID_FAILED_VALIDATION_IN_CLASS1
 #: LABEL/ID_FAILED_VALIDATION_IN_CLASS1
-msgid "[LABEL/ID_FAILED_VALIDATION_IN_CLASS1] Failed Validation in class {CLASS}."
+msgid "Failed Validation in class {CLASS}."
 msgstr "Failed Validation in class {CLASS}."
 
 # TRANSLATION
@@ -8690,7 +8690,7 @@ msgstr "yesno"
 # TRANSLATION
 # LABEL/ID_FIELD_FOREIGN_TABLE
 #: LABEL/ID_FIELD_FOREIGN_TABLE
-msgid "[LABEL/ID_FIELD_FOREIGN_TABLE] Field \"table\" is required"
+msgid "Field \"table\" is required"
 msgstr "Field \"table\" is required"
 
 # TRANSLATION
@@ -8912,7 +8912,7 @@ msgstr "Filter By"
 # TRANSLATION
 # LABEL/ID_FILTER_BY_DELEGATED_DATE
 #: LABEL/ID_FILTER_BY_DELEGATED_DATE
-msgid "[LABEL/ID_FILTER_BY_DELEGATED_DATE] Filter"
+msgid "Filter"
 msgstr "Filter"
 
 # TRANSLATION
@@ -8960,7 +8960,7 @@ msgstr "Finishing..."
 # TRANSLATION
 # LABEL/ID_FINISH_DATE
 #: LABEL/ID_FINISH_DATE
-msgid "[LABEL/ID_FINISH_DATE] Finish Date"
+msgid "Finish Date"
 msgstr "Finish Date"
 
 # TRANSLATION
@@ -9002,7 +9002,7 @@ msgstr "First Graph"
 # TRANSLATION
 # LABEL/ID_FIRST_NAME
 #: LABEL/ID_FIRST_NAME
-msgid "[LABEL/ID_FIRST_NAME] First Name"
+msgid "First Name"
 msgstr "First Name"
 
 # TRANSLATION
@@ -9134,7 +9134,7 @@ msgstr "Generate"
 # TRANSLATION
 # LABEL/ID_GENERATED_DOCUMENTS
 #: LABEL/ID_GENERATED_DOCUMENTS
-msgid "[LABEL/ID_GENERATED_DOCUMENTS] Generated Documents"
+msgid "Generated Documents"
 msgstr "Generated Documents"
 
 # TRANSLATION
@@ -9488,7 +9488,7 @@ msgstr "ProcessMaker Grid Wizard"
 # TRANSLATION
 # LABEL/ID_GROUP
 #: LABEL/ID_GROUP
-msgid "[LABEL/ID_GROUP] Group"
+msgid "Group"
 msgstr "Group"
 
 # TRANSLATION
@@ -9668,7 +9668,7 @@ msgstr "Align"
 # TRANSLATION
 # LABEL/ID_HEADER_FIELD_NAME
 #: LABEL/ID_HEADER_FIELD_NAME
-msgid "[LABEL/ID_HEADER_FIELD_NAME] Field Name"
+msgid "Field Name"
 msgstr "Field Name"
 
 # TRANSLATION
@@ -9686,7 +9686,7 @@ msgstr "Label"
 # TRANSLATION
 # LABEL/ID_HEADER_NUMBER
 #: LABEL/ID_HEADER_NUMBER
-msgid "[LABEL/ID_HEADER_NUMBER] #"
+msgid "#"
 msgstr "#"
 
 # TRANSLATION
@@ -9704,7 +9704,7 @@ msgstr "Heart Beat"
 # TRANSLATION
 # LABEL/ID_HEARTBEAT_DISPLAY
 #: LABEL/ID_HEARTBEAT_DISPLAY
-msgid "[LABEL/ID_HEARTBEAT_DISPLAY] Heart Beat"
+msgid "Heart Beat"
 msgstr "Heart Beat"
 
 # TRANSLATION
@@ -9782,7 +9782,7 @@ msgstr "My Message History"
 # TRANSLATION
 # LABEL/ID_HISTORY_MESSAGE_CASE
 #: LABEL/ID_HISTORY_MESSAGE_CASE
-msgid "[LABEL/ID_HISTORY_MESSAGE_CASE] Messages History"
+msgid "Messages History"
 msgstr "Messages History"
 
 # TRANSLATION
@@ -9830,7 +9830,7 @@ msgstr "Horizontal Line"
 # TRANSLATION
 # LABEL/ID_HOST
 #: LABEL/ID_HOST
-msgid "[LABEL/ID_HOST] Host"
+msgid "Host"
 msgstr "Host"
 
 # TRANSLATION
@@ -10124,7 +10124,7 @@ msgstr "in"
 # TRANSLATION
 # LABEL/ID_INACTIVE
 #: LABEL/ID_INACTIVE
-msgid "[LABEL/ID_INACTIVE] Inactive"
+msgid "Inactive"
 msgstr "Inactive"
 
 # TRANSLATION
@@ -10160,7 +10160,7 @@ msgstr "Your E-mail address is not valid."
 # TRANSLATION
 # LABEL/ID_INCORRECT_USERNAME_PASSWORD
 #: LABEL/ID_INCORRECT_USERNAME_PASSWORD
-msgid "[LABEL/ID_INCORRECT_USERNAME_PASSWORD] Incorrect username or password"
+msgid "Incorrect username or password"
 msgstr "Incorrect username or password"
 
 # TRANSLATION
@@ -10244,7 +10244,7 @@ msgstr "Info"
 # TRANSLATION
 # LABEL/ID_INFORMATION
 #: LABEL/ID_INFORMATION
-msgid "[LABEL/ID_INFORMATION] Information"
+msgid "Information"
 msgstr "Information"
 
 # TRANSLATION
@@ -10574,7 +10574,7 @@ msgstr "Intermediate Message Events (Task Notifications)"
 # TRANSLATION
 # LABEL/ID_INTERMEDIATE_MESSAGE_EVENTS
 #: LABEL/ID_INTERMEDIATE_MESSAGE_EVENTS
-msgid "[LABEL/ID_INTERMEDIATE_MESSAGE_EVENTS] Intermediate Message Events (Task Notifications)"
+msgid "Intermediate Message Events (Task Notifications)"
 msgstr "Intermediate Message Events (Task Notifications)"
 
 # TRANSLATION
@@ -10598,7 +10598,7 @@ msgstr "Intermediate Timer Event (Multiple Event)"
 # TRANSLATION
 # LABEL/ID_INTERMEDIATE_TIMER_EVENTS
 #: LABEL/ID_INTERMEDIATE_TIMER_EVENTS
-msgid "[LABEL/ID_INTERMEDIATE_TIMER_EVENTS] Intermediate Timer Event (Multiple Event)"
+msgid "Intermediate Timer Event (Multiple Event)"
 msgstr "Intermediate Timer Event (Multiple Event)"
 
 # TRANSLATION
@@ -10706,7 +10706,7 @@ msgstr "Invalid process name, please just use alphanumeric characters."
 # TRANSLATION
 # LABEL/ID_INVALID_PROCESS_NAME2
 #: LABEL/ID_INVALID_PROCESS_NAME2
-msgid "[LABEL/ID_INVALID_PROCESS_NAME2] Invalid process name, please just use alphanumeric characters."
+msgid "Invalid process name, please just use alphanumeric characters."
 msgstr "Invalid process name, please just use alphanumeric characters."
 
 # TRANSLATION
@@ -10898,7 +10898,7 @@ msgstr "It was identified in the workspace duplicated groups, please remove manu
 # TRANSLATION
 # LABEL/ID_IUD
 #: LABEL/ID_IUD
-msgid "[LABEL/ID_IUD] #"
+msgid "#"
 msgstr "#"
 
 # TRANSLATION
@@ -10934,13 +10934,13 @@ msgstr "Key Performance Indicators"
 # TRANSLATION
 # LABEL/ID_LABEL
 #: LABEL/ID_LABEL
-msgid "[LABEL/ID_LABEL] Label"
+msgid "Label"
 msgstr "Label"
 
 # TRANSLATION
 # LABEL/ID_LANGUAGES
 #: LABEL/ID_LANGUAGES
-msgid "[LABEL/ID_LANGUAGES] Language"
+msgid "Language"
 msgstr "Language"
 
 # TRANSLATION
@@ -10982,13 +10982,13 @@ msgstr "Install / Update"
 # TRANSLATION
 # LABEL/ID_LAN_COUNTRY
 #: LABEL/ID_LAN_COUNTRY
-msgid "[LABEL/ID_LAN_COUNTRY] Country"
+msgid "Country"
 msgstr "Country"
 
 # TRANSLATION
 # LABEL/ID_LAN_FILE
 #: LABEL/ID_LAN_FILE
-msgid "[LABEL/ID_LAN_FILE] File"
+msgid "File"
 msgstr "File"
 
 # TRANSLATION
@@ -11000,7 +11000,7 @@ msgstr "Select a translation file"
 # TRANSLATION
 # LABEL/ID_LAN_LANGUAGE
 #: LABEL/ID_LAN_LANGUAGE
-msgid "[LABEL/ID_LAN_LANGUAGE] Language"
+msgid "Language"
 msgstr "Language"
 
 # TRANSLATION
@@ -11090,7 +11090,7 @@ msgstr "Last Modified"
 # TRANSLATION
 # LABEL/ID_LAST_NAME
 #: LABEL/ID_LAST_NAME
-msgid "[LABEL/ID_LAST_NAME] Last Name"
+msgid "Last Name"
 msgstr "Last Name"
 
 # TRANSLATION
@@ -11288,7 +11288,7 @@ msgstr "Load More"
 # TRANSLATION
 # LABEL/ID_LOCALE
 #: LABEL/ID_LOCALE
-msgid "[LABEL/ID_LOCALE] Locale"
+msgid "Locale"
 msgstr "Locale"
 
 # TRANSLATION
@@ -11426,13 +11426,13 @@ msgstr "Please select a file to upload"
 # TRANSLATION
 # LABEL/ID_MAFE_0095a9fa74d1713e43e370a7d7846224
 #: LABEL/ID_MAFE_0095a9fa74d1713e43e370a7d7846224
-msgid "[LABEL/ID_MAFE_0095a9fa74d1713e43e370a7d7846224] Export"
+msgid "Export"
 msgstr "Export"
 
 # TRANSLATION
 # LABEL/ID_MAFE_00d23a76e43b46dae9ec7aa9dcbebb32
 #: LABEL/ID_MAFE_00d23a76e43b46dae9ec7aa9dcbebb32
-msgid "[LABEL/ID_MAFE_00d23a76e43b46dae9ec7aa9dcbebb32] Enabled"
+msgid "Enabled"
 msgstr "Enabled"
 
 # TRANSLATION
@@ -11444,7 +11444,7 @@ msgstr "Invalid flow between elements. Please delete the flow and reconnect the 
 # TRANSLATION
 # LABEL/ID_MAFE_014bd6f385cb5aec29ec9714b8106ccb
 #: LABEL/ID_MAFE_014bd6f385cb5aec29ec9714b8106ccb
-msgid "[LABEL/ID_MAFE_014bd6f385cb5aec29ec9714b8106ccb] Search ..."
+msgid "Search ..."
 msgstr "Search ..."
 
 # TRANSLATION
@@ -11510,13 +11510,13 @@ msgstr "Next Month"
 # TRANSLATION
 # LABEL/ID_MAFE_03727ac48595a24daed975559c944a44
 #: LABEL/ID_MAFE_03727ac48595a24daed975559c944a44
-msgid "[LABEL/ID_MAFE_03727ac48595a24daed975559c944a44] Day"
+msgid "Day"
 msgstr "Day"
 
 # TRANSLATION
 # LABEL/ID_MAFE_03937134cedab9078be39a77ee3a48a0
 #: LABEL/ID_MAFE_03937134cedab9078be39a77ee3a48a0
-msgid "[LABEL/ID_MAFE_03937134cedab9078be39a77ee3a48a0] Group"
+msgid "Group"
 msgstr "Group"
 
 # TRANSLATION
@@ -11582,7 +11582,7 @@ msgstr "User Task"
 # TRANSLATION
 # LABEL/ID_MAFE_0557fa923dcee4d0f86b1409f5c2167f
 #: LABEL/ID_MAFE_0557fa923dcee4d0f86b1409f5c2167f
-msgid "[LABEL/ID_MAFE_0557fa923dcee4d0f86b1409f5c2167f] Back"
+msgid "Back"
 msgstr "Back"
 
 # TRANSLATION
@@ -11618,7 +11618,7 @@ msgstr "&#8592; Back"
 # TRANSLATION
 # LABEL/ID_MAFE_06502cb888fb850e36367519eb1fc54c
 #: LABEL/ID_MAFE_06502cb888fb850e36367519eb1fc54c
-msgid "[LABEL/ID_MAFE_06502cb888fb850e36367519eb1fc54c] Vertical line"
+msgid "Vertical line"
 msgstr "Vertical line"
 
 # TRANSLATION
@@ -11708,7 +11708,7 @@ msgstr "No records found"
 # TRANSLATION
 # LABEL/ID_MAFE_08898cf72a0c0bab1fd5a011cb430875
 #: LABEL/ID_MAFE_08898cf72a0c0bab1fd5a011cb430875
-msgid "[LABEL/ID_MAFE_08898cf72a0c0bab1fd5a011cb430875] Filename generated"
+msgid "Filename generated"
 msgstr "Filename generated"
 
 # TRANSLATION
@@ -11774,7 +11774,7 @@ msgstr "Allows date selection after this date<br>(in YYYY-MM-DD HH:MM:SS format)
 # TRANSLATION
 # LABEL/ID_MAFE_0b27918290ff5323bea1e3b78a9cf04e
 #: LABEL/ID_MAFE_0b27918290ff5323bea1e3b78a9cf04e
-msgid "[LABEL/ID_MAFE_0b27918290ff5323bea1e3b78a9cf04e] File"
+msgid "File"
 msgstr "File"
 
 # TRANSLATION
@@ -11810,7 +11810,7 @@ msgstr "Digital"
 # TRANSLATION
 # LABEL/ID_MAFE_0bf7c19f7eac3bfa5ad960a50ad602dc
 #: LABEL/ID_MAFE_0bf7c19f7eac3bfa5ad960a50ad602dc
-msgid "[LABEL/ID_MAFE_0bf7c19f7eac3bfa5ad960a50ad602dc] subtitle"
+msgid "subtitle"
 msgstr "subtitle"
 
 # TRANSLATION
@@ -11906,7 +11906,7 @@ msgstr "There are problems deleting the OutputDocument, please try again."
 # TRANSLATION
 # LABEL/ID_MAFE_1063e38cb53d94d386f21227fcd84717
 #: LABEL/ID_MAFE_1063e38cb53d94d386f21227fcd84717
-msgid "[LABEL/ID_MAFE_1063e38cb53d94d386f21227fcd84717] Remove"
+msgid "Remove"
 msgstr "Remove"
 
 # TRANSLATION
@@ -11990,13 +11990,13 @@ msgstr "Both"
 # TRANSLATION
 # LABEL/ID_MAFE_13348442cc6a27032d2b4aa28b75a5d3
 #: LABEL/ID_MAFE_13348442cc6a27032d2b4aa28b75a5d3
-msgid "[LABEL/ID_MAFE_13348442cc6a27032d2b4aa28b75a5d3] Search"
+msgid "Search"
 msgstr "Search"
 
 # TRANSLATION
 # LABEL/ID_MAFE_1351017ac6423911223bc19a8cb7c653
 #: LABEL/ID_MAFE_1351017ac6423911223bc19a8cb7c653
-msgid "[LABEL/ID_MAFE_1351017ac6423911223bc19a8cb7c653] Filename"
+msgid "Filename"
 msgstr "Filename"
 
 # TRANSLATION
@@ -12146,7 +12146,7 @@ msgstr "There are problems updating the trigger, please try again."
 # TRANSLATION
 # LABEL/ID_MAFE_185b7133db22230701a857c059360cc2
 #: LABEL/ID_MAFE_185b7133db22230701a857c059360cc2
-msgid "[LABEL/ID_MAFE_185b7133db22230701a857c059360cc2] Assign"
+msgid "Assign"
 msgstr "Assign"
 
 # TRANSLATION
@@ -12266,7 +12266,7 @@ msgstr "Portrait"
 # TRANSLATION
 # LABEL/ID_MAFE_1cb251ec0d568de6a929b520c4aed8d1
 #: LABEL/ID_MAFE_1cb251ec0d568de6a929b520c4aed8d1
-msgid "[LABEL/ID_MAFE_1cb251ec0d568de6a929b520c4aed8d1] text"
+msgid "text"
 msgstr "text"
 
 # TRANSLATION
@@ -12446,7 +12446,7 @@ msgstr "Float"
 # TRANSLATION
 # LABEL/ID_MAFE_22e74b4a2ae3e237300f7a79f6e6dbc4
 #: LABEL/ID_MAFE_22e74b4a2ae3e237300f7a79f6e6dbc4
-msgid "[LABEL/ID_MAFE_22e74b4a2ae3e237300f7a79f6e6dbc4] Completed Task"
+msgid "Completed Task"
 msgstr "Completed Task"
 
 # TRANSLATION
@@ -12494,7 +12494,7 @@ msgstr "The value provided for the Results limit property of the field \""
 # TRANSLATION
 # LABEL/ID_MAFE_23faca394186e73f3446b5ff25802885
 #: LABEL/ID_MAFE_23faca394186e73f3446b5ff25802885
-msgid "[LABEL/ID_MAFE_23faca394186e73f3446b5ff25802885] Process Files Manager"
+msgid "Process Files Manager"
 msgstr "Process Files Manager"
 
 # TRANSLATION
@@ -12680,7 +12680,7 @@ msgstr "B5"
 # TRANSLATION
 # LABEL/ID_MAFE_2a304a1348456ccd2234cd71a81bd338
 #: LABEL/ID_MAFE_2a304a1348456ccd2234cd71a81bd338
-msgid "[LABEL/ID_MAFE_2a304a1348456ccd2234cd71a81bd338] link"
+msgid "link"
 msgstr "link"
 
 # TRANSLATION
@@ -12776,7 +12776,7 @@ msgstr "Timer Event saved correctly"
 # TRANSLATION
 # LABEL/ID_MAFE_2da6df2dfb6fe5c9542ee11118dce1fa
 #: LABEL/ID_MAFE_2da6df2dfb6fe5c9542ee11118dce1fa
-msgid "[LABEL/ID_MAFE_2da6df2dfb6fe5c9542ee11118dce1fa] Do you want to delete this file?"
+msgid "Do you want to delete this file?"
 msgstr "Do you want to delete this file?"
 
 # TRANSLATION
@@ -12854,7 +12854,7 @@ msgstr "Triggers after and before a step are not supported when working offline"
 # TRANSLATION
 # LABEL/ID_MAFE_30c40215e6d00c574ca23451003db9b9
 #: LABEL/ID_MAFE_30c40215e6d00c574ca23451003db9b9
-msgid "[LABEL/ID_MAFE_30c40215e6d00c574ca23451003db9b9] checkgroup"
+msgid "checkgroup"
 msgstr "checkgroup"
 
 # TRANSLATION
@@ -12902,7 +12902,7 @@ msgstr "Calendar Days"
 # TRANSLATION
 # LABEL/ID_MAFE_32e5bfca7823c2dc9de9df3dfbb5a7d4
 #: LABEL/ID_MAFE_32e5bfca7823c2dc9de9df3dfbb5a7d4
-msgid "[LABEL/ID_MAFE_32e5bfca7823c2dc9de9df3dfbb5a7d4] Process Information"
+msgid "Process Information"
 msgstr "Process Information"
 
 # TRANSLATION
@@ -13076,7 +13076,7 @@ msgstr "Create Predefined Trigger"
 # TRANSLATION
 # LABEL/ID_MAFE_3a3678eaaa8b058dc89a4c3aba8ff52e
 #: LABEL/ID_MAFE_3a3678eaaa8b058dc89a4c3aba8ff52e
-msgid "[LABEL/ID_MAFE_3a3678eaaa8b058dc89a4c3aba8ff52e] Edit Database Connection"
+msgid "Edit Database Connection"
 msgstr "Edit Database Connection"
 
 # TRANSLATION
@@ -13088,13 +13088,13 @@ msgstr "Supported Controls: checkgroup."
 # TRANSLATION
 # LABEL/ID_MAFE_3adbdb3ac060038aa0e6e6c138ef9873
 #: LABEL/ID_MAFE_3adbdb3ac060038aa0e6e6c138ef9873
-msgid "[LABEL/ID_MAFE_3adbdb3ac060038aa0e6e6c138ef9873] Category"
+msgid "Category"
 msgstr "Category"
 
 # TRANSLATION
 # LABEL/ID_MAFE_3afd78b28798273ac67a7b9f22619d98
 #: LABEL/ID_MAFE_3afd78b28798273ac67a7b9f22619d98
-msgid "[LABEL/ID_MAFE_3afd78b28798273ac67a7b9f22619d98] DB Connection"
+msgid "DB Connection"
 msgstr "DB Connection"
 
 # TRANSLATION
@@ -13136,7 +13136,7 @@ msgstr "Data Type"
 # TRANSLATION
 # LABEL/ID_MAFE_3cab03c00dbd11bc3569afa0748013f0
 #: LABEL/ID_MAFE_3cab03c00dbd11bc3569afa0748013f0
-msgid "[LABEL/ID_MAFE_3cab03c00dbd11bc3569afa0748013f0] Inactive"
+msgid "Inactive"
 msgstr "Inactive"
 
 # TRANSLATION
@@ -13220,7 +13220,7 @@ msgstr "responsive"
 # TRANSLATION
 # LABEL/ID_MAFE_3e8f92eb64623f0ecd16d2efcd0acd7e
 #: LABEL/ID_MAFE_3e8f92eb64623f0ecd16d2efcd0acd7e
-msgid "[LABEL/ID_MAFE_3e8f92eb64623f0ecd16d2efcd0acd7e] Report Tables"
+msgid "Report Tables"
 msgstr "Report Tables"
 
 # TRANSLATION
@@ -13352,7 +13352,7 @@ msgstr "http://eonasdan.github.io/bootstrap-datetimepicker/</a>"
 # TRANSLATION
 # LABEL/ID_MAFE_42184184a95464c63c790acc3a69e564
 #: LABEL/ID_MAFE_42184184a95464c63c790acc3a69e564
-msgid "[LABEL/ID_MAFE_42184184a95464c63c790acc3a69e564] Routing History"
+msgid "Routing History"
 msgstr "Routing History"
 
 # TRANSLATION
@@ -13412,13 +13412,13 @@ msgstr "An error occurred while retrieving the access token"
 # TRANSLATION
 # LABEL/ID_MAFE_4466476a945cb091a8f4252b96f140d7
 #: LABEL/ID_MAFE_4466476a945cb091a8f4252b96f140d7
-msgid "[LABEL/ID_MAFE_4466476a945cb091a8f4252b96f140d7] suggest"
+msgid "suggest"
 msgstr "suggest"
 
 # TRANSLATION
 # LABEL/ID_MAFE_44749712dbec183e983dcd78a7736c41
 #: LABEL/ID_MAFE_44749712dbec183e983dcd78a7736c41
-msgid "[LABEL/ID_MAFE_44749712dbec183e983dcd78a7736c41] Date"
+msgid "Date"
 msgstr "Date"
 
 # TRANSLATION
@@ -13544,7 +13544,7 @@ msgstr "Allow users to change the task duration in runtime"
 # TRANSLATION
 # LABEL/ID_MAFE_4994a8ffeba4ac3140beb89e8d41f174
 #: LABEL/ID_MAFE_4994a8ffeba4ac3140beb89e8d41f174
-msgid "[LABEL/ID_MAFE_4994a8ffeba4ac3140beb89e8d41f174] Language"
+msgid "Language"
 msgstr "Language"
 
 # TRANSLATION
@@ -13574,7 +13574,7 @@ msgstr "Business Rule Task"
 # TRANSLATION
 # LABEL/ID_MAFE_49ee3087348e8d44e1feda1917443987
 #: LABEL/ID_MAFE_49ee3087348e8d44e1feda1917443987
-msgid "[LABEL/ID_MAFE_49ee3087348e8d44e1feda1917443987] Name"
+msgid "Name"
 msgstr "Name"
 
 # TRANSLATION
@@ -13664,7 +13664,7 @@ msgstr "Method"
 # TRANSLATION
 # LABEL/ID_MAFE_4c524bf462d270df1443cd80bf70e5de
 #: LABEL/ID_MAFE_4c524bf462d270df1443cd80bf70e5de
-msgid "[LABEL/ID_MAFE_4c524bf462d270df1443cd80bf70e5de] Input Document"
+msgid "Input Document"
 msgstr "Input Document"
 
 # TRANSLATION
@@ -13688,7 +13688,7 @@ msgstr "Start date"
 # TRANSLATION
 # LABEL/ID_MAFE_4d3d769b812b6faa6b76e1a8abaece2d
 #: LABEL/ID_MAFE_4d3d769b812b6faa6b76e1a8abaece2d
-msgid "[LABEL/ID_MAFE_4d3d769b812b6faa6b76e1a8abaece2d] Active"
+msgid "Active"
 msgstr "Active"
 
 # TRANSLATION
@@ -13724,7 +13724,7 @@ msgstr "<li>Parent: Inherit the mode from parent.</li>"
 # TRANSLATION
 # LABEL/ID_MAFE_50913568f681474c32d3f1b4a9fafdf1
 #: LABEL/ID_MAFE_50913568f681474c32d3f1b4a9fafdf1
-msgid "[LABEL/ID_MAFE_50913568f681474c32d3f1b4a9fafdf1] Case Tracker"
+msgid "Case Tracker"
 msgstr "Case Tracker"
 
 # TRANSLATION
@@ -13748,19 +13748,19 @@ msgstr "textbox"
 # TRANSLATION
 # LABEL/ID_MAFE_5174d1309f275ba6f275db3af9eb3e18
 #: LABEL/ID_MAFE_5174d1309f275ba6f275db3af9eb3e18
-msgid "[LABEL/ID_MAFE_5174d1309f275ba6f275db3af9eb3e18] Grid"
+msgid "Grid"
 msgstr "Grid"
 
 # TRANSLATION
 # LABEL/ID_MAFE_5199decbb00b9a606e30f3ddfc951f3f
 #: LABEL/ID_MAFE_5199decbb00b9a606e30f3ddfc951f3f
-msgid "[LABEL/ID_MAFE_5199decbb00b9a606e30f3ddfc951f3f] Database Connections"
+msgid "Database Connections"
 msgstr "Database Connections"
 
 # TRANSLATION
 # LABEL/ID_MAFE_520d0db389f362bf79ef56ca0af3dcab
 #: LABEL/ID_MAFE_520d0db389f362bf79ef56ca0af3dcab
-msgid "[LABEL/ID_MAFE_520d0db389f362bf79ef56ca0af3dcab] Format"
+msgid "Format"
 msgstr "Format"
 
 # TRANSLATION
@@ -13832,13 +13832,13 @@ msgstr "Grid: drag & drop controls.<br>Supports: textbox, textarea, dropdown, ch
 # TRANSLATION
 # LABEL/ID_MAFE_5493fda247f138a0b3fc0d493b2906e5
 #: LABEL/ID_MAFE_5493fda247f138a0b3fc0d493b2906e5
-msgid "[LABEL/ID_MAFE_5493fda247f138a0b3fc0d493b2906e5] Web Entry"
+msgid "Web Entry"
 msgstr "Web Entry"
 
 # TRANSLATION
 # LABEL/ID_MAFE_54ca84a794888fe8d92834787dfa935a
 #: LABEL/ID_MAFE_54ca84a794888fe8d92834787dfa935a
-msgid "[LABEL/ID_MAFE_54ca84a794888fe8d92834787dfa935a] columns"
+msgid "columns"
 msgstr "columns"
 
 # TRANSLATION
@@ -13874,7 +13874,7 @@ msgstr "A0Oversize"
 # TRANSLATION
 # LABEL/ID_MAFE_56a1bf7a363021c1d31dd8338428cc03
 #: LABEL/ID_MAFE_56a1bf7a363021c1d31dd8338428cc03
-msgid "[LABEL/ID_MAFE_56a1bf7a363021c1d31dd8338428cc03] Custom Trigger"
+msgid "Custom Trigger"
 msgstr "Custom Trigger"
 
 # TRANSLATION
@@ -13934,7 +13934,7 @@ msgstr "The email can be a string or a variable (@@myEmail), comma separated lis
 # TRANSLATION
 # LABEL/ID_MAFE_585db2c92dc89eef837f07b5791c5536
 #: LABEL/ID_MAFE_585db2c92dc89eef837f07b5791c5536
-msgid "[LABEL/ID_MAFE_585db2c92dc89eef837f07b5791c5536] Edit"
+msgid "Edit"
 msgstr "Edit"
 
 # TRANSLATION
@@ -14096,13 +14096,13 @@ msgstr "Variable type"
 # TRANSLATION
 # LABEL/ID_MAFE_5da618e8e4b89c66fe86e32cdafde142
 #: LABEL/ID_MAFE_5da618e8e4b89c66fe86e32cdafde142
-msgid "[LABEL/ID_MAFE_5da618e8e4b89c66fe86e32cdafde142] From"
+msgid "From"
 msgstr "From"
 
 # TRANSLATION
 # LABEL/ID_MAFE_5dbf17e4c8ca8f1979b7b4b3abaffe32
 #: LABEL/ID_MAFE_5dbf17e4c8ca8f1979b7b4b3abaffe32
-msgid "[LABEL/ID_MAFE_5dbf17e4c8ca8f1979b7b4b3abaffe32] Edit process"
+msgid "Edit process"
 msgstr "Edit process"
 
 # TRANSLATION
@@ -14132,7 +14132,7 @@ msgstr "array of numbers from 0-6"
 # TRANSLATION
 # LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7
 #: LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7
-msgid "[LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7] Check All"
+msgid "Check All"
 msgstr "Check All"
 
 # TRANSLATION
@@ -14162,7 +14162,7 @@ msgstr "Are you sure you want to discard your changes?"
 # TRANSLATION
 # LABEL/ID_MAFE_5fb63579fc981698f97d55bfecb213ea
 #: LABEL/ID_MAFE_5fb63579fc981698f97d55bfecb213ea
-msgid "[LABEL/ID_MAFE_5fb63579fc981698f97d55bfecb213ea] Copy"
+msgid "Copy"
 msgstr "Copy"
 
 # TRANSLATION
@@ -14198,7 +14198,7 @@ msgstr "title (mouseover)"
 # TRANSLATION
 # LABEL/ID_MAFE_60aaf44d4b562252c04db7f98497e9aa
 #: LABEL/ID_MAFE_60aaf44d4b562252c04db7f98497e9aa
-msgid "[LABEL/ID_MAFE_60aaf44d4b562252c04db7f98497e9aa] Port"
+msgid "Port"
 msgstr "Port"
 
 # TRANSLATION
@@ -14210,7 +14210,7 @@ msgstr "There are problems getting the Triggers list, please try again."
 # TRANSLATION
 # LABEL/ID_MAFE_611ebad77c16b1edc01a8e4962094900
 #: LABEL/ID_MAFE_611ebad77c16b1edc01a8e4962094900
-msgid "[LABEL/ID_MAFE_611ebad77c16b1edc01a8e4962094900] All Tasks"
+msgid "All Tasks"
 msgstr "All Tasks"
 
 # TRANSLATION
@@ -14282,7 +14282,7 @@ msgstr "Condition Trigger"
 # TRANSLATION
 # LABEL/ID_MAFE_6394d816bfb4220289a6f4b29cfb1834
 #: LABEL/ID_MAFE_6394d816bfb4220289a6f4b29cfb1834
-msgid "[LABEL/ID_MAFE_6394d816bfb4220289a6f4b29cfb1834] textarea"
+msgid "textarea"
 msgstr "textarea"
 
 # TRANSLATION
@@ -14306,7 +14306,7 @@ msgstr "By clicking on the generated file link"
 # TRANSLATION
 # LABEL/ID_MAFE_640eaa8954e206c0dc9a4da71619537d
 #: LABEL/ID_MAFE_640eaa8954e206c0dc9a4da71619537d
-msgid "[LABEL/ID_MAFE_640eaa8954e206c0dc9a4da71619537d] Case Labels"
+msgid "Case Labels"
 msgstr "Case Labels"
 
 # TRANSLATION
@@ -14396,7 +14396,7 @@ msgstr "Process Objects"
 # TRANSLATION
 # LABEL/ID_MAFE_662f707d5491e9bce8238a6c0be92190
 #: LABEL/ID_MAFE_662f707d5491e9bce8238a6c0be92190
-msgid "[LABEL/ID_MAFE_662f707d5491e9bce8238a6c0be92190] hidden"
+msgid "hidden"
 msgstr "hidden"
 
 # TRANSLATION
@@ -14414,7 +14414,7 @@ msgstr "Executive"
 # TRANSLATION
 # LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5
 #: LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5
-msgid "[LABEL/ID_MAFE_67dab01827a619fdbcb137f18a83feb5] End of process"
+msgid "End of process"
 msgstr "End of process"
 
 # TRANSLATION
@@ -14432,7 +14432,7 @@ msgstr "Insert a condition"
 # TRANSLATION
 # LABEL/ID_MAFE_686e697538050e4664636337cc3b834f
 #: LABEL/ID_MAFE_686e697538050e4664636337cc3b834f
-msgid "[LABEL/ID_MAFE_686e697538050e4664636337cc3b834f] Create"
+msgid "Create"
 msgstr "Create"
 
 # TRANSLATION
@@ -14504,7 +14504,7 @@ msgstr "New Trigger saved successfully"
 # TRANSLATION
 # LABEL/ID_MAFE_6a26f548831e6a8c26bfbbd9f6ec61e0
 #: LABEL/ID_MAFE_6a26f548831e6a8c26bfbbd9f6ec61e0
-msgid "[LABEL/ID_MAFE_6a26f548831e6a8c26bfbbd9f6ec61e0] Help"
+msgid "Help"
 msgstr "Help"
 
 # TRANSLATION
@@ -14516,7 +14516,7 @@ msgstr "Open Editor"
 # TRANSLATION
 # LABEL/ID_MAFE_6a7e73161603d87b26a8eac49dab0a9c
 #: LABEL/ID_MAFE_6a7e73161603d87b26a8eac49dab0a9c
-msgid "[LABEL/ID_MAFE_6a7e73161603d87b26a8eac49dab0a9c] Hours"
+msgid "Hours"
 msgstr "Hours"
 
 # TRANSLATION
@@ -14624,13 +14624,13 @@ msgstr "Monday"
 # TRANSLATION
 # LABEL/ID_MAFE_6ff9dd0d34f65181173c1e4bc39939de
 #: LABEL/ID_MAFE_6ff9dd0d34f65181173c1e4bc39939de
-msgid "[LABEL/ID_MAFE_6ff9dd0d34f65181173c1e4bc39939de] Selection"
+msgid "Selection"
 msgstr "Selection"
 
 # TRANSLATION
 # LABEL/ID_MAFE_6fff14365ddc2513ed26053e4b7161d0
 #: LABEL/ID_MAFE_6fff14365ddc2513ed26053e4b7161d0
-msgid "[LABEL/ID_MAFE_6fff14365ddc2513ed26053e4b7161d0] Assignment Rules"
+msgid "Assignment Rules"
 msgstr "Assignment Rules"
 
 # TRANSLATION
@@ -14648,13 +14648,13 @@ msgstr "show today button"
 # TRANSLATION
 # LABEL/ID_MAFE_7079c72c21415131774625ba1d64f4b0
 #: LABEL/ID_MAFE_7079c72c21415131774625ba1d64f4b0
-msgid "[LABEL/ID_MAFE_7079c72c21415131774625ba1d64f4b0] Anonymous"
+msgid "Anonymous"
 msgstr "Anonymous"
 
 # TRANSLATION
 # LABEL/ID_MAFE_70d9be9b139893aa6c69b5e77e614311
 #: LABEL/ID_MAFE_70d9be9b139893aa6c69b5e77e614311
-msgid "[LABEL/ID_MAFE_70d9be9b139893aa6c69b5e77e614311] Confirm"
+msgid "Confirm"
 msgstr "Confirm"
 
 # TRANSLATION
@@ -14666,7 +14666,7 @@ msgstr "Variable saved successfully"
 # TRANSLATION
 # LABEL/ID_MAFE_713aecbe2f5f5523ebccad6740dc1fc7
 #: LABEL/ID_MAFE_713aecbe2f5f5523ebccad6740dc1fc7
-msgid "[LABEL/ID_MAFE_713aecbe2f5f5523ebccad6740dc1fc7] DynaForm"
+msgid "DynaForm"
 msgstr "DynaForm"
 
 # TRANSLATION
@@ -14738,7 +14738,7 @@ msgstr "The process objects are used to add execution features to the current pr
 # TRANSLATION
 # LABEL/ID_MAFE_72d6d7a1885885bb55a565fd1070581a
 #: LABEL/ID_MAFE_72d6d7a1885885bb55a565fd1070581a
-msgid "[LABEL/ID_MAFE_72d6d7a1885885bb55a565fd1070581a] Import"
+msgid "Import"
 msgstr "Import"
 
 # TRANSLATION
@@ -14834,7 +14834,7 @@ msgstr "years"
 # TRANSLATION
 # LABEL/ID_MAFE_75f470a662481c10dda96968bbeb6d62
 #: LABEL/ID_MAFE_75f470a662481c10dda96968bbeb6d62
-msgid "[LABEL/ID_MAFE_75f470a662481c10dda96968bbeb6d62] Export Process"
+msgid "Export Process"
 msgstr "Export Process"
 
 # TRANSLATION
@@ -14912,7 +14912,7 @@ msgstr "Add Routing Rule"
 # TRANSLATION
 # LABEL/ID_MAFE_7917f0a4bc9e0d07acf8cad570e5f68f
 #: LABEL/ID_MAFE_7917f0a4bc9e0d07acf8cad570e5f68f
-msgid "[LABEL/ID_MAFE_7917f0a4bc9e0d07acf8cad570e5f68f] Dynaform Information"
+msgid "Dynaform Information"
 msgstr "Dynaform Information"
 
 # TRANSLATION
@@ -14978,25 +14978,25 @@ msgstr "Pool: Place each process in a separate pool."
 # TRANSLATION
 # LABEL/ID_MAFE_7b7a4cc675a7dec4f33f0554209f1be9
 #: LABEL/ID_MAFE_7b7a4cc675a7dec4f33f0554209f1be9
-msgid "[LABEL/ID_MAFE_7b7a4cc675a7dec4f33f0554209f1be9] Black Box Pool"
+msgid "Black Box Pool"
 msgstr "Black Box Pool"
 
 # TRANSLATION
 # LABEL/ID_MAFE_7bf7a32fd5dfdd1bdbd08a2360b6c72f
 #: LABEL/ID_MAFE_7bf7a32fd5dfdd1bdbd08a2360b6c72f
-msgid "[LABEL/ID_MAFE_7bf7a32fd5dfdd1bdbd08a2360b6c72f] Supervisors"
+msgid "Supervisors"
 msgstr "Supervisors"
 
 # TRANSLATION
 # LABEL/ID_MAFE_7bfa30721c5e726ff17e3f972237a82c
 #: LABEL/ID_MAFE_7bfa30721c5e726ff17e3f972237a82c
-msgid "[LABEL/ID_MAFE_7bfa30721c5e726ff17e3f972237a82c] Engine"
+msgid "Engine"
 msgstr "Engine"
 
 # TRANSLATION
 # LABEL/ID_MAFE_7bfcadb5535fe8aad5032762b7bfe159
 #: LABEL/ID_MAFE_7bfcadb5535fe8aad5032762b7bfe159
-msgid "[LABEL/ID_MAFE_7bfcadb5535fe8aad5032762b7bfe159] After"
+msgid "After"
 msgstr "After"
 
 # TRANSLATION
@@ -15050,7 +15050,7 @@ msgstr "Next Century"
 # TRANSLATION
 # LABEL/ID_MAFE_7dce122004969d56ae2e0245cb754d35
 #: LABEL/ID_MAFE_7dce122004969d56ae2e0245cb754d35
-msgid "[LABEL/ID_MAFE_7dce122004969d56ae2e0245cb754d35] Edit"
+msgid "Edit"
 msgstr "Edit"
 
 # TRANSLATION
@@ -15098,7 +15098,7 @@ msgstr "Insert a description"
 # TRANSLATION
 # LABEL/ID_MAFE_7fb55ed0b7a30342ba6da306428cae04
 #: LABEL/ID_MAFE_7fb55ed0b7a30342ba6da306428cae04
-msgid "[LABEL/ID_MAFE_7fb55ed0b7a30342ba6da306428cae04] First"
+msgid "First"
 msgstr "First"
 
 # TRANSLATION
@@ -15128,7 +15128,7 @@ msgstr "Insert a subject variable"
 # TRANSLATION
 # LABEL/ID_MAFE_801ab24683a4a8c433c6eb40c48bcd9d
 #: LABEL/ID_MAFE_801ab24683a4a8c433c6eb40c48bcd9d
-msgid "[LABEL/ID_MAFE_801ab24683a4a8c433c6eb40c48bcd9d] Download"
+msgid "Download"
 msgstr "Download"
 
 # TRANSLATION
@@ -15224,7 +15224,7 @@ msgstr "Enable versioning"
 # TRANSLATION
 # LABEL/ID_MAFE_825689fed4e8cd85dbc5beedf98feec0
 #: LABEL/ID_MAFE_825689fed4e8cd85dbc5beedf98feec0
-msgid "[LABEL/ID_MAFE_825689fed4e8cd85dbc5beedf98feec0] Database Name"
+msgid "Database Name"
 msgstr "Database Name"
 
 # TRANSLATION
@@ -15260,13 +15260,13 @@ msgstr "year"
 # TRANSLATION
 # LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8
 #: LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8
-msgid "[LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8] Export Process Objects"
+msgid "Export Process Objects"
 msgstr "Export Process Objects"
 
 # TRANSLATION
 # LABEL/ID_MAFE_84ff23e034dfdf2b03ed32a46c01b3a1
 #: LABEL/ID_MAFE_84ff23e034dfdf2b03ed32a46c01b3a1
-msgid "[LABEL/ID_MAFE_84ff23e034dfdf2b03ed32a46c01b3a1] Triggers"
+msgid "Triggers"
 msgstr "Triggers"
 
 # TRANSLATION
@@ -15302,7 +15302,7 @@ msgstr "SubProcess must have an outgoing sequence flow"
 # TRANSLATION
 # LABEL/ID_MAFE_86266ee937d97f812a8e57d22b62ee29
 #: LABEL/ID_MAFE_86266ee937d97f812a8e57d22b62ee29
-msgid "[LABEL/ID_MAFE_86266ee937d97f812a8e57d22b62ee29] reset"
+msgid "reset"
 msgstr "reset"
 
 # TRANSLATION
@@ -15344,7 +15344,7 @@ msgstr "January"
 # TRANSLATION
 # LABEL/ID_MAFE_86fd9a7abc9f357e7fa206b2d42ec5ba
 #: LABEL/ID_MAFE_86fd9a7abc9f357e7fa206b2d42ec5ba
-msgid "[LABEL/ID_MAFE_86fd9a7abc9f357e7fa206b2d42ec5ba] Destination Path"
+msgid "Destination Path"
 msgstr "Destination Path"
 
 # TRANSLATION
@@ -15410,7 +15410,7 @@ msgstr "hour"
 # TRANSLATION
 # LABEL/ID_MAFE_897356954c2cd3d41b221e3f24f99bba
 #: LABEL/ID_MAFE_897356954c2cd3d41b221e3f24f99bba
-msgid "[LABEL/ID_MAFE_897356954c2cd3d41b221e3f24f99bba] Key"
+msgid "Key"
 msgstr "Key"
 
 # TRANSLATION
@@ -15512,7 +15512,7 @@ msgstr "Script Task saved correctly"
 # TRANSLATION
 # LABEL/ID_MAFE_8bf8854bebe108183caeb845c7676ae4
 #: LABEL/ID_MAFE_8bf8854bebe108183caeb845c7676ae4
-msgid "[LABEL/ID_MAFE_8bf8854bebe108183caeb845c7676ae4] of"
+msgid "of"
 msgstr "of"
 
 # TRANSLATION
@@ -15542,7 +15542,7 @@ msgstr "Supported Controls: grid."
 # TRANSLATION
 # LABEL/ID_MAFE_8c7dd922ad47494fc02c388e12c00eac
 #: LABEL/ID_MAFE_8c7dd922ad47494fc02c388e12c00eac
-msgid "[LABEL/ID_MAFE_8c7dd922ad47494fc02c388e12c00eac] file"
+msgid "file"
 msgstr "file"
 
 # TRANSLATION
@@ -15632,7 +15632,7 @@ msgstr "Link to fill a form"
 # TRANSLATION
 # LABEL/ID_MAFE_8f9bfe9d1345237cb3b2b205864da075
 #: LABEL/ID_MAFE_8f9bfe9d1345237cb3b2b205864da075
-msgid "[LABEL/ID_MAFE_8f9bfe9d1345237cb3b2b205864da075] User"
+msgid "User"
 msgstr "User"
 
 # TRANSLATION
@@ -15650,13 +15650,13 @@ msgstr "Set a timeout"
 # TRANSLATION
 # LABEL/ID_MAFE_8ff922bbcd8ad41cdfc48d3c5163b2ab
 #: LABEL/ID_MAFE_8ff922bbcd8ad41cdfc48d3c5163b2ab
-msgid "[LABEL/ID_MAFE_8ff922bbcd8ad41cdfc48d3c5163b2ab] Calendar"
+msgid "Calendar"
 msgstr "Calendar"
 
 # TRANSLATION
 # LABEL/ID_MAFE_902b0d55fddef6f8d651fe1035b7d4bd
 #: LABEL/ID_MAFE_902b0d55fddef6f8d651fe1035b7d4bd
-msgid "[LABEL/ID_MAFE_902b0d55fddef6f8d651fe1035b7d4bd] Error"
+msgid "Error"
 msgstr "Error"
 
 # TRANSLATION
@@ -15674,7 +15674,7 @@ msgstr "Custom"
 # TRANSLATION
 # LABEL/ID_MAFE_9060587edeb01a63e3d3edc959678d1e
 #: LABEL/ID_MAFE_9060587edeb01a63e3d3edc959678d1e
-msgid "[LABEL/ID_MAFE_9060587edeb01a63e3d3edc959678d1e] Before"
+msgid "Before"
 msgstr "Before"
 
 # TRANSLATION
@@ -15908,7 +15908,7 @@ msgstr "Html Editor"
 # TRANSLATION
 # LABEL/ID_MAFE_9639e32cab248434a17ab32237cb3b71
 #: LABEL/ID_MAFE_9639e32cab248434a17ab32237cb3b71
-msgid "[LABEL/ID_MAFE_9639e32cab248434a17ab32237cb3b71] Apply"
+msgid "Apply"
 msgstr "Apply"
 
 # TRANSLATION
@@ -16052,7 +16052,7 @@ msgstr "<tr><td></td><td>do</td><td>0th 1st ... 5th 6th</td></tr><tr><td></td><t
 # TRANSLATION
 # LABEL/ID_MAFE_9b377ab6489b9495395f3fc4f4a03fb4
 #: LABEL/ID_MAFE_9b377ab6489b9495395f3fc4f4a03fb4
-msgid "[LABEL/ID_MAFE_9b377ab6489b9495395f3fc4f4a03fb4] Initial Dynaform"
+msgid "Initial Dynaform"
 msgstr "Initial Dynaform"
 
 # TRANSLATION
@@ -16094,7 +16094,7 @@ msgstr "Working..."
 # TRANSLATION
 # LABEL/ID_MAFE_9cd2a4862f826886105d87195ee6998c
 #: LABEL/ID_MAFE_9cd2a4862f826886105d87195ee6998c
-msgid "[LABEL/ID_MAFE_9cd2a4862f826886105d87195ee6998c] Input Documents"
+msgid "Input Documents"
 msgstr "Input Documents"
 
 # TRANSLATION
@@ -16118,7 +16118,7 @@ msgstr "Conditional"
 # TRANSLATION
 # LABEL/ID_MAFE_9dcfba52eee7cb299acdeb584bfc76bd
 #: LABEL/ID_MAFE_9dcfba52eee7cb299acdeb584bfc76bd
-msgid "[LABEL/ID_MAFE_9dcfba52eee7cb299acdeb584bfc76bd] End Email Event"
+msgid "End Email Event"
 msgstr "End Email Event"
 
 # TRANSLATION
@@ -16148,7 +16148,7 @@ msgstr "Javascript"
 # TRANSLATION
 # LABEL/ID_MAFE_9e2941b3c81256fac10392aaca4ccfde
 #: LABEL/ID_MAFE_9e2941b3c81256fac10392aaca4ccfde
-msgid "[LABEL/ID_MAFE_9e2941b3c81256fac10392aaca4ccfde] Condition"
+msgid "Condition"
 msgstr "Condition"
 
 # TRANSLATION
@@ -16178,13 +16178,13 @@ msgstr "<tr><td><b>Quarter</b></td><td>Q</td><td>1 2 3 4</td></tr><tr><td><b>Day
 # TRANSLATION
 # LABEL/ID_MAFE_9fc2d28c05ed9eb1d75ba4465abf15a9
 #: LABEL/ID_MAFE_9fc2d28c05ed9eb1d75ba4465abf15a9
-msgid "[LABEL/ID_MAFE_9fc2d28c05ed9eb1d75ba4465abf15a9] Properties"
+msgid "Properties"
 msgstr "Properties"
 
 # TRANSLATION
 # LABEL/ID_MAFE_9fced129522f128b2445a41fb0b6ef9f
 #: LABEL/ID_MAFE_9fced129522f128b2445a41fb0b6ef9f
-msgid "[LABEL/ID_MAFE_9fced129522f128b2445a41fb0b6ef9f] checkbox"
+msgid "checkbox"
 msgstr "checkbox"
 
 # TRANSLATION
@@ -16202,7 +16202,7 @@ msgstr "Rich Text"
 # TRANSLATION
 # LABEL/ID_MAFE_a0bfb8e59e6c13fc8d990781f77694fe
 #: LABEL/ID_MAFE_a0bfb8e59e6c13fc8d990781f77694fe
-msgid "[LABEL/ID_MAFE_a0bfb8e59e6c13fc8d990781f77694fe] Continue"
+msgid "Continue"
 msgstr "Continue"
 
 # TRANSLATION
@@ -16262,7 +16262,7 @@ msgstr "show clear button"
 # TRANSLATION
 # LABEL/ID_MAFE_a274f4d4670213a9045ce258c6c56b80
 #: LABEL/ID_MAFE_a274f4d4670213a9045ce258c6c56b80
-msgid "[LABEL/ID_MAFE_a274f4d4670213a9045ce258c6c56b80] Notifications"
+msgid "Notifications"
 msgstr "Notifications"
 
 # TRANSLATION
@@ -16292,7 +16292,7 @@ msgstr "Activity Properties"
 # TRANSLATION
 # LABEL/ID_MAFE_a37ede293936e29279ed543129451ec3
 #: LABEL/ID_MAFE_a37ede293936e29279ed543129451ec3
-msgid "[LABEL/ID_MAFE_a37ede293936e29279ed543129451ec3] Groups"
+msgid "Groups"
 msgstr "Groups"
 
 # TRANSLATION
@@ -16442,7 +16442,7 @@ msgstr "Time"
 # TRANSLATION
 # LABEL/ID_MAFE_a79a682f66f0f9b8aa2ca16816883717
 #: LABEL/ID_MAFE_a79a682f66f0f9b8aa2ca16816883717
-msgid "[LABEL/ID_MAFE_a79a682f66f0f9b8aa2ca16816883717] Encode"
+msgid "Encode"
 msgstr "Encode"
 
 # TRANSLATION
@@ -16454,7 +16454,7 @@ msgstr "show"
 # TRANSLATION
 # LABEL/ID_MAFE_a7e82daa7280af25afbaa076ac16eb1e
 #: LABEL/ID_MAFE_a7e82daa7280af25afbaa076ac16eb1e
-msgid "[LABEL/ID_MAFE_a7e82daa7280af25afbaa076ac16eb1e] Sequential"
+msgid "Sequential"
 msgstr "Sequential"
 
 # TRANSLATION
@@ -16472,7 +16472,7 @@ msgstr "static"
 # TRANSLATION
 # LABEL/ID_MAFE_a82be0f551b8708bc08eb33cd9ded0cf
 #: LABEL/ID_MAFE_a82be0f551b8708bc08eb33cd9ded0cf
-msgid "[LABEL/ID_MAFE_a82be0f551b8708bc08eb33cd9ded0cf] Information"
+msgid "Information"
 msgstr "Information"
 
 # TRANSLATION
@@ -16616,7 +16616,7 @@ msgstr "The value introduced doesn't have the correct format with a vallid prefi
 # TRANSLATION
 # LABEL/ID_MAFE_ad973c252653a47144b79403cfb0668b
 #: LABEL/ID_MAFE_ad973c252653a47144b79403cfb0668b
-msgid "[LABEL/ID_MAFE_ad973c252653a47144b79403cfb0668b] dropdown"
+msgid "dropdown"
 msgstr "dropdown"
 
 # TRANSLATION
@@ -16652,7 +16652,7 @@ msgstr "The amount of time entered is not valid. Please fill in at least one of 
 # TRANSLATION
 # LABEL/ID_MAFE_b021df6aac4654c454f46c77646e745f
 #: LABEL/ID_MAFE_b021df6aac4654c454f46c77646e745f
-msgid "[LABEL/ID_MAFE_b021df6aac4654c454f46c77646e745f] Label"
+msgid "Label"
 msgstr "Label"
 
 # TRANSLATION
@@ -16688,7 +16688,7 @@ msgstr "Average"
 # TRANSLATION
 # LABEL/ID_MAFE_b1c94ca2fbc3e78fc30069c8d0f01680
 #: LABEL/ID_MAFE_b1c94ca2fbc3e78fc30069c8d0f01680
-msgid "[LABEL/ID_MAFE_b1c94ca2fbc3e78fc30069c8d0f01680] All"
+msgid "All"
 msgstr "All"
 
 # TRANSLATION
@@ -16712,13 +16712,13 @@ msgstr "print dynaform"
 # TRANSLATION
 # LABEL/ID_MAFE_b206a1b4ea1097761f78e8876f6da779
 #: LABEL/ID_MAFE_b206a1b4ea1097761f78e8876f6da779
-msgid "[LABEL/ID_MAFE_b206a1b4ea1097761f78e8876f6da779] External"
+msgid "External"
 msgstr "External"
 
 # TRANSLATION
 # LABEL/ID_MAFE_b243a6cb94ba1c81a0caa579227ab48c
 #: LABEL/ID_MAFE_b243a6cb94ba1c81a0caa579227ab48c
-msgid "[LABEL/ID_MAFE_b243a6cb94ba1c81a0caa579227ab48c] Messages History"
+msgid "Messages History"
 msgstr "Messages History"
 
 # TRANSLATION
@@ -16784,13 +16784,13 @@ msgstr "Vertical Text"
 # TRANSLATION
 # LABEL/ID_MAFE_b55a7dbee5118fdf297492f8fb6e8d4a
 #: LABEL/ID_MAFE_b55a7dbee5118fdf297492f8fb6e8d4a
-msgid "[LABEL/ID_MAFE_b55a7dbee5118fdf297492f8fb6e8d4a] Execute Trigger"
+msgid "Execute Trigger"
 msgstr "Execute Trigger"
 
 # TRANSLATION
 # LABEL/ID_MAFE_b55e509c697e4cca0e1d160a7806698f
 #: LABEL/ID_MAFE_b55e509c697e4cca0e1d160a7806698f
-msgid "[LABEL/ID_MAFE_b55e509c697e4cca0e1d160a7806698f] Hour"
+msgid "Hour"
 msgstr "Hour"
 
 # TRANSLATION
@@ -16826,7 +16826,7 @@ msgstr "<tr><td><b>Hour</b></td><td>H</td><td>0 1 ... 22 23</td></tr><tr><td></t
 # TRANSLATION
 # LABEL/ID_MAFE_b5a7adde1af5c87d7fd797b6245c2a39
 #: LABEL/ID_MAFE_b5a7adde1af5c87d7fd797b6245c2a39
-msgid "[LABEL/ID_MAFE_b5a7adde1af5c87d7fd797b6245c2a39] Description"
+msgid "Description"
 msgstr "Description"
 
 # TRANSLATION
@@ -16856,7 +16856,7 @@ msgstr "Insert a variable with options"
 # TRANSLATION
 # LABEL/ID_MAFE_b6ec7abeb6ae29cc35a4b47475e12afe
 #: LABEL/ID_MAFE_b6ec7abeb6ae29cc35a4b47475e12afe
-msgid "[LABEL/ID_MAFE_b6ec7abeb6ae29cc35a4b47475e12afe] Process"
+msgid "Process"
 msgstr "Process"
 
 # TRANSLATION
@@ -16880,7 +16880,7 @@ msgstr "Do you want to close? All your changes will be lost if you close it."
 # TRANSLATION
 # LABEL/ID_MAFE_b74a43dbb36287ea86eb5b0c7b86e8e8
 #: LABEL/ID_MAFE_b74a43dbb36287ea86eb5b0c7b86e8e8
-msgid "[LABEL/ID_MAFE_b74a43dbb36287ea86eb5b0c7b86e8e8] Evaluation"
+msgid "Evaluation"
 msgstr "Evaluation"
 
 # TRANSLATION
@@ -16898,7 +16898,7 @@ msgstr "Data Input"
 # TRANSLATION
 # LABEL/ID_MAFE_b78a3223503896721cca1303f776159b
 #: LABEL/ID_MAFE_b78a3223503896721cca1303f776159b
-msgid "[LABEL/ID_MAFE_b78a3223503896721cca1303f776159b] Title"
+msgid "Title"
 msgstr "Title"
 
 # TRANSLATION
@@ -16970,7 +16970,7 @@ msgstr "There are problems saved the OutputDocument, please try again."
 # TRANSLATION
 # LABEL/ID_MAFE_b9f5c797ebbf55adccdd8539a65a0241
 #: LABEL/ID_MAFE_b9f5c797ebbf55adccdd8539a65a0241
-msgid "[LABEL/ID_MAFE_b9f5c797ebbf55adccdd8539a65a0241] Disabled"
+msgid "Disabled"
 msgstr "Disabled"
 
 # TRANSLATION
@@ -17042,7 +17042,7 @@ msgstr "icons"
 # TRANSLATION
 # LABEL/ID_MAFE_be1a57f7e1cfe44284e71c5175874967
 #: LABEL/ID_MAFE_be1a57f7e1cfe44284e71c5175874967
-msgid "[LABEL/ID_MAFE_be1a57f7e1cfe44284e71c5175874967] Event"
+msgid "Event"
 msgstr "Event"
 
 # TRANSLATION
@@ -17102,7 +17102,7 @@ msgstr "working..."
 # TRANSLATION
 # LABEL/ID_MAFE_c0b06c68c75e0313cac38c4cc8a64d50
 #: LABEL/ID_MAFE_c0b06c68c75e0313cac38c4cc8a64d50
-msgid "[LABEL/ID_MAFE_c0b06c68c75e0313cac38c4cc8a64d50] Generate Web Entry Page"
+msgid "Generate Web Entry Page"
 msgstr "Generate Web Entry Page"
 
 # TRANSLATION
@@ -17312,7 +17312,7 @@ msgstr "Multiple Steps"
 # TRANSLATION
 # LABEL/ID_MAFE_c75f7811d70d17dbcd88e9d03752cbed
 #: LABEL/ID_MAFE_c75f7811d70d17dbcd88e9d03752cbed
-msgid "[LABEL/ID_MAFE_c75f7811d70d17dbcd88e9d03752cbed] Authentication"
+msgid "Authentication"
 msgstr "Authentication"
 
 # TRANSLATION
@@ -17336,7 +17336,7 @@ msgstr "Execute a trigger when a case is opened"
 # TRANSLATION
 # LABEL/ID_MAFE_c79bdf421714f5087fc34b7c538b6807
 #: LABEL/ID_MAFE_c79bdf421714f5087fc34b7c538b6807
-msgid "[LABEL/ID_MAFE_c79bdf421714f5087fc34b7c538b6807] submit"
+msgid "submit"
 msgstr "submit"
 
 # TRANSLATION
@@ -17354,7 +17354,7 @@ msgstr "Enable this task for offline use:"
 # TRANSLATION
 # LABEL/ID_MAFE_c84b883e444f5a6104a94e46190b1051
 #: LABEL/ID_MAFE_c84b883e444f5a6104a94e46190b1051
-msgid "[LABEL/ID_MAFE_c84b883e444f5a6104a94e46190b1051] Edit Input Document"
+msgid "Edit Input Document"
 msgstr "Edit Input Document"
 
 # TRANSLATION
@@ -17396,13 +17396,13 @@ msgstr "Single Dynaform"
 # TRANSLATION
 # LABEL/ID_MAFE_c9cc8cce247e49bae79f15173ce97354
 #: LABEL/ID_MAFE_c9cc8cce247e49bae79f15173ce97354
-msgid "[LABEL/ID_MAFE_c9cc8cce247e49bae79f15173ce97354] Save"
+msgid "Save"
 msgstr "Save"
 
 # TRANSLATION
 # LABEL/ID_MAFE_ca0dbad92a874b2f69b549293387925e
 #: LABEL/ID_MAFE_ca0dbad92a874b2f69b549293387925e
-msgid "[LABEL/ID_MAFE_ca0dbad92a874b2f69b549293387925e] Code"
+msgid "Code"
 msgstr "Code"
 
 # TRANSLATION
@@ -17528,13 +17528,13 @@ msgstr "multiple"
 # TRANSLATION
 # LABEL/ID_MAFE_ce4d4b319a571fda7b689cee71432d5d
 #: LABEL/ID_MAFE_ce4d4b319a571fda7b689cee71432d5d
-msgid "[LABEL/ID_MAFE_ce4d4b319a571fda7b689cee71432d5d] Custom Trigger"
+msgid "Custom Trigger"
 msgstr "Custom Trigger"
 
 # TRANSLATION
 # LABEL/ID_MAFE_ce50a09343724eb82df11390e2c1de18
 #: LABEL/ID_MAFE_ce50a09343724eb82df11390e2c1de18
-msgid "[LABEL/ID_MAFE_ce50a09343724eb82df11390e2c1de18] button"
+msgid "button"
 msgstr "button"
 
 # TRANSLATION
@@ -17570,7 +17570,7 @@ msgstr "An integer"
 # TRANSLATION
 # LABEL/ID_MAFE_d08ccf52b4cdd08e41cfb99ec42e0b29
 #: LABEL/ID_MAFE_d08ccf52b4cdd08e41cfb99ec42e0b29
-msgid "[LABEL/ID_MAFE_d08ccf52b4cdd08e41cfb99ec42e0b29] Permissions"
+msgid "Permissions"
 msgstr "Permissions"
 
 # TRANSLATION
@@ -17606,7 +17606,7 @@ msgstr "Saving Process"
 # TRANSLATION
 # LABEL/ID_MAFE_d1948d0992fcf56030d9f5b250736dad
 #: LABEL/ID_MAFE_d1948d0992fcf56030d9f5b250736dad
-msgid "[LABEL/ID_MAFE_d1948d0992fcf56030d9f5b250736dad] Enable Versioning"
+msgid "Enable Versioning"
 msgstr "Enable Versioning"
 
 # TRANSLATION
@@ -17672,7 +17672,7 @@ msgstr "Error, There are problems updating the element"
 # TRANSLATION
 # LABEL/ID_MAFE_d3d2e617335f08df83599665eef8a418
 #: LABEL/ID_MAFE_d3d2e617335f08df83599665eef8a418
-msgid "[LABEL/ID_MAFE_d3d2e617335f08df83599665eef8a418] Close"
+msgid "Close"
 msgstr "Close"
 
 # TRANSLATION
@@ -17738,7 +17738,7 @@ msgstr "Step {0} ( {1} )"
 # TRANSLATION
 # LABEL/ID_MAFE_d55b30607c2a9a2616347d6edb789f6b
 #: LABEL/ID_MAFE_d55b30607c2a9a2616347d6edb789f6b
-msgid "[LABEL/ID_MAFE_d55b30607c2a9a2616347d6edb789f6b] Last"
+msgid "Last"
 msgstr "Last"
 
 # TRANSLATION
@@ -17750,7 +17750,7 @@ msgstr "Advanced link generation"
 # TRANSLATION
 # LABEL/ID_MAFE_d5d3db1765287eef77d7927cc956f50a
 #: LABEL/ID_MAFE_d5d3db1765287eef77d7927cc956f50a
-msgid "[LABEL/ID_MAFE_d5d3db1765287eef77d7927cc956f50a] title"
+msgid "title"
 msgstr "title"
 
 # TRANSLATION
@@ -17864,7 +17864,7 @@ msgstr "Define accepted variable values"
 # TRANSLATION
 # LABEL/ID_MAFE_dc30bc0c7914db5918da4263fce93ad2
 #: LABEL/ID_MAFE_dc30bc0c7914db5918da4263fce93ad2
-msgid "[LABEL/ID_MAFE_dc30bc0c7914db5918da4263fce93ad2] Clear"
+msgid "Clear"
 msgstr "Clear"
 
 # TRANSLATION
@@ -17888,7 +17888,7 @@ msgstr "The changed variables have been added with the suffix “_1”."
 # TRANSLATION
 # LABEL/ID_MAFE_dc647eb65e6711e155375218212b3964
 #: LABEL/ID_MAFE_dc647eb65e6711e155375218212b3964
-msgid "[LABEL/ID_MAFE_dc647eb65e6711e155375218212b3964] Password"
+msgid "Password"
 msgstr "Password"
 
 # TRANSLATION
@@ -17960,7 +17960,7 @@ msgstr "edit"
 # TRANSLATION
 # LABEL/ID_MAFE_de9b9ed78d7e2e1dceeffee780e2f919
 #: LABEL/ID_MAFE_de9b9ed78d7e2e1dceeffee780e2f919
-msgid "[LABEL/ID_MAFE_de9b9ed78d7e2e1dceeffee780e2f919] javascript"
+msgid "javascript"
 msgstr "javascript"
 
 # TRANSLATION
@@ -18068,7 +18068,7 @@ msgstr "Of the month(s)"
 # TRANSLATION
 # LABEL/ID_MAFE_e1e4c8c9ccd9fc39c391da4bcd093fb2
 #: LABEL/ID_MAFE_e1e4c8c9ccd9fc39c391da4bcd093fb2
-msgid "[LABEL/ID_MAFE_e1e4c8c9ccd9fc39c391da4bcd093fb2] Block"
+msgid "Block"
 msgstr "Block"
 
 # TRANSLATION
@@ -18242,7 +18242,7 @@ msgstr "UID"
 # TRANSLATION
 # LABEL/ID_MAFE_e807d3ccf8d24c8c1a3d86db5da78da8
 #: LABEL/ID_MAFE_e807d3ccf8d24c8c1a3d86db5da78da8
-msgid "[LABEL/ID_MAFE_e807d3ccf8d24c8c1a3d86db5da78da8] Days"
+msgid "Days"
 msgstr "Days"
 
 # TRANSLATION
@@ -18314,13 +18314,13 @@ msgstr "There are problems saved, please try again."
 # TRANSLATION
 # LABEL/ID_MAFE_ea4788705e6873b424c65e91c2846b19
 #: LABEL/ID_MAFE_ea4788705e6873b424c65e91c2846b19
-msgid "[LABEL/ID_MAFE_ea4788705e6873b424c65e91c2846b19] Cancel"
+msgid "Cancel"
 msgstr "Cancel"
 
 # TRANSLATION
 # LABEL/ID_MAFE_eaeb30f9f18e0c50b178676f3eaef45f
 #: LABEL/ID_MAFE_eaeb30f9f18e0c50b178676f3eaef45f
-msgid "[LABEL/ID_MAFE_eaeb30f9f18e0c50b178676f3eaef45f] Task"
+msgid "Task"
 msgstr "Task"
 
 # TRANSLATION
@@ -18350,7 +18350,7 @@ msgstr "Cases Notes"
 # TRANSLATION
 # LABEL/ID_MAFE_ebb035d359e317060c652f54a18cfb1b
 #: LABEL/ID_MAFE_ebb035d359e317060c652f54a18cfb1b
-msgid "[LABEL/ID_MAFE_ebb035d359e317060c652f54a18cfb1b] Copy of"
+msgid "Copy of"
 msgstr "Copy of"
 
 # TRANSLATION
@@ -18368,7 +18368,7 @@ msgstr "Options:"
 # TRANSLATION
 # LABEL/ID_MAFE_ec211f7c20af43e742bf2570c3cb84f9
 #: LABEL/ID_MAFE_ec211f7c20af43e742bf2570c3cb84f9
-msgid "[LABEL/ID_MAFE_ec211f7c20af43e742bf2570c3cb84f9] Add"
+msgid "Add"
 msgstr "Add"
 
 # TRANSLATION
@@ -18380,7 +18380,7 @@ msgstr "Participation"
 # TRANSLATION
 # LABEL/ID_MAFE_ec53a8c4f07baed5d8825072c89799be
 #: LABEL/ID_MAFE_ec53a8c4f07baed5d8825072c89799be
-msgid "[LABEL/ID_MAFE_ec53a8c4f07baed5d8825072c89799be] Status"
+msgid "Status"
 msgstr "Status"
 
 # TRANSLATION
@@ -18458,7 +18458,7 @@ msgstr "hint"
 # TRANSLATION
 # LABEL/ID_MAFE_ee458e0db2f22a6528caf5111e594df0
 #: LABEL/ID_MAFE_ee458e0db2f22a6528caf5111e594df0
-msgid "[LABEL/ID_MAFE_ee458e0db2f22a6528caf5111e594df0] Export Diagram"
+msgid "Export Diagram"
 msgstr "Export Diagram"
 
 # TRANSLATION
@@ -18512,7 +18512,7 @@ msgstr "Sep"
 # TRANSLATION
 # LABEL/ID_MAFE_f0c8b2bc40856314cdc241d77f7eb12a
 #: LABEL/ID_MAFE_f0c8b2bc40856314cdc241d77f7eb12a
-msgid "[LABEL/ID_MAFE_f0c8b2bc40856314cdc241d77f7eb12a] Horizontal line"
+msgid "Horizontal line"
 msgstr "Horizontal line"
 
 # TRANSLATION
@@ -18560,7 +18560,7 @@ msgstr "Permission edited successfully"
 # TRANSLATION
 # LABEL/ID_MAFE_f2a6c498fb90ee345d997f888fce3b18
 #: LABEL/ID_MAFE_f2a6c498fb90ee345d997f888fce3b18
-msgid "[LABEL/ID_MAFE_f2a6c498fb90ee345d997f888fce3b18] Delete"
+msgid "Delete"
 msgstr "Delete"
 
 # TRANSLATION
@@ -18572,7 +18572,7 @@ msgstr "day view header format"
 # TRANSLATION
 # LABEL/ID_MAFE_f3a29486bed19a90f2da6d007818b427
 #: LABEL/ID_MAFE_f3a29486bed19a90f2da6d007818b427
-msgid "[LABEL/ID_MAFE_f3a29486bed19a90f2da6d007818b427] Steps"
+msgid "Steps"
 msgstr "Steps"
 
 # TRANSLATION
@@ -18752,7 +18752,7 @@ msgstr "This a sub-process"
 # TRANSLATION
 # LABEL/ID_MAFE_f92965e2c8a7afb3c1b9a5c09a263636
 #: LABEL/ID_MAFE_f92965e2c8a7afb3c1b9a5c09a263636
-msgid "[LABEL/ID_MAFE_f92965e2c8a7afb3c1b9a5c09a263636] Done"
+msgid "Done"
 msgstr "Done"
 
 # TRANSLATION
@@ -18824,7 +18824,7 @@ msgstr "Disable Grid Lines"
 # TRANSLATION
 # LABEL/ID_MAFE_fb8e567d9b10447761969e1e08eebc2b
 #: LABEL/ID_MAFE_fb8e567d9b10447761969e1e08eebc2b
-msgid "[LABEL/ID_MAFE_fb8e567d9b10447761969e1e08eebc2b] Create"
+msgid "Create"
 msgstr "Create"
 
 # TRANSLATION
@@ -18860,7 +18860,7 @@ msgstr "Create/Select Variable"
 # TRANSLATION
 # LABEL/ID_MAFE_fc85b3878f914dbad84b82aa35d1c9b9
 #: LABEL/ID_MAFE_fc85b3878f914dbad84b82aa35d1c9b9
-msgid "[LABEL/ID_MAFE_fc85b3878f914dbad84b82aa35d1c9b9] Output Documents"
+msgid "Output Documents"
 msgstr "Output Documents"
 
 # TRANSLATION
@@ -18908,7 +18908,7 @@ msgstr "textfield"
 # TRANSLATION
 # LABEL/ID_MAFE_ff4a008470319a22d9cf3d14af485977
 #: LABEL/ID_MAFE_ff4a008470319a22d9cf3d14af485977
-msgid "[LABEL/ID_MAFE_ff4a008470319a22d9cf3d14af485977] grid"
+msgid "grid"
 msgstr "grid"
 
 # TRANSLATION
@@ -18932,11 +18932,11 @@ msgstr "Your message has been sent successfully"
 # TRANSLATION
 # LABEL/ID_MAIL_STATUS_ERROR
 #: LABEL/ID_MAIL_STATUS_ERROR
-msgid "[LABEL/ID_MAIL_STATUS_ERROR] Error"
+msgid "Error"
 msgstr "Error"
 
 # TRANSLATION
-# LABEL/ID_MAIL_STATUS_PENDING
+# LABEL/ID_MAIL_STATUS_ENDING
 #: LABEL/ID_MAIL_STATUS_PENDING
 msgid "Pending"
 msgstr "Pending"
@@ -18944,13 +18944,13 @@ msgstr "Pending"
 # TRANSLATION
 # LABEL/ID_MAIL_STATUS_SENT
 #: LABEL/ID_MAIL_STATUS_SENT
-msgid "[LABEL/ID_MAIL_STATUS_SENT] Sent"
+msgid "Sent"
 msgstr "Sent"
 
 # TRANSLATION
 # LABEL/ID_MAIL_TEST_SUCCESS
 #: LABEL/ID_MAIL_TEST_SUCCESS
-msgid "[LABEL/ID_MAIL_TEST_SUCCESS] Test message sent successfully"
+msgid "Test message sent successfully"
 msgstr "Test message sent successfully"
 
 # TRANSLATION
@@ -18980,7 +18980,7 @@ msgstr "Managers dashboard"
 # TRANSLATION
 # LABEL/ID_MANUAL_ASSIGNMENT
 #: LABEL/ID_MANUAL_ASSIGNMENT
-msgid "[LABEL/ID_MANUAL_ASSIGNMENT] Manual Assignment"
+msgid "Manual Assignment"
 msgstr "Manual Assignment"
 
 # TRANSLATION
@@ -19058,7 +19058,7 @@ msgstr "Mcrypt Support"
 # TRANSLATION
 # LABEL/ID_MEDIA
 #: LABEL/ID_MEDIA
-msgid "[LABEL/ID_MEDIA] Media"
+msgid "Media"
 msgstr "Media"
 
 # TRANSLATION
@@ -19100,19 +19100,19 @@ msgstr "Enterprise Manager"
 # TRANSLATION
 # LABEL/ID_MESSAGE
 #: LABEL/ID_MESSAGE
-msgid "[LABEL/ID_MESSAGE] Message"
+msgid "Message"
 msgstr "Message"
 
 # TRANSLATION
 # LABEL/ID_MESSAGES
 #: LABEL/ID_MESSAGES
-msgid "[LABEL/ID_MESSAGES] Messages"
+msgid "Messages"
 msgstr "Messages"
 
 # TRANSLATION
 # LABEL/ID_MESSAGES_HISTORY
 #: LABEL/ID_MESSAGES_HISTORY
-msgid "[LABEL/ID_MESSAGES_HISTORY] Messages History"
+msgid "Messages History"
 msgstr "Messages History"
 
 # TRANSLATION
@@ -19250,7 +19250,7 @@ msgstr "The Variable Name with {0}: \"{1}\" already exists."
 # TRANSLATION
 # LABEL/ID_MESS_ENGINE_TYPE_1
 #: LABEL/ID_MESS_ENGINE_TYPE_1
-msgid "[LABEL/ID_MESS_ENGINE_TYPE_1] Mail (PHP)"
+msgid "Mail (PHP)"
 msgstr "Mail (PHP)"
 
 # TRANSLATION
@@ -19292,7 +19292,7 @@ msgstr "Test message send failed, error:"
 # TRANSLATION
 # LABEL/ID_MESS_TEST_MESSAGE_SENDED
 #: LABEL/ID_MESS_TEST_MESSAGE_SENDED
-msgid "[LABEL/ID_MESS_TEST_MESSAGE_SENDED] Test message sent successfully"
+msgid "Test message sent successfully"
 msgstr "Test message sent successfully"
 
 # TRANSLATION
@@ -19304,7 +19304,7 @@ msgstr "Test Email"
 # TRANSLATION
 # LABEL/ID_METHOD
 #: LABEL/ID_METHOD
-msgid "[LABEL/ID_METHOD] Method"
+msgid "Method"
 msgstr "Method"
 
 # TRANSLATION
@@ -19328,7 +19328,7 @@ msgstr "Minimum data required to run the \"Test Connection\": \"Server Address, 
 # TRANSLATION
 # LABEL/ID_MINUTE
 #: LABEL/ID_MINUTE
-msgid "[LABEL/ID_MINUTE] Minute"
+msgid "Minute"
 msgstr "Minute"
 
 # TRANSLATION
@@ -19340,7 +19340,7 @@ msgstr "min"
 # TRANSLATION
 # LABEL/ID_MINUTES
 #: LABEL/ID_MINUTES
-msgid "[LABEL/ID_MINUTES] Minutes"
+msgid "Minutes"
 msgstr "Minutes"
 
 # TRANSLATION
@@ -19376,145 +19376,145 @@ msgstr "Month"
 # TRANSLATION
 # LABEL/ID_MONTH_1
 #: LABEL/ID_MONTH_1
-msgid "[LABEL/ID_MONTH_1] January"
+msgid "January"
 msgstr "January"
 
 # TRANSLATION
 # LABEL/ID_MONTH_10
 #: LABEL/ID_MONTH_10
-msgid "[LABEL/ID_MONTH_10] October"
+msgid "October"
 msgstr "October"
 
 # TRANSLATION
 # LABEL/ID_MONTH_11
 #: LABEL/ID_MONTH_11
-msgid "[LABEL/ID_MONTH_11] November"
+msgid "November"
 msgstr "November"
 
 # TRANSLATION
 # LABEL/ID_MONTH_12
 #: LABEL/ID_MONTH_12
-msgid "[LABEL/ID_MONTH_12] December"
+msgid "December"
 msgstr "December"
 
 # TRANSLATION
 # LABEL/ID_MONTH_2
 #: LABEL/ID_MONTH_2
-msgid "[LABEL/ID_MONTH_2] February"
+msgid "February"
 msgstr "February"
 
 # TRANSLATION
 # LABEL/ID_MONTH_3
 #: LABEL/ID_MONTH_3
-msgid "[LABEL/ID_MONTH_3] March"
+msgid "March"
 msgstr "March"
 
 # TRANSLATION
 # LABEL/ID_MONTH_4
 #: LABEL/ID_MONTH_4
-msgid "[LABEL/ID_MONTH_4] April"
+msgid "April"
 msgstr "April"
 
 # TRANSLATION
 # LABEL/ID_MONTH_5
 #: LABEL/ID_MONTH_5
-msgid "[LABEL/ID_MONTH_5] May"
+msgid "May"
 msgstr "May"
 
 # TRANSLATION
 # LABEL/ID_MONTH_6
 #: LABEL/ID_MONTH_6
-msgid "[LABEL/ID_MONTH_6] June"
+msgid "June"
 msgstr "June"
 
 # TRANSLATION
 # LABEL/ID_MONTH_7
 #: LABEL/ID_MONTH_7
-msgid "[LABEL/ID_MONTH_7] July"
+msgid "July"
 msgstr "July"
 
 # TRANSLATION
 # LABEL/ID_MONTH_8
 #: LABEL/ID_MONTH_8
-msgid "[LABEL/ID_MONTH_8] August"
+msgid "August"
 msgstr "August"
 
 # TRANSLATION
 # LABEL/ID_MONTH_9
 #: LABEL/ID_MONTH_9
-msgid "[LABEL/ID_MONTH_9] September"
+msgid "September"
 msgstr "September"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_1
 #: LABEL/ID_MONTH_ABB_1
-msgid "[LABEL/ID_MONTH_ABB_1] Jan"
+msgid "Jan"
 msgstr "Jan"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_10
 #: LABEL/ID_MONTH_ABB_10
-msgid "[LABEL/ID_MONTH_ABB_10] Oct"
+msgid "Oct"
 msgstr "Oct"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_11
 #: LABEL/ID_MONTH_ABB_11
-msgid "[LABEL/ID_MONTH_ABB_11] Nov"
+msgid "Nov"
 msgstr "Nov"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_12
 #: LABEL/ID_MONTH_ABB_12
-msgid "[LABEL/ID_MONTH_ABB_12] Dec"
+msgid "Dec"
 msgstr "Dec"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_2
 #: LABEL/ID_MONTH_ABB_2
-msgid "[LABEL/ID_MONTH_ABB_2] Feb"
+msgid "Feb"
 msgstr "Feb"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_3
 #: LABEL/ID_MONTH_ABB_3
-msgid "[LABEL/ID_MONTH_ABB_3] Mar"
+msgid "Mar"
 msgstr "Mar"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_4
 #: LABEL/ID_MONTH_ABB_4
-msgid "[LABEL/ID_MONTH_ABB_4] Apr"
+msgid "Apr"
 msgstr "Apr"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_5
 #: LABEL/ID_MONTH_ABB_5
-msgid "[LABEL/ID_MONTH_ABB_5] May"
+msgid "May"
 msgstr "May"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_6
 #: LABEL/ID_MONTH_ABB_6
-msgid "[LABEL/ID_MONTH_ABB_6] Jun"
+msgid "Jun"
 msgstr "Jun"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_7
 #: LABEL/ID_MONTH_ABB_7
-msgid "[LABEL/ID_MONTH_ABB_7] Jul"
+msgid "Jul"
 msgstr "Jul"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_8
 #: LABEL/ID_MONTH_ABB_8
-msgid "[LABEL/ID_MONTH_ABB_8] Aug"
+msgid "Aug"
 msgstr "Aug"
 
 # TRANSLATION
 # LABEL/ID_MONTH_ABB_9
 #: LABEL/ID_MONTH_ABB_9
-msgid "[LABEL/ID_MONTH_ABB_9] Sep"
+msgid "Sep"
 msgstr "Sep"
 
 # TRANSLATION
@@ -19628,7 +19628,7 @@ msgstr "Do you want to assign all available users to this role?"
 # TRANSLATION
 # LABEL/ID_MSG_CONFIRM_CANCEL_CASE
 #: LABEL/ID_MSG_CONFIRM_CANCEL_CASE
-msgid "[LABEL/ID_MSG_CONFIRM_CANCEL_CASE] Are you sure you want to cancel this case?"
+msgid "Are you sure you want to cancel this case?"
 msgstr "Are you sure you want to cancel this case?"
 
 # TRANSLATION
@@ -19658,7 +19658,7 @@ msgstr "Do you want to delete this authentication source?"
 # TRANSLATION
 # LABEL/ID_MSG_CONFIRM_DELETE_CASE
 #: LABEL/ID_MSG_CONFIRM_DELETE_CASE
-msgid "[LABEL/ID_MSG_CONFIRM_DELETE_CASE] Are you sure you want to delete this case?"
+msgid "Are you sure you want to delete this case?"
 msgstr "Are you sure you want to delete this case?"
 
 # TRANSLATION
@@ -19808,19 +19808,19 @@ msgstr "Are you sure you want to remove this language?"
 # TRANSLATION
 # LABEL/ID_MSG_CONFIRM_REMOVE_TRIGGER
 #: LABEL/ID_MSG_CONFIRM_REMOVE_TRIGGER
-msgid "[LABEL/ID_MSG_CONFIRM_REMOVE_TRIGGER] Are you sure you want to remove this trigger?"
+msgid "Are you sure you want to remove this trigger?"
 msgstr "Are you sure you want to remove this trigger?"
 
 # TRANSLATION
 # LABEL/ID_MSG_CONFIRM_REMOVE_USER
 #: LABEL/ID_MSG_CONFIRM_REMOVE_USER
-msgid "[LABEL/ID_MSG_CONFIRM_REMOVE_USER] Are you sure you want to remove this user?"
+msgid "Are you sure you want to remove this user?"
 msgstr "Are you sure you want to remove this user?"
 
 # TRANSLATION
 # LABEL/ID_MSG_CONFIRM_REMOVE_USERGROUP
 #: LABEL/ID_MSG_CONFIRM_REMOVE_USERGROUP
-msgid "[LABEL/ID_MSG_CONFIRM_REMOVE_USERGROUP] Are you sure you want to remove this user group?"
+msgid "Are you sure you want to remove this user group?"
 msgstr "Are you sure you want to remove this user group?"
 
 # TRANSLATION
@@ -19868,7 +19868,7 @@ msgstr "User name required!"
 # TRANSLATION
 # LABEL/ID_MSG_GROUP_NAME_EXISTS
 #: LABEL/ID_MSG_GROUP_NAME_EXISTS
-msgid "[LABEL/ID_MSG_GROUP_NAME_EXISTS] Group name already exists!"
+msgid "Group name already exists!"
 msgstr "Group name already exists!"
 
 # TRANSLATION
@@ -19880,7 +19880,7 @@ msgstr "This user is not assigned to a group"
 # TRANSLATION
 # LABEL/ID_MSG_REMOVE_PLUGIN
 #: LABEL/ID_MSG_REMOVE_PLUGIN
-msgid "[LABEL/ID_MSG_REMOVE_PLUGIN] Are you sure that you want to remove this plugin?"
+msgid "Are you sure that you want to remove this plugin?"
 msgstr "Are you sure that you want to remove this plugin?"
 
 # TRANSLATION
@@ -19970,7 +19970,7 @@ msgstr "My inbox"
 # TRANSLATION
 # LABEL/ID_NAME
 #: LABEL/ID_NAME
-msgid "[LABEL/ID_NAME] Name"
+msgid "Name"
 msgstr "Name"
 
 # TRANSLATION
@@ -20012,7 +20012,7 @@ msgstr "You need to be registered to download this process. Register NOW!"
 # TRANSLATION
 # LABEL/ID_NEW
 #: LABEL/ID_NEW
-msgid "[LABEL/ID_NEW] New"
+msgid "New"
 msgstr "New"
 
 # TRANSLATION
@@ -20084,7 +20084,7 @@ msgstr "New connection"
 # TRANSLATION
 # LABEL/ID_NEW_DEPARTMENT
 #: LABEL/ID_NEW_DEPARTMENT
-msgid "[LABEL/ID_NEW_DEPARTMENT] New"
+msgid " New"
 msgstr "New"
 
 # TRANSLATION
@@ -20108,7 +20108,7 @@ msgstr "New Folder"
 # TRANSLATION
 # LABEL/ID_NEW_GROUP
 #: LABEL/ID_NEW_GROUP
-msgid "[LABEL/ID_NEW_GROUP] New"
+msgid "New"
 msgstr "New"
 
 # TRANSLATION
@@ -20150,7 +20150,7 @@ msgstr "The confirm password must be the same!"
 # TRANSLATION
 # LABEL/ID_NEW_PMTABLE
 #: LABEL/ID_NEW_PMTABLE
-msgid "[LABEL/ID_NEW_PMTABLE] New PM Table"
+msgid "New PM Table"
 msgstr "New PM Table"
 
 # TRANSLATION
@@ -20210,7 +20210,7 @@ msgstr "New Translation"
 # TRANSLATION
 # LABEL/ID_NEW_TRIGGERS
 #: LABEL/ID_NEW_TRIGGERS
-msgid "[LABEL/ID_NEW_TRIGGERS] New Trigger"
+msgid "New Trigger"
 msgstr "New Trigger"
 
 # TRANSLATION
@@ -20240,7 +20240,7 @@ msgstr "New Workspace"
 # TRANSLATION
 # LABEL/ID_NEXT
 #: LABEL/ID_NEXT
-msgid "[LABEL/ID_NEXT] Next"
+msgid "Next"
 msgstr "Next"
 
 # TRANSLATION
@@ -20264,7 +20264,7 @@ msgstr "License installed successfully"
 # TRANSLATION
 # LABEL/ID_NO
 #: LABEL/ID_NO
-msgid "[LABEL/ID_NO] No"
+msgid "No"
 msgstr "No"
 
 # TRANSLATION
@@ -20276,7 +20276,7 @@ msgstr "You must add all the days that you have selected in work days, otherwise
 # TRANSLATION
 # LABEL/ID_NONE
 #: LABEL/ID_NONE
-msgid "[LABEL/ID_NONE] None"
+msgid "None"
 msgstr "None"
 
 # TRANSLATION
@@ -20294,13 +20294,13 @@ msgstr "Non-writable Files"
 # TRANSLATION
 # LABEL/ID_NORMAL
 #: LABEL/ID_NORMAL
-msgid "[LABEL/ID_NORMAL] Normal"
+msgid "Normal"
 msgstr "Normal"
 
 # TRANSLATION
 # LABEL/ID_NORMAL_EXPORT
 #: LABEL/ID_NORMAL_EXPORT
-msgid "[LABEL/ID_NORMAL_EXPORT] Normal"
+msgid "Normal"
 msgstr "Normal"
 
 # TRANSLATION
@@ -20336,7 +20336,7 @@ msgstr "Notify"
 # TRANSLATION
 # LABEL/ID_NOTIFY_USERS_AFTER_ASSIGN
 #: LABEL/ID_NOTIFY_USERS_AFTER_ASSIGN
-msgid "[LABEL/ID_NOTIFY_USERS_AFTER_ASSIGN] After routing notify the next assigned user(s)"
+msgid "After routing notify the next assigned user(s)"
 msgstr "After routing notify the next assigned user(s)"
 
 # TRANSLATION
@@ -20624,13 +20624,13 @@ msgstr "Do not reassign"
 # TRANSLATION
 # LABEL/ID_NO_RECORDS
 #: LABEL/ID_NO_RECORDS
-msgid "[LABEL/ID_NO_RECORDS] No records"
+msgid "No records"
 msgstr "No records"
 
 # TRANSLATION
 # LABEL/ID_NO_RECORDS_FOUND
 #: LABEL/ID_NO_RECORDS_FOUND
-msgid "[LABEL/ID_NO_RECORDS_FOUND] No records found"
+msgid "No records found"
 msgstr "No records found"
 
 # TRANSLATION
@@ -20684,7 +20684,7 @@ msgstr "The task doesn't have any users."
 # TRANSLATION
 # LABEL/ID_NO_VALUE
 #: LABEL/ID_NO_VALUE
-msgid "[LABEL/ID_NO_VALUE] No"
+msgid "No"
 msgstr "No"
 
 # TRANSLATION
@@ -20726,7 +20726,7 @@ msgstr "Number of Tasks in the Unassigned Folder: "
 # TRANSLATION
 # LABEL/ID_OBJECT
 #: LABEL/ID_OBJECT
-msgid "[LABEL/ID_OBJECT] Object"
+msgid "Object"
 msgstr "Object"
 
 # TRANSLATION
@@ -20798,7 +20798,7 @@ msgstr "of the month(s)"
 # TRANSLATION
 # LABEL/ID_OK
 #: LABEL/ID_OK
-msgid "[LABEL/ID_OK] Ok"
+msgid "Ok"
 msgstr "Ok"
 
 # TRANSLATION
@@ -20870,7 +20870,7 @@ msgstr "Open in a new window"
 # TRANSLATION
 # LABEL/ID_OPEN_IN_POPUP
 #: LABEL/ID_OPEN_IN_POPUP
-msgid "[LABEL/ID_OPEN_IN_POPUP] Open in a popup"
+msgid "Open in a popup"
 msgstr "Open in a popup"
 
 # TRANSLATION
@@ -20900,7 +20900,7 @@ msgstr "Option"
 # TRANSLATION
 # LABEL/ID_OPTIONS
 #: LABEL/ID_OPTIONS
-msgid "[LABEL/ID_OPTIONS] Options"
+msgid "Options"
 msgstr "Options"
 
 # TRANSLATION
@@ -20912,7 +20912,7 @@ msgstr "Options Menu Task"
 # TRANSLATION
 # LABEL/ID_OPT_ALL
 #: LABEL/ID_OPT_ALL
-msgid "[LABEL/ID_OPT_ALL] All"
+msgid "All"
 msgstr "All"
 
 # TRANSLATION
@@ -20954,19 +20954,19 @@ msgstr "or"
 # TRANSLATION
 # LABEL/ID_ORIENTATION
 #: LABEL/ID_ORIENTATION
-msgid "[LABEL/ID_ORIENTATION] Orientation"
+msgid "Orientation"
 msgstr "Orientation"
 
 # TRANSLATION
 # LABEL/ID_ORIGIN
 #: LABEL/ID_ORIGIN
-msgid "[LABEL/ID_ORIGIN] Origin"
+msgid "Origin"
 msgstr "Origin"
 
 # TRANSLATION
 # LABEL/ID_ORIGIN_TASK
 #: LABEL/ID_ORIGIN_TASK
-msgid "[LABEL/ID_ORIGIN_TASK] Origin Task"
+msgid "Origin Task"
 msgstr "Origin Task"
 
 # TRANSLATION
@@ -20996,13 +20996,13 @@ msgstr "Output"
 # TRANSLATION
 # LABEL/ID_OUTPUT_DOCUMENT
 #: LABEL/ID_OUTPUT_DOCUMENT
-msgid "[LABEL/ID_OUTPUT_DOCUMENT] Output Document"
+msgid "Output Document"
 msgstr "Output Document"
 
 # TRANSLATION
 # LABEL/ID_OUTPUT_DOCUMENTS
 #: LABEL/ID_OUTPUT_DOCUMENTS
-msgid "[LABEL/ID_OUTPUT_DOCUMENTS] Output Documents"
+msgid "Output Documents"
 msgstr "Output Documents"
 
 # TRANSLATION
@@ -21038,7 +21038,7 @@ msgstr "Output Document Template"
 # TRANSLATION
 # LABEL/ID_OUTPUT_GENERATE
 #: LABEL/ID_OUTPUT_GENERATE
-msgid "[LABEL/ID_OUTPUT_GENERATE] Output Document to Generate"
+msgid "Output Document to Generate"
 msgstr "Output Document to Generate"
 
 # TRANSLATION
@@ -21146,7 +21146,7 @@ msgstr "Owner type"
 # TRANSLATION
 # LABEL/ID_PAGE
 #: LABEL/ID_PAGE
-msgid "[LABEL/ID_PAGE] Page"
+msgid "Page"
 msgstr "Page"
 
 # TRANSLATION
@@ -21158,7 +21158,7 @@ msgstr "Page Size"
 # TRANSLATION
 # LABEL/ID_PARALLEL_TASK
 #: LABEL/ID_PARALLEL_TASK
-msgid "[LABEL/ID_PARALLEL_TASK] Parallel Task"
+msgid "Parallel Task"
 msgstr "Parallel Task"
 
 # TRANSLATION
@@ -21176,7 +21176,7 @@ msgstr "Parent department doesn't exist"
 # TRANSLATION
 # LABEL/ID_PARTICIPATION
 #: LABEL/ID_PARTICIPATION
-msgid "[LABEL/ID_PARTICIPATION] Participation"
+msgid "Participation"
 msgstr "Participation"
 
 # TRANSLATION
@@ -21194,7 +21194,7 @@ msgstr "Password is required"
 # TRANSLATION
 # LABEL/ID_PASSWORD
 #: LABEL/ID_PASSWORD
-msgid "[LABEL/ID_PASSWORD] Password"
+msgid "Password"
 msgstr "Password"
 
 # TRANSLATION
@@ -21230,7 +21230,7 @@ msgstr "The password complies with the security policies."
 # TRANSLATION
 # LABEL/ID_PASSWORD_CONFIRM
 #: LABEL/ID_PASSWORD_CONFIRM
-msgid "[LABEL/ID_PASSWORD_CONFIRM] Confirm Password"
+msgid "Confirm Password"
 msgstr "Confirm Password"
 
 # TRANSLATION
@@ -21272,7 +21272,7 @@ msgstr "Testing password"
 # TRANSLATION
 # LABEL/ID_PATH
 #: LABEL/ID_PATH
-msgid "[LABEL/ID_PATH] Path"
+msgid "Path"
 msgstr "Path"
 
 # TRANSLATION
@@ -21284,13 +21284,13 @@ msgstr "Pause"
 # TRANSLATION
 # LABEL/ID_PAUSED
 #: LABEL/ID_PAUSED
-msgid "[LABEL/ID_PAUSED] Paused"
+msgid "Paused"
 msgstr "Paused"
 
 # TRANSLATION
 # LABEL/ID_PAUSED_CASE
 #: LABEL/ID_PAUSED_CASE
-msgid "[LABEL/ID_PAUSED_CASE] Pause"
+msgid "Pause"
 msgstr "Pause"
 
 # TRANSLATION
@@ -21320,13 +21320,13 @@ msgstr "Pausing Case"
 # TRANSLATION
 # LABEL/ID_PENDING
 #: LABEL/ID_PENDING
-msgid "[LABEL/ID_PENDING] Pending"
+msgid "Pending"
 msgstr "Pending"
 
 # TRANSLATION
 # LABEL/ID_PENDING_TASK
 #: LABEL/ID_PENDING_TASK
-msgid "[LABEL/ID_PENDING_TASK] Pending Task / Not Executed"
+msgid "Pending Task / Not Executed"
 msgstr "Pending Task / Not Executed"
 
 # TRANSLATION
@@ -21350,7 +21350,7 @@ msgstr "Periodicity"
 # TRANSLATION
 # LABEL/ID_PERMISSIONS
 #: LABEL/ID_PERMISSIONS
-msgid "[LABEL/ID_PERMISSIONS] Permissions"
+msgid "Permissions"
 msgstr "Permissions"
 
 # TRANSLATION
@@ -21392,7 +21392,7 @@ msgstr "New specific Permission"
 # TRANSLATION
 # LABEL/ID_PERMITIONS
 #: LABEL/ID_PERMITIONS
-msgid "[LABEL/ID_PERMITIONS] Permissions"
+msgid "Permissions"
 msgstr "Permissions"
 
 # TRANSLATION
@@ -21500,7 +21500,7 @@ msgstr "Please enter comments!"
 # TRANSLATION
 # LABEL/ID_PLEASE_ENTER_CREDENTIALS
 #: LABEL/ID_PLEASE_ENTER_CREDENTIALS
-msgid "[LABEL/ID_PLEASE_ENTER_CREDENTIALS] Please enter your credentials below"
+msgid "Please enter your credentials below"
 msgstr "Please enter your credentials below"
 
 # TRANSLATION
@@ -21728,7 +21728,7 @@ msgstr "PM Table"
 # TRANSLATION
 # LABEL/ID_PMTABLES
 #: LABEL/ID_PMTABLES
-msgid "[LABEL/ID_PMTABLES] PM Tables"
+msgid "PM Tables"
 msgstr "PM Tables"
 
 # TRANSLATION
@@ -21836,7 +21836,7 @@ msgstr "The field {0}: {1}, is not a primary key field of the PM Table."
 # TRANSLATION
 # LABEL/ID_PMTABLE_IMPORT_SUCCESS
 #: LABEL/ID_PMTABLE_IMPORT_SUCCESS
-msgid "[LABEL/ID_PMTABLE_IMPORT_SUCCESS] File \"{0}\" imported successfully."
+msgid "File \"{0}\" imported successfully."
 msgstr "File \"{0}\" imported successfully."
 
 # TRANSLATION
@@ -21926,7 +21926,7 @@ msgstr "PM Table Dynaform"
 # TRANSLATION
 # LABEL/ID_PM_ENV_HOME_SETTINGS_TITLE
 #: LABEL/ID_PM_ENV_HOME_SETTINGS_TITLE
-msgid "[LABEL/ID_PM_ENV_HOME_SETTINGS_TITLE] Home Settings"
+msgid "Home Settings"
 msgstr "Home Settings"
 
 # TRANSLATION
@@ -21986,7 +21986,7 @@ msgstr "Heart Beat Configuration"
 # TRANSLATION
 # LABEL/ID_PM_TABLE
 #: LABEL/ID_PM_TABLE
-msgid "[LABEL/ID_PM_TABLE] PM Table"
+msgid "PM Table"
 msgstr "PM Table"
 
 # TRANSLATION
@@ -22004,7 +22004,7 @@ msgstr "Your password must meet the following policies:"
 # TRANSLATION
 # LABEL/ID_PORT
 #: LABEL/ID_PORT
-msgid "[LABEL/ID_PORT] Port"
+msgid "Port"
 msgstr "Port"
 
 # TRANSLATION
@@ -22052,7 +22052,7 @@ msgstr "Maximum length"
 # TRANSLATION
 # LABEL/ID_PPP_MAXIMUN_LENGTH
 #: LABEL/ID_PPP_MAXIMUN_LENGTH
-msgid "[LABEL/ID_PPP_MAXIMUN_LENGTH] Maximum length"
+msgid "Maximum length"
 msgstr "Maximum length"
 
 # TRANSLATION
@@ -22064,7 +22064,7 @@ msgstr "Minimum length"
 # TRANSLATION
 # LABEL/ID_PPP_MINIMUN_LENGTH
 #: LABEL/ID_PPP_MINIMUN_LENGTH
-msgid "[LABEL/ID_PPP_MINIMUN_LENGTH] Minimum length"
+msgid "Minimum length"
 msgstr "Minimum length"
 
 # TRANSLATION
@@ -22094,7 +22094,7 @@ msgstr "Preferences"
 # TRANSLATION
 # LABEL/ID_PREFIX
 #: LABEL/ID_PREFIX
-msgid "[LABEL/ID_PREFIX] Prefix"
+msgid "Prefix"
 msgstr "Prefix"
 
 # TRANSLATION
@@ -22106,19 +22106,19 @@ msgstr "Pre-installation check"
 # TRANSLATION
 # LABEL/ID_PREVIEW
 #: LABEL/ID_PREVIEW
-msgid "[LABEL/ID_PREVIEW] Preview"
+msgid "Preview"
 msgstr "Preview"
 
 # TRANSLATION
 # LABEL/ID_PREVIOUS
 #: LABEL/ID_PREVIOUS
-msgid "[LABEL/ID_PREVIOUS] Previous"
+msgid "Previous"
 msgstr "Previous"
 
 # TRANSLATION
 # LABEL/ID_PREVIOUS_MONTH
 #: LABEL/ID_PREVIOUS_MONTH
-msgid "[LABEL/ID_PREVIOUS_MONTH] Previous Month"
+msgid "Previous Month"
 msgstr "Previous Month"
 
 # TRANSLATION
@@ -22142,13 +22142,13 @@ msgstr "Previous Week"
 # TRANSLATION
 # LABEL/ID_PREVIOUS_YEAR
 #: LABEL/ID_PREVIOUS_YEAR
-msgid "[LABEL/ID_PREVIOUS_YEAR] Previous Year"
+msgid "Previous Year"
 msgstr "Previous Year"
 
 # TRANSLATION
 # LABEL/ID_PREVIUS
 #: LABEL/ID_PREVIUS
-msgid "[LABEL/ID_PREVIUS] Previous"
+msgid "Previous"
 msgstr "Previous"
 
 # TRANSLATION
@@ -22166,7 +22166,7 @@ msgstr "Primary Key"
 # TRANSLATION
 # LABEL/ID_PRIORITY
 #: LABEL/ID_PRIORITY
-msgid "[LABEL/ID_PRIORITY] Priority"
+msgid "Priority"
 msgstr "Priority"
 
 # TRANSLATION
@@ -22208,7 +22208,7 @@ msgstr "Privacy"
 # TRANSLATION
 # LABEL/ID_PRIVATE
 #: LABEL/ID_PRIVATE
-msgid "[LABEL/ID_PRIVATE] Private"
+msgid "Private"
 msgstr "Private"
 
 # TRANSLATION
@@ -22220,7 +22220,7 @@ msgstr "Processing: {0}"
 # TRANSLATION
 # LABEL/ID_PROCESS
 #: LABEL/ID_PROCESS
-msgid "[LABEL/ID_PROCESS] Process"
+msgid "Process"
 msgstr "Process"
 
 # TRANSLATION
@@ -22472,55 +22472,55 @@ msgstr "ProcessMaker couldn't write on configuration file: {0}<br/>"
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_CALENDAR_CONFIRM_DELETE
 #: LABEL/ID_PROCESSMAP_CALENDAR_CONFIRM_DELETE
-msgid "[LABEL/ID_PROCESSMAP_CALENDAR_CONFIRM_DELETE] Are you sure you want to delete this calendar?"
+msgid "Are you sure you want to delete this calendar?"
 msgstr "Are you sure you want to delete this calendar?"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_DYNAFORMS
 #: LABEL/ID_PROCESSMAP_DYNAFORMS
-msgid "[LABEL/ID_PROCESSMAP_DYNAFORMS] DynaForms"
+msgid "DynaForms"
 msgstr "DynaForms"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_EVALUATION
 #: LABEL/ID_PROCESSMAP_EVALUATION
-msgid "[LABEL/ID_PROCESSMAP_EVALUATION] Evaluation"
+msgid "Evaluation"
 msgstr "Evaluation"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_MESSAGES
 #: LABEL/ID_PROCESSMAP_MESSAGES
-msgid "[LABEL/ID_PROCESSMAP_MESSAGES] Messages"
+msgid "Messages"
 msgstr "Messages"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_PARALLEL_EVALUATION_FORK
 #: LABEL/ID_PROCESSMAP_PARALLEL_EVALUATION_FORK
-msgid "[LABEL/ID_PROCESSMAP_PARALLEL_EVALUATION_FORK] Parallel by Evaluation (fork)"
+msgid "Parallel by Evaluation (fork)"
 msgstr "Parallel by Evaluation (fork)"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_PARALLEL_FORK
 #: LABEL/ID_PROCESSMAP_PARALLEL_FORK
-msgid "[LABEL/ID_PROCESSMAP_PARALLEL_FORK] Parallel (fork)"
+msgid "Parallel (fork)"
 msgstr "Parallel (fork)"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_PARALLEL_JOIN
 #: LABEL/ID_PROCESSMAP_PARALLEL_JOIN
-msgid "[LABEL/ID_PROCESSMAP_PARALLEL_JOIN] Parallel (join)"
+msgid "Parallel (join)"
 msgstr "Parallel (join)"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_SELECTION
 #: LABEL/ID_PROCESSMAP_SELECTION
-msgid "[LABEL/ID_PROCESSMAP_SELECTION] Selection"
+msgid "Selection"
 msgstr "Selection"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAP_SEQUENTIAL
 #: LABEL/ID_PROCESSMAP_SEQUENTIAL
-msgid "[LABEL/ID_PROCESSMAP_SEQUENTIAL] Sequential"
+msgid "Sequential"
 msgstr "Sequential"
 
 # TRANSLATION
@@ -22652,7 +22652,7 @@ msgstr "Process Inefficiency Cost"
 # TRANSLATION
 # LABEL/ID_PROCESS_INFORMATION
 #: LABEL/ID_PROCESS_INFORMATION
-msgid "[LABEL/ID_PROCESS_INFORMATION] Process Information"
+msgid "Process Information"
 msgstr "Process Information"
 
 # TRANSLATION
@@ -22664,13 +22664,13 @@ msgstr "Process field is required"
 # TRANSLATION
 # LABEL/ID_PROCESS_MAP
 #: LABEL/ID_PROCESS_MAP
-msgid "[LABEL/ID_PROCESS_MAP] Process Map"
+msgid "Process Map"
 msgstr "Process Map"
 
 # TRANSLATION
 # LABEL/ID_PROCESS_NOCATEGORY
 #: LABEL/ID_PROCESS_NOCATEGORY
-msgid "[LABEL/ID_PROCESS_NOCATEGORY] No Category"
+msgid "No Category"
 msgstr "No Category"
 
 # TRANSLATION
@@ -22682,7 +22682,7 @@ msgstr "The report table '{0}' is related to a process not present in the worksp
 # TRANSLATION
 # LABEL/ID_PROCESS_NO_CATEGORY
 #: LABEL/ID_PROCESS_NO_CATEGORY
-msgid "[LABEL/ID_PROCESS_NO_CATEGORY] No Category"
+msgid "No Category"
 msgstr "No Category"
 
 # TRANSLATION
@@ -22700,7 +22700,7 @@ msgstr "Process doesn't exist!"
 # TRANSLATION
 # LABEL/ID_PROCESS_PERMISSIONS
 #: LABEL/ID_PROCESS_PERMISSIONS
-msgid "[LABEL/ID_PROCESS_PERMISSIONS] Process Permissions"
+msgid "Process Permissions"
 msgstr "Process Permissions"
 
 # TRANSLATION
@@ -22844,7 +22844,7 @@ msgstr "The Project ID was not set!"
 # TRANSLATION
 # LABEL/ID_PROPERTIES
 #: LABEL/ID_PROPERTIES
-msgid "[LABEL/ID_PROPERTIES] Properties"
+msgid "Properties"
 msgstr "Properties"
 
 # TRANSLATION
@@ -22856,19 +22856,19 @@ msgstr "Provider"
 # TRANSLATION
 # LABEL/ID_PROXY_HOST
 #: LABEL/ID_PROXY_HOST
-msgid "[LABEL/ID_PROXY_HOST] Host"
+msgid "Host"
 msgstr "Host"
 
 # TRANSLATION
 # LABEL/ID_PROXY_PASSWORD
 #: LABEL/ID_PROXY_PASSWORD
-msgid "[LABEL/ID_PROXY_PASSWORD] Password"
+msgid "Password"
 msgstr "Password"
 
 # TRANSLATION
 # LABEL/ID_PROXY_PORT
 #: LABEL/ID_PROXY_PORT
-msgid "[LABEL/ID_PROXY_PORT] Port"
+msgid "Port"
 msgstr "Port"
 
 # TRANSLATION
@@ -22880,7 +22880,7 @@ msgstr "Proxy Settings"
 # TRANSLATION
 # LABEL/ID_PROXY_USER
 #: LABEL/ID_PROXY_USER
-msgid "[LABEL/ID_PROXY_USER] User"
+msgid "User"
 msgstr "User"
 
 # TRANSLATION
@@ -22892,7 +22892,7 @@ msgstr "Date Created"
 # TRANSLATION
 # LABEL/ID_PRO_DEBUG
 #: LABEL/ID_PRO_DEBUG
-msgid "[LABEL/ID_PRO_DEBUG] Debug"
+msgid "Debug"
 msgstr "Debug"
 
 # TRANSLATION
@@ -22904,7 +22904,7 @@ msgstr "Process Description"
 # TRANSLATION
 # LABEL/ID_PRO_EFFICIENCY_INDEX
 #: LABEL/ID_PRO_EFFICIENCY_INDEX
-msgid "[LABEL/ID_PRO_EFFICIENCY_INDEX] Process Efficiency Index"
+msgid "Process Efficiency Index"
 msgstr "Process Efficiency Index"
 
 # TRANSLATION
@@ -22928,7 +22928,7 @@ msgstr "Assigned users"
 # TRANSLATION
 # LABEL/ID_PUBLIC
 #: LABEL/ID_PUBLIC
-msgid "[LABEL/ID_PUBLIC] Public"
+msgid "Public"
 msgstr "Public"
 
 # TRANSLATION
@@ -22988,7 +22988,7 @@ msgstr "Do not import the Table"
 # TRANSLATION
 # LABEL/ID_RADIO_NOT_IMPORTED_PMT
 #: LABEL/ID_RADIO_NOT_IMPORTED_PMT
-msgid "[LABEL/ID_RADIO_NOT_IMPORTED_PMT] Do not import the Table"
+msgid " Do not import the Table"
 msgstr "Do not import the Table"
 
 # TRANSLATION
@@ -23138,13 +23138,13 @@ msgstr "Do you want to reassign the case?"
 # TRANSLATION
 # LABEL/ID_REASSIGN_MY_CASES
 #: LABEL/ID_REASSIGN_MY_CASES
-msgid "[LABEL/ID_REASSIGN_MY_CASES] Reassign my cases"
+msgid "Reassign my cases"
 msgstr "Reassign my cases"
 
 # TRANSLATION
 # LABEL/ID_REASSIGN_TO
 #: LABEL/ID_REASSIGN_TO
-msgid "[LABEL/ID_REASSIGN_TO] Reassign"
+msgid "Reassign"
 msgstr "Reassign"
 
 # TRANSLATION
@@ -23330,7 +23330,7 @@ msgstr "Reload"
 # TRANSLATION
 # LABEL/ID_REMOVE
 #: LABEL/ID_REMOVE
-msgid "[LABEL/ID_REMOVE] Remove"
+msgid "Remove"
 msgstr "Remove"
 
 # TRANSLATION
@@ -23384,7 +23384,7 @@ msgstr "Remove field"
 # TRANSLATION
 # LABEL/ID_REMOVE_LOGO
 #: LABEL/ID_REMOVE_LOGO
-msgid "[LABEL/ID_REMOVE_LOGO] Are you sure you want to delete this Logo?"
+msgid "Are you sure you want to delete this Logo?"
 msgstr "Are you sure you want to delete this Logo?"
 
 # TRANSLATION
@@ -23396,7 +23396,7 @@ msgstr "Remove Plugin"
 # TRANSLATION
 # LABEL/ID_REMOVE_ROLE
 #: LABEL/ID_REMOVE_ROLE
-msgid "[LABEL/ID_REMOVE_ROLE] Are you sure you want to delete this role?"
+msgid "Are you sure you want to delete this role?"
 msgstr "Are you sure you want to delete this role?"
 
 # TRANSLATION
@@ -23528,7 +23528,7 @@ msgstr "Reports"
 # TRANSLATION
 # LABEL/ID_REPORTS_TO
 #: LABEL/ID_REPORTS_TO
-msgid "[LABEL/ID_REPORTS_TO] Reports to"
+msgid "Reports to"
 msgstr "Reports to"
 
 # TRANSLATION
@@ -23570,7 +23570,7 @@ msgstr "Report Table"
 # TRANSLATION
 # LABEL/ID_REPORT_TABLES
 #: LABEL/ID_REPORT_TABLES
-msgid "[LABEL/ID_REPORT_TABLES] Report Tables"
+msgid "Report Tables"
 msgstr "Report Tables"
 
 # TRANSLATION
@@ -23582,7 +23582,7 @@ msgstr "Data export for Report Tables is not allowed!"
 # TRANSLATION
 # LABEL/ID_REPORT_TABLE_TITLE
 #: LABEL/ID_REPORT_TABLE_TITLE
-msgid "[LABEL/ID_REPORT_TABLE_TITLE] Title"
+msgid "Title"
 msgstr "Title"
 
 # TRANSLATION
@@ -23600,7 +23600,7 @@ msgstr "The requested action does not exist"
 # TRANSLATION
 # LABEL/ID_REQUEST_DOCUMENTS
 #: LABEL/ID_REQUEST_DOCUMENTS
-msgid "[LABEL/ID_REQUEST_DOCUMENTS] Input Documents"
+msgid "Input Documents"
 msgstr "Input Documents"
 
 # TRANSLATION
@@ -23654,7 +23654,7 @@ msgstr "Dynaform name required."
 # TRANSLATION
 # LABEL/ID_RESEND
 #: LABEL/ID_RESEND
-msgid "[LABEL/ID_RESEND] Resend"
+msgid "Resend"
 msgstr "Resend"
 
 # TRANSLATION
@@ -23666,7 +23666,7 @@ msgstr "because it is a reserved word"
 # TRANSLATION
 # LABEL/ID_RESET
 #: LABEL/ID_RESET
-msgid "[LABEL/ID_RESET] Reset"
+msgid "Reset"
 msgstr "Reset"
 
 # TRANSLATION
@@ -23732,7 +23732,7 @@ msgstr "Result"
 # TRANSLATION
 # LABEL/ID_RESUME
 #: LABEL/ID_RESUME
-msgid "[LABEL/ID_RESUME] Resume"
+msgid "Resume"
 msgstr "Resume"
 
 # TRANSLATION
@@ -23756,7 +23756,7 @@ msgstr "Right Margin"
 # TRANSLATION
 # LABEL/ID_ROLE
 #: LABEL/ID_ROLE
-msgid "[LABEL/ID_ROLE] Role"
+msgid "Role"
 msgstr "Role"
 
 # TRANSLATION
@@ -23768,13 +23768,13 @@ msgstr "Roles"
 # TRANSLATION
 # LABEL/ID_ROLES_CAN_NOT_DELETE
 #: LABEL/ID_ROLES_CAN_NOT_DELETE
-msgid "[LABEL/ID_ROLES_CAN_NOT_DELETE] This role cannot be deleted while it still has some assigned users."
+msgid "This role cannot be deleted while it still has some assigned users."
 msgstr "This role cannot be deleted while it still has some assigned users."
 
 # TRANSLATION
 # LABEL/ID_ROLES_MSG
 #: LABEL/ID_ROLES_MSG
-msgid "[LABEL/ID_ROLES_MSG] You cannot modify this role."
+msgid "You cannot modify this role."
 msgstr "You cannot modify this role."
 
 # TRANSLATION
@@ -24032,7 +24032,7 @@ msgstr "Sat"
 # TRANSLATION
 # LABEL/ID_SAVE
 #: LABEL/ID_SAVE
-msgid "[LABEL/ID_SAVE] Save"
+msgid "Save"
 msgstr "Save"
 
 # TRANSLATION
@@ -24068,7 +24068,7 @@ msgstr "Save Changes"
 # TRANSLATION
 # LABEL/ID_SAVE_DERIVATION_RULES_BEFORE_CLOSING
 #: LABEL/ID_SAVE_DERIVATION_RULES_BEFORE_CLOSING
-msgid "[LABEL/ID_SAVE_DERIVATION_RULES_BEFORE_CLOSING] Save changes to the routing rules before closing?"
+msgid "Save changes to the routing rules before closing?"
 msgstr "Save changes to the routing rules before closing?"
 
 # TRANSLATION
@@ -24200,7 +24200,7 @@ msgstr "Schema"
 # TRANSLATION
 # LABEL/ID_SCRIPT_TASK
 #: LABEL/ID_SCRIPT_TASK
-msgid "[LABEL/ID_SCRIPT_TASK] Script Task"
+msgid "Script Task"
 msgstr "Script Task"
 
 # TRANSLATION
@@ -24212,7 +24212,7 @@ msgstr "The Script-Task with {0}: \"{1}\" already registered"
 # TRANSLATION
 # LABEL/ID_SEARCH
 #: LABEL/ID_SEARCH
-msgid "[LABEL/ID_SEARCH] Search"
+msgid "Search"
 msgstr "Search"
 
 # TRANSLATION
@@ -24332,7 +24332,7 @@ msgstr "Search results"
 # TRANSLATION
 # LABEL/ID_SEARCH_USER
 #: LABEL/ID_SEARCH_USER
-msgid "[LABEL/ID_SEARCH_USER] Username"
+msgid "Username"
 msgstr "Username"
 
 # TRANSLATION
@@ -24344,7 +24344,7 @@ msgstr "Search XML metadata"
 # TRANSLATION
 # LABEL/ID_SECOND
 #: LABEL/ID_SECOND
-msgid "[LABEL/ID_SECOND] Second"
+msgid "Second"
 msgstr "Second"
 
 # TRANSLATION
@@ -24434,7 +24434,7 @@ msgstr "Select the time and day you want this task to start"
 # TRANSLATION
 # LABEL/ID_SELECT_DAY_OF_WEEK
 #: LABEL/ID_SELECT_DAY_OF_WEEK
-msgid "[LABEL/ID_SELECT_DAY_OF_WEEK] Select the day(s) of the week below"
+msgid "Select the day(s) of the week below"
 msgstr "Select the day(s) of the week below"
 
 # TRANSLATION
@@ -24602,13 +24602,13 @@ msgstr "Select a workspace"
 # TRANSLATION
 # LABEL/ID_SELFSERVICE
 #: LABEL/ID_SELFSERVICE
-msgid "[LABEL/ID_SELFSERVICE] Self Service"
+msgid "Self Service"
 msgstr "Self Service"
 
 # TRANSLATION
 # LABEL/ID_SELF_SERVICE
 #: LABEL/ID_SELF_SERVICE
-msgid "[LABEL/ID_SELF_SERVICE] Self Service"
+msgid "Self Service"
 msgstr "Self Service"
 
 # TRANSLATION
@@ -24662,8 +24662,8 @@ msgstr "Sending request to ProcessMaker Sales Department, please wait..."
 # TRANSLATION
 # LABEL/ID_SENDMAIL_NOT_INSTALLED
 #: LABEL/ID_SENDMAIL_NOT_INSTALLED
-msgid "An error has occured, please verify on which server \"SendMail\" has been installed or any other mail service, and if it has been configured correctly."
-msgstr "An error has occured, please verify on which server \"SendMail\" has been installed or any other mail service, and if it has been configured correctly."
+msgid "An error has occurred, please verify on which server \"SendMail\" has been installed or any other mail service, and if it has been configured correctly."
+msgstr "An error has occurred, please verify on which server \"SendMail\" has been installed or any other mail service, and if it has been configured correctly."
 
 # TRANSLATION
 # LABEL/ID_SEND_AT
@@ -24692,7 +24692,7 @@ msgstr "Sent By"
 # TRANSLATION
 # LABEL/ID_SERVER
 #: LABEL/ID_SERVER
-msgid "[LABEL/ID_SERVER] Server"
+msgid "Server"
 msgstr "Server"
 
 # TRANSLATION
@@ -24728,7 +24728,7 @@ msgstr "Server IP Address"
 # TRANSLATION
 # LABEL/ID_SERVER_NAME
 #: LABEL/ID_SERVER_NAME
-msgid "[LABEL/ID_SERVER_NAME] Server Address"
+msgid "Server Address"
 msgstr "Server Address"
 
 # TRANSLATION
@@ -24788,7 +24788,7 @@ msgstr "The session has expired."
 # TRANSLATION
 # LABEL/ID_SETTINGS
 #: LABEL/ID_SETTINGS
-msgid "[LABEL/ID_SETTINGS] Settings"
+msgid "Settings"
 msgstr "Settings"
 
 # TRANSLATION
@@ -25376,13 +25376,13 @@ msgstr "Start a new case for:"
 # TRANSLATION
 # LABEL/ID_START_CASE
 #: LABEL/ID_START_CASE
-msgid "[LABEL/ID_START_CASE] New"
+msgid "New"
 msgstr "New"
 
 # TRANSLATION
 # LABEL/ID_START_DATE
 #: LABEL/ID_START_DATE
-msgid "[LABEL/ID_START_DATE] Start Date"
+msgid "Start Date"
 msgstr "Start Date"
 
 # TRANSLATION
@@ -25460,7 +25460,7 @@ msgstr "Status Reassignment"
 # TRANSLATION
 # LABEL/ID_STEPS
 #: LABEL/ID_STEPS
-msgid "[LABEL/ID_STEPS] Steps"
+msgid "Steps"
 msgstr "Steps"
 
 # TRANSLATION
@@ -25526,13 +25526,13 @@ msgstr "KPIs"
 # TRANSLATION
 # LABEL/ID_SUBJECT
 #: LABEL/ID_SUBJECT
-msgid "[LABEL/ID_SUBJECT] Subject"
+msgid "Subject"
 msgstr "Subject"
 
 # TRANSLATION
 # LABEL/ID_SUBMIT
 #: LABEL/ID_SUBMIT
-msgid "[LABEL/ID_SUBMIT] submit"
+msgid "submit"
 msgstr "submit"
 
 # TRANSLATION
@@ -25550,7 +25550,7 @@ msgstr "Sub-Process"
 # TRANSLATION
 # LABEL/ID_SUBPROCESS_NAME
 #: LABEL/ID_SUBPROCESS_NAME
-msgid "[LABEL/ID_SUBPROCESS_NAME] Sub-Process name"
+msgid "Sub-Process name"
 msgstr "Sub-Process name"
 
 # TRANSLATION
@@ -25790,13 +25790,13 @@ msgstr "Invalid syntax"
 # TRANSLATION
 # LABEL/ID_TABLE_NAME
 #: LABEL/ID_TABLE_NAME
-msgid "[LABEL/ID_TABLE_NAME] Table Name"
+msgid "Table Name"
 msgstr "Table Name"
 
 # TRANSLATION
 # LABEL/ID_TABLE_NAME_IS_REQUIRED
 #: LABEL/ID_TABLE_NAME_IS_REQUIRED
-msgid "[LABEL/ID_TABLE_NAME_IS_REQUIRED] Table Name is required."
+msgid "Table Name is required."
 msgstr "Table Name is required."
 
 # TRANSLATION
@@ -25832,7 +25832,7 @@ msgstr "Table Type"
 # TRANSLATION
 # LABEL/ID_TAGS
 #: LABEL/ID_TAGS
-msgid "[LABEL/ID_TAGS] Tags"
+msgid "Tags"
 msgstr "Tags"
 
 # TRANSLATION
@@ -25850,7 +25850,7 @@ msgstr "Leaf task"
 # TRANSLATION
 # LABEL/ID_TARGET
 #: LABEL/ID_TARGET
-msgid "[LABEL/ID_TARGET] Target"
+msgid "Target"
 msgstr "Target"
 
 # TRANSLATION
@@ -25862,7 +25862,7 @@ msgstr "Target and Origin user are the same"
 # TRANSLATION
 # LABEL/ID_TARGET_TASK
 #: LABEL/ID_TARGET_TASK
-msgid "[LABEL/ID_TARGET_TASK] Target Task"
+msgid "Target Task"
 msgstr "Target Task"
 
 # TRANSLATION
@@ -25880,7 +25880,7 @@ msgstr "The target user does not have rights to execute the task"
 # TRANSLATION
 # LABEL/ID_TASK
 #: LABEL/ID_TASK
-msgid "[LABEL/ID_TASK] Task"
+msgid "Task"
 msgstr "Task"
 
 # TRANSLATION
@@ -25910,7 +25910,7 @@ msgstr "The task is defined for Manual assignment"
 # TRANSLATION
 # LABEL/ID_TASK_DOES_NOT_HAVE_ROUTING_RULE
 #: LABEL/ID_TASK_DOES_NOT_HAVE_ROUTING_RULE
-msgid "[LABEL/ID_TASK_DOES_NOT_HAVE_ROUTING_RULE] Task does not have a routing rule. Please, check the process definition."
+msgid "Task does not have a routing rule. Please, check the process definition."
 msgstr "Task does not have a routing rule. Please, check the process definition."
 
 # TRANSLATION
@@ -25934,7 +25934,7 @@ msgstr "Task ID"
 # TRANSLATION
 # LABEL/ID_TASK_INFORMATION
 #: LABEL/ID_TASK_INFORMATION
-msgid "[LABEL/ID_TASK_INFORMATION] Task Information"
+msgid "Task Information"
 msgstr "Task Information"
 
 # TRANSLATION
@@ -25952,7 +25952,7 @@ msgstr "Task invalid or the user is not assigned to the task"
 # TRANSLATION
 # LABEL/ID_TASK_IN_PROGRESS
 #: LABEL/ID_TASK_IN_PROGRESS
-msgid "[LABEL/ID_TASK_IN_PROGRESS] Task in Progress"
+msgid "Task in Progress"
 msgstr "Task in Progress"
 
 # TRANSLATION
@@ -26048,7 +26048,7 @@ msgstr "Tasks (View mode)"
 # TRANSLATION
 # LABEL/ID_TEMPLATES
 #: LABEL/ID_TEMPLATES
-msgid "[LABEL/ID_TEMPLATES] Templates"
+msgid "Templates"
 msgstr "Templates"
 
 # TRANSLATION
@@ -26090,7 +26090,7 @@ msgstr "Test Configuration"
 # TRANSLATION
 # LABEL/ID_TEST_CONNECTION
 #: LABEL/ID_TEST_CONNECTION
-msgid "[LABEL/ID_TEST_CONNECTION] Test Connection"
+msgid "Test Connection"
 msgstr "Test Connection"
 
 # TRANSLATION
@@ -26282,7 +26282,7 @@ msgstr "This Year"
 # TRANSLATION
 # LABEL/ID_THREAD_INDEX
 #: LABEL/ID_THREAD_INDEX
-msgid "[LABEL/ID_THREAD_INDEX] Thread Index"
+msgid "Thread Index"
 msgstr "Thread Index"
 
 # TRANSLATION
@@ -26366,7 +26366,7 @@ msgstr "Time (Hours)"
 # TRANSLATION
 # LABEL/ID_TIME_LABEL
 #: LABEL/ID_TIME_LABEL
-msgid "[LABEL/ID_TIME_LABEL] Time"
+msgid "Time"
 msgstr "Time"
 
 # TRANSLATION
@@ -26444,7 +26444,7 @@ msgstr "Time zone configuration"
 # TRANSLATION
 # LABEL/ID_TIMING_CONTROL
 #: LABEL/ID_TIMING_CONTROL
-msgid "[LABEL/ID_TIMING_CONTROL] Timing Control"
+msgid "Timing Control"
 msgstr "Timing Control"
 
 # TRANSLATION
@@ -26462,7 +26462,7 @@ msgstr "Grid Variables"
 # TRANSLATION
 # LABEL/ID_TINY_PROCESS_VARIABLES
 #: LABEL/ID_TINY_PROCESS_VARIABLES
-msgid "[LABEL/ID_TINY_PROCESS_VARIABLES] Process Variables"
+msgid "Process Variables"
 msgstr "Process Variables"
 
 # TRANSLATION
@@ -26486,25 +26486,25 @@ msgstr "Type Variable"
 # TRANSLATION
 # LABEL/ID_TITLE
 #: LABEL/ID_TITLE
-msgid "[LABEL/ID_TITLE] Title"
+msgid "Title"
 msgstr "Title"
 
 # TRANSLATION
 # LABEL/ID_TITLE_AUTHENTICATION_SOURCE_INF
 #: LABEL/ID_TITLE_AUTHENTICATION_SOURCE_INF
-msgid "[LABEL/ID_TITLE_AUTHENTICATION_SOURCE_INF] Authentication Source Information"
+msgid "Authentication Source Information"
 msgstr "Authentication Source Information"
 
 # TRANSLATION
 # LABEL/ID_TITLE_CANCELLED
 #: LABEL/ID_TITLE_CANCELLED
-msgid "[LABEL/ID_TITLE_CANCELLED] Canceled"
+msgid "Canceled"
 msgstr "Canceled"
 
 # TRANSLATION
 # LABEL/ID_TITLE_COMPLETED
 #: LABEL/ID_TITLE_COMPLETED
-msgid "[LABEL/ID_TITLE_COMPLETED] Completed"
+msgid "Completed"
 msgstr "Completed"
 
 # TRANSLATION
@@ -26516,7 +26516,7 @@ msgstr "Dashboard Indicator Title"
 # TRANSLATION
 # LABEL/ID_TITLE_DRAFT
 #: LABEL/ID_TITLE_DRAFT
-msgid "[LABEL/ID_TITLE_DRAFT] Draft"
+msgid "Draft"
 msgstr "Draft"
 
 # TRANSLATION
@@ -26534,19 +26534,19 @@ msgstr "Exporting Tool"
 # TRANSLATION
 # LABEL/ID_TITLE_FIELD
 #: LABEL/ID_TITLE_FIELD
-msgid "[LABEL/ID_TITLE_FIELD] Title"
+msgid "Title"
 msgstr "Title"
 
 # TRANSLATION
 # LABEL/ID_TITLE_FIELD_DYNAFORM
 #: LABEL/ID_TITLE_FIELD_DYNAFORM
-msgid "[LABEL/ID_TITLE_FIELD_DYNAFORM] title"
+msgid "title"
 msgstr "title"
 
 # TRANSLATION
 # LABEL/ID_TITLE_INBOX
 #: LABEL/ID_TITLE_INBOX
-msgid "[LABEL/ID_TITLE_INBOX] Inbox"
+msgid "Inbox"
 msgstr "Inbox"
 
 # TRANSLATION
@@ -26564,13 +26564,13 @@ msgstr "SYSTEM INSTALLATION FAILED"
 # TRANSLATION
 # LABEL/ID_TITLE_PARTICIPATED
 #: LABEL/ID_TITLE_PARTICIPATED
-msgid "[LABEL/ID_TITLE_PARTICIPATED] Participated"
+msgid "Participated"
 msgstr "Participated"
 
 # TRANSLATION
 # LABEL/ID_TITLE_PAUSED
 #: LABEL/ID_TITLE_PAUSED
-msgid "[LABEL/ID_TITLE_PAUSED] Paused"
+msgid "Paused"
 msgstr "Paused"
 
 # TRANSLATION
@@ -26582,7 +26582,7 @@ msgstr "Title is required."
 # TRANSLATION
 # LABEL/ID_TITLE_START_CASE
 #: LABEL/ID_TITLE_START_CASE
-msgid "[LABEL/ID_TITLE_START_CASE] Start Case"
+msgid "Start Case"
 msgstr "Start Case"
 
 # TRANSLATION
@@ -26600,7 +26600,7 @@ msgstr "TLS certificate is not installed in the server."
 # TRANSLATION
 # LABEL/ID_TO
 #: LABEL/ID_TO
-msgid "[LABEL/ID_TO] To"
+msgid "To"
 msgstr "To"
 
 # TRANSLATION
@@ -26666,7 +26666,7 @@ msgstr "Replace the value converted to integer"
 # TRANSLATION
 # LABEL/ID_TO_REASSIGN
 #: LABEL/ID_TO_REASSIGN
-msgid "[LABEL/ID_TO_REASSIGN] Reassign"
+msgid "Reassign"
 msgstr "Reassign"
 
 # TRANSLATION
@@ -26696,7 +26696,7 @@ msgstr "Replace the value with URL encoding"
 # TRANSLATION
 # LABEL/ID_TRANSFER_HISTORY
 #: LABEL/ID_TRANSFER_HISTORY
-msgid "[LABEL/ID_TRANSFER_HISTORY] Transfer History"
+msgid "Transfer History"
 msgstr "Transfer History"
 
 # TRANSLATION
@@ -26714,7 +26714,7 @@ msgstr "The translation file is not writable. <br/>Please give write permission 
 # TRANSLATION
 # LABEL/ID_TRIGGERS
 #: LABEL/ID_TRIGGERS
-msgid "[LABEL/ID_TRIGGERS] Triggers"
+msgid "Triggers"
 msgstr "Triggers"
 
 # TRANSLATION
@@ -26750,7 +26750,7 @@ msgstr "({N}) Dependencies were found for this trigger in {Object} objects"
 # TRANSLATION
 # LABEL/ID_TRIGGERS_VALIDATION_ERR3
 #: LABEL/ID_TRIGGERS_VALIDATION_ERR3
-msgid "[LABEL/ID_TRIGGERS_VALIDATION_ERR3] * The {Object} {Description} depends."
+msgid "* The {Object} {Description} depends."
 msgstr "* The {Object} {Description} depends."
 
 # TRANSLATION
@@ -26780,7 +26780,7 @@ msgstr "Copy/Import Trigger"
 # TRANSLATION
 # LABEL/ID_TRIGGER_DB
 #: LABEL/ID_TRIGGER_DB
-msgid "[LABEL/ID_TRIGGER_DB] Trigger"
+msgid "Trigger"
 msgstr "Trigger"
 
 # TRANSLATION
@@ -26840,7 +26840,7 @@ msgstr "Return value"
 # TRANSLATION
 # LABEL/ID_TRIGGER_SOURCE_LINK
 #: LABEL/ID_TRIGGER_SOURCE_LINK
-msgid "[LABEL/ID_TRIGGER_SOURCE_LINK] Edit Source Code"
+msgid "Edit Source Code"
 msgstr "Edit Source Code"
 
 # TRANSLATION
@@ -26864,7 +26864,7 @@ msgstr "Tue"
 # TRANSLATION
 # LABEL/ID_TYPE
 #: LABEL/ID_TYPE
-msgid "[LABEL/ID_TYPE] Type"
+msgid "Type"
 msgstr "Type"
 
 # TRANSLATION
@@ -26882,7 +26882,7 @@ msgstr "Process Type"
 # TRANSLATION
 # LABEL/ID_UID
 #: LABEL/ID_UID
-msgid "[LABEL/ID_UID] UID"
+msgid "UID"
 msgstr "UID"
 
 # TRANSLATION
@@ -26912,7 +26912,7 @@ msgstr "Unable to send email, the task is closed."
 # TRANSLATION
 # LABEL/ID_UNASSIGNED
 #: LABEL/ID_UNASSIGNED
-msgid "[LABEL/ID_UNASSIGNED] Unassigned"
+msgid "Unassigned"
 msgstr "Unassigned"
 
 # TRANSLATION
@@ -26972,7 +26972,7 @@ msgstr "Uninstall this plugin"
 # TRANSLATION
 # LABEL/ID_UNITS
 #: LABEL/ID_UNITS
-msgid "[LABEL/ID_UNITS] Units"
+msgid "Units"
 msgstr "Units"
 
 # TRANSLATION
@@ -26996,7 +26996,7 @@ msgstr "Unpause"
 # TRANSLATION
 # LABEL/ID_UNPAUSE_CASE
 #: LABEL/ID_UNPAUSE_CASE
-msgid "[LABEL/ID_UNPAUSE_CASE] Unpause"
+msgid "Unpause"
 msgstr "Unpause"
 
 # TRANSLATION
@@ -27104,7 +27104,7 @@ msgstr "Update Data from PM Table"
 # TRANSLATION
 # LABEL/ID_UPDATE_DATE
 #: LABEL/ID_UPDATE_DATE
-msgid "[LABEL/ID_UPDATE_DATE] Update"
+msgid "Update"
 msgstr "Update"
 
 # TRANSLATION
@@ -27284,7 +27284,7 @@ msgstr "Please wait while the upgrade is starting..."
 # TRANSLATION
 # LABEL/ID_UPGRADE_SYSTEM
 #: LABEL/ID_UPGRADE_SYSTEM
-msgid "[LABEL/ID_UPGRADE_SYSTEM] Upgrade System"
+msgid "Upgrade System"
 msgstr "Upgrade System"
 
 # TRANSLATION
@@ -27302,13 +27302,13 @@ msgstr "Please wait while upgrading the plugin..."
 # TRANSLATION
 # LABEL/ID_UPLOAD
 #: LABEL/ID_UPLOAD
-msgid "[LABEL/ID_UPLOAD] Upload"
+msgid "Upload"
 msgstr "Upload"
 
 # TRANSLATION
 # LABEL/ID_UPLOADED_DOCUMENTS
 #: LABEL/ID_UPLOADED_DOCUMENTS
-msgid "[LABEL/ID_UPLOADED_DOCUMENTS] Uploaded Documents"
+msgid "Uploaded Documents"
 msgstr "Uploaded Documents"
 
 # TRANSLATION
@@ -27410,7 +27410,7 @@ msgstr "The format is incorrect, check the following examples:    *.*   *.png   
 # TRANSLATION
 # LABEL/ID_UPLOAD_FILE
 #: LABEL/ID_UPLOAD_FILE
-msgid "[LABEL/ID_UPLOAD_FILE] Upload File"
+msgid "Upload File"
 msgstr "Upload File"
 
 # TRANSLATION
@@ -27482,13 +27482,13 @@ msgstr "Up Trigger"
 # TRANSLATION
 # LABEL/ID_USER
 #: LABEL/ID_USER
-msgid "[LABEL/ID_USER] User"
+msgid "User"
 msgstr "User"
 
 # TRANSLATION
 # LABEL/ID_USERNAME
 #: LABEL/ID_USERNAME
-msgid "[LABEL/ID_USERNAME] Username"
+msgid "Username"
 msgstr "Username"
 
 # TRANSLATION
@@ -27566,7 +27566,7 @@ msgstr "Verifying username availability"
 # TRANSLATION
 # LABEL/ID_USERS
 #: LABEL/ID_USERS
-msgid "[LABEL/ID_USERS] Users"
+msgid "Users"
 msgstr "Users"
 
 # TRANSLATION
@@ -27578,7 +27578,7 @@ msgstr "Users Actors"
 # TRANSLATION
 # LABEL/ID_USERS_DELETE_WITH_HISTORY
 #: LABEL/ID_USERS_DELETE_WITH_HISTORY
-msgid "[LABEL/ID_USERS_DELETE_WITH_HISTORY] The user has some completed or canceled tasks (which may be useful for historical records). Do you want to delete this user anyway?"
+msgid "The user has some completed or canceled tasks (which may be useful for historical records). Do you want to delete this user anyway?"
 msgstr "The user has some completed or canceled tasks (which may be useful for historical records). Do you want to delete this user anyway?"
 
 # TRANSLATION
@@ -27596,7 +27596,7 @@ msgstr "The user has assigned cases. Do you want to continue anyway?"
 # TRANSLATION
 # LABEL/ID_USERS_LIST
 #: LABEL/ID_USERS_LIST
-msgid "[LABEL/ID_USERS_LIST] Users"
+msgid "Users"
 msgstr "Users"
 
 # TRANSLATION
@@ -27692,7 +27692,7 @@ msgstr "Wrong authentication. This user does not correspond with the email addre
 # TRANSLATION
 # LABEL/ID_USER_DOES_NOT_CORRESPOND_TYPE
 #: LABEL/ID_USER_DOES_NOT_CORRESPOND_TYPE
-msgid "[LABEL/ID_USER_DOES_NOT_CORRESPOND_TYPE] This id: {0} does not correspond to a registered {1}"
+msgid "This id: {0} does not correspond to a registered {1}"
 msgstr "This id: {0} does not correspond to a registered {1}"
 
 # TRANSLATION
@@ -27758,7 +27758,7 @@ msgstr "User does not have access to the system"
 # TRANSLATION
 # LABEL/ID_USER_ID
 #: LABEL/ID_USER_ID
-msgid "[LABEL/ID_USER_ID] Username"
+msgid "Username"
 msgstr "Username"
 
 # TRANSLATION
@@ -27812,7 +27812,7 @@ msgstr "User must change password at next logon"
 # TRANSLATION
 # LABEL/ID_USER_NAME
 #: LABEL/ID_USER_NAME
-msgid "[LABEL/ID_USER_NAME] User Name"
+msgid "User Name"
 msgstr "User Name"
 
 # TRANSLATION
@@ -27998,13 +27998,13 @@ msgstr "Use the language of URL"
 # TRANSLATION
 # LABEL/ID_UXS_NORMAL
 #: LABEL/ID_UXS_NORMAL
-msgid "[LABEL/ID_UXS_NORMAL] Normal"
+msgid "Normal"
 msgstr "Normal"
 
 # TRANSLATION
 # LABEL/ID_UXS_SIMPLIFIED
 #: LABEL/ID_UXS_SIMPLIFIED
-msgid "[LABEL/ID_UXS_SIMPLIFIED] Mobile"
+msgid "Mobile"
 msgstr "Mobile"
 
 # TRANSLATION
@@ -28028,7 +28028,7 @@ msgstr "Vacation"
 # TRANSLATION
 # LABEL/ID_VALIDATED_FIELDS
 #: LABEL/ID_VALIDATED_FIELDS
-msgid "[LABEL/ID_VALIDATED_FIELDS] The following fields have invalid values"
+msgid "The following fields have invalid values"
 msgstr "The following fields have invalid values"
 
 # TRANSLATION
@@ -28058,13 +28058,13 @@ msgstr "Please enter valid credentials"
 # TRANSLATION
 # LABEL/ID_VALID_FROM
 #: LABEL/ID_VALID_FROM
-msgid "[LABEL/ID_VALID_FROM] From"
+msgid "From"
 msgstr "From"
 
 # TRANSLATION
 # LABEL/ID_VALID_TO
 #: LABEL/ID_VALID_TO
-msgid "[LABEL/ID_VALID_TO] To"
+msgid "To"
 msgstr "To"
 
 # TRANSLATION
@@ -28094,19 +28094,19 @@ msgstr "VARCHAR"
 # TRANSLATION
 # LABEL/ID_VARIABLES
 #: LABEL/ID_VARIABLES
-msgid "[LABEL/ID_VARIABLES] Variables"
+msgid "Variables"
 msgstr "Variables"
 
 # TRANSLATION
 # LABEL/ID_VARIABLES_CASE_PRIORITY
 #: LABEL/ID_VARIABLES_CASE_PRIORITY
-msgid "[LABEL/ID_VARIABLES_CASE_PRIORITY] Variable for Case priority"
+msgid "Variable for Case priority"
 msgstr "Variable for Case priority"
 
 # TRANSLATION
 # LABEL/ID_VARIABLES_IN
 #: LABEL/ID_VARIABLES_IN
-msgid "[LABEL/ID_VARIABLES_IN] Variables In"
+msgid "Variables In"
 msgstr "Variables In"
 
 # TRANSLATION
@@ -28124,7 +28124,7 @@ msgstr "Variable for number of instances."
 # TRANSLATION
 # LABEL/ID_VARIABLES_OUT
 #: LABEL/ID_VARIABLES_OUT
-msgid "[LABEL/ID_VARIABLES_OUT] Variables Out"
+msgid "Variables Out"
 msgstr "Variables Out"
 
 # TRANSLATION
@@ -28154,7 +28154,7 @@ msgstr "variables sent"
 # TRANSLATION
 # LABEL/ID_VARIABLES_VALUE_ASSIGNMENT
 #: LABEL/ID_VARIABLES_VALUE_ASSIGNMENT
-msgid "[LABEL/ID_VARIABLES_VALUE_ASSIGNMENT] Variable for Value Based Assignment"
+msgid "Variable for Value Based Assignment"
 msgstr "Variable for Value Based Assignment"
 
 # TRANSLATION
@@ -28184,7 +28184,7 @@ msgstr "pmVariablePicker"
 # TRANSLATION
 # LABEL/ID_VERSION
 #: LABEL/ID_VERSION
-msgid "[LABEL/ID_VERSION] Version"
+msgid "Version"
 msgstr "Version"
 
 # TRANSLATION
@@ -28220,7 +28220,7 @@ msgstr "Very Low"
 # TRANSLATION
 # LABEL/ID_VIEW
 #: LABEL/ID_VIEW
-msgid "[LABEL/ID_VIEW] View"
+msgid "View"
 msgstr "View"
 
 # TRANSLATION
@@ -28244,7 +28244,7 @@ msgstr "View Response"
 # TRANSLATION
 # LABEL/ID_VIEW_USER_GROUP
 #: LABEL/ID_VIEW_USER_GROUP
-msgid "[LABEL/ID_VIEW_USER_GROUP] Groups"
+msgid "Groups"
 msgstr "Groups"
 
 # TRANSLATION
@@ -28322,7 +28322,7 @@ msgstr "Web Entry Link"
 # TRANSLATION
 # LABEL/ID_WEB_ENTRY
 #: LABEL/ID_WEB_ENTRY
-msgid "[LABEL/ID_WEB_ENTRY] Web Entry"
+msgid "Web Entry"
 msgstr "Web Entry"
 
 # TRANSLATION
@@ -28370,7 +28370,7 @@ msgstr "The WebEntry-Event title with {0}: \"{1}\" already exists."
 # TRANSLATION
 # LABEL/ID_WEB_ENTRY_LINK
 #: LABEL/ID_WEB_ENTRY_LINK
-msgid "[LABEL/ID_WEB_ENTRY_LINK] Web Entry Link"
+msgid "Web Entry Link"
 msgstr "Web Entry Link"
 
 # TRANSLATION
@@ -28424,61 +28424,61 @@ msgstr "Web Service User"
 # TRANSLATION
 # LABEL/ID_WEEKDAY_0
 #: LABEL/ID_WEEKDAY_0
-msgid "[LABEL/ID_WEEKDAY_0] Sunday"
+msgid "Sunday"
 msgstr "Sunday"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_1
 #: LABEL/ID_WEEKDAY_1
-msgid "[LABEL/ID_WEEKDAY_1] Monday"
+msgid "Monday"
 msgstr "Monday"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_2
 #: LABEL/ID_WEEKDAY_2
-msgid "[LABEL/ID_WEEKDAY_2] Tuesday"
+msgid "Tuesday"
 msgstr "Tuesday"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_3
 #: LABEL/ID_WEEKDAY_3
-msgid "[LABEL/ID_WEEKDAY_3] Wednesday"
+msgid "Wednesday"
 msgstr "Wednesday"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_4
 #: LABEL/ID_WEEKDAY_4
-msgid "[LABEL/ID_WEEKDAY_4] Thursday"
+msgid "Thursday"
 msgstr "Thursday"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_5
 #: LABEL/ID_WEEKDAY_5
-msgid "[LABEL/ID_WEEKDAY_5] Friday"
+msgid "Friday"
 msgstr "Friday"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_6
 #: LABEL/ID_WEEKDAY_6
-msgid "[LABEL/ID_WEEKDAY_6] Saturday"
+msgid "Saturday"
 msgstr "Saturday"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_ABB_0
 #: LABEL/ID_WEEKDAY_ABB_0
-msgid "[LABEL/ID_WEEKDAY_ABB_0] Sun"
+msgid "Sun"
 msgstr "Sun"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_ABB_1
 #: LABEL/ID_WEEKDAY_ABB_1
-msgid "[LABEL/ID_WEEKDAY_ABB_1] Mon"
+msgid "Mon"
 msgstr "Mon"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_ABB_2
 #: LABEL/ID_WEEKDAY_ABB_2
-msgid "[LABEL/ID_WEEKDAY_ABB_2] Tue"
+msgid "Tue"
 msgstr "Tue"
 
 # TRANSLATION
@@ -28490,19 +28490,19 @@ msgstr "Wed"
 # TRANSLATION
 # LABEL/ID_WEEKDAY_ABB_4
 #: LABEL/ID_WEEKDAY_ABB_4
-msgid "[LABEL/ID_WEEKDAY_ABB_4] Thu"
+msgid "Thu"
 msgstr "Thu"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_ABB_5
 #: LABEL/ID_WEEKDAY_ABB_5
-msgid "[LABEL/ID_WEEKDAY_ABB_5] Fri"
+msgid "Fri"
 msgstr "Fri"
 
 # TRANSLATION
 # LABEL/ID_WEEKDAY_ABB_6
 #: LABEL/ID_WEEKDAY_ABB_6
-msgid "[LABEL/ID_WEEKDAY_ABB_6] Sat"
+msgid "Sat"
 msgstr "Sat"
 
 # TRANSLATION
@@ -28694,7 +28694,7 @@ msgstr "Yellow Starts In"
 # TRANSLATION
 # LABEL/ID_YES
 #: LABEL/ID_YES
-msgid "[LABEL/ID_YES] Yes"
+msgid "Yes"
 msgstr "Yes"
 
 # TRANSLATION
@@ -28706,7 +28706,7 @@ msgstr "Yesterday"
 # TRANSLATION
 # LABEL/ID_YES_VALUE
 #: LABEL/ID_YES_VALUE
-msgid "[LABEL/ID_YES_VALUE] Yes"
+msgid "Yes"
 msgstr "Yes"
 
 # TRANSLATION
@@ -28844,7 +28844,7 @@ msgstr "User Name Display Format"
 # TRANSLATION
 # LABEL/LOGIN
 #: LABEL/LOGIN
-msgid "[LABEL/LOGIN] Login"
+msgid "Login"
 msgstr "Login"
 
 # TRANSLATION
@@ -28910,7 +28910,7 @@ msgstr "CSS File"
 # TRANSLATION
 # LABEL/MIME_DES_DIR
 #: LABEL/MIME_DES_DIR
-msgid "[LABEL/MIME_DES_DIR] Directory"
+msgid "Directory"
 msgstr "Directory"
 
 # TRANSLATION
@@ -28922,7 +28922,7 @@ msgstr "Word Document"
 # TRANSLATION
 # LABEL/MIME_DES_DOCX
 #: LABEL/MIME_DES_DOCX
-msgid "[LABEL/MIME_DES_DOCX] Word Document"
+msgid "Word Document"
 msgstr "Word Document"
 
 # TRANSLATION
@@ -28940,7 +28940,7 @@ msgstr "Executable File"
 # TRANSLATION
 # LABEL/MIME_DES_FILE
 #: LABEL/MIME_DES_FILE
-msgid "[LABEL/MIME_DES_FILE] File"
+msgid "File"
 msgstr "File"
 
 # TRANSLATION
@@ -29060,7 +29060,7 @@ msgstr "PowerPoint File"
 # TRANSLATION
 # LABEL/MIME_DES_PPTX
 #: LABEL/MIME_DES_PPTX
-msgid "[LABEL/MIME_DES_PPTX] PowerPoint File"
+msgid "PowerPoint File"
 msgstr "PowerPoint File"
 
 # TRANSLATION
@@ -29108,7 +29108,7 @@ msgstr "Text File"
 # TRANSLATION
 # LABEL/MIME_DES_TXT
 #: LABEL/MIME_DES_TXT
-msgid "[LABEL/MIME_DES_TXT] Text File"
+msgid "Text File"
 msgstr "Text File"
 
 # TRANSLATION
@@ -29120,19 +29120,19 @@ msgstr "WAV Audio File"
 # TRANSLATION
 # LABEL/MIME_DES_WORD
 #: LABEL/MIME_DES_WORD
-msgid "[LABEL/MIME_DES_WORD] Word Document"
+msgid "Word Document"
 msgstr "Word Document"
 
 # TRANSLATION
 # LABEL/MIME_DES_XLS
 #: LABEL/MIME_DES_XLS
-msgid "[LABEL/MIME_DES_XLS] Excel Document"
+msgid "Excel Document"
 msgstr "Excel Document"
 
 # TRANSLATION
 # LABEL/MIME_DES_XLSX
 #: LABEL/MIME_DES_XLSX
-msgid "[LABEL/MIME_DES_XLSX] Excel Document"
+msgid "Excel Document"
 msgstr "Excel Document"
 
 # TRANSLATION
@@ -29150,7 +29150,7 @@ msgstr "SMTP mail is missing or it's not configured. Please, check the configura
 # TRANSLATION
 # LABEL/MSGS_HISTORY
 #: LABEL/MSGS_HISTORY
-msgid "[LABEL/MSGS_HISTORY] Messages History"
+msgid "Messages History"
 msgstr "Messages History"
 
 # TRANSLATION
@@ -29198,19 +29198,19 @@ msgstr "Workspace already exists, please choose a different name."
 # TRANSLATION
 # LABEL/NEW_SITE_SUCCESS
 #: LABEL/NEW_SITE_SUCCESS
-msgid "[LABEL/NEW_SITE_SUCCESS] Your new site was successfully created with name:"
+msgid "Your new site was successfully created with name:"
 msgstr "Your new site was successfully created with name:"
 
 # TRANSLATION
 # LABEL/NEW_SITE_SUCCESS_CONFIRM
 #: LABEL/NEW_SITE_SUCCESS_CONFIRM
-msgid "[LABEL/NEW_SITE_SUCCESS_CONFIRM] Do you want open the new site?"
+msgid "Do you want open the new site?"
 msgstr "Do you want open the new site?"
 
 # TRANSLATION
 # LABEL/NEW_SITE_SUCCESS_CONFIRMNOTE
 #: LABEL/NEW_SITE_SUCCESS_CONFIRMNOTE
-msgid "[LABEL/NEW_SITE_SUCCESS_CONFIRMNOTE] Note.- If you open the new site your current session will be closed."
+msgid "Note.- If you open the new site your current session will be closed."
 msgstr "Note.- If you open the new site your current session will be closed."
 
 # TRANSLATION
@@ -29240,13 +29240,13 @@ msgstr "Password history"
 # TRANSLATION
 # LABEL/PAUSED
 #: LABEL/PAUSED
-msgid "[LABEL/PAUSED] Pause"
+msgid "Pause"
 msgstr "Pause"
 
 # TRANSLATION
 # LABEL/PENTAHO_LABEL_CONFIGURATION
 #: LABEL/PENTAHO_LABEL_CONFIGURATION
-msgid "[LABEL/PENTAHO_LABEL_CONFIGURATION] Configuration"
+msgid "Configuration"
 msgstr "Configuration"
 
 # TRANSLATION
@@ -29288,7 +29288,7 @@ msgstr "JNDI Information"
 # TRANSLATION
 # LABEL/PENTAHO_LABEL_PASSWORD
 #: LABEL/PENTAHO_LABEL_PASSWORD
-msgid "[LABEL/PENTAHO_LABEL_PASSWORD] Password"
+msgid "Password"
 msgstr "Password"
 
 # TRANSLATION
@@ -29378,13 +29378,13 @@ msgstr "User already exists"
 # TRANSLATION
 # LABEL/PENTAHO_LABEL_USER_NAME
 #: LABEL/PENTAHO_LABEL_USER_NAME
-msgid "[LABEL/PENTAHO_LABEL_USER_NAME] User Name"
+msgid "User Name"
 msgstr "User Name"
 
 # TRANSLATION
 # LABEL/PENTAHO_LABEL_WS_SYNCHED
 #: LABEL/PENTAHO_LABEL_WS_SYNCHED
-msgid "[LABEL/PENTAHO_LABEL_WS_SYNCHED] Workspace synchronized with Pentaho Solution"
+msgid "Workspace synchronized with Pentaho Solution"
 msgstr "Workspace synchronized with Pentaho Solution"
 
 # TRANSLATION
@@ -29396,7 +29396,7 @@ msgstr "Pentaho Workspace User and Password"
 # TRANSLATION
 # LABEL/PENTAHO_TABLES_TRIGGERS
 #: LABEL/PENTAHO_TABLES_TRIGGERS
-msgid "[LABEL/PENTAHO_TABLES_TRIGGERS] Database tables and triggers"
+msgid "Database tables and triggers"
 msgstr "Database tables and triggers"
 
 # TRANSLATION
@@ -29420,7 +29420,7 @@ msgstr "Require authentication"
 # TRANSLATION
 # LABEL/RESOLVING_NAME
 #: LABEL/RESOLVING_NAME
-msgid "[LABEL/RESOLVING_NAME] Resolving Host Name"
+msgid "Resolving Host Name"
 msgstr "Resolving Host Name"
 
 # TRANSLATION
@@ -29438,7 +29438,7 @@ msgstr "Send a test mail"
 # TRANSLATION
 # LABEL/SERVER_RESPONSE
 #: LABEL/SERVER_RESPONSE
-msgid "[LABEL/SERVER_RESPONSE] Server Response"
+msgid "Server Response"
 msgstr "Server Response"
 
 # TRANSLATION
@@ -29474,7 +29474,7 @@ msgstr "Step 4"
 # TRANSLATION
 # LABEL/STEP_MODE
 #: LABEL/STEP_MODE
-msgid "[LABEL/STEP_MODE] Mode"
+msgid "Mode"
 msgstr "Mode"
 
 # TRANSLATION
@@ -29486,13 +29486,13 @@ msgstr "Testing email configuration"
 # TRANSLATION
 # LABEL/TEST_HAS
 #: LABEL/TEST_HAS
-msgid "[LABEL/TEST_HAS] The test has"
+msgid "The test has"
 msgstr "The test has"
 
 # TRANSLATION
 # LABEL/TO_DO
 #: LABEL/TO_DO
-msgid "[LABEL/TO_DO] To Do"
+msgid "To Do"
 msgstr "To Do"
 
 # TRANSLATION
@@ -29516,7 +29516,7 @@ msgstr "Use Secure Connection"
 # TRANSLATION
 # LABEL/VIEW_ROLE_USERS
 #: LABEL/VIEW_ROLE_USERS
-msgid "[LABEL/VIEW_ROLE_USERS] Users"
+msgid "Users"
 msgstr "Users"
 
 # TRANSLATION
