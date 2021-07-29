@@ -205,16 +205,7 @@ export default {
           this.$refs["newRequest"].show();
         },
       },
-      // columns: [
-      //  "detail",
-      //   "case_number",
-      //   "case_title",
-      //   "process_name",
-      //   "task",
-      //   "priority",
-      //   "actions"
-      // ],
-       filters:
+      filters:
           this.settings && this.settings.filters
               ? this.settings.filters
               : {},

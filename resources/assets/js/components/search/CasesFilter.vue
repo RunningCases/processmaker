@@ -350,7 +350,6 @@ export default {
      * @param {string} tag filter identifier
      */
     updateSearchTag(params) {
-      debugger;
       let temp = this.filters.concat(params);
       temp = [...new Set([...this.filters, ...params])];
       this.$emit("onUpdateFilters", { params: temp, refresh: true });

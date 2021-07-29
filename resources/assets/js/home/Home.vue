@@ -117,7 +117,6 @@ export default {
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
     },
-   
     methods: {
         /**
          * Listener for iframes childs
@@ -405,7 +404,6 @@ export default {
         onUpdateFilters(filters) {
             this.filters = filters;
         },
-       
     }
 };
 </script>

@@ -641,8 +641,6 @@ export default {
         },
         onRemoveFilter(data) {},
         onUpdateFilters(data) {
-            debugger;
-            // this.$emit("onUpdateFilters", data.params);
             this.filters = data.params;
             if (data.refresh) {
                 this.$nextTick(() => {

@@ -421,7 +421,6 @@ export default {
       filters = {
         paged: paged,
       }
-      debugger;
       _.forIn(this.filters, function (item, key) {
           if(filters && item.value) {
               filters[item.filterVar] = item.value;
