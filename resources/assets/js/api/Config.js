@@ -5,8 +5,8 @@ let Api = new ApiInstance( Services );
 export let config = {
     get(data) {
         return Api.get({
-            service: "CONFIG",
-            params: data
+            service: "GET_CONFIG",
+            keys: data
         });
     },
     post(data) {

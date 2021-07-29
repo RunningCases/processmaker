@@ -68,5 +68,6 @@
     TASKS: "/home/tasks",
     CATEGORIES: "/home/categories",
     DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}",
-    CONFIG: "/home/config"
+    CONFIG: "/home/config",
+    GET_CONFIG: "/home/config/{id}/{name}"
 };

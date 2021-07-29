@@ -20,6 +20,7 @@
       ref="vueTable"
       @row-click="onRowClick"
       :key="random"
+      name="todo" 
     >
       <div slot="detail" slot-scope="props">
         <div class="btn-default" @click="openCaseDetail(props.row)">
@@ -186,7 +187,7 @@ import defaultMixins from "./defaultMixins";
 import Ellipsis from '../../components/utils/ellipsis.vue';
 import ModalPauseCase from '../modal/ModalPauseCase.vue';
 import ModalReassignCase from '../modal/ModalReassignCase.vue';
-
+import { Event } from 'vue-tables-2';
 
 export default {
   name: "Todo",
@@ -204,10 +205,15 @@ export default {
     ModalPauseCase,
     ModalReassignCase,
   },
-  props: ["defaultOption", "filters"],
+  props: ["defaultOption", "settings"],
   data() {
     let that = this;
     return {
+      columMap: {
+          case_number: "APP_NUMBER",
+          case_title: "DEL_TITLE",
+          process_name: "PRO_TITLE"
+      },
       newCase: {
         title: this.$i18n.t("ID_NEW_CASE"),
         class: "btn-success",
@@ -215,17 +221,24 @@ export default {
           this.$refs["newRequest"].show();
         },
       },
-      columns: [
-        "detail",
-        "case_number",
-        "case_title",
-        "process_name",
-        "task",
-        "due_date",
-        "delegation_date",
-        "priority",
-        "actions"
-      ],
+      filters:
+          this.settings && this.settings.filters
+              ? this.settings.filters
+              : {},
+      columns:
+          this.settings && this.settings.columns
+              ? this.settings.columns
+              : [
+                  "detail",
+                  "case_number",
+                  "case_title",
+                  "process_name",
+                  "task",
+                  "due_date",
+                  "delegation_date",
+                  "priority",
+                  "actions"
+                ],
       tableData: [],
       options: {
         filterable: false,
@@ -257,6 +270,8 @@ export default {
           selectAllMode: "page",
           programmatic: false,
         },
+        sortable: ['case_number'],
+        orderBy: this.settings && this.settings.orderBy ?  this.settings.orderBy: {},
         requestFunction(data) {
           return this.$parent.$parent.getCasesForVueTable(data);
         },
@@ -292,10 +307,22 @@ export default {
     this.initFilters();
   },
   mounted() {
+    let that = this;
     // force to open case
     this.openDefaultCase();
+    // define sort event
+    Event.$on('vue-tables.todo.sorted', function (data) {
+        that.$emit("updateUserSettings", "orderBy", data);
+    });
   },
-  watch: {},
+  watch: {
+      columns: function (val) {
+          this.$emit("updateUserSettings", "columns", val);
+      },  
+      filters: function (val) {
+          this.$emit("updateUserSettings", "filters", val);
+      },
+  },
   computed: {
     /**
      * Build our ProcessMaker apiClient
@@ -387,18 +414,23 @@ export default {
         paged,
         limit = data.limit,
         start = data.page === 1 ? 0 : limit * (data.page - 1),
-        filters = {};
+        filters = {},
+        sort = "";
       paged = start + "," + limit;
 
       filters = {
         paged: paged,
-      };
-
+      }
+      debugger;
       _.forIn(this.filters, function (item, key) {
           if(filters && item.value) {
               filters[item.filterVar] = item.value;
           }
       });
+      sort = that.prepareSortString(data);
+      if (sort) {
+          filters["sort"] = sort;
+      }
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
           .todo(filters)
@@ -413,6 +445,18 @@ export default {
             rejectionFunc(e);
           });
       });
+    },
+    /**
+     * Prepare sort string to be sended in the service
+     * @param {object} data
+     * @returns {string}
+     */
+    prepareSortString(data){
+        let sort = "";
+        if (data.orderBy && this.columMap[data.orderBy]) {
+            sort  =  `${this.columMap[data.orderBy]},${data.ascending === 1 ? "ASC": "DESC"}`;
+        }
+        return sort;
     },
     /**
      * Format Response API TODO to grid todo and columns
@@ -491,7 +535,7 @@ export default {
     },
     onRemoveFilter(data) {},
     onUpdateFilters(data) {
-      this.$emit("onUpdateFilters", data.params);
+      this.filters = data.params;
       if (data.refresh) {
         this.$nextTick(() => {
           if (this.typeView === "GRID") {

@@ -232,8 +232,10 @@ export default {
         if  (element) {
             initialFilters = this.prepareFilterItems(element.items, this.selected, true);
         }
-        //adding process name filter
-        initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
+        //adding process name filter 
+        if (self.byProcessName !== "") {
+            initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
+        }
         this.$emit("onUpdateFilters", {params: initialFilters, refresh: false}); 
     },
     /**
@@ -348,6 +350,7 @@ export default {
      * @param {string} tag filter identifier
      */
     updateSearchTag(params) {
+      debugger;
       let temp = this.filters.concat(params);
       temp = [...new Set([...this.filters, ...params])];
       this.$emit("onUpdateFilters", { params: temp, refresh: true });

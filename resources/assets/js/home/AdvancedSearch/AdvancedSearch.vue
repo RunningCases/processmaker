@@ -169,21 +169,12 @@ export default {
                     selectAllMode: "page",
                     programmatic: false,
                 },
+                sortable: [],
+                orderBy: {},
                 requestFunction(data) {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
-                customFilters: ["myfilter"],
-                settings: {
-                    "actions":{
-                        class: "fas fa-cog",
-                        id:"pm-dr-column-settings",
-                        events:{ 
-                            click(){
-                                that.$root.$emit('bv::show::popover', 'pm-dr-column-settings')
-                            }
-                        }
-                    }
-                }
+                customFilters: ["myfilter"]
             },
             pmDateFormat: window.config.FORMATS.dateFormat,
             clickCount: 0,

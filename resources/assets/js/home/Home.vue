@@ -20,13 +20,13 @@
             <component
                 v-bind:is="page"
                 ref="component"
-                :filters="filters"
                 :id="pageId"
                 :pageUri="pageUri"
                 :name="pageName"
                 :defaultOption="defaultOption"
-                :settings="config[page]"
-                @onSubmitFilter="onSubmitFilter"
+                :settings="config.setting[page]"
+                :filters="filters"
+                @onSubmitFilter="onSubmitFilter"    
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
                 @onUpdateDataCase="onUpdateDataCase"
@@ -87,10 +87,10 @@ export default {
             pageName: null,
             pageUri: null,
             filters: null,
-            config: {},
-            configParams: {
+            config: {
                 id: window.config.userId || "1",
-                name: "home"
+                name: "home",
+                setting: {}
             },
             menuMap: {
                 CASES_MY_CASES: "MyCases",
@@ -162,7 +162,10 @@ export default {
          */
         getUserSettings() {
             api.config
-                .get(this.configParams)
+                .get({
+                    id: this.config.id,
+                    name: this.config.name
+                })
                 .then((response) => {
                     if (response.data) {
                         this.config = response.data;
@@ -196,23 +199,22 @@ export default {
          * Update the user config service
          */
         updateUserSettings(prop, data) {
-            if (!this.config.setting[this.page]) {
-                this.config.setting[this.page] = {};
+            if (this.config.setting) {
+                if (!this.config.setting[this.page]) {
+                    this.config.setting[this.page] = {};
+                }
+                this.config.setting[this.page][prop] = data;
+                api.config
+                    .put(this.config)
+                    .then((response) => {
+                        if (response.data) {
+                            //TODO success response
+                        }
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
             }
-            this.config.setting[this.page][prop] = data;
-            console.log(this.config);
-            api.config
-                .put(this.config)
-                .then((response) => {
-                    if (response.data) {
-                        // this.settings = response.data;
-                        console.log("Updated")
-                        console.log(this.config);
-                    }
-                })
-                .catch((e) => {
-                    console.error(e);
-                });
         },
         /**
          * Set default cases menu option
@@ -274,6 +276,7 @@ export default {
                 this.pageId = item.item.id;
                 this.pageUri = item.item.href;
                 this.pageName = item.item.title;
+
             } else {
                 this.filters = [];
                 this.pageId = null;
