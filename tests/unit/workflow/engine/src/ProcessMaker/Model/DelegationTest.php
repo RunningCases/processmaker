@@ -427,6 +427,42 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeOnTime
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeOnTime()
+     * @test
+     */
+    public function it_return_scope_on_time()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->onTime($table->DEL_DELEGATE_DATE)->get());
+    }
+
+    /**
+     * This test scopeAtRisk
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeAtRisk()
+     * @test
+     */
+    public function it_return_scope_at_risk()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->atRisk($table->DEL_DELEGATE_DATE)->get());
+    }
+
+    /**
+     * This test scopeOverdue
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeOverdue()
+     * @test
+     */
+    public function it_return_scope_overdue()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->overdue($table->DEL_DELEGATE_DATE)->get());
+    }
+
+    /**
      * This test scopeCase
      *
      * @covers \ProcessMaker\Model\Delegation::scopeCase()
@@ -3197,6 +3233,28 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This check the return of thread info
+     *
+     * @covers \ProcessMaker\Model\Delegation::getDatesFromThread()
+     * @test
+     */
+    public function it_get_thread_dates()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $task = new Task();
+        $taskInfo = $task->load($delegation->TAS_UID);
+        $taskInfo = head($taskInfo);
+        $taskType = $taskInfo['TAS_TYPE'];
+        $result = Delegation::getDatesFromThread(
+            $delegation->APP_UID,
+            $delegation->DEL_INDEX,
+            $delegation->TAS_UID,
+            $taskType
+        );
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * This check the return of pending threads
      *
      * @covers \ProcessMaker\Model\Delegation::getPendingThreads()
@@ -3206,6 +3264,8 @@ class DelegationTest extends TestCase
     {
         $delegation = factory(Delegation::class)->states('foreign_keys')->create();
         $result = Delegation::getPendingThreads($delegation->APP_NUMBER);
+        $this->assertNotEmpty($result);
+        $result = Delegation::getPendingThreads($delegation->APP_NUMBER, false);
         $this->assertNotEmpty($result);
     }
 
@@ -3283,9 +3343,9 @@ class DelegationTest extends TestCase
         ]);
 
         $res = Delegation::hasActiveParentsCases($parents);
-
-        // Assert the result is true
         $this->assertTrue($res);
+        $res = Delegation::hasActiveParentsCases([]);
+        $this->assertFalse($res);
     }
 
     /**
@@ -3296,9 +3356,9 @@ class DelegationTest extends TestCase
      */
     public function it_get_cases_completed_by_specific_user()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = factory(Delegation::class)->states('last_thread')->create();
         $result = Delegation::casesCompletedBy($delegation->USR_ID);
-        $this->assertEmpty($result);
+        $this->assertNotEmpty($result);
     }
 
     /**

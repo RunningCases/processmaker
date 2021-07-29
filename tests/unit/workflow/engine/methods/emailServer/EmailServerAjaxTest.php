@@ -90,7 +90,7 @@ class EmailServerAjaxTest extends TestCase
         $content = $this->requireOnceForEmailServerAjax();
         $data = json_decode($content, JSON_OBJECT_AS_ARRAY);
 
-        $this->assertContains(200, $data);
+        $this->assertContains(500, $data);
     }
 
     /**

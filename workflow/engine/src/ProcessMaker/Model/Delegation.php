@@ -381,36 +381,39 @@ class Delegation extends Model
      * Scope a query to get only the date on time
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $now
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOnTime($query)
+    public function scopeOnTime($query, $now)
     {
-        return $query->whereRaw('TIMEDIFF(DEL_RISK_DATE, NOW()) > 0');
+        return $query->where('DEL_RISK_DATE', '>', $now);
     }
 
     /**
      * Scope a query to get only the date at risk
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $now
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeAtRisk($query)
+    public function scopeAtRisk($query, $now)
     {
-        return $query->whereRaw('TIMEDIFF(DEL_RISK_DATE, NOW()) < 0 AND TIMEDIFF(DEL_TASK_DUE_DATE, NOW()) > 0');
+        return $query->where('DEL_RISK_DATE', '>=', $now)->where('DEL_TASK_DUE_DATE', '>=', $now);
     }
 
     /**
      * Scope a query to get only the date overdue
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $now
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOverdue($query)
+    public function scopeOverdue($query, $now)
     {
-        return $query->whereRaw('TIMEDIFF(DEL_TASK_DUE_DATE, NOW()) < 0');
+        return $query->where('DEL_TASK_DUE_DATE', '>', $now);
     }
 
     /**
