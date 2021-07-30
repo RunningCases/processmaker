@@ -154,7 +154,6 @@ export default {
                 userDataFormat;  
                 debugger;
             _.forEach(response, (v) => {
-
                 userDataFormat = utils.userNameDisplayFormat({
                         userName: v.userName || "",
                         firstName: v.userFirstname || "",
