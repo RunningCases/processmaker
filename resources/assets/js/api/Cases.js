@@ -293,6 +293,17 @@ export let cases = {
             window.config.SYS_URI +
             `cases/debug_triggers?r=${r}&_dc=${dc}`);
     },
+    /**
+     * Make a search request to the Api service 
+     * @param {object} dt - filter parameters
+     */
+    listTotalCases(dt) {
+      return Api.get({
+        service: "LIST_TOTAL_CASES",
+        params: {},
+        keys: {}
+      })
+    },
 };
 
 export let casesHeader = {

@@ -44,6 +44,7 @@ import Todo from "./Inbox/Todo.vue";
 import Paused from "./Paused/Paused.vue";
 import Draft from "./Draft/Draft.vue";
 import Unassigned from "./Unassigned/Unassigned.vue";
+import TaskMetrics from "./TaskMetrics/TaskMetrics.vue";
 import BatchRouting from "./BatchRouting";
 import CaseDetail from "./CaseDetail";
 import XCase from "./XCase";
@@ -68,7 +69,8 @@ export default {
         Paused,
         Unassigned,
         CaseDetail,
-        LegacyFrame
+        LegacyFrame,
+        TaskMetrics
     },
     data() {
         return {

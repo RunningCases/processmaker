@@ -11,9 +11,11 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import "@fortawesome/fontawesome-free/js/all.js";
 import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import VueApexCharts from 'vue-apexcharts'
 import Home from "./Home";
+
+Vue.use(VueApexCharts);
 Vue.use(VueRouter);
 Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
@@ -25,9 +27,12 @@ Vue.use(ServerTable, {}, false, 'bootstrap3', {
 });
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
 Vue.component('settings-popover', SettingsPopover);
+Vue.component('apexchart', VueApexCharts);
+
 window.ProcessMaker = {
     apiClient: require('axios')
 };
+
 window.ProcessMaker.pluginBase = "/sysworkflow/en/neoclassic/viena/index.php";
 window.ProcessMaker.apiClient.defaults.baseURL = '/sysworkflow/en/neoclassic/viena/index.php/api/';
 window.ProcessMaker.SYS_SYS = "workflow";

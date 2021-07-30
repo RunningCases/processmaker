@@ -1,6 +1,7 @@
 <template>
   <div id="v-todo" ref="v-todo" class="v-container-todo">
     <button-fleft :data="newCase"></button-fleft>
+    <button type="button" @click="task" class="btn btn-primary">Primary</button>
     <modal-new-request ref="newRequest"></modal-new-request>
     <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
     <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
