@@ -192,7 +192,7 @@ class Supervising extends AbstractCases
         // Only cases in to_do
         $query->caseTodo();
         // Only open threads
-        $query->isThreadOpen();
+        $query->threadOpen();
         // For parallel threads the distinct by APP_NUMBER is important
         $query->distinct();
         // Get the list of processes of the supervisor
@@ -217,7 +217,7 @@ class Supervising extends AbstractCases
         // Only cases in to_do
         $query->caseTodo();
         // Only open threads
-        $query->isThreadOpen();
+        $query->threadOpen();
         // For parallel threads the distinct by APP_NUMBER is important
         $query->distinct();
         // Get the list of processes of the supervisor

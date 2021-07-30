@@ -374,7 +374,7 @@ class Application extends Model
     }
 
     /**
-     * Get information related to the created case
+     * Get information related to the case, avoiding to load the APP_DATA
      *
      * @param string $appUid
      *
@@ -382,7 +382,13 @@ class Application extends Model
      */
     public static function getCase($appUid)
     {
-        $query = Application::query()->select(['APP_STATUS', 'APP_INIT_USER']);
+        $query = Application::query()->select([
+            'APP_NUMBER',
+            'APP_STATUS',
+            'PRO_UID',
+            'PRO_ID',
+            'APP_INIT_USER'
+        ]);
         $query->appUid($appUid);
         $result = $query->get()->toArray();
         $firstElement = head($result);

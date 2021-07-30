@@ -50,9 +50,10 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
      * @param string $filterCases
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -66,9 +67,10 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
@@ -83,11 +85,10 @@ class Home extends Api
             // Get the user that access to the API
             $usrUid = $this->getUserId();
             $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
+            $properties['start'] = $offset;
+            $properties['limit'] = $limit;
+            // Set the sort parameters
             $sort = explode(',', $sort);
-            $properties['start'] = (int)$paged[0];
-            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -108,11 +109,12 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -126,11 +128,12 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
@@ -147,11 +150,10 @@ class Home extends Api
             // Get the user that access to the API
             $usrUid = $this->getUserId();
             $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
+            $properties['start'] = $offset;
+            $properties['limit'] = $limit;
             // Set the pagination parameters
-            $paged = explode(',', $paged);
             $sort = explode(',', $sort);
-            $properties['start'] = (int)$paged[0];
-            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -172,11 +174,12 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -190,11 +193,12 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
@@ -211,11 +215,10 @@ class Home extends Api
             // Get the user that access to the API
             $usrUid = $this->getUserId();
             $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
+            $properties['start'] = $offset;
+            $properties['limit'] = $limit;
+            // Set the sort parameters
             $sort = explode(',', $sort);
-            $properties['start'] = (int)$paged[0];
-            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             // todo: some queries related to the unassigned are using the USR_UID
@@ -238,11 +241,12 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
      * @param string $delegateFrom
      * @param string $delegateTo
      * @param string $filterCases
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -256,11 +260,12 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
@@ -277,11 +282,10 @@ class Home extends Api
             // Get the user that access to the API
             $usrUid = $this->getUserId();
             $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
+            $properties['start'] = $offset;
+            $properties['limit'] = $limit;
+            // Set the sort parameters
             $sort = explode(',', $sort);
-            $properties['start'] = (int)$paged[0];
-            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -302,6 +306,8 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
      * @param string $filterCases
      * @param string $filter
@@ -310,7 +316,6 @@ class Home extends Api
      * @param string $startCaseTo
      * @param string $finishCaseFrom
      * @param string $finishCaseTo
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -324,6 +329,8 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
         string $filter = 'IN_PROGRESS',
@@ -332,7 +339,6 @@ class Home extends Api
         string $startCaseTo = '',
         string $finishCaseFrom = '',
         string $finishCaseTo = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         // Define the filters to apply
@@ -351,11 +357,10 @@ class Home extends Api
         $properties['startCaseTo'] = $startCaseTo;
         $properties['finishCaseFrom'] = $finishCaseFrom;
         $properties['finishCaseTo'] = $finishCaseTo;
-        // Set the pagination parameters
-        $paged = explode(',', $paged);
+        $properties['start'] = $offset;
+        $properties['limit'] = $limit;
+        // Set the sort parameters
         $sort = explode(',', $sort);
-        $properties['start'] = (int)$paged[0];
-        $properties['limit'] = (int)$paged[1];
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
         $result = [];
@@ -395,6 +400,7 @@ class Home extends Api
      * Get counters
      *
      * @url GET /counters
+     * @url GET /mycases/counters
      *
      * @return array
      *
@@ -466,6 +472,8 @@ class Home extends Api
      * @param int $user
      * @param int $userCompleted
      * @param int $userStarted
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
      * @param string $caseStatuses
      * @param string $filterCases
@@ -473,7 +481,6 @@ class Home extends Api
      * @param string $startCaseTo
      * @param string $finishCaseFrom
      * @param string $finishCaseTo
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -491,6 +498,8 @@ class Home extends Api
         int $user = 0,
         int $userCompleted = 0,
         int $userStarted = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
         string $caseStatuses = '',
         string $filterCases = '',
@@ -498,7 +507,6 @@ class Home extends Api
         string $startCaseTo = '',
         string $finishCaseFrom = '',
         string $finishCaseTo = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
@@ -519,11 +527,10 @@ class Home extends Api
             $properties['startCaseTo'] = $startCaseTo;
             $properties['finishCaseFrom'] = $finishCaseFrom;
             $properties['finishCaseTo'] = $finishCaseTo;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
+            $properties['start'] = $offset;
+            $properties['limit'] = $limit;
+            // Set the sort parameters
             $sort = explode(',', $sort);
-            $properties['start'] = (int)$paged[0];
-            $properties['limit'] = (int)$paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -625,9 +632,7 @@ class Home extends Api
     public function getPendingTasks(int $appNumber)
     {
         // Get the pending task
-        $result = Delegation::getPendingTask($appNumber);
-
-        return $result;
+        return Delegation::getPendingTask($appNumber);
     }
 
     /**
@@ -647,11 +652,10 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getProcesses($text = null, $category = null, $offset = null, $limit = null)
+    public function getProcesses($text = null, $category = null, int $offset = 0, int $limit = 15)
     {
         try {
-            $processes = Process::getProcessesForHome($text, $category, $offset, $limit);
-            return $processes;
+            return Process::getProcessesForHome($text, $category, $offset, $limit);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -673,11 +677,10 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getUsers($text = null, $offset = null, $limit = null)
+    public function getUsers($text = null, int $offset = 0, int $limit = 15)
     {
         try {
-            $users = User::getUsersForHome($text, $offset, $limit);
-            return $users;
+            return User::getUsersForHome($text, $offset, $limit);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -732,7 +735,9 @@ class Home extends Api
      * Get the tasks counters for todo, draft, paused and unassigned
      * 
      * @url GET /tasks/counter
+     *
      * @return array
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -782,11 +787,10 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getTasks($text = null, $proId = null, $offset = null, $limit = null)
+    public function getTasks(string $text = null, string $proId = null, int $offset = 0, int $limit = 15)
     {
         try {
-            $tasks = Task::getTasksForHome($text, $proId, $offset, $limit);
-            return $tasks;
+            return Task::getTasksForHome($text, $proId, $offset, $limit);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -806,7 +810,7 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getProcessDebugStatus($processUid)
+    public function getProcessDebugStatus(string $processUid)
     {
         try {
             // Get the process requested
@@ -825,64 +829,80 @@ class Home extends Api
 
     /**
      * Get user setting.
-     * @params int $id
-     * @params string $name
-     * @url GET /config
+     * @url GET /config/:id/:name
+     * @param int $id
+     * @param string $name
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
     public function doGetConfig(int $id, string $name)
     {
-        return UserConfig::getSetting($id, $name);
+        $setting = UserConfig::getSetting($id, $name);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
     }
 
     /**
      * Add user setting.
-     * @params int $id
-     * @params string $name
-     * @params string $setting
      * @url POST /config
+     * @param int $id
+     * @param string $name
+     * @param array $setting
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPostConfig(int $id, string $name, string $setting)
+    public function doPostConfig(int $id, string $name, array $setting)
     {
-        return UserConfig::addSetting($id, $name, $setting);
+        try {
+            return UserConfig::addSetting($id, $name, $setting);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_EXIST'));
+        }
     }
 
     /**
      * Update user setting.
-     * @params int $id
-     * @params string $name
-     * @params string $setting
      * @url PUT /config
+     * @param int $id
+     * @param string $name
+     * @param array $setting
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPutConfig(int $id, string $name, string $setting)
+    public function doPutConfig(int $id, string $name, array $setting)
     {
-        return UserConfig::editSetting($id, $name, $setting);
+        $setting = UserConfig::editSetting($id, $name, $setting);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
     }
 
     /**
      * Delete user setting.
-     * @params int $id
-     * @params string $name
-     * @url DELETE /config
+     * @url DELETE /config/:id/:name
+     * @param int $id
+     * @param string $name
      * @return array
-     * @throws Exception
+     * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
     public function doDeleteConfig(int $id, string $name)
     {
-        return UserConfig::deleteSetting($id, $name);
+        $setting = UserConfig::deleteSetting($id, $name);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
     }
 
     /**
@@ -891,8 +911,8 @@ class Home extends Api
      * @url GET /categories
      *
      * @param string $name
-     * @param int $start
      * @param int $limit
+     * @param int $offset
      *
      * @return array
      *
@@ -901,11 +921,10 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getCategories($name = null, $start = null, $limit = null)
+    public function getCategories($name = null, int $limit = 0, int $offset = 15)
     {
         try {
-            $categories = ProcessCategory::getProcessCategories($name, $start, $limit);
-            return $categories;
+            return ProcessCategory::getProcessCategories($name, $offset, $limit);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

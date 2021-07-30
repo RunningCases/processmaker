@@ -15,6 +15,7 @@ class UserConfigTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        UserConfig::truncate();
     }
 
     /**
@@ -34,7 +35,7 @@ class UserConfigTest extends TestCase
     {
         $id = 1;
         $name = "test";
-        $setting = json_encode(["test" => 1]);
+        $setting = ["test" => 1];
         $result = UserConfig::addSetting($id, $name, $setting);
 
         //assert get
@@ -44,7 +45,7 @@ class UserConfigTest extends TestCase
         $this->assertArrayHasKey("setting", $result);
         $this->assertEquals($result["id"], $id);
         $this->assertEquals($result["name"], $name);
-        $this->assertEquals($result["setting"], json_decode($setting));
+        $this->assertEquals($result["setting"], (object) $setting);
     }
 
     /**
@@ -56,7 +57,7 @@ class UserConfigTest extends TestCase
     {
         $id = 1;
         $name = "test";
-        $setting = json_encode(["test" => 1]);
+        $setting = ["test" => 1];
 
         $result = UserConfig::addSetting($id, $name, $setting);
         $this->assertArrayHasKey("id", $result);
@@ -64,7 +65,7 @@ class UserConfigTest extends TestCase
         $this->assertArrayHasKey("setting", $result);
         $this->assertEquals($result["id"], $id);
         $this->assertEquals($result["name"], $name);
-        $this->assertEquals($result["setting"], json_decode($setting));
+        $this->assertEquals($result["setting"], (object) $setting);
     }
 
     /**
@@ -76,18 +77,18 @@ class UserConfigTest extends TestCase
     {
         $id = 1;
         $name = "test";
-        $setting = json_encode(["test" => 1]);
+        $setting = ["test" => 1];
         $result = UserConfig::addSetting($id, $name, $setting);
 
         //assert edit
-        $setting = json_encode(["test" => 2, "test2" => 3]);
+        $setting = ["test" => 2, "test2" => 3];
         $result = UserConfig::editSetting($id, $name, $setting);
         $this->assertArrayHasKey("id", $result);
         $this->assertArrayHasKey("name", $result);
         $this->assertArrayHasKey("setting", $result);
         $this->assertEquals($result["id"], $id);
         $this->assertEquals($result["name"], $name);
-        $this->assertEquals($result["setting"], json_decode($setting));
+        $this->assertEquals($result["setting"], (object) $setting);
     }
 
     /**
@@ -99,7 +100,7 @@ class UserConfigTest extends TestCase
     {
         $id = 2;
         $name = "test2";
-        $setting = json_encode(["test2" => 1]);
+        $setting = ["test2" => 1];
         $result = UserConfig::addSetting($id, $name, $setting);
 
         //assert delete
