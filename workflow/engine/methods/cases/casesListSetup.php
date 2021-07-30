@@ -6,6 +6,8 @@ use ProcessMaker\Core\System;
 global $translation;
 global $RBAC;
 
+$conf = new Configurations();
+
 if ($RBAC->userCanAccess("PM_SETUP") != 1 || $RBAC->userCanAccess("PM_SETUP_ADVANCE") != 1) {
     G::SendTemporalMessage("ID_USER_HAVENT_RIGHTS_PAGE", "error", "labels");
     exit(0);
@@ -30,4 +32,5 @@ ScriptVariables::add('SYS_WORKSPACE', config("system.workspace"));
 ScriptVariables::add('SYS_URI', SYS_URI);
 ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
+ScriptVariables::add('FORMATS', $conf->getFormats());
 echo View::make('Views::admin.settings.customCasesList', compact("userCanAccess"))->render();
