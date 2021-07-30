@@ -143,6 +143,11 @@ export default {
                 });
             });
         },
+        /**
+         * Format Response API TODO to grid inbox and columns
+         * @param {object} response
+         * @returns {object}
+         */
         formatDataResponse(response){
              let that = this,
                 data = [],
