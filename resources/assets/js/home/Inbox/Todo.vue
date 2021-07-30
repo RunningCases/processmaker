@@ -60,10 +60,19 @@
       :options="optionsVueView"
       ref="vueCardView"
     >
-      <div slot="detail" slot-scope="props">
-        <div @click="updateDataEllipsis(props.row)">
-          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-        </div>
+      <div slot="actions" slot-scope="props">
+        <b-row>
+          <b-col sm="12">
+            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </b-col>
+          <b-col sm="12">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.row)">
+              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            </div>
+          </b-col>
+        </b-row>
       </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
         <span class="v-card-text-highlight"
@@ -117,12 +126,21 @@
       :options="optionsVueView"
       ref="vueListView"
     >
-      <div slot="detail" slot-scope="props">
-        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
-          <i class="fas fa-info-circle"></i>
-        </div>
+      <div slot="actions" slot-scope="props">
+        <b-row>
+          <b-col sm="12">
+            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </b-col>
+          <b-col sm="12">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.row)">
+              <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            </div>
+          </b-col>
+        </b-row>
       </div>
-      <div slot="case_number" slot-scope="props" class="v-card-text">
+      <div ref="text" slot="case_number" slot-scope="props" class="v-card-text">
         <span class="v-card-text-highlight"
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
@@ -607,7 +625,8 @@ export default {
   display: inline-block;
 }
 
-.v-card-text {
+.ellipsis-container {
+  margin-top: 5em;
 }
 
 .v-pm-card-info{
