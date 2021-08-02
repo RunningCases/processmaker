@@ -6,13 +6,20 @@
         :style="{height: height + 'px'}"
       >
         <vue-card v-for="item in data" :key="item.id" :item="item" :options="options">
-          <slot
-            v-for="column in options.columns"
-            :name="column"
-            :item="item"
-            :column="column"
-            :headings="options.headings"
-          ></slot>
+          <b-row>
+            <b-col sm="9">
+              <slot
+                v-for="column in options.columns"
+                :name="column"
+                :item="item"
+                :column="column"
+                :headings="options.headings"
+              ></slot>
+            </b-col>
+            <b-col sm="3">
+              <slot name="actions"></slot>
+            </b-col>
+          </b-row>
         </vue-card>
       </div>
 
