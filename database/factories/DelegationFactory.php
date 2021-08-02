@@ -69,7 +69,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
     return [
         'DELEGATION_ID' => $faker->unique()->numberBetween(5000),
         'APP_UID' => $application->APP_UID,
-        'DEL_INDEX' => 1,
+        'DEL_INDEX' => $faker->unique()->numberBetween(2000),
         'APP_NUMBER' => $application->APP_NUMBER,
         'DEL_PREVIOUS' => 0,
         'PRO_UID' => $process->PRO_UID,
@@ -176,7 +176,17 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'closed', function (Faker
 
 // Create a last delegation
 $factory->state(\ProcessMaker\Model\Delegation::class, 'last_thread', function (Faker $faker) {
+
     return [
         'DEL_LAST_INDEX' => 1,
+    ];
+});
+
+// Create a first delegation
+$factory->state(\ProcessMaker\Model\Delegation::class, 'first_thread', function (Faker $faker) {
+
+    return [
+        'DEL_INDEX' => 1,
+        'DEL_PREVIOUS' => 0,
     ];
 });

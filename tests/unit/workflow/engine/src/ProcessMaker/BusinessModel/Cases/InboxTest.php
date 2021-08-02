@@ -199,6 +199,7 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\Model\Delegation::scopeTask()
      * @test
      */
     public function it_filter_by_task()
