@@ -24678,6 +24678,12 @@ msgid "send at"
 msgstr "send at"
 
 # TRANSLATION
+# LABEL/ID_SEND_BY
+#: LABEL/ID_SEND_BY
+msgid "Send By"
+msgstr "Send By"
+
+# TRANSLATION
 # LABEL/ID_SEND_EMAIL_CASE_PARTICIPANTS
 #: LABEL/ID_SEND_EMAIL_CASE_PARTICIPANTS
 msgid "Send Email (Case Participants)"
