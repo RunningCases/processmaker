@@ -215,6 +215,7 @@ class User extends Model
     public static function getInformation(int $usrId)
     {
         $query = User::query()->select([
+            'USR_ID',
             'USR_USERNAME',
             'USR_FIRSTNAME',
             'USR_LASTNAME',
@@ -226,6 +227,7 @@ class User extends Model
         $results = $query->get();
         $info = [];
         $results->each(function ($item) use (&$info) {
+            $info['usr_id'] = $item->USR_ID;
             $info['usr_username'] = $item->USR_USERNAME;
             $info['usr_firstname'] = $item->USR_FIRSTNAME;
             $info['usr_lastname'] = $item->USR_LASTNAME;
