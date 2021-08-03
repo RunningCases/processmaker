@@ -61027,6 +61027,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SENDING_REQUEST_SALES_DEPARTMENT','en','Sending request to ProcessMaker Sales Department, please wait...','2014-09-18') ,
 ( 'LABEL','ID_SENDMAIL_NOT_INSTALLED','en','An error has occured, please verify on which server "SendMail" has been installed or any other mail service, and if it has been configured correctly.','2014-01-15') ,
 ( 'LABEL','ID_SEND_AT','en','send at','2014-01-15') ,
+( 'LABEL','ID_SEND_BY','en','Send By','2021-08-02') ,
 ( 'LABEL','ID_SEND_EMAIL_CASE_PARTICIPANTS','en','Send Email (Case Participants)','2014-01-15') ,
 ( 'LABEL','ID_SEND_EMAIL_TO_PARTICIPANTS','en','Send email to participants','2020-12-01') ,
 ( 'LABEL','ID_SENT','en','Participated','2016-07-11') ,
