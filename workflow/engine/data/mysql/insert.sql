@@ -57561,6 +57561,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CITY','en','City','2020-12-15') ,
 ( 'LABEL','ID_CHOOSE_TIME','en','Choose a time','2014-08-27') ,
 ( 'LABEL','ID_CLAIM','en','Claim','2014-01-15') ,
+( 'LABEL','ID_CLAIM_THIS_CASE','en','Claim this case','2021-08-03') ,
 ( 'LABEL','ID_CLASSIC_EDITOR','en','Classic Editor','2014-01-15') ,
 ( 'LABEL','ID_CLASS_ALREADY_EXISTS','en','Class already exists','2014-01-15') ,
 ( 'LABEL','ID_CLASS_TABLE_DOESNT_EXIST','en','This Class Table doesn''t exist!','2014-01-15') ,

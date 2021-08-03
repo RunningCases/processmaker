@@ -4494,6 +4494,12 @@ msgid "Claim"
 msgstr "Claim"
 
 # TRANSLATION
+# LABEL/ID_CLAIM_THIS_CASE
+#: LABEL/ID_CLAIM_THIS_CASE
+msgid "Claim this case"
+msgstr "Claim this case"
+
+# TRANSLATION
 # LABEL/ID_CLASSIC_EDITOR
 #: LABEL/ID_CLASSIC_EDITOR
 msgid "Classic Editor"
