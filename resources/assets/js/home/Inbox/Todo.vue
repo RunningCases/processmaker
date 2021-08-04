@@ -512,7 +512,7 @@ export default {
                 POSITION: data.user_tooltip.usr_position,
                 AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
                     window.config.SYS_URI +
-                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.user_id}` : "",
+                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
                 UNASSIGNED: userDataFormat !== "" ? true : false
             });    
         return dataFormat;
