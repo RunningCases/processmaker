@@ -6,13 +6,21 @@
         :style="{height: height + 'px'}"
       >
         <vue-list v-for="item in data" :key="item.id" :item="item" :options="options"> 
-          <slot
-            v-for="column in options.columns"
-            :name="column"
-            :item="item"
-            :column="column"
-            :headings="options.headings"
-          ></slot>
+          <b-row>
+            <b-col sm="10">
+              <slot
+                v-for="column in options.columns"
+                :name="column"
+                :item="item"
+                :column="column"
+                :headings="options.headings"
+                ref="containerList"
+              ></slot>
+            </b-col>
+            <b-col sm="2">
+              <slot name="actions"></slot>
+            </b-col>
+          </b-row>
         </vue-list>
       </div>
 

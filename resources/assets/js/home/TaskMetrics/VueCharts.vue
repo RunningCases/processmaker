@@ -9,12 +9,14 @@
 </template>
 
 <script>
+import VueChartLvZero from "./VueChartLvZero.vue";
 import VueChartLvOne from "./VueChartLvOne.vue";
 
 export default {
   name: "VueCharts",
   mixins: [],
   components: {
+    VueChartLvZero,
     VueChartLvOne,
   },
   props: [],

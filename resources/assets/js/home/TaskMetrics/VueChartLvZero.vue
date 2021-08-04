@@ -2,25 +2,43 @@
 	<div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
 		<div class="p-1 v-flex">
 			<h6 class="v-search-title">Number of tasks per Task Status</h6>
-			<div>
-				<label class="vp-inline-block">{{ $t("ID_PROCESS_CATEGORY") }}</label>
-				<div class="vp-width-p40 vp-inline-block">
-					<multiselect
-						v-model="category"
-						:options="optionsCategory"
-						:searchable="false"
-						:close-on-select="false"
-						:show-labels="false"
-						placeholder="Pick a value"
-					></multiselect>
-				</div>
-			</div>
 			<apexchart
+				v-show="typeView === 'donut'"
 				ref="apexchart1"
+				:width="width"
+				:options="optionsDonut"
+				:series="seriesDonut"
+			></apexchart>
+			<apexchart
+				v-show="typeView === 'bar'"
+				ref="apexchart2"
 				:width="width"
 				:options="optionsBar"
 				:series="seriesBar"
 			></apexchart>
+
+			<div class="row">
+				<div class="col-sm vp-center">
+					<button
+						@click="changeView('donut')"
+						type="button"
+						class="btn btn-primary"
+					>
+						<i class="fas fa-chart-pie"></i
+						><span class="vp-padding-l10">View</span>
+					</button>
+				</div>
+				<div class="col-sm">
+					<button
+						@click="changeView('bar')"
+						type="button"
+						class="btn btn-primary"
+					>
+						<i class="fas fa-chart-bar"></i
+						><span class="vp-padding-l10">View</span>
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -28,21 +46,33 @@
 <script>
 import _ from "lodash";
 import Api from "../../api/index";
-import Multiselect from "vue-multiselect";
-
 export default {
-	name: "VueChartLvOne",
+	name: "VueChartLvZero",
 	mixins: [],
-	components: {
-		Multiselect,
-	},
+	components: {},
 	props: [],
 	data() {
 		let that = this;
 		return {
-			category: null,
-			optionsCategory: [],
+			typeView: "bar",
 			width: 0,
+			seriesDonut: [],
+			optionsDonut: {
+				labels: [
+					this.$i18n.t("ID_INBOX"),
+					this.$i18n.t("ID_DRAFT"),
+					this.$i18n.t("ID_PAUSED"),
+					this.$i18n.t("ID_UNASSIGNED"),
+				],
+				chart: {
+					id: "apexchart1",
+					type: "donut",
+				},
+				legend: {
+					position: "top",
+					offsetY: 0,
+				},
+			},
 			seriesBar: [
 				{
 					data: [400, 430, 448, 470],
@@ -55,23 +85,16 @@ export default {
 					toolbar: {
 						show: false,
 					},
-					events: {
-						legendClick: function (chartContext, seriesIndex, config) {
-							console.log("click");
-						},
-					},
 				},
 				plotOptions: {
 					bar: {
 						barHeight: "100%",
 						distributed: true,
-						horizontal: true,
 					},
 				},
 				legend: {
-					position: "left",
-					offsetY: 50,
-					fontSize: "18px",
+					position: "top",
+					offsetY: 0,
 				},
 				colors: ["#33b2df", "#546E7A", "#d4526e", "#13d8aa"],
 				dataLabels: {
@@ -103,9 +126,8 @@ export default {
 	created() {},
 	mounted() {
 		this.getBodyHeight();
-		this.getCategories();
 		//this.getDataDonut();
-		//this.getData();
+		this.getData();
 	},
 	watch: {},
 	computed: {},
@@ -125,9 +147,9 @@ export default {
 			this.typeView = view;
 			this.getData();
 		},
-		/**
-		 * Get data from rest API
-		 */
+    /**
+     * Get data from rest API
+     */
 		getData() {
 			let that = this;
 			Api.cases
@@ -175,42 +197,15 @@ export default {
 				},
 			]);
 		},
-		getCategories() {
-			let that = this;
-			console.log("jonas");
-			Api.process
-				.categories({
-					name:""
-				})
-				.then((response) => {
-					that.formatDataCategories(response.data);
-				})
-				.catch((e) => {
-					console.error(err);
-				});
-		},
-		formatDataCategories(data) {
-			let array = [];
-			_.each(data, (el) => {
-				array.push(el["cat_name"]);
-			});
-			this.optionsCategory = array;
-			this.category = array[0];
-		},
 	},
 };
 </script>
 <style>
-.vp-task-metrics-label {
-	display: inline-block;
+.vp-center {
+	text-align: center;
 }
 
-.vp-width-p40 {
-	width: 40%;
-}
-
-.vp-inline-block {
-	display: inline-block;
+.vp-padding-l10 {
+	padding-left: 10px;
 }
 </style>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

@@ -68,5 +68,9 @@
     TASKS: "/home/tasks",
     CATEGORIES: "/home/categories",
     DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}",
-    LIST_TOTAL_CASES: "/metrics/list-total-cases"
+    LIST_TOTAL_CASES: "/metrics/list-total-cases",
+    PAUSE_CASE: "/cases/{app_uid}/pause",
+    REASSIGN_CASE: "/cases/{app_uid}/reassign-case",
+    REASSIGN_USERS: "/light/userstoreassign/{task_uid}",
+    CATEGORIES: "/processcategory/categories"
 };
