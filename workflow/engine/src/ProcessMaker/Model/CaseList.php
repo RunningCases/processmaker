@@ -173,9 +173,10 @@ class CaseList extends Model
      * @param string $search
      * @param int $offset
      * @param int $limit
+     * @param bool $paged
      * @return array
      */
-    public static function getSetting(string $type, string $search, int $offset, int $limit): array
+    public static function getSetting(string $type, string $search, int $offset, int $limit, bool $paged = true): array
     {
         $order = 'asc';
         $model = CaseList::where('CAL_TYPE', '=', $type)
@@ -198,7 +199,11 @@ class CaseList extends Model
 
         $count = $model->count();
 
-        $data = $model->offset($offset)->limit($limit)->get();
+        if ($paged === true) {
+            $model->offset($offset)->limit($limit);
+        }
+        $data = $model->get();
+
         $data->transform(function ($item, $key) {
             if (is_null($item->CAL_COLUMNS)) {
                 $item->CAL_COLUMNS = '[]';

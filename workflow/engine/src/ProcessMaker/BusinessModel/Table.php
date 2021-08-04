@@ -8,6 +8,7 @@ use Fields;
 use G;
 use PmTable;
 use ProcessMaker\BusinessModel\ReportTable as BusinessModelRpt;
+use ProcessMaker\Model\AdditionalTables as ModelAdditionalTables;
 use stdClass;
 
 class Table
@@ -23,34 +24,25 @@ class Table
         'or','throw','protected','public','static','switch','xor','try','use','var','while'];
         
     /**
-     * List of Tables in process
-     * @var string $pro_uid. Uid for process
-     * @var string $reportFlag. If is report table
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * List of Tables in process.
+     * @param string $proUid
+     * @param bool $reportFlag
+     * @param bool $offline
+     * @param string $search
      * @return array
      */
-    public function getTables($pro_uid = '', $reportFlag = false, $offline = false)
+    public function getTables(string $proUid = '', bool $reportFlag = false, bool $offline = false, string $search = ''): array
     {
-        //VALIDATION
         if ($reportFlag) {
-            $pro_uid = $this->validateProUid($pro_uid);
+            $proUid = $this->validateProUid($proUid);
         }
-
-        $reportTables = array();
-        $oCriteria = new \Criteria('workflow');
-        $oCriteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_UID);
-        $oCriteria->add(\AdditionalTablesPeer::PRO_UID, $pro_uid, \Criteria::EQUAL);
-        $oDataset = \AdditionalTablesPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-        while ($oDataset->next()) {
-            $row = $oDataset->getRow();
-            $reportTables[] = $this->getTable($row['ADD_TAB_UID'], $pro_uid, $reportFlag, false);
-        }
-
-        return $reportTables;
+        $additionalTables = ModelAdditionalTables::where('PRO_UID', '=', $proUid)
+            ->where('ADD_TAB_NAME', 'LIKE', "%{$search}%")
+            ->get();
+        $additionalTables->transform(function ($object) use ($proUid, $reportFlag) {
+            return $this->getTable($object->ADD_TAB_UID, $proUid, $reportFlag, false);
+        });
+        return $additionalTables->toArray();
     }
 
     /**

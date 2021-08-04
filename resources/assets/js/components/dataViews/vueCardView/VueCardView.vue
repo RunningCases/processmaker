@@ -15,9 +15,18 @@
                 :column="column"
                 :headings="options.headings"
               ></slot>
+              <slot
+                name="send_by"
+                :item="item"
+                column="send_by"
+                :headings="options.headings"
+              ></slot>
             </b-col>
             <b-col sm="3">
-              <slot name="actions"></slot>
+              <slot
+                name="actions"
+                :item="item"
+              ></slot>
             </b-col>
           </b-row>
         </vue-card>
@@ -45,12 +54,20 @@ export default {
     };
   },
   mounted() {
-
+    this.filterOptions();
   },
   methods: {
     classBtn(cls) {
       return "btn btn-slim btn-force-radius v-btn-header " + cls;
     },
+    /**
+     * Filter the column send_by
+     */
+    filterOptions() {
+      this.options.columns = this.options.columns.filter(function(item) {
+        return item !== "send_by";
+      });
+    }
   },
 };
 </script>

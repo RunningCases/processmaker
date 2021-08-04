@@ -5,9 +5,11 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
+use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\AppAssignSelfServiceValue;
 use ProcessMaker\Model\AppAssignSelfServiceValueGroup;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
@@ -656,5 +658,69 @@ class UnassignedTest extends TestCase
 
         $res = $unassigned->getCountersByRange(null, '2021-05-20', '2021-05-23');
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCustomListCount() method
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCustomListCount()
+     * @test
+     */
+    public function it_should_test_getCustomListCount_method()
+    {
+        $cases = $this->createMultipleUnassigned(0);
+
+        $additionalTables = factory(AdditionalTables::class)->create();
+        $query = ""
+            . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
+            . "`APP_UID` varchar(32) NOT NULL,"
+            . "`APP_NUMBER` int(11) NOT NULL,"
+            . "`APP_STATUS` varchar(10) NOT NULL,"
+            . "`VAR1` varchar(255) DEFAULT NULL,"
+            . "`VAR2` varchar(255) DEFAULT NULL,"
+            . "`VAR3` varchar(255) DEFAULT NULL,"
+            . "PRIMARY KEY (`APP_UID`),"
+            . "KEY `indexTable` (`APP_UID`))";
+        DB::statement($query);
+
+        $caseList = factory(CaseList::class)->create([
+            'CAL_TYPE' => 'unassigned',
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
+            'USR_ID' => $cases->USR_ID
+        ]);
+
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($cases->USR_ID);
+        $unassigned->setUserUid($cases->USR_UID);
+
+        $res = $unassigned->getCustomListCount($caseList->CAL_ID, 'unassigned');
+
+        //assertions
+        $this->assertArrayHasKey('label', $res);
+        $this->assertArrayHasKey('name', $res);
+        $this->assertArrayHasKey('description', $res);
+        $this->assertArrayHasKey('tableName', $res);
+        $this->assertArrayHasKey('total', $res);
+
+        $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
+        $this->assertEquals(0, $res['total']);
+
+        //for user or group
+        $cases = $this->createSelfServiceUserOrGroup();
+
+        $unassigned = new Unassigned();
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+
+        $res = $unassigned->getCustomListCount($caseList->CAL_ID, 'unassigned');
+
+        //assertions
+        $this->assertArrayHasKey('label', $res);
+        $this->assertArrayHasKey('name', $res);
+        $this->assertArrayHasKey('description', $res);
+        $this->assertArrayHasKey('tableName', $res);
+        $this->assertArrayHasKey('total', $res);
+
+        $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
+        $this->assertEquals(0, $res['total']);
     }
 }

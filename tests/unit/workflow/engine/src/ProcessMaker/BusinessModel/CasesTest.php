@@ -5,6 +5,7 @@ namespace ProcessMaker\BusinessModel;
 use Exception;
 use G;
 use Illuminate\Support\Facades\DB;
+use ProcessMaker\Model\AppDelay;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Documents;
@@ -380,4 +381,45 @@ class CasesTest extends TestCase
         // Get DynaForms assigned as steps for the second task when the application status is COMPLETED
         self::assertCount(1, Cases::dynaFormsByApplication($application->APP_UID, $task2->TAS_UID, '', 'COMPLETED'));
     }
+
+    /**
+     * It test the case info used in the PMFCaseLink
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases::getStatusInfo()
+     * @covers \ProcessMaker\Model\AppDelay::getPaused()
+     * @test
+     */
+    public function it_should_test_case_status_info()
+    {
+        // Get status info when the case is PAUSED
+        $table = factory(AppDelay::class)->states('paused_foreign_keys')->create();
+        $cases = new Cases();
+        $result = $cases->getStatusInfo($table->APP_UID, $table->APP_DEL_INDEX, $table->APP_DELEGATION_USER);
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('APP_STATUS', $result);
+        $this->assertArrayHasKey('DEL_INDEX', $result);
+        $this->assertArrayHasKey('PRO_UID', $result);
+        // Get status info when the case is UNASSIGNED
+        // Get status info when the case is TO_DO
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $cases = new Cases();
+        $result = $cases->getStatusInfo($table->APP_UID, $table->DEL_INDEX, $table->USR_UID);
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('APP_STATUS', $result);
+        $this->assertArrayHasKey('DEL_INDEX', $result);
+        $this->assertArrayHasKey('PRO_UID', $result);
+        // Get status info when the case is COMPLETED
+        $table = factory(Application::class)->states('completed')->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $table->APP_NUMBER,
+            'APP_UID' => $table->APP_UID,
+        ]);
+        $cases = new Cases();
+        $result = $cases->getStatusInfo($table->APP_UID, $table->DEL_INDEX, $table->USR_UID);
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('APP_STATUS', $result);
+        $this->assertArrayHasKey('DEL_INDEX', $result);
+        $this->assertArrayHasKey('PRO_UID', $result);
+    }
+
 }

@@ -46,6 +46,7 @@ use ProcessMaker\BusinessModel\User as BmUser;
 use ProcessMaker\Core\System;
 use ProcessMaker\Exception\UploadException;
 use ProcessMaker\Exception\CaseNoteUploadFile;
+use ProcessMaker\Model\AppDelay as Delay;
 use ProcessMaker\Model\Application as ModelApplication;
 use ProcessMaker\Model\AppNotes as Notes;
 use ProcessMaker\Model\AppTimeoutAction;
@@ -2456,33 +2457,25 @@ class Cases
     /**
      * This function get the status information
      *
-     * @param object $rsCriteria
+     * @param array $result
+     * @param string $status
      *
      * @return array
      * @throws Exception
     */
-    private function getStatusInfoDataByRsCriteria($rsCriteria)
+    private function getStatusInfoFormatted(array $result, string $status = '')
     {
         try {
-            $arrayData = [];
-
-            if ($rsCriteria->next()) {
-                $record = $rsCriteria->getRow();
-
-                $arrayData = [
-                    'APP_STATUS' => $record['APP_STATUS'],
-                    'DEL_INDEX' => [],
-                    'PRO_UID' => $record['PRO_UID']
-                ];
+            $record = head($result);
+            $arrayData = [
+                'APP_STATUS' => empty($status) ? $record['APP_STATUS'] : $status,
+                'DEL_INDEX' => [],
+                'PRO_UID' => $record['PRO_UID']
+            ];
+            $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
+            foreach ($result as $record) {
                 $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
-
-                while ($rsCriteria->next()) {
-                    $record = $rsCriteria->getRow();
-
-                    $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
-                }
             }
-
             //Return
             return $arrayData;
         } catch (Exception $e) {
@@ -2493,8 +2486,8 @@ class Cases
     /**
      * Get status info Case
      *
-     * @param string $applicationUid Unique id of Case
-     * @param int $delIndex Delegation index
+     * @param string $appUid Unique id of Case
+     * @param int $index Delegation index
      * @param string $userUid Unique id of User
      *
      * @return array Return an array with status info Case, array empty otherwise
@@ -2502,179 +2495,120 @@ class Cases
      *
      * @see workflow/engine/methods/cases/main_init.php
      * @see workflow/engine/methods/cases/opencase.php
-     * @see ProcessMaker\BusinessModel\Cases->setCaseVariables()
-     * @see ProcessMaker\BusinessModel\Cases\InputDocument->getCasesInputDocuments()
-     * @see ProcessMaker\BusinessModel\Cases\InputDocument->throwExceptionIfHaventPermissionToDelete()
-     * @see ProcessMaker\BusinessModel\Cases\OutputDocument->throwExceptionIfCaseNotIsInInbox()
-     * @see ProcessMaker\BusinessModel\Cases\OutputDocument->throwExceptionIfHaventPermissionToDelete()
+     * @see \ProcessMaker\BusinessModel\Cases::setCaseVariables()
+     * @see \ProcessMaker\BusinessModel\Cases\InputDocument::getCasesInputDocuments()
+     * @see \ProcessMaker\BusinessModel\Cases\InputDocument::throwExceptionIfHaventPermissionToDelete()
+     * @see \ProcessMaker\BusinessModel\Cases\OutputDocument::throwExceptionIfCaseNotIsInInbox()
+     * @see \ProcessMaker\BusinessModel\Cases\OutputDocument::throwExceptionIfHaventPermissionToDelete()
      */
-    public function getStatusInfo($applicationUid, $delIndex = 0, $userUid = "")
+    public function getStatusInfo(string $appUid, int $index = 0, string $userUid = "")
     {
         try {
-            //Verify data
-            $this->throwExceptionIfNotExistsCase($applicationUid, $delIndex,
-                $this->getFieldNameByFormatFieldName("APP_UID"));
-
-            //Get data
-            //Status is PAUSED
-            $delimiter = DBAdapter::getStringDelimiter();
-
-            $criteria = new Criteria("workflow");
-
-            $criteria->setDistinct();
-            $criteria->addSelectColumn($delimiter . 'PAUSED' . $delimiter . ' AS APP_STATUS');
-            $criteria->addSelectColumn(AppDelayPeer::APP_DEL_INDEX . " AS DEL_INDEX");
-            $criteria->addSelectColumn(AppDelayPeer::PRO_UID);
-
-            $criteria->add(AppDelayPeer::APP_UID, $applicationUid, Criteria::EQUAL);
-            $criteria->add(AppDelayPeer::APP_TYPE, "PAUSE", Criteria::EQUAL);
-            $criteria->add(
-                $criteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL)->addOr(
-                    $criteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL))
-            );
-
-            if ($delIndex != 0) {
-                $criteria->add(AppDelayPeer::APP_DEL_INDEX, $delIndex, Criteria::EQUAL);
+            $arrayData = [];
+            // Verify data
+            $this->throwExceptionIfNotExistsCase($appUid, $index, $this->getFieldNameByFormatFieldName("APP_UID"));
+            // Get the case number
+            $caseNumber = ModelApplication::getCaseNumber($appUid);
+            // Status is PAUSED
+            $result = Delay::getPaused($caseNumber, $index, $userUid);
+            if (!empty($result)) {
+                $arrayData = $this->getStatusInfoFormatted($result, 'PAUSED');
+                return $arrayData;
             }
 
-            if ($userUid != "") {
-                $criteria->add(AppDelayPeer::APP_DELEGATION_USER, $userUid, Criteria::EQUAL);
+            // Status is UNASSIGNED
+            $query = Delegation::query()->select([
+                'APP_DELEGATION.APP_NUMBER',
+                'APP_DELEGATION.DEL_INDEX',
+                'APP_DELEGATION.PRO_UID'
+            ]);
+            $query->taskAssignType('SELF_SERVICE');
+            $query->threadOpen()->withoutUserId();
+            // Filter specific user
+            if (!empty($userUid)) {
+                $delegation = new Delegation();
+                $delegation->casesUnassigned($query, $userUid);
+            }
+            // Filter specific case
+            $query->case($caseNumber);
+            // Filter specific index
+            if (is_int($index)) {
+                $query->index($index);
+            }
+            $results = $query->get();
+            $arrayData = $results->values()->toArray();
+            if (!empty($arrayData)) {
+                $arrayData = $this->getStatusInfoFormatted($arrayData, 'UNASSIGNED');
+                return $arrayData;
             }
 
-            $rsCriteria = AppDelayPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            // Status is TO_DO, DRAFT
+            $query = Delegation::query()->select([
+                'APPLICATION.APP_STATUS',
+                'APP_DELEGATION.APP_NUMBER',
+                'APP_DELEGATION.DEL_INDEX',
+                'APP_DELEGATION.PRO_UID'
+            ]);
+            $query->joinApplication();
+            // Filter the status TO_DO and DRAFT
+            $query->casesInProgress([1, 2]);
+            // Filter the OPEN thread
+            $query->threadOpen();
+            // Filter specific case
+            $query->case($caseNumber);
+            // Filter specific index
+            if ($index > 0) {
+                $query->index($index);
+            }
+            //  Filter specific user
+            if (!empty($userUid)) {
+                $userId = !empty($userUid) ? User::getId($userUid) : 0;
+                $query->userId($userId);
+            }
+            $results = $query->get();
+            $arrayData = $results->values()->toArray();
 
-            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria);
+            if (!empty($arrayData)) {
+                $arrayData = $this->getStatusInfoFormatted($arrayData);
+                return $arrayData;
+            }
 
+            // Status is CANCELLED, COMPLETED
+            $query = Delegation::query()->select([
+                'APPLICATION.APP_STATUS',
+                'APP_DELEGATION.APP_NUMBER',
+                'APP_DELEGATION.DEL_INDEX',
+                'APP_DELEGATION.PRO_UID'
+            ]);
+            $query->joinApplication();
+            // Filter the status COMPLETED and CANCELLED
+            $query->casesDone([3, 4]);
+            // Filter specific case
+            $query->case($caseNumber);
+            // Filter specific index
+            if ($index > 0)  {
+                $query->index($index);
+            }
+            //  Filter specific user
+            if (!empty($userUid)) {
+                $userId = !empty($userUid) ? User::getId($userUid) : 0;
+                $query->userId($userId);
+            }
+            $query->lastThread();
+            $results = $query->get();
+            $arrayData = $results->values()->toArray();
+            if (!empty($arrayData)) {
+                $arrayData = $this->getStatusInfoFormatted($arrayData);
+                return $arrayData;
+            }
+
+            // Status is PARTICIPATED
+            $arrayData = Delegation::getParticipatedInfo($appUid);
             if (!empty($arrayData)) {
                 return $arrayData;
             }
 
-            //Status is UNASSIGNED
-            if ($userUid != '') {
-                $appCacheView = new AppCacheView();
-
-                $criteria = $appCacheView->getUnassignedListCriteria($userUid);
-            } else {
-                $criteria = new Criteria('workflow');
-
-                $criteria->add(AppCacheViewPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
-                $criteria->add(AppCacheViewPeer::USR_UID, '', Criteria::EQUAL);
-            }
-
-            $criteria->setDistinct();
-            $criteria->clearSelectColumns();
-            $criteria->addSelectColumn($delimiter . 'UNASSIGNED' . $delimiter . ' AS APP_STATUS');
-            $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
-            $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
-
-            $criteria->add(AppCacheViewPeer::APP_UID, $applicationUid, Criteria::EQUAL);
-
-            if ($delIndex != 0) {
-                $criteria->add(AppCacheViewPeer::DEL_INDEX, $delIndex, Criteria::EQUAL);
-            }
-
-            $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria);
-
-            if (!empty($arrayData)) {
-                return $arrayData;
-            }
-
-            //Status is TO_DO, DRAFT
-            $criteria = new Criteria("workflow");
-
-            $criteria->setDistinct();
-            $criteria->addSelectColumn(ApplicationPeer::APP_STATUS);
-            $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
-            $criteria->addSelectColumn(AppDelegationPeer::DEL_INDEX);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::EQUAL);
-            $arrayCondition[] = array(
-                ApplicationPeer::APP_UID,
-                $delimiter . $applicationUid . $delimiter,
-                Criteria::EQUAL
-            );
-            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
-
-            $criteria->add(
-                $criteria->getNewCriterion(ApplicationPeer::APP_STATUS, "TO_DO", Criteria::EQUAL)->addAnd(
-                    $criteria->getNewCriterion(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL))->addAnd(
-                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))
-            )->addOr(
-                $criteria->getNewCriterion(ApplicationPeer::APP_STATUS, "DRAFT", Criteria::EQUAL)->addAnd(
-                    $criteria->getNewCriterion(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))
-            );
-
-            if ($delIndex != 0) {
-                $criteria->add(AppDelegationPeer::DEL_INDEX, $delIndex, Criteria::EQUAL);
-            }
-
-            if ($userUid != "") {
-                $criteria->add(AppDelegationPeer::USR_UID, $userUid, Criteria::EQUAL);
-            }
-
-            $rsCriteria = ApplicationPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria);
-
-            if (!empty($arrayData)) {
-                return $arrayData;
-            }
-
-            //Status is CANCELLED, COMPLETED
-            $criteria = new Criteria("workflow");
-
-            $criteria->addSelectColumn(ApplicationPeer::APP_STATUS);
-            $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
-            $criteria->addSelectColumn(AppDelegationPeer::DEL_INDEX);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::EQUAL);
-            $arrayCondition[] = array(
-                ApplicationPeer::APP_UID,
-                $delimiter . $applicationUid . $delimiter,
-                Criteria::EQUAL
-            );
-            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
-
-            if ($delIndex != 0) {
-                $criteria->add(AppDelegationPeer::DEL_INDEX, $delIndex, Criteria::EQUAL);
-            }
-
-            if ($userUid != "") {
-                $criteria->add(AppDelegationPeer::USR_UID, $userUid, Criteria::EQUAL);
-            }
-
-            $criteria2 = clone $criteria;
-
-            $criteria2->setDistinct();
-
-            $criteria2->add(ApplicationPeer::APP_STATUS, ['CANCELLED', 'COMPLETED'], Criteria::IN);
-            $criteria2->add(AppDelegationPeer::DEL_LAST_INDEX, 1, Criteria::EQUAL);
-
-            $rsCriteria2 = ApplicationPeer::doSelectRS($criteria2);
-            $rsCriteria2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            $arrayData = $this->getStatusInfoDataByRsCriteria($rsCriteria2);
-
-            if (!empty($arrayData)) {
-                return $arrayData;
-            }
-
-            //Status is PARTICIPATED
-            $arrayData = Delegation::getParticipatedInfo($applicationUid);
-
-            if (!empty($arrayData)) {
-                return $arrayData;
-            }
-
-            //Return
-            return array();
+            return $arrayData;
         } catch (Exception $e) {
             throw $e;
         }

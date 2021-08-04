@@ -14,6 +14,7 @@ use ProcessMaker\BusinessModel\Cases\Paused;
 use ProcessMaker\BusinessModel\Cases\Search;
 use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
+use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessCategory;
@@ -609,6 +610,30 @@ class Home extends Api
             if ($menuInstance->Id[$i] === 'ID_CASE_ARCHIVE_SEARCH') {
                 $option->icon = "fas fa-archive";
             }
+            //custom cases list
+            if (in_array($menuInstance->Id[$i], $optionsWithCounter)) {
+                $mapKeys = [
+                    'CASES_INBOX' => 'inbox',
+                    'CASES_DRAFT' => 'draft',
+                    'CASES_SELFSERVICE' => 'unassigned',
+                    'CASES_PAUSED' => 'paused'
+                ];
+                $option->customCasesList = [];
+                $result = CaseList::getSetting($mapKeys[$menuInstance->Id[$i]], '', 0, 10, false);
+                foreach ($result['data'] as $value) {
+                    $option->customCasesList[] = [
+                        "href" => "casesListExtJs?action=" . $mapKeys[$menuInstance->Id[$i]],
+                        "id" => $value['id'],
+                        "title" => $value['name'],
+                        "description" => $value['description'],
+                        "icon" => $value['iconList'],
+                        "badge" => [
+                            "text" => "0",
+                            "class" => "badge-custom"
+                        ]
+                    ];
+                }
+            }
             // Add option to the menu
             $menuHome[] = $option;
         }
@@ -727,8 +752,46 @@ class Home extends Api
         $result = [];
         $result['label'] = $text . $count;
         $result['total'] = $count;
-
         return $result;
+    }
+
+    /**
+     * Get task counters for inbox, draft, paused, and unassigned for custom case lists.
+     * @url GET /:task/counter/caseList/:id
+     * @param string $task
+     * @param int $id
+     * @return array
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getCustomCaseListCounter(string $task, int $id)
+    {
+        try {
+            $usrUid = $this->getUserId();
+            $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
+            switch ($task) {
+                case 'inbox':
+                    $taskList = new Inbox();
+                    break;
+                case 'draft':
+                    $taskList = new Draft();
+                    break;
+                case 'paused':
+                    $taskList = new Paused();
+                    break;
+                case 'unassigned':
+                    $taskList = new Unassigned();
+                    break;
+                default:
+                    return [];
+            }
+            $taskList->setUserUid($usrUid);
+            $taskList->setUserId($usrId);
+            $result = $taskList->getCustomListCount($id, $task);
+            return $result;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
     }
 
     /**

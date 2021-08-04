@@ -1,6 +1,6 @@
 import ApiInstance from "./Api.js";
 import Services from "./Services";
-let Api = new ApiInstance( Services );
+let Api = new ApiInstance(Services);
 
 export let process = {
     list: {
@@ -12,5 +12,13 @@ export let process = {
                 keys: {}
             });
         }
+    },
+    categories(dt) {
+        return Api.fetch({
+            service: "CATEGORIES",
+            method: "get",
+            data: dt,
+            keys: {}
+        });
     }
 };

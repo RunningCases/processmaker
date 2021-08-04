@@ -38,6 +38,9 @@
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
+      <div slot="send_by" slot-scope="props">
+        <CurrentUserCell :data="props.row.USER_DATA" />
+      </div>
       <div slot="current_user" slot-scope="props">
         {{ props.row.USERNAME_DISPLAY_FORMAT }}
       </div>
@@ -67,7 +70,7 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @click="updateDataEllipsis(props.row)">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
               <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
           </b-col>
@@ -118,7 +121,14 @@
           <TaskCell :data="props.item.TASK" />
         </span>
       </div>
-
+      <div slot="send_by" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <CurrentUserCell :data="props.item.USER_DATA" />
+        </span>
+      </div>
     </VueCardView>
     <VueListView
       v-if="typeView === 'LIST'"
@@ -133,7 +143,7 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @click="updateDataEllipsis(props.row)">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
               <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
           </b-col>
@@ -182,6 +192,14 @@
         >
         <span class="v-card-text-light">
           <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+      <div slot="send_by" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueListView>
@@ -204,6 +222,7 @@ import VueListView from "../../components/dataViews/vueListView/VueListView.vue"
 import defaultMixins from "./defaultMixins";
 import Ellipsis from '../../components/utils/ellipsis.vue';
 import ModalReassignCase from '../modal/ModalReassignCase.vue';
+import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 
 export default {
   name: "Paused",
@@ -220,6 +239,7 @@ export default {
     VueCardView,
     VueListView,
     ModalReassignCase,
+    CurrentUserCell,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -238,6 +258,7 @@ export default {
         "case_title",
         "process_name",
         "task",
+        "send_by",
         "due_date",
         "delegation_date",
         "priority",
@@ -252,6 +273,7 @@ export default {
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
+          send_by: this.$i18n.t("ID_SEND_BY"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY"),
@@ -449,6 +471,7 @@ export default {
               this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
             DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
           }],
+          USER_DATA: this.formatUser(v.SEND_BY_INFO),
           USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
               userName: v.USR_LASTNAME,
               firstName: v.USR_LASTNAME,
@@ -465,6 +488,30 @@ export default {
         });
       });
       return data;
+    },
+    /**
+     * Set the format to show user's information
+     * @return {array} dataFormat
+     */
+    formatUser(data) {
+        var dataFormat = [],
+            userDataFormat;
+            userDataFormat = utils.userNameDisplayFormat({
+                userName: data.user_tooltip.usr_firstname,
+                firstName: data.user_tooltip.usr_lastname,
+                lastName: data.user_tooltip.usr_username,
+                format: window.config.FORMATS.format || null
+            });
+            dataFormat.push({
+                USERNAME_DISPLAY_FORMAT: userDataFormat,
+                EMAIL: data.user_tooltip.usr_email,
+                POSITION: data.user_tooltip.usr_position,
+                AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                    window.config.SYS_URI +
+                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.user_id}` : "",
+                UNASSIGNED: userDataFormat !== "" ? true : false
+            });    
+        return dataFormat;
     },
     /**
      * Open selected cases in the inbox
