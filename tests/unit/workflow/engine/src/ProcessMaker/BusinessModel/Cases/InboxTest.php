@@ -5,7 +5,9 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Inbox;
+use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
@@ -610,5 +612,50 @@ class InboxTest extends TestCase
 
         $res = $inbox->getCountersByRange(null, '2021-05-20', '2021-05-23');
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * This tests the getCustomListCount() method.
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCustomListCount()
+     * @test
+     */
+    public function it_should_test_getCustomListCounts_method()
+    {
+        $cases = $this->createMultipleInbox(3);
+
+        $additionalTables = factory(AdditionalTables::class)->create();
+        $query = ""
+            . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
+            . "`APP_UID` varchar(32) NOT NULL,"
+            . "`APP_NUMBER` int(11) NOT NULL,"
+            . "`APP_STATUS` varchar(10) NOT NULL,"
+            . "`VAR1` varchar(255) DEFAULT NULL,"
+            . "`VAR2` varchar(255) DEFAULT NULL,"
+            . "`VAR3` varchar(255) DEFAULT NULL,"
+            . "PRIMARY KEY (`APP_UID`),"
+            . "KEY `indexTable` (`APP_UID`))";
+        DB::statement($query);
+
+        $caseList = factory(CaseList::class)->create([
+            'CAL_TYPE' => 'inbox',
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
+            'USR_ID' => $cases->USR_ID
+        ]);
+
+        $inbox = new Inbox();
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setUserUid($cases->USR_UID);
+
+        $res = $inbox->getCustomListCount($caseList->CAL_ID, 'inbox');
+
+        //assertions
+        $this->assertArrayHasKey('label', $res);
+        $this->assertArrayHasKey('name', $res);
+        $this->assertArrayHasKey('description', $res);
+        $this->assertArrayHasKey('tableName', $res);
+        $this->assertArrayHasKey('total', $res);
+
+        $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
+        $this->assertEquals(3, $res['total']);
     }
 }
