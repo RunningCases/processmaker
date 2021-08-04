@@ -354,6 +354,7 @@ class DraftTest extends TestCase
      * It tests the getCountersByProcesses() method with the category filter
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByProcesses()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCountersByProcesses()
      * @test
      */
     public function it_should_test_get_counters_by_processes_method_category()
@@ -643,6 +644,7 @@ class DraftTest extends TestCase
      * It tests the getCountersByRange() method
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByRange()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCountersByProcesses()
      * @test
      */
     public function it_should_test_get_counters_by_range_method()

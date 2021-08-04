@@ -170,7 +170,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_started()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = factory(Delegation::class)->states('first_thread')->create();
         $this->assertCount(1, $table->caseStarted($table->DEL_INDEX)->get());
     }
 
@@ -532,7 +532,7 @@ class DelegationTest extends TestCase
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
         $cases = [$table->APP_NUMBER];
-        $rangeCases = [$table->APP_NUMBER.'-'.$table->APP_NUMBER];
+        $rangeCases = [$table->APP_NUMBER . '-' . $table->APP_NUMBER];
         $this->assertCount(1, $table->casesOrRangeOfCases($cases, $rangeCases)->get());
     }
 
@@ -2150,6 +2150,8 @@ class DelegationTest extends TestCase
         //Review the self-service records
         $result = Delegation::getSelfService($user->USR_UID);
         $this->assertEquals(25, count($result));
+        $result = Delegation::getSelfService($user->USR_UID, ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'], null,  null,null, null, null, 0, 15);
+        $this->assertEquals(15, count($result));
     }
 
     /**
@@ -3369,7 +3371,7 @@ class DelegationTest extends TestCase
      */
     public function it_get_cases_started_by_specific_user()
     {
-        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $delegation = factory(Delegation::class)->states('first_thread')->create();
         $result = Delegation::casesStartedBy($delegation->USR_ID);
         $this->assertNotEmpty($result);
     }
