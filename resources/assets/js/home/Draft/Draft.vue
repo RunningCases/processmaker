@@ -5,6 +5,7 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_DRAFT')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -226,6 +227,7 @@ export default {
         "actions"
       ],
       tableData: [],
+      icon:"fas fa-edit",
       options: {
         filterable: false,
         headings: {
