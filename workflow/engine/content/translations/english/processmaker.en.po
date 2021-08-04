@@ -43785,42 +43785,6 @@ msgstr ""
 msgid "[setup/plugin_ListOptions.xml?MNU_IMPORT] Import"
 msgstr "Import"
 
-# setup/processHeartBeatConfig.xml?HB_TITLE
-# setup/processHeartBeatConfig.xml
-#: title - HB_TITLE
-msgid "Processmaker Heartbeat"
-msgstr "Processmaker Heartbeat"
-
-# setup/processHeartBeatConfig.xml?HB_OPTION
-# setup/processHeartBeatConfig.xml
-#: dropdown - HB_OPTION
-msgid "Enable Heartbeat"
-msgstr "Enable Heartbeat"
-
-# setup/processHeartBeatConfig.xml?HB_OPTION-0
-# setup/processHeartBeatConfig.xml
-#: dropdown - HB_OPTION - 0
-msgid "[setup/processHeartBeatConfig.xml?HB_OPTION-0]"
-msgstr "No"
-
-# setup/processHeartBeatConfig.xml?HB_OPTION-1
-# setup/processHeartBeatConfig.xml
-#: dropdown - HB_OPTION - 1
-msgid "[setup/processHeartBeatConfig.xml?HB_OPTION-1]"
-msgstr "Yes"
-
-# setup/processHeartBeatConfig.xml?HB_SAVE
-# setup/processHeartBeatConfig.xml
-#: button - HB_SAVE
-msgid "[setup/processHeartBeatConfig.xml?HB_SAVE] save"
-msgstr "save"
-
-# setup/processHeartBeatConfig.xml?HB_LINKINFO
-# setup/processHeartBeatConfig.xml
-#: link - HB_LINKINFO
-msgid "[setup/processHeartBeatConfig.xml?HB_LINKINFO] Read Online Documentation"
-msgstr "Read Online Documentation"
-
 # setup/showMessage.xml?TITLE
 # setup/showMessage.xml
 #: title - TITLE
