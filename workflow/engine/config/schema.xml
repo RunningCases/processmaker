@@ -1385,7 +1385,7 @@
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="TRI_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="ST_TYPE" type="VARCHAR" size="20" required="true" primaryKey="true" default=""/>
-        <column name="ST_CONDITION" type="VARCHAR" size="255" required="true" default=""/>
+        <column name="ST_CONDITION" type="LONGVARCHAR" required="true"/>
         <column name="ST_POSITION" type="INTEGER" required="true" default="0"/>
         <validator column="ST_TYPE">
             <rule name="validValues" value="BEFORE|AFTER"
