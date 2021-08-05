@@ -56,7 +56,7 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
 
@@ -67,7 +67,6 @@ class SearchTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::setCaseNumber()
-     * @covers \ProcessMaker\BusinessModel\Cases\Search::setOrderByColumn()
      * @test
      */
     public function it_filter_by_app_number()
@@ -77,10 +76,8 @@ class SearchTest extends TestCase
         // Create new Search object
         $search = new Search();
         $search->setCaseNumber($cases[0]->APP_NUMBER);
-        // Set order by column value
-        $search->setOrderByColumn('APP_NUMBER');
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertEquals($cases[0]->APP_NUMBER, $result[0]['APP_NUMBER']);
     }
 
@@ -101,7 +98,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setCasesNumbers([$cases[0]->APP_NUMBER]);
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertEquals($cases[0]->APP_NUMBER, $result[0]['APP_NUMBER']);
     }
 
@@ -123,7 +120,31 @@ class SearchTest extends TestCase
         $rangeOfCases = $cases[0]->APP_NUMBER . "-" . $cases[0]->APP_NUMBER;
         $search->setRangeCasesFromTo([$rangeOfCases]);
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Tests the specific filter setCasesNumbers and setRangeCasesFromTo
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setCasesNumbers()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setRangeCasesFromTo()
+     * @test
+     */
+    public function it_filter_by_cases_and_range_cases()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $search->setCasesNumbers([$cases[0]->APP_NUMBER]);
+        $rangeOfCases = $cases[0]->APP_NUMBER . "-" . $cases[0]->APP_NUMBER;
+        $search->setRangeCasesFromTo([$rangeOfCases]);
+        $result = $search->getData();
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
 
@@ -144,7 +165,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setProcessId($cases[0]->PRO_ID);
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
 
@@ -165,7 +186,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setTaskId($cases[0]->TAS_ID);
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
 
@@ -196,6 +217,27 @@ class SearchTest extends TestCase
     }
 
     /**
+     * It tests the getData with setCategoryId
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setCategoryId()
+     * @test
+     */
+    public function it_filter_by_category()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $search->setCategoryId(12);
+        $result = $search->getData();
+        // Asserts with the result
+        $this->assertEmpty($result);
+    }
+
+    /**
      * It tests the getData with user
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
@@ -212,12 +254,12 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setUserId($cases[0]->USR_ID);
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
 
     /**
-     * It tests the getData with user
+     * It tests the getData with setStartCaseFrom and setStartCaseTo
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
@@ -236,7 +278,31 @@ class SearchTest extends TestCase
         $search->setStartCaseFrom($date);
         $search->setStartCaseTo($date);
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+       // Asserts with the result
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * It tests the getData with setFinishCaseFrom and setFinishCaseTo
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setFinishCaseFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setFinishCaseTo()
+     * @test
+     */
+    public function it_filter_by_finish_date()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $date = date('Y-m-d');
+        $search->setFinishCaseFrom($date);
+        $search->setFinishCaseTo($date);
+        $result = $search->getData();
+        // Asserts with the result
         $this->assertEmpty($result);
     }
 
@@ -257,7 +323,7 @@ class SearchTest extends TestCase
         $search = new Search();
         $search->setCaseStatuses(['TO_DO']);
         $result = $search->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
 
