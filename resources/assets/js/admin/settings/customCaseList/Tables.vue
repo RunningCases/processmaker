@@ -1,5 +1,6 @@
 <template>
 <div id="people">
+    <ModalDeleteCaseList ref="modal-delete-list"></ModalDeleteCaseList>
     <button-fleft :data="newList"></button-fleft>
     <button-fleft :data="importList"></button-fleft>
     <v-server-table 
@@ -27,13 +28,15 @@ import ButtonFleft from "../../../components/home/ButtonFleft.vue";
 import Ellipsis from "../../../components/utils/ellipsis.vue";
 import utils from "../../../utils/utils";
 import OwnerCell from "../../../components/vuetable/OwnerCell";
+import ModalDeleteCaseList from "./../../Modals/ModalDeleteCaseList.vue"
 export default {
     name: "Tables",
     props: ["module"],
     components: {
         ButtonFleft,
         Ellipsis,
-        OwnerCell
+        OwnerCell,
+        ModalDeleteCaseList
     },
     data() {
         return {
@@ -171,6 +174,14 @@ export default {
                 data.push(v);
             });
             return data;
+        },
+        /**
+         * Show modal to delete a custom case list
+         * @param {object} data
+         */
+        showModalDelete(data) {
+            this.$refs["modal-delete-list"].data = data;
+            this.$refs["modal-delete-list"].show();
         }
     }
 };
