@@ -4494,6 +4494,12 @@ msgid "Claim"
 msgstr "Claim"
 
 # TRANSLATION
+# LABEL/ID_CLAIM_THIS_CASE
+#: LABEL/ID_CLAIM_THIS_CASE
+msgid "Claim this case"
+msgstr "Claim this case"
+
+# TRANSLATION
 # LABEL/ID_CLASSIC_EDITOR
 #: LABEL/ID_CLASSIC_EDITOR
 msgid "Classic Editor"
@@ -24670,6 +24676,12 @@ msgstr "An error has occurred, please verify on which server \"SendMail\" has be
 #: LABEL/ID_SEND_AT
 msgid "send at"
 msgstr "send at"
+
+# TRANSLATION
+# LABEL/ID_SEND_BY
+#: LABEL/ID_SEND_BY
+msgid "Send By"
+msgstr "Send By"
 
 # TRANSLATION
 # LABEL/ID_SEND_EMAIL_CASE_PARTICIPANTS

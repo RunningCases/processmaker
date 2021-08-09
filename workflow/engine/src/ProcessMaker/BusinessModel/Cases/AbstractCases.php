@@ -1492,8 +1492,7 @@ class AbstractCases implements CasesInterface
 
     /**
      * Count how many cases has each process
-     * 
-     * @param string $list
+     *
      * @param int $category
      * @param bool $topTen
      * @param array $processes
@@ -1528,7 +1527,7 @@ class AbstractCases implements CasesInterface
             $query->topTen('TOTAL', 'DESC');
         }
         if (!empty($processes)) {
-            $query->inProcesses($processes);
+            $query->processInList($processes);
         }
         return $query->get()->values()->toArray();
     }
@@ -1574,7 +1573,7 @@ class AbstractCases implements CasesInterface
         }
         $query->joinProcess();
         if (!is_null($processId)) {
-            $query->inProcesses([$processId]);
+            $query->processInList([$processId]);
         }
         if (!is_null($dateFrom)) {
             $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);

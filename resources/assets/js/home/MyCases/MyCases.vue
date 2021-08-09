@@ -13,6 +13,8 @@
         <MyCasesFilter
             :filters="filters"
             :title="title"
+            :random="random"
+            :icon="filterHeaderObject.icon"
             @onRemoveFilter="onRemoveFilter"
             @onUpdateFilters="onUpdateFilters"
         />
@@ -116,12 +118,16 @@ export default {
             filter: "CASES_INBOX",
             allView: [],
             filterHeader: "STARTED",
+            filterHeaderObject: {
+                icon:"fas fa-inbox"
+            },
             headers: [],
             columMap: {
                 case_number: "APP_NUMBER",
                 case_title: "DEL_TITLE",
                 process_name: "PRO_TITLE",
             },
+            random: _.random(0,1000000000),
             newCase: {
                 title: this.$i18n.t("ID_NEW_CASE"),
                 class: "btn-success",
@@ -621,6 +627,8 @@ export default {
                             that.filterHeader = obj.item;
                             that.$refs["vueTable"].setPage(1); // Reset the page when change the header filter
                             that.$refs["vueTable"].getData();
+                            that.filterHeaderObject = obj;
+                            that.random = _.random(0,1000000000);
                         },
                         class: info[v.id].class,
                     });

@@ -8,11 +8,14 @@
         :options="options"
         ref="table" 
     >
-         <div slot="actions" slot-scope="props">
+        <div slot="actions" slot-scope="props">
             <div>
-            <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+                <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
         </div>
+        <div slot="owner" slot-scope="props">
+                <OwnerCell :data="props.row.owner" />
+            </div>
     </v-server-table>
 </div>
 
@@ -21,13 +24,16 @@
 <script>
 import Api from "./Api/CaseList";
 import ButtonFleft from "../../../components/home/ButtonFleft.vue";
-import Ellipsis from '../../../components/utils/ellipsis.vue';
+import Ellipsis from "../../../components/utils/ellipsis.vue";
+import utils from "../../../utils/utils";
+import OwnerCell from "../../../components/vuetable/OwnerCell";
 export default {
     name: "Tables",
     props: ["module"],
     components: {
         ButtonFleft,
-        Ellipsis
+        Ellipsis,
+        OwnerCell
     },
     data() {
         return {
@@ -125,9 +131,10 @@ export default {
             });
             return new Promise((resolutionFunc, rejectionFunc) => {
                 Api.getCaseList(filters, that.module)
-                .then((response) => {       
+                .then((response) => {      
+                    dt = that.formatDataResponse(response.data.data); 
                     resolutionFunc({
-                        data: response.data.data,        
+                        data: dt,        
                         count: response.data.total
                     });
                 })
@@ -135,6 +142,35 @@ export default {
                     rejectionFunc(e);
                 });
             });
+        },
+        /**
+         * Format Response API TODO to grid inbox and columns
+         * @param {object} response
+         * @returns {object}
+         */
+        formatDataResponse(response){
+             let that = this,
+                data = [],
+                userDataFormat;  
+            _.forEach(response, (v) => {
+                userDataFormat = utils.userNameDisplayFormat({
+                        userName: v.userName || "",
+                        firstName: v.userFirstname || "",
+                        lastName: v.userLastname || "",
+                        format: window.config.FORMATS.format || null
+                    });
+                v["owner"] =    {
+                    userAvatar: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                            window.config.SYS_URI +
+                            `users/users_ViewPhotoGrid?pUID=${v.userId}` : "",
+                    userInfo: userDataFormat || "",
+                    userEmail: v.userEmail,
+                    userId: v.userId,
+                    userPosition: v.userPosition || ""
+                }
+                data.push(v);
+            });
+            return data;
         }
     }
 };

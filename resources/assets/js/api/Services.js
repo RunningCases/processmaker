@@ -69,5 +69,8 @@
     CATEGORIES: "/home/categories",
     DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}",
     CONFIG: "/home/config",
-    GET_CONFIG: "/home/config/{id}/{name}"
+    GET_CONFIG: "/home/config/{id}/{name}",
+    PAUSE_CASE: "/cases/{app_uid}/pause",
+    REASSIGN_CASE: "/cases/{app_uid}/reassign-case",
+    REASSIGN_USERS: "/light/userstoreassign/{task_uid}"
 };

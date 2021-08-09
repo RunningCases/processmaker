@@ -174,18 +174,6 @@ class Delegation extends Model
     }
 
     /**
-     * Scope a query to get the in-progress
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeCaseInProgress($query)
-    {
-        return $query->statusIds([Application::STATUS_DRAFT, Application::STATUS_TODO]);
-    }
-
-    /**
      * Scope a query to get the to_do cases
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -381,36 +369,39 @@ class Delegation extends Model
      * Scope a query to get only the date on time
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $now
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOnTime($query)
+    public function scopeOnTime($query, $now)
     {
-        return $query->whereRaw('TIMEDIFF(DEL_RISK_DATE, NOW()) > 0');
+        return $query->where('DEL_RISK_DATE', '>', $now);
     }
 
     /**
      * Scope a query to get only the date at risk
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $now
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeAtRisk($query)
+    public function scopeAtRisk($query, $now)
     {
-        return $query->whereRaw('TIMEDIFF(DEL_RISK_DATE, NOW()) < 0 AND TIMEDIFF(DEL_TASK_DUE_DATE, NOW()) > 0');
+        return $query->where('DEL_RISK_DATE', '>=', $now)->where('DEL_TASK_DUE_DATE', '>=', $now);
     }
 
     /**
      * Scope a query to get only the date overdue
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $now
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOverdue($query)
+    public function scopeOverdue($query, $now)
     {
-        return $query->whereRaw('TIMEDIFF(DEL_TASK_DUE_DATE, NOW()) < 0');
+        return $query->where('DEL_TASK_DUE_DATE', '>', $now);
     }
 
     /**
@@ -775,19 +766,6 @@ class Delegation extends Model
     }
 
     /**
-     * Scope where in processes
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param array $processes
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeInProcesses($query, array $processes)
-    {
-        return $query->whereIn('PROCESS.PRO_ID', $processes);
-    }
-
-    /**
      * Scope the Inbox cases
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -803,26 +781,6 @@ class Delegation extends Model
         $query->status(Application::STATUS_TODO);
         // Scope that return the results for an specific user
         $query->userId($userId);
-        // Scope that establish that the DEL_THREAD_STATUS must be OPEN
-        $query->threadOpen();
-
-        return $query;
-    }
-
-    /**
-     * Scope the Inbox cases
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeInboxWithoutUser($query)
-    {
-        // This scope is for the join with the APP_DELEGATION table
-        $query->joinApplication();
-        $query->status(Application::STATUS_TODO);
-        // Scope for the restriction of the task that must not be searched for
-        $query->excludeTaskTypes(Task::DUMMY_TASKS);
         // Scope that establish that the DEL_THREAD_STATUS must be OPEN
         $query->threadOpen();
 
@@ -1414,7 +1372,7 @@ class Delegation extends Model
      * @param string $appUid
      * @return array
      *
-     * @see \ProcessMaker\BusinessModel\Cases:getStatusInfo()
+     * @see \ProcessMaker\BusinessModel\Cases::getStatusInfo()
      */
     public static function getParticipatedInfo($appUid)
     {

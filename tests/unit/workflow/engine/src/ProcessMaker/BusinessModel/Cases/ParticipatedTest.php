@@ -5,6 +5,7 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Participated;
+use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
@@ -26,7 +27,7 @@ class ParticipatedTest extends TestCase
     }
 
     /**
-     * Create participated cases factories
+     * Create participated cases factories when the case is TO_DO
      *
      * @param string
      *
@@ -37,8 +38,9 @@ class ParticipatedTest extends TestCase
         $delegation = factory(Delegation::class)->states('foreign_keys')->create([
             'DEL_THREAD_STATUS' => 'CLOSED',
             'DEL_INDEX' => 1,
+            'DEL_LAST_INDEX' => 0,
         ]);
-        $delegation2 = factory(Delegation::class)->states('last_thread')->create([
+        $delegation = factory(Delegation::class)->states('last_thread')->create([
             'APP_NUMBER' => $delegation->APP_NUMBER,
             'TAS_ID' => $delegation->TAS_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
@@ -46,9 +48,41 @@ class ParticipatedTest extends TestCase
             'USR_ID' => $delegation->USR_ID,
             'PRO_ID' => $delegation->PRO_ID,
             'DEL_INDEX' => 2,
+            'DEL_LAST_INDEX' => 1,
         ]);
 
-        return $delegation2;
+        return $delegation;
+    }
+
+    /**
+     * Create participated cases factories when the case is COMPLETED
+     *
+     * @param string
+     *
+     * @return array
+     */
+    public function createParticipatedCompleted()
+    {
+        $application = factory(Application::class)->states('completed')->create();
+        $delegation = factory(Delegation::class)->states('first_thread')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+            'DEL_LAST_INDEX' => 0,
+        ]);
+        $delegation = factory(Delegation::class)->states('last_thread')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'USR_UID' => $delegation->USR_UID,
+            'USR_ID' => $delegation->USR_ID,
+            'PRO_ID' => $delegation->PRO_ID,
+            'DEL_INDEX' => 2,
+            'DEL_LAST_INDEX' => 1,
+        ]);
+
+        return $delegation;
     }
 
     /**
@@ -67,6 +101,7 @@ class ParticipatedTest extends TestCase
                 'DEL_INDEX' => 1,
                 'USR_UID' =>  $user->USR_UID,
                 'USR_ID' =>  $user->USR_ID,
+                'DEL_LAST_INDEX' => 0,
             ]);
             factory(Delegation::class)->states('last_thread')->create([
                 'APP_UID' => $delegation->APP_UID,
@@ -77,6 +112,7 @@ class ParticipatedTest extends TestCase
                 'USR_ID' => $delegation->USR_ID,
                 'PRO_ID' => $delegation->PRO_ID,
                 'DEL_INDEX' => 2,
+                'DEL_LAST_INDEX' => 1,
             ]);
         }
         return $user;
@@ -105,9 +141,9 @@ class ParticipatedTest extends TestCase
         // Set OrderBYColumn value
         $participated->setOrderByColumn('APP_NUMBER');
         // Get the data
-        $res = $participated->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertEquals(2, count($res));
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -137,9 +173,9 @@ class ParticipatedTest extends TestCase
         // Set the filter STARTED
         $participated->setParticipatedStatus('STARTED');
         // Get the data
-        $res = $participated->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertEquals(1, count($res));
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -156,7 +192,7 @@ class ParticipatedTest extends TestCase
     public function it_filter_by_completed_by_me()
     {
         // Create factories related to the participated cases
-        $cases = $this->createParticipated();
+        $cases = $this->createParticipatedCompleted();
         // Create new Participated object
         $participated = new Participated();
         // Set the user UID
@@ -166,9 +202,9 @@ class ParticipatedTest extends TestCase
         // Set the filter COMPLETED
         $participated->setParticipatedStatus('COMPLETED');
         // Get the data
-        $res = $participated->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertEquals(0, count($res));
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -198,9 +234,9 @@ class ParticipatedTest extends TestCase
         // Set the process
         $participated->setProcessId($cases['PRO_ID']);
         // Get the data
-        $res = $participated->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertEquals(2, count($res));
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -227,9 +263,9 @@ class ParticipatedTest extends TestCase
         // Set the case numbers
         $participated->setCasesNumbers([$cases['APP_NUMBER']]);
         // Get the data
-        $res = $participated->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertEquals(2, count($res));
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -257,9 +293,9 @@ class ParticipatedTest extends TestCase
         $rangeOfCases = $cases['APP_NUMBER'] . "-" . $cases['APP_NUMBER'];
         $participated->setRangeCasesFromTo([$rangeOfCases]);
         // Get the data
-        $res = $participated->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertEquals(2, count($res));
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -291,9 +327,9 @@ class ParticipatedTest extends TestCase
         // Set the title
         $participated->setCaseTitle($cases->DEL_TITLE);
         // Get the data
-        $res = $participated->getData();
-        // Asserts
-        $this->assertCount(1, $res);
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -324,7 +360,7 @@ class ParticipatedTest extends TestCase
         $participated->setCaseStatus('TO_DO');
         // Get the data
         $result = $participated->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
 
@@ -359,7 +395,7 @@ class ParticipatedTest extends TestCase
         $participated->setStartCaseTo($date);
         // Get the data
         $result = $participated->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertEmpty($result);
     }
 
@@ -394,7 +430,7 @@ class ParticipatedTest extends TestCase
         $participated->setFinishCaseTo($date);
         // Get the data
         $result = $participated->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertEmpty($result);
     }
 
@@ -419,11 +455,39 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases->USR_ID);
         // Set participated status
         $participated->setParticipatedStatus('IN_PROGRESS');
-        // Get result
+        // Get the data
         $result = $participated->getData();
-        // This assert that the expected numbers of results are returned
+        // Asserts with the result
         $this->assertNotEmpty($result);
     }
+
+    /**
+     * It tests the specific filter setParticipatedStatus = STARTED
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
+     * @test
+     */
+    public function it_get_status_started()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the user UID
+        $participated->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('STARTED');
+        // Get the data
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
+    }
+
     /**
      * It tests the specific filter setParticipatedStatus = COMPLETED
      *
@@ -436,7 +500,7 @@ class ParticipatedTest extends TestCase
     public function it_get_status_completed()
     {
         // Create factories related to the participated cases
-        $cases = $this->createParticipated();
+        $cases = $this->createParticipatedCompleted();
         // Create new Participated object
         $participated = new Participated();
         // Set the user UID
@@ -445,10 +509,10 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases->USR_ID);
         // Set participated status
         $participated->setParticipatedStatus('COMPLETED');
-        // Get result
+        // Get the data
         $result = $participated->getData();
-        // This assert that the expected numbers of results are returned
-        $this->assertEmpty($result);
+        // Asserts with the result
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -460,7 +524,22 @@ class ParticipatedTest extends TestCase
      */
     public function it_get_counter()
     {
-        // Create factories related to the participated cases
+        // Create factories related to the in started cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the user UID
+        $participated->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('STARTED');
+        // Get the data
+        $result = $participated->getCounter();
+        // Asserts with the result
+        $this->assertTrue($result > 0);
+
+        // Create factories related to the in progress cases
         $cases = $this->createParticipated();
         // Create new Participated object
         $participated = new Participated();
@@ -470,10 +549,25 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases->USR_ID);
         // Set participated status
         $participated->setParticipatedStatus('IN_PROGRESS');
-        // Get result
-        $res = $participated->getCounter();
-        // Assert the result of getCounter method
-        $this->assertEquals(1, $res);
+        // Get the data
+        $result = $participated->getCounter();
+        // Asserts with the result
+        $this->assertTrue($result > 0);
+
+        // Create factories related to the complete cases
+        $cases = $this->createParticipatedCompleted();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the user UID
+        $participated->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('COMPLETED');
+        // Get the data
+        $result = $participated->getCounter();
+        // Asserts with the result
+        $this->assertTrue($result > 0);
     }
 
     /**
@@ -485,20 +579,40 @@ class ParticipatedTest extends TestCase
      */
     public function it_should_test_get_paging_counters_method()
     {
-        $cases = $this->createMultipleParticipated(3);
+        // Create factories related to the in started cases
+        $cases = $this->createParticipated();
         $participated = new Participated();
         $participated->setUserId($cases->USR_ID);
         $participated->setUserUid($cases->USR_UID);
+        $participated->setCaseUid($cases->APP_UID);
         $participated->setParticipatedStatus('STARTED');
-        $res = $participated->getPagingCounters();
-        $this->assertEquals(3, $res);
+        // Get the data
+        $result = $participated->getPagingCounters();
+        // Asserts with the result
+        $this->assertTrue($result >= 0);
 
-        $delegation = Delegation::select()->where('USR_ID', $cases->USR_ID)->first();
-        $participated->setCaseNumber($delegation->APP_NUMBER);
-        $participated->setProcessId($delegation->PRO_ID);
-        $participated->setTaskId($delegation->TAS_ID);
-        $participated->setCaseUid($delegation->APP_UID);
-        $res = $participated->getPagingCounters();
-        $this->assertEquals(1, $res);
+        // Create factories related to the in progress cases
+        $cases = $this->createParticipated();
+        $participated = new Participated();
+        $participated->setUserId($cases->USR_ID);
+        $participated->setUserUid($cases->USR_UID);
+        $participated->setCaseUid($cases->APP_UID);
+        $participated->setParticipatedStatus('IN_PROGRESS');
+        // Get the data
+        $result = $participated->getPagingCounters();
+        // Asserts with the result
+        $this->assertTrue($result >= 0);
+
+        // Create factories related to the complete cases
+        $cases = $this->createParticipatedCompleted();
+        $participated = new Participated();
+        $participated->setUserId($cases->USR_ID);
+        $participated->setUserUid($cases->USR_UID);
+        $participated->setCaseUid($cases->APP_UID);
+        $participated->setParticipatedStatus('COMPLETED');
+        // Get the data
+        $result = $participated->getPagingCounters();
+        // Asserts with the result
+        $this->assertTrue($result >= 0);
     }
 }

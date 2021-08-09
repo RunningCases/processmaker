@@ -5,6 +5,7 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_UNASSIGNED')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -37,6 +38,9 @@
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
+      <div slot="send_by" slot-scope="props">
+        <CurrentUserCell :data="props.row.USER_DATA" />
+      </div>
       <div slot="due_date" slot-scope="props">
         {{ props.row.DUE_DATE }}
       </div>
@@ -55,10 +59,19 @@
       :options="optionsVueList"
       ref="vueCardView"
     >
-      <div slot="detail" slot-scope="props">
-        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
-          <i class="fas fa-info-circle"></i>
-        </div>
+      <div slot="actions" slot-scope="props">
+        <b-row>
+          <b-col sm="12">
+            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </b-col>
+          <b-col sm="12">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
+              <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            </div>
+          </b-col>
+        </b-row>
       </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
         <span class="v-card-text-highlight"
@@ -103,6 +116,14 @@
         >
         <span class="v-card-text-light">
           <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+      <div slot="send_by" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueCardView>
@@ -111,10 +132,19 @@
       :options="optionsVueList"
       ref="vueListView"
     >
-      <div slot="detail" slot-scope="props">
-        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
-          <i class="fas fa-info-circle"></i>
-        </div>
+      <div slot="actions" slot-scope="props">
+        <b-row>
+          <b-col sm="12">
+            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </b-col>
+          <b-col sm="12">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
+              <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            </div>
+          </b-col>
+        </b-row>
       </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
         <span class="v-card-text-highlight"
@@ -159,6 +189,14 @@
         >
         <span class="v-card-text-light">
           <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+      <div slot="send_by" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueListView>
@@ -183,6 +221,7 @@ import VueListView from "../../components/dataViews/vueListView/VueListView.vue"
 import defaultMixins from "./defaultMixins";
 import ModalPauseCase from '../modal/ModalPauseCase.vue';
 import { Event } from 'vue-tables-2';
+import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 
 export default {
   name: "Unassigned",
@@ -199,6 +238,7 @@ export default {
     VueCardView,
     VueListView,
     ModalPauseCase,
+    CurrentUserCell,
   },
   props: ["defaultOption", "settings"],
   data() {
@@ -242,6 +282,7 @@ export default {
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
+          send_by: this.$i18n.t("ID_SEND_BY"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY"),
@@ -440,6 +481,7 @@ export default {
               this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[v.TAS_STATUS],
             DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : ""
           }],
+          USER_DATA: this.formatUser(v.SEND_BY_INFO),
           DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
           DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
           PRIORITY: v.DEL_PRIORITY_LABEL,
@@ -450,6 +492,30 @@ export default {
         });
       });
       return data;
+    },
+    /**
+     * Set the format to show user's information
+     * @return {array} dataFormat
+     */
+    formatUser(data) {
+        var dataFormat = [],
+            userDataFormat;
+            userDataFormat = utils.userNameDisplayFormat({
+                userName: data.user_tooltip.usr_firstname,
+                firstName: data.user_tooltip.usr_lastname,
+                lastName: data.user_tooltip.usr_username,
+                format: window.config.FORMATS.format || null
+            });
+            dataFormat.push({
+                USERNAME_DISPLAY_FORMAT: userDataFormat,
+                EMAIL: data.user_tooltip.usr_email,
+                POSITION: data.user_tooltip.usr_position,
+                AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                    window.config.SYS_URI +
+                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                UNASSIGNED: userDataFormat !== "" ? true : false
+            });    
+        return dataFormat;
     },
     /**
      * Claim case

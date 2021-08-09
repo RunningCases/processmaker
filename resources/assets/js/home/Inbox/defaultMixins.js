@@ -40,25 +40,25 @@ export default {
           this.openCase(item);
         },
         headings: {
-          detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
+          send_by: this.$i18n.t("ID_SEND_BY"),
           current_user: this.$i18n.t("ID_CURRENT_USER"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY")
         },
         columns: [
-          "detail",
           "case_number",
           "case_title",
           "process_name",
           "due_date",
           "delegation_date",
           "priority",
-          "task"
+          "task",
+          "send_by",
         ],
         requestFunction(data) {
           return that.getCases(data);

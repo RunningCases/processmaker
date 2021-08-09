@@ -94,6 +94,7 @@ export default {
         width: 0px;
         z-index: 999;
         display: inline-flex !important;
+        opacity: 1 !important;
     }
     .btn-outline-info {
         border: none;
