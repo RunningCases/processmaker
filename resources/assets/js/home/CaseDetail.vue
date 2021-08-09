@@ -35,8 +35,8 @@
             <div slot="case_title" slot-scope="props">
               {{ props.row.CASE_TITLE }}
             </div>
-            <div slot="assignee" slot-scope="props">
-              {{ props.row.ASSIGNEE }}
+            <div slot="current_user" slot-scope="props">
+                <CurrentUserCell :data="props.row.USER_DATA" />
             </div>
             <div slot="status" slot-scope="props">
               {{ props.row.STATUS }}
@@ -114,6 +114,7 @@ import ModalCancelCase from "../home/modal/ModalCancelCase.vue";
 import ModalNewRequest from "./ModalNewRequest.vue";
 import ModalClaimCase from "./modal/ModalClaimCase.vue";
 import TaskCell from "../components/vuetable/TaskCell.vue";
+import CurrentUserCell from "../components/vuetable/CurrentUserCell.vue"
 import utils from "./../utils/utils";
 import Api from "../api/index";
 
@@ -131,7 +132,8 @@ export default {
     ButtonFleft,
     ModalNewRequest,
     ModalClaimCase,
-    TaskCell
+    TaskCell,
+    CurrentUserCell
   },
   props: {},
   data() {
@@ -153,7 +155,7 @@ export default {
       columns: [
         "task",
         "case_title",
-        "assignee",
+        "current_user",
         "status",
         "due_date",
         "actions"
@@ -164,7 +166,7 @@ export default {
         headings: {
           task: this.$i18n.t("ID_TASK"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
-          assignee: this.$i18n.t("ID_CURRENT_USER"),
+          current_user: this.$i18n.t("ID_CURRENT_USER"),
           status: this.$i18n.t("ID_STATUS"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           actions: this.$i18n.t("ID_ACTIONS")
@@ -500,15 +502,7 @@ export default {
             },
           ],
           CASE_TITLE: v.DEL_TITLE,
-          ASSIGNEE:
-            v.USR_ID !== 0
-              ? utils.userNameDisplayFormat({
-                  userName: v.USR_USERNAME,
-                  firstName: v.USR_LASTNAME,
-                  lastName: v.USR_LASTNAME,
-                  format: window.config.FORMATS.format || null
-                })
-              : this.$i18n.t("ID_UNASSIGNED"),
+          USER_DATA: this.formatUser(v.user_tooltip),
           STATUS: v.DEL_THREAD_STATUS,
           DUE_DATE: v.DEL_TASK_DUE_DATE,
           TASK_COLOR: v.TAS_COLOR_LABEL,
@@ -519,6 +513,31 @@ export default {
         });
       });
       return data;
+    },
+    /**
+     * Format user information to show
+     */
+    formatUser(data) {
+        var dataFormat = [],
+            userDataFormat;
+        userDataFormat = data.usr_id ?
+            utils.userNameDisplayFormat({
+                userName: data.usr_firstname,
+                firstName: data.usr_lastname,
+                lastName: data.usr_username,
+                format: window.config.FORMATS.format || null
+            })
+            : this.$i18n.t("ID_UNASSIGNED");
+        dataFormat.push({
+            USERNAME_DISPLAY_FORMAT: userDataFormat !== "" ? userDataFormat : this.$i18n.t("ID_UNASSIGNED"),
+            EMAIL: data.usr_email,
+            POSITION: data.usr_position,
+            AVATAR: userDataFormat !== this.$i18n.t("ID_UNASSIGNED") ? window.config.SYS_SERVER_AJAX +
+                window.config.SYS_URI +
+                `users/users_ViewPhotoGrid?pUID=${data.usr_id}` : "",
+            UNASSIGNED: userDataFormat !== this.$i18n.t("ID_UNASSIGNED") ? true : false
+        });    
+        return dataFormat;
     },
     /**
      * Show the alert message
