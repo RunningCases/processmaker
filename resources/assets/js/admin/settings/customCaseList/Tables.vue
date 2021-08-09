@@ -59,8 +59,8 @@ export default {
                         name: "Rocko",
                         description: "algo te texto",
                         tableUid: "1234",
-                        iconList: '',
-                        iconColor: '',
+                        iconList: 'far fa-calendar-alt',
+                        iconColor: '#4287f5',
                         iconColorScreen:'',
                         type: this.module
 

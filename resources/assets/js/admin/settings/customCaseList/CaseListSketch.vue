@@ -91,7 +91,7 @@
                             label="Icon "
                             label-for="icon"
                         >
-                            <icon-picker @selected="onSelectIcon" :color="menuColor"/>
+                            <icon-picker @selected="onSelectIcon" :default="params.iconList"/>
                         </b-form-group>
                         <div>
                              <b-form-group
@@ -99,7 +99,7 @@
                                 label="Menu Color "
                                 label-for="icon"    
                             >  
-                                <verte :value="menuColor" id="icon" @input="onChangeColor" picker="square" menuPosition="left" model="hex">
+                                <verte :value="params.iconColor" id="icon" @input="onChangeColor" picker="square" menuPosition="left" model="hex">
                                         <svg viewBox="0 0 50 50">
                                             <path d="M 10 10 H 90 V 90 H 10 L 10 10"/>
                                         </svg> 
@@ -156,7 +156,6 @@ export default {
         return {
              icon: "fas fa-user-cog",
             isLoading: false,
-            menuColor:"#4287f5",
             pmTablesOptions: [],
             columns: ['name', 'code', 'uri'],
             data: utils.getData(),
@@ -179,7 +178,7 @@ export default {
     methods: {
         onSelectIcon(data){
             console.log (data);
-
+            // this.params.iconList = data;
         },
         onChangeColor(color){
             console.log(color);

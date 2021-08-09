@@ -20,6 +20,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
     "@rightbraintechbd/vue-awesome-icon-picker": "^1.1.0",
     "axios": "^0.15.3",
     "bootstrap": "^4.5.3",
