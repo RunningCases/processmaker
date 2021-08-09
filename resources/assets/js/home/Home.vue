@@ -275,7 +275,6 @@ export default {
                 this.pageId = item.item.id;
                 this.pageUri = item.item.href;
                 this.pageName = item.item.title;
-
             } else {
                 this.filters = [];
                 this.pageId = null;
