@@ -1,0 +1,56 @@
+<?php
+
+namespace ProcessMaker\BusinessModel;
+
+use ProcessMaker\BusinessModel\Table;
+use ProcessMaker\Model\AdditionalTables;
+use Tests\TestCase;
+
+class TableTest extends TestCase
+{
+    /**
+     * Method setUp.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        AdditionalTables::truncate();
+    }
+
+    /**
+     * Method tearDown.
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
+
+    /**
+     * This test getTables() method.
+     * @test
+     * @covers \ProcessMaker\BusinessModel\Table::getTables()
+     */
+    public function it_should_test_getTables_method()
+    {
+        $additionalTables = factory(AdditionalTables::class)
+            ->create();
+
+        $proUid = $additionalTables->PRO_UID;
+        $search = $additionalTables->ADD_TAB_NAME;
+
+        $table = new Table();
+        $result = $table->getTables($proUid, true, false, $search);
+
+        //assertions
+        $this->assertNotEmpty($result);
+        $this->assertEquals($additionalTables->ADD_TAB_NAME, $result[0]['rep_tab_name']);
+
+        $search = '';
+        $table = new Table();
+        $result = $table->getTables($proUid, true, false, $search);
+
+        //assertions
+        $this->assertNotEmpty($result);
+        $this->assertEquals($additionalTables->ADD_TAB_NAME, $result[0]['rep_tab_name']);
+    }
+}

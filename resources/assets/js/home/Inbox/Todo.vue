@@ -7,6 +7,7 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_CASES_STATUS_TO_DO')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -39,6 +40,9 @@
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
+      <div slot="send_by" slot-scope="props">
+        <CurrentUserCell :data="props.row.USER_DATA" />
+      </div>
       <div slot="current_user" slot-scope="props">
         {{ props.row.USERNAME_DISPLAY_FORMAT }}
       </div>
@@ -60,10 +64,19 @@
       :options="optionsVueView"
       ref="vueCardView"
     >
-      <div slot="detail" slot-scope="props">
-        <div @click="updateDataEllipsis(props.row)">
-          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
-        </div>
+      <div slot="actions" slot-scope="props">
+        <b-row>
+          <b-col sm="12">
+            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </b-col>
+          <b-col sm="12">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
+              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            </div>
+          </b-col>
+        </b-row>
       </div>
       <div slot="case_number" slot-scope="props" class="v-card-text">
         <span class="v-card-text-highlight"
@@ -110,19 +123,35 @@
           <TaskCell :data="props.item.TASK" />
         </span>
       </div>
-
+      <div slot="send_by" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <CurrentUserCell :data="props.item.USER_DATA" />
+        </span>
+      </div>
     </VueCardView>
     <VueListView
       v-if="typeView === 'LIST'"
       :options="optionsVueView"
       ref="vueListView"
     >
-      <div slot="detail" slot-scope="props">
-        <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
-          <i class="fas fa-info-circle"></i>
-        </div>
+      <div slot="actions" slot-scope="props">
+        <b-row>
+          <b-col sm="12">
+            <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+              <i class="fas fa-info-circle"></i>
+            </div>
+          </b-col>
+          <b-col sm="12">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
+              <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            </div>
+          </b-col>
+        </b-row>
       </div>
-      <div slot="case_number" slot-scope="props" class="v-card-text">
+      <div ref="text" slot="case_number" slot-scope="props" class="v-card-text">
         <span class="v-card-text-highlight"
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
@@ -165,6 +194,14 @@
         >
         <span class="v-card-text-light">
           <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+      <div slot="send_by" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light">
+          <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueListView>
@@ -186,7 +223,7 @@ import defaultMixins from "./defaultMixins";
 import Ellipsis from '../../components/utils/ellipsis.vue';
 import ModalPauseCase from '../modal/ModalPauseCase.vue';
 import ModalReassignCase from '../modal/ModalReassignCase.vue';
-
+import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 
 export default {
   name: "Todo",
@@ -203,6 +240,7 @@ export default {
     Ellipsis,
     ModalPauseCase,
     ModalReassignCase,
+    CurrentUserCell,
   },
   props: ["defaultOption", "filters"],
   data() {
@@ -221,12 +259,14 @@ export default {
         "case_title",
         "process_name",
         "task",
+        "send_by",
         "due_date",
         "delegation_date",
         "priority",
         "actions"
       ],
       tableData: [],
+      icon:"fas fa-check-circle",
       options: {
         filterable: false,
         headings: {
@@ -235,6 +275,7 @@ export default {
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
+          send_by: this.$i18n.t("ID_SEND_BY"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY"),
@@ -436,6 +477,7 @@ export default {
               DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : "",
             },
           ],
+          USER_DATA: this.formatUser(v.SEND_BY_INFO),
           USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
             userName: v.USR_LASTNAME,
             firstName: v.USR_LASTNAME,
@@ -452,6 +494,30 @@ export default {
         });
       });
       return data;
+    },
+    /**
+     * Set the format to show user's information
+     * @return {array} dataFormat
+     */
+    formatUser(data) {
+        var dataFormat = [],
+            userDataFormat;
+            userDataFormat = utils.userNameDisplayFormat({
+                userName: data.user_tooltip.usr_firstname,
+                firstName: data.user_tooltip.usr_lastname,
+                lastName: data.user_tooltip.usr_username,
+                format: window.config.FORMATS.format || null
+            });
+            dataFormat.push({
+                USERNAME_DISPLAY_FORMAT: userDataFormat,
+                EMAIL: data.user_tooltip.usr_email,
+                POSITION: data.user_tooltip.usr_position,
+                AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                    window.config.SYS_URI +
+                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                UNASSIGNED: userDataFormat !== "" ? true : false
+            });    
+        return dataFormat;
     },
     /**
      * Open selected cases in the inbox
@@ -607,7 +673,8 @@ export default {
   display: inline-block;
 }
 
-.v-card-text {
+.ellipsis-container {
+  margin-top: 5em;
 }
 
 .v-pm-card-info{

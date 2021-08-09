@@ -67,5 +67,8 @@
     USERS: "/home/users",
     TASKS: "/home/tasks",
     CATEGORIES: "/home/categories",
-    DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}"
+    DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}",
+    PAUSE_CASE: "/cases/{app_uid}/pause",
+    REASSIGN_CASE: "/cases/{app_uid}/reassign-case",
+    REASSIGN_USERS: "/light/userstoreassign/{task_uid}"
 };

@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use G;
+use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\User;
 
@@ -172,5 +173,45 @@ class Paused extends AbstractCases
         $this->filters($query);
         // Return the number of rows
         return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
+
+    /**
+     * Returns the total cases of the custom paused list.
+     * @param int $id
+     * @param string $type
+     * @return array
+     */
+    public function getCustomListCount(int $id, string $type): array
+    {
+        $caseList = CaseList::where('CAL_ID', '=', $id)
+            ->where('CAL_TYPE', '=', $type)
+            ->leftJoin('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
+            ->select([
+                'CASE_LIST.*',
+                'ADDITIONAL_TABLES.ADD_TAB_NAME'
+            ])
+            ->get()
+            ->first();
+
+        $query = Delegation::query()->select();
+        $query->paused($this->getUserId());
+
+        $name = '';
+        $description = '';
+        $tableName = '';
+        if (!is_null($caseList)) {
+            $name = $caseList->CAL_NAME;
+            $description = $caseList->CAL_DESCRIPTION;
+            $tableName = $caseList->ADD_TAB_NAME;
+            $query->leftJoin($caseList->ADD_TAB_NAME, $caseList->ADD_TAB_NAME . '.APP_UID', '=', 'APP_DELEGATION.APP_UID');
+        }
+        $count = $query->count(['APP_DELEGATION.APP_NUMBER']);
+        return [
+            'label' => G::LoadTranslation('ID_NUMBER_OF_CASES_PAUSED') . $count,
+            'name' => $name,
+            'description' => $description,
+            'tableName' => $tableName,
+            'total' => $count
+        ];
     }
 }
