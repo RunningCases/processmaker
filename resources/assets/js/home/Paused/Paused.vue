@@ -273,6 +273,7 @@ export default {
                   "case_title",
                   "process_name",
                   "task",
+                  "send_by",
                   "due_date",
                   "delegation_date",
                   "priority",

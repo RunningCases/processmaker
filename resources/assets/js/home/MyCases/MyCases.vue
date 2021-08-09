@@ -233,7 +233,6 @@ export default {
         Event.$on("vue-tables.mycases.sorted", function(data) {
             that.$emit("updateUserSettings", "orderBy", data);
         });
-        // this.columns = this.settings.columns;
     },
     watch: {
         columns: function(val) {
@@ -388,7 +387,6 @@ export default {
                     .myCases(filters)
                     .then((response) => {
                         dt = that.formatDataResponse(response.data.data);
-
                         resolutionFunc({
                             data: dt,
                             count: response.data.total,
