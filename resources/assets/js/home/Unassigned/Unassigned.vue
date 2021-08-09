@@ -5,10 +5,14 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_UNASSIGNED')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
-    <multiview-header :data="dataMultiviewHeader" />
+    <multiview-header
+      :data="dataMultiviewHeader"
+      :dataSubtitle="dataSubtitle"
+    />
     <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
     <v-server-table
       v-if="typeView === 'GRID'"
@@ -260,6 +264,7 @@ export default {
         "priority",
         "actions",
       ],
+      icon:"fas fa-users",
       options: {
         filterable: false,
         headings: {
@@ -319,7 +324,8 @@ export default {
       dataEllipsis: {
         buttons: {}
       },
-      showEllipsis: false
+      showEllipsis: false,
+      dataSubtitle: null
     };
   },
   mounted() {
@@ -467,7 +473,7 @@ export default {
                 POSITION: data.user_tooltip.usr_position,
                 AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
                     window.config.SYS_URI +
-                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.user_id}` : "",
+                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
                 UNASSIGNED: userDataFormat !== "" ? true : false
             });    
         return dataFormat;

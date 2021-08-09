@@ -31,7 +31,9 @@
 
     <div class="p-1 v-flex">
       <h5 class="v-search-title">{{ title }}</h5>
-
+      <div class="pm-in-text-icon">
+        <i :class="icon"></i>
+      </div>  
       <b-input-group class="w-75 p-1">
         <div class="input-group mb-3">
           <div class="input-group-prepend">
@@ -87,7 +89,7 @@ import api from "./../../api/index";
 
 export default {
   name: "Cases",
-  props: ["filters", "title"],
+  props: ["filters", "title", "icon"],
   components: {
     SearchPopover,
     CaseNumber,
@@ -376,7 +378,12 @@ export default {
 }
 
 .v-search-title {
-  padding-right: 20px;
+  padding-right: 10px;
   line-height: 40px;
+}
+.pm-in-text-icon {
+  font-size: 2vw;
+  padding-right: 10px;
+  line-height: 3vw;
 }
 </style>

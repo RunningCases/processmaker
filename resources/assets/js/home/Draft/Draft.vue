@@ -5,10 +5,14 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_DRAFT')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
-    <multiview-header :data="dataMultiviewHeader" />
+    <multiview-header
+      :data="dataMultiviewHeader"
+      :dataSubtitle="dataSubtitle"
+    />
     <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
     <v-server-table
       v-if="typeView === 'GRID'"
@@ -226,6 +230,7 @@ export default {
         "actions"
       ],
       tableData: [],
+      icon:"fas fa-edit",
       options: {
         filterable: false,
         headings: {
@@ -281,7 +286,8 @@ export default {
       dataEllipsis: {
         buttons: {}
       },
-      showEllipsis: false
+      showEllipsis: false,
+      dataSubtitle: null
     };
   },
   created() {
