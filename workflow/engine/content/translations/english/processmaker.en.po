@@ -2360,6 +2360,12 @@ msgid "Are you sure want to claim the task?"
 msgstr "Are you sure want to claim the task?"
 
 # TRANSLATION
+# LABEL/ID_ARE_YOU_SURE_DELETE_CUSTOM_CASE_LIST
+#: LABEL/ID_ARE_YOU_SURE_DELETE_CUSTOM_CASE_LIST
+msgid "Are you sure to delete the Case List {CUSTOM_NAME}, please confirm?"
+msgstr "Are you sure to delete the Case List {CUSTOM_NAME}, please confirm?"
+
+# TRANSLATION
 # LABEL/ID_ARE_YOU_SURE_RESEND
 #: LABEL/ID_ARE_YOU_SURE_RESEND
 msgid "Are you sure that you want to resend this message"
@@ -6148,6 +6154,12 @@ msgstr "Delete Category"
 #: LABEL/ID_DELETE_CONNECTION
 msgid "Delete the connection?"
 msgstr "Delete the connection?"
+
+# TRANSLATION
+# LABEL/ID_DELETE_CUSTOM_CASE_LIST
+#: LABEL/ID_DELETE_CUSTOM_CASE_LIST
+msgid "Delete Custom Case List"
+msgstr "Delete Custom Case List"
 
 # TRANSLATION
 # LABEL/ID_DELETE_DASHLET_INSTANCE
