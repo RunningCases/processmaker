@@ -7,6 +7,7 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_CASES_STATUS_TO_DO')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -265,6 +266,7 @@ export default {
         "actions"
       ],
       tableData: [],
+      icon:"fas fa-check-circle",
       options: {
         filterable: false,
         headings: {

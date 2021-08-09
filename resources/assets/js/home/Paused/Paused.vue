@@ -6,6 +6,7 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_PAUSED')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -265,6 +266,7 @@ export default {
         "actions",
       ],
       tableData: [],
+      icon:"far fa-pause-circle",
       options: {
         filterable: false,
         headings: {

@@ -5,6 +5,7 @@
     <CasesFilter
       :filters="filters"
       :title="$t('ID_UNASSIGNED')"
+      :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -260,6 +261,7 @@ export default {
         "priority",
         "actions",
       ],
+      icon:"fas fa-users",
       options: {
         filterable: false,
         headings: {
