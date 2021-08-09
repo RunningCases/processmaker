@@ -59,13 +59,11 @@ export default {
     methods: {
         onShowSketch (params) {
             this.showSketch = true;
-            debugger;
             this.params = params;
         },
         onCloseSketch (params) {
             this.showSketch = false;
         }
-        
     }
 };
 </script>
