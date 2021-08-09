@@ -55,6 +55,17 @@ export default {
                 title: this.$i18n.t("New List"),
                 class: "btn-success",
                 onClick: () => {
+                    this.$emit("showSketch", {
+                        name: "Rocko",
+                        description: "algo te texto",
+                        tableUid: "1234",
+                        iconList: '',
+                        iconColor: '',
+                        iconColorScreen:'',
+                        type: this.module
+
+                    });
+
                     //TODO button
                 }
             },
@@ -76,8 +87,6 @@ export default {
             ],
             tableData: [],
             options: {
-                perPage:25,
-                perPageValues:[25],
                 filterable: true,
                 headings: {
                     name: this.$i18n.t("ID_NAME"),

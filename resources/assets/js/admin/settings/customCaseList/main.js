@@ -10,14 +10,17 @@ import "@fortawesome/fontawesome-free/js/all.js";
 import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-
 import CustomCaseList from "./CustomCaseList";
+
+import Verte from 'verte';
+import 'verte/dist/verte.css';
+// register component globally
+Vue.component('verte', Verte);
 Vue.use(VueRouter);
 Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
-Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
-
+Vue.use(BootstrapVueIcons)
 Vue.use(ServerTable, {}, false, 'bootstrap3', {});
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
 window.ProcessMaker = {
@@ -48,5 +51,6 @@ new Vue({
     // eslint-disable-line no-new
     el: "#customCaseList",
     router,
+    components: { Verte },
     render: (h) => h(CustomCaseList),
 });
