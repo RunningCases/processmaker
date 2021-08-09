@@ -61,7 +61,7 @@ export default {
                         tableUid: "1234",
                         iconList: 'far fa-calendar-alt',
                         iconColor: '#4287f5',
-                        iconColorScreen:'',
+                        iconColorScreen:'#4287f5',
                         type: this.module
 
                     });

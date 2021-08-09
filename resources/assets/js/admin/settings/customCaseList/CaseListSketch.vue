@@ -66,26 +66,71 @@
                         </b-form-group>
 
 
-                        <v-client-table :columns="columns" v-model="data" :options="options">
-                            <a slot="uri" slot-scope="props" target="_blank" :href="props.row.uri" class="glyphicon glyphicon-eye-open"></a>
+                        
+                               
+                                <b-row>
 
-                            <div slot="child_row" slot-scope="props">
-                            The link to {{props.row.name}} is <a :href="props.row.uri">{{props.row.uri}}</a>
-                            </div>
+                                    <b-col cols="10">
+                                        <v-client-table :columns="columns" v-model="data" :options="options">
+                                          
 
-                            <div slot="name" slot-scope="{row, update, setEditing, isEditing, revertValue}">
-                            <span @click="setEditing(true)" v-if="!isEditing()">
-                                <a>{{row.name}}</a>
-                            </span>
-                            <span v-else>
-                                <input type="text" v-model="row.name">
-                                <button type="button" class="btn btn-info btn-xs" @click="update(row.name); setEditing(false)">Submit</button>
-                            <button type="button" class="btn btn-default btn-xs" @click="revertValue(); setEditing(false)">Cancel</button>
-                            
-                            </span>
+                                            <div slot="name" slot-scope="{row, update, setEditing, isEditing, revertValue}">
+                                            <span @click="setEditing(true)" v-if="!isEditing()">
+                                                <a>{{row.name}}</a>
+                                            </span>
+                                            <span v-else>
+                                                <input type="text" v-model="row.name">
+                                                <button type="button" class="btn btn-info btn-xs" @click="update(row.name); setEditing(false)">Submit</button>
+                                            <button type="button" class="btn btn-default btn-xs" @click="revertValue(); setEditing(false)">Cancel</button>
+                                            
+                                            </span>
 
-                            </div>
-                        </v-client-table>
+                                            </div>
+                                        </v-client-table>
+                                    </b-col>
+                                    <b-col cols="2">
+                                        <!-- Control panel -->
+                                        <div class="control-panel">
+                                            <div class="vertical-center">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-light"
+                                                    @click="assignAll()"
+                                                    :disabled="isButtonDisabled"
+                                                >
+                                                    
+                                                    <i class="fa fa-angle-double-right"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-light"
+                                                    @click="assignSelected()"
+                                                    :disabled="isButtonDisabled"
+                                                >
+                                                    
+                                                    <i class="fa fa-angle-right"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-light"
+                                                    @click="unassignSelected()"
+                                                    :disabled="isButtonDisabled"
+                                                >
+                                                    <i class="fa fa-angle-left"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-light"
+                                                    @click="unassignAll()"
+                                                    :disabled="isButtonDisabled"
+                                                >
+                                                    <i class="fa fa-angle-double-right"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- End Control panel -->
+                                    </b-col>
+                                </b-row>
                         <b-form-group
                             id="iconLabel"
                             label="Icon "
@@ -113,20 +158,38 @@
                                 label="Screen Color Icon"
                                 label-for="screen"
                             >  
-                                <verte id="screen" picker="square" menuPosition="left" model="rgb">
+                                <verte :value="params.iconColorScreen" @input="onChangeColor" picker="square" menuPosition="left" model="hex">
                                         <svg viewBox="0 0 50 50">
                                             <path d="M 10 10 H 90 V 90 H 10 L 10 10"/>
-                                        </svg> 
+                                        </svg>  
                                 </verte>
                             </b-form-group>
                         </div>
+
                         
                     </div>
                     <div class="col-sm">
-                    One of two columns
-                  
+
+
+                         <v-client-table :columns="columnsCaseList" v-model="data" :options="caseListOptions">
+                                           
+
+                                           
+
+                                            <div slot="name" slot-scope="{row, update, setEditing, isEditing, revertValue}">
+                                            <span @click="setEditing(true)" v-if="!isEditing()">
+                                                <a>{{row.name}}</a>
+                                            </span>
+                                            <span v-else>
+                                                <input type="text" v-model="row.name">
+                                                <button type="button" class="btn btn-info btn-xs" @click="update(row.name); setEditing(false)">Submit</button>
+                                            <button type="button" class="btn btn-default btn-xs" @click="revertValue(); setEditing(false)">Cancel</button>
+                                            
+                                            </span>
+
+                                            </div>
+                                        </v-client-table>
                     </div>
-                    
                 </div>
                 <div>
                     <b-button variant="danger" @click="onCancel">Cancel</b-button>
@@ -156,19 +219,35 @@ export default {
         return {
              icon: "fas fa-user-cog",
             isLoading: false,
+            isButtonDisabled: false,
             pmTablesOptions: [],
-            columns: ['name', 'code', 'uri'],
+            columns: ['name', 'field', 'type', 'source', 'source'],
+           
             data: utils.getData(),
             options: {
                 headings: {
-                    name: 'Country Name',
-                    code: 'Country Code',
-                    uri: 'View Record'
+                    name: 'Name',
+                    field: 'Field',
+                    type: 'Type',
+                    source: 'Source'
                 },
-                filterable:true,
-                editableColumns:['name'],
-                sortable: ['name', 'code'],
-                filterable: ['name', 'code']
+                filterable:true
+            },
+            columnsCaseList: ['name', 'field', 'type', 'source', 'typeOfSearching', 'enableSearchFilter', 'actions'],
+            caseListOptions: {
+                headings: {
+                    name: 'Name',
+                    field: 'Field',
+                    type: 'Type',
+                    typeOfSearching: 'Type of Searching',
+                    enableSearchFilter: 'Enable Search Filter'
+                },
+                filterable:false,
+                perPage: 1000,
+                perPageValues: [],
+                texts:{
+                    count:''
+                }
             }
         };
     },
@@ -176,6 +255,18 @@ export default {
        
     },
     methods: {
+        unassignSelected(){
+
+        },
+        unassignAll(){
+
+        },
+        assignSelected(){
+
+        },
+        assignAll(){
+
+        },
         onSelectIcon(data){
             console.log (data);
             // this.params.iconList = data;
@@ -200,7 +291,7 @@ export default {
             self.processes = [];
             api.filters
                 .processList(query)
-                .then((response) => {
+                .then((response) => {   
                     self.processes = [];
                     _.forEach(response.data, function(elem, key) {
                         self.pmTablesOptions.push({
@@ -224,6 +315,23 @@ export default {
     position: relative;
     display: flex;
     justify-content: normal;
+}
+.control-panel {
+    height: 100%;
+    width: 8%;
+    float: left;
+    position: relative;
+}
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.vertical-center > button {
+    width: 70%;
+    margin: 5px;
 }
 </style>
 
