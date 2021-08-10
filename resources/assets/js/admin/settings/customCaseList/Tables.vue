@@ -10,8 +10,8 @@
         ref="table" 
     >
         <div slot="actions" slot-scope="props">
-            <div>
-                <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            <div @click="updateDataEllipsis(props.row)">
+                <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
         </div>
         <div slot="owner" slot-scope="props">
@@ -41,19 +41,9 @@ export default {
     data() {
         return {
             dataEllipsis: {
-                buttons: {
-                    open: {
-                    name: "edit",
-                    icon: "far fa-edit",
-                    fn: function() {console.log("Edit");}
-                    },
-                    note: {
-                    name: "case note",
-                    icon: "far fa-comments",
-                    fn: function() {console.log("comments");}
-                    },
-                }
-        },
+                buttons: {}
+            },
+            showEllipsis: false,
             newList: {
                 title: this.$i18n.t("New List"),
                 class: "btn-success",
@@ -191,7 +181,60 @@ export default {
         showModalDelete(data) {
             this.$refs["modal-delete-list"].data = data;
             this.$refs["modal-delete-list"].show();
+        },
+        showPreview(data) {
+
+        },
+        editCustomCaseList(data) {
+
+        },
+        downloadCaseList(data) {
+
+        },
+        /**
+     * Show options in the ellipsis 
+     * @param {objec} data
+     */
+    updateDataEllipsis(data) {
+        let that = this;
+        this.showEllipsis = !this.showEllipsis;
+        if (this.showEllipsis) {
+          this.dataEllipsis = {
+            buttons: {
+              open: {
+                name: "delete",
+                icon: "far fa-trash-alt",
+                color: "red",
+                fn: function() {
+                  that.showModalDelete(data);
+                }
+              },
+              note: {
+                name: "edit",
+                icon: "far fa-edit",
+                fn: function() {
+                  that.editCustomCaseList(data);
+                }
+              },
+              reassign: {
+                name: "download",
+                icon: "fas fa-arrow-circle-down",
+                fn: function() {
+                  that.downloadCaseList(data);
+                }
+              },
+              pause: {
+                name: "preview",
+                icon: "fas fa-tv",
+                color: "green",
+                fn: function() {
+                  that.showPreview(data);
+                }
+              }
+            }
+          }
         }
+      },
     }
 };
 </script>
