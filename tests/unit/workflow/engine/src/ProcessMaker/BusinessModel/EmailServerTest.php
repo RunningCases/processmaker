@@ -340,7 +340,7 @@ class EmailServerTest extends TestCase
         // Assert the status is false
         $this->assertFalse($result['success']);
         // Assert the message of the result is empty
-        $this->assertEmpty($result['msg']);
+        $this->assertNotEmpty($result['msg']);
     }
 
     /**
