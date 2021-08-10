@@ -3,13 +3,16 @@
         id="home"
     >
         <div class="demo">
-            <div class="container">
+            <div class="container" v-if="!showSketch">
                 <h5 >{{ $t("ID_CUSTOM_CASES_LISTS") }}</h5>
                 <div class="x_content">
                     <b-container fluid>
                         <b-tabs content-class="mt-3">
                             <b-tab :title="$t('TO_DO')" active>
-                                <Tables module="inbox"/>
+                                <Tables module="inbox" 
+                                    @showSketch="onShowSketch"
+                                    @closeSketch="onCloseSketch"
+                                />
                             </b-tab>
                             <b-tab :title="$t('ID_DRAFT')" lazy>
                                 <Tables module="draft"/>
@@ -25,26 +28,42 @@
                   
                 </div> 
             </div>
+            <div class="container" v-if="showSketch">
+                <CaseListSketch 
+                    @showSketch="onShowSketch"
+                    @closeSketch="onCloseSketch"
+                    :params="params"
+                />
+            </div>
         </div>
     </div>
 </template>
 <script>
 import Tables from "./Tables";
+import CaseListSketch from "./CaseListSketch"
 export default {
     name: "CustomCaseList",
     components: {
-        Tables
+        Tables,
+        CaseListSketch
     },
     data() {
         return {
-            
+            showSketch: false,
+            params: {}
         };
     },
     mounted() {
        
     },
     methods: {
-        
+        onShowSketch (params) {
+            this.showSketch = true;
+            this.params = params;
+        },
+        onCloseSketch (params) {
+            this.showSketch = false;
+        }
     }
 };
 </script>

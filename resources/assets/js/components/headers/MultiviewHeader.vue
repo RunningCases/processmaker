@@ -2,21 +2,33 @@
   <div class="pm-multiview-header">
     <div class="pm-multiview-header-title"></div>
     <div class="pm-multiview-header-actions">
-      <div>
-        <button
-          v-for="action in data.actions"
-          :key="action.id"
-          @click="action.onClick(action)"
-          class="pm-multiview-header-button"
-          :title="action.title"
-        >
-          <div>
-            <span>
-              <i :class="action.icon"></i>
-            </span>
+      <b-row>
+        <b-col sm="8">
+          <div class="subtitle" v-if="dataSubtitle">
+            <h6>
+              {{ dataSubtitle.subtitle }}
+              <span>
+                <i :class="dataSubtitle.icon"></i>
+              </span>
+            </h6>
           </div>
-        </button>
-      </div>
+        </b-col>
+        <b-col sm="4" class="pm-multiview-header-actions-buttons">
+          <button
+            v-for="action in data.actions"
+            :key="action.id"
+            @click="action.onClick(action)"
+            class="pm-multiview-header-button"
+            :title="action.title"
+          >
+            <div>
+              <span>
+                <i :class="action.icon"></i>
+              </span>
+            </div>
+          </button>
+        </b-col>
+      </b-row>
     </div>
   </div>
 </template>
@@ -24,7 +36,10 @@
 <script>
 export default {
   name: "MultiviewHeader",
-  props: ["data"],
+  props: [
+    "data",
+    "dataSubtitle"
+  ],
   data() {
     return {};
   },
@@ -38,10 +53,11 @@ export default {
 
 <style>
 .pm-multiview-header {
+  margin-bottom: 7px;
 }
 .pm-multiview-header-title {
 }
-.pm-multiview-header-actions {
+.pm-multiview-header-actions-buttons {
   text-align: end;
 }
 .pm-multiview-header-button {
