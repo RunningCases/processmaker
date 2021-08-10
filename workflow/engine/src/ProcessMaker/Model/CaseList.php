@@ -4,6 +4,7 @@ namespace ProcessMaker\Model;
 
 use Exception;
 use G;
+use ProcessMaker\BusinessModel\Table;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\User;
@@ -62,9 +63,16 @@ class CaseList extends Model
         'USR_FIRSTNAME' => 'userFirstname',
         'USR_LASTNAME' => 'userLastname',
         'USR_EMAIL' => 'userEmail',
+        'USR_POSITION' => 'userPosition',
         'ADD_TAB_NAME' => 'tableName',
         'PRO_TITLE' => 'process'
     ];
+
+    /**
+     * Represents the columns exclude from report table.
+     * @var array
+     */
+    public static $excludeColumns = ['APP_UID', 'APP_NUMBER', 'APP_STATUS'];
 
     /**
      * Get column name from alias.
@@ -187,7 +195,7 @@ class CaseList extends Model
                 'CASE_LIST.*',
                 'PROCESS.PRO_TITLE',
                 'ADDITIONAL_TABLES.ADD_TAB_NAME',
-                'USERS.USR_UID', 'USERS.USR_USERNAME', 'USERS.USR_FIRSTNAME', 'USERS.USR_LASTNAME', 'USERS.USR_EMAIL'
+                'USERS.USR_UID', 'USERS.USR_USERNAME', 'USERS.USR_FIRSTNAME', 'USERS.USR_LASTNAME', 'USERS.USR_EMAIL', 'USERS.USR_POSITION'
             ])
             ->where(function ($query) use ($search) {
                 $query
@@ -211,7 +219,10 @@ class CaseList extends Model
 
             $result = CaseList::getAliasFromColumnName($item->toArray());
 
-            $result['columns'] = json_decode($result['columns']);
+            $columns = json_decode($result['columns']);
+            $columns = CaseList::formattingColumns($result['type'], $result['tableUid'], $columns);
+
+            $result['columns'] = $columns;
             $result['userAvatar'] = System::getServerMainPath() . '/users/users_ViewPhotoGrid?pUID=' . $result['USR_UID'] . '&h=' . microtime(true);
             unset($result['USR_UID']);
 
@@ -284,5 +295,191 @@ class CaseList extends Model
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * Formatting columns from minimal stored columns configuration in custom cases list.
+     * @param string $type
+     * @param string $tableUid
+     * @param array $storedColumns
+     * @return array
+     */
+    public static function formattingColumns(string $type = 'inbox', string $tableUid = '', array $storedColumns = [])
+    {
+        $default = [
+            [
+                'list' => ['inbox', 'draft', 'paused', 'unassigned'],
+                'field' => 'case_number',
+                'name' => G::LoadTranslation('ID_MYCASE_NUMBER'),
+                'type' => 'integer',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'integer range',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'draft', 'paused', 'unassigned'],
+                'field' => 'case_title',
+                'name' => G::LoadTranslation('ID_CASE_TITLE'),
+                'type' => 'string',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'search text',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'draft', 'paused', 'unassigned'],
+                'field' => 'process_name',
+                'name' => G::LoadTranslation('ID_PROCESS_NAME'),
+                'type' => 'string',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'search text',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'draft', 'paused', 'unassigned'],
+                'field' => 'task',
+                'name' => G::LoadTranslation('ID_TASK'),
+                'type' => 'string',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'search text',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'draft', 'paused', 'unassigned'],
+                'field' => 'send_by',
+                'name' => G::LoadTranslation('ID_SEND_BY'),
+                'type' => 'string',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'search text',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'paused', 'unassigned'],
+                'field' => 'due_date',
+                'name' => G::LoadTranslation('ID_DUE_DATE'),
+                'type' => 'date',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'date range',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'paused', 'unassigned'],
+                'field' => 'delegation_date',
+                'name' => G::LoadTranslation('ID_DELEGATION_DATE'),
+                'type' => 'date',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'date range',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'draft', 'paused', 'unassigned'],
+                'field' => 'priority',
+                'name' => G::LoadTranslation('ID_PRIORITY'),
+                'type' => 'string',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'option',
+                'enableFilter' => false,
+                'set' => true
+            ],
+        ];
+
+        //filter by type
+        $result = [];
+        foreach ($default as &$column) {
+            if (in_array($type, $column['list'])) {
+                unset($column['list']);
+                $result[] = $column;
+            }
+        }
+        $default = $result;
+
+        //get additional tables
+        $additionalTables = AdditionalTables::where('ADD_TAB_UID', '=', $tableUid)
+            ->where('PRO_UID', '<>', '')
+            ->whereNotNull('PRO_UID')
+            ->get();
+        $additionalTables->transform(function ($object) {
+            $table = new Table();
+            return $table->getTable($object->ADD_TAB_UID, $object->PRO_UID, true, false);
+        });
+        $result = $additionalTables->toArray();
+        if (!empty($result)) {
+            $result = $result[0];
+            if (isset($result['fields'])) {
+                foreach ($result['fields'] as $column) {
+                    if (in_array($column['fld_name'], self::$excludeColumns)) {
+                        continue;
+                    }
+                    $default[] = [
+                        'field' => $column['fld_name'],
+                        'name' => $column['fld_name'],
+                        'type' => $column['fld_type'],
+                        'source' => $result['rep_tab_name'],
+                        'typeSearch' => 'search text',
+                        'enableFilter' => false,
+                        'set' => false
+                    ];
+                }
+            }
+        }
+
+        //merge with stored information
+        $result = [];
+        foreach ($default as &$column) {
+            foreach ($storedColumns as $storedColumn) {
+                if (!is_array($storedColumn) || !isset($storedColumn['field'])) {
+                    continue;
+                }
+                if ($storedColumn['field'] === $column['field']) {
+                    $column['enableFilter'] = $storedColumn['enableFilter'];
+                    $column['set'] = $storedColumn['set'];
+                    break;
+                }
+            }
+            $result[] = $column;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the report tables, this can filter the results by the search parameter.
+     * @param string $search
+     * @return array
+     */
+    public static function getReportTables(string $search = '')
+    {
+        $additionalTables = AdditionalTables::where('ADD_TAB_NAME', 'LIKE', "%{$search}%")
+            ->where('PRO_UID', '<>', '')
+            ->whereNotNull('PRO_UID')
+            ->get();
+        $additionalTables->transform(function ($object) {
+            $table = new Table();
+            $result = $table->getTable($object->ADD_TAB_UID, $object->PRO_UID, true, false);
+            $fields = [];
+            if (isset($result['fields'])) {
+                foreach ($result['fields'] as $column) {
+                    if (in_array($column['fld_name'], self::$excludeColumns)) {
+                        continue;
+                    }
+                    $fields[] = [
+                        'field' => $column['fld_name'],
+                        'name' => $column['fld_name'],
+                        'type' => $column['fld_type'],
+                        'source' => $result['rep_tab_name'],
+                        'typeSearch' => 'search text',
+                        'enableFilter' => false,
+                        'set' => false
+                    ];
+                }
+            }
+            return [
+            'name' => $result['rep_tab_name'],
+            'description' => $result['rep_tab_description'],
+            'fields' => $fields
+            ];
+        });
+        $result = $additionalTables->toArray();
+
+        return $result;
     }
 }
