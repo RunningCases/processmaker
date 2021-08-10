@@ -12,9 +12,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import CustomCaseList from "./CustomCaseList";
 import Verte from 'verte';
 import 'verte/dist/verte.css';
-import fontawesome from '@fortawesome/fontawesome'
-
-fontawesome.config = { autoReplaceSvg: false }
 // register component globally
 Vue.component('verte', Verte);
 Vue.use(VueRouter); 

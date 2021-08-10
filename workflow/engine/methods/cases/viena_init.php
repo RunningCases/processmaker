@@ -4,6 +4,7 @@ use Eusebiu\JavaScript\Facades\ScriptVariables;
 use Illuminate\Support\Facades\View;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\User;
 
 $conf = new Configurations();
 
@@ -127,7 +128,6 @@ $oHeadPublisher->assign('urlProxy', $urlProxy); //sending the urlProxy to make
 $oHeadPublisher->assign("_nodeId", isset($confDefaultOption) ? $confDefaultOption : "PM_USERS"); //User menu permissions
 $oHeadPublisher->assign("FORMATS", $conf->getFormats());
 
-
 $userCanAccess = 1;
 global $translation;
 
@@ -142,4 +142,5 @@ ScriptVariables::add('SYS_URI', SYS_URI);
 ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
 ScriptVariables::add('FORMATS', $conf->getFormats());
+ScriptVariables::add('userId', User::getId($_SESSION['USER_LOGGED']));
 echo View::make('Views::home.home', compact("userCanAccess"))->render();

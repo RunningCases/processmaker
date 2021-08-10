@@ -120,7 +120,9 @@ export default {
         paged: paged,
       };
       _.forIn(this.filters, function (item, key) {
-        filters[item.filterVar] = item.value;
+          if(filters && item.value) {
+              filters[item.filterVar] = item.value;
+          }
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
