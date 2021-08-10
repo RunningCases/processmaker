@@ -31,7 +31,7 @@ class Metrics extends Api
     /**
      * Get total cases per process
      * 
-     * @url /process-total-cases
+     * @url GET /total-cases-by-process
      * 
      * @param string $caseList
      * @param int $category
@@ -112,7 +112,7 @@ class Metrics extends Api
     /**
      * Get total of cases per list
      * 
-     * @url /list-total-cases
+     * @url GET /list-total-cases
      * 
      * @return array
      * 
