@@ -183,4 +183,40 @@ class CaseList extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * Get default columns associate to custom cases list.
+     * @url GET /:type/default-columns
+     * @param string $type
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @throws RestException
+     * @return array
+     */
+    public function doGetDefaultColumns(string $type)
+    {
+        try {
+            return CaseListBusinessModel::formattingColumns($type, '', []);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get report tables.
+     * @url GET /report-tables
+     * @param string $search
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     * @throws RestException
+     * @return array
+     */
+    public function doGetReportTables(string $search = '')
+    {
+        try {
+            return CaseListBusinessModel::getReportTables($search);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 }

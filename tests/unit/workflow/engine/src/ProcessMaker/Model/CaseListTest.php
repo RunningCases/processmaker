@@ -2,6 +2,7 @@
 
 namespace tests\unit\workflow\engine\src\ProcessMaker\Model;
 
+use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\CaseList;
 use Tests\TestCase;
 
@@ -347,5 +348,109 @@ class CaseListTest extends TestCase
 
         //assert file export
         $this->assertFileExists($result['filename']);
+    }
+
+    /**
+     * This test the formattingColumns method.
+     * @test
+     * @covers  \ProcessMaker\Model\CaseList::formattingColumns()
+     */
+    public function it_should_test_formattingColumns()
+    {
+        $additionalTables = factory(\ProcessMaker\Model\AdditionalTables::class)->create();
+
+        $fields = factory(\ProcessMaker\Model\Fields::class, 5)->create([
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
+        ]);
+
+        factory(CaseList::class)->create([
+            'CAL_TYPE' => 'inbox',
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
+        ]);
+        factory(CaseList::class)->create([
+            'CAL_TYPE' => 'draft',
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
+        ]);
+        factory(CaseList::class)->create([
+            'CAL_TYPE' => 'paused',
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
+        ]);
+        factory(CaseList::class)->create([
+            'CAL_TYPE' => 'unassigned',
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID
+        ]);
+
+        $columns = [
+            [
+                "field" => "case_number",
+                "enableFilter" => false,
+                "set" => true
+            ],
+            [
+                "field" => "case_title",
+                "enableFilter" => false,
+                "set" => true
+            ],
+        ];
+
+        $result = CaseList::formattingColumns('inbox', $additionalTables->ADD_TAB_UID, $columns);
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('field', $result[0]);
+        $this->assertArrayHasKey('name', $result[0]);
+        $this->assertArrayHasKey('type', $result[0]);
+        $this->assertArrayHasKey('source', $result[0]);
+        $this->assertArrayHasKey('typeSearch', $result[0]);
+        $this->assertArrayHasKey('enableFilter', $result[0]);
+        $this->assertArrayHasKey('set', $result[0]);
+
+        $result = CaseList::formattingColumns('draft', $additionalTables->ADD_TAB_UID, $columns);
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('field', $result[1]);
+        $this->assertArrayHasKey('name', $result[1]);
+        $this->assertArrayHasKey('type', $result[1]);
+        $this->assertArrayHasKey('source', $result[1]);
+        $this->assertArrayHasKey('typeSearch', $result[1]);
+        $this->assertArrayHasKey('enableFilter', $result[1]);
+        $this->assertArrayHasKey('set', $result[1]);
+
+        $result = CaseList::formattingColumns('paused', $additionalTables->ADD_TAB_UID, $columns);
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('field', $result[2]);
+        $this->assertArrayHasKey('name', $result[2]);
+        $this->assertArrayHasKey('type', $result[2]);
+        $this->assertArrayHasKey('source', $result[2]);
+        $this->assertArrayHasKey('typeSearch', $result[2]);
+        $this->assertArrayHasKey('enableFilter', $result[2]);
+        $this->assertArrayHasKey('set', $result[2]);
+
+        $result = CaseList::formattingColumns('unassigned', $additionalTables->ADD_TAB_UID, $columns);
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('field', $result[3]);
+        $this->assertArrayHasKey('name', $result[3]);
+        $this->assertArrayHasKey('type', $result[3]);
+        $this->assertArrayHasKey('source', $result[3]);
+        $this->assertArrayHasKey('typeSearch', $result[3]);
+        $this->assertArrayHasKey('enableFilter', $result[3]);
+        $this->assertArrayHasKey('set', $result[3]);
+    }
+
+    /**
+     * This test the getReportTables method.
+     * @test
+     * @covers  \ProcessMaker\Model\CaseList::getReportTables()
+     */
+    public function it_should_test_getReportTables()
+    {
+        AdditionalTables::truncate();
+        $additionalTables = factory(AdditionalTables::class, 10)->create();
+
+        $search = '';
+        $result = CaseList::getReportTables($search);
+
+        $this->assertNotEmpty($result);
+        $this->assertCount(10, $result);
+        $this->assertArrayHasKey('name', $result[0]);
+        $this->assertArrayHasKey('description', $result[0]);
+        $this->assertArrayHasKey('fields', $result[0]);
     }
 }
