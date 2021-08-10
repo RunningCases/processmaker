@@ -221,6 +221,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListToDo(
         $start = 0,
@@ -265,6 +266,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListToDoPaged(
         $start = 0,
@@ -309,6 +311,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListDraft(
         $start = 0,
@@ -353,6 +356,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListDraftPaged(
         $start = 0,
@@ -397,6 +401,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListParticipated(
         $start = 0,
@@ -441,6 +446,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListParticipatedPaged(
         $start = 0,
@@ -485,6 +491,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListUnassigned(
         $start = 0,
@@ -529,6 +536,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListUnassignedPaged(
         $start = 0,
@@ -573,6 +581,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListPaused(
         $start = 0,
@@ -617,6 +626,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListPausedPaged(
         $start = 0,
@@ -665,6 +675,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListAdvancedSearch(
         $start = 0,
@@ -723,6 +734,7 @@ class Cases extends Api
      *
      * @return array
      * @throws Exception
+     * @deprecated Method deprecated in Release 3.6.x
      */
     public function doGetCasesListAdvancedSearchPaged(
         $start = 0,
