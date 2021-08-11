@@ -28,7 +28,9 @@ import ButtonFleft from "../../../components/home/ButtonFleft.vue";
 import Ellipsis from "../../../components/utils/ellipsis.vue";
 import utils from "../../../utils/utils";
 import OwnerCell from "../../../components/vuetable/OwnerCell";
-import ModalDeleteCaseList from "./../../Modals/ModalDeleteCaseList.vue"
+import ModalDeleteCaseList from "./../../Modals/ModalDeleteCaseList.vue";
+import download from "downloadjs";
+
 export default {
     name: "Tables",
     props: ["module"],
@@ -188,8 +190,14 @@ export default {
         editCustomCaseList(data) {
 
         },
+        /**
+         * Export the Custom Case List in a json
+         * @param {object} data
+         */
         downloadCaseList(data) {
-
+            var fileName = data.name,
+                typeMime = "text/plain";
+            download(JSON.stringify(data), fileName + ".json", typeMime);
         },
         /**
      * Show options in the ellipsis 
