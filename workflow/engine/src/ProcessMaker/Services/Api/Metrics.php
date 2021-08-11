@@ -46,6 +46,7 @@ class Metrics extends Api
      */
     public function getProcessTotalCases($caseList, $category = null, $topTen = false, $processes = [])
     {
+        $usrId = $this->getUserId();
         try {
             switch ($caseList) {
                 case 'inbox':
@@ -61,6 +62,7 @@ class Metrics extends Api
                     $list = new Unassigned();
                     break;
             }
+            $list->setUserId($usrId);
             $result = $list->getCountersByProcesses($category, $topTen, $processes);
             return $result;
         } catch (Exception $e) {
