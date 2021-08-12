@@ -13,7 +13,7 @@
                         variant="outline-info"
                         @click="executeFunction(item.fn)"
                     >
-                        <i :class="item.icon"></i>
+                        <i class="custom-icon" :class="item.icon" v-bind:style="{color: item.color}"></i>
                     </b-button>
                 </div>
             </div>

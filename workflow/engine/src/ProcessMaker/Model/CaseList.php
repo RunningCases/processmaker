@@ -426,12 +426,20 @@ class CaseList extends Model
         $result = [];
         foreach ($default as &$column) {
             foreach ($storedColumns as $storedColumn) {
-                if (!is_array($storedColumn) || !isset($storedColumn['field'])) {
+                if (!is_object($storedColumn)) {
                     continue;
                 }
-                if ($storedColumn['field'] === $column['field']) {
-                    $column['enableFilter'] = $storedColumn['enableFilter'];
-                    $column['set'] = $storedColumn['set'];
+                $storedColumn = (array) $storedColumn;
+                if (!isset($storedColumn['field'])) {
+                    continue;
+                }
+                if ($column['field'] === $storedColumn['field']) {
+                    if (isset($storedColumn['enableFilter'])) {
+                        $column['enableFilter'] = $storedColumn['enableFilter'];
+                    }
+                    if (isset($storedColumn['set'])) {
+                        $column['set'] = $storedColumn['set'];
+                    }
                     break;
                 }
             }
@@ -472,11 +480,13 @@ class CaseList extends Model
                     ];
                 }
             }
-            return [
-            'name' => $result['rep_tab_name'],
-            'description' => $result['rep_tab_description'],
-            'fields' => $fields
+            $format = [
+                'uid' => $result['rep_uid'],
+                'name' => $result['rep_tab_name'],
+                'description' => $result['rep_tab_description'],
+                'fields' => $fields
             ];
+            return $format;
         });
         $result = $additionalTables->toArray();
 
