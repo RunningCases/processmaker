@@ -2,6 +2,7 @@
 use Eusebiu\JavaScript\Facades\ScriptVariables;
 use Illuminate\Support\Facades\View;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\User;
 
 global $translation;
 global $RBAC;
@@ -33,4 +34,5 @@ ScriptVariables::add('SYS_URI', SYS_URI);
 ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
 ScriptVariables::add('FORMATS', $conf->getFormats());
+ScriptVariables::add('userId', User::getId($_SESSION['USER_LOGGED']));
 echo View::make('Views::admin.settings.customCasesList', compact("userCanAccess"))->render();

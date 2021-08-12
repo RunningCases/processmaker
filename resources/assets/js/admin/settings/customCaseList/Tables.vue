@@ -49,12 +49,12 @@ export default {
                 class: "btn-success",
                 onClick: () => {
                     this.$emit("showSketch", {
-                        name: "Rocko",
-                        description: "algo te texto",
-                        tableUid: "1234",
-                        iconList: 'far fa-calendar-alt',
-                        iconColor: '#4287f5',
-                        iconColorScreen:'#4287f5',
+                        name: "",
+                        description: "",
+                        tableUid: "",
+                        iconList: "far fa-check-circle",
+                        iconColor: '#000000',
+                        iconColorScreen: '#FFFFFF',
                         type: this.module
 
                     });

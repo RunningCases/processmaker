@@ -1,7 +1,7 @@
 import axios from "axios";
 import Api from "../../../../api/Api";
 import Services from "./Services";
-
+import Defaults from "./Mocks/defaults.json";
 class caseListApi extends Api {
     constructor(services) {
     // Here, it calls the parent class' constructor with lengths
@@ -48,6 +48,22 @@ class caseListApi extends Api {
               }
             }
         );
+    }
+    reportTables(data) {
+        return this.get({
+            service: 'REPORT_TABLES',
+            params: data,
+            keys: {}
+        });
+    }
+    getDefault(module){
+        return Defaults[module]
+    }
+    createCaseList(data) {
+        return this.post({
+            service: "CASE_LIST",
+            data: data
+        });
     }
 }
 let api = new caseListApi(Services);

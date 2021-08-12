@@ -7,21 +7,12 @@
                 <h5 >{{ $t("ID_CUSTOM_CASES_LISTS") }}</h5>
                 <div class="x_content">
                     <b-container fluid>
-                        <b-tabs content-class="mt-3">
-                            <b-tab :title="$t('TO_DO')" active>
-                                <Tables module="inbox" 
+                        <b-tabs content-class="mt-3" @input="onInputTab">
+                            <b-tab v-for="i in tabs" :key="'dyn-tab-' + i.key" :title="i.title" lazy>
+                               <Tables :module="i.key" 
                                     @showSketch="onShowSketch"
                                     @closeSketch="onCloseSketch"
                                 />
-                            </b-tab>
-                            <b-tab :title="$t('ID_DRAFT')" lazy>
-                                <Tables module="draft"/>
-                            </b-tab>
-                            <b-tab :title="$t('ID_UNASSIGNED')" lazy>
-                                <Tables module="unassigned"/>
-                            </b-tab>
-                             <b-tab :title="$t('ID_PAUSED')" lazy>
-                                <Tables module="paused"/>
                             </b-tab>
                         </b-tabs> 
                     </b-container>
@@ -30,8 +21,9 @@
             </div>
             <div class="container" v-if="showSketch">
                 <CaseListSketch 
-                    @showSketch="onShowSketch"
+                    @showSketch="onShowSketch"  
                     @closeSketch="onCloseSketch"
+                    :module="tabModule"
                     :params="params"
                 />
             </div>
@@ -50,11 +42,30 @@ export default {
     data() {
         return {
             showSketch: false,
-            params: {}
+            params: {},
+            tabModule: null,
+            tabs: [
+                {
+                    key: "inbox",
+                    title: this.$i18n.t("TO_DO")
+                },
+                {
+                    key: "draft",
+                    title: this.$i18n.t("ID_DRAFT")
+                },
+                {
+                    key: "unassigned",
+                    title: this.$i18n.t("ID_UNASSIGNED")
+                },
+                {
+                    key: "paused",
+                    title: this.$i18n.t("ID_PAUSED")
+                }
+            ]
         };
     },
     mounted() {
-       
+       this.tabModule= this.tabs[0];
     },
     methods: {
         onShowSketch (params) {
@@ -63,6 +74,10 @@ export default {
         },
         onCloseSketch (params) {
             this.showSketch = false;
+        },
+        onInputTab(tabIndex){
+            console.log(tabIndex);
+            this.tabModule= this.tabs[tabIndex];
         }
     }
 };
