@@ -57196,6 +57196,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_APP_MSG_BODY','en','Body','2014-01-15') ,
 ( 'LABEL','ID_APP_UID','en','App Uid','2015-09-15') ,
 ( 'LABEL','ID_ARE_YOU_SURE_CLAIM_TASK','en','Are you sure want to claim the task?','2021-01-26') ,
+( 'LABEL','ID_ARE_YOU_SURE_DELETE_CUSTOM_CASE_LIST','en','Are you sure to delete the Case List {CUSTOM_NAME}, please confirm?','2021-08-05') ,
 ( 'LABEL','ID_ARE_YOU_SURE_RESEND','en','Are you sure that you want to resend this message','2014-01-15') ,
 ( 'LABEL','ID_ARE_YOU_SURE_TO_DELETE_ATTRIBUTE_PLEASE_CONFIRM','en','Are you sure to delete the matched attribute "{0}", please confirm?','2020-12-10') ,
 ( 'LABEL','ID_ARE_YOU_SURE_TO_DELETE_CONNECTION_PLEASE_CONFIRM','en','Are you sure to delete the connection "{0}", please confirm?','2020-12-10') ,
@@ -57851,6 +57852,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_DELETE_CONNECTION','en','Delete the connection?','2014-01-15') ,
+( 'LABEL','ID_DELETE_CUSTOM_CASE_LIST','en','Delete Custom Case List','2021-08-05') ,
 ( 'LABEL','ID_DELETE_DASHLET_INSTANCE','en','Delete Dashlet Instance','2014-10-10') ,
 ( 'LABEL','ID_DELETE_DATABASES','en','Delete database if it exists','2015-02-23') ,
 ( 'LABEL','ID_DELETE_DATABASE_CONNECTION','en','Delete Database Connection','2015-02-20') ,

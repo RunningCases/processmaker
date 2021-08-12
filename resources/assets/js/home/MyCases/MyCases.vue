@@ -1,14 +1,14 @@
 <template>
     <div id="v-mycases" ref="v-mycases" class="v-container-mycases">
-      <b-alert
-        :show="dataAlert.dismissCountDown"
-        dismissible
-        :variant="dataAlert.variant"
-        @dismissed="dataAlert.dismissCountDown = 0"
-        @dismiss-count-down="countDownChanged"
-      >
-        {{ dataAlert.message }}
-      </b-alert>
+        <b-alert
+            :show="dataAlert.dismissCountDown"
+            dismissible
+            :variant="dataAlert.variant"
+            @dismissed="dataAlert.dismissCountDown = 0"
+            @dismiss-count-down="countDownChanged"
+        >
+            {{ dataAlert.message }}
+        </b-alert>
         <button-fleft :data="newCase"></button-fleft>
         <MyCasesFilter
             :filters="filters"
@@ -20,18 +20,25 @@
         />
         <header-counter :data="headers"> </header-counter>
         <modal-new-request ref="newRequest"></modal-new-request>
-        <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
+        <settings-popover
+            :options="formatColumnSettings(options.headings)"
+            target="pm-dr-column-settings"
+            @onUpdateColumnSettings="onUpdateColumnSettings"
+            :key="random + 1"
+            :selected="formatColumnSelected(columns)"
+        />
         <v-server-table
             :data="tableData"
             :columns="columns"
             :options="options"
             ref="vueTable"
+            name="mycases"
             @row-click="onRowClick"
             :key="random"
         >
             <div slot="detail" slot-scope="props">
                 <div class="btn-default" @click="openCaseDetail(props.row)">
-                <i class="fas fa-info-circle"></i>
+                    <i class="fas fa-info-circle"></i>
                 </div>
             </div>
             <div slot="case_number" slot-scope="props">
@@ -57,12 +64,19 @@
                 {{ props.row.DURATION }}
             </div>
             <div slot="actions" slot-scope="props">
-                <div class="btn-default"  v-bind:style="{ color: props.row.MESSAGE_COLOR}" @click="openComments(props.row)">
+                <div
+                    class="btn-default"
+                    v-bind:style="{ color: props.row.MESSAGE_COLOR }"
+                    @click="openComments(props.row)"
+                >
                     <span class="fas fa-comments"></span>
                 </div>
             </div>
         </v-server-table>
-        <ModalComments ref="modal-comments" @postNotes="onPostNotes"></ModalComments>
+        <ModalComments
+            ref="modal-comments"
+            @postNotes="onPostNotes"
+        ></ModalComments>
     </div>
 </template>
 
@@ -76,6 +90,7 @@ import GroupedCell from "../../components/vuetable/GroupedCell.vue";
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import defaultMixins from "./defaultMixins";
+import { Event } from "vue-tables-2";
 
 export default {
     name: "MyCases",
@@ -88,18 +103,18 @@ export default {
         GroupedCell,
         ModalComments,
     },
-    props: ["filters", "defaultOption"],
+    props: ["defaultOption", "settings"],
     data() {
         let that = this;
         return {
             dataAlert: {
-              dismissSecs: 5,
-              dismissCountDown: 0,
-              message: "",
-              variant: "info"
+                dismissSecs: 5,
+                dismissCountDown: 0,
+                message: "",
+                variant: "info",
             },
             metrics: [],
-            title: this.$i18n.t('ID_MY_CASES'),
+            title: this.$i18n.t("ID_MY_CASES"),
             filter: "CASES_INBOX",
             allView: [],
             filterHeader: "STARTED",
@@ -107,6 +122,11 @@ export default {
                 icon:"fas fa-inbox"
             },
             headers: [],
+            columMap: {
+                case_number: "APP_NUMBER",
+                case_title: "DEL_TITLE",
+                process_name: "PRO_TITLE",
+            },
             random: _.random(0,1000000000),
             newCase: {
                 title: this.$i18n.t("ID_NEW_CASE"),
@@ -115,17 +135,24 @@ export default {
                     this.$refs["newRequest"].show();
                 },
             },
-            columns: [
-                "case_number",
-                "case_title",
-                "process_name",
-                "pending_taks",
-                "status",
-                "start_date",
-                "finish_date",
-                "duration",
-                "actions",
-            ],
+            filters:
+                this.settings && this.settings.filters
+                    ? this.settings.filters
+                    : {},
+            columns:
+                this.settings && this.settings.columns
+                    ? this.settings.columns
+                    : [
+                          "case_number",
+                          "case_title",
+                          "process_name",
+                          "pending_taks",
+                          "status",
+                          "start_date",
+                          "finish_date",
+                          "duration",
+                          "actions",
+                      ],
             tableData: [],
             options: {
                 filterable: false,
@@ -141,13 +168,13 @@ export default {
                     actions: "",
                 },
                 texts: {
-                    count:this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
+                    count: this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
                     first: this.$i18n.t("ID_FIRST"),
                     last: this.$i18n.t("ID_LAST"),
                     filter: this.$i18n.t("ID_FILTER") + ":",
                     limit: this.$i18n.t("ID_RECORDS") + ":",
                     page: this.$i18n.t("ID_PAGE") + ":",
-                    noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS")
+                    noResults: this.$i18n.t("ID_NO_MATCHING_RECORDS"),
                 },
                 selectable: {
                     mode: "single",
@@ -157,35 +184,44 @@ export default {
                     selectAllMode: "page",
                     programmatic: false,
                 },
+                sortable: ["case_number"],
+                orderBy:
+                    this.settings && this.settings.orderBy
+                        ? this.settings.orderBy
+                        : {},
                 requestFunction(data) {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
                 settings: {
-                    "actions":{
+                    actions: {
                         class: "fas fa-cog",
-                        id:"pm-dr-column-settings",
-                        events:{ 
-                            click(){
-                                that.$root.$emit('bv::show::popover', 'pm-dr-column-settings')
-                            }
-                        }
-                    }
-                }
+                        id: "pm-dr-column-settings",
+                        events: {
+                            click() {
+                                that.$root.$emit(
+                                    "bv::show::popover",
+                                    "pm-dr-column-settings"
+                                );
+                            },
+                        },
+                    },
+                },
             },
             translations: null,
             pmDateFormat: window.config.FORMATS.dateFormat,
             clickCount: 0,
             singleClickTimer: null,
             statusTitle: {
-                "ON_TIME": this.$i18n.t("ID_IN_PROGRESS"),
-                "OVERDUE": this.$i18n.t("ID_TASK_OVERDUE"),
-                "DRAFT": this.$i18n.t("ID_IN_DRAFT"),
-                "PAUSED": this.$i18n.t("ID_PAUSED"),
-                "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
-            }
+                ON_TIME: this.$i18n.t("ID_IN_PROGRESS"),
+                OVERDUE: this.$i18n.t("ID_TASK_OVERDUE"),
+                DRAFT: this.$i18n.t("ID_IN_DRAFT"),
+                PAUSED: this.$i18n.t("ID_PAUSED"),
+                UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
+            },
         };
     },
     mounted() {
+        let that = this;
         this.getHeaders();
         this.openDefaultCase();
         // force to open start cases modal
@@ -193,8 +229,19 @@ export default {
         if (window.config._nodeId === "CASES_START_CASE") {
             this.$refs["newRequest"].show();
         }
+        // define sort event
+        Event.$on("vue-tables.mycases.sorted", function(data) {
+            that.$emit("updateUserSettings", "orderBy", data);
+        });
     },
-    watch: {},
+    watch: {
+        columns: function(val) {
+            this.$emit("updateUserSettings", "columns", val);
+        },
+        filters: function(val) {
+            this.$emit("updateUserSettings", "filters", val);
+        },
+    },
     computed: {
         /**
          * Build our ProcessMaker apiClient
@@ -211,12 +258,12 @@ export default {
          */
         openDefaultCase() {
             let params;
-            if(this.defaultOption) {
+            if (this.defaultOption) {
                 params = utils.getAllUrlParams(this.defaultOption);
                 if (params && params.app_uid && params.del_index) {
                     this.openCase({
                         APP_UID: params.app_uid,
-                        DEL_INDEX: params.del_index
+                        DEL_INDEX: params.del_index,
                     });
                     this.$emit("cleanDefaultOption");
                 }
@@ -231,7 +278,7 @@ export default {
             self.clickCount += 1;
             if (self.clickCount === 1) {
                 self.singleClickTimer = setTimeout(function() {
-                    self.clickCount = 0;            
+                    self.clickCount = 0;
                 }, 400);
             } else if (self.clickCount === 2) {
                 clearTimeout(self.singleClickTimer);
@@ -250,7 +297,7 @@ export default {
                 DEL_INDEX: item.DEL_INDEX,
                 PRO_UID: item.PRO_UID,
                 TAS_UID: item.TAS_UID,
-                ACTION: "todo"
+                ACTION: "todo",
             });
             this.$emit("onUpdatePage", "XCase");
         },
@@ -262,17 +309,22 @@ export default {
         openCaseDetail(item) {
             let that = this;
             api.cases.open(_.extend({ ACTION: "todo" }, item)).then(() => {
-                api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
-                    that.$emit("onUpdateDataCase", {
-                    APP_UID: item.APP_UID,
-                    DEL_INDEX: item.DEL_INDEX,
-                    PRO_UID: item.PRO_UID,
-                    TAS_UID: item.TAS_UID,
-                    APP_NUMBER: item.CASE_NUMBER,
-                    ACTION: that.filterHeader === "SUPERVISING" ? "to_revise": "todo"
+                api.cases
+                    .cases_open(_.extend({ ACTION: "todo" }, item))
+                    .then(() => {
+                        that.$emit("onUpdateDataCase", {
+                            APP_UID: item.APP_UID,
+                            DEL_INDEX: item.DEL_INDEX,
+                            PRO_UID: item.PRO_UID,
+                            TAS_UID: item.TAS_UID,
+                            APP_NUMBER: item.CASE_NUMBER,
+                            ACTION:
+                                that.filterHeader === "SUPERVISING"
+                                    ? "to_revise"
+                                    : "todo",
+                        });
+                        that.$emit("onUpdatePage", "case-detail");
                     });
-                    that.$emit("onUpdatePage", "case-detail");
-                });
             });
         },
         /**
@@ -314,18 +366,22 @@ export default {
                 paged,
                 limit = data.limit,
                 start = data.page === 1 ? 0 : limit * (data.page - 1),
-                filters = {};
-                paged = start + "," + limit;
-                
+                filters = {},
+                sort = "";
+            paged = start + "," + limit;
             filters = {
                 filter: that.filterHeader,
                 paged: paged,
             };
-            _.forIn(this.filters, function (item, key) {
-                if(filters && item.value) {
+            _.forIn(this.filters, function(item, key) {
+                if (filters && item.value) {
                     filters[item.filterVar] = item.value;
                 }
             });
+            sort = that.prepareSortString(data);
+            if (sort) {
+                filters["sort"] = sort;
+            }
             return new Promise((resolutionFunc, rejectionFunc) => {
                 api.cases
                     .myCases(filters)
@@ -342,6 +398,20 @@ export default {
             });
         },
         /**
+         * Prepare sort string to be sended in the service
+         * @param {object} data
+         * @returns {string}
+         */
+        prepareSortString(data) {
+            let sort = "";
+            if (data.orderBy && this.columMap[data.orderBy]) {
+                sort = `${this.columMap[data.orderBy]},${
+                    data.ascending === 1 ? "ASC" : "DESC"
+                }`;
+            }
+            return sort;
+        },
+        /**
          * Format Response API TODO to grid inbox and columns
          */
         formatDataResponse(response) {
@@ -355,13 +425,16 @@ export default {
                     STATUS: v.APP_STATUS,
                     START_DATE: v.APP_CREATE_DATE_LABEL || "",
                     FINISH_DATE: v.APP_FINISH_DATE_LABEL || "",
-                    PENDING_TASKS: that.formantPendingTask(v.PENDING, v.APP_STATUS),
+                    PENDING_TASKS: that.formantPendingTask(
+                        v.PENDING,
+                        v.APP_STATUS
+                    ),
                     DURATION: v.DURATION,
                     DEL_INDEX: v.DEL_INDEX,
                     APP_UID: v.APP_UID,
                     PRO_UID: v.PRO_UID,
                     TAS_UID: v.TAS_UID,
-                    MESSAGE_COLOR: v.CASE_NOTES_COUNT > 0 ? "black":"silver"
+                    MESSAGE_COLOR: v.CASE_NOTES_COUNT > 0 ? "black" : "silver",
                 });
             });
             return data;
@@ -375,26 +448,34 @@ export default {
                 dataFormat = [];
             for (i = 0; i < data.length; i += 1) {
                 userDataFormat = utils.userNameDisplayFormat({
-                        userName: data[i].user_tooltip.usr_username || "",
-                        firstName: data[i].user_tooltip.usr_firstname || "",
-                        lastName: data[i].user_tooltip.usr_lastname || "",
-                        format: window.config.FORMATS.format || null
-                    });
-                dataFormat.push(
-                    {
-                        TAS_NAME: data[i].tas_title,
-                        STATUS: data[i].tas_color,
-                        DELAYED_TITLE: this.delayedTitle(data[i], status),
-                        DELAYED_MSG: data[i].tas_status === "OVERDUE" && status !== "COMPLETED" ? data[i].delay : "",
-                        AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
-                                window.config.SYS_URI +
-                                `users/users_ViewPhotoGrid?pUID=${data[i].user_id}` : "",
-                        USERNAME: userDataFormat !== "" ? userDataFormat : this.$i18n.t("ID_UNASSIGNED"),
-                        POSITION: data[i].user_tooltip.usr_position,
-                        EMAIL: data[i].user_tooltip.usr_email,
-                        UNASSIGNED: userDataFormat !== "" ? true : false
-                    }
-                );
+                    userName: data[i].user_tooltip.usr_username || "",
+                    firstName: data[i].user_tooltip.usr_firstname || "",
+                    lastName: data[i].user_tooltip.usr_lastname || "",
+                    format: window.config.FORMATS.format || null,
+                });
+                dataFormat.push({
+                    TAS_NAME: data[i].tas_title,
+                    STATUS: data[i].tas_color,
+                    DELAYED_TITLE: this.delayedTitle(data[i], status),
+                    DELAYED_MSG:
+                        data[i].tas_status === "OVERDUE" &&
+                        status !== "COMPLETED"
+                            ? data[i].delay
+                            : "",
+                    AVATAR:
+                        userDataFormat !== ""
+                            ? window.config.SYS_SERVER_AJAX +
+                              window.config.SYS_URI +
+                              `users/users_ViewPhotoGrid?pUID=${data[i].user_id}`
+                            : "",
+                    USERNAME:
+                        userDataFormat !== ""
+                            ? userDataFormat
+                            : this.$i18n.t("ID_UNASSIGNED"),
+                    POSITION: data[i].user_tooltip.usr_position,
+                    EMAIL: data[i].user_tooltip.usr_email,
+                    UNASSIGNED: userDataFormat !== "" ? true : false,
+                });
             }
             return dataFormat;
         },
@@ -402,16 +483,21 @@ export default {
          * Prepare the delayed title
          * @param {object} data
          * @param {string} status
-         * @returns {string} 
+         * @returns {string}
          */
         delayedTitle(data, status) {
             let title = "";
             if (status === "COMPLETED") {
                 title = this.$i18n.t("ID_COMPLETED") + ": ";
-                title += data.tas_status === "ON_TIME" ? this.$i18n.t("ID_ON_TIME"): this.$i18n.t("ID_TASK_OVERDUE");
+                title +=
+                    data.tas_status === "ON_TIME"
+                        ? this.$i18n.t("ID_ON_TIME")
+                        : this.$i18n.t("ID_TASK_OVERDUE");
             } else {
-                title = data.tas_status === "OVERDUE" ?
-                this.$i18n.t("ID_DELAYED") + ":" : this.statusTitle[data.tas_status];
+                title =
+                    data.tas_status === "OVERDUE"
+                        ? this.$i18n.t("ID_DELAYED") + ":"
+                        : this.statusTitle[data.tas_status];
             }
             return title;
         },
@@ -528,7 +614,7 @@ export default {
                 };
             _.forEach(response, (v) => {
                 //Hack for display the SUPERVISING CARD
-                if(!(v.id === "SUPERVISING" && v.counter === 0)){
+                if (!(v.id === "SUPERVISING" && v.counter === 0)) {
                     data.push({
                         title: v.title,
                         counter: v.counter,
@@ -542,7 +628,7 @@ export default {
                             that.filterHeaderObject = obj;
                             that.random = _.random(0,1000000000);
                         },
-                        class: info[v.id].class
+                        class: info[v.id].class,
                     });
                 }
             });
@@ -559,10 +645,9 @@ export default {
                 that.$refs["modal-comments"].show();
             });
         },
-        onRemoveFilter(data) {
-        },
+        onRemoveFilter(data) {},
         onUpdateFilters(data) {
-            this.$emit("onUpdateFilters", data.params);
+            this.filters = data.params;
             if (data.refresh) {
                 this.$nextTick(() => {
                     this.$refs["vueTable"].getData();
@@ -581,9 +666,9 @@ export default {
          * @param {string} type - alert type
          */
         showAlert(message, type) {
-          this.dataAlert.message = message;
-          this.dataAlert.variant = type || "info";
-          this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+            this.dataAlert.message = message;
+            this.dataAlert.variant = type || "info";
+            this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
         },
         /**
          * Updates the alert dismiss value to update
@@ -591,7 +676,7 @@ export default {
          * @param {mumber}
          */
         countDownChanged(dismissCountDown) {
-          this.dataAlert.dismissCountDown = dismissCountDown;
+            this.dataAlert.dismissCountDown = dismissCountDown;
         },
     },
 };

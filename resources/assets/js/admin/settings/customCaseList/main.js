@@ -2,22 +2,22 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import VueSidebarMenu from "vue-sidebar-menu";
 import VueI18n from 'vue-i18n';
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
+import { BootstrapVue } from 'bootstrap-vue';
 import { ServerTable, Event, ClientTable} from 'vue-tables-2';
 import Sortable from 'sortablejs';
 import "@fortawesome/fontawesome-free/css/all.css";
-import "@fortawesome/fontawesome-free/js/all.js";
 import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-
 import CustomCaseList from "./CustomCaseList";
-Vue.use(VueRouter);
+import Verte from 'verte';
+import 'verte/dist/verte.css';
+// register component globally
+Vue.component('verte', Verte);
+Vue.use(VueRouter); 
 Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
-Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
-
 Vue.use(ServerTable, {}, false, 'bootstrap3', {});
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
 window.ProcessMaker = {
@@ -48,5 +48,6 @@ new Vue({
     // eslint-disable-line no-new
     el: "#customCaseList",
     router,
+    components: { Verte },
     render: (h) => h(CustomCaseList),
 });

@@ -13,11 +13,18 @@ export let process = {
             });
         }
     },
-    categories(dt) {
+    totalCasesByProcess(dt) {
+        return Api.get({
+            service: "TOTAL_CASES_BY_PROCESS",
+            params: dt,
+            keys: {}
+        });
+    },
+    processCategories() {
         return Api.fetch({
-            service: "CATEGORIES",
+            service: "PROCESS_CATEGORIES",
             method: "get",
-            data: dt,
+            data: {},
             keys: {}
         });
     }

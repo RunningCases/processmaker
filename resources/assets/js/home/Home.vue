@@ -20,19 +20,21 @@
             <component
                 v-bind:is="page"
                 ref="component"
-                :filters="filters"
                 :id="pageId"
                 :pageUri="pageUri"
                 :name="pageName"
                 :defaultOption="defaultOption"
-                @onSubmitFilter="onSubmitFilter"
+                :settings="config.setting[page]"
+                :filters="filters"
+                @onSubmitFilter="onSubmitFilter"    
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
                 @onUpdateDataCase="onUpdateDataCase"
                 @onLastPage="onLastPage"
                 @onUpdateFilters="onUpdateFilters"
                 @cleanDefaultOption="cleanDefaultOption"
-            ></component>
+                @updateUserSettings="updateUserSettings"
+            ></component>   
         </div>
     </div>
 </template>
@@ -87,6 +89,11 @@ export default {
             pageName: null,
             pageUri: null,
             filters: null,
+            config: {
+                id: window.config.userId || "1",
+                name: "home",
+                setting: {}
+            },
             menuMap: {
                 CASES_MY_CASES: "MyCases",
                 CASES_SENT: "MyCases",
@@ -105,6 +112,7 @@ export default {
     mounted() {
         this.onResize();
         this.getMenu();
+        this.getUserSettings();
         this.listenerIframe();
         window.setInterval(
             this.setCounter,
@@ -149,6 +157,65 @@ export default {
                 .catch((e) => {
                     console.error(e);
                 });
+        },
+        /**
+         * Gets the user config
+         */
+        getUserSettings() {
+            api.config
+                .get({
+                    id: this.config.id,
+                    name: this.config.name
+                })
+                .then((response) => {
+                    if (response.data) {
+                        this.config = response.data;
+                    } else {
+                        this.createUserSettings();
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+        },
+        /**
+         * Creates the user config service
+         */
+        createUserSettings() {
+            api.config
+                .post({
+                    ...this.configParams,
+                    ...{setting: '{}'}
+                })
+                .then((response) => {
+                    if (response.data) {
+                        this.config = response.data;
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+        },
+        /**
+         * Update the user config service
+         */
+        updateUserSettings(prop, data) {
+            if (this.config.setting) {
+                if (!this.config.setting[this.page]) {
+                    this.config.setting[this.page] = {};
+                }
+                this.config.setting[this.page][prop] = data;
+                api.config
+                    .put(this.config)
+                    .then((response) => {
+                        if (response.data) {
+                            //TODO success response
+                        }
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            }
         },
         /**
          * Set default cases menu option
@@ -337,7 +404,7 @@ export default {
         },
         onUpdateFilters(filters) {
             this.filters = filters;
-        }
+        },
     }
 };
 </script>

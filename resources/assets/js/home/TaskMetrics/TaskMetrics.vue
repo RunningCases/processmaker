@@ -2,13 +2,16 @@
   <div id="v-pm-task-metrics" ref="v-pm-task-metrics" class="v-pm-task-metrics">
     <button-fleft :data="newCase"></button-fleft>
     <div class="p-1 v-flex">
-      <h5 class="v-search-title">Task metrics</h5>
+      <h4 class="v-search-title">
+        Task metrics
+        <span class="vp-padding-r3"> <i class="fas fa-chart-pie"></i></span>
+      </h4>
     </div>
     <modal-new-request ref="newRequest"></modal-new-request>
     <div class="d-inline-flex p-2">
-      <vue-charts />
+      <vue-charts @onChangeLevel="changeLevel" />
       <div class="vp-6"></div>
-      <drill-down />
+      <drill-down :level="level" />
     </div>
   </div>
 </template>
@@ -32,7 +35,9 @@ export default {
   props: [],
   data() {
     let that = this;
-    return {};
+    return {
+      level: 0,
+    };
   },
   created() {},
   mounted() {},
@@ -40,7 +45,11 @@ export default {
   computed: {},
   updated() {},
   beforeCreate() {},
-  methods: {},
+  methods: {
+    changeLevel(lv) {
+      this.level = lv;
+    },
+  },
 };
 </script>
 <style>
@@ -51,7 +60,7 @@ export default {
   padding-right: 50px;
 }
 
-.vp-6 {
-  padding: 3.5rem !important;
+.vp-padding-r3 {
+  padding-right: 3rem;
 }
 </style>

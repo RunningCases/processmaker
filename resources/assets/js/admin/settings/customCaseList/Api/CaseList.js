@@ -36,6 +36,19 @@ class caseListApi extends Api {
             keys: {}
         });
     }
+    deleteCaseList(data) {
+        return axios.delete(
+            window.config.SYS_SERVER_API +
+            '/api/1.0/' +
+            window.config.SYS_WORKSPACE +
+            '/caseList/' + data.id, {
+            headers: {
+                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                "Accept-Language": window.config.SYS_LANG
+              }
+            }
+        );
+    }
 }
 let api = new caseListApi(Services);
 

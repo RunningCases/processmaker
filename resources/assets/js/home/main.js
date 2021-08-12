@@ -5,6 +5,7 @@ import VueI18n from 'vue-i18n';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import { ServerTable, Event, ClientTable } from 'vue-tables-2';
 import VtTableHeadingCustom from './../components/vuetable/extends/VtTableHeadingCustom';
+import VtSortControl from './../components/vuetable/extends/VtSortControl';
 import SettingsPopover from "../components/vuetable/SettingsPopover.vue";
 import Sortable from 'sortablejs';
 import "@fortawesome/fontawesome-free/css/all.css";
@@ -13,6 +14,10 @@ import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import VueApexCharts from 'vue-apexcharts'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 import Home from "./Home";
 
 Vue.use(VueApexCharts);
@@ -21,9 +26,11 @@ Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(ServerTable, {}, false, 'bootstrap3', {
-    tableHeading: VtTableHeadingCustom
+    tableHeading: VtTableHeadingCustom,
+    sortControl: VtSortControl
 });
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
 Vue.component('settings-popover', SettingsPopover);
