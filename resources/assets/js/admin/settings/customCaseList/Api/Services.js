@@ -4,5 +4,6 @@ export default {
     CASE_LIST_UNASSIGNED: "/caseList/unassigned",
     CASE_LIST_PAUSED: "/caseList/paused",
     REPORT_TABLES: "/caseList/report-tables",
-    CASE_LIST: "/caseList"
+    CASE_LIST: "/caseList",
+    PUT_CASE_LIST: "/caseList/{id}"
 };

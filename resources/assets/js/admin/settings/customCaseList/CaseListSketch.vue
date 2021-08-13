@@ -75,7 +75,7 @@
                                 ></b-form-textarea>
                             </b-form-group>
                             <b-row>
-                                <b-col cols="10">
+                                <b-col cols="11">
                                     <v-client-table
                                         :columns="columns"
                                         v-model="data"
@@ -97,9 +97,20 @@
                                             :checked="props.row.selected"
                                             :value="props.row.field"
                                         />
+                                         <div slot="action" slot-scope="props">
+                                        <b-button
+                                            variant="light"
+                                            @click="onAddRow(props.row)"
+                                        >
+                                            <i
+                                                ref="iconClose"
+                                                class="fas fa-plus"
+                                            ></i>
+                                        </b-button>
+                                    </div>
                                     </v-client-table>
                                 </b-col>
-                                <b-col cols="2">
+                                <b-col cols="1">
                                     <!-- Control panel -->
                                     <div class="control-panel">
                                         <div class="vertical-center">
@@ -187,7 +198,7 @@
                                 >
                                     <verte
                                         :value="params.iconColorScreen"
-                                        @input="onChangeColor"
+                                        @input="onChangeColorScreen"
                                         picker="square"
                                         menuPosition="left"
                                         model="hex"
@@ -226,6 +237,18 @@
                                         :checked="props.row.selected"
                                         :value="props.row.field"
                                     />
+                                    <b-form-checkbox 
+                                        slot="enableFilter"
+                                        slot-scope="props"
+                                        v-model="enabledFilterRows"
+                                        @change="onTongleFilter(props.row.field)" 
+                                        name="check-button" 
+                                        :checked="props.row.enableFilter"
+                                        :value="props.row.field"
+                                        switch
+                                    >
+                                    </b-form-checkbox>
+
                                     <div slot="action" slot-scope="props">
                                         <b-button
                                             variant="light"
@@ -233,7 +256,7 @@
                                         >
                                             <i
                                                 ref="iconClose"
-                                                class="far fa-window-close"
+                                                class="fas fa-minus"
                                             ></i>
                                         </b-button>
                                     </div>
@@ -280,9 +303,10 @@ export default {
             isSelectedCaseList: false,
             pmTablesOptions: [],
             checkedRows: [],
+            enabledFilterRows: [],
             closedRows: [],
             checkedRowsCaseList: [],
-            columns: ["selected", "name", "field", "type", "source"],
+            columns: ["selected", "name", "field", "type", "source", "action"],
             //data: utils.getData(),
             data: [],
             options: {
@@ -291,11 +315,14 @@ export default {
                     field: this.$i18n.t("ID_FIELD"),
                     type: this.$i18n.t("ID_TYPE"),
                     source: this.$i18n.t("ID_SOURCE"),
+                    action: "",
                 },
                 sortable: [],
                 filterable: true,
-                columnsDisplay: {
-                    type: "desktop",
+                perPage: 1000,
+                perPageValues: [],
+                texts: {
+                    count: "",
                 },
             },
             dataCaseList: [],
@@ -339,10 +366,35 @@ export default {
     mounted() {
         this.defaultCaseList = Api.getDefault(this.module.key);
         this.dataCaseList = this.defaultCaseList;
+        if(this.params.id) {
+            this.editMode();
+        }
+
     },
     methods: {
+        /**
+         * Edit mode handler
+         * prepare the datato be rendered
+         */
+        editMode(){
+            let that = this;
+            this.pmTable = {
+                label: this.params.tableName,
+                value: this.params.tableUid
+            }   
+            this.data =this.params.columns.filter(elem => elem.set === false);
+            this.dataCaseList =this.params.columns.filter(elem => elem.set === true);
+            this.dataCaseList.forEach(function (value) {
+                if (value.enableFilter) {
+                    that.enabledFilterRows.push(value.field);
+                }
+                
+            });
+        },
+        /**
+         * Select all checkbox handler into available pm tables column list
+         */
         selectAllAtOnce() {
-            console.log("isSelected: ", this.isSelected);
             let length = this.data.length;
             this.isSelected = !this.isSelected;
             this.checkedRows = [];
@@ -353,6 +405,9 @@ export default {
                 }
             }
         },
+        /**
+         * Select all checkbox handler into case list table
+         */
         selectAllAtOnceCaseList() {
             let length = this.dataCaseList.length;
             this.isSelectedCaseList = !this.isSelectedCaseList;
@@ -364,6 +419,9 @@ export default {
                 }
             }
         },
+        /**
+         * Unassign the selected columns from custm list
+         */
         unassignSelected() {
             let temp;
             let length = this.checkedRowsCaseList.length;
@@ -379,10 +437,19 @@ export default {
             }
             this.checkedRowsCaseList = [];
         },
+        /**
+         *  Unassign all columns from custom list
+         */
         unassignAll() {
             this.data = [...this.data, ...this.dataCaseList];
+              this.data.forEach(function (element) {
+                element.set = false;
+            });
             this.dataCaseList = [];
         },
+        /**
+         * Assign the selected row to custom list
+         */
         assignSelected() {
             let temp;
             let length = this.checkedRows.length;
@@ -396,23 +463,39 @@ export default {
             }
             this.checkedRows = [];
         },
+        /**
+         * Assign all columns to custom list
+         */
         assignAll() {
             this.dataCaseList = [...this.dataCaseList, ...this.data];
+            this.dataCaseList.forEach(function (element) {
+                element.set = true;
+            });
             this.data = [];
         },
+        /**
+         * On select icon handler
+         */
         onSelectIcon(data) {
-            console.log(data);
-            // this.params.iconList = data;
+            this.params.iconList = data;
         },
+        /**
+         * On change color handler
+         */
         onChangeColor(color) {
-            console.log(color);
-            this.menuColor = color;
+            this.params.iconColor = color;
         },
+        /**
+         * On change color screen handler
+         */
+        onChangeColorScreen(color) {
+            this.params.iconColorScreen = color;
+        },
+        /**
+         * On Cancel event handler
+         */
         onCancel() {
             this.$emit("closeSketch");
-        },
-        onChange(e) {
-            console.log(e);
         },
         /**
          * Find asynchronously in the server
@@ -438,15 +521,23 @@ export default {
 
                 this.isLoading = false;
             })
-            .catch((e) => {
+            .catch((err) => {
                 console.error(err);
             });
         },
+        /**
+         * On select event handler in multiselect component
+         * @param {object} option
+         */
         onSelect(option) {
             this.checkedRows = [];
             this.data = option.fields;
             this.dataCaseList = this.defaultCaseList;
         },
+        /**
+         * On remove row event handler
+         * @param {object} row
+         */
         onRemoveRow(row) {
             var temp = this.dataCaseList.find((x) => x.field === row.field);
             if (temp) {
@@ -457,6 +548,23 @@ export default {
                 });
             }
         },
+        /**
+         * On remove row event handler
+         * @param {object} row
+         */
+        onAddRow(row) {
+            var temp = this.data.find((x) => x.field === row.field);
+            if (temp) {
+                temp["set"] = true;
+                this.dataCaseList.push(temp);
+                this.data = this.data.filter((item) => {
+                    return item.field != row.field;
+                });
+            }
+        },
+        /**
+         * On submit event handler
+         */
         onSubmit() {
             this.isValidName = true;
             this.isValidTable = true;
@@ -469,20 +577,53 @@ export default {
                 return;
             }
             this.params.tableUid = this.pmTable.value;
-            this.params.columns = this.dataCaseList;
+            this.params.columns = [...this.preparePostColumns(this.dataCaseList), ...this.preparePostColumns(this.data)];
             this.params.type = this.module.key;
             this.params.userId = window.config.userId;
-            Api.createCaseList(this.params)
-            .then((response) => {
-                this.$emit("closeSketch");
-              
-            })
-            .catch((e) => {
-                console.error(err);
-            });
-
+            if (this.params.id) {
+                delete this.params["tableName"];
+                Api.updateCaseList(this.params)
+                .then((response) => {
+                    this.$emit("closeSketch");
+                
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            } else {
+                Api.createCaseList(this.params)
+                .then((response) => {
+                    this.$emit("closeSketch");
+                
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            }
         },
-        onReset() {},   
+        /**
+         * Prepares columns data to be sended to the server
+         * @param {array} collection
+         */
+        preparePostColumns(collection){
+            let temp = [];
+            collection.forEach(function (value) {
+                temp.push({
+                    field: value.field,
+                    enableFilter: value.enableFilter || false,
+                    set: value.set || false
+                })  
+            });
+            return temp;
+        },
+        /**
+         * Tongle filter switcher
+         * @param {string} field
+         */
+        onTongleFilter(field){
+            let objIndex = this.dataCaseList.findIndex((obj => obj.field === field));
+            this.dataCaseList[objIndex].enableFilter = !this.dataCaseList[objIndex].enableFilter
+        }  
     },
 };
 </script>

@@ -65,6 +65,15 @@ class caseListApi extends Api {
             data: data
         });
     }
+    updateCaseList(data) {
+        return this.put({
+            service: "PUT_CASE_LIST",
+            keys: {
+                id: data.id
+            },
+            data: data
+        });
+    }
 }
 let api = new caseListApi(Services);
 
