@@ -76,7 +76,6 @@ export default {
             this.showSketch = false;
         },
         onInputTab(tabIndex){
-            console.log(tabIndex);
             this.tabModule= this.tabs[tabIndex];
         }
     }

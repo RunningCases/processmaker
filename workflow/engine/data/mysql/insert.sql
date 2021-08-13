@@ -61138,7 +61138,6 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SMTP_ERROR_USERNAME_NOT_ACCEPTED','en','Username not accepted by the server','2014-10-21') ,
 ( 'LABEL','ID_SMTP_FAILED_CONNECT_SERVER','en','Failed to connect to server','2014-02-12') ,
 ( 'LABEL','ID_SNAP_GEOMETRY','en','Snap Geometry','2014-01-15') ,
-
 ( 'LABEL','ID_SOMETHING_WRONG','en','Something was wrong','2014-01-15') ,
 ( 'LABEL','ID_SOME_ACTORS_ALREADY_ASSIGNED','en','Some actor(s) is/are already assigned to task <b>{0}</b>','2014-01-15') ,
 ( 'LABEL','ID_SOME_FIELDS_REQUIRED','en','Some Fields are required.','2014-01-15') ,
