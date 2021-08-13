@@ -30,6 +30,7 @@
     "bootstrap-vue-font-awesome-picker": "^0.1.3",
     "chart.js": "^2.7.2",
     "dateformat": "^3.0.3",
+    "downloadjs": "^1.4.7",
     "faker": "^5.1.0",
     "font-awesome": "^4.7.0",
     "hammerjs": "^2.0.8",
