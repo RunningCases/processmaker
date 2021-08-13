@@ -307,7 +307,6 @@ export default {
             closedRows: [],
             checkedRowsCaseList: [],
             columns: ["selected", "name", "field", "type", "source", "action"],
-            //data: utils.getData(),
             data: [],
             options: {
                 headings: {
