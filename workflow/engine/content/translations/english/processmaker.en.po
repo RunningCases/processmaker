@@ -7770,6 +7770,12 @@ msgid "Enable PM Gmail"
 msgstr "Enable PM Gmail"
 
 # TRANSLATION
+# LABEL/ID_ENABLE_SEARCH_FILTER
+#: LABEL/ID_ENABLE_SEARCH_FILTER
+msgid "Enable Search Filter"
+msgstr "Enable Search Filter"
+
+# TRANSLATION
 # LABEL/ID_ENABLE_USER
 #: LABEL/ID_ENABLE_USER
 msgid "Enable User"
@@ -26932,6 +26938,12 @@ msgstr "Tue"
 #: LABEL/ID_TYPE
 msgid "Type"
 msgstr "Type"
+
+# TRANSLATION
+# LABEL/ID_TYPE_OF_SEARCHING
+#: LABEL/ID_TYPE_OF_SEARCHING
+msgid "Type of Searching"
+msgstr "Type of Searching"
 
 # TRANSLATION
 # LABEL/ID_TYPE_PASSWORD
