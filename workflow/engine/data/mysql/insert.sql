@@ -58358,6 +58358,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_FORMS_METADATA_CACHE','en','Forms metadata cache','2014-01-15') ,
 ( 'LABEL','ID_FRI','en','Fri','2014-01-15') ,
 ( 'LABEL','ID_FROM','en','From','2014-01-15') ,
+( 'LABEL','ID_SENDER','en','Sender','2021-08-13') ,
 ( 'LABEL','ID_FROM_EMAIL','en','Sender Email','2017-02-21') ,
 ( 'LABEL','ID_FROM_FINISH_DATE','en','From Finish Date','2020-12-16') ,
 ( 'LABEL','ID_FROM_NAME','en','Sender Name','2017-02-21') ,
