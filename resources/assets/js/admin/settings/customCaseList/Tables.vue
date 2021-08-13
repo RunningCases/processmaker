@@ -51,12 +51,12 @@ export default {
                 class: "btn-success",
                 onClick: () => {
                     this.$emit("showSketch", {
-                        name: "Rocko",
-                        description: "algo te texto",
-                        tableUid: "1234",
-                        iconList: 'far fa-calendar-alt',
-                        iconColor: '#4287f5',
-                        iconColorScreen:'#4287f5',
+                        name: "",
+                        description: "",
+                        tableUid: "",
+                        iconList: "far fa-check-circle",
+                        iconColor: '#000000',
+                        iconColorScreen: '#FFFFFF',
                         type: this.module
 
                     });
@@ -188,7 +188,19 @@ export default {
 
         },
         editCustomCaseList(data) {
-
+            this.$emit("showSketch", {
+                id: data.id,
+                name: data.name,
+                description: data.description,
+                tableUid: data.tableUid,
+                tableName: data.tableName,
+                iconList: data.iconList,
+                iconColor: data.iconColor,
+                iconColorScreen: data.iconColorScreen,
+                columns: data.columns,
+                enableFilter: data.enableFilter,
+                type: this.module
+            });
         },
         /**
          * Export the Custom Case List in a json

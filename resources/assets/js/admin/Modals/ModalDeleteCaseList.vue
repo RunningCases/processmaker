@@ -51,10 +51,11 @@ export default {
             this.$refs["modal-delete-list"].hide();
         },
         deleteCustomCaseList() {
-            api.deleteCaseList(this.data).then((response) => {
-                if (response.statusText == "OK") {
-                    that.$refs["modal-pause-case"].hide();
-                    that.$parent.$refs["vueTable"].getData();
+            let that = this;
+            api.deleteCaseList(this.data).then((response) => { 
+                if (response.statusText === "OK") {
+                    that.$refs["modal-delete-list"].hide();
+                    that.$parent.$refs["table"].getData();
                 }
             });
         }
