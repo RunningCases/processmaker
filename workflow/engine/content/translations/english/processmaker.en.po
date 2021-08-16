@@ -9096,6 +9096,12 @@ msgid "From"
 msgstr "From"
 
 # TRANSLATION
+# LABEL/ID_SENDER
+#: LABEL/ID_SENDER
+msgid "Sender"
+msgstr "Sender"
+
+# TRANSLATION
 # LABEL/ID_FROM_EMAIL
 #: LABEL/ID_FROM_EMAIL
 msgid "Sender Email"
