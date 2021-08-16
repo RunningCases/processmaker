@@ -71,16 +71,6 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
          * Remove heartbeat config from core, it will probably be used again
          * when the functionality will be redesigned.
          */
-        if ($RBAC->userCanAccess('PM_SETUP_HEART_BEAT') === 1 && false) {
-            $G_TMP_MENU->AddIdRawOption(
-                'HEARTBEAT',
-                'processHeartBeatConfig',
-                G::LoadTranslation('ID_HEARTBEAT_CONFIG'),
-                'heartBeat.jpg',
-                '',
-                'settings'
-            );
-        }
     }
     if ($RBAC->userCanAccess('PM_SETUP_ENVIRONMENT') === 1) {
         $G_TMP_MENU->AddIdRawOption(

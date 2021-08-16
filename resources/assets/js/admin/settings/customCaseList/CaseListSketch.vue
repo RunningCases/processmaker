@@ -2,187 +2,280 @@
     <div id="home">
         <div class="demo">
             <div class="container">
-                <h5>{{ $t("ID_NEW_CASES_LISTS") }}</h5>
-
-                <div class="row">
-                    <div class="col-sm">
-                        <b-row>
-                            <b-col>
-                                <b-form-group
-                                    id="nameLabel"
-                                    label="Name"
-                                    label-for="name"
-                                >
-                                    <b-form-input
-                                        id="name"
-                                        v-model="params.name"
-                                        placeholder="Set a Case List Name"
-                                        required
-                                    ></b-form-input>
-                                </b-form-group>
-                            </b-col>
-                            <b-col>
-                                <b-form-group
-                                    id="tableLabel"
-                                    label="PM Table "
-                                    label-for="name"
-                                >
-                                    <multiselect
-                                        v-model="params.tableUid"
-                                        :options="pmTablesOptions"
-                                        placeholder="Chose an option"
-                                        label="label"
-                                        track-by="value"
-                                        :show-no-results="false"
-                                        @search-change="asyncFind"
-                                        :loading="isLoading"
-                                        id="ajax"
-                                        :limit="10"
-                                        :clear-on-select="true"
+                <h5>{{ $t("ID_NEW_CASES_LISTS") }} ({{ module.title }})</h5>
+                <b-form @submit="onSubmit">
+                    <b-row>
+                        <b-col cols="6">
+                            <b-row>
+                                <b-col>
+                                    <b-form-group
+                                        id="nameLabel"
+                                        :label="$t('ID_NAME')"
+                                        label-for="name"
                                     >
-                                    </multiselect>
-                                </b-form-group>
-                            </b-col>
-                        </b-row>
-
-                        <b-form-group
-                            id="descriptionLabel"
-                            label="Description "
-                            label-for="description"
-                        >
-                            <b-form-textarea
-                                id="description"
-                                v-model="params.description"
-                                placeholder="Some Text"
-                                rows="1"
-                                max-rows="1"
-                            ></b-form-textarea>
-                        </b-form-group>
-                        <b-row>
-                            <b-col cols="10">
-                                <v-client-table
-                                    :columns="columns"
-                                    v-model="data"
-                                    :options="options"
-                                >
-                                </v-client-table>
-                            </b-col>
-                            <b-col cols="2">
-                                <!-- Control panel -->
-                                <div class="control-panel">
-                                    <div class="vertical-center">
-                                        <button
-                                            type="button"
-                                            class="btn btn-light"
-                                            @click="assignAll()"
-                                            :disabled="isButtonDisabled"
+                                        <b-form-input
+                                            id="name"
+                                            v-model="params.name"
+                                            :state="isValidName"
+                                            :placeholder="
+                                                $t('ID_SET_A_CASE_LIST_NAME')
+                                            "
+                                        ></b-form-input>
+                                        <b-form-invalid-feedback
+                                            :state="isValidName"
                                         >
-                                            <i
-                                                class="fa fa-angle-double-right"
-                                            ></i>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="btn btn-light"
-                                            @click="assignSelected()"
-                                            :disabled="isButtonDisabled"
+                                            {{ $t("ID_REQUIRED_FIELD") }}
+                                        </b-form-invalid-feedback>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col>
+                                    <div :class="{ invalid: isValidTable === false }">
+                                        <label>{{ $t("ID_PM_TABLE") }}</label>
+                                        <multiselect
+                                            v-model="pmTable"
+                                            :options="pmTablesOptions"
+                                            :placeholder="
+                                                $t('ID_CHOOSE_OPTION')
+                                            "
+                                            label="label"
+                                            track-by="value"
+                                            :show-no-results="false"
+                                            @search-change="asyncFind"
+                                            @select="onSelect"
+                                            :loading="isLoading"
+                                            id="ajax"
+                                            :limit="10"
+                                            :clear-on-select="true"
                                         >
-                                            <i class="fa fa-angle-right"></i>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="btn btn-light"
-                                            @click="unassignSelected()"
-                                            :disabled="isButtonDisabled"
+                                        </multiselect>
+                                        <label
+                                            :class="{
+                                                'd-block invalid-feedback': isValidTable === false
+                                            }"
+                                            v-show="isValidTable === false"
+                                            >{{
+                                                $t("ID_REQUIRED_FIELD")
+                                            }}</label
                                         >
-                                            <i class="fa fa-angle-left"></i>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="btn btn-light"
-                                            @click="unassignAll()"
-                                            :disabled="isButtonDisabled"
-                                        >
-                                            <i
-                                                class="fa fa-angle-double-right"
-                                            ></i>
-                                        </button>
                                     </div>
-                                </div>
-                                <!-- End Control panel -->
-                            </b-col>
-                        </b-row>
-                        <b-form-group
-                            id="iconLabel"
-                            label="Icon "
-                            label-for="icon"
-                        >
-                            <icon-picker
-                                @selected="onSelectIcon"
-                                :default="params.iconList"
-                            />
-                        </b-form-group>
-                        <div>
+                                </b-col>
+                            </b-row>
+
                             <b-form-group
-                                id="menuColor"
-                                label="Menu Color "
+                                id="descriptionLabel"
+                                :label="$t('ID_DESCRIPTION')"
+                                label-for="description"
+                            >
+                                <b-form-textarea
+                                    id="description"
+                                    v-model="params.description"
+                                    :placeholder="$t('ID_SOME_TEXT')"
+                                    rows="1"
+                                    max-rows="1"
+                                ></b-form-textarea>
+                            </b-form-group>
+                            <b-row>
+                                <b-col cols="11">
+                                    <v-client-table
+                                        :columns="columns"
+                                        v-model="data"
+                                        :options="options"
+                                        ref="pmTableColumns"
+                                    >
+                                        <!-- checkbox for each header (prefix column name with h__-->
+                                        <template slot="h__selected">
+                                            <input
+                                                type="checkbox"
+                                                @click="selectAllAtOnce()"
+                                            />
+                                        </template>
+                                        <input
+                                            slot="selected"
+                                            slot-scope="props"
+                                            type="checkbox"
+                                            v-model="checkedRows"
+                                            :checked="props.row.selected"
+                                            :value="props.row.field"
+                                        />
+                                         <div slot="action" slot-scope="props">
+                                        <b-button
+                                            variant="light"
+                                            @click="onAddRow(props.row)"
+                                        >
+                                            <i
+                                                ref="iconClose"
+                                                class="fas fa-plus"
+                                            ></i>
+                                        </b-button>
+                                    </div>
+                                    </v-client-table>
+                                </b-col>
+                                <b-col cols="1">
+                                    <!-- Control panel -->
+                                    <div class="control-panel">
+                                        <div class="vertical-center">
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                                @click="assignAll()"
+                                                :disabled="isButtonDisabled"
+                                            >
+                                                <i
+                                                    class="fa fa-angle-double-right"
+                                                ></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                                @click="assignSelected()"
+                                                :disabled="isButtonDisabled"
+                                            >
+                                                <i
+                                                    class="fa fa-angle-right"
+                                                ></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                                @click="unassignSelected()"
+                                                :disabled="isButtonDisabled"
+                                            >
+                                                <i class="fa fa-angle-left"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                                @click="unassignAll()"
+                                                :disabled="isButtonDisabled"
+                                            >
+                                                <i
+                                                    class="fa fa-angle-double-left"
+                                                ></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- End Control panel -->
+                                </b-col>
+                            </b-row>
+                            <b-form-group
+                                id="iconLabel"
+                                :label="$t('ID_ICON')"
                                 label-for="icon"
                             >
-                                <verte
-                                    :value="params.iconColor"
-                                    id="icon"
-                                    @input="onChangeColor"
-                                    picker="square"
-                                    menuPosition="left"
-                                    model="hex"
-                                >
-                                    <svg viewBox="0 0 50 50">
-                                        <path
-                                            d="M 10 10 H 90 V 90 H 10 L 10 10"
-                                        />
-                                    </svg>
-                                </verte>
+                                <icon-picker
+                                    @selected="onSelectIcon"
+                                    :default="params.iconList"
+                                />
                             </b-form-group>
-                        </div>
+                            <div>
+                                <b-form-group
+                                    id="menuColor"
+                                    :label="$t('ID_MENU_COLOR')"
+                                    label-for="icon"
+                                >
+                                    <verte
+                                        :value="params.iconColor"
+                                        id="icon"
+                                        @input="onChangeColor"
+                                        picker="square"
+                                        menuPosition="left"
+                                        model="hex"
+                                    >
+                                        <svg viewBox="0 0 50 50">
+                                            <path
+                                                d="M 10 10 H 90 V 90 H 10 L 10 10"
+                                            />
+                                        </svg>
+                                    </verte>
+                                </b-form-group>
+                            </div>
 
-                        <div>
-                            <b-form-group
-                                id="screenColor"
-                                label="Screen Color Icon"
-                                label-for="screen"
-                            >
-                                <verte
-                                    :value="params.iconColorScreen"
-                                    @input="onChangeColor"
-                                    picker="square"
-                                    menuPosition="left"
-                                    model="hex"
+                            <div>
+                                <b-form-group
+                                    id="screenColor"
+                                    :label="$t('ID_SCREEN_COLOR_ICON')"
+                                    label-for="screen"
                                 >
-                                    <svg viewBox="0 0 50 50">
-                                        <path
-                                            d="M 10 10 H 90 V 90 H 10 L 10 10"
+                                    <verte
+                                        :value="params.iconColorScreen"
+                                        @input="onChangeColorScreen"
+                                        picker="square"
+                                        menuPosition="left"
+                                        model="hex"
+                                    >
+                                        <svg viewBox="0 0 50 50">
+                                            <path
+                                                d="M 10 10 H 90 V 90 H 10 L 10 10"
+                                            />
+                                        </svg>
+                                    </verte>
+                                </b-form-group>
+                            </div>
+                        </b-col>
+                        <b-col cols="6">
+                            <b-form-group
+                                id="caseListFieldset"
+                                :label="$t('ID_CASE_LIST')"
+                            >
+                                <v-client-table
+                                    :columns="columnsCaseList"
+                                    v-model="dataCaseList"
+                                    :options="caseListOptions"
+                                >
+                                    <!-- checkbox for each header (prefix column name with h__-->
+                                    <template slot="h__selected">
+                                        <input
+                                            type="checkbox"
+                                            @click="selectAllAtOnceCaseList()"
                                         />
-                                    </svg>
-                                </verte>
+                                    </template>
+                                    <input
+                                        slot="selected"
+                                        slot-scope="props"
+                                        type="checkbox"
+                                        v-model="checkedRowsCaseList"
+                                        :checked="props.row.selected"
+                                        :value="props.row.field"
+                                    />
+                                    <b-form-checkbox 
+                                        slot="enableFilter"
+                                        slot-scope="props"
+                                        v-model="enabledFilterRows"
+                                        @change="onTongleFilter(props.row.field)" 
+                                        name="check-button" 
+                                        :checked="props.row.enableFilter"
+                                        :value="props.row.field"
+                                        switch
+                                    >
+                                    </b-form-checkbox>
+
+                                    <div slot="action" slot-scope="props">
+                                        <b-button
+                                            variant="light"
+                                            @click="onRemoveRow(props.row)"
+                                        >
+                                            <i
+                                                ref="iconClose"
+                                                class="fas fa-minus"
+                                            ></i>
+                                        </b-button>
+                                    </div>
+                                </v-client-table>
                             </b-form-group>
-                        </div>
+                        </b-col>
+                    </b-row>
+                    <div>
+                        <b-button tvariant="danger" @click="onCancel">{{
+                            $t("ID_CANCEL")
+                        }}</b-button>
+                        <b-button variant="outline-primary">{{
+                            $t("ID_PREVIEW")
+                        }}</b-button>
+                        <b-button type="submit" variant="primary">{{
+                            $t("ID_SAVE")
+                        }}</b-button>
                     </div>
-                    <div class="col-sm">
-                        <v-client-table
-                            :columns="columnsCaseList"
-                            v-model="data"
-                            :options="caseListOptions"
-                        >
-                        </v-client-table>
-                    </div>
-                </div>
-                <div>
-                    <b-button variant="danger" @click="onCancel"
-                        >Cancel</b-button
-                    >
-                    <b-button variant="outline-primary">Preview</b-button>
-                    <b-button variant="success">Save</b-button>
-                </div>
+                </b-form>
             </div>
         </div>
     </div>
@@ -190,7 +283,7 @@
 <script>
 import utils from "../../../utils/utils";
 import Multiselect from "vue-multiselect";
-import api from "./../../../api/index";
+import Api from "./Api/CaseList";
 import IconPicker from "../../../components/iconPicker/IconPicker.vue";
 
 export default {
@@ -200,70 +293,208 @@ export default {
         IconPicker,
         IconPicker,
     },
-    props: ["params"],
+    props: ["params", "module"],
     data() {
         return {
             icon: "fas fa-user-cog",
             isLoading: false,
             isButtonDisabled: false,
+            isSelected: false,
+            isSelectedCaseList: false,
             pmTablesOptions: [],
-            columns: ["name", "field", "type", "source", "source"],
-
-            data: utils.getData(),
+            checkedRows: [],
+            enabledFilterRows: [],
+            closedRows: [],
+            checkedRowsCaseList: [],
+            columns: ["selected", "name", "field", "type", "source", "action"],
+            data: [],
             options: {
                 headings: {
-                    name: "Name",
-                    field: "Field",
-                    type: "Type",
-                    source: "Source",
+                    name: this.$i18n.t("ID_NAME"),
+                    field: this.$i18n.t("ID_FIELD"),
+                    type: this.$i18n.t("ID_TYPE"),
+                    source: this.$i18n.t("ID_SOURCE"),
+                    action: "",
                 },
+                sortable: [],
                 filterable: true,
-            },
-            columnsCaseList: [
-                "name",
-                "field",
-                "type",
-                "source",
-                "typeOfSearching",
-                "enableSearchFilter",
-                "actions",
-            ],
-            caseListOptions: {
-                headings: {
-                    name: "Name",
-                    field: "Field",
-                    type: "Type",
-                    typeOfSearching: "Type of Searching",
-                    enableSearchFilter: "Enable Search Filter",
-                },
-                filterable: false,
                 perPage: 1000,
                 perPageValues: [],
                 texts: {
                     count: "",
                 },
             },
+            dataCaseList: [],
+            columnsCaseList: [
+                "selected",
+                "name",
+                "field",
+                "type",
+                "typeSearch",
+                "enableFilter",
+                "action",
+            ],
+            caseListOptions: {
+                headings: {
+                    name: this.$i18n.t("ID_NAME"),
+                    field: this.$i18n.t("ID_FIELD"),
+                    type: this.$i18n.t("ID_TYPE"),
+                    typeOfSearching: this.$i18n.t("ID_TYPE_OF_SEARCHING"),
+                    enableSearchFilter: this.$i18n.t("ID_ENABLE_SEARCH_FILTER"),
+                    action: "",
+                },
+                filterable: false,
+                perPage: 1000,
+                perPageValues: [],
+                sortable: [],
+                texts: {
+                    count: "",
+                },
+            },
+            defaultCaseList: null,
+            isValidName: null,
+            isValidTable: null,
+            pmTable: null
         };
     },
-    mounted() {},
+    computed: {
+        validation() {
+            return this.params.name !== "";
+        },
+    },
+    mounted() {
+        this.defaultCaseList = Api.getDefault(this.module.key);
+        this.dataCaseList = this.defaultCaseList;
+        if(this.params.id) {
+            this.editMode();
+        }
+
+    },
     methods: {
-        unassignSelected() {},
-        unassignAll() {},
-        assignSelected() {},
-        assignAll() {},
+        /**
+         * Edit mode handler
+         * prepare the datato be rendered
+         */
+        editMode(){
+            let that = this;
+            this.pmTable = {
+                label: this.params.tableName,
+                value: this.params.tableUid
+            }   
+            this.data =this.params.columns.filter(elem => elem.set === false);
+            this.dataCaseList =this.params.columns.filter(elem => elem.set === true);
+            this.dataCaseList.forEach(function (value) {
+                if (value.enableFilter) {
+                    that.enabledFilterRows.push(value.field);
+                }
+                
+            });
+        },
+        /**
+         * Select all checkbox handler into available pm tables column list
+         */
+        selectAllAtOnce() {
+            let length = this.data.length;
+            this.isSelected = !this.isSelected;
+            this.checkedRows = [];
+            for (let i = 0; i < length; i++) {
+                this.data[i].selected = this.isSelected;
+                if (this.isSelected) {
+                    this.checkedRows.push(this.data[i].field);
+                }
+            }
+        },
+        /**
+         * Select all checkbox handler into case list table
+         */
+        selectAllAtOnceCaseList() {
+            let length = this.dataCaseList.length;
+            this.isSelectedCaseList = !this.isSelectedCaseList;
+            this.checkedRowsCaseList = [];
+            for (let i = 0; i < length; i++) {
+                this.dataCaseList[i].selected = this.isSelectedCaseList;
+                if (this.isSelectedCaseList) {
+                    this.checkedRowsCaseList.push(this.dataCaseList[i].field);
+                }
+            }
+        },
+        /**
+         * Unassign the selected columns from custm list
+         */
+        unassignSelected() {
+            let temp;
+            let length = this.checkedRowsCaseList.length;
+            for (let i = 0; i < length; i++) {
+                temp = this.dataCaseList.find(
+                    (x) => x.field === this.checkedRowsCaseList[i]
+                );
+                temp["set"] = false;
+                this.data.push(temp);
+                this.dataCaseList = this.dataCaseList.filter((item) => {
+                    return item.field != this.checkedRowsCaseList[i];
+                });
+            }
+            this.checkedRowsCaseList = [];
+        },
+        /**
+         *  Unassign all columns from custom list
+         */
+        unassignAll() {
+            this.data = [...this.data, ...this.dataCaseList];
+              this.data.forEach(function (element) {
+                element.set = false;
+            });
+            this.dataCaseList = [];
+        },
+        /**
+         * Assign the selected row to custom list
+         */
+        assignSelected() {
+            let temp;
+            let length = this.checkedRows.length;
+            for (let i = 0; i < length; i++) {
+                temp = this.data.find((x) => x.field === this.checkedRows[i]);
+                temp["set"] = true;
+                this.dataCaseList.push(temp);
+                this.data = this.data.filter((item) => {
+                    return item.field != this.checkedRows[i];
+                });
+            }
+            this.checkedRows = [];
+        },
+        /**
+         * Assign all columns to custom list
+         */
+        assignAll() {
+            this.dataCaseList = [...this.dataCaseList, ...this.data];
+            this.dataCaseList.forEach(function (element) {
+                element.set = true;
+            });
+            this.data = [];
+        },
+        /**
+         * On select icon handler
+         */
         onSelectIcon(data) {
-            console.log(data);
-            // this.params.iconList = data;
+            this.params.iconList = data;
         },
+        /**
+         * On change color handler
+         */
         onChangeColor(color) {
-            console.log(color);
-            this.menuColor = color;
+            this.params.iconColor = color;
         },
+        /**
+         * On change color screen handler
+         */
+        onChangeColorScreen(color) {
+            this.params.iconColorScreen = color;
+        },
+        /**
+         * On Cancel event handler
+         */
         onCancel() {
             this.$emit("closeSketch");
-        },
-        onChange(e) {
-            console.log(e);
         },
         /**
          * Find asynchronously in the server
@@ -273,28 +504,131 @@ export default {
             let self = this;
             this.isLoading = true;
             self.processes = [];
-            api.filters
-                .processList(query)
-                .then((response) => {
-                    self.processes = [];
-                    _.forEach(response.data, function(elem, key) {
-                        self.pmTablesOptions.push({
-                            label: elem.PRO_TITLE,
-                            value: elem.PRO_ID,
-                        });
+            self.pmTablesOptions = [];
+            Api.reportTables({
+                search: query,
+            })
+            .then((response) => {
+                self.processes = [];
+                _.forEach(response.data, function(elem, key) {
+                    self.pmTablesOptions.push({
+                        label: elem.name,
+                        value: elem.uid,
+                        fields: elem.fields,
                     });
-                    this.isLoading = false;
+                });
+
+                this.isLoading = false;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        },
+        /**
+         * On select event handler in multiselect component
+         * @param {object} option
+         */
+        onSelect(option) {
+            this.checkedRows = [];
+            this.data = option.fields;
+            this.dataCaseList = this.defaultCaseList;
+        },
+        /**
+         * On remove row event handler
+         * @param {object} row
+         */
+        onRemoveRow(row) {
+            var temp = this.dataCaseList.find((x) => x.field === row.field);
+            if (temp) {
+                temp["set"] = false;
+                this.data.push(temp);
+                this.dataCaseList = this.dataCaseList.filter((item) => {
+                    return item.field != row.field;
+                });
+            }
+        },
+        /**
+         * On remove row event handler
+         * @param {object} row
+         */
+        onAddRow(row) {
+            var temp = this.data.find((x) => x.field === row.field);
+            if (temp) {
+                temp["set"] = true;
+                this.dataCaseList.push(temp);
+                this.data = this.data.filter((item) => {
+                    return item.field != row.field;
+                });
+            }
+        },
+        /**
+         * On submit event handler
+         */
+        onSubmit() {
+            this.isValidName = true;
+            this.isValidTable = true;
+            if (!this.params.name) {
+                this.isValidName = false;
+                return;
+            }
+            if (!this.pmTable) {
+                this.isValidTable = false;
+                return;
+            }
+            this.params.tableUid = this.pmTable.value;
+            this.params.columns = [...this.preparePostColumns(this.dataCaseList), ...this.preparePostColumns(this.data)];
+            this.params.type = this.module.key;
+            this.params.userId = window.config.userId;
+            if (this.params.id) {
+                delete this.params["tableName"];
+                Api.updateCaseList(this.params)
+                .then((response) => {
+                    this.$emit("closeSketch");
+                
                 })
-                .catch((e) => {
+                .catch((err) => {
                     console.error(err);
                 });
+            } else {
+                Api.createCaseList(this.params)
+                .then((response) => {
+                    this.$emit("closeSketch");
+                
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            }
         },
+        /**
+         * Prepares columns data to be sended to the server
+         * @param {array} collection
+         */
+        preparePostColumns(collection){
+            let temp = [];
+            collection.forEach(function (value) {
+                temp.push({
+                    field: value.field,
+                    enableFilter: value.enableFilter || false,
+                    set: value.set || false
+                })  
+            });
+            return temp;
+        },
+        /**
+         * Tongle filter switcher
+         * @param {string} field
+         */
+        onTongleFilter(field){
+            let objIndex = this.dataCaseList.findIndex((obj => obj.field === field));
+            this.dataCaseList[objIndex].enableFilter = !this.dataCaseList[objIndex].enableFilter
+        }  
     },
 };
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
-<style scoped>
+<style>
 .verte {
     position: relative;
     display: flex;
@@ -316,5 +650,12 @@ export default {
 .vertical-center > button {
     width: 70%;
     margin: 5px;
+}
+.invalid .multiselect__tags {
+    border-color: #f04124;
+}
+
+.invalid .typo__label {
+    color: #f04124;
 }
 </style>
