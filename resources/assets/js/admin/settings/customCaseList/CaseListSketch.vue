@@ -237,17 +237,37 @@
                                         :checked="props.row.selected"
                                         :value="props.row.field"
                                     />
-                                    <b-form-checkbox 
-                                        slot="enableFilter"
-                                        slot-scope="props"
-                                        v-model="enabledFilterRows"
-                                        @change="onTongleFilter(props.row.field)" 
-                                        name="check-button" 
-                                        :checked="props.row.enableFilter"
-                                        :value="props.row.field"
-                                        switch
-                                    >
-                                    </b-form-checkbox>
+                                    <div slot="enableFilter" slot-scope="props">
+                                    <b-row>
+                                        <b-col>
+                                            <i
+                                                ref="iconClose"
+                                                class="fas fa-info-circle"
+                                                :id="`popover-1-${props.row.field}`"
+                                            ></i>
+                                            <b-popover
+                                                :target="`popover-1-${props.row.field}`"
+                                                placement="top"
+                                                triggers="hover focus"
+                                                :content="searchInfoContent(props.row)"
+                                            ></b-popover>
+                                        </b-col>
+                                        <b-col>
+                                            <b-form-checkbox 
+                                            v-model="enabledFilterRows"
+                                            @change="onTongleFilter(props.row.field)" 
+                                            name="check-button" 
+                                            :checked="props.row.enableFilter"
+                                            :value="props.row.field"
+                                            switch
+                                        >
+                                        </b-form-checkbox>
+                                        </b-col>
+                                    </b-row>
+                                        
+                                        
+                                    </div>
+                                   
 
                                     <div slot="action" slot-scope="props">
                                         <b-button
@@ -339,8 +359,8 @@ export default {
                     name: this.$i18n.t("ID_NAME"),
                     field: this.$i18n.t("ID_FIELD"),
                     type: this.$i18n.t("ID_TYPE"),
-                    typeOfSearching: this.$i18n.t("ID_TYPE_OF_SEARCHING"),
-                    enableSearchFilter: this.$i18n.t("ID_ENABLE_SEARCH_FILTER"),
+                    typeSearch: this.$i18n.t("ID_TYPE_OF_SEARCHING"),
+                    enableFilter: this.$i18n.t("ID_ENABLE_SEARCH_FILTER"),
                     action: "",
                 },
                 filterable: false,
@@ -371,6 +391,29 @@ export default {
 
     },
     methods: {
+        /**
+         * Prepare search popover info
+         * @param {object} row
+         * @returns {string}
+         */
+        searchInfoContent(row) {
+            let info = this.$i18n.t("ID_THE_SEARCH_WILL_BE_FROM");
+            switch (row.type) {
+                case 'integer':
+                    info += " " + this.$i18n.t("ID_A_RANGE_OF_VALUES");
+                    break;
+                case 'string':
+                    info += " " + this.$i18n.t("ID_A_TEXT_SEARCH");
+                    break;
+                case 'date':
+                    info += " " + this.$i18n.t("ID_DATE_TO_DATE");
+                    break;    
+                default:
+                    info = this.$i18n.t("ID_NO_SEARCHING_METHOD");
+            }
+            return  info;
+        },
+       
         /**
          * Edit mode handler
          * prepare the datato be rendered
@@ -584,9 +627,9 @@ export default {
                 Api.updateCaseList(this.params)
                 .then((response) => {
                     this.$emit("closeSketch");
-                
                 })
                 .catch((err) => {
+                    this.makeToast('danger', this.$i18n.t('ID_ERROR'), err.response.statusText);
                     console.error(err);
                 });
             } else {
@@ -596,6 +639,7 @@ export default {
                 
                 })
                 .catch((err) => {
+                    this.makeToast('danger',this.$i18n.t('ID_ERROR') ,err.response.statusText);
                     console.error(err);
                 });
             }
@@ -622,7 +666,20 @@ export default {
         onTongleFilter(field){
             let objIndex = this.dataCaseList.findIndex((obj => obj.field === field));
             this.dataCaseList[objIndex].enableFilter = !this.dataCaseList[objIndex].enableFilter
-        }  
+        },
+        /**
+         * Make the toast component
+         * @param {string} variant
+         * @param {string} title
+         * @param {string} message
+         */
+        makeToast(variant = null, title, message) {
+            this.$bvToast.toast(message, {
+            title: `${title || variant}`,
+            variant: variant,
+            solid: true
+            })
+        }
     },
 };
 </script>

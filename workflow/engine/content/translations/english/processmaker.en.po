@@ -1694,6 +1694,18 @@ msgid "3 days at least"
 msgstr "3 days at least"
 
 # TRANSLATION
+# LABEL/ID_A_RANGE_OF_VALUES
+#: LABEL/ID_A_RANGE_OF_VALUES
+msgid "a range of values"
+msgstr "a range of values"
+
+# TRANSLATION
+# LABEL/ID_A_TEXT_SEARCH
+#: LABEL/ID_A_TEXT_SEARCH
+msgid "a Text Search"
+msgstr "a Text Search"
+
+# TRANSLATION
 # LABEL/ID_ABE_ANSWER_SUBMITTED
 #: LABEL/ID_ABE_ANSWER_SUBMITTED
 msgid "The answer has been submitted. Thank you."
@@ -5818,6 +5830,13 @@ msgstr "The value '{0}' is not a valid date for the format '{1}'."
 #: LABEL/ID_DATE_UPDATED    
 msgid "Date Created"
 msgstr "Date Created"
+
+
+# TRANSLATION
+# LABEL/ID_DATE_TO_DATE
+#: LABEL/ID_DATE_TO_DATE    
+msgid "Date to Date"
+msgstr "Date to Date"
 
 # TRANSLATION
 # LABEL/ID_DAY
@@ -20316,6 +20335,12 @@ msgid "No"
 msgstr "No"
 
 # TRANSLATION
+# LABEL/ID_NO_SEARCHING_METHOD
+#: LABEL/ID_NO_SEARCHING_METHOD
+msgid "No searching method"
+msgstr "No searching method"
+
+# TRANSLATION
 # LABEL/ID_NODELETEOPTIONALL
 #: LABEL/ID_NODELETEOPTIONALL
 msgid "You must add all the days that you have selected in work days, otherwise you should leave at least an \"-- ALL --\" option."
@@ -26308,6 +26333,12 @@ msgstr "Please complete the reassign reason."
 #: LABEL/ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES
 msgid "The report table is regenerating please come back in a few minutes."
 msgstr "The report table is regenerating please come back in a few minutes."
+
+# TRANSLATION
+# LABEL/ID_THE_SEARCH_WILL_BE_FROM
+#: LABEL/ID_THE_SEARCH_WILL_BE_FROM
+msgid "The search will be from"
+msgstr "The search will be from"
 
 # TRANSLATION
 # LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
