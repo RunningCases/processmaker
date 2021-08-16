@@ -3325,6 +3325,8 @@ class WorkspaceTools
      */
     public function checkRbacPermissions()
     {
+        CLI::logging("-> Remove the permissions depreacated in RBAC \n");
+        $this->removePermission();
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
         $RBAC = RBAC::getSingleton();
@@ -4077,6 +4079,26 @@ class WorkspaceTools
         BasePeer::doUpdate($criteria, $criteriaSet, $con);
 
         CLI::logging("   Migrating Self-Service by Value Cases Done \n");
+    }
+
+    /**
+     * Remove the permissions deprecated
+     */
+    public function removePermission()
+    {
+        // Initializing
+        $this->initPropel(true);
+        $con = Propel::getConnection(RbacUsersPeer::DATABASE_NAME);
+        // Remove the permission PM_SETUP_HEART_BEAT
+        CLI::logging("->   Remove permission PM_SETUP_HEART_BEAT \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("DELETE FROM RBAC_ROLES_PERMISSIONS WHERE PER_UID = '00000000000000000000000000000025'");
+        $con->commit();
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("DELETE FROM RBAC_PERMISSIONS WHERE PER_UID = '00000000000000000000000000000025'");
+        $con->commit();
     }
 
     /**
