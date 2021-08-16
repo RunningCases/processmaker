@@ -9,9 +9,13 @@
     </div>
     <modal-new-request ref="newRequest"></modal-new-request>
     <div class="d-inline-flex p-2">
-      <vue-charts @onChangeLevel="changeLevel" />
+      <vue-charts
+        ref="pm-vue-chart"
+        @onChangeLevel="changeLevel"
+        :level="level"
+      />
       <div class="vp-6"></div>
-      <drill-down :level="level" />
+      <drill-down :level="level" @onChangeLevel="updateVueChart" />
     </div>
   </div>
 </template>
@@ -48,6 +52,9 @@ export default {
   methods: {
     changeLevel(lv) {
       this.level = lv;
+    },
+    updateVueChart(lv) {
+      this.$refs["pm-vue-chart"].onChangeLevel(lv);
     },
   },
 };

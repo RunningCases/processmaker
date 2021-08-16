@@ -2,6 +2,10 @@
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
       <h6 class="v-search-title">Number of tasks per Task Status</h6>
+      <BreadCrumb
+        :options="breadCrumbs.data"
+        :settings="breadCrumbs.settings"
+      />
       <apexchart
         v-show="typeView === 'donut'"
         ref="apexchart1"
@@ -46,11 +50,12 @@
 <script>
 import _ from "lodash";
 import Api from "../../api/index";
+import BreadCrumb from "./../../components/utils/BreadCrumb.vue";
 export default {
   name: "VueChartLvZero",
   mixins: [],
-  components: {},
-  props: [],
+  components: { BreadCrumb },
+  props: ["breadCrumbs"],
   data() {
     let that = this;
     return {
@@ -161,7 +166,7 @@ export default {
      * Return the height for Vue Card View body
      */
     getBodyHeight() {
-      this.width = window.innerHeight * 0.9;
+      this.width = window.innerHeight * 0.8;
     },
     /**
      * Change view - donut/bar

@@ -3,7 +3,10 @@
     <div class="p-1 v-flex">
       <h6 class="v-search-title">Number of Tasks Status per Process</h6>
       <div>
-        <BreadCrumb :options="dataBreadCrumbs(data)" />
+        <BreadCrumb
+          :options="breadCrumbs.data"
+          :settings="breadCrumbs.settings"
+        />
         <ProcessPopover
           :options="optionsProcesses"
           target="pm-task-process"
@@ -26,7 +29,12 @@
           $t("ID_MAFE_a4ffdcf0dc1f31b9acaf295d75b51d00")
         }}</label>
         <div class="vp-inline-block">
-          <b-form-checkbox v-model="top" name="check-button" switch>
+          <b-form-checkbox
+            v-model="top"
+            name="check-button"
+            @change="changeOption"
+            switch
+          >
           </b-form-checkbox>
         </div>
         <div class="vp-inline-block vp-right vp-padding-r40">
@@ -64,7 +72,7 @@ export default {
     BreadCrumb,
     ProcessPopover,
   },
-  props: ["data"],
+  props: ["data", "breadCrumbs"],
   data() {
     let that = this;
     return {
@@ -93,7 +101,6 @@ export default {
           events: {
             legendClick: function (chartContext, seriesIndex, config) {
               that.currentSelection = that.totalCases[seriesIndex];
-              console.log("LEGENDDDDDDDDDDDDD");
               that.$emit("updateDataLevel", {
                 id: that.currentSelection["PRO_ID"],
                 name: that.currentSelection["PRO_TITLE"],
@@ -217,7 +224,6 @@ export default {
       //Update the labels
       this.dataProcesses = data;
       this.updateLabels(data);
-      console.log("aaaaaaaaaaaaaaaaa aaaaaaa");
     },
     /**
      * Change the options in TOTAL CASES BY PROCESS
@@ -230,6 +236,7 @@ export default {
           category: option.id,
           caseList: this.data[0].id.toLowerCase(),
           processes: this.selectedProcesses,
+          top: this.top,
         };
         Api.process
           .totalCasesByProcess(dt)
@@ -257,34 +264,14 @@ export default {
         serie.push(el["TOTAL"]);
         labels.push(el["PRO_TITLE"]);
       });
-      
+
       this.$refs["LevelOneChart"].updateOptions({ labels: labels });
-      
+
       this.$apexcharts.exec("LevelOneChart", "updateSeries", [
         {
           data: serie,
         },
       ]);
-    },
-    dataBreadCrumbs(options) {
-      let res = [],
-        that = this;
-      res.push({
-        label: "Start",
-        onClick() {
-          console.log("STARTTTTTTTTTT");
-          that.$emit("onChangeLevel", 0);
-        },
-      });
-      _.each(options, (el) => {
-        res.push({
-          label: el.id,
-          onClick() {
-            that.$emit("onChangeLevel", el.level);
-          },
-        });
-      });
-      return res;
     },
     /**
      * Update list processes in chart
@@ -316,7 +303,14 @@ export default {
       });
       this.$refs["LevelOneChart"].updateOptions({ labels: labels });
     },
-    
+    /**
+     * Force update view when update level
+     */
+    forceUpdateView() {
+      this.changeOption({
+        id: 0,
+      });
+    },
   },
 };
 </script>

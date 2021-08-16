@@ -27,5 +27,13 @@ export let process = {
             data: {},
             keys: {}
         });
-    }
+    },
+    totalCasesByRange(dt) {
+      return Api.get({
+          service: "TOTAL_CASES_BY_RANGE",
+          method: "get",
+          params: dt,
+          keys: {}
+      });
+  }
 };

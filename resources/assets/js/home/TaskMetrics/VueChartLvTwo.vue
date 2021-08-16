@@ -3,25 +3,53 @@
     <div class="p-1 v-flex">
       <h6 class="v-search-title">Number of Tasks Status per Process</h6>
       <div>
-        <BreadCrumb :options="dataBreadCrumbs(data)" />
+        <BreadCrumb
+          :options="breadCrumbs.data"
+          :settings="breadCrumbs.settings"
+        />
         <div class="vp-width-p30 vp-inline-block">
-          <b-form-datepicker id="date-from" size="sm"></b-form-datepicker>
+          <b-form-datepicker
+            id="date-from"
+            :date-format-options="{
+              year: '2-digit',
+              month: '2-digit',
+              day: '2-digit',
+            }"
+            size="sm"
+            :placeholder="$t('ID_DELEGATE_DATE_FROM')"
+            v-model="dateFrom"
+            @input="changeOption"
+          ></b-form-datepicker>
         </div>
         <div class="vp-width-p30 vp-inline-block">
-          <b-form-datepicker id="date-to" size="sm"></b-form-datepicker>
+          <b-form-datepicker
+            id="date-to"
+            size="sm"
+            :date-format-options="{
+              year: '2-digit',
+              month: '2-digit',
+              day: '2-digit',
+            }"
+            :placeholder="$t('ID_DELEGATE_DATE_TO')"
+            v-model="dateTo"
+            @input="changeOption"
+          ></b-form-datepicker>
         </div>
         <div class="vp-inline-block">
-          <b-button-group size="sm">
-            <b-button variant="outline-secondary">{{ $t("ID_DAY") }}</b-button>
-            <b-button variant="outline-secondary">{{
-              $t("ID_MONTH")
-            }}</b-button>
-            <b-button variant="outline-secondary">{{ $t("ID_YEAR") }}</b-button>
-          </b-button-group>
+          <b-form-radio-group
+            id="btn-radios"
+            v-model="period"
+            :options="periodOptions"
+            button-variant="outline-secondary"
+            size="sm"
+            name="radio-btn-outline"
+            buttons
+            @change="changeOption"
+          ></b-form-radio-group>
         </div>
       </div>
       <apexchart
-        ref="apexchart1"
+        ref="LevelTwoChart"
         :width="width"
         :options="options"
         :series="series"
@@ -35,108 +63,62 @@ import _ from "lodash";
 import Api from "../../api/index";
 import Multiselect from "vue-multiselect";
 import BreadCrumb from "../../components/utils/BreadCrumb.vue";
-
+import moment from "moment";
 export default {
-  name: "VueChartLvOne",
+  name: "VueChartLvTwo",
   mixins: [],
   components: {
     Multiselect,
     BreadCrumb,
   },
-  props: ["data"],
+  props: ["data", "breadCrumbs"],
   data() {
     let that = this;
     return {
-      category: null,
-      optionsCategory: [],
-      top: false,
+      dateFrom: "",
+      dateTo: "",
+      period: "",
+      periodOptions: [
+        { text: this.$t("ID_DAY"), value: "day" },
+        { text: this.$t("ID_MONTH"), value: "month" },
+        { text: this.$t("ID_YEAR"), value: "year" },
+      ],
+      dataCasesByRange: [],
       width: 0,
-
       series: [
         {
-          name: "TEAM 1",
-          data: this.generateDayWiseTimeSeries(
-            new Date("11/02/2017").getTime(),
-            20,
-            {
-              min: 10,
-              max: 60,
-            }
-          ),
-        },
-        {
-          name: "TEAM 2",
-          data: this.generateDayWiseTimeSeries(
-            new Date("11 Feb 2017 GMT").getTime(),
-            20,
-            {
-              min: 10,
-              max: 60,
-            }
-          ),
-        },
-        {
-          name: "TEAM 3",
-          data: this.generateDayWiseTimeSeries(
-            new Date("11 Feb 2017 GMT").getTime(),
-            30,
-            {
-              min: 10,
-              max: 60,
-            }
-          ),
-        },
-        {
-          name: "TEAM 4",
-          data: this.generateDayWiseTimeSeries(
-            new Date("11 Feb 2017 GMT").getTime(),
-            10,
-            {
-              min: 10,
-              max: 60,
-            }
-          ),
-        },
-        {
-          name: "TEAM 5",
-          data: this.generateDayWiseTimeSeries(
-            new Date("11 Feb 2017 GMT").getTime(),
-            30,
-            {
-              min: 10,
-              max: 60,
-            }
-          ),
+          name: "Process",
+          data: [],
         },
       ],
       options: {
         chart: {
-          height: 350,
-          type: "scatter",
+          type: "area",
           zoom: {
-            type: "xy",
+            enabled: false,
           },
+          id: "LevelTwoChart",
         },
         dataLabels: {
-          enabled: false,
+          enabled: true,
         },
-        grid: {
-          xaxis: {
-            lines: {
-              show: true,
-            },
-          },
-          yaxis: {
-            lines: {
-              show: true,
-            },
-          },
+        stroke: {
+          curve: "straight",
         },
+
+        title: {
+          text: "",
+          align: "left",
+        },
+        labels: [],
         xaxis: {
           type: "datetime",
         },
         yaxis: {
-          max: 70,
+          opposite: false,
+        },
+        legend: {
+          horizontalAlign: "left",
         },
       },
     };
@@ -144,9 +126,6 @@ export default {
   created() {},
   mounted() {
     this.getBodyHeight();
-    this.getCategories();
-    //this.getDataDonut();
-    //this.getData();
   },
   watch: {},
   computed: {},
@@ -160,123 +139,56 @@ export default {
       this.width = window.innerHeight;
     },
     /**
-     * Change view - donut/bar
+     * Change datepickers or radio button
      */
-    changeView(view) {
-      this.typeView = view;
-      this.getData();
+    changeOption() {
+      let that = this,
+        dt;
+      if (this.dateFrom && this.dateTo && this.period) {
+        dt = {
+          processId: this.data[1].id,
+          caseList: this.data[0].id.toLowerCase(),
+          dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
+          dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
+          groupBy: this.period,
+        };
+        Api.process
+          .totalCasesByRange(dt)
+          .then((response) => {
+            that.formatDataRange(response.data);
+          })
+          .catch((e) => {
+            console.error(err);
+          });
+      }
     },
     /**
-     * Get data from rest API
+     * Format response fromn API
      */
-    getData() {
-      let that = this;
-      Api.cases
-        .listTotalCases()
-        .then((response) => {
-          that.formatData(response.data);
-        })
-        .catch((response) => {});
-    },
-    /**
-     * Format the data for chart
-     */
-    formatData(data) {
-      let l = [],
-        c = [],
-        s = [];
+    formatDataRange(data) {
+      let labels = [],
+        serie = [];
+
+      this.dataCasesByRange = data;
       _.each(data, (el) => {
-        l.push(el["List Name"]);
-        s.push(el["Total"]);
-        if (el["Color"] == "green") {
-          c.push("#179a6e");
-        }
-        if (el["Color"] == "yellow") {
-          c.push("#feb019");
-        }
-        if (el["Color"] == "blue") {
-          c.push("#008ffb");
-        }
-        if (el["Color"] == "gray") {
-          c.push("#8f99a0");
-        }
+        serie.push(el["TOTAL"]);
+        labels.push(el["dateGroup"]);
       });
-      this.seriesDonut = s;
-      this.seriesBar = [
-        {
-          data: s,
+      console.log("DRWAWWW");
+      this.$refs["LevelTwoChart"].updateOptions({
+        labels: labels,
+        title: {
+          text: this.data[0]["PRO_TITLE"],
+          align: "left",
         },
-      ];
-      this.$refs["apexchart1"].updateOptions({ labels: l, colors: c });
-      this.$refs["apexchart2"].updateOptions({ labels: l, colors: c });
-      this.$apexcharts.exec("apexchart1", "updateSeries", s);
-      this.$apexcharts.exec("apexchart2", "updateSeries", [
+      });
+      this.$apexcharts.exec("LevelTwoChart", "updateSeries", [
         {
-          data: s,
+          name: this.data[0]["PRO_TITLE"],
+          data: serie,
         },
       ]);
     },
-    getCategories() {
-      let that = this;
-      console.log("jonas");
-      Api.filters
-        .categories()
-        .then((response) => {
-          that.formatDataCategories(response.data);
-        })
-        .catch((e) => {
-          console.error(err);
-        });
-    },
-    formatDataCategories(data) {
-      let array = [];
-      _.each(data, (el) => {
-        array.push({ name: el["CATEGORY_NAME"], id: el["CATEGORY_ID"] });
-      });
-      this.optionsCategory = array;
-      this.category = array[0];
-    },
-    changeOption(option) {
-      console.log("asda sdas d");
-      let dt = {
-        category: option.id,
-        caseList:
-          this.data && this.data.dataLv0
-            ? this.data.dataLv0["List Name"].toLowerCase()
-            : "inbox",
-      };
-
-      Api.process
-        .processTotalCases(dt)
-        .then((response) => {
-          console.log("asda sdas d11111111111111");
-          console.log(response);
-        })
-        .catch((e) => {
-          console.error(err);
-        });
-    },
-    dataBreadCrumbs(options) {
-      let res = [],
-        that = this;
-      res.push({
-        label: "Start",
-        onClick() {
-          console.log("STARTTTTTTTTTT");
-          that.$emit("onChangeLevel", 0);
-        },
-      });
-      _.each(options, (el) => {
-        res.push({
-          label: el.name,
-          onClick() {
-            that.$emit("onChangeLevel", el.level);
-          },
-        });
-      });
-      return res;
-    },
-
     generateDayWiseTimeSeries(baseval, count, yrange) {
       var i = 0;
       var series = [];

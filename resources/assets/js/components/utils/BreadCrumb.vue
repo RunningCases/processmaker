@@ -1,6 +1,6 @@
 <template>
   <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+    <ol class="vp-breadcrumb">
       <li
         v-for="item in formatOptions(options)"
         :key="item.label"
@@ -14,6 +14,15 @@
           >{{ item.label }}</a
         >
       </li>
+      <div
+        v-for="item in settings"
+        :key="item.id"
+        class="vp-bread-crumbs-settings vp-float-right vp-inline-block"
+      >
+        <span @click="item.onClick">
+          <i :class="formatClass(item)"></i>
+        </span>
+      </div>
     </ol>
   </nav>
 </template>
@@ -22,7 +31,7 @@
 import _ from "lodash";
 export default {
   name: "BreadCrumb",
-  props: ["options"],
+  props: ["options", "settings"],
   data() {
     return {};
   },
@@ -37,17 +46,42 @@ export default {
           options[i].classObject = {
             "breadcrumb-item": true,
             active: true,
+            "vp-inline-block": true,
           };
         } else {
           options[i].classObject = {
             "breadcrumb-item": true,
             active: false,
+            "vp-inline-block": true,
           };
         }
       }
-      console.log("aquii");
       return options;
+    },
+    formatClass(item) {
+      return item.class;
     },
   },
 };
 </script>
+<style scoped>
+.vp-float-right {
+  float: right;
+}
+
+.vp-bread-crumbs-settings {
+  line-height: 20px;
+}
+
+.vp-breadcrumb {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  list-style: none;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+}
+
+.vp-inline-block {
+  display: inline-block;
+}
+</style>

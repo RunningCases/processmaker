@@ -70,6 +70,7 @@
     DEBUG_STATUS: "/home/process-debug-status?processUid={prj_uid}",
     LIST_TOTAL_CASES: "/metrics/list-total-cases",
     TOTAL_CASES_BY_PROCESS:"/metrics/total-cases-by-process",
+    TOTAL_CASES_BY_RANGE:"/metrics/process-total-cases",
     CONFIG: "/home/config",
     GET_CONFIG: "/home/config/{id}/{name}",
     PAUSE_CASE: "/cases/{app_uid}/pause",
