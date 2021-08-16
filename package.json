@@ -20,10 +20,10 @@
     "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
-    "apexcharts": "^3.27.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/vue-fontawesome": "^2.0.2",
+    "apexcharts": "^3.27.3",
     "axios": "^0.15.3",
     "bootstrap": "^4.5.3",
     "bootstrap-colorpicker": "^3.0.3",
@@ -38,6 +38,7 @@
     "idempotent-babel-polyfill": "^7.4.4",
     "jquery": "^3.1.1",
     "lodash": "^4.17.20",
+    "moment": "^2.29.1",
     "muuri": "^0.7.1",
     "npm-font-open-sans": "^1.1.0",
     "popper.js": "^1.12",
