@@ -73,7 +73,7 @@ class Metrics extends Api
     /**
      * Get total cases by range
      * 
-     * @url /process-total-cases
+     * @url GET /process-total-cases
      * 
      * @param string $caseList
      * @param int $processId
@@ -89,6 +89,7 @@ class Metrics extends Api
      */
     public function getTotalCasesByRange($caseList, $processId = null, $dateFrom = null, $dateTo = null, $groupBy = 'day')
     {
+        $usrId = $this->getUserId();
         try {
             switch ($caseList) {
                 case 'inbox':
@@ -104,6 +105,7 @@ class Metrics extends Api
                     $list = new Unassigned();
                     break;
             }
+            $list->setUserId($usrId);
             $result = $list->getCountersByRange($processId, $dateFrom, $dateTo, $groupBy);
             return $result;
         } catch (Exception $e) {
