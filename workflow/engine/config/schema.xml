@@ -3815,7 +3815,7 @@
         <column name="ACT_INSTANTIATE" type="TINYINT" required="false" default="0"/>
         <column name="ACT_SCRIPT_TYPE" type="VARCHAR" size="255" required="false"/>
         <column name="ACT_SCRIPT" type="LONGVARCHAR" required="false"/>
-        <column name="ACT_LOOP_TYPE" type="VARCHAR" size="20" required="true" default="NONE"/>
+        <column name="ACT_LOOP_TYPE" type="VARCHAR" size="20" required="true" default="EMPTY"/>
         <column name="ACT_TEST_BEFORE" type="TINYINT" required="false" default="0"/>
         <column name="ACT_LOOP_MAXIMUM" type="INTEGER" required="false" default="0"/>
         <column name="ACT_LOOP_CONDITION" type="VARCHAR" size="100" required="false"/>
