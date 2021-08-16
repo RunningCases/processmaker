@@ -1,6 +1,7 @@
 <template>
 <div id="people">
     <ModalDeleteCaseList ref="modal-delete-list"></ModalDeleteCaseList>
+    <ModalPreview ref="modal-preview"></ModalPreview>
     <button-fleft :data="newList"></button-fleft>
     <button-fleft :data="importList"></button-fleft>
     <v-server-table 
@@ -16,11 +17,9 @@
         </div>
         <div slot="owner" slot-scope="props">
                 <OwnerCell :data="props.row.owner" />
-            </div>
+        </div>
     </v-server-table>
 </div>
-
-
 </template>
 <script>
 import Api from "./Api/CaseList";
@@ -29,6 +28,7 @@ import Ellipsis from "../../../components/utils/ellipsis.vue";
 import utils from "../../../utils/utils";
 import OwnerCell from "../../../components/vuetable/OwnerCell";
 import ModalDeleteCaseList from "./../../Modals/ModalDeleteCaseList.vue";
+import ModalPreview from "./../../Modals/ModalPreview.vue";
 import download from "downloadjs";
 
 export default {
@@ -38,7 +38,8 @@ export default {
         ButtonFleft,
         Ellipsis,
         OwnerCell,
-        ModalDeleteCaseList
+        ModalDeleteCaseList,
+        ModalPreview,
     },
     data() {
         return {
@@ -105,7 +106,8 @@ export default {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
            
-            }
+            },
+            customColumns: [],
         };
     },
     methods: {
@@ -184,8 +186,33 @@ export default {
             this.$refs["modal-delete-list"].data = data;
             this.$refs["modal-delete-list"].show();
         },
+        /**
+         * Show modal preview
+         * @param {object} data
+         */
         showPreview(data) {
-
+            this.$refs["modal-preview"].columns = this.getColumns(data);
+            this.$refs["modal-preview"].type = data.type;
+            this.$refs["modal-preview"].show();
+        },
+        /**
+         * Get columns to show in the preview
+         * @param {Object} data
+         * @returns {Array} columns
+         */
+        getColumns(data) {
+            var columns = [],
+                auxColumn,
+                i;
+            for (i = 0; i < data.columns.length; i += 1) {
+                auxColumn = data.columns[i];
+                if (auxColumn.set) {
+                    columns.push(auxColumn.field);
+                }
+            }
+            columns.push('actions');
+            columns.unshift('detail');
+            return columns
         },
         editCustomCaseList(data) {
             this.$emit("showSketch", {
@@ -212,49 +239,49 @@ export default {
             download(JSON.stringify(data), fileName + ".json", typeMime);
         },
         /**
-     * Show options in the ellipsis 
-     * @param {objec} data
-     */
-    updateDataEllipsis(data) {
-        let that = this;
-        this.showEllipsis = !this.showEllipsis;
-        if (this.showEllipsis) {
-          this.dataEllipsis = {
-            buttons: {
-              open: {
-                name: "delete",
-                icon: "far fa-trash-alt",
-                color: "red",
-                fn: function() {
-                  that.showModalDelete(data);
+        * Show options in the ellipsis 
+        * @param {objec} data
+        */
+        updateDataEllipsis(data) {
+            let that = this;
+            this.showEllipsis = !this.showEllipsis;
+            if (this.showEllipsis) {
+                this.dataEllipsis = {
+                    buttons: {
+                        open: {
+                            name: "delete",
+                            icon: "far fa-trash-alt",
+                            color: "red",
+                            fn: function() {
+                                that.showModalDelete(data);
+                            }
+                        },
+                        note: {
+                            name: "edit",
+                            icon: "far fa-edit",
+                            fn: function() {
+                                that.editCustomCaseList(data);
+                            }
+                        },
+                        reassign: {
+                            name: "download",
+                            icon: "fas fa-arrow-circle-down",
+                            fn: function() {
+                                that.downloadCaseList(data);
+                            }
+                        },
+                        pause: {
+                            name: "preview",
+                            icon: "fas fa-tv",
+                            color: "green",
+                            fn: function() {
+                                that.showPreview(data);
+                            }
+                        }
+                    }
                 }
-              },
-              note: {
-                name: "edit",
-                icon: "far fa-edit",
-                fn: function() {
-                  that.editCustomCaseList(data);
-                }
-              },
-              reassign: {
-                name: "download",
-                icon: "fas fa-arrow-circle-down",
-                fn: function() {
-                  that.downloadCaseList(data);
-                }
-              },
-              pause: {
-                name: "preview",
-                icon: "fas fa-tv",
-                color: "green",
-                fn: function() {
-                  that.showPreview(data);
-                }
-              }
             }
-          }
-        }
-      },
+        },
     }
 };
 </script>
