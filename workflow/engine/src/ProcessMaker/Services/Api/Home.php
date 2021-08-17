@@ -637,7 +637,7 @@ class Home extends Api
      * Get the search cases
      *
      * @url GET /:appNumber/pending-tasks
-     *  
+     * 
      * @param int $appNumber
      *
      * @return array
