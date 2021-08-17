@@ -17,6 +17,13 @@
       v-show="level === 2"
       :data="data"
       @onChangeLevel="onChangeLevel"
+      @updateDataLevel="updateDataLevel"
+      :breadCrumbs="dataBreadCrumbs()"
+    />
+    <vue-chart-lv-three
+      v-show="level === 3"
+      :data="data"
+      @onChangeLevel="onChangeLevel"
       :breadCrumbs="dataBreadCrumbs()"
     />
   </div>
@@ -26,6 +33,7 @@
 import VueChartLvZero from "./VueChartLvZero.vue";
 import VueChartLvOne from "./VueChartLvOne.vue";
 import VueChartLvTwo from "./VueChartLvTwo.vue";
+import VueChartLvThree from "./VueChartLvThree.vue";
 
 export default {
   name: "VueCharts",
@@ -34,6 +42,7 @@ export default {
     VueChartLvZero,
     VueChartLvOne,
     VueChartLvTwo,
+    VueChartLvThree,
   },
   props: [],
   data() {
