@@ -1,6 +1,6 @@
 <template>
     <span
-        :id="data.id"
+        :id="`label-${data.id}`"
         @mouseover="hoverHandler"
         v-b-tooltip.hover
         :title="labelTooltip"
@@ -8,7 +8,7 @@
     >
         {{ data.title }}
     <b-tooltip
-        :target="data.id"
+        :target="`label-${data.id}`"
         triggers="hoverHandler"
         :show.sync="show"
     >
@@ -38,6 +38,9 @@ export default {
                 CASES_SELFSERVICE: "unassigned"
             }
         }
+    },
+    mounted () {
+        console.log(this.data);
     },
     methods: {
         /**

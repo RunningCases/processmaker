@@ -6,7 +6,7 @@
             :class="item.class"
             v-bind="item.attributes"
         >
-            {{ item.title }} <b-icon icon="pie-chart-fill"></b-icon>
+            {{ item.title }} <b-icon :icon="item.icon || ''" @click="item.onClick(item) || function(){}"></b-icon>
         </div>
         <div
             v-else-if="!isItemHidden"
@@ -50,7 +50,6 @@
                             isMobileItem
                     "
                 >
-                    <sidebar-menu-badge v-if="item.badge" :badge="item.badge" />
                     <div
                         v-if="itemHasChild"
                         class="vsm--arrow"
@@ -257,7 +256,15 @@ export default {
             return !!(this.item.child && this.item.child.length > 0);
         },
         isItemHidden() {
-            return false;
+            if (this.isCollapsed) {
+                if (this.item.hidden && this.item.hiddenOnCollapse === undefined) {
+                    return true
+                } else {
+                    return this.item.hiddenOnCollapse === true
+                }
+            } else {
+            return this.item.hidden === true
+            }
         },
     },
     watch: {
@@ -374,7 +381,6 @@ export default {
          */
         initState() {
             this.initActiveState();
-            this.initShowState();
         },
         /**
          * Initalize the active state of the menu item
@@ -427,6 +433,7 @@ export default {
          * @param {object} event
          */
         mouseOverEvent(event) {
+            console.log("over");
             if (this.item.disabled) return;
             event.stopPropagation();
             this.itemHover = true;
@@ -439,6 +446,7 @@ export default {
          * @param {object} event
          */
         mouseOutEvent(event) {
+
             event.stopPropagation();
             this.itemHover = false;
         },
@@ -454,6 +462,7 @@ export default {
          * @param {object} el
          */
         expandAfterEnter(el) {
+            console.log("ebnter");
             el.style.height = "auto";
         },
         /**
@@ -473,16 +482,18 @@ export default {
          * @param {object} itemEl
          */
         emitMobileItem(event, itemEl) {
+            debugger;
             if (this.hover) return;
             if (!this.isCollapsed || !this.isFirstLevel || this.isMobileItem)
                 return;
             this.$emit("unset-mobile-item", true);
             setTimeout(() => {
-                if (this.mobileItem !== this.item) {
-                    this.$emit("set-mobile-item", { item: this.item, itemEl });
+                
+                if (this.$parent.mobileItem !== this.item) {
+                    this.$parent.$emit("set-mobile-item", { item: this.item, itemEl });
                 }
                 if (event.type === "click" && !this.itemHasChild) {
-                    this.$emit("unset-mobile-item", false);
+                    this.$parent.$emit("unset-mobile-item", false);
                 }
             }, 0);
         },

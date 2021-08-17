@@ -40,6 +40,7 @@
 </template>
 <script>
 import CustomSidebar from "./../components/menu/CustomSidebar";
+import CustomSidebarMenuItem from "./../components/menu/CustomSidebarMenuItem";
 import MyCases from "./MyCases/MyCases.vue";
 import MyDocuments from "./MyDocuments";
 import Todo from "./Inbox/Todo.vue";
@@ -245,6 +246,37 @@ export default {
                     newData[i].id = this.menuMap[auxId];
                 } else if (newData[i].href) {
                     newData[i].id  = "LegacyFrame";
+                }
+                // Tasks group need pie chart icon
+                if (data[i].header && data[i].id === "FOLDERS") {
+                    data[i] = {
+                        component: CustomSidebarMenuItem,
+                        props: {
+                            isCollapsed: this.collapsed? true: false,
+                            item: {
+                                header: data[i].header,
+                                title: data[i].title,
+                                hiddenOnCollapse: data[i].hiddenOnCollapse,
+                                icon: 'pie-chart-fill',
+                                onClick: function (item) {
+                                    console.log("onclick");
+                                }
+                            }
+                        }
+                    }
+                }
+                if (data[i].id === "todo" || data[i].id === "draft" 
+                || data[i].id === "paused" || data[i].id === "unassigned")  {
+                    data[i]["child"] = data[i].customCasesList;
+                    data[i]["sortable"] = data[i].customCasesList.length > 1;
+                    data[i]["sortIcon"] = "gear-fill";
+                    data[i] = {
+                        component: CustomSidebarMenuItem,   
+                        props: {
+                            isCollapsed: this.collapsed? true: false,
+                            item: data[i]
+                        }
+                    };
                 }
             }
             return newData;
