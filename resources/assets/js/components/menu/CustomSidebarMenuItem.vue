@@ -433,7 +433,6 @@ export default {
          * @param {object} event
          */
         mouseOverEvent(event) {
-            console.log("over");
             if (this.item.disabled) return;
             event.stopPropagation();
             this.itemHover = true;
@@ -446,7 +445,6 @@ export default {
          * @param {object} event
          */
         mouseOutEvent(event) {
-
             event.stopPropagation();
             this.itemHover = false;
         },
@@ -482,7 +480,6 @@ export default {
          * @param {object} itemEl
          */
         emitMobileItem(event, itemEl) {
-            debugger;
             if (this.hover) return;
             if (!this.isCollapsed || !this.isFirstLevel || this.isMobileItem)
                 return;

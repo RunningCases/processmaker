@@ -39,9 +39,6 @@ export default {
             }
         }
     },
-    mounted () {
-        console.log(this.data);
-    },
     methods: {
         /**
          * Delay the hover event

@@ -575,7 +575,6 @@ class Home extends Api
                 $option->title = $menuInstance->Labels[$i];
                 $option->hiddenOnCollapse = true;
                 $option->id = $menuInstance->Id[$i];
-
             } else {
                 $option->href = $menuInstance->Options[$i];
                 $option->id = $menuInstance->Id[$i];
@@ -638,7 +637,7 @@ class Home extends Api
      * Get the search cases
      *
      * @url GET /:appNumber/pending-tasks
-     *
+     *  
      * @param int $appNumber
      *
      * @return array
