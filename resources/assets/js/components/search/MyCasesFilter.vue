@@ -113,7 +113,7 @@ export default {
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CASE_NUMBER'),
                     items:[
                         {
-                            id: "filterCases",
+                            id: "caseNumber",
                             value: ""
                         }
                     ],
