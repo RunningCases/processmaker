@@ -7,7 +7,7 @@
                     <b-row>
                         <b-col cols="6">
                             <b-row>
-                                <b-col>
+                                <b-col cols="6">
                                     <b-form-group
                                         id="nameLabel"
                                         :label="$t('ID_NAME')"
@@ -28,7 +28,7 @@
                                         </b-form-invalid-feedback>
                                     </b-form-group>
                                 </b-col>
-                                <b-col>
+                                <b-col cols="6">
                                     <div :class="{ invalid: isValidTable === false }">
                                         <label>{{ $t("ID_PM_TABLE") }}</label>
                                         <multiselect
@@ -239,7 +239,7 @@
                                     />
                                     <div slot="enableFilter" slot-scope="props">
                                     <b-row>
-                                        <b-col>
+                                        <b-col cols="6">
                                             <i
                                                 ref="iconClose"
                                                 class="fas fa-info-circle"
@@ -252,7 +252,7 @@
                                                 :content="searchInfoContent(props.row)"
                                             ></b-popover>
                                         </b-col>
-                                        <b-col>
+                                        <b-col cols="6">
                                             <b-form-checkbox 
                                             v-model="enabledFilterRows"
                                             @change="onTongleFilter(props.row.field)" 
@@ -263,12 +263,8 @@
                                         >
                                         </b-form-checkbox>
                                         </b-col>
-                                    </b-row>
-                                        
-                                        
+                                    </b-row>  
                                     </div>
-                                   
-
                                     <div slot="action" slot-scope="props">
                                         <b-button
                                             variant="light"
@@ -675,9 +671,9 @@ export default {
          */
         makeToast(variant = null, title, message) {
             this.$bvToast.toast(message, {
-            title: `${title || variant}`,
-            variant: variant,
-            solid: true
+                title: `${title || variant}`,
+                variant: variant,
+                solid: true
             })
         }
     },

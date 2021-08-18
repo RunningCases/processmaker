@@ -5831,7 +5831,6 @@ msgstr "The value '{0}' is not a valid date for the format '{1}'."
 msgid "Date Created"
 msgstr "Date Created"
 
-
 # TRANSLATION
 # LABEL/ID_DATE_TO_DATE
 #: LABEL/ID_DATE_TO_DATE    
