@@ -460,7 +460,6 @@ export default {
          * @param {object} el
          */
         expandAfterEnter(el) {
-            console.log("ebnter");
             el.style.height = "auto";
         },
         /**
@@ -485,7 +484,6 @@ export default {
                 return;
             this.$emit("unset-mobile-item", true);
             setTimeout(() => {
-                
                 if (this.$parent.mobileItem !== this.item) {
                     this.$parent.$emit("set-mobile-item", { item: this.item, itemEl });
                 }

@@ -259,7 +259,7 @@ export default {
                                 hiddenOnCollapse: data[i].hiddenOnCollapse,
                                 icon: 'pie-chart-fill',
                                 onClick: function (item) {
-                                    console.log("onclick");
+                                    // TODO click evet handler
                                 }
                             }
                         }
