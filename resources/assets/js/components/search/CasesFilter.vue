@@ -214,7 +214,10 @@ export default {
         handler(newVal, oldVal) { 
             this.searchTags = [];
             this.selected = [];
-            this.setFilters(newVal);
+            if (newVal.length) {
+                this.setFilters(newVal, oldVal);
+                this.searchClickHandler();
+            }
         }
     }
   },
@@ -272,17 +275,20 @@ export default {
      * Set Filters and make the tag labels
      * @param {object} filters json to manage the query
      */
-    setFilters(filters) {
+    setFilters(filters, oldVal) {
       let self = this;
       _.forEach(filters, function (item, key) {
         let component = _.find(self.filterItems, function (o) {
           return o.id === item.fieldId;
         });
         if (component) {
-          self.searchTags.push(component.id);
-          self.selected = component.id;
-          self.itemModel[component.id] = component;
-          self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true
+            self.searchTags.push(component.id);
+            self.selected.push(component.id);
+            self.itemModel[component.id] = component;
+            self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true;
+            if (!oldVal.length) {
+                self.updateSearchTag(item);
+            }
         }
         if(item.fieldId === "processName") {
             self.searchTags.push(self.processName.id);
