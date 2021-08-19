@@ -2,6 +2,8 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
+use DateInterval;
+use Datetime;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Inbox;
@@ -658,5 +660,99 @@ class InboxTest extends TestCase
 
         $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
         $this->assertEquals(3, $res['total']);
+    }
+
+    /**
+     * This tests the getCasesRisk() method with on time filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCasesRisk()
+     * @test
+     */
+    public function it_tests_get_cases_risk_on_time()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff1Day = new DateInterval('P1D');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process = factory(Process::class)->create();
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $date->add($diff1Day),
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCasesRisk($process->PRO_ID);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * This tests the getCasesRisk() method with at risk filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCasesRisk()
+     * @test
+     */
+    public function it_tests_get_cases_risk_at_risk()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process = factory(Process::class)->create();
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCasesRisk($process->PRO_ID, null, null, "AT_RISK");
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * This tests the getCasesRisk() method with overdue filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCasesRisk()
+     * @test
+     */
+    public function it_tests_get_cases_risk_overdue()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process = factory(Process::class)->create();
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
+        $inbox = new Inbox();
+        $inbox->setUserId($user->USR_ID);
+        $inbox->setUserUid($user->USR_UID);
+        $res = $inbox->getCasesRisk($process->PRO_ID, null, null, "OVERDUE");
+        $this->assertCount(1, $res);
     }
 }

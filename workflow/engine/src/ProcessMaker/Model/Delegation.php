@@ -388,7 +388,7 @@ class Delegation extends Model
      */
     public function scopeAtRisk($query, $now)
     {
-        return $query->where('DEL_RISK_DATE', '>=', $now)->where('DEL_TASK_DUE_DATE', '>=', $now);
+        return $query->where('DEL_RISK_DATE', '<=', $now)->where('DEL_TASK_DUE_DATE', '>=', $now);
     }
 
     /**
@@ -401,7 +401,7 @@ class Delegation extends Model
      */
     public function scopeOverdue($query, $now)
     {
-        return $query->where('DEL_TASK_DUE_DATE', '>', $now);
+        return $query->where('DEL_TASK_DUE_DATE', '<', $now);
     }
 
     /**

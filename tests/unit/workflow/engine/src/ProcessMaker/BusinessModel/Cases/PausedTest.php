@@ -2,6 +2,8 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
+use DateInterval;
+use Datetime;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Paused;
@@ -652,5 +654,216 @@ class PausedTest extends TestCase
 
         $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
         $this->assertEquals(3, $res['total']);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with the ontime filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_on_time()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff1Day = new DateInterval('P1D');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create();
+
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => '',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TYPE' => 'NORMAL'
+        ]);
+
+        $application1 = factory(Application::class)->create();
+
+        factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 0,
+            'DEL_INDEX' => 1,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $date->add($diff1Day),
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $delegation1 = factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $date->add($diff1Day),
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $user->USR_UID,
+            'PRO_UID' => $process1->PRO_UID,
+            'APP_NUMBER' => $delegation1->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation1->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+        $this->createMultiplePaused(3, 2, $user);
+        $paused = new Paused();
+        $paused->setUserId($user->USR_ID);
+        $paused->setUserUid($user->USR_UID);
+        $res = $paused->getCasesRisk($process1->PRO_ID);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with the at risk filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_at_risk()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create();
+
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => '',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TYPE' => 'NORMAL'
+        ]);
+
+        $application1 = factory(Application::class)->create();
+
+        factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 0,
+            'DEL_INDEX' => 1,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $delegation1 = factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $user->USR_UID,
+            'PRO_UID' => $process1->PRO_UID,
+            'APP_NUMBER' => $delegation1->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation1->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+        $this->createMultiplePaused(3, 2, $user);
+        $paused = new Paused();
+        $paused->setUserId($user->USR_ID);
+        $paused->setUserUid($user->USR_UID);
+        $res = $paused->getCasesRisk($process1->PRO_ID, null, null, 'AT_RISK');
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with the overdue filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_overdue()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create();
+
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => '',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'TAS_TYPE' => 'NORMAL'
+        ]);
+
+        $application1 = factory(Application::class)->create();
+
+        factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 0,
+            'DEL_INDEX' => 1,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
+        $delegation1 = factory(Delegation::class)->create([
+            'APP_UID' => $application1->APP_UID,
+            'APP_NUMBER' => $application1->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'PRO_UID' => $process1->PRO_UID,
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
+
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $user->USR_UID,
+            'PRO_UID' => $process1->PRO_UID,
+            'APP_NUMBER' => $delegation1->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation1->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+        $this->createMultiplePaused(3, 2, $user);
+        $paused = new Paused();
+        $paused->setUserId($user->USR_ID);
+        $paused->setUserUid($user->USR_UID);
+        $res = $paused->getCasesRisk($process1->PRO_ID, null, null, 'OVERDUE');
+        $this->assertCount(1, $res);
     }
 }
