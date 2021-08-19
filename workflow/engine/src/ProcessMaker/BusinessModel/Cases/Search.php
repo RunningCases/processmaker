@@ -216,6 +216,17 @@ class Search extends AbstractCases
     }
 
     /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        // This class does not require this value
+        return false;
+    }
+
+    /**
      * Get the number of rows corresponding to the advanced search, needs to apply filters
      *
      * @return int

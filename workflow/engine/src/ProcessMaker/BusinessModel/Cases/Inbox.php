@@ -166,6 +166,24 @@ class Inbox extends AbstractCases
     }
 
     /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        $query = Delegation::query()->select(['APP_DELEGATION.APP_NUMBER']);
+        // Scope that sets the queries for List Inbox for specific user
+        $query->inbox($this->getUserId());
+        // Get only one case
+        $query->limit(1);
+        // Get the result
+        $items = $query->get();
+
+        return $items->count() > 0;
+    }
+
+    /**
      * Count how many cases the user has in TO_DO, needs to apply filters
      *
      * @return int

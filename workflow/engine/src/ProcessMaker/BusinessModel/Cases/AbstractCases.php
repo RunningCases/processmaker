@@ -1481,6 +1481,16 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Get true if the user has at least one case
+     *
+     * @throws Exception
+     */
+    public function atLeastOne()
+    {
+        throw new Exception("Method '" . __FUNCTION__ . "' should be implemented in the extended class '" . get_class($this) . "'.");
+    }
+
+    /**
      * Get the list counter
      *
      * @throws Exception

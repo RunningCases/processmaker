@@ -6,6 +6,7 @@ use Exception;
 use G;
 use Luracast\Restler\RestException;
 use Menu;
+use ProcessMaker\BusinessModel\Cases\CasesList;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\BusinessModel\Cases\Filter;
 use ProcessMaker\BusinessModel\Cases\Inbox;
@@ -795,7 +796,7 @@ class Home extends Api
     }
 
     /**
-     * Get the tasks counters for todo, draft, paused and unassigned
+     * Get the tasks counters for all task list: todo, draft, paused and unassigned
      * 
      * @url GET /tasks/counter
      *
@@ -829,6 +830,26 @@ class Home extends Api
         $unassigned->setUserUid($usrUid);
         $unassigned->setUserId($usrId);
         $result['unassigned'] = $unassigned->getCounter();
+
+        return $result;
+    }
+
+    /**
+     * Get the tasks highlight for all task list
+     *
+     * @url GET /tasks/highlight
+     *
+     * @return array
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getHighlight()
+    {
+        $usrUid = $this->getUserId();
+        $casesList = new CasesList();
+        $result = [];
+        $result = $casesList->atLeastOne($usrUid);
 
         return $result;
     }
