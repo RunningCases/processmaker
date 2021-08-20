@@ -9,12 +9,10 @@ import VtSortControl from './../components/vuetable/extends/VtSortControl';
 import SettingsPopover from "../components/vuetable/SettingsPopover.vue";
 import Sortable from 'sortablejs';
 import "@fortawesome/fontawesome-free/css/all.css";
-import "@fortawesome/fontawesome-free/js/all.js";
 import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import Home from "./Home";
 Vue.use(VueRouter);
@@ -22,7 +20,6 @@ Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
-Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(ServerTable, {}, false, 'bootstrap3', {
     tableHeading: VtTableHeadingCustom,
