@@ -904,7 +904,10 @@ class Home extends Api
     {
         $setting = UserConfig::getSetting($id, $name);
         if (is_null($setting)) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+            $setting = [
+                "status" => 404,
+                "message" => G::LoadTranslation('ID_DOES_NOT_EXIST')
+            ];
         }
         return $setting;
     }
