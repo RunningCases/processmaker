@@ -308,7 +308,7 @@ export default {
 
         },
         /**
-         * Util to compare an oobject by id
+         * Util to compare an array by id
          * @param {array} otherArray
          * @returns {object}
          */
