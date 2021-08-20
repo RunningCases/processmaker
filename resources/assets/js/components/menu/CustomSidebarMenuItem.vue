@@ -140,7 +140,7 @@
 
                 <template #modal-footer="{ cancel }">
                     <b-button size="sm" variant="danger" @click="cancel()">
-                        Cancel
+                        {{ $t("ID_CLOSE")}}
                     </b-button>
                 </template>
             </b-modal>
@@ -153,6 +153,7 @@ import draggable from "vuedraggable";
 import CustomSidebarMenuLink from "./CustomSidebarMenuLink";
 import CustomSidebarMenuIcon from "./CustomSidebarMenuIcon";
 import CustomTooltip from "./../utils/CustomTooltip.vue";
+import eventBus from './../../home/EventBus/eventBus'
 
 export default {
     name: "CustomSidebarMenuItem",
@@ -403,13 +404,15 @@ export default {
                 this.show = false;
             }
         },
-        /**
+        /** 
          * Handler to check if the item is moving
          * @param {object} e
          */
         checkMove: function(e) {
             let aux = this.item.child.splice(e.newIndex, 1);
             this.item.child.splice(e.newIndex, 0, aux[0]);
+            this.emitItemUpdate(this.item, this.item);
+            eventBus.$emit('sort-menu', this.item.child);
         },
         /**
          * Click event Handler 
@@ -482,7 +485,7 @@ export default {
             if (this.hover) return;
             if (!this.isCollapsed || !this.isFirstLevel || this.isMobileItem)
                 return;
-            this.$emit("unset-mobile-item", true);
+            this.$parent.$emit("unset-mobile-item", true);
             setTimeout(() => {
                 if (this.$parent.mobileItem !== this.item) {
                     this.$parent.$emit("set-mobile-item", { item: this.item, itemEl });

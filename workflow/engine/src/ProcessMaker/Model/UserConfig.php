@@ -53,7 +53,7 @@ class UserConfig extends Model
         $model = new UserConfig();
         $model->USR_ID = $id;
         $model->USC_NAME = $name;
-        $model->USC_SETTING = json_encode($setting);
+        $model->USC_SETTING = json_encode($setting, JSON_FORCE_OBJECT);
         $model->save();
         $userConfig = UserConfig::getSetting($id, $name);
         return $userConfig;

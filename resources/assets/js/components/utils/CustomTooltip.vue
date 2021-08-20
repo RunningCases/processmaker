@@ -2,20 +2,16 @@
     <span
         :id="`label-${data.id}`"
         @mouseover="hoverHandler"
-        v-b-tooltip.hover
         :title="labelTooltip"
-        @mouseleave="unhoverHandler"
     >
-        {{ data.title }}
+        {{ data.title }}    
     <b-tooltip
         :target="`label-${data.id}`"
-        triggers="hoverHandler"
-        :show.sync="show"
+        :ref="`tooltip-${data.id}`"
     >
         {{ labelTooltip }}
     </b-tooltip>
-    </span>
-    
+    </span>   
 </template>
 
 <script>
@@ -31,11 +27,16 @@ export default {
             labelTooltip: "",
             hovering: "",
             show: false,
+            disabled: true,
             menuMap: {
                 CASES_INBOX: "inbox",
                 CASES_DRAFT: "draft",
                 CASES_PAUSED: "paused",
-                CASES_SELFSERVICE: "unassigned"
+                CASES_SELFSERVICE: "unassigned",
+                todo: "inbox",
+                draft: "draft",
+                paused: "paused",
+                unassigned: "unassigned"
             }
         }
     },
@@ -44,27 +45,33 @@ export default {
          * Delay the hover event
          */
         hoverHandler() {
-            this.hovering = setTimeout(() => { this.setTooltip() }, 3000);
+            // this.hovering = setTimeout(() => { this.setTooltip() }, 3000);
+            this.setTooltip();
         },
         /**
          * Reset the delay and hide the tooltip
          */
         unhoverHandler() {
+            let key =`tooltip-${this.data.id}`;
             this.labelTooltip = "";
-            this.show = false;
+            // this.show = false;
+            this.disabled = true;
+            this.$refs[key].$emit('close');
             clearTimeout(this.hovering);
         },
         /**
          * Set the label to show in the tooltip
-         */
+         */     
         setTooltip() {
             let that = this;
             api.menu
                 .getTooltip(that.menuMap[that.data.id])
                 .then((response) => {
+                    let key =`tooltip-${that.data.id}`;
+                    that.disabled = false;
                     that.labelTooltip = response.data.label;
-                    that.show = true;
-                });
+                    that.$refs[key].$emit('open');
+                });     
         },
     }
 }

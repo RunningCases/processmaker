@@ -286,7 +286,7 @@ export default {
             self.selected.push(component.id);
             self.itemModel[component.id] = component;
             self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true;
-            if (!oldVal.length) {
+            if (oldVal && !oldVal.length) {
                 self.updateSearchTag(item);
             }
         }
