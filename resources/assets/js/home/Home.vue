@@ -111,7 +111,6 @@ export default {
     mounted() {
         let that = this;
         this.onResize();
-        this.getMenu();
         this.getUserSettings();
         this.listenerIframe();
         window.setInterval(
@@ -176,7 +175,9 @@ export default {
                         this.createUserSettings();
                     } else if (response.data) {
                         this.config = response.data;
+                        this.getMenu();
                     }
+
                 })
                 .catch((e) => {
                     console.error(e);
@@ -269,7 +270,13 @@ export default {
                 }
                 if (data[i].id === "inbox" || data[i].id === "draft"
                 || data[i].id === "paused" || data[i].id === "unassigned")  {
-                    data[i]["child"] = this.sortCustomCasesList(data[i].customCasesList, this.config.setting[this.page] && this.config.setting[this.page].customCasesList ? this.config.setting[this.page].customCasesList: [])
+                    data[i]["child"] = this.sortCustomCasesList(
+                        data[i].customCasesList,
+                        this.config.setting[this.page] &&
+                            this.config.setting[this.page].customCasesList
+                            ? this.config.setting[this.page].customCasesList
+                            : []
+                    );
                     data[i]["sortable"] = data[i].customCasesList.length > 1;
                     data[i]["sortIcon"] = "gear-fill";
                     data[i] = {
