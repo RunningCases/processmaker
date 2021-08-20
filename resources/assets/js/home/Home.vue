@@ -26,7 +26,7 @@
                 :defaultOption="defaultOption"
                 :settings="config.setting[page]"
                 :filters="filters"
-                @onSubmitFilter="onSubmitFilter"    
+                @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
                 @onUpdateDataCase="onUpdateDataCase"
@@ -34,15 +34,16 @@
                 @onUpdateFilters="onUpdateFilters"
                 @cleanDefaultOption="cleanDefaultOption"
                 @updateUserSettings="updateUserSettings"
-            ></component>   
+            ></component>
         </div>
     </div>
 </template>
 <script>
 import CustomSidebar from "./../components/menu/CustomSidebar";
+import CustomSidebarMenuItem from "./../components/menu/CustomSidebarMenuItem";
 import MyCases from "./MyCases/MyCases.vue";
 import MyDocuments from "./MyDocuments";
-import Todo from "./Inbox/Todo.vue";
+import Inbox from "./Inbox/Inbox.vue";
 import Paused from "./Paused/Paused.vue";
 import Draft from "./Draft/Draft.vue";
 import Unassigned from "./Unassigned/Unassigned.vue";
@@ -54,7 +55,7 @@ import AdvancedSearch from "./AdvancedSearch/AdvancedSearch.vue";
 import LegacyFrame from "./LegacyFrame";
 
 import api from "./../api/index";
-
+import eventBus from './EventBus/eventBus'
 export default {
     name: "Home",
     components: {
@@ -65,7 +66,7 @@ export default {
         BatchRouting,
         TaskReassignments,
         XCase,
-        Todo,
+        Inbox,
         Draft,
         Paused,
         Unassigned,
@@ -89,14 +90,14 @@ export default {
             filters: null,
             config: {
                 id: window.config.userId || "1",
-                name: "home",
+                name: "userConfig",
                 setting: {}
             },
             menuMap: {
                 CASES_MY_CASES: "MyCases",
                 CASES_SENT: "MyCases",
                 CASES_SEARCH: "advanced-search",
-                CASES_INBOX: "todo",
+                CASES_INBOX: "inbox",
                 CASES_DRAFT: "draft",
                 CASES_PAUSED: "paused",
                 CASES_SELFSERVICE: "unassigned",
@@ -108,6 +109,7 @@ export default {
         };
     },
     mounted() {
+        let that = this;
         this.onResize();
         this.getMenu();
         this.getUserSettings();
@@ -116,6 +118,10 @@ export default {
             this.setCounter,
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
+        // adding eventBus listener
+         eventBus.$on('sort-menu', (data) => {
+            that.updateUserSettings('customCasesList', data);
+        });
     },
     methods: {
         /**
@@ -132,7 +138,7 @@ export default {
 
             eventer(messageEvent, function(e) {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
-                    that.page = "todo";
+                    that.page = "inbox";
                 }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
@@ -166,10 +172,10 @@ export default {
                     name: this.config.name
                 })
                 .then((response) => {
-                    if (response.data) {
-                        this.config = response.data;
-                    } else {
+                    if(response.data && response.data.status === 404) {
                         this.createUserSettings();
+                    } else if (response.data) {
+                        this.config = response.data;
                     }
                 })
                 .catch((e) => {
@@ -181,10 +187,7 @@ export default {
          */
         createUserSettings() {
             api.config
-                .post({
-                    ...this.configParams,
-                    ...{setting: '{}'}
-                })
+                .post(this.config)
                 .then((response) => {
                     if (response.data) {
                         this.config = response.data;
@@ -246,8 +249,75 @@ export default {
                 } else if (newData[i].href) {
                     newData[i].id  = "LegacyFrame";
                 }
+                // Tasks group need pie chart icon
+                if (data[i].header && data[i].id === "FOLDERS") {
+                    data[i] = {
+                        component: CustomSidebarMenuItem,
+                        props: {
+                            isCollapsed: this.collapsed? true: false,
+                            item: {
+                                header: data[i].header,
+                                title: data[i].title,
+                                hiddenOnCollapse: data[i].hiddenOnCollapse,
+                                icon: 'pie-chart-fill',
+                                onClick: function (item) {
+                                    // TODO click evet handler
+                                }
+                            }
+                        }
+                    }
+                }
+                if (data[i].id === "inbox" || data[i].id === "draft"
+                || data[i].id === "paused" || data[i].id === "unassigned")  {
+                    data[i]["child"] = this.sortCustomCasesList(data[i].customCasesList, this.config.setting[this.page] && this.config.setting[this.page].customCasesList ? this.config.setting[this.page].customCasesList: [])
+                    data[i]["sortable"] = data[i].customCasesList.length > 1;
+                    data[i]["sortIcon"] = "gear-fill";
+                    data[i] = {
+                        component: CustomSidebarMenuItem,
+                        props: {
+                            isCollapsed: this.collapsed? true: false,
+                            item: data[i]
+                        }
+                    };
+                }
             }
             return newData;
+        },
+        /**
+         * Sort the custom case list menu items
+         * @param {array} list
+         * @param {array} ref
+         * @returns {array}
+         */
+        sortCustomCasesList(list, ref) {
+            let item,
+                newList = [],
+                temp = [];
+            if (ref && ref.length) {
+                ref.forEach(function (menu) {
+                    item = list.find(x => x.id === menu.id);
+                    if (item) {
+                        newList.push(item);
+                    }
+                })
+            } else {
+                return list;
+            }
+            temp = list.filter(this.comparerById(newList));
+            return  [...newList, ...temp];
+
+        },
+        /**
+         * Util to compare an array by id
+         * @param {array} otherArray
+         * @returns {object}
+         */
+        comparerById(otherArray){
+            return function(current){
+                return otherArray.filter(function(other){
+                    return other.id == current.id
+                }).length == 0;
+            }
         },
         /**
          * Set a default icon if the item doesn't have one
@@ -280,8 +350,8 @@ export default {
                 this.pageId = null;
                 this.pageUri = item.item.href;
                 this.page = item.item.id || "MyCases";
-                if (this.page === this.lastPage 
-                    && this.$refs["component"] 
+                if (this.page === this.lastPage
+                    && this.$refs["component"]
                     && this.$refs["component"].updateView) {
                     this.$refs["component"].updateView();
                 }

@@ -6,7 +6,7 @@
     <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
     <CasesFilter
       :filters="filters"
-      :title="$t('ID_CASES_STATUS_TO_DO')"
+      :title="$t('ID_INBOX')"
       :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
@@ -231,7 +231,7 @@ import { Event } from 'vue-tables-2';
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 
 export default {
-  name: "Todo",
+  name: "Inbox",
   mixins: [defaultMixins],
   components: {
     HeaderCounter,

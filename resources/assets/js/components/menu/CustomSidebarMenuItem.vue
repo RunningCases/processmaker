@@ -6,7 +6,11 @@
             :class="item.class"
             v-bind="item.attributes"
         >
-            {{ item.title }} <b-icon icon="pie-chart-fill"></b-icon>
+            {{ item.title }}
+            <b-icon
+                :icon="item.icon || ''"
+                @click="item.onClick(item) || function() {}"
+            ></b-icon>
         </div>
         <div
             v-else-if="!isItemHidden"
@@ -50,7 +54,6 @@
                             isMobileItem
                     "
                 >
-                    <sidebar-menu-badge v-if="item.badge" :badge="item.badge" />
                     <div
                         v-if="itemHasChild"
                         class="vsm--arrow"
@@ -141,7 +144,7 @@
 
                 <template #modal-footer="{ cancel }">
                     <b-button size="sm" variant="danger" @click="cancel()">
-                        Cancel
+                        {{ $t("ID_CLOSE") }}
                     </b-button>
                 </template>
             </b-modal>
@@ -154,6 +157,7 @@ import draggable from "vuedraggable";
 import CustomSidebarMenuLink from "./CustomSidebarMenuLink";
 import CustomSidebarMenuIcon from "./CustomSidebarMenuIcon";
 import CustomTooltip from "./../utils/CustomTooltip.vue";
+import eventBus from "./../../home/EventBus/eventBus";
 
 export default {
     name: "CustomSidebarMenuItem",
@@ -203,7 +207,7 @@ export default {
         draggable,
         CustomSidebarMenuLink,
         CustomSidebarMenuIcon,
-        CustomTooltip
+        CustomTooltip,
     },
     data() {
         return {
@@ -213,7 +217,7 @@ export default {
             itemHover: false,
             exactActive: false,
             active: false,
-            titleHover: '',
+            titleHover: "",
         };
     },
     computed: {
@@ -257,7 +261,18 @@ export default {
             return !!(this.item.child && this.item.child.length > 0);
         },
         isItemHidden() {
-            return false;
+            if (this.isCollapsed) {
+                if (
+                    this.item.hidden &&
+                    this.item.hiddenOnCollapse === undefined
+                ) {
+                    return true;
+                } else {
+                    return this.item.hiddenOnCollapse === true;
+                }
+            } else {
+                return this.item.hidden === true;
+            }
         },
     },
     watch: {
@@ -362,7 +377,7 @@ export default {
             );
         },
         /**
-         * Ensurre if the link exact is active 
+         * Ensurre if the link exact is active
          * @param {object} item
          * @return {boolean}
          */
@@ -374,7 +389,6 @@ export default {
          */
         initState() {
             this.initActiveState();
-            this.initShowState();
         },
         /**
          * Initalize the active state of the menu item
@@ -384,7 +398,7 @@ export default {
             this.exactActive = this.isLinkExactActive(this.item);
         },
         /**
-         * Initialize and show active state menu item 
+         * Initialize and show active state menu item
          */
         initShowState() {
             if (!this.itemHasChild || this.showChild) return;
@@ -404,9 +418,11 @@ export default {
         checkMove: function(e) {
             let aux = this.item.child.splice(e.newIndex, 1);
             this.item.child.splice(e.newIndex, 0, aux[0]);
+            this.emitItemUpdate(this.item, this.item);
+            eventBus.$emit("sort-menu", this.item.child);
         },
         /**
-         * Click event Handler 
+         * Click event Handler
          * @param {object} event
          */
         clickEvent(event) {
@@ -476,13 +492,16 @@ export default {
             if (this.hover) return;
             if (!this.isCollapsed || !this.isFirstLevel || this.isMobileItem)
                 return;
-            this.$emit("unset-mobile-item", true);
+            this.$parent.$emit("unset-mobile-item", true);
             setTimeout(() => {
-                if (this.mobileItem !== this.item) {
-                    this.$emit("set-mobile-item", { item: this.item, itemEl });
+                if (this.$parent.mobileItem !== this.item) {
+                    this.$parent.$emit("set-mobile-item", {
+                        item: this.item,
+                        itemEl,
+                    });
                 }
                 if (event.type === "click" && !this.itemHasChild) {
-                    this.$emit("unset-mobile-item", false);
+                    this.$parent.$emit("unset-mobile-item", false);
                 }
             }, 0);
         },

@@ -574,6 +574,7 @@ class Home extends Api
                 $option->header = true;
                 $option->title = $menuInstance->Labels[$i];
                 $option->hiddenOnCollapse = true;
+                $option->id = $menuInstance->Id[$i];
             } else {
                 $option->href = $menuInstance->Options[$i];
                 $option->id = $menuInstance->Id[$i];
@@ -581,12 +582,6 @@ class Home extends Api
                 $option->icon = $menuInstance->Icons[$i];
             }
 
-            // Add additional attributes for some options
-            if (in_array($menuInstance->Id[$i], $optionsWithCounter)) {
-                $option->badge = new stdClass();
-                $option->badge->text = '0';
-                $option->badge->class = 'badge-custom';
-            }
             if ($menuInstance->Id[$i] === 'CASES_SEARCH') {
                 // Get advanced search filters for the current user
                 $filters = Filter::getByUser($this->getUserId());
@@ -626,11 +621,7 @@ class Home extends Api
                         "id" => $value['id'],
                         "title" => $value['name'],
                         "description" => $value['description'],
-                        "icon" => $value['iconList'],
-                        "badge" => [
-                            "text" => "0",
-                            "class" => "badge-custom"
-                        ]
+                        "icon" => $value['iconList']
                     ];
                 }
             }
