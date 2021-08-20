@@ -140,7 +140,7 @@
 
                 <template #modal-footer="{ cancel }">
                     <b-button size="sm" variant="danger" @click="cancel()">
-                        {{ $t("ID_CLOSE")}}
+                        {{ $t("ID_CLOSE") }}
                     </b-button>
                 </template>
             </b-modal>
