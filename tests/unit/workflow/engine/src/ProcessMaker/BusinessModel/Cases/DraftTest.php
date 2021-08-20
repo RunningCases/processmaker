@@ -2,6 +2,8 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
+use DateInterval;
+use Datetime;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Draft;
@@ -765,5 +767,117 @@ class DraftTest extends TestCase
 
         $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
         $this->assertEquals(3, $res['total']);
+    }
+
+    /**
+     * This tests the getCasesRisk() method with on time filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCasesRisk()
+     * @test
+     */
+    public function it_tests_get_cases_risk_on_time()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff1Day = new DateInterval('P1D');
+        $diff2Days = new DateInterval('P2D');
+        $process = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $application = factory(Application::class, 14)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[0]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[0]->APP_UID,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $date->add($diff1Day),
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+        $res = $draft->getCasesRisk($process->PRO_ID);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * This tests the getCasesRisk() method with at risk filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCasesRisk()
+     * @test
+     */
+    public function it_tests_get_cases_risk_at_risk()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $process = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $application = factory(Application::class, 14)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[0]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[0]->APP_UID,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+        $res = $draft->getCasesRisk($process->PRO_ID, null, null, 'AT_RISK');
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * This tests the getCasesRisk() method with overdue filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCasesRisk()
+     * @test
+     */
+    public function it_tests_get_cases_risk_overdue()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $process = factory(Process::class)->create();
+        $user = factory(User::class)->create();
+        $application = factory(Application::class, 14)->states('draft')->create([
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID,
+        ]);
+        factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'USR_UID' => $application[0]->APP_INIT_USER,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application[0]->APP_UID,
+            'APP_NUMBER' => $application[0]->APP_NUMBER,
+            'PRO_ID' => $process->PRO_ID,
+            'PRO_UID' => $process->PRO_UID,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
+        $draft = new Draft();
+        $draft->setUserId($user->USR_ID);
+        $draft->setUserUid($user->USR_ID);
+        $res = $draft->getCasesRisk($process->PRO_ID, null, null, 'OVERDUE');
+        $this->assertCount(1, $res);
     }
 }
