@@ -6,7 +6,11 @@
             :class="item.class"
             v-bind="item.attributes"
         >
-            {{ item.title }} <b-icon :icon="item.icon || ''" @click="item.onClick(item) || function(){}"></b-icon>
+            {{ item.title }}
+            <b-icon
+                :icon="item.icon || ''"
+                @click="item.onClick(item) || function() {}"
+            ></b-icon>
         </div>
         <div
             v-else-if="!isItemHidden"
@@ -153,7 +157,7 @@ import draggable from "vuedraggable";
 import CustomSidebarMenuLink from "./CustomSidebarMenuLink";
 import CustomSidebarMenuIcon from "./CustomSidebarMenuIcon";
 import CustomTooltip from "./../utils/CustomTooltip.vue";
-import eventBus from './../../home/EventBus/eventBus'
+import eventBus from "./../../home/EventBus/eventBus";
 
 export default {
     name: "CustomSidebarMenuItem",
@@ -203,7 +207,7 @@ export default {
         draggable,
         CustomSidebarMenuLink,
         CustomSidebarMenuIcon,
-        CustomTooltip
+        CustomTooltip,
     },
     data() {
         return {
@@ -213,7 +217,7 @@ export default {
             itemHover: false,
             exactActive: false,
             active: false,
-            titleHover: '',
+            titleHover: "",
         };
     },
     computed: {
@@ -258,13 +262,16 @@ export default {
         },
         isItemHidden() {
             if (this.isCollapsed) {
-                if (this.item.hidden && this.item.hiddenOnCollapse === undefined) {
-                    return true
+                if (
+                    this.item.hidden &&
+                    this.item.hiddenOnCollapse === undefined
+                ) {
+                    return true;
                 } else {
-                    return this.item.hiddenOnCollapse === true
+                    return this.item.hiddenOnCollapse === true;
                 }
             } else {
-            return this.item.hidden === true
+                return this.item.hidden === true;
             }
         },
     },
@@ -370,7 +377,7 @@ export default {
             );
         },
         /**
-         * Ensurre if the link exact is active 
+         * Ensurre if the link exact is active
          * @param {object} item
          * @return {boolean}
          */
@@ -391,7 +398,7 @@ export default {
             this.exactActive = this.isLinkExactActive(this.item);
         },
         /**
-         * Initialize and show active state menu item 
+         * Initialize and show active state menu item
          */
         initShowState() {
             if (!this.itemHasChild || this.showChild) return;
@@ -404,7 +411,7 @@ export default {
                 this.show = false;
             }
         },
-        /** 
+        /**
          * Handler to check if the item is moving
          * @param {object} e
          */
@@ -412,10 +419,10 @@ export default {
             let aux = this.item.child.splice(e.newIndex, 1);
             this.item.child.splice(e.newIndex, 0, aux[0]);
             this.emitItemUpdate(this.item, this.item);
-            eventBus.$emit('sort-menu', this.item.child);
+            eventBus.$emit("sort-menu", this.item.child);
         },
         /**
-         * Click event Handler 
+         * Click event Handler
          * @param {object} event
          */
         clickEvent(event) {
@@ -488,7 +495,10 @@ export default {
             this.$parent.$emit("unset-mobile-item", true);
             setTimeout(() => {
                 if (this.$parent.mobileItem !== this.item) {
-                    this.$parent.$emit("set-mobile-item", { item: this.item, itemEl });
+                    this.$parent.$emit("set-mobile-item", {
+                        item: this.item,
+                        itemEl,
+                    });
                 }
                 if (event.type === "click" && !this.itemHasChild) {
                     this.$parent.$emit("unset-mobile-item", false);

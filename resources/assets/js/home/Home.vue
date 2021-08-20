@@ -283,6 +283,12 @@ export default {
             }
             return newData;
         },
+        /**
+         * Sort the custom case list menu items
+         * @param {array} list
+         * @param {array} ref
+         * @returns {array}
+         */
         sortCustomCasesList(list, ref) {
             let item,
                 newList = [],
@@ -301,6 +307,11 @@ export default {
             return  [...newList, ...temp];
 
         },
+        /**
+         * Util to compare an oobject by id
+         * @param {array} otherArray
+         * @returns {object}
+         */
         comparerById(otherArray){
             return function(current){
                 return otherArray.filter(function(other){
