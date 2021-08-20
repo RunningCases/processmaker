@@ -13,7 +13,6 @@ import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-
 import Home from "./Home";
 Vue.use(VueRouter);
 Vue.use(VueSidebarMenu);
