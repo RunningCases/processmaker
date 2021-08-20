@@ -54,7 +54,8 @@ export default {
          */
         setTooltip() {
             let that = this;
-            api.menu.getTooltip(that.menuMap[that.data.id]).then((response) => {
+            debugger;
+            api.menu.getTooltip(that.data.id).then((response) => {
                 let key = `tooltip-${that.data.id}`;
                 that.labelTooltip = response.data.label;
                 that.$refs[key].$emit("open");

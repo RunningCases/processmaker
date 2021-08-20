@@ -43,7 +43,7 @@ import CustomSidebar from "./../components/menu/CustomSidebar";
 import CustomSidebarMenuItem from "./../components/menu/CustomSidebarMenuItem";
 import MyCases from "./MyCases/MyCases.vue";
 import MyDocuments from "./MyDocuments";
-import Todo from "./Inbox/Todo.vue";
+import Inbox from "./Inbox/Inbox.vue";
 import Paused from "./Paused/Paused.vue";
 import Draft from "./Draft/Draft.vue";
 import Unassigned from "./Unassigned/Unassigned.vue";
@@ -66,7 +66,7 @@ export default {
         BatchRouting,
         TaskReassignments,
         XCase,
-        Todo,
+        Inbox,
         Draft,
         Paused,
         Unassigned,
@@ -97,7 +97,7 @@ export default {
                 CASES_MY_CASES: "MyCases",
                 CASES_SENT: "MyCases",
                 CASES_SEARCH: "advanced-search",
-                CASES_INBOX: "todo",
+                CASES_INBOX: "inbox",
                 CASES_DRAFT: "draft",
                 CASES_PAUSED: "paused",
                 CASES_SELFSERVICE: "unassigned",
@@ -138,7 +138,7 @@ export default {
 
             eventer(messageEvent, function(e) {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
-                    that.page = "todo";
+                    that.page = "inbox";
                 }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
@@ -267,7 +267,7 @@ export default {
                         }
                     }
                 }
-                if (data[i].id === "todo" || data[i].id === "draft"
+                if (data[i].id === "inbox" || data[i].id === "draft"
                 || data[i].id === "paused" || data[i].id === "unassigned")  {
                     data[i]["child"] = this.sortCustomCasesList(data[i].customCasesList, this.config.setting[this.page] && this.config.setting[this.page].customCasesList ? this.config.setting[this.page].customCasesList: [])
                     data[i]["sortable"] = data[i].customCasesList.length > 1;
