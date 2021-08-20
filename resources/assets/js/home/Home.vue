@@ -177,7 +177,6 @@ export default {
                         this.config = response.data;
                         this.getMenu();
                     }
-
                 })
                 .catch((e) => {
                     console.error(e);
