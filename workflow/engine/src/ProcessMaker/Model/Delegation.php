@@ -1989,8 +1989,8 @@ class Delegation extends Model
         ]);
         // Join with task
         $query->joinTask();
-        // Get the open threads
-        $query->threadOpen();
+        // Get the open and paused threads
+        $query->openAndPause();
         // Related to the specific case number
         $query->case($appNumber);
         // Get the results
