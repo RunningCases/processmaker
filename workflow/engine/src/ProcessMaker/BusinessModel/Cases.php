@@ -1050,7 +1050,8 @@ class Cases
         }
 
         // Check if the case is unassigned
-        if ($this->isUnassignedPauseCase($appUid, $index)) {
+        $classCases = new ClassesCases();
+        if ($classCases->isUnassignedPauseCase($appUid, $index)) {
             throw new Exception(G::LoadTranslation("ID_CASE_NOT_PAUSED", [G::LoadTranslation("ID_UNASSIGNED_STATUS")]));
         }
 
