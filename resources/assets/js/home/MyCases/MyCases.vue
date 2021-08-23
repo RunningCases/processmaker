@@ -368,10 +368,10 @@ export default {
                 start = data.page === 1 ? 0 : limit * (data.page - 1),
                 filters = {},
                 sort = "";
-            paged = start + "," + limit;
             filters = {
                 filter: that.filterHeader,
-                paged: paged,
+                limit: limit,
+                offset: start
             };
             _.forIn(this.filters, function(item, key) {
                 if (filters && item.value) {
