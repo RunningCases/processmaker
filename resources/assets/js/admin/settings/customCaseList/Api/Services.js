@@ -5,5 +5,7 @@ export default {
     CASE_LIST_PAUSED: "/caseList/paused",
     REPORT_TABLES: "/caseList/report-tables",
     CASE_LIST: "/caseList",
-    PUT_CASE_LIST: "/caseList/{id}"
+    DEFAULT_COLUMNS: "/caseList/{type}/default-columns",
+    PUT_CASE_LIST: "/caseList/{id}",    
+    IMPOR_CASE_LIST: "/caseList/import"
 };

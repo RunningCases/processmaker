@@ -157,4 +157,46 @@ class Metrics extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * Get total cases risk
+     * 
+     * @url GET /cases-risk
+     * 
+     * @param string $caseList
+     * @param int $process
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @param string $riskStatus
+     * @param int $topCases
+     * 
+     * @return array
+     * 
+     * @throws RestException
+     */
+    public function getCasesRiskByProcess($caseList = 'inbox', $process, $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
+    {
+        try {
+            $usrId = $this->getUserId();
+            switch ($caseList) {
+                case 'inbox':
+                    $list = new Inbox();
+                    break;
+                case 'draft':
+                    $list = new Draft();
+                    break;
+                case 'paused':
+                    $list = new Paused();
+                    break;
+                case 'unassigned':
+                    $list = new Unassigned();
+                    break;
+            }
+            $list->setUserId($usrId);
+            $result = $list->getCasesRisk($process, $dateFrom, $dateTo, $riskStatus, $topCases);
+            return $result;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 }

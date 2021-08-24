@@ -153,6 +153,24 @@ class Draft extends AbstractCases
     }
 
     /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        $query = Application::query()->select(['APPLICATION.APP_NUMBER']);
+        // Add the initial scope for draft cases for specific user
+        $query->draft($this->getUserUid());
+        // Get only one case
+        $query->limit(1);
+        // Get result
+        $items = $query->get();
+
+        return $items->count() > 0;
+    }
+
+    /**
      * Count how many cases the user has in DRAFT, needs to apply filters
      *
      * @return int

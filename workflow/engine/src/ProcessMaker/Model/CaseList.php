@@ -7,6 +7,7 @@ use G;
 use ProcessMaker\BusinessModel\Table;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\AdditionalTables;
+use ProcessMaker\Model\Fields;
 use ProcessMaker\Model\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -246,7 +247,8 @@ class CaseList extends Model
             ->leftJoin('USERS', 'USERS.USR_ID', '=', 'CASE_LIST.USR_ID')
             ->leftJoin('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
             ->select([
-                'CASE_LIST.*'
+                'CASE_LIST.*',
+                'ADDITIONAL_TABLES.ADD_TAB_NAME'
             ])
             ->get()
             ->first();
@@ -256,6 +258,7 @@ class CaseList extends Model
 
         $result = CaseList::getAliasFromColumnName($model->toArray());
         $result['columns'] = json_decode($result['columns']);
+        $result['tableName'] = $model->ADD_TAB_NAME;
 
         //clean invalid items
         unset($result['id']);
@@ -275,21 +278,77 @@ class CaseList extends Model
 
     /**
      * The import requires a $ _FILES content in json format to create a record.
-     * @param array $request_data
+     * @param array $requestData
      * @param int $ownerId
      * @return array
      * @throws Exception
      */
-    public static function import(array $request_data, int $ownerId)
+    public static function import(array $requestData, int $ownerId)
     {
         if ($_FILES['file_content']['error'] !== UPLOAD_ERR_OK ||
             $_FILES['file_content']['tmp_name'] === '') {
-            throw new Exception(G::LoadTranslation('ID_ERROR_UPLOADING_FILENAME'));
+            throw new Exception(G::LoadTranslation('ID_ERROR_UPLOAD_FILE_CONTACT_ADMINISTRATOR'));
         }
         $content = file_get_contents($_FILES['file_content']['tmp_name']);
         try {
             $array = json_decode($content, true);
-            $caseList = CaseList::createSetting($array, $ownerId);
+
+            $tableName = $array['tableName'];
+            unset($array['tableName']);
+
+            //the pmtable not exist
+            $table = AdditionalTables::where('ADD_TAB_NAME', '=', $tableName)
+                ->get()
+                ->first();
+            if ($table === null) {
+                return [
+                    'status' => 'tableNotExist',
+                    'message' => G::LoadTranslation('ID_CASELIST_CAN_NOT_BE_IMPORTED_THE_PMTABLE_NOT_EXIST', [$_FILES['file_content']['name']])
+                ];
+            }
+            $array['tableUid'] = $table->ADD_TAB_UID;
+
+            //the fields have differences between the import file and the current table
+            $requestData['invalidFields'] = $requestData['invalidFields'] ?? '';
+            if ($requestData['invalidFields'] !== 'continue') {
+                $fields = Fields::where('ADD_TAB_UID', '=', $array['tableUid'])
+                    ->whereNotIn('FLD_NAME', self::$excludeColumns)
+                    ->select('FLD_NAME')
+                    ->get()
+                    ->transform(function ($object) {
+                        return $object->FLD_NAME;
+                    })
+                    ->toArray();
+                foreach ($array['columns'] as $value) {
+                    if (!in_array($value['field'], $fields)) {
+                        return [
+                            'status' => 'invalidFields',
+                            'message' => G::LoadTranslation('ID_PMTABLE_NOT_HAVE_ALL_CASELIST_FIELDS_WOULD_YOU_LIKE_CONTINUE', [$tableName, $_FILES['file_content']['name']])
+                        ];
+                    }
+                }
+            }
+
+            //the name of the case list already exist
+            $list = CaseList::where('CAL_NAME', '=', $array['name'])
+                ->get()
+                ->first();
+            $requestData['duplicateName'] = $requestData['duplicateName'] ?? '';
+            if ($requestData['duplicateName'] !== 'continue') {
+                if ($list !== null) {
+                    return [
+                        'status' => 'duplicateName',
+                        'message' => G::LoadTranslation('ID_IMPORTING_CASELIST_WITH_THE_SAME_NAME_SELECT_OPTION', [$array['name']])
+                    ];
+                }
+            }
+
+            if ($requestData['duplicateName'] === 'continue' && $list !== null) {
+                $caseList = CaseList::updateSetting($list->CAL_ID, $array, $ownerId);
+            } else {
+                $caseList = CaseList::createSetting($array, $ownerId);
+            }
+
             $result = CaseList::getAliasFromColumnName($caseList->toArray());
             return $result;
         } catch (Exception $e) {

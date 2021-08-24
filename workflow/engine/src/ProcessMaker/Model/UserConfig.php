@@ -34,10 +34,14 @@ class UserConfig extends Model
         if (empty($userConfig)) {
             return null;
         }
+        $setting = json_decode($userConfig->USC_SETTING);
+        if (empty($setting)) {
+            $setting = new stdClass();
+        }
         return [
             "id" => $userConfig->USR_ID,
             "name" => $userConfig->USC_NAME,
-            "setting" => json_decode($userConfig->USC_SETTING)
+            "setting" => $setting
         ];
     }
 

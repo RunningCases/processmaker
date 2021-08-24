@@ -388,7 +388,7 @@ class Delegation extends Model
      */
     public function scopeAtRisk($query, $now)
     {
-        return $query->where('DEL_RISK_DATE', '>=', $now)->where('DEL_TASK_DUE_DATE', '>=', $now);
+        return $query->where('DEL_RISK_DATE', '<=', $now)->where('DEL_TASK_DUE_DATE', '>=', $now);
     }
 
     /**
@@ -401,7 +401,7 @@ class Delegation extends Model
      */
     public function scopeOverdue($query, $now)
     {
-        return $query->where('DEL_TASK_DUE_DATE', '>', $now);
+        return $query->where('DEL_TASK_DUE_DATE', '<', $now);
     }
 
     /**
@@ -1989,8 +1989,8 @@ class Delegation extends Model
         ]);
         // Join with task
         $query->joinTask();
-        // Get the open threads
-        $query->threadOpen();
+        // Get the open and paused threads
+        $query->openAndPause();
         // Related to the specific case number
         $query->case($appNumber);
         // Get the results

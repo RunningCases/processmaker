@@ -2,6 +2,8 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
+use DateInterval;
+use Datetime;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
@@ -722,5 +724,150 @@ class UnassignedTest extends TestCase
 
         $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
         $this->assertEquals(0, $res['total']);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with ontime filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_on_time()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff1Day = new DateInterval('P1D');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $date->add($diff1Day),
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCasesRisk($process1->PRO_ID);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with at risk filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_at_risk()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCasesRisk($process1->PRO_ID, null, null, 'AT_RISK');
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with overdue filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_overdue()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCasesRisk($process1->PRO_ID, null, null, 'OVERDUE');
+        $this->assertCount(1, $res);
     }
 }

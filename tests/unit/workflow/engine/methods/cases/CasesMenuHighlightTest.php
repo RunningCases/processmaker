@@ -96,9 +96,9 @@ class CasesMenuHighlightTest extends TestCase
 
         // Check if the object is valid
         $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('item', $result[0]);
-        $this->assertArrayHasKey('highlight', $result[0]);
-        $this->assertEquals('CASES_SELFSERVICE', $result[0]['item']);
-        $this->assertEquals(true, $result[0]['highlight']);
+        $this->assertArrayHasKey('item', $result[7]);
+        $this->assertArrayHasKey('highlight', $result[7]);
+        $this->assertEquals('CASES_SELFSERVICE', $result[7]['item']);
+        $this->assertEquals(true, $result[7]['highlight']);
     }
 }

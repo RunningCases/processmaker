@@ -356,6 +356,24 @@ class Application extends Model
     }
 
     /**
+     * Scope the Draft cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDraft($query, $user)
+    {
+        // Filter the status draft
+        $query->statusId(Application::STATUS_DRAFT);
+        // Filter the creator
+        $query->creator($user);
+
+        return $query;
+    }
+
+    /**
      * Get Applications by PRO_UID, ordered by APP_NUMBER.
      *
      * @param string $proUid

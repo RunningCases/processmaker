@@ -1694,6 +1694,18 @@ msgid "3 days at least"
 msgstr "3 days at least"
 
 # TRANSLATION
+# LABEL/ID_A_RANGE_OF_VALUES
+#: LABEL/ID_A_RANGE_OF_VALUES
+msgid "a range of values"
+msgstr "a range of values"
+
+# TRANSLATION
+# LABEL/ID_A_TEXT_SEARCH
+#: LABEL/ID_A_TEXT_SEARCH
+msgid "a Text Search"
+msgstr "a Text Search"
+
+# TRANSLATION
 # LABEL/ID_ABE_ANSWER_SUBMITTED
 #: LABEL/ID_ABE_ANSWER_SUBMITTED
 msgid "The answer has been submitted. Thank you."
@@ -3514,6 +3526,12 @@ msgstr "No actions available for this case."
 #: LABEL/ID_CASEDEMO
 msgid "Case Demo"
 msgstr "Case Demo"
+
+# TRANSLATION
+# LABEL/ID_CASELIST_CAN_NOT_BE_IMPORTED_THE_PMTABLE_NOT_EXIST
+#: LABEL/ID_CASELIST_CAN_NOT_BE_IMPORTED_THE_PMTABLE_NOT_EXIST
+msgid "Custom Case List {0} can not be imported because the PM Table does not exist in this Workspace."
+msgstr "Custom Case List {0} can not be imported because the PM Table does not exist in this Workspace."
 
 # TRANSLATION
 # LABEL/ID_CASE_DELETE_SUCCESFULLY
@@ -5818,6 +5836,12 @@ msgstr "The value '{0}' is not a valid date for the format '{1}'."
 #: LABEL/ID_DATE_UPDATED    
 msgid "Date Created"
 msgstr "Date Created"
+
+# TRANSLATION
+# LABEL/ID_DATE_TO_DATE
+#: LABEL/ID_DATE_TO_DATE    
+msgid "Date to Date"
+msgstr "Date to Date"
 
 # TRANSLATION
 # LABEL/ID_DAY
@@ -10042,6 +10066,12 @@ msgstr "Group already exists. You need set an action to continue. Available acti
 #: LABEL/ID_IMPORTER_PROJECT_ALREADY_EXISTS_SET_ACTION_TO_CONTINUE
 msgid "Project already exists. Set an action to continue. Available actions: [{0}]."
 msgstr "Project already exists. Set an action to continue. Available actions: [{0}]."
+
+# TRANSLATION
+# LABEL/ID_IMPORTING_CASELIST_WITH_THE_SAME_NAME_SELECT_OPTION
+#: LABEL/ID_IMPORTING_CASELIST_WITH_THE_SAME_NAME_SELECT_OPTION
+msgid "You are about importing a Case List with the same name {0}, please select an option."
+msgstr "You are about importing a Case List with the same name {0}, please select an option."
 
 # TRANSLATION
 # LABEL/ID_IMPORTING_ERROR
@@ -20316,6 +20346,12 @@ msgid "No"
 msgstr "No"
 
 # TRANSLATION
+# LABEL/ID_NO_SEARCHING_METHOD
+#: LABEL/ID_NO_SEARCHING_METHOD
+msgid "No searching method"
+msgstr "No searching method"
+
+# TRANSLATION
 # LABEL/ID_NODELETEOPTIONALL
 #: LABEL/ID_NODELETEOPTIONALL
 msgid "You must add all the days that you have selected in work days, otherwise you should leave at least an \"-- ALL --\" option."
@@ -21928,6 +21964,12 @@ msgstr "The PM Table associated with this DynaForm could not be found."
 #: LABEL/ID_PMTABLE_NOT_FOUNDED_SAVED_DATA
 msgid "The data from this case was saved in the database, but it was not saved in the PM Table, which it couldn't be found."
 msgstr "The data from this case was saved in the database, but it was not saved in the PM Table, which it couldn't be found."
+
+# TRANSLATION
+# LABEL/ID_PMTABLE_NOT_HAVE_ALL_CASELIST_FIELDS_WOULD_YOU_LIKE_CONTINUE
+#: LABEL/ID_PMTABLE_NOT_HAVE_ALL_CASELIST_FIELDS_WOULD_YOU_LIKE_CONTINUE
+msgid "The PM Table {0} does not have all the Custom Case List fields for file {1}. Would you like continue?"
+msgstr "The PM Table {0} does not have all the Custom Case List fields for file {1}. Would you like continue?"
 
 # TRANSLATION
 # LABEL/ID_PMTABLE_NOT_IMPORT_HAS_ERRORS
@@ -26308,6 +26350,12 @@ msgstr "Please complete the reassign reason."
 #: LABEL/ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES
 msgid "The report table is regenerating please come back in a few minutes."
 msgstr "The report table is regenerating please come back in a few minutes."
+
+# TRANSLATION
+# LABEL/ID_THE_SEARCH_WILL_BE_FROM
+#: LABEL/ID_THE_SEARCH_WILL_BE_FROM
+msgid "The search will be from"
+msgstr "The search will be from"
 
 # TRANSLATION
 # LABEL/ID_THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED

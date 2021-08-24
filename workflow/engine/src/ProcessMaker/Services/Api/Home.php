@@ -6,6 +6,7 @@ use Exception;
 use G;
 use Luracast\Restler\RestException;
 use Menu;
+use ProcessMaker\BusinessModel\Cases\CasesList;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\BusinessModel\Cases\Filter;
 use ProcessMaker\BusinessModel\Cases\Inbox;
@@ -574,6 +575,7 @@ class Home extends Api
                 $option->header = true;
                 $option->title = $menuInstance->Labels[$i];
                 $option->hiddenOnCollapse = true;
+                $option->id = $menuInstance->Id[$i];
             } else {
                 $option->href = $menuInstance->Options[$i];
                 $option->id = $menuInstance->Id[$i];
@@ -581,12 +583,6 @@ class Home extends Api
                 $option->icon = $menuInstance->Icons[$i];
             }
 
-            // Add additional attributes for some options
-            if (in_array($menuInstance->Id[$i], $optionsWithCounter)) {
-                $option->badge = new stdClass();
-                $option->badge->text = '0';
-                $option->badge->class = 'badge-custom';
-            }
             if ($menuInstance->Id[$i] === 'CASES_SEARCH') {
                 // Get advanced search filters for the current user
                 $filters = Filter::getByUser($this->getUserId());
@@ -626,11 +622,7 @@ class Home extends Api
                         "id" => $value['id'],
                         "title" => $value['name'],
                         "description" => $value['description'],
-                        "icon" => $value['iconList'],
-                        "badge" => [
-                            "text" => "0",
-                            "class" => "badge-custom"
-                        ]
+                        "icon" => $value['iconList']
                     ];
                 }
             }
@@ -795,7 +787,7 @@ class Home extends Api
     }
 
     /**
-     * Get the tasks counters for todo, draft, paused and unassigned
+     * Get the tasks counters for all task list: todo, draft, paused and unassigned
      * 
      * @url GET /tasks/counter
      *
@@ -829,6 +821,26 @@ class Home extends Api
         $unassigned->setUserUid($usrUid);
         $unassigned->setUserId($usrId);
         $result['unassigned'] = $unassigned->getCounter();
+
+        return $result;
+    }
+
+    /**
+     * Get the tasks highlight for all task list
+     *
+     * @url GET /tasks/highlight
+     *
+     * @return array
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getHighlight()
+    {
+        $usrUid = $this->getUserId();
+        $casesList = new CasesList();
+        $result = [];
+        $result = $casesList->atLeastOne($usrUid);
 
         return $result;
     }
@@ -904,7 +916,10 @@ class Home extends Api
     {
         $setting = UserConfig::getSetting($id, $name);
         if (is_null($setting)) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+            $setting = [
+                "status" => 404,
+                "message" => G::LoadTranslation('ID_DOES_NOT_EXIST')
+            ];
         }
         return $setting;
     }

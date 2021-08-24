@@ -7,7 +7,7 @@
     <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
     <CasesFilter
       :filters="filters"
-      :title="$t('ID_CASES_STATUS_TO_DO')"
+      :title="$t('ID_INBOX')"
       :icon="icon"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
@@ -232,7 +232,7 @@ import { Event } from 'vue-tables-2';
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 
 export default {
-  name: "Todo",
+  name: "Inbox",
   mixins: [defaultMixins],
   components: {
     HeaderCounter,
@@ -463,11 +463,10 @@ export default {
         start = data.page === 1 ? 0 : limit * (data.page - 1),
         filters = {},
         sort = "";
-      paged = start + "," + limit;
-
       filters = {
-        paged: paged,
-      }
+        limit: limit,
+        offset: start
+      };
       _.forIn(this.filters, function (item, key) {
           if(filters && item.value) {
               filters[item.filterVar] = item.value;

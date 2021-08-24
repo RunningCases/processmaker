@@ -2,6 +2,7 @@
 <div id="people">
     <ModalDeleteCaseList ref="modal-delete-list"></ModalDeleteCaseList>
     <ModalPreview ref="modal-preview"></ModalPreview>
+    <ModalImport ref="modal-import"></ModalImport>
     <button-fleft :data="newList"></button-fleft>
     <button-fleft :data="importList"></button-fleft>
     <v-server-table 
@@ -29,6 +30,7 @@ import utils from "../../../utils/utils";
 import OwnerCell from "../../../components/vuetable/OwnerCell";
 import ModalDeleteCaseList from "./../../Modals/ModalDeleteCaseList.vue";
 import ModalPreview from "./../../Modals/ModalPreview.vue";
+import ModalImport from "./../../Modals/ModalImport.vue";
 import download from "downloadjs";
 
 export default {
@@ -40,6 +42,7 @@ export default {
         OwnerCell,
         ModalDeleteCaseList,
         ModalPreview,
+        ModalImport,
     },
     data() {
         return {
@@ -69,7 +72,7 @@ export default {
                 title: this.$i18n.t("Import List"),
                 class: "btn-success",   
                 onClick: () => {
-                    //TODO button
+                    this.importCustomCaseList();
                 }
             },
             columns: [
@@ -235,8 +238,32 @@ export default {
          */
         downloadCaseList(data) {
             var fileName = data.name,
-                typeMime = "text/plain";
-            download(JSON.stringify(data), fileName + ".json", typeMime);
+                typeMime = "text/plain",
+                dataExport = [];
+            dataExport = this.filterDataToExport(data);
+            download(JSON.stringify(dataExport), fileName + ".json", typeMime);
+        },
+        /**
+         * Filter the sensible information to export
+         * @param {Array} data
+         */
+        filterDataToExport(data) {
+            var dataExport = [];
+            dataExport.push({
+                type: data['type'],
+                name: data['name'],
+                description: data['description'],
+                tableUid: data['tableUid'],
+                tableName: data['tableName'],
+                columns: data['columns'],
+                userId: data['userId'],
+                iconList: data['iconList'],
+                iconColor: data['iconColor'],
+                iconColorScreen: data['iconColorScreen'],
+                createDate: data['createDate'],
+                updateDate: data['updateDate']
+            });
+            return dataExport;
         },
         /**
         * Show options in the ellipsis 
@@ -282,6 +309,14 @@ export default {
                 }
             }
         },
+        importCustomCaseList() {
+            this.$refs["modal-import"].show();
+        }
     }
 };
 </script>
+<style>
+.float-right {
+    padding-left: 1.5%;
+}
+</style>

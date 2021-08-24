@@ -221,8 +221,11 @@ export default {
                 limit = data.limit,
                 filters = {},
                 start = data.page === 1 ? 0 : limit * (data.page - 1);
-            paged = start + "," + limit;
-            filters["paged"] = paged;
+            paged = start + "," + limit ;
+            filters = {
+                limit: limit,
+                offset: start
+            };
             _.forIn(this.filters, function (item, key) {
                 if(filters && item.value) {
                     filters[item.filterVar] = item.value;

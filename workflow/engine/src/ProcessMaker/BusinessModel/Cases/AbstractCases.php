@@ -1481,6 +1481,16 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Get true if the user has at least one case
+     *
+     * @throws Exception
+     */
+    public function atLeastOne()
+    {
+        throw new Exception("Method '" . __FUNCTION__ . "' should be implemented in the extended class '" . get_class($this) . "'.");
+    }
+
+    /**
      * Get the list counter
      *
      * @throws Exception
@@ -1582,5 +1592,79 @@ class AbstractCases implements CasesInterface
             $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
         }
         return $query->get()->values()->toArray();
+    }
+
+    /**
+     * Get cases risk by process
+     * 
+     * @param int $processId
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @param string $riskStatus
+     * @param int $topCases
+     * 
+     * @return array
+     */
+    public function getCasesRisk($processId, $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $query = Delegation::selectRaw('
+            APP_DELEGATION.APP_NUMBER as number_case,
+            APP_DELEGATION.DEL_DELEGATE_DATE as delegated,
+            APP_DELEGATION.DEL_RISK_DATE as at_risk,
+            APP_DELEGATION.DEL_TASK_DUE_DATE as due_date,
+            APP_DELEGATION.APP_UID as app_uid,
+            APP_DELEGATION.DEL_INDEX as del_index,
+            APP_DELEGATION.TAS_UID as tas_uid
+        ');
+        $listArray = explode("\\", get_class($this));
+        $list = end($listArray);
+        switch ($list) {
+            case 'Inbox':
+                $query->inbox($this->getUserId());
+                break;
+            case 'Draft':
+                $query->draft($this->getUserId());
+                break;
+            case 'Paused':
+                $query->paused($this->getUserId());
+                break;
+            case 'Unassigned':
+                $query->selfService($this->getUserUid());
+                break;
+        }
+        $query->joinProcess();
+        $query->processInList([$processId]);
+
+        if (!is_null($dateFrom)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);
+        }
+        if (!is_null($dateTo)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
+        }
+        if (!is_null($topCases)) {
+            $query->orderBy('APP_DELEGATION.DEL_DELEGATE_DATE', 'ASC')->limit($topCases);
+        }
+        $value = 'due_date';
+        switch ($riskStatus) {
+            case 'ON_TIME':
+                $query->onTime($currentDate);
+                $value = 'at_risk';
+                break;
+            case 'AT_RISK':
+                $query->atRisk($currentDate);
+                break;
+            case 'OVERDUE':
+                $query->overdue($currentDate);
+                break;
+        }
+        $res = $query->get()->values()->toArray();
+        foreach ($res as $key => $values) {
+            $riskDate = new DateTime($values[$value]);
+            $days = ['days' => $date->diff($riskDate)->days];
+            $res[$key] = $days + $res[$key];
+        }
+        return $res;
     }
 }

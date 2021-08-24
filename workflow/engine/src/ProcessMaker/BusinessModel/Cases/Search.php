@@ -172,7 +172,7 @@ class Search extends AbstractCases
             switch ($status) {
                 case 'DRAFT':
                 case 'TO_DO':
-                    $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
+                    $taskPending = Delegation::getPendingThreads($item['APP_NUMBER'], false);
                     break;
                 case 'COMPLETED':
                 case 'CANCELLED':
@@ -213,6 +213,17 @@ class Search extends AbstractCases
     {
         // The search does not have a counters
         return 0;
+    }
+
+    /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        // This class does not require this value
+        return false;
     }
 
     /**

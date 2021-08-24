@@ -2,6 +2,8 @@
 
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
+use DateInterval;
+use Datetime;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -446,7 +448,16 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_at_risk()
     {
-        $table = factory(Delegation::class)->states('closed')->create();
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+
+        $table = factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
         $this->assertCount(1, $table->atRisk($table->DEL_DELEGATE_DATE)->get());
     }
 
@@ -458,7 +469,16 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_overdue()
     {
-        $table = factory(Delegation::class)->states('closed')->create();
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+
+        $table = factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
         $this->assertCount(1, $table->overdue($table->DEL_DELEGATE_DATE)->get());
     }
 

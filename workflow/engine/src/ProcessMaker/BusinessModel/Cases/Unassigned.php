@@ -168,6 +168,24 @@ class Unassigned extends AbstractCases
     }
 
     /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        $query = Delegation::query()->select(['APP_DELEGATION.APP_NUMBER']);
+        // Add the initial scope for self-service cases
+        $query->selfService($this->getUserUid());
+        // Get only one case
+        $query->limit(1);
+        // Get result
+        $items = $query->get();
+
+        return $items->count() > 0;
+    }
+
+    /**
      * Count how many cases the user has in SELF_SERVICE, needs to apply filters
      *
      * @return int
