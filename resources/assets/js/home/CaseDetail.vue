@@ -52,10 +52,10 @@
                 >{{ $t("ID_CONTINUE") }}</b-button
               >
               <b-button
-                v-if="props.row.STATUS === 'PAUSE'"
+                v-if="props.row.STATUS === 'PAUSED'"
                 @click="onClickUnpause(props)"
                 variant="outline-primary"
-                >{{ $t("ID_INPAUSE") }}</b-button
+                >{{ $t("ID_UNPAUSE") }}</b-button
               >
             </div>
           </v-server-table>
@@ -591,7 +591,7 @@ export default {
      * @param {object} data
      */
     onClickUnpause(data) {
-      Api.cases.unpause(data).then((response) => {
+      Api.cases.unpause(data.row).then((response) => {
         if (response.statusText === "OK") {
           this.$refs["vueTable"].getData();
         }
