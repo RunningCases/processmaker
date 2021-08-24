@@ -882,7 +882,7 @@ class Cases
     public function participation($usrUid, $caseNumber, $index)
     {
         $userId = User::getId($usrUid);
-        $query = Delegation::query()->select(['APP_NUMBER'])->case($caseNumber)->index($index)->threadOpen();
+        $query = Delegation::query()->select(['APP_NUMBER'])->case($caseNumber)->index($index)->openAndPause();
         $query1 = clone $query;
         $result = $query->userId($userId)->limit(1)->get()->values()->toArray();
         $permission = empty($result) ? false : true;

@@ -367,7 +367,7 @@ export default {
                     count: "",
                 },
             },
-            defaultCaseList: null,
+            defaultCaseList: [],
             isValidName: null,
             isValidTable: null,
             pmTable: null
@@ -379,8 +379,7 @@ export default {
         },
     },
     mounted() {
-        this.defaultCaseList = Api.getDefault(this.module.key);
-        this.dataCaseList = this.defaultCaseList;
+        this.getDefaultColumns(this.module.key);
         if(this.params.id) {
             this.editMode();
         }
@@ -675,6 +674,22 @@ export default {
                 variant: variant,
                 solid: true
             })
+        },
+        /**
+         * Get default Columns
+         * @param {string} type
+         */
+        getDefaultColumns(type) {
+            let that = this;
+            if (!this.params.columns) {
+                Api.getDefault(type)
+                .then((response) => {
+                    that.dataCaseList = response.data;
+                })
+                .catch((e) => {
+                    console.error(e);
+                })
+            }
         }
     },
 };

@@ -56,8 +56,13 @@ class caseListApi extends Api {
             keys: {}
         });
     }
-    getDefault(module){
-        return Defaults[module]
+    getDefault(type){
+        return this.get({
+            service: 'DEFAULT_COLUMNS',
+            keys: {
+                type: type
+            }
+        });
     }
     createCaseList(data) {
         return this.post({

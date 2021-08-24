@@ -281,15 +281,17 @@ class CaseListTest extends TestCase
      */
     public function it_should_test_import()
     {
+        $additionalTables = factory(AdditionalTables::class)->create();
         $data = [
             'type' => 'inbox',
             'name' => 'test1',
             'description' => 'my description',
-            'tableUid' => '',
+            'tableUid' => $additionalTables->ADD_TAB_UID,
             'columns' => [],
             'iconList' => 'deafult.png',
             'iconColor' => 'red',
-            'iconColorScreen' => 'blue'
+            'iconColorScreen' => 'blue',
+            'tableName' => $additionalTables->ADD_TAB_NAME
         ];
         $json = json_encode($data);
         $tempFile = sys_get_temp_dir() . '/test_' . random_int(10000, 99999);
@@ -300,7 +302,10 @@ class CaseListTest extends TestCase
                 'error' => 0
             ]
         ];
-        $request_data = [];
+        $request_data = [
+            'invalidFields' => 'continue',
+            'duplicateName' => 'continue'
+        ];
         $ownerId = 1;
         $result = CaseList::import($request_data, $ownerId);
 
