@@ -1,12 +1,17 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\GroupUser;
+use ProcessMaker\Model\Groupwf;
+use ProcessMaker\Model\RbacRoles;
+use ProcessMaker\Model\RbacUsers;
+use ProcessMaker\Model\User;
 use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\ElementTranslation;
 use ProcessMaker\Validation\SqlBlacklist;
-use Illuminate\Support\Facades\DB;
 
 /**
  * ProcessMaker has made a number of its PHP functions available be used in triggers and conditions.
@@ -4011,6 +4016,202 @@ function PMFSendMessageToGroup(
 
     //Return
     return 1;
+}
+
+/**
+ * @method
+ * 
+ * Create a new user
+ * 
+ * @name PMFNewUser
+ * @label PMF New User
+ * 
+ * @param string | $username
+ * @param string | $password
+ * @param string | $firstname
+ * @param string | $lastname
+ * @param string | $email
+ * @param string | $role
+ * @param string | $dueDate = null
+ * @param string | $status = null
+ * @param string | $group =null
+ * 
+ * @return array | $response | Response
+ */
+function PMFNewUser(
+    $username,
+    $password, 
+    $firstname, 
+    $lastname, 
+    $email,
+    $role,
+    $dueDate = null,
+    $status = null,
+    $group = null)
+{
+    if (empty($username)) {
+        throw new Exception(G::LoadTranslation('ID_USERNAME_REQUIRED'));
+    }
+
+    if (empty($firstname)) {
+        throw new Exception(G::LoadTranslation('ID_MSG_ERROR_USR_FIRSTNAME'));
+    }
+
+    if (empty($lastname)) {
+        throw new Exception(G::LoadTranslation('ID_MSG_ERROR_USR_LASTNAME'));
+    }
+
+    if (empty($password)) {
+        throw new Exception(G::LoadTranslation('ID_PASSWD_REQUIRED'));
+    }
+
+    if (empty($email)) {
+        throw new Exception(G::LoadTranslation('ID_EMAIL_IS_REQUIRED'));
+    }
+
+    if (!empty($dueDate) && $dueDate != 'null' && $dueDate != '' && $dueDate) {
+        if (!preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $dueDate, $match)) {
+            throw new Exception(G::LoadTranslation('ID_INVALID_DATA'));
+        } else {
+            $dueDate = mktime(
+                0,
+                0,
+                0,
+                intval($match[2]),
+                intval($match[3]),
+                intval($match[1])
+            );
+        }
+    } else {
+        $expirationDate = 1;
+        $envFile = PATH_CONFIG . 'env.ini';
+        if (file_exists($envFile)) {
+            $sysConf = System::getSystemConfiguration($envFile);
+            if (isset($sysConf['expiration_year']) && $sysConf['expiration_year'] > 0) {
+                $expirationDate = abs($sysConf['expiration_year']);
+            }
+        }
+        $dueDate = mktime(0, 0, 0, 12, 31, date("Y") + $expirationDate);
+    }
+    
+    if (!empty($status) && $status != null && $status != "" && $status) {
+        if ($status != "ACTIVE" && $status != "INACTIVE" && $status != "VACATION") {
+            throw new Exception(G::LoadTranslation('ID_INVALID_DATA'));
+        }
+    } else {
+        $status = "ACTIVE";
+    }
+
+    $rolUid = RbacRoles::getRolUidByCode($role);
+    if (empty($rolUid)) {
+        throw new Exception(G::LoadTranslation('ID_INVALID_ROLE'));
+    }
+
+    $userProperties = new UsersProperties();
+    $validation = $userProperties->validatePassword($password, '', 0);
+
+    if (in_array('ID_PPP_MAXIMUM_LENGTH', $validation)) {
+        throw new Exception(G::LoadTranslation('ID_PASSWORD_SURPRASES'));
+    }
+    
+    if (in_array('ID_PPP_MINIMUM_LENGTH', $validation)) {
+        throw new Exception(G::LoadTranslation('ID_PASSWORD_BELOW'));
+    }
+
+    if (in_array('ID_PPP_NUMERICAL_CHARACTER_REQUIRED', $validation)) {
+        throw new Exception(G::LoadTranslation('ID_PPP_NUMERICAL_CHARACTER_REQUIRED'));
+    }
+
+    if (in_array('ID_PPP_UPPERCASE_CHARACTER_REQUIRED', $validation)) {
+        throw new Exception(G::LoadTranslation('ID_PPP_UPPERCASE_CHARACTER_REQUIRED'));
+    }
+
+    if (in_array('ID_PPP_SPECIAL_CHARACTER_REQUIRED', $validation)) {
+        throw new Exception(G::LoadTranslation('ID_PPP_SPECIAL_CHARACTER_REQUIRED'));
+    }
+
+    if (RbacUsers::verifyUsernameExists($username)) {
+        throw new Exception(G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS'));
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception(G::LoadTranslation('ID_EMAIL_INVALID'));
+    }
+
+    if (!is_null($group) && $group != '' && !Groupwf::verifyGroupExists($group)) {
+        throw new Exception(G::LoadTranslation('ID_GROUP_DOESNT_EXIST'));
+    }
+
+    switch ($status) {
+        case 'ACTIVE':
+            $statusId = 1;
+            break;
+        case 'INACTIVE':
+            $statusId = 0;
+            break;
+        case 'VACATION':
+            $statusId = 0;
+            break;
+    }
+    $usrUid = G::generateUniqueID();
+
+    $data = [
+        'USR_UID' => $usrUid,
+        'USR_USERNAME' => $username,
+        'USR_PASSWORD' => Bootstrap::hashPassword($password),
+        'USR_FIRSTNAME' => $firstname,
+        'USR_LASTNAME' => $lastname,
+        'USR_EMAIL' => $email,
+        'USR_DUE_DATE' => date('Y-m-d', $dueDate),
+        'USR_CREATE_DATE' => date("Y-m-d H:i:s"),
+        'USR_UPDATE_DATE' => date("Y-m-d H:i:s"),
+        'USR_STATUS' => $status,
+        'USR_AUTH_TYPE' => '',
+        'UID_AUTH_SOURCE' => '',
+        'USR_AUTH_USER_DN' => "",
+        'USR_AUTH_SUPERVISOR_DN' => "",
+        'USR_STATUS_ID' => $statusId,
+        'USR_COUNTRY' => '',
+        'USR_CITY' => '',
+        'USR_LOCATION' => '',
+        'USR_ADDRESS' => '',
+        'USR_PHONE' => '',
+        'USR_FAX' => '',
+        'USR_CELLULAR' => '',
+        'USR_ZIP_CODE' => '',
+        'DEP_UID' => '',
+        'USR_POSITION' => '',
+        'USR_RESUME' => '',
+        'ROL_CODE' => $role,
+        'ROL_UID' => $rolUid['ROL_UID']
+    ];
+
+    RbacUsers::createUser($data);
+    $usrId = User::createUser($data);
+    
+    $data['USR_ID'] = $usrId;
+
+    if (!is_null($group) && $group != '') {
+        $grpId = Groupwf::getGroupId($group);
+        $data['GRP_ID'] = $grpId['GRP_ID'];
+        GroupUser::assignUserToGroup($usrUid, $usrUid, $group, $grpId['GRP_ID']);
+    }
+
+    $response = [
+        'userUid' => $data['USR_UID'],
+        'userId' => $data['USR_ID'],
+        'username' => $data['USR_USERNAME'],
+        'password' => $data['USR_PASSWORD'],
+        'firstname' => $data['USR_FIRSTNAME'],
+        'lastname' => $data['USR_LASTNAME'],
+        'email' => $data['USR_EMAIL'],
+        'role' => $data['ROL_CODE'],
+        'dueDate' => $data['USR_DUE_DATE'],
+        'status' => $data['USR_STATUS'],
+        'groupUid' => $group
+    ];
+    
+    return $response;
 }
 
 //Start - Private functions

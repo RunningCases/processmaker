@@ -42,5 +42,31 @@ class Groupwf extends Model
     {
         return $query->where('GRP_UID', $uid);
     }
-}
 
+    /**
+     * Verify if group exists
+     * 
+     * @param string $grpUid
+     * @return boolean
+     */
+    public static function verifyGroupExists($grpUid)
+    {
+        $query = Groupwf::select()->group($grpUid);
+        if (empty($query->get()->values()->toArray())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get group Id
+     * 
+     * @param string $grpUid
+     * @return array
+     */
+    public static function getGroupId($grpUid)
+    {
+        $query = Groupwf::select('GRP_ID')->where('GRP_UID', $grpUid);
+        return $query->get()->first()->toArray();
+    }
+}

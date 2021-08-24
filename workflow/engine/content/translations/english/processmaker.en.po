@@ -458,6 +458,12 @@ msgid "Mail To is required, or uncheck the Send a Test Mail option"
 msgstr "Mail To is required, or uncheck the Send a Test Mail option"
 
 # TRANSLATION
+# JAVASCRIPT/ID_EMAIL_IS_REQUIRED
+#: JAVASCRIPT/ID_EMAIL_IS_REQUIRED
+msgid "Email is required"
+msgstr "Email is required"
+
+# TRANSLATION
 # JAVASCRIPT/ID_EMPTY_NODENAME
 #: JAVASCRIPT/ID_EMPTY_NODENAME
 msgid "The field name contains spaces or it's empty!"
@@ -21198,6 +21204,12 @@ msgid "Password is longer than the maximum allowed length"
 msgstr "Password is longer than the maximum allowed length"
 
 # TRANSLATION
+# LABEL/ID_PASSWORD_BELOW
+#: LABEL/ID_PASSWORD_BELOW
+msgid "Password is below than the maximum allowed length"
+msgstr "Password is below than the maximum allowed length"
+
+# TRANSLATION
 # LABEL/ID_PASSWORD_TESTING
 #: LABEL/ID_PASSWORD_TESTING
 msgid "Testing password"
@@ -27880,6 +27892,12 @@ msgstr "Reassign to:"
 #: LABEL/ID_USER_UID_DOESNT_EXIST
 msgid "The row '{USR_UID}' in table USER doesn't exist!"
 msgstr "The row '{USR_UID}' in table USER doesn't exist!"
+
+# TRANSLATION
+# LABEL/ID_GROUP_DOESNT_EXIST
+#: LABEL/ID_GROUP_DOESNT_EXIST
+msgid "The group '{GRP_UID}' doesn't exist!"
+msgstr "The group '{GRP_UID}' doesn't exist!"
 
 # TRANSLATION
 # LABEL/ID_USER_WITH_ROLE
