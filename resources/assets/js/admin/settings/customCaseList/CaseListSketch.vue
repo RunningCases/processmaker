@@ -681,15 +681,16 @@ export default {
          */
         getDefaultColumns(type) {
             let that = this;
-            if (!this.params.columns) {
-                Api.getDefault(type)
-                .then((response) => {
+            Api.getDefault(type)
+            .then((response) => {
+                if (!that.params.columns) {
                     that.dataCaseList = response.data;
-                })
-                .catch((e) => {
-                    console.error(e);
-                })
-            }
+                }
+                that.defaultCaseList = response.data;
+            })
+            .catch((e) => {
+                console.error(e);
+            })
         }
     },
 };
