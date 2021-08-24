@@ -61,4 +61,15 @@ class Canceled extends AbstractCases
         // Return the number of rows
         return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
+
+    /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        // This class does not require this value
+        return false;
+    }
 }

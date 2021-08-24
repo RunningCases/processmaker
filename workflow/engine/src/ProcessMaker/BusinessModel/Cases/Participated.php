@@ -267,6 +267,17 @@ class Participated extends AbstractCases
     }
 
     /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        // This class does not require this value
+        return false;
+    }
+
+    /**
      * Count how many cases the user has Participation, needs to apply filters
      *
      * @return int

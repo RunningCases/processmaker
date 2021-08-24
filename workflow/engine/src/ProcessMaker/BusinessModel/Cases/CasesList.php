@@ -41,6 +41,7 @@ class CasesList
             'inbox' => 'CASES_INBOX',
             'participated' => 'CASES_SENT',
             'paused' => 'CASES_PAUSED',
+            'unassigned' => 'CASES_SELFSERVICE',
         ];
 
         /*----------------------------------********---------------------------------*/
@@ -79,6 +80,30 @@ class CasesList
             } else {
                 $response[$item] = $total;
             }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Count if the user has at least one case in the list
+     *
+     * @param string $usrUid
+     *
+     * @return array
+     */
+    public function atLeastOne(string $usrUid)
+    {
+        // Get the usrId key
+        $usrId = User::getId($usrUid);
+        // Get the classes
+        $list = $this->mapList;
+        $response = [];
+        foreach ($list as $listObject => $item) {
+            $this->$listObject->setUserUid($usrUid);
+            $this->$listObject->setUserId($usrId);
+            $atLeastOne = $this->$listObject->atLeastOne($usrUid);
+            $response[] = ['item' => $item, 'highlight' => $atLeastOne];
         }
 
         return $response;

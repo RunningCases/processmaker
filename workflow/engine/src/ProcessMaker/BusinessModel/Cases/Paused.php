@@ -160,6 +160,24 @@ class Paused extends AbstractCases
     }
 
     /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        $query = Delegation::query()->select(['APP_DELEGATION.APP_NUMBER']);
+        // Scope that set the paused cases
+        $query->paused($this->getUserId());
+        // Get only one case
+        $query->limit(1);
+        // Get result
+        $items = $query->get();
+
+        return $items->count() > 0;
+    }
+
+    /**
      * Count how many cases the user has in PAUSED, needs to apply filters
      *
      * @return int
