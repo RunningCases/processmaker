@@ -48,8 +48,14 @@
               <b-button
                 v-if="props.row.STATUS === 'OPEN'"
                 @click="onClick(props)"
-                variant="outline-primary"
+                variant="outline-success"
                 >{{ $t("ID_CONTINUE") }}</b-button
+              >
+              <b-button
+                v-if="props.row.STATUS === 'PAUSED'"
+                @click="onClickUnpause(props)"
+                variant="outline-primary"
+                >{{ $t("ID_UNPAUSE") }}</b-button
               >
             </div>
           </v-server-table>
@@ -428,6 +434,9 @@ export default {
           that.dataComments.noPerms = response.data.noPerms || 0;
         })
         .catch((err) => {
+          if (err.response.data) {
+            that.showAlert(err.response.data.error.message, "danger");
+          }
           throw new Error(err);
         });
     },
@@ -576,6 +585,18 @@ export default {
         this.$emit("onUpdatePage", "XCase");
       }
     },
+    /**
+     * Unpause click handler
+     *
+     * @param {object} data
+     */
+    onClickUnpause(data) {
+      Api.cases.unpause(data.row).then((response) => {
+        if (response.statusText === "OK") {
+          this.$refs["vueTable"].getData();
+        }
+      });
+    },  
     /**
      * Claim case
      *
