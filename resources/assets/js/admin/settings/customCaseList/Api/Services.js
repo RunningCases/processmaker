@@ -6,5 +6,6 @@ export default {
     REPORT_TABLES: "/caseList/report-tables",
     CASE_LIST: "/caseList",
     DEFAULT_COLUMNS: "/caseList/{type}/default-columns",
-    PUT_CASE_LIST: "/caseList/{id}"
+    PUT_CASE_LIST: "/caseList/{id}",    
+    IMPOR_CASE_LIST: "/caseList/import"
 };

@@ -10,7 +10,7 @@
             </template>
             <b-container fluid>
                 <p>
-                    {{ $t("ID_ARE_YOU_SURE_DELETE_CUSTOM_CASE_LIST") }}
+                    {{ $t("ID_ARE_YOU_SURE_DELETE_CUSTOM_CASE_LIST", {'CUSTOM_NAME': data.name})  }}
                 </p>
             </b-container>
             <div class="modal-footer">
@@ -40,7 +40,9 @@ export default {
     name: "ModalDeleteCaseList",
     data() {
         return {
-            data: null
+            data: {
+                name: null
+            }
         }
     },
     methods: {

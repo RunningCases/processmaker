@@ -79,6 +79,20 @@ class caseListApi extends Api {
             data: data
         });
     }
+    importCaseList(data) {
+        let formData = new FormData();
+        formData.append('file_content', data.file);
+        if (data.continue) {
+            formData.append(data.continue, 'continue');
+        }
+        return this.post({
+            service: "IMPOR_CASE_LIST",
+            data: formData,
+            headers:{
+                'Content-Type': 'multipart/form-data'
+            },
+        })
+    }
 }
 let api = new caseListApi(Services);
 
