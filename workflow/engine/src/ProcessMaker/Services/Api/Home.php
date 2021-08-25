@@ -87,7 +87,8 @@ class Home extends Api
     /**
      * Get the inbox cases
      *
-     * @url GET /todo
+     * @url GET /inbox
+     * @url GET /todo [This is kept for compatibility should not be used 'todo', the reason is to only handle the same verb (inbox) for all 'normal case list' and 'custom case list']
      *
      * @param int $caseNumber
      * @param int $process
