@@ -96,10 +96,10 @@ class Inbox extends AbstractCases
 
     /**
      * Get the data corresponding to List Inbox
-     *
+     * @param callable $callback
      * @return array
      */
-    public function getData()
+    public function getData(callable $callback = null)
     {
         // Start the query for get the cases related to the user
         $query = Delegation::query()->select($this->getColumnsView());
@@ -120,6 +120,9 @@ class Inbox extends AbstractCases
         }
         // The limit by clause
         $query->offset($this->getOffset())->limit($this->getLimit());
+        if (is_callable($callback)) {
+            $callback($query);
+        }
         // Execute the query
         $results = $query->get();
         // Prepare the result

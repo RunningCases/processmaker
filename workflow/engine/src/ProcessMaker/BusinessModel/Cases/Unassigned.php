@@ -96,10 +96,10 @@ class Unassigned extends AbstractCases
 
     /**
      * Get data self-services cases by user
-     *
+     * @param callable $callback
      * @return array
      */
-    public function getData()
+    public function getData(callable $callback = null)
     {
         $query = Delegation::query()->select($this->getColumnsView());
         // Join with process
@@ -122,6 +122,9 @@ class Unassigned extends AbstractCases
         }
         // Add pagination to the query
         $query->offset($this->getOffset())->limit($this->getLimit());
+        if (is_callable($callback)) {
+            $callback($query);
+        }
         // Get the data
         $results = $query->get();
         // Prepare the result
