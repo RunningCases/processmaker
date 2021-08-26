@@ -1073,19 +1073,19 @@ class Cases
      * @access public
      * @param string $app_uid , Uid for case
      * @param string $usr_uid , Uid for user
-     * @param bool|string $del_index
+     * @param int $del_index
      *
      * @return void
      * @throws Exception
      */
-    public function putUnpauseCase($appUid, $usrUid, $index = false)
+    public function putUnpauseCase($appUid, $usrUid, $index = 0)
     {
         Validator::isString($appUid, '$app_uid');
         Validator::isString($usrUid, '$usr_uid');
         Validator::appUid($appUid, '$app_uid');
         Validator::usrUid($usrUid, '$usr_uid');
 
-        if ($index === false) {
+        if ($index === 0) {
             $index = AppDelegation::getCurrentIndex($appUid);
         }
         Validator::isInteger($index, '$del_index');

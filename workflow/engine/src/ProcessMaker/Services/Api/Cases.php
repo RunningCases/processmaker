@@ -994,18 +994,19 @@ class Cases extends Api
      * @url PUT /:appUid/unpause
      *
      * @param string $appUid {@min 1}{@max 32}
+     * @param int $index {@from body}
      *
      * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doPutUnpauseCase($appUid)
+    public function doPutUnpauseCase($appUid, $index = 0)
     {
         try {
             $userUid = $this->getUserId();
             $cases = new BmCases();
-            $cases->putUnpauseCase($appUid, $userUid);
+            $cases->putUnpauseCase($appUid, $userUid, $index);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
