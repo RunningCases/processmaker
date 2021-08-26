@@ -311,14 +311,11 @@ class CaseList extends Model
             //the fields have differences between the import file and the current table
             $requestData['invalidFields'] = $requestData['invalidFields'] ?? '';
             if ($requestData['invalidFields'] !== 'continue') {
-                $fields = Fields::where('ADD_TAB_UID', '=', $array['tableUid'])
-                    ->whereNotIn('FLD_NAME', self::$excludeColumns)
-                    ->select('FLD_NAME')
-                    ->get()
-                    ->transform(function ($object) {
-                        return $object->FLD_NAME;
-                    })
-                    ->toArray();
+                $fields = [];
+                $columns = CaseList::formattingColumns($array['type'], $array['tableUid'], []);
+                foreach ($columns as $column) {
+                    $fields[] = $column['field'];
+                }
                 foreach ($array['columns'] as $value) {
                     if (!in_array($value['field'], $fields)) {
                         return [
