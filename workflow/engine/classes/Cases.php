@@ -4178,12 +4178,13 @@ class Cases
     }
 
     /**
-     * unpause a case
+     * Unpause a case
      *
      * @name unpauseCase
      * @param string $appUid
      * @param int $index
      * @param string $usrUid
+     *
      * @return object
      */
     public function unpauseCase($appUid, $index, $usrUid)
