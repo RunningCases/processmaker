@@ -277,6 +277,9 @@ export default {
         this.series = serie;
       }
     },
+    /**
+     * Update axis chart
+     */
     updateApexchartAxis() {
       switch (this.riskType) {
         case "OVERDUE":
@@ -311,6 +314,9 @@ export default {
           break;
       }
     },
+    /**
+     * Create custom tooltip
+     */
     customTooltip(series, seriesIndex, dataPointIndex, w) {
       let obj = this.dataCasesByRisk[seriesIndex];
       return `<div class="apexcharts-theme-light">
@@ -356,6 +362,9 @@ export default {
       });
       this.$parent.$parent.$emit("onUpdatePage", "XCase");
     },
+    /**
+     * Click in marker chart
+     */
     onClickCaseMarker(selection) {
       let process = this.data[1].id,
         caseList = this.data[0].id.toLowerCase();
@@ -387,6 +396,9 @@ export default {
           break;
       }
     },
+    /**
+     * Show modal unpause
+     */
     showModalUnpauseCase(item) {
       this.$refs["modal-unpause-case"].data = item;
       this.$refs["modal-unpause-case"].show();

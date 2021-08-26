@@ -50,9 +50,15 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
+    /**
+     * Change level in drill down
+     */
     changeLevel(lv) {
       this.level = lv;
     },
+    /**
+     * update data in charts
+     */
     updateVueChart(lv) {
       this.$refs["pm-vue-chart"].onChangeLevel(lv);
     },
