@@ -95,10 +95,10 @@ class Paused extends AbstractCases
 
     /**
      * Gets the data for the paused cases list
-     *
+     * @param callable $callback
      * @return array
      */
-    public function getData()
+    public function getData(callable $callback = null)
     {
         $query = Delegation::query()->select($this->getColumnsView());
         // Join with process
@@ -114,6 +114,9 @@ class Paused extends AbstractCases
         $query->orderBy($this->getOrderByColumn(), $this->getOrderDirection());
         // Add pagination to the query
         $query->offset($this->getOffset())->limit($this->getLimit());
+        if (is_callable($callback)) {
+            $callback($query);
+        }
         //Execute the query
         $results = $query->get();
         // Prepare the result

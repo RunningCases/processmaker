@@ -3372,7 +3372,6 @@ class WsBase
 
             if (empty($caseUid)) {
                 $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " caseUid");
-
                 $g->sessionVarRestore();
 
                 return $result;
@@ -3380,7 +3379,6 @@ class WsBase
 
             if (empty($delIndex)) {
                 $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " delIndex");
-
                 $g->sessionVarRestore();
 
                 return $result;
@@ -3388,7 +3386,6 @@ class WsBase
 
             if (empty($userUid)) {
                 $result = new WsResponse(100, G::LoadTranslation("ID_REQUIRED_FIELD") . " userUid");
-
                 $g->sessionVarRestore();
 
                 return $result;
