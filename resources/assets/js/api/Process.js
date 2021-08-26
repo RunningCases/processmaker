@@ -35,5 +35,13 @@ export let process = {
           params: dt,
           keys: {}
       });
-  }
+    },
+    totalCasesByRisk(dt) {
+      return Api.get({
+          service: "CASES_RISK",
+          method: "get",
+          params: dt,
+          keys: {}
+      });
+    },
 };

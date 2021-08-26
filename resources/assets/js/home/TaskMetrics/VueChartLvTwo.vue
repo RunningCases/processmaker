@@ -1,11 +1,11 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">Number of Tasks Status per Process</h6>
+      <h6 class="v-search-title">Number of Tasks Status per Process by task status</h6>
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"
-          :settings="breadCrumbs.settings"
+          :settings="settingsBreadcrumbs"
         />
         <div class="vp-width-p30 vp-inline-block">
           <b-form-datepicker
@@ -82,6 +82,13 @@ export default {
         { text: this.$t("ID_DAY"), value: "day" },
         { text: this.$t("ID_MONTH"), value: "month" },
         { text: this.$t("ID_YEAR"), value: "year" },
+      ],
+      settingsBreadcrumbs: [
+        {
+          class: "fas fa-info-circle",
+          tooltip: this.$t("ID_TASK_RISK_LEVEL2_INFO"),
+          onClick() {},
+        },
       ],
       dataCasesByRange: [],
       width: 0,

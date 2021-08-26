@@ -55,7 +55,9 @@ export default {
       api.cases.unpause(this.data).then((response) => {
         if (response.statusText == "OK") {
           that.$refs["modal-unpause-case"].hide();
-          that.$parent.$refs["vueTable"].getData();
+          if (that.$parent.$refs["vueTable"]) { // TODO this component should be return a event to parent to code in the parent
+            that.$parent.$refs["vueTable"].getData();
+          }
         }
       });
     },

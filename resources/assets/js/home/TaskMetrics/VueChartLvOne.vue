@@ -5,7 +5,7 @@
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"
-          :settings="breadCrumbs.settings"
+          :settings="settingsBreadcrumbs"
         />
         <ProcessPopover
           :options="optionsProcesses"
@@ -18,7 +18,7 @@
             v-model="category"
             :options="optionsCategory"
             :searchable="false"
-            :close-on-select="false"
+            :close-on-select="true"
             :show-labels="false"
             track-by="id"
             label="name"
@@ -78,7 +78,13 @@ export default {
     return {
       category: null,
       dataProcesses: null, //Data API processes
-
+      settingsBreadcrumbs: [
+        {
+          class: "fas fa-info-circle",
+          tooltip: this.$t("ID_TASK_RISK_LEVEL1_INFO"),
+          onClick() {},
+        },
+      ],
       optionsCategory: [],
       optionsProcesses: [],
       selectedProcesses: [],

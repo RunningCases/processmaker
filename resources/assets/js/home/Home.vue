@@ -120,8 +120,14 @@ export default {
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
         // adding eventBus listener
-         eventBus.$on('sort-menu', (data) => {
+        eventBus.$on('sort-menu', (data) => {
             that.updateUserSettings('customCasesList', data);
+        });
+        eventBus.$on('home-update-page', (data) => {
+            that.onUpdatePage(data);
+        });
+        eventBus.$on('home-update-datacase', (data) => {
+            that.onUpdateDataCase(data);
         });
     },
     methods: {
@@ -242,6 +248,7 @@ export default {
         mappingMenu(data) {
             var i,
                 j,
+                that = this,
                 newData = data,
                 auxId;
             for (i = 0; i < data.length; i += 1) {
@@ -263,7 +270,7 @@ export default {
                                 hiddenOnCollapse: data[i].hiddenOnCollapse,
                                 icon: 'pie-chart-fill',
                                 onClick: function (item) {
-                                    // TODO click evet handler
+                                  that.onUpdatePage("task-metrics");
                                 }
                             }
                         }

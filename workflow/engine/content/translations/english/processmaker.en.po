@@ -53054,3 +53054,28 @@ msgstr "Send email to participants"
 #: LABEL/ID_TRYING_CANCEL
 msgid "You are tying to cancel the current case. Please be aware this action cannot be undone"
 msgstr "You are tying to cancel the current case. Please be aware this action cannot be undone"
+
+
+# TRANSLATION
+# LABEL/ID_TASK_RISK_LEVEL0_INFO
+#: LABEL/ID_TASK_RISK_LEVEL0_INFO
+msgid "Select a task status option to drill down by status for all processes. Then view can be changed as pie or bar chart."
+msgstr "Select a task status option to drill down by status for all processes. Then view can be changed as pie or bar chart."
+
+# TRANSLATION
+# LABEL/ID_TASK_RISK_LEVEL1_INFO
+#: LABEL/ID_TASK_RISK_LEVEL1_INFO
+msgid "Select the 'Drill' option of a Process in the Chart, to Drill Down By a Range of Dates listing the number of tasks By Task Status of the Process, or use the 'Data' option to open the Task List displaying all Tasks of the Process and Status"
+msgstr "Select the 'Drill' option of a Process in the Chart, to Drill Down By a Range of Dates listing the number of tasks By Task Status of the Process, or use the 'Data' option to open the Task List displaying all Tasks of the Process and Status"
+
+# TRANSLATION
+# LABEL/ID_TASK_RISK_LEVEL2_INFO
+#: LABEL/ID_TASK_RISK_LEVEL2_INFO
+msgid "Select the Drill option to have a Risk Matrix of the tasks or select the Data option to open the Task Folder listing all Tasks of the Process status by a range of date"
+msgstr "Select the Drill option to have a Risk Matrix of the tasks or select the Data option to open the Task Folder listing all Tasks of the Process status by a range of date"
+
+# TRANSLATION
+# LABEL/ID_TASK_RISK_LEVEL3_INFO
+#: LABEL/ID_TASK_RISK_LEVEL3_INFO
+msgid "By selecting the task will be open automatically if the task is Inbox or Draft"
+msgstr "By selecting the task will be open automatically if the task is Inbox or Draft"

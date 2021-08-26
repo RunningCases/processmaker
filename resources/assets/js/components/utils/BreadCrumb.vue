@@ -19,7 +19,12 @@
         :key="item.id"
         class="vp-bread-crumbs-settings vp-float-right vp-inline-block"
       >
-        <span @click="item.onClick">
+        <span
+          @click="item.onClick"
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          :title="item.tooltip || ''"
+        >
           <i :class="formatClass(item)"></i>
         </span>
       </div>

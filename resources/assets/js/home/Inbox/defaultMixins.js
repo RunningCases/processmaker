@@ -174,9 +174,6 @@ export default {
       }
       this.columns = cols;
       this.random = _.random(0, 10000000000);
-    },
-    task(){
-      this.$emit("onUpdatePage", "task-metrics");
     }
   }
 }

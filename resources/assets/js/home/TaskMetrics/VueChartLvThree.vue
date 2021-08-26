@@ -1,11 +1,11 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">Number of Tasks Status per Process</h6>
+      <h6 class="v-search-title">Risk Matrix per Process by Task Status</h6>
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"
-          :settings="breadCrumbs.settings"
+          :settings="settingsBreadcrumbs"
         />
         <div class="vp-width-p30 vp-inline-block">
           <b-form-datepicker
@@ -49,6 +49,7 @@
             :show-labels="false"
             track-by="id"
             label="name"
+            @input="changeOption"
           ></multiselect>
         </div>
       </div>
@@ -58,6 +59,47 @@
         :options="options"
         :series="series"
       ></apexchart>
+      <div class="vp-width-p100">
+        <div class="vp-text-align-center" role="group">
+          <button
+            type="button"
+            @click="
+              riskType = 'ON_TIME';
+              changeOption();
+            "
+            class="btn vp-btn-success btn-sm"
+          >
+            On Time
+          </button>
+          <button
+            type="button"
+            @click="
+              riskType = 'AT_RISK';
+              changeOption();
+            "
+            class="btn vp-btn-warning btn-sm"
+          >
+            At Risk
+          </button>
+          <button
+            type="button"
+            @click="
+              riskType = 'OVERDUE';
+              changeOption();
+            "
+            class="btn vp-btn-danger btn-sm"
+          >
+            Overdue
+          </button>
+        </div>
+      </div>
+      <div class="vp-width-p100 vp-text-align-center">
+        <label class="vp-form-label">
+          {{ $t("ID_TODAY") }} : {{ dateNow }}
+        </label>
+      </div>
+      <ModalUnpauseCase ref="modal-unpause-case"></ModalUnpauseCase>
+      <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
     </div>
   </div>
 </template>
@@ -68,20 +110,35 @@ import Api from "../../api/index";
 import Multiselect from "vue-multiselect";
 import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import moment from "moment";
+import ModalUnpauseCase from "../modal/ModalUnpauseCase.vue";
+import ModalClaimCase from "../modal/ModalClaimCase.vue";
+
 export default {
   name: "VueChartLvThree",
   mixins: [],
   components: {
     Multiselect,
     BreadCrumb,
+    ModalUnpauseCase,
+    ModalClaimCase,
   },
   props: ["data", "breadCrumbs"],
   data() {
     let that = this;
     return {
+      currentSelection: null,
       dateFrom: "",
       dateTo: "",
-      size: "all",
+      dateNow: "",
+      size: { name: this.$t("ID_ALL"), id: "all" },
+      riskType: "ON_TIME",
+      settingsBreadcrumbs: [
+        {
+          class: "fas fa-info-circle",
+          tooltip: this.$t("ID_TASK_RISK_LEVEL3_INFO"),
+          onClick() {},
+        },
+      ],
       sizeOptions: [
         { name: this.$t("ID_ALL"), id: "all" },
         { name: "5", id: "5" },
@@ -89,137 +146,48 @@ export default {
         { name: "15", id: "15" },
         { name: "20", id: "20" },
       ],
-      dataCasesByRange: [],
+      dataCasesByRisk: [],
       width: 0,
-      series: [
-        {
-          name: "SAMPLE A",
-          data: [
-            [16.4, 5.4],
-            [21.7, 2],
-            [25.4, 3],
-            [19, 2],
-            [10.9, 1],
-            [13.6, 3.2],
-            [10.9, 7.4],
-            [10.9, 0],
-            [10.9, 8.2],
-            [16.4, 0],
-            [16.4, 1.8],
-            [13.6, 0.3],
-            [13.6, 0],
-            [29.9, 0],
-            [27.1, 2.3],
-            [16.4, 0],
-            [13.6, 3.7],
-            [10.9, 5.2],
-            [16.4, 6.5],
-            [10.9, 0],
-            [24.5, 7.1],
-            [10.9, 0],
-            [8.1, 4.7],
-            [19, 0],
-            [21.7, 1.8],
-            [27.1, 0],
-            [24.5, 0],
-            [27.1, 0],
-            [29.9, 1.5],
-            [27.1, 0.8],
-            [22.1, 2],
-          ],
-        },
-        {
-          name: "SAMPLE B",
-          data: [
-            [36.4, 13.4],
-            [1.7, 11],
-            [5.4, 8],
-            [9, 17],
-            [1.9, 4],
-            [3.6, 12.2],
-            [1.9, 14.4],
-            [1.9, 9],
-            [1.9, 13.2],
-            [1.4, 7],
-            [6.4, 8.8],
-            [3.6, 4.3],
-            [1.6, 10],
-            [9.9, 2],
-            [7.1, 15],
-            [1.4, 0],
-            [3.6, 13.7],
-            [1.9, 15.2],
-            [6.4, 16.5],
-            [0.9, 10],
-            [4.5, 17.1],
-            [10.9, 10],
-            [0.1, 14.7],
-            [9, 10],
-            [12.7, 11.8],
-            [2.1, 10],
-            [2.5, 10],
-            [27.1, 10],
-            [2.9, 11.5],
-            [7.1, 10.8],
-            [2.1, 12],
-          ],
-        },
-        {
-          name: "SAMPLE C",
-          data: [
-            [21.7, 3],
-            [23.6, 3.5],
-            [24.6, 3],
-            [29.9, 3],
-            [21.7, 20],
-            [23, 2],
-            [10.9, 3],
-            [28, 4],
-            [27.1, 0.3],
-            [16.4, 4],
-            [13.6, 0],
-            [19, 5],
-            [22.4, 3],
-            [24.5, 3],
-            [32.6, 3],
-            [27.1, 4],
-            [29.6, 6],
-            [31.6, 8],
-            [21.6, 5],
-            [20.9, 4],
-            [22.4, 0],
-            [32.6, 10.3],
-            [29.7, 20.8],
-            [24.5, 0.8],
-            [21.4, 0],
-            [21.7, 6.9],
-            [28.6, 7.7],
-            [15.4, 0],
-            [18.1, 0],
-            [33.4, 0],
-            [16.4, 0],
-          ],
-        },
-      ],
+      series: [],
       options: {
         chart: {
           height: 350,
-          type: "scatter",
+          type: "bubble",
           zoom: {
             enabled: true,
             type: "xy",
           },
-        },
-        xaxis: {
-          tickAmount: 10,
-          labels: {
-            formatter: function (val) {
-              return parseFloat(val).toFixed(1);
+          id: "LevelThreeChart",
+          events: {
+            markerClick: function (event, chartContext, config) {
+              that.currentSelection = that.dataCasesByRisk[config.seriesIndex];
+              that.onClickCaseMarker(that.currentSelection);
             },
           },
         },
+        legend: {
+          show: false,
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val, opt) {
+            if (that.dataCasesByRisk.length > 0) {
+              return that.dataCasesByRisk[opt["seriesIndex"]]["number_case"];
+            }
+            return "";
+          },
+          offsetX: 0,
+        },
+        xaxis: {
+          type: "datetime",
+        },
         yaxis: {
-          tickAmount: 7,
+          tickAmount: 1,
+        },
+        tooltip: {
+          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+            return that.customTooltip(series, seriesIndex, dataPointIndex, w);
+          },
         },
       },
     };
@@ -237,7 +205,7 @@ export default {
      * Return the height for Vue Card View body
      */
     getBodyHeight() {
-      this.width = window.innerHeight;
+      this.width = window.innerHeight * 0.95;
     },
     /**
      * Change datepickers or radio button
@@ -245,16 +213,18 @@ export default {
     changeOption() {
       let that = this,
         dt;
-      if (this.dateFrom && this.dateTo && this.period) {
+      if (this.dateFrom && this.dateTo) {
         dt = {
-          processId: this.data[1].id,
+          process: this.data[1].id,
           caseList: this.data[0].id.toLowerCase(),
           dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
           dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
-          groupBy: this.period,
+          riskStatus: this.riskType,
         };
+        this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
+        this.dateNow = moment().format("DD/MM/YYYY h:mm:ss a");
         Api.process
-          .totalCasesByRange(dt)
+          .totalCasesByRisk(dt)
           .then((response) => {
             that.formatDataRange(response.data);
           })
@@ -267,42 +237,172 @@ export default {
      * Format response fromn API
      */
     formatDataRange(data) {
-      let labels = [],
+      let that = this,
         serie = [];
-
-      this.dataCasesByRange = data;
+      this.dataCasesByRisk = data;
       _.each(data, (el) => {
-        serie.push(el["TOTAL"]);
-        labels.push(el["dateGroup"]);
+        //Format the response to risk type Overdue/At risk/ On time
+        switch (that.riskType) {
+          case "OVERDUE":
+            serie.push({
+              name: el["number_case"].toString(),
+              data: [
+                [moment(el["due_date"]).toDate().getTime(), el["days"], 20],
+              ],
+            });
+            break;
+          case "AT_RISK":
+            serie.push({
+              name: el["number_case"].toString(),
+              data: [
+                [moment(el["delegated"]).toDate().getTime(), -el["days"], 20],
+              ],
+            });
+            break;
+          case "ON_TIME":
+            serie.push({
+              name: el["number_case"].toString(),
+              data: [
+                [moment(el["delegated"]).toDate().getTime(), -el["days"], 20],
+              ],
+            });
+            break;
+        }
       });
-      this.$refs["LevelTwoChart"].updateOptions({
-        labels: labels,
-        title: {
-          text: this.data[0]["PRO_TITLE"],
-          align: "left",
-        },
-      });
-      this.$apexcharts.exec("LevelTwoChart", "updateSeries", [
-        {
-          name: this.data[0]["PRO_TITLE"],
-          data: serie,
-        },
-      ]);
-    },
-    generateDayWiseTimeSeries(baseval, count, yrange) {
-      var i = 0;
-      var series = [];
-      while (i < count) {
-        var y =
-          Math.floor(Math.random() * (yrange.max - yrange.min + 1)) +
-          yrange.min;
 
-        series.push([baseval, y]);
-        baseval += 86400000;
-        i++;
+      this.updateApexchartAxis();
+      if (this.data[0].id.toLowerCase() == "draft") {
+        this.series = []; // Draft is empty
+      } else {
+        this.series = serie;
       }
-      console.log(series);
-      return series;
+    },
+    updateApexchartAxis() {
+      switch (this.riskType) {
+        case "OVERDUE":
+          this.$refs["LevelThreeChart"].updateOptions({
+            yaxis: {
+              min: 0,
+            },
+            title: {
+              text: "Overdue days",
+            },
+          });
+          break;
+        case "AT_RISK":
+          this.$refs["LevelThreeChart"].updateOptions({
+            yaxis: {
+              max: 0,
+            },
+            title: {
+              text: "Days before being Overdue",
+            },
+          });
+          break;
+        case "ON_TIME":
+          this.$refs["LevelThreeChart"].updateOptions({
+            yaxis: {
+              max: 0,
+            },
+            title: {
+              text: "Days before being At-Risk",
+            },
+          });
+          break;
+      }
+    },
+    customTooltip(series, seriesIndex, dataPointIndex, w) {
+      let obj = this.dataCasesByRisk[seriesIndex];
+      return `<div class="apexcharts-theme-light">
+                  <div class="apexcharts-tooltip-title" style="font-family: Helvetica, Arial, sans-serif; font-size: 12px;">
+                    ${"Number Case"} : ${obj["number_case"]}
+                  </div>
+                  <div class="apexcharts-tooltip-series-group apexcharts-active" style="order: 1; display: flex;">
+                  <div class="apexcharts-tooltip-text" style="font-family: Helvetica, Arial, sans-serif; font-size: 12px;">
+                  <div class="apexcharts-tooltip-y-group">
+                    <span class="" style="background-color: #28a745;"></span>
+                    <span class="apexcharts-tooltip-text-y-label">Delegated</span> : <span class="apexcharts-tooltip-text-y-value">${
+                      obj["delegated"]
+                    }</span>
+                  </div>
+                   <div class="apexcharts-tooltip-y-group">
+                    <span class="" style="background-color: #28a745;"></span>
+                    <span class="apexcharts-tooltip-text-y-label">At Risk</span> : <span class="apexcharts-tooltip-text-y-value">${
+                      obj["at_risk"]
+                    }</span>
+                  </div>
+                   <div class="apexcharts-tooltip-y-group">
+                    <span class="" style="background-color: #28a745;"></span>
+                    <span class="apexcharts-tooltip-text-y-label">Due Date</span> : <span class="apexcharts-tooltip-text-y-value">${
+                      obj["due_date"]
+                    }</span>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+    },
+    /**
+     * Open selected cases in the inbox
+     *
+     * @param {object} item
+     */
+    openCase(item) {
+      this.$parent.$parent.$emit("onUpdateDataCase", {
+        APP_UID: item.APP_UID,
+        DEL_INDEX: item.DEL_INDEX,
+        PRO_UID: item.PRO_UID,
+        TAS_UID: item.TAS_UID,
+        ACTION: "todo",
+      });
+      this.$parent.$parent.$emit("onUpdatePage", "XCase");
+    },
+    onClickCaseMarker(selection) {
+      let process = this.data[1].id,
+        caseList = this.data[0].id.toLowerCase();
+      switch (caseList) {
+        case "inbox":
+        case "draft":
+          this.openCase({
+            APP_UID: selection["app_uid"],
+            DEL_INDEX: selection["del_index"],
+            PRO_UID: process,
+            TAS_UID: selection["tas_uid"],
+          });
+          break;
+        case "paused":
+          this.showModalUnpauseCase({
+            APP_UID: selection["app_uid"],
+            DEL_INDEX: selection["del_index"],
+            PRO_UID: process,
+            TAS_UID: selection["tas_uid"],
+          });
+          break;
+        case "unassigned":
+          this.showModalClaimCase({
+            APP_UID: selection["app_uid"],
+            DEL_INDEX: selection["del_index"],
+            PRO_UID: process,
+            TAS_UID: selection["tas_uid"],
+          });
+          break;
+      }
+    },
+    showModalUnpauseCase(item) {
+      this.$refs["modal-unpause-case"].data = item;
+      this.$refs["modal-unpause-case"].show();
+    },
+    /**
+     * Claim case
+     * @param {object} item
+     */
+    showModalClaimCase(item) {
+      let that = this;
+      api.cases.open(_.extend({ ACTION: "unassigned" }, item)).then(() => {
+        api.cases.cases_open(_.extend({ ACTION: "todo" }, item)).then(() => {
+          that.$refs["modal-claim-case"].data = item;
+          that.$refs["modal-claim-case"].show();
+        });
+      });
     },
   },
 };
@@ -322,6 +422,58 @@ export default {
 
 .vp-padding-l20 {
   padding-left: 20px;
+}
+
+.vp-width-p100 {
+  width: 100%;
+}
+
+.vp-text-align-center {
+  text-align: center;
+}
+
+.vp-btn-success {
+  color: #fff;
+  background-color: #368b48;
+  border-color: #368b48;
+}
+.vp-btn-success:hover {
+  color: #fff;
+  background-color: #255a30;
+  border-color: #368b48;
+}
+
+.vp-btn-warning {
+  color: #fff;
+  background-color: #c99e11;
+  border-color: #a1831d;
+}
+.vp-btn-warning:hover {
+  color: #fff;
+  background-color: #886c0e;
+  border-color: #a1831d;
+}
+.vp-btn-danger {
+  color: #fff;
+  background-color: #b63b32;
+  border-color: #b63b32;
+}
+
+.vp-btn-danger:hover {
+  color: #fff;
+  background-color: #832923;
+  border-color: #b63b32;
+}
+
+.vp-form-label {
+  display: inline-block;
+  font-family: Helvetica, Arial, sans-serif;
+  text-anchor: start;
+  font-size: 14px;
+  font-weight: 900;
+  fill: rgb(15 17 18);
+  margin-top: 0.5rem;
+  color: #7d7f93;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

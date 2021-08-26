@@ -14,6 +14,7 @@
       :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-two
+      :key="key2"
       v-show="level === 2"
       :data="data"
       @onChangeLevel="onChangeLevel"
@@ -21,6 +22,7 @@
       :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-three
+      :key="key3"
       v-show="level === 3"
       :data="data"
       @onChangeLevel="onChangeLevel"
@@ -50,6 +52,8 @@ export default {
     return {
       level: 0,
       key1: 1,
+      key2: 1,
+      key3: 1,
       data: [],
       settingsBreadCrumbs: [
         {
@@ -83,8 +87,10 @@ export default {
           this.key1++;
           break;
         case 2:
+          this.key2++;
           break;
         case 3:
+          this.key3++;
           break;
       }
     },
@@ -137,7 +143,7 @@ export default {
           };
           break;
       }
-    },
+    }
   },
 };
 </script>

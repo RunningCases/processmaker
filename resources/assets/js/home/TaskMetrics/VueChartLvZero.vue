@@ -2,10 +2,7 @@
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
       <h6 class="v-search-title">Number of tasks per Task Status</h6>
-      <BreadCrumb
-        :options="breadCrumbs.data"
-        :settings="breadCrumbs.settings"
-      />
+      <BreadCrumb :options="breadCrumbs.data" :settings="settingsBreadcrumbs" />
       <apexchart
         v-show="typeView === 'donut'"
         ref="apexchart1"
@@ -64,6 +61,13 @@ export default {
       data: [],
       currentSelection: null,
       seriesDonut: [],
+      settingsBreadcrumbs: [
+        {
+          class: "fas fa-info-circle",
+          tooltip: this.$t("ID_TASK_RISK_LEVEL0_INFO"),
+          onClick() {},
+        },
+      ],
       optionsDonut: {
         labels: [
           this.$i18n.t("ID_INBOX"),
