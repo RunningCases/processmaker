@@ -1,7 +1,7 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">Number of tasks per Task Status</h6>
+      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_NUMBER_TASKS")}}</h6>
       <BreadCrumb :options="breadCrumbs.data" :settings="settingsBreadcrumbs" />
       <apexchart
         v-show="typeView === 'donut'"

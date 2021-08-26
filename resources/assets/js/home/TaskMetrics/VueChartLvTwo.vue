@@ -1,7 +1,7 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">Number of Tasks Status per Process by task status</h6>
+      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK")}}</h6>
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"
@@ -106,7 +106,7 @@ export default {
                 id: that.currentSelection["PRO_ID"],
                 name: that.currentSelection["PRO_TITLE"],
                 level: 2,
-                data: that.currentSelection,
+                data: null,
               });
             },
           },
@@ -165,7 +165,7 @@ export default {
             that.formatDataRange(response.data);
           })
           .catch((e) => {
-            console.error(err);
+            console.error(e);
           });
       }
     },
@@ -181,7 +181,6 @@ export default {
         serie.push(el["TOTAL"]);
         labels.push(el["dateGroup"]);
       });
-      console.log("DRWAWWW");
       this.$refs["LevelTwoChart"].updateOptions({
         labels: labels,
         title: {
@@ -195,21 +194,6 @@ export default {
           data: serie,
         },
       ]);
-    },
-    generateDayWiseTimeSeries(baseval, count, yrange) {
-      var i = 0;
-      var series = [];
-      while (i < count) {
-        var y =
-          Math.floor(Math.random() * (yrange.max - yrange.min + 1)) +
-          yrange.min;
-
-        series.push([baseval, y]);
-        baseval += 86400000;
-        i++;
-      }
-      console.log(series);
-      return series;
     },
   },
 };

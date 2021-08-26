@@ -94,7 +94,6 @@ export default {
           break;
       }
     },
-
     /**
      * Format data to vue charts any level
      */
@@ -104,6 +103,9 @@ export default {
         data: this.data,
       };
     },
+    /**
+     * Change level with changes in data
+     */
     onChangeLevel(lv) {
       _.remove(this.data, function (n) {
         return n.level >= lv;
@@ -111,12 +113,15 @@ export default {
       this.level = lv;
       this.$emit("onChangeLevel", this.level);
     },
+    /**
+     * Format data for data beadcrumbs
+     */
     dataBreadCrumbs() {
       let res = [],
         that = this,
         index = 0;
       _.each(this.data, (el) => {
-        if (index <= that.level) {
+        if (index <= that.level && el.data) {
           res.push({
             label: el.name,
             onClick() {
@@ -126,7 +131,7 @@ export default {
         }
       });
       res.push({
-        label: "Select the drill option",
+        label: this.$t("ID_SELECT"),
         onClick() {},
       });
       switch (this.level) {

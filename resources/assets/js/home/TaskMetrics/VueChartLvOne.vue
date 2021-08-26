@@ -1,7 +1,7 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">Number of Tasks Status per Process</h6>
+      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_NUMBER_TASKS_PROCESS")}}</h6>
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"
@@ -124,7 +124,7 @@ export default {
           },
         },
         legend: {
-          position: "left",
+          position: "top",
         },
         colors: ["#33b2df", "#546E7A", "#d4526e", "#13d8aa"],
         dataLabels: {
@@ -202,7 +202,7 @@ export default {
     formatDataCategories(data) {
       let array = [];
       array.push({
-        name: "No Categories",
+        name: this.$t("ID_PROCESS_NONE_CATEGORY"),
         id: "0",
       });
       _.each(data, (el) => {
@@ -263,6 +263,9 @@ export default {
       this.$refs["pm-task-process"].setOptions(this.optionsProcesses);
       this.$refs["pm-task-process"].setSelectedOptions(this.selectedProcesses);
     },
+    /**
+     * Format response form BE to chart
+     */
     formatTotalCases(data) {
       let serie = [],
         labels = [];
@@ -272,7 +275,6 @@ export default {
       });
 
       this.$refs["LevelOneChart"].updateOptions({ labels: labels });
-
       this.$apexcharts.exec("LevelOneChart", "updateSeries", [
         {
           data: serie,
@@ -295,6 +297,9 @@ export default {
       });
       this.formatTotalCases(res);
     },
+    /**
+     * Update labels in chart
+     */
     updateLabels(processes) {
       let labels = [];
       _.each(processes, (el) => {
@@ -302,6 +307,9 @@ export default {
       });
       this.$refs["LevelOneChart"].updateOptions({ labels: labels });
     },
+    /**
+     * UPdate serie in chart
+     */
     updateSerie(processes) {
       let labels = [];
       _.each(processes, (el) => {

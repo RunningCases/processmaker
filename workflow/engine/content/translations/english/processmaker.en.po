@@ -53079,3 +53079,39 @@ msgstr "Select the Drill option to have a Risk Matrix of the tasks or select the
 #: LABEL/ID_TASK_RISK_LEVEL3_INFO
 msgid "By selecting the task will be open automatically if the task is Inbox or Draft"
 msgstr "By selecting the task will be open automatically if the task is Inbox or Draft"
+
+# TRANSLATION
+# LABEL/ID_LEVEL
+#: LABEL/ID_LEVEL
+msgid "Level"
+msgstr "Level"
+
+# TRANSLATION
+# LABEL/ID_DRILL_DOWN_NAVIGATOR
+#: LABEL/ID_DRILL_DOWN_NAVIGATOR
+msgid "Drill Down Navigator"
+msgstr "Drill Down Navigator"
+
+# TRANSLATION
+# LABEL/ID_DRILL_DOWN_NUMBER_TASKS
+#: LABEL/ID_DRILL_DOWN_NUMBER_TASKS
+msgid "Number of tasks per Task Status"
+msgstr "Number of tasks per Task Status"
+
+# TRANSLATION
+# LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS
+#: LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS
+msgid "Number of Tasks Status per Process"
+msgstr "Number of Tasks Status per Process"
+
+# TRANSLATION
+# LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK
+#: LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK
+msgid "Number of Tasks Status per Process by task status"
+msgstr "Number of Tasks Status per Process by task status"
+
+# TRANSLATION
+# LABEL/ID_DRILL_DOWN_RISK_MATRIX
+#: LABEL/ID_DRILL_DOWN_RISK_MATRIX
+msgid "Risk Matrix per Process by Task Status"
+msgstr "Risk Matrix per Process by Task Status"

@@ -1,7 +1,7 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">Risk Matrix per Process by Task Status</h6>
+      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_RISK_MATRIX")}}</h6>
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"

@@ -5,7 +5,7 @@
     class="v-pm-drill-down vp-inline-block"
   >
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">Drill Down Navigator</h6>
+      <h6 class="v-search-title">{{ $t("ID_DRILL_DOWN_NAVIGATOR") }}</h6>
     </div>
     <div
       v-for="item in loadItems(data, level)"
@@ -42,28 +42,28 @@ export default {
       },
       data: [
         {
-          label: "Level",
+          label: that.$t("ID_LEVEL"),
           content: "0",
           click() {
             that.$emit("onChangeLevel", 0);
           },
         },
         {
-          label: "Level",
+          label: that.$t("ID_LEVEL"),
           content: "1",
           click() {
             that.$emit("onChangeLevel", 1);
           },
         },
         {
-          label: "Level",
+          label: that.$t("ID_LEVEL"),
           content: "2",
           click() {
             that.$emit("onChangeLevel", 2);
           },
         },
         {
-          label: "Level",
+          label: that.$t("ID_LEVEL"),
           content: "3",
           click() {},
         },
@@ -77,6 +77,9 @@ export default {
   updated() {},
   beforeCreate() {},
   methods: {
+    /**
+     * Click in drill option
+     */
     onClick(item) {
       let array,
         i = 0,
@@ -93,6 +96,9 @@ export default {
         item.click(item);
       }
     },
+    /**
+     * Load items in drill items
+     */
     loadItems(items, index) {
       let array,
         i = 0,
@@ -108,7 +114,6 @@ export default {
       });
       return array;
     },
-    changeItem(item) {},
   },
 };
 </script>
