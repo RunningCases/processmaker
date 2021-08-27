@@ -127,8 +127,8 @@ export default {
         }
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases
-          .todo(filters)
+        api.cases[that.data.pageParent]
+          (filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
