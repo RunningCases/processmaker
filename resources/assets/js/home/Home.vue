@@ -116,7 +116,7 @@ export default {
         this.getUserSettings();
         this.listenerIframe();
         window.setInterval(
-            this.setCounter,
+            this.getHighlight,
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
         // adding eventBus listener
@@ -163,7 +163,7 @@ export default {
                 .then((response) => {
                     this.setDefaultCasesMenu(response.data);
                     this.menu = this.mappingMenu(this.setDefaultIcon(response.data));
-                    this.setCounter();
+                    this.getHighlight();
                 })
                 .catch((e) => {
                     console.error(e);
@@ -287,6 +287,7 @@ export default {
                     );
                     data[i]["sortable"] = data[i].customCasesList.length > 1;
                     data[i]["sortIcon"] = "gear-fill";
+                    data[i]['highlight'] = false;
                     data[i] = {
                         component: CustomSidebarMenuItem,
                         props: {
@@ -488,6 +489,29 @@ export default {
         onUpdateFilters(filters) {
             this.filters = filters;
         },
+        getHighlight() {
+            let that = this;
+            if (that.menu.length > 0) {
+            api.menu
+            .getHighlight()
+            .then((response) => {
+                var i,
+                    dataHighlight = [];
+                for (i = 0; i < response.data.length; i += 1) {
+                    if (response.data[i].highlight) {
+                        dataHighlight.push({
+                            id: that.menuMap[response.data[i].item],
+                            highlight: response.data[i].highlight
+                        });
+                    }
+                }
+                eventBus.$emit('highlight', dataHighlight);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+            }
+        }
     }
 };
 </script>
