@@ -5,7 +5,7 @@
         :title="labelTooltip"
     >
         {{ data.title }}
-        <b-tooltip :target="`label-${data.id}`" :ref="`tooltip-${data.id}`">
+        <b-tooltip :target="`label-${data.page}`" :ref="`tooltip-${data.page}`">
             {{ labelTooltip }}
         </b-tooltip>
     </span>
@@ -45,7 +45,7 @@ export default {
          * Reset the delay and hide the tooltip
          */
         unhoverHandler() {
-            let key = `tooltip-${this.data.id}`;
+            let key = `tooltip-${this.data.page}`;
             this.labelTooltip = "";
             this.$refs[key].$emit("close");
         },
@@ -54,8 +54,8 @@ export default {
          */
         setTooltip() {
             let that = this;
-            api.menu.getTooltip(that.data.id).then((response) => {
-                let key = `tooltip-${that.data.id}`;
+            api.menu.getTooltip(that.data.page).then((response) => {
+                let key = `tooltip-${that.data.page}`;
                 that.labelTooltip = response.data.label;
                 that.$refs[key].$emit("open");
             });

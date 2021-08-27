@@ -50,7 +50,6 @@ export default {
           priority: this.$i18n.t("ID_PRIORITY")
         },
         columns: [
-          "detail",
           "case_number",
           "case_title",
           "process_name",
