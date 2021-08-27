@@ -26,6 +26,7 @@
                 :defaultOption="defaultOption"
                 :settings="config.setting[page]"
                 :filters="filters"
+                :data="pageData"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
@@ -53,6 +54,7 @@ import XCase from "./XCase";
 import TaskReassignments from "./TaskReassignments";
 import AdvancedSearch from "./AdvancedSearch/AdvancedSearch.vue";
 import LegacyFrame from "./LegacyFrame";
+import CustomCaseList from "./CustomCaseList/CustomCaseList.vue"
 
 import api from "./../api/index";
 import eventBus from './EventBus/eventBus'
@@ -71,7 +73,8 @@ export default {
         Paused,
         Unassigned,
         CaseDetail,
-        LegacyFrame
+        LegacyFrame,
+        CustomCaseList,
     },
     data() {
         return {
@@ -105,7 +108,8 @@ export default {
                 CASES_TO_REASSIGN: "task-reassignments",
                 CASES_FOLDERS: "my-documents"
             },
-            defaultOption: window.config.defaultOption || ''
+            defaultOption: window.config.defaultOption || '',
+            pageData: {}
         };
     },
     mounted() {
@@ -243,11 +247,11 @@ export default {
                 newData = data,
                 auxId;
             for (i = 0; i < data.length; i += 1) {
-                auxId = data[i].id || "";
+                auxId = data[i].page || "";
                 if (auxId !== "" && this.menuMap[auxId]) {
-                    newData[i].id = this.menuMap[auxId];
+                    newData[i].page = this.menuMap[auxId];
                 } else if (newData[i].href) {
-                    newData[i].id  = "LegacyFrame";
+                    newData[i].page  = "LegacyFrame";
                 }
                 // Tasks group need pie chart icon
                 if (data[i].header && data[i].id === "FOLDERS") {
@@ -267,8 +271,7 @@ export default {
                         }
                     }
                 }
-                if (data[i].id === "inbox" || data[i].id === "draft"
-                || data[i].id === "paused" || data[i].id === "unassigned")  {
+                if (data[i].customCasesList)  {
                     data[i]["child"] = this.sortCustomCasesList(
                         data[i].customCasesList,
                         this.config.setting[this.page] &&
@@ -346,7 +349,7 @@ export default {
             this.defaultOption = "";
         },
         OnClickSidebarItem(item) {
-            if (item.item.page && item.item.page === "/advanced-search") {
+            if (item.item.page && item.item.page === "advanced-search") {
                 this.page = "advanced-search";
                 this.filters = item.item.filters;
                 this.pageId = item.item.id;
@@ -356,11 +359,21 @@ export default {
                 this.filters = [];
                 this.pageId = null;
                 this.pageUri = item.item.href;
-                this.page = item.item.id || "MyCases";
+                this.page = item.item.page || "MyCases";
+                if (!item.item.customCasesList) {
+                    this.page = "custom-case-list";
+                    this.pageData = {
+                        pageUri: item.item.pageUri,
+                        pageParent: item.item.page,
+                        pageName: item.item.title,
+                        pageIcon: item.item.icon,
+                        customListId: item.item.id
+                    }
+                }
                 if (this.page === this.lastPage
                     && this.$refs["component"]
                     && this.$refs["component"].updateView) {
-                    this.$refs["component"].updateView();
+                    this.$refs["component"].updateView(this.pageData);
                 }
                 this.lastPage = this.page;
             }

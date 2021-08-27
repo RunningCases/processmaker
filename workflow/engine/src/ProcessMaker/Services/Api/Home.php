@@ -658,6 +658,7 @@ class Home extends Api
                 $option->href = $menuInstance->Options[$i];
                 $option->id = $menuInstance->Id[$i];
                 $option->title = $menuInstance->Labels[$i];
+                $option->page = $menuInstance->Id[$i];
                 $option->icon = $menuInstance->Icons[$i];
             }
 
@@ -670,7 +671,7 @@ class Home extends Api
                 foreach ($filters as $filter) {
                     $childFilter = new stdClass();
                     $childFilter->id = $filter->id;
-                    $childFilter->page = '/advanced-search';
+                    $childFilter->page = 'advanced-search';
                     $childFilter->href = "{$childFilter->page}/{$filter->id}";
                     $childFilter->title = $filter->name;
                     $childFilter->icon = 'fas fa-circle';
@@ -700,7 +701,8 @@ class Home extends Api
                         "id" => $value['id'],
                         "title" => $value['name'],
                         "description" => $value['description'],
-                        "icon" => $value['iconList']
+                        "icon" => $value['iconList'],
+                        "page" => $mapKeys[$menuInstance->Id[$i]]
                     ];
                 }
             }

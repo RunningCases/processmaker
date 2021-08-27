@@ -1,3 +1,4 @@
+import _ from "lodash";
 import api from "../../api/index";
 export default {
   data() {
@@ -5,6 +6,17 @@ export default {
     return {
       typeView: "GRID",
       random: 1,
+      dataCasesList: [],
+      defaultColumns: [
+        "case_number",
+        "case_title",
+        "process_name",
+        "task",
+        "send_by",
+        "due_date",
+        "delegation_date",
+        "priority",
+      ],
       dataMultiviewHeader: {
         actions: [
           {
@@ -35,29 +47,21 @@ export default {
       },
       optionsVueView: {
         limit: 10,
-        dblClick:(event, item, options)=>{
+        dblClick: (event, item, options) => {
           this.openCase(item);
         },
         headings: {
-          detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
+          send_by: this.$i18n.t("ID_SEND_BY"),
           current_user: this.$i18n.t("ID_CURRENT_USER"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
           delegation_date: this.$i18n.t("ID_DELEGATION_DATE"),
           priority: this.$i18n.t("ID_PRIORITY")
         },
-        columns: [
-          "case_number",
-          "case_title",
-          "process_name",
-          "due_date",
-          "delegation_date",
-          "priority",
-          "task"
-        ],
+        columns: [],
         requestFunction(data) {
           return that.getCases(data);
         },
@@ -85,15 +89,10 @@ export default {
       };
 
       _.forIn(this.filters, function (item, key) {
-        if (item.value && item.value != "") {
-            if(filters && item.value) {
-                filters[item.filterVar] = item.value;
-            }
-        }
+        filters[item.filterVar] = item.value;
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases
-          .draft(filters)
+        api.cases[that.data.pageParent](filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
@@ -122,13 +121,13 @@ export default {
         paged: paged,
       };
       _.forIn(this.filters, function (item, key) {
-        if (item.value && item.value != "") {
+        if (filters && item.value) {
           filters[item.filterVar] = item.value;
         }
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases
-          .draft(filters)
+        api.cases[that.data.pageParent]
+          (filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
@@ -142,40 +141,57 @@ export default {
       });
     },
     /**
-     * Format columns for custom columns
-     * @param {*} headings 
-     * @returns 
-     */
-     formatColumnSettings(headings) {
-      let res=[];
-      _.forEach(headings, function(value, key) {
-        if(key != "actions"){
-            res.push({value,key});
-        }
-      });
-      return res;
-    },
-    /**
-     * Formating the columns selected
-     * @param {*} columns 
-     * @returns 
-     */
-    formatColumnSelected(columns) {
-      let cols = _.clone(columns);
-      cols.pop();
-      return cols;
-    },
-    /**
      * Event handler when update the settings columns
      * @param {*} columns 
      */
     onUpdateColumnSettings(columns) {
-      let cols = columns;
-      if(_.findIndex(cols, 'actions') == -1){
-        cols.push("actions");
-      }
-      this.columns = cols;
+      this.columns = this.getTableColumns(columns);
       this.random = _.random(0, 10000000000);
+    },
+    /**
+     * Get columns for origin , settings or custom cases list
+     */
+    getColumnsFromSource() {
+      let dt = _.clone(this.dataCasesList),
+        res = _.clone(this.defaultColumns);
+      if (!this.data.customListId) {
+        res = _.map(_.filter(dt, o => o.set), s => s.field);
+      }
+      return res;
+    },
+    /**
+     * Return the columns for table - concat with field "detail" "actions"
+     */
+    getTableColumns(columns) {
+      return _.concat(["detail"], columns, ["actions"]);
+    },
+    /**
+     * Return options for Table
+     * @returns Object
+     */
+    getTableOptions() {
+      let dt = _.clone(this.options);
+      dt.headings = _.pick(this.headings, this.columns);
+      return dt;
+    },
+    /**
+     * Return options for Table
+     * @returns Object
+     */
+    getVueViewOptions() {
+      let dt = _.clone(this.optionsVueView);
+      dt.columns = this.cardColumns;
+      return dt;
+    },
+    /**
+     * Format column settings for popover
+     * @param {*} headings 
+     * @returns 
+     */
+    formatColumnSettings(columns) {
+      return _.map(_.pick(this.headings, columns), (value, key) => {
+        return { value, key }
+      });
     }
   }
 }
