@@ -92,8 +92,7 @@ export default {
         filters[item.filterVar] = item.value;
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases
-          .todo(filters)
+        api.cases[that.data.pageParent](filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({

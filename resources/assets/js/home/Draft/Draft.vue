@@ -491,7 +491,6 @@ export default {
      * @param {object} item
      */
     openCase(item) {
-      debugger;
       this.$emit("onUpdateDataCase", {
         APP_UID: item.APP_UID,
         DEL_INDEX: item.DEL_INDEX,
@@ -558,7 +557,6 @@ export default {
      * @param {object} data
      */
     updateDataEllipsis(data) {
-      debugger;
       let that = this;
       this.showEllipsis = !this.showEllipsis;
       if (this.showEllipsis) {

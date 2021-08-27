@@ -459,7 +459,7 @@ export default {
         // force to open case
         this.openDefaultCase();
         // define sort event
-        Event.$on("vue-tables.todo.so   rted", function(data) {
+        Event.$on("vue-tables.todo.sorted", function(data) {
             that.$emit("updateUserSettings", "orderBy", data);
         });
     },
@@ -625,6 +625,8 @@ export default {
         },
         /**
          * Format Response API TODO to grid todo and columns
+         * @param {object} response
+         * @returns {object}
          */
         formatDataResponse(response) {
             let data = [];
@@ -666,7 +668,8 @@ export default {
         },
         /**
          * Set the format to show user's information
-         * @return {array} dataFormat
+         * @return {array} data
+         * @returns {object}
          */
         formatUser(data) {
             var dataFormat = [],

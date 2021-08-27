@@ -1,13 +1,17 @@
 <template>
     <span
-        :id="`label-${data.id}`"
+        :id="`label-${data.page}`"
         @mouseover="hoverHandler"
         v-b-tooltip.hover
         @mouseleave="unhoverHandler"
         v-bind:class="{highlightText: isHighlight}"
     >
         {{ data.title }}
-        <b-tooltip :target="`label-${data.page}`" :ref="`tooltip-${data.page}`">
+        <b-tooltip 
+            :target="`label-${data.page}`"
+            triggers="hoverHandler"
+            :ref="`tooltip-${data.page}`"
+        >
             {{ labelTooltip }}
         </b-tooltip>
     </span>
