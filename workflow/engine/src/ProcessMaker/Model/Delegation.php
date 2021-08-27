@@ -442,7 +442,7 @@ class Delegation extends Model
             $query->whereRaw("MATCH(APP_DELEGATION.DEL_TITLE) AGAINST('{$search}' IN BOOLEAN MODE)");
         } else {
             // Searching using "like" operator
-            $query->where('APP_DELEGATION.DEL_TITLE', 'LIKE', "%${$search}%");
+            $query->where('APP_DELEGATION.DEL_TITLE', 'LIKE', "%{$search}%");
         }
 
         return $query;
@@ -2074,6 +2074,31 @@ class Delegation extends Model
         $query->participated($userId);
         // Filter the first thread
         $query->caseStarted();
+        // Apply the limit
+        $query->offset($offset)->limit($limit);
+        // Get the result
+        $results = $query->get();
+
+        return $results->values()->toArray();
+    }
+
+    /**
+     * Get cases filter by thread title
+     *
+     * @param string $search
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return array
+     */
+    public static function casesThreadTitle(string $search, int $offset = 0, int $limit = 15)
+    {
+        // Get the case numbers related to this filter
+        $query = Delegation::query()->select(['APP_NUMBER']);
+        // Filter the title
+        $query->title($search);
+        // Group by
+        $query->groupBy('APP_NUMBER');
         // Apply the limit
         $query->offset($offset)->limit($limit);
         // Get the result

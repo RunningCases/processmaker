@@ -354,7 +354,7 @@ class AppProxy extends HttpProxyController
                 ],
                 $j++ => [ // Case Title per thread
                     'id' => 'CASE_TITLE',
-                    'label' => G::LoadTranslation('ID_TASK_TITLE') . ': ',
+                    'label' => G::LoadTranslation('ID_CASE_THREAD_TITLE') . ': ',
                     'value' => $row['DEL_TITLE'],
                 ],
                 $j++ => [ // Current User

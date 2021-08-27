@@ -3546,6 +3546,12 @@ msgid "Case Uid"
 msgstr "Case Uid"
 
 # TRANSLATION
+# LABEL/ID_CASE_THREAD_TITLE
+#: LABEL/ID_CASE_THREAD_TITLE
+msgid "Case thread title"
+msgstr "Case thread title"
+
+# TRANSLATION
 # LABEL/ID_CASES
 #: LABEL/ID_CASES
 msgid "HOME"
