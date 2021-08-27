@@ -6,6 +6,7 @@ use Exception;
 use G;
 use Luracast\Restler\RestException;
 use Menu;
+use ProcessMaker\BusinessModel\Cases\CasesList;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\BusinessModel\Cases\Filter;
 use ProcessMaker\BusinessModel\Cases\Home as BMHome;
