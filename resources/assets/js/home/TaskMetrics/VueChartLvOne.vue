@@ -1,7 +1,9 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_NUMBER_TASKS_PROCESS")}}</h6>
+      <h6 class="v-search-title">
+        {{ $t("ID_DRILL_DOWN_NUMBER_TASKS_PROCESS") }}
+      </h6>
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"
@@ -26,7 +28,7 @@
           ></multiselect>
         </div>
         <label class="vp-inline-block vp-padding-l20">{{
-          $t("ID_MAFE_a4ffdcf0dc1f31b9acaf295d75b51d00")
+          $t("ID_TOP")
         }}</label>
         <div class="vp-inline-block">
           <b-form-checkbox
@@ -198,6 +200,7 @@ export default {
     },
     /**
      * Format categories for multiselect
+     * @param {*} data
      */
     formatDataCategories(data) {
       let array = [];
@@ -213,6 +216,7 @@ export default {
     },
     /**
      * Format processes for popover
+     * @param {*} data
      */
     formatDataProcesses(data) {
       let sels = [],
@@ -233,6 +237,7 @@ export default {
     },
     /**
      * Change the options in TOTAL CASES BY PROCESS
+     * @param {*} option
      */
     changeOption(option) {
       let that = this,
@@ -265,6 +270,7 @@ export default {
     },
     /**
      * Format response form BE to chart
+     * @param {*} data
      */
     formatTotalCases(data) {
       let serie = [],
@@ -283,6 +289,7 @@ export default {
     },
     /**
      * Update list processes in chart
+     * @param {*} data
      */
     onUpdateColumnSettings(data) {
       let res;
@@ -299,6 +306,7 @@ export default {
     },
     /**
      * Update labels in chart
+     * @param {*} processes
      */
     updateLabels(processes) {
       let labels = [];
@@ -309,6 +317,7 @@ export default {
     },
     /**
      * UPdate serie in chart
+     * @param {*} processes
      */
     updateSerie(processes) {
       let labels = [];

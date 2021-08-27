@@ -110,7 +110,7 @@ export default {
           el.classObject["vp-btn-secondary"] = false;
           el.classObject["btn-primary"] = true;
         }
-        i++;
+        i += 1;
       });
       return array;
     },

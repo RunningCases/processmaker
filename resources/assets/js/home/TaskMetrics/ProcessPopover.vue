@@ -8,13 +8,11 @@
       @show="onshow"
     >
       <template #title>{{ $t("ID_PROCESSES").toUpperCase() }}</template>
-
       <div>
         <div class="input-group input-group-sm mb-3">
           <span class="input-group-text" id="inputGroup-sizing-sm"
             ><i class="fas fa-search"></i
           ></span>
-
           <input
             type="text"
             class="form-control"
@@ -23,7 +21,6 @@
             v-model="text"
           />
         </div>
-
         <div class="form-check border-bottom">
           <input
             class="form-check-input"
@@ -31,12 +28,10 @@
             v-model="allColumns"
             @change="toogleAllColumns"
           />
-
           <label class="form-check-label" for="flexCheckDefault">
             {{ $t("ID_ALL") }}
           </label>
         </div>
-
         <b-form-group>
           <b-form-checkbox-group
             v-model="localSelected"
@@ -48,13 +43,11 @@
             stacked
           ></b-form-checkbox-group>
         </b-form-group>
-
         <div class="v-popover-footer">
           <div class="float-right">
             <b-button @click="onClose" size="sm" variant="danger">
               {{ $t("ID_CANCEL") }}</b-button
             >
-
             <b-button @click="onSave" size="sm" variant="success">{{
               $t("ID_SAVE")
             }}</b-button>
@@ -64,7 +57,6 @@
     </b-popover>
   </div>
 </template>
-
 <script>
 export default {
   name: "ProcessPopover",
@@ -85,17 +77,18 @@ export default {
   },
   methods: {
     /**
-     * Set options
+     * Setter options for fill the popover
+     * @param {*} options
      */
     setOptions(options) {
       this.options = options;
       this.results = options;
     },
     /**
-     * Set selected options
+     * Setter the selected options
+     * @param {*} options
      */
     setSelectedOptions(options) {
-      console.log("SELECTED");
       this.selected = options;
       this.localSelected = options;
     },
@@ -169,14 +162,11 @@ export default {
   },
 };
 </script>
-
-
 <style scoped>
 .pm-all-view-popover .popover {
   max-width: 350px !important;
   min-width: 200px !important;
 }
-
 .v-popover-footer {
   display: flow-root;
 }

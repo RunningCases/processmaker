@@ -170,7 +170,8 @@ export default {
       }
     },
     /**
-     * Format response fromn API
+     * Format response from API
+     * @param {object} data
      */
     formatDataRange(data) {
       let labels = [],

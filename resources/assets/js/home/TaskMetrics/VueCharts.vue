@@ -105,6 +105,7 @@ export default {
     },
     /**
      * Change level with changes in data
+     * @param {object} lv
      */
     onChangeLevel(lv) {
       _.remove(this.data, function (n) {

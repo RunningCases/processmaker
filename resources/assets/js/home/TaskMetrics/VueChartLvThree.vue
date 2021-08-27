@@ -37,7 +37,7 @@
         </div>
         <div class="vp-inline-block">
           <label class="form-label">{{
-            $t("ID_MAFE_a4ffdcf0dc1f31b9acaf295d75b51d00")
+            $t("ID_TOP")
           }}</label>
         </div>
         <div class="vp-inline-block">
@@ -235,6 +235,7 @@ export default {
     },
     /**
      * Format response fromn API
+     * @param {object} data
      */
     formatDataRange(data) {
       let that = this,
@@ -349,7 +350,6 @@ export default {
     },
     /**
      * Open selected cases in the inbox
-     *
      * @param {object} item
      */
     openCase(item) {
@@ -364,6 +364,7 @@ export default {
     },
     /**
      * Click in marker chart
+     * @param {object} selection
      */
     onClickCaseMarker(selection) {
       let process = this.data[1].id,
@@ -398,6 +399,7 @@ export default {
     },
     /**
      * Show modal unpause
+     * @param {object} item
      */
     showModalUnpauseCase(item) {
       this.$refs["modal-unpause-case"].data = item;
