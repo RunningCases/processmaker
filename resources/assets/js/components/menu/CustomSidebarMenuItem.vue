@@ -37,8 +37,12 @@
                                 isMobileItem
                         "
                     >
+                    
                         <span class="vsm--title">
-                            <custom-tooltip :data="item"></custom-tooltip>
+                            <custom-tooltip
+                                :data="item"
+                                ref="tooltip"
+                            ></custom-tooltip>
                             <b-icon
                                 v-if="item.sortable"
                                 :icon="item.sortIcon"
@@ -220,6 +224,9 @@ export default {
             titleHover: "",
         };
     },
+    mounted() {
+        this.setHighlight();
+    },
     computed: {
         isCollapsed() {
             return this.$parent.isCollapsed;
@@ -293,6 +300,20 @@ export default {
         this.initState();
     },
     methods: {
+        /**
+         * set the highlight
+         */
+        setHighlight() {
+            let that = this;
+            eventBus.$on('highlight', (data) => {
+                var i;
+                for (i = 0; i < data.length; i += 1) {
+                    if (that.item.id && that.item.id === data[i].id) {
+                        that.$refs.tooltip.setHighlight()
+                    }
+                }
+            });
+        },
         /**
          * Match the route to ensure the correct location
          * @param {string} href
