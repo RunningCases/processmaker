@@ -458,15 +458,14 @@ export default {
         let that = this;
         // force to open case
         this.openDefaultCase();
-        //this.columns = this.getTableColumns(_.intersection(this.defaultColumns, this.settings.columns));
         // define sort event
-        Event.$on("vue-tables.todo.sorted", function(data) {
+        Event.$on("vue-tables.todo.so   rted", function(data) {
             that.$emit("updateUserSettings", "orderBy", data);
         });
     },
     watch: {
         columns: function(val) {
-            //this.$emit("updateUserSettings", "columns", val);
+            //TODO update settings
         },
         filters: function(val) {
             this.$emit("updateUserSettings", "filters", val);
@@ -593,8 +592,6 @@ export default {
                             return item.field;
                         });
                         that.settingOptions = that.formatColumnSettings(columns);
-                        //columns = _.intersection(tmp, that.settings.columns);
-                        // columns = tmp;
                         dt = that.formatDataResponse(response.data.data);
                         that.cardColumns = columns;
                         if (that.isFistTime) {
