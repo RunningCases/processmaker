@@ -356,11 +356,12 @@ export default {
                 this.pageUri = item.item.href;
                 this.pageName = item.item.title;
             } else {
+                debugger;
                 this.filters = [];
                 this.pageId = null;
                 this.pageUri = item.item.href;
                 this.page = item.item.page || "MyCases";
-                if (!item.item.customCasesList) {
+                if (this.menuMap[item.id]) {
                     this.page = "custom-case-list";
                     this.pageData = {
                         pageUri: item.item.pageUri,
