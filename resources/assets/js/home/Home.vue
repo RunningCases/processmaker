@@ -128,7 +128,6 @@ export default {
          eventBus.$on('sort-menu', (data) => {
             let newData = [];
             data.forEach(item => newData.push({id: item.id}));
-            //that.updateUserSettings('customCasesList', newData);
             that.updateSettings({
                 data: newData,
                 key: "customCaseListOrder",
