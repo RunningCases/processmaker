@@ -356,7 +356,6 @@ export default {
                 this.pageUri = item.item.href;
                 this.pageName = item.item.title;
             } else {
-                debugger;
                 this.filters = [];
                 this.pageId = null;
                 this.pageUri = item.item.href;
