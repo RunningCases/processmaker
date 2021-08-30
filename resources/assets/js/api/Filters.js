@@ -1,7 +1,7 @@
 import axios from "axios";
 import ApiInstance from "./Api.js";
 import Services from "./Services";
-let Api = new ApiInstance( Services );
+let Api = new ApiInstance(Services);
 export let filters = {
     get(data) {
         return Api.get({
@@ -42,8 +42,8 @@ export let filters = {
         params.append("action", "startCase");
         return axios.post(
             window.config.SYS_SERVER_AJAX +
-                window.config.SYS_URI +
-                `cases/casesStartPage_Ajax.php`,
+            window.config.SYS_URI +
+            `cases/casesStartPage_Ajax.php`,
             params
         );
     },
@@ -88,11 +88,16 @@ export let filters = {
      * Service to get the categories list
      */
     categories(query) {
+        let pr = {
+            limit: 15,
+            offset: 0
+        };
+        if (query) {
+            pr["name"] = query;
+        }
         return Api.get({
             service: "CATEGORIES",
-            params: {
-                name: query,
-            },
+            params: pr,
             keys: {},
         });
     },
@@ -102,8 +107,8 @@ export let filters = {
     userValues(query) {
         return axios.post(
             window.config.SYS_SERVER_AJAX +
-                window.config.SYS_URI +
-                `cases/casesList_Ajax?actionAjax=userValues&action=search`,
+            window.config.SYS_URI +
+            `cases/casesList_Ajax?actionAjax=userValues&action=search`,
             {
                 query,
             }
