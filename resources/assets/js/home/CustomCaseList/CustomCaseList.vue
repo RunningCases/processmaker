@@ -455,20 +455,43 @@ export default {
         this.initFilters();
     },
     mounted() {
+        debugger;
         let that = this;
         // force to open case
         this.openDefaultCase();
         // define sort event
         Event.$on("vue-tables.todo.sorted", function(data) {
-            that.$emit("updateUserSettings", "orderBy", data);
+             that.$emit("updateSettings", {
+                data: data,
+                key: "orderBy",
+                parent: that.data.pageParent,
+                type: "custom",
+                id: that.data.customListId
+            });
         });
     },
     watch: {
         columns: function(val) {
-            //TODO update settings
+            if (this.isFistTime) {
+                 this.isFistTime = false;
+            }  else {
+                this.$emit("updateSettings", {
+                    data: val,
+                    key: "columns",
+                    parent: this.data.pageParent,
+                    type: "custom",
+                    id: this.data.customListId
+                });
+            }
         },
         filters: function(val) {
-            this.$emit("updateUserSettings", "filters", val);
+            this.$emit("updateSettings", {
+                data: val,
+                key: "filters",
+                parent: this.data.pageParent,
+                type: "custom",
+                id: this.data.customListId
+            });
         },
     },
     computed: {
@@ -595,9 +618,7 @@ export default {
                         dt = that.formatDataResponse(response.data.data);
                         that.cardColumns = columns;
                         if (that.isFistTime) {
-                            that.columns = that.getTableColumns(columns);
-                            
-                            that.isFistTime = false;
+                            that.columns = that.settings && that.settings.columns ? that.settings.columns :  that.getTableColumns(columns);
                         }
                         resolutionFunc({
                             data: dt,

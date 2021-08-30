@@ -24,7 +24,7 @@
                 :pageUri="pageUri"
                 :name="pageName"
                 :defaultOption="defaultOption"
-                :settings="config.setting[page]"
+                :settings="settings"
                 :filters="filters"
                 :data="pageData"
                 @onSubmitFilter="onSubmitFilter"
@@ -35,6 +35,7 @@
                 @onUpdateFilters="onUpdateFilters"
                 @cleanDefaultOption="cleanDefaultOption"
                 @updateUserSettings="updateUserSettings"
+                @updateSettings="updateSettings"
             ></component>
         </div>
     </div>
@@ -111,7 +112,8 @@ export default {
                 CASES_FOLDERS: "my-documents"
             },
             defaultOption: window.config.defaultOption || '',
-            pageData: {}
+            pageData: {},
+            settings: {}
         };
     },
     mounted() {
@@ -124,8 +126,10 @@ export default {
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
         // adding eventBus listener
-        eventBus.$on('sort-menu', (data) => {
-            that.updateUserSettings('customCasesList', data);
+         eventBus.$on('sort-menu', (data) => {
+            let newData = [];
+            data.forEach(item => newData.push({id: item.id}));
+            that.updateUserSettings('customCasesList', newData);
         });
         eventBus.$on('home-update-page', (data) => {
             that.onUpdatePage(data);
@@ -231,6 +235,40 @@ export default {
             }
         },
         /**
+         * Update the user config service
+         * @param {object} params
+         */
+        updateSettings (params){
+            if (params.type === "custom") {
+                if (!this.config.setting[params.parent]) {
+                    this.config.setting[params.parent] = {};
+                }
+                if (!this.config.setting[params.parent]["customCaseList"]) {
+                    this.config.setting[params.parent]["customCaseList"] = {};
+                }
+                if (!this.config.setting[params.parent].customCaseList[params.id]) {
+                    this.config.setting[params.parent].customCaseList[params.id] = {}
+                }
+                this.config.setting[params.parent].customCaseList[params.id][params.key] = params.data;
+            } else {
+                if (!this.config.setting[this.page]) {
+                    this.config.setting[this.page] = {};
+                }
+                this.config.setting[this.page][params.key] = data;
+            }
+            api.config
+                .put(this.config)
+                .then((response) => {
+                    if (response.data) {
+                        //TODO success response
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+            
+        },
+        /**
          * Set default cases menu option
          */
         setDefaultCasesMenu(data) {
@@ -243,8 +281,9 @@ export default {
             } else {
                 this.page = "MyCases";
             }
+            this.settings = this.config.setting[this.page];
             this.lastPage = this.page;
-        },
+        },  
         /**
          * Do a mapping of vue view for menus
          * @returns array
@@ -369,6 +408,7 @@ export default {
                 this.pageId = null;
                 this.pageUri = item.item.href;
                 this.page = item.item.page || "MyCases";
+                this.settings = this.config.setting[this.page];
                 if (!this.menuMap[item.item.id]) {
                     this.page = "custom-case-list";
                     this.pageData = {
@@ -378,7 +418,13 @@ export default {
                         pageIcon: item.item.icon,
                         customListId: item.item.id
                     }
+                    if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
+                        this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
+                    } else {
+                        this.settings = {};
+                    }
                 }
+                
                 if (this.page === this.lastPage
                     && this.$refs["component"]
                     && this.$refs["component"].updateView) {
