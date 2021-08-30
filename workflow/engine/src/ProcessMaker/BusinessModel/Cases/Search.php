@@ -62,10 +62,10 @@ class Search extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            // Join with delegation
-            $query->joinDelegation();
+            // Get the result
+            $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
             // Add the filter
-            // $query->title($this->getCaseTitle());
+            $query->specificCases($result);
         }
         // Filter by category
         if ($this->getCategoryId()) {
