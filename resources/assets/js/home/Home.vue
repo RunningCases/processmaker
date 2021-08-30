@@ -34,7 +34,6 @@
                 @onLastPage="onLastPage"
                 @onUpdateFilters="onUpdateFilters"
                 @cleanDefaultOption="cleanDefaultOption"
-                @updateUserSettings="updateUserSettings"
                 @updateSettings="updateSettings"
             ></component>
         </div>
@@ -215,27 +214,6 @@ export default {
         },
         /**
          * Update the user config service
-         */
-        updateUserSettings(prop, data) {
-            if (this.config.setting) {
-                if (!this.config.setting[this.page]) {
-                    this.config.setting[this.page] = {};
-                }
-                this.config.setting[this.page][prop] = data;
-                api.config
-                    .put(this.config)
-                    .then((response) => {
-                        if (response.data) {
-                            //TODO success response
-                        }
-                    })
-                    .catch((e) => {
-                        console.error(e);
-                    });
-            }
-        },
-        /**
-         * Update the user config service
          * @param {object} params
          */
         updateSettings (params){
@@ -254,7 +232,7 @@ export default {
                 if (!this.config.setting[this.page]) {
                     this.config.setting[this.page] = {};
                 }
-                this.config.setting[this.page][params.key] = data;
+                this.config.setting[this.page][params.key] = params.data;
             }
             api.config
                 .put(this.config)
@@ -283,7 +261,7 @@ export default {
             }
             this.settings = this.config.setting[this.page];
             this.lastPage = this.page;
-        },  
+        },
         /**
          * Do a mapping of vue view for menus
          * @returns array
@@ -424,7 +402,6 @@ export default {
                         this.settings = {};
                     }
                 }
-                
                 if (this.page === this.lastPage
                     && this.$refs["component"]
                     && this.$refs["component"].updateView) {

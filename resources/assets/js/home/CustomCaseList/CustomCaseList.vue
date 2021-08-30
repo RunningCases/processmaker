@@ -455,7 +455,6 @@ export default {
         this.initFilters();
     },
     mounted() {
-        debugger;
         let that = this;
         // force to open case
         this.openDefaultCase();
