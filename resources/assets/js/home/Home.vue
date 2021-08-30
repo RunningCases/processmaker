@@ -128,7 +128,14 @@ export default {
          eventBus.$on('sort-menu', (data) => {
             let newData = [];
             data.forEach(item => newData.push({id: item.id}));
-            that.updateUserSettings('customCasesList', newData);
+            //that.updateUserSettings('customCasesList', newData);
+            that.updateSettings({
+                data: newData,
+                key: "customCaseListOrder",
+                parent: this.page,
+                type: "normal",
+                id: this.id
+            });
         });
         eventBus.$on('home-update-page', (data) => {
             that.onUpdatePage(data);
@@ -301,8 +308,8 @@ export default {
                     data[i]["child"] = this.sortCustomCasesList(
                         data[i].customCasesList,
                         this.config.setting[this.page] &&
-                            this.config.setting[this.page].customCasesList
-                            ? this.config.setting[this.page].customCasesList
+                            this.config.setting[this.page].customCaseListOrder
+                            ? this.config.setting[this.page].customCaseListOrder
                             : []
                     );
                     data[i]["sortable"] = data[i].customCasesList.length > 1;
