@@ -76,5 +76,9 @@
     GET_CONFIG: "/home/config/{id}/{name}",
     PAUSE_CASE: "/cases/{app_uid}/pause",
     REASSIGN_CASE: "/cases/{app_uid}/reassign-case",
-    REASSIGN_USERS: "/light/userstoreassign/{task_uid}"
+    REASSIGN_USERS: "/light/userstoreassign/{task_uid}",
+    INBOX_CUSTOM_LIST: "/home/inbox/{id}",
+    DRAFT_CUSTOM_LIST: "/home/draft/{id}",
+    PAUSED_CUSTOM_LIST: "/home/paused/{id}",
+    UNASSIGNED_CUSTOM_LIST: "/home/unassigned/{id}"
 };

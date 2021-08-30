@@ -1,16 +1,16 @@
 <template>
     <span
-        :id="`label-${data.id}`"
+        :id="`label-${data.page}`"
         @mouseover="hoverHandler"
         v-b-tooltip.hover
         @mouseleave="unhoverHandler"
         v-bind:class="{highlightText: isHighlight}"
     >
         {{ data.title }}
-        <b-tooltip
-            :target="`label-${data.id}`"
+        <b-tooltip 
+            :target="`label-${data.page}`"
             triggers="hoverHandler"
-            :ref="`tooltip-${data.id}`"
+            :ref="`tooltip-${data.page}`"
         >
             {{ labelTooltip }}
         </b-tooltip>
@@ -50,7 +50,7 @@ export default {
          * Reset the delay and hide the tooltip
          */
         unhoverHandler() {
-            let key = `tooltip-${this.data.id}`;
+            let key = `tooltip-${this.data.page}`;
             this.labelTooltip = "";
             this.$refs[key].$emit("close");
             clearTimeout(this.hovering);
@@ -60,8 +60,8 @@ export default {
          */
         setTooltip() {
             let that = this;
-            api.menu.getTooltip(that.data.id).then((response) => {
-                let key = `tooltip-${that.data.id}`;
+            api.menu.getTooltip(that.data.page).then((response) => {
+                let key = `tooltip-${that.data.page}`;
                 that.labelTooltip = response.data.label;
                 that.$refs[key].$emit("open");
                 that.isHighlight = false;

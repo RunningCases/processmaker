@@ -40,7 +40,7 @@
         <b-form-group>
           <b-form-checkbox-group
             v-model="localSelected"
-            :options="results"
+            :options="options"
             value-field="key"
             text-field="value"
             name="flavour-2a"
@@ -79,6 +79,11 @@ export default {
   mounted() {
     this.results = this.options;
     this.localSelected = this.selected || [];
+  },
+  watch:  {
+    selected: function (newSelection, oldSelection) {
+      this.localSelected = newSelection;
+    }
   },
   methods: {
     /**

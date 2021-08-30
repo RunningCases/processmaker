@@ -18,25 +18,56 @@ export let cases = {
             keys: {}
         });
     },
-    draft(data) {
+    inbox(data) {
+        let service = "INBOX_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "INBOX_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
         return Api.get({
-            service: "DRAFT_LIST",
+            service,
+            params: data.filters,
+            keys
+        });
+    },
+    draft(data) {
+        let service = "DRAFT_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "DRAFT_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
+        return Api.get({
+            service,
             params: data,
-            keys: {}
+            keys
         });
     },
     paused(data) {
+        let service = "PAUSED_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "PAUSED_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
         return Api.get({
-            service: "PAUSED_LIST",
+            service,
             params: data,
-            keys: {}
+            keys
         });
     },
     unassigned(data) {
+        let service = "UNASSIGNED_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "UNASSIGNED_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
         return Api.get({
-            service: "UNASSIGNED_LIST",
+            service,
             params: data,
-            keys: {}
+            keys
         });
     },
     summary(data) {
