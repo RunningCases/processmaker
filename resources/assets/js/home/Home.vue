@@ -369,7 +369,7 @@ export default {
                 this.pageId = null;
                 this.pageUri = item.item.href;
                 this.page = item.item.page || "MyCases";
-                if (this.menuMap[item.id]) {
+                if (!this.menuMap[item.item.id]) {
                     this.page = "custom-case-list";
                     this.pageData = {
                         pageUri: item.item.pageUri,
