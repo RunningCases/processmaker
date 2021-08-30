@@ -39,8 +39,11 @@ export default {
   color: #212529;
   background-color: #f8f9fa;
 }
-
 .pm-vue-card-inside:hover {
   background-color: #cfd9e4;
+}
+.card-body {
+  height: 266px;
+  overflow-x: hidden;
 }
 </style>
