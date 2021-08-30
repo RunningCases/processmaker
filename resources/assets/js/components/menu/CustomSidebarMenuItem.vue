@@ -308,7 +308,7 @@ export default {
             eventBus.$on('highlight', (data) => {
                 var i;
                 for (i = 0; i < data.length; i += 1) {
-                    if (that.item.id && that.item.id === data[i].id) {
+                    if (that.item.page && that.item.page === data[i].id) {
                         that.$refs.tooltip.setHighlight()
                     }
                 }

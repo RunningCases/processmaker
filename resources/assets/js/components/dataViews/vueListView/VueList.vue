@@ -1,7 +1,7 @@
 <template>
   <div class="pm-vue-list">
     <div class="card pm-vue-list-inside" @dblclick.prevent="dblClick">
-      <div class="card-body">
+      <div class="list-body">
         <slot> </slot>
       </div>
     </div>
@@ -38,8 +38,11 @@ export default {
   color: #212529;
   background-color: #f8f9fa;
 }
-
 .pm-vue-list-inside:hover {
   background-color: #cfd9e4;
+}
+.list-body {
+  height: 224px;
+  overflow-x: hidden;
 }
 </style>
