@@ -81,6 +81,7 @@ export default {
     getCases(data) {
       let that = this,
         dt,
+        typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
         start = 0,
         limit = data.limit,
         filters = {};
@@ -92,7 +93,7 @@ export default {
         filters[item.filterVar] = item.value;
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases[that.data.pageParent](filters)
+        api.cases[typeList](filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
@@ -112,6 +113,7 @@ export default {
       let that = this,
         dt,
         paged,
+        typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
         limit = data.limit,
         start = data.page === 1 ? 0 : limit * (data.page - 1),
         filters = {};
@@ -126,7 +128,7 @@ export default {
         }
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases[that.data.pageParent]
+        api.cases[typeList]
           (filters)
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);

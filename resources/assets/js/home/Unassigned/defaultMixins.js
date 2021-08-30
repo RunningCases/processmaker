@@ -78,17 +78,9 @@ export default {
     getCases(data) {
       let that = this,
         dt,
-        start = 0,
-        limit = data.limit,
         filters = {};
-      filters = {
-        paged: "0," + limit,
-      };
-
       _.forIn(this.filters, function (item, key) {
-          if(filters && item.value) {
-              filters[item.filterVar] = item.value;
-          }
+        filters[item.filterVar] = item.value;
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
@@ -115,13 +107,14 @@ export default {
         limit = data.limit,
         start = data.page === 1 ? 0 : limit * (data.page - 1),
         filters = {};
-      paged = start + "," + limit;
-
       filters = {
-        paged: paged,
+        limit: limit,
+        offset: start
       };
       _.forIn(this.filters, function (item, key) {
-        filters[item.filterVar] = item.value;
+        if (filters && item.value) {
+          filters[item.filterVar] = item.value;
+        }
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases

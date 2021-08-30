@@ -36,7 +36,7 @@ export default {
       },
       optionsVueView: {
         limit: 10,
-        dblClick:(event, item, options)=>{
+        dblClick: (event, item, options) => {
           this.openCase(item);
         },
         headings: {
@@ -79,13 +79,7 @@ export default {
     getCases(data) {
       let that = this,
         dt,
-        start = 0,
-        limit = data.limit,
         filters = {};
-      filters = {
-        paged: "0," + limit,
-      };
-
       _.forIn(this.filters, function (item, key) {
         filters[item.filterVar] = item.value;
       });
@@ -114,15 +108,14 @@ export default {
         limit = data.limit,
         start = data.page === 1 ? 0 : limit * (data.page - 1),
         filters = {};
-      paged = start + "," + limit;
-
       filters = {
-        paged: paged,
+        limit: limit,
+        offset: start
       };
       _.forIn(this.filters, function (item, key) {
-          if(filters && item.value) {
-              filters[item.filterVar] = item.value;
-          }
+        if (filters && item.value) {
+          filters[item.filterVar] = item.value;
+        }
       });
       return new Promise((resolutionFunc, rejectionFunc) => {
         api.cases
@@ -145,10 +138,10 @@ export default {
      * @returns 
      */
     formatColumnSettings(headings) {
-      let res=[];
-      _.forEach(headings, function(value, key) {
-        if(key != "actions"){
-            res.push({value,key});
+      let res = [];
+      _.forEach(headings, function (value, key) {
+        if (key != "actions") {
+          res.push({ value, key });
         }
       });
       return res;
@@ -169,7 +162,7 @@ export default {
      */
     onUpdateColumnSettings(columns) {
       let cols = columns;
-      if(_.findIndex(cols, 'actions') == -1){
+      if (_.findIndex(cols, 'actions') == -1) {
         cols.push("actions");
       }
       this.columns = cols;
