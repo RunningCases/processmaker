@@ -103,7 +103,7 @@ export default {
         searchLabel: this.$i18n.t("ID_SEARCH"),
         addSearchTitle: this.$i18n.t("ID_ADD_SEARCH_FILTER_CRITERIA"),
         searchTags: [],
-
+        dataLoaded: false,
         filterItems: [
             {
             type: "CaseNumber",
@@ -206,6 +206,7 @@ export default {
         o.autoShow = false;
       });
       this.setFilters(fils);
+      this.dataLoaded = true;
     }
   },
   watch: {
@@ -214,7 +215,8 @@ export default {
         handler(newVal, oldVal) { 
             this.searchTags = [];
             this.selected = [];
-            if (newVal.length) {
+            //Prevent show popover at the first time
+            if (newVal.length && this.dataLoaded) {
                 this.setFilters(newVal, oldVal);
                 this.searchClickHandler();
             }
