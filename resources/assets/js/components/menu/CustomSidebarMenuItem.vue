@@ -309,7 +309,9 @@ export default {
                 var i;
                 for (i = 0; i < data.length; i += 1) {
                     if (that.item.page && that.item.page === data[i].id) {
-                        that.$refs.tooltip.setHighlight()
+                        if (that.$refs.tooltip) {
+                            that.$refs.tooltip.setHighlight()
+                        }
                     }
                 }
             });

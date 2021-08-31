@@ -32,8 +32,8 @@
             <div slot="task" slot-scope="props">
               <TaskCell :data="props.row.TASK" />
             </div>
-            <div slot="case_title" slot-scope="props">
-              {{ props.row.CASE_TITLE }}
+            <div slot="thread_title" slot-scope="props">
+                {{ props.row.THREAD_TITLE }}
             </div>
             <div slot="current_user" slot-scope="props">
                 <CurrentUserCell :data="props.row.USER_DATA" />
@@ -160,7 +160,7 @@ export default {
       },
       columns: [
         "task",
-        "case_title",
+        "thread_title",
         "current_user",
         "status",
         "due_date",
@@ -171,7 +171,7 @@ export default {
       options: {
         headings: {
           task: this.$i18n.t("ID_TASK"),
-          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           current_user: this.$i18n.t("ID_CURRENT_USER"),
           status: this.$i18n.t("ID_STATUS"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
@@ -510,7 +510,7 @@ export default {
               COLOR: v.TAS_COLOR_LABEL
             },
           ],
-          CASE_TITLE: v.DEL_TITLE,
+          THREAD_TITLE: v.DEL_TITLE,
           USER_DATA: this.formatUser(v.user_tooltip),
           STATUS: v.DEL_THREAD_STATUS,
           DUE_DATE: v.DEL_TASK_DUE_DATE,
