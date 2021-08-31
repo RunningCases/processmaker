@@ -402,7 +402,6 @@ export default {
      * Initialize filters
      */
     initFilters() {
-      debugger;
       let params;
       if (this.defaultOption) {
         params = utils.getAllUrlParams(this.defaultOption);
