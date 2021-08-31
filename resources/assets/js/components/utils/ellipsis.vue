@@ -50,11 +50,23 @@ export default {
          * Show the action buttons by row
          */
         showActionButtons() {
-            var i;
+            var i,
+                elelemts;
             this.showActions = !this.showActions;
             if (this.showActions) {
-                for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
-                    this.$parent.$parent.$parent.$children[i].$el.style.opacity = 0.15
+                if (this.$parent.Row !== undefined) {
+                    for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
+                        this.$parent.$parent.$parent.$children[i].$el.style.opacity = 0.15
+                    }
+                } else if (this.$parent.item !== undefined) {
+                    if (this.$parent.$parent.$parent.$refs.vueListView !== undefined) {
+                        elelemts = this.$parent.$el.getElementsByClassName('col-sm-5');
+                        elelemts[0].style.opacity = 0.4;
+                        elelemts[1].style.opacity = 0.4;
+                    }
+                    if (this.$parent.$parent.$parent.$refs.vueCardView !== undefined) {
+                        this.$parent.$el.getElementsByClassName('col-sm-9')[0].style.opacity = 0.2
+                    }
                 }
             } else {
                 this.hideActionButtons();     
@@ -64,11 +76,23 @@ export default {
          * Hide action buttons
          */
         hideActionButtons() {
-            var i;
+            var i,
+                elelemts;
             this.showActions = false;
-            for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
+            if (this.$parent.Row !== undefined) {
+                for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
                     this.$parent.$parent.$parent.$children[i].$el.style.opacity = 1
                 }
+            } else if (this.$parent.item !== undefined) {
+                if (this.$parent.$parent.$parent.$refs.vueListView !== undefined) {
+                    elelemts = this.$parent.$el.getElementsByClassName('col-sm-5');
+                    elelemts[0].style.opacity = 1;
+                    elelemts[1].style.opacity = 1;
+                }
+                if (this.$parent.$parent.$parent.$refs.vueCardView !== undefined) {
+                    this.$parent.$el.getElementsByClassName('col-sm-9')[0].style.opacity = 1;
+                }
+            }
         },
     }
 }
