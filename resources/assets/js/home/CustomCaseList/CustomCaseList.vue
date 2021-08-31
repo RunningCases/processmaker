@@ -779,13 +779,13 @@ export default {
             if (newData && newData.customListId) {
                 this.data.customListId = newData.customListId;
             }
-            if (this.typeView === "GRID") {
+            if (this.typeView === "GRID" && this.$refs["vueTable"]) {
                 this.$refs["vueTable"].getData();
             }
-            if (this.typeView === "CARD") {
+            if (this.typeView === "CARD" && this.$refs["vueCardView"]) {
                 this.$refs["vueCardView"].getData();
             }
-            if (this.typeView === "LIST") {
+            if (this.typeView === "LIST" && this.$refs["vueCardView"]) {
                 this.$refs["vueListView"].getData();
             }
         },
