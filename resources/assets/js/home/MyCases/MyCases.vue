@@ -230,16 +230,34 @@ export default {
             this.$refs["newRequest"].show();
         }
         // define sort event
-        Event.$on("vue-tables.mycases.sorted", function(data) {
-            that.$emit("updateUserSettings", "orderBy", data);
+        Event.$on('vue-tables.mycases.sorted', function (data) {
+            that.$emit("updateSettings", {
+                data: data,
+                key: "orderBy",
+                parent: this.page,
+                type: "normal",
+                id: this.id
+            });
         });
     },
     watch: {
-        columns: function(val) {
-            this.$emit("updateUserSettings", "columns", val);
-        },
-        filters: function(val) {
-            this.$emit("updateUserSettings", "filters", val);
+        columns: function (val) {
+            this.$emit("updateSettings", {
+                data: val,
+                key: "columns",
+                parent: this.page,
+                type: "normal",
+                id: this.id
+            });
+        },  
+        filters: function (val) {
+            this.$emit("updateSettings", {
+                data: val,
+                key: "filters",
+                parent: this.page,
+                type: "normal",
+                id: this.id
+            });
         },
     },
     computed: {

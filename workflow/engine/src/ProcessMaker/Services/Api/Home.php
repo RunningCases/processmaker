@@ -697,7 +697,7 @@ class Home extends Api
                 $result = CaseList::getSetting($mapKeys[$menuInstance->Id[$i]], '', 0, 10, false);
                 foreach ($result['data'] as $value) {
                     $option->customCasesList[] = [
-                        "href" => "casesListExtJs?action=" . $mapKeys[$menuInstance->Id[$i]],
+                        "href" => "casesListExtJs?action=" . $mapKeys[$menuInstance->Id[$i]] . "&customList=" . $value['id'],
                         "id" => $value['id'],
                         "title" => $value['name'],
                         "description" => $value['description'],
