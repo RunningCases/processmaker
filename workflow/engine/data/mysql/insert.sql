@@ -57321,7 +57321,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_BY_CASE_NUMBER','en','By Case #','2020-12-16') ,
 ( 'LABEL','ID_BY_CASE_TITLE','en','By Case Title','2020-12-16') ,
 ( 'LABEL','ID_BY_CURRENT_USER','en','By Current User','2021-07-13') ,
-( 'LABEL','P','en','By Delegation Date','2021-08-31') ,
+( 'LABEL','ID_BY_DELEGATION_DATE','en','By Delegation Date','2021-08-31') ,
 ( 'LABEL','ID_BY_FINISH_DATE','en','By Finish Date','2020-12-16') ,
 ( 'LABEL','ID_BY_PARTICIPATION','en','By Participation','2021-07-13') ,
 ( 'LABEL','ID_BY_PROCESS_CATEGORY','en','By Process Category','2021-07-13') ,
