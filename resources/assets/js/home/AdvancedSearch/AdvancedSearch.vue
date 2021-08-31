@@ -43,8 +43,8 @@
             <div slot="case_number" slot-scope="props">
                 {{ props.row.CASE_NUMBER }}
             </div>
-            <div slot="case_title" slot-scope="props">
-                {{ props.row.CASE_TITLE }}
+            <div slot="thread_title" slot-scope="props">
+                <ThreadTitleCell :data="props.row.THREAD_TITLE" />
             </div>
             <div slot="case_status" slot-scope="props">
                 {{ props.row.APP_STATUS }}
@@ -89,6 +89,7 @@ import AdvancedFilter from "../../components/search/AdvancedFilter";
 import TaskCell from "../../components/vuetable/TaskCell.vue";
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 import ModalComments from "../modal/ModalComments.vue";
+import ThreadTitleCell from "../../components/vuetable/ThreadTitleCell.vue"
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import defaultMixin from "./defaultMixins.js";
@@ -102,7 +103,8 @@ export default {
         ModalNewRequest,
         TaskCell,
         CurrentUserCell,
-        ModalComments
+        ModalComments,
+        ThreadTitleCell,
     },
     props: ["id", "name", "filters"],
     data() {
@@ -127,9 +129,9 @@ export default {
             },
             columns: [
                 "case_number",
-                "case_title",
-                "status",
                 "process_name",
+                "status",
+                "thread_title",
                 "task",
                 "current_user",
                 "start_date",
@@ -142,9 +144,9 @@ export default {
                 filterable: false,
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                    case_title: this.$i18n.t("ID_CASE_TITLE"),
-                    status: this.$i18n.t("ID_STATUS"),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
+                    status: this.$i18n.t("ID_STATUS"),
+                    thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                     task: this.$i18n.t("ID_TASK"),
                     current_user: this.$i18n.t("ID_CURRENT_USER"),
                     start_date: this.$i18n.t("ID_START_DATE"),
@@ -257,7 +259,7 @@ export default {
             _.forEach(response, (v) => {
                 data.push({
                     CASE_NUMBER: v.APP_NUMBER,
-                    CASE_TITLE: v.DEL_TITLE,
+                    THREAD_TITLE: v.THREAD_TITLES,
                     PROCESS_NAME: v.PRO_TITLE,
                     TASK: this.formatTasks(v.THREAD_TASKS),
                     USER_DATA: this.formatUser(v.THREAD_USERS),

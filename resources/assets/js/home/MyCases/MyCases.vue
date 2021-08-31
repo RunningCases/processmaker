@@ -44,8 +44,8 @@
             <div slot="case_number" slot-scope="props">
                 {{ props.row.CASE_NUMBER }}
             </div>
-            <div slot="case_title" slot-scope="props">
-                {{ props.row.CASE_TITLE }}
+            <div slot="thread_title" slot-scope="props">
+                <ThreadTitleCell :data="props.row.THREAD_TITLE" />
             </div>
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
@@ -87,6 +87,7 @@ import ModalNewRequest from "../ModalNewRequest.vue";
 import MyCasesFilter from "../../components/search/MyCasesFilter";
 import ModalComments from "../modal/ModalComments.vue";
 import GroupedCell from "../../components/vuetable/GroupedCell.vue";
+import ThreadTitleCell from "../../components/vuetable/ThreadTitleCell.vue"
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import defaultMixins from "./defaultMixins";
@@ -102,6 +103,7 @@ export default {
         ModalNewRequest,
         GroupedCell,
         ModalComments,
+        ThreadTitleCell,
     },
     props: ["defaultOption", "settings"],
     data() {
@@ -144,8 +146,8 @@ export default {
                     ? this.settings.columns
                     : [
                           "case_number",
-                          "case_title",
                           "process_name",
+                          "thread_title",
                           "pending_taks",
                           "status",
                           "start_date",
@@ -158,8 +160,8 @@ export default {
                 filterable: false,
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                    case_title: this.$i18n.t("ID_CASE_TITLE"),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
+                    thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                     pending_taks: this.$i18n.t("ID_PENDING_TASKS"),
                     status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
                     start_date: this.$i18n.t("ID_START_DATE"),
@@ -438,7 +440,7 @@ export default {
             _.forEach(response, (v) => {
                 data.push({
                     CASE_NUMBER: v.APP_NUMBER,
-                    CASE_TITLE: v.DEL_TITLE,
+                    THREAD_TITLE: v.THREAD_TITLES,
                     PROCESS_NAME: v.PRO_TITLE,
                     STATUS: v.APP_STATUS,
                     START_DATE: v.APP_CREATE_DATE_LABEL || "",
