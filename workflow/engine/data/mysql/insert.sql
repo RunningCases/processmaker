@@ -60345,6 +60345,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_NO_MANAGER_SELECTED','en','No Manager Selected','2014-01-15') ,
 ( 'LABEL','ID_NO_MATCHING_RECORDS','en','No matching records','2020-12-10') ,
 ( 'LABEL','ID_NO_MORE_APPLICATIONS','en','No more applications to show.','2014-01-15') ,
+( 'LABEL','ID_NO_MORE_INFORMATION','en','No more information to Load','2020-08-31') ,
 ( 'LABEL','ID_NO_NEW_VERSIONS','en','No new versions available','2014-09-18') ,
 ( 'LABEL','ID_NO_OLDER_SESSION_FILES','en','There are no older session files','2014-01-15') ,
 ( 'LABEL','ID_NO_PERMISSION_NO_PARTICIPATED','en','You cannot open this case because on the reason below: <br> You do not have permission to see this case. <br> You have not participated in this case. <br> Case is already claimed.','2017-06-05') ,
