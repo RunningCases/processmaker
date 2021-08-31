@@ -147,11 +147,19 @@ export default {
       this.data.unpausedTime = this.pauseData.unpauseTime;
       this.data.nofitfyUser = this.pauseData.nofitfyUser;
       this.data.reasonPause = this.pauseData.reasonPause;
-      
       api.cases.pauseCase(this.data).then((response) => {
         if (response.statusText == "OK") {
           that.$refs["modal-pause-case"].hide();
-          that.$parent.$refs["vueTable"].getData();
+          that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
+          if (that.$parent.$refs["vueTable"] !== undefined) {
+            that.$parent.$refs["vueTable"].getData();
+          }
+          if (that.$parent.$refs["vueListView"] !== undefined) {
+            that.$parent.$refs["vueListView"].getData();
+          }
+          if (that.$parent.$refs["vueCardView"] !== undefined) {
+            that.$parent.$refs["vueCardView"].getData();
+          }
         }
       });
     },
