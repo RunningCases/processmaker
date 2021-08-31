@@ -195,6 +195,7 @@ export default {
           programmatic: false,
         },
         filterable: false,
+        sortable: [],
         requestFunction() {
           return this.$parent.$parent.getCasesForVueTable();
         },
