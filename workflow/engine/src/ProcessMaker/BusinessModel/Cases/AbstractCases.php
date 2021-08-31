@@ -1250,7 +1250,7 @@ class AbstractCases implements CasesInterface
      *
      * @return array
      */
-    public function threadInformation(array $thread, $addUserInfo = false, $addThreadInfo = false)
+    public function threadInformation(array $thread, $addUserInfo = false, $addThreadInfo = true)
     {
         $status = '';
         $finishDate = 'now';
