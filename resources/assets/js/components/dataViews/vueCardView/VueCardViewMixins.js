@@ -39,6 +39,8 @@ export default {
           if (data.data && data.data.length != 0) {
             that.data = that.data.concat(data.data);
             that.config.page += 1;
+          } else {
+            that.loadMore = that.$t("ID_NO_MORE_INFORMATION");
           }
         })
         .catch(() => {

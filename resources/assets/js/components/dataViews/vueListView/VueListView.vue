@@ -36,7 +36,7 @@
       </div>
 
       <div class="pm-vue-list-view-footer">
-        <a @click="viewMore" class="list-group-item">View more</a>
+        <a @click="viewMore" class="list-group-item">{{ loadMore }}</a>
       </div>
     </div>
   </div>
@@ -54,6 +54,7 @@ export default {
   props: ["options"],
   data() {
     return {
+      loadMore: this.$t("ID_LOAD_MORE")
     };
   },
   mounted() {

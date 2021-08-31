@@ -3558,12 +3558,6 @@ msgid "Case Uid"
 msgstr "Case Uid"
 
 # TRANSLATION
-# LABEL/ID_CASE_THREAD_TITLE
-#: LABEL/ID_CASE_THREAD_TITLE
-msgid "Case Thread Title"
-msgstr "Case Thread Title"
-
-# TRANSLATION
 # LABEL/ID_CASES
 #: LABEL/ID_CASES
 msgid "HOME"
@@ -53174,3 +53168,15 @@ msgstr "Risk Matrix per Process by Task Status"
 #: LABEL/ID_TOP
 msgid "Top"
 msgstr "Top"
+
+ # TRANSLATION
+# LABEL/ID_CASE_THREAD_TITLE
+#: LABEL/ID_CASE_THREAD_TITLE
+msgid "Case Thread Title"
+msgstr "Case Thread Title"
+
+# TRANSLATION
+# LABEL/ID_NO_MORE_INFORMATION
+#: LABEL/ID_NO_MORE_INFORMATION
+msgid "No more Information to Load"
+msgstr "No more Information to Load"
