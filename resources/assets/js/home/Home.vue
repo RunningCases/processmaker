@@ -212,6 +212,7 @@ export default {
                 .then((response) => {
                     if (response.data) {
                         this.config = response.data;
+                        this.getMenu();
                     }
                 })
                 .catch((e) => {
