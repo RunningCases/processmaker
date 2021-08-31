@@ -85,6 +85,7 @@ import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
 import DateFilter from "./popovers/DateFilter.vue";
 import TaskTitle from "./popovers/TaskTitle.vue";
+import CurrentUser from "./popovers/CurrentUser.vue";
 import api from "./../../api/index";
 
 export default {
@@ -97,6 +98,8 @@ export default {
     ProcessName,
     DateFilter,
     TaskTitle,
+    CurrentUser,
+    DateFilter
   },
   data() {
     return {
@@ -148,12 +151,57 @@ export default {
             },
             },
             {
+                type: "DateFilter",
+                id: "delegationDate",
+                title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_DELEGATION_DATE')}`,
+                optionLabel: this.$i18n.t('ID_BY_DELEGATION_DATE'),
+                detail: this.$i18n.t('ID_PLEASE_SELECT_THE_DELEGATION_DATE_TO_BE_SEARCHED'),
+                tagText: "",
+                tagPrefix:  this.$i18n.t('ID_SEARCH_BY_DELEGATION_DATE'),
+                items:[
+                    {
+                        id: "delegateFrom",
+                        value: "",
+                        label: this.$i18n.t('ID_FROM_DELEGATION_DATE')
+                    },
+                    {
+                        id: "delegateTo",
+                        value: "",
+                        label: this.$i18n.t('ID_TO_DELEGATION_DATE')
+                    }
+                ],
+                makeTagText: function (params, data) {
+                    return  `${params.tagPrefix} ${data[0].value} - ${data[1].value}`;
+                }
+            },
+            {
+                type: "CurrentUser",
+                id: "bySendBy",
+                title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_SEND_BY')}`,
+                optionLabel: this.$i18n.t('ID_BY_SEND_BY'),
+                detail: this.$i18n.t('ID_PLEASE_SELECT_USER_NAME_TO_BE_SEARCHED'),
+                placeholder: this.$i18n.t('ID_USER_NAME'),
+                tagText: "",
+                tagPrefix:  this.$i18n.t('ID_SEARCH_BY_SEND_BY'),
+                items:[
+                    {
+                        id: "sendBy",
+                        value: "",
+                        options: [],
+                        placeholder: this.$i18n.t('ID_USER_NAME')
+                    }
+                ],
+                makeTagText: function (params, data) {
+                    return  `${params.tagPrefix} : ${data[0].label || ''}`;
+                }
+            },
+            {
             type: "TaskTitle",
             id: "taskTitle",
             title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
                 "ID_TASK_NAME"
             )}`,
-            optionLabel: this.$i18n.t("ID_TASK"),
+            optionLabel: this.$i18n.t("ID_BY_TASK"),
             detail: "",
             tagText: "",
             tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_NAME"),

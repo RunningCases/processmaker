@@ -3090,6 +3090,12 @@ msgid "By Current User"
 msgstr "By Current User"
 
 # TRANSLATION
+# LABEL/ID_BY_DELEGATION_DATE
+#: LABEL/ID_BY_DELEGATION_DATE
+msgid "By Delegation Date"
+msgstr "By Delegation Date"
+
+# TRANSLATION
 # LABEL/ID_BY_FINISH_DATE
 #: LABEL/ID_BY_FINISH_DATE
 msgid "By Finish Date"
@@ -3136,6 +3142,12 @@ msgstr "By Start Date"
 #: LABEL/ID_BY_ROLE
 msgid "By Role"
 msgstr "By Role"
+
+# TRANSLATION
+# LABEL/ID_BY_SEND_BY
+#: LABEL/ID_BY_SEND_BY
+msgid "By Send By"
+msgstr "By Send By"
 
 # TRANSLATION
 # LABEL/ID_CACHE_BTN_BUILD
@@ -9130,6 +9142,12 @@ msgstr "From"
 #: LABEL/ID_SENDER
 msgid "Sender"
 msgstr "Sender"
+
+# TRANSLATION
+# LABEL/ID_FROM_DELEGATION_DATE
+#: LABEL/ID_FROM_DELEGATION_DATE
+msgid "From Delegation Date"
+msgstr "From Delegation Date"
 
 # TRANSLATION
 # LABEL/ID_FROM_EMAIL
@@ -21648,6 +21666,12 @@ msgid "Please select a .po file"
 msgstr "Please select a .po file"
 
 # TRANSLATION
+# LABEL/ID_PLEASE_SELECT_THE_DELEGATION_DATE_TO_BE_SEARCHED
+#: LABEL/ID_PLEASE_SELECT_THE_DELEGATION_DATE_TO_BE_SEARCHED
+msgid "Please select the Delegation Date to be searched:"
+msgstr "Please select the Delegation Date to be searched:"
+
+# TRANSLATION
 # LABEL/ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH
 #: LABEL/ID_PLEASE_SELECT_THE_STATUS_FOR_THE_SEARCH
 msgid "Please select the status for the search:"
@@ -21658,6 +21682,12 @@ msgstr "Please select the status for the search:"
 #: LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 msgid "Please select the upgrade file"
 msgstr "Please select the upgrade file"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_SELECT_USER_NAME_TO_BE_SEARCHED
+#: LABEL/ID_PLEASE_SELECT_USER_NAME_TO_BE_SEARCHED
+msgid "Please select the user name to be searched:"
+msgstr "Please select the user name to be searched:"
 
 # TRANSLATION
 # LABEL/ID_PLEASE_SET_A_RANGE_OF_CASES_START_DATE_TO_SEARCH
@@ -24366,6 +24396,12 @@ msgid "Search by Case Title:"
 msgstr "Search by Case Title:"
 
 # TRANSLATION
+# LABEL/ID_SEARCH_BY_DELEGATION_DATE
+#: LABEL/ID_SEARCH_BY_DELEGATION_DATE
+msgid "Search by Delegation Date:"
+msgstr "Search by Delegation Date:"
+
+# TRANSLATION
 # LABEL/ID_SEARCH_BY_CURRENT_USER
 #: LABEL/ID_SEARCH_BY_CURRENT_USER
 msgid "Search by Current User:"
@@ -24394,6 +24430,12 @@ msgstr "Search by Process Category:"
 #: LABEL/ID_SEARCH_BY_PROCESS_NAME
 msgid "Search by Process Name:"
 msgstr "Search by Process Name:"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_BY_SEND_BY
+#: LABEL/ID_SEARCH_BY_SEND_BY
+msgid "Search By Send By:"
+msgstr "Search By Send By:"
 
 # TRANSLATION
 # LABEL/ID_SEARCH_BY_START_DATE
@@ -26770,6 +26812,12 @@ msgstr "Total Cases"
 #: LABEL/ID_TOTAL_CASES_REASSIGNED
 msgid "Total Cases Reassigned"
 msgstr "Total Cases Reassigned"
+
+# TRANSLATION
+# LABEL/ID_TO_DELEGATION_DATE
+#: LABEL/ID_TO_DELEGATION_DATE
+msgid "To Delegation Date"
+msgstr "To Delegation Date"
 
 # TRANSLATION
 # LABEL/ID_TO_DO
