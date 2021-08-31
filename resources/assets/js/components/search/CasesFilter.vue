@@ -98,8 +98,7 @@ export default {
     ProcessName,
     DateFilter,
     TaskTitle,
-    CurrentUser,
-    DateFilter
+    CurrentUser
   },
   data() {
     return {
