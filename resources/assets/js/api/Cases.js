@@ -212,7 +212,9 @@ export let cases = {
     unpause(data) {
         return Api.update({
             service: "UNPAUSE_CASE",
-            data: {},
+            data: {
+              index: data.DEL_INDEX
+            },
             keys: {
                 app_uid: data.APP_UID
             }

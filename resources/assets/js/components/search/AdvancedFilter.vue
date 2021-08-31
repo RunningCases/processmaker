@@ -343,7 +343,7 @@ export default {
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CURRENT_USER'),
                     items:[
                         {
-                            id: "user",
+                            id: "sendBy",
                             value: "",
                             options: [],
                             placeholder: this.$i18n.t('ID_USER_NAME')
