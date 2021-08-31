@@ -176,19 +176,24 @@ class Participated extends AbstractCases
             switch ($filter) {
                 case 'STARTED':
                 case 'IN_PROGRESS':
-                    $result = [];
-                    $i = 0;
                     switch ($item['APP_STATUS']) {
                         case 'TO_DO':
                             // Get the pending task
                             $taskPending = Delegation::getPendingThreads($item['APP_NUMBER'], false);
+                            $result = [];
                             foreach ($taskPending as $thread) {
                                 $thread['APP_STATUS'] = $item['APP_STATUS'];
                                 // Get the thread information
-                                $result[$i] = $this->threadInformation($thread);
-                                $i++;
+                                $information = $this->threadInformation($thread);
+                                $result['THREAD_TASKS'] = [];
+                                $result['THREAD_TITLES'] = [];
+                                $result['THREAD_TASKS'][] = $information['THREAD_TASK'];
+                                $result['THREAD_TITLES'][] = $information['THREAD_TITLE'];
                             }
-                            $item['PENDING'] = $result;
+                            // Return THREAD_TASKS and THREAD_USERS in the same column
+                            $item['PENDING'] = !empty($result['THREAD_TASKS']) ? $result['THREAD_TASKS'] : [];
+                            // Return the THREAD_TITLES
+                            $item['THREAD_TITLES'] = !empty($result['THREAD_TITLES']) ? $result['THREAD_TITLES'] : [];
                             break;
                         case 'COMPLETED':
                             // Get the last thread
@@ -199,22 +204,57 @@ class Participated extends AbstractCases
                             $thread['APP_STATUS'] = $item['APP_STATUS'];
                             $thread['APP_FINISH_DATE'] = $item['APP_FINISH_DATE'];
                             // Get the thread information
-                            $result[$i] = $this->threadInformation($thread);
+                            $information = $this->threadInformation($thread);
+                            $result = [];
+                            $result[] = $information['THREAD_TASK'];
+                            // Return THREAD_TASKS and THREAD_USERS in the same column
                             $item['PENDING'] = $result;
+                            // Return the THREAD_TITLES
+                            $result = [];
+                            $result[] = $information['THREAD_TITLE'];
+                            $item['THREAD_TITLES'] = $result;
                             break;
-                        default: // Other status
-                            $result[$i] = $this->threadInformation($thread);
+                        default: // Other status like DRAFT
+                            // Get the last thread
+                            $taskPending = Delegation::getLastThread($item['APP_NUMBER']);
+                            // Get the head of array
+                            $thread = head($taskPending);
+                            // Define some values required for define the color status
+                            $thread['APP_STATUS'] = $item['APP_STATUS'];
+                            $thread['APP_FINISH_DATE'] = $item['APP_FINISH_DATE'];
+                            // Get the thread information
+                            $information = $this->threadInformation($thread);
+                            $result = [];
+                            $result[] = $information['THREAD_TASK'];
+                            // Return THREAD_TASKS and THREAD_USERS in the same column
                             $item['PENDING'] = $result;
+                            // Return the THREAD_TITLES
+                            $result = [];
+                            $result[] = $information['THREAD_TITLE'];
+                            $item['THREAD_TITLES'] = $result;
                     }
                     break;
                 case 'COMPLETED':
+                    // Get the last thread
+                    $taskPending = Delegation::getLastThread($item['APP_NUMBER']);
+                    // Get the head of array
+                    $thread = head($taskPending);
+                    // Define some values required for define the color status
+                    $thread['APP_STATUS'] = $item['APP_STATUS'];
+                    $thread['APP_FINISH_DATE'] = $item['APP_FINISH_DATE'];
+                    // Get the thread information
+                    $information = $this->threadInformation($thread);
                     $result = [];
-                    $i = 0;
-                    $result[$i] = $this->threadInformation($thread);
+                    $result[] = $information['THREAD_TASK'];
+                    // Return THREAD_TASKS and THREAD_USERS in the same column
                     $item['PENDING'] = $result;
+                    // Return the THREAD_TITLES
+                    $result = [];
+                    $result[] = $information['THREAD_TITLE'];
+                    $item['THREAD_TITLES'] = $result;
                     break;
             }
-            // Get the send by related to the previous index
+            // Get send by related to the previous index
             $previousThread = Delegation::getThreadInfo($item['APP_NUMBER'], $item['DEL_PREVIOUS']);
             $userInfo = !empty($previousThread) ? User::getInformation($previousThread['USR_ID']) : [];
             $result = [];

@@ -155,13 +155,18 @@ class Supervising extends AbstractCases
                 $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
                 // Get the detail related to the open thread
                 $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
-                $information = [];
+                $result = [];
                 foreach ($taskPending as $thread) {
                     $thread['APP_STATUS'] = $item['APP_STATUS'];
-                    $information[] = $this->threadInformation($thread);
+                    $information = $this->threadInformation($thread);
+                    $result['THREAD_TASKS'] = [];
+                    $result['THREAD_TITLES'] = [];
+                    $result['THREAD_TASKS'][] = $information['THREAD_TASK'];
+                    $result['THREAD_TITLES'][] = $information['THREAD_TITLE'];
                 }
-                $item['PENDING'] = $information;
-                // Get the send by related to the previous index
+                $item['PENDING'] = $result['THREAD_TASKS'];
+                $item['THREAD_TITLES'] = $result['THREAD_TITLES'];
+                // Get send by related to the previous index
                 $previousThread = Delegation::getThreadInfo($item['APP_NUMBER'], $item['DEL_PREVIOUS']);
                 $userInfo = !empty($previousThread) ? User::getInformation($previousThread['USR_ID']) : [];
                 $result = [];

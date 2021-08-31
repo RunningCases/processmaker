@@ -183,7 +183,7 @@ class Search extends AbstractCases
             $result = [];
             foreach ($taskPending as $thread) {
                 $thread['APP_STATUS'] = $item['APP_STATUS'];
-                $information = $this->threadInformation($thread, true, true);
+                $information = $this->threadInformation($thread, true);
                 $result['THREAD_TASKS'][$i] = $information['THREAD_TASK'];
                 $result['THREAD_USERS'][$i] = $information['THREAD_USER'];
                 $result['THREAD_TITLES'][$i] = $information['THREAD_TITLE'];
