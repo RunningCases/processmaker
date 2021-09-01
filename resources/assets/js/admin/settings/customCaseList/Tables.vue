@@ -13,7 +13,7 @@
     >
         <div slot="actions" slot-scope="props">
             <div @click="updateDataEllipsis(props.row)">
-                <ellipsis ref="ellipsis" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+                <ellipsis :ref="`ellipsis-${props.row.id}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
         </div>
         <div slot="owner" slot-scope="props">
@@ -196,6 +196,7 @@ export default {
         showPreview(data) {
             this.$refs["modal-preview"].columns = this.getColumns(data);
             this.$refs["modal-preview"].type = data.type;
+            this.$refs["modal-preview"].customCaseId = data.id;
             this.$refs["modal-preview"].show();
         },
         /**
@@ -297,7 +298,7 @@ export default {
                                 that.downloadCaseList(data);
                             }
                         },
-                        pause: {
+                        preview: {
                             name: "preview",
                             icon: "fas fa-tv",
                             color: "green",

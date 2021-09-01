@@ -58,6 +58,7 @@ export default {
                 if (response.statusText === "OK") {
                     that.$refs["modal-delete-list"].hide();
                     that.$parent.$refs["table"].getData();
+                    that.$parent.$refs['ellipsis-' + that.data.id].hideActionButtons();
                 }
             });
         }
