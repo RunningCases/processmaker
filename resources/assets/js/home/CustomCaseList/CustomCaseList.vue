@@ -6,8 +6,8 @@
         <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
         <CasesFilter
             :filters="filters"
-            :title="data.pageName"
-            :icon="data.pageIcon"
+            :title="titleMap[data.pageParent].label"
+            :icon="titleMap[data.pageParent].icon"
             @onRemoveFilter="onRemoveFilter"
             @onUpdateFilters="onUpdateFilters"
         />
@@ -347,6 +347,24 @@ export default {
     data() {
         let that = this;
         return {
+            titleMap: {
+                inbox: {
+                    icon:"fas fa-check-circle",
+                    label: this.$i18n.t('ID_INBOX')
+                },
+                draft: {
+                    icon:"fas fa-edit",
+                    label: this.$i18n.t('ID_DRAFT')
+                },
+                paused: {
+                    icon:"far fa-pause-circle",
+                    label: this.$i18n.t('ID_PAUSED')
+                },
+                unassigned: {
+                    icon:"fas fa-users",
+                    label: this.$i18n.t('ID_UNASSIGNED')
+                }
+            },
             columMap: {
                 case_number: "APP_NUMBER",
                 case_title: "DEL_TITLE",
@@ -448,7 +466,10 @@ export default {
                 buttons: {},
             },
             showEllipsis: false,
-            dataSubtitle: null,
+            dataSubtitle: {
+                subtitle: this.data.pageName,
+                icon: this.data.pageIcon
+            },
         };
     },
     created() {
@@ -776,8 +797,14 @@ export default {
             this.isFistTime = true;
             this.typeView = "GRID";
             // force to update component id
-            if (newData && newData.customListId) {
-                this.data.customListId = newData.customListId;
+            if (newData){
+                if(newData.customListId) {
+                    this.data.customListId = newData.customListId;
+                }
+                this.dataSubtitle = {
+                    subtitle: newData.pageName,
+                    icon: newData.pageIcon
+                }
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {
                 this.$refs["vueTable"].getData();
