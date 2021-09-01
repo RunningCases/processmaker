@@ -93,20 +93,18 @@ export default {
             })
           )
           .then((response) => {
-            if (
-              response.data.success === "success" &&
-              response.data.message == ""
-            ) {
+            if (response.status === 200) {
               that.attachDocuments = false;
               that.dataAttachedDocuments.items = [];
               that.getCasesNotes();
               this.$refs["modal-comments"].hide();
-              this.$emit("postNotes");
-            } else {
-              that.showAlert(response.data.message, "danger");
-              that.dataAttachedDocuments.items = [];
+              this.$emit("postNotes"); 
             }
-          });
+          })
+          .catch((error) => {
+            that.showAlert(error.response.data.error.message, "danger");
+            that.dataAttachedDocuments.items = [];
+          })
       },
     };
   },
