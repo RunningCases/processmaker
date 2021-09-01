@@ -673,36 +673,39 @@ export default {
             let data = [];
             _.forEach(response, (v) => {
                 data.push({
-                    CASE_NUMBER: v.APP_NUMBER,
-                    CASE_TITLE: v.DEL_TITLE,
-                    PROCESS_NAME: v.PRO_TITLE,
-                    TASK: [
-                        {
-                            TITLE: v.TAS_TITLE,
-                            CODE_COLOR: v.TAS_COLOR,
-                            COLOR: v.TAS_COLOR_LABEL,
-                            DELAYED_TITLE:
-                                v.TAS_STATUS === "OVERDUE"
-                                    ? this.$i18n.t("ID_DELAYED") + ":"
-                                    : this.statusTitle[v.TAS_STATUS],
-                            DELAYED_MSG:
-                                v.TAS_STATUS === "OVERDUE" ? v.DELAY : "",
-                        },
-                    ],
-                    USER_DATA: this.formatUser(v.SEND_BY_INFO),
-                    USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
-                        userName: v.USR_LASTNAME,
-                        firstName: v.USR_LASTNAME,
-                        lastName: v.USR_LASTNAME,
-                        format: window.config.FORMATS.format || null,
-                    }),
-                    DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
-                    DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
-                    PRIORITY: v.DEL_PRIORITY_LABEL,
-                    DEL_INDEX: v.DEL_INDEX,
-                    APP_UID: v.APP_UID,
-                    PRO_UID: v.PRO_UID,
-                    TAS_UID: v.TAS_UID,
+                    ...v,
+                    ...{
+                        CASE_NUMBER: v.APP_NUMBER,
+                        CASE_TITLE: v.DEL_TITLE,
+                        PROCESS_NAME: v.PRO_TITLE,
+                        TASK: [
+                            {
+                                TITLE: v.TAS_TITLE,
+                                CODE_COLOR: v.TAS_COLOR,
+                                COLOR: v.TAS_COLOR_LABEL,
+                                DELAYED_TITLE:
+                                    v.TAS_STATUS === "OVERDUE"
+                                        ? this.$i18n.t("ID_DELAYED") + ":"
+                                        : this.statusTitle[v.TAS_STATUS],
+                                DELAYED_MSG:
+                                    v.TAS_STATUS === "OVERDUE" ? v.DELAY : "",
+                            },
+                        ],
+                        USER_DATA: this.formatUser(v.SEND_BY_INFO),
+                        USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
+                            userName: v.USR_LASTNAME,
+                            firstName: v.USR_LASTNAME,
+                            lastName: v.USR_LASTNAME,
+                            format: window.config.FORMATS.format || null,
+                        }),
+                        DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
+                        DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
+                        PRIORITY: v.DEL_PRIORITY_LABEL,
+                        DEL_INDEX: v.DEL_INDEX,
+                        APP_UID: v.APP_UID,
+                        PRO_UID: v.PRO_UID,
+                        TAS_UID: v.TAS_UID,
+                    }
                 });
             });
             return data;
