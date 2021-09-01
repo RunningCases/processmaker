@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import eventBus from '../../home/EventBus/eventBus';
 export default {
     name: "Ellipsis",
     props: {
@@ -36,6 +37,12 @@ export default {
         return {
             showActions: false
         }
+    },
+    mounted(){
+        let that = this;
+            eventBus.$on('ellipsis::hide', (data) => {
+            that.hideActionButtons();
+        });
     },
     methods: {
         /**
@@ -51,8 +58,10 @@ export default {
          */
         showActionButtons() {
             var i,
+                showOld = this.showActions,
                 elelemts;
-            this.showActions = !this.showActions;
+            eventBus.$emit("ellipsis::hide",{});
+            this.showActions = !showOld;
             if (this.showActions) {
                 if (this.$parent.Row !== undefined) {
                     for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){
