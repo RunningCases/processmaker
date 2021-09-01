@@ -41,8 +41,8 @@ export default {
     mounted(){
         let that = this;
             eventBus.$on('ellipsis::hide', (data) => {
-            that.hideActionButtons();
-        });
+                that.hideActionButtons();
+            });
     },
     methods: {
         /**
