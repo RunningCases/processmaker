@@ -1,5 +1,6 @@
 <template>
     <div id="home">
+        <ModalPreview ref="modal-preview"></ModalPreview>
         <div class="demo">
             <div class="container">
                 <h5>{{ $t("ID_NEW_CASES_LISTS") }} ({{ module.title }})</h5>
@@ -284,7 +285,7 @@
                         <b-button tvariant="danger" @click="onCancel">{{
                             $t("ID_CANCEL")
                         }}</b-button>
-                        <b-button variant="outline-primary">{{
+                        <b-button variant="outline-primary" @click="showPreview">{{
                             $t("ID_PREVIEW")
                         }}</b-button>
                         <b-button type="submit" variant="primary">{{
@@ -301,6 +302,7 @@ import utils from "../../../utils/utils";
 import Multiselect from "vue-multiselect";
 import Api from "./Api/CaseList";
 import IconPicker from "../../../components/iconPicker/IconPicker.vue";
+import ModalPreview from "../../Modals/ModalPreview.vue";
 
 export default {
     name: "CaseListSketh",
@@ -308,6 +310,7 @@ export default {
         Multiselect,
         IconPicker,
         IconPicker,
+        ModalPreview,
     },
     props: ["params", "module"],
     data() {
@@ -370,7 +373,8 @@ export default {
             defaultCaseList: [],
             isValidName: null,
             isValidTable: null,
-            pmTable: null
+            pmTable: null,
+            isPreview: false
         };
     },
     computed: {
@@ -603,6 +607,7 @@ export default {
          * On submit event handler
          */
         onSubmit() {
+            let that = this;
             this.isValidName = true;
             this.isValidTable = true;
             if (!this.params.name) {
@@ -621,7 +626,15 @@ export default {
                 delete this.params["tableName"];
                 Api.updateCaseList(this.params)
                 .then((response) => {
-                    this.$emit("closeSketch");
+                    if (that.isPreview) {
+                        that.$refs["modal-preview"].columns = that.getColumns();
+                        that.$refs["modal-preview"].type = that.params.type;
+                        that.$refs["modal-preview"].customCaseId = that.params.id;
+                        that.$refs["modal-preview"].show();
+                        that.isPreview = false;
+                    } else {
+                        this.$emit("closeSketch");
+                    }
                 })
                 .catch((err) => {
                     this.makeToast('danger', this.$i18n.t('ID_ERROR'), err.response.statusText);
@@ -630,8 +643,16 @@ export default {
             } else {
                 Api.createCaseList(this.params)
                 .then((response) => {
-                    this.$emit("closeSketch");
-                
+                    if (that.isPreview) {
+                        that.params.id = response.data.id;
+                        that.$refs["modal-preview"].columns = that.getColumns();
+                        that.$refs["modal-preview"].type = that.params.type;
+                        that.$refs["modal-preview"].customCaseId = that.params.id;
+                        that.$refs["modal-preview"].show();
+                        that.isPreview = false;
+                    } else {
+                        this.$emit("closeSketch");
+                    }
                 })
                 .catch((err) => {
                     this.makeToast('danger',this.$i18n.t('ID_ERROR') ,err.response.statusText);
@@ -691,6 +712,30 @@ export default {
             .catch((e) => {
                 console.error(e);
             })
+        },
+        /**
+         * Show modal preview
+         */
+        showPreview() {
+            this.isPreview = true;
+            this.onSubmit();
+        },
+        /**
+         * Get columns to show in the preview
+         */
+        getColumns() {
+            var columns = [],
+                auxColumn,
+                i;
+            for (i = 0; i < this.dataCaseList.length; i += 1) {
+                auxColumn = this.dataCaseList[i];
+                if (auxColumn.set) {
+                    columns.push(auxColumn.field);
+                }
+            }
+            columns.push('actions');
+            columns.unshift('detail');
+            return columns
         }
     },
 };

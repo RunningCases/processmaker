@@ -27,7 +27,7 @@ export let cases = {
         }
         return Api.get({
             service,
-            params: data.filters,
+            params: data,
             keys
         });
     },

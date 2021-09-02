@@ -98,6 +98,14 @@ export default {
                     return this.$parent.$parent.$parent.$parent.getCasesForPreview(data)
                 },
             },
+            customCaseId: '',
+            statusTitle: {
+                ON_TIME: this.$i18n.t("ID_IN_PROGRESS"),
+                OVERDUE: this.$i18n.t("ID_TASK_OVERDUE"),
+                DRAFT: this.$i18n.t("ID_IN_DRAFT"),
+                PAUSED: this.$i18n.t("ID_PAUSED"),
+                UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
+            },
         }
     },
     mounted() {
@@ -119,25 +127,19 @@ export default {
                 paged,
                 limit = data.limit,
                 start = data.page === 1 ? 0 : limit * (data.page - 1),
-                filters = {},
-                sort = "";
+                filters = {};
             paged = start + "," + limit;
             filters = {
                 paged: paged,
             }
-            _.forIn(this.filters, function (item, key) {
-                if(filters && item.value) {
-                    filters[item.filterVar] = item.value;
-                }
-            });
-            if (sort) {
-              filters["sort"] = sort;
+            if (this.customCaseId !== '') {
+                filters['id'] = this.customCaseId;
             }
             return new Promise((resolutionFunc, rejectionFunc) => {
                 switch (that.type) {
                     case 'inbox':
                         api.cases
-                        .todo(filters)
+                        .inbox(filters)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -195,39 +197,47 @@ export default {
             });
         },
         /**
-         * Format Response API to grid todo and columns
+         * Format Response API custom case list to grid todo and columns
+         * @param {object} response
+         * @returns {object}
          */
         formatDataResponse(response) {
             let data = [];
             _.forEach(response, (v) => {
                 data.push({
-                    CASE_NUMBER: v.APP_NUMBER,
-                    CASE_TITLE: v.DEL_TITLE,
-                    PROCESS_NAME: v.PRO_TITLE,
-                    TASK: [{
-                        TITLE: v.TAS_TITLE,
-                        CODE_COLOR: v.TAS_COLOR,
-                        COLOR: v.TAS_COLOR_LABEL,
-                        DELAYED_TITLE:
-                        v.TAS_STATUS === "OVERDUE"
-                            ? this.$i18n.t("ID_DELAYED") + ":"
-                            : this.statusTitle[v.TAS_STATUS],
-                        DELAYED_MSG: v.TAS_STATUS === "OVERDUE" ? v.DELAY : "",
-                    }],
-                    USER_DATA: this.formatUser(v.SEND_BY_INFO),
-                    USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
-                        userName: v.USR_LASTNAME,
-                        firstName: v.USR_LASTNAME,
-                        lastName: v.USR_LASTNAME,
-                        format: window.config.FORMATS.format || null,
-                    }),
-                    DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
-                    DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
-                    PRIORITY: v.DEL_PRIORITY_LABEL,
-                    DEL_INDEX: v.DEL_INDEX,
-                    APP_UID: v.APP_UID,
-                    PRO_UID: v.PRO_UID,
-                    TAS_UID: v.TAS_UID,
+                    ...v,
+                    ...{
+                        CASE_NUMBER: v.APP_NUMBER,
+                        CASE_TITLE: v.DEL_TITLE,
+                        PROCESS_NAME: v.PRO_TITLE,
+                        TASK: [
+                            {
+                                TITLE: v.TAS_TITLE,
+                                CODE_COLOR: v.TAS_COLOR,
+                                COLOR: v.TAS_COLOR_LABEL,
+                                DELAYED_TITLE:
+                                    v.TAS_STATUS === "OVERDUE"
+                                        ? this.$i18n.t("ID_DELAYED") + ":"
+                                        : this.statusTitle[v.TAS_STATUS],
+                                DELAYED_MSG:
+                                    v.TAS_STATUS === "OVERDUE" ? v.DELAY : "",
+                            },
+                        ],
+                        USER_DATA: this.formatUser(v.SEND_BY_INFO),
+                        USERNAME_DISPLAY_FORMAT: utils.userNameDisplayFormat({
+                            userName: v.USR_LASTNAME,
+                            firstName: v.USR_LASTNAME,
+                            lastName: v.USR_LASTNAME,
+                            format: window.config.FORMATS.format || null,
+                        }),
+                        DUE_DATE: v.DEL_TASK_DUE_DATE_LABEL,
+                        DELEGATION_DATE: v.DEL_DELEGATE_DATE_LABEL,
+                        PRIORITY: v.DEL_PRIORITY_LABEL,
+                        DEL_INDEX: v.DEL_INDEX,
+                        APP_UID: v.APP_UID,
+                        PRO_UID: v.PRO_UID,
+                        TAS_UID: v.TAS_UID,
+                    }
                 });
             });
             return data;
