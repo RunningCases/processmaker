@@ -112,6 +112,7 @@
 
 .vsm--link_level-2>.vsm--icon {
   margin-top: 0px;
+  padding-left: 20px;
 }
 
 .v-sidebar-menu .vsm--arrow {
@@ -196,8 +197,10 @@
   background-color: transparent !important
 }
 
-.v-sidebar-menu.vsm_collapsed .vsm--link_level-1 .vsm--icon {
-  margin-right: 0px
+.v-sidebar-menu.vsm_collapsed .vsm--link_level-1 .vsm--icon,
+.v-sidebar-menu.vsm_collapsed .vsm--link_level-2 > .vsm--icon {
+  margin-right: 0px;
+  padding-left: 0px;
 }
 
 .v-sidebar-menu.vsm_rtl {

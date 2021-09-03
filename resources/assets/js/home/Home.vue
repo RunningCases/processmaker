@@ -401,7 +401,8 @@ export default {
                         pageParent: item.item.page,
                         pageName: item.item.title,
                         pageIcon: item.item.icon,
-                        customListId: item.item.id
+                        customListId: item.item.id,
+                        color: item.item.colorScreen
                     }
                     if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
                         this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];

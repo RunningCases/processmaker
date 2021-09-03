@@ -468,7 +468,8 @@ export default {
             showEllipsis: false,
             dataSubtitle: {
                 subtitle: this.data.pageName,
-                icon: this.data.pageIcon
+                icon: this.data.pageIcon,
+                color: this.data.color
             },
         };
     },
@@ -806,7 +807,8 @@ export default {
                 }
                 this.dataSubtitle = {
                     subtitle: newData.pageName,
-                    icon: newData.pageIcon
+                    icon: newData.pageIcon,
+                    color: newData.color
                 }
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {

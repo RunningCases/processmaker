@@ -28,6 +28,7 @@
                 <custom-sidebar-menu-icon
                     v-if="item.icon && !isMobileItem"
                     :icon="item.icon"
+                    v-bind:style="setIconColor"
                 />
                 <transition name="fade-animation" :appear="isMobileItem">
                     <template
@@ -39,10 +40,15 @@
                     >
                     
                         <span class="vsm--title">
-                            <custom-tooltip
-                                :data="item"
-                                ref="tooltip"
-                            ></custom-tooltip>
+                            <template v-if="itemHasChild">
+                                <custom-tooltip
+                                    :data="item"
+                                    ref="tooltip"
+                                ></custom-tooltip>
+                            </template>
+                            <template v-else>
+                                <span> {{ item.title }} </span>
+                            </template>
                             <b-icon
                                 v-if="item.sortable"
                                 :icon="item.sortIcon"
@@ -280,6 +286,14 @@ export default {
             } else {
                 return this.item.hidden === true;
             }
+        },
+        /**
+         * Set color to icon defined from custom case list
+         */
+        setIconColor() {
+            return {
+                color: this.item.color ? this.item.color : '#fff'
+            };
         },
     },
     watch: {
