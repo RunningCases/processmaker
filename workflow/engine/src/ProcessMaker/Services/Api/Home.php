@@ -702,6 +702,8 @@ class Home extends Api
                         "title" => $value['name'],
                         "description" => $value['description'],
                         "icon" => $value['iconList'],
+                        "color" => $value['iconColor'],
+                        "colorScreen" => $value['iconColorScreen'],
                         "page" => $mapKeys[$menuInstance->Id[$i]]
                     ];
                 }
