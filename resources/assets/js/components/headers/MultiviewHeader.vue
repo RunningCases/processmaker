@@ -8,7 +8,7 @@
             <h6>
               {{ dataSubtitle.subtitle }}
               <span>
-                <i :class="dataSubtitle.icon"></i>
+                <i :class="dataSubtitle.icon" v-bind:style="setIconColor"></i>
               </span>
             </h6>
           </div>
@@ -43,6 +43,16 @@ export default {
   data() {
     return {};
   },
+  computed : {
+    /**
+     * Set color to icon defined from custom case list
+     */
+    setIconColor() {
+      return {
+        color: this.dataSubtitle.color ? this.dataSubtitle.color : '#000'
+      };
+    }
+  },
   methods: {
     classBtn(cls) {
       return "btn btn-slim btn-force-radius v-btn-header " + cls;
@@ -54,8 +64,6 @@ export default {
 <style>
 .pm-multiview-header {
   margin-bottom: 7px;
-}
-.pm-multiview-header-title {
 }
 .pm-multiview-header-actions-buttons {
   text-align: end;
