@@ -53,8 +53,18 @@ class Completed extends AbstractCases
         $participated->setParticipatedStatus('COMPLETED');
         $participated->setUserUid($this->getUserUid());
         $participated->setUserId($this->getUserId());
-        $count = $participated->getCounter();
 
-        return $count;
+        return $participated->getCounter();
+    }
+
+    /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        // This class does not require this value
+        return false;
     }
 }

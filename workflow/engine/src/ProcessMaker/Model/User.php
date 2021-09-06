@@ -95,7 +95,7 @@ class User extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeUserId($query, string $usrId)
+    public function scopeUserId($query, int $usrId)
     {
         return $query->where('USR_ID', '=', $usrId);
     }
@@ -255,9 +255,10 @@ class User extends Model
      *
      * @return array
      */
-    public static function getInformation($usrId)
+    public static function getInformation(int $usrId)
     {
         $query = User::query()->select([
+            'USR_ID',
             'USR_USERNAME',
             'USR_FIRSTNAME',
             'USR_LASTNAME',
@@ -269,6 +270,7 @@ class User extends Model
         $results = $query->get();
         $info = [];
         $results->each(function ($item) use (&$info) {
+            $info['usr_id'] = $item->USR_ID;
             $info['usr_username'] = $item->USR_USERNAME;
             $info['usr_firstname'] = $item->USR_FIRSTNAME;
             $info['usr_lastname'] = $item->USR_LASTNAME;

@@ -732,7 +732,7 @@ try {
             $aData = $oCase->loadCase($_SESSION['APPLICATION']);
 
             $aFields['PROCESS'] = $oProcess->load($_SESSION['PROCESS']);
-            $aFields['PREVIOUS_PAGE'] = $aPreviousStep['PAGE'];
+            $aFields['PREVIOUS_PAGE'] = isset($aPreviousStep['PAGE']) ? $aPreviousStep['PAGE'] : null;
             $aFields['PREVIOUS_PAGE_LABEL'] = G::LoadTranslation('ID_PREVIOUS_STEP');
             $aFields['ASSIGN_TASK'] = G::LoadTranslation('ID_ASSIGN_TASK');
             $aFields['END_OF_PROCESS'] = G::LoadTranslation('ID_END_OF_PROCESS');

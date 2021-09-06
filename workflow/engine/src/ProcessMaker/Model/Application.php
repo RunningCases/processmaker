@@ -43,7 +43,7 @@ class Application extends Model
      * @param int $user
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeUserId($query, $user)
+    public function scopeUserId($query, int $user)
     {
         return $query->where('APP_DELEGATION.USR_ID', '=', $user);
     }
@@ -135,18 +135,49 @@ class Application extends Model
      */
     public function scopeRangeOfCases($query, array $rangeCases)
     {
-        foreach ($rangeCases as $fromTo) {
-            $fromTo = explode("-", $fromTo);
-            if (count($fromTo) === 2) {
-                $from = $fromTo[0];
-                $to = $fromTo[1];
-                if ($to > $from) {
-                    $query->orWhere(function ($query) use ($from, $to) {
-                        $query->casesFrom($from)->casesTo($to);
-                    });
+        $query->where(function ($query) use ($rangeCases) {
+            foreach ($rangeCases as $fromTo) {
+                $fromTo = explode("-", $fromTo);
+                if (count($fromTo) === 2) {
+                    $from = $fromTo[0];
+                    $to = $fromTo[1];
+                    if ($to > $from) {
+                        $query->orWhere(function ($query) use ($from, $to) {
+                            $query->casesFrom($from)->casesTo($to);
+                        });
+                    }
                 }
             }
-        }
+        });
+    }
+
+    /**
+     * Scope more than one range of cases
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array $cases
+     * @param  array $rangeCases
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCasesOrRangeOfCases($query, array $cases, array $rangeCases)
+    {
+        $query->where(function ($query) use ($cases, $rangeCases) {
+            // Get the cases related to the task self service
+            $query->specificCases($cases);
+            foreach ($rangeCases as $fromTo) {
+                $fromTo = explode("-", $fromTo);
+                if (count($fromTo) === 2) {
+                    $from = $fromTo[0];
+                    $to = $fromTo[1];
+                    if ($to > $from) {
+                        $query->orWhere(function ($query) use ($from, $to) {
+                            $query->casesFrom($from)->casesTo($to);
+                        });
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -199,6 +230,19 @@ class Application extends Model
     public function scopeStatusIds($query, array $statuses)
     {
         return $query->whereIn('APPLICATION.APP_STATUS_ID', $statuses);
+    }
+
+    /**
+     * Scope a query to only include specific category
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $category
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategory($query, $category)
+    {
+        return $query->where('PROCESS.CATEGORY_ID', $category);
     }
 
     /**
@@ -312,6 +356,24 @@ class Application extends Model
     }
 
     /**
+     * Scope the Draft cases
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDraft($query, $user)
+    {
+        // Filter the status draft
+        $query->statusId(Application::STATUS_DRAFT);
+        // Filter the creator
+        $query->creator($user);
+
+        return $query;
+    }
+
+    /**
      * Get Applications by PRO_UID, ordered by APP_NUMBER.
      *
      * @param string $proUid
@@ -330,7 +392,7 @@ class Application extends Model
     }
 
     /**
-     * Get information related to the created case
+     * Get information related to the case, avoiding to load the APP_DATA
      *
      * @param string $appUid
      *
@@ -338,7 +400,13 @@ class Application extends Model
      */
     public static function getCase($appUid)
     {
-        $query = Application::query()->select(['APP_STATUS', 'APP_INIT_USER']);
+        $query = Application::query()->select([
+            'APP_NUMBER',
+            'APP_STATUS',
+            'PRO_UID',
+            'PRO_ID',
+            'APP_INIT_USER'
+        ]);
         $query->appUid($appUid);
         $result = $query->get()->toArray();
         $firstElement = head($result);

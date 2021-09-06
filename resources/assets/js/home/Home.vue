@@ -20,11 +20,13 @@
             <component
                 v-bind:is="page"
                 ref="component"
-                :filters="filters"
                 :id="pageId"
                 :pageUri="pageUri"
                 :name="pageName"
                 :defaultOption="defaultOption"
+                :settings="settings"
+                :filters="filters"
+                :data="pageData"
                 @onSubmitFilter="onSubmitFilter"
                 @onRemoveFilter="onRemoveFilter"
                 @onUpdatePage="onUpdatePage"
@@ -32,27 +34,31 @@
                 @onLastPage="onLastPage"
                 @onUpdateFilters="onUpdateFilters"
                 @cleanDefaultOption="cleanDefaultOption"
+                @updateSettings="updateSettings"
             ></component>
         </div>
     </div>
 </template>
 <script>
 import CustomSidebar from "./../components/menu/CustomSidebar";
-import MyCases from "./MyCases";
+import CustomSidebarMenuItem from "./../components/menu/CustomSidebarMenuItem";
+import MyCases from "./MyCases/MyCases.vue";
 import MyDocuments from "./MyDocuments";
-import Todo from "./Todo";
-import Draft from "./Draft";
-import Paused from "./Paused";
-import Unassigned from "./Unassigned";
+import Inbox from "./Inbox/Inbox.vue";
+import Paused from "./Paused/Paused.vue";
+import Draft from "./Draft/Draft.vue";
+import Unassigned from "./Unassigned/Unassigned.vue";
+import TaskMetrics from "./TaskMetrics/TaskMetrics.vue";
 import BatchRouting from "./BatchRouting";
 import CaseDetail from "./CaseDetail";
 import XCase from "./XCase";
 import TaskReassignments from "./TaskReassignments";
-import AdvancedSearch from "./AdvancedSearch";
+import AdvancedSearch from "./AdvancedSearch/AdvancedSearch.vue";
 import LegacyFrame from "./LegacyFrame";
+import CustomCaseList from "./CustomCaseList/CustomCaseList.vue"
 
 import api from "./../api/index";
-
+import eventBus from './EventBus/eventBus'
 export default {
     name: "Home",
     components: {
@@ -63,12 +69,14 @@ export default {
         BatchRouting,
         TaskReassignments,
         XCase,
-        Todo,
+        Inbox,
         Draft,
         Paused,
         Unassigned,
         CaseDetail,
-        LegacyFrame
+        LegacyFrame,
+        TaskMetrics,
+        CustomCaseList
     },
     data() {
         return {
@@ -85,11 +93,16 @@ export default {
             pageName: null,
             pageUri: null,
             filters: null,
+            config: {
+                id: window.config.userId || "1",
+                name: "userConfig",
+                setting: {}
+            },
             menuMap: {
                 CASES_MY_CASES: "MyCases",
                 CASES_SENT: "MyCases",
                 CASES_SEARCH: "advanced-search",
-                CASES_INBOX: "todo",
+                CASES_INBOX: "inbox",
                 CASES_DRAFT: "draft",
                 CASES_PAUSED: "paused",
                 CASES_SELFSERVICE: "unassigned",
@@ -97,17 +110,38 @@ export default {
                 CASES_TO_REASSIGN: "task-reassignments",
                 CASES_FOLDERS: "my-documents"
             },
-            defaultOption: window.config.defaultOption || ''
+            defaultOption: window.config.defaultOption || '',
+            pageData: {},
+            settings: {}
         };
     },
     mounted() {
+        let that = this;
         this.onResize();
-        this.getMenu();
+        this.getUserSettings();
         this.listenerIframe();
         window.setInterval(
-            this.setCounter,
+            this.getHighlight,
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
+        // adding eventBus listener
+         eventBus.$on('sort-menu', (data) => {
+            let newData = [];
+            data.forEach(item => newData.push({id: item.id}));
+            that.updateSettings({
+                data: newData,
+                key: "customCaseListOrder",
+                parent: this.page,
+                type: "normal",
+                id: this.id
+            });
+        });
+        eventBus.$on('home-update-page', (data) => {
+            that.onUpdatePage(data);
+        });
+        eventBus.$on('home-update-datacase', (data) => {
+            that.onUpdateDataCase(data);
+        });
     },
     methods: {
         /**
@@ -124,7 +158,7 @@ export default {
 
             eventer(messageEvent, function(e) {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
-                    that.page = "todo";
+                    that.page = "inbox";
                 }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
@@ -142,11 +176,82 @@ export default {
                 .then((response) => {
                     this.setDefaultCasesMenu(response.data);
                     this.menu = this.mappingMenu(this.setDefaultIcon(response.data));
-                    this.setCounter();
+                    this.getHighlight();
                 })
                 .catch((e) => {
                     console.error(e);
                 });
+        },
+        /**
+         * Gets the user config
+         */
+        getUserSettings() {
+            api.config
+                .get({
+                    id: this.config.id,
+                    name: this.config.name
+                })
+                .then((response) => {
+                    if(response.data && response.data.status === 404) {
+                        this.createUserSettings();
+                    } else if (response.data) {
+                        this.config = response.data;
+                        this.getMenu();
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+        },
+        /**
+         * Creates the user config service
+         */
+        createUserSettings() {
+            api.config
+                .post(this.config)
+                .then((response) => {
+                    if (response.data) {
+                        this.config = response.data;
+                        this.getMenu();
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+        },
+        /**
+         * Update the user config service
+         * @param {object} params
+         */
+        updateSettings (params){
+            if (params.type === "custom") {
+                if (!this.config.setting[params.parent]) {
+                    this.config.setting[params.parent] = {};
+                }
+                if (!this.config.setting[params.parent]["customCaseList"]) {
+                    this.config.setting[params.parent]["customCaseList"] = {};
+                }
+                if (!this.config.setting[params.parent].customCaseList[params.id]) {
+                    this.config.setting[params.parent].customCaseList[params.id] = {}
+                }
+                this.config.setting[params.parent].customCaseList[params.id][params.key] = params.data;
+            } else {
+                if (!this.config.setting[this.page]) {
+                    this.config.setting[this.page] = {};
+                }
+                this.config.setting[this.page][params.key] = params.data;
+            }
+            api.config
+                .put(this.config)
+                .then((response) => {
+                    if (response.data) {
+                        //TODO success response
+                    }
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+            
         },
         /**
          * Set default cases menu option
@@ -161,6 +266,7 @@ export default {
             } else {
                 this.page = "MyCases";
             }
+            this.settings = this.config.setting[this.page];
             this.lastPage = this.page;
         },
         /**
@@ -170,17 +276,91 @@ export default {
         mappingMenu(data) {
             var i,
                 j,
+                that = this,
                 newData = data,
                 auxId;
             for (i = 0; i < data.length; i += 1) {
-                auxId = data[i].id || "";
+                auxId = data[i].page || "";
                 if (auxId !== "" && this.menuMap[auxId]) {
-                    newData[i].id = this.menuMap[auxId];
+                    newData[i].page = this.menuMap[auxId];
                 } else if (newData[i].href) {
-                    newData[i].id  = "LegacyFrame";
+                    newData[i].page  = "LegacyFrame";
+                }
+                // Tasks group need pie chart icon
+                if (data[i].header && data[i].id === "FOLDERS") {
+                    data[i] = {
+                        component: CustomSidebarMenuItem,
+                        props: {
+                            isCollapsed: this.collapsed? true: false,
+                            item: {
+                                header: data[i].header,
+                                title: data[i].title,
+                                hiddenOnCollapse: data[i].hiddenOnCollapse,
+                                icon: 'pie-chart-fill',
+                                onClick: function (item) {
+                                  that.onUpdatePage("task-metrics");
+                                }
+                            }
+                        }
+                    }
+                }
+                if (data[i].customCasesList)  {
+                    data[i]["child"] = this.sortCustomCasesList(
+                        data[i].customCasesList,
+                        this.config.setting[this.page] &&
+                            this.config.setting[this.page].customCaseListOrder
+                            ? this.config.setting[this.page].customCaseListOrder
+                            : []
+                    );
+                    data[i]["sortable"] = data[i].customCasesList.length > 1;
+                    data[i]["sortIcon"] = "gear-fill";
+                    data[i]['highlight'] = false;
+                    data[i] = {
+                        component: CustomSidebarMenuItem,
+                        props: {
+                            isCollapsed: this.collapsed? true: false,
+                            item: data[i]
+                        }
+                    };
                 }
             }
             return newData;
+        },
+        /**
+         * Sort the custom case list menu items
+         * @param {array} list
+         * @param {array} ref
+         * @returns {array}
+         */
+        sortCustomCasesList(list, ref) {
+            let item,
+                newList = [],
+                temp = [];
+            if (ref && ref.length) {
+                ref.forEach(function (menu) {
+                    item = list.find(x => x.id === menu.id);
+                    if (item) {
+                        newList.push(item);
+                    }
+                })
+            } else {
+                return list;
+            }
+            temp = list.filter(this.comparerById(newList));
+            return  [...newList, ...temp];
+
+        },
+        /**
+         * Util to compare an array by id
+         * @param {array} otherArray
+         * @returns {object}
+         */
+        comparerById(otherArray){
+            return function(current){
+                return otherArray.filter(function(other){
+                    return other.id == current.id
+                }).length == 0;
+            }
         },
         /**
          * Set a default icon if the item doesn't have one
@@ -202,7 +382,7 @@ export default {
             this.defaultOption = "";
         },
         OnClickSidebarItem(item) {
-            if (item.item.page && item.item.page === "/advanced-search") {
+            if (item.item.page && item.item.page === "advanced-search") {
                 this.page = "advanced-search";
                 this.filters = item.item.filters;
                 this.pageId = item.item.id;
@@ -212,11 +392,28 @@ export default {
                 this.filters = [];
                 this.pageId = null;
                 this.pageUri = item.item.href;
-                this.page = item.item.id || "MyCases";
-                if (this.page === this.lastPage 
-                    && this.$refs["component"] 
+                this.page = item.item.page || "MyCases";
+                this.settings = this.config.setting[this.page];
+                if (!this.menuMap[item.item.id]) {
+                    this.page = "custom-case-list";
+                    this.pageData = {
+                        pageUri: item.item.pageUri,
+                        pageParent: item.item.page,
+                        pageName: item.item.title,
+                        pageIcon: item.item.icon,
+                        customListId: item.item.id,
+                        color: item.item.colorScreen
+                    }
+                    if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
+                        this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
+                    } else {
+                        this.settings = {};
+                    }
+                }
+                if (this.page === this.lastPage
+                    && this.$refs["component"]
                     && this.$refs["component"].updateView) {
-                    this.$refs["component"].updateView();
+                    this.$refs["component"].updateView(this.pageData);
                 }
                 this.lastPage = this.page;
             }
@@ -333,8 +530,37 @@ export default {
                 if (index !== -1) advSearch.child.splice(index, 1);
             }
         },
+        /**
+         * Update filters handler
+         */
         onUpdateFilters(filters) {
             this.filters = filters;
+        },
+        /**
+         * Service to get Highlight  
+         */
+        getHighlight() {
+            let that = this;
+            if (that.menu.length > 0) {
+            api.menu
+            .getHighlight()
+            .then((response) => {
+                var i,
+                    dataHighlight = [];
+                for (i = 0; i < response.data.length; i += 1) {
+                    if (response.data[i].highlight) {
+                        dataHighlight.push({
+                            id: that.menuMap[response.data[i].item],
+                            highlight: response.data[i].highlight
+                        });
+                    }
+                }
+                eventBus.$emit('highlight', dataHighlight);
+            })
+            .catch((e) => {
+                console.error(e);
+            });
+            }
         }
     }
 };

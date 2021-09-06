@@ -46,7 +46,7 @@ class rbacTest extends TestCase
         $rbac->initRBAC();
         $result = $rbac->updateUser($data, $rolCode);
 
-        //assert
+        // assert
         $user = \ProcessMaker\Model\RbacUsers::where('USR_UID', '=', $data['USR_UID'])->first()->toArray();
         $this->assertEquals($data['USR_DUE_DATE'], $user['USR_DUE_DATE']);
     }

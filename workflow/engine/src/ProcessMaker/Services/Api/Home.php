@@ -6,17 +6,22 @@ use Exception;
 use G;
 use Luracast\Restler\RestException;
 use Menu;
+use ProcessMaker\BusinessModel\Cases\CasesList;
 use ProcessMaker\BusinessModel\Cases\Draft;
 use ProcessMaker\BusinessModel\Cases\Filter;
+use ProcessMaker\BusinessModel\Cases\Home as BMHome;
 use ProcessMaker\BusinessModel\Cases\Inbox;
 use ProcessMaker\BusinessModel\Cases\Participated;
 use ProcessMaker\BusinessModel\Cases\Paused;
 use ProcessMaker\BusinessModel\Cases\Search;
 use ProcessMaker\BusinessModel\Cases\Supervising;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
+use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
+use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
+use ProcessMaker\Model\UserConfig;
 use ProcessMaker\Model\Task;
 use ProcessMaker\Services\Api;
 use ProcessMaker\Util\DateTime;
@@ -48,13 +53,15 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
-     * @param string $paged
+     * @param string $filterCases
      * @param string $sort
      *
      * @return array
      *
-     * @throws Exception
+     * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -63,33 +70,16 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
-        string $paged = '0,15',
+        string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC'
-    ) {
+    )
+    {
         try {
-            $list = new Draft();
-            // Define the filters to apply
-            $properties = [];
-            $properties['caseNumber'] = $caseNumber;
-            $properties['caseTitle'] = $caseTitle;
-            $properties['process'] = $process;
-            $properties['task'] = $task;
-            // Get the user that access to the API
-            $usrUid = $this->getUserId();
-            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
-            $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
-            $properties['sort'] = $sort[0];
-            $properties['dir'] = $sort[1];
-            $list->setProperties($properties);
-            $result = [];
-            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
-            $result['total'] = $list->getPagingCounters();
-            return $result;
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getDraft(...func_get_args());
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -98,18 +88,23 @@ class Home extends Api
     /**
      * Get the inbox cases
      *
-     * @url GET /todo
+     * @url GET /inbox
+     * @url GET /todo [This is kept for compatibility should not be used 'todo', the reason is to only handle the same verb (inbox) for all 'normal case list' and 'custom case list']
      *
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
-     * @param string $paged
+     * @param string $delegateFrom
+     * @param string $delegateTo
+     * @param string $filterCases
      * @param string $sort
      *
      * @return array
      *
-     * @throws Exception
+     * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -118,33 +113,18 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
-        string $paged = '0,15',
+        string $delegateFrom = '',
+        string $delegateTo = '',
+        string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC'
-    ) {
+    )
+    {
         try {
-            $list = new Inbox();
-            // Define the filters to apply
-            $properties = [];
-            $properties['caseNumber'] = $caseNumber;
-            $properties['caseTitle'] = $caseTitle;
-            $properties['process'] = $process;
-            $properties['task'] = $task;
-            // Get the user that access to the API
-            $usrUid = $this->getUserId();
-            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
-            $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
-            $properties['sort'] = $sort[0];
-            $properties['dir'] = $sort[1];
-            $list->setProperties($properties);
-            $result = [];
-            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
-            $result['total'] = $list->getPagingCounters();
-            return $result;
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getInbox(...func_get_args());
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -158,13 +138,17 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
-     * @param string $paged
+     * @param string $delegateFrom
+     * @param string $delegateTo
+     * @param string $filterCases
      * @param string $sort
      *
      * @return array
      *
-     * @throws Exception
+     * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -173,35 +157,18 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
-        string $paged = '0,15',
+        string $delegateFrom = '',
+        string $delegateTo = '',
+        string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC'
-    ) {
+    )
+    {
         try {
-            $list = new Unassigned();
-            // Define the filters to apply
-            $properties = [];
-            $properties['caseNumber'] = $caseNumber;
-            $properties['caseTitle'] = $caseTitle;
-            $properties['process'] = $process;
-            $properties['task'] = $task;
-            // Get the user that access to the API
-            $usrUid = $this->getUserId();
-            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
-            $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
-            $properties['sort'] = $sort[0];
-            $properties['dir'] = $sort[1];
-            // todo: some queries related to the unassigned are using the USR_UID
-            $list->setUserUid($usrUid);
-            $list->setProperties($properties);
-            $result = [];
-            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
-            $result['total'] = $list->getPagingCounters();
-            return $result;
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getUnassigned(...func_get_args());
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -215,13 +182,17 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
-     * @param string $paged
+     * @param string $delegateFrom
+     * @param string $delegateTo
+     * @param string $filterCases
      * @param string $sort
      *
      * @return array
      *
-     * @throws Exception
+     * @throws RestException
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
@@ -230,33 +201,178 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
-        string $paged = '0,15',
+        string $delegateFrom = '',
+        string $delegateTo = '',
+        string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC'
-    ) {
+    )
+    {
         try {
-            $list = new Paused();
-            // Define the filters to apply
-            $properties = [];
-            $properties['caseNumber'] = $caseNumber;
-            $properties['caseTitle'] = $caseTitle;
-            $properties['process'] = $process;
-            $properties['task'] = $task;
-            // Get the user that access to the API
-            $usrUid = $this->getUserId();
-            $properties['user'] = !empty($usrUid) ? User::getId($usrUid) : 0;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
-            $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
-            $properties['sort'] = $sort[0];
-            $properties['dir'] = $sort[1];
-            $list->setProperties($properties);
-            $result = [];
-            $result['data'] = DateTime::convertUtcToTimeZone($list->getData());
-            $result['total'] = $list->getPagingCounters();
-            return $result;
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getPaused(...func_get_args());
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get the custom draft cases.
+     * @url GET /draft/:id
+     * @param int $id
+     * @param int $caseNumber
+     * @param int $process
+     * @param int $task
+     * @param int $limit
+     * @param int $offset
+     * @param string $caseTitle
+     * @param string $filterCases
+     * @param string $sort
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doGetCustomDraftCases(
+        int $id,
+        int $caseNumber = 0,
+        int $process = 0,
+        int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
+        string $caseTitle = '',
+        string $filterCases = '',
+        string $sort = 'APP_NUMBER,DESC'
+    )
+    {
+        try {
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getCustomDraft(...func_get_args());
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get the custom inbox cases.
+     * @url GET /inbox/:id
+     * @param int $id
+     * @param int $caseNumber
+     * @param int $process
+     * @param int $task
+     * @param int $limit
+     * @param int $offset
+     * @param string $caseTitle
+     * @param string $delegateFrom
+     * @param string $delegateTo
+     * @param string $filterCases
+     * @param string $sort
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doGetCustomTodoCases(
+        int $id,
+        int $caseNumber = 0,
+        int $process = 0,
+        int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
+        string $caseTitle = '',
+        string $delegateFrom = '',
+        string $delegateTo = '',
+        string $filterCases = '',
+        string $sort = 'APP_NUMBER,DESC'
+    )
+    {
+        try {
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getCustomInbox(...func_get_args());
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get the custom unassigned cases.
+     * @url GET /unassigned/:id
+     * @param int $id
+     * @param int $caseNumber
+     * @param int $process
+     * @param int $task
+     * @param int $limit
+     * @param int $offset
+     * @param string $caseTitle
+     * @param string $delegateFrom
+     * @param string $delegateTo
+     * @param string $filterCases
+     * @param string $sort
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doGetCustomUnassignedCases(
+        int $id,
+        int $caseNumber = 0,
+        int $process = 0,
+        int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
+        string $caseTitle = '',
+        string $delegateFrom = '',
+        string $delegateTo = '',
+        string $filterCases = '',
+        string $sort = 'APP_NUMBER,DESC'
+    )
+    {
+        try {
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getCustomUnassigned(...func_get_args());
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get the custom paused cases.
+     * @url GET /paused/:id
+     * @param int $id
+     * @param int $caseNumber
+     * @param int $process
+     * @param int $task
+     * @param int $limit
+     * @param int $offset
+     * @param string $caseTitle
+     * @param string $delegateFrom
+     * @param string $delegateTo
+     * @param string $filterCases
+     * @param string $sort
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doGetCustomPausedCases(
+        int $id,
+        int $caseNumber = 0,
+        int $process = 0,
+        int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
+        string $caseTitle = '',
+        string $delegateFrom = '',
+        string $delegateTo = '',
+        string $filterCases = '',
+        string $sort = 'APP_NUMBER,DESC'
+    )
+    {
+        try {
+            $bmHome = new BMHome($this->getUserId());
+            return $bmHome->getCustomPaused(...func_get_args());
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -270,14 +386,16 @@ class Home extends Api
      * @param int $caseNumber
      * @param int $process
      * @param int $task
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
+     * @param string $filterCases
      * @param string $filter
      * @param string $caseStatus
      * @param string $startCaseFrom
      * @param string $startCaseTo
      * @param string $finishCaseFrom
      * @param string $finishCaseTo
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -291,20 +409,23 @@ class Home extends Api
         int $caseNumber = 0,
         int $process = 0,
         int $task = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
+        string $filterCases = '',
         string $filter = 'IN_PROGRESS',
         string $caseStatus = '',
         string $startCaseFrom = '',
         string $startCaseTo = '',
         string $finishCaseFrom = '',
         string $finishCaseTo = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         // Define the filters to apply
         $properties = [];
         $properties['caseNumber'] = $caseNumber;
         $properties['caseTitle'] = $caseTitle;
+        $properties['filterCases'] = $filterCases;
         $properties['process'] = $process;
         $properties['task'] = $task;
         // Get the user that access to the API
@@ -316,11 +437,10 @@ class Home extends Api
         $properties['startCaseTo'] = $startCaseTo;
         $properties['finishCaseFrom'] = $finishCaseFrom;
         $properties['finishCaseTo'] = $finishCaseTo;
-        // Set the pagination parameters
-        $paged = explode(',', $paged);
+        $properties['start'] = $offset;
+        $properties['limit'] = $limit;
+        // Set the sort parameters
         $sort = explode(',', $sort);
-        $properties['start'] = $paged[0];
-        $properties['limit'] = $paged[1];
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
         $result = [];
@@ -360,6 +480,7 @@ class Home extends Api
      * Get counters
      *
      * @url GET /counters
+     * @url GET /mycases/counters
      *
      * @return array
      *
@@ -425,9 +546,14 @@ class Home extends Api
      * @url GET /search
      *
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $user
+     * @param int $userCompleted
+     * @param int $userStarted
+     * @param int $limit
+     * @param int $offset
      * @param string $caseTitle
      * @param string $caseStatuses
      * @param string $filterCases
@@ -435,7 +561,6 @@ class Home extends Api
      * @param string $startCaseTo
      * @param string $finishCaseFrom
      * @param string $finishCaseTo
-     * @param string $paged
      * @param string $sort
      *
      * @return array
@@ -447,9 +572,14 @@ class Home extends Api
      */
     public function doGetSearchCases(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $user = 0,
+        int $userCompleted = 0,
+        int $userStarted = 0,
+        int $limit = 15,
+        int $offset = 0,
         string $caseTitle = '',
         string $caseStatuses = '',
         string $filterCases = '',
@@ -457,7 +587,6 @@ class Home extends Api
         string $startCaseTo = '',
         string $finishCaseFrom = '',
         string $finishCaseTo = '',
-        string $paged = '0,15',
         string $sort = 'APP_NUMBER,DESC'
     ) {
         try {
@@ -465,21 +594,23 @@ class Home extends Api
             // Define the filters to apply
             $properties = [];
             $properties['caseNumber'] = $caseNumber;
+            $properties['category'] = $category;
             $properties['caseTitle'] = $caseTitle;
             $properties['process'] = $process;
             $properties['task'] = $task;
             $properties['user'] = $user;
+            $properties['userCompleted'] = $userCompleted;
+            $properties['userStarted'] = $userStarted;
             $properties['caseStatuses'] = explode(',', $caseStatuses);
             $properties['filterCases'] = $filterCases;
             $properties['startCaseFrom'] = $startCaseFrom;
             $properties['startCaseTo'] = $startCaseTo;
             $properties['finishCaseFrom'] = $finishCaseFrom;
             $properties['finishCaseTo'] = $finishCaseTo;
-            // Set the pagination parameters
-            $paged = explode(',', $paged);
+            $properties['start'] = $offset;
+            $properties['limit'] = $limit;
+            // Set the sort parameters
             $sort = explode(',', $sort);
-            $properties['start'] = $paged[0];
-            $properties['limit'] = $paged[1];
             $properties['sort'] = $sort[0];
             $properties['dir'] = $sort[1];
             $list->setProperties($properties);
@@ -522,19 +653,15 @@ class Home extends Api
                 $option->header = true;
                 $option->title = $menuInstance->Labels[$i];
                 $option->hiddenOnCollapse = true;
+                $option->id = $menuInstance->Id[$i];
             } else {
                 $option->href = $menuInstance->Options[$i];
                 $option->id = $menuInstance->Id[$i];
                 $option->title = $menuInstance->Labels[$i];
+                $option->page = $menuInstance->Id[$i];
                 $option->icon = $menuInstance->Icons[$i];
             }
 
-            // Add additional attributes for some options
-            if (in_array($menuInstance->Id[$i], $optionsWithCounter)) {
-                $option->badge = new stdClass();
-                $option->badge->text = '0';
-                $option->badge->class = 'badge-custom';
-            }
             if ($menuInstance->Id[$i] === 'CASES_SEARCH') {
                 // Get advanced search filters for the current user
                 $filters = Filter::getByUser($this->getUserId());
@@ -544,7 +671,7 @@ class Home extends Api
                 foreach ($filters as $filter) {
                     $childFilter = new stdClass();
                     $childFilter->id = $filter->id;
-                    $childFilter->page = '/advanced-search';
+                    $childFilter->page = 'advanced-search';
                     $childFilter->href = "{$childFilter->page}/{$filter->id}";
                     $childFilter->title = $filter->name;
                     $childFilter->icon = 'fas fa-circle';
@@ -558,6 +685,29 @@ class Home extends Api
             if ($menuInstance->Id[$i] === 'ID_CASE_ARCHIVE_SEARCH') {
                 $option->icon = "fas fa-archive";
             }
+            //custom cases list
+            if (in_array($menuInstance->Id[$i], $optionsWithCounter)) {
+                $mapKeys = [
+                    'CASES_INBOX' => 'inbox',
+                    'CASES_DRAFT' => 'draft',
+                    'CASES_SELFSERVICE' => 'unassigned',
+                    'CASES_PAUSED' => 'paused'
+                ];
+                $option->customCasesList = [];
+                $result = CaseList::getSetting($mapKeys[$menuInstance->Id[$i]], '', 0, 10, false);
+                foreach ($result['data'] as $value) {
+                    $option->customCasesList[] = [
+                        "href" => "casesListExtJs?action=" . $mapKeys[$menuInstance->Id[$i]] . "&customList=" . $value['id'],
+                        "id" => $value['id'],
+                        "title" => $value['name'],
+                        "description" => $value['description'],
+                        "icon" => $value['iconList'],
+                        "color" => $value['iconColor'],
+                        "colorScreen" => $value['iconColorScreen'],
+                        "page" => $mapKeys[$menuInstance->Id[$i]]
+                    ];
+                }
+            }
             // Add option to the menu
             $menuHome[] = $option;
         }
@@ -569,20 +719,19 @@ class Home extends Api
     /**
      * Get the search cases
      *
-     * @url GET /:app_number/pending-tasks
+     * @url GET /:appNumber/pending-tasks
      *
-     * @param int $app_number
+     * @param int $appNumber
      *
      * @return array
      *
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getPendingTasks(int $app_number)
+    public function getPendingTasks(int $appNumber)
     {
-        $result = Delegation::getPendingTask($app_number);
-
-        return $result;
+        // Get the pending task
+        return Delegation::getPendingTask($appNumber);
     }
 
     /**
@@ -602,11 +751,10 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getProcesses($text = null, $category = null, $offset = null, $limit = null)
+    public function getProcesses($text = null, $category = null, int $offset = 0, int $limit = 15)
     {
         try {
-            $processes = Process::getProcessesForHome($text, $category, $offset, $limit);
-            return $processes;
+            return Process::getProcessesForHome($text, $category, $offset, $limit);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -628,11 +776,10 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getUsers($text = null, $offset = null, $limit = null)
+    public function getUsers($text = null, int $offset = 0, int $limit = 15)
     {
         try {
-            $users = User::getUsersForHome($text, $offset, $limit);
-            return $users;
+            return User::getUsersForHome($text, $offset, $limit);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -640,9 +787,94 @@ class Home extends Api
 
     /**
      * Get the tasks counters for todo, draft, paused and unassigned
+     *
+     * @url GET /:task/counter
+     *
+     * @return array
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getSpecificTaskCounter($task)
+    {
+        $result = [];
+        $usrUid = $this->getUserId();
+        $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
+        switch ($task) {
+            case 'inbox':
+                $taskList = new Inbox();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_INBOX');
+                break;
+            case 'draft':
+                $taskList = new Draft();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_DRAFT');
+                break;
+            case 'paused':
+                $taskList = new Paused();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_PAUSED');
+                break;
+            case 'unassigned':
+                $taskList = new Unassigned();
+                $text = G::LoadTranslation('ID_NUMBER_OF_CASES_UNASSIGNED');
+                break;
+            default:
+              return [];
+        }
+        $taskList->setUserUid($usrUid);
+        $taskList->setUserId($usrId);
+        $count = $taskList->getCounter();
+        $result = [];
+        $result['label'] = $text . $count;
+        $result['total'] = $count;
+        return $result;
+    }
+
+    /**
+     * Get task counters for inbox, draft, paused, and unassigned for custom case lists.
+     * @url GET /:task/counter/caseList/:id
+     * @param string $task
+     * @param int $id
+     * @return array
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getCustomCaseListCounter(string $task, int $id)
+    {
+        try {
+            $usrUid = $this->getUserId();
+            $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
+            switch ($task) {
+                case 'inbox':
+                    $taskList = new Inbox();
+                    break;
+                case 'draft':
+                    $taskList = new Draft();
+                    break;
+                case 'paused':
+                    $taskList = new Paused();
+                    break;
+                case 'unassigned':
+                    $taskList = new Unassigned();
+                    break;
+                default:
+                    return [];
+            }
+            $taskList->setUserUid($usrUid);
+            $taskList->setUserId($usrId);
+            $result = $taskList->getCustomListCount($id, $task);
+            return $result;
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get the tasks counters for all task list: todo, draft, paused and unassigned
      * 
      * @url GET /tasks/counter
+     *
      * @return array
+     * 
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
@@ -676,6 +908,26 @@ class Home extends Api
     }
 
     /**
+     * Get the tasks highlight for all task list
+     *
+     * @url GET /tasks/highlight
+     *
+     * @return array
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getHighlight()
+    {
+        $usrUid = $this->getUserId();
+        $casesList = new CasesList();
+        $result = [];
+        $result = $casesList->atLeastOne($usrUid);
+
+        return $result;
+    }
+
+    /**
      * Get all tasks, paged optionally, can be sent a text to filter results by "TAS_TITLE"
      *
      * @url GET /tasks
@@ -692,11 +944,10 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getTasks($text = null, $proId = null, $offset = null, $limit = null)
+    public function getTasks(string $text = null, string $proId = null, int $offset = 0, int $limit = 15)
     {
         try {
-            $tasks = Task::getTasksForHome($text, $proId, $offset, $limit);
-            return $tasks;
+            return Task::getTasksForHome($text, $proId, $offset, $limit);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -716,7 +967,7 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getProcessDebugStatus($processUid)
+    public function getProcessDebugStatus(string $processUid)
     {
         try {
             // Get the process requested
@@ -730,6 +981,112 @@ class Home extends Api
         // If not exists the requested process throw an 404 error
         if (is_null($process)) {
             throw new RestException(404, "Process with Uid '{$processUid}'.");
+        }
+    }
+
+    /**
+     * Get user setting.
+     * @url GET /config/:id/:name
+     * @param int $id
+     * @param string $name
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doGetConfig(int $id, string $name)
+    {
+        $setting = UserConfig::getSetting($id, $name);
+        if (is_null($setting)) {
+            $setting = [
+                "status" => 404,
+                "message" => G::LoadTranslation('ID_DOES_NOT_EXIST')
+            ];
+        }
+        return $setting;
+    }
+
+    /**
+     * Add user setting.
+     * @url POST /config
+     * @param int $id
+     * @param string $name
+     * @param array $setting
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doPostConfig(int $id, string $name, array $setting)
+    {
+        try {
+            return UserConfig::addSetting($id, $name, $setting);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_EXIST'));
+        }
+    }
+
+    /**
+     * Update user setting.
+     * @url PUT /config
+     * @param int $id
+     * @param string $name
+     * @param array $setting
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doPutConfig(int $id, string $name, array $setting)
+    {
+        $setting = UserConfig::editSetting($id, $name, $setting);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
+    }
+
+    /**
+     * Delete user setting.
+     * @url DELETE /config/:id/:name
+     * @param int $id
+     * @param string $name
+     * @return array
+     * @throws RestException
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function doDeleteConfig(int $id, string $name)
+    {
+        $setting = UserConfig::deleteSetting($id, $name);
+        if (is_null($setting)) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
+        }
+        return $setting;
+    }
+
+    /**
+     * Get all process categories
+     *
+     * @url GET /categories
+     *
+     * @param string $name
+     * @param int $limit
+     * @param int $offset
+     *
+     * @return array
+     *
+     * @throws RestException
+     *
+     * @access protected
+     * @class AccessControl {@permission PM_CASES}
+     */
+    public function getCategories($name = null, int $limit = 0, int $offset = 15)
+    {
+        try {
+            return ProcessCategory::getProcessCategories($name, $offset, $limit);
+        } catch (Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 }

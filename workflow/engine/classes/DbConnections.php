@@ -83,8 +83,10 @@ class DbConnections
 
                 $result->next();
             }
-            if (! in_array($row[2], $types)) {
-                $types[] = $row[2];
+            if (isset($row[2])) {
+                if (!in_array($row[2], $types)) {
+                    $types[] = $row[2];
+                }
             }
             $this->connections = $connections;
             return $connections;

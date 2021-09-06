@@ -60,11 +60,16 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
         'APP_CUR_USER' => $user->USR_UID
     ]);
 
+    $delegateDate = $faker->dateTime();
+    $initDate = $faker->dateTimeInInterval($delegateDate, '+30 minutes');
+    $riskDate = $faker->dateTimeInInterval($initDate, '+1 day');
+    $taskDueDate = $faker->dateTimeInInterval($riskDate, '+2 day');
+
     // Return with default values
     return [
         'DELEGATION_ID' => $faker->unique()->numberBetween(5000),
         'APP_UID' => $application->APP_UID,
-        'DEL_INDEX' => 1,
+        'DEL_INDEX' => $faker->unique()->numberBetween(2000),
         'APP_NUMBER' => $application->APP_NUMBER,
         'DEL_PREVIOUS' => 0,
         'PRO_UID' => $process->PRO_UID,
@@ -74,10 +79,10 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
         'DEL_THREAD' => 1,
         'DEL_THREAD_STATUS' => 'OPEN',
         'DEL_PRIORITY' => 3,
-        'DEL_DELEGATE_DATE' => $faker->dateTime(),
-        'DEL_INIT_DATE' => $faker->dateTime(),
-        'DEL_TASK_DUE_DATE' => $faker->dateTime(),
-        'DEL_RISK_DATE' => $faker->dateTime(),
+        'DEL_DELEGATE_DATE' => $delegateDate,
+        'DEL_INIT_DATE' => $initDate,
+        'DEL_TASK_DUE_DATE' => $taskDueDate,
+        'DEL_RISK_DATE' => $riskDate,
         'DEL_LAST_INDEX' => 1,
         'USR_ID' => $user->USR_ID,
         'PRO_ID' => $process->PRO_ID,
@@ -138,7 +143,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'open', function (Faker $
     $delegateDate = $faker->dateTime();
     $initDate = $faker->dateTimeInInterval($delegateDate, '+30 minutes');
     $riskDate = $faker->dateTimeInInterval($initDate, '+1 day');
-    $taskDueDate = $faker->dateTimeInInterval($riskDate, '+1 day');
+    $taskDueDate = $faker->dateTimeInInterval($riskDate, '+2 day');
 
     return [
         'DEL_THREAD_STATUS' => 'OPEN',
@@ -156,7 +161,7 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'closed', function (Faker
     $delegateDate = $faker->dateTime();
     $initDate = $faker->dateTimeInInterval($delegateDate, '+30 minutes');
     $riskDate = $faker->dateTimeInInterval($initDate, '+1 day');
-    $taskDueDate = $faker->dateTimeInInterval($riskDate, '+1 day');
+    $taskDueDate = $faker->dateTimeInInterval($riskDate, '+2 day');
     $finishDate = $faker->dateTimeInInterval($initDate, '+10 days');
 
     return [
@@ -171,7 +176,17 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'closed', function (Faker
 
 // Create a last delegation
 $factory->state(\ProcessMaker\Model\Delegation::class, 'last_thread', function (Faker $faker) {
+
     return [
         'DEL_LAST_INDEX' => 1,
+    ];
+});
+
+// Create a first delegation
+$factory->state(\ProcessMaker\Model\Delegation::class, 'first_thread', function (Faker $faker) {
+
+    return [
+        'DEL_INDEX' => 1,
+        'DEL_PREVIOUS' => 0,
     ];
 });

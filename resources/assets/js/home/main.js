@@ -3,24 +3,39 @@ import VueRouter from "vue-router";
 import VueSidebarMenu from "vue-sidebar-menu";
 import VueI18n from 'vue-i18n';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
-import { ServerTable, Event, ClientTable} from 'vue-tables-2';
+import { ServerTable, Event, ClientTable } from 'vue-tables-2';
+import VtTableHeadingCustom from './../components/vuetable/extends/VtTableHeadingCustom';
+import VtSortControl from './../components/vuetable/extends/VtSortControl';
+import SettingsPopover from "../components/vuetable/SettingsPopover.vue";
+import Sortable from 'sortablejs';
 import "@fortawesome/fontawesome-free/css/all.css";
-import "@fortawesome/fontawesome-free/js/all.js";
 import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import VueApexCharts from 'vue-apexcharts'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Home from "./Home";
+
+Vue.use(VueApexCharts);
 Vue.use(VueRouter);
 Vue.use(VueSidebarMenu);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VueI18n);
-Vue.use(ServerTable, {}, false, 'bootstrap3', {});
+
+Vue.use(ServerTable, {}, false, 'bootstrap3', {
+    tableHeading: VtTableHeadingCustom,
+    sortControl: VtSortControl
+});
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
+Vue.component('settings-popover', SettingsPopover);
+Vue.component('apexchart', VueApexCharts);
+
 window.ProcessMaker = {
     apiClient: require('axios')
 };
+
 window.ProcessMaker.pluginBase = "/sysworkflow/en/neoclassic/viena/index.php";
 window.ProcessMaker.apiClient.defaults.baseURL = '/sysworkflow/en/neoclassic/viena/index.php/api/';
 window.ProcessMaker.SYS_SYS = "workflow";
