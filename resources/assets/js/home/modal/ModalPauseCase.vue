@@ -10,6 +10,15 @@
         <i class="far fa-pause-circle"></i>
       </template>
       <b-container fluid>
+        <b-alert
+          :show="dataAlert.dismissCountDown"
+          dismissible
+          :variant="dataAlert.variant"
+          @dismissed="dataAlert.dismissCountDown = 0"
+          @dismiss-count-down="countDownChanged"
+        >
+          {{ dataAlert.message }}
+        </b-alert>
         <b-row class="my-1">
           <b-col sm="3">
             <label for="pauseDate">{{ $t('ID_PAUSE_DATE') }}</label>
@@ -113,6 +122,12 @@ export default {
         pauseTime: ''
       },
       minDate: '',
+      dataAlert: {
+        dismissSecs: 5,
+        dismissCountDown: 0,
+        message: "",
+        variant: "info"
+      },
     };
   },
   methods: {
@@ -147,21 +162,43 @@ export default {
       this.data.unpausedTime = this.pauseData.unpauseTime;
       this.data.nofitfyUser = this.pauseData.nofitfyUser;
       this.data.reasonPause = this.pauseData.reasonPause;
-      api.cases.pauseCase(this.data).then((response) => {
-        if (response.statusText == "OK") {
-          that.$refs["modal-pause-case"].hide();
-          that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
-          if (that.$parent.$refs["vueTable"] !== undefined) {
-            that.$parent.$refs["vueTable"].getData();
+      api.cases.pauseCase(this.data)
+        .then((response) => {
+          if (response.statusText == "OK") {
+            that.$refs["modal-pause-case"].hide();
+            that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
+            if (that.$parent.$refs["vueTable"] !== undefined) {
+              that.$parent.$refs["vueTable"].getData();
+            }
+            if (that.$parent.$refs["vueListView"] !== undefined) {
+              that.$parent.$refs["vueListView"].getData();
+            }
+            if (that.$parent.$refs["vueCardView"] !== undefined) {
+              that.$parent.$refs["vueCardView"].getData();
+            }
           }
-          if (that.$parent.$refs["vueListView"] !== undefined) {
-            that.$parent.$refs["vueListView"].getData();
-          }
-          if (that.$parent.$refs["vueCardView"] !== undefined) {
-            that.$parent.$refs["vueCardView"].getData();
-          }
-        }
-      });
+        })
+        .catch((error) => {
+          that.showAlert(error.response.data.error.message, "danger");
+        });
+    },
+    /**
+     * Show the alert message
+     * @param {string} message - message to be displayen in the body
+     * @param {string} type - alert type
+     */
+    showAlert(message, type) {
+      this.dataAlert.message = message;
+      this.dataAlert.variant = type || "info";
+      this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+    },
+    /**
+     * Updates the alert dismiss value to update
+     * dismissCountDown and decrease
+     * @param {mumber}
+     */
+    countDownChanged(dismissCountDown) {
+      this.dataAlert.dismissCountDown = dismissCountDown;
     },
   },
 };
