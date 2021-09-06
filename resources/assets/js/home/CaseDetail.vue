@@ -438,7 +438,6 @@ export default {
           if (err.response.data) {
             that.showAlert(err.response.data.error.message, "danger");
           }
-          throw new Error(err);
         });
     },
     formatResponseCaseNotes(notes) {
