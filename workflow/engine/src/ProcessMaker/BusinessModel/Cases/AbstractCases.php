@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use Datetime;
+use DB;
 use Exception;
 use ProcessMaker\BusinessModel\Interfaces\CasesInterface;
 use ProcessMaker\BusinessModel\Validator;
@@ -34,6 +35,11 @@ class AbstractCases implements CasesInterface
     const STATUS_TODO = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
+    // Order by column allowed
+    const ORDER_BY_COLUMN_ALLOWED = ['APP_NUMBER', 'DEL_TITLE', 'PRO_TITLE'];
+
+    // Filter by category using the Id field
+    private $categoryId = 0;
 
     // Filter by category from a process, know as "$category" in the old lists classes
     private $categoryUid = '';
@@ -52,6 +58,12 @@ class AbstractCases implements CasesInterface
 
     // Filter by user using the Id field
     private $userId = 0;
+
+    // Filter by user who completed using the Id field
+    private $userCompleted = 0;
+
+    // Filter by user who started using the Id field
+    private $userStarted = 0;
 
     // Value to search, can be a text or an application number, know as "$search" in the old lists classes
     private $valueToSearch = '';
@@ -136,6 +148,26 @@ class AbstractCases implements CasesInterface
 
     // Number of rows to return
     private $limit = 15;
+
+    /**
+     * Set Category Uid value
+     *
+     * @param int $category
+     */
+    public function setCategoryId(int $category)
+    {
+        $this->categoryId = $category;
+    }
+
+    /**
+     * Get Category Id value
+     *
+     * @return string
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
 
     /**
      * Set Category Uid value
@@ -255,6 +287,46 @@ class AbstractCases implements CasesInterface
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * Set User Id value
+     *
+     * @param int $userId
+     */
+    public function setUserCompletedId(int $userId)
+    {
+        $this->userCompleted = $userId;
+    }
+
+    /**
+     * Get User Id value
+     *
+     * @return int
+     */
+    public function getUserCompletedId()
+    {
+        return $this->userCompleted;
+    }
+
+    /**
+     * Set User Id value
+     *
+     * @param int $userId
+     */
+    public function setUserStartedId(int $userId)
+    {
+        $this->userStarted = $userId;
+    }
+
+    /**
+     * Get User Id value
+     *
+     * @return int
+     */
+    public function getUserStartedId()
+    {
+        return $this->userStarted;
     }
 
     /**
@@ -617,10 +689,10 @@ class AbstractCases implements CasesInterface
         $specificCases = [];
         $rangeCases = [];
         foreach ($rangeOfCases as $cases) {
-            if(is_numeric($cases)) {
-                array_push($specificCases,$cases);
+            if (is_numeric($cases)) {
+                array_push($specificCases, $cases);
             } else {
-                array_push($rangeCases,$cases);
+                array_push($rangeCases, $cases);
             }
         }
         $this->setCasesNumbers($specificCases);
@@ -957,6 +1029,11 @@ class AbstractCases implements CasesInterface
         // Convert the value to upper case
         $orderByColumn = strtoupper($orderByColumn);
 
+        // Validate the order by column
+        if (!in_array($orderByColumn, self::ORDER_BY_COLUMN_ALLOWED)) {
+            throw new Exception("Order by column '{$orderByColumn}' is not valid.");
+        }
+
         $this->orderByColumn = $orderByColumn;
     }
 
@@ -1131,7 +1208,7 @@ class AbstractCases implements CasesInterface
                 // Review if require other information
                 if ($onlyTask) {
                     // Thread tasks
-                    if($key === 'user_id') {
+                    if ($key === 'user_id') {
                         $threadTasks[$i][$key] = $row;
                         // Get the user tooltip information
                         $threadTasks[$i]['user_tooltip'] = User::getInformation($row);
@@ -1154,7 +1231,7 @@ class AbstractCases implements CasesInterface
                     }
                 }
             }
-            $i ++;
+            $i++;
         }
         // Define the array responses
         $result['THREAD_TASKS'] = $threadTasks;
@@ -1173,7 +1250,7 @@ class AbstractCases implements CasesInterface
      *
      * @return array
      */
-    public function threadInformation(array $thread, $addUserInfo = false, $addThreadInfo = false)
+    public function threadInformation(array $thread, $addUserInfo = false, $addThreadInfo = true)
     {
         $status = '';
         $finishDate = 'now';
@@ -1184,6 +1261,9 @@ class AbstractCases implements CasesInterface
         }
         if ($thread['APP_STATUS'] === 'DRAFT') {
             $status = 'DRAFT';
+        }
+        if (isset($thread['DEL_THREAD_STATUS']) && $thread['DEL_THREAD_STATUS'] === 'PAUSED') {
+            $status = 'PAUSED';
         }
         if ($thread['APP_STATUS'] === 'COMPLETED') {
             $finishDate = !empty($thread['APP_FINISH_DATE']) ? $thread['APP_FINISH_DATE'] : date("Y-m-d H:i:s");
@@ -1240,10 +1320,6 @@ class AbstractCases implements CasesInterface
      */
     public function setProperties(array $properties)
     {
-        // Filter by category
-        if (!empty($properties['category'])) {
-            $this->setCategoryUid($properties['category']);
-        }
         // Filter by process
         if (!empty($properties['process'])) {
             $this->setProcessId($properties['process']);
@@ -1260,59 +1336,13 @@ class AbstractCases implements CasesInterface
         if (!empty($properties['caseNumber'])) {
             $this->setCaseNumber($properties['caseNumber']);
         }
+        // Add a filter with specific cases or range of cases like '1, 3-5, 8, 10-15'
+        if (!empty($properties['filterCases'])) {
+            $this->setFilterCases($properties['filterCases']);
+        }
         // Filter by case title
         if (!empty($properties['caseTitle'])) {
             $this->setCaseTitle($properties['caseTitle']);
-        }
-        /** Apply filters related to MY CASES */
-        // My cases filter: started, in-progress, completed, supervising
-        if (get_class($this) === Participated::class && !empty($properties['filter'])) {
-            $this->setParticipatedStatus($properties['filter']);
-        }
-        // Filter by one case status
-        if (get_class($this) === Participated::class && !empty($properties['caseStatus'])) {
-            $this->setCaseStatus($properties['caseStatus']);
-        }
-        // Filter date related to started date from
-        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['startCaseFrom'])) {
-            $this->setStartCaseFrom($properties['startCaseFrom']);
-        }
-        // Filter date related to started date to
-        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['startCaseTo'])) {
-            $this->setStartCaseTo($properties['startCaseTo']);
-        }
-        // Filter date related to finish date from
-        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['finishCaseFrom'])) {
-            $this->setFinishCaseFrom($properties['finishCaseFrom']);
-        }
-        //  Filter date related to finish date to
-        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['finishCaseTo'])) {
-            $this->setFinishCaseTo($properties['finishCaseTo']);
-        }
-        /** Apply filters related to SEARCH */
-        // Add a filter with specific cases or range of cases like '1, 3-5, 8, 10-15'
-        if (get_class($this) === Search::class && !empty($properties['filterCases'])) {
-            $this->setFilterCases($properties['filterCases']);
-        }
-        // Filter by more than one case statuses like ['DRAFT', 'TO_DO']
-        if (get_class($this) === Search::class && !empty($properties['caseStatuses'])) {
-            $this->setCaseStatuses($properties['caseStatuses']);
-        }
-        // Filter date related to started date from
-        if (get_class($this) === Search::class && !empty($properties['startCaseFrom'])) {
-            $this->setStartCaseFrom($properties['startCaseFrom']);
-        }
-        // Filter date related to started date to
-        if (get_class($this) === Search::class && !empty($properties['startCaseTo'])) {
-            $this->setStartCaseTo($properties['startCaseTo']);
-        }
-        // Filter date related to finish date from
-        if (get_class($this) === Search::class && !empty($properties['finishCaseFrom'])) {
-            $this->setFinishCaseFrom($properties['finishCaseFrom']);
-        }
-        // Filter date related to finish date to
-        if (get_class($this) === Search::class && !empty($properties['finishCaseTo'])) {
-            $this->setFinishCaseTo($properties['finishCaseTo']);
         }
         // Filter by case uid
         if (!empty($properties['caseLink'])) {
@@ -1342,6 +1372,92 @@ class AbstractCases implements CasesInterface
         if (!empty($properties['limit'])) {
             $this->setLimit($properties['limit']);
         }
+        /** Apply filters related to INBOX */
+        // Filter date related to delegate from
+        if (get_class($this) === Inbox::class && !empty($properties['delegateFrom'])) {
+            $this->setDelegateFrom($properties['delegateFrom']);
+        }
+        // Filter date related to delegate to
+        if (get_class($this) === Inbox::class && !empty($properties['delegateTo'])) {
+            $this->setDelegateTo($properties['delegateTo']);
+        }
+        /** Apply filters related to PAUSED */
+        // Filter date related to delegate from
+        if (get_class($this) === Paused::class && !empty($properties['delegateFrom'])) {
+            $this->setDelegateFrom($properties['delegateFrom']);
+        }
+        // Filter date related to delegate to
+        if (get_class($this) === Paused::class && !empty($properties['delegateTo'])) {
+            $this->setDelegateTo($properties['delegateTo']);
+        }
+        /** Apply filters related to UNASSIGNED */
+        // Filter date related to delegate from
+        if (get_class($this) === Unassigned::class && !empty($properties['delegateFrom'])) {
+            $this->setDelegateFrom($properties['delegateFrom']);
+        }
+        // Filter date related to delegate to
+        if (get_class($this) === Unassigned::class && !empty($properties['delegateTo'])) {
+            $this->setDelegateTo($properties['delegateTo']);
+        }
+
+        /** Apply filters related to MY CASES */
+        // My cases filter: started, in-progress, completed, supervising
+        if (get_class($this) === Participated::class && !empty($properties['filter'])) {
+            $this->setParticipatedStatus($properties['filter']);
+        }
+        // Filter by one case status
+        if (get_class($this) === Participated::class && !empty($properties['caseStatus'])) {
+            $this->setCaseStatus($properties['caseStatus']);
+        }
+        // Filter date related to started date from
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['startCaseFrom'])) {
+            $this->setStartCaseFrom($properties['startCaseFrom']);
+        }
+        // Filter date related to started date to
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['startCaseTo'])) {
+            $this->setStartCaseTo($properties['startCaseTo']);
+        }
+        // Filter date related to finish date from
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['finishCaseFrom'])) {
+            $this->setFinishCaseFrom($properties['finishCaseFrom']);
+        }
+        //  Filter date related to finish date to
+        if ((get_class($this) === Participated::class || get_class($this) === Supervising::class) && !empty($properties['finishCaseTo'])) {
+            $this->setFinishCaseTo($properties['finishCaseTo']);
+        }
+        /** Apply filters related to SEARCH */
+        // Filter by category
+        if (get_class($this) === Search::class && !empty($properties['category'])) {
+            $this->setCategoryId($properties['category']);
+        }
+        // Filter by more than one case statuses like ['DRAFT', 'TO_DO']
+        if (get_class($this) === Search::class && !empty($properties['caseStatuses'])) {
+            $this->setCaseStatuses($properties['caseStatuses']);
+        }
+        // Filter date related to started date from
+        if (get_class($this) === Search::class && !empty($properties['startCaseFrom'])) {
+            $this->setStartCaseFrom($properties['startCaseFrom']);
+        }
+        // Filter date related to started date to
+        if (get_class($this) === Search::class && !empty($properties['startCaseTo'])) {
+            $this->setStartCaseTo($properties['startCaseTo']);
+        }
+        // Filter date related to finish date from
+        if (get_class($this) === Search::class && !empty($properties['finishCaseFrom'])) {
+            $this->setFinishCaseFrom($properties['finishCaseFrom']);
+        }
+        // Filter date related to finish date to
+        if (get_class($this) === Search::class && !empty($properties['finishCaseTo'])) {
+            $this->setFinishCaseTo($properties['finishCaseTo']);
+        }
+        // Filter date related to user who started
+        if (get_class($this) === Search::class && !empty($properties['userCompleted'])) {
+            $this->setUserCompletedId($properties['userCompleted']);
+        }
+        // Filter date related to user who completed
+        if (get_class($this) === Search::class && !empty($properties['userStarted'])) {
+            $this->setUserStartedId($properties['userStarted']);
+        }
     }
 
     /**
@@ -1365,6 +1481,16 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Get true if the user has at least one case
+     *
+     * @throws Exception
+     */
+    public function atLeastOne()
+    {
+        throw new Exception("Method '" . __FUNCTION__ . "' should be implemented in the extended class '" . get_class($this) . "'.");
+    }
+
+    /**
      * Get the list counter
      *
      * @throws Exception
@@ -1372,5 +1498,173 @@ class AbstractCases implements CasesInterface
     public function getPagingCounters()
     {
         throw new Exception("Method '" . __FUNCTION__ . "' should be implemented in the extended class '" . get_class($this) . "'.");
+    }
+
+    /**
+     * Count how many cases has each process
+     *
+     * @param int $category
+     * @param bool $topTen
+     * @param array $processes
+     * 
+     * @return array
+     */
+    public function getCountersByProcesses($category = null, $topTen = false, $processes = [])
+    {
+        $query = Delegation::selectRaw('count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE')
+            ->groupBy('APP_DELEGATION.PRO_UID');
+        $listArray = explode("\\", get_class($this));
+        $list = end($listArray);
+        switch ($list) {
+            case 'Inbox':
+                $query->inbox($this->getUserId());
+                break;
+            case 'Draft':
+                $query->draft($this->getUserId());
+                break;
+            case 'Paused':
+                $query->paused($this->getUserId());
+                break;
+            case 'Unassigned':
+                $query->selfService($this->getUserUid());
+                break;
+        }
+        $query->joinProcess();
+        if (!is_null($category)) {
+            $query->categoryId($category);
+        }
+        if ($topTen) {
+            $query->topTen('TOTAL', 'DESC');
+        }
+        if (!empty($processes)) {
+            $query->processInList($processes);
+        }
+        return $query->get()->values()->toArray();
+    }
+
+    /**
+     * Count how many cases has each process by range of dates
+     * 
+     * @param int $processId
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @param string $groupBy
+     * 
+     * @return array
+     */
+    public function getCountersByRange($processId = null, $dateFrom = null, $dateTo = null, $groupBy = 'day')
+    {
+        $rawQuery = 'count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE, DATE(APP_DELEGATION.DEL_DELEGATE_DATE) as dateGroup';
+        switch ($groupBy) {
+            case 'month':
+                $rawQuery = 'count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE, EXTRACT(YEAR_MONTH From APP_DELEGATION.DEL_DELEGATE_DATE) as dateGroup';
+                break;
+            case 'year':
+                $rawQuery = 'count(APP_DELEGATION.DELEGATION_ID) as TOTAL, APP_DELEGATION.PRO_ID, PROCESS.PRO_TITLE, YEAR(APP_DELEGATION.DEL_DELEGATE_DATE) as dateGroup';
+                break;
+        }
+        $query = Delegation::selectRaw($rawQuery);
+        $query->groupBy('dateGroup');
+        $listArray = explode("\\", get_class($this));
+        $list = end($listArray);
+        switch ($list) {
+            case 'Inbox':
+                $query->inbox($this->getUserId());
+                break;
+            case 'Draft':
+                $query->draft($this->getUserId());
+                break;
+            case 'Paused':
+                $query->paused($this->getUserId());
+                break;
+            case 'Unassigned':
+                $query->selfService($this->getUserUid());
+                break;
+        }
+        $query->joinProcess();
+        if (!is_null($processId)) {
+            $query->processInList([$processId]);
+        }
+        if (!is_null($dateFrom)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);
+        }
+        if (!is_null($dateTo)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
+        }
+        return $query->get()->values()->toArray();
+    }
+
+    /**
+     * Get cases risk by process
+     * 
+     * @param int $processId
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @param string $riskStatus
+     * @param int $topCases
+     * 
+     * @return array
+     */
+    public function getCasesRisk($processId, $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $query = Delegation::selectRaw('
+            APP_DELEGATION.APP_NUMBER as number_case,
+            APP_DELEGATION.DEL_DELEGATE_DATE as delegated,
+            APP_DELEGATION.DEL_RISK_DATE as at_risk,
+            APP_DELEGATION.DEL_TASK_DUE_DATE as due_date,
+            APP_DELEGATION.APP_UID as app_uid,
+            APP_DELEGATION.DEL_INDEX as del_index,
+            APP_DELEGATION.TAS_UID as tas_uid
+        ');
+        $listArray = explode("\\", get_class($this));
+        $list = end($listArray);
+        switch ($list) {
+            case 'Inbox':
+                $query->inbox($this->getUserId());
+                break;
+            case 'Draft':
+                $query->draft($this->getUserId());
+                break;
+            case 'Paused':
+                $query->paused($this->getUserId());
+                break;
+            case 'Unassigned':
+                $query->selfService($this->getUserUid());
+                break;
+        }
+        $query->joinProcess();
+        $query->processInList([$processId]);
+
+        if (!is_null($dateFrom)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);
+        }
+        if (!is_null($dateTo)) {
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
+        }
+        if (!is_null($topCases)) {
+            $query->orderBy('APP_DELEGATION.DEL_DELEGATE_DATE', 'ASC')->limit($topCases);
+        }
+        $value = 'due_date';
+        switch ($riskStatus) {
+            case 'ON_TIME':
+                $query->onTime($currentDate);
+                $value = 'at_risk';
+                break;
+            case 'AT_RISK':
+                $query->atRisk($currentDate);
+                break;
+            case 'OVERDUE':
+                $query->overdue($currentDate);
+                break;
+        }
+        $res = $query->get()->values()->toArray();
+        foreach ($res as $key => $values) {
+            $riskDate = new DateTime($values[$value]);
+            $days = ['days' => $date->diff($riskDate)->days];
+            $res[$key] = $days + $res[$key];
+        }
+        return $res;
     }
 }

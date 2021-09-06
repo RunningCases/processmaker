@@ -43,6 +43,18 @@ class CasesListTest extends TestCase
     }
 
     /**
+     * This test construct
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\CasesList::__construct()
+     * @test
+     */
+    public function it_test_construct()
+    {
+        $casesList = new CasesList();
+        $this->assertInstanceOf(CasesList::class, $casesList);
+    }
+
+    /**
      * This test getAllCounters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\CasesList::getAllCounters()
@@ -56,5 +68,30 @@ class CasesListTest extends TestCase
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('CASES_INBOX', $result);
         $this->assertArrayHasKey('CASES_DRAFT', $result);
+    }
+
+    /**
+     * This test getAllCounters
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\CasesList::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\BatchRouting::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\Canceled::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\Completed::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::atLeastOne()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::atLeastOne()
+     * @test
+     */
+    public function it_return_at_least_one()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $count = new CasesList();
+        $result = $count->atLeastOne($delegation->USR_UID);
+        $this->assertNotEmpty($result);
+        $firstItem = head($result);
+        $this->assertArrayHasKey('item', $firstItem);
+        $this->assertArrayHasKey('highlight', $firstItem);
     }
 }

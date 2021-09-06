@@ -1480,7 +1480,7 @@ function G_Text(form, element, name)
     		}
       }
 
-      if (me.browser.name == 'Chrome' || me.browser.name == 'Safari' || me.browser.name == 'Firefox'){
+      if (me.browser.name == 'Chrome' || me.browser.name == 'Safari'){
         event.returnValue = false;
       }
       else{

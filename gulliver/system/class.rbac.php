@@ -409,11 +409,7 @@ class RBAC
                 "PER_CODE" => "PM_SETUP_CLEAR_CACHE",
                 "PER_NAME" => "Setup Clear Cache"
             ],
-            [
-                "PER_UID" => "00000000000000000000000000000025",
-                "PER_CODE" => "PM_SETUP_HEART_BEAT",
-                "PER_NAME" => "Setup Heart Beat"
-            ],
+            // The 00000000000000000000000000000025 was deleted related to the heart beat
             [
                 "PER_UID" => "00000000000000000000000000000026",
                 "PER_CODE" => "PM_SETUP_ENVIRONMENT",
@@ -628,6 +624,11 @@ class RBAC
                 'PER_UID' => '00000000000000000000000000000069',
                 'PER_CODE' => 'PM_TASK_SCHEDULER_ADMIN',
                 'PER_NAME' => 'View Task Scheduler'
+            ],
+            [
+                'PER_UID' => '00000000000000000000000000000070',
+                'PER_CODE' => 'TASK_METRICS_VIEW',
+                'PER_NAME' => 'Task Metrics View'
             ]
         ];
 

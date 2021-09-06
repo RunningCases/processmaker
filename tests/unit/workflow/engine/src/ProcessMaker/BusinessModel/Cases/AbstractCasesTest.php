@@ -2,10 +2,12 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
+use Exception;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\AbstractCases;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\Task;
@@ -22,11 +24,27 @@ class AbstractCasesTest extends TestCase
     /**
      * This check the getter and setter related to the category
      *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCategoryId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCategoryId()
+     * @test
+     */
+    public function it_return_set_get_category()
+    {
+        $category = factory(ProcessCategory::class)->create();
+        $absCases = new AbstractCases();
+        $absCases->setCategoryId($category->CATEGORY_ID);
+        $actual = $absCases->getCategoryId();
+        $this->assertEquals($category->CATEGORY_ID, $actual);
+    }
+
+    /**
+     * This check the getter and setter related to the category
+     *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCategoryUid()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCategoryUid()
      * @test
      */
-    public function it_return_set_get_category()
+    public function it_return_set_get_category_uid()
     {
         $category = factory(ProcessCategory::class)->create();
         $absCases = new AbstractCases();
@@ -94,6 +112,38 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This check the getter and setter related to the user completed
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setUserCompletedId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getUserCompletedId()
+     * @test
+     */
+    public function it_return_set_get_user_completed()
+    {
+        $users = factory(User::class)->create();
+        $absCases = new AbstractCases();
+        $absCases->setUserCompletedId($users->USR_ID);
+        $actual = $absCases->getUserCompletedId();
+        $this->assertEquals($users->USR_ID, $actual);
+    }
+
+    /**
+     * This check the getter and setter related to the user started
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setUserStartedId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getUserStartedId()
+     * @test
+     */
+    public function it_return_set_get_user_started()
+    {
+        $users = factory(User::class)->create();
+        $absCases = new AbstractCases();
+        $absCases->setUserStartedId($users->USR_ID);
+        $actual = $absCases->getUserStartedId();
+        $this->assertEquals($users->USR_ID, $actual);
+    }
+
+    /**
      * This check the getter and setter related to the priority
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPriority()
@@ -129,6 +179,19 @@ class AbstractCasesTest extends TestCase
         $absCases->setPriorities([$arguments[$index]]);
         $actual = $absCases->getPriorities();
         $this->assertNotEmpty($actual);
+    }
+
+    /**
+     * This test the exception setPriorities
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPriorities()
+     * @test
+     */
+    public function it_return_exception_priorities()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setPriorities(['INVALID_VALUE']);
     }
 
     /**
@@ -209,6 +272,19 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This test the exception setInboxStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setInboxStatus()
+     * @test
+     */
+    public function it_return_exception_inbox_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setInboxStatus('INVALID_VALUE');
+    }
+
+    /**
      * This check the getter and setter related to the participated status
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setParticipatedStatus()
@@ -223,6 +299,19 @@ class AbstractCasesTest extends TestCase
         $absCases->setParticipatedStatus($arguments[$index]);
         $actual = $absCases->getParticipatedStatus();
         $this->assertEquals($arguments[$index], $actual);
+    }
+
+    /**
+     * This test the exception setParticipatedStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setParticipatedStatus()
+     * @test
+     */
+    public function it_return_exception_participated_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setParticipatedStatus('INVALID_VALUE');
     }
 
     /**
@@ -243,6 +332,19 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This test the exception setRiskStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setRiskStatus()
+     * @test
+     */
+    public function it_return_exception_risk_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setRiskStatus('INVALID_VALUE');
+    }
+
+    /**
      * This check the getter and setter related to the case status
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatus()
@@ -258,9 +360,22 @@ class AbstractCasesTest extends TestCase
         $actual = $absCases->getCaseStatus();
         $this->assertEquals($index, $actual);
         // Incorrect canceled status
-        $absCases->setCaseStatuses(['CANCELLED']);
-        $actual = $absCases->getCaseStatuses();
-        $this->assertEquals([4], $actual);
+        $absCases->setCaseStatus('CANCELLED');
+        $actual = $absCases->getCaseStatus();
+        $this->assertEquals(4, $actual);
+    }
+
+    /**
+     * This test the exception setCaseStatus
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatus()
+     * @test
+     */
+    public function it_return_exception_case_status()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setCaseStatus('INVALID_VALUE');
     }
 
     /**
@@ -282,6 +397,19 @@ class AbstractCasesTest extends TestCase
         $absCases->setCaseStatuses(['CANCELLED']);
         $actual = $absCases->getCaseStatuses();
         $this->assertNotEmpty($actual);
+    }
+
+    /**
+     * This test the exception setCaseStatuses
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatuses()
+     * @test
+     */
+    public function it_return_exception_case_statuses()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setCaseStatuses(['INVALID_VALUE']);
     }
 
     /**
@@ -500,7 +628,7 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
-     * This check the getter and setter related to the oldest than date
+     * This check the getter and setter related to the order by column
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOrderByColumn()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getOrderByColumn()
@@ -513,6 +641,20 @@ class AbstractCasesTest extends TestCase
         $absCases->setOrderByColumn($text);
         $actual = $absCases->getOrderByColumn();
         $this->assertEquals($text, $actual);
+
+    }
+    /**
+     *  This test the exception setOrderByColumn
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOrderByColumn()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getOrderByColumn()
+     * @test
+     */
+    public function it_return_exception_order_by_column()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setOrderByColumn('INVALID');
     }
 
     /**
@@ -530,6 +672,19 @@ class AbstractCasesTest extends TestCase
         $absCases->setOrderDirection($arguments[$index]);
         $actual = $absCases->getOrderDirection();
         $this->assertEquals($arguments[$index], $actual);
+    }
+
+    /**
+     * This test the exception setOrderDirection
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOrderDirection()
+     * @test
+     */
+    public function it_return_exception_order_direction()
+    {
+        $this->expectException(Exception::class);
+        $absCases = new AbstractCases();
+        $absCases->setOrderDirection('INVALID_VALUE');
     }
 
     /**
@@ -618,39 +773,8 @@ class AbstractCasesTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setUserId()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseNumber()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseTitle()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getProcessId()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getTaskId()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getUserId()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseNumber()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseTitle()
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setParticipatedStatus()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatus()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setStartCaseFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setStartCaseTo()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setFinishCaseFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setFinishCaseTo()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getParticipatedStatus()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseStatus()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getStartCaseFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getStartCaseTo()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getFinishCaseFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getFinishCaseTo()
-     *
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setFilterCases()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseStatuses()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setProperties()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDelegateFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDelegateTo()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDueFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setDueTo()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getFilterCases()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseStatuses()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getDelegateFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getDelegateTo()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getDueFrom()
-     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getDueTo()
-     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCasesNumbers()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setRangeCasesFromTo()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCaseUid()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCasesUids()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOrderByColumn()
@@ -658,6 +782,14 @@ class AbstractCasesTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPaged()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOffset()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setLimit()
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getProcessId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getTaskId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseNumber()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseTitle()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCasesNumbers()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getRangeCasesFromTo()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCaseUid()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCasesUids()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getOrderByColumn()
@@ -671,23 +803,13 @@ class AbstractCasesTest extends TestCase
     {
         $absCases = new AbstractCases();
         $properties = [
-            // Tasks - Cases
+            // Filters that works for all list
             'process' => rand(),
             'task' => rand(),
             'user' => rand(),
             'caseNumber' => rand(),
             'caseTitle' => G::generateUniqueID(),
-            // Home - Search
-            'caseStatuses' => ['TO_DO','DRAFT'],
             'filterCases'=> '1,3-5,8,10-15',
-            // Home - My cases
-            'filter'=> 'STARTED',
-            'caseStatus' => 'TO_DO',
-            'startCaseFrom' => date('Y-m-d'),
-            'startCaseTo' => date('Y-m-d'),
-            'finishCaseFrom' => date('Y-m-d'),
-            'finishCaseTo' => date('Y-m-d'),
-            // Other
             'caseLink' => G::generateUniqueID(),
             'appUidCheck' => [G::generateUniqueID()],
             'sort' => 'APP_NUMBER',
@@ -708,37 +830,10 @@ class AbstractCasesTest extends TestCase
         $this->assertEquals($properties['caseNumber'], $actual);
         $actual = $absCases->getCaseTitle();
         $this->assertEquals($properties['caseTitle'], $actual);
-        // Home - Search
-        $actual = $absCases->getCaseStatuses();
-        $this->assertNotEmpty($actual);
-        $actual = $absCases->getFilterCases();
-        $this->assertEmpty($actual);
         $actual = $absCases->getCasesNumbers();
-        $this->assertEmpty($actual);
+        $this->assertNotEmpty($actual);
         $actual = $absCases->getRangeCasesFromTo();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getStartCaseFrom();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getStartCaseTo();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getFinishCaseFrom();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getFinishCaseTo();
-        $this->assertEmpty($actual);
-        // Home - My cases
-        $actual = $absCases->getParticipatedStatus();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getCaseStatus();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getStartCaseFrom();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getStartCaseTo();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getFinishCaseFrom();
-        $this->assertEmpty($actual);
-        $actual = $absCases->getFinishCaseTo();
-        $this->assertEmpty($actual);
-        // Other
+        $this->assertNotEmpty($actual);
         $actual = $absCases->getCaseUid();
         $this->assertEquals($properties['caseLink'], $actual);
         $actual = $absCases->getCasesUids();
@@ -765,7 +860,14 @@ class AbstractCasesTest extends TestCase
     {
         $absCases = new AbstractCases();
         $dueDate = date('Y-m-d');
+        // Review overdue
         $result = $absCases->getTaskColor($dueDate);
+        $this->assertNotEmpty($result);
+
+        $absCases = new AbstractCases();
+        $dueDate = date('Y-m-d');
+        // Review on-time
+        $result = $absCases->getTaskColor($dueDate,'' ,'2000-01-01');
         $this->assertNotEmpty($result);
     }
 
@@ -783,7 +885,29 @@ class AbstractCasesTest extends TestCase
             {"tas_id":'.$task[0]->TAS_ID.', "user_id":1, "due_date":"2020-12-04 19:11:14"},
             {"tas_id":'.$task[1]->TAS_ID.', "user_id":2, "due_date":"2020-12-04 19:12:45"}
         ]';
+        // Default values
         $result = $absCases->prepareTaskPending($pending);
         $this->assertNotEmpty($result);
+        // Thread users
+        $result = $absCases->prepareTaskPending($pending, false);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * This get thread information
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::threadInformation()
+     * @test
+     */
+    public function it_return_thread_information()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $taskPending = Delegation::getLastThread($delegation->APP_NUMBER);
+        $absCases = new AbstractCases();
+        foreach ($taskPending as $thread) {
+            $thread['APP_STATUS'] = 'TO_DO';
+            $result = $absCases->threadInformation($thread, true, true);
+            $this->assertNotEmpty($result);
+        }
     }
 }

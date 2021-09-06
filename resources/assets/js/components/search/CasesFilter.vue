@@ -7,21 +7,33 @@
     >
       <template v-slot:body>
         <b-form-group>
-          <b-form-radio-group
-            v-model="selected"
-            :options="filterItems"
-            value-field="id"
-            text-field="optionLabel"
-            name="flavour-2a"
-            stacked
-          ></b-form-radio-group>
+            <b-form-radio-group
+                v-model="selected"
+                :options="filterItems"
+                value-field="id"
+                text-field="optionLabel"
+                name="flavour-2a"
+                stacked
+            ></b-form-radio-group>
+        <b-form-group>
+        </b-form-group>
+            <b-form-checkbox
+                id="checkbox-1"
+                v-model="byProcessName"
+                name="checkbox-1"
+                value="processName"
+            >
+                {{$t('ID_BY_PROCESS_NAME') }}
+            </b-form-checkbox>
         </b-form-group>
       </template>
     </SearchPopover>
 
     <div class="p-1 v-flex">
       <h5 class="v-search-title">{{ title }}</h5>
-
+      <div class="pm-in-text-icon">
+        <i :class="icon"></i>
+      </div>  
       <b-input-group class="w-75 p-1">
         <div class="input-group mb-3">
           <div class="input-group-prepend">
@@ -68,124 +80,169 @@
 
 <script>
 import SearchPopover from "./popovers/SearchPopover.vue";
-import CaseIntegerNumber from "./popovers/CaseIntegerNumber.vue";
+import CaseNumber from "./popovers/CaseNumber.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
 import DateFilter from "./popovers/DateFilter.vue";
 import TaskTitle from "./popovers/TaskTitle.vue";
+import CurrentUser from "./popovers/CurrentUser.vue";
 import api from "./../../api/index";
 
 export default {
   name: "Cases",
-  props: ["filters", "title"],
+  props: ["filters", "title", "icon"],
   components: {
     SearchPopover,
-    CaseIntegerNumber,
+    CaseNumber,
     CaseTitle,
     ProcessName,
     DateFilter,
     TaskTitle,
+    CurrentUser
   },
   data() {
     return {
-      searchLabel: this.$i18n.t("ID_SEARCH"),
-      addSearchTitle: this.$i18n.t("ID_ADD_SEARCH_FILTER_CRITERIA"),
-      searchTags: [],
+        searchLabel: this.$i18n.t("ID_SEARCH"),
+        addSearchTitle: this.$i18n.t("ID_ADD_SEARCH_FILTER_CRITERIA"),
+        searchTags: [],
+        dataLoaded: false,
+        filterItems: [
+            {
+            type: "CaseNumber",
+            id: "caseNumber",
+            title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                "ID_BY_CASE_NUMBER"
+            )}`,
+            optionLabel: this.$i18n.t("ID_BY_CASE_NUMBER"),
+            detail: this.$i18n.t("ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED"),
+            tagText: "",
+            tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_NUMBER"),
+            items: [
+                {
+                id: "filterCases",
+                value: "",
+                },
+            ],
+            autoShow: true,
+            makeTagText: function (params, data) {
+                return `${params.tagPrefix}: ${data[0].value}`;
+            },
+            },
+            {
+            type: "CaseTitle",
+            id: "caseTitle",
+            title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                "ID_BY_CASE_TITLE"
+            )}`,
+            optionLabel: this.$i18n.t("ID_BY_CASE_TITLE"),
+            tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_TITLE"),
+            detail: "",
+            tagText: "",
+            items: [
+                {
+                id: "caseTitle",
+                value: "",
+                },
+            ],
+            autoShow: true,
+            makeTagText: function (params, data) {
+                return `${this.tagPrefix} ${data[0].value}`;
+            },
+            },
+            {
+                type: "DateFilter",
+                id: "delegationDate",
+                title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_DELEGATION_DATE')}`,
+                optionLabel: this.$i18n.t('ID_BY_DELEGATION_DATE'),
+                detail: this.$i18n.t('ID_PLEASE_SELECT_THE_DELEGATION_DATE_TO_BE_SEARCHED'),
+                tagText: "",
+                tagPrefix:  this.$i18n.t('ID_SEARCH_BY_DELEGATION_DATE'),
+                items:[
+                    {
+                        id: "delegateFrom",
+                        value: "",
+                        label: this.$i18n.t('ID_FROM_DELEGATION_DATE')
+                    },
+                    {
+                        id: "delegateTo",
+                        value: "",
+                        label: this.$i18n.t('ID_TO_DELEGATION_DATE')
+                    }
+                ],
+                makeTagText: function (params, data) {
+                    return  `${params.tagPrefix} ${data[0].value} - ${data[1].value}`;
+                }
+            },
+            {
+                type: "CurrentUser",
+                id: "bySendBy",
+                title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_SEND_BY')}`,
+                optionLabel: this.$i18n.t('ID_BY_SEND_BY'),
+                detail: this.$i18n.t('ID_PLEASE_SELECT_USER_NAME_TO_BE_SEARCHED'),
+                placeholder: this.$i18n.t('ID_USER_NAME'),
+                tagText: "",
+                tagPrefix:  this.$i18n.t('ID_SEARCH_BY_SEND_BY'),
+                items:[
+                    {
+                        id: "sendBy",
+                        value: "",
+                        options: [],
+                        placeholder: this.$i18n.t('ID_USER_NAME')
+                    }
+                ],
+                makeTagText: function (params, data) {
+                    return  `${params.tagPrefix} : ${data[0].label || ''}`;
+                }
+            },
+            {
+            type: "TaskTitle",
+            id: "taskTitle",
+            title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                "ID_TASK_NAME"
+            )}`,
+            optionLabel: this.$i18n.t("ID_BY_TASK"),
+            detail: "",
+            tagText: "",
+            tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_NAME"),
+            autoShow: true,
+            items: [
+                {
+                id: "task",
+                value: "",
+                options: [],
+                placeholder: this.$i18n.t("ID_TASK_NAME"),
+                },
+            ],
+            makeTagText: function (params, data) {
+                return `${this.tagPrefix}: ${data[0].label || ""}`;
+            },
+            },
+        ],
+        processName: {
+                type: "ProcessName",
+                id: "processName",
+                title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
+                optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
+                detail: "",
+                tagText: "",
+                tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
+                autoShow: false,
+                items:[
+                    {
+                        id: "process",
+                        value: "",
+                        options: [],
+                        placeholder: this.$i18n.t('ID_PROCESS_NAME')
+                    }
+                ],
+                makeTagText: function (params, data) {
 
-      filterItems: [
-        {
-          type: "CaseIntegerNumber",
-          id: "caseNumber",
-          title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-            "ID_BY_CASE_NUMBER"
-          )}`,
-          optionLabel: this.$i18n.t("ID_BY_CASE_NUMBER"),
-          detail: this.$i18n.t("ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED"),
-          tagText: "",
-          tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_NUMBER"),
-          items: [
-            {
-              id: "caseNumber",
-              value: "",
+                    return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                }
             },
-          ],
-          autoShow: true,
-          makeTagText: function (params, data) {
-            return `${params.tagPrefix}: ${data[0].value}`;
-          },
-        },
-        {
-          type: "CaseTitle",
-          id: "caseTitle",
-          title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-            "ID_BY_CASE_TITLE"
-          )}`,
-          optionLabel: this.$i18n.t("ID_BY_CASE_TITLE"),
-          tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_TITLE"),
-          detail: "",
-          tagText: "",
-          items: [
-            {
-              id: "caseTitle",
-              value: "",
-            },
-          ],
-          autoShow: true,
-          makeTagText: function (params, data) {
-            return `${this.tagPrefix} ${data[0].value}`;
-          },
-        },
-        {
-          type: "ProcessName",
-          id: "processName",
-          title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-            "ID_BY_PROCESS_NAME"
-          )}`,
-          optionLabel: this.$i18n.t("ID_BY_PROCESS_NAME"),
-          detail: "",
-          tagText: "",
-          tagPrefix: this.$i18n.t("ID_SEARCH_BY_PROCESS_NAME"),
-          autoShow: true,
-          items: [
-            {
-              id: "process",
-              value: "",
-              options: [],
-              placeholder: this.$i18n.t("ID_PROCESS_NAME"),
-            },
-          ],
-          makeTagText: function (params, data) {
-            return `${this.tagPrefix} ${
-              (data[0].options && data[0].options.label) || ""
-            }`;
-          },
-        },
-        {
-          type: "TaskTitle",
-          id: "taskTitle",
-          title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-            "ID_TASK_NAME"
-          )}`,
-          optionLabel: this.$i18n.t("ID_TASK"),
-          detail: "",
-          tagText: "",
-          tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_NAME"),
-          autoShow: true,
-          items: [
-            {
-              id: "task",
-              value: "",
-              options: [],
-              placeholder: this.$i18n.t("ID_TASK_NAME"),
-            },
-          ],
-          makeTagText: function (params, data) {
-            return `${this.tagPrefix}: ${data[0].label || ""}`;
-          },
-        },
-      ],
-      selected: "",
-      itemModel: {},
+        selected: "",
+        itemModel: {},
+        byProcessName: ""
     };
   },
   mounted() {
@@ -196,57 +253,97 @@ export default {
         o.autoShow = false;
       });
       this.setFilters(fils);
+      this.dataLoaded = true;
     }
   },
   watch: {
-    filters: function (filters) {
-      this.searchTags = [];
-      this.selected = "";
-      this.setFilters(filters);
-    },
+    filters: { 
+        immediate: true, 
+        handler(newVal, oldVal) { 
+            this.searchTags = [];
+            this.selected = [];
+            //Prevent show popover at the first time
+            if (newVal.length && this.dataLoaded) {
+                this.setFilters(newVal, oldVal);
+                this.searchClickHandler();
+            }
+        }
+    }
   },
   methods: {
     /**
      * Add filter criteria save button handler
      */
     onOk() {
-      let self = this,
-        element,
-        initialFilters = [],
-        item;
-      this.$root.$emit("bv::hide::popover");
-      element = _.find(this.filterItems, function (o) {
-        return o.id === self.selected;
-      });
-      if (element) {
-        _.forEach(element.items, function (value, key) {
-          item = {
-            filterVar: value.id,
-            fieldId: self.selected,
-            value: "",
-            label: "",
-            options: [],
-          };
-          initialFilters.push(item);
+        let self = this,
+            element,
+            initialFilters = [],
+            item;
+        this.$root.$emit("bv::hide::popover");
+        element = _.find(this.filterItems, function (o) {
+            return o.id === self.selected;
         });
-      }
-      this.$emit("onUpdateFilters", { params: initialFilters, refresh: false });
+        if  (element) {
+            initialFilters = this.prepareFilterItems(element.items, this.selected, true);
+        }
+        //adding process name filter 
+        if (self.byProcessName !== "") {
+            initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
+        }
+        this.$emit("onUpdateFilters", {params: initialFilters, refresh: false}); 
+    },
+    /**
+     * Prepare the filter items
+     * @param {array} items
+     * @param {id} string
+     * @param {boolean} restore
+     */
+    prepareFilterItems(items, id, restore){
+        let initialFilters = [],
+            self = this,
+            filter,
+            item;
+        _.forEach(items, function(value, key) {
+            filter = _.find(self.filters, function(o) { return o.filterVar === value.id; });
+            if (filter && restore) {
+                initialFilters.push(filter);
+            } else {
+                item = {
+                    filterVar: value.id,
+                    fieldId: id,
+                    value:  '',
+                    label: "",
+                    options: []
+                };
+                initialFilters.push(item);
+            }
+        });
+        return initialFilters;
     },
     /**
      * Set Filters and make the tag labels
      * @param {object} filters json to manage the query
      */
-    setFilters(filters) {
+    setFilters(filters, oldVal) {
       let self = this;
       _.forEach(filters, function (item, key) {
         let component = _.find(self.filterItems, function (o) {
           return o.id === item.fieldId;
         });
         if (component) {
-          self.searchTags.push(component.id);
-          self.selected = component.id;
-          self.itemModel[component.id] = component;
-          self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true
+            self.searchTags.push(component.id);
+            self.selected.push(component.id);
+            self.itemModel[component.id] = component;
+            self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true;
+            if (oldVal && !oldVal.length) {
+                self.updateSearchTag(item);
+            }
+        }
+        if(item.fieldId === "processName") {
+            self.searchTags.push(self.processName.id);
+            self.byProcessName = self.processName.id;
+            self.itemModel[self.processName.id] = self.processName;
+            self.itemModel[self.processName.id].autoShow = typeof self.processName.autoShow !== "undefined" ? self.processName.autoShow  : true;
         }
       });
     },
@@ -293,8 +390,16 @@ export default {
      * @param {string} tag filter identifier
      */
     customRemove(removeTag, tag) {
-      this.selected = "";
-      this.$emit("onUpdateFilters", { params: [], refresh: true });
+        let temp = [];
+        _.forEach(this.filters, function(item, key) {
+            if(item.fieldId !== tag) { 
+                temp.push(item);   
+            }
+        });
+        if (tag === "processName") {
+            this.byProcessName = "";
+        }
+        this.$emit("onUpdateFilters", {params: temp, refresh: true});
     },
     /**
      * Update the filter model this is fired from filter popaver save action
@@ -330,7 +435,12 @@ export default {
 }
 
 .v-search-title {
-  padding-right: 20px;
+  padding-right: 10px;
   line-height: 40px;
+}
+.pm-in-text-icon {
+  font-size: 2vw;
+  padding-right: 10px;
+  line-height: 3vw;
 }
 </style>

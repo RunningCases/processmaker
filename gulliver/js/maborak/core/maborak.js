@@ -999,7 +999,7 @@ else{me.applyMask(pressKey);}
 if(updateOnChange){me.sendOnChange();}}
 if(me.browser.name=='Firefox'){if(keyCode==0)return true;}
 if(me.browser.name=='Microsoft Internet Explorer'||me.browser.name=='Netscape'){if(window.event.preventDefault){window.event.preventDefault();}else{window.event.returnValue=false;}}
-if(me.browser.name=='Chrome'||me.browser.name=='Safari'||me.browser.name=='Firefox'){event.returnValue=false;}
+if(me.browser.name=='Chrome'||me.browser.name=='Safari'){event.returnValue=false;}
 else{return false;}}};if(this.element){this.element.onblur=function(event)
 {var evt=event||window.event;var keyPressed=evt.which||evt.keyCode;if((me.mask!='')&&((me.mType=='currency')||(me.mType=='percentage')||((me.validate=="Real")&&(me.mType=='text')))&&(me.mask.indexOf('-')==-1)&&(me.element.value!='')){masks=me.mask;aMasks=masks.split(';');for(m=0;m<aMasks.length;m++){var separatorField=",";if(typeof(me.comma_separator)!='undefined'){separatorField=me.comma_separator;}else{txtRealMask=aMasks[m].split('');p=txtRealMask.length-1;for(;p>=0;p--){if(txtRealMask[p]!='#'&&txtRealMask[p]!='%'&&txtRealMask[p]!=' '){separatorField=txtRealMask[p];break;}}}
 var partsMaskSep=aMasks[m].split(separatorField);if(partsMaskSep.length==2){var countDecimal=0;txtRealMask=aMasks[m].split('');p=txtRealMask.length-1;for(;p>=0;p--){if(txtRealMask[p]=='#'){countDecimal++;}

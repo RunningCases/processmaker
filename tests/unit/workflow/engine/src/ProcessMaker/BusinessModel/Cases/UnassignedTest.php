@@ -1,13 +1,17 @@
 <?php
 
-namespace Tests\unit\workflow\src\ProcessMaker\BusinessModel\Cases;
+namespace Tests\unit\workflow\engine\src\ProcessMaker\BusinessModel\Cases;
 
+use DateInterval;
+use Datetime;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\BusinessModel\Cases\Unassigned;
+use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\AppAssignSelfServiceValue;
 use ProcessMaker\Model\AppAssignSelfServiceValueGroup;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
@@ -88,7 +92,6 @@ class UnassignedTest extends TestCase
             'taskUser' => $taskUser,
             'delegation' => $delegation
         ];
-
     }
 
     /**
@@ -135,7 +138,7 @@ class UnassignedTest extends TestCase
             $selfValueGroup = factory(AppAssignSelfServiceValueGroup::class)->create([
                 'ID' => $appSelfValueUser->ID,
                 'GRP_UID' => $user->USR_UID,
-                'ASSIGNEE_ID' => ($userAssignee) ? $user->USR_ID: $group->GRP_ID,
+                'ASSIGNEE_ID' => ($userAssignee) ? $user->USR_ID : $group->GRP_ID,
                 'ASSIGNEE_TYPE' => $relation
             ]);
             //Create the register in delegation relate to self-service
@@ -417,5 +420,454 @@ class UnassignedTest extends TestCase
         // Get the total for the pagination with some filters
         $res = $unassigned->getPagingCounters();
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method without filters
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_no_filter()
+    {
+        $cases = $this->createMultipleUnassigned(3);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($cases->USR_ID);
+        $unassigned->setUserUid($cases->USR_UID);
+        $res = $unassigned->getCountersByProcesses();
+        $this->assertCount(3, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the category filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_category()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 3
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process2->PRO_UID,
+            'PRO_ID' => $process2->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-2 year"))
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+        $res = $unassigned->getCountersByProcesses(2);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the top ten filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_top_ten()
+    {
+        $cases = $this->createMultipleUnassigned(20);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($cases->USR_ID);
+        $unassigned->setUserUid($cases->USR_UID);
+        $res = $unassigned->getCountersByProcesses(null, true);
+        $this->assertCount(10, $res);
+    }
+
+    /**
+     * It tests the getCountersByProcesses() method with the processes filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByProcesses()
+     * @test
+     */
+    public function it_should_test_get_counters_by_processes_method_processes()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 3
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process2->PRO_UID,
+            'PRO_ID' => $process2->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-2 year"))
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+        $res = $unassigned->getCountersByProcesses(null, false, [$process1->PRO_ID]);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCountersByRange() method
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCountersByRange()
+     * @test
+     */
+    public function it_should_test_get_counters_by_range_method()
+    {
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $process2 = factory(Process::class)->create([
+            'CATEGORY_ID' => 3
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => '2021-05-21 09:52:32'
+        ]);
+        $task2 = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process2->PRO_UID,
+            'PRO_ID' => $process2->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task2->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task2->TAS_ID,
+            'PRO_ID' => $process2->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => '2021-05-24 09:52:32'
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCountersByRange();
+        $this->assertCount(2, $res);
+
+        $res = $unassigned->getCountersByRange(null, null, null, 'month');
+        $this->assertCount(1, $res);
+
+        $res = $unassigned->getCountersByRange(null, null, null, 'year');
+        $this->assertCount(1, $res);
+
+        $res = $unassigned->getCountersByRange($process1->PRO_ID);
+        $this->assertCount(1, $res);
+
+        $res = $unassigned->getCountersByRange(null, '2021-05-20', '2021-05-23');
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCustomListCount() method
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCustomListCount()
+     * @test
+     */
+    public function it_should_test_getCustomListCount_method()
+    {
+        $cases = $this->createMultipleUnassigned(0);
+
+        $additionalTables = factory(AdditionalTables::class)->create();
+        $query = ""
+            . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
+            . "`APP_UID` varchar(32) NOT NULL,"
+            . "`APP_NUMBER` int(11) NOT NULL,"
+            . "`APP_STATUS` varchar(10) NOT NULL,"
+            . "`VAR1` varchar(255) DEFAULT NULL,"
+            . "`VAR2` varchar(255) DEFAULT NULL,"
+            . "`VAR3` varchar(255) DEFAULT NULL,"
+            . "PRIMARY KEY (`APP_UID`),"
+            . "KEY `indexTable` (`APP_UID`))";
+        DB::statement($query);
+
+        $caseList = factory(CaseList::class)->create([
+            'CAL_TYPE' => 'unassigned',
+            'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
+            'USR_ID' => $cases->USR_ID
+        ]);
+
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($cases->USR_ID);
+        $unassigned->setUserUid($cases->USR_UID);
+
+        $res = $unassigned->getCustomListCount($caseList->CAL_ID, 'unassigned');
+
+        //assertions
+        $this->assertArrayHasKey('label', $res);
+        $this->assertArrayHasKey('name', $res);
+        $this->assertArrayHasKey('description', $res);
+        $this->assertArrayHasKey('tableName', $res);
+        $this->assertArrayHasKey('total', $res);
+
+        $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
+        $this->assertEquals(0, $res['total']);
+
+        //for user or group
+        $cases = $this->createSelfServiceUserOrGroup();
+
+        $unassigned = new Unassigned();
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+
+        $res = $unassigned->getCustomListCount($caseList->CAL_ID, 'unassigned');
+
+        //assertions
+        $this->assertArrayHasKey('label', $res);
+        $this->assertArrayHasKey('name', $res);
+        $this->assertArrayHasKey('description', $res);
+        $this->assertArrayHasKey('tableName', $res);
+        $this->assertArrayHasKey('total', $res);
+
+        $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
+        $this->assertEquals(0, $res['total']);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with ontime filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_on_time()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff1Day = new DateInterval('P1D');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $date->add($diff1Day),
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCasesRisk($process1->PRO_ID);
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with at risk filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_at_risk()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCasesRisk($process1->PRO_ID, null, null, 'AT_RISK');
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCasesRisk() method with overdue filter
+     * 
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCasesRisk()
+     * @test
+     */
+    public function it_should_test_get_cases_risk_overdue()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+        $user = factory(User::class)->create();
+        $process1 = factory(Process::class)->create([
+            'CATEGORY_ID' => 2
+        ]);
+        $application = factory(Application::class)->create([
+            'APP_STATUS_ID' => 2
+        ]);
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+            'TAS_GROUP_VARIABLE' => '',
+            'PRO_UID' => $process1->PRO_UID,
+            'PRO_ID' => $process1->PRO_ID,
+        ]);
+        factory(TaskUser::class)->create([
+            'TAS_UID' => $task->TAS_UID,
+            'USR_UID' => $user->USR_UID,
+            'TU_RELATION' => 1,
+            'TU_TYPE' => 1
+        ]);
+        factory(Delegation::class)->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'TAS_ID' => $task->TAS_ID,
+            'PRO_ID' => $process1->PRO_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
+        $unassigned = new Unassigned();
+        $unassigned->setUserId($user->USR_ID);
+        $unassigned->setUserUid($user->USR_UID);
+
+        $res = $unassigned->getCasesRisk($process1->PRO_ID, null, null, 'OVERDUE');
+        $this->assertCount(1, $res);
     }
 }

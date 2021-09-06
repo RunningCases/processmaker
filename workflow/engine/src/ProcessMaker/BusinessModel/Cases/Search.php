@@ -48,20 +48,29 @@ class Search extends AbstractCases
         if ($this->getCaseNumber()) {
             $query->case($this->getCaseNumber());
         }
-        // Filter cases by specific cases like [1,3,5]
-        if (!empty($this->getCasesNumbers())) {
+        // Filter only cases by specific cases like [1,3,5]
+        if (!empty($this->getCasesNumbers()) && empty($this->getRangeCasesFromTo())) {
             $query->specificCases($this->getCasesNumbers());
         }
-        // Filter cases by range of cases like ['1-5', '10-15']
-        if (!empty($this->getRangeCasesFromTo())) {
+        // Filter only cases by range of cases like ['1-5', '10-15']
+        if (!empty($this->getRangeCasesFromTo()) && empty($this->getCasesNumbers())) {
             $query->rangeOfCases($this->getRangeCasesFromTo());
+        }
+        // Filter cases mixed by range of cases and specific cases like '1,3-5,8'
+        if (!empty($this->getCasesNumbers()) && !empty($this->getRangeCasesFromTo())) {
+            $query->casesOrRangeOfCases($this->getCasesNumbers(), $this->getRangeCasesFromTo());
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            // Join with delegation
-            $query->joinDelegation();
+            // Get the result
+            $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
             // Add the filter
-            // $query->title($this->getCaseTitle());
+            $query->specificCases($result);
+        }
+        // Filter by category
+        if ($this->getCategoryId()) {
+            // This filter require a join with the process table
+            $query->category($this->getCategoryId());
         }
         // Filter by process
         if ($this->getProcessId()) {
@@ -78,6 +87,18 @@ class Search extends AbstractCases
             $query->userId($this->getUserId());
             // Get only the open threads related to the user
             $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
+        }
+        // Filter by user who started
+        if ($this->getUserStartedId()) {
+            // Get the case numbers related to this filter
+            $result = Delegation::casesStartedBy($this->getUserStartedId(), $this->getOffset(), $this->getLimit());
+            $query->specificCases($result);
+        }
+        // Filter by user who completed
+        if ($this->getUserCompletedId()) {
+            // Get the case numbers related to this filter
+            $result = Delegation::casesCompletedBy($this->getUserCompletedId(), $this->getOffset(), $this->getLimit());
+            $query->specificCases($result);
         }
         // Filter by task
         if ($this->getTaskId()) {
@@ -151,7 +172,7 @@ class Search extends AbstractCases
             switch ($status) {
                 case 'DRAFT':
                 case 'TO_DO':
-                    $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
+                    $taskPending = Delegation::getPendingThreads($item['APP_NUMBER'], false);
                     break;
                 case 'COMPLETED':
                 case 'CANCELLED':
@@ -162,7 +183,7 @@ class Search extends AbstractCases
             $result = [];
             foreach ($taskPending as $thread) {
                 $thread['APP_STATUS'] = $item['APP_STATUS'];
-                $information = $this->threadInformation($thread, true, true);
+                $information = $this->threadInformation($thread, true);
                 $result['THREAD_TASKS'][$i] = $information['THREAD_TASK'];
                 $result['THREAD_USERS'][$i] = $information['THREAD_USER'];
                 $result['THREAD_TITLES'][$i] = $information['THREAD_TITLE'];
@@ -192,6 +213,17 @@ class Search extends AbstractCases
     {
         // The search does not have a counters
         return 0;
+    }
+
+    /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        // This class does not require this value
+        return false;
     }
 
     /**

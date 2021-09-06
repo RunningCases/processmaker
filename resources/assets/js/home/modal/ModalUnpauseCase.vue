@@ -55,7 +55,16 @@ export default {
       api.cases.unpause(this.data).then((response) => {
         if (response.statusText == "OK") {
           that.$refs["modal-unpause-case"].hide();
-          that.$parent.$refs["vueTable"].getData();
+          that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
+          if (that.$parent.$refs["vueTable"] !== undefined) {
+            that.$parent.$refs["vueTable"].getData();
+          }
+          if (that.$parent.$refs["vueListView"] !== undefined) {
+            that.$parent.$refs["vueListView"].getData();
+          }
+          if (that.$parent.$refs["vueCardView"] !== undefined) {
+            that.$parent.$refs["vueCardView"].getData();
+          }
         }
       });
     },

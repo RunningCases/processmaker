@@ -2,6 +2,8 @@
 
 namespace Tests\unit\workflow\src\ProcessMaker\Model;
 
+use DateInterval;
+use Datetime;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -140,6 +142,29 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeThreadPause
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeThreadPause()
+     * @test
+     */
+    public function it_return_scope_thread_pause()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(0, $table->threadPause()->get());
+    }
+    /**
+     * This test scopeOpenAndPause
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeOpenAndPause()
+     * @test
+     */
+    public function it_return_scope_thread_open_and_pause()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->openAndPause()->get());
+    }
+
+    /**
      * This test scopeCaseStarted
      *
      * @covers \ProcessMaker\Model\Delegation::scopeCaseStarted()
@@ -147,7 +172,7 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_case_started()
     {
-        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $table = factory(Delegation::class)->states('first_thread')->create();
         $this->assertCount(1, $table->caseStarted($table->DEL_INDEX)->get());
     }
 
@@ -404,6 +429,60 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This test scopeOnTime
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeOnTime()
+     * @test
+     */
+    public function it_return_scope_on_time()
+    {
+        $table = factory(Delegation::class)->states('closed')->create();
+        $this->assertCount(1, $table->onTime($table->DEL_DELEGATE_DATE)->get());
+    }
+
+    /**
+     * This test scopeAtRisk
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeAtRisk()
+     * @test
+     */
+    public function it_return_scope_at_risk()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+
+        $table = factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->add($diff2Days)
+        ]);
+        $this->assertCount(1, $table->atRisk($table->DEL_DELEGATE_DATE)->get());
+    }
+
+    /**
+     * This test scopeOverdue
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeOverdue()
+     * @test
+     */
+    public function it_return_scope_overdue()
+    {
+        $date = new DateTime('now');
+        $currentDate = $date->format('Y-m-d H:i:s');
+        $diff2Days = new DateInterval('P2D');
+
+        $table = factory(Delegation::class)->create([
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_DELEGATE_DATE' => $currentDate,
+            'DEL_RISK_DATE' => $currentDate,
+            'DEL_TASK_DUE_DATE' => $date->sub($diff2Days)
+        ]);
+        $this->assertCount(1, $table->overdue($table->DEL_DELEGATE_DATE)->get());
+    }
+
+    /**
      * This test scopeCase
      *
      * @covers \ProcessMaker\Model\Delegation::scopeCase()
@@ -461,6 +540,20 @@ class DelegationTest extends TestCase
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
         $this->assertCount(1, $table->positiveCases()->get());
+    }
+
+    /**
+     * This test scopeCasesOrRangeOfCases
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCasesOrRangeOfCases()
+     * @test
+     */
+    public function it_return_scope_cases_and_range_of_cases()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $cases = [$table->APP_NUMBER];
+        $rangeCases = [$table->APP_NUMBER . '-' . $table->APP_NUMBER];
+        $this->assertCount(1, $table->casesOrRangeOfCases($cases, $rangeCases)->get());
     }
 
     /**
@@ -555,6 +648,18 @@ class DelegationTest extends TestCase
      * @covers \ProcessMaker\Model\Delegation::scopeTask()
      * @test
      */
+    public function it_return_scope_task_id()
+    {
+        $table = factory(Delegation::class)->states('foreign_keys')->create();
+        $this->assertCount(1, $table->task($table->TAS_ID)->get());
+    }
+
+    /**
+     * This test scopeTask
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeTask()
+     * @test
+     */
     public function it_return_scope_task()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
@@ -635,8 +740,38 @@ class DelegationTest extends TestCase
      */
     public function it_return_scope_process_in_list()
     {
+        $process = factory(Process::class)->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'PRO_ID' => $process->PRO_ID
+        ]);
+        $this->assertCount(1, $table->joinProcess()->processInList([$table->PRO_ID])->get());
+    }
+
+    /**
+     * This test scopeParticipated
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeParticipated()
+     * @test
+     */
+    public function it_return_scope_participated()
+    {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->processInList([$table->PRO_ID])->get());
+        $this->assertCount(1, $table->participated($table->USR_ID)->get());
+    }
+
+    /**
+     * This test scopeCategoryId
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeCategoryId()
+     * @test
+     */
+    public function it_return_scope_category()
+    {
+        $process = factory(Process::class)->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'PRO_ID' => $process->PRO_ID
+        ]);
+        $this->assertCount(1, $table->joinProcess()->categoryId($process->CATEGORY_ID)->get());
     }
 
     /**
@@ -2035,6 +2170,8 @@ class DelegationTest extends TestCase
         //Review the self-service records
         $result = Delegation::getSelfService($user->USR_UID);
         $this->assertEquals(25, count($result));
+        $result = Delegation::getSelfService($user->USR_UID, ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'], null,  null,null, null, null, 0, 15);
+        $this->assertEquals(15, count($result));
     }
 
     /**
@@ -3118,6 +3255,28 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This check the return of thread info
+     *
+     * @covers \ProcessMaker\Model\Delegation::getDatesFromThread()
+     * @test
+     */
+    public function it_get_thread_dates()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $task = new Task();
+        $taskInfo = $task->load($delegation->TAS_UID);
+        $taskInfo = head($taskInfo);
+        $taskType = $taskInfo['TAS_TYPE'];
+        $result = Delegation::getDatesFromThread(
+            $delegation->APP_UID,
+            $delegation->DEL_INDEX,
+            $delegation->TAS_UID,
+            $taskType
+        );
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * This check the return of pending threads
      *
      * @covers \ProcessMaker\Model\Delegation::getPendingThreads()
@@ -3127,6 +3286,8 @@ class DelegationTest extends TestCase
     {
         $delegation = factory(Delegation::class)->states('foreign_keys')->create();
         $result = Delegation::getPendingThreads($delegation->APP_NUMBER);
+        $this->assertNotEmpty($result);
+        $result = Delegation::getPendingThreads($delegation->APP_NUMBER, false);
         $this->assertNotEmpty($result);
     }
 
@@ -3204,8 +3365,34 @@ class DelegationTest extends TestCase
         ]);
 
         $res = Delegation::hasActiveParentsCases($parents);
-
-        // Assert the result is true
         $this->assertTrue($res);
+        $res = Delegation::hasActiveParentsCases([]);
+        $this->assertFalse($res);
+    }
+
+    /**
+     * This check the return cases completed by specific user
+     *
+     * @covers \ProcessMaker\Model\Delegation::casesCompletedBy()
+     * @test
+     */
+    public function it_get_cases_completed_by_specific_user()
+    {
+        $delegation = factory(Delegation::class)->states('last_thread')->create();
+        $result = Delegation::casesCompletedBy($delegation->USR_ID);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * This check the return cases completed by specific user
+     *
+     * @covers \ProcessMaker\Model\Delegation::casesStartedBy()
+     * @test
+     */
+    public function it_get_cases_started_by_specific_user()
+    {
+        $delegation = factory(Delegation::class)->states('first_thread')->create();
+        $result = Delegation::casesStartedBy($delegation->USR_ID);
+        $this->assertNotEmpty($result);
     }
 }

@@ -5,6 +5,7 @@ namespace ProcessMaker\BusinessModel\Cases;
 use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\ProcessUser;
+use ProcessMaker\Model\User;
 
 class Supervising extends AbstractCases
 {
@@ -14,11 +15,12 @@ class Supervising extends AbstractCases
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
         'PROCESS.PRO_TITLE', // Process Name
-        'TASK.TAS_TITLE',  // Pending Task
-        'APPLICATION.APP_STATUS',  // Status
-        'APPLICATION.APP_CREATE_DATE',  // Start Date
-        'APPLICATION.APP_FINISH_DATE',  // Finish Date
-        'APP_DELEGATION.DEL_TASK_DUE_DATE',  // Due Date related to the colors
+        'TASK.TAS_TITLE', // Pending Task
+        'APPLICATION.APP_STATUS', // Status
+        'APPLICATION.APP_CREATE_DATE', // Start Date
+        'APPLICATION.APP_FINISH_DATE', // Finish Date
+        'APP_DELEGATION.DEL_TASK_DUE_DATE', // Due Date related to the colors
+        'APP_DELEGATION.DEL_PREVIOUS', // Previous
         'USERS.USR_ID',  // Current UserId
         // Additional column for other functionalities
         'APP_DELEGATION.APP_UID', // Case Uid for Open case
@@ -48,6 +50,18 @@ class Supervising extends AbstractCases
         // Specific case
         if ($this->getCaseNumber()) {
             $query->case($this->getCaseNumber());
+        }
+        // Filter only cases by specific cases like [1,3,5]
+        if (!empty($this->getCasesNumbers()) && empty($this->getRangeCasesFromTo())) {
+            $query->specificCases($this->getCasesNumbers());
+        }
+        // Filter only cases by range of cases like ['1-5', '10-15']
+        if (!empty($this->getRangeCasesFromTo()) && empty($this->getCasesNumbers())) {
+            $query->rangeOfCases($this->getRangeCasesFromTo());
+        }
+        // Filter cases mixed by range of cases and specific cases like '1,3-5,8'
+        if (!empty($this->getCasesNumbers()) && !empty($this->getRangeCasesFromTo())) {
+            $query->casesOrRangeOfCases($this->getCasesNumbers(), $this->getRangeCasesFromTo());
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
@@ -141,12 +155,24 @@ class Supervising extends AbstractCases
                 $item['CASE_NOTES_COUNT'] = AppNotes::total($item['APP_NUMBER']);
                 // Get the detail related to the open thread
                 $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
-                $information = [];
+                $result = [];
                 foreach ($taskPending as $thread) {
                     $thread['APP_STATUS'] = $item['APP_STATUS'];
-                    $information[] = $this->threadInformation($thread);
+                    $information = $this->threadInformation($thread);
+                    $result['THREAD_TASKS'] = [];
+                    $result['THREAD_TITLES'] = [];
+                    $result['THREAD_TASKS'][] = $information['THREAD_TASK'];
+                    $result['THREAD_TITLES'][] = $information['THREAD_TITLE'];
                 }
-                $item['PENDING'] = $information;
+                $item['PENDING'] = $result['THREAD_TASKS'];
+                $item['THREAD_TITLES'] = $result['THREAD_TITLES'];
+                // Get send by related to the previous index
+                $previousThread = Delegation::getThreadInfo($item['APP_NUMBER'], $item['DEL_PREVIOUS']);
+                $userInfo = !empty($previousThread) ? User::getInformation($previousThread['USR_ID']) : [];
+                $result = [];
+                $result['del_previous'] = $item['DEL_PREVIOUS'];
+                $result['user_tooltip'] = $userInfo;
+                $item['SEND_BY_INFO'] = $result;
 
                 return $item;
             });
@@ -171,7 +197,7 @@ class Supervising extends AbstractCases
         // Only cases in to_do
         $query->caseTodo();
         // Only open threads
-        $query->isThreadOpen();
+        $query->threadOpen();
         // For parallel threads the distinct by APP_NUMBER is important
         $query->distinct();
         // Get the list of processes of the supervisor
@@ -180,6 +206,17 @@ class Supervising extends AbstractCases
         $query->processInList($processes);
         // Return the number of rows
         return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
+
+    /**
+     * Count if the user has at least one case in the list
+     *
+     * @return bool
+     */
+    public function atLeastOne()
+    {
+        // This class does not require this value
+        return false;
     }
 
     /**
@@ -196,7 +233,7 @@ class Supervising extends AbstractCases
         // Only cases in to_do
         $query->caseTodo();
         // Only open threads
-        $query->isThreadOpen();
+        $query->threadOpen();
         // For parallel threads the distinct by APP_NUMBER is important
         $query->distinct();
         // Get the list of processes of the supervisor

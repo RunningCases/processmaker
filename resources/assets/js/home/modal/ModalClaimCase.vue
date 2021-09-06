@@ -30,6 +30,8 @@
 
 <script>
 import api from "./../../api/index";
+import eventBus from "../EventBus/eventBus";
+
 export default {
   name: "ModalClaimCase",
   components: {},
@@ -57,14 +59,25 @@ export default {
       api.cases.claim(this.data).then((response) => {
         if (response.status === 200) {
           that.$refs["modal-claim-case"].hide();
-          that.$parent.$emit("onUpdateDataCase", {
+          that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
+          if (that.$parent.$refs["vueTable"] !== undefined) {
+            that.$parent.$refs["vueTable"].getData();
+          }
+          if (that.$parent.$refs["vueListView"] !== undefined) {
+            that.$parent.$refs["vueListView"].getData();
+          }
+          if (that.$parent.$refs["vueCardView"] !== undefined) {
+            that.$parent.$refs["vueCardView"].getData();
+          }
+          //TODO Trigger onUpdateDataCase
+          eventBus.$emit("home-update-datacase", {
             APP_UID: this.data.APP_UID,
             DEL_INDEX: this.data.DEL_INDEX,
             PRO_UID: this.data.PRO_UID,
             TAS_UID: this.data.TAS_UID,
             ACTION: "todo",
           });
-          that.$parent.$emit("onUpdatePage", "XCase");
+          eventBus.$emit("home-update-page", "XCase");
         }
       });
     },

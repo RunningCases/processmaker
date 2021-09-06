@@ -1,5 +1,7 @@
 import axios from "axios";
-import Api from "./Api.js";
+import ApiInstance from "./Api.js";
+import Services from "./Services";
+let Api = new ApiInstance( Services );
 
 export let cases = {
     myCases(data) {
@@ -16,25 +18,56 @@ export let cases = {
             keys: {}
         });
     },
-    draft(data) {
+    inbox(data) {
+        let service = "INBOX_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "INBOX_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
         return Api.get({
-            service: "DRAFT_LIST",
+            service,
             params: data,
-            keys: {}
+            keys
+        });
+    },
+    draft(data) {
+        let service = "DRAFT_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "DRAFT_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
+        return Api.get({
+            service,
+            params: data,
+            keys
         });
     },
     paused(data) {
+        let service = "PAUSED_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "PAUSED_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
         return Api.get({
-            service: "PAUSED_LIST",
+            service,
             params: data,
-            keys: {}
+            keys
         });
     },
     unassigned(data) {
+        let service = "UNASSIGNED_LIST",
+            keys = {};
+        if (data && data.id) {
+            service = "UNASSIGNED_CUSTOM_LIST";
+            keys["id"] =  data.id;
+        }
         return Api.get({
-            service: "UNASSIGNED_LIST",
+            service,
             params: data,
-            keys: {}
+            keys
         });
     },
     summary(data) {
@@ -152,6 +185,26 @@ export let cases = {
             `cases/ajaxListener`, params);
     },
     /**
+     * Pause case with endpoint
+     * @param {*} data 
+     * @returns 
+     */
+    pauseCase(data) {
+        return Api.update({
+            service: "PAUSE_CASE",
+            data: {
+                unpaused_date: data.unpausedDate,
+                unpaused_time: data.unpausedTime,
+                index: data.DEL_INDEX,
+                reason: data.reasonPause,
+                sendMail: data.notifyUser
+            },
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
+    },
+    /**
      * Unpause case with endpoint
      * @param {*} data 
      * @returns 
@@ -159,7 +212,32 @@ export let cases = {
     unpause(data) {
         return Api.update({
             service: "UNPAUSE_CASE",
+            data: {
+              index: data.DEL_INDEX
+            },
+            keys: {
+                app_uid: data.APP_UID
+            }
+        });
+    },
+    getUserReassign(data) {
+        return Api.get({
+            service: "REASSIGN_USERS",
             data: {},
+            keys: {
+                task_uid: data.TAS_UID
+            }
+        });
+    },
+    reassingCase(data) {
+        return Api.update({
+            service: "REASSIGN_CASE",
+            data: {
+                usr_uid_target: data.userSelected,
+                del_index: data.DEL_INDEX,
+                reason: data.reasonReassign,
+                sendMail: data.notifyUser
+            },
             keys: {
                 app_uid: data.APP_UID
             }
@@ -247,6 +325,17 @@ export let cases = {
         return axios.get(window.config.SYS_SERVER_AJAX +
             window.config.SYS_URI +
             `cases/debug_triggers?r=${r}&_dc=${dc}`);
+    },
+    /**
+     * Make a search request to the Api service 
+     * @param {object} dt - filter parameters
+     */
+    listTotalCases(dt) {
+      return Api.get({
+        service: "LIST_TOTAL_CASES",
+        params: {},
+        keys: {}
+      })
     },
 };
 

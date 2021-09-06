@@ -291,11 +291,6 @@ class AppProxy extends HttpProxyController
                 'label' => G::LoadTranslation('ID_CASE_NUMBER') . ': ',
                 'value' => $appFields['APP_NUMBER'],
             ],
-            $i++ => [ // Case Title
-                'id' => 'CASE_TITLE',
-                'label' => G::LoadTranslation('ID_CASE_TITLE') . ': ',
-                'value' => $appFields['TITLE'],
-            ],
             $i++ => [ // Case Description
                 'id' => 'CASE_DESCRIPTION',
                 'label' => G::LoadTranslation('ID_CASE_DESCRIPTION') . ': ',
@@ -357,6 +352,11 @@ class AppProxy extends HttpProxyController
                     'label' => G::LoadTranslation('ID_TASK') . ': ',
                     'value' => $row['TAS_TITLE'],
                 ],
+                $j++ => [ // Case Title per thread
+                    'id' => 'CASE_TITLE',
+                    'label' => G::LoadTranslation('ID_CASE_THREAD_TITLE') . ': ',
+                    'value' => $row['DEL_TITLE'],
+                ],
                 $j++ => [ // Current User
                     'id' => 'CURRENT_USER',
                     'label' => G::LoadTranslation('ID_CURRENT_USER') . ': ',
@@ -405,7 +405,7 @@ class AppProxy extends HttpProxyController
             ],
             $i++ => [ // Case Title
                 'id' => 'CASE_TITLE',
-                'label' => G::LoadTranslation('ID_CASE_TITLE') . ': ',
+                'label' => G::LoadTranslation('ID_TASK_TITLE') . ': ',
                 'value' => $appFields['TITLE'],
             ],
             $i++ => [ // Case Status

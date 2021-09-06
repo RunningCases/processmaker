@@ -416,7 +416,7 @@ Ext.onReady(function(){
 
     buttonCancel = new Ext.Button({
         buttonAlign: 'center',
-        text: 'Cancel',
+        text: _("ID_CANCEL"),
         handler: redirectHistory,
         cls: 'cancelSummary',
         width: '100px',
@@ -427,7 +427,7 @@ Ext.onReady(function(){
     buttonClaimCase = new Ext.Button({
         buttonAlign: 'center',
         ui: 'round',
-        text: 'Claim this case',
+        text: _("ID_CLAIM_THIS_CASE"),
         handler: claimCase,
         cls: 'claimCaseSummary',
         width: '120px',

@@ -3325,6 +3325,8 @@ class WorkspaceTools
      */
     public function checkRbacPermissions()
     {
+        CLI::logging("-> Remove the permissions depreacated in RBAC \n");
+        $this->removePermission();
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
         $RBAC = RBAC::getSingleton();
@@ -4080,6 +4082,26 @@ class WorkspaceTools
     }
 
     /**
+     * Remove the permissions deprecated
+     */
+    public function removePermission()
+    {
+        // Initializing
+        $this->initPropel(true);
+        $con = Propel::getConnection(RbacUsersPeer::DATABASE_NAME);
+        // Remove the permission PM_SETUP_HEART_BEAT
+        CLI::logging("->   Remove permission PM_SETUP_HEART_BEAT \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("DELETE FROM RBAC_ROLES_PERMISSIONS WHERE PER_UID = '00000000000000000000000000000025'");
+        $con->commit();
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("DELETE FROM RBAC_PERMISSIONS WHERE PER_UID = '00000000000000000000000000000025'");
+        $con->commit();
+    }
+
+    /**
      * Populate new fields used for avoiding the use of the "APP_CACHE_VIEW" table
      */
     public function migratePopulateIndexingACV()
@@ -4145,6 +4167,22 @@ class WorkspaceTools
                                    ON (AD.TAS_UID = TAS.TAS_UID)
                                    SET AD.TAS_ID = TAS.TAS_ID
                                    WHERE AD.TAS_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.DEL_THREAD_STATUS_ID with paused threads
+        CLI::logging("->   Populating APP_DELEGATION.DEL_THREAD_STATUS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT APP_DELAY.APP_NUMBER, APP_DELAY.APP_DEL_INDEX
+                                       FROM APP_DELAY
+                                       WHERE APP_TYPE = 'PAUSE' AND APP_DELAY.APP_DISABLE_ACTION_USER = '0'
+                                   ) AS DELAY
+                                   ON (AD.APP_NUMBER = DELAY.APP_NUMBER AND AD.DEL_INDEX = DELAY.APP_DEL_INDEX)
+                                   SET AD.DEL_THREAD_STATUS_ID = 3, 
+                                       AD.DEL_THREAD_STATUS = 'PAUSED'
+                                   WHERE AD.DEL_THREAD_STATUS_ID = 0");
         $con->commit();
 
         // Populating APPLICATION.APP_STATUS_ID
@@ -4367,6 +4405,21 @@ class WorkspaceTools
                                    WHERE APP_SELF.TAS_ID = 0");
         $con->commit();
         CLI::logging("-> Populating APP_ASSIGN_SELF_SERVICE_VALUE.TAS_ID  Done \n");
+
+        // Populating PROCESS.CATEGORY_ID
+        CLI::logging("->   Populating PROCESS.CATEGORY_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE PROCESS
+                                   INNER JOIN (
+                                       SELECT PROCESS_CATEGORY.CATEGORY_UID, PROCESS_CATEGORY.CATEGORY_ID
+                                       FROM PROCESS_CATEGORY
+                                   ) AS CAT
+                                   ON (PROCESS.PRO_CATEGORY = CAT.CATEGORY_UID)
+                                   SET PROCESS.CATEGORY_ID = CAT.CATEGORY_ID
+                                   WHERE PROCESS.CATEGORY_ID = 0");
+        $con->commit();
+        CLI::logging("-> Populating PROCESS.CATEGORY_ID  Done \n");
 
         // Populating PROCESS_VARIABLES.PRO_ID
         CLI::logging("->   Populating PROCESS_VARIABLES.PRO_ID \n");
@@ -5003,11 +5056,10 @@ class WorkspaceTools
         $processUid = '',
         $gridKey = '',
         $addTabUid = '',
-        $className = '',
-        $pathWorkspace,
         int $start = 0,
         int $limit = 10
     ) {
+        // Initialize DB connections
         $this->initPropel();
         $dbHost = explode(':', $this->dbHost);
         config(['database.connections.workflow.host' => $dbHost[0]]);
@@ -5018,19 +5070,15 @@ class WorkspaceTools
             config(['database.connections.workflow.port' => $dbHost[1]]);
         }
 
-        //require file
-        set_include_path(get_include_path() . PATH_SEPARATOR . $pathWorkspace);
-        if (!file_exists($pathWorkspace . 'classes/' . $className . '.php')) {
-            throw new Exception("ERROR: " . $pathWorkspace . 'classes/' . $className . '.php' . " class file doesn't exit!");
-        }
-        require_once 'classes/model/AdditionalTables.php';
-        require_once $pathWorkspace . 'classes/' . $className . '.php';
-
-        //get fields
+        // Get fields and some specific field types
+        $fields = [];
+        $fieldsWithTypes = [];
         $fieldTypes = [];
         if ($addTabUid != '') {
-            $fields = Fields::where('ADD_TAB_UID', '=', $addTabUid)->get();
-            foreach ($fields as $field) {
+            $fieldsAux = Fields::where('ADD_TAB_UID', '=', $addTabUid)->get();
+            foreach ($fieldsAux as $field) {
+                $fields[] = $field->FLD_NAME;
+                $fieldsWithTypes[$field->FLD_NAME] = strtoupper($field->FLD_TYPE);
                 switch ($field->FLD_TYPE) {
                     case 'FLOAT':
                     case 'DOUBLE':
@@ -5043,10 +5091,11 @@ class WorkspaceTools
             }
         }
 
+        // Initialize variables
         $context = Bootstrap::context();
         $case = new Cases();
 
-        //select cases for this Process, ordered by APP_NUMBER
+        // Select cases of the related process, ordered by APP_NUMBER
         $applications = Application::query()
             ->where('PRO_UID', '=', $processUid)
             ->where('APP_NUMBER', '>', 0)
@@ -5054,11 +5103,13 @@ class WorkspaceTools
             ->offset($start)
             ->limit($limit)
             ->get();
+
+        // Process applications selected
         foreach ($applications as $application) {
-            //getting the case data
+            // Get case data
             $appData = $case->unserializeData($application->APP_DATA);
 
-            //quick fix, map all empty values as NULL for Database
+            // Quick fix, map all empty values as NULL for Database
             foreach ($appData as $appDataKey => $appDataValue) {
                 if (is_array($appDataValue) && count($appDataValue)) {
                     $j = key($appDataValue);
@@ -5073,10 +5124,10 @@ class WorkspaceTools
                             }
                         }
                     }
-                    // normal fields
+                    // Normal fields
                     $appData[$appDataKey] = $appDataValue === '' ? null : $appDataValue;
                 } else {
-                    // grids
+                    // Grids
                     if (is_array($appData[$appDataKey])) {
                         foreach ($appData[$appDataKey] as $dIndex => $dRow) {
                             if (is_array($dRow)) {
@@ -5091,22 +5142,30 @@ class WorkspaceTools
                 }
             }
 
-            //populate data
+            // Populate data
             if ($type === 'GRID') {
                 list($gridName, $gridUid) = explode('-', $gridKey);
                 $gridData = isset($appData[$gridName]) ? $appData[$gridName] : [];
                 foreach ($gridData as $i => $gridRow) {
                     try {
-                        $obj = new $className();
-                        $obj->fromArray($appData, BasePeer::TYPE_FIELDNAME);
-                        $obj->setAppUid($application->APP_UID);
-                        $obj->setAppNumber($application->APP_NUMBER);
-                        if (method_exists($obj, 'setAppStatus')) {
-                            $obj->setAppStatus($application->APP_STATUS);
-                        }
-                        $obj->fromArray(array_change_key_case($gridRow, CASE_UPPER), BasePeer::TYPE_FIELDNAME);
-                        $obj->setRow($i);
-                        $obj->save();
+                        // Change keys to uppercase
+                        $gridRow = array_change_key_case($gridRow, CASE_UPPER);
+
+                        // Completing some required values in row data
+                        $gridRow['APP_UID'] = $application->APP_UID;
+                        $gridRow['APP_NUMBER'] = $application->APP_NUMBER;
+                        $gridRow['APP_STATUS'] = $application->APP_STATUS;
+                        $gridRow['ROW'] = $i;
+
+                        // Build sections of the query
+                        $fieldsSection = $this->buildFieldsSection($fields);
+                        $valuesSection = $this->buildValuesSection($fieldsWithTypes, $gridRow);
+
+                        // Build insert query
+                        $query = "INSERT INTO `$tableName` ($fieldsSection) VALUES ($valuesSection);";
+
+                        // Execute the query
+                        DB::connection()->statement(DB::raw($query));
                     } catch (Exception $e) {
                         $context["message"] = $e->getMessage();
                         $context["tableName"] = $tableName;
@@ -5118,14 +5177,23 @@ class WorkspaceTools
                 }
             } else {
                 try {
-                    $obj = new $className();
-                    $obj->fromArray(array_change_key_case($appData, CASE_UPPER), BasePeer::TYPE_FIELDNAME);
-                    $obj->setAppUid($application->APP_UID);
-                    $obj->setAppNumber($application->APP_NUMBER);
-                    if (method_exists($obj, 'setAppStatus')) {
-                        $obj->setAppStatus($application->APP_STATUS);
-                    }
-                    $obj->save();
+                    // Change keys to uppercase
+                    $appData = array_change_key_case($appData, CASE_UPPER);
+
+                    // Completing some required values in case data
+                    $appData['APP_UID'] = $application->APP_UID;
+                    $appData['APP_NUMBER'] = $application->APP_NUMBER;
+                    $appData['APP_STATUS'] = $application->APP_STATUS;
+
+                    // Build sections of the query
+                    $fieldsSection = $this->buildFieldsSection($fields);
+                    $valuesSection = $this->buildValuesSection($fieldsWithTypes, $appData);
+
+                    // Build insert query
+                    $query = "INSERT INTO `$tableName` ($fieldsSection) VALUES ($valuesSection);";
+
+                    // Execute the query
+                    DB::connection()->statement(DB::raw($query));
                 } catch (Exception $e) {
                     $context["message"] = $e->getMessage();
                     $context["tableName"] = $tableName;
@@ -5133,7 +5201,6 @@ class WorkspaceTools
                     $message = 'Sql Execution';
                     Log::channel(':sqlExecution')->critical($message, Bootstrap::context($context));
                 }
-                unset($obj);
             }
         }
     }
@@ -5226,5 +5293,73 @@ class WorkspaceTools
             // Display the error message
             CLI::logging($e->getMessage() . PHP_EOL . PHP_EOL);
         }
+    }
+
+    /**
+     * Build the fields section for the insert query
+     *
+     * @param array $fields
+     * @return string
+     */
+    private function buildFieldsSection($fields)
+    {
+        // Transform records to single array
+        $fields = array_map(function($field) {
+            return "`{$field}`";
+        }, $fields);
+
+        return implode(', ', $fields);
+    }
+
+    /**
+     * Build values section for the insert query
+     *
+     * @param array $fieldsWithTypes
+     * @param array $caseData
+     * @return string
+     */
+    private function buildValuesSection($fieldsWithTypes, $caseData)
+    {
+        // Initialize variables
+        $values = [];
+
+        // Sanitize each value in case data according to the field type
+        foreach ($fieldsWithTypes as $fieldName => $fieldType) {
+            // Get the value
+            $fieldName = strtoupper($fieldName);
+            $value = isset($caseData[$fieldName]) ? $caseData[$fieldName] : null;
+
+            // Sanitize data
+            switch ($fieldType) {
+                case 'BIGINT':
+                case 'INTEGER':
+                case 'SMALLINT':
+                case 'TINYINT':
+                case 'BOOLEAN':
+                    $values[] = (int)$value;
+                    break;
+                case 'DECIMAL':
+                case 'DOUBLE':
+                case 'FLOAT':
+                case 'REAL':
+                    $values[] = (float)$value;
+                    break;
+                case 'DATE':
+                case 'DATETIME':
+                case 'TIME':
+                    if (strtotime($value) === false) {
+                        $value = '0000-00-00 00:00:00';
+                    }
+                    $values[] = "'{$value}'";
+                    break;
+                default: // char, mediumtext, varchar or another type
+                    // Escape the strings
+                    $values[] = DB::connection()->getPdo()->quote($value);
+                    break;
+            }
+        }
+
+        // Convert to string separated by commas
+        return implode(', ', $values);
     }
 }

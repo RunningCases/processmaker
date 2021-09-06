@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\Model\Application as ModelApplication;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\SubApplication as ModelSubApplication;
 
 class Derivation
@@ -1482,6 +1483,7 @@ class Derivation
         // Update the DelThreadStatus, the thread is ready for continue
         $appDelegation = AppDelegationPeer::retrieveByPK($newCase['APPLICATION'], $newCase['INDEX']);
         $appDelegation->setDelThreadStatus('OPEN');
+        $appDelegation->setDelThreadStatusId(Delegation::$thread_status['OPEN']);
         $appDelegation->save();
 
         // Create record in table APP_ASSIGN_SELF_SERVICE_VALUE

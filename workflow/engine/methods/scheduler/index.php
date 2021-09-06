@@ -1,7 +1,3 @@
-<script language="Javascript">
-    function ajax_function(ajax_server, funcion, parameters, method){
-    }
-</script>
 <?php
 
 use ProcessMaker\Core\System;

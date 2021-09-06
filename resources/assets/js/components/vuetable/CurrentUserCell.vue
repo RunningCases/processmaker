@@ -69,7 +69,7 @@ export default {
 
 .ellipsis {
     white-space: nowrap;
-    width: 140px;
+    width: auto;
     overflow: hidden;
     text-overflow: ellipsis;
 }
