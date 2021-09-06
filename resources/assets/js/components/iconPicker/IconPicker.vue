@@ -10,11 +10,11 @@
                     <div class="rip-search">
                         <div class="rip-input">
                             <label for="ripSearch" style="display: none;"
-                                >Search for Icon</label
+                                >{{$t("ID_SEARCH_FOR_ICON")}}</label
                             >
                             <input
                                 id="ripSearch"
-                                placeholder="Search for Icon"
+                                :placeholder="$t('ID_SEARCH_FOR_ICON')"
                                 v-model="searchText"
                                 @input="searchTextChanged"
                             />
@@ -29,14 +29,14 @@
                         </div>
                         <div class="rip-icons" v-show="!loading">
                             <h4 class="icon-title">
-                                Regular Icons
+                                {{$t('ID_REGULAR_ICONS')}}
                             </h4>
                             <p
                                 style="text-align: center;"
                                 v-if="regularIcons.length <= 0"
                             >
                                 <i class="fas fa-eye-slash"></i>
-                                Sorry, No icons found!
+                                {{$t('ID_SORRY_NO_ICONS')}}
                             </p>
                             <ul class="rip-row" v-if="regularIcons.length > 0">
                                 <li
@@ -58,14 +58,14 @@
                                 </li>
                             </ul>
                             <h4 class="icon-title">
-                                Brand Icons
+                                {{$t('ID_BRAND_ICONS')}}
                             </h4>
                             <p
                                 style="text-align: center;"
                                 v-if="brandIcons.length <= 0"
                             >
                                 <i class="fas fa-eye-slash"></i>
-                                Sorry, No Brand icons found!
+                                {{$t('ID_BRAND_ICONS_NOT_FOUND')}}
                             </p>
                             <ul class="rip-row" v-if="brandIcons.length > 0">
                                 <li
@@ -87,14 +87,14 @@
                                 </li>
                             </ul>
                             <h4 class="icon-title">
-                                Solid Icons
+                                {{$t('ID_SOLID_ICONS')}}
                             </h4>
                             <p
                                 style="text-align: center;"
                                 v-if="solidIcons.length <= 0"
                             >
                                 <i class="fas fa-eye-slash"></i>
-                                Sorry, No Solid icons found!
+                                {{$t('ID_SOLID_ICONS_NOT_FOUND')}}
                             </p>
                             <ul class="rip-row" v-if="solidIcons.length > 0">
                                 <li
@@ -170,19 +170,31 @@ export default {
         },
     },
     methods: {
+        /**
+         * Handler select icon
+         */
         selectIcon(icon, type) {
             this.icon = `${type} fa-${icon}`;
             this.popUpActive = false;
             this.$emit("selected", this.icon);
         },
+        /**
+         * Handler search text changed 
+         */
         searchTextChanged() {
             this.searchIcon(this.searchText);
         },
+        /**
+         * Set default icons
+         */
         setDefaultIcons() {
             this.allIcons.brand = ripIcons.brand;
             this.allIcons.regular = ripIcons.regular;
             this.allIcons.solid = ripIcons.solid;
         },
+        /**
+         * Serach icons handler
+         */
         searchIcon(txt) {
             this.loading = true;
             if (txt && txt.length > 0) {

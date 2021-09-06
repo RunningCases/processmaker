@@ -24,8 +24,8 @@ export default {
         .then((data) => {
           that.data = data.data;
         })
-        .catch(() => {
-
+        .catch((e) => {
+          console.error(e);
         });
     },
     /**
@@ -43,8 +43,8 @@ export default {
             that.loadMore = that.$t("ID_NO_MORE_INFORMATION");
           }
         })
-        .catch(() => {
-
+        .catch((e) => {
+          console.error(e);
         });
     },
     /**

@@ -124,13 +124,22 @@ export default {
             this.caseListDuplicate = false;
             this.$refs["modal-import"].show();
         },
+        /**
+         * Close table
+         */
         close() {
             this.pmTableNoFields = false;
         },
+        /**
+         * Hide modal import
+         */
         hide() {
             this.caseListDuplicate = false;
             this.$refs["modal-import"].hide();
         },
+        /**
+         * Get the custom list case API
+         */
         importCustomCaseList() {
             let that = this;
             this.data.file = this.fileCaseList;
@@ -162,6 +171,9 @@ export default {
                 console.error(e);
             });
         },
+        /**
+         * Continue import custom case list
+         */
         continueImport() {
             let that = this;
             this.data.file = this.fileCaseList;

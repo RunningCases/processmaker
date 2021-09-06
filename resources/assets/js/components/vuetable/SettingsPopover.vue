@@ -99,7 +99,6 @@ export default {
     onSave() {
       let sels;
       sels = _.clone(this.localSelected);
-      //this.$root.$emit("bv::hide::popover");
       this.$emit("onUpdateColumnSettings", sels);
     },
     /**
@@ -121,7 +120,6 @@ export default {
 
         return val.search(txt) != -1;
       });
-
       this.results = opts;
     },
     /**

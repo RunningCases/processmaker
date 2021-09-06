@@ -87,13 +87,22 @@ export default {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
     },
+    /**
+     * Show modal
+     */
     show() {
       this.getUsersReassign();
       this.$refs["modal-reassign-case"].show();
     },
+    /**
+     * Button cancel
+     */
     cancel() {
       this.$refs["modal-reassign-case"].hide();
     },
+    /**
+     * Service to get user reassign
+     */
     getUsersReassign() {
       let that = this;
       api.cases.getUserReassign(this.data).then((response) => {
@@ -114,6 +123,9 @@ export default {
         }
       });
     },
+    /**
+     * Service reassign case
+     */
     reassignCase() {
       let that = this;
       this.data.userSelected = this.userSelected;
@@ -138,6 +150,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

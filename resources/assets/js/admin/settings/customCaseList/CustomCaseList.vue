@@ -16,7 +16,6 @@
                             </b-tab>
                         </b-tabs> 
                     </b-container>
-                  
                 </div> 
             </div>
             <div class="container" v-if="showSketch">
@@ -68,13 +67,22 @@ export default {
        this.tabModule= this.tabs[0];
     },
     methods: {
+       /**
+         * Show sketch
+         */
         onShowSketch (params) {
             this.showSketch = true;
             this.params = params;
         },
+        /**
+         * Close sketch
+         */
         onCloseSketch (params) {
             this.showSketch = false;
         },
+        /**
+         * On change input
+         */
         onInputTab(tabIndex){
             this.tabModule= this.tabs[tabIndex];
         }

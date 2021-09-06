@@ -387,7 +387,6 @@ export default {
         if(this.params.id) {
             this.editMode();
         }
-
     },
     methods: {
         /**
@@ -412,7 +411,6 @@ export default {
             }
             return  info;
         },
-       
         /**
          * Edit mode handler
          * prepare the datato be rendered
@@ -429,7 +427,6 @@ export default {
                 if (value.enableFilter) {
                     that.enabledFilterRows.push(value.field);
                 }
-                
             });
         },
         /**

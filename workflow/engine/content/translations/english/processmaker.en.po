@@ -53180,3 +53180,45 @@ msgstr "Case Thread Title"
 #: LABEL/ID_NO_MORE_INFORMATION
 msgid "No more Information to Load"
 msgstr "No more Information to Load"
+
+# TRANSLATION
+# LABEL/ID_SEARCH_FOR_ICON
+#: LABEL/ID_SEARCH_FOR_ICON
+msgid "Search for icon"
+msgstr "Search for icon"
+
+# TRANSLATION
+# LABEL/ID_REGULAR_ICONS
+#: LABEL/ID_REGULAR_ICONS
+msgid "Regular icons"
+msgstr "Regular icons"
+
+# TRANSLATION
+# LABEL/ID_SORRY_NO_ICONS
+#: LABEL/ID_SORRY_NO_ICONS
+msgid "Sorry, No icons found!"
+msgstr "Sorry, No icons found!"
+
+# TRANSLATION
+# LABEL/ID_BRAND_ICONS
+#: LABEL/ID_BRAND_ICONS
+msgid "Brand Icons"
+msgstr "Brand Icons"
+
+# TRANSLATION
+# LABEL/ID_BRAND_ICONS_NOT_FOUND
+#: LABEL/ID_BRAND_ICONS_NOT_FOUND
+msgid "Sorry, No Brand icons found!"
+msgstr "Sorry, No Brand icons found!"
+
+# TRANSLATION
+# LABEL/ID_SOLID_ICONS
+#: LABEL/ID_SOLID_ICONS
+msgid "Solid icons"
+msgstr "Solid icons"
+
+# TRANSLATION
+# LABEL/ID_SOLID_ICONS_NOT_FOUND
+#: LABEL/ID_SOLID_ICONS_NOT_FOUND
+msgid "Sorry, No Solid icons found!"
+msgstr "Sorry, No Solid icons found!"

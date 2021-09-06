@@ -530,9 +530,15 @@ export default {
                 if (index !== -1) advSearch.child.splice(index, 1);
             }
         },
+        /**
+         * Update filters handler
+         */
         onUpdateFilters(filters) {
             this.filters = filters;
         },
+        /**
+         * Service to get Highlight  
+         */
         getHighlight() {
             let that = this;
             if (that.menu.length > 0) {

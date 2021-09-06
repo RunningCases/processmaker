@@ -36,6 +36,11 @@ class caseListApi extends Api {
             keys: {}
         });
     }
+    /**
+     * Service delete case list 
+     * @param {*} data 
+     * @returns 
+     */
     deleteCaseList(data) {
         return axios.delete(
             window.config.SYS_SERVER_API +
@@ -49,6 +54,11 @@ class caseListApi extends Api {
             }
         );
     }
+    /**
+     * Service return report tables
+     * @param {*} data 
+     * @returns 
+     */
     reportTables(data) {
         return this.get({
             service: 'REPORT_TABLES',
@@ -56,6 +66,11 @@ class caseListApi extends Api {
             keys: {}
         });
     }
+    /**
+     * Service default columns
+     * @param {*} type 
+     * @returns 
+     */
     getDefault(type){
         return this.get({
             service: 'DEFAULT_COLUMNS',
@@ -64,12 +79,22 @@ class caseListApi extends Api {
             }
         });
     }
+    /**
+     * Service create case list
+     * @param {*} data 
+     * @returns 
+     */
     createCaseList(data) {
         return this.post({
             service: "CASE_LIST",
             data: data
         });
     }
+    /**
+     * Service update case list
+     * @param {*} data 
+     * @returns 
+     */
     updateCaseList(data) {
         return this.put({
             service: "PUT_CASE_LIST",
@@ -79,6 +104,11 @@ class caseListApi extends Api {
             data: data
         });
     }
+    /**
+     * Service import case list
+     * @param {*} data 
+     * @returns 
+     */
     importCaseList(data) {
         let formData = new FormData();
         formData.append('file_content', data.file);
