@@ -58375,7 +58375,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_FRI','en','Fri','2014-01-15') ,
 ( 'LABEL','ID_FROM','en','From','2014-01-15') ,
 ( 'LABEL','ID_SENDER','en','Sender','2021-08-13') ,
-( 'LABEL','ID_FROM_DELEGATION_DATE','en','From Delegation Date','2021-08-31') ;
+( 'LABEL','ID_FROM_DELEGATION_DATE','en','From Delegation Date','2021-08-31') ,
 ( 'LABEL','ID_FROM_EMAIL','en','Sender Email','2017-02-21') ,
 ( 'LABEL','ID_FROM_FINISH_DATE','en','From Finish Date','2020-12-16') ,
 ( 'LABEL','ID_FROM_NAME','en','Sender Name','2017-02-21') ,
