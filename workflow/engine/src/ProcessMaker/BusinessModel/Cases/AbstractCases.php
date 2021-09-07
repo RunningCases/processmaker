@@ -113,6 +113,9 @@ class AbstractCases implements CasesInterface
 
     // Filter by specific cases, know as "$appUidCheck" in the old lists classes
     private $casesUids = [];
+    
+    // Filter by Send By
+    private $sendBy = '';
 
     // Filter range related to the start case date
     private $startCaseFrom = '';
@@ -750,6 +753,26 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Set send by.
+     * 
+     * @param type $sendBy
+     */
+    public function setSendBy(string $sendBy)
+    {
+        $this->sendBy = $sendBy;
+    }
+
+    /**
+     * Get send by.
+     * 
+     * @return string
+     */
+    public function getSendBy()
+    {
+        return $this->sendBy;
+    }
+
+    /**
      * Set Cases Numbers
      *
      * @param array $casesNumbers
@@ -1381,6 +1404,10 @@ class AbstractCases implements CasesInterface
         if (get_class($this) === Inbox::class && !empty($properties['delegateTo'])) {
             $this->setDelegateTo($properties['delegateTo']);
         }
+        // Filter by Send By
+        if (get_class($this) === Inbox::class && !empty($properties['sendBy'])) {
+            $this->setSendBy($properties['sendBy']);
+        }
         /** Apply filters related to PAUSED */
         // Filter date related to delegate from
         if (get_class($this) === Paused::class && !empty($properties['delegateFrom'])) {
@@ -1390,6 +1417,10 @@ class AbstractCases implements CasesInterface
         if (get_class($this) === Paused::class && !empty($properties['delegateTo'])) {
             $this->setDelegateTo($properties['delegateTo']);
         }
+        // Filter by Send By
+        if (get_class($this) === Paused::class && !empty($properties['sendBy'])) {
+            $this->setSendBy($properties['sendBy']);
+        }
         /** Apply filters related to UNASSIGNED */
         // Filter date related to delegate from
         if (get_class($this) === Unassigned::class && !empty($properties['delegateFrom'])) {
@@ -1398,6 +1429,10 @@ class AbstractCases implements CasesInterface
         // Filter date related to delegate to
         if (get_class($this) === Unassigned::class && !empty($properties['delegateTo'])) {
             $this->setDelegateTo($properties['delegateTo']);
+        }
+        // Filter by Send By
+        if (get_class($this) === Unassigned::class && !empty($properties['sendBy'])) {
+            $this->setSendBy($properties['sendBy']);
         }
 
         /** Apply filters related to MY CASES */

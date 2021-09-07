@@ -78,6 +78,7 @@ class Home
         $sort = explode(',', $sort);
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
+        $properties['sendBy'] = $sendBy;
         $list->setProperties($properties);
         $result = [];
         $result['data'] = DateTime::convertUtcToTimeZone($list->getData($callback));
@@ -97,6 +98,7 @@ class Home
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @param callable $callback
      * @return array
      */
@@ -111,6 +113,7 @@ class Home
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = '',
         callable $callback = null
     )
     {
@@ -133,6 +136,7 @@ class Home
         $sort = explode(',', $sort);
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
+        $properties['sendBy'] = $sendBy;
         $list->setProperties($properties);
         $result = [];
         $result['data'] = DateTime::convertUtcToTimeZone($list->getData($callback));
@@ -152,6 +156,7 @@ class Home
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @param callable $callback
      * @return array
      */
@@ -166,6 +171,7 @@ class Home
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = '',
         callable $callback = null
     )
     {
@@ -188,6 +194,7 @@ class Home
         $sort = explode(',', $sort);
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
+        $properties['sendBy'] = $sendBy;
         // todo: some queries related to the unassigned are using the USR_UID
         $list->setUserUid($usrUid);
         $list->setProperties($properties);
@@ -209,6 +216,7 @@ class Home
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @param callable $callback
      * @return array
      */
@@ -223,6 +231,7 @@ class Home
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = '',
         callable $callback = null
     )
     {
@@ -245,6 +254,7 @@ class Home
         $sort = explode(',', $sort);
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
+        $properties['sendBy'] = $sendBy;
         $list->setProperties($properties);
         $result = [];
         $result['data'] = DateTime::convertUtcToTimeZone($list->getData($callback));
@@ -349,6 +359,7 @@ class Home
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @return array
      */
     public function getCustomInbox(
@@ -362,7 +373,8 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         $arguments = func_get_args();
@@ -390,6 +402,7 @@ class Home
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @return array
      */
     public function getCustomUnassigned(
@@ -403,7 +416,8 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         $arguments = func_get_args();
@@ -431,6 +445,7 @@ class Home
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @return array
      */
     public function getCustomPaused(
@@ -444,7 +459,8 @@ class Home
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         $arguments = func_get_args();
