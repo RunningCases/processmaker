@@ -236,7 +236,8 @@ export let cases = {
                 usr_uid_target: data.userSelected,
                 del_index: data.DEL_INDEX,
                 reason: data.reasonReassign,
-                sendMail: data.notifyUser
+                sendMail: data.notifyUser,
+                usr_uid_source: window.config.userConfig.usr_uid
             },
             keys: {
                 app_uid: data.APP_UID

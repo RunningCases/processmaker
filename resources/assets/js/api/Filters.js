@@ -29,9 +29,10 @@ export let filters = {
     put(data) {
         return Api.put({
             service: "PUT_MY_FILTERS",
-            id: data.id,
             data,
-            keys: {},
+            keys: {
+                id: data.id,
+            },
         });
     },
     /**

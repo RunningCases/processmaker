@@ -175,7 +175,8 @@ class Api {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ` + credentials.accessToken
+                "Authorization": `Bearer ` + credentials.accessToken,
+                "Accept-Language": lang
             }
         });
     }

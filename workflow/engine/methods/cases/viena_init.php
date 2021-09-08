@@ -143,4 +143,7 @@ ScriptVariables::add('SYS_LANG', SYS_LANG);
 ScriptVariables::add('TRANSLATIONS', $translation);
 ScriptVariables::add('FORMATS', $conf->getFormats());
 ScriptVariables::add('userId', User::getId($_SESSION['USER_LOGGED']));
+ScriptVariables::add('userConfig', array(
+  "usr_uid" => $_SESSION['USER_LOGGED']
+));
 echo View::make('Views::home.home', compact("userCanAccess"))->render();
