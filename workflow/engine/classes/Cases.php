@@ -4196,11 +4196,10 @@ class Cases
                 return false;
             }
         }
-
         // Get information about current $index row
         $delegation = new AppDelegation();
         $delRow = $delegation->Load($appUid, $index);
-        //and creates a new AppDelegation row with the same user, task, process, etc.
+        // Define the values for create a new index
         $proUid = $delRow['PRO_UID'];
         $appUid = $delRow['APP_UID'];
         $tasUid = $delRow['TAS_UID'];
@@ -4209,7 +4208,13 @@ class Cases
         $application = new Application();
         $caseFields = $application->Load($appUid);
         $caseData = unserialize($caseFields['APP_DATA']);
-
+        // Update to PAUSED to CLOSED
+        $row = [];
+        $row['APP_UID'] = $appUid;
+        $row['DEL_INDEX'] = $index;
+        $row['DEL_THREAD_STATUS'] = 'CLOSED';
+        $row['DEL_THREAD_STATUS_ID'] = 0;
+        $delegation->update($row);
         // Create a new delegation
         $newIndex = $this->newAppDelegation(
             $proUid,
@@ -4228,7 +4233,6 @@ class Cases
             $delRow['TAS_ID'],
             $caseData
         );
-
         // Update other fields in the recent new appDelegation
         $row = [];
         $row['APP_UID'] = $delRow['APP_UID'];
@@ -4240,7 +4244,6 @@ class Cases
         $row['DEL_INIT_DATE'] = date('Y-m-d H:i:s');
         $row['DEL_FINISH_DATE'] = null;
         $delegation->update($row);
-
         // Get the APP_DELAY row with app_uid, del_index and app_type=pause
         $criteria = new Criteria('workflow');
         $criteria->clearSelectColumns();
@@ -4258,12 +4261,9 @@ class Cases
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $rowPaused = $dataset->getRow();
-
-
         $caseFields['APP_STATUS'] = $rowPaused['APP_STATUS'];
         $application->update($caseFields);
-
-        // Update the DEL_INDEX ? in APP_THREAD table?
+        // Update the APP_THREAD table
         $rowUpdate = [
             'APP_UID' => $appUid,
             'APP_THREAD_INDEX' => $rowPaused['APP_THREAD_INDEX'],
@@ -4271,14 +4271,13 @@ class Cases
         ];
         $thread = new AppThread();
         $thread->update($rowUpdate);
-
+        // Update the APP_DELAY table
         $row['APP_DELAY_UID'] = $rowPaused['APP_DELAY_UID'];
         $row['APP_DISABLE_ACTION_USER'] = $usrUid;
         $row['APP_DISABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
         $delay = new AppDelay();
         $rowDelay = $delay->update($row);
-
-        // Update searchindex
+        // Update solr
         if ($this->appSolr != null) {
             $this->appSolr->updateApplicationSearchIndex($appUid);
         }

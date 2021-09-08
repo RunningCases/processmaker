@@ -6,6 +6,15 @@
       :title="$t('ID_CANCEL_CASE')"
       size="md"
     >
+      <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+      >
+        {{ dataAlert.message }}
+      </b-alert>
       <p>
         You are tying to cancel the current case. Please be aware this action
         cannot be undone
@@ -47,6 +56,7 @@
 
 <script>
 import api from "./../../api/index";
+import eventBus from "../EventBus/eventBus";
 export default {
   name: "ModalCancelCase",
   components: {},
@@ -56,6 +66,12 @@ export default {
   mounted() {},
   data() {
     return {
+      dataAlert: {
+        dismissSecs: 5,
+        dismissCountDown: 0,
+        message: "",
+        variant: "danger",
+      },
       filter: "",
       categories: [],
       categoriesFiltered: [],
@@ -75,16 +91,41 @@ export default {
     cancelCase() {
       let that = this;
       api.cases
-        .cancel(_.extend({}, this.dataCase, {
-          COMMENT: this.$refs["comment"].value,
-          SEND: this.$refs["send"].checked ? 1 : 0,
-        }))
+        .cancel(
+          _.extend({}, this.dataCase, {
+            COMMENT: this.$refs["comment"].value,
+            SEND: this.$refs["send"].checked ? 1 : 0,
+          })
+        )
         .then((response) => {
           if (response.status === 200) {
             that.$refs["modal-cancel-case"].hide();
-            that.$parent.$parent.page = "todo";
+            eventBus.$emit("home-update-page", "inbox");
+          }
+        })
+        .catch((e) => {
+          if(e.response.data && e.response.data.error){
+            that.showAlert(e.response.data.error.message, "danger");
           }
         });
+    },
+    /**
+     * Show the alert message
+     * @param {string} message - message to be displayen in the body
+     * @param {string} type - alert type
+     */
+    showAlert(message, type) {
+      this.dataAlert.message = message;
+      this.dataAlert.variant = type || "info";
+      this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+    },
+    /**
+     * Updates the alert dismiss value to update
+     * dismissCountDown and decrease
+     * @param {mumber}
+     */
+    countDownChanged(dismissCountDown) {
+      this.dataAlert.dismissCountDown = dismissCountDown;
     },
   },
 };

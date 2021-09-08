@@ -438,7 +438,6 @@ export default {
           if (err.response.data) {
             that.showAlert(err.response.data.error.message, "danger");
           }
-          throw new Error(err);
         });
     },
     formatResponseCaseNotes(notes) {
@@ -592,11 +591,16 @@ export default {
      * @param {object} data
      */
     onClickUnpause(data) {
-      Api.cases.unpause(data.row).then((response) => {
-        if (response.statusText === "OK") {
-          this.$refs["vueTable"].getData();
-        }
-      });
+      let that = this;
+      Api.cases.unpause(data.row)
+        .then((response) => {
+          if (response.statusText === "OK") {
+            that.$refs["vueTable"].getData();
+          }
+        })
+        .catch((error) => {
+          that.showAlert(error.response.data.error.message, 'danger');
+        });
     },  
     /**
      * Claim case

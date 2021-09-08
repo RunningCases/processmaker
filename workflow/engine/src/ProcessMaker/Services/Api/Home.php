@@ -101,6 +101,7 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      *
      * @return array
      *
@@ -119,7 +120,8 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         try {
@@ -145,6 +147,7 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      *
      * @return array
      *
@@ -163,7 +166,8 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         try {
@@ -189,6 +193,7 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      *
      * @return array
      *
@@ -207,7 +212,8 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         try {
@@ -269,6 +275,7 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @return array
      * @throws RestException
      * @access protected
@@ -285,7 +292,8 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         try {
@@ -310,6 +318,7 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @return array
      * @throws RestException
      * @access protected
@@ -326,7 +335,8 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         try {
@@ -351,6 +361,7 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
+     * @param string $sendBy
      * @return array
      * @throws RestException
      * @access protected
@@ -367,7 +378,8 @@ class Home extends Api
         string $delegateFrom = '',
         string $delegateTo = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        string $sendBy = ''
     )
     {
         try {

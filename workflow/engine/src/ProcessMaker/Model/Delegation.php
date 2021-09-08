@@ -1033,6 +1033,24 @@ class Delegation extends Model
     }
 
     /**
+     * Scope sendBy.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $usrId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSendBy($query, int $usrId)
+    {
+        $query->where(DB::raw($usrId), function ($sql) {
+            $sql->from('APP_DELEGATION AS B')
+                ->select('B.USR_ID')
+                ->where('B.APP_NUMBER', '=', DB::raw('APP_DELEGATION.APP_NUMBER'))
+                ->where('B.DEL_INDEX', '=', DB::raw('APP_DELEGATION.DEL_PREVIOUS'))
+                ->limit(1);
+        });
+        return $query;
+    }
+
+    /**
      * Get specific cases unassigned that the user can view
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
