@@ -91,6 +91,11 @@ class Inbox extends AbstractCases
             $query->delegateDateTo($this->getDelegateTo());
         }
 
+        // Specific usrId represented by sendBy. 
+        if (!empty($this->getSendBy())) {
+            $query->sendBy($this->getSendBy());
+        }
+
         return $query;
     }
 
