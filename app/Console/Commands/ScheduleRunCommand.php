@@ -1,9 +1,13 @@
 <?php
+
 namespace App\Console\Commands;
+
+use Bootstrap;
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Scheduling\ScheduleRunCommand as BaseCommand;
 use Maveriks\WebApplication;
 use ProcessMaker\Model\TaskScheduler;
+
 class ScheduleRunCommand extends BaseCommand
 {
     use AddParametersTrait;
@@ -50,7 +54,7 @@ class ScheduleRunCommand extends BaseCommand
                 if (!$win) {
                     $body = str_replace(" -c"," " . $user . " -c", $p->body);
                 }
-                $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
+                $schedule = $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
                     $now = Carbon::now();
                     $result = false;
                     $datework = Carbon::createFromFormat('Y-m-d H:i:s', $p->last_update);
@@ -88,7 +92,11 @@ class ScheduleRunCommand extends BaseCommand
                         return $result;
                     }
                     return true;
-                })->onOneServer();
+                });
+                $config = Bootstrap::getSystemConfiguration();
+                if (intval($config['on_one_server_enable']) === 1) {
+                    $schedule->onOneServer();
+                }
             }
         });
         parent::handle();
