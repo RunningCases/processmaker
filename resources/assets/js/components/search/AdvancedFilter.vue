@@ -608,7 +608,7 @@ export default {
             this.handleJumpTo();
         },
         onClick() {
-            if (this.id) {
+            if (this.id && this.id !== 'CASES_SEARCH') {
                 this.updateData(this.id);
             } else {
                 this.$refs['saveFilter'].show();
@@ -619,7 +619,9 @@ export default {
          * Delete Search handler
          */
         onDeleteSearch() {
-             this.$emit("onRemoveFilter", this.id);
+            if (this.id && this.id !== 'CASES_SEARCH') {
+                this.$emit("onRemoveFilter", this.id);
+            }
         },
         checkFormValidity() {
             const valid = this.$refs.form.checkValidity();
