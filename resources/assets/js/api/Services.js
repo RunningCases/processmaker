@@ -60,7 +60,7 @@
     UNASSIGNED_LIST: "/home/unassigned",
     MY_FILTERS: "/cases/advanced-search/filters",
     POST_MY_FILTERS: "/cases/advanced-search/filter",
-    PUT_MY_FILTERS: "/cases/advanced-search/filter/",
+    PUT_MY_FILTERS: "/cases/advanced-search/filter/{id}",
     DELETE_MY_FILTERS: "/cases/advanced-search/filter/",
     SEARCH: "/home/search",
     PROCESSES: "/home/processes",
