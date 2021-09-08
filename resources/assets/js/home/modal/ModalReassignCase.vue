@@ -9,6 +9,15 @@
         {{ $t('ID_REASSIGN_CASE') }}
         <i class="fas fa-undo"></i>
       </template>
+      <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+      >
+        {{ dataAlert.message }}
+      </b-alert>
       <b-container fluid>
         <b-row class="my-1">
           <b-col sm="3">
@@ -56,7 +65,7 @@
             variant="success" 
             @click="reassignCase"
           >
-            {{ $t("ID_PAUSE") }}
+            {{ $t("ID_REASSIGN") }}
           </b-button>
         </div>
       </div>
@@ -75,6 +84,12 @@ export default {
   mounted() {},
   data() {
     return {
+      dataAlert: {
+        dismissSecs: 5,
+        dismissCountDown: 0,
+        message: "",
+        variant: "danger",
+      },
       data: null,
       locale: 'en-US',
       users: [],
@@ -145,8 +160,31 @@ export default {
             that.$parent.$refs["vueCardView"].getData();
           }
         }
+      })
+      .catch((e) => {
+        if(e.response.data && e.response.data.error){
+          that.showAlert(e.response.data.error.message, "danger");
+        }
       });
     },
+    /**
+     * Show the alert message
+     * @param {string} message - message to be displayen in the body
+     * @param {string} type - alert type
+     */
+    showAlert(message, type) {
+      this.dataAlert.message = message;
+      this.dataAlert.variant = type || "info";
+      this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+    },
+    /**
+     * Updates the alert dismiss value to update
+     * dismissCountDown and decrease
+     * @param {mumber}
+     */
+    countDownChanged(dismissCountDown) {
+      this.dataAlert.dismissCountDown = dismissCountDown;
+    }
   },
 };
 </script>
