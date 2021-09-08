@@ -24,6 +24,16 @@ export default {
   props: {
     data: Object
   },
+  data() {
+    return {
+      openDebug: false,
+      dataCase: null,
+      height: "100%",
+      width: "100%",
+      diffHeight: 10,
+      path: "",
+    };
+  },
   mounted() {
     let that = this;
     this.height = window.innerHeight - this.diffHeight;
@@ -41,23 +51,20 @@ export default {
     }
 
     setTimeout(() => {
-      api.cases.debugStatus(this.dataCase).then((response) => {
-        if (response.data) {
-          that.openDebug = true;
-        }
-      });
+      let that = this;
+      if (this.dataCase.APP_UID) {
+        api.cases.debugStatus(this.dataCase)
+          .then((response) => {
+            if (response.data) {
+              that.openDebug = true;
+            }
+          })
+          .catch((error) => {
+            that.openDebug = false;
+          });
+      }
     }, 2000);
     window.addEventListener("resize", this.handleIframeResize);
-  },
-  data() {
-    return {
-      openDebug: false,
-      dataCase: null,
-      height: "100%",
-      width: "100%",
-      diffHeight: 10,
-      path: "",
-    };
   },
   methods: {
     classBtn(cls) {
