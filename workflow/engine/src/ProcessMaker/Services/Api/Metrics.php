@@ -132,12 +132,14 @@ class Metrics extends Api
             $listInbox->setProperties($properties);
 
             $listDraft = new Draft();
+            $listDraft->setUserUid($usrUid);
             $listDraft->setProperties($properties);
 
             $listPaused = new Paused();
             $listPaused->setProperties($properties);
 
             $listUnassigned = new Unassigned();
+            $listUnassigned->setUserUid($usrUid);
             $listUnassigned->setProperties($properties);
 
             $casesInbox = $listInbox->getCounter();
