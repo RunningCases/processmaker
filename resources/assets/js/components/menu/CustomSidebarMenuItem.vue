@@ -40,7 +40,7 @@
                     >
                     
                         <span class="vsm--title">
-                            <template v-if="itemHasChild">
+                            <template v-if="itemTaskList">
                                 <custom-tooltip
                                     :data="item"
                                     ref="tooltip"
@@ -228,6 +228,12 @@ export default {
             exactActive: false,
             active: false,
             titleHover: "",
+            menuMap: {
+                CASES_INBOX: "inbox",
+                CASES_DRAFT: "draft",
+                CASES_PAUSED: "paused",
+                CASES_SELFSERVICE: "unassigned"
+            },
         };
     },
     mounted() {
@@ -288,6 +294,13 @@ export default {
             }
         },
         /**
+         * Verify if the item is INBOX, DRAFT, PAUSED OR UNASSIGNED
+         * to set functionality of tooltip and highlight 
+         */
+        itemTaskList() {
+            return this.menuMap[this.item.id] !== undefined;
+        },
+        /**
          * Set color to icon defined from custom case list
          */
         setIconColor() {
@@ -323,7 +336,7 @@ export default {
                 var i;
                 for (i = 0; i < data.length; i += 1) {
                     if (that.item.page && that.item.page === data[i].id) {
-                        if (that.$refs.tooltip) {
+                        if (that.$refs.tooltip && that.menuMap[that.item.id]) {
                             that.$refs.tooltip.setHighlight()
                         }
                     }
