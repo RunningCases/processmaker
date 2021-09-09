@@ -78,7 +78,6 @@ class Home
         $sort = explode(',', $sort);
         $properties['sort'] = $sort[0];
         $properties['dir'] = $sort[1];
-        $properties['sendBy'] = $sendBy;
         $list->setProperties($properties);
         $result = [];
         $result['data'] = DateTime::convertUtcToTimeZone($list->getData($callback));

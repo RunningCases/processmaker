@@ -83,7 +83,8 @@ class System
         'report_table_floating_number' => 4,
         'report_table_double_number' => 4,
         'ext_ajax_timeout' => 600000,
-        'disable_task_manager_routing_async' => '0'
+        'disable_task_manager_routing_async' => '0',
+        'on_one_server_enable' => 0
     ];
 
     /**
