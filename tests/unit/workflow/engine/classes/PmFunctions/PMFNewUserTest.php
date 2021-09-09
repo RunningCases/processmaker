@@ -16,6 +16,8 @@ class PMFNewUserTest extends TestCase
      */
     public function setUp()
     {
+        parent::setup();
+
         if (!defined('PPP_NUMERICAL_CHARACTER_REQUIRED')) {
             define('PPP_NUMERICAL_CHARACTER_REQUIRED', 1);
         }
@@ -25,6 +27,14 @@ class PMFNewUserTest extends TestCase
         if (!defined('PPP_SPECIAL_CHARACTER_REQUIRED')) {
             define('PPP_SPECIAL_CHARACTER_REQUIRED', 1);
         }
+    }
+    
+    /**
+     * Creates the tearDown method
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
     }
 
     /**
