@@ -17,7 +17,7 @@
             </div>
         </div>
         <div slot="owner" slot-scope="props">
-                <OwnerCell :data="props.row.owner" />
+            <OwnerCell :data="props.row.owner" />
         </div>
     </v-server-table>
 </div>
@@ -175,7 +175,8 @@ export default {
                     userInfo: userDataFormat || "",
                     userEmail: v.userEmail,
                     userId: v.userId,
-                    userPosition: v.userPosition || ""
+                    userPosition: v.userPosition || "",
+                    caseListId: v.id
                 }
                 data.push(v);
             });
