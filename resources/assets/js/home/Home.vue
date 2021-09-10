@@ -396,19 +396,21 @@ export default {
                 this.settings = this.config.setting[this.page];
                 if (!this.menuMap[item.item.id]) {
                     this.page = "custom-case-list";
+                    if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
+                        this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
+                    } else {
+                        this.settings = {};
+                    }
                     this.pageData = {
                         pageUri: item.item.pageUri,
                         pageParent: item.item.page,
                         pageName: item.item.title,
                         pageIcon: item.item.icon,
                         customListId: item.item.id,
-                        color: item.item.colorScreen
+                        color: item.item.colorScreen,
+                        settings: this.settings
                     }
-                    if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
-                        this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
-                    } else {
-                        this.settings = {};
-                    }
+                    
                 }
                 if (this.page === this.lastPage
                     && this.$refs["component"]

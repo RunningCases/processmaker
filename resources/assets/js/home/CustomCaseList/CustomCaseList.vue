@@ -504,16 +504,7 @@ export default {
                     id: this.data.customListId
                 });
             }
-        },
-        filters: function(val) {
-            this.$emit("updateSettings", {
-                data: val,
-                key: "filters",
-                parent: this.data.pageParent,
-                type: "custom",
-                id: this.data.customListId
-            });
-        },
+        }
     },
     computed: {
         /**
@@ -778,8 +769,37 @@ export default {
             });
         },
         onRemoveFilter(data) {},
+        /**
+         * Prepare the data to be updated
+         * @param {object} data
+         */
+        prepareAndUpdate(data) {
+            let canUpdate = false,
+                newFilters = [];
+            data.params.forEach(item =>  {
+                const container  = {...item};
+                container.autoShow = false;
+                if (item.value !== "") {
+                    newFilters.push(container);
+                    canUpdate = true;
+                }
+            });
+            if (data.params.length == 0) {
+            canUpdate = true;
+            } 
+            if (canUpdate) {
+            this.$emit("updateSettings", {
+                data: newFilters,
+                key: "filters",
+                parent: this.data.pageParent,
+                type: "custom",
+                id: this.data.customListId
+            });
+            }
+        },
         onUpdateFilters(data) {
             this.filters = data.params;
+            this.prepareAndUpdate(data);
             if (data.refresh) {
                 this.$nextTick(() => {
                     if (this.typeView === "GRID") {
@@ -801,7 +821,7 @@ export default {
             this.isFistTime = true;
             this.typeView = "GRID";
             // force to update component id
-            if (newData){
+            if (newData) {
                 if(newData.customListId) {
                     this.data.customListId = newData.customListId;
                 }
@@ -810,6 +830,7 @@ export default {
                     icon: newData.pageIcon,
                     color: newData.color
                 }
+                this.filters = newData.settings && newData.settings.filters ? newData.settings.filters : {};
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {
                 this.$refs["vueTable"].getData();
