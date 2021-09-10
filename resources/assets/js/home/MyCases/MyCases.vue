@@ -368,9 +368,6 @@ export default {
             if (header === "CASES_TO_REVISE") {
                 filter = "SUPERVISING";
             }
-            if (header === "CASES_SENT") {
-                filter = "STARTED";
-            }
             for (i = 0; i < filters.length; i += 1) {
                 if (filters[i].item === filter) {
                     filters[i].onClick(filters[i]);
@@ -643,8 +640,6 @@ export default {
                         onClick: (obj) => {
                             that.title = obj.title;
                             that.filterHeader = obj.item;
-                            that.$refs["vueTable"].setPage(1); // Reset the page when change the header filter
-                            that.$refs["vueTable"].getData();
                             that.filterHeaderObject = obj;
                             that.random = _.random(0,1000000000);
                         },
