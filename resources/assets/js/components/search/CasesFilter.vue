@@ -9,7 +9,7 @@
         <b-form-group>
             <b-form-radio-group
                 v-model="selected"
-                :options="filterItems"
+                :options="criteriaItems"
                 value-field="id"
                 text-field="optionLabel"
                 name="flavour-2a"
@@ -90,7 +90,7 @@ import api from "./../../api/index";
 
 export default {
   name: "Cases",
-  props: ["filters", "title", "icon"],
+  props: ["filters", "title", "icon" , "hiddenItems"],
   components: {
     SearchPopover,
     CaseNumber,
@@ -245,25 +245,34 @@ export default {
         byProcessName: ""
     };
   },
-  mounted() {
-    // Force to load filters when mounted the component
-    let fils= this.filters;
-    if(_.isArray(this.filters)){
-      _.forEach(fils,(o)=>{
-        o.autoShow = false;
-      });
-      this.setFilters(fils);
-      this.dataLoaded = true;
+  computed: {
+    // a computed getter
+    criteriaItems: function () {
+      let found,
+          criteria = [];
+      if (this.hiddenItems && this.hiddenItems.length) {
+          this.filterItems.forEach(item =>  {
+              found = this.hiddenItems.find( elem  => elem !== item.id);
+              if (found) {
+                  criteria.push(item);
+              }
+          });
+          return criteria;
+      } else {
+          return this.filterItems;
+      }
     }
+  },
+  mounted() {
   },
   watch: {
     filters: { 
         immediate: true, 
-        handler(newVal, oldVal) { 
+        handler(newVal, oldVal) {
             this.searchTags = [];
             this.selected = [];
             //Prevent show popover at the first time
-            if (newVal.length && this.dataLoaded) {
+            if (newVal.length) {
                 this.setFilters(newVal, oldVal);
                 this.searchClickHandler();
             }
@@ -275,7 +284,7 @@ export default {
      * Add filter criteria save button handler
      */
     onOk() {
-        let self = this,
+        let self = this,  
             element,
             initialFilters = [],
             item;
@@ -313,7 +322,8 @@ export default {
                     fieldId: id,
                     value:  '',
                     label: "",
-                    options: []
+                    options: [],
+                    autoShow: true
                 };
                 initialFilters.push(item);
             }
@@ -332,12 +342,9 @@ export default {
         });
         if (component) {
             self.searchTags.push(component.id);
-            self.selected.push(component.id);
+            self.selected = component.id;
             self.itemModel[component.id] = component;
             self.itemModel[component.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : true;
-            if (oldVal && !oldVal.length) {
-                self.updateSearchTag(item);
-            }
         }
         if(item.fieldId === "processName") {
             self.searchTags.push(self.processName.id);

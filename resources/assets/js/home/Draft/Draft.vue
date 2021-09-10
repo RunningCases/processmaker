@@ -6,6 +6,7 @@
       :filters="filters"
       :title="$t('ID_DRAFT')"
       :icon="icon"
+      :hiddenItems="hiddenItems"
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
@@ -303,7 +304,8 @@ export default {
         buttons: {}
       },
       showEllipsis: false,
-      dataSubtitle: null
+      dataSubtitle: null,
+      hiddenItems: ['bySendBy']
     };
   },
   created() {
@@ -332,16 +334,7 @@ export default {
         type: "normal",
         id: this.id
       });
-    },  
-    filters: function (val) {
-      this.$emit("updateSettings", {
-        data: val,
-        key: "filters",
-        parent: this.page,
-        type: "normal",
-        id: this.id
-      });
-    },
+    }
   },
   computed: {
     /**
@@ -540,8 +533,41 @@ export default {
       });
     },
     onRemoveFilter(data) {},
+    /**
+     * Prepare the data to be updated
+     * @param {object} data
+     */
+    prepareAndUpdate(data) {
+        let canUpdate = false,
+            newFilters = [];
+        data.params.forEach(item =>  {
+            const container  = {...item};
+            container.autoShow = false;
+            if (item.value !== "") {
+                newFilters.push(container);
+                canUpdate = true;
+            }
+        });
+        if (data.params.length == 0) {
+          canUpdate = true;
+        } 
+        if (canUpdate) {
+          this.$emit("updateSettings", {
+            data: newFilters,
+            key: "filters",
+            parent: this.page,
+            type: "normal",
+            id: this.id
+          });
+        }
+    },
+    /**
+     * Update event handler
+     * @param {object} data
+     */
     onUpdateFilters(data) {
       this.filters = data.params;
+      this.prepareAndUpdate(data);
       if (data.refresh) {
         this.$nextTick(() => {
           if (this.typeView === "GRID") {

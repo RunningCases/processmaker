@@ -112,15 +112,14 @@ export default {
     getCasesViewMore(data) {
       let that = this,
         dt,
-        paged,
         typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
         limit = data.limit,
         start = data.page === 1 ? 0 : limit * (data.page - 1),
         filters = {};
-      paged = start + "," + limit;
 
       filters = {
-        paged: paged,
+        limit: limit,
+        offset: start
       };
       _.forIn(this.filters, function (item, key) {
         if (filters && item.value) {
