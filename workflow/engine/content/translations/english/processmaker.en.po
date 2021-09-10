@@ -5852,8 +5852,8 @@ msgstr "The value '{0}' is not a valid date for the format '{1}'."
 # TRANSLATION
 # LABEL/ID_DATE_UPDATED
 #: LABEL/ID_DATE_UPDATED    
-msgid "Date Created"
-msgstr "Date Created"
+msgid "Date Updated"
+msgstr "Date Updated"
 
 # TRANSLATION
 # LABEL/ID_DATE_TO_DATE
