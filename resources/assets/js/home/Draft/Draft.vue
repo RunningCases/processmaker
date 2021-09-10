@@ -13,7 +13,13 @@
       :data="dataMultiviewHeader"
       :dataSubtitle="dataSubtitle"
     />
-    <settings-popover :options="formatColumnSettings(options.headings)" target="pm-dr-column-settings" @onUpdateColumnSettings="onUpdateColumnSettings" :key="random+1" :selected="formatColumnSelected(columns)"/>
+    <settings-popover
+      :options="formatColumnSettings(options.headings)"
+      target="pm-dr-column-settings"
+      @onUpdateColumnSettings="onUpdateColumnSettings"
+      :key="random+1"
+      :selected="formatColumnSelected(columns)"
+    />
     <v-server-table
       v-if="typeView === 'GRID'"
       :data="tableData"
@@ -253,6 +259,7 @@ export default {
           case_title: this.$i18n.t("ID_CASE_TITLE"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
+          priority: this.$i18n.t("ID_PRIORITY"),
           actions: ""
         },
         selectable: {
