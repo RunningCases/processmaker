@@ -159,8 +159,7 @@ export default {
 
             eventer(messageEvent, function(e) {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
-                  console.log("JONN");
-                  that.OnClickSidebarItem(that.getItemMenuByValue("page","inbox"));
+                    that.OnClickSidebarItem(that.getItemMenuByValue("page","inbox"));
                 }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
