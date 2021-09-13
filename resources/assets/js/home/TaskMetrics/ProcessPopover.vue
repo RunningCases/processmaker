@@ -125,7 +125,6 @@ export default {
      * Toogle all options in popover
      */
     toogleAllColumns() {
-
       let res = [];
       if (this.allColumns) {
         _.each(this.options, function (o) {
