@@ -10146,6 +10146,12 @@ msgid "CSV Import"
 msgstr "CSV Import"
 
 # TRANSLATION
+# LABEL/ID_IMPORT_CUSTOM_CASE_LIST
+#: LABEL/ID_IMPORT_CUSTOM_CASE_LIST
+msgid "Import Custom Case List"
+msgstr "Import Custom Case List"
+
+# TRANSLATION
 # LABEL/ID_IMPORT_DATA_CSV
 #: LABEL/ID_IMPORT_DATA_CSV
 msgid "Import Data from CSV file"
@@ -20154,6 +20160,12 @@ msgid "% New Cases"
 msgstr "% New Cases"
 
 # TRANSLATION
+# LABEL/ID_NEW_CASES_LISTS
+#: LABEL/ID_NEW_CASES_LISTS
+msgid "New Case List"
+msgstr "New Case List"
+
+# TRANSLATION
 # LABEL/ID_NEW_CASE_PANEL
 #: LABEL/ID_NEW_CASE_PANEL
 msgid "New Case Panel"
@@ -21586,6 +21598,12 @@ msgstr "The PIN is invalid"
 #: LABEL/ID_PLEASE
 msgid "please"
 msgstr "please"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_ADD_THE_CUSTOM_LIST_FILE_TO_BE_UPLOADED
+#: LABEL/ID_PLEASE_ADD_THE_CUSTOM_LIST_FILE_TO_BE_UPLOADED
+msgid "Please add the Custom List File to be uploaded"
+msgstr "Please add the Custom List File to be uploaded"
 
 # TRANSLATION
 # LABEL/ID_PLEASE_ADD_THE_FILE_SETTINGS_TO_BE_UPLOADED
