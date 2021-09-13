@@ -64,7 +64,6 @@ export default {
                 let key = `tooltip-${that.data.id}`;
                 that.labelTooltip = response.data.label;
                 that.$refs[key].$emit("open");
-                that.isHighlight = false;
             });
         },
         /**
