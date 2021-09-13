@@ -83,17 +83,34 @@ export default {
         dt,
         typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
         start = 0,
+        paged,
         limit = data.limit,
-        filters = {};
+        filters = {},
+        id = this.data.customListId;
       filters = {
-        paged: "0," + limit,
+          paged: paged,
+          limit: limit,
+          offset: start,
       };
-
-      _.forIn(this.filters, function (item, key) {
-        filters[item.filterVar] = item.value;
-      });
+      if (_.isEmpty(that.filters) && this.data.settings) {
+          _.forIn(this.data.settings.filters, function(item, key) {
+              if (filters && item.value) {
+                  filters[item.filterVar] = item.value;
+              }
+          });
+      } else {
+          _.forIn(this.filters, function(item, key) {
+              if (filters && item.value) {
+                  filters[item.filterVar] = item.value;
+              }
+          });
+      }
       return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases[typeList](filters)
+          api.custom[that.data.pageParent]
+            ({
+                id,
+                filters,
+            })
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({

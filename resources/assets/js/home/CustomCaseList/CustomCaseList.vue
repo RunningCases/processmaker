@@ -4,10 +4,11 @@
         <modal-new-request ref="newRequest"></modal-new-request>
         <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
         <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
-        <CasesFilter
+        <CustomFilter
             :filters="filters"
             :title="titleMap[data.pageParent].label"
             :icon="titleMap[data.pageParent].icon"
+            :filterItems="filterItems"
             @onRemoveFilter="onRemoveFilter"
             @onUpdateFilters="onUpdateFilters"
         />
@@ -310,7 +311,7 @@ import ModalNewRequest from "../ModalNewRequest.vue";
 import ModalUnpauseCase from "../modal/ModalUnpauseCase.vue";
 import ModalClaimCase from "../modal/ModalClaimCase.vue";
 import TaskCell from "../../components/vuetable/TaskCell.vue";
-import CasesFilter from "../../components/search/CasesFilter";
+import CustomFilter from "../../components/search/CustomFilter";
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
@@ -334,7 +335,7 @@ export default {
         ModalUnpauseCase,
         ModalClaimCase,
         TaskCell,
-        CasesFilter,
+        CustomFilter,
         MultiviewHeader,
         VueCardView,
         VueListView,
@@ -377,10 +378,7 @@ export default {
                     this.$refs["newRequest"].show();
                 },
             },
-            filters:
-                this.settings && this.settings.filters
-                    ? this.settings.filters
-                    : {},
+            filters: {},
             defaultColumns: [
                 "case_number",
                 "case_title",
@@ -471,6 +469,196 @@ export default {
                 icon: this.data.pageIcon,
                 color: this.data.color
             },
+            itemMap: {
+                case_number: "caseNumber",
+                case_title: "caseTitle",
+                delegation_date: "delegationDate",
+                send_by: "bySendBy",
+                process_name: "processName"
+            },
+            customItems:{
+                VARCHAR: {
+                    group: "radio",
+                    type: "VARCHAR",
+                    id: "string",
+                    title: `${this.$i18n.t("ID_FILTER")}:`,
+                    optionLabel: "",
+                    tagPrefix: "",
+                    detail: "",
+                    tagText: "",
+                    placeholder: "", 
+                    items: [
+                        {
+                        id: "",
+                        value: "",
+                        },
+                    ],
+                    autoShow: true,
+                    makeTagText: function (params, data) {
+                        return `${this.tagPrefix} ${data[0].value}`;
+                    },
+                },
+                DATETIME: {
+                    group: "radio",
+                    type: "DATETIME",
+                    id: "datetime",
+                    title: `${this.$i18n.t('ID_FILTER')}:`,
+                    optionLabel: "",
+                    detail: "",
+                    tagText: "",
+                    tagPrefix: "",
+                    items:[
+                        {
+                            id: "",
+                            value: ""
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        let temp = data[0].value.split(",");
+                        return `${this.tagPrefix} ${temp[0]} - ${temp[1]} `;
+                    }
+                }
+            },
+            filterItems:[],
+            availableItems: {
+                caseNumber:  {
+                    group: "radio",
+                    type: "CaseNumber",
+                    id: "caseNumber",
+                    title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                        "ID_BY_CASE_NUMBER"
+                    )}`,
+                    optionLabel: this.$i18n.t("ID_BY_CASE_NUMBER"),
+                    detail: this.$i18n.t("ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED"),
+                    tagText: "",
+                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_NUMBER"),
+                    items: [
+                        {
+                        id: "filterCases",
+                        value: "",
+                        },
+                    ],
+                    autoShow: true,
+                    makeTagText: function (params, data) {
+                        return `${params.tagPrefix}: ${data[0].value}`;
+                    },
+                },
+                caseTitle: {
+                    group: "radio",
+                    type: "CaseTitle",
+                    id: "caseTitle",
+                    title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                        "ID_BY_CASE_TITLE"
+                    )}`,
+                    optionLabel: this.$i18n.t("ID_BY_CASE_TITLE"),
+                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_TITLE"),
+                    detail: "",
+                    tagText: "",    
+                    items: [
+                        {
+                        id: "caseTitle",
+                        value: "",
+                        },
+                    ],
+                    autoShow: true,
+                    makeTagText: function (params, data) {
+                        return `${this.tagPrefix} ${data[0].value}`;
+                    },
+                },
+                delegationDate: {
+                    group: "radio",
+                    type: "DateFilter",
+                    id: "delegationDate",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_DELEGATION_DATE')}`,
+                    optionLabel: this.$i18n.t('ID_BY_DELEGATION_DATE'),
+                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_DELEGATION_DATE_TO_BE_SEARCHED'),
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_DELEGATION_DATE'),
+                    items:[
+                        {
+                            id: "delegateFrom",
+                            value: "",
+                            label: this.$i18n.t('ID_FROM_DELEGATION_DATE')
+                        },
+                        {
+                            id: "delegateTo",
+                            value: "",
+                            label: this.$i18n.t('ID_TO_DELEGATION_DATE')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} ${data[0].value} - ${data[1].value}`;
+                    }
+                },
+                bySendBy: {
+                    group: "radio",
+                    type: "CurrentUser",
+                    id: "bySendBy",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_SEND_BY')}`,
+                    optionLabel: this.$i18n.t('ID_BY_SEND_BY'),
+                    detail: this.$i18n.t('ID_PLEASE_SELECT_USER_NAME_TO_BE_SEARCHED'),
+                    placeholder: this.$i18n.t('ID_USER_NAME'),
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_SEND_BY'),
+                    items:[
+                        {
+                            id: "sendBy",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_USER_NAME')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} : ${data[0].label || ''}`;
+                    }
+                },
+                taskTitle: {
+                    group: "radio",
+                    type: "TaskTitle",
+                    id: "taskTitle",
+                    title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                        "ID_TASK_NAME"
+                    )}`,
+                    optionLabel: this.$i18n.t("ID_BY_TASK"),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_NAME"),
+                    autoShow: true,
+                    items: [
+                        {
+                        id: "task",
+                        value: "",
+                        options: [],
+                        placeholder: this.$i18n.t("ID_TASK_NAME"),
+                        },
+                    ],
+                    makeTagText: function (params, data) {
+                        return `${this.tagPrefix}: ${data[0].label || ""}`;
+                    },
+                },
+                processName: {
+                    group: "checkbox",
+                    type: "ProcessName",
+                    id: "processName",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
+                    autoShow: false,
+                    items:[
+                        {
+                            id: "process",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_PROCESS_NAME')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                    }
+                }
+            }
         };
     },
     created() {
@@ -605,31 +793,54 @@ export default {
                 limit: limit,
                 offset: start,
             };
-            _.forIn(this.filters, function(item, key) {
-                if (filters && item.value) {
-                    filters[item.filterVar] = item.value;
-                }
-            });
+            if (_.isEmpty(that.filters) && this.data.settings) {
+                _.forIn(this.data.settings.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            } else {
+                _.forIn(this.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            }
             sort = that.prepareSortString(data);
             if (sort) {
                 filters["sort"] = sort;
             }
             return new Promise((resolutionFunc, rejectionFunc) => {
-                api.cases[that.data.pageParent]
+                api.custom[that.data.pageParent]
                     ({
                         id,
                         filters,
                     })
                     .then((response) => {
-                        let tmp, columns;
-
-                        columns = response.data.columns.map((item) => {
-                            return item.field;
+                        let tmp,
+                            columns = [],
+                            product,
+                            newItems = [];
+                        that.filterItems = [];
+                        response.data.columns.forEach((item) => {
+                            if (item.enableFilter) {
+                                if (that.availableItems[that.itemMap[item.field]]) {
+                                    newItems.push(that.availableItems[that.itemMap[item.field]]);
+                                } else {
+                                    product = this.filterItemFactory(item)
+                                    if (product) {
+                                        newItems.push(product);
+                                    }
+                                }
+                            }
+                            columns.push(item.field);
                         });
+                        that.filterItems = newItems;
                         that.settingOptions = that.formatColumnSettings(columns);
                         dt = that.formatDataResponse(response.data.data);
                         that.cardColumns = columns;
                         if (that.isFistTime) {
+                            that.filters = that.settings && that.settings.filters ? that.settings.filters : {};
                             that.columns = that.settings && that.settings.columns ? that.settings.columns :  that.getTableColumns(columns);
                         }
                         resolutionFunc({
@@ -641,6 +852,28 @@ export default {
                         rejectionFunc(e);
                     });
             });
+        },
+        /**
+         * Create a filter item dinamically
+         * @param {object} item
+         * @returns {object|boolean}
+         */
+        filterItemFactory(item) {
+            let product;
+            if (item.type === "DATETIME") {
+                product= {...this.customItems["DATETIME"]};
+            } else {
+                product = {...this.customItems["VARCHAR"]};
+            }
+            product.title += " " + item.name;
+            product.id = item.field;    
+            product.optionLabel = item.name;
+            product.tagPrefix = item.name;
+            if (product.items && product.items[0]) {
+                product.items[0].id = item.field;
+            }
+            product.placeholder = "";
+            return product;
         },
         /**
          * Prepare sort string to be sended in the service
@@ -818,6 +1051,7 @@ export default {
          * update view in component
          */
         updateView(newData) {
+            let newCriteria = [];
             this.isFistTime = true;
             this.typeView = "GRID";
             // force to update component id
@@ -830,10 +1064,15 @@ export default {
                     icon: newData.pageIcon,
                     color: newData.color
                 }
-                this.filters = newData.settings && newData.settings.filters ? newData.settings.filters : {};
+                this.data.settings = newData.settings;
+                this.filters = {};
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {
-                this.$refs["vueTable"].getData();
+                 if (newData.settings && newData.settings.orderBy) {
+                    this.$refs["vueTable"].setOrder(newData.settings.orderBy.column, newData.settings.orderBy.ascending);
+                } else {
+                    this.$refs["vueTable"].setOrder(false);
+                 }
             }
             if (this.typeView === "CARD" && this.$refs["vueCardView"]) {
                 this.$refs["vueCardView"].getData();
