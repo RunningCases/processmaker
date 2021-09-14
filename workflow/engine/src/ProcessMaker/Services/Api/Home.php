@@ -79,7 +79,16 @@ class Home extends Api
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getDraft(...func_get_args());
+            return $bmHome->getDraft(
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $filterCases,
+                    $sort
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -126,7 +135,19 @@ class Home extends Api
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getInbox(...func_get_args());
+            return $bmHome->getInbox(
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $delegateFrom,
+                    $delegateTo,
+                    $filterCases,
+                    $sort,
+                    $sendBy
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -172,7 +193,19 @@ class Home extends Api
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getUnassigned(...func_get_args());
+            return $bmHome->getUnassigned(
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $delegateFrom,
+                    $delegateTo,
+                    $filterCases,
+                    $sort,
+                    $sendBy
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -218,7 +251,19 @@ class Home extends Api
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getPaused(...func_get_args());
+            return $bmHome->getPaused(
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $delegateFrom,
+                    $delegateTo,
+                    $filterCases,
+                    $sort,
+                    $sendBy
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -226,7 +271,7 @@ class Home extends Api
 
     /**
      * Get the custom draft cases.
-     * @url GET /draft/:id
+     * @url POST /draft/:id
      * @param int $id
      * @param int $caseNumber
      * @param int $process
@@ -236,6 +281,7 @@ class Home extends Api
      * @param string $caseTitle
      * @param string $filterCases
      * @param string $sort
+     * @param array $request_data
      * @return array
      * @throws RestException
      * @access protected
@@ -250,12 +296,24 @@ class Home extends Api
         int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        array $request_data = []
     )
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getCustomDraft(...func_get_args());
+            return $bmHome->getCustomDraft(
+                    $id,
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $filterCases,
+                    $sort,
+                    $request_data
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -263,7 +321,7 @@ class Home extends Api
 
     /**
      * Get the custom inbox cases.
-     * @url GET /inbox/:id
+     * @url POST /inbox/:id
      * @param int $id
      * @param int $caseNumber
      * @param int $process
@@ -276,12 +334,13 @@ class Home extends Api
      * @param string $filterCases
      * @param string $sort
      * @param string $sendBy
+     * @param array $request_data
      * @return array
      * @throws RestException
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function doGetCustomTodoCases(
+    public function doGetCustomInboxCases(
         int $id,
         int $caseNumber = 0,
         int $process = 0,
@@ -293,12 +352,27 @@ class Home extends Api
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = ''
+        string $sendBy = '',
+        array $request_data = []
     )
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getCustomInbox(...func_get_args());
+            return $bmHome->getCustomInbox(
+                    $id,
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $delegateFrom,
+                    $delegateTo,
+                    $filterCases,
+                    $sort,
+                    $sendBy,
+                    $request_data
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -306,7 +380,7 @@ class Home extends Api
 
     /**
      * Get the custom unassigned cases.
-     * @url GET /unassigned/:id
+     * @url POST /unassigned/:id
      * @param int $id
      * @param int $caseNumber
      * @param int $process
@@ -319,6 +393,7 @@ class Home extends Api
      * @param string $filterCases
      * @param string $sort
      * @param string $sendBy
+     * @param array $request_data
      * @return array
      * @throws RestException
      * @access protected
@@ -336,12 +411,27 @@ class Home extends Api
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = ''
+        string $sendBy = '',
+        array $request_data = []
     )
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getCustomUnassigned(...func_get_args());
+            return $bmHome->getCustomUnassigned(
+                    $id,
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $delegateFrom,
+                    $delegateTo,
+                    $filterCases,
+                    $sort,
+                    $sendBy,
+                    $request_data
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -349,7 +439,7 @@ class Home extends Api
 
     /**
      * Get the custom paused cases.
-     * @url GET /paused/:id
+     * @url POST /paused/:id
      * @param int $id
      * @param int $caseNumber
      * @param int $process
@@ -362,6 +452,7 @@ class Home extends Api
      * @param string $filterCases
      * @param string $sort
      * @param string $sendBy
+     * @param array $request_data
      * @return array
      * @throws RestException
      * @access protected
@@ -379,12 +470,27 @@ class Home extends Api
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = ''
+        string $sendBy = '',
+        array $request_data = []
     )
     {
         try {
             $bmHome = new BMHome($this->getUserId());
-            return $bmHome->getCustomPaused(...func_get_args());
+            return $bmHome->getCustomPaused(
+                    $id,
+                    $caseNumber,
+                    $process,
+                    $task,
+                    $limit,
+                    $offset,
+                    $caseTitle,
+                    $delegateFrom,
+                    $delegateTo,
+                    $filterCases,
+                    $sort,
+                    $sendBy,
+                    $request_data
+            );
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

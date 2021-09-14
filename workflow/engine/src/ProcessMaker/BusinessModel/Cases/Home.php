@@ -267,8 +267,9 @@ class Home
      * @param int $id
      * @param array $arguments
      * @param array $defaultColumns
+     * @param array $customFilters
      */
-    public function buildCustomCaseList(string $type, int $id, array &$arguments, array &$defaultColumns)
+    public function buildCustomCaseList(string $type, int $id, array &$arguments, array &$defaultColumns, array $customFilters = [])
     {
         $caseList = CaseList::where('CAL_TYPE', '=', $type)
             ->where('CAL_ID', '=', $id)
@@ -287,21 +288,46 @@ class Home
                 $defaultColumns = [];
             }
             $fields = [];
+            $types = [];
             foreach ($columns as $value) {
                 if ($value['set'] === true) {
                     $defaultColumns[] = $value;
                     if ($value['source'] === $tableName) {
                         $fields[] = $value['field'];
+                        $types[$value['field']] = $value['type'];
                     }
                 }
             }
 
             //this modifies the query
             if (!empty($tableName) && !empty($fields)) {
-                $arguments[] = function ($query) use ($tableName, $fields) {
+                $arguments[] = function ($query) use ($tableName, $fields, $customFilters, $types) {
                     $query->leftJoin($tableName, "{$tableName}.APP_UID", "=", "APP_DELEGATION.APP_UID");
                     foreach ($fields as $value) {
                         $query->addSelect($value);
+                    }
+                    //filters for custom case list
+                    foreach ($customFilters as $key => $filter) {
+                        if (in_array($key, $fields)) {
+                            //special case for date range
+                            if (isset($types[$key]) && ($types[$key] === "DATETIME" || $types[$key] === "DATE")) {
+                                if (strpos($customFilters[$key], ",") !== false) {
+                                    $explode = explode(",", $customFilters[$key]);
+                                    $dateFrom = $explode[0];
+                                    $dateTo = $explode[1];
+                                    $query->whereBetween($key, [$dateFrom, $dateTo]);
+                                    if (is_null($filter) || $filter === "") {
+                                        $subquery->orWhereNull($key);
+                                    }
+                                    continue;
+                                }
+                            }
+                            //normal filter
+                            $subquery = $query->where($key, 'like', "%{$filter}%");
+                            if (is_null($filter) || $filter === "") {
+                                $subquery->orWhereNull($key);
+                            }
+                        }
                     }
                 };
             }
@@ -319,6 +345,7 @@ class Home
      * @param string $caseTitle
      * @param string $filterCases
      * @param string $sort
+     * @param array $customFilters
      * @return array
      */
     public function getCustomDraft(
@@ -330,15 +357,30 @@ class Home
         int $offset = 0,
         string $caseTitle = '',
         string $filterCases = '',
-        string $sort = 'APP_NUMBER,DESC'
+        string $sort = 'APP_NUMBER,DESC',
+        array $customFilters = []
     )
     {
-        $arguments = func_get_args();
-        array_shift($arguments);
+        $arguments = [
+            $caseNumber,
+            $process,
+            $task,
+            $limit,
+            $offset,
+            $caseTitle,
+            $filterCases,
+            $sort
+        ];
+
+        //clear duplicate indexes
+        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'filterCases', 'sort'];
+        foreach ($keys as $value) {
+            unset($customFilters[$value]);
+        }
 
         $type = 'draft';
         $defaultColumns = CaseList::formattingColumns($type, '', []);
-        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns);
+        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns, $customFilters);
 
         $result = $this->getDraft(...$arguments);
         $result['columns'] = $defaultColumns;
@@ -359,6 +401,7 @@ class Home
      * @param string $filterCases
      * @param string $sort
      * @param string $sendBy
+     * @param array $customFilters
      * @return array
      */
     public function getCustomInbox(
@@ -373,15 +416,33 @@ class Home
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = ''
+        string $sendBy = '',
+        array $customFilters = []
     )
     {
-        $arguments = func_get_args();
-        array_shift($arguments);
+        $arguments = [
+            $caseNumber,
+            $process,
+            $task,
+            $limit,
+            $offset,
+            $caseTitle,
+            $delegateFrom,
+            $delegateTo,
+            $filterCases,
+            $sort,
+            $sendBy
+        ];
+
+        //clear duplicate indexes
+        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        foreach ($keys as $value) {
+            unset($customFilters[$value]);
+        }
 
         $type = 'inbox';
         $defaultColumns = CaseList::formattingColumns($type, '', []);
-        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns);
+        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns, $customFilters);
 
         $result = $this->getInbox(...$arguments);
         $result['columns'] = $defaultColumns;
@@ -402,6 +463,7 @@ class Home
      * @param string $filterCases
      * @param string $sort
      * @param string $sendBy
+     * @param array $customFilters
      * @return array
      */
     public function getCustomUnassigned(
@@ -416,15 +478,33 @@ class Home
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = ''
+        string $sendBy = '',
+        array $customFilters = []
     )
     {
-        $arguments = func_get_args();
-        array_shift($arguments);
+        $arguments = [
+            $caseNumber,
+            $process,
+            $task,
+            $limit,
+            $offset,
+            $caseTitle,
+            $delegateFrom,
+            $delegateTo,
+            $filterCases,
+            $sort,
+            $sendBy
+        ];
+
+        //clear duplicate indexes
+        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        foreach ($keys as $value) {
+            unset($customFilters[$value]);
+        }
 
         $type = 'unassigned';
         $defaultColumns = CaseList::formattingColumns($type, '', []);
-        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns);
+        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns, $customFilters);
 
         $result = $this->getUnassigned(...$arguments);
         $result['columns'] = $defaultColumns;
@@ -445,6 +525,7 @@ class Home
      * @param string $filterCases
      * @param string $sort
      * @param string $sendBy
+     * @param array $customFilters
      * @return array
      */
     public function getCustomPaused(
@@ -459,15 +540,33 @@ class Home
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = ''
+        string $sendBy = '',
+        array $customFilters = []
     )
     {
-        $arguments = func_get_args();
-        array_shift($arguments);
+        $arguments = [
+            $caseNumber,
+            $process,
+            $task,
+            $limit,
+            $offset,
+            $caseTitle,
+            $delegateFrom,
+            $delegateTo,
+            $filterCases,
+            $sort,
+            $sendBy
+        ];
+
+        //clear duplicate indexes
+        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        foreach ($keys as $value) {
+            unset($customFilters[$value]);
+        }
 
         $type = 'paused';
         $defaultColumns = CaseList::formattingColumns($type, '', []);
-        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns);
+        $this->buildCustomCaseList($type, $id, $arguments, $defaultColumns, $customFilters);
 
         $result = $this->getPaused(...$arguments);
         $result['columns'] = $defaultColumns;

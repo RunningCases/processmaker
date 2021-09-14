@@ -250,8 +250,8 @@ export default {
          * @param {Array} data
          */
         filterDataToExport(data) {
-            var dataExport = [];
-            dataExport.push({
+            var dataExport;
+            dataExport = {
                 type: data['type'],
                 name: data['name'],
                 description: data['description'],
@@ -264,7 +264,7 @@ export default {
                 iconColorScreen: data['iconColorScreen'],
                 createDate: data['createDate'],
                 updateDate: data['updateDate']
-            });
+            };
             return dataExport;
         },
         /**

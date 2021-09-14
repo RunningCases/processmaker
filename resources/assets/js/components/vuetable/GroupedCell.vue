@@ -54,7 +54,7 @@ export default {
     data() {
         return {
             //Color map for ["In Progress", "overdue", "inDraft", "paused", "unnasigned"]
-            colorMap: ["green", "red", "orange", "aqua", "silver"],
+            colorMap: ["green", "red", "orange", "blue", "silver"],
             id: "avatar-" + _.random(1000000),
             statusId: "status-" + _.random(1000000)
         };

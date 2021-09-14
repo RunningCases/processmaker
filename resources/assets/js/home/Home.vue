@@ -59,6 +59,7 @@ import CustomCaseList from "./CustomCaseList/CustomCaseList.vue"
 
 import api from "./../api/index";
 import eventBus from './EventBus/eventBus'
+import _ from "lodash";
 export default {
     name: "Home",
     components: {
@@ -158,7 +159,7 @@ export default {
 
             eventer(messageEvent, function(e) {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
-                    that.page = "inbox";
+                    that.OnClickSidebarItem(that.getItemMenuByValue("page","inbox"));
                 }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
@@ -563,6 +564,23 @@ export default {
                 console.error(e);
             });
             }
+        },
+        /**
+         * Search in menu Items by value, return the item
+         * @param {string} key - Key for search in object
+         * @param {string} value - value for search in key
+         */
+        getItemMenuByValue(key, value) {
+            let obj = _.find(this.menu, function(o) {
+                if(o.component){
+                  return o.props.item[key] == value;
+                }
+                return o[key] == value; 
+            });
+            if(obj.component){
+              return obj.props;
+            }
+            return obj;
         }
     }
 };
