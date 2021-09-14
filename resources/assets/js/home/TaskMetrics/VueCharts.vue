@@ -36,6 +36,7 @@ import VueChartLvZero from "./VueChartLvZero.vue";
 import VueChartLvOne from "./VueChartLvOne.vue";
 import VueChartLvTwo from "./VueChartLvTwo.vue";
 import VueChartLvThree from "./VueChartLvThree.vue";
+import _ from "lodash";
 
 export default {
   name: "VueCharts",
@@ -51,9 +52,9 @@ export default {
     let that = this;
     return {
       level: 0,
-      key1: 1,
-      key2: 1,
-      key3: 1,
+      key1: _.random(0,100),
+      key2: _.random(0,100),
+      key3: _.random(0,100),
       data: [],
       settingsBreadCrumbs: [
         {
