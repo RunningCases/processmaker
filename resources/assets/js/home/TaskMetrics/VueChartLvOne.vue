@@ -184,6 +184,7 @@ export default {
     },
     /**
      * Get Processes form API
+     * @param {string} query - Text value in search popover
      */
     getProcesses(query) {
       let that = this;
