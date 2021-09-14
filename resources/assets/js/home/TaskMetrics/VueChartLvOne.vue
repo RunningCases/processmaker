@@ -11,6 +11,7 @@
         />
         <ProcessPopover
           :options="optionsProcesses"
+          @onChange="onChangeSearchPopover"
           target="pm-task-process"
           ref="pm-task-process"
           @onUpdateColumnSettings="onUpdateColumnSettings"
@@ -183,11 +184,12 @@ export default {
     },
     /**
      * Get Processes form API
+     * @param {string} query - Text value in search popover
      */
-    getProcesses() {
+    getProcesses(query) {
       let that = this;
       Api.filters
-        .processList("")
+        .processList(query || "")
         .then((response) => {
           that.formatDataProcesses(response.data);
           that.changeOption({
@@ -334,6 +336,13 @@ export default {
         id: 0,
       });
     },
+    /**
+     * Event handler change input search popover
+     * @param {string} query - value in popover search input
+     */
+    onChangeSearchPopover(query){
+      this.getProcesses(query);
+    }
   },
 };
 </script>

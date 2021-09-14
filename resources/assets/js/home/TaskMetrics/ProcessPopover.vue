@@ -35,7 +35,7 @@
         <b-form-group>
           <b-form-checkbox-group
             v-model="localSelected"
-            :options="results"
+            :options="options"
             value-field="key"
             text-field="value"
             name="flavour-2a"
@@ -60,19 +60,17 @@
 <script>
 export default {
   name: "ProcessPopover",
-  props: ["target"],
+  props: ["target", "options"],
   data() {
     return {
-      options: [],
+      timeCounter:"",
       text: "",
-      results: [],
       allColumns: false,
       localSelected: [],
       selected: [],
     };
   },
   mounted() {
-    this.results = this.options;
     this.localSelected = this.selected;
   },
   methods: {
@@ -82,7 +80,6 @@ export default {
      */
     setOptions(options) {
       this.options = options;
-      this.results = options;
     },
     /**
      * Setter the selected options
@@ -118,17 +115,11 @@ export default {
      * Search in the column name
      */
     search() {
-      let txt = this.text.toLowerCase(),
-        val,
-        opts = [];
-
-      opts = _.filter(this.options, function (o) {
-        val = o.value.toLowerCase();
-
-        return val.search(txt) != -1;
-      });
-
-      this.results = opts;
+      let that = this;
+      clearTimeout(this.timeCounter);
+      this.timeCounter = setTimeout(()=>{
+          that.$emit("onChange", this.text.toLowerCase())
+      }, 500);
     },
     /**
      * Toogle all options in popover
@@ -140,7 +131,7 @@ export default {
           res.push(o.key);
         });
       }
-      this.selected = res;
+      this.localSelected = res;
     },
     /**
      * Handler when change options event
