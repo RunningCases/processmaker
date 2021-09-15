@@ -406,7 +406,6 @@ export default {
                 this.$emit("cleanDefaultOption");
                 this.onUpdateFilters(filter);
             }
-            
         }
     },
     /**
