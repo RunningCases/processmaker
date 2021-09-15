@@ -404,7 +404,7 @@ export default {
                 settings: this.settings
             }
             //Custom Cases List
-            if (!this.menuMap[item.item.id] && item.item.page !== "LegacyFrame" ) {
+            if (!this.menuMap[item.item.id] && item.item.page !== "LegacyFrame" && item.item.page !== "advanced-search" ) {
                 this.page = "custom-case-list";
                 if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
                     this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
