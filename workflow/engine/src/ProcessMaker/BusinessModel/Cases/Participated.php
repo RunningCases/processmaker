@@ -181,12 +181,12 @@ class Participated extends AbstractCases
                             // Get the pending task
                             $taskPending = Delegation::getPendingThreads($item['APP_NUMBER'], false);
                             $result = [];
+                            $result['THREAD_TASKS'] = [];
+                            $result['THREAD_TITLES'] = [];
                             foreach ($taskPending as $thread) {
                                 $thread['APP_STATUS'] = $item['APP_STATUS'];
                                 // Get the thread information
                                 $information = $this->threadInformation($thread);
-                                $result['THREAD_TASKS'] = [];
-                                $result['THREAD_TITLES'] = [];
                                 $result['THREAD_TASKS'][] = $information['THREAD_TASK'];
                                 $result['THREAD_TITLES'][] = $information['THREAD_TITLE'];
                             }
