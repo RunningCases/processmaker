@@ -49,7 +49,8 @@ class AppDelegation extends BaseAppDelegation
     public function getRisk()
     {
         try {
-            $risk = 2;
+            // This value needs to have a value like 0.x
+            $risk = 0.2;
 
             return $risk;
         } catch (Exception $e) {
