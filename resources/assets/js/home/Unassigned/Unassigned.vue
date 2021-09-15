@@ -403,10 +403,11 @@ export default {
                     ],
                     refresh: true
                 };
+                this.$emit("cleanDefaultOption");
+                this.onUpdateFilters(filter);
             }
-            this.$emit("cleanDefaultOption");
+            
         }
-        this.onUpdateFilters(filter);
     },
     /**
      * On row click event handler
