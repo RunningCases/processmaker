@@ -388,10 +388,9 @@ export default {
          */
         pageFactory(item){
             this.filters = [];
-            // Updating the last page ATTENTION
+            // Updating the last page
             this.lastPage = this.page;
             this.page = item.item.page;
-
             this.filters = item.item.filters;
             this.pageId = item.item.id;
             this.pageUri = item.item.href;
