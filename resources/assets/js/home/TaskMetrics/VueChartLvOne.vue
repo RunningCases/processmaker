@@ -193,7 +193,7 @@ export default {
         .then((response) => {
           that.formatDataProcesses(response.data);
           that.changeOption({
-            id: 0,
+            id: "all",
           });
         })
         .catch((e) => {
@@ -206,6 +206,10 @@ export default {
      */
     formatDataCategories(data) {
       let array = [];
+      array.push({
+        name: this.$t("ID_ALL_CATEGORIES"),
+        id: "all",
+      });
       array.push({
         name: this.$t("ID_PROCESS_NONE_CATEGORY"),
         id: "0",
@@ -251,6 +255,7 @@ export default {
           processes: this.selectedProcesses,
           top: this.top,
         };
+        option.id == "all"? delete dt.category:null;
         Api.process
           .totalCasesByProcess(dt)
           .then((response) => {

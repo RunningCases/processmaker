@@ -182,7 +182,7 @@ export default {
           type: "datetime",
         },
         yaxis: {
-          tickAmount: 1,
+          tickAmount: 7,
         },
         tooltip: {
           custom: function ({ series, seriesIndex, dataPointIndex, w }) {
@@ -286,7 +286,8 @@ export default {
         case "OVERDUE":
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
-              min: 0,
+              min: -1,
+              tickAmount: 7,
             },
             title: {
               text: "Overdue days",
@@ -296,7 +297,8 @@ export default {
         case "AT_RISK":
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
-              max: 0,
+              max: 1,
+              tickAmount: 7
             },
             title: {
               text: "Days before being Overdue",
@@ -306,7 +308,8 @@ export default {
         case "ON_TIME":
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
-              max: 0,
+              max: 1,
+              tickAmount: 7
             },
             title: {
               text: "Days before being At-Risk",

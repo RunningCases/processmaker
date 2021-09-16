@@ -120,6 +120,9 @@ export default {
         xaxis: {
           type: "datetime",
         },
+        yaxis: {
+          tickAmount: 7,
+        },
         tooltip: {
           fixed: {
             enabled: false,
