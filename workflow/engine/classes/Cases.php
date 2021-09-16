@@ -544,7 +544,7 @@ class Cases
             } catch (Exception $oError) {
                 $fields['TITLE'] = $oApp->getAppTitle();
                 $fields['DESCRIPTION'] = '';
-                $fields['CREATOR'] = '(USER_DELETED)';
+                $fields['CREATOR'] = G::LoadTranslation('ID_UNASSIGNED');
                 $fields['CREATE_DATE'] = $oApp->getAppCreateDate();
                 $fields['UPDATE_DATE'] = $oApp->getAppUpdateDate();
             }
