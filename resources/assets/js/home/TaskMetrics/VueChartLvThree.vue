@@ -286,7 +286,7 @@ export default {
         case "OVERDUE":
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
-              min: -1,
+              min: 0,
               tickAmount: 7,
             },
             title: {
@@ -297,7 +297,7 @@ export default {
         case "AT_RISK":
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
-              max: 1,
+              max: 0,
               tickAmount: 7
             },
             title: {
@@ -308,7 +308,7 @@ export default {
         case "ON_TIME":
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
-              max: 1,
+              max: 0,
               tickAmount: 7
             },
             title: {
