@@ -325,8 +325,6 @@ export default {
                     };
                 }
             }
-            console.log("JON");
-
             return newData;
         },
         /**
@@ -390,8 +388,6 @@ export default {
          */
         pageFactory(item){
             this.filters = [];
-            // Updating the last page
-            this.lastPage = this.page;
             this.page = item.item.page;
             this.filters = item.item.filters;
             this.pageId = item.item.id;
@@ -421,6 +417,7 @@ export default {
                 && this.$refs["component"].updateView) {
                 this.$refs["component"].updateView(this.pageData);
             }
+            this.lastPage = this.page;
         },
         /**
          * Click sidebar menu item handler
