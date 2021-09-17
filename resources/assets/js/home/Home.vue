@@ -109,7 +109,8 @@ export default {
                 CASES_SELFSERVICE: "unassigned",
                 CONSOLIDATED_CASES: "batch-routing",
                 CASES_TO_REASSIGN: "task-reassignments",
-                CASES_FOLDERS: "my-documents"
+                CASES_FOLDERS: "my-documents",
+                TASK_METRICS:"task-metrics"
             },
             defaultOption: window.config.defaultOption || '',
             pageData: {},
@@ -294,16 +295,15 @@ export default {
                         props: {
                             isCollapsed: this.collapsed? true: false,
                             item: {
-                                header: data[i].header,
+                                href: "/task-metrics/" + data[i].id,
+                                icon: "fas fa-chart-pie",
+                                id: "TASK_METRICS",
+                                page: "task-metrics",
                                 title: data[i].title,
-                                hiddenOnCollapse: data[i].hiddenOnCollapse,
-                                icon: 'pie-chart-fill',
-                                onClick: function (item) {
-                                  that.onUpdatePage("task-metrics");
-                                }
+                                specialType: "header"
                             }
                         }
-                    }
+                    };
                 }
                 if (data[i].customCasesList)  {
                     data[i]["child"] = this.sortCustomCasesList(
@@ -325,6 +325,8 @@ export default {
                     };
                 }
             }
+            console.log("JON");
+
             return newData;
         },
         /**
