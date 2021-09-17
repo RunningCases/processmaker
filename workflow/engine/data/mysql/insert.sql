@@ -61385,6 +61385,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_THE_WEBSITE_CAN_NOT_BE_REACHED','en','The website can not be reached','2020-03-02') ,
 ( 'LABEL','ID_THIS_MONTH','en','This Month','2014-01-15') ,
 ( 'LABEL','ID_THIS_QUARTER','en','This quarter','2014-01-15') ,
+( 'LABEL','ID_THIS_USER_DOESNT_HAVE_PERMISSIONS_TO_SEE_CASE_NOTES','en','This user doesn’t have permissions to see the case notes of this process.','2021-09-16') ,
 ( 'LABEL','ID_THIS_WEEK','en','This Week','2014-01-15') ,
 ( 'LABEL','ID_THIS_YEAR','en','This Year','2014-01-15') ,
 ( 'LABEL','ID_THREAD_INDEX','en','Thread Index','2014-01-15') ,

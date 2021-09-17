@@ -436,7 +436,7 @@ export default {
         })
         .catch((err) => {
           if (err.response.data) {
-            that.showAlert(err.response.data.error.message, "danger");
+            that.showAlert(err.response.data.error.message, "info");
           }
         });
     },

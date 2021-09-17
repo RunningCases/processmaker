@@ -26466,6 +26466,12 @@ msgid "This quarter"
 msgstr "This quarter"
 
 # TRANSLATION
+# LABEL/ID_THIS_USER_DOESNT_HAVE_PERMISSIONS_TO_SEE_CASE_NOTES
+#: LABEL/ID_THIS_USER_DOESNT_HAVE_PERMISSIONS_TO_SEE_CASE_NOTES
+msgid "This user doesn’t have permissions to see the case notes of this process."
+msgstr "This user doesn’t have permissions to see the case notes of this process."
+
+# TRANSLATION
 # LABEL/ID_THIS_WEEK
 #: LABEL/ID_THIS_WEEK
 msgid "This Week"
