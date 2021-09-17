@@ -836,12 +836,12 @@ export default {
                             columns.push(item.field);
                         });
                         that.filterItems = newItems;
-                        that.settingOptions = that.formatColumnSettings(columns);
                         dt = that.formatDataResponse(response.data.data);
                         that.cardColumns = columns;
                         if (that.isFistTime) {
-                            that.filters = that.settings && that.settings.filters ? that.settings.filters : {};
-                            that.columns = that.settings && that.settings.columns ? that.settings.columns :  that.getTableColumns(columns);
+                            that.filters = that.data.settings && that.data.settings.filters ? that.data.settings.filters : {};
+                            that.columns = that.data.settings && that.data.settings.columns ? that.data.settings.columns :  that.getTableColumns(columns);
+                            that.settingOptions = that.formatColumnSettings(columns);
                         }
                         resolutionFunc({
                             data: dt,
@@ -1065,6 +1065,8 @@ export default {
                     color: newData.color
                 }
                 this.data.settings = newData.settings;
+                // this.settings = newData.settings;
+                
                 this.filters = {};
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {

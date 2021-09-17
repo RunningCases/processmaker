@@ -207,8 +207,11 @@ export default {
      * @returns 
      */
     formatColumnSettings(columns) {
-      return _.map(_.pick(this.headings, columns), (value, key) => {
-        return { value, key }
+      return _.map(columns, (value, key) => {
+        if (this.headings[value]) {
+          return { value: this.headings[value], key: value };
+        }
+        return { value, key: value }
       });
     }
   }

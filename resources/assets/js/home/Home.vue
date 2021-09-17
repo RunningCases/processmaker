@@ -387,6 +387,7 @@ export default {
          * @param {object} item
          */
         pageFactory(item){
+            debugger;
             this.filters = [];
             this.page = item.item.page;
             this.filters = item.item.filters;
@@ -407,9 +408,9 @@ export default {
             if (!this.menuMap[item.item.id] && item.item.page !== "LegacyFrame" && item.item.page !== "advanced-search" ) {
                 this.page = "custom-case-list";
                 if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
-                    this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
+                    this.pageData.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
                 } else {
-                    this.settings = {};
+                    this.pageData.settings  = {};
                 }
             }
             if (this.page === this.lastPage
