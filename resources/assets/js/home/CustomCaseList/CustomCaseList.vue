@@ -1064,7 +1064,7 @@ export default {
                     icon: newData.pageIcon,
                     color: newData.color
                 }
-                this.data.settings = newData.settings;              
+                this.data.settings = newData.settings;
                 this.filters = {};
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {

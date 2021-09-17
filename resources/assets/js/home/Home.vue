@@ -387,7 +387,6 @@ export default {
          * @param {object} item
          */
         pageFactory(item){
-            debugger;
             this.filters = [];
             this.page = item.item.page;
             this.filters = item.item.filters;
