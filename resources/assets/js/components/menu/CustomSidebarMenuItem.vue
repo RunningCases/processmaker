@@ -37,7 +37,7 @@
                                 !isCollapsed ||
                                 isMobileItem
                         "
-                    >  
+                    >
                         <span :class="item.specialType != 'header'?'vsm--title': 'vsm--header vsm--title--header'">
                             <template v-if="itemTaskList">
                                 <custom-tooltip
