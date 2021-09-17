@@ -2076,7 +2076,7 @@ class Cases
         $respView = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'VIEW');
         $respBlock = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'BLOCK');
         if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
-            throw new Exception(G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS"));
+            throw new Exception(G::LoadTranslation("ID_THIS_USER_DOESNT_HAVE_PERMISSIONS_TO_SEE_CASE_NOTES"));
         }
         // Get the notes
         $appNote = new Notes();
