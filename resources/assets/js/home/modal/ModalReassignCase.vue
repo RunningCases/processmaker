@@ -123,7 +123,7 @@ export default {
       api.cases.getUserReassign(this.data).then((response) => {
         var users = response.data.data,
           i;
-        if (response.statusText == "OK") {
+        if (response.statusText == "OK" || response.status === 200) {
           for (i = 0; i < users.length; i += 1) {
             that.users.push({
               value: users[i].USR_UID,
@@ -147,7 +147,7 @@ export default {
       this.data.reasonReassign = this.reasonReassign;
       this.notifyUser = this.notifyUser;
       api.cases.reassingCase(this.data).then((response) => {
-        if (response.statusText == "OK") {
+        if (response.statusText == "OK" || response.status === 200) {
           that.$refs["modal-reassign-case"].hide();
           that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
           if (that.$parent.$refs["vueTable"] !== undefined) {

@@ -436,7 +436,7 @@ export default {
         })
         .catch((err) => {
           if (err.response.data) {
-            that.showAlert(err.response.data.error.message, "danger");
+            that.showAlert(err.response.data.error.message, "info");
           }
         });
     },
@@ -594,7 +594,7 @@ export default {
       let that = this;
       Api.cases.unpause(data.row)
         .then((response) => {
-          if (response.statusText === "OK") {
+          if (response.statusText === "OK" || response.status === 200) {
             that.$refs["vueTable"].getData();
           }
         })
