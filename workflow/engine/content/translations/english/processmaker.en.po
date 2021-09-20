@@ -3132,6 +3132,12 @@ msgid "By Task"
 msgstr "By Task"
 
 # TRANSLATION
+# LABEL/ID_BY_TASK_THREAD_TITLE
+#: LABEL/ID_BY_TASK_THREAD_TITLE
+msgid "By Task Thread Title"
+msgstr "By Task Thread Title"
+
+# TRANSLATION
 # LABEL/ID_BY_STATUS
 #: LABEL/ID_BY_STATUS
 msgid "By Status"
@@ -24474,6 +24480,12 @@ msgid "Search by Status:"
 msgstr "Search by Status:"
 
 # TRANSLATION
+# LABEL/ID_SEARCH_BY_TASK_THREAD_TITLE
+#: LABEL/ID_SEARCH_BY_TASK_THREAD_TITLE
+msgid "Search by Task Thread Title:"
+msgstr "Search by Task Thread Title:"
+
+# TRANSLATION
 # LABEL/ID_SEARCH_BY_TASK_NAME
 #: LABEL/ID_SEARCH_BY_TASK_NAME
 msgid "Search by Task Name:"
@@ -26194,6 +26206,18 @@ msgstr "Task properties has been saved successfully"
 #: LABEL/ID_TASK_REASSIGNMENTS
 msgid "Task Reassignments"
 msgstr "Task Reassignments"
+
+# TRANSLATION
+# LABEL/ID_TASK_THREAD_TITLE
+#: LABEL/ID_TASK_THREAD_TITLE
+msgid "Task Thread Title"
+msgstr "Task Thread Title"
+
+# TRANSLATION
+# LABEL/ID_TASK_THREAD_TITLE_NAME
+#: LABEL/ID_TASK_THREAD_TITLE_NAME
+msgid "Task Thread Title Name"
+msgstr "Task Thread Title Name"
 
 # TRANSLATION
 # LABEL/ID_TASK_TITLE
