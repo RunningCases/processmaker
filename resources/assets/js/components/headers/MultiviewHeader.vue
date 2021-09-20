@@ -14,19 +14,20 @@
           </div>
         </b-col>
         <b-col sm="4" class="pm-multiview-header-actions-buttons">
-          <button
+          <b-button
             v-for="action in data.actions"
             :key="action.id"
             @click="action.onClick(action)"
             class="pm-multiview-header-button"
             :title="action.title"
+            variant="primary"
           >
             <div>
               <span>
                 <i :class="action.icon"></i>
               </span>
             </div>
-          </button>
+          </b-button>
         </b-col>
       </b-row>
     </div>
