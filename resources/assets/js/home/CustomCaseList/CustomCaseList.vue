@@ -673,7 +673,7 @@ export default {
              that.$emit("updateSettings", {
                 data: data,
                 key: "orderBy",
-                parent: that.data.pageParent,
+                page: that.data.pageParent,
                 type: "custom",
                 id: that.data.customListId
             });
@@ -687,7 +687,7 @@ export default {
                 this.$emit("updateSettings", {
                     data: val,
                     key: "columns",
-                    parent: this.data.pageParent,
+                    page: this.data.pageParent,
                     type: "custom",
                     id: this.data.customListId
                 });
@@ -1024,7 +1024,7 @@ export default {
             this.$emit("updateSettings", {
                 data: newFilters,
                 key: "filters",
-                parent: this.data.pageParent,
+                page: this.data.pageParent,
                 type: "custom",
                 id: this.data.customListId
             });

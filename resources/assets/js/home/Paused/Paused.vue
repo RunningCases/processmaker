@@ -360,7 +360,7 @@ export default {
       that.$emit("updateSettings", {
         data: data,
         key: "orderBy",
-        parent: this.page,
+        page: "paused",
         type: "normal",
         id: this.id
       });
@@ -371,7 +371,7 @@ export default {
       this.$emit("updateSettings", {
         data: val,
         key: "columns",
-        parent: this.page,
+        page: "paused",
         type: "normal",
         id: this.id
       });
@@ -632,7 +632,7 @@ export default {
           this.$emit("updateSettings", {
             data: newFilters,
             key: "filters",
-            parent: this.page,
+            page: "paused",
             type: "normal",
             id: this.id
           });
