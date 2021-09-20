@@ -1,24 +1,29 @@
 <template>
-    <div class="float-right">
-         <transition name="fade">
-            <div
-                class="v-inline"
-                v-show="showActions"
-                ref="ellipsis"
-            >
-                <div class="buttonGroup">
-                    <b-button
-                        v-for="item in data.buttons"
-                        :key="item.name"
-                        variant="outline-info"
-                        @click="executeFunction(item.fn)"
-                    >
-                        <i class="custom-icon" :class="item.icon" v-bind:style="{color: item.color}"></i>
-                    </b-button>
+    <div>
+        <div class="float-right" v-show="showActions">
+            <transition name="fade">
+                <div
+                    class="v-inline"
+                    v-show="showActions"
+                    ref="ellipsis"
+                >
+                    <div class="buttonGroup">
+                        <b-button
+                            v-for="item in data.buttons"
+                            :key="item.name"
+                            variant="outline-info"
+                            @click="executeFunction(item.fn)"
+                        >
+                            <i class="custom-icon" :class="item.icon" v-bind:style="{color: item.color}"></i>
+                        </b-button>
+                    </div>
                 </div>
-            </div>
-        </transition>
-        <div class="ellipsis-button">
+            </transition>
+        </div>
+        <div 
+            class="ellipsis-button align-middle"
+            v-show="!showActions"
+        >
             <div @click="showActionButtons()">
                 <i class="fas fa-ellipsis-v"></i>
             </div>
@@ -116,10 +121,7 @@ export default {
     }
     .ellipsis-button {
         font-size: 22px;
-        width: 15px;
         text-align: center;
-        float: inherit;
-        margin-top: 9px;
     }
     .buttonGroup {
         position: relative;

@@ -1,5 +1,7 @@
 <template>
-  <span v-if="settings()" :class="classObject" :id="id"> </span>
+    <div class="align-middle table-settings">
+        <span v-if="settings()" :class="classObject" :id="id"> </span>
+    </div>
 </template>
 <script>
 export default {
@@ -27,3 +29,8 @@ export default {
   },
 };
 </script>
+<style>
+.table-settings {
+  text-align: center;
+}
+</style>
