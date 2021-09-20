@@ -39,15 +39,10 @@
                         "
                     >
                         <span :class="item.specialType != 'header'?'vsm--title': 'vsm--header vsm--title--header'">
-                            <template v-if="itemTaskList">
-                                <custom-tooltip
-                                    :data="item"
-                                    ref="tooltip"
-                                ></custom-tooltip>
-                            </template>
-                            <template v-else>
-                                <span> {{ item.title }} </span>
-                            </template>
+                            <custom-tooltip
+                                :data="item"
+                                ref="tooltip"
+                            ></custom-tooltip>
                             <b-icon
                                 v-if="item.sortable"
                                 :icon="item.sortIcon"
