@@ -26,7 +26,7 @@
                 @click.native="clickEvent"
             >
                 <custom-sidebar-menu-icon
-                    v-if="item.icon && !isMobileItem"
+                    v-if="item.icon && !isMobileItem && item.specialType !='header'"
                     :icon="item.icon"
                     v-bind:style="setIconColor"
                 />
@@ -38,8 +38,7 @@
                                 isMobileItem
                         "
                     >
-                    
-                        <span class="vsm--title">
+                        <span :class="item.specialType != 'header'?'vsm--title': 'vsm--header vsm--title--header'">
                             <template v-if="itemTaskList">
                                 <custom-tooltip
                                     :data="item"
@@ -57,6 +56,11 @@
                         </span>
                     </template>
                 </transition>
+                <custom-sidebar-menu-icon
+                    v-if="item.icon && !isMobileItem && item.specialType =='header'"
+                    :icon="item.icon"
+                    v-bind:style="setIconColor"
+                />
                 <template
                     v-if="
                         (isCollapsed && !isFirstLevel) ||
@@ -568,3 +572,20 @@ export default {
     inject: ["emitActiveShow", "emitItemClick", "emitItemUpdate"],
 };
 </script>
+<style scoped>
+.vsm--header.vsm--title--header{
+    display: initial;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vsm--header.vsm--title--header + .vsm--icon{
+    float: none;
+    line-height: 30px;
+    margin-right: 10px;
+    margin-left: 0px;
+}
+</style>
