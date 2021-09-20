@@ -127,13 +127,19 @@ export default {
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
         // adding eventBus listener
-         eventBus.$on('sort-menu', (data) => {
+        eventBus.$on('sort-menu', (data) => {
+            let page;
             let newData = [];
-            data.forEach(item => newData.push({id: item.id}));
+            data.forEach(item => {
+                newData.push({id: item.id});
+                if (!page) {
+                    page = item.page;
+                }
+            });
             that.updateSettings({
                 data: newData,
                 key: "customCaseListOrder",
-                parent: this.page,
+                page: page,
                 type: "normal",
                 id: this.id
             });
@@ -227,21 +233,21 @@ export default {
          */
         updateSettings (params){
             if (params.type === "custom") {
-                if (!this.config.setting[params.parent]) {
-                    this.config.setting[params.parent] = {};
+                if (!this.config.setting[params.page]) {
+                    this.config.setting[params.page] = {};
                 }
-                if (!this.config.setting[params.parent]["customCaseList"]) {
-                    this.config.setting[params.parent]["customCaseList"] = {};
+                if (!this.config.setting[params.page]["customCaseList"]) {
+                    this.config.setting[params.page]["customCaseList"] = {};
                 }
-                if (!this.config.setting[params.parent].customCaseList[params.id]) {
-                    this.config.setting[params.parent].customCaseList[params.id] = {}
+                if (!this.config.setting[params.page].customCaseList[params.id]) {
+                    this.config.setting[params.page].customCaseList[params.id] = {}
                 }
-                this.config.setting[params.parent].customCaseList[params.id][params.key] = params.data;
+                this.config.setting[params.page].customCaseList[params.id][params.key] = params.data;
             } else {
-                if (!this.config.setting[this.page]) {
-                    this.config.setting[this.page] = {};
+                if (!this.config.setting[params.page]) {
+                    this.config.setting[params.page] = {};
                 }
-                this.config.setting[this.page][params.key] = params.data;
+                this.config.setting[params.page][params.key] = params.data;
             }
             api.config
                 .put(this.config)
@@ -308,9 +314,9 @@ export default {
                 if (data[i].customCasesList)  {
                     data[i]["child"] = this.sortCustomCasesList(
                         data[i].customCasesList,
-                        this.config.setting[this.page] &&
-                            this.config.setting[this.page].customCaseListOrder
-                            ? this.config.setting[this.page].customCaseListOrder
+                        this.config.setting[data[i]["page"]] &&
+                            this.config.setting[data[i]["page"]].customCaseListOrder
+                            ? this.config.setting[data[i]["page"]].customCaseListOrder
                             : []
                     );
                     data[i]["sortable"] = data[i].customCasesList.length > 1;
