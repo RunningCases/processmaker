@@ -120,6 +120,11 @@ export default {
             filtersModel: {},
             filterHeader: "STARTED_BY_ME",
             headers: [],
+            columMap: {
+                case_number: "APP_NUMBER",
+                case_title: "DEL_TITLE",
+                process_name: "PRO_TITLE",
+            },
             newCase: {
                 title: this.$i18n.t("ID_NEW_CASE"),
                 class: "btn-success",
@@ -172,7 +177,7 @@ export default {
                     programmatic: false,
                 },
                 sortable: [],
-                orderBy: {},
+                sortable: ["case_number"],
                 requestFunction(data) {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
@@ -222,7 +227,8 @@ export default {
                 paged,
                 limit = data.limit,
                 filters = {},
-                start = data.page === 1 ? 0 : limit * (data.page - 1);
+                start = data.page === 1 ? 0 : limit * (data.page - 1),
+                sort = "";
             paged = start + "," + limit ;
             filters = {
                 limit: limit,
@@ -233,6 +239,11 @@ export default {
                     filters[item.filterVar] = item.value;
                 }
             });
+
+            sort = that.prepareSortString(data);
+            if (sort) {
+                filters["sort"] = sort;
+            }
             return new Promise((resolutionFunc, rejectionFunc) => {
                 api.cases
                     .search(filters)
@@ -250,6 +261,20 @@ export default {
                         rejectionFunc(e);
                     });
             });
+        },
+        /**
+         * Prepare sort string to be sended in the service
+         * @param {object} data
+         * @returns {string}
+         */
+        prepareSortString(data) {
+            let sort = "";
+            if (data.orderBy && this.columMap[data.orderBy]) {
+                sort = `${this.columMap[data.orderBy]},${
+                    data.ascending === 1 ? "ASC" : "DESC"
+                }`;
+            }
+            return sort;
         },
         /**
          * Format the service response
