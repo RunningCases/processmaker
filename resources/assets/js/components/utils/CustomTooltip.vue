@@ -12,6 +12,9 @@
             v-if="showTooltip"
         >
             {{ labelTooltip }}
+            <p v-if="labelDescription !== ''">
+                {{ labelDescription }}
+            </p>
         </b-tooltip>
     </span>
 </template>
@@ -27,6 +30,7 @@ export default {
     data() {
         return {
             labelTooltip: "",
+            labelDescription: "",
             hovering: "",
             show: false,
             menuMap: {
@@ -54,6 +58,7 @@ export default {
          */
         unhoverHandler() {
             this.labelTooltip = "";
+            this.labelDescription = "";
             this.showTooltip = false;
             this.isLoading = false;
             clearTimeout(this.hovering);
@@ -63,11 +68,21 @@ export default {
          */
         setTooltip() {
             let that = this;
-            api.menu.getTooltip(that.data.page).then((response) => {
-                that.showTooltip = true;
-                that.isLoading = false;
-                that.labelTooltip = response.data.label;
-            });
+            if (this.menuMap[this.data.id]) {
+                api.menu.getTooltip(that.data.page).then((response) => {
+                    that.showTooltip = true;
+                    that.isLoading = false;
+                    that.labelTooltip = response.data.label;
+                });
+            } else {
+                api.menu.getTooltipCaseList(that.data)
+                .then((response) => {
+                    that.showTooltip = true;
+                    that.isLoading = false;
+                    that.labelTooltip = response.data.label;
+                    that.labelDescription = response.data.description;
+                });
+            }
         },
         /**
          * Set bold the label 
