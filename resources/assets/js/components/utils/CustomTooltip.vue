@@ -2,15 +2,14 @@
     <span
         :id="`label-${data.id}`"
         @mouseover="hoverHandler"
-        v-b-tooltip.hover
         @mouseleave="unhoverHandler"
-        v-bind:class="{highlightText: isHighlight}"
+        v-bind:class="{highlightText: isHighlight, loadingTooltip: isLoading}"
     >
         {{ data.title }}
         <b-tooltip 
             :target="`label-${data.id}`"
-            triggers="hoverHandler"
-            :ref="`tooltip-${data.id}`"
+            :show.sync="showTooltip"
+            v-if="showTooltip"
         >
             {{ labelTooltip }}
         </b-tooltip>
@@ -36,7 +35,10 @@ export default {
                 CASES_PAUSED: "paused",
                 CASES_SELFSERVICE: "unassigned"
             },
-            isHighlight: false
+            isHighlight: false,
+            showTooltip: false,
+            isLoading: false,
+            loading: ""
         };
     },
     methods: {
@@ -44,15 +46,16 @@ export default {
          * Delay the hover event
          */
         hoverHandler() {
+            this.isLoading = true;
             this.hovering = setTimeout(() => { this.setTooltip() }, 3000);
         },
         /**
          * Reset the delay and hide the tooltip
          */
         unhoverHandler() {
-            let key = `tooltip-${this.data.id}`;
             this.labelTooltip = "";
-            this.$refs[key].$emit("close");
+            this.showTooltip = false;
+            this.isLoading = false;
             clearTimeout(this.hovering);
         },
         /**
@@ -61,9 +64,9 @@ export default {
         setTooltip() {
             let that = this;
             api.menu.getTooltip(that.data.page).then((response) => {
-                let key = `tooltip-${that.data.id}`;
+                that.showTooltip = true;
+                that.isLoading = false;
                 that.labelTooltip = response.data.label;
-                that.$refs[key].$emit("open");
             });
         },
         /**
@@ -78,5 +81,8 @@ export default {
 <style>
 .highlightText {
     font-weight: 900;
+}
+.loadingTooltip {
+    cursor: wait;
 }
 </style>
