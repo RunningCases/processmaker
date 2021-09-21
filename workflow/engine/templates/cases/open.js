@@ -457,7 +457,7 @@ Ext.onReady(function(){
      */
     function claimCase() {
         Ext.Ajax.request({
-            url: 'cases_CatchExecute',
+            url: 'cases_CatchExecute?hideMessage=true',
             success: function (response, opts) {
                 Ext.Ajax.request({
                     url: 'ajaxListener',
