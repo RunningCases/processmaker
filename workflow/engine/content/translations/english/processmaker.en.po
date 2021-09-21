@@ -3768,6 +3768,12 @@ msgid "Loading Cases List, please wait..."
 msgstr "Loading Cases List, please wait..."
 
 # TRANSLATION
+# LABEL/ID_CASES_LIST_SETTINGS
+#: LABEL/ID_CASES_LIST_SETTINGS
+msgid "Cases List Settings"
+msgstr "Cases List Settings"
+
+# TRANSLATION
 # LABEL/ID_CASES_LIST_SETUP
 #: LABEL/ID_CASES_LIST_SETUP
 msgid "Case Lists"
