@@ -2015,7 +2015,7 @@ class Delegation extends Model
         $results = $query->get();
         $results->transform(function ($item) {
             $abs = new AbstractCases();
-            $item['TAS_COLOR'] = $abs->getTaskColor($item['DEL_TASK_DUE_DATE']);
+            $item['TAS_COLOR'] = $abs->getTaskColor($item['DEL_TASK_DUE_DATE'], $item['DEL_THREAD_STATUS']);
             $item['TAS_COLOR_LABEL'] = AbstractCases::TASK_COLORS[$item['TAS_COLOR']];
             $item['UNASSIGNED'] = ($item['TAS_ASSIGN_TYPE'] === 'SELF_SERVICE' ? true : false);
             $userInfo = User::getInformation($item['USR_ID']);
