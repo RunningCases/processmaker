@@ -2,6 +2,15 @@
   <div id="v-draft" ref="v-draft" class="v-container-draft">
     <button-fleft :data="newCase"></button-fleft>
     <modal-new-request ref="newRequest"></modal-new-request>
+    <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+    >
+        {{ dataAlert.message }}
+    </b-alert>
     <CasesFilter
       :filters="filters"
       :title="$t('ID_DRAFT')"
@@ -186,6 +195,10 @@
         </span>
       </div>
     </VueListView>
+    <ModalComments
+        ref="modal-comments"
+        @postNotes="onPostNotes"
+    ></ModalComments>
   </div>
 </template>
 
@@ -193,6 +206,7 @@
 import HeaderCounter from "../../components/home/HeaderCounter.vue";
 import ButtonFleft from "../../components/home/ButtonFleft.vue";
 import ModalNewRequest from "../ModalNewRequest.vue";
+import ModalComments from "../modal/ModalComments.vue";
 import CasesFilter from "../../components/search/CasesFilter";
 import TaskCell from "../../components/vuetable/TaskCell.vue";
 import api from "../../api/index";
@@ -216,12 +230,19 @@ export default {
     Ellipsis,
     MultiviewHeader,
     VueCardView,
-    VueListView
+    VueListView,
+    ModalComments
   },
   props: ["defaultOption", "settings"],
   data() {
     let that = this;
     return {
+      dataAlert: {
+          dismissSecs: 5,
+          dismissCountDown: 0,
+          message: "",
+          variant: "info",
+      },
       columMap: {
           case_number: "APP_NUMBER",
           case_title: "DEL_TITLE",
@@ -624,12 +645,47 @@ export default {
               name: "case note",
               icon: "far fa-comments",
               fn: function() {
-                that.openCaseDetail(data);
+                that.openComments(data);
               }
             },
           }
         }
       }
+    },
+    /**
+     * Show the alert message
+     * @param {string} message - message to be displayen in the body
+     * @param {string} type - alert type
+     */
+    showAlert(message, type) {
+        this.dataAlert.message = message;
+        this.dataAlert.variant = type || "info";
+        this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+    },
+    /**
+     * Updates the alert dismiss value to update
+     * dismissCountDown and decrease
+     * @param {mumber}
+     */
+    countDownChanged(dismissCountDown) {
+        this.dataAlert.dismissCountDown = dismissCountDown;
+    },
+    /**
+     * Open the case notes modal
+     * @param {object} data - needed to create the data
+     */
+    openComments(data) {
+        let that = this;
+        api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
+            that.$refs["modal-comments"].dataCase = data;
+            that.$refs["modal-comments"].show();
+        });
+    },
+    /**
+     * Post notes event handler
+     */
+    onPostNotes() {
+        this.$refs["vueTable"].getData();
     },
   },
 };
