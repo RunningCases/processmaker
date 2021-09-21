@@ -326,7 +326,8 @@ export default {
                         component: CustomSidebarMenuItem,
                         props: {
                             isCollapsed: this.collapsed? true: false,
-                            item: data[i]
+                            item: data[i],
+                            showOneChild: true
                         }
                     };
                 }
