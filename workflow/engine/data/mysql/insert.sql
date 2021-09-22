@@ -61452,6 +61452,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TOO_MANY_REQUESTS','en','Upon configurations, you have reached the maximum number of files to upload.','2018-12-17') ,
 ( 'LABEL','ID_TOP_MARGIN','en','Top Margin','2014-01-15') ,
 ( 'LABEL','ID_TOP','en','Top','2020-08-27') ,
+( 'LABEL','ID_TOP10','en','Top 10','2020-08-27') ,
 ( 'LABEL','ID_TOTAL_CASES','en','Total Cases','2014-01-15') ,
 ( 'LABEL','ID_TOTAL_CASES_REASSIGNED','en','Total Cases Reassigned','2014-01-15') ,
 ( 'LABEL','ID_TO_DELEGATION_DATE','en','To Delegation Date','2021-08-31') ,

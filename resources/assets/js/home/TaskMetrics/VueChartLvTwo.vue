@@ -1,7 +1,9 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK")}}</h6>
+      <h6 class="v-search-title">
+        {{ $t("ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK") }}
+      </h6>
       <div>
         <BreadCrumb
           :options="breadCrumbs.data"
@@ -54,6 +56,24 @@
         :options="options"
         :series="series"
       ></apexchart>
+      <div class="row">
+        <div class="col-sm vp-align-right">
+          <button
+            @click="onClickDrillDown()"
+            type="button"
+            class="btn btn-primary"
+          >
+            <i class="fas fa-chart-line"></i
+            ><span class="vp-padding-l10">{{ $t("ID_DRILL") }}</span>
+          </button>
+        </div>
+        <div class="col-sm">
+          <button @click="onClickData()" type="button" class="btn btn-primary">
+            <i class="fas fa-th"></i
+            ><span class="vp-padding-l10">{{ $t("ID_DATA") }}</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -64,6 +84,7 @@ import Api from "../../api/index";
 import Multiselect from "vue-multiselect";
 import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import moment from "moment";
+import eventBus from "./../EventBus/eventBus";
 export default {
   name: "VueChartLvTwo",
   mixins: [],
@@ -75,9 +96,9 @@ export default {
   data() {
     let that = this;
     return {
-      dateFrom: "",
-      dateTo: "",
-      period: "",
+      dateFrom: moment().format("YYYY-MM-DD"),
+      dateTo: moment().add(30, "d").format("YYYY-MM-DD"),
+      period: "day",
       periodOptions: [
         { text: this.$t("ID_DAY"), value: "day" },
         { text: this.$t("ID_MONTH"), value: "month" },
@@ -100,15 +121,7 @@ export default {
           },
           id: "LevelTwoChart",
           events: {
-            markerClick: function (event, chartContext, config) {
-              that.currentSelection = that.dataCasesByRange[config.seriesIndex];
-              that.$emit("updateDataLevel", {
-                id: that.currentSelection["PRO_ID"],
-                name: that.currentSelection["PRO_TITLE"],
-                level: 2,
-                data: null,
-              });
-            },
+            markerClick: function (event, chartContext, config) {},
           },
         },
         dataLabels: {
@@ -136,6 +149,7 @@ export default {
   created() {},
   mounted() {
     this.getBodyHeight();
+    this.changeOption();
   },
   watch: {},
   computed: {},
@@ -198,6 +212,59 @@ export default {
           data: serie,
         },
       ]);
+    },
+    /**
+     * Show popover drill down options
+     */
+    onClickDrillDown() {
+      this.$emit("updateDataLevel", {
+        id: this.data[1]["id"],
+        name: this.data[1]["name"],
+        level: 2,
+        data: null,
+      });
+    },
+    /**
+     * Show popover data options
+     */
+    onClickData() {
+      let taskList = this.data[0].id.toLowerCase(),
+        obj = [
+          {
+            autoshow: false,
+            fieldId: "processName",
+            filterVar: "process",
+            label: "",
+            options: {
+              label: this.data[1]["name"],
+              value: this.data[1]["id"],
+            },
+            value: this.data[1]["id"],
+          },
+          {
+            autoShow: false,
+            fieldId: "delegationDate",
+            filterVar: "delegateFrom",
+            label: "",
+            options: [],
+            value: this.dateFrom,
+          },
+          {
+            autoShow: false,
+            fieldId: "delegationDate",
+            filterVar: "delegateTo",
+            label: "",
+            options: [],
+            value: this.dateTo,
+          },
+        ];
+      eventBus.$emit("home::update-settings", {
+        data: obj,
+        key: "filters",
+        page: taskList,
+        type: "normal",
+      });
+      eventBus.$emit("home::sidebar::click-item", taskList);
     },
   },
 };

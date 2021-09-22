@@ -53247,6 +53247,12 @@ msgstr "Risk Matrix per Process by Task Status"
 msgid "Top"
 msgstr "Top"
 
+# TRANSLATION
+# LABEL/ID_TOP10
+#: LABEL/ID_TOP10
+msgid "Top 10"
+msgstr "Top 10"
+
  # TRANSLATION
 # LABEL/ID_CASE_THREAD_TITLE
 #: LABEL/ID_CASE_THREAD_TITLE

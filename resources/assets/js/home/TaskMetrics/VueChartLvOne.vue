@@ -28,7 +28,7 @@
             @select="changeOption"
           ></multiselect>
         </div>
-        <label class="vp-inline-block vp-padding-l20">{{ $t("ID_TOP") }}</label>
+        <label class="vp-inline-block vp-padding-l20">{{ $t("ID_TOP10") }}</label>
         <div class="vp-inline-block">
           <b-form-checkbox
             v-model="top"
