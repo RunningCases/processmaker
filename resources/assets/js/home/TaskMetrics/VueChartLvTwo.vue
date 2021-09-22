@@ -34,6 +34,8 @@
             }"
             :placeholder="$t('ID_DELEGATE_DATE_TO')"
             v-model="dateTo"
+            :min="dateFrom"
+            :state="stateDateTo"
             @input="changeOption"
           ></b-form-datepicker>
         </div>
@@ -144,6 +146,7 @@ export default {
         },
       },
       series: [],
+      stateDateTo: null,
     };
   },
   created() {},
@@ -151,7 +154,14 @@ export default {
     this.getBodyHeight();
     this.changeOption();
   },
-  watch: {},
+  watch: {
+    dateFrom () {
+      this.validateDateTo();
+    },
+    dateTo () {
+      this.validateDateTo();
+    }
+  },
   computed: {},
   updated() {},
   beforeCreate() {},
@@ -265,6 +275,18 @@ export default {
         type: "normal",
       });
       eventBus.$emit("home::sidebar::click-item", taskList);
+    },
+    /**
+     * Validate range date
+     */
+    validateDateTo() {
+      if (this.dateFrom !== '' && this.dateTo !== '') {
+        if (this.dateFrom > this.dateTo) {
+          this.stateDateTo = false;
+        } else {
+          this.stateDateTo = null;
+        }
+      }
     },
   },
 };

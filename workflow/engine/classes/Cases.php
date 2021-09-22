@@ -814,7 +814,7 @@ class Cases
 
             // Update case title
             if (!empty($appUid) && !empty($appFields['APP_NUMBER']) && $appFields['APP_NUMBER'] > 0 && !empty($appFields['DEL_INDEX'])) {
-                $threadInfo = $this->updateThreadTitle($appUid, $appFields['APP_NUMBER'], $appFields['DEL_INDEX'], $appFields['APP_DATA']);
+                $threadInfo = $this->updateThreadTitle($appUid, $appFields['APP_NUMBER'], $appFields['DEL_INDEX'], $appData);
                 $Fields['APP_TITLE'] = $threadInfo['title'];
                 $Fields['APP_DESCRIPTION'] = $threadInfo['description'];
             }
