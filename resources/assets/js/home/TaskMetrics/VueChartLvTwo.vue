@@ -32,6 +32,8 @@
             }"
             :placeholder="$t('ID_DELEGATE_DATE_TO')"
             v-model="dateTo"
+            :min="dateFrom"
+            :state="stateDateTo"
             @input="changeOption"
           ></b-form-datepicker>
         </div>
@@ -131,13 +133,21 @@ export default {
         },
       },
       series: [],
+      stateDateTo: null,
     };
   },
   created() {},
   mounted() {
     this.getBodyHeight();
   },
-  watch: {},
+  watch: {
+    dateFrom () {
+      this.validateDateTo();
+    },
+    dateTo () {
+      this.validateDateTo();
+    }
+  },
   computed: {},
   updated() {},
   beforeCreate() {},
@@ -198,6 +208,15 @@ export default {
           data: serie,
         },
       ]);
+    },
+    validateDateTo() {
+      if (this.dateFrom !== '' && this.dateTo !== '') {
+        if (this.dateFrom > this.dateTo) {
+          this.stateDateTo = false;
+        } else {
+          this.stateDateTo = null;
+        }
+      }
     },
   },
 };
