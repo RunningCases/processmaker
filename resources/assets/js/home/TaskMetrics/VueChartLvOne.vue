@@ -28,9 +28,7 @@
             @select="changeOption"
           ></multiselect>
         </div>
-        <label class="vp-inline-block vp-padding-l20">{{
-          $t("ID_TOP")
-        }}</label>
+        <label class="vp-inline-block vp-padding-l20">{{ $t("ID_TOP") }}</label>
         <div class="vp-inline-block">
           <b-form-checkbox
             v-model="top"
@@ -40,6 +38,35 @@
           >
           </b-form-checkbox>
         </div>
+        <b-popover
+          ref="popover"
+          :target="popoverTarget"
+          variant="secondary"
+          placement="right"
+        >
+          <div class="vp-chart-minipopover">
+            <div class="vp-align-right vp-flex1">
+              <button
+                type="button"
+                class="btn btn-link btn-sm"
+                @click="onClickDrillDown"
+              >
+                <i class="fas fa-chart-line"></i>
+                {{ $t("ID_DRILL") }}
+              </button>
+            </div>
+            <div class="vp-flex1">
+              <button
+                type="button"
+                class="btn btn-link btn-sm"
+                @click="onClickData"
+              >
+                <i class="fas fa-th"></i>
+                {{ $t("ID_DATA") }}
+              </button>
+            </div>
+          </div>
+        </b-popover>
         <div class="vp-inline-block vp-right vp-padding-r40">
           <h4
             class="v-search-title"
@@ -62,10 +89,12 @@
 
 <script>
 import _ from "lodash";
+import jquery from "jquery";
 import Api from "../../api/index";
 import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import ProcessPopover from "./ProcessPopover.vue";
 import Multiselect from "vue-multiselect";
+import eventBus from "./../EventBus/eventBus";
 
 export default {
   name: "VueChartLvOne",
@@ -79,6 +108,8 @@ export default {
   data() {
     let that = this;
     return {
+      popoverTarget: "",
+      showPopover: false,
       category: null,
       dataProcesses: null, //Data API processes
       settingsBreadcrumbs: [
@@ -108,14 +139,15 @@ export default {
             show: false,
           },
           events: {
-            legendClick: function (chartContext, seriesIndex, config) {
-              that.currentSelection = that.totalCases[seriesIndex];
-              that.$emit("updateDataLevel", {
-                id: that.currentSelection["PRO_ID"],
-                name: that.currentSelection["PRO_TITLE"],
-                level: 1,
-                data: that.currentSelection,
-              });
+            click: function (event, chartContext, config) {
+              that.$refs.popover.$emit("close");
+              if (config.dataPointIndex != -1) {
+                that.currentSelection = that.totalCases[config.dataPointIndex];
+                that.onShowDrillDownOptions(
+                  event.currentTarget,
+                  config.dataPointIndex
+                );
+              }
             },
           },
         },
@@ -125,9 +157,6 @@ export default {
             distributed: true,
             horizontal: true,
           },
-        },
-        legend: {
-          position: "top",
         },
         colors: ["#33b2df", "#546E7A", "#d4526e", "#13d8aa"],
         dataLabels: {
@@ -255,7 +284,7 @@ export default {
           processes: this.selectedProcesses,
           top: this.top,
         };
-        option.id == "all"? delete dt.category:null;
+        option.id == "all" ? delete dt.category : null;
         Api.process
           .totalCasesByProcess(dt)
           .then((response) => {
@@ -345,9 +374,60 @@ export default {
      * Event handler change input search popover
      * @param {string} query - value in popover search input
      */
-    onChangeSearchPopover(query){
+    onChangeSearchPopover(query) {
       this.getProcesses(query);
-    }
+    },
+    /**
+     * Show popover drill down options
+     * @param {objHtml} target
+     * @param {number} index
+     */
+    onShowDrillDownOptions(target, index) {
+      let obj,
+        dt,
+        that = this;
+      if (index != -1) {
+        obj = jquery(target).find("path")[index];
+        dt = this.dataProcesses[index];
+        this.popoverTarget = obj.id;
+        setTimeout(() => {
+          that.$refs.popover.$emit("open");
+        }, 200);
+      }
+    },
+    /**
+     * Show popover drill down options
+     */
+    onClickDrillDown() {
+      this.$emit("updateDataLevel", {
+        id: this.currentSelection["PRO_ID"],
+        name: this.currentSelection["PRO_TITLE"],
+        level: 1,
+        data: this.currentSelection,
+      });
+    },
+    /**
+     * Show popover data options
+     */
+    onClickData() {
+      let taskList = this.data[0].id.toLowerCase(),
+        obj = {
+          autoshow: false,
+          fieldId: "processName",
+          filterVar: "process",
+          label: "",
+          options: {
+            label: this.currentSelection["PRO_TITLE"],
+            value: this.currentSelection["PRO_ID"],
+          },
+          value: this.currentSelection["PRO_ID"],
+        };
+      eventBus.$emit("inbox::update-filters", {
+        params: [obj],
+        refresh: false,
+      });
+      eventBus.$emit("home-update-page", taskList);
+    },
   },
 };
 </script>
@@ -374,6 +454,14 @@ export default {
 
 .vp-right {
   float: right;
+}
+
+.vp-chart-minipopover {
+  display: flex;
+}
+
+.vp-flex1 {
+  flex: 1;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

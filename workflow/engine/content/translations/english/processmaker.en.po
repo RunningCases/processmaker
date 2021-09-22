@@ -53200,6 +53200,12 @@ msgid "Level"
 msgstr "Level"
 
 # TRANSLATION
+# LABEL/ID_DRILL
+#: LABEL/ID_DRILL
+msgid "Drill"
+msgstr "Drill"
+
+# TRANSLATION
 # LABEL/ID_DRILL_DOWN_NAVIGATOR
 #: LABEL/ID_DRILL_DOWN_NAVIGATOR
 msgid "Drill Down Navigator"

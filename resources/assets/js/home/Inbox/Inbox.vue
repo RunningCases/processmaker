@@ -366,6 +366,9 @@ export default {
         id: this.id
       });
     });
+    Event.$on('inbox::update-filters', (data) => {
+        that.updateSettings(data);
+    });
   },
   watch: {
     columns: function (val) {
@@ -645,6 +648,7 @@ export default {
      * @param {object} data
      */
     onUpdateFilters(data) {
+      console.log("jonas");
       this.filters = data.params;
       this.prepareAndUpdate(data);
       if (data.refresh) {

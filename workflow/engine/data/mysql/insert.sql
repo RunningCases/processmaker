@@ -58006,6 +58006,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DRAFT','en','Draft','2014-01-15') ,
 ( 'LABEL','ID_DRIVE_HELP_ENABLE','en','When this option is enabled, all input, output and attached documents generated in your processes can be stored in Google Drive.','2016-01-05') ,
 ( 'LABEL','ID_DRILL_DOWN_NAVIGATOR','en','Drill Down Navigator','2020-08-26') ,
+( 'LABEL','ID_DRILL','en','Drill','2021-08-26') ,
 ( 'LABEL','ID_DRILL_DOWN_NUMBER_TASKS','en','Number of tasks per Task Status','2020-08-26') ,
 ( 'LABEL','ID_DRILL_DOWN_NUMBER_TASKS_PROCESS','en','Number of Tasks Status per Process','2020-08-26') ,
 ( 'LABEL','ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK','en','Number of Tasks Status per Process by task status','2020-08-26') ,
