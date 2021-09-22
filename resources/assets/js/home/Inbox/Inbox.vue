@@ -387,9 +387,6 @@ export default {
         id: this.id
       });
     });
-    Event.$on('inbox::update-filters', (data) => {
-        that.updateSettings(data);
-    });
   },
   watch: {
     columns: function (val) {

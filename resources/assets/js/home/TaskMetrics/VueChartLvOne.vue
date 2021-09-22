@@ -421,11 +421,13 @@ export default {
           },
           value: this.currentSelection["PRO_ID"],
         };
-      eventBus.$emit("inbox::update-filters", {
-        params: [obj],
-        refresh: false,
+      eventBus.$emit("home::update-settings", {
+        data: [obj],
+        key: "filters",
+        page: taskList,
+        type: "normal",
       });
-      eventBus.$emit("home-update-page", taskList);
+      eventBus.$emit("home::sidebar::click-item", taskList);
     },
   },
 };
