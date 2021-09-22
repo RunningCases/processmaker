@@ -450,6 +450,7 @@ export default {
          */
         initState() {
             this.initActiveState();
+            this.initShowState();
         },
         /**
          * Initalize the active state of the menu item
