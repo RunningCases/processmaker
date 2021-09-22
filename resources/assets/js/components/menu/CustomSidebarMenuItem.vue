@@ -39,20 +39,26 @@
                         "
                     >
                         <span :class="item.specialType != 'header'?'vsm--title': 'vsm--header vsm--title--header'">
-                            <template v-if="itemTaskList">
-                                <custom-tooltip
-                                    :data="item"
-                                    ref="tooltip"
-                                ></custom-tooltip>
-                            </template>
-                            <template v-else>
-                                <span> {{ item.title }} </span>
-                            </template>
-                            <b-icon
-                                v-if="item.sortable"
-                                :icon="item.sortIcon"
-                                @click="onClickSortSettings"
-                            ></b-icon>
+                            <custom-tooltip
+                                :data="item"
+                                ref="tooltip"
+                            ></custom-tooltip>
+                            <span v-if="item.sortable">
+                                <b-icon
+                                    :id="`gear-${item.id}`"
+                                    :icon="item.sortIcon"
+                                    @click="onClickSortSettings"
+                                    @mouseover="hoverHandler"
+                                    @mouseleave="unhoverHandler"
+                                    v-bind:style="{color: sortColor}"
+                                ></b-icon>
+                                <b-tooltip
+                                    :target="`gear-${item.id}`"
+                                    triggers="hover"
+                                >
+                                    {{ $t("ID_CASES_LIST_SETTINGS") }}
+                                </b-tooltip>
+                            </span>
                         </span>
                     </template>
                 </transition>
@@ -238,6 +244,7 @@ export default {
                 CASES_PAUSED: "paused",
                 CASES_SELFSERVICE: "unassigned"
             },
+            sortColor: "white",
         };
     },
     mounted() {
@@ -568,6 +575,12 @@ export default {
             event.stopPropagation();
             this.$refs["modal"].show();
         },
+        hoverHandler() {
+            this.sortColor = '#02feff';
+        },
+        unhoverHandler() {
+            this.sortColor = 'white';
+        }
     },
     inject: ["emitActiveShow", "emitItemClick", "emitItemUpdate"],
 };

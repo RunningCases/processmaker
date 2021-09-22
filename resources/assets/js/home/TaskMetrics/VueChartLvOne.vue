@@ -268,7 +268,6 @@ export default {
 
       //Update the labels
       this.dataProcesses = data;
-      this.updateLabels(data);
     },
     /**
      * Change the options in TOTAL CASES BY PROCESS

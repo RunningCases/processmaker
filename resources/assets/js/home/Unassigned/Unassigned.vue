@@ -9,6 +9,15 @@
       @onRemoveFilter="onRemoveFilter"
       @onUpdateFilters="onUpdateFilters"
     />
+     <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+    >
+        {{ dataAlert.message }}
+    </b-alert>
     <multiview-header
       :data="dataMultiviewHeader"
       :dataSubtitle="dataSubtitle"
@@ -203,6 +212,10 @@
         </span>
       </div>
     </VueListView>
+    <ModalComments
+        ref="modal-comments"
+        @postNotes="onPostNotes"
+    ></ModalComments>
     <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
     <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
   </div>
@@ -223,6 +236,7 @@ import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue"
 import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
 import defaultMixins from "./defaultMixins";
 import ModalPauseCase from '../modal/ModalPauseCase.vue';
+import ModalComments from "../modal/ModalComments.vue";
 import { Event } from 'vue-tables-2';
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 
@@ -242,11 +256,18 @@ export default {
     VueListView,
     ModalPauseCase,
     CurrentUserCell,
+    ModalComments
   },
   props: ["defaultOption", "settings"],
   data() {
     let that = this;
     return {
+      dataAlert: {
+          dismissSecs: 5,
+          dismissCountDown: 0,
+          message: "",
+          variant: "info",
+      },
       columMap: {
           case_number: "APP_NUMBER",
           case_title: "DEL_TITLE",
@@ -352,8 +373,7 @@ export default {
       that.$emit("updateSettings", {
         data: data,
         key: "orderBy",
-        parent: this.page,
-        type: "normal",
+        page: "unassigned",
         id: this.id
       });
     });
@@ -363,7 +383,7 @@ export default {
       this.$emit("updateSettings", {
         data: val,
         key: "columns",
-        parent: this.page,
+        page: "unassigned",
         type: "normal",
         id: this.id
       });
@@ -602,7 +622,7 @@ export default {
           this.$emit("updateSettings", {
             data: newFilters,
             key: "filters",
-            parent: this.page,
+            page: "unassigned",
             type: "normal",
             id: this.id
           });
@@ -665,7 +685,7 @@ export default {
               name: "case note",
               icon: "far fa-comments",
               fn: function() {
-                that.openCaseDetail(data);
+                that.openComments(data);
               }
             },
             pause: {
@@ -685,6 +705,41 @@ export default {
           }
         }
       }
+    },
+    /**
+     * Show the alert message
+     * @param {string} message - message to be displayen in the body
+     * @param {string} type - alert type
+     */
+    showAlert(message, type) {
+        this.dataAlert.message = message;
+        this.dataAlert.variant = type || "info";
+        this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+    },
+    /**
+     * Updates the alert dismiss value to update
+     * dismissCountDown and decrease
+     * @param {mumber}
+     */
+    countDownChanged(dismissCountDown) {
+        this.dataAlert.dismissCountDown = dismissCountDown;
+    },
+    /**
+     * Open the case notes modal
+     * @param {object} data - needed to create the data
+     */
+    openComments(data) {
+        let that = this;
+        api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
+            that.$refs["modal-comments"].dataCase = data;
+            that.$refs["modal-comments"].show();
+        });
+    },
+    /**
+     * Post notes event handler
+     */
+    onPostNotes() {
+        this.$refs["vueTable"].getData();
     },
   },
 };

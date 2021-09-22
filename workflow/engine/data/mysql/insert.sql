@@ -57439,6 +57439,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASES_LIST','en','Cases Lists','2015-04-28') ,
 ( 'LABEL','ID_CASES_LIST_FIELDS','en','Case List Fields','2017-02-21') ,
 ( 'LABEL','ID_CASES_LIST_GRID_LOADING','en','Loading Cases List, please wait...','2014-01-15') ,
+( 'LABEL','ID_CASES_LIST_SETTINGS','en','Cases List Settings','2021-09-20') ,
 ( 'LABEL','ID_CASES_LIST_SETUP','en','Case Lists','2017-02-21') ,
 ( 'LABEL','ID_CASES_MENU_ADMIN','en','Process Supervisor','2014-01-15') ,
 ( 'LABEL','ID_CASES_MENU_FOLDERS','en','Cases','2014-01-15') ,
