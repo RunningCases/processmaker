@@ -4,7 +4,9 @@ export default {
   data() {
     let that = this;
     return {
-      typeView: "GRID",
+      typeView: this.settings.view && this.settings.view.typeView
+        ? this.settings.view.typeView
+        : "GRID",
       random: 1,
       dataMultiviewHeader: {
         actions: [
@@ -13,6 +15,9 @@ export default {
             title: "Grid",
             onClick(action) {
               that.typeView = "GRID";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-table",
           },
@@ -21,6 +26,9 @@ export default {
             title: "List",
             onClick(action) {
               that.typeView = "LIST";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-list",
           },
@@ -29,6 +37,9 @@ export default {
             title: "Card",
             onClick(action) {
               that.typeView = "CARD";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-th",
           },
@@ -167,6 +178,20 @@ export default {
       }
       this.columns = cols;
       this.random = _.random(0, 10000000000);
+    },
+    /**
+     * Update settings for user
+     * @param {string} key
+     * @param {*} data
+     */
+    updateRootSettings(key, data) {
+      this.$emit("updateSettings", {
+        data: data,
+        key: key,
+        page: "inbox",
+        type: "normal",
+        id: this.id
+      });
     }
   }
 }
