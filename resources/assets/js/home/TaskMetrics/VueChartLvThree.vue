@@ -127,8 +127,8 @@ export default {
     let that = this;
     return {
       currentSelection: null,
-      dateFrom: "",
-      dateTo: "",
+      dateFrom: moment().format("YYYY-MM-DD"),
+      dateTo: moment().add(30, "d").format("YYYY-MM-DD"),
       dateNow: "",
       size: { name: this.$t("ID_ALL"), id: "all" },
       riskType: "ON_TIME",

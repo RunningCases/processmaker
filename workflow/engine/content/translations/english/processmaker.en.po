@@ -53206,6 +53206,12 @@ msgid "Level"
 msgstr "Level"
 
 # TRANSLATION
+# LABEL/ID_DRILL
+#: LABEL/ID_DRILL
+msgid "Drill"
+msgstr "Drill"
+
+# TRANSLATION
 # LABEL/ID_DRILL_DOWN_NAVIGATOR
 #: LABEL/ID_DRILL_DOWN_NAVIGATOR
 msgid "Drill Down Navigator"
@@ -53240,6 +53246,12 @@ msgstr "Risk Matrix per Process by Task Status"
 #: LABEL/ID_TOP
 msgid "Top"
 msgstr "Top"
+
+# TRANSLATION
+# LABEL/ID_TOP10
+#: LABEL/ID_TOP10
+msgid "Top 10"
+msgstr "Top 10"
 
  # TRANSLATION
 # LABEL/ID_CASE_THREAD_TITLE

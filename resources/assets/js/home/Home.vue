@@ -147,6 +147,12 @@ export default {
         eventBus.$on('home-update-page', (data) => {
             that.onUpdatePage(data);
         });
+        eventBus.$on('home::sidebar::click-item', (data) => {
+            that.OnClickSidebarItem(that.getItemMenuByValue("page",data));
+        });
+        eventBus.$on('home::update-settings', (data) => {
+            that.updateSettings(data);
+        });
         eventBus.$on('home-update-datacase', (data) => {
             that.onUpdateDataCase(data);
         });
@@ -395,6 +401,7 @@ export default {
          */
         pageFactory(item){
             this.filters = [];
+            this.lastPage = this.page;
             this.page = item.item.page;
             this.filters = item.item.filters;
             this.pageId = item.item.id;
@@ -424,7 +431,6 @@ export default {
                 && this.$refs["component"].updateView) {
                 this.$refs["component"].updateView(this.pageData);
             }
-            this.lastPage = this.page;
         },
         /**
          * Click sidebar menu item handler
