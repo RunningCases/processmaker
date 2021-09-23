@@ -179,10 +179,10 @@ export default {
       this.random = _.random(0, 10000000000);
     },
     /**
- * Update settings for user
- * @param {string} key
- * @param {*} data
- */
+     * Update settings for user
+     * @param {string} key
+     * @param {*} data
+     */
     updateRootSettings(key, data) {
       this.$emit("updateSettings", {
         data: data,
