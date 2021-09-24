@@ -43,7 +43,8 @@ export default {
       visited: this.settings && this.settings.visited ? this.settings.visited : [
           {
               level: 0,
-              active: true
+              active: true,
+              id: _.random(0,100),
           }
       ]
     };
@@ -60,16 +61,18 @@ export default {
      * Change level in drill down
      */
     changeLevel(data) {
-      let item  = _.find(this.visited, {level: data.level });
+      let item  = _.find(this.visited, data);
       this.visited.forEach(function (elem) {
           elem.active = false;
       });
       if(!item) {
         data.active = true;
+        this.visited = _.filter(this.visited, function(o) { 
+          return o.level < data.level; 
+        });
         this.visited.push(data);
       } else {
         item.active = true;
-        
       }
       this.$emit("updateSettings", {
         data: this.visited,
