@@ -1,18 +1,18 @@
 <template>
-  <nav aria-label="breadcrumb">
+  <nav>
     <ol class="vp-breadcrumb">
       <li
         v-for="item in formatOptions(options)"
         :key="item.label"
         :class="item.classObject"
       >
-        <span v-if="item.classObject.active === true">{{ item.label }}</span>
-        <a
-          v-if="item.classObject.active === false"
-          href="#"
-          @click="item.onClick"
-          >{{ item.label }}</a
-        >
+        <span v-if="item.data.color">
+          <div
+            class="vp-color-breadcrumb"
+            :style="{ backgroundColor: item.data.color }"
+          ></div
+        ></span>
+        <span>{{ item.label }}</span>
       </li>
       <div
         v-for="item in settings"
@@ -49,13 +49,13 @@ export default {
       for (let i = 0; i <= options.length - 1; i++) {
         if (i === options.length - 1) {
           options[i].classObject = {
-            "breadcrumb-item": true,
+            "vp-breadcrumb-item": true,
             active: true,
             "vp-inline-block": true,
           };
         } else {
           options[i].classObject = {
-            "breadcrumb-item": true,
+            "vp-breadcrumb-item": true,
             active: false,
             "vp-inline-block": true,
           };
@@ -75,18 +75,32 @@ export default {
 }
 
 .vp-bread-crumbs-settings {
-  line-height: 20px;
+  line-height: 40px;
+  font-size: 18px;
+  padding-right: 10px;
 }
 
 .vp-breadcrumb {
-  padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   list-style: none;
   background-color: #e9ecef;
   border-radius: 0.25rem;
+  line-height: 40px;
+  height: 40px;
 }
 
 .vp-inline-block {
+  display: inline-block;
+}
+
+.vp-breadcrumb-item {
+  color: grey;
+  padding-right: 35px;
+}
+
+.vp-color-breadcrumb {
+  height: 10px;
+  width: 10px;
   display: inline-block;
 }
 </style>

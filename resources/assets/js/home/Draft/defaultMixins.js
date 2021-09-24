@@ -3,7 +3,9 @@ export default {
   data() {
     let that = this;
     return {
-      typeView: "GRID",
+      typeView: this.settings.view && this.settings.view.typeView
+        ? this.settings.view.typeView
+        : "GRID",
       random: 1,
       dataMultiviewHeader: {
         actions: [
@@ -12,6 +14,9 @@ export default {
             title: "Grid",
             onClick(action) {
               that.typeView = "GRID";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-table",
           },
@@ -20,6 +25,9 @@ export default {
             title: "List",
             onClick(action) {
               that.typeView = "LIST";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-list",
           },
@@ -28,6 +36,9 @@ export default {
             title: "Card",
             onClick(action) {
               that.typeView = "CARD";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-th",
           },
@@ -35,7 +46,7 @@ export default {
       },
       optionsVueView: {
         limit: 10,
-        dblClick:(event, item, options)=>{
+        dblClick: (event, item, options) => {
           this.openCase(item);
         },
         headings: {
@@ -135,11 +146,11 @@ export default {
      * @param {*} headings 
      * @returns 
      */
-     formatColumnSettings(headings) {
-      let res=[];
-      _.forEach(headings, function(value, key) {
-        if(key != "actions"){
-            res.push({value,key});
+    formatColumnSettings(headings) {
+      let res = [];
+      _.forEach(headings, function (value, key) {
+        if (key != "actions") {
+          res.push({ value, key });
         }
       });
       return res;
@@ -160,11 +171,25 @@ export default {
      */
     onUpdateColumnSettings(columns) {
       let cols = columns;
-      if(_.findIndex(cols, 'actions') == -1){
+      if (_.findIndex(cols, 'actions') == -1) {
         cols.push("actions");
       }
       this.columns = cols;
       this.random = _.random(0, 10000000000);
+    },
+    /**
+     * Update settings for user
+     * @param {string} key
+     * @param {*} data
+     */
+    updateRootSettings(key, data) {
+      this.$emit("updateSettings", {
+        data: data,
+        key: key,
+        page: "draft",
+        type: "normal",
+        id: this.id
+      });
     }
   }
 }

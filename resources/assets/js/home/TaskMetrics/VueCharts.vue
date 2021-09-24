@@ -106,12 +106,9 @@ export default {
             onClick() {
                this.$emit("onChangeLevel", el);
             },
+            data: el,
           });
         }
-      });
-      res.push({
-        label: this.$t("ID_SELECT"),
-        onClick() {},
       });
       switch (this.level) {
         case 0:
