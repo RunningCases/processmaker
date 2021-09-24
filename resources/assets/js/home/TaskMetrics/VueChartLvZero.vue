@@ -1,7 +1,7 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_NUMBER_TASKS")}}</h6>
+      <h6 class="v-search-title">{{ $t("ID_DRILL_DOWN_NUMBER_TASKS") }}</h6>
       <BreadCrumb :options="breadCrumbs.data" :settings="settingsBreadcrumbs" />
       <apexchart
         v-show="typeView === 'donut'"
@@ -85,6 +85,7 @@ export default {
                 id: that.currentSelection["List Name"],
                 name: that.currentSelection["List Name"],
                 level: 0,
+                color: that.formatColor(that.currentSelection["Color"]),
                 data: that.currentSelection,
               });
             },
@@ -229,6 +230,29 @@ export default {
           data: s,
         },
       ]);
+    },
+    /**
+     * Format color for show in breadcrumb
+     * @param {string} color
+     * @returns {string}
+     */
+    formatColor(color) {
+      let code = "#ffffff";
+      switch (color) {
+        case "green":
+          code = "#179a6e";
+          break;
+        case "yellow":
+          code = "#feb019";
+          break;
+        case "blue":
+          code = "#008ffb";
+          break;
+        case "gray":
+          code = "#8f99a0";
+          break;
+      }
+      return code;
     },
   },
 };

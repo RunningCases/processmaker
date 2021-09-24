@@ -52,9 +52,9 @@ export default {
     let that = this;
     return {
       level: 0,
-      key1: _.random(0,100),
-      key2: _.random(0,100),
-      key3: _.random(0,100),
+      key1: _.random(0, 100),
+      key2: _.random(0, 100),
+      key3: _.random(0, 100),
       data: [],
       settingsBreadCrumbs: [
         {
@@ -129,12 +129,9 @@ export default {
             onClick() {
               that.onChangeLevel(el.level);
             },
+            data: el,
           });
         }
-      });
-      res.push({
-        label: this.$t("ID_SELECT"),
-        onClick() {},
       });
       switch (this.level) {
         case 0:
