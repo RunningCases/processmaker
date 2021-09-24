@@ -8,24 +8,21 @@
     <vue-chart-lv-one
       :key="key1"
       v-show="level === 1"
-      :data="data"
-      @onChangeLevel="onChangeLevel"
+      :data="levels"
       @updateDataLevel="updateDataLevel"
       :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-two
       :key="key2"
       v-show="level === 2"
-      :data="data"
-      @onChangeLevel="onChangeLevel"
+      :data="levels"
       @updateDataLevel="updateDataLevel"
       :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-three
       :key="key3"
       v-show="level === 3"
-      :data="data"
-      @onChangeLevel="onChangeLevel"
+      :data="levels"
       :breadCrumbs="dataBreadCrumbs()"
     />
   </div>
@@ -47,15 +44,15 @@ export default {
     VueChartLvTwo,
     VueChartLvThree,
   },
-  props: [],
+  props: ["levels"], 
   data() {
-    let that = this;
+    let that = this;  
     return {
-      level: 0,
+      // level: 0,
       key1: _.random(0,100),
       key2: _.random(0,100),
       key3: _.random(0,100),
-      data: [],
+      // data: [],
       settingsBreadCrumbs: [
         {
           class: "fas fa-info-circle",
@@ -67,7 +64,12 @@ export default {
   created() {},
   mounted() {},
   watch: {},
-  computed: {},
+  computed: {
+      level: function () {
+        //return 0
+        return _.find(this.levels, {'active': true }).level;
+      }
+  },
   updated() {},
   beforeCreate() {},
   methods: {
@@ -75,13 +77,12 @@ export default {
      * Set data level 0
      */
     updateDataLevel(data) {
-      this.data.push(data);
-      this.level = data.level + 1;
-      this.$emit("onChangeLevel", data.level + 1);
-      this.updateKey();
+      this.$emit("onChangeLevel", data);
+      this.updateKey(data.level);
     },
-    updateKey() {
-      switch (this.level) {
+    updateKey(level) {
+      debugger;
+      switch (level) {
         case 0:
           break;
         case 1:
@@ -96,38 +97,18 @@ export default {
       }
     },
     /**
-     * Format data to vue charts any level
-     */
-    formatData() {
-      return {
-        level: this.level,
-        data: this.data,
-      };
-    },
-    /**
-     * Change level with changes in data
-     * @param {object} lv
-     */
-    onChangeLevel(lv) {
-      _.remove(this.data, function (n) {
-        return n.level >= lv;
-      });
-      this.level = lv;
-      this.$emit("onChangeLevel", this.level);
-    },
-    /**
      * Format data for data beadcrumbs
      */
     dataBreadCrumbs() {
       let res = [],
         that = this,
         index = 0;
-      _.each(this.data, (el) => {
+      _.each(this.levels, (el) => {
         if (index <= that.level && el.data) {
           res.push({
             label: el.name,
             onClick() {
-              that.onChangeLevel(el.level);
+               this.$emit("onChangeLevel", el);
             },
           });
         }

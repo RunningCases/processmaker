@@ -12,12 +12,12 @@
       <vue-charts
         ref="pm-vue-chart"
         @onChangeLevel="changeLevel"
-        :level="level"
+        :levels="visited"
       />
       <div class="vp-6"></div>
-      <drill-down :level="level" @onChangeLevel="updateVueChart" />
+      <drill-down :visited="visited" @onChangeLevel="changeLevel" />
     </div>
-  </div>
+  </div>  
 </template>
 
 <script>
@@ -31,21 +31,27 @@ export default {
   name: "TaskMetrics",
   mixins: [defaultMixins],
   components: {
-    ButtonFleft,
+    ButtonFleft,  
     ModalNewRequest,
     DrillDown,
     VueCharts,
   },
-  props: [],
+  props: ["settings"],
   data() {
     let that = this;
     return {
-      level: 0,
+      visited: this.settings && this.settings.visited ? this.settings.visited : [
+          {
+              level: 0,
+              active: true
+          }
+      ]
     };
   },
   created() {},
-  mounted() {},
-  watch: {},
+  mounted() {
+    debugger;
+  },
   computed: {},
   updated() {},
   beforeCreate() {},
@@ -53,15 +59,28 @@ export default {
     /**
      * Change level in drill down
      */
-    changeLevel(lv) {
-      this.level = lv;
-    },
-    /**
-     * update data in charts
-     */
-    updateVueChart(lv) {
-      this.$refs["pm-vue-chart"].onChangeLevel(lv);
-    },
+    changeLevel(data) {
+      let item  = _.find(this.visited, {level: data.level });
+      debugger;
+      this.visited.forEach(function (elem) {
+          elem.active = false;
+      });
+      if(!item) {
+        data.active = true;
+        this.visited.push(data);
+      } else {
+        // console.log("change lavel");
+        item.active = true;
+        
+      }
+      this.$emit("updateSettings", {
+        data: this.visited,
+        key: "visited",
+        page: "task-metrics",
+        type: "normal",
+        id: this.id
+      });
+  },
   },
 };
 </script>

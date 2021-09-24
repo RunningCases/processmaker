@@ -178,22 +178,24 @@ export default {
     changeOption() {
       let that = this,
         dt;
-      if (this.dateFrom && this.dateTo && this.period) {
-        dt = {
-          processId: this.data[1].id,
-          caseList: this.data[0].id.toLowerCase(),
-          dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
-          dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
-          groupBy: this.period,
-        };
-        Api.process
-          .totalCasesByRange(dt)
-          .then((response) => {
-            that.formatDataRange(response.data);
-          })
-          .catch((e) => {
-            console.error(e);
-          });
+      if (this.data.length > 2) {
+        if (this.dateFrom && this.dateTo && this.period) {
+          dt = {
+            processId: this.data[2].id,
+            caseList: this.data[1].id.toLowerCase(),
+            dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
+            dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
+            groupBy: this.period,
+          };
+          Api.process
+            .totalCasesByRange(dt)
+            .then((response) => {
+              that.formatDataRange(response.data);
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+        }
       }
     },
     /**
@@ -212,13 +214,13 @@ export default {
       this.$refs["LevelTwoChart"].updateOptions({
         labels: labels,
         title: {
-          text: this.data[0]["PRO_TITLE"],
+          text: this.data[1]["PRO_TITLE"],
           align: "left",
         },
       });
       this.$apexcharts.exec("LevelTwoChart", "updateSeries", [
         {
-          name: this.data[0]["PRO_TITLE"],
+          name: this.data[1]["PRO_TITLE"],
           data: serie,
         },
       ]);
@@ -228,9 +230,9 @@ export default {
      */
     onClickDrillDown() {
       this.$emit("updateDataLevel", {
-        id: this.data[1]["id"],
-        name: this.data[1]["name"],
-        level: 2,
+        id: this.data[2]["id"],
+        name: this.data[2]["name"],
+        level: 3,
         data: null,
       });
     },
@@ -238,7 +240,7 @@ export default {
      * Show popover data options
      */
     onClickData() {
-      let taskList = this.data[0].id.toLowerCase(),
+      let taskList = this.data[1].id.toLowerCase(),
         obj = [
           {
             autoshow: false,
@@ -246,10 +248,10 @@ export default {
             filterVar: "process",
             label: "",
             options: {
-              label: this.data[1]["name"],
-              value: this.data[1]["id"],
+              label: this.data[2]["name"],
+              value: this.data[2]["id"],
             },
-            value: this.data[1]["id"],
+            value: this.data[2]["id"],
           },
           {
             autoShow: false,
