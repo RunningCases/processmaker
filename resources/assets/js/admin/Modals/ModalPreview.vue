@@ -124,22 +124,23 @@ export default {
         getCasesForPreview(data) {
             let that = this,
                 dt,
-                paged,
                 limit = data.limit,
                 start = data.page === 1 ? 0 : limit * (data.page - 1),
-                filters = {};
-            paged = start + "," + limit;
-            filters = {
-                paged: paged,
+                params = {};
+            params = {
+                filters: {
+                    limit: limit,
+                    offset: start,
+                },
             }
             if (this.customCaseId !== '') {
-                filters['id'] = this.customCaseId;
+                params['id'] = this.customCaseId;
             }
             return new Promise((resolutionFunc, rejectionFunc) => {
                 switch (that.type) {
                     case 'inbox':
-                        api.cases
-                        .inbox(filters)
+                        api.custom
+                        .inbox(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -152,8 +153,8 @@ export default {
                         });
                         break;
                     case 'draft':
-                        api.cases
-                        .draft(filters)
+                        api.custom
+                        .draft(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -166,8 +167,8 @@ export default {
                         });
                         break;
                     case 'paused':
-                        api.cases
-                        .paused(filters)
+                        api.custom
+                        .paused(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -180,8 +181,8 @@ export default {
                         });
                         break;
                     case 'unassigned':
-                        api.cases
-                        .unassigned(filters)
+                        api.custom
+                        .unassigned(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
