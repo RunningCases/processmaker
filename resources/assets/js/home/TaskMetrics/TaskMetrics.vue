@@ -50,9 +50,7 @@ export default {
     };
   },
   created() {},
-  mounted() {
-    debugger;
-  },
+  mounted() {},
   computed: {},
   updated() {},
   beforeCreate() {},
