@@ -21,6 +21,7 @@ use PMLicensedFeatures;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\AbeConfiguration as AbeConfigurationModel;
 use ProcessMaker\Model\EmailServerModel;
+use ProcessMaker\Model\Task;
 use ProcessMaker\Plugins\PluginRegistry;
 use Publisher;
 use ResultSet;
@@ -300,6 +301,8 @@ class ActionsByEmail
         $criteria->addSelectColumn(AbeConfigurationPeer::ABE_TEMPLATE);
         $criteria->addSelectColumn(AbeConfigurationPeer::ABE_ACTION_FIELD);
         $criteria->addSelectColumn(AbeConfigurationPeer::DYN_UID);
+        $criteria->addSelectColumn(AbeConfigurationPeer::ABE_MAILSERVER_OR_MAILCURRENT);
+        $criteria->addSelectColumn(AbeConfigurationPeer::ABE_EMAIL_SERVER_UID);
         $criteria->addSelectColumn(AbeRequestsPeer::ABE_REQ_UID);
         $criteria->addSelectColumn(AbeRequestsPeer::APP_UID);
         $criteria->addSelectColumn(AbeRequestsPeer::DEL_INDEX);
@@ -349,6 +352,19 @@ class ActionsByEmail
                 }
             } else {
                 $data[$index]['USER'] = '';
+                if ($data[$index]['ABE_MAILSERVER_OR_MAILCURRENT'] == 1) {
+                    $emailServer = new EmailServer();
+                    $dataEmailServer = $emailServer->getEmailServer($data[$index]['ABE_EMAIL_SERVER_UID']);
+                    $data[$index]['USER'] = $dataEmailServer['MESS_FROM_NAME'];
+                }
+                if ($data[$index]['ABE_MAILSERVER_OR_MAILCURRENT'] == 0) {
+                    $delegation = new AppDelegation();
+                    $previousTask = $delegation->getPreviousDelegationValidTask($data[$index]['APP_UID'], $data[$index]['DEL_INDEX']);
+                    if (in_array($previousTask['TAS_TYPE'], Task::DUMMY_TASKS)) {
+                        $res = Task::getTask($previousTask['TAS_ID']);
+                        $data[$index]['USER'] = $res->TAS_TITLE . ' (' . $previousTask['TAS_TYPE'] . ')';
+                    }
+                }
             }
 
             $data[$index]['ABE_REQ_ANSWERED'] = ($data[$index]['ABE_REQ_ANSWERED'] == 1) ? G::LoadTranslation('ID_YES') : G::LoadTranslation('ID_NO');
