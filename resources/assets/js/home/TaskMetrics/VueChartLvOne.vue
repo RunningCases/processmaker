@@ -124,7 +124,7 @@ export default {
       optionsCategory: [],
       optionsProcesses: [],
       selectedProcesses: [],
-      top: false,
+      top: true,
       width: 0,
       totalCases: [],
       currentSelection: null,
@@ -225,6 +225,7 @@ export default {
           that.formatDataProcesses(response.data);
           that.changeOption({
             id: "all",
+            paged: false,
           });
         })
         .catch((e) => {
@@ -480,5 +481,6 @@ export default {
 .vp-flex1 {
   flex: 1;
 }
+
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

@@ -6,18 +6,15 @@
       <apexchart
         v-show="typeView === 'donut'"
         ref="apexchart1"
-        :width="width"
         :options="optionsDonut"
         :series="seriesDonut"
       ></apexchart>
       <apexchart
         v-show="typeView === 'bar'"
         ref="apexchart2"
-        :width="width"
         :options="optionsBar"
         :series="seriesBar"
       ></apexchart>
-
       <div class="row">
         <div class="col-sm vp-align-right">
           <button
