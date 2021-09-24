@@ -73,6 +73,7 @@
     "vuejs-datepicker": "^1.5.4",
     "vuejs-paginate": "^2.0.1",
     "vuetify": "^1.1.4",
-    "web-animations-js": "^2.3.2"
+    "web-animations-js": "^2.3.2",
+    "vue-simple-context-menu": "^3.4.1"
   }
 }

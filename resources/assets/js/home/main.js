@@ -12,8 +12,11 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import 'bootstrap/dist/css/bootstrap-grid.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css';
-import VueApexCharts from 'vue-apexcharts'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import VueApexCharts from 'vue-apexcharts';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import VueSimpleContextMenu from 'vue-simple-context-menu';
+import VtTableRow from '../components/vuetable/extends/VtTableRow';
+import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
 
 import Home from "./Home";
 
@@ -26,11 +29,13 @@ Vue.use(VueI18n);
 
 Vue.use(ServerTable, {}, false, 'bootstrap3', {
     tableHeading: VtTableHeadingCustom,
-    sortControl: VtSortControl
+    sortControl: VtSortControl,
+    tableRow: VtTableRow
 });
 Vue.use(ClientTable, {}, false, 'bootstrap3', {});
 Vue.component('settings-popover', SettingsPopover);
 Vue.component('apexchart', VueApexCharts);
+Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 
 window.ProcessMaker = {
     apiClient: require('axios')
