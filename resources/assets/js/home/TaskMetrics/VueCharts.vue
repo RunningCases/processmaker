@@ -48,11 +48,9 @@ export default {
   data() {
     let that = this;  
     return {
-      // level: 0,
       key1: _.random(0,100),
       key2: _.random(0,100),
       key3: _.random(0,100),
-      // data: [],
       settingsBreadCrumbs: [
         {
           class: "fas fa-info-circle",
@@ -66,7 +64,6 @@ export default {
   watch: {},
   computed: {
       level: function () {
-        //return 0
         return _.find(this.levels, {'active': true }).level;
       }
   },
@@ -81,7 +78,6 @@ export default {
       this.updateKey(data.level);
     },
     updateKey(level) {
-      debugger;
       switch (level) {
         case 0:
           break;
