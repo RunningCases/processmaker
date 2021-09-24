@@ -231,6 +231,11 @@ export default {
         },
       ]);
     },
+    /**
+     * Format color for show in breadcrumb
+     * @param {string} color
+     * @returns {string}
+     */
     formatColor(color) {
       let code = "#ffffff";
       switch (color) {
