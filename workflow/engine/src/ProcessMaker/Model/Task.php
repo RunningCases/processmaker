@@ -46,6 +46,18 @@ class Task extends Model
     }
 
     /**
+     * Get the task by taskId
+     * 
+     * @param int $tasId
+     * @return \ProcessMaker\Model\Task
+     */
+    public static function getTask($tasId)
+    {
+        $query = Task::query()->select()->where('TAS_ID', $tasId);
+        return $query->first();
+    }
+
+    /**
      * Scope a query to only include self-service
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -98,7 +110,7 @@ class Task extends Model
     public function scopeExcludedTasks($query)
     {
         $query->whereNotIn('TAS_TYPE', Task::$typesRunAutomatically)
-        ->whereNotIn('TAS_TYPE', Task::DUMMY_TASKS);
+            ->whereNotIn('TAS_TYPE', Task::DUMMY_TASKS);
 
         return $query;
     }
@@ -256,7 +268,7 @@ class Task extends Model
         });
 
         $res = $query->first();
-        if(is_null($res)) {
+        if (is_null($res)) {
             return "";
         } else {
             return $res->TAS_DEF_TITLE;

@@ -4,7 +4,7 @@ export default {
   data() {
     let that = this;
     return {
-      typeView: this.data.settings.view && this.data.settings.view.typeView
+      typeView: this.data.settings && this.data.settings.view && this.data.settings.view.typeView
         ? this.data.settings.view.typeView
         : "GRID",
       random: 1,
