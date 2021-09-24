@@ -422,6 +422,7 @@ export default {
                 this.page = "custom-case-list";
                 if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
                     this.pageData.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
+                    this.settings = this.pageData.settings;
                 } else {
                     this.pageData.settings  = {};
                 }

@@ -4,7 +4,9 @@ export default {
   data() {
     let that = this;
     return {
-      typeView: "GRID",
+      typeView: this.data.settings.view && this.data.settings.view.typeView
+        ? this.data.settings.view.typeView
+        : "GRID",
       random: 1,
       dataCasesList: [],
       defaultColumns: [
@@ -24,6 +26,9 @@ export default {
             title: "Grid",
             onClick(action) {
               that.typeView = "GRID";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-table",
           },
@@ -32,6 +37,9 @@ export default {
             title: "List",
             onClick(action) {
               that.typeView = "LIST";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-list",
           },
@@ -40,6 +48,9 @@ export default {
             title: "Card",
             onClick(action) {
               that.typeView = "CARD";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-th",
           },
@@ -81,36 +92,36 @@ export default {
     getCases(data) {
       let that = this,
         dt,
-        typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
+        typeList = that.data.pageParent == "inbox" ? "todo" : that.data.pageParent,
         start = 0,
         paged,
         limit = data.limit,
         filters = {},
         id = this.data.customListId;
       filters = {
-          paged: paged,
-          limit: limit,
-          offset: start,
+        paged: paged,
+        limit: limit,
+        offset: start,
       };
       if (_.isEmpty(that.filters) && this.data.settings) {
-          _.forIn(this.data.settings.filters, function(item, key) {
-              if (filters && item.value) {
-                  filters[item.filterVar] = item.value;
-              }
-          });
+        _.forIn(this.data.settings.filters, function (item, key) {
+          if (filters && item.value) {
+            filters[item.filterVar] = item.value;
+          }
+        });
       } else {
-          _.forIn(this.filters, function(item, key) {
-              if (filters && item.value) {
-                  filters[item.filterVar] = item.value;
-              }
-          });
+        _.forIn(this.filters, function (item, key) {
+          if (filters && item.value) {
+            filters[item.filterVar] = item.value;
+          }
+        });
       }
       return new Promise((resolutionFunc, rejectionFunc) => {
-          api.custom[that.data.pageParent]
-            ({
-                id,
-                filters,
-            })
+        api.custom[that.data.pageParent]
+          ({
+            id,
+            filters,
+          })
           .then((response) => {
             dt = that.formatDataResponse(response.data.data);
             resolutionFunc({
@@ -129,7 +140,7 @@ export default {
     getCasesViewMore(data) {
       let that = this,
         dt,
-        typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
+        typeList = that.data.pageParent == "inbox" ? "todo" : that.data.pageParent,
         limit = data.limit,
         start = data.page === 1 ? 0 : limit * (data.page - 1),
         filters = {};
@@ -212,6 +223,20 @@ export default {
           return { value: this.headings[value], key: value };
         }
         return { value, key: value }
+      });
+    },
+    /**
+     * Update settings for user
+     * @param {string} key
+     * @param {*} data
+     */
+    updateRootSettings(key, data) {
+      this.$emit("updateSettings", {
+        data: data,
+        key: key,
+        page: this.data.pageParent,
+        type: "custom",
+        id: this.data.customListId
       });
     }
   }
