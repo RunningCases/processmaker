@@ -3,27 +3,23 @@
     <vue-chart-lv-zero
       v-show="level === 0"
       @updateDataLevel="updateDataLevel"
-      :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-one
       :key="key1"
       v-show="level === 1"
       :data="levels"
       @updateDataLevel="updateDataLevel"
-      :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-two
       :key="key2"
       v-show="level === 2"
       :data="levels"
       @updateDataLevel="updateDataLevel"
-      :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-three
       :key="key3"
       v-show="level === 3"
       :data="levels"
-      :breadCrumbs="dataBreadCrumbs()"
     />
   </div>
 </template>

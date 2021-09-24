@@ -6,7 +6,7 @@
       </h6>
       <div>
         <BreadCrumb
-          :options="breadCrumbs.data"
+          :options="dataBreadcrumbs()"
           :settings="settingsBreadcrumbs"
         />
         <ProcessPopover
@@ -28,7 +28,9 @@
             @select="changeOption"
           ></multiselect>
         </div>
-        <label class="vp-inline-block vp-padding-l20">{{ $t("ID_TOP10") }}</label>
+        <label class="vp-inline-block vp-padding-l20">{{
+          $t("ID_TOP10")
+        }}</label>
         <div class="vp-inline-block">
           <b-form-checkbox
             v-model="top"
@@ -104,7 +106,7 @@ export default {
     BreadCrumb,
     ProcessPopover,
   },
-  props: ["data", "breadCrumbs"],
+  props: ["data"],
   data() {
     let that = this;
     return {
@@ -289,7 +291,7 @@ export default {
           .then((response) => {
             that.totalCases = response.data;
             that.formatTotalCases(response.data);
-          })  
+          })
           .catch((e) => {
             console.error(err);
           });
@@ -428,6 +430,20 @@ export default {
         type: "normal",
       });
       eventBus.$emit("home::sidebar::click-item", taskList);
+    },
+    /**
+     * Return the breadcrumbs
+     */
+    dataBreadcrumbs() {
+      let res = [];
+      if (this.data[1]) {
+        res.push({
+          label: this.data[1]["name"],
+          onClick() {},
+          color: this.data[1]["color"],
+        });
+      }
+      return res;
     },
   },
 };

@@ -2,7 +2,7 @@
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
       <h6 class="v-search-title">{{ $t("ID_DRILL_DOWN_NUMBER_TASKS") }}</h6>
-      <BreadCrumb :options="breadCrumbs.data" :settings="settingsBreadcrumbs" />
+      <BreadCrumb :options="dataBreadcrumbs" :settings="settingsBreadcrumbs" />
       <apexchart
         v-show="typeView === 'donut'"
         ref="apexchart1"
@@ -52,7 +52,7 @@ export default {
   name: "VueChartLvZero",
   mixins: [],
   components: { BreadCrumb },
-  props: ["breadCrumbs"],
+  props: [],
   data() {
     let that = this;
     return {
@@ -68,6 +68,57 @@ export default {
           onClick() {},
         },
       ],
+      dataBreadcrumbs: [
+        {
+          label: that.$i18n.t("ID_INBOX"),
+          onClick() {
+            that.$emit("updateDataLevel", {
+              id: that.$i18n.t("ID_INBOX"),
+              name: that.$i18n.t("ID_INBOX"),
+              level: 1,
+              color: "#179a6e",
+            });
+          },
+          color: "#179a6e",
+        },
+        {
+          label: this.$i18n.t("ID_DRAFT"),
+          onClick() {
+            that.$emit("updateDataLevel", {
+              id: that.$i18n.t("ID_DRAFT"),
+              name: that.$i18n.t("ID_DRAFT"),
+              level: 1,
+              color: "#feb019",
+            });
+          },
+          color: "#feb019",
+        },
+        {
+          label: this.$i18n.t("ID_PAUSED"),
+          onClick() {
+            that.$emit("updateDataLevel", {
+              id: that.$i18n.t("ID_PAUSED"),
+              name: that.$i18n.t("ID_PAUSED"),
+              level: 1,
+              color: "#008ffb",
+            });
+          },
+          color: "#008ffb",
+        },
+        {
+          label: this.$i18n.t("ID_UNASSIGNED"),
+          onClick() {
+            that.$emit("updateDataLevel", {
+              id: that.$i18n.t("ID_UNASSIGNED"),
+              name: that.$i18n.t("ID_UNASSIGNED"),
+              level: 1,
+              color: "#8f99a0",
+            });
+          },
+
+          color: "#8f99a0",
+        },
+      ],
       optionsDonut: {
         labels: [
           this.$i18n.t("ID_INBOX"),
@@ -78,20 +129,10 @@ export default {
         chart: {
           id: "apexchart1",
           type: "donut",
-          events: {
-            legendClick: function (chartContext, seriesIndex, config) {
-              that.currentSelection = that.data[seriesIndex];
-              that.$emit("updateDataLevel", {
-                id: that.currentSelection["List Name"],
-                name: that.currentSelection["List Name"],
-                level: 1,
-                color: that.formatColor(that.currentSelection["Color"]),
-                data: that.currentSelection,
-              });
-            },
-          },
+          events: {},
         },
         legend: {
+          show: false,
           position: "top",
           offsetY: 0,
         },
@@ -127,6 +168,7 @@ export default {
           },
         },
         legend: {
+          show: false,
           position: "top",
           offsetY: 0,
         },

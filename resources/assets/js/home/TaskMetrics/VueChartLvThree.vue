@@ -1,10 +1,10 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_RISK_MATRIX")}}</h6>
+      <h6 class="v-search-title">{{ $t("ID_DRILL_DOWN_RISK_MATRIX") }}</h6>
       <div>
         <BreadCrumb
-          :options="breadCrumbs.data"
+          :options="dataBreadcrumbs()"
           :settings="settingsBreadcrumbs"
         />
         <div class="vp-width-p30 vp-inline-block">
@@ -36,9 +36,7 @@
           ></b-form-datepicker>
         </div>
         <div class="vp-inline-block">
-          <label class="form-label">{{
-            $t("ID_TOP")
-          }}</label>
+          <label class="form-label">{{ $t("ID_TOP") }}</label>
         </div>
         <div class="vp-inline-block">
           <multiselect
@@ -298,7 +296,7 @@ export default {
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
               max: 0,
-              tickAmount: 7
+              tickAmount: 7,
             },
             title: {
               text: "Days before being Overdue",
@@ -309,7 +307,7 @@ export default {
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
               max: 0,
-              tickAmount: 7
+              tickAmount: 7,
             },
             title: {
               text: "Days before being At-Risk",
@@ -420,6 +418,27 @@ export default {
           that.$refs["modal-claim-case"].show();
         });
       });
+    },
+    /**
+     * Return the breadcrumbs
+     */
+    dataBreadcrumbs() {
+      let res = [];
+      if (this.data[1]) {
+        res.push({
+          label: this.data[1]["name"],
+          onClick() {},
+          color: this.data[1]["color"],
+        });
+      }
+      if (this.data[2]) {
+        res.push({
+          label: this.data[2]["name"],
+          onClick() {},
+          color: null,
+        });
+      }
+      return res;
     },
   },
 };
