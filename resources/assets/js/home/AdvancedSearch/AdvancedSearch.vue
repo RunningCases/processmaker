@@ -30,7 +30,7 @@
             :columns="columns"
             :options="options"
             ref="vueTable"
-            @row-click="onRowClick"
+            @row-click="configRowClick"
             :key="random"
         >
             <div slot="info" slot-scope="props">
@@ -76,6 +76,12 @@
                 </div>
             </div>
         </v-server-table>
+        <vue-simple-context-menu
+            :elementId="idContextMenu"
+            :options="contextMenuItems"
+            :ref="idContextMenu"
+            @option-clicked="contextMenuItemClicked"
+        />
         <ModalComments
             ref="modal-comments"
             @postNotes="onPostNotes"
@@ -93,10 +99,11 @@ import ThreadTitleCell from "../../components/vuetable/ThreadTitleCell.vue"
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import defaultMixin from "./defaultMixins.js";
+import customMixin from "./customMixins";
 
 export default {
     name: "AdvancedSearch",
-    mixins: [defaultMixin],
+    mixins: [defaultMixin, customMixin],
     components: {
         AdvancedFilter,
         ButtonFleft,
