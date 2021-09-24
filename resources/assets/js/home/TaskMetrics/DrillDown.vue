@@ -46,7 +46,6 @@ export default {
           label: that.$t("ID_LEVEL"),
           content: 0,
           click(elem) {
-            console.log(elem);
             that.$emit("onChangeLevel", elem);
           },
         },

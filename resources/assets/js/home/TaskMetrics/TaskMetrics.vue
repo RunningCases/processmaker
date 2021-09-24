@@ -61,7 +61,6 @@ export default {
      */
     changeLevel(data) {
       let item  = _.find(this.visited, {level: data.level });
-      debugger;
       this.visited.forEach(function (elem) {
           elem.active = false;
       });
@@ -69,7 +68,6 @@ export default {
         data.active = true;
         this.visited.push(data);
       } else {
-        // console.log("change lavel");
         item.active = true;
         
       }
