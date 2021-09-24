@@ -8,7 +8,7 @@
       <h6 class="v-search-title">{{ $t("ID_DRILL_DOWN_NAVIGATOR") }}</h6>
     </div>
     <div
-      v-for="item in loadItems(data, level)"
+      v-for="item in loadItems()"
       :key="item.content"
       class="vp-padding-b10"
       @click="onClick(item)"
@@ -29,7 +29,7 @@ export default {
   name: "DrillDown",
   mixins: [],
   components: {},
-  props: ["level"],
+  props: ["visited"],
   data() {
     let that = this;
     return {
@@ -37,35 +37,38 @@ export default {
         "rounded-circle": true,
         "v-pm-drill-down-number": true,
         "vp-btn-secondary": true,
+        "vp-btn-primary-inactive": false,
         "btn-primary": false,
         "vp-block": true,
       },
       data: [
         {
           label: that.$t("ID_LEVEL"),
-          content: "0",
-          click() {
-            that.$emit("onChangeLevel", 0);
+          content: 0,
+          click(elem) {
+            that.$emit("onChangeLevel", elem);
           },
         },
         {
           label: that.$t("ID_LEVEL"),
-          content: "1",
-          click() {
-            that.$emit("onChangeLevel", 1);
+          content: 1,
+          click(elem) {
+            that.$emit("onChangeLevel", elem);
           },
         },
         {
           label: that.$t("ID_LEVEL"),
-          content: "2",
-          click() {
-            that.$emit("onChangeLevel", 2);
+          content: 2,
+          click(elem) {
+            that.$emit("onChangeLevel", elem);
           },
         },
         {
           label: that.$t("ID_LEVEL"),
-          content: "3",
-          click() {},
+          content: 3,
+          click(elem) {
+            that.$emit("onChangeLevel", elem);
+          },
         },
       ],
     };
@@ -73,7 +76,11 @@ export default {
   created() {},
   mounted() {},
   watch: {},
-  computed: {},
+  computed: {
+      level: function () {
+          return _.find(this.visited, {'active': true }).level ;
+      }
+  },
   updated() {},
   beforeCreate() {},
   methods: {
@@ -81,37 +88,34 @@ export default {
      * Click in drill option
      */
     onClick(item) {
-      let array,
-        i = 0,
-        nindex;
-      array = _.clone(this.data);
-      array.forEach((el) => {
-        if (el.content === item.content) {
-          nindex = i;
-        }
-        i++;
-      });
-      this.index = nindex;
-      if (nindex <= this.level) {
-        item.click(item);
+      let elem =_.find(this.visited, {'level': item.content });
+      if (elem) {
+        item.click(elem);
       }
     },
     /**
      * Load items in drill items
      */
-    loadItems(items, index) {
+    loadItems() {
       let array,
-        i = 0,
-        that = this;
-      array = _.clone(items);
+        that = this,
+        item;
+      array = _.clone(this.data);
       array.forEach((el) => {
         el.classObject = _.clone(that.classObject);
-        if (i <= index) {
-          el.classObject["vp-btn-secondary"] = false;
-          el.classObject["btn-primary"] = true;
-        }
-        i += 1;
-      });
+        item =_.find(this.visited, {'level': el.content });
+        if (item) {
+            if (item.active){
+              el.classObject["vp-btn-primary-inactive"] = false;
+              el.classObject["vp-btn-secondary"] = false;
+              el.classObject["btn-primary"] = true;
+            } else {
+              el.classObject["vp-btn-secondary"] = false;
+              el.classObject["btn-primary"] = false;
+              el.classObject["vp-btn-primary-inactive"] = true;
+            }
+          }
+      }); 
       return array;
     },
   },
@@ -153,6 +157,18 @@ export default {
   color: #fff;
   background-color: #6c757d;
   border-color: #6c757d;
+}
+
+.vp-btn-primary-inactive {
+    color: #6c757d;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.vp-btn-primary-inactive:hover {
+  color: #6c757d;
+  background-color: #0066d3;
+  border-color: #0066d3;
 }
 
 .v-pm-drill-down {

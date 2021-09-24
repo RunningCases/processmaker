@@ -276,10 +276,10 @@ export default {
     changeOption(option) {
       let that = this,
         dt = {};
-      if (this.data.length > 0) {
+      if (this.data.length > 1) {
         dt = {
           category: option.id,
-          caseList: this.data[0].id.toLowerCase(),
+          caseList: this.data[1].id.toLowerCase(),
           processes: this.selectedProcesses,
           top: this.top,
         };
@@ -289,7 +289,7 @@ export default {
           .then((response) => {
             that.totalCases = response.data;
             that.formatTotalCases(response.data);
-          })
+          })  
           .catch((e) => {
             console.error(err);
           });
@@ -401,7 +401,7 @@ export default {
       this.$emit("updateDataLevel", {
         id: this.currentSelection["PRO_ID"],
         name: this.currentSelection["PRO_TITLE"],
-        level: 1,
+        level: 2,
         data: this.currentSelection,
       });
     },
@@ -409,7 +409,7 @@ export default {
      * Show popover data options
      */
     onClickData() {
-      let taskList = this.data[0].id.toLowerCase(),
+      let taskList = this.data[1].id.toLowerCase(),
         obj = {
           autoshow: false,
           fieldId: "processName",

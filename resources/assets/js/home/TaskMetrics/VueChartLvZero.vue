@@ -84,7 +84,7 @@ export default {
               that.$emit("updateDataLevel", {
                 id: that.currentSelection["List Name"],
                 name: that.currentSelection["List Name"],
-                level: 0,
+                level: 1,
                 color: that.formatColor(that.currentSelection["Color"]),
                 data: that.currentSelection,
               });

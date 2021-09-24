@@ -215,8 +215,8 @@ export default {
         dt;
       if (this.dateFrom && this.dateTo) {
         dt = {
-          process: this.data[1].id,
-          caseList: this.data[0].id.toLowerCase(),
+          process: this.data[2].id,
+          caseList: this.data[1].id.toLowerCase(),
           dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
           dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
           riskStatus: this.riskType,
@@ -272,7 +272,7 @@ export default {
       });
 
       this.updateApexchartAxis();
-      if (this.data[0].id.toLowerCase() == "draft") {
+      if (this.data[1].id.toLowerCase() == "draft") {
         this.series = []; // Draft is empty
       } else {
         this.series = serie;
