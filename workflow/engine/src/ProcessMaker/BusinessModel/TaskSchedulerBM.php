@@ -172,9 +172,7 @@ class TaskSchedulerBM
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/10 * * * 0,1,2,3,4,5,6",
-            "description" => "ID_TASK_SCHEDULER_REPORT_USERS_DESC",
-            "initDate" => "+init-date",
-            "finishDate" => "+finish-date"
+            "description" => "ID_TASK_SCHEDULER_REPORT_USERS_DESC"
         ],
         [
             "title" => "ID_TASK_SCHEDULER_REPORT_PROCESS",
@@ -191,9 +189,7 @@ class TaskSchedulerBM
             "everyOn" => "1",
             "interval" => "week",
             "expression" => "*/10 * * * 0,1,2,3,4,5,6",
-            "description" => "ID_TASK_SCHEDULER_CALCULATE_APP_DESC",
-            "initDate" => "+init-date",
-            "finishDate" => "+finish-date"
+            "description" => "ID_TASK_SCHEDULER_CALCULATE_APP_DESC"
         ],
         [
             "title" => "ID_TASK_SCHEDULER_LDAP",
@@ -283,25 +279,10 @@ class TaskSchedulerBM
             $task->description = $service["description"];
             $task->startingTime = $service["startingTime"];
             $task->endingTime = $service["endingTime"];
-            $activity = $service["service"];
-
-            //for init date and finish date parameters
-            $currentDate = date("Y-m-d H:i:s");
-            $setOfActivities = ["report_by_user", "report_by_process"];
-            if (!empty($service["initDate"]) && in_array($activity, $setOfActivities)) {
-                $oneMonthAgo = $currentDate . " -1 month";
-                $timestamp = strtotime($oneMonthAgo);
-                $oneMonthAgo = date("Y-m-d H:i:s", $timestamp);
-                $activity = $activity . ' ' . $service["initDate"] . '"' . $oneMonthAgo . '"';
-            }
-            if (!empty($service["finishDate"]) && in_array($activity, $setOfActivities)) {
-                $activity = $activity . ' ' . $service["initDate"] . '"' . $currentDate . '"';
-            }
-
             if ($win) {
-                $task->body = 'php "' . PATH_TRUNK . $service["filew"] . '" ' . $activity . ' +w' . config("system.workspace") . ' +force +async';
+                $task->body = 'php "' . PATH_TRUNK . $service["filew"] . '" ' . $service["service"] . ' +w' . config("system.workspace") . ' +force +async';
             } else {
-                $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $activity . ' +w' . config("system.workspace") . ' +force +async"';
+                $task->body = 'su -s /bin/sh -c "php ' . PATH_TRUNK . $service["file"] . " " . $service["service"] . ' +w' . config("system.workspace") . ' +force +async"';
             }
             $task->expression = $service["expression"];
             $task->type = "shell";
