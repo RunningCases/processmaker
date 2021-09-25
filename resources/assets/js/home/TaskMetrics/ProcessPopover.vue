@@ -69,7 +69,6 @@ export default {
       results: [],
       allColumns: false,
       localSelected: [],
-      selected: [],
     };
   },
   mounted() {
@@ -138,7 +137,7 @@ export default {
           res.push(o.key);
         });
       }
-      this.selected = res;
+      this.localSelected = res;
     },
     /**
      * Handler when change options event

@@ -1,24 +1,24 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <vue-chart-lv-zero
-      v-show="level === 0"
+      v-if="level === 0"
       @updateDataLevel="updateDataLevel"
     />
     <vue-chart-lv-one
       :key="key1"
-      v-show="level === 1"
+      v-if="level === 1"
       :data="levels"
       @updateDataLevel="updateDataLevel"
     />
     <vue-chart-lv-two
       :key="key2"
-      v-show="level === 2"
+      v-if="level === 2"
       :data="levels"
       @updateDataLevel="updateDataLevel"
     />
     <vue-chart-lv-three
       :key="key3"
-      v-show="level === 3"
+      v-if="level === 3"
       :data="levels"
     />
   </div>
