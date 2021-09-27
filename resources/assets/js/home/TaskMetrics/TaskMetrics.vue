@@ -65,7 +65,9 @@ export default {
      * Change level in drill down
      */
     changeLevel(data) {
-      let item = _.findIndex(this.visited, data);
+      let item = _.findIndex(this.visited, (el) => {
+        return el.id == data.id;
+      });
       this.visited.forEach(function (elem) {
         elem.active = false;
       });

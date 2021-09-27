@@ -98,9 +98,13 @@ export default {
   data() {
     let that = this;
     return {
-      dateFrom: moment().format("YYYY-MM-DD"),
-      dateTo: moment().add(30, "d").format("YYYY-MM-DD"),
-      period: "day",
+      dateFrom: this.data[3]
+        ? this.data[3].data.dateFrom
+        : moment().format("YYYY-MM-DD"),
+      dateTo: this.data[3]
+        ? this.data[3].data.dateTo
+        : moment().add(30, "d").format("YYYY-MM-DD"),
+      period: this.data[3] ? this.data[3].data.period : "day",
       periodOptions: [
         { text: this.$t("ID_DAY"), value: "day" },
         { text: this.$t("ID_MONTH"), value: "month" },
@@ -230,10 +234,14 @@ export default {
      */
     onClickDrillDown() {
       this.$emit("updateDataLevel", {
-        id: this.data[2]["id"],
+        id: "level2",
         name: this.data[2]["name"],
         level: 3,
-        data: null,
+        data: {
+          dateFrom: this.dateFrom,
+          dateTo: this.dateTo,
+          period: this.period,
+        },
       });
     },
     /**
