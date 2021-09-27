@@ -220,6 +220,7 @@ export default {
                 PAUSED: this.$i18n.t("ID_PAUSED"),
                 UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
             },
+            clearSortState: this.settings && this.settings.orderBy && this.settings.orderBy.column,
         };
     },
     mounted() {
@@ -241,6 +242,7 @@ export default {
                 id: this.id
             });
         });
+        Event.$on('clearSortEvent', this.clearSort);
     },
     watch: {
         columns: function (val) {
@@ -713,6 +715,21 @@ export default {
         countDownChanged(dismissCountDown) {
             this.dataAlert.dismissCountDown = dismissCountDown;
         },
+        /**
+         * Reset the sort in the table
+         */
+        clearSort() {
+            if (this.$refs['vueTable']) {
+                this.$refs['vueTable'].setOrder(false)
+                this.$emit("updateSettings", {
+                    data: [],
+                    key: "orderBy",
+                    page: "MyCases",
+                    type: "normal",
+                    id: this.id
+                });
+            }
+        }
     },
 };
 </script>
@@ -723,4 +740,9 @@ export default {
     padding-left: 50px;
     padding-right: 50px;
 }
+/*.btn-clear-sort {
+    position: fixed;
+    margin-top: 16px;
+    margin-left: -11px;
+}*/
 </style>
