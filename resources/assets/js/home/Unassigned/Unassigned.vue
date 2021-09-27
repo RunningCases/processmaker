@@ -122,6 +122,14 @@
           >{{ props["item"]["DELEGATION_DATE"] }}
         </span>
       </div>
+      <div slot="priority" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PRIORITY"] }}
+        </span>
+      </div>
       <div slot="task" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
@@ -193,6 +201,14 @@
         >
         <span class="v-card-text-light"
           >{{ props["item"]["DELEGATION_DATE"] }}
+        </span>
+      </div>
+      <div slot="priority" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PRIORITY"] }}
         </span>
       </div>
       <div slot="task" slot-scope="props" class="v-card-text">
