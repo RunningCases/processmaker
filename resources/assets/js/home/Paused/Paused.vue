@@ -798,4 +798,12 @@ export default {
   padding-left: 50px;
   padding-right: 50px;
 }
+.ellipsis-container {
+  margin-top: 5em;
+  float: right;
+}
+
+.v-pm-card-info{
+  float: right;
+}
 </style>
