@@ -678,6 +678,7 @@ export default {
                 id: that.data.customListId
             });
         });
+        Event.$on('clearSortEvent', this.clearSort);
     },
     watch: {
         columns: function(val) {
@@ -1238,6 +1239,21 @@ export default {
           return dataEllipsisMap[page];
         }
     },
+    /**
+     * Reset the sort in the table
+     */
+    clearSort() {
+        if (this.$refs['vueTable']) {
+            this.$refs['vueTable'].setOrder(false)
+            this.$emit("updateSettings", {
+                data: [],
+                key: "orderBy",
+                page: that.data.pageParent,
+                type: "custom",
+                id: that.data.customListId
+            });
+        }
+    }
 };
 </script>
 <style>

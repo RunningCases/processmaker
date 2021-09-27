@@ -386,6 +386,7 @@ export default {
         id: this.id
       });
     });
+    Event.$on('clearSortEvent', this.clearSort);
   },
   watch: {
     columns: function (val) {
@@ -772,6 +773,21 @@ export default {
     onPostNotes() {
         this.$refs["vueTable"].getData();
     },
+    /**
+     * Reset the sort in the table
+     */
+    clearSort() {
+        if (this.$refs['vueTable']) {
+            this.$refs['vueTable'].setOrder(false);
+            this.$emit("updateSettings", {
+                data: [],
+                key: "orderBy",
+                page: "paused",
+                type: "normal",
+                id: this.id
+            });
+        }
+    }
   },
 };
 </script>
