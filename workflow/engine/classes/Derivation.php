@@ -1086,11 +1086,14 @@ class Derivation
                                  break;
                             default:
                                 $iNewDelIndex = $this->doDerivation($currentDelegation, $nextDel, $appFields, $aSP);
+                                $appUid = $currentDelegation['APP_UID'];
                                 // Load Case Data again because the information could be change in method "doDerivation"
-                                $verifyApplication = $this->case->loadCase($currentDelegation['APP_UID']);
-                                $appFields['APP_DATA'] = $verifyApplication['APP_DATA'];
-                                //When the users route the case in the same time
-                                if($iNewDelIndex !== 0){
+                                $lastData = $this->case->loadCase($appUid);
+                                // Update the thread title related to the last index created
+                                $this->case->updateThreadTitle($appUid, $lastData['APP_NUMBER'], $iNewDelIndex, $lastData['APP_DATA']);
+                                $appFields['APP_DATA'] = $lastData['APP_DATA'];
+                                // When the users route the case in the same time
+                                if($iNewDelIndex !== 0) {
                                     $arrayDerivationResult[] = [
                                         'DEL_INDEX' => $iNewDelIndex,
                                         'TAS_UID' => $nextDel['TAS_UID'],
