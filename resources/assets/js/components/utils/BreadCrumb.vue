@@ -6,13 +6,15 @@
         :key="item.label"
         :class="item.classObject"
       >
-        <span v-if="item.data.color">
-          <div
-            class="vp-color-breadcrumb"
-            :style="{ backgroundColor: item.data.color }"
-          ></div
-        ></span>
-        <span>{{ item.label }}</span>
+        <span @click="item.onClick">
+          <span v-if="item.color">
+            <div
+              class="vp-color-breadcrumb"
+              :style="{ backgroundColor: item.color }"
+            ></div
+          ></span>
+          <span>{{ item.label }}</span>
+        </span>
       </li>
       <div
         v-for="item in settings"
@@ -47,19 +49,11 @@ export default {
     formatOptions(data) {
       let options = data;
       for (let i = 0; i <= options.length - 1; i++) {
-        if (i === options.length - 1) {
-          options[i].classObject = {
-            "vp-breadcrumb-item": true,
-            active: true,
-            "vp-inline-block": true,
-          };
-        } else {
-          options[i].classObject = {
-            "vp-breadcrumb-item": true,
-            active: false,
-            "vp-inline-block": true,
-          };
-        }
+        options[i].classObject = {
+          "vp-breadcrumb-item": true,
+          active: false,
+          "vp-inline-block": true,
+        };
       }
       return options;
     },

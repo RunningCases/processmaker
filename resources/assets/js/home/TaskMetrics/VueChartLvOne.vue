@@ -6,11 +6,12 @@
       </h6>
       <div>
         <BreadCrumb
-          :options="breadCrumbs.data"
+          :options="dataBreadcrumbs()"
           :settings="settingsBreadcrumbs"
         />
         <ProcessPopover
           :options="optionsProcesses"
+          :selected="selectedProcesses"
           @onChange="onChangeSearchPopover"
           target="pm-task-process"
           ref="pm-task-process"
@@ -25,10 +26,11 @@
             :show-labels="false"
             track-by="id"
             label="name"
-            @select="changeOption"
           ></multiselect>
         </div>
-        <label class="vp-inline-block vp-padding-l20">{{ $t("ID_TOP10") }}</label>
+        <label class="vp-inline-block vp-padding-l20">{{
+          $t("ID_TOP10")
+        }}</label>
         <div class="vp-inline-block">
           <b-form-checkbox
             v-model="top"
@@ -104,7 +106,7 @@ export default {
     BreadCrumb,
     ProcessPopover,
   },
-  props: ["data", "breadCrumbs"],
+  props: ["data"],
   data() {
     let that = this;
     return {
@@ -122,7 +124,7 @@ export default {
       optionsCategory: [],
       optionsProcesses: [],
       selectedProcesses: [],
-      top: false,
+      top: this.data[2] ? this.data[2].data.top : true,
       width: 0,
       totalCases: [],
       currentSelection: null,
@@ -186,7 +188,20 @@ export default {
     this.getCategories();
     this.getProcesses();
   },
-  watch: {},
+  watch: {
+    category(nvalue, old) {
+      this.changeOption();
+    },
+    optionsCategory(nvalue, old) {
+      this.category = this.data[2] ? this.data[2].data.category : nvalue[0];
+    },
+    optionsProcesses(nvalue, old) {
+      this.selectedProcesses = this.data[2]
+        ? this.data[2].data.selectedProcesses
+        : _.flatMap(nvalue, (n) => n.key);
+      this.changeOption();
+    },
+  },
   computed: {},
   updated() {},
   beforeCreate() {},
@@ -221,9 +236,6 @@ export default {
         .processList(query || "")
         .then((response) => {
           that.formatDataProcesses(response.data);
-          that.changeOption({
-            id: "all",
-          });
         })
         .catch((e) => {
           console.error(err);
@@ -247,25 +259,19 @@ export default {
         array.push({ name: el["CATEGORY_NAME"], id: el["CATEGORY_ID"] });
       });
       this.optionsCategory = array;
-      this.category = array[0];
     },
     /**
      * Format processes for popover
      * @param {*} data
      */
     formatDataProcesses(data) {
-      let sels = [],
-        labels = [],
+      let labels = [],
         array = [];
-
       _.each(data, (el) => {
         array.push({ value: el["PRO_TITLE"], key: el["PRO_ID"] });
-        sels.push(el["PRO_ID"]);
         labels;
       });
       this.optionsProcesses = array;
-      this.selectedProcesses = sels;
-
       //Update the labels
       this.dataProcesses = data;
     },
@@ -273,25 +279,25 @@ export default {
      * Change the options in TOTAL CASES BY PROCESS
      * @param {*} option
      */
-    changeOption(option) {
+    changeOption() {
       let that = this,
         dt = {};
-      if (this.data.length > 1) {
+      if (this.category && this.selectedProcesses.length > 0 && this.data[1]) {
         dt = {
-          category: option.id,
+          category: this.category.id,
           caseList: this.data[1].id.toLowerCase(),
           processes: this.selectedProcesses,
           top: this.top,
         };
-        option.id == "all" ? delete dt.category : null;
+        this.category.id == "all" ? delete dt.category : null;
         Api.process
           .totalCasesByProcess(dt)
           .then((response) => {
             that.totalCases = response.data;
             that.formatTotalCases(response.data);
-          })  
+          })
           .catch((e) => {
-            console.error(err);
+            console.error(e);
           });
       }
     },
@@ -327,17 +333,8 @@ export default {
      * @param {*} data
      */
     onUpdateColumnSettings(data) {
-      let res;
       this.selectedProcesses = data;
-      res = _.intersectionBy(this.totalCases, data, (el) => {
-        if (_.isNumber(el)) {
-          return el;
-        }
-        if (_.isObject(el) && el["PRO_ID"]) {
-          return el["PRO_ID"];
-        }
-      });
-      this.formatTotalCases(res);
+      this.changeOption();
     },
     /**
      * Update labels in chart
@@ -365,9 +362,7 @@ export default {
      * Force update view when update level
      */
     forceUpdateView() {
-      this.changeOption({
-        id: 0,
-      });
+      this.changeOption();
     },
     /**
      * Event handler change input search popover
@@ -402,7 +397,11 @@ export default {
         id: this.currentSelection["PRO_ID"],
         name: this.currentSelection["PRO_TITLE"],
         level: 2,
-        data: this.currentSelection,
+        data: {
+          top: this.top,
+          category: this.category,
+          selectedProcesses: this.selectedProcesses,
+        },
       });
     },
     /**
@@ -428,6 +427,20 @@ export default {
         type: "normal",
       });
       eventBus.$emit("home::sidebar::click-item", taskList);
+    },
+    /**
+     * Return the breadcrumbs
+     */
+    dataBreadcrumbs() {
+      let res = [];
+      if (this.data[1]) {
+        res.push({
+          label: this.data[1]["name"],
+          onClick() {},
+          color: this.data[1]["color"],
+        });
+      }
+      return res;
     },
   },
 };

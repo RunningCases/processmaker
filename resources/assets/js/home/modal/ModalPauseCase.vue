@@ -164,7 +164,6 @@ export default {
       this.data.reasonPause = this.pauseData.reasonPause;
       api.cases.pauseCase(this.data)
         .then((response) => {
-            console.log(response);
           if (response.statusText == "OK" || response.status === 200) {
             that.$refs["modal-pause-case"].hide();
             that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()

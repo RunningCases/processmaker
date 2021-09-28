@@ -6,7 +6,7 @@
       </h6>
       <div>
         <BreadCrumb
-          :options="breadCrumbs.data"
+          :options="dataBreadcrumbs()"
           :settings="settingsBreadcrumbs"
         />
         <div class="vp-width-p30 vp-inline-block">
@@ -94,13 +94,17 @@ export default {
     Multiselect,
     BreadCrumb,
   },
-  props: ["data", "breadCrumbs"],
+  props: ["data"],
   data() {
     let that = this;
     return {
-      dateFrom: moment().format("YYYY-MM-DD"),
-      dateTo: moment().add(30, "d").format("YYYY-MM-DD"),
-      period: "day",
+      dateFrom: this.data[3]
+        ? this.data[3].data.dateFrom
+        : moment().format("YYYY-MM-DD"),
+      dateTo: this.data[3]
+        ? this.data[3].data.dateTo
+        : moment().add(30, "d").format("YYYY-MM-DD"),
+      period: this.data[3] ? this.data[3].data.period : "day",
       periodOptions: [
         { text: this.$t("ID_DAY"), value: "day" },
         { text: this.$t("ID_MONTH"), value: "month" },
@@ -155,12 +159,12 @@ export default {
     this.changeOption();
   },
   watch: {
-    dateFrom () {
+    dateFrom() {
       this.validateDateTo();
     },
-    dateTo () {
+    dateTo() {
       this.validateDateTo();
-    }
+    },
   },
   computed: {},
   updated() {},
@@ -230,10 +234,14 @@ export default {
      */
     onClickDrillDown() {
       this.$emit("updateDataLevel", {
-        id: this.data[2]["id"],
+        id: "level2",
         name: this.data[2]["name"],
         level: 3,
-        data: null,
+        data: {
+          dateFrom: this.dateFrom,
+          dateTo: this.dateTo,
+          period: this.period,
+        },
       });
     },
     /**
@@ -282,13 +290,34 @@ export default {
      * Validate range date
      */
     validateDateTo() {
-      if (this.dateFrom !== '' && this.dateTo !== '') {
+      if (this.dateFrom !== "" && this.dateTo !== "") {
         if (this.dateFrom > this.dateTo) {
           this.stateDateTo = false;
         } else {
           this.stateDateTo = null;
         }
       }
+    },
+    /**
+     * Return the breadcrumbs
+     */
+    dataBreadcrumbs() {
+      let res = [];
+      if (this.data[1]) {
+        res.push({
+          label: this.data[1]["name"],
+          onClick() {},
+          color: this.data[1]["color"],
+        });
+      }
+      if (this.data[2]) {
+        res.push({
+          label: this.data[2]["name"],
+          onClick() {},
+          color: null,
+        });
+      }
+      return res;
     },
   },
 };

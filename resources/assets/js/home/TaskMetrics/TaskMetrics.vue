@@ -10,6 +10,7 @@
     <modal-new-request ref="newRequest"></modal-new-request>
     <div class="d-inline-flex p-2">
       <vue-charts
+        :key="random"
         ref="pm-vue-chart"
         @onChangeLevel="changeLevel"
         :levels="visited"
@@ -17,7 +18,7 @@
       <div class="vp-6"></div>
       <drill-down :visited="visited" @onChangeLevel="changeLevel" />
     </div>
-  </div>  
+  </div>
 </template>
 
 <script>
@@ -27,11 +28,12 @@ import DrillDown from "./DrillDown.vue";
 import VueCharts from "./VueCharts.vue";
 
 import defaultMixins from "./defaultMixins";
+import _ from "lodash";
 export default {
   name: "TaskMetrics",
   mixins: [defaultMixins],
   components: {
-    ButtonFleft,  
+    ButtonFleft,
     ModalNewRequest,
     DrillDown,
     VueCharts,
@@ -40,13 +42,17 @@ export default {
   data() {
     let that = this;
     return {
-      visited: this.settings && this.settings.visited ? this.settings.visited : [
-          {
-              level: 0,
-              active: true,
-              id: _.random(0,100),
-          }
-      ]
+      random: _.random(0, 100000),
+      visited:
+        this.settings && this.settings.visited
+          ? this.settings.visited
+          : [
+              {
+                level: 0,
+                active: true,
+                id: _.random(0, 100),
+              },
+            ],
     };
   },
   created() {},
@@ -59,27 +65,30 @@ export default {
      * Change level in drill down
      */
     changeLevel(data) {
-      let item  = _.find(this.visited, data);
-      this.visited.forEach(function (elem) {
-          elem.active = false;
+      let item = _.findIndex(this.visited, (el) => {
+        return el.id == data.id;
       });
-      if(!item) {
+      this.visited.forEach(function (elem) {
+        elem.active = false;
+      });
+      data.active = true;
+      item != -1 ? this.visited.splice(item, 1, data) : null;
+      if (item == -1) {
         data.active = true;
-        this.visited = _.filter(this.visited, function(o) { 
-          return o.level < data.level; 
+        this.visited = _.filter(this.visited, function (o) {
+          return o.level < data.level;
         });
         this.visited.push(data);
-      } else {
-        item.active = true;
       }
+      this.random = _.random(0, 100000);
       this.$emit("updateSettings", {
         data: this.visited,
         key: "visited",
         page: "task-metrics",
         type: "normal",
-        id: this.id
+        id: this.id,
       });
-  },
+    },
   },
 };
 </script>

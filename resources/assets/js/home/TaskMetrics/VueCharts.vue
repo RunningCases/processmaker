@@ -1,29 +1,23 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
-    <vue-chart-lv-zero
-      v-show="level === 0"
-      @updateDataLevel="updateDataLevel"
-      :breadCrumbs="dataBreadCrumbs()"
-    />
+    <vue-chart-lv-zero v-if="level === 0" @updateDataLevel="updateDataLevel" />
     <vue-chart-lv-one
       :key="key1"
-      v-show="level === 1"
+      v-if="level === 1"
       :data="levels"
       @updateDataLevel="updateDataLevel"
-      :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-two
       :key="key2"
-      v-show="level === 2"
+      v-if="level === 2"
       :data="levels"
       @updateDataLevel="updateDataLevel"
-      :breadCrumbs="dataBreadCrumbs()"
     />
     <vue-chart-lv-three
       :key="key3"
       v-show="level === 3"
       :data="levels"
-      :breadCrumbs="dataBreadCrumbs()"
+      @updateDataLevel="updateDataLevel"
     />
   </div>
 </template>
@@ -44,13 +38,13 @@ export default {
     VueChartLvTwo,
     VueChartLvThree,
   },
-  props: ["levels"], 
+  props: ["levels"],
   data() {
-    let that = this;  
+    let that = this;
     return {
-      key1: _.random(0,100),
-      key2: _.random(0,100),
-      key3: _.random(0,100),
+      key1: _.random(0, 100),
+      key2: _.random(0, 100),
+      key3: _.random(0, 100),
       settingsBreadCrumbs: [
         {
           class: "fas fa-info-circle",
@@ -63,9 +57,9 @@ export default {
   mounted() {},
   watch: {},
   computed: {
-      level: function () {
-        return _.find(this.levels, {'active': true }).level;
-      }
+    level: function () {
+      return _.find(this.levels, { active: true }).level;
+    },
   },
   updated() {},
   beforeCreate() {},
@@ -104,7 +98,7 @@ export default {
           res.push({
             label: el.name,
             onClick() {
-               this.$emit("onChangeLevel", el);
+              this.$emit("onChangeLevel", el);
             },
             data: el,
           });
@@ -124,7 +118,7 @@ export default {
           };
           break;
       }
-    }
+    },
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="pm-all-view-popover">
+  <div class="pm-tm-view-popover">
     <b-popover
       :target="target"
       ref="popover"
@@ -39,6 +39,7 @@
             value-field="key"
             text-field="value"
             name="flavour-2a"
+            class="process-view-popover"
             @change="changeOptions"
             stacked
           ></b-form-checkbox-group>
@@ -68,7 +69,6 @@ export default {
       results: [],
       allColumns: false,
       localSelected: [],
-      selected: [],
     };
   },
   mounted() {
@@ -137,7 +137,7 @@ export default {
           res.push(o.key);
         });
       }
-      this.selected = res;
+      this.localSelected = res;
     },
     /**
      * Handler when change options event
@@ -166,5 +166,12 @@ export default {
 }
 .v-popover-footer {
   display: flow-root;
+}
+
+.process-view-popover {
+  margin-bottom: 1rem;
+  overflow-y: auto;
+  display: block;
+  max-height: 200px;
 }
 </style>
