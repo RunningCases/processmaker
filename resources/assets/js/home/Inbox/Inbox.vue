@@ -852,6 +852,7 @@ export default {
 
 .ellipsis-container {
   margin-top: 5em;
+  float: right;
 }
 
 .v-pm-card-info{
