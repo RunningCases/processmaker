@@ -375,7 +375,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'case_title',
-                'name' => G::LoadTranslation('ID_CASE_TITLE'),
+                'name' => G::LoadTranslation('ID_CASE_THREAD_TITLE'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
                 'typeSearch' => 'search text',
