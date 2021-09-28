@@ -649,6 +649,7 @@ class Cases
      * @return array
      *
      * @see Cases::updateCase()
+     * @see Derivation::derivate()
      */
     public function updateThreadTitle(string $appUid, int $appNumber, int $delIndex, $caseData = [])
     {
