@@ -312,10 +312,12 @@ export default {
                                 id: "TASK_METRICS",
                                 page: "task-metrics",
                                 title: data[i].title,
-                                specialType: "header"
+                                header: data[i] && !data[i].permission? true : null,
+                                specialType: data[i] && data[i].permission? "header" : null
                             }
                         }
                     };
+
                 }
                 if (data[i].customCasesList)  {
                     data[i]["child"] = this.sortCustomCasesList(
