@@ -67,7 +67,7 @@
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
         <div @click="updateDataEllipsis(props.row)">
-          <ellipsis :ref="`ellipsis-${props.row.TAS_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+          <ellipsis :ref="`ellipsis-${props.row.APP_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
         </div>
       </div>
     </v-server-table>
@@ -85,7 +85,7 @@
           </b-col>
           <b-col sm="12">
             <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
-              <ellipsis :ref="`ellipsis-${props.item.TAS_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+              <ellipsis :ref="`ellipsis-${props.item.APP_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
           </b-col>
         </b-row>
@@ -166,7 +166,7 @@
           </b-col>
           <b-col sm="12">
             <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
-              <ellipsis :ref="`ellipsis-${props.item.TAS_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+              <ellipsis :ref="`ellipsis-${props.item.APP_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
           </b-col>
         </b-row>
