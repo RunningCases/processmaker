@@ -753,6 +753,7 @@ class Home extends Api
      */
     public function getMenu()
     {
+        global $RBAC;
         // Parse menu definition
         $menuInstance = new Menu();
         $menuInstance->load('home');
@@ -772,6 +773,9 @@ class Home extends Api
                 $option->title = $menuInstance->Labels[$i];
                 $option->hiddenOnCollapse = true;
                 $option->id = $menuInstance->Id[$i];
+                if ( $option->id == "FOLDERS" && $RBAC->userCanAccess('TASK_METRICS_VIEW') == "1") {
+                    $option->permission = true;   
+                }
             } else {
                 $option->href = $menuInstance->Options[$i];
                 $option->id = $menuInstance->Id[$i];
