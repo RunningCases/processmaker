@@ -126,7 +126,7 @@ export default {
             headers: [],
             columMap: {
                 case_number: "APP_NUMBER",
-                case_title: "DEL_TITLE",
+                thread_title: "DEL_TITLE",
                 process_name: "PRO_TITLE",
             },
             random: _.random(0,1000000000),

@@ -51,7 +51,7 @@ export default {
         },
         headings: {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
@@ -62,7 +62,7 @@ export default {
         },
         columns: [
           "case_number",
-          "case_title",
+          "thread_title",
           "process_name",
           "due_date",
           "delegation_date",

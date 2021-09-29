@@ -40,8 +40,8 @@
       <div slot="case_number" slot-scope="props">
         {{ props.row.CASE_NUMBER }}
       </div>
-      <div slot="case_title" slot-scope="props">
-        {{ props.row.CASE_TITLE }}
+      <div slot="thread_title" slot-scope="props">
+        {{ props.row.THREAD_TITLE }}
       </div>
       <div slot="process_name" slot-scope="props">
         {{ props.row.PROCESS_NAME }}
@@ -90,12 +90,12 @@
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
       </div>
-      <div slot="case_title" slot-scope="props" class="v-card-text">
+      <div slot="thread_title" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
-          >{{ props["item"]["CASE_TITLE"] }}
+        <span class="v-card-text-light">
+          {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
@@ -171,12 +171,12 @@
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
       </div>
-      <div slot="case_title" slot-scope="props" class="v-card-text">
+      <div slot="thread_title" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
-          >{{ props["item"]["CASE_TITLE"] }}
+        <span class="v-card-text-light">
+          {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
@@ -286,7 +286,7 @@ export default {
       },
       columMap: {
           case_number: "APP_NUMBER",
-          case_title: "DEL_TITLE",
+          thread_title: "DEL_TITLE",
           process_name: "PRO_TITLE"
       },
       newCase: {
@@ -306,7 +306,7 @@ export default {
               : [
                   "detail",
                   "case_number",
-                  "case_title",
+                  "thread_title",
                   "process_name",
                   "task",
                   "send_by",
@@ -321,7 +321,7 @@ export default {
         headings: {
           detail: this.$i18n.t("ID_DETAIL_CASE"),
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
@@ -521,7 +521,7 @@ export default {
       _.forEach(response, (v) => {
         data.push({
           CASE_NUMBER: v.APP_NUMBER,
-          CASE_TITLE: v.DEL_TITLE,
+          THREAD_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
           TASK: [{
             TITLE: v.TAS_TITLE,

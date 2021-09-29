@@ -43,8 +43,8 @@
             <div slot="case_number" slot-scope="props">
                 {{ props.row.CASE_NUMBER }}
             </div>
-            <div slot="case_title" slot-scope="props">
-                {{ props.row.CASE_TITLE }}
+            <div slot="thread_title" slot-scope="props">
+                {{ props.row.THREAD_TITLE }}
             </div>
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
@@ -113,12 +113,12 @@
                     {{ props["item"]["CASE_NUMBER"] }}</span
                 >
             </div>
-            <div slot="case_title" slot-scope="props" class="v-card-text">
+            <div slot="thread_title" slot-scope="props" class="v-card-text">
                 <span class="v-card-text-dark"
                     >{{ props["headings"][props.column] }} :</span
                 >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["CASE_TITLE"] }}
+                <span class="v-card-text-light">
+                    {{ props["item"]["THREAD_TITLE"] }}
                 </span>
             </div>
             <div slot="process_name" slot-scope="props" class="v-card-text">
@@ -218,15 +218,15 @@
             </b-col>
             <b-col
                 sm="5"
-                slot="case_title"
+                slot="thread_title"
                 slot-scope="props"
                 class="v-card-text"
             >
                 <span class="v-card-text-dark"
                     >{{ props["headings"][props.column] }} :</span
                 >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["CASE_TITLE"] }}
+                <span class="v-card-text-light">
+                    {{ props["item"]["THREAD_TITLE"] }}
                 </span>
             </b-col>
             <b-col
@@ -368,7 +368,7 @@ export default {
             },
             columMap: {
                 case_number: "APP_NUMBER",
-                case_title: "DEL_TITLE",
+                thread_title: "DEL_TITLE",
                 process_name: "PRO_TITLE",
             },
             newCase: {
@@ -381,7 +381,7 @@ export default {
             filters: {},
             defaultColumns: [
                 "case_number",
-                "case_title",
+                "thread_title",
                 "process_name",
                 "task",
                 "send_by",
@@ -396,7 +396,7 @@ export default {
             headings: {
                 detail: this.$i18n.t("ID_DETAIL_CASE"),
                 case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                case_title: this.$i18n.t("ID_CASE_TITLE"),
+                thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                 process_name: this.$i18n.t("ID_PROCESS_NAME"),
                 task: this.$i18n.t("ID_TASK"),
                 send_by: this.$i18n.t("ID_SEND_BY"),
@@ -471,7 +471,7 @@ export default {
             },
             itemMap: {
                 case_number: "caseNumber",
-                case_title: "caseTitle",
+                thread_title: "caseTitle",
                 delegation_date: "delegationDate",
                 send_by: "bySendBy",
                 process_name: "processName"
@@ -548,10 +548,10 @@ export default {
                     type: "CaseTitle",
                     id: "caseTitle",
                     title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-                        "ID_BY_CASE_TITLE"
+                        "ID_BY_TASK_THREAD_TITLE"
                     )}`,
-                    optionLabel: this.$i18n.t("ID_BY_CASE_TITLE"),
-                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_TITLE"),
+                    optionLabel: this.$i18n.t("ID_BY_TASK_THREAD_TITLE"),
+                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_THREAD_TITLE"),
                     detail: "",
                     tagText: "",    
                     items: [
@@ -902,7 +902,7 @@ export default {
                     ...v,
                     ...{
                         CASE_NUMBER: v.APP_NUMBER,
-                        CASE_TITLE: v.DEL_TITLE,
+                        THREAD_TITLE: v.DEL_TITLE,
                         PROCESS_NAME: v.PRO_TITLE,
                         TASK: [
                             {
