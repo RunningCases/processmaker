@@ -71,7 +71,7 @@
             <div slot="actions" slot-scope="props">
                 <div @click="updateDataEllipsis(props.row)">
                     <ellipsis
-                        ref="ellipsis"
+                        :ref="`ellipsis-${props.row.APP_UID}`"
                         v-if="dataEllipsis"
                         :data="dataEllipsis"
                     >
@@ -101,7 +101,10 @@
                     </b-col>
                     <b-col sm="12">
                         <div @click="updateDataEllipsis(props.item)">
-                            <ellipsis v-if="dataEllipsis" :data="dataEllipsis">
+                            <ellipsis 
+                                :ref="`ellipsis-${props.item.APP_UID}`"
+                                v-if="dataEllipsis" 
+                                :data="dataEllipsis">
                             </ellipsis>
                         </div>
                     </b-col>
@@ -194,7 +197,7 @@
                         <b-col sm="12">
                             <div @click="updateDataEllipsis(props.row)">
                                 <ellipsis
-                                    ref="ellipsis"
+                                    :ref="`ellipsis-${props.row.APP_UID}`"
                                     v-if="dataEllipsis"
                                     :data="dataEllipsis"
                                 >

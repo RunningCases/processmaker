@@ -149,7 +149,7 @@ export default {
       api.cases.reassingCase(this.data).then((response) => {
         if (response.statusText == "OK" || response.status === 200) {
           that.$refs["modal-reassign-case"].hide();
-          that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
+          that.$parent.$refs['ellipsis-' + that.data.APP_UID].hideActionButtons()
           if (that.$parent.$refs["vueTable"] !== undefined) {
             that.$parent.$refs["vueTable"].getData();
           }
