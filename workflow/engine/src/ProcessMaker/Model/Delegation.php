@@ -1051,6 +1051,25 @@ class Delegation extends Model
     }
 
     /**
+     * Scope a participated user in the case
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeParticipatedUser($query, $user)
+    {
+        // Scope to set the user who participated in the case
+        $query->whereIn('APP_DELEGATION.APP_NUMBER', function ($query) use ($user) {
+            $query->select('APP_NUMBER')->from('APP_DELEGATION')
+                ->where('USR_ID', $user)->distinct();
+        });
+
+        return $query;
+    }
+
+    /**
      * Get specific cases unassigned that the user can view
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
