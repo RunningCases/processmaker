@@ -1441,13 +1441,13 @@ class Derivation
         $newCase = $this->case->startCase($subProcessInfo['TAS_UID'], $subProcessInfo['USR_UID'], true, $appFields, $isSelfService);
 
         // Load the TAS_UID related to the SubProcess
-        $taskNextDel = TaskPeer::retrieveByPK($subProcessInfo["TAS_UID"]); //Sub-Process
-
+        $taskNextDel = TaskPeer::retrieveByPK($subProcessInfo["TAS_UID"]);
         // Copy case variables to sub-process case
         $fields = unserialize($subProcessInfo['SP_VARIABLES_OUT']);
+        // Load the information about the new case
+        $currentFields = $this->case->loadCase($newCase['APPLICATION']);
         $newFields = [];
-        $oldFields = $this->case->loadCase($newCase['APPLICATION']);
-
+        $newFields['INDEX'] = 1;
         foreach ($fields as $originField => $targetField) {
             $originField = trim($originField, " @#%?$=&");
             $targetField = trim($targetField, " @#%?$=&");
@@ -1458,12 +1458,14 @@ class Derivation
             }
         }
 
-        // We will to update the new case
-        $oldFields['APP_DATA'] = array_merge($oldFields['APP_DATA'], $newFields);
-        $oldFields['APP_STATUS'] = 'TO_DO';
+
+        // We will to update the new case with the variables to define in the sub-process
+        $currentFields['APP_DATA'] = array_merge($currentFields['APP_DATA'], $newFields);
+        $currentFields['DEL_INDEX'] = 1;
+        $currentFields['APP_STATUS'] = 'TO_DO';
         $this->case->updateCase(
             $newCase['APPLICATION'],
-            $oldFields
+            $currentFields
         );
 
         // Create a registry in SUB_APPLICATION table
