@@ -414,9 +414,9 @@ export default {
   line-height: 40px;
 }
 .pm-mc-text-icon{
-  font-size: 2vw;
+  font-size: 1.40rem;
   padding-right: 10px;
-  line-height: 3vw;
+  line-height: 40px;
 }
 </style>
 
