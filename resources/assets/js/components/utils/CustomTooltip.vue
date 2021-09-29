@@ -50,7 +50,7 @@ export default {
          * Delay the hover event
          */
         hoverHandler() {
-            this.isLoading = true;
+            this.loading = setTimeout(() => { this.isLoading = true }, 1000) ;
             this.hovering = setTimeout(() => { this.setTooltip() }, 3000);
         },
         /**
@@ -61,6 +61,7 @@ export default {
             this.labelDescription = "";
             this.showTooltip = false;
             this.isLoading = false;
+            clearTimeout(this.loading);
             clearTimeout(this.hovering);
         },
         /**

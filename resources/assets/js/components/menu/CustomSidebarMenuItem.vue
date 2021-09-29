@@ -39,10 +39,17 @@
                         "
                     >
                         <span :class="item.specialType != 'header'?'vsm--title': 'vsm--header vsm--title--header'">
-                            <custom-tooltip
-                                :data="item"
-                                ref="tooltip"
-                            ></custom-tooltip>
+                            <template v-if="!verifyTaskMetrics">
+                                <custom-tooltip
+                                    :data="item"
+                                    ref="tooltip"
+                                ></custom-tooltip>
+                            </template>
+                            <template v-else>
+                                <span>
+                                    {{ item.title }}
+                                </span>
+                            </template>
                             <span v-if="item.sortable">
                                 <b-icon
                                     :id="`gear-${item.id}`"
@@ -305,11 +312,10 @@ export default {
             }
         },
         /**
-         * Verify if the item is INBOX, DRAFT, PAUSED OR UNASSIGNED
-         * to set functionality of tooltip and highlight 
+         * Verify if the item is TASK_METRICS
          */
-        itemTaskList() {
-            return this.menuMap[this.item.id] !== undefined;
+        verifyTaskMetrics() {
+            return this.item.id === "TASK_METRICS";
         },
         /**
          * Set color to icon defined from custom case list
