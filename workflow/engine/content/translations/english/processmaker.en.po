@@ -3084,6 +3084,12 @@ msgid "By Case #"
 msgstr "By Case #"
 
 # TRANSLATION
+# LABEL/ID_BY_CASE_THREAD_TITLE
+#: LABEL/ID_BY_CASE_THREAD_TITLE
+msgid "By Case Thread Title"
+msgstr "By Case Thread Title"
+
+# TRANSLATION
 # LABEL/ID_BY_CASE_TITLE
 #: LABEL/ID_BY_CASE_TITLE
 msgid "By Case Title"
@@ -3130,12 +3136,6 @@ msgstr "By Process Name"
 #: LABEL/ID_BY_TASK
 msgid "By Task"
 msgstr "By Task"
-
-# TRANSLATION
-# LABEL/ID_BY_TASK_THREAD_TITLE
-#: LABEL/ID_BY_TASK_THREAD_TITLE
-msgid "By Task Thread Title"
-msgstr "By Task Thread Title"
 
 # TRANSLATION
 # LABEL/ID_BY_STATUS
@@ -24426,6 +24426,12 @@ msgid "Search by Case #:"
 msgstr "Search by Case #:"
 
 # TRANSLATION
+# LABEL/ID_SEARCH_BY_CASE_THREAD_TITLE
+#: LABEL/ID_SEARCH_BY_CASE_THREAD_TITLE
+msgid "Search by Case Thread Title:"
+msgstr "Search by Case Thread Title:"
+
+# TRANSLATION
 # LABEL/ID_SEARCH_BY_CASE_TITLE
 #: LABEL/ID_SEARCH_BY_CASE_TITLE
 msgid "Search by Case Title:"
@@ -24484,12 +24490,6 @@ msgstr "Search by Start Date:"
 #: LABEL/ID_SEARCH_BY_STATUS
 msgid "Search by Status:"
 msgstr "Search by Status:"
-
-# TRANSLATION
-# LABEL/ID_SEARCH_BY_TASK_THREAD_TITLE
-#: LABEL/ID_SEARCH_BY_TASK_THREAD_TITLE
-msgid "Search by Task Thread Title:"
-msgstr "Search by Task Thread Title:"
 
 # TRANSLATION
 # LABEL/ID_SEARCH_BY_TASK_NAME
@@ -26212,18 +26212,6 @@ msgstr "Task properties has been saved successfully"
 #: LABEL/ID_TASK_REASSIGNMENTS
 msgid "Task Reassignments"
 msgstr "Task Reassignments"
-
-# TRANSLATION
-# LABEL/ID_TASK_THREAD_TITLE
-#: LABEL/ID_TASK_THREAD_TITLE
-msgid "Task Thread Title"
-msgstr "Task Thread Title"
-
-# TRANSLATION
-# LABEL/ID_TASK_THREAD_TITLE_NAME
-#: LABEL/ID_TASK_THREAD_TITLE_NAME
-msgid "Task Thread Title Name"
-msgstr "Task Thread Title Name"
 
 # TRANSLATION
 # LABEL/ID_TASK_TITLE
@@ -53253,11 +53241,17 @@ msgstr "Top"
 msgid "Top 10"
 msgstr "Top 10"
 
- # TRANSLATION
+# TRANSLATION
 # LABEL/ID_CASE_THREAD_TITLE
 #: LABEL/ID_CASE_THREAD_TITLE
 msgid "Case Thread Title"
 msgstr "Case Thread Title"
+
+# TRANSLATION
+# LABEL/ID_CASE_THREAD_TITLE_NAME
+#: LABEL/ID_CASE_THREAD_TITLE_NAME
+msgid "Case Thread Title Name"
+msgstr "Case Thread Title Name"
 
 # TRANSLATION
 # LABEL/ID_NO_MORE_INFORMATION

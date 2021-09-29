@@ -125,9 +125,9 @@ export default {
                 {
                     type: "CaseTitle",
                     id: "caseTitle",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_TASK_THREAD_TITLE')}`,
-                    optionLabel: this.$i18n.t('ID_BY_TASK_THREAD_TITLE'),
-                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_TASK_THREAD_TITLE'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_CASE_THREAD_TITLE')}`,
+                    optionLabel: this.$i18n.t('ID_BY_CASE_THREAD_TITLE'),
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CASE_THREAD_TITLE'),
                     detail: "",
                     tagText: "",
                     items:[
