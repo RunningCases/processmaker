@@ -7050,6 +7050,12 @@ msgid "Draft"
 msgstr "Draft"
 
 # TRANSLATION
+# LABEL/ID_DRAFT_CASES_CAN_NOT_PAUSED
+#: LABEL/ID_DRAFT_CASES_CAN_NOT_PAUSED
+msgid "Draft cases can not be paused"
+msgstr "Draft cases can not be paused"
+
+# TRANSLATION
 # LABEL/ID_DRIVE_HELP_ENABLE
 #: LABEL/ID_DRIVE_HELP_ENABLE
 msgid "When this option is enabled, all input, output and attached documents generated in your processes can be stored in Google Drive."

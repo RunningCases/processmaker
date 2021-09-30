@@ -4200,6 +4200,20 @@ class WorkspaceTools
                                     APP_STATUS_ID = 0");
         $con->commit();
 
+        // Populating APPLICATION.APP_INIT_USER_ID
+        CLI::logging("->   Populating APPLICATION.APP_INIT_USER_ID  \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APPLICATION AS AP
+                                   INNER JOIN (
+                                       SELECT USERS.USR_UID, USERS.USR_ID
+                                       FROM USERS
+                                   ) AS USR
+                                   ON (AP.APP_INIT_USER = USR.USR_UID)
+                                   SET AP.APP_INIT_USER_ID = USR.USR_ID
+                                   WHERE AP.APP_INIT_USER_ID = 0");
+        $con->commit();
+
         // Populating APPLICATION.APP_FINISH_DATE
         CLI::logging("->   Populating APPLICATION.APP_FINISH_DATE \n");
         $con->begin();

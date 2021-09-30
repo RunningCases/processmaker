@@ -58006,6 +58006,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DOWNLOAD_SETTINGS','en','Download Settings','2020-12-10') ,
 ( 'LABEL','ID_DOWN_TRIGGER','en','Down Trigger','2015-02-20') ,
 ( 'LABEL','ID_DRAFT','en','Draft','2014-01-15') ,
+( 'LABEL','ID_DRAFT_CASES_CAN_NOT_PAUSED','en','Draft cases can not be paused','2021-10-01') ,
 ( 'LABEL','ID_DRIVE_HELP_ENABLE','en','When this option is enabled, all input, output and attached documents generated in your processes can be stored in Google Drive.','2016-01-05') ,
 ( 'LABEL','ID_DRILL_DOWN_NAVIGATOR','en','Drill Down Navigator','2020-08-26') ,
 ( 'LABEL','ID_DRILL','en','Drill','2021-08-26') ,
