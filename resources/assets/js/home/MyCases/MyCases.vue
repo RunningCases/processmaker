@@ -347,6 +347,9 @@ export default {
             let that = this;
             api.casesHeader.get().then((response) => {
                 that.headers = that.formatCasesHeaders(response.data);
+                if (that.headers[0]) {
+                    that.title = that.headers[0].title;
+                }
                 that.setFilterHeader();
             });
         },
