@@ -77,7 +77,7 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @click="updateDataEllipsis(props.row)">
+            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
               <ellipsis :ref="`ellipsis-${props.item.APP_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
           </b-col>
