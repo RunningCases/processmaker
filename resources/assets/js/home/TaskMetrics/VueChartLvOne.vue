@@ -233,7 +233,10 @@ export default {
     getProcesses(query) {
       let that = this;
       Api.filters
-        .processList(query || "")
+        .processListPaged({
+          text: query || "",
+          paged: false,
+        })
         .then((response) => {
           that.formatDataProcesses(response.data);
         })

@@ -61,6 +61,16 @@ export let filters = {
         });
     },
     /**
+     * Service to get the process list
+     */
+    processListPaged(data) {
+        return Api.get({
+            service: "PROCESSES",
+            params: data,
+            keys: {},
+        });
+    },
+    /**
      * Service to get the users list
      */
     userList(query) {
