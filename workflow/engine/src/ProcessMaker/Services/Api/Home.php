@@ -877,7 +877,7 @@ class Home extends Api
     public function getProcesses($text = null, $category = null, int $offset = 0, int $limit = 15, $paged = true)
     {
         try {
-            return Process::getProcessesForHome($text, $category, $offset, $limit);
+            return Process::getProcessesForHome($text, $category, $offset, $limit, $paged);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
