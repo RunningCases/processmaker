@@ -49,6 +49,12 @@ export default {
         window.config.SYS_URI +
         `cases/open?APP_UID=${this.dataCase.APP_UID}&DEL_INDEX=${this.dataCase.DEL_INDEX}&TAS_UID=${this.dataCase.TAS_UID}&action=${this.dataCase.ACTION}`;
     }
+    if (this.dataCase.UNASSIGNED === true) {
+      this.path =
+        window.config.SYS_SERVER_AJAX +
+        window.config.SYS_URI +
+        `cases/open?APP_UID=${this.dataCase.APP_UID}&DEL_INDEX=${this.dataCase.DEL_INDEX}&action=unassigned`;
+    }
 
     setTimeout(() => {
       let that = this;
