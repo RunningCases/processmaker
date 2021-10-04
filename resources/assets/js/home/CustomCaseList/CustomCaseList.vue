@@ -195,9 +195,9 @@
                             </div>
                         </b-col>
                         <b-col sm="12">
-                            <div @click="updateDataEllipsis(props.row)">
+                            <div @click="updateDataEllipsis(props.item)">
                                 <ellipsis
-                                    :ref="`ellipsis-${props.row.APP_UID}`"
+                                    :ref="`ellipsis-${props.item.APP_UID}`"
                                     v-if="dataEllipsis"
                                     :data="dataEllipsis"
                                 >
