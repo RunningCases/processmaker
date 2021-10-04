@@ -1496,8 +1496,8 @@ class Derivation
         if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && !empty(trim($tasGroupVariable))) {
             $nextTaskGroupVariable = trim($tasGroupVariable, " @#");
 
-            if (isset($oldFields["APP_DATA"][$nextTaskGroupVariable])) {
-                $dataVariable = $oldFields["APP_DATA"][$nextTaskGroupVariable];
+            if (isset($currentFields["APP_DATA"][$nextTaskGroupVariable])) {
+                $dataVariable = $currentFields["APP_DATA"][$nextTaskGroupVariable];
                 $dataVariable = (is_array($dataVariable))? $dataVariable : trim($dataVariable);
 
                 if (!empty($dataVariable)) {
@@ -1512,7 +1512,7 @@ class Derivation
             }
         }
         // We will to send the notifications
-        $sendNotificationsMobile = $this->sendNotificationsMobile($oldFields, $subProcessInfo, $newCase['INDEX']);
+        $sendNotificationsMobile = $this->sendNotificationsMobile($currentFields, $subProcessInfo, $newCase['INDEX']);
         $nextTaskData = $taskNextDel->toArray(BasePeer::TYPE_FIELDNAME);
         $nextTaskData['USR_UID'] = $subProcessInfo['USR_UID'];
         $sendNotifications = $this->notifyAssignedUser($appFields, $nextTaskData, $newCase['INDEX']);
