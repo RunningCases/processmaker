@@ -4,6 +4,15 @@
         :class="[{ collapsed: collapsed }, { onmobile: isOnMobile }]"
     >
         <div class="demo">
+            <b-alert
+                :show="dataAlert.dismissCountDown"
+                dismissible
+                :variant="dataAlert.variant"
+                @dismissed="dataAlert.dismissCountDown = 0"
+                @dismiss-count-down="countDownChanged"
+            >
+                {{ dataAlert.message }}
+            </b-alert>
             <div class="container">
                 <router-view />
             </div>
@@ -114,7 +123,13 @@ export default {
             },
             defaultOption: window.config.defaultOption || '',
             pageData: {},
-            settings: {}
+            settings: {},
+            dataAlert: {
+                dismissSecs: 5,
+                dismissCountDown: 0,
+                message: "",
+                variant: "info"
+            },
         };
     },
     mounted() {
@@ -279,6 +294,10 @@ export default {
                 this.$router.push(menuItem.href);
             } else {
                 this.page = "MyCases";
+            }
+            if (window.config._nodeId === "CASES_SENT" && this.defaultOption !== "") {
+                this.cleanDefaultOption();
+                this.showAlert(this.$i18n.t("ID_NO_PERMISSION_NO_PARTICIPATED_CASES"));
             }
             this.settings = this.config.setting[this.page];
             this.lastPage = this.page;
@@ -602,7 +621,25 @@ export default {
               return obj.props;
             }
             return obj;
-        }
+        },
+        /**
+         * Show the alert message
+         * @param {string} message - message to be displayen in the body
+         * @param {string} type - alert type
+         */
+        showAlert(message, type) {
+            this.dataAlert.message = message;
+            this.dataAlert.variant = type || "info";
+            this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+        },
+        /**
+         * Updates the alert dismiss value to update
+         * dismissCountDown and decrease
+         * @param {mumber}
+         */
+        countDownChanged(dismissCountDown) {
+            this.dataAlert.dismissCountDown = dismissCountDown;
+        },
     }
 };
 </script>
