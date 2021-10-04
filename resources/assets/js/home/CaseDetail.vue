@@ -518,7 +518,8 @@ export default {
           APP_UID: v.APP_UID,
           DEL_INDEX: v.DEL_INDEX,
           PRO_UID: v.PRO_UID,
-          TAS_UID: v.TAS_UID
+          TAS_UID: v.TAS_UID,
+          UNASSIGNED: v.UNASSIGNED
         });
       });
       return data;
@@ -580,7 +581,8 @@ export default {
           DEL_INDEX: data.row.DEL_INDEX,
           PRO_UID: data.row.PRO_UID,
           TAS_UID: data.row.TAS_UID,
-          ACTION: this.dataCase.ACTION || "todo"
+          ACTION: this.dataCase.ACTION || "todo",
+          UNASSIGNED: data.row.UNASSIGNED
         });
         this.$emit("onUpdatePage", "XCase");
       }
