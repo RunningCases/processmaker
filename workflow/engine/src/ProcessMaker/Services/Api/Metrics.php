@@ -46,7 +46,8 @@ class Metrics extends Api
      */
     public function getProcessTotalCases($caseList, $category = null, $topTen = false, $processes = [])
     {
-        $usrId = $this->getUserId();
+        $usrUid = $this->getUserId();
+        $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
         try {
             switch ($caseList) {
                 case 'inbox':
@@ -60,6 +61,7 @@ class Metrics extends Api
                     break;
                 case 'unassigned':
                     $list = new Unassigned();
+                    $list->setUserUid($usrUid);
                     break;
             }
             $list->setUserId($usrId);
@@ -89,7 +91,8 @@ class Metrics extends Api
      */
     public function getTotalCasesByRange($caseList, $processId = null, $dateFrom = null, $dateTo = null, $groupBy = 'day')
     {
-        $usrId = $this->getUserId();
+        $usrUid = $this->getUserId();
+        $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
         try {
             switch ($caseList) {
                 case 'inbox':
@@ -103,6 +106,7 @@ class Metrics extends Api
                     break;
                 case 'unassigned':
                     $list = new Unassigned();
+                    $list->setUserUid($usrUid);
                     break;
             }
             $list->setUserId($usrId);
@@ -179,7 +183,8 @@ class Metrics extends Api
     public function getCasesRiskByProcess($caseList = 'inbox', $process, $dateFrom = null, $dateTo = null, $riskStatus = 'ON_TIME', $topCases = null)
     {
         try {
-            $usrId = $this->getUserId();
+            $usrUid = $this->getUserId();
+            $usrId = !empty($usrUid) ? User::getId($usrUid) : 0;
             switch ($caseList) {
                 case 'inbox':
                     $list = new Inbox();
@@ -192,6 +197,7 @@ class Metrics extends Api
                     break;
                 case 'unassigned':
                     $list = new Unassigned();
+                    $list->setUserUid($usrUid);
                     break;
             }
             $list->setUserId($usrId);
