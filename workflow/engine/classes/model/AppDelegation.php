@@ -89,7 +89,7 @@ class AppDelegation extends BaseAppDelegation
                 $record = $rsCriteria->getRow();
 
                 if ($flagIncludeCurrentDel) {
-                    if (preg_match('/^(?:' . 'NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
+                    if (preg_match('/^(?:' . 'SERVICE\-TASK|NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
                         $arrayAppDelegationPrevious = $record;
                         $flagPrevious = false;
                     }
