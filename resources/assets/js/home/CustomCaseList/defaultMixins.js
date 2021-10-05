@@ -91,48 +91,77 @@ export default {
     */
     getCases(data) {
       let that = this,
-        dt,
-        typeList = that.data.pageParent == "inbox" ? "todo" : that.data.pageParent,
-        start = 0,
-        paged,
-        limit = data.limit,
-        filters = {},
-        id = this.data.customListId;
-      filters = {
-        paged: paged,
-        limit: limit,
-        offset: start,
-      };
-      if (_.isEmpty(that.filters) && this.data.settings) {
-        _.forIn(this.data.settings.filters, function (item, key) {
-          if (filters && item.value) {
-            filters[item.filterVar] = item.value;
-          }
-        });
-      } else {
-        _.forIn(this.filters, function (item, key) {
-          if (filters && item.value) {
-            filters[item.filterVar] = item.value;
-          }
-        });
-      }
-      return new Promise((resolutionFunc, rejectionFunc) => {
-        api.custom[that.data.pageParent]
-          ({
-            id,
-            filters,
-          })
-          .then((response) => {
-            dt = that.formatDataResponse(response.data.data);
-            resolutionFunc({
-              data: dt,
-              count: response.data.total,
+                dt,
+                paged,
+                limit = data.limit,
+                start = data.page === 1 ? 0 : limit * (data.page - 1),
+                filters = {},
+                sort = "",
+                id = this.data.customListId;
+            filters = {
+                paged: paged,
+                limit: limit,
+                offset: start,
+            };
+            if (_.isEmpty(that.filters) && this.data.settings) {
+                _.forIn(this.data.settings.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            } else {
+                _.forIn(this.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            }
+            sort = that.prepareSortString(data);
+            if (sort) {
+                filters["sort"] = sort;
+            }
+            return new Promise((resolutionFunc, rejectionFunc) => {
+                api.custom[that.data.pageParent]
+                    ({
+                        id,
+                        filters,
+                    })
+                    .then((response) => {
+                        let tmp,
+                            columns = [],
+                            product,
+                            newItems = [];
+                        that.filterItems = [];
+                        response.data.columns.forEach((item) => {
+                            if (item.enableFilter) {
+                                if (that.availableItems[that.itemMap[item.field]]) {
+                                    newItems.push(that.availableItems[that.itemMap[item.field]]);
+                                } else {
+                                    product = this.filterItemFactory(item)
+                                    if (product) {
+                                        newItems.push(product);
+                                    }
+                                }
+                            }
+                            columns.push(item.field);
+                        });
+                        that.filterItems = newItems;
+                        dt = that.formatDataResponse(response.data.data);
+                        that.cardColumns = columns;
+                        if (that.isFistTime) {
+                            that.filters = that.data.settings && that.data.settings.filters ? that.data.settings.filters : {};
+                            that.columns = that.data.settings && that.data.settings.columns ? that.data.settings.columns :  that.getTableColumns(columns);
+                            that.settingOptions = that.formatColumnSettings(columns);
+                        }
+                        resolutionFunc({
+                            data: dt,
+                            count: response.data.total,
+                        });
+                    })
+                    .catch((e) => {
+                        rejectionFunc(e);
+                    });
             });
-          })
-          .catch((e) => {
-            rejectionFunc(e);
-          });
-      });
     },
     /**
     * Get cases for Vue Card View

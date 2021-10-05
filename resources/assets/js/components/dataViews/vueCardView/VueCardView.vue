@@ -15,12 +15,12 @@
                 :column="column"
                 :headings="options.headings"
               ></slot>
-              <slot
+              <!-- <slot
                 name="send_by"
                 :item="item"
                 column="send_by"
                 :headings="options.headings"
-              ></slot>
+              ></slot> -->
             </b-col>
             <b-col sm="3">
               <slot
@@ -55,7 +55,7 @@ export default {
     };
   },
   mounted() {
-    this.filterOptions();
+    // this.filterOptions();
   },
   methods: {
     classBtn(cls) {
@@ -65,6 +65,7 @@ export default {
      * Filter the column send_by
      */
     filterOptions() {
+      debugger;
       this.options.columns = this.options.columns.filter(function(item) {
         return item !== "send_by";
       });

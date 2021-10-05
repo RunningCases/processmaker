@@ -9,7 +9,7 @@
           <b-row>
             <b-col sm="5">
               <slot
-                v-for="column in options.columns"
+                v-for="column in chunkColumns[0]"
                 :name="column"
                 :item="item"
                 :column="column"
@@ -18,11 +18,19 @@
               ></slot>
             </b-col>
             <b-col sm="5">
-              <slot
+              <!-- <slot
                 name="send_by"
                 :item="item"
                 column="send_by"
                 :headings="options.headings"
+              ></slot> -->
+               <slot
+                v-for="column in chunkColumns[1]"
+                :name="column"
+                :item="item"
+                :column="column"
+                :headings="options.headings"
+                ref="containerList"
               ></slot>
             </b-col>
             <b-col sm="2">
@@ -54,13 +62,23 @@ export default {
   props: ["options"],
   data() {
     return {
-      loadMore: this.$t("ID_LOAD_MORE")
+      loadMore: this.$t("ID_LOAD_MORE"),
+      chunkColumns: []
     };
   },
   mounted() {
-    this.filterOptions();
+    this.chunkColumns = this.chunkArray(this.options.columns, 2);
+    debugger
   },
   methods: {
+    chunkArray(array, size) {
+      let result = [],
+        arrayCopy = [...array];
+      while (arrayCopy.length > 0) {
+          result.push(arrayCopy.splice(0, size));
+      }
+      return result;
+    },
     classBtn(cls) {
       return "btn btn-slim btn-force-radius v-btn-header " + cls;
     },
