@@ -126,13 +126,13 @@ export default {
     return {
       currentSelection: null,
       dateFrom:
-        this.data[3] && this.data[3].data.dateFromRisk
-          ? this.data[3].data.dateFromRisk
-          : moment().format("YYYY-MM-DD"),
+        this.data[3] && this.data[3].data.dateFrom
+          ? this.data[3].data.dateFrom
+          : moment().subtract(30, "d").format("YYYY-MM-DD"),
       dateTo:
-        this.data[3] && this.data[3].data.dateToRisk
-          ? this.data[3].data.dateToRisk
-          : moment().add(30, "d").format("YYYY-MM-DD"),
+        this.data[3] && this.data[3].data.dateTo
+          ? this.data[3].data.dateTo
+          : moment().format("YYYY-MM-DD"),
       dateNow: moment().format("DD/MM/YYYY h:mm:ss a"),
       size:
         this.data[3] && this.data[3].data.size
@@ -462,11 +462,9 @@ export default {
         name: this.data[2]["name"],
         level: 3,
         data: {
-          dateFrom: this.data[3].data.dateFrom,
-          dateTo: this.data[3].data.dateTo,
+          dateFrom: this.dateFrom,
+          dateTo: this.dateTo,
           period: this.data[3].data.period,
-          dateFromRisk: this.dateFrom,
-          dateToRisk: this.dateTo,
           size: this.size,
           riskType: this.riskType,
         },
