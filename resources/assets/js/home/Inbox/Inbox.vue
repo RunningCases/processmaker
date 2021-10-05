@@ -475,7 +475,7 @@ export default {
                 autoShow: false,
               },
             ],
-            refresh: false,
+            refresh: true,
           });
           this.$emit("cleanDefaultOption");
         }

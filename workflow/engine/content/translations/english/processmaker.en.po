@@ -20748,6 +20748,12 @@ msgid "You cannot open this case because on the reason below: <br> You do not ha
 msgstr "You cannot open this case because on the reason below: <br> You do not have permission to see this case. <br> You have not participated in this case. <br> Case is already claimed."
 
 # TRANSLATION
+# LABEL/ID_NO_PERMISSION_NO_PARTICIPATED_CASES
+#: LABEL/ID_NO_PERMISSION_NO_PARTICIPATED_CASES
+msgid "You do not have permission to see this case or you have not participated in it."
+msgstr "You do not have permission to see this case or you have not participated in it."
+
+# TRANSLATION
 # LABEL/ID_NO_PREVIOUS_USR_UID
 #: LABEL/ID_NO_PREVIOUS_USR_UID
 msgid "The previous task doesn't have any users."

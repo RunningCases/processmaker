@@ -60362,6 +60362,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_NO_NEW_VERSIONS','en','No new versions available','2014-09-18') ,
 ( 'LABEL','ID_NO_OLDER_SESSION_FILES','en','There are no older session files','2014-01-15') ,
 ( 'LABEL','ID_NO_PERMISSION_NO_PARTICIPATED','en','You cannot open this case because on the reason below: <br> You do not have permission to see this case. <br> You have not participated in this case. <br> Case is already claimed.','2017-06-05') ,
+( 'LABEL','ID_NO_PERMISSION_NO_PARTICIPATED_CASES','en','You do not have permission to see this case or you have not participated in it.','2021-10-04') ,
 ( 'LABEL','ID_NO_PREVIOUS_USR_UID','en','The previous task doesn''t have any users.','2017-10-18') ,
 ( 'LABEL','ID_NO_REASSIGN','en','Do not reassign','2014-01-15') ,
 ( 'LABEL','ID_NO_RECORDS','en','No records','2014-01-15') ,
