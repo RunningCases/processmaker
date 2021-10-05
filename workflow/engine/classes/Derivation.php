@@ -1090,7 +1090,9 @@ class Derivation
                                 // Load Case Data again because the information could be change in method "doDerivation"
                                 $lastData = $this->case->loadCase($appUid);
                                 // Update the thread title related to the last index created
-                                $this->case->updateThreadTitle($appUid, $lastData['APP_NUMBER'], $iNewDelIndex, $lastData['APP_DATA']);
+                                if (!is_null($iNewDelIndex)) {
+                                    $this->case->updateThreadTitle($appUid, $lastData['APP_NUMBER'], $iNewDelIndex, $lastData['APP_DATA']);
+                                }
                                 $appFields['APP_DATA'] = $lastData['APP_DATA'];
                                 // When the users route the case in the same time
                                 if($iNewDelIndex !== 0) {

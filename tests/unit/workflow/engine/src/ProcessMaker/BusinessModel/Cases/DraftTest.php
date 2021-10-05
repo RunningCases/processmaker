@@ -40,12 +40,11 @@ class DraftTest extends TestCase
     public function createDraft()
     {
         $application = factory(Application::class)->states('draft')->create();
-        $usrId = User::getId($application['APP_INIT_USER']);
         $delegation = factory(Delegation::class)->states('foreign_keys')->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application->APP_INIT_USER,
-            'USR_ID' => $usrId,
+            'USR_ID' => $application->APP_INIT_USER_ID,
             'APP_UID' => $application->APP_UID,
             'APP_NUMBER' => $application->APP_NUMBER,
         ]);
@@ -66,6 +65,7 @@ class DraftTest extends TestCase
         for ($i = 0; $i < $cases; $i = $i + 1) {
             $application = factory(Application::class)->states('draft')->create([
                 'APP_INIT_USER' => $user->USR_UID,
+                'APP_INIT_USER_ID' => $user->USR_ID,
                 'APP_CUR_USER' => $user->USR_UID,
             ]);
             factory(Delegation::class)->states('foreign_keys')->create([
@@ -73,7 +73,8 @@ class DraftTest extends TestCase
                 'DEL_INDEX' => 1,
                 'APP_UID' => $application->APP_UID,
                 'APP_NUMBER' => $application->APP_NUMBER,
-                'USR_ID' => $user->USR_ID
+                'USR_UID' => $application->APP_INIT_USER,
+                'USR_ID' => $application->APP_INIT_USER_ID,
             ]);
         }
 

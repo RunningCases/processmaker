@@ -333,6 +333,26 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Set send by
+     * 
+     * @param type $sendBy
+     */
+    public function setSendBy(string $sendBy)
+    {
+        $this->sendBy = $sendBy;
+    }
+
+    /**
+     * Get send by.
+     * 
+     * @return string
+     */
+    public function getSendBy()
+    {
+        return $this->sendBy;
+    }
+
+    /**
      * Set value to search
      *
      * @param string $valueToSearch
@@ -750,26 +770,6 @@ class AbstractCases implements CasesInterface
     public function getCasesUids()
     {
         return $this->casesUids;
-    }
-
-    /**
-     * Set send by.
-     * 
-     * @param type $sendBy
-     */
-    public function setSendBy(string $sendBy)
-    {
-        $this->sendBy = $sendBy;
-    }
-
-    /**
-     * Get send by.
-     * 
-     * @return string
-     */
-    public function getSendBy()
-    {
-        return $this->sendBy;
     }
 
     /**
