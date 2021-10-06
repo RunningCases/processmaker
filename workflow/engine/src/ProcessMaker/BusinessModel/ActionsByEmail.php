@@ -360,7 +360,7 @@ class ActionsByEmail
                 if ($data[$index]['ABE_MAILSERVER_OR_MAILCURRENT'] == 0) {
                     $delegation = new AppDelegation();
                     $previousTask = $delegation->getPreviousDelegationValidTask($data[$index]['APP_UID'], $data[$index]['DEL_INDEX']);
-                    if (in_array($previousTask['TAS_TYPE'], Task::DUMMY_TASKS)) {
+                    if (in_array($previousTask['TAS_TYPE'], Task::DUMMY_TASKS) || in_array($previousTask['TAS_TYPE'], Task::$typesRunAutomatically)) {
                         $res = Task::getTask($previousTask['TAS_ID']);
                         $data[$index]['USER'] = $res->TAS_TITLE . ' (' . $previousTask['TAS_TYPE'] . ')';
                     }

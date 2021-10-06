@@ -58,8 +58,8 @@
         :options="options"
         :series="series"
       ></apexchart>
-      <div class="row">
-        <div class="col-sm vp-align-right">
+      <div class="vp-text-align-center">
+        <div class="vp-align-right vp-inline-block">
           <button
             @click="onClickDrillDown()"
             type="button"
@@ -69,7 +69,7 @@
             ><span class="vp-padding-l10">{{ $t("ID_DRILL") }}</span>
           </button>
         </div>
-        <div class="col-sm">
+        <div class="vp-inline-block">
           <button @click="onClickData()" type="button" class="btn btn-primary">
             <i class="fas fa-th"></i
             ><span class="vp-padding-l10">{{ $t("ID_DATA") }}</span>
@@ -100,10 +100,10 @@ export default {
     return {
       dateFrom: this.data[3]
         ? this.data[3].data.dateFrom
-        : moment().format("YYYY-MM-DD"),
+        : moment().subtract(30, "d").format("YYYY-MM-DD"),
       dateTo: this.data[3]
         ? this.data[3].data.dateTo
-        : moment().add(30, "d").format("YYYY-MM-DD"),
+        : moment().format("YYYY-MM-DD"),
       period: this.data[3] ? this.data[3].data.period : "day",
       periodOptions: [
         { text: this.$t("ID_DAY"), value: "day" },
@@ -187,8 +187,8 @@ export default {
           dt = {
             processId: this.data[2].id,
             caseList: this.data[1].id.toLowerCase(),
-            dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
-            dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
+            dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
+            dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
             groupBy: this.period,
           };
           Api.process
@@ -337,6 +337,10 @@ export default {
 
 .vp-padding-l20 {
   padding-left: 20px;
+}
+
+.vp-text-align-center {
+  text-align: center;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

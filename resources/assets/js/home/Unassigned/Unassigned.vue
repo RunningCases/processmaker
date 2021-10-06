@@ -233,7 +233,6 @@
         @postNotes="onPostNotes"
     ></ModalComments>
     <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
-    <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
   </div>
 </template>
 
@@ -251,7 +250,6 @@ import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
 import VueCardView from "../../components/dataViews/vueCardView/VueCardView.vue";
 import VueListView from "../../components/dataViews/vueListView/VueListView.vue";
 import defaultMixins from "./defaultMixins";
-import ModalPauseCase from '../modal/ModalPauseCase.vue';
 import ModalComments from "../modal/ModalComments.vue";
 import { Event } from 'vue-tables-2';
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
@@ -270,7 +268,6 @@ export default {
     MultiviewHeader,
     VueCardView,
     VueListView,
-    ModalPauseCase,
     CurrentUserCell,
     ModalComments
   },
@@ -681,14 +678,6 @@ export default {
       }
     },
     /**
-     * Show modal to pause a case
-     * @param {objec} data
-     */
-    showModalPause(data) {
-      this.$refs["modal-pause-case"].data = data;
-      this.$refs["modal-pause-case"].show();
-    },
-    /**
      * Show options in the ellipsis 
      * @param {object} data
      */
@@ -703,13 +692,6 @@ export default {
               icon: "far fa-comments",
               fn: function() {
                 that.openComments(data);
-              }
-            },
-            pause: {
-              name: "pause case",
-              icon: "far fa-pause-circle",
-              fn: function() {
-                that.showModalPause(data);
               }
             },
             claim: {

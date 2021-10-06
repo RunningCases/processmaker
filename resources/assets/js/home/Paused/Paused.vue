@@ -464,17 +464,17 @@ export default {
             //force to search in the parallel tasks
             if (params && params.openapplicationuid) {
                 this.onUpdateFilters({
-                        params: [
-                            {
-                                fieldId: "caseNumber",
-                                filterVar: "caseNumber",
-                                label: "",
-                                options:[],
-                                value: params.openapplicationuid,
-                                autoShow: false
-                            }
-                        ],
-                        refresh: false
+                    params: [
+                        {
+                            fieldId: "caseNumber",
+                            filterVar: "caseNumber",
+                            label: "",
+                            options:[],
+                            value: params.openapplicationuid,
+                            autoShow: false
+                        }
+                    ],
+                    refresh: true
                 });
                 this.$emit("cleanDefaultOption");                
             }
