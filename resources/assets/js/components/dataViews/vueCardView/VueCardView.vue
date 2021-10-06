@@ -65,7 +65,6 @@ export default {
      * Filter the column send_by
      */
     filterOptions() {
-      debugger;
       this.options.columns = this.options.columns.filter(function(item) {
         return item !== "send_by";
       });

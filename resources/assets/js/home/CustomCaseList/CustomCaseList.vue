@@ -747,7 +747,6 @@ export default {
                         that.filterItems = newItems;
                         dt = that.formatDataResponse(response.data.data);
                         that.cardColumns = columns;
-                        debugger;
                         if (that.isFistTime) {
                             that.filters = that.data.settings && that.data.settings.filters ? that.data.settings.filters : {};
                             that.columns = that.data.settings && that.data.settings.columns ? that.data.settings.columns :  that.getTableColumns(columns);
