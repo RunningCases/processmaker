@@ -609,6 +609,9 @@ export default {
     methods: {
         /**
          * Get custom headigns for dynamic lists
+         * @param {String} column
+         * @param {Object} props
+         * @returns {*}
          */
         getCustomHeading(column, props) {   
             if (props["headings"] && props["headings"][column]) {
