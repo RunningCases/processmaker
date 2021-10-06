@@ -56,15 +56,7 @@ export default {
   methods: {
     classBtn(cls) {
       return "btn btn-slim btn-force-radius v-btn-header " + cls;
-    },
-    /**
-     * Filter the column send_by
-     */
-    filterOptions() {
-      this.options.columns = this.options.columns.filter(function (item) {
-        return item !== "send_by";
-      });
-    },
+    }
   },
 };
 </script>

@@ -607,6 +607,9 @@ export default {
     updated() {},
     beforeCreate() {},
     methods: {
+        /**
+         * Get custom headigns for dynamic lists
+         */
         getCustomHeading(column, props) {   
             if (props["headings"] && props["headings"][column]) {
                 return props["headings"][column];
