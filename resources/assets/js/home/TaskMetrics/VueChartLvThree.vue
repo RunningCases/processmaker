@@ -133,7 +133,7 @@ export default {
         this.data[3] && this.data[3].data.dateTo
           ? this.data[3].data.dateTo
           : moment().format("YYYY-MM-DD"),
-      dateNow: moment().format("DD/MM/YYYY h:mm:ss a"),
+      dateNow: moment().format("YYYY-MM-DD h:mm:ss a"),
       size:
         this.data[3] && this.data[3].data.size
           ? this.data[3].data.size
@@ -227,12 +227,12 @@ export default {
         dt = {
           process: this.data[2].id,
           caseList: this.data[1].id.toLowerCase(),
-          dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
-          dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
+          dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
+          dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
           riskStatus: this.riskType,
         };
         this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
-        this.dateNow = moment().format("DD/MM/YYYY h:mm:ss a");
+        this.dateNow = moment().format("YYYY-MM-DD h:mm:ss a");
         Api.process
           .totalCasesByRisk(dt)
           .then((response) => {

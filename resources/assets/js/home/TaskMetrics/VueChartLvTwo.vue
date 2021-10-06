@@ -187,8 +187,8 @@ export default {
           dt = {
             processId: this.data[2].id,
             caseList: this.data[1].id.toLowerCase(),
-            dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
-            dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
+            dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
+            dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
             groupBy: this.period,
           };
           Api.process
