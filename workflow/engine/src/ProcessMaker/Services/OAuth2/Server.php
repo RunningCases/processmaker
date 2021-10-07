@@ -432,7 +432,7 @@ class Server implements iAuthenticate
             $tokenData = $server->getAccessTokenData($request);
 
             // Set the User Uid
-            self::$userId = $tokenData['user_id'];
+            self::$userId = isset($tokenData['user_id']) ? $tokenData['user_id'] : null;
         }
         return self::$userId;
     }
