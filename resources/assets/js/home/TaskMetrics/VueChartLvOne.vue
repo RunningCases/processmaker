@@ -111,6 +111,7 @@ export default {
     let that = this;
     return {
       popoverTarget: "",
+      dataPointIndex: null,
       showPopover: false,
       category: null,
       dataProcesses: null, //Data API processes
@@ -141,8 +142,14 @@ export default {
             show: false,
           },
           events: {
-            click: function (event, chartContext, config) {
-              that.$refs.popover.$emit("close");
+            mouseMove: function (event, chartContext, config) {
+              if (
+                config.dataPointIndex != that.dataPointIndex &&
+                config.dataPointIndex != -1
+              ) {
+                that.dataPointIndex = config.dataPointIndex;
+                that.$refs.popover.$emit("close");
+              }
               if (config.dataPointIndex != -1) {
                 that.currentSelection = that.totalCases[config.dataPointIndex];
                 that.onShowDrillDownOptions(
@@ -150,6 +157,9 @@ export default {
                   config.dataPointIndex
                 );
               }
+            },
+            mouseLeave: function (event, chartContext, config) {
+
             },
           },
         },
@@ -162,7 +172,7 @@ export default {
         },
         colors: ["#33b2df", "#546E7A", "#d4526e", "#13d8aa"],
         dataLabels: {
-          enabled: false,
+          enabled: true,
         },
         xaxis: {
           categories: [],
