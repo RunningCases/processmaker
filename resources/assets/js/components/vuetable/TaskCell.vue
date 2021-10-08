@@ -3,7 +3,7 @@
         <div 
             v-for="(item, index) in data"
             v-bind:key = index
-            class="d-flex mb-3">
+            class="d-flex">
             <div
                 v-bind:style="{ color: activeColor(item.CODE_COLOR) }"
                 :id="statusId + index"

@@ -110,197 +110,94 @@
                     </b-col>
                 </b-row>
             </b-col>
-            <div slot="case_number" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-highlight"
-                    >{{ props["headings"][props.column] }} :
-                    {{ props["item"]["CASE_NUMBER"] }}</span
-                >
-            </div>
-            <div slot="thread_title" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    {{ props["item"]["THREAD_TITLE"] }}
-                </span>
-            </div>
-            <div slot="process_name" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PROCESS_NAME"] }}
-                </span>
-            </div>
-            <div slot="due_date" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DUE_DATE"] }}
-                </span>
-            </div>
-            <div slot="delegation_date" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DELEGATION_DATE"] }}
-                </span>
-            </div>
-            <div slot="task" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <TaskCell :data="props.item.TASK" />
-                </span>
-            </div>
-            <div slot="priority" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PRIORITY"] }}
-                </span>
-            </div>
-            <div slot="send_by" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <CurrentUserCell :data="props.item.USER_DATA" />
-                </span>
-            </div>
+            <template v-for="column in cardColumns" :slot="column" slot-scope="props" class="v-card-text">
+                <div :key="column">
+                    <span class="v-card-text-dark">
+                        {{ getCustomHeading(column, props) }} :
+                    </span>
+                    <span  v-if="column === 'case_number'" class="v-card-text-highlight">
+                        {{ props["item"]["CASE_NUMBER"] }}
+                    </span>
+                    <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
+                        {{ props["item"]["THREAD_TITLE"] }}
+                    </span>
+                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_NAME"] }}
+                    </span>
+                    <span  v-if="column === 'due_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DUE_DATE"] }}
+                    </span>
+                    <span  v-if="column === 'delegation_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DELEGATION_DATE"] }}
+                    </span>                   
+                    <span v-if="column === 'task'" span class="v-card-text-light">
+                        <TaskCell :data="props.item.TASK" />
+                    </span>
+                    <span  v-if="column === 'priority'" class="v-card-text-highlight">
+                        {{ props["item"]["PRIORITY"] }}
+                    </span>
+                    <span v-else-if="column === 'send_by'" class="v-card-text-light">
+                        <CurrentUserCell :data="props.item.USER_DATA" />
+                    </span>
+                    <span  v-else class="v-card-text-light">
+                        {{ props["item"][column] }}
+                    </span>
+                </div>
+            </template>
         </VueCardView>
         <VueListView
             v-if="typeView === 'LIST'"
             :options="getVueViewOptions()"
             ref="vueListView"
         >
-            <b-col
-                sm="12"
-                slot="actions"
-                slot-scope="props"
-                class="vp-inbox-list-actions"
-            >
-                <div class="">
-                    <b-row>
-                        <b-col sm="12">
-                            <div
-                                class="v-pm-card-info"
-                                @click="openCaseDetail(props.item)"
-                            >
-                                <i class="fas fa-info-circle"></i>
-                            </div>
-                        </b-col>
-                        <b-col sm="12">
-                            <div @click="updateDataEllipsis(props.row)">
-                                <ellipsis
-                                    :ref="`ellipsis-${props.row.APP_UID}`"
-                                    v-if="dataEllipsis"
-                                    :data="dataEllipsis"
-                                >
-                                </ellipsis>
-                            </div>
-                        </b-col>
-                    </b-row>
+        <div slot="actions" slot-scope="props">
+            <b-row>
+            <b-col sm="12">
+                <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+                <i class="fas fa-info-circle"></i>
                 </div>
             </b-col>
-            <b-col
-                sm="5"
-                ref="text"
-                slot="case_number"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-highlight"
-                    >{{ props["headings"][props.column] }} :
-                    {{ props["item"]["CASE_NUMBER"] }}</span
-                >
+            <b-col sm="12">
+                <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
+                <ellipsis :ref="`ellipsis-${props.item.APP_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+                </div>
             </b-col>
-            <b-col
-                sm="5"
-                slot="thread_title"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    {{ props["item"]["THREAD_TITLE"] }}
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="process_name"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PROCESS_NAME"] }}
-                </span>
-            </b-col>
-            <b-col sm="5" slot="task" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <TaskCell :data="props.item.TASK" />
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="due_date"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DUE_DATE"] }}
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="delegation_date"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DELEGATION_DATE"] }}
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="priority"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PRIORITY"] }}
-                </span>
-            </b-col>
-
-            <b-col sm="5" slot="send_by" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <CurrentUserCell :data="props.item.USER_DATA" />
-                </span>
-            </b-col>
+            </b-row>
+        </div>
+            <template v-for="column in cardColumns" :slot="column" slot-scope="props" class="v-card-text">
+                <div :key="column">
+                    <span class="v-card-text-dark">
+                        {{ getCustomHeading(column, props) }} :
+                    </span>
+                    <span  v-if="column === 'case_number'" class="v-card-text-highlight">
+                        {{ props["item"]["CASE_NUMBER"] }}
+                    </span>
+                    <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
+                        {{ props["item"]["THREAD_TITLE"] }}
+                    </span>
+                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_NAME"] }}
+                    </span>
+                    <span  v-if="column === 'due_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DUE_DATE"] }}
+                    </span>
+                    <span  v-if="column === 'delegation_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DELEGATION_DATE"] }}
+                    </span>                   
+                    <span v-if="column === 'task'" span class="v-card-text-light">
+                        <TaskCell :data="props.item.TASK" />
+                    </span>
+                    <span  v-if="column === 'priority'" class="v-card-text-highlight">
+                        {{ props["item"]["PRIORITY"] }}
+                    </span>
+                    <span v-else-if="column === 'send_by'" class="v-card-text-light">
+                        <CurrentUserCell :data="props.item.USER_DATA" />
+                    </span>
+                    <span  v-else class="v-card-text-light">
+                        {{ props["item"][column] }}
+                    </span>
+                </div>
+            </template>
         </VueListView>
         <ModalUnpauseCase ref="modal-unpause-case"></ModalUnpauseCase>
         <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
@@ -705,10 +602,24 @@ export default {
         ProcessMaker() {
             return window.ProcessMaker;
         },
+       
     },
     updated() {},
     beforeCreate() {},
     methods: {
+        /**
+         * Get custom headigns for dynamic lists
+         * @param {String} column
+         * @param {Object} props
+         * @returns {*}
+         */
+        getCustomHeading(column, props) {   
+            if (props["headings"] && props["headings"][column]) {
+                return props["headings"][column];
+            } else {
+                return column;
+            }
+        },
         /**
          * Initialize filters
          */
@@ -1070,6 +981,7 @@ export default {
                 }
                 this.data.settings = newData.settings;
                 this.filters = {};
+                this.typeView = newData.settings.view.typeView;
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {
                  if (newData.settings && newData.settings.orderBy) {
