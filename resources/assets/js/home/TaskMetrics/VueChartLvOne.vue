@@ -158,9 +158,6 @@ export default {
                 );
               }
             },
-            mouseLeave: function (event, chartContext, config) {
-
-            },
           },
         },
         plotOptions: {
