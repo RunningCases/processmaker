@@ -69,9 +69,8 @@
                 {{ props.row.PRIORITY }}
             </div>
             <div slot="actions" slot-scope="props">
-                <div @click="updateDataEllipsis(props.row)">
+                <div @mouseover="updateDataEllipsis(props.row)">
                     <ellipsis
-                        :ref="`ellipsis-${props.row.APP_UID}`"
                         v-if="dataEllipsis"
                         :data="dataEllipsis"
                     >
@@ -100,9 +99,8 @@
                         </div>
                     </b-col>
                     <b-col sm="12">
-                        <div @click="updateDataEllipsis(props.item)">
+                        <div @mouseover="updateDataEllipsis(props.item)">
                             <ellipsis 
-                                :ref="`ellipsis-${props.item.APP_UID}`"
                                 v-if="dataEllipsis" 
                                 :data="dataEllipsis">
                             </ellipsis>
@@ -158,8 +156,8 @@
                 </div>
             </b-col>
             <b-col sm="12">
-                <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
-                <ellipsis :ref="`ellipsis-${props.item.APP_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+                <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
+                <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
                 </div>
             </b-col>
             </b-row>

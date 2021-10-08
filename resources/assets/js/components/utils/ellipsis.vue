@@ -6,6 +6,7 @@
                     class="v-inline"
                     v-show="showActions"
                     ref="ellipsis"
+                    @mouseleave="hideActionButtons"
                 >
                     <div class="buttonGroup">
                         <b-button
@@ -23,16 +24,16 @@
         <div 
             class="ellipsis-button align-middle"
             v-show="!showActions"
+            @mouseover="showActionButtons"
         >
-            <div @click="showActionButtons()">
+            <span>
                 <i class="fas fa-ellipsis-v"></i>
-            </div>
+            </span>
         </div>
     </div>
 </template>
 
 <script>
-import eventBus from '../../home/EventBus/eventBus';
 export default {
     name: "Ellipsis",
     props: {
@@ -43,12 +44,7 @@ export default {
             showActions: false
         }
     },
-    mounted(){
-        let that = this;
-            eventBus.$on('ellipsis::hide', (data) => {
-                that.hideActionButtons();
-            });
-    },
+    mounted () {},
     methods: {
         /**
          * Callback function from parent
@@ -63,10 +59,8 @@ export default {
          */
         showActionButtons() {
             var i,
-                showOld = this.showActions,
                 elelemts;
-            eventBus.$emit("ellipsis::hide",{});
-            this.showActions = !showOld;
+            this.showActions = true;
             if (this.showActions) {
                 if (this.$parent.Row !== undefined) {
                     for (i = 0; i < this.$parent.$parent.$parent.$children.length -1 ; i++){

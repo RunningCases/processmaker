@@ -55,7 +55,6 @@ export default {
       api.cases.unpause(this.data).then((response) => {
         if (response.statusText == "OK" || response.status === 200) {
           that.$refs["modal-unpause-case"].hide();
-          that.$parent.$refs['ellipsis-' + that.data.APP_UID].hideActionButtons()
           if (that.$parent.$refs["vueTable"] !== undefined) {
             that.$parent.$refs["vueTable"].getData();
           }
