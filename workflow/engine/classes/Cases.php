@@ -2225,7 +2225,7 @@ class Cases
             $oPluginRegistry = PluginRegistry::loadSingleton();
             $oPluginRegistry->executeTriggers(PM_CREATE_CASE, $folderData);
         }
-        $this->getExecuteTriggerProcess($appUid, 'CREATE');
+        $this->getExecuteTriggerProcess($appUid, 'CREATE', false);
         //end plugin
         return [
             'APPLICATION' => $appUid,
