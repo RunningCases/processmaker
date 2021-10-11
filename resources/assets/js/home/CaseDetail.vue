@@ -573,7 +573,7 @@ export default {
      * @param {object} data
      */
     onClick(data) {
-      if (data.row.ASSIGNEE === "Unassigned") {
+      if (data.row.UNASSIGNED) {
         this.claimCase(data.row);
       } else {
         this.$emit("onUpdateDataCase", {
