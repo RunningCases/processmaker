@@ -150,7 +150,7 @@ class Light extends Api
         );
         $response = array();
         foreach ($data as $key => $counterList) {
-            if (isset($structure[$counterList['item']])) {
+            if (isset($structure[isset($counterList['item']) ? $counterList['item'] : null])) {
                 $name = $structure[$counterList['item']];
                 $response[$name] = $counterList['count'];
             } else {
