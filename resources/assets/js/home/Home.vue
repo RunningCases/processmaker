@@ -295,7 +295,7 @@ export default {
             } else {
                 this.page = "MyCases";
             }
-            if (window.config._nodeId === "CASES_SENT" && this.defaultOption !== "") {
+            if (window.config._nodeId === "CASES_SENT" && this.defaultOption.indexOf('openApplicationUid') > 0) {
                 this.cleanDefaultOption();
                 this.showAlert(this.$i18n.t("ID_NO_PERMISSION_NO_PARTICIPATED_CASES"));
             }

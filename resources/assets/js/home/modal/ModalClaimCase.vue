@@ -59,7 +59,6 @@ export default {
       api.cases.claim(this.data).then((response) => {
         if (response.status === 200) {
           that.$refs["modal-claim-case"].hide();
-          that.$parent.$refs['ellipsis-' + that.data.APP_UID].hideActionButtons()
           if (that.$parent.$refs["vueTable"] !== undefined) {
             that.$parent.$refs["vueTable"].getData();
           }

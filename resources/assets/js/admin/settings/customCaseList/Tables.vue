@@ -12,8 +12,8 @@
         ref="table" 
     >
         <div slot="actions" slot-scope="props">
-            <div @click="updateDataEllipsis(props.row)">
-                <ellipsis :ref="`ellipsis-${props.row.id}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            <div @mouseover="updateDataEllipsis(props.row)">
+                <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
         </div>
         <div slot="owner" slot-scope="props">
