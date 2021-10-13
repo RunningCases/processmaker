@@ -982,7 +982,7 @@ export default {
                 this.typeView = newData.settings.view.typeView;
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {
-                 if (newData.settings && newData.settings.orderBy) {
+                 if (newData && newData.settings && newData.settings.orderBy) {
                     this.$refs["vueTable"].setOrder(newData.settings.orderBy.column, newData.settings.orderBy.ascending);
                 } else {
                     this.$refs["vueTable"].setOrder(false);
@@ -1130,13 +1130,6 @@ export default {
                   icon: "far fa-comments",
                   fn: function() {
                     that.openCaseDetail(data);
-                  }
-                },
-                pause: {
-                  name: "pause case",
-                  icon: "far fa-pause-circle",
-                  fn: function() {
-                    that.showModalPause(data);
                   }
                 },
                 claim: {
