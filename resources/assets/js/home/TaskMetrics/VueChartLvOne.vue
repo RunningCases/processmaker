@@ -79,6 +79,9 @@
           </h4>
         </div>
       </div>
+      <div class="v-search-info">
+        {{ $t("ID_SELECT_PROCESS_DRILL") }}
+      </div>
       <apexchart
         ref="LevelOneChart"
         :width="width"
@@ -139,17 +142,11 @@ export default {
           type: "bar",
           id: "LevelOneChart",
           toolbar: {
-            show: false,
+            show: true,
           },
           events: {
-            mouseMove: function (event, chartContext, config) {
-              if (
-                config.dataPointIndex != that.dataPointIndex &&
-                config.dataPointIndex != -1
-              ) {
-                that.dataPointIndex = config.dataPointIndex;
-                that.$refs.popover.$emit("close");
-              }
+            click: function (event, chartContext, config) {
+              that.$refs.popover.$emit("close");
               if (config.dataPointIndex != -1) {
                 that.currentSelection = that.totalCases[config.dataPointIndex];
                 that.onShowDrillDownOptions(
@@ -169,7 +166,7 @@ export default {
         },
         colors: ["#33b2df", "#546E7A", "#d4526e", "#13d8aa"],
         dataLabels: {
-          enabled: true,
+          enabled: false,
         },
         xaxis: {
           categories: [],
@@ -486,6 +483,14 @@ export default {
 
 .vp-flex1 {
   flex: 1;
+}
+
+.v-search-info {
+  font-size: 15px;
+  color: darkgray;
+  padding-left: 5%;
+  padding-top: 10px;
+  text-align: end;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

@@ -61053,6 +61053,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SELECT_PLUGIN_FILE','en','Select a plugin file','2014-09-18') ,
 ( 'LABEL','ID_SELECT_PM_FILE','en','Select a .pmt file','2014-01-15') ,
 ( 'LABEL','ID_SELECT_PROCESS_FILE','en','Select a process file','2014-01-15') ,
+( 'LABEL','ID_SELECT_PROCESS_DRILL','en','Select a process to have the Drilling Down Options','2021-10-13') ,
 ( 'LABEL','ID_SELECT_STATUS','en','Select status...','2014-01-15') ,
 ( 'LABEL','ID_SELECT_TABLE','en','Please select a table to export.','2014-01-15') ,
 ( 'LABEL','ID_SELECT_TEMPLATE_FILE','en','Select a template file','2014-01-15') ,
