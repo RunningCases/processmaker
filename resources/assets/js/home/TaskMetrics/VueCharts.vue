@@ -15,7 +15,7 @@
     />
     <vue-chart-lv-three
       :key="key3"
-      v-show="level === 3"
+      v-if="level === 3"
       :data="levels"
       @updateDataLevel="updateDataLevel"
     />

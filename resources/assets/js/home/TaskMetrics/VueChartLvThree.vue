@@ -205,6 +205,7 @@ export default {
   created() {},
   mounted() {
     this.getBodyHeight();
+    this.loadOption();
   },
   watch: {},
   computed: {},
@@ -221,28 +222,47 @@ export default {
      * Change datepickers or radio button
      */
     changeOption() {
-      let that = this,
-        dt;
-      if (this.dateFrom && this.dateTo) {
-        dt = {
-          process: this.data[2].id,
-          caseList: this.data[1].id.toLowerCase(),
-          dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
-          dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
-          riskStatus: this.riskType,
-        };
-        this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
-        this.dateNow = moment().format("YYYY-MM-DD h:mm:ss a");
-        Api.process
-          .totalCasesByRisk(dt)
-          .then((response) => {
-            that.formatDataRange(response.data);
-            that.updateSettings();
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-      }
+        let dt;
+        if (this.dateFrom && this.dateTo) {
+            dt = {
+                process: this.data[2].id,
+                caseList: this.data[1].id.toLowerCase(),
+                dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
+                dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
+                riskStatus: this.riskType,
+            };
+            this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
+            this.dateNow = moment().format("YYYY-MM-DD h:mm:ss a");
+            this.updateSettings();
+        }
+    },
+    /**
+     * Load option saved in userConfig
+     */
+    loadOption() {
+        let that = this,
+            dt;
+        if (this.data.length > 2) {
+            if (this.dateFrom && this.dateTo) {
+                dt = {
+                    process: this.data[2].id,
+                    caseList: this.data[1].id.toLowerCase(),
+                    dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
+                    dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
+                    riskStatus: this.riskType,
+                };
+                this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
+                this.dateNow = moment().format("YYYY-MM-DD h:mm:ss a");
+                Api.process
+                  .totalCasesByRisk(dt)
+                  .then((response) => {
+                      that.formatDataRange(response.data);
+                  })
+                  .catch((e) => {
+                      console.error(e);
+                  });
+            }
+        }
     },
     /**
      * Format response fromn API
@@ -283,9 +303,7 @@ export default {
       });
 
       this.updateApexchartAxis();
-      if (this.data[1].id.toLowerCase() == "draft") {
-        this.series = []; // Draft is empty
-      } else {
+      if (this.data[1].id.toLowerCase() !== "draft") {
         this.series = serie;
       }
     },
