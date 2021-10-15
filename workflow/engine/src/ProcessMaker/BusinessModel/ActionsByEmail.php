@@ -354,8 +354,16 @@ class ActionsByEmail
                 $data[$index]['USER'] = '';
                 if ($data[$index]['ABE_MAILSERVER_OR_MAILCURRENT'] == 1) {
                     $emailServer = new EmailServer();
-                    $dataEmailServer = $emailServer->getEmailServer($data[$index]['ABE_EMAIL_SERVER_UID']);
-                    $data[$index]['USER'] = $dataEmailServer['MESS_FROM_NAME'];
+                    if (!empty($data[$index]['ABE_EMAIL_SERVER_UID'])) {
+                        $dataEmailServer = $emailServer->getEmailServer($data[$index]['ABE_EMAIL_SERVER_UID']);
+                    } else {
+                        $emailServerModel = new EmailServerModel();
+                        $emailServerDefault = $emailServerModel->getEmailServerDefault();
+                        if (isset($emailServerDefault['MESS_UID'])) {
+                            $dataEmailServer = $emailServer->getEmailServer($emailServerDefault['MESS_UID']);
+                        }
+                    }
+                    $data[$index]['USER'] = isset($dataEmailServer['MESS_FROM_NAME']) ? $dataEmailServer['MESS_FROM_NAME'] : '';
                 }
                 if ($data[$index]['ABE_MAILSERVER_OR_MAILCURRENT'] == 0) {
                     $delegation = new AppDelegation();
