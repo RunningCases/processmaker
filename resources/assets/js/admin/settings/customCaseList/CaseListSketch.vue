@@ -183,9 +183,7 @@
                                         model="hex"
                                     >
                                         <svg viewBox="0 0 50 50">
-                                            <path
-                                                d="M 10 10 H 90 V 90 H 10 L 10 10"
-                                            />
+                                            <rect width="50" height="50" style="stroke-width:6;stroke:rgb(0,0,0)" />
                                         </svg>
                                     </verte>
                                 </b-form-group>
@@ -205,9 +203,7 @@
                                         model="hex"
                                     >
                                         <svg viewBox="0 0 50 50">
-                                            <path
-                                                d="M 10 10 H 90 V 90 H 10 L 10 10"
-                                            />
+                                            <rect width="50" height="50" style="stroke-width:6;stroke:rgb(0,0,0)" />
                                         </svg>
                                     </verte>
                                 </b-form-group>
