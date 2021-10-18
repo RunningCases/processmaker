@@ -67,7 +67,10 @@ class Participated extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            $query->title($this->getCaseTitle());
+            // Get the result
+            $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
+            // Add the filter
+            $query->specificCases($result);
         }
         // Scope to search for an specific process
         if ($this->getProcessId()) {
