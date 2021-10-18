@@ -108,46 +108,46 @@ export default {
         dataLoaded: false,
         filterItems: [
             {
-            type: "CaseNumber",
-            id: "caseNumber",
-            title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-                "ID_BY_CASE_NUMBER"
-            )}`,
-            optionLabel: this.$i18n.t("ID_BY_CASE_NUMBER"),
-            detail: this.$i18n.t("ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED"),
-            tagText: "",
-            tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_NUMBER"),
-            items: [
-                {
-                id: "filterCases",
-                value: "",
+                type: "CaseNumber",
+                id: "caseNumber",
+                title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                    "ID_BY_CASE_NUMBER"
+                )}`,
+                optionLabel: this.$i18n.t("ID_BY_CASE_NUMBER"),
+                detail: this.$i18n.t("ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED"),
+                tagText: "",
+                tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_NUMBER"),
+                items: [
+                    {
+                        id: "filterCases",
+                        value: "",
+                    },
+                ],
+                autoShow: true,
+                makeTagText: function (params, data) {
+                    return `${params.tagPrefix}: ${data[0].value}`;
                 },
-            ],
-            autoShow: true,
-            makeTagText: function (params, data) {
-                return `${params.tagPrefix}: ${data[0].value}`;
-            },
             },
             {
-            type: "CaseTitle",
-            id: "caseTitle",
-            title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-                "ID_BY_CASE_THREAD_TITLE"
-            )}`,
-            optionLabel: this.$i18n.t("ID_BY_CASE_THREAD_TITLE"),
-            tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_THREAD_TITLE"),
-            detail: "",
-            tagText: "",
-            items: [
-                {
+                type: "CaseTitle",
                 id: "caseTitle",
-                value: "",
+                title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                    "ID_BY_CASE_THREAD_TITLE"
+                )}`,
+                optionLabel: this.$i18n.t("ID_BY_CASE_THREAD_TITLE"),
+                tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_THREAD_TITLE"),
+                detail: "",
+                tagText: "",
+                items: [
+                    {
+                        id: "caseTitle",
+                        value: "",
+                    },
+                ],
+                autoShow: true,
+                makeTagText: function (params, data) {
+                    return `${this.tagPrefix} ${data[0].value}`;
                 },
-            ],
-            autoShow: true,
-            makeTagText: function (params, data) {
-                return `${this.tagPrefix} ${data[0].value}`;
-            },
             },
             {
                 type: "DateFilter",
@@ -182,6 +182,7 @@ export default {
                 placeholder: this.$i18n.t('ID_USER_NAME'),
                 tagText: "",
                 tagPrefix:  this.$i18n.t('ID_SEARCH_BY_SEND_BY'),
+                autoShow: true,
                 items:[
                     {
                         id: "sendBy",
@@ -195,27 +196,27 @@ export default {
                 }
             },
             {
-            type: "TaskTitle",
-            id: "taskTitle",
-            title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
-                "ID_TASK_NAME"
-            )}`,
-            optionLabel: this.$i18n.t("ID_BY_TASK"),
-            detail: "",
-            tagText: "",
-            tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_NAME"),
-            autoShow: true,
-            items: [
-                {
-                id: "task",
-                value: "",
-                options: [],
-                placeholder: this.$i18n.t("ID_TASK_NAME"),
+                type: "TaskTitle",
+                id: "taskTitle",
+                title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                    "ID_TASK_NAME"
+                )}`,
+                optionLabel: this.$i18n.t("ID_BY_TASK"),
+                detail: "",
+                tagText: "",
+                tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_NAME"),
+                autoShow: true,
+                items: [
+                    {
+                        id: "task",
+                        value: "",
+                        options: [],
+                        placeholder: this.$i18n.t("ID_TASK_NAME"),
+                    },
+                ],
+                makeTagText: function (params, data) {
+                    return `${this.tagPrefix}: ${data[0].label || ""}`;
                 },
-            ],
-            makeTagText: function (params, data) {
-                return `${this.tagPrefix}: ${data[0].label || ""}`;
-            },
             },
         ],
         processName: {
@@ -226,7 +227,7 @@ export default {
                 detail: "",
                 tagText: "",
                 tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
-                autoShow: false,
+                autoShow: true,
                 items:[
                     {
                         id: "process",
@@ -236,7 +237,6 @@ export default {
                     }
                 ],
                 makeTagText: function (params, data) {
-
                     return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
                 }
             },
@@ -297,6 +297,11 @@ export default {
         }
         //adding process name filter 
         if (self.byProcessName !== "") {
+            if (element !== undefined) {
+                this.processName.autoShow = false;
+            } else {
+                this.processName.autoShow = true;
+            }
             initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
         }
         this.$emit("onUpdateFilters", {params: initialFilters, refresh: false}); 

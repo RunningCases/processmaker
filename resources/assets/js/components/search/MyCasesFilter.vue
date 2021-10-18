@@ -221,7 +221,7 @@ export default {
                 detail: "",
                 tagText: "",
                 tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
-                autoShow: false,
+                autoShow: true,
                 items:[
                     {
                         id: "process",
@@ -276,7 +276,14 @@ export default {
                 initialFilters = this.prepareFilterItems(element.items, this.selected, true);
             }
             //adding process name filter
-            initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
+            if (self.byProcessName !== "") {
+                if (element !== undefined) {
+                    this.processName.autoShow = false;
+                } else {
+                    this.processName.autoShow = true;
+                }
+                initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
+            }
             this.$emit("onUpdateFilters", {params: initialFilters, refresh: false}); 
         },
         /**
