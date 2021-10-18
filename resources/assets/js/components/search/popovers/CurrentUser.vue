@@ -1,6 +1,11 @@
 <template>
     <div>
-        <SearchPopover :target="tag" @savePopover="onOk" :title="info.title">
+        <SearchPopover
+            :target="tag"
+            @savePopover="onOk"
+            :title="info.title"
+            :autoShow="info.autoShow || false"
+        >
             <template v-slot:body>
                 <p>{{ info.detail }}</p>
                 <form ref="form" @submit.stop.prevent="handleSubmit">

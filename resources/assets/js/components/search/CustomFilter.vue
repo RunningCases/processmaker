@@ -115,6 +115,7 @@ export default {
             byProcessName: "",
             criteriaItemsRadio: [],
             criteriaItemsCheckbox: [],
+            showProcessName: true,
         };
     },
     watch: {
@@ -169,18 +170,22 @@ export default {
                 return o.id === self.selectedRadio;
             });
             if (element) {
+                this.showProcessName = false;
                 initialFilters = this.prepareFilterItems(
                     element,
                     this.selectedRadio,
                     true
                 );
+            } else {
+                this.showProcessName = true;
             }
             self.selectedCheckbox.forEach((item) => {
                 element = _.find(this.filterItems, function(o) {
                     return o.id === item;
                 });
                 if (element) {
-                  initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(element, item, true)])];
+                    element.autoShow = self.showProcessName;
+                    initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(element, item, true)])];
                 }
             });
             this.$emit("onUpdateFilters", {
@@ -213,7 +218,7 @@ export default {
                         value: "",
                         label: "",
                         options: [],
-                        autoShow: true,
+                        autoShow: element.autoShow,
                     };
                     initialFilters.push(item);
                 }
@@ -310,6 +315,7 @@ export default {
             });
             if (tag === "processName") {
                 this.byProcessName = "";
+                this.selectedCheckbox = [];
             }
             this.$emit("onUpdateFilters", { params: temp, refresh: true });
         },
