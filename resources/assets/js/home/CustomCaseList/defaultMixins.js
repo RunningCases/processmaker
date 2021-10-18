@@ -59,7 +59,13 @@ export default {
       optionsVueView: {
         limit: 10,
         dblClick: (event, item, options) => {
-          this.openCase(item);
+          if (this.data.pageParent === "paused") {
+            this.showModalUnpauseCase(item);
+          } else if(this.data.pageParent === "unassigned") {
+            this.claimCase(item);
+          } else {
+            this.openCase(item);
+          }
         },
         headings: {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
