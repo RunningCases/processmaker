@@ -60,7 +60,8 @@
             </div>
           </v-server-table>
         </div>
-        <TabsCaseDetail
+        <TabsCaseDetail 
+          ref="tabsCaseDetail" 
           :dataCaseStatus="dataCaseStatusTab"
           :dataCase="dataCase"
         ></TabsCaseDetail>
@@ -222,6 +223,10 @@ export default {
 
   mounted() {
     let that = this;
+    //restore tab selected to initial state
+    let hash = this.$refs["tabsCaseDetail"].$refs["tabs"].getTabHash(0);
+    this.$refs["tabsCaseDetail"].$refs["tabs"].selectTab(hash);
+    //set dataCase
     this.dataCase = this.$parent.dataCase;
     this.$el.getElementsByClassName("VuePagination__count")[0].remove();
     this.getDataCaseSummary();
