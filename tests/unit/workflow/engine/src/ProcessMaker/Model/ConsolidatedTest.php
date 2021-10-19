@@ -69,4 +69,30 @@ class ConsolidatedTest extends TestCase
         $result = $consolidated->getConsolidated();
         $this->assertTrue($result > 0);
     }
+
+    /**
+     * This tests the scopeJoinProcess
+     *
+     * @covers \ProcessMaker\Model\Consolidated::scopeJoinProcess()
+     * @test
+     */
+    public function it_should_test_scope_join_process()
+    {
+        $query = factory(Consolidated::class)->states('foreign_keys')->create();
+        $consolidated = new Consolidated();
+        $this->assertCount(1, $consolidated->scopeJoinProcess($query)->get());
+    }
+
+    /**
+     * This tests the scopeJoinTask
+     *
+     * @covers \ProcessMaker\Model\Consolidated::scopeJoinTask()
+     * @test
+     */
+    public function it_should_test_scope_join_task()
+    {
+        $query = factory(Consolidated::class)->states('foreign_keys')->create();
+        $consolidated = new Consolidated();
+        $this->assertCount(1, $consolidated->scopeJoinTask($query)->get());
+    }
 }

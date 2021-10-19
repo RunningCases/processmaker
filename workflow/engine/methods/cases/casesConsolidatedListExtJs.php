@@ -34,9 +34,9 @@ foreach ($results as $row) {
     $casesPerTask = count($row);
     $row = head($row);
     $processUid = $row['PRO_UID'];
-    $proTitle = 'PRO_TITLE';
+    $proTitle = $row['PRO_TITLE'];
     $taskUid = $row['TAS_UID'];
-    $taskTitle = 'TAS_TITLE';
+    $taskTitle = $row['TAS_TITLE'];
     $dynaformUid = $row['DYN_UID'];
 
     $tabTitle = $taskTitle . " (" . (($activeNumRows > 0) ? $casesPerTask : 0) . ")";
