@@ -692,7 +692,13 @@ export default {
             } else if (self.clickCount === 2) {
                 clearTimeout(self.singleClickTimer);
                 self.clickCount = 0;
-                self.openCase(event.row);
+                if (this.data.pageParent === "paused") {
+                    self.showModalUnpauseCase(event.row);
+                } else if(this.data.pageParent === "unassigned") {
+                    self.claimCase(event.row);
+                } else {
+                    self.openCase(event.row);
+                }
             }
         },
         /**
@@ -985,7 +991,7 @@ export default {
                 }
                 this.data.settings = newData.settings;
                 this.filters = {};
-                this.typeView = newData.settings.view.typeView;
+                this.typeView = newData.settings && newData.settings.view ? newData.settings.view.typeView : this.typeView;
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {
                  if (newData && newData.settings && newData.settings.orderBy) {
