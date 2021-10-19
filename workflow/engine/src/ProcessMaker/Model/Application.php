@@ -475,6 +475,6 @@ class Application extends Model
             ->statusId($status)
             ->positiveCases();
 
-        return $query->get()->count(['APP_NUMBER']);
+        return $query->count(['APP_NUMBER']);
     }
 }
