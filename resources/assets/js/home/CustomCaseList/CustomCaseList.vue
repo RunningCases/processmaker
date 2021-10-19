@@ -199,6 +199,10 @@
         </VueListView>
         <ModalUnpauseCase ref="modal-unpause-case"></ModalUnpauseCase>
         <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
+        <ModalComments
+            ref="modal-comments"
+            @postNotes="onPostNotes"
+        ></ModalComments>
     </div>
 </template>
 
@@ -219,6 +223,7 @@ import defaultMixins from "./defaultMixins";
 import Ellipsis from "../../components/utils/ellipsis.vue";
 import ModalPauseCase from "../modal/ModalPauseCase.vue";
 import ModalReassignCase from "../modal/ModalReassignCase.vue";
+import ModalComments from "../modal/ModalComments.vue"
 import { Event } from "vue-tables-2";
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 import _ from "lodash";
@@ -241,6 +246,7 @@ export default {
         ModalPauseCase,
         ModalReassignCase,
         CurrentUserCell,
+        ModalComments
     },
     props: ["defaultOption", "settings", "data"],
     data() {
@@ -1040,6 +1046,23 @@ export default {
           this.$refs["modal-unpause-case"].show();
         },
         /**
+         * Open the case notes modal
+         * @param {object} data - needed to create the data
+         */
+        openComments(data) {
+            let that = this;
+            api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
+                that.$refs["modal-comments"].dataCase = data;
+                that.$refs["modal-comments"].show();
+            });
+        },
+        /**
+         * Post notes event handler
+         */
+        onPostNotes() {
+            this.$refs["vueTable"].getData();
+        },
+        /**
          * Json factory for ellipsis control item
          * @param {object} data
          * @param {object} page
@@ -1061,7 +1084,7 @@ export default {
                       name: "case note",
                       icon: "far fa-comments",
                       fn: function() {
-                          that.openCaseDetail(data);
+                        that.openComments(data);
                       },
                   },
                   reassign: {
@@ -1093,7 +1116,7 @@ export default {
                   name: "case note",
                   icon: "far fa-comments",
                   fn: function() {
-                    that.openCaseDetail(data);
+                    that.openComments(data);
                   }
                 },
               }
@@ -1104,7 +1127,7 @@ export default {
                   name: "case note",
                   icon: "far fa-comments",
                   fn: function() {
-                    that.openCaseDetail(data);
+                    that.openComments(data);
                   }
                 },
                 play: {
@@ -1129,7 +1152,7 @@ export default {
                   name: "case note",
                   icon: "far fa-comments",
                   fn: function() {
-                    that.openCaseDetail(data);
+                    that.openComments(data);
                   }
                 },
                 claim: {
