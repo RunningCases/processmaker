@@ -1621,10 +1621,10 @@ class AbstractCases implements CasesInterface
             $query->processInList([$processId]);
         }
         if (!is_null($dateFrom)) {
-            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom . ' 00:00:00');
         }
         if (!is_null($dateTo)) {
-            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo . ' 23:59:59');
         }
         return $query->get()->values()->toArray();
     }
