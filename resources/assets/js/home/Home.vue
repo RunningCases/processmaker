@@ -65,7 +65,7 @@ import TaskReassignments from "./TaskReassignments";
 import AdvancedSearch from "./AdvancedSearch/AdvancedSearch.vue";
 import LegacyFrame from "./LegacyFrame";
 import CustomCaseList from "./CustomCaseList/CustomCaseList.vue"
-
+import utils from "../utils/utils"
 import api from "./../api/index";
 import eventBus from './EventBus/eventBus'
 import _ from "lodash";
@@ -286,7 +286,8 @@ export default {
          * Set default cases menu option
          */
         setDefaultCasesMenu(data) {
-            let menuItem = _.find(data, function(o) {
+            let params,
+                menuItem = _.find(data, function(o) {
                 return o.id === window.config._nodeId;
             });
             if (menuItem && menuItem.href) {
@@ -295,8 +296,8 @@ export default {
             } else {
                 this.page = "MyCases";
             }
-            if (window.config._nodeId === "CASES_SENT" && this.defaultOption.indexOf('openApplicationUid') > 0) {
-                this.cleanDefaultOption();
+            params = utils.getAllUrlParams(this.defaultOption);
+            if (params.action === 'mycases' && params.filter === '') { 
                 this.showAlert(this.$i18n.t("ID_NO_PERMISSION_NO_PARTICIPATED_CASES"));
             }
             this.settings = this.config.setting[this.page];

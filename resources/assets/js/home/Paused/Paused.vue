@@ -460,9 +460,8 @@ export default {
                     DEL_INDEX: params.del_index
                 });
                 this.$emit("cleanDefaultOption");
-            }   
-            //force to search in the parallel tasks
-            if (params && params.openapplicationuid) {
+            } else if (params && params.openapplicationuid) {
+              //force to search in the parallel tasks
                 this.onUpdateFilters({
                     params: [
                         {

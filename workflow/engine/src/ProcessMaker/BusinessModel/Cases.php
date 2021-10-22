@@ -2473,7 +2473,6 @@ class Cases
                 'DEL_INDEX' => [],
                 'PRO_UID' => $record['PRO_UID']
             ];
-            $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
             foreach ($result as $record) {
                 $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
             }

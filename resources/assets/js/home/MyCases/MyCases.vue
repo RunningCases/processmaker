@@ -273,10 +273,19 @@ export default {
             let params;
             if (this.defaultOption) {
                 params = utils.getAllUrlParams(this.defaultOption);
-                if (params && params.app_uid && params.del_index) {
-                    this.openCase({
-                        APP_UID: params.app_uid,
-                        DEL_INDEX: params.del_index,
+                if (params && params.openapplicationuid) {
+                    this.onUpdateFilters({
+                        params: [
+                            {
+                                fieldId: "caseNumber",
+                                filterVar: "caseNumber",
+                                label: "",
+                                options: [],
+                                value: params.openapplicationuid,
+                                autoShow: false,
+                            },
+                        ],
+                    refresh: false,
                     });
                     this.$emit("cleanDefaultOption");
                 }
@@ -360,9 +369,19 @@ export default {
             let header = window.config._nodeId,
                 filters = this.headers,
                 filter,
-                i;
+                i,
+                params;
             if (header === "CASES_TO_REVISE") {
                 filter = "SUPERVISING";
+            }
+            params = utils.getAllUrlParams(window.config.defaultOption);
+            if (params.action === 'mycases' && params.filter !== '') {
+                if (params.filter === 'inprogress') {
+                    filter = 'IN_PROGRESS'
+                }
+                if (params.filter === 'completed') {
+                    filter = 'COMPLETED'
+                }
             }
             for (i = 0; i < filters.length; i += 1) {
                 if (filters[i].item === filter) {
