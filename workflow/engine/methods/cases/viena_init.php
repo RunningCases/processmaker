@@ -4,6 +4,7 @@ use Eusebiu\JavaScript\Facades\ScriptVariables;
 use Illuminate\Support\Facades\View;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\User;
 
 $conf = new Configurations();
@@ -52,10 +53,12 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
     unset($_SESSION['__OPEN_APPLICATION_UID__']);
     $case = new \ProcessMaker\BusinessModel\Cases();
 
+    $userLogged = $_SESSION['USER_LOGGED'];
     $confDefaultOption = 'CASES_SEARCH';
     $action = 'search';
-    $participation = $case->getStatusInfo($openAppUid, 0, $_SESSION['USER_LOGGED']);
+    $participation = $case->getStatusInfo($openAppUid, 0, $userLogged);
     $arrayDelIndex = [];
+    $filter = '';
 
     if (!empty($participation)) {
         /** If the user does have participation */
@@ -64,7 +67,7 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
             'DRAFT' => ['CASES_DRAFT', 'draft'],
             'CANCELLED' => ['CASES_SENT', 'sent'],
             'COMPLETED' => ['CASES_SENT', 'sent'],
-            'PARTICIPATED' => ['CASES_SENT', 'sent'],
+            'PARTICIPATED' => ['CASES_SENT', 'mycases'],
             'UNASSIGNED' => ['CASES_SELFSERVICE', 'unassigned'],
             'PAUSED' => ['CASES_PAUSED', 'paused']
         ];
@@ -72,6 +75,20 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
         $confDefaultOption = $arrayDefaultOption[$participation['APP_STATUS']][0];
         $action = $arrayDefaultOption[$participation['APP_STATUS']][1];
         $arrayDelIndex = $participation['DEL_INDEX'];
+        $hasParticipation = Delegation::participation($openAppUid, $userLogged);
+        // The Participated status needs to define the filter: InProgress or Completed
+        if ($participation['APP_STATUS'] === 'PARTICIPATED') {
+            // If the user has some participation in the case is important define the current status of the case
+            if ($hasParticipation) {
+                $caseInfo = Application::getCase($openAppUid);
+                if ($caseInfo['APP_STATUS'] === Application::STATUS_DRAFT_NAME || $caseInfo['APP_STATUS'] === Application::STATUS_TODO_NAME) {
+                    $filter = 'inProgress';
+                }
+                if ($caseInfo['APP_STATUS'] === Application::STATUS_COMPLETED_NAME || $caseInfo['APP_STATUS'] === Application::STATUS_CANCELED_NAME) {
+                    $filter = 'completed';
+                }
+            }
+        }
     } else {
         /** If the user does not have participation */
         $action = 'jump';
@@ -95,10 +112,10 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
     if (count($arrayDelIndex) === 1) {
         //We will to open the case: one thread
         $openCaseIE = true;
-        $defaultOption = '../cases/open?APP_UID=' . $openAppUid . '&DEL_INDEX=' . $arrayDelIndex[0] . '&action=' . $action . '&openApplicationUid=' . $appNumber;
+        $defaultOption = '../cases/open?APP_UID=' . $openAppUid . '&DEL_INDEX=' . $arrayDelIndex[0] . '&action=' . $action . '&openApplicationUid=' . $appNumber . '&filter='. $filter;
     } else {
         //We will to show the list: more than one thread
-        $defaultOption = '../cases/casesListExtJs?action=' . $action . '&openApplicationUid=' . $appNumber;
+        $defaultOption = '../cases/casesListExtJs?action=' . $action . '&openApplicationUid=' . $appNumber . '&filter='. $filter;
     }
 } else {
     if (isset($_GET['id'])) {

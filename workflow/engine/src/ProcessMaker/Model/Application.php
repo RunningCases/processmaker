@@ -16,8 +16,11 @@ class Application extends Model
     const STATUS_DRAFT = 1;
     const STATUS_DRAFT_NAME = 'DRAFT';
     const STATUS_TODO = 2;
+    const STATUS_TODO_NAME = 'TO_DO';
     const STATUS_COMPLETED = 3;
+    const STATUS_COMPLETED_NAME = 'COMPLETED';
     const STATUS_CANCELED = 4;
+    const STATUS_CANCELED_NAME = 'CANCELLED';
     // Status name and status id
     public static $app_status_values = ['DRAFT' => 1, 'TO_DO' => 2, 'COMPLETED' => 3, 'CANCELLED' => 4];
 
