@@ -100,6 +100,7 @@ import api from "../../api/index";
 import utils from "../../utils/utils";
 import defaultMixin from "./defaultMixins.js";
 import customMixin from "./customMixins";
+import { Event } from "vue-tables-2";
 
 export default {
     name: "AdvancedSearch",
@@ -183,7 +184,6 @@ export default {
                     selectAllMode: "page",
                     programmatic: false,
                 },
-                sortable: [],
                 sortable: ["case_number"],
                 requestFunction(data) {
                     return this.$parent.$parent.getCasesForVueTable(data);
@@ -201,6 +201,9 @@ export default {
                 "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
             }
         };
+    },
+    mounted() {
+        Event.$on('clearSortEvent', this.clearSort);
     },
     watch: {
         id: function() {
@@ -593,6 +596,14 @@ export default {
          */
         onPostNotes() {
             this.$refs["vueTable"].getData();
+        },
+        /**
+         * Reset the sort in the table
+         */
+        clearSort() {
+            if (this.$refs['vueTable']) {
+                this.$refs['vueTable'].setOrder(false);
+            }
         },
     },
 };
