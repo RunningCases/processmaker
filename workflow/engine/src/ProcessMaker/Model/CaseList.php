@@ -467,7 +467,7 @@ class CaseList extends Model
                     }
                     $default[] = [
                         'field' => $column['fld_name'],
-                        'name' => $column['fld_name'],
+                        'name' => $column['fld_description'],
                         'type' => $column['fld_type'],
                         'source' => $result['rep_tab_name'],
                         'typeSearch' => 'search text',
@@ -527,7 +527,7 @@ class CaseList extends Model
                     }
                     $fields[] = [
                         'field' => $column['fld_name'],
-                        'name' => $column['fld_name'],
+                        'name' => $column['fld_description'],
                         'type' => $column['fld_type'],
                         'source' => $result['rep_tab_name'],
                         'typeSearch' => 'search text',
