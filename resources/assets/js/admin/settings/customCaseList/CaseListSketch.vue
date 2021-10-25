@@ -4,7 +4,7 @@
         <div class="demo">
             <div class="container">
                 <h5>{{ $t("ID_NEW_CASES_LISTS") }} ({{ module.title }})</h5>
-                <b-form @submit="onSubmit">
+                <b-form>
                     <b-row>
                         <b-col cols="6">
                             <b-row>
@@ -284,7 +284,7 @@
                         <b-button variant="outline-primary" @click="showPreview">{{
                             $t("ID_PREVIEW")
                         }}</b-button>
-                        <b-button type="submit" variant="primary">{{
+                        <b-button variant="primary" @click="onSubmit">{{
                             $t("ID_SAVE")
                         }}</b-button>
                     </div>
