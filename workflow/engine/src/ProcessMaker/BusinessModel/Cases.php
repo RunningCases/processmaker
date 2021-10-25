@@ -2253,8 +2253,8 @@ class Cases
                     $rsCriteria2->next();
 
                     $row2 = $rsCriteria2->getRow();
-
-                    if ($process->exists($row2["PRO_UID"])) {
+                    $proUid = isset($row2["PRO_UID"]) ? $row2["PRO_UID"] : '';
+                    if (!empty($proUid) && $process->exists($proUid)) {
                         $row["TAS_TITLE"] = $row2["TAS_TITLE"];
                         $row["TAS_DESCRIPTION"] = $row2["TAS_DESCRIPTION"];
                     }
