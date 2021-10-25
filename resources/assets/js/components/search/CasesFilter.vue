@@ -355,7 +355,7 @@ export default {
             self.searchTags.push(self.processName.id);
             self.byProcessName = self.processName.id;
             self.itemModel[self.processName.id] = self.processName;
-            self.itemModel[self.processName.id].autoShow = typeof self.processName.autoShow !== "undefined" ? self.processName.autoShow  : true;
+            self.itemModel[self.processName.id].autoShow = typeof item.autoShow !== "undefined" ? item.autoShow : self.processName.autoShow;
         }
       });
     },
