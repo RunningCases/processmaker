@@ -78,7 +78,12 @@ class Participated extends AbstractCases
         }
         // Specific task
         if ($this->getTaskId()) {
-            $query->task($this->getTaskId());
+            $queryTask = Delegation::query()->select('APP_NUMBER');
+            $queryTask->task($this->getTaskId());
+            $results = $queryTask->get();
+            $result = $results->values()->toArray();
+            // Filter the cases related to the specific task
+            $query->specificCases($result);
         }
         // Specific status
         if ($this->getCaseStatus()) {
