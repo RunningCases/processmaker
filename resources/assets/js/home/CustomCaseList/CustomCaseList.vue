@@ -4,6 +4,15 @@
         <modal-new-request ref="newRequest"></modal-new-request>
         <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
         <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
+        <b-alert
+            :show="dataAlert.dismissCountDown"
+            dismissible
+            :variant="dataAlert.variant"
+            @dismissed="dataAlert.dismissCountDown = 0"
+            @dismiss-count-down="countDownChanged"
+        >
+            {{ dataAlert.message }}
+        </b-alert>
         <CustomFilter
             :filters="filters"
             :title="titleMap[data.pageParent].label"
@@ -252,6 +261,12 @@ export default {
     data() {
         let that = this;
         return {
+            dataAlert: {
+                dismissSecs: 5,
+                dismissCountDown: 0,
+                message: "",
+                variant: "info",
+            },
             titleMap: {
                 inbox: {
                     icon:"fas fa-check-circle",
@@ -1032,6 +1047,24 @@ export default {
             if (this.showEllipsis) {
                 this.dataEllipsis = this.ellipsisItemFactory(data, this.data.pageParent);
             }
+        },
+        /**
+         * Show the alert message
+         * @param {string} message - message to be displayen in the body
+         * @param {string} type - alert type
+         */
+        showAlert(message, type) {
+            this.dataAlert.message = message;
+            this.dataAlert.variant = type || "info";
+            this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+        },
+        /**
+         * Updates the alert dismiss value to update
+         * dismissCountDown and decrease
+         * @param {mumber}
+         */
+        countDownChanged(dismissCountDown) {
+            this.dataAlert.dismissCountDown = dismissCountDown;
         },
         /**
          * Claim case
