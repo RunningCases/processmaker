@@ -58,7 +58,7 @@ export default {
 
     setTimeout(() => {
       let that = this;
-      if (this.dataCase.APP_UID) {
+      if (this.dataCase.APP_UID && this.dataCase.PRO_UID) {
         api.cases.debugStatus(this.dataCase)
           .then((response) => {
             if (response.data) {
