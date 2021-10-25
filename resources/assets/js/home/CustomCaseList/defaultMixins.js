@@ -138,6 +138,7 @@ export default {
                             product,
                             newItems = [];
                         that.filterItems = [];
+                        that.headings = {};
                         response.data.columns.forEach((item) => {
                             if (item.enableFilter) {
                                 if (that.availableItems[that.itemMap[item.field]]) {
@@ -149,6 +150,7 @@ export default {
                                     }
                                 }
                             }
+                            that.headings[item.field] = item.name;
                             columns.push(item.field);
                         });
                         that.filterItems = newItems;

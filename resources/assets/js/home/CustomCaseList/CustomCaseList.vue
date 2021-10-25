@@ -43,7 +43,7 @@
             <div slot="case_number" slot-scope="props">
                 {{ props.row.CASE_NUMBER }}
             </div>
-            <div slot="thread_title" slot-scope="props">
+            <div slot="case_title" slot-scope="props">
                 {{ props.row.THREAD_TITLE }}
             </div>
             <div slot="process_name" slot-scope="props">
@@ -746,6 +746,7 @@ export default {
                             product,
                             newItems = [];
                         that.filterItems = [];
+                        that.headings = {};
                         response.data.columns.forEach((item) => {
                             if (item.enableFilter) {
                                 if (that.availableItems[that.itemMap[item.field]]) {
@@ -757,6 +758,7 @@ export default {
                                     }
                                 }
                             }
+                            that.headings[item.field] = item.name;
                             columns.push(item.field);
                         });
                         that.filterItems = newItems;
