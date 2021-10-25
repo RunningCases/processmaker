@@ -53232,8 +53232,8 @@ msgstr "Number of Tasks Status per Process"
 # TRANSLATION
 # LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK
 #: LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK
-msgid "Number of Tasks Status per Process by task status"
-msgstr "Number of Tasks Status per Process by task status"
+msgid "Number of Tasks by Status and Process"
+msgstr "Number of Tasks by Status and Process"
 
 # TRANSLATION
 # LABEL/ID_DRILL_DOWN_RISK_MATRIX
