@@ -399,8 +399,8 @@ export default {
      * @param {object} selection
      */
     onClickCaseMarker(selection) {
-      let process = this.data[1].id,
-        caseList = this.data[0].id.toLowerCase();
+      let process = this.data[0].id,
+        caseList = this.data[1].id.toLowerCase();
       switch (caseList) {
         case "inbox":
         case "draft":
