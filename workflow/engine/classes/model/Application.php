@@ -232,7 +232,9 @@ class Application extends BaseApplication
             $this->setAppParallel('N');
             $this->setAppInitUser($userUid);
             $user = UsersPeer::retrieveByPK($userUid);
-            $this->setAppInitUserId($user->getUsrId());
+            if ($user) {
+                $this->setAppInitUserId($user->getUsrId());
+            }
             $this->setAppCurUser($userUid);
             $this->setAppCreateDate('now');
             $this->setAppInitDate('now');
