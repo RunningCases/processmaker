@@ -515,7 +515,7 @@ export default {
         addMenuSearchChild(data) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.id === "advanced-search";
+                return o.id === "CASES_SEARCH";
             });
             if (advSearch) {
                 const index = advSearch.child.findIndex(function(o) {
@@ -533,7 +533,7 @@ export default {
                         title: data.name,
                         icon: "fas fa-circle",
                         id: data.id,
-                        page: "/advanced-search",
+                        page: "advanced-search",
                     });
                 }
             }
@@ -565,7 +565,7 @@ export default {
         removeMenuSearchChild(id) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.id === "advanced-search";
+                return o.id === "CASES_SEARCH";
             });
             if (advSearch) {
                 const index = advSearch.child.findIndex(function(o) {
