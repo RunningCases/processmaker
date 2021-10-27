@@ -4,12 +4,14 @@ export default {
   data() {
     let that = this;
     return {
-      typeView: "GRID",
+      typeView: this.data.settings && this.data.settings.view && this.data.settings.view.typeView
+        ? this.data.settings.view.typeView
+        : "GRID",
       random: 1,
       dataCasesList: [],
       defaultColumns: [
         "case_number",
-        "case_title",
+        "thread_title",
         "process_name",
         "task",
         "send_by",
@@ -24,6 +26,9 @@ export default {
             title: "Grid",
             onClick(action) {
               that.typeView = "GRID";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-table",
           },
@@ -32,6 +37,9 @@ export default {
             title: "List",
             onClick(action) {
               that.typeView = "LIST";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-list",
           },
@@ -40,6 +48,9 @@ export default {
             title: "Card",
             onClick(action) {
               that.typeView = "CARD";
+              that.updateRootSettings("view", {
+                typeView: that.typeView
+              });
             },
             icon: "fas fa-th",
           },
@@ -48,11 +59,17 @@ export default {
       optionsVueView: {
         limit: 10,
         dblClick: (event, item, options) => {
-          this.openCase(item);
+          if (this.data.pageParent === "paused") {
+            this.showModalUnpauseCase(item);
+          } else if(this.data.pageParent === "unassigned") {
+            this.claimCase(item);
+          } else {
+            this.openCase(item);
+          }
         },
         headings: {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
@@ -80,31 +97,79 @@ export default {
     */
     getCases(data) {
       let that = this,
-        dt,
-        typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
-        start = 0,
-        limit = data.limit,
-        filters = {};
-      filters = {
-        paged: "0," + limit,
-      };
-
-      _.forIn(this.filters, function (item, key) {
-        filters[item.filterVar] = item.value;
-      });
-      return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases[typeList](filters)
-          .then((response) => {
-            dt = that.formatDataResponse(response.data.data);
-            resolutionFunc({
-              data: dt,
-              count: response.data.total,
+                dt,
+                paged,
+                limit = data.limit,
+                start = data.page === 1 ? 0 : limit * (data.page - 1),
+                filters = {},
+                sort = "",
+                id = this.data.customListId;
+            filters = {
+                paged: paged,
+                limit: limit,
+                offset: start,
+            };
+            if (_.isEmpty(that.filters) && this.data.settings) {
+                _.forIn(this.data.settings.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            } else {
+                _.forIn(this.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            }
+            sort = that.prepareSortString(data);
+            if (sort) {
+                filters["sort"] = sort;
+            }
+            return new Promise((resolutionFunc, rejectionFunc) => {
+                api.custom[that.data.pageParent]
+                    ({
+                        id,
+                        filters,
+                    })
+                    .then((response) => {
+                        let tmp,
+                            columns = [],
+                            product,
+                            newItems = [];
+                        that.filterItems = [];
+                        that.headings = {};
+                        response.data.columns.forEach((item) => {
+                            if (item.enableFilter) {
+                                if (that.availableItems[that.itemMap[item.field]]) {
+                                    newItems.push(that.availableItems[that.itemMap[item.field]]);
+                                } else {
+                                    product = this.filterItemFactory(item)
+                                    if (product) {
+                                        newItems.push(product);
+                                    }
+                                }
+                            }
+                            that.headings[item.field] = item.name;
+                            columns.push(item.field);
+                        });
+                        that.filterItems = newItems;
+                        dt = that.formatDataResponse(response.data.data);
+                        that.cardColumns = columns;
+                        if (that.isFistTime) {
+                            that.filters = that.data.settings && that.data.settings.filters ? that.data.settings.filters : {};
+                            that.columns = that.data.settings && that.data.settings.columns ? that.data.settings.columns :  that.getTableColumns(columns);
+                            that.settingOptions = that.formatColumnSettings(columns);
+                        }
+                        resolutionFunc({
+                            data: dt,
+                            count: response.data.total,
+                        });
+                    })
+                    .catch((e) => {
+                        rejectionFunc(e);
+                    });
             });
-          })
-          .catch((e) => {
-            rejectionFunc(e);
-          });
-      });
     },
     /**
     * Get cases for Vue Card View
@@ -112,15 +177,14 @@ export default {
     getCasesViewMore(data) {
       let that = this,
         dt,
-        paged,
-        typeList = that.data.pageParent == "inbox"? "todo": that.data.pageParent,
+        typeList = that.data.pageParent == "inbox" ? "todo" : that.data.pageParent,
         limit = data.limit,
         start = data.page === 1 ? 0 : limit * (data.page - 1),
         filters = {};
-      paged = start + "," + limit;
 
       filters = {
-        paged: paged,
+        limit: limit,
+        offset: start
       };
       _.forIn(this.filters, function (item, key) {
         if (filters && item.value) {
@@ -191,8 +255,25 @@ export default {
      * @returns 
      */
     formatColumnSettings(columns) {
-      return _.map(_.pick(this.headings, columns), (value, key) => {
-        return { value, key }
+      return _.map(columns, (value, key) => {
+        if (this.headings[value]) {
+          return { value: this.headings[value], key: value };
+        }
+        return { value, key: value }
+      });
+    },
+    /**
+     * Update settings for user
+     * @param {string} key
+     * @param {*} data
+     */
+    updateRootSettings(key, data) {
+      this.$emit("updateSettings", {
+        data: data,
+        key: key,
+        page: this.data.pageParent,
+        type: "custom",
+        id: this.data.customListId
       });
     }
   }

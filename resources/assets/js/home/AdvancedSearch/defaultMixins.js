@@ -2,7 +2,9 @@ import api from "../../api/index";
 export default {
     data() {
         return {
-            random: 1
+            random: 1,
+            idContextMenu: "pm-ad-context-menu",
+            contextMenuItems: []
         };
     },
     methods: {
@@ -41,6 +43,46 @@ export default {
             }
             this.columns = cols;
             this.random = _.random(0, 10000000000);
+        },
+        /**
+         * Row click event handler
+         * @param {*} event 
+         */
+        configRowClick(event) {
+            if (event.event.button === 2) {
+                this.onRowContextMenu(event);
+            } else {
+                this.onRowClick(event);
+            }
+        },
+        /**
+         * Context Menu event handler
+         * @param {*} event 
+         */
+        onRowContextMenu(event) {
+            this.$refs[this.idContextMenu].showMenu(event.event, event.row);
+        },
+        /**
+         * Row click event handler
+         * @param {*} event 
+         */
+        onRowClick(event) {
+            var self = this;
+            self.clickCount += 1;
+            if (self.clickCount === 1) {
+                self.singleClickTimer = setTimeout(function () {
+                    self.clickCount = 0;
+                }, 400);
+            } else if (self.clickCount === 2) {
+                clearTimeout(self.singleClickTimer);
+                self.clickCount = 0;
+                self.openCaseDetail(event.row);
+            }
+        },
+        /**
+         * Handler for item context menu clicked
+         */
+        contextMenuItemClicked(event) {
         }
     }
 }

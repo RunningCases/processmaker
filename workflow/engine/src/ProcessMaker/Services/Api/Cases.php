@@ -1184,7 +1184,7 @@ class Cases extends Api
 
             return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (Exception $e) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+            throw new RestException(401, $e->getMessage());
         }
     }
 

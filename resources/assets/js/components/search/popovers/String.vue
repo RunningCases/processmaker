@@ -18,7 +18,7 @@
                         <b-form-input
                             id="name-input"
                             v-model="filter[0].value"
-                            :placeholder="$t('ID_CASE_THREAD_TITLE_NAME')"
+                            :placeholder="info.placeholder"
                             :state="valueState"
                             required
                         ></b-form-input>

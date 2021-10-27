@@ -56,6 +56,7 @@ export default {
       return "btn v-btn-request " + cls;
     },
     show() {
+      this.filter = "";
       this.$refs["my-modal"].show();
       this.getProcess();
     },
@@ -97,10 +98,8 @@ export default {
     filterProcesses(processes) {
       let that = this;
       return _.filter(processes, (p) => {
-        return (
-          _.toLower(p.title).search(_.lowerCase(that.filter)) != -1 ||
-          _.toLower(p.description).search(_.lowerCase(that.filter)) != -1
-        );
+        return p.title.toLowerCase().indexOf(that.filter.toLowerCase()) !== -1 ||
+          p.description.toLowerCase().indexOf(that.filter.toLowerCase()) !== -1;
       });
     },
     formatResponseGetProcess(response) {

@@ -732,8 +732,12 @@ class Ajax
             }
             // End save
 
-            $case = new Cases();
-            $case->pauseCase($appUid, $delIndex, $_SESSION['USER_LOGGED'], $unpauseDate);
+            $case = new WsBase();
+            $response = $case->pauseCase($appUid, $delIndex, $_SESSION['USER_LOGGED'], $unpauseDate);
+            $response = (object) $response;
+            if ($response->status_code == 100) {
+                throw new Exception($response->message);
+            }
             $app = new Application();
             $caseData = $app->load($appUid);
             $data['APP_NUMBER'] = $caseData['APP_NUMBER'];

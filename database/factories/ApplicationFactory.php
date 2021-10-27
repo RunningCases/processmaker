@@ -56,6 +56,7 @@ $factory->state(\ProcessMaker\Model\Application::class, 'foreign_keys', function
         'APP_PROC_CODE' => '',
         'APP_PARALLEL' => 'N',
         'APP_INIT_USER' => $user->USR_UID,
+        'APP_INIT_USER_ID' => $user->USR_ID,
         'APP_CUR_USER' => $user->USR_UID,
         'APP_PIN' => G::generateUniqueID(),
         'APP_CREATE_DATE' => $faker->dateTime(),
@@ -84,10 +85,14 @@ $factory->state(\ProcessMaker\Model\Application::class, 'todo', function (Faker 
 });
 
 $factory->state(\ProcessMaker\Model\Application::class, 'draft', function (Faker $faker) {
+    $user = factory(\ProcessMaker\Model\User::class)->create();
+
     return [
         'APP_NUMBER' => $faker->unique()->numberBetween(1000),
         'APP_STATUS_ID' => 1,
-        'APP_STATUS' => 'DRAFT'
+        'APP_STATUS' => 'DRAFT',
+        'APP_INIT_USER' => $user->USR_UID,
+        'APP_INIT_USER_ID' => $user->USR_ID,
     ];
 });
 

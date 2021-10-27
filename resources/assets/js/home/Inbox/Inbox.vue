@@ -4,6 +4,15 @@
     <modal-new-request ref="newRequest"></modal-new-request>
     <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
     <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
+    <b-alert
+        :show="dataAlert.dismissCountDown"
+        dismissible
+        :variant="dataAlert.variant"
+        @dismissed="dataAlert.dismissCountDown = 0"
+        @dismiss-count-down="countDownChanged"
+    >
+        {{ dataAlert.message }}
+    </b-alert>
     <CasesFilter
       :filters="filters"
       :title="$t('ID_INBOX')"
@@ -34,8 +43,8 @@
       <div slot="case_number" slot-scope="props">
         {{ props.row.CASE_NUMBER }}
       </div>
-      <div slot="case_title" slot-scope="props">
-        {{ props.row.CASE_TITLE }}
+      <div slot="thread_title" slot-scope="props">
+        {{ props.row.THREAD_TITLE }}
       </div>
       <div slot="process_name" slot-scope="props">
         {{ props.row.PROCESS_NAME }}
@@ -58,8 +67,8 @@
       </div>
       <div slot="priority" slot-scope="props">{{ props.row.PRIORITY }}</div>
       <div slot="actions" slot-scope="props">
-        <div @click="updateDataEllipsis(props.row)">
-          <ellipsis :ref="`ellipsis-${props.row.TAS_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+        <div @mouseover="updateDataEllipsis(props.row)">
+          <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
         </div>
       </div>
     </v-server-table>
@@ -76,8 +85,8 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
-              <ellipsis :ref="`ellipsis-${props.item.TAS_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
+              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
           </b-col>
         </b-row>
@@ -87,12 +96,12 @@
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
       </div>
-      <div slot="case_title" slot-scope="props" class="v-card-text">
+      <div slot="thread_title" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
-          >{{ props["item"]["CASE_TITLE"] }}
+        <span class="v-card-text-light">
+          {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
@@ -125,6 +134,14 @@
         >
         <span class="v-card-text-light">
           <TaskCell :data="props.item.TASK" />
+        </span>
+      </div>
+      <div slot="priority" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PRIORITY"] }}
         </span>
       </div>
       <div slot="send_by" slot-scope="props" class="v-card-text">
@@ -149,8 +166,8 @@
             </div>
           </b-col>
           <b-col sm="12">
-            <div class="ellipsis-container" @click="updateDataEllipsis(props.item)">
-              <ellipsis :ref="`ellipsis-${props.item.TAS_UID}`" v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+            <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
+              <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
             </div>
           </b-col>
         </b-row>
@@ -160,12 +177,12 @@
           >{{ props["headings"][props.column] }} : {{ props["item"]["CASE_NUMBER"] }}</span
         >
       </div>
-      <div slot="case_title" slot-scope="props" class="v-card-text">
+      <div slot="thread_title" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
-        <span class="v-card-text-light"
-          >{{ props["item"]["CASE_TITLE"] }}
+        <span class="v-card-text-light">
+          {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
@@ -192,6 +209,14 @@
           >{{ props["item"]["DELEGATION_DATE"] }}
         </span>
       </div>
+      <div slot="priority" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PRIORITY"] }}
+        </span>
+      </div>
       <div slot="task" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
@@ -209,6 +234,10 @@
         </span>
       </div>
     </VueListView>
+    <ModalComments
+        ref="modal-comments"
+        @postNotes="onPostNotes"
+    ></ModalComments>
   </div>
 </template>
 
@@ -227,6 +256,7 @@ import defaultMixins from "./defaultMixins";
 import Ellipsis from '../../components/utils/ellipsis.vue';
 import ModalPauseCase from '../modal/ModalPauseCase.vue';
 import ModalReassignCase from '../modal/ModalReassignCase.vue';
+import ModalComments from "../modal/ModalComments.vue";
 import { Event } from 'vue-tables-2';
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 
@@ -246,14 +276,21 @@ export default {
     ModalPauseCase,
     ModalReassignCase,
     CurrentUserCell,
+    ModalComments
   },
   props: ["defaultOption", "settings"],
   data() {
     let that = this;
     return {
+      dataAlert: {
+          dismissSecs: 5,
+          dismissCountDown: 0,
+          message: "",
+          variant: "info",
+      },
       columMap: {
           case_number: "APP_NUMBER",
-          case_title: "DEL_TITLE",
+          thread_title: "DEL_TITLE",
           process_name: "PRO_TITLE"
       },
       newCase: {
@@ -273,7 +310,7 @@ export default {
               : [
                   "detail",
                   "case_number",
-                  "case_title",
+                  "thread_title",
                   "process_name",
                   "task",
                   "send_by",
@@ -289,7 +326,7 @@ export default {
         headings: {
           detail: this.$i18n.t("ID_DETAIL_CASE"),
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-          case_title: this.$i18n.t("ID_CASE_TITLE"),
+          thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
@@ -361,31 +398,23 @@ export default {
       that.$emit("updateSettings", {
         data: data,
         key: "orderBy",
-        parent: this.page,
+        page: "inbox",
         type: "normal",
         id: this.id
       });
     });
+    Event.$on('clearSortEvent', this.clearSort);
   },
   watch: {
     columns: function (val) {
       this.$emit("updateSettings", {
         data: val,
         key: "columns",
-        parent: this.page,
+        page: "inbox",
         type: "normal",
         id: this.id
       });
-    },  
-    filters: function (val) {
-      this.$emit("updateSettings", {
-        data: val,
-        key: "filters",
-        parent: this.page,
-        type: "normal",
-        id: this.id
-      });
-    },
+    }
   },
   computed: {
     /**
@@ -432,9 +461,8 @@ export default {
             DEL_INDEX: params.del_index,
           });
           this.$emit("cleanDefaultOption");
-        }
-        //force to search in the parallel tasks
-        if (params && params.openapplicationuid) {
+        } else if (params && params.openapplicationuid) { 
+          //force to search in the parallel tasks
           this.onUpdateFilters({
             params: [
               {
@@ -446,7 +474,7 @@ export default {
                 autoShow: false,
               },
             ],
-            refresh: false,
+            refresh: true,
           });
           this.$emit("cleanDefaultOption");
         }
@@ -528,7 +556,7 @@ export default {
       _.forEach(response, (v) => {
         data.push({
           CASE_NUMBER: v.APP_NUMBER,
-          CASE_TITLE: v.DEL_TITLE,
+          THREAD_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
           TASK: [
             {
@@ -621,8 +649,41 @@ export default {
       });
     },
     onRemoveFilter(data) {},
+    /**
+     * Prepare the data to be updated
+     * @param {object} data
+     */
+    prepareAndUpdate(data) {
+        let canUpdate = false,
+            newFilters = [];
+        data.params.forEach(item =>  {
+            const container  = {...item};
+            container.autoShow = false;
+            if (item.value !== "") {
+                newFilters.push(container);
+                canUpdate = true;
+            }
+        });
+        if (data.params.length == 0) {
+          canUpdate = true;
+        } 
+        if (canUpdate) {
+          this.$emit("updateSettings", {
+            data: newFilters,
+            key: "filters",
+            page: "inbox",
+            type: "normal",
+            id: this.id
+          });
+        }
+    },
+    /**
+     * Update event handler
+     * @param {object} data
+     */
     onUpdateFilters(data) {
       this.filters = data.params;
+      this.prepareAndUpdate(data);
       if (data.refresh) {
         this.$nextTick(() => {
           if (this.typeView === "GRID") {
@@ -688,7 +749,7 @@ export default {
                 name: "case note",
                 icon: "far fa-comments",
                 fn: function() {
-                  that.openCaseDetail(data);
+                  that.openComments(data);
                 }
               },
               reassign: {
@@ -709,6 +770,56 @@ export default {
           }
         }
       },
+      /**
+       * Show the alert message
+       * @param {string} message - message to be displayen in the body
+       * @param {string} type - alert type
+       */
+      showAlert(message, type) {
+          this.dataAlert.message = message;
+          this.dataAlert.variant = type || "info";
+          this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+      },
+      /**
+       * Updates the alert dismiss value to update
+       * dismissCountDown and decrease
+       * @param {mumber}
+       */
+      countDownChanged(dismissCountDown) {
+          this.dataAlert.dismissCountDown = dismissCountDown;
+      },
+      /**
+       * Open the case notes modal
+       * @param {object} data - needed to create the data
+       */
+      openComments(data) {
+          let that = this;
+          api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
+              that.$refs["modal-comments"].dataCase = data;
+              that.$refs["modal-comments"].show();
+          });
+      },
+      /**
+       * Post notes event handler
+       */
+      onPostNotes() {
+          this.$refs["vueTable"].getData();
+      },
+      /**
+       * Reset the sort in the table
+       */
+      clearSort() {
+          if (this.$refs['vueTable']) {
+            this.$refs['vueTable'].setOrder(false);
+            this.$emit("updateSettings", {
+                data: [],
+                key: "orderBy",
+                page: "inbox",
+                type: "normal",
+                id: this.id
+            });
+          }
+      }
   },
 };
 </script>
@@ -740,6 +851,7 @@ export default {
 
 .ellipsis-container {
   margin-top: 5em;
+  float: right;
 }
 
 .v-pm-card-info{

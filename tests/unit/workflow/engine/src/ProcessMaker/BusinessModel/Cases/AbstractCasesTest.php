@@ -144,6 +144,22 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This check the getter and setter related to the user sender
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setSendBy()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getSendBy()
+     * @test
+     */
+    public function it_return_set_get_user_send()
+    {
+        $users = factory(User::class)->create();
+        $absCases = new AbstractCases();
+        $absCases->setSendBy($users->USR_UID);
+        $actual = $absCases->getSendBy();
+        $this->assertEquals($users->USR_UID, $actual);
+    }
+
+    /**
      * This check the getter and setter related to the priority
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setPriority()

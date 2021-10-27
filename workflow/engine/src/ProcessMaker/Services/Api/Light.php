@@ -150,7 +150,7 @@ class Light extends Api
         );
         $response = array();
         foreach ($data as $key => $counterList) {
-            if (isset($structure[$counterList['item']])) {
+            if (isset($structure[isset($counterList['item']) ? $counterList['item'] : null])) {
                 $name = $structure[$counterList['item']];
                 $response[$name] = $counterList['count'];
             } else {
@@ -1830,6 +1830,10 @@ class Light extends Api
         try {
             $usr_uid = $this->getUserId();
             $cases = new BusinessModelCases();
+            //for propel connection is required $_SESSION['PROCESS']
+            if (!empty($pro_uid)) {
+                $_SESSION['PROCESS'] = $pro_uid;
+            }
             $response = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid, $pro_uid, $act_uid, $app_index);
 
             return DateTime::convertUtcToTimeZone($response);

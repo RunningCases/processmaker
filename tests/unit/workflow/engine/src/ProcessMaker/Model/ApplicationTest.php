@@ -104,7 +104,7 @@ class ApplicationTest extends TestCase
     public function it_return_scope_creator()
     {
         $table = factory(Application::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->creator($table->APP_INIT_USER)->get());
+        $this->assertCount(1, $table->creator($table->APP_INIT_USER_ID)->get());
     }
 
     /**

@@ -327,6 +327,9 @@ class Process extends BaseProcess
                     if (isset($aData['PRO_PROCESS_OWNER'])) {
                         $oPro->setProCreateUser($aData['PRO_PROCESS_OWNER']);
                     }
+                    if (isset($aData['CATEGORY_ID'])) {
+                        $oPro->setCategoryId((!empty($aData["CATEGORY_ID"])) ? $aData["CATEGORY_ID"]: 0);
+                    }
                     $res = $oPro->save();
                     $con->commit();
 

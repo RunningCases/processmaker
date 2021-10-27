@@ -1,6 +1,8 @@
 <template>
   <div>
-    <tabs @changed="changed">
+    <tabs 
+      ref="tabs" 
+      @changed="changed">
       <tab :name="$t('ID_STATUS')">
         <CaseStatus :data="dataCaseStatus"> </CaseStatus>
       </tab>

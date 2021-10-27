@@ -1,10 +1,10 @@
 <template>
   <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
     <div class="p-1 v-flex">
-      <h6 class="v-search-title">{{$t("ID_DRILL_DOWN_RISK_MATRIX")}}</h6>
+      <h6 class="v-search-title">{{ $t("ID_DRILL_DOWN_RISK_MATRIX") }}</h6>
       <div>
         <BreadCrumb
-          :options="breadCrumbs.data"
+          :options="dataBreadcrumbs()"
           :settings="settingsBreadcrumbs"
         />
         <div class="vp-width-p30 vp-inline-block">
@@ -36,9 +36,7 @@
           ></b-form-datepicker>
         </div>
         <div class="vp-inline-block">
-          <label class="form-label">{{
-            $t("ID_TOP")
-          }}</label>
+          <label class="form-label">{{ $t("ID_TOP") }}</label>
         </div>
         <div class="vp-inline-block">
           <multiselect
@@ -127,11 +125,23 @@ export default {
     let that = this;
     return {
       currentSelection: null,
-      dateFrom: "",
-      dateTo: "",
-      dateNow: "",
-      size: { name: this.$t("ID_ALL"), id: "all" },
-      riskType: "ON_TIME",
+      dateFrom:
+        this.data[3] && this.data[3].data.dateFrom
+          ? this.data[3].data.dateFrom
+          : moment().subtract(30, "d").format("YYYY-MM-DD"),
+      dateTo:
+        this.data[3] && this.data[3].data.dateTo
+          ? this.data[3].data.dateTo
+          : moment().format("YYYY-MM-DD"),
+      dateNow: moment().format("YYYY-MM-DD h:mm:ss a"),
+      size:
+        this.data[3] && this.data[3].data.size
+          ? this.data[3].data.size
+          : { name: this.$t("ID_ALL"), id: "all" },
+      riskType:
+        this.data[3] && this.data[3].data.riskType
+          ? this.data[3].data.riskType
+          : "ON_TIME",
       settingsBreadcrumbs: [
         {
           class: "fas fa-info-circle",
@@ -182,7 +192,7 @@ export default {
           type: "datetime",
         },
         yaxis: {
-          tickAmount: 1,
+          tickAmount: 7,
         },
         tooltip: {
           custom: function ({ series, seriesIndex, dataPointIndex, w }) {
@@ -195,6 +205,7 @@ export default {
   created() {},
   mounted() {
     this.getBodyHeight();
+    this.loadOption();
   },
   watch: {},
   computed: {},
@@ -211,27 +222,47 @@ export default {
      * Change datepickers or radio button
      */
     changeOption() {
-      let that = this,
-        dt;
-      if (this.dateFrom && this.dateTo) {
-        dt = {
-          process: this.data[1].id,
-          caseList: this.data[0].id.toLowerCase(),
-          dateFrom: moment(this.dateFrom).format("DD/MM/YYYY"),
-          dateTo: moment(this.dateTo).format("DD/MM/YYYY"),
-          riskStatus: this.riskType,
-        };
-        this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
-        this.dateNow = moment().format("DD/MM/YYYY h:mm:ss a");
-        Api.process
-          .totalCasesByRisk(dt)
-          .then((response) => {
-            that.formatDataRange(response.data);
-          })
-          .catch((e) => {
-            console.error(err);
-          });
-      }
+        let dt;
+        if (this.dateFrom && this.dateTo) {
+            dt = {
+                process: this.data[2].id,
+                caseList: this.data[1].id.toLowerCase(),
+                dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
+                dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
+                riskStatus: this.riskType,
+            };
+            this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
+            this.dateNow = moment().format("YYYY-MM-DD h:mm:ss a");
+            this.updateSettings();
+        }
+    },
+    /**
+     * Load option saved in userConfig
+     */
+    loadOption() {
+        let that = this,
+            dt;
+        if (this.data.length > 2) {
+            if (this.dateFrom && this.dateTo) {
+                dt = {
+                    process: this.data[2].id,
+                    caseList: this.data[1].id.toLowerCase(),
+                    dateFrom: moment(this.dateFrom).format("YYYY-MM-DD"),
+                    dateTo: moment(this.dateTo).format("YYYY-MM-DD"),
+                    riskStatus: this.riskType,
+                };
+                this.size.id != "all" ? (dt["topCases"] = this.size.id) : null;
+                this.dateNow = moment().format("YYYY-MM-DD h:mm:ss a");
+                Api.process
+                  .totalCasesByRisk(dt)
+                  .then((response) => {
+                      that.formatDataRange(response.data);
+                  })
+                  .catch((e) => {
+                      console.error(e);
+                  });
+            }
+        }
     },
     /**
      * Format response fromn API
@@ -272,9 +303,7 @@ export default {
       });
 
       this.updateApexchartAxis();
-      if (this.data[0].id.toLowerCase() == "draft") {
-        this.series = []; // Draft is empty
-      } else {
+      if (this.data[1].id.toLowerCase() !== "draft") {
         this.series = serie;
       }
     },
@@ -287,6 +316,7 @@ export default {
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
               min: 0,
+              tickAmount: 7,
             },
             title: {
               text: "Overdue days",
@@ -297,6 +327,7 @@ export default {
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
               max: 0,
+              tickAmount: 7,
             },
             title: {
               text: "Days before being Overdue",
@@ -307,6 +338,7 @@ export default {
           this.$refs["LevelThreeChart"].updateOptions({
             yaxis: {
               max: 0,
+              tickAmount: 7,
             },
             title: {
               text: "Days before being At-Risk",
@@ -367,8 +399,8 @@ export default {
      * @param {object} selection
      */
     onClickCaseMarker(selection) {
-      let process = this.data[1].id,
-        caseList = this.data[0].id.toLowerCase();
+      let process = this.data[0].id,
+        caseList = this.data[1].id.toLowerCase();
       switch (caseList) {
         case "inbox":
         case "draft":
@@ -416,6 +448,44 @@ export default {
           that.$refs["modal-claim-case"].data = item;
           that.$refs["modal-claim-case"].show();
         });
+      });
+    },
+    /**
+     * Return the breadcrumbs
+     */
+    dataBreadcrumbs() {
+      let res = [];
+      if (this.data[1]) {
+        res.push({
+          label: this.data[1]["name"],
+          onClick() {},
+          color: this.data[1]["color"],
+        });
+      }
+      if (this.data[2]) {
+        res.push({
+          label: this.data[2]["name"],
+          onClick() {},
+          color: null,
+        });
+      }
+      return res;
+    },
+    /**
+     * UPdate settings user config
+     */
+    updateSettings() {
+      this.$emit("updateDataLevel", {
+        id: "level3",
+        name: this.data[2]["name"],
+        level: 3,
+        data: {
+          dateFrom: this.dateFrom,
+          dateTo: this.dateTo,
+          period: this.data[3].data.period,
+          size: this.size,
+          riskType: this.riskType,
+        },
       });
     },
   },

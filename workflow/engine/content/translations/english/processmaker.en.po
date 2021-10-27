@@ -3084,6 +3084,12 @@ msgid "By Case #"
 msgstr "By Case #"
 
 # TRANSLATION
+# LABEL/ID_BY_CASE_THREAD_TITLE
+#: LABEL/ID_BY_CASE_THREAD_TITLE
+msgid "By Case Thread Title"
+msgstr "By Case Thread Title"
+
+# TRANSLATION
 # LABEL/ID_BY_CASE_TITLE
 #: LABEL/ID_BY_CASE_TITLE
 msgid "By Case Title"
@@ -3760,6 +3766,12 @@ msgstr "Case List Fields"
 #: LABEL/ID_CASES_LIST_GRID_LOADING
 msgid "Loading Cases List, please wait..."
 msgstr "Loading Cases List, please wait..."
+
+# TRANSLATION
+# LABEL/ID_CASES_LIST_SETTINGS
+#: LABEL/ID_CASES_LIST_SETTINGS
+msgid "Cases List Settings"
+msgstr "Cases List Settings"
 
 # TRANSLATION
 # LABEL/ID_CASES_LIST_SETUP
@@ -5852,8 +5864,8 @@ msgstr "The value '{0}' is not a valid date for the format '{1}'."
 # TRANSLATION
 # LABEL/ID_DATE_UPDATED
 #: LABEL/ID_DATE_UPDATED    
-msgid "Date Created"
-msgstr "Date Created"
+msgid "Date Updated"
+msgstr "Date Updated"
 
 # TRANSLATION
 # LABEL/ID_DATE_TO_DATE
@@ -7036,6 +7048,12 @@ msgstr "Down Trigger"
 #: LABEL/ID_DRAFT
 msgid "Draft"
 msgstr "Draft"
+
+# TRANSLATION
+# LABEL/ID_DRAFT_CASES_CAN_NOT_PAUSED
+#: LABEL/ID_DRAFT_CASES_CAN_NOT_PAUSED
+msgid "Draft cases can not be paused"
+msgstr "Draft cases can not be paused"
 
 # TRANSLATION
 # LABEL/ID_DRIVE_HELP_ENABLE
@@ -20730,6 +20748,12 @@ msgid "You cannot open this case because on the reason below: <br> You do not ha
 msgstr "You cannot open this case because on the reason below: <br> You do not have permission to see this case. <br> You have not participated in this case. <br> Case is already claimed."
 
 # TRANSLATION
+# LABEL/ID_NO_PERMISSION_NO_PARTICIPATED_CASES
+#: LABEL/ID_NO_PERMISSION_NO_PARTICIPATED_CASES
+msgid "You do not have permission to see this case or you have not participated in it."
+msgstr "You do not have permission to see this case or you have not participated in it."
+
+# TRANSLATION
 # LABEL/ID_NO_PREVIOUS_USR_UID
 #: LABEL/ID_NO_PREVIOUS_USR_UID
 msgid "The previous task doesn't have any users."
@@ -24414,6 +24438,12 @@ msgid "Search by Case #:"
 msgstr "Search by Case #:"
 
 # TRANSLATION
+# LABEL/ID_SEARCH_BY_CASE_THREAD_TITLE
+#: LABEL/ID_SEARCH_BY_CASE_THREAD_TITLE
+msgid "Search by Case Thread Title:"
+msgstr "Search by Case Thread Title:"
+
+# TRANSLATION
 # LABEL/ID_SEARCH_BY_CASE_TITLE
 #: LABEL/ID_SEARCH_BY_CASE_TITLE
 msgid "Search by Case Title:"
@@ -26464,6 +26494,12 @@ msgstr "This Month"
 #: LABEL/ID_THIS_QUARTER
 msgid "This quarter"
 msgstr "This quarter"
+
+# TRANSLATION
+# LABEL/ID_THIS_USER_DOESNT_HAVE_PERMISSIONS_TO_SEE_CASE_NOTES
+#: LABEL/ID_THIS_USER_DOESNT_HAVE_PERMISSIONS_TO_SEE_CASE_NOTES
+msgid "This user doesn’t have permissions to see the case notes of this process."
+msgstr "This user doesn’t have permissions to see the case notes of this process."
 
 # TRANSLATION
 # LABEL/ID_THIS_WEEK
@@ -53170,6 +53206,12 @@ msgid "Level"
 msgstr "Level"
 
 # TRANSLATION
+# LABEL/ID_DRILL
+#: LABEL/ID_DRILL
+msgid "Drill"
+msgstr "Drill"
+
+# TRANSLATION
 # LABEL/ID_DRILL_DOWN_NAVIGATOR
 #: LABEL/ID_DRILL_DOWN_NAVIGATOR
 msgid "Drill Down Navigator"
@@ -53190,8 +53232,8 @@ msgstr "Number of Tasks Status per Process"
 # TRANSLATION
 # LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK
 #: LABEL/ID_DRILL_DOWN_NUMBER_TASKS_PROCESS_BY_TASK
-msgid "Number of Tasks Status per Process by task status"
-msgstr "Number of Tasks Status per Process by task status"
+msgid "Number of Tasks by Status and Process"
+msgstr "Number of Tasks by Status and Process"
 
 # TRANSLATION
 # LABEL/ID_DRILL_DOWN_RISK_MATRIX
@@ -53205,11 +53247,23 @@ msgstr "Risk Matrix per Process by Task Status"
 msgid "Top"
 msgstr "Top"
 
- # TRANSLATION
+# TRANSLATION
+# LABEL/ID_TOP10
+#: LABEL/ID_TOP10
+msgid "Top 10"
+msgstr "Top 10"
+
+# TRANSLATION
 # LABEL/ID_CASE_THREAD_TITLE
 #: LABEL/ID_CASE_THREAD_TITLE
 msgid "Case Thread Title"
 msgstr "Case Thread Title"
+
+# TRANSLATION
+# LABEL/ID_CASE_THREAD_TITLE_NAME
+#: LABEL/ID_CASE_THREAD_TITLE_NAME
+msgid "Case Thread Title Name"
+msgstr "Case Thread Title Name"
 
 # TRANSLATION
 # LABEL/ID_NO_MORE_INFORMATION
@@ -53258,3 +53312,9 @@ msgstr "Solid icons"
 #: LABEL/ID_SOLID_ICONS_NOT_FOUND
 msgid "Sorry, No Solid icons found!"
 msgstr "Sorry, No Solid icons found!"
+
+# TRANSLATION
+# LABEL/ID_SELECT_PROCESS_DRILL
+#: LABEL/ID_SELECT_PROCESS_DRILL
+msgid "Select a process to have the Drilling Down Options"
+msgstr "Select a process to have the Drilling Down Options"

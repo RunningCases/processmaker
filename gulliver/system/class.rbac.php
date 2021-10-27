@@ -807,7 +807,8 @@ class RBAC
         $this->sSystem = $sSystem;
         $fieldsSystem = $this->systemObj->loadByCode($sSystem);
         $fieldsRoles = $this->usersRolesObj->getRolesBySystem($fieldsSystem['SYS_UID'], $sUser);
-        $fieldsPermissions = $this->usersRolesObj->getAllPermissions($fieldsRoles['ROL_UID'], $sUser);
+        $rolUid = isset($fieldsRoles['ROL_UID']) ? $fieldsRoles['ROL_UID'] : null;
+        $fieldsPermissions = $this->usersRolesObj->getAllPermissions($rolUid, $sUser);
         $this->aUserInfo['USER_INFO'] = $this->userObj->load($sUser);
         $this->aUserInfo[$sSystem]['SYS_UID'] = $fieldsSystem['SYS_UID'];
         $this->aUserInfo[$sSystem]['ROLE'] = $fieldsRoles;

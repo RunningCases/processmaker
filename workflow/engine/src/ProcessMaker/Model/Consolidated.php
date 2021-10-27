@@ -45,11 +45,37 @@ class Consolidated extends Model
      */
     public function scopeJoinPendingCases($query, $statusId = 2)
     {
-        $query->leftJoin('APP_DELEGATION', function ($join) {
+        $query->join('APP_DELEGATION', function ($join) {
             $join->on('APP_DELEGATION.TAS_UID', '=', 'CASE_CONSOLIDATED.TAS_UID')
             ->where('APP_DELEGATION.DEL_THREAD_STATUS', 'OPEN');
         });
 
+        return $query;
+    }
+
+    /**
+     * Scope a join with PROCESS table
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinProcess($query)
+    {
+        $query->join('PROCESS', 'PROCESS.PRO_ID', '=', 'APP_DELEGATION.PRO_ID');
+        return $query;
+    }
+
+    /**
+     * Scope a join with TASK table
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeJoinTask($query)
+    {
+        $query->join('TASK', 'TASK.TAS_UID', '=', 'CASE_CONSOLIDATED.TAS_UID');
         return $query;
     }
 
@@ -79,11 +105,15 @@ class Consolidated extends Model
             'APP_DELEGATION.PRO_UID',
             'CASE_CONSOLIDATED.TAS_UID',
             'CASE_CONSOLIDATED.DYN_UID',
+            'PROCESS.PRO_TITLE',
+            'TASK.TAS_TITLE'
         ]);
         // Scope get the pending consolidated task
         $query->joinPendingCases();
         // Get only active
         $query->active();
+        $query->joinProcess();
+        $query->joinTask();
         // Get the rows
         $bachPerTask = [];
         $results = $query->get();

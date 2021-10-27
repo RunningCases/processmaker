@@ -1,7 +1,7 @@
 <template>
   <div class="pm-vue-card">
     <div class="card pm-vue-card-inside" style="width: 20rem" @dblclick="dblClick">
-      <div class="card-body">
+      <div class="card-view-body">
         <slot> </slot>
       </div>
     </div>
@@ -42,8 +42,11 @@ export default {
 .pm-vue-card-inside:hover {
   background-color: #cfd9e4;
 }
-.card-body {
+.card-view-body {
   height: 266px;
   overflow-x: hidden;
+  flex: 1 1 auto;
+  min-height: 1px;
+  padding: 1.25rem;
 }
 </style>

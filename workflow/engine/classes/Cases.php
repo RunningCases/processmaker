@@ -544,7 +544,7 @@ class Cases
             } catch (Exception $oError) {
                 $fields['TITLE'] = $oApp->getAppTitle();
                 $fields['DESCRIPTION'] = '';
-                $fields['CREATOR'] = '(USER_DELETED)';
+                $fields['CREATOR'] = G::LoadTranslation('ID_UNASSIGNED');
                 $fields['CREATE_DATE'] = $oApp->getAppCreateDate();
                 $fields['UPDATE_DATE'] = $oApp->getAppUpdateDate();
             }
@@ -649,6 +649,7 @@ class Cases
      * @return array
      *
      * @see Cases::updateCase()
+     * @see Derivation::derivate()
      */
     public function updateThreadTitle(string $appUid, int $appNumber, int $delIndex, $caseData = [])
     {
@@ -814,7 +815,7 @@ class Cases
 
             // Update case title
             if (!empty($appUid) && !empty($appFields['APP_NUMBER']) && $appFields['APP_NUMBER'] > 0 && !empty($appFields['DEL_INDEX'])) {
-                $threadInfo = $this->updateThreadTitle($appUid, $appFields['APP_NUMBER'], $appFields['DEL_INDEX'], $appFields['APP_DATA']);
+                $threadInfo = $this->updateThreadTitle($appUid, $appFields['APP_NUMBER'], $appFields['DEL_INDEX'], $appData);
                 $Fields['APP_TITLE'] = $threadInfo['title'];
                 $Fields['APP_DESCRIPTION'] = $threadInfo['description'];
             }
@@ -2224,7 +2225,7 @@ class Cases
             $oPluginRegistry = PluginRegistry::loadSingleton();
             $oPluginRegistry->executeTriggers(PM_CREATE_CASE, $folderData);
         }
-        $this->getExecuteTriggerProcess($appUid, 'CREATE');
+        $this->getExecuteTriggerProcess($appUid, 'CREATE', false);
         //end plugin
         return [
             'APPLICATION' => $appUid,

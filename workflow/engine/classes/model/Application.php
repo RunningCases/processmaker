@@ -231,6 +231,10 @@ class Application extends BaseApplication
             $this->setAppProcCode('');
             $this->setAppParallel('N');
             $this->setAppInitUser($userUid);
+            $user = UsersPeer::retrieveByPK($userUid);
+            if ($user) {
+                $this->setAppInitUserId($user->getUsrId());
+            }
             $this->setAppCurUser($userUid);
             $this->setAppCreateDate('now');
             $this->setAppInitDate('now');
@@ -380,6 +384,8 @@ class Application extends BaseApplication
         $this->setAppProcCode(isset($aData['APP_PROC_CODE'])? $aData['APP_PROC_CODE'] : '');
         $this->setAppParallel(isset($aData['APP_PARALLEL'])? $aData['APP_PARALLEL'] : 'N');
         $this->setAppInitUser($aData['USR_UID']);
+        $user = UsersPeer::retrieveByPK($aData['USR_UID']);
+        $this->setAppInitUserId($user->getUsrId());
         $this->setAppCurUser($aData['USR_UID']);
         $this->setAppCreateDate(isset($aData['APP_CREATE_DATE'])? $aData['APP_CREATE_DATE'] : 'now');
         $this->setAppInitDate(isset($aData['APP_INIT_DATE'])? $aData['APP_INIT_DATE'] : 'now');

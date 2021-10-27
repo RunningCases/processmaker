@@ -11,6 +11,7 @@ use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\EmailServerModel;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
+use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 class ActionsByEmailTest extends TestCase
@@ -253,5 +254,56 @@ class ActionsByEmailTest extends TestCase
 
         //Assert the email was sent successfully
         $this->assertContains('**ID_EMAIL_RESENT_TO**: ' . $abeRequest->ABE_REQ_SENT_TO, $res);
+    }
+
+    /**
+     * Test the loadActionByEmail method
+     *
+     * @covers \ProcessMaker\BusinessModel\ActionsByEmail::loadActionByEmail()
+     * @test
+     */
+    public function it_should_test_the_load_action_by_email_method()
+    {
+        AbeConfiguration::truncate();
+        AbeRequest::truncate();
+        $user = factory(User::class)->create();
+        $application = factory(Application::class)->create([
+            'APP_UID' => '123456asse'
+        ]);
+        $delegation = factory(Delegation::class)->create([
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application->APP_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 0,
+            'DEL_INDEX' => 1
+        ]);
+        $delegation2 = factory(Delegation::class)->create([
+            'USR_UID' => $user->USR_UID,
+            'USR_ID' => $user->USR_ID,
+            'APP_UID' => $application->APP_UID,
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2
+        ]);
+        $abeConfiguration = factory(AbeConfiguration::class)->create([
+            'PRO_UID' => $delegation->PRO_UID,
+            'TAS_UID' => $delegation->TAS_UID,
+            'ABE_TYPE' => 'LINK',
+        ]);
+        $abeRequest = factory(AbeRequest::class)->create([
+            'ABE_UID' => $abeConfiguration->ABE_UID,
+            'APP_UID' => $delegation2->APP_UID,
+            'DEL_INDEX' => $delegation2->DEL_INDEX,
+        ]);
+        $arrayData = [
+            'action' => 'forwardMail',
+            'REQ_UID' => $abeRequest->ABE_REQ_UID,
+            'limit' => '',
+            'start' => ''
+        ];
+        $abe = new ActionsByEmail();
+        $res = $abe->loadActionByEmail($arrayData);
+        $this->assertEquals(1, $res["totalCount"]);
     }
 }

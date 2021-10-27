@@ -20,53 +20,61 @@ export let cases = {
     },
     inbox(data) {
         let service = "INBOX_LIST",
-            keys = {};
+            keys = {},
+            params = data;
         if (data && data.id) {
             service = "INBOX_CUSTOM_LIST";
             keys["id"] =  data.id;
+            params = data.filters;
         }
         return Api.get({
             service,
-            params: data,
+            params,
             keys
         });
     },
     draft(data) {
         let service = "DRAFT_LIST",
-            keys = {};
+            keys = {},
+            params = data;
         if (data && data.id) {
             service = "DRAFT_CUSTOM_LIST";
             keys["id"] =  data.id;
+            params = data.filters;
         }
         return Api.get({
             service,
-            params: data,
+            params,
             keys
         });
     },
     paused(data) {
         let service = "PAUSED_LIST",
-            keys = {};
+            keys = {},
+            params = data;
         if (data && data.id) {
             service = "PAUSED_CUSTOM_LIST";
             keys["id"] =  data.id;
+            params = data.filters;
         }
         return Api.get({
             service,
-            params: data,
+            params,
             keys
         });
     },
     unassigned(data) {
         let service = "UNASSIGNED_LIST",
-            keys = {};
+            keys = {},
+            params = data;
         if (data && data.id) {
             service = "UNASSIGNED_CUSTOM_LIST";
             keys["id"] =  data.id;
+            params = data.filters;
         }
         return Api.get({
             service,
-            params: data,
+            params,
             keys
         });
     },

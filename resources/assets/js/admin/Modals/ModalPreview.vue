@@ -19,8 +19,8 @@
                 <div slot="case_number" slot-scope="props">
                     {{ props.row.CASE_NUMBER }}
                 </div>
-                <div slot="case_title" slot-scope="props">
-                    {{ props.row.CASE_TITLE }}
+                <div slot="thread_title" slot-scope="props">
+                    {{ props.row.THREAD_TITLE }}
                 </div>
                 <div slot="process_name" slot-scope="props">
                     {{ props.row.PROCESS_NAME }}
@@ -85,7 +85,7 @@ export default {
                 headings: {
                     detail: this.$i18n.t("ID_DETAIL_CASE"),
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                    case_title: this.$i18n.t("ID_CASE_TITLE"),
+                    thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     task: this.$i18n.t("ID_TASK"),
                     send_by: this.$i18n.t("ID_SEND_BY"),
@@ -124,22 +124,23 @@ export default {
         getCasesForPreview(data) {
             let that = this,
                 dt,
-                paged,
                 limit = data.limit,
                 start = data.page === 1 ? 0 : limit * (data.page - 1),
-                filters = {};
-            paged = start + "," + limit;
-            filters = {
-                paged: paged,
+                params = {};
+            params = {
+                filters: {
+                    limit: limit,
+                    offset: start,
+                },
             }
             if (this.customCaseId !== '') {
-                filters['id'] = this.customCaseId;
+                params['id'] = this.customCaseId;
             }
             return new Promise((resolutionFunc, rejectionFunc) => {
                 switch (that.type) {
                     case 'inbox':
-                        api.cases
-                        .inbox(filters)
+                        api.custom
+                        .inbox(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -152,8 +153,8 @@ export default {
                         });
                         break;
                     case 'draft':
-                        api.cases
-                        .draft(filters)
+                        api.custom
+                        .draft(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -166,8 +167,8 @@ export default {
                         });
                         break;
                     case 'paused':
-                        api.cases
-                        .paused(filters)
+                        api.custom
+                        .paused(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -180,8 +181,8 @@ export default {
                         });
                         break;
                     case 'unassigned':
-                        api.cases
-                        .unassigned(filters)
+                        api.custom
+                        .unassigned(params)
                         .then((response) => {
                             dt = that.formatDataResponse(response.data.data);
                             resolutionFunc({
@@ -208,7 +209,7 @@ export default {
                     ...v,
                     ...{
                         CASE_NUMBER: v.APP_NUMBER,
-                        CASE_TITLE: v.DEL_TITLE,
+                        THREAD_TITLE: v.DEL_TITLE,
                         PROCESS_NAME: v.PRO_TITLE,
                         TASK: [
                             {

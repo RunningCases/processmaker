@@ -147,7 +147,7 @@ class Task
     public function resendEmails($now, $dateSystem)
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:resendEmails')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($now, $dateSystem, $scheduledTaskIdentifier) {
             $this->setExecutionMessage("Resending emails");
@@ -189,7 +189,7 @@ class Task
                 $context = [
                     "trace" => $e->getTraceAsString()
                 ];
-                Log::channel('taskScheduler:taskScheduler')->error($e->getMessage(), Bootstrap::context($context));
+                Log::channel('taskScheduler:resendEmails')->error($e->getMessage(), Bootstrap::context($context));
                 $criteria = new Criteria("workflow");
                 $criteria->clearSelectColumns();
                 $criteria->addSelectColumn(ConfigurationPeer::CFG_UID);
@@ -212,7 +212,7 @@ class Task
                 $this->saveLog("resendEmails", "error", "Error Resending Emails: " . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:resendEmails')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -224,7 +224,7 @@ class Task
     public function unpauseApplications($now)
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:unpauseApplications')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($now, $scheduledTaskIdentifier) {
             $this->setExecutionMessage("Unpausing applications");
@@ -242,7 +242,7 @@ class Task
                 $this->saveLog('unpauseApplications', 'error', 'Error Unpausing Applications: ' . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:unpauseApplications')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -255,7 +255,7 @@ class Task
     function executeCaseSelfService()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:executeCaseSelfService')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             try {
@@ -275,7 +275,7 @@ class Task
                 $this->saveLog("unassignedCase", "error", "Error in unassigned case: " . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:executeCaseSelfService')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -286,7 +286,7 @@ class Task
     public function calculateDuration()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:calculateDuration')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             $this->setExecutionMessage("Calculating Duration");
@@ -303,7 +303,7 @@ class Task
                 $this->saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:calculateDuration')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -314,7 +314,7 @@ class Task
     public function calculateAppDuration()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:calculateAppDuration')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             $this->setExecutionMessage("Calculating Duration by Application");
@@ -331,7 +331,7 @@ class Task
                 $this->saveLog('calculateDurationByApp', 'error', 'Error Calculating Duration: ' . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:calculateAppDuration')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -342,7 +342,7 @@ class Task
     public function cleanSelfServiceTables()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:cleanSelfServiceTables')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             try {
@@ -373,7 +373,7 @@ class Task
                 $this->saveLog("ExecuteCleanSelfServiceTables", "error", "Error when try to clean self-service tables " . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:cleanSelfServiceTables')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -385,7 +385,7 @@ class Task
     public function executePlugins()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:executePlugins')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             $pathCronPlugins = PATH_CORE . 'bin' . PATH_SEP . 'plugins' . PATH_SEP;
@@ -429,7 +429,7 @@ class Task
                 }
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:executePlugins')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -475,7 +475,7 @@ class Task
     public function fillReportByUser($dateInit, $dateFinish)
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:fillReportByUser')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         if ($dateInit == null) {
             if ($this->asynchronous === false) {
@@ -484,7 +484,7 @@ class Task
             }
             if ($this->asynchronous === true) {
                 $message = 'You must enter the starting date. Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"';
-                Log::channel('taskScheduler:taskScheduler')->info($message, Bootstrap::context());
+                Log::channel('taskScheduler:fillReportByUser')->info($message, Bootstrap::context());
             }
             return false;
         }
@@ -506,7 +506,7 @@ class Task
                 $this->saveLog("fillReportByUser", "error", "Error in fill report by user: " . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:fillReportByUser')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -520,7 +520,7 @@ class Task
     public function fillReportByProcess($dateInit, $dateFinish)
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:fillReportByProcess')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         if ($dateInit == null) {
             if ($this->asynchronous === false) {
@@ -529,7 +529,7 @@ class Task
             }
             if ($this->asynchronous === true) {
                 $message = 'You must enter the starting date. Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"';
-                Log::channel('taskScheduler:taskScheduler')->info($message, Bootstrap::context());
+                Log::channel('taskScheduler:fillReportByProcess')->info($message, Bootstrap::context());
             }
             return false;
         }
@@ -551,7 +551,7 @@ class Task
                 $this->saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:fillReportByProcess')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -563,14 +563,14 @@ class Task
     public function ldapcron($debug)
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:ldapcron')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($debug, $scheduledTaskIdentifier) {
             require_once(PATH_HOME . 'engine' . PATH_SEP . 'methods' . PATH_SEP . 'services' . PATH_SEP . 'ldapadvanced.php');
             $ldapadvancedClassCron = new ldapadvancedClassCron();
             $ldapadvancedClassCron->executeCron($debug);
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:ldapcron')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -581,7 +581,7 @@ class Task
     function sendNotifications()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:sendNotifications')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             try {
@@ -627,7 +627,7 @@ class Task
                 $this->saveLog("ExecuteSendNotifications", "error", "Error when sending notifications " . $e->getMessage());
             }
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:sendNotifications')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -638,13 +638,13 @@ class Task
     public function actionsByEmailResponse()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:actionsByEmailResponse')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             $responseReader = new ResponseReader();
             $responseReader->actionsByEmailEmailResponse();
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:actionsByEmailResponse')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -655,13 +655,13 @@ class Task
     public function messageeventcron()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:messageeventcron')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use($scheduledTaskIdentifier) {
             $messageApplication = new MessageApplication();
             $messageApplication->catchMessageEvent(true);
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:messageeventcron')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -675,13 +675,13 @@ class Task
     public function timerEventCron($datetime, $frontEnd)
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:timerEventCron')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use ($datetime, $frontEnd, $scheduledTaskIdentifier) {
             $timerEvent = new TimerEvent();
             $timerEvent->startContinueCaseByTimerEvent($datetime, $frontEnd);
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:timerEventCron')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }
@@ -692,12 +692,12 @@ class Task
     public function webEntriesCron()
     {
         $scheduledTaskIdentifier = uniqid(__FUNCTION__ . "#");
-        Log::channel('taskScheduler:taskScheduler')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
+        Log::channel('taskScheduler:webEntriesCron')->info("Start {$scheduledTaskIdentifier}", Bootstrap::context());
 
         $job = function() use ($scheduledTaskIdentifier) {
             WebEntry::deleteOldWebEntries();
 
-            Log::channel('taskScheduler:taskScheduler')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
+            Log::channel('taskScheduler:webEntriesCron')->info("Finish {$scheduledTaskIdentifier}", Bootstrap::context());
         };
         $this->runTask($job);
     }

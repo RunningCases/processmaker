@@ -219,7 +219,8 @@ class UserTest extends TestCase
             'USR_ZIP_CODE' => '',
             'DEP_UID' => '',
             'USR_POSITION' => '',
-            'USR_RESUME' => ''
+            'USR_RESUME' => '',
+            'ROL_CODE' => 0
         ];
         $res = User::createUser($usrData);
         $this->assertInternalType('integer', $res);

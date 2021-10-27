@@ -54,6 +54,23 @@ class ScheduleRunCommand extends BaseCommand
                 if (!$win) {
                     $body = str_replace(" -c"," " . $user . " -c", $p->body);
                 }
+
+                //for init date and finish date parameters
+                if (strpos($body, "report_by_user") !== false || strpos($body, "report_by_process") !== false) {
+                    //remove if the command is old and contains an incorrect definition of the date
+                    $body = preg_replace("/\s\+init-date\"[0-9\-\s:]+\"/", "", $body);
+                    $body = preg_replace("/\s\+finish-date\"[0-9\-\s:]+\"/", "", $body);
+
+                    //the start date must be one month back from the current date.
+                    $currentDate = date("Y-m-d H:i:s");
+                    $oneMonthAgo = $currentDate . " -1 month";
+                    $timestamp = strtotime($oneMonthAgo);
+                    $oneMonthAgo = date("Y-m-d H:i:s", $timestamp);
+
+                    $body = str_replace("report_by_user", "report_by_user +init-date'{$oneMonthAgo}' +finish-date'{$currentDate}'", $body);
+                    $body = str_replace("report_by_process", "report_by_process +init-date'{$oneMonthAgo}' +finish-date'{$currentDate}'", $body);
+                }
+
                 $schedule = $that->schedule->exec($body)->cron($p->expression)->between($starting, $ending)->timezone($timezone)->when(function () use ($p) {
                     $now = Carbon::now();
                     $result = false;

@@ -1,6 +1,6 @@
 <template>
     <div v-if="data.length" class="grouped-cell">
-        <div v-for="(item, index) in data" v-bind:key="item.TITLE" class="d-flex mb-3">
+        <div v-for="(item, index) in data" v-bind:key="item.TITLE" class="d-flex">
             <div class="avatar" :id="id + index">
                 <b-avatar
                     variant="info"

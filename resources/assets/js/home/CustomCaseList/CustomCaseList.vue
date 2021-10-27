@@ -4,10 +4,20 @@
         <modal-new-request ref="newRequest"></modal-new-request>
         <ModalPauseCase ref="modal-pause-case"></ModalPauseCase>
         <ModalReassignCase ref="modal-reassign-case"></ModalReassignCase>
-        <CasesFilter
+        <b-alert
+            :show="dataAlert.dismissCountDown"
+            dismissible
+            :variant="dataAlert.variant"
+            @dismissed="dataAlert.dismissCountDown = 0"
+            @dismiss-count-down="countDownChanged"
+        >
+            {{ dataAlert.message }}
+        </b-alert>
+        <CustomFilter
             :filters="filters"
             :title="titleMap[data.pageParent].label"
             :icon="titleMap[data.pageParent].icon"
+            :filterItems="filterItems"
             @onRemoveFilter="onRemoveFilter"
             @onUpdateFilters="onUpdateFilters"
         />
@@ -43,7 +53,7 @@
                 {{ props.row.CASE_NUMBER }}
             </div>
             <div slot="case_title" slot-scope="props">
-                {{ props.row.CASE_TITLE }}
+                {{ props.row.THREAD_TITLE }}
             </div>
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
@@ -68,9 +78,8 @@
                 {{ props.row.PRIORITY }}
             </div>
             <div slot="actions" slot-scope="props">
-                <div @click="updateDataEllipsis(props.row)">
+                <div @mouseover="updateDataEllipsis(props.row)">
                     <ellipsis
-                        ref="ellipsis"
                         v-if="dataEllipsis"
                         :data="dataEllipsis"
                     >
@@ -99,207 +108,110 @@
                         </div>
                     </b-col>
                     <b-col sm="12">
-                        <div @click="updateDataEllipsis(props.item)">
-                            <ellipsis v-if="dataEllipsis" :data="dataEllipsis">
+                        <div @mouseover="updateDataEllipsis(props.item)">
+                            <ellipsis 
+                                v-if="dataEllipsis" 
+                                :data="dataEllipsis">
                             </ellipsis>
                         </div>
                     </b-col>
                 </b-row>
             </b-col>
-            <div slot="case_number" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-highlight"
-                    >{{ props["headings"][props.column] }} :
-                    {{ props["item"]["CASE_NUMBER"] }}</span
-                >
-            </div>
-            <div slot="case_title" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["CASE_TITLE"] }}
-                </span>
-            </div>
-            <div slot="process_name" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PROCESS_NAME"] }}
-                </span>
-            </div>
-            <div slot="due_date" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DUE_DATE"] }}
-                </span>
-            </div>
-            <div slot="delegation_date" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DELEGATION_DATE"] }}
-                </span>
-            </div>
-            <div slot="task" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <TaskCell :data="props.item.TASK" />
-                </span>
-            </div>
-            <div slot="priority" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PRIORITY"] }}
-                </span>
-            </div>
-            <div slot="send_by" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <CurrentUserCell :data="props.item.USER_DATA" />
-                </span>
-            </div>
+            <template v-for="column in cardColumns" :slot="column" slot-scope="props" class="v-card-text">
+                <div :key="column">
+                    <span class="v-card-text-dark">
+                        {{ getCustomHeading(column, props) }} :
+                    </span>
+                    <span  v-if="column === 'case_number'" class="v-card-text-highlight">
+                        {{ props["item"]["CASE_NUMBER"] }}
+                    </span>
+                    <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
+                        {{ props["item"]["THREAD_TITLE"] }}
+                    </span>
+                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_NAME"] }}
+                    </span>
+                    <span  v-if="column === 'due_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DUE_DATE"] }}
+                    </span>
+                    <span  v-if="column === 'delegation_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DELEGATION_DATE"] }}
+                    </span>                   
+                    <span v-if="column === 'task'" span class="v-card-text-light">
+                        <TaskCell :data="props.item.TASK" />
+                    </span>
+                    <span  v-if="column === 'priority'" class="v-card-text-highlight">
+                        {{ props["item"]["PRIORITY"] }}
+                    </span>
+                    <span v-else-if="column === 'send_by'" class="v-card-text-light">
+                        <CurrentUserCell :data="props.item.USER_DATA" />
+                    </span>
+                    <span  v-else class="v-card-text-light">
+                        {{ props["item"][column] }}
+                    </span>
+                </div>
+            </template>
         </VueCardView>
         <VueListView
             v-if="typeView === 'LIST'"
             :options="getVueViewOptions()"
             ref="vueListView"
         >
-            <b-col
-                sm="12"
-                slot="actions"
-                slot-scope="props"
-                class="vp-inbox-list-actions"
-            >
-                <div class="">
-                    <b-row>
-                        <b-col sm="12">
-                            <div
-                                class="v-pm-card-info"
-                                @click="openCaseDetail(props.item)"
-                            >
-                                <i class="fas fa-info-circle"></i>
-                            </div>
-                        </b-col>
-                        <b-col sm="12">
-                            <div @click="updateDataEllipsis(props.row)">
-                                <ellipsis
-                                    ref="ellipsis"
-                                    v-if="dataEllipsis"
-                                    :data="dataEllipsis"
-                                >
-                                </ellipsis>
-                            </div>
-                        </b-col>
-                    </b-row>
+        <div slot="actions" slot-scope="props">
+            <b-row>
+            <b-col sm="12">
+                <div class="v-pm-card-info" @click="openCaseDetail(props.item)">
+                <i class="fas fa-info-circle"></i>
                 </div>
             </b-col>
-            <b-col
-                sm="5"
-                ref="text"
-                slot="case_number"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-highlight"
-                    >{{ props["headings"][props.column] }} :
-                    {{ props["item"]["CASE_NUMBER"] }}</span
-                >
+            <b-col sm="12">
+                <div class="ellipsis-container" @mouseover="updateDataEllipsis(props.item)">
+                <ellipsis v-if="dataEllipsis" :data="dataEllipsis"> </ellipsis>
+                </div>
             </b-col>
-            <b-col
-                sm="5"
-                slot="case_title"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["CASE_TITLE"] }}
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="process_name"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PROCESS_NAME"] }}
-                </span>
-            </b-col>
-            <b-col sm="5" slot="task" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <TaskCell :data="props.item.TASK" />
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="due_date"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DUE_DATE"] }}
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="delegation_date"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["DELEGATION_DATE"] }}
-                </span>
-            </b-col>
-            <b-col
-                sm="5"
-                slot="priority"
-                slot-scope="props"
-                class="v-card-text"
-            >
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light"
-                    >{{ props["item"]["PRIORITY"] }}
-                </span>
-            </b-col>
-
-            <b-col sm="5" slot="send_by" slot-scope="props" class="v-card-text">
-                <span class="v-card-text-dark"
-                    >{{ props["headings"][props.column] }} :</span
-                >
-                <span class="v-card-text-light">
-                    <CurrentUserCell :data="props.item.USER_DATA" />
-                </span>
-            </b-col>
+            </b-row>
+        </div>
+            <template v-for="column in cardColumns" :slot="column" slot-scope="props" class="v-card-text">
+                <div :key="column">
+                    <span class="v-card-text-dark">
+                        {{ getCustomHeading(column, props) }} :
+                    </span>
+                    <span  v-if="column === 'case_number'" class="v-card-text-highlight">
+                        {{ props["item"]["CASE_NUMBER"] }}
+                    </span>
+                    <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
+                        {{ props["item"]["THREAD_TITLE"] }}
+                    </span>
+                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_NAME"] }}
+                    </span>
+                    <span  v-if="column === 'due_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DUE_DATE"] }}
+                    </span>
+                    <span  v-if="column === 'delegation_date'" class="v-card-text-highlight">
+                        {{ props["item"]["DELEGATION_DATE"] }}
+                    </span>                   
+                    <span v-if="column === 'task'" span class="v-card-text-light">
+                        <TaskCell :data="props.item.TASK" />
+                    </span>
+                    <span  v-if="column === 'priority'" class="v-card-text-highlight">
+                        {{ props["item"]["PRIORITY"] }}
+                    </span>
+                    <span v-else-if="column === 'send_by'" class="v-card-text-light">
+                        <CurrentUserCell :data="props.item.USER_DATA" />
+                    </span>
+                    <span  v-else class="v-card-text-light">
+                        {{ props["item"][column] }}
+                    </span>
+                </div>
+            </template>
         </VueListView>
         <ModalUnpauseCase ref="modal-unpause-case"></ModalUnpauseCase>
         <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
+        <ModalComments
+            ref="modal-comments"
+            @postNotes="onPostNotes"
+        ></ModalComments>
     </div>
 </template>
 
@@ -310,7 +222,7 @@ import ModalNewRequest from "../ModalNewRequest.vue";
 import ModalUnpauseCase from "../modal/ModalUnpauseCase.vue";
 import ModalClaimCase from "../modal/ModalClaimCase.vue";
 import TaskCell from "../../components/vuetable/TaskCell.vue";
-import CasesFilter from "../../components/search/CasesFilter";
+import CustomFilter from "../../components/search/CustomFilter";
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import MultiviewHeader from "../../components/headers/MultiviewHeader.vue";
@@ -320,6 +232,7 @@ import defaultMixins from "./defaultMixins";
 import Ellipsis from "../../components/utils/ellipsis.vue";
 import ModalPauseCase from "../modal/ModalPauseCase.vue";
 import ModalReassignCase from "../modal/ModalReassignCase.vue";
+import ModalComments from "../modal/ModalComments.vue"
 import { Event } from "vue-tables-2";
 import CurrentUserCell from "../../components/vuetable/CurrentUserCell.vue";
 import _ from "lodash";
@@ -334,7 +247,7 @@ export default {
         ModalUnpauseCase,
         ModalClaimCase,
         TaskCell,
-        CasesFilter,
+        CustomFilter,
         MultiviewHeader,
         VueCardView,
         VueListView,
@@ -342,11 +255,18 @@ export default {
         ModalPauseCase,
         ModalReassignCase,
         CurrentUserCell,
+        ModalComments
     },
     props: ["defaultOption", "settings", "data"],
     data() {
         let that = this;
         return {
+            dataAlert: {
+                dismissSecs: 5,
+                dismissCountDown: 0,
+                message: "",
+                variant: "info",
+            },
             titleMap: {
                 inbox: {
                     icon:"fas fa-check-circle",
@@ -367,7 +287,7 @@ export default {
             },
             columMap: {
                 case_number: "APP_NUMBER",
-                case_title: "DEL_TITLE",
+                thread_title: "DEL_TITLE",
                 process_name: "PRO_TITLE",
             },
             newCase: {
@@ -377,13 +297,10 @@ export default {
                     this.$refs["newRequest"].show();
                 },
             },
-            filters:
-                this.settings && this.settings.filters
-                    ? this.settings.filters
-                    : {},
+            filters: {},
             defaultColumns: [
                 "case_number",
-                "case_title",
+                "thread_title",
                 "process_name",
                 "task",
                 "send_by",
@@ -398,7 +315,7 @@ export default {
             headings: {
                 detail: this.$i18n.t("ID_DETAIL_CASE"),
                 case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                case_title: this.$i18n.t("ID_CASE_TITLE"),
+                thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                 process_name: this.$i18n.t("ID_PROCESS_NAME"),
                 task: this.$i18n.t("ID_TASK"),
                 send_by: this.$i18n.t("ID_SEND_BY"),
@@ -471,6 +388,196 @@ export default {
                 icon: this.data.pageIcon,
                 color: this.data.color
             },
+            itemMap: {
+                case_number: "caseNumber",
+                thread_title: "caseTitle",
+                delegation_date: "delegationDate",
+                send_by: "bySendBy",
+                process_name: "processName"
+            },
+            customItems:{
+                VARCHAR: {
+                    group: "radio",
+                    type: "VARCHAR",
+                    id: "string",
+                    title: `${this.$i18n.t("ID_FILTER")}:`,
+                    optionLabel: "",
+                    tagPrefix: "",
+                    detail: "",
+                    tagText: "",
+                    placeholder: "", 
+                    items: [
+                        {
+                        id: "",
+                        value: "",
+                        },
+                    ],
+                    autoShow: true,
+                    makeTagText: function (params, data) {
+                        return `${this.tagPrefix} ${data[0].value}`;
+                    },
+                },
+                DATETIME: {
+                    group: "radio",
+                    type: "DATETIME",
+                    id: "datetime",
+                    title: `${this.$i18n.t('ID_FILTER')}:`,
+                    optionLabel: "",
+                    detail: "",
+                    tagText: "",
+                    tagPrefix: "",
+                    items:[
+                        {
+                            id: "",
+                            value: ""
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        let temp = data[0].value.split(",");
+                        return `${this.tagPrefix} ${temp[0]} - ${temp[1]} `;
+                    }
+                }
+            },
+            filterItems:[],
+            availableItems: {
+                caseNumber:  {
+                    group: "radio",
+                    type: "CaseNumber",
+                    id: "caseNumber",
+                    title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                        "ID_BY_CASE_NUMBER"
+                    )}`,
+                    optionLabel: this.$i18n.t("ID_BY_CASE_NUMBER"),
+                    detail: this.$i18n.t("ID_PLEASE_SET_THE_CASE_NUMBER_TO_BE_SEARCHED"),
+                    tagText: "",
+                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_NUMBER"),
+                    items: [
+                        {
+                        id: "filterCases",
+                        value: "",
+                        },
+                    ],
+                    autoShow: true,
+                    makeTagText: function (params, data) {
+                        return `${params.tagPrefix}: ${data[0].value}`;
+                    },
+                },
+                caseTitle: {
+                    group: "radio",
+                    type: "CaseTitle",
+                    id: "caseTitle",
+                    title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                        "ID_BY_CASE_THREAD_TITLE"
+                    )}`,
+                    optionLabel: this.$i18n.t("ID_BY_CASE_THREAD_TITLE"),
+                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_CASE_THREAD_TITLE"),
+                    detail: "",
+                    tagText: "",    
+                    items: [
+                        {
+                        id: "caseTitle",
+                        value: "",
+                        },
+                    ],
+                    autoShow: true,
+                    makeTagText: function (params, data) {
+                        return `${this.tagPrefix} ${data[0].value}`;
+                    },
+                },
+                delegationDate: {
+                    group: "radio",
+                    type: "DateFilter",
+                    id: "delegationDate",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_DELEGATION_DATE')}`,
+                    optionLabel: this.$i18n.t('ID_BY_DELEGATION_DATE'),
+                    detail: this.$i18n.t('ID_PLEASE_SELECT_THE_DELEGATION_DATE_TO_BE_SEARCHED'),
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_DELEGATION_DATE'),
+                    items:[
+                        {
+                            id: "delegateFrom",
+                            value: "",
+                            label: this.$i18n.t('ID_FROM_DELEGATION_DATE')
+                        },
+                        {
+                            id: "delegateTo",
+                            value: "",
+                            label: this.$i18n.t('ID_TO_DELEGATION_DATE')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} ${data[0].value} - ${data[1].value}`;
+                    }
+                },
+                bySendBy: {
+                    group: "radio",
+                    type: "CurrentUser",
+                    id: "bySendBy",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_SEND_BY')}`,
+                    optionLabel: this.$i18n.t('ID_BY_SEND_BY'),
+                    detail: this.$i18n.t('ID_PLEASE_SELECT_USER_NAME_TO_BE_SEARCHED'),
+                    placeholder: this.$i18n.t('ID_USER_NAME'),
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_SEND_BY'),
+                    items:[
+                        {
+                            id: "sendBy",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_USER_NAME')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${params.tagPrefix} : ${data[0].label || ''}`;
+                    }
+                },
+                taskTitle: {
+                    group: "radio",
+                    type: "TaskTitle",
+                    id: "taskTitle",
+                    title: `${this.$i18n.t("ID_FILTER")}: ${this.$i18n.t(
+                        "ID_TASK_NAME"
+                    )}`,
+                    optionLabel: this.$i18n.t("ID_BY_TASK"),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix: this.$i18n.t("ID_SEARCH_BY_TASK_NAME"),
+                    autoShow: true,
+                    items: [
+                        {
+                        id: "task",
+                        value: "",
+                        options: [],
+                        placeholder: this.$i18n.t("ID_TASK_NAME"),
+                        },
+                    ],
+                    makeTagText: function (params, data) {
+                        return `${this.tagPrefix}: ${data[0].label || ""}`;
+                    },
+                },
+                processName: {
+                    group: "checkbox",
+                    type: "ProcessName",
+                    id: "processName",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
+                    autoShow: false,
+                    items:[
+                        {
+                            id: "process",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_PROCESS_NAME')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                    }
+                }
+            }
         };
     },
     created() {
@@ -485,11 +592,12 @@ export default {
              that.$emit("updateSettings", {
                 data: data,
                 key: "orderBy",
-                parent: that.data.pageParent,
+                page: that.data.pageParent,
                 type: "custom",
                 id: that.data.customListId
             });
         });
+        Event.$on('clearSortEvent', this.clearSort);
     },
     watch: {
         columns: function(val) {
@@ -499,21 +607,12 @@ export default {
                 this.$emit("updateSettings", {
                     data: val,
                     key: "columns",
-                    parent: this.data.pageParent,
+                    page: this.data.pageParent,
                     type: "custom",
                     id: this.data.customListId
                 });
             }
-        },
-        filters: function(val) {
-            this.$emit("updateSettings", {
-                data: val,
-                key: "filters",
-                parent: this.data.pageParent,
-                type: "custom",
-                id: this.data.customListId
-            });
-        },
+        }
     },
     computed: {
         /**
@@ -522,10 +621,24 @@ export default {
         ProcessMaker() {
             return window.ProcessMaker;
         },
+       
     },
     updated() {},
     beforeCreate() {},
     methods: {
+        /**
+         * Get custom headigns for dynamic lists
+         * @param {String} column
+         * @param {Object} props
+         * @returns {*}
+         */
+        getCustomHeading(column, props) {   
+            if (props["headings"] && props["headings"][column]) {
+                return props["headings"][column];
+            } else {
+                return column;
+            }
+        },
         /**
          * Initialize filters
          */
@@ -560,9 +673,8 @@ export default {
                         DEL_INDEX: params.del_index,
                     });
                     this.$emit("cleanDefaultOption");
-                }
-                //force to search in the parallel tasks
-                if (params && params.openapplicationuid) {
+                } else if (params && params.openapplicationuid) {
+                    //force to search in the parallel tasks
                     this.onUpdateFilters({
                         params: [
                             {
@@ -574,7 +686,7 @@ export default {
                                 autoShow: false,
                             },
                         ],
-                        refresh: false,
+                        refresh: true,
                     });
                     this.$emit("cleanDefaultOption");
                 }
@@ -594,7 +706,13 @@ export default {
             } else if (self.clickCount === 2) {
                 clearTimeout(self.singleClickTimer);
                 self.clickCount = 0;
-                self.openCase(event.row);
+                if (this.data.pageParent === "paused") {
+                    self.showModalUnpauseCase(event.row);
+                } else if(this.data.pageParent === "unassigned") {
+                    self.claimCase(event.row);
+                } else {
+                    self.openCase(event.row);
+                }
             }
         },
         /**
@@ -614,32 +732,57 @@ export default {
                 limit: limit,
                 offset: start,
             };
-            _.forIn(this.filters, function(item, key) {
-                if (filters && item.value) {
-                    filters[item.filterVar] = item.value;
-                }
-            });
+            if (_.isEmpty(that.filters) && this.data.settings) {
+                _.forIn(this.data.settings.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            } else {
+                _.forIn(this.filters, function(item, key) {
+                    if (filters && item.value) {
+                        filters[item.filterVar] = item.value;
+                    }
+                });
+            }
             sort = that.prepareSortString(data);
             if (sort) {
                 filters["sort"] = sort;
             }
             return new Promise((resolutionFunc, rejectionFunc) => {
-                api.cases[that.data.pageParent]
+                api.custom[that.data.pageParent]
                     ({
                         id,
                         filters,
                     })
                     .then((response) => {
-                        let tmp, columns;
-
-                        columns = response.data.columns.map((item) => {
-                            return item.field;
+                        let tmp,
+                            columns = [],
+                            product,
+                            newItems = [];
+                        that.filterItems = [];
+                        that.headings = {};
+                        response.data.columns.forEach((item) => {
+                            if (item.enableFilter) {
+                                if (that.availableItems[that.itemMap[item.field]]) {
+                                    newItems.push(that.availableItems[that.itemMap[item.field]]);
+                                } else {
+                                    product = this.filterItemFactory(item)
+                                    if (product) {
+                                        newItems.push(product);
+                                    }
+                                }
+                            }
+                            that.headings[item.field] = item.name;
+                            columns.push(item.field);
                         });
-                        that.settingOptions = that.formatColumnSettings(columns);
+                        that.filterItems = newItems;
                         dt = that.formatDataResponse(response.data.data);
                         that.cardColumns = columns;
                         if (that.isFistTime) {
-                            that.columns = that.settings && that.settings.columns ? that.settings.columns :  that.getTableColumns(columns);
+                            that.filters = that.data.settings && that.data.settings.filters ? that.data.settings.filters : {};
+                            that.columns = that.data.settings && that.data.settings.columns ? that.data.settings.columns :  that.getTableColumns(columns);
+                            that.settingOptions = that.formatColumnSettings(columns);
                         }
                         resolutionFunc({
                             data: dt,
@@ -650,6 +793,28 @@ export default {
                         rejectionFunc(e);
                     });
             });
+        },
+        /**
+         * Create a filter item dinamically
+         * @param {object} item
+         * @returns {object|boolean}
+         */
+        filterItemFactory(item) {
+            let product;
+            if (item.type === "DATETIME") {
+                product= {...this.customItems["DATETIME"]};
+            } else {
+                product = {...this.customItems["VARCHAR"]};
+            }
+            product.title += " " + item.name;
+            product.id = item.field;    
+            product.optionLabel = item.name;
+            product.tagPrefix = item.name;
+            if (product.items && product.items[0]) {
+                product.items[0].id = item.field;
+            }
+            product.placeholder = "";
+            return product;
         },
         /**
          * Prepare sort string to be sended in the service
@@ -677,7 +842,7 @@ export default {
                     ...v,
                     ...{
                         CASE_NUMBER: v.APP_NUMBER,
-                        CASE_TITLE: v.DEL_TITLE,
+                        THREAD_TITLE: v.DEL_TITLE,
                         PROCESS_NAME: v.PRO_TITLE,
                         TASK: [
                             {
@@ -778,8 +943,37 @@ export default {
             });
         },
         onRemoveFilter(data) {},
+        /**
+         * Prepare the data to be updated
+         * @param {object} data
+         */
+        prepareAndUpdate(data) {
+            let canUpdate = false,
+                newFilters = [];
+            data.params.forEach(item =>  {
+                const container  = {...item};
+                container.autoShow = false;
+                if (item.value !== "") {
+                    newFilters.push(container);
+                    canUpdate = true;
+                }
+            });
+            if (data.params.length == 0) {
+            canUpdate = true;
+            } 
+            if (canUpdate) {
+            this.$emit("updateSettings", {
+                data: newFilters,
+                key: "filters",
+                page: this.data.pageParent,
+                type: "custom",
+                id: this.data.customListId
+            });
+            }
+        },
         onUpdateFilters(data) {
             this.filters = data.params;
+            this.prepareAndUpdate(data);
             if (data.refresh) {
                 this.$nextTick(() => {
                     if (this.typeView === "GRID") {
@@ -798,10 +992,11 @@ export default {
          * update view in component
          */
         updateView(newData) {
+            let newCriteria = [];
             this.isFistTime = true;
             this.typeView = "GRID";
             // force to update component id
-            if (newData){
+            if (newData) {
                 if(newData.customListId) {
                     this.data.customListId = newData.customListId;
                 }
@@ -810,9 +1005,16 @@ export default {
                     icon: newData.pageIcon,
                     color: newData.color
                 }
+                this.data.settings = newData.settings;
+                this.filters = {};
+                this.typeView = newData.settings && newData.settings.view ? newData.settings.view.typeView : this.typeView;
             }
             if (this.typeView === "GRID" && this.$refs["vueTable"]) {
-                this.$refs["vueTable"].getData();
+                 if (newData && newData.settings && newData.settings.orderBy) {
+                    this.$refs["vueTable"].setOrder(newData.settings.orderBy.column, newData.settings.orderBy.ascending);
+                } else {
+                    this.$refs["vueTable"].setOrder(false);
+                 }
             }
             if (this.typeView === "CARD" && this.$refs["vueCardView"]) {
                 this.$refs["vueCardView"].getData();
@@ -848,6 +1050,24 @@ export default {
             }
         },
         /**
+         * Show the alert message
+         * @param {string} message - message to be displayen in the body
+         * @param {string} type - alert type
+         */
+        showAlert(message, type) {
+            this.dataAlert.message = message;
+            this.dataAlert.variant = type || "info";
+            this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+        },
+        /**
+         * Updates the alert dismiss value to update
+         * dismissCountDown and decrease
+         * @param {mumber}
+         */
+        countDownChanged(dismissCountDown) {
+            this.dataAlert.dismissCountDown = dismissCountDown;
+        },
+        /**
          * Claim case
          *
          * @param {object} item
@@ -864,6 +1084,23 @@ export default {
         showModalUnpauseCase(item) {
           this.$refs["modal-unpause-case"].data = item;
           this.$refs["modal-unpause-case"].show();
+        },
+        /**
+         * Open the case notes modal
+         * @param {object} data - needed to create the data
+         */
+        openComments(data) {
+            let that = this;
+            api.cases.open(_.extend({ ACTION: "todo" }, data)).then(() => {
+                that.$refs["modal-comments"].dataCase = data;
+                that.$refs["modal-comments"].show();
+            });
+        },
+        /**
+         * Post notes event handler
+         */
+        onPostNotes() {
+            this.$refs["vueTable"].getData();
         },
         /**
          * Json factory for ellipsis control item
@@ -887,7 +1124,7 @@ export default {
                       name: "case note",
                       icon: "far fa-comments",
                       fn: function() {
-                          that.openCaseDetail(data);
+                        that.openComments(data);
                       },
                   },
                   reassign: {
@@ -919,7 +1156,7 @@ export default {
                   name: "case note",
                   icon: "far fa-comments",
                   fn: function() {
-                    that.openCaseDetail(data);
+                    that.openComments(data);
                   }
                 },
               }
@@ -930,7 +1167,7 @@ export default {
                   name: "case note",
                   icon: "far fa-comments",
                   fn: function() {
-                    that.openCaseDetail(data);
+                    that.openComments(data);
                   }
                 },
                 play: {
@@ -955,14 +1192,7 @@ export default {
                   name: "case note",
                   icon: "far fa-comments",
                   fn: function() {
-                    that.openCaseDetail(data);
-                  }
-                },
-                pause: {
-                  name: "pause case",
-                  icon: "far fa-pause-circle",
-                  fn: function() {
-                    that.showModalPause(data);
+                    that.openComments(data);
                   }
                 },
                 claim: {
@@ -978,6 +1208,21 @@ export default {
           return dataEllipsisMap[page];
         }
     },
+    /**
+     * Reset the sort in the table
+     */
+    clearSort() {
+        if (this.$refs['vueTable']) {
+            this.$refs['vueTable'].setOrder(false)
+            this.$emit("updateSettings", {
+                data: [],
+                key: "orderBy",
+                page: that.data.pageParent,
+                type: "custom",
+                id: that.data.customListId
+            });
+        }
+    }
 };
 </script>
 <style>
@@ -1008,6 +1253,7 @@ export default {
 
 .ellipsis-container {
     margin-top: 5em;
+    float: right;
 }
 
 .v-pm-card-info {

@@ -49,7 +49,8 @@ class AppDelegation extends BaseAppDelegation
     public function getRisk()
     {
         try {
-            $risk = 2;
+            // This value needs to have a value like 0.x
+            $risk = 0.2;
 
             return $risk;
         } catch (Exception $e) {
@@ -88,7 +89,7 @@ class AppDelegation extends BaseAppDelegation
                 $record = $rsCriteria->getRow();
 
                 if ($flagIncludeCurrentDel) {
-                    if (preg_match('/^(?:' . 'NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
+                    if (preg_match('/^(?:' . 'SERVICE\-TASK|NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
                         $arrayAppDelegationPrevious = $record;
                         $flagPrevious = false;
                     }

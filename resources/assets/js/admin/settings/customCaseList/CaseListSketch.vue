@@ -4,7 +4,7 @@
         <div class="demo">
             <div class="container">
                 <h5>{{ $t("ID_NEW_CASES_LISTS") }} ({{ module.title }})</h5>
-                <b-form @submit="onSubmit">
+                <b-form>
                     <b-row>
                         <b-col cols="6">
                             <b-row>
@@ -183,9 +183,7 @@
                                         model="hex"
                                     >
                                         <svg viewBox="0 0 50 50">
-                                            <path
-                                                d="M 10 10 H 90 V 90 H 10 L 10 10"
-                                            />
+                                            <rect width="50" height="50" style="stroke-width:6;stroke:rgb(0,0,0)" />
                                         </svg>
                                     </verte>
                                 </b-form-group>
@@ -205,9 +203,7 @@
                                         model="hex"
                                     >
                                         <svg viewBox="0 0 50 50">
-                                            <path
-                                                d="M 10 10 H 90 V 90 H 10 L 10 10"
-                                            />
+                                            <rect width="50" height="50" style="stroke-width:6;stroke:rgb(0,0,0)" />
                                         </svg>
                                     </verte>
                                 </b-form-group>
@@ -288,7 +284,7 @@
                         <b-button variant="outline-primary" @click="showPreview">{{
                             $t("ID_PREVIEW")
                         }}</b-button>
-                        <b-button type="submit" variant="primary">{{
+                        <b-button variant="primary" @click="onSubmit">{{
                             $t("ID_SAVE")
                         }}</b-button>
                     </div>

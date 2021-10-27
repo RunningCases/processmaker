@@ -375,7 +375,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'case_title',
-                'name' => G::LoadTranslation('ID_CASE_TITLE'),
+                'name' => G::LoadTranslation('ID_CASE_THREAD_TITLE'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
                 'typeSearch' => 'search text',
@@ -467,7 +467,7 @@ class CaseList extends Model
                     }
                     $default[] = [
                         'field' => $column['fld_name'],
-                        'name' => $column['fld_name'],
+                        'name' => $column['fld_description'],
                         'type' => $column['fld_type'],
                         'source' => $result['rep_tab_name'],
                         'typeSearch' => 'search text',
@@ -527,7 +527,7 @@ class CaseList extends Model
                     }
                     $fields[] = [
                         'field' => $column['fld_name'],
-                        'name' => $column['fld_name'],
+                        'name' => $column['fld_description'],
                         'type' => $column['fld_type'],
                         'source' => $result['rep_tab_name'],
                         'typeSearch' => 'search text',

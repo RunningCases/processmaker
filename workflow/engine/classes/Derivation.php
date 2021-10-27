@@ -1086,11 +1086,16 @@ class Derivation
                                  break;
                             default:
                                 $iNewDelIndex = $this->doDerivation($currentDelegation, $nextDel, $appFields, $aSP);
+                                $appUid = $currentDelegation['APP_UID'];
                                 // Load Case Data again because the information could be change in method "doDerivation"
-                                $verifyApplication = $this->case->loadCase($currentDelegation['APP_UID']);
-                                $appFields['APP_DATA'] = $verifyApplication['APP_DATA'];
-                                //When the users route the case in the same time
-                                if($iNewDelIndex !== 0){
+                                $lastData = $this->case->loadCase($appUid);
+                                // Update the thread title related to the last index created
+                                if (!is_null($iNewDelIndex)) {
+                                    $this->case->updateThreadTitle($appUid, $lastData['APP_NUMBER'], $iNewDelIndex, $lastData['APP_DATA']);
+                                }
+                                $appFields['APP_DATA'] = $lastData['APP_DATA'];
+                                // When the users route the case in the same time
+                                if($iNewDelIndex !== 0) {
                                     $arrayDerivationResult[] = [
                                         'DEL_INDEX' => $iNewDelIndex,
                                         'TAS_UID' => $nextDel['TAS_UID'],
@@ -1438,13 +1443,13 @@ class Derivation
         $newCase = $this->case->startCase($subProcessInfo['TAS_UID'], $subProcessInfo['USR_UID'], true, $appFields, $isSelfService);
 
         // Load the TAS_UID related to the SubProcess
-        $taskNextDel = TaskPeer::retrieveByPK($subProcessInfo["TAS_UID"]); //Sub-Process
-
+        $taskNextDel = TaskPeer::retrieveByPK($subProcessInfo["TAS_UID"]);
         // Copy case variables to sub-process case
         $fields = unserialize($subProcessInfo['SP_VARIABLES_OUT']);
+        // Load the information about the new case
+        $currentFields = $this->case->loadCase($newCase['APPLICATION']);
         $newFields = [];
-        $oldFields = $this->case->loadCase($newCase['APPLICATION']);
-
+        $newFields['INDEX'] = 1;
         foreach ($fields as $originField => $targetField) {
             $originField = trim($originField, " @#%?$=&");
             $targetField = trim($targetField, " @#%?$=&");
@@ -1455,12 +1460,14 @@ class Derivation
             }
         }
 
-        // We will to update the new case
-        $oldFields['APP_DATA'] = array_merge($oldFields['APP_DATA'], $newFields);
-        $oldFields['APP_STATUS'] = 'TO_DO';
+
+        // We will to update the new case with the variables to define in the sub-process
+        $currentFields['APP_DATA'] = array_merge($currentFields['APP_DATA'], $newFields);
+        $currentFields['DEL_INDEX'] = 1;
+        $currentFields['APP_STATUS'] = 'TO_DO';
         $this->case->updateCase(
             $newCase['APPLICATION'],
-            $oldFields
+            $currentFields
         );
 
         // Create a registry in SUB_APPLICATION table
@@ -1491,8 +1498,8 @@ class Derivation
         if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && !empty(trim($tasGroupVariable))) {
             $nextTaskGroupVariable = trim($tasGroupVariable, " @#");
 
-            if (isset($oldFields["APP_DATA"][$nextTaskGroupVariable])) {
-                $dataVariable = $oldFields["APP_DATA"][$nextTaskGroupVariable];
+            if (isset($currentFields["APP_DATA"][$nextTaskGroupVariable])) {
+                $dataVariable = $currentFields["APP_DATA"][$nextTaskGroupVariable];
                 $dataVariable = (is_array($dataVariable))? $dataVariable : trim($dataVariable);
 
                 if (!empty($dataVariable)) {
@@ -1507,7 +1514,7 @@ class Derivation
             }
         }
         // We will to send the notifications
-        $sendNotificationsMobile = $this->sendNotificationsMobile($oldFields, $subProcessInfo, $newCase['INDEX']);
+        $sendNotificationsMobile = $this->sendNotificationsMobile($currentFields, $subProcessInfo, $newCase['INDEX']);
         $nextTaskData = $taskNextDel->toArray(BasePeer::TYPE_FIELDNAME);
         $nextTaskData['USR_UID'] = $subProcessInfo['USR_UID'];
         $sendNotifications = $this->notifyAssignedUser($appFields, $nextTaskData, $newCase['INDEX']);

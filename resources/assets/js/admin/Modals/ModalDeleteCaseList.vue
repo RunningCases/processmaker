@@ -55,10 +55,9 @@ export default {
         deleteCustomCaseList() {
             let that = this;
             api.deleteCaseList(this.data).then((response) => { 
-                if (response.statusText === "OK") {
+                if (response.statusText === "OK" || response.status === 200) {
                     that.$refs["modal-delete-list"].hide();
                     that.$parent.$refs["table"].getData();
-                    that.$parent.$refs['ellipsis-' + that.data.id].hideActionButtons();
                 }
             });
         }

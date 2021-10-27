@@ -202,7 +202,8 @@
                         <b-form-group :label="$root.translation('ID_DEFAULT_MAIN_MENU_OPTION')">
                             <b-form-select v-model="form.PREF_DEFAULT_MENUSELECTED"
                                            :options="defaultMainMenuOptionList"
-                                           :disabled="disabledField.PREF_DEFAULT_MENUSELECTED"/>
+                                           :disabled="disabledField.PREF_DEFAULT_MENUSELECTED"
+                                           @change="changeDefaultMainMenuOption"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="2">
@@ -211,7 +212,7 @@
                         <b-form-group :label="$root.translation('ID_DEFAULT_CASES_MENU_OPTION')">
                             <b-form-select v-model="form.PREF_DEFAULT_CASES_MENUSELECTED"
                                            :options="defaultCasesMenuOptionList"
-                                           :disabled="disabledField.PREF_DEFAULT_CASES_MENUSELECTED"/>
+                                           :disabled="disabledField.PREF_DEFAULT_CASES_MENUSELECTED || switchChangeDefaultMainMenuOption"/>
                         </b-form-group>
                     </b-col>
                     <b-col cols="1">
@@ -458,7 +459,9 @@
                 },
                 permission: {},
                 classCustom: "",
-                classCustom2: ""
+                classCustom2: "",
+                switchChangeDefaultMainMenuOption: true,
+                memoryChangeDefaultMainMenuOption: ""
             };
         },
         mounted() {
@@ -835,6 +838,8 @@
                                             text: response.data.user.REPLACED_NAME
                                         }];
                                 }
+                                //for Default Cases Menu option
+                                this.changeDefaultMainMenuOption();
                             }
                         })
                         .catch(error => {
@@ -1158,6 +1163,20 @@
             },
             changeRole() {
                 this.getUserExtendedAttributesList();
+            },
+            changeDefaultMainMenuOption() {
+                let isPmCases = this.form.PREF_DEFAULT_MENUSELECTED === "PM_CASES";
+
+                //disable PREF_DEFAULT_CASES_MENUSELECTED
+                this.switchChangeDefaultMainMenuOption = !isPmCases;
+
+                //remember PREF_DEFAULT_CASES_MENUSELECTED
+                if (isPmCases && this.form.PREF_DEFAULT_CASES_MENUSELECTED !== "") {
+                    this.memoryChangeDefaultMainMenuOption = this.form.PREF_DEFAULT_CASES_MENUSELECTED;
+                }
+
+                //restore
+                this.form.PREF_DEFAULT_CASES_MENUSELECTED = isPmCases ? this.memoryChangeDefaultMainMenuOption : "";
             }
         }
     }

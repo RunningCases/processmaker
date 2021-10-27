@@ -241,9 +241,9 @@ export default {
                 {
                     type: "CaseTitle",
                     id: "caseTitle",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_CASE_TITLE')}`,
-                    optionLabel: this.$i18n.t('ID_BY_CASE_TITLE'),
-                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CASE_TITLE'),
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_CASE_THREAD_TITLE')}`,
+                    optionLabel: this.$i18n.t('ID_BY_CASE_THREAD_TITLE'),
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CASE_THREAD_TITLE'),
                     detail: "",
                     tagText: "",
                     items:[
@@ -343,7 +343,7 @@ export default {
                     tagPrefix:  this.$i18n.t('ID_SEARCH_BY_CURRENT_USER'),
                     items:[
                         {
-                            id: "sendBy",
+                            id: "user",
                             value: "",
                             options: [],
                             placeholder: this.$i18n.t('ID_USER_NAME')

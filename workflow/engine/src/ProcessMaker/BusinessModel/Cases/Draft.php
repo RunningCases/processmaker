@@ -150,7 +150,7 @@ class Draft extends AbstractCases
         // Add the initial scope for draft cases
         $query->statusId(Application::STATUS_DRAFT);
         // Filter the creator
-        $query->creator($this->getUserUid());
+        $query->creator($this->getUserId());
         // Return the number of rows
         return $query->count(['APPLICATION.APP_NUMBER']);
     }
@@ -164,7 +164,7 @@ class Draft extends AbstractCases
     {
         $query = Application::query()->select(['APPLICATION.APP_NUMBER']);
         // Add the initial scope for draft cases for specific user
-        $query->draft($this->getUserUid());
+        $query->draft($this->getUserId());
         // Get only one case
         $query->limit(1);
         // Get result
