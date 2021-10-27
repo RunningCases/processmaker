@@ -294,7 +294,7 @@ export default {
           category: this.category.id,
           caseList: this.data[1].id.toLowerCase(),
           processes: this.selectedProcesses,
-          top: this.top,
+          topTen: this.top,
         };
         this.category.id == "all" ? delete dt.category : null;
         Api.process
