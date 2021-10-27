@@ -163,7 +163,9 @@ export default {
             that.onUpdatePage(data);
         });
         eventBus.$on('home::sidebar::click-item', (data) => {
-            that.OnClickSidebarItem(that.getItemMenuByValue("page",data));
+            let item = that.getItemMenuByValue("page",data);
+            that.OnClickSidebarItem(item);
+            this.$router.push(item.item.href);
         });
         eventBus.$on('home::update-settings', (data) => {
             that.updateSettings(data);
