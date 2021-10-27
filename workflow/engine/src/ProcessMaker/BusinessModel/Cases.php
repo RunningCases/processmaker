@@ -4140,10 +4140,15 @@ class Cases
 
                 // Add the time in the corresponding unit to the delegation date
                 $delegateDate = calculateDate($delegateDate, $taskSelfServiceTimeUnit, $taskSelfServiceTime);
+                $datetime = new DateTime($delegateDate);
+                //please the seconds is variant not must be considered
+                $delegateDate = $datetime->format('Y-m-d H:i:00');
 
                 // Define the current time
                 $datetime = new DateTime('now');
-                $currentDate = $datetime->format('Y-m-d H:i:s');
+                //please the seconds is variant not must be considered
+                $currentDate = $datetime->format('Y-m-d H:i:00');
+                $currentDate = UtilDateTime::convertDataToUtc($currentDate);
 
                 // Check if the triggers to be executed
                 if ($currentDate >= $delegateDate && $flagExecuteOnce) {
@@ -4208,8 +4213,10 @@ class Cases
                             'tasUid' => $taskUid,
                             'selfServiceTime' => $taskSelfServiceTime,
                             'selfServiceTimeUnit' => $taskSelfServiceTimeUnit,
+                            'currentDate' => $currentDate,
+                            'delegateDate' => $delegateDate
                         ];
-                        Log::channel(':TriggerExecution')->info('Timeout trigger execution', Bootstrap::context($context));
+                        Log::channel('taskScheduler:executeSelfServiceTimeout')->info('TriggerExecution', Bootstrap::context($context));
                     }
 
                     unset($_SESSION["PROCESS"]);

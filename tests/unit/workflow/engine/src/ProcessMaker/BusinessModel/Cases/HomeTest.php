@@ -119,7 +119,7 @@ class HomeTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-1 year"))
         ]);
 
         $home = new Home($user->USR_UID);
@@ -415,7 +415,7 @@ class HomeTest extends TestCase
             'PRO_ID' => $process->PRO_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-1 year"))
         ]);
 
         $caseList = factory(CaseList::class)->create([

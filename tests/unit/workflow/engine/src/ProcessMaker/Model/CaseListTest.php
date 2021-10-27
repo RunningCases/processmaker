@@ -43,8 +43,8 @@ class CaseListTest extends TestCase
             'iconList' => 'deafult.png',
             'iconColor' => 'red',
             'iconColorScreen' => 'blue',
-            'createDate' => date('Y-m-d H:m:s'),
-            'updateDate' => date('Y-m-d H:m:s')
+            'createDate' => date('Y-m-d H:i:s'),
+            'updateDate' => date('Y-m-d H:i:s')
         ];
         $array = CaseList::getColumnNameFromAlias($data);
 
@@ -81,8 +81,8 @@ class CaseListTest extends TestCase
             'CAL_ICON_LIST' => 'deafult.png',
             'CAL_ICON_COLOR' => 'red',
             'CAL_ICON_COLOR_SCREEN' => 'blue',
-            'CAL_CREATE_DATE' => date('Y-m-d H:m:s'),
-            'CAL_UPDATE_DATE' => date('Y-m-d H:m:s')
+            'CAL_CREATE_DATE' => date('Y-m-d H:i:s'),
+            'CAL_UPDATE_DATE' => date('Y-m-d H:i:s')
         ];
         $array = CaseList::getAliasFromColumnName($data);
 
@@ -118,8 +118,8 @@ class CaseListTest extends TestCase
             'iconList' => 'deafult.png',
             'iconColor' => 'red',
             'iconColorScreen' => 'blue',
-            'createDate' => date('Y-m-d H:m:s'),
-            'updateDate' => date('Y-m-d H:m:s')
+            'createDate' => date('Y-m-d H:i:s'),
+            'updateDate' => date('Y-m-d H:i:s')
         ];
         $caseList = CaseList::createSetting($data, $data['userId']);
 
@@ -152,8 +152,8 @@ class CaseListTest extends TestCase
             'iconList' => 'deafult.png',
             'iconColor' => 'red',
             'iconColorScreen' => 'blue',
-            'createDate' => date('Y-m-d H:m:s'),
-            'updateDate' => date('Y-m-d H:m:s')
+            'createDate' => date('Y-m-d H:i:s'),
+            'updateDate' => date('Y-m-d H:i:s')
         ];
         $model = CaseList::createSetting($data, $data['userId']);
 
@@ -194,8 +194,8 @@ class CaseListTest extends TestCase
             'iconList' => 'deafult.png',
             'iconColor' => 'red',
             'iconColorScreen' => 'blue',
-            'createDate' => date('Y-m-d H:m:s'),
-            'updateDate' => date('Y-m-d H:m:s')
+            'createDate' => date('Y-m-d H:i:s'),
+            'updateDate' => date('Y-m-d H:i:s')
         ];
         $model = CaseList::createSetting($data, $data['userId']);
 
