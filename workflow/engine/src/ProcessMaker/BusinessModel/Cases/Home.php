@@ -278,6 +278,7 @@ class Home
             ->first();
         if (!empty($caseList)) {
             $tableName = $caseList->ADD_TAB_NAME;
+            $proUid = $caseList->PRO_UID;
 
             //this gets the configured columns
             $columns = json_decode($caseList->CAL_COLUMNS);
@@ -300,13 +301,18 @@ class Home
             }
 
             //this modifies the query
-            if (!empty($tableName) && !empty($fields)) {
-                $arguments[] = function ($query) use ($tableName, $fields, $customFilters, $types) {
+            if (!empty($tableName)) {
+                $arguments[] = function ($query) use ($tableName, $fields, $customFilters, $types, $proUid) {
+                    //setting the related process
+                    $query->where('PROCESS.PRO_UID', '=', $proUid);
+
+                    //setting columns data from report table
                     $query->leftJoin($tableName, "{$tableName}.APP_UID", "=", "APP_DELEGATION.APP_UID");
                     foreach ($fields as $value) {
                         $query->addSelect($value);
                     }
-                    //filters for custom case list
+
+                    //setting filters for custom case list
                     foreach ($customFilters as $key => $filter) {
                         if (in_array($key, $fields)) {
                             //special case for date range
