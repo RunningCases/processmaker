@@ -2673,7 +2673,7 @@ class Bootstrap
         $context = [
             'ip' => G::getIpAddress(),
             'workspace' => config('system.workspace', 'Undefined Workspace'),
-            'timeZone' => DateTime::convertUtcToTimeZone(date('Y-m-d H:m:s')),
+            'timeZone' => DateTime::convertUtcToTimeZone(date('Y-m-d H:i:s')),
             'usrUid' => G::LoadTranslation('UID_UNDEFINED_USER')
         ];
         $context = array_merge($context, $extraParams);

@@ -163,7 +163,9 @@ export default {
             that.onUpdatePage(data);
         });
         eventBus.$on('home::sidebar::click-item', (data) => {
-            that.OnClickSidebarItem(that.getItemMenuByValue("page",data));
+            let item = that.getItemMenuByValue("page",data);
+            that.OnClickSidebarItem(item);
+            this.$router.push(item.item.href);
         });
         eventBus.$on('home::update-settings', (data) => {
             that.updateSettings(data);
@@ -515,7 +517,7 @@ export default {
         addMenuSearchChild(data) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.id === "advanced-search";
+                return o.id === "CASES_SEARCH";
             });
             if (advSearch) {
                 const index = advSearch.child.findIndex(function(o) {
@@ -533,7 +535,7 @@ export default {
                         title: data.name,
                         icon: "fas fa-circle",
                         id: data.id,
-                        page: "/advanced-search",
+                        page: "advanced-search",
                     });
                 }
             }
@@ -565,7 +567,7 @@ export default {
         removeMenuSearchChild(id) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.id === "advanced-search";
+                return o.id === "CASES_SEARCH";
             });
             if (advSearch) {
                 const index = advSearch.child.findIndex(function(o) {
