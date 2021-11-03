@@ -145,7 +145,7 @@ export default {
             riskType:
                 this.data[3] && this.data[3].data.riskType
                     ? this.data[3].data.riskType
-                    : "AT_RISK",
+                    : "ON_TIME",
             settingsBreadcrumbs: [
                 {
                     class: "fas fa-info-circle",
