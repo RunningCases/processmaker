@@ -50,7 +50,8 @@ class AppDelegation extends BaseAppDelegation
     {
         try {
             // This value needs to have a value like 0.x
-            $risk = 0.2;
+            $systemConfiguration = Bootstrap::getSystemConfiguration();
+            $risk = $systemConfiguration['at_risk_delegation_max_time'];
 
             return $risk;
         } catch (Exception $e) {
