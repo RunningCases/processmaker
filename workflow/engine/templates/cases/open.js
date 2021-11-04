@@ -1368,7 +1368,8 @@ Ext.onReady(function(){
   Actions.reassignCase = function()
   {
     var rowSelected = Ext.getCmp("grdpnlUsersToReassign").getSelectionModel().getSelected();
-
+    var msg = "";
+    var credentials = JSON.parse(_CREDENTIALS);
     if( rowSelected ) {
         if (Ext.getCmp('idTextareaReason').getValue() === '') {
             Ext.Msg.alert(_('ID_ALERT'), _('ID_THE_REASON_REASSIGN_USER_EMPTY'));
@@ -1376,11 +1377,17 @@ Ext.onReady(function(){
         }
       PMExt.confirm(_('ID_CONFIRM'), _('ID_REASSIGN_CONFIRM'), function(){
         Ext.Ajax.request({
-          url : 'ajaxListener' ,
-          params : {action : 'reassignCase', USR_UID: rowSelected.data.USR_UID, NOTE_REASON: Ext.getCmp('idTextareaReason').getValue(), NOTIFY_REASSIGN: Ext.getCmp('idCheckboxReason').getValue()},
-          success: function ( result, request ) {
-            var data = Ext.util.JSON.decode(result.responseText);
-            if( data.status == 0 ) {
+          method:"PUT",
+          url: _SERVER + "/api/1.0/" + _WORKSPACE + `/cases/${_APP_UID}/reassign-case`,
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ` + credentials.accessToken,
+          },
+          jsonData : {del_index : _DEL_INDEX_DELEGATE, usr_uid_target: rowSelected.data.USR_UID,usr_uid_source: _USR_DELEGATE, reason: Ext.getCmp('idTextareaReason').getValue()},
+          success: function (result, request) {
+            var data = result;
+            if( data.status == 0 || data.status == 200) {
               try {
                   if (typeof parent.notify !== "undefined") {
                       parent.notify('', data.msg);
@@ -1402,8 +1409,9 @@ Ext.onReady(function(){
               alert(data.msg);
             }
           },
-          failure: function ( result, request) {
-            Ext.MessageBox.alert( _('ID_FAILED') , result.responseText);
+          failure: function (result, request) {
+            msg = JSON.parse(result.responseText);
+            Ext.MessageBox.alert( _('ID_FAILED') , msg.error? msg.error.message: "");
           }
         });
       });
