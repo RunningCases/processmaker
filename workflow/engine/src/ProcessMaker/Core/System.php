@@ -1248,7 +1248,7 @@ class System
         }
 
         $value = $config['at_risk_delegation_max_time'];
-        if ($value > 0 && $value < 1) {
+        if ($value < 0 || $value > 1) {
             $config['at_risk_delegation_max_time'] = self::$defaultConfig['at_risk_delegation_max_time'];
         }
 
