@@ -251,7 +251,7 @@ export default {
       let taskList = this.data[1].id.toLowerCase(),
         obj = [
           {
-            autoshow: false,
+            autoShow: false,
             fieldId: "processName",
             filterVar: "process",
             label: "",
