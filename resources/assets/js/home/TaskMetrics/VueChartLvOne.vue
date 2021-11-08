@@ -144,6 +144,9 @@ export default {
           toolbar: {
             show: true,
           },
+          export: {
+            csv: false
+          },
           events: {
             click: function (event, chartContext, config) {
               that.$refs.popover.$emit("close");
@@ -491,6 +494,9 @@ export default {
   padding-left: 5%;
   padding-top: 10px;
   text-align: end;
+}
+.apexcharts-menu-item.exportCSV{
+  display: none !important;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

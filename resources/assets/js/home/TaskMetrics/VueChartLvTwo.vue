@@ -342,5 +342,9 @@ export default {
 .vp-text-align-center {
   text-align: center;
 }
+
+.apexcharts-menu-item.exportCSV{
+  display: none !important;
+}
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
