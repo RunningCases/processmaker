@@ -274,11 +274,13 @@ class Home
         $caseList = CaseList::where('CAL_TYPE', '=', $type)
             ->where('CAL_ID', '=', $id)
             ->join('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
+            ->join('PROCESS', 'PROCESS.PRO_UID', '=', 'ADDITIONAL_TABLES.PRO_UID')
             ->get()
             ->first();
         if (!empty($caseList)) {
             $tableName = $caseList->ADD_TAB_NAME;
             $proUid = $caseList->PRO_UID;
+            $proId = $caseList->PRO_ID;
 
             //this gets the configured columns
             $columns = json_decode($caseList->CAL_COLUMNS);
@@ -337,6 +339,7 @@ class Home
                     }
                 };
             }
+            $arguments[1] = $proId;
         }
     }
 

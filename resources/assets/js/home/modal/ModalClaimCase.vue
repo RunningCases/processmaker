@@ -78,6 +78,9 @@ export default {
           });
           eventBus.$emit("home-update-page", "XCase");
         }
+      }).catch(function (error) {
+        that.$refs["modal-claim-case"].hide();
+        that.$emit("claimCatch", error.response.data.error.message);
       });
     },
   },

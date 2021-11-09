@@ -251,7 +251,7 @@ export default {
       let taskList = this.data[1].id.toLowerCase(),
         obj = [
           {
-            autoshow: false,
+            autoShow: false,
             fieldId: "processName",
             filterVar: "process",
             label: "",
@@ -341,6 +341,10 @@ export default {
 
 .vp-text-align-center {
   text-align: center;
+}
+
+.apexcharts-menu-item.exportCSV{
+  display: none !important;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

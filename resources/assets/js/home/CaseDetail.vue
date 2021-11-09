@@ -104,7 +104,7 @@
         ></attached-documents-edit>
       </div>
     </div>
-    <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
+    <ModalClaimCase ref="modal-claim-case" @claimCatch="claimCatch"></ModalClaimCase>
   </div>
 </template>
 
@@ -640,6 +640,12 @@ export default {
           console.error(e);
         });
     },
+    /**
+     * Claim catch error handler message
+     */
+    claimCatch(message) {
+      this.showAlert(message, "danger");
+    }
   },
 };
 </script>
