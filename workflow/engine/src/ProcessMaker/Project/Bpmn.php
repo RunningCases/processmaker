@@ -3,6 +3,7 @@
 namespace ProcessMaker\Project;
 
 use BasePeer;
+use Bootstrap;
 use BpmnActivity as Activity;
 use BpmnArtifact as Artifact;
 use BpmnActivityPeer as ActivityPeer;
@@ -31,11 +32,12 @@ use Criteria as Criteria;
 use Exception;
 use G;
 use Illuminate\Support\Facades\Log;
-use ResultSet as ResultSet;
-use ProcessMaker\Util\Common;
+use pmTablesProxy;
+use Processes;
 use ProcessMaker\Exception\ProjectNotFound;
 use ProcessMaker\Project\Adapter\BpmnWorkflow;
-use Bootstrap;
+use ProcessMaker\Util\Common;
+use ResultSet as ResultSet;
 
 /**
  * Class Bpmn
@@ -405,6 +407,20 @@ class Bpmn extends Handler
         if ($project = $this->getProject("object")) {
             $project->delete();
         }
+
+        $process = new Processes();
+        $repTable = $process->getReportTables($this->getUid());
+        $rows = [];
+        foreach ($repTable as $table) {
+            array_push($rows, ["id" => $table["ADD_TAB_UID"], "type" => ""]);
+        }
+        if (!empty($rows)) {
+            $httpData = (object)[];
+            $httpData->rows = json_encode($rows);
+            $repTable = new pmTablesProxy();
+            $repTable->delete($httpData);
+        }
+
         self::log("Remove Project Success!");
     }
 
