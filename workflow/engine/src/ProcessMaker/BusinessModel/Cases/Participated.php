@@ -2,10 +2,12 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Task;
+use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
 
 class Participated extends AbstractCases
@@ -15,6 +17,7 @@ class Participated extends AbstractCases
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
+        'PROCESS.CATEGORY_ID', // Category
         'PROCESS.PRO_TITLE', // Process Name
         'TASK.TAS_TITLE', // Pending Task
         'TASK.TAS_ASSIGN_TYPE', // Task assign rule
@@ -71,6 +74,10 @@ class Participated extends AbstractCases
             $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
             // Add the filter
             $query->specificCases($result);
+        }
+        // Specific category
+        if ($this->getCategoryId()) {
+            $query->categoryId($this->getCategoryId());
         }
         // Scope to search for an specific process
         if ($this->getProcessId()) {
@@ -168,6 +175,9 @@ class Participated extends AbstractCases
         $results = $query->get();
         // Prepare the result
         $results->transform(function ($item, $key) use ($filter) {
+            // Get the category
+            $category = !empty($item['CATEGORY_ID']) ? ProcessCategory::getCategory($item['CATEGORY_ID']) : '';
+            $item['CATEGORY'] = !empty($category) ? $category : G::LoadTranslation('ID_PROCESS_NONE_CATEGORY');
             // Apply the date format defined in environment
             $item['APP_CREATE_DATE_LABEL'] = !empty($item['APP_CREATE_DATE']) ? applyMaskDateEnvironment($item['APP_CREATE_DATE']): null;
             $item['APP_FINISH_DATE_LABEL'] = !empty($item['APP_FINISH_DATE']) ? applyMaskDateEnvironment($item['APP_FINISH_DATE']): null;
@@ -366,6 +376,11 @@ class Participated extends AbstractCases
                 // Scope to set the last thread
                 $query->lastThread();
                 break;
+        }
+        // Check if the category was defined
+        if ($this->getCategoryId()) {
+            // Join with process if the filter with category exist
+            $query->joinProcess();
         }
         // Apply filters
         $this->filters($query);

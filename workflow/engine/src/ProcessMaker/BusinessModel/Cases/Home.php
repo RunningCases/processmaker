@@ -38,7 +38,9 @@ class Home
 
     /**
      * Get the draft cases.
+     * 
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -47,10 +49,12 @@ class Home
      * @param string $filterCases
      * @param string $sort
      * @param callable $callback
+     * 
      * @return array
      */
     public function getDraft(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -67,6 +71,7 @@ class Home
         $properties['caseNumber'] = $caseNumber;
         $properties['caseTitle'] = $caseTitle;
         $properties['filterCases'] = $filterCases;
+        $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
         // Get the user that access to the API
@@ -87,7 +92,9 @@ class Home
 
     /**
      * Get the inbox cases.
+     * 
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -99,10 +106,12 @@ class Home
      * @param string $sort
      * @param string $sendBy
      * @param callable $callback
+     * 
      * @return array
      */
     public function getInbox(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -124,6 +133,7 @@ class Home
         $properties['delegateFrom'] = $delegateFrom;
         $properties['delegateTo'] = $delegateTo;
         $properties['filterCases'] = $filterCases;
+        $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
         // Get the user that access to the API
@@ -145,7 +155,9 @@ class Home
 
     /**
      * Get the unassigned cases.
+     * 
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -157,10 +169,12 @@ class Home
      * @param string $sort
      * @param string $sendBy
      * @param callable $callback
+     * 
      * @return array
      */
     public function getUnassigned(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -182,6 +196,7 @@ class Home
         $properties['delegateFrom'] = $delegateFrom;
         $properties['delegateTo'] = $delegateTo;
         $properties['filterCases'] = $filterCases;
+        $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
         // Get the user that access to the API
@@ -205,7 +220,9 @@ class Home
 
     /**
      * Get the paused cases.
+     * 
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -217,10 +234,12 @@ class Home
      * @param string $sort
      * @param string $sendBy
      * @param callable $callback
+     * 
      * @return array
      */
     public function getPaused(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -242,6 +261,7 @@ class Home
         $properties['delegateFrom'] = $delegateFrom;
         $properties['delegateTo'] = $delegateTo;
         $properties['filterCases'] = $filterCases;
+        $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
         // Get the user that access to the API
@@ -263,6 +283,7 @@ class Home
 
     /**
      * Build the columns and data from the custom list.
+     * 
      * @param string $type
      * @param int $id
      * @param array $arguments
@@ -345,8 +366,10 @@ class Home
 
     /**
      * Get the custom draft cases.
+     * 
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -355,11 +378,13 @@ class Home
      * @param string $filterCases
      * @param string $sort
      * @param array $customFilters
+     * 
      * @return array
      */
     public function getCustomDraft(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -372,6 +397,7 @@ class Home
     {
         $arguments = [
             $caseNumber,
+            $category,
             $process,
             $task,
             $limit,
@@ -382,7 +408,7 @@ class Home
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'filterCases', 'sort'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'filterCases', 'sort'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }
@@ -398,8 +424,10 @@ class Home
 
     /**
      * Get the custom inbox cases.
+     * 
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -411,11 +439,13 @@ class Home
      * @param string $sort
      * @param string $sendBy
      * @param array $customFilters
+     * 
      * @return array
      */
     public function getCustomInbox(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -431,6 +461,7 @@ class Home
     {
         $arguments = [
             $caseNumber,
+            $category,
             $process,
             $task,
             $limit,
@@ -444,7 +475,7 @@ class Home
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }
@@ -460,8 +491,10 @@ class Home
 
     /**
      * Get the custom unassigned cases.
+     * 
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -473,11 +506,13 @@ class Home
      * @param string $sort
      * @param string $sendBy
      * @param array $customFilters
+     * 
      * @return array
      */
     public function getCustomUnassigned(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -493,6 +528,7 @@ class Home
     {
         $arguments = [
             $caseNumber,
+            $category,
             $process,
             $task,
             $limit,
@@ -506,7 +542,7 @@ class Home
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }
@@ -522,8 +558,10 @@ class Home
 
     /**
      * Get the custom paused cases.
+     * 
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -535,11 +573,13 @@ class Home
      * @param string $sort
      * @param string $sendBy
      * @param array $customFilters
+     * 
      * @return array
      */
     public function getCustomPaused(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -555,6 +595,7 @@ class Home
     {
         $arguments = [
             $caseNumber,
+            $category,
             $process,
             $task,
             $limit,
@@ -568,7 +609,7 @@ class Home
         ];
 
         //clear duplicate indexes
-        $keys = ['caseNumber', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
+        $keys = ['caseNumber', 'category', 'process', 'task', 'limit', 'offset', 'caseTitle', 'delegateFrom', 'delegateTo', 'filterCases', 'sort', 'sendBy'];
         foreach ($keys as $value) {
             unset($customFilters[$value]);
         }

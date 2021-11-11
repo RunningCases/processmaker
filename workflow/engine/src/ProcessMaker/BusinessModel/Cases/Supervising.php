@@ -2,9 +2,11 @@
 
 namespace ProcessMaker\BusinessModel\Cases;
 
+use G;
 use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\ProcessUser;
+use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
 
 class Supervising extends AbstractCases
@@ -14,6 +16,7 @@ class Supervising extends AbstractCases
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
+        'PROCESS.CATEGORY_ID', // Category
         'PROCESS.PRO_TITLE', // Process Name
         'TASK.TAS_TITLE', // Pending Task
         'APPLICATION.APP_STATUS', // Status
@@ -69,6 +72,10 @@ class Supervising extends AbstractCases
             $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
             // Add the filter
             $query->specificCases($result);
+        }
+        // Specific category
+        if ($this->getCategoryId()) {
+            $query->categoryId($this->getCategoryId());
         }
         // Scope to search for an specific process
         if ($this->getProcessId()) {
@@ -144,6 +151,9 @@ class Supervising extends AbstractCases
             $results = $query->get();
             // Prepare the result
             $results->transform(function ($item, $key) {
+                // Get the category
+                $category = !empty($item['CATEGORY_ID']) ? ProcessCategory::getCategory($item['CATEGORY_ID']) : '';
+                $item['CATEGORY'] = !empty($category) ? $category : G::LoadTranslation('ID_PROCESS_NONE_CATEGORY');
                 // Get task color label
                 $item['TAS_COLOR'] = $this->getTaskColor($item['DEL_TASK_DUE_DATE']);
                 $item['TAS_COLOR_LABEL'] = self::TASK_COLORS[$item['TAS_COLOR']];
@@ -243,6 +253,11 @@ class Supervising extends AbstractCases
         $processes = ProcessUser::getProcessesOfSupervisor($this->getUserUid());
         // Scope the specific array of processes supervising
         $query->processInList($processes);
+        // Check if the category was defined
+        if ($this->getCategoryId()) {
+            // Join with process if the filter with category exist
+            $query->joinProcess();
+        }
         // Apply filters
         $this->filters($query);
         // Return the number of rows

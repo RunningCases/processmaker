@@ -6,6 +6,7 @@ use G;
 use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Task;
+use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
 
 class Paused extends AbstractCases
@@ -15,6 +16,7 @@ class Paused extends AbstractCases
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
+        'PROCESS.CATEGORY_ID', // Category
         'PROCESS.PRO_TITLE', // Process
         'TASK.TAS_TITLE', // Task
         'USERS.USR_USERNAME', // Current UserName
@@ -125,6 +127,9 @@ class Paused extends AbstractCases
         $results = $query->get();
         // Prepare the result
         $results->transform(function ($item, $key) {
+            // Get the category
+            $category = !empty($item['CATEGORY_ID']) ? ProcessCategory::getCategory($item['CATEGORY_ID']) : '';
+            $item['CATEGORY'] = !empty($category) ? $category : G::LoadTranslation('ID_PROCESS_NONE_CATEGORY');
             // Get priority label
             $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
             $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
@@ -210,6 +215,11 @@ class Paused extends AbstractCases
         $query = Delegation::query()->select();
         // Scope that set the paused cases
         $query->paused($this->getUserId());
+        // Check if the category was defined
+        if ($this->getCategoryId()) {
+            // Join with process if the filter with category exist
+            $query->joinProcess();
+        }
         // Apply filters
         $this->filters($query);
         // Return the number of rows

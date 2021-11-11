@@ -788,7 +788,7 @@ class DraftTest extends TestCase
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $del = factory(Delegation::class)->states('foreign_keys')->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -804,7 +804,7 @@ class DraftTest extends TestCase
         $draft = new Draft();
         $draft->setUserId($user->USR_ID);
         $draft->setUserUid($user->USR_ID);
-        $res = $draft->getCasesRisk($process->PRO_ID);
+        $res = $draft->getCasesRisk($process->PRO_ID, $currentDate, $currentDate, 'ON_TIME', 10);
         $this->assertCount(1, $res);
     }
 
