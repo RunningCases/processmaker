@@ -98,7 +98,7 @@ export default {
       return (
         window.config.SYS_SERVER_AJAX +
         window.config.SYS_URI +
-        `cases/cases_ShowOutputDocument?a=${item.data.APP_DOC_UID}&v=${item.data.DOC_VERSION}&ext=doc&random=${random}&nocachetime=${cacheTime}`
+        `cases/${item.data.DOWNLOAD_LINK}`
       );
     },
   },
