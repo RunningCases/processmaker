@@ -441,16 +441,16 @@ if (Bootstrap::virtualURI($_SERVER['REQUEST_URI'], $virtualURITable, $realPath))
             $arrayMatch)) ? $arrayMatch[1] : $_SERVER["REQUEST_URI"];
 
         $fileToBeStreamed = str_replace("/skin/", PATH_CUSTOM_SKINS, $url);
-
+       
         if (file_exists($fileToBeStreamed)) {
             //NewRelic Snippet - By JHL
             transactionLog($fileToBeStreamed);
-
+    
             Bootstrap::streamFile($fileToBeStreamed);
         }
         die();
     }
-
+   
     switch ($realPath) {
         case 'jsMethod':
             Bootstrap::parseURI(getenv("REQUEST_URI"));
