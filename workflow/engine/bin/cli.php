@@ -41,8 +41,10 @@ if (!defined('TIME_ZONE')) {
     $cliName = array_shift($args);
     $taskName = array_shift($args);
     $workspace = array_shift($args);
-    while ($workspace[0] == '-') {
-        $workspace = array_shift($args);
+    if (isset($workspace[0])) {
+        while ($workspace[0] == '-') {
+            $workspace = array_shift($args);
+        }
     }
 
     // Get time zone (global or by workspace)
