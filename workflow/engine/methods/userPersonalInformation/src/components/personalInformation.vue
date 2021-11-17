@@ -467,11 +467,11 @@
         mounted() {
             this.$nextTick(function () {
                 let promise = null;
+                this.getTimeZoneList();
                 if ("USR_UID" in window && window.USR_UID !== "") {
                     this.editing = true;
                     promise = this.load();
-                    promise.then(response => {
-                        response;
+                    promise.then(() => {
                         this.loadServices();
                     });
                 } else {
@@ -851,7 +851,6 @@
             loadServices() {
                 this.getCountryList();
                 this.getAvailableCalendars();
-                this.getTimeZoneList();
                 this.getLanguagesList();
                 this.getDefaultMainMenuOptionList();
                 this.getDefaultCasesMenuOptionList();
