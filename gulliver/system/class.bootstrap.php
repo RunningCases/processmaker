@@ -806,6 +806,7 @@ class Bootstrap
     public static function streamCSSBigFile($filename)
     {
         header('Content-Type: text/css');
+        header('X-Content-Type-Options: nosniff');
 
         //First get Skin info
         $filenameParts = explode("-", $filename);
@@ -969,7 +970,7 @@ class Bootstrap
             header('Content-Disposition: attachment; filename="' . $downloadFileName . '"');
         }
         header('Content-Type: ' . $contentType);
-
+        header('X-Content-Type-Options: nosniff');
         // if userAgent (BROWSER) is MSIE we need special headers to avoid MSIE
         // behaivor.
         $userAgent = strtolower($_SERVER ['HTTP_USER_AGENT']);
