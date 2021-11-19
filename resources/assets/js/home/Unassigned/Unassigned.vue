@@ -46,6 +46,9 @@
       <div slot="process_name" slot-scope="props">
         {{ props.row.PROCESS_NAME }}
       </div>
+      <div slot="process_category" slot-scope="props">
+        {{ props.row.PROCESS_CATEGORY }}
+      </div>
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
@@ -108,6 +111,14 @@
         >
         <span class="v-card-text-light"
           >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="process_category" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_CATEGORY"] }}
         </span>
       </div>
       <div slot="due_date" slot-scope="props" class="v-card-text">
@@ -194,6 +205,14 @@
         >
         <span class="v-card-text-light"
           >{{ props["item"]["PROCESS_NAME"] }}
+        </span>
+      </div>
+      <div slot="process_category" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_CATEGORY"] }}
         </span>
       </div>
       <div slot="due_date" slot-scope="props" class="v-card-text">
@@ -334,6 +353,7 @@ export default {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
+          process_category: this.$i18n.t("ID_PROCESS_CATEGORY"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
           due_date: this.$i18n.t("ID_DUE_DATE"),
@@ -535,6 +555,7 @@ export default {
           CASE_NUMBER: v.APP_NUMBER,
           THREAD_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
+          PROCESS_CATEGORY: v.CATEGORY,
           TASK: [{
             TITLE: v.TAS_TITLE,
             CODE_COLOR: v.TAS_COLOR,

@@ -50,6 +50,9 @@
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
             </div>
+            <div slot="process_category" slot-scope="props">
+                {{ props.row.PROCESS_CATEGORY }}
+            </div>
             <div slot="pending_taks" slot-scope="props">
                 <GroupedCell :data="props.row.PENDING_TASKS" />
             </div>
@@ -161,6 +164,7 @@ export default {
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
+                    process_category: this.$i18n.t("ID_PROCESS_CATEGORY"),
                     thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                     pending_taks: this.$i18n.t("ID_PENDING_TASKS"),
                     status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
@@ -454,6 +458,8 @@ export default {
                     CASE_NUMBER: v.APP_NUMBER,
                     THREAD_TITLE: v.THREAD_TITLES,
                     PROCESS_NAME: v.PRO_TITLE,
+                    PROCESS_NAME: v.PRO_TITLE,
+                    PROCESS_CATEGORY: v.CATEGORY,
                     STATUS: v.APP_STATUS,
                     START_DATE: v.APP_CREATE_DATE_LABEL || "",
                     FINISH_DATE: v.APP_FINISH_DATE_LABEL || "",
