@@ -24384,6 +24384,12 @@ msgid "Script Task"
 msgstr "Script Task"
 
 # TRANSLATION
+# LABEL/ID_SCRIPT_TASK_UNTITLED
+#: LABEL/ID_SCRIPT_TASK_UNTITLED
+msgid "Untitled - Script Task"
+msgstr "Untitled - Script Task"
+
+# TRANSLATION
 # LABEL/ID_SCRIPT_TASK_ACTIVITY_ALREADY_REGISTERED
 #: LABEL/ID_SCRIPT_TASK_ACTIVITY_ALREADY_REGISTERED
 msgid "The Script-Task with {0}: \"{1}\" already registered"
@@ -24964,6 +24970,18 @@ msgstr "Server reported"
 #: LABEL/ID_SERVICE
 msgid "Service"
 msgstr "Service"
+
+# TRANSLATION
+# LABEL/ID_SERVICE_TASK
+#: LABEL/ID_SERVICE_TASK
+msgid "Service Task"
+msgstr "Service Task"
+
+# TRANSLATION
+# LABEL/ID_SERVICE_TASK_UNTITLED
+#: LABEL/ID_SERVICE_TASKUNTITLED
+msgid "Untitled - Service Task"
+msgstr "Untitled - Service Task"
 
 # TRANSLATION
 # LABEL/ID_SESSION

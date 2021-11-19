@@ -64,14 +64,15 @@ $factory->state(\ProcessMaker\Model\Delegation::class, 'foreign_keys', function 
     $initDate = $faker->dateTimeInInterval($delegateDate, '+30 minutes');
     $riskDate = $faker->dateTimeInInterval($initDate, '+1 day');
     $taskDueDate = $faker->dateTimeInInterval($riskDate, '+2 day');
+    $index = $faker->unique()->numberBetween(2000);
 
     // Return with default values
     return [
         'DELEGATION_ID' => $faker->unique()->numberBetween(5000),
         'APP_UID' => $application->APP_UID,
-        'DEL_INDEX' => $faker->unique()->numberBetween(2000),
+        'DEL_INDEX' => $index,
         'APP_NUMBER' => $application->APP_NUMBER,
-        'DEL_PREVIOUS' => 0,
+        'DEL_PREVIOUS' => $index - 1,
         'PRO_UID' => $process->PRO_UID,
         'TAS_UID' => $task->TAS_UID,
         'USR_UID' => $user->USR_UID,

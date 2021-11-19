@@ -120,16 +120,18 @@ class Task extends Model
      *
      * @param  integer $tasId
      *
-     * @return string
+     * @return array
      */
-    public function title($tasId)
+    public static function title($tasId)
     {
-        $query = Task::query()->select('TAS_TITLE');
+        $query = Task::query()->select('TAS_TITLE', 'TAS_TYPE');
         $query->where('TAS_ID', $tasId);
         $results = $query->get();
         $title = '';
-        $results->each(function ($item, $key) use (&$title) {
+        $type = '';
+        $results->each(function ($item, $key) use (&$title, &$type) {
             $title = $item->TAS_TITLE;
+            $type = $item->TAS_TYPE;
             switch ($title) {
                 case "INTERMEDIATE-THROW-EMAIL-EVENT":
                     $title = G::LoadTranslation('ID_INTERMEDIATE_THROW_EMAIL_EVENT');
@@ -143,10 +145,37 @@ class Task extends Model
                 case "INTERMEDIATE-CATCH-TIMER-EVENT":
                     $title = G::LoadTranslation('ID_INTERMEDIATE_CATCH_TIMER_EVENT');
                     break;
+                case "SCRIPT-TASK":
+                    $title = G::LoadTranslation('ID_SCRIPT_TASK_UNTITLED');
+                    break;
+                case "SERVICE-TASK":
+                    $title = G::LoadTranslation('ID_SERVICE_TASK_UNTITLED');
+                    break;
+            }
+            switch ($type) {
+                case "INTERMEDIATE-THROW-EMAIL-EVENT":
+                    $type = G::LoadTranslation('ID_EMAIL_EVENT');
+                    break;
+                case "INTERMEDIATE-THROW-MESSAGE-EVENT":
+                case "INTERMEDIATE-CATCH-MESSAGE-EVENT":
+                    $type = G::LoadTranslation('ID_MESSAGE_EVENT');
+                    break;
+                case "INTERMEDIATE-CATCH-TIMER-EVENT":
+                    $type = G::LoadTranslation('ID_TIMER_EVENT');
+                    break;
+                case "SCRIPT-TASK":
+                    $type = G::LoadTranslation('ID_SCRIPT_TASK');
+                    break;
+                case "SERVICE-TASK":
+                    $type = G::LoadTranslation('ID_SERVICE_TASK');
+                    break;
             }
         });
 
-        return $title;
+        return [
+            'title' => $title,
+            'type' => $type,
+        ];
     }
 
     /**
