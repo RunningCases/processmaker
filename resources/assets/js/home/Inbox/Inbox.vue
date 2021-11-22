@@ -54,7 +54,12 @@
         <TaskCell :data="props.row.TASK" />
       </div>
       <div slot="send_by" slot-scope="props">
-        <CurrentUserCell :data="props.row.USER_DATA" />
+        <template v-if="showUserTooltip" >
+          <CurrentUserCell :data="props.row.USER_DATA" />
+        </template>
+        <template v-else>
+          {{ props.row.USER_DATA }}
+        </template>
       </div>
       <div slot="current_user" slot-scope="props">
         {{ props.row.USERNAME_DISPLAY_FORMAT }}
@@ -149,7 +154,12 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <CurrentUserCell :data="props.item.USER_DATA" />
+          <template v-if="showUserTooltip" >
+            <CurrentUserCell :data="props.item.USER_DATA" />
+          </template>
+          <template v-else>
+            {{ props.item.USER_DATA }}
+          </template>
         </span>
       </div>
     </VueCardView>
@@ -230,7 +240,12 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <CurrentUserCell :data="props.item.USER_DATA" />
+          <template v-if="showUserTooltip" >
+            <CurrentUserCell :data="props.item.USER_DATA" />
+          </template>
+          <template v-else>
+            {{ props.item.USER_DATA }}
+          </template>
         </span>
       </div>
     </VueListView>
@@ -383,7 +398,8 @@ export default {
         buttons: {}
       },
       showEllipsis: false,
-      dataSubtitle: null
+      dataSubtitle: null,
+      showUserTooltip: true
     };
   },
   created() {
@@ -595,6 +611,8 @@ export default {
     formatUser(data) {
         var dataFormat = [],
             userDataFormat;
+        if (data.user_tooltip && !_.isEmpty(data.user_tooltip)) {
+            this.showUserTooltip = true;
             userDataFormat = utils.userNameDisplayFormat({
                 userName: data.user_tooltip.usr_firstname,
                 firstName: data.user_tooltip.usr_lastname,
@@ -610,6 +628,13 @@ export default {
                     `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
                 UNASSIGNED: userDataFormat !== "" ? true : false
             });    
+        } else if (data.dummy_task && !_.isEmpty(data.dummy_task)) {
+            this.showUserTooltip = false;
+            dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
+        } else {
+            this.showUserTooltip = false;
+            dataFormat = this.$i18n.t("ID_ANONYMOUS_USER");
+        }
         return dataFormat;
     },
     /**
