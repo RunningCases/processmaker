@@ -403,11 +403,6 @@ class AppProxy extends HttpProxyController
                 'label' => G::LoadTranslation('ID_CASE_NUMBER') . ': ',
                 'value' => $appFields['APP_NUMBER'],
             ],
-            $i++ => [ // Case Title
-                'id' => 'CASE_TITLE',
-                'label' => G::LoadTranslation('ID_TASK_TITLE') . ': ',
-                'value' => $appFields['TITLE'],
-            ],
             $i++ => [ // Case Status
                 'id' => 'CASE_STATUS',
                 'label' => G::LoadTranslation('ID_CASE_STATUS') . ': ',
@@ -420,7 +415,7 @@ class AppProxy extends HttpProxyController
             ],
             $i++ => [ // Delegate Date
                 'id' => 'DEL_DELEGATE_DATE',
-                'label' => G::LoadTranslation('DEL_DELEGATE_DATE') . ': ',
+                'label' => G::LoadTranslation('ID_TASK_DELEGATE_DATE') . ': ',
                 'value' => DateTime::convertUtcToTimeZone($delegateDateLabel),
             ],
             $i++ => [ // Duration

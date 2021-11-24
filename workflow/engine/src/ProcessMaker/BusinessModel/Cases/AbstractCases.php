@@ -333,6 +333,26 @@ class AbstractCases implements CasesInterface
     }
 
     /**
+     * Set send by
+     * 
+     * @param type $sendBy
+     */
+    public function setSendBy(string $sendBy)
+    {
+        $this->sendBy = $sendBy;
+    }
+
+    /**
+     * Get send by.
+     * 
+     * @return string
+     */
+    public function getSendBy()
+    {
+        return $this->sendBy;
+    }
+
+    /**
      * Set value to search
      *
      * @param string $valueToSearch
@@ -750,26 +770,6 @@ class AbstractCases implements CasesInterface
     public function getCasesUids()
     {
         return $this->casesUids;
-    }
-
-    /**
-     * Set send by.
-     * 
-     * @param type $sendBy
-     */
-    public function setSendBy(string $sendBy)
-    {
-        $this->sendBy = $sendBy;
-    }
-
-    /**
-     * Get send by.
-     * 
-     * @return string
-     */
-    public function getSendBy()
-    {
-        return $this->sendBy;
     }
 
     /**
@@ -1621,10 +1621,10 @@ class AbstractCases implements CasesInterface
             $query->processInList([$processId]);
         }
         if (!is_null($dateFrom)) {
-            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom);
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '>=', $dateFrom . ' 00:00:00');
         }
         if (!is_null($dateTo)) {
-            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo);
+            $query->where('APP_DELEGATION.DEL_DELEGATE_DATE', '<=', $dateTo . ' 23:59:59');
         }
         return $query->get()->values()->toArray();
     }

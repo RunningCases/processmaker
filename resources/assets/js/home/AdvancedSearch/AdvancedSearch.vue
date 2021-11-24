@@ -30,7 +30,7 @@
             :columns="columns"
             :options="options"
             ref="vueTable"
-            @row-click="onRowClick"
+            @row-click="configRowClick"
             :key="random"
         >
             <div slot="info" slot-scope="props">
@@ -76,6 +76,12 @@
                 </div>
             </div>
         </v-server-table>
+        <vue-simple-context-menu
+            :elementId="idContextMenu"
+            :options="contextMenuItems"
+            :ref="idContextMenu"
+            @option-clicked="contextMenuItemClicked"
+        />
         <ModalComments
             ref="modal-comments"
             @postNotes="onPostNotes"
@@ -93,10 +99,12 @@ import ThreadTitleCell from "../../components/vuetable/ThreadTitleCell.vue"
 import api from "../../api/index";
 import utils from "../../utils/utils";
 import defaultMixin from "./defaultMixins.js";
+import customMixin from "./customMixins";
+import { Event } from "vue-tables-2";
 
 export default {
     name: "AdvancedSearch",
-    mixins: [defaultMixin],
+    mixins: [defaultMixin, customMixin],
     components: {
         AdvancedFilter,
         ButtonFleft,
@@ -120,6 +128,11 @@ export default {
             filtersModel: {},
             filterHeader: "STARTED_BY_ME",
             headers: [],
+            columMap: {
+                case_number: "APP_NUMBER",
+                thread_title: "DEL_TITLE",
+                process_name: "PRO_TITLE",
+            },
             newCase: {
                 title: this.$i18n.t("ID_NEW_CASE"),
                 class: "btn-success",
@@ -171,8 +184,7 @@ export default {
                     selectAllMode: "page",
                     programmatic: false,
                 },
-                sortable: [],
-                orderBy: {},
+                sortable: ["case_number"],
                 requestFunction(data) {
                     return this.$parent.$parent.getCasesForVueTable(data);
                 },
@@ -189,6 +201,9 @@ export default {
                 "UNASSIGNED": this.$i18n.t("ID_UNASSIGNED")
             }
         };
+    },
+    mounted() {
+        Event.$on('clearSortEvent', this.clearSort);
     },
     watch: {
         id: function() {
@@ -222,7 +237,8 @@ export default {
                 paged,
                 limit = data.limit,
                 filters = {},
-                start = data.page === 1 ? 0 : limit * (data.page - 1);
+                start = data.page === 1 ? 0 : limit * (data.page - 1),
+                sort = "";
             paged = start + "," + limit ;
             filters = {
                 limit: limit,
@@ -233,6 +249,11 @@ export default {
                     filters[item.filterVar] = item.value;
                 }
             });
+
+            sort = that.prepareSortString(data);
+            if (sort) {
+                filters["sort"] = sort;
+            }
             return new Promise((resolutionFunc, rejectionFunc) => {
                 api.cases
                     .search(filters)
@@ -250,6 +271,20 @@ export default {
                         rejectionFunc(e);
                     });
             });
+        },
+        /**
+         * Prepare sort string to be sended in the service
+         * @param {object} data
+         * @returns {string}
+         */
+        prepareSortString(data) {
+            let sort = "";
+            if (data.orderBy && this.columMap[data.orderBy]) {
+                sort = `${this.columMap[data.orderBy]},${
+                    data.ascending === 1 ? "ASC" : "DESC"
+                }`;
+            }
+            return sort;
         },
         /**
          * Format the service response
@@ -561,6 +596,14 @@ export default {
          */
         onPostNotes() {
             this.$refs["vueTable"].getData();
+        },
+        /**
+         * Reset the sort in the table
+         */
+        clearSort() {
+            if (this.$refs['vueTable']) {
+                this.$refs['vueTable'].setOrder(false);
+            }
         },
     },
 };

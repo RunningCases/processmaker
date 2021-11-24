@@ -5,7 +5,7 @@ import { config } from "./Config";
 import { caseNotes } from "./CaseNotes";
 import { process } from "./Process";
 import { filters } from "./Filters";
-
+import { custom } from "./Custom";
 
 export default {
     menu,
@@ -14,5 +14,6 @@ export default {
     process,
     caseNotes,
     filters,
-    config
+    config,
+    custom
 };

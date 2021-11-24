@@ -49,7 +49,9 @@ class AppDelegation extends BaseAppDelegation
     public function getRisk()
     {
         try {
-            $risk = 2;
+            // This value needs to have a value like 0.x
+            $systemConfiguration = Bootstrap::getSystemConfiguration();
+            $risk = $systemConfiguration['at_risk_delegation_max_time'];
 
             return $risk;
         } catch (Exception $e) {
@@ -88,7 +90,7 @@ class AppDelegation extends BaseAppDelegation
                 $record = $rsCriteria->getRow();
 
                 if ($flagIncludeCurrentDel) {
-                    if (preg_match('/^(?:' . 'NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
+                    if (preg_match('/^(?:' . 'SERVICE\-TASK|NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
                         $arrayAppDelegationPrevious = $record;
                         $flagPrevious = false;
                     }

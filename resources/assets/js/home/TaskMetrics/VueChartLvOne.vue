@@ -6,11 +6,13 @@
       </h6>
       <div>
         <BreadCrumb
-          :options="breadCrumbs.data"
+          :options="dataBreadcrumbs()"
           :settings="settingsBreadcrumbs"
         />
         <ProcessPopover
           :options="optionsProcesses"
+          :selected="selectedProcesses"
+          @onChange="onChangeSearchPopover"
           target="pm-task-process"
           ref="pm-task-process"
           @onUpdateColumnSettings="onUpdateColumnSettings"
@@ -24,11 +26,10 @@
             :show-labels="false"
             track-by="id"
             label="name"
-            @select="changeOption"
           ></multiselect>
         </div>
         <label class="vp-inline-block vp-padding-l20">{{
-          $t("ID_TOP")
+          $t("ID_TOP10")
         }}</label>
         <div class="vp-inline-block">
           <b-form-checkbox
@@ -39,6 +40,35 @@
           >
           </b-form-checkbox>
         </div>
+        <b-popover
+          ref="popover"
+          :target="popoverTarget"
+          variant="secondary"
+          placement="right"
+        >
+          <div class="vp-chart-minipopover">
+            <div class="vp-align-right vp-flex1">
+              <button
+                type="button"
+                class="btn btn-link btn-sm"
+                @click="onClickDrillDown"
+              >
+                <i class="fas fa-chart-line"></i>
+                {{ $t("ID_DRILL") }}
+              </button>
+            </div>
+            <div class="vp-flex1">
+              <button
+                type="button"
+                class="btn btn-link btn-sm"
+                @click="onClickData"
+              >
+                <i class="fas fa-th"></i>
+                {{ $t("ID_DATA") }}
+              </button>
+            </div>
+          </div>
+        </b-popover>
         <div class="vp-inline-block vp-right vp-padding-r40">
           <h4
             class="v-search-title"
@@ -48,6 +78,9 @@
             <i class="fas fa-cog"></i>
           </h4>
         </div>
+      </div>
+      <div class="v-search-info">
+        {{ $t("ID_SELECT_PROCESS_DRILL") }}
       </div>
       <apexchart
         ref="LevelOneChart"
@@ -61,10 +94,12 @@
 
 <script>
 import _ from "lodash";
+import jquery from "jquery";
 import Api from "../../api/index";
 import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import ProcessPopover from "./ProcessPopover.vue";
 import Multiselect from "vue-multiselect";
+import eventBus from "./../EventBus/eventBus";
 
 export default {
   name: "VueChartLvOne",
@@ -74,10 +109,13 @@ export default {
     BreadCrumb,
     ProcessPopover,
   },
-  props: ["data", "breadCrumbs"],
+  props: ["data"],
   data() {
     let that = this;
     return {
+      popoverTarget: "",
+      dataPointIndex: null,
+      showPopover: false,
       category: null,
       dataProcesses: null, //Data API processes
       settingsBreadcrumbs: [
@@ -90,7 +128,7 @@ export default {
       optionsCategory: [],
       optionsProcesses: [],
       selectedProcesses: [],
-      top: false,
+      top: this.data[2] ? this.data[2].data.top : true,
       width: 0,
       totalCases: [],
       currentSelection: null,
@@ -104,17 +142,21 @@ export default {
           type: "bar",
           id: "LevelOneChart",
           toolbar: {
-            show: false,
+            show: true,
+          },
+          export: {
+            csv: false
           },
           events: {
-            legendClick: function (chartContext, seriesIndex, config) {
-              that.currentSelection = that.totalCases[seriesIndex];
-              that.$emit("updateDataLevel", {
-                id: that.currentSelection["PRO_ID"],
-                name: that.currentSelection["PRO_TITLE"],
-                level: 1,
-                data: that.currentSelection,
-              });
+            click: function (event, chartContext, config) {
+              that.$refs.popover.$emit("close");
+              if (config.dataPointIndex != -1) {
+                that.currentSelection = that.totalCases[config.dataPointIndex];
+                that.onShowDrillDownOptions(
+                  event.currentTarget,
+                  config.dataPointIndex
+                );
+              }
             },
           },
         },
@@ -124,9 +166,6 @@ export default {
             distributed: true,
             horizontal: true,
           },
-        },
-        legend: {
-          position: "top",
         },
         colors: ["#33b2df", "#546E7A", "#d4526e", "#13d8aa"],
         dataLabels: {
@@ -156,7 +195,20 @@ export default {
     this.getCategories();
     this.getProcesses();
   },
-  watch: {},
+  watch: {
+    category(nvalue, old) {
+      this.changeOption();
+    },
+    optionsCategory(nvalue, old) {
+      this.category = this.data[2] ? this.data[2].data.category : nvalue[0];
+    },
+    optionsProcesses(nvalue, old) {
+      this.selectedProcesses = this.data[2]
+        ? this.data[2].data.selectedProcesses
+        : _.flatMap(nvalue, (n) => n.key);
+      this.changeOption();
+    },
+  },
   computed: {},
   updated() {},
   beforeCreate() {},
@@ -183,16 +235,17 @@ export default {
     },
     /**
      * Get Processes form API
+     * @param {string} query - Text value in search popover
      */
-    getProcesses() {
+    getProcesses(query) {
       let that = this;
       Api.filters
-        .processList("")
+        .processListPaged({
+          text: query || "",
+          paged: false,
+        })
         .then((response) => {
           that.formatDataProcesses(response.data);
-          that.changeOption({
-            id: 0,
-          });
         })
         .catch((e) => {
           console.error(err);
@@ -205,6 +258,10 @@ export default {
     formatDataCategories(data) {
       let array = [];
       array.push({
+        name: this.$t("ID_ALL_CATEGORIES"),
+        id: "all",
+      });
+      array.push({
         name: this.$t("ID_PROCESS_NONE_CATEGORY"),
         id: "0",
       });
@@ -212,43 +269,37 @@ export default {
         array.push({ name: el["CATEGORY_NAME"], id: el["CATEGORY_ID"] });
       });
       this.optionsCategory = array;
-      this.category = array[0];
     },
     /**
      * Format processes for popover
      * @param {*} data
      */
     formatDataProcesses(data) {
-      let sels = [],
-        labels = [],
+      let labels = [],
         array = [];
-
       _.each(data, (el) => {
         array.push({ value: el["PRO_TITLE"], key: el["PRO_ID"] });
-        sels.push(el["PRO_ID"]);
         labels;
       });
       this.optionsProcesses = array;
-      this.selectedProcesses = sels;
-
       //Update the labels
       this.dataProcesses = data;
-      this.updateLabels(data);
     },
     /**
      * Change the options in TOTAL CASES BY PROCESS
      * @param {*} option
      */
-    changeOption(option) {
+    changeOption() {
       let that = this,
         dt = {};
-      if (this.data.length > 0) {
+      if (this.category && this.selectedProcesses.length > 0 && this.data[1]) {
         dt = {
-          category: option.id,
-          caseList: this.data[0].id.toLowerCase(),
+          category: this.category.id,
+          caseList: this.data[1].id.toLowerCase(),
           processes: this.selectedProcesses,
-          top: this.top,
+          topTen: this.top,
         };
+        this.category.id == "all" ? delete dt.category : null;
         Api.process
           .totalCasesByProcess(dt)
           .then((response) => {
@@ -256,7 +307,7 @@ export default {
             that.formatTotalCases(response.data);
           })
           .catch((e) => {
-            console.error(err);
+            console.error(e);
           });
       }
     },
@@ -292,17 +343,8 @@ export default {
      * @param {*} data
      */
     onUpdateColumnSettings(data) {
-      let res;
       this.selectedProcesses = data;
-      res = _.intersectionBy(this.totalCases, data, (el) => {
-        if (_.isNumber(el)) {
-          return el;
-        }
-        if (_.isObject(el) && el["PRO_ID"]) {
-          return el["PRO_ID"];
-        }
-      });
-      this.formatTotalCases(res);
+      this.changeOption();
     },
     /**
      * Update labels in chart
@@ -330,9 +372,85 @@ export default {
      * Force update view when update level
      */
     forceUpdateView() {
-      this.changeOption({
-        id: 0,
+      this.changeOption();
+    },
+    /**
+     * Event handler change input search popover
+     * @param {string} query - value in popover search input
+     */
+    onChangeSearchPopover(query) {
+      this.getProcesses(query);
+    },
+    /**
+     * Show popover drill down options
+     * @param {objHtml} target
+     * @param {number} index
+     */
+    onShowDrillDownOptions(target, index) {
+      let obj,
+        dt,
+        that = this;
+      if (index != -1) {
+        obj = jquery(target).find("path")[index];
+        dt = this.dataProcesses[index];
+        this.popoverTarget = obj.id;
+        setTimeout(() => {
+          that.$refs.popover.$emit("open");
+        }, 200);
+      }
+    },
+    /**
+     * Show popover drill down options
+     */
+    onClickDrillDown() {
+      this.$emit("updateDataLevel", {
+        id: this.currentSelection["PRO_ID"],
+        name: this.currentSelection["PRO_TITLE"],
+        level: 2,
+        data: {
+          top: this.top,
+          category: this.category,
+          selectedProcesses: this.selectedProcesses,
+        },
       });
+    },
+    /**
+     * Show popover data options
+     */
+    onClickData() {
+      let taskList = this.data[1].id.toLowerCase(),
+        obj = {
+          autoShow: false,
+          fieldId: "processName",
+          filterVar: "process",
+          label: "",
+          options: {
+            label: this.currentSelection["PRO_TITLE"],
+            value: this.currentSelection["PRO_ID"],
+          },
+          value: this.currentSelection["PRO_ID"],
+        };
+      eventBus.$emit("home::update-settings", {
+        data: [obj],
+        key: "filters",
+        page: taskList,
+        type: "normal",
+      });
+      eventBus.$emit("home::sidebar::click-item", taskList);
+    },
+    /**
+     * Return the breadcrumbs
+     */
+    dataBreadcrumbs() {
+      let res = [];
+      if (this.data[1]) {
+        res.push({
+          label: this.data[1]["name"],
+          onClick() {},
+          color: this.data[1]["color"],
+        });
+      }
+      return res;
     },
   },
 };
@@ -360,6 +478,25 @@ export default {
 
 .vp-right {
   float: right;
+}
+
+.vp-chart-minipopover {
+  display: flex;
+}
+
+.vp-flex1 {
+  flex: 1;
+}
+
+.v-search-info {
+  font-size: 15px;
+  color: darkgray;
+  padding-left: 5%;
+  padding-top: 10px;
+  text-align: end;
+}
+.apexcharts-menu-item.exportCSV{
+  display: none !important;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

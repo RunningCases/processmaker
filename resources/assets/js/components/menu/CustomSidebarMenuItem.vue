@@ -26,7 +26,7 @@
                 @click.native="clickEvent"
             >
                 <custom-sidebar-menu-icon
-                    v-if="item.icon && !isMobileItem"
+                    v-if="item.icon && !isMobileItem && item.specialType !='header'"
                     :icon="item.icon"
                     v-bind:style="setIconColor"
                 />
@@ -38,25 +38,42 @@
                                 isMobileItem
                         "
                     >
-                    
-                        <span class="vsm--title">
-                            <template v-if="itemHasChild">
+                        <span :class="item.specialType != 'header'?'vsm--title': 'vsm--header vsm--title--header'">
+                            <template v-if="!verifyTaskMetrics">
                                 <custom-tooltip
                                     :data="item"
                                     ref="tooltip"
                                 ></custom-tooltip>
                             </template>
                             <template v-else>
-                                <span> {{ item.title }} </span>
+                                <span>
+                                    {{ item.title }}
+                                </span>
                             </template>
-                            <b-icon
-                                v-if="item.sortable"
-                                :icon="item.sortIcon"
-                                @click="onClickSortSettings"
-                            ></b-icon>
+                            <span v-if="item.sortable">
+                                <b-icon
+                                    :id="`gear-${item.id}`"
+                                    :icon="item.sortIcon"
+                                    @click="onClickSortSettings"
+                                    @mouseover="hoverHandler"
+                                    @mouseleave="unhoverHandler"
+                                    v-bind:style="{color: sortColor}"
+                                ></b-icon>
+                                <b-tooltip
+                                    :target="`gear-${item.id}`"
+                                    triggers="hover"
+                                >
+                                    {{ $t("ID_CASES_LIST_SETTINGS") }}
+                                </b-tooltip>
+                            </span>
                         </span>
                     </template>
                 </transition>
+                <custom-sidebar-menu-icon
+                    v-if="item.icon && !isMobileItem && item.specialType =='header'"
+                    :icon="item.icon"
+                    v-bind:style="setIconColor"
+                />
                 <template
                     v-if="
                         (isCollapsed && !isFirstLevel) ||
@@ -228,6 +245,13 @@ export default {
             exactActive: false,
             active: false,
             titleHover: "",
+            menuMap: {
+                CASES_INBOX: "inbox",
+                CASES_DRAFT: "draft",
+                CASES_PAUSED: "paused",
+                CASES_SELFSERVICE: "unassigned"
+            },
+            sortColor: "white",
         };
     },
     mounted() {
@@ -288,6 +312,12 @@ export default {
             }
         },
         /**
+         * Verify if the item is TASK_METRICS
+         */
+        verifyTaskMetrics() {
+            return this.item.id === "TASK_METRICS";
+        },
+        /**
          * Set color to icon defined from custom case list
          */
         setIconColor() {
@@ -323,7 +353,7 @@ export default {
                 var i;
                 for (i = 0; i < data.length; i += 1) {
                     if (that.item.page && that.item.page === data[i].id) {
-                        if (that.$refs.tooltip) {
+                        if (that.$refs.tooltip && that.menuMap[that.item.id]) {
                             that.$refs.tooltip.setHighlight()
                         }
                     }
@@ -426,6 +456,7 @@ export default {
          */
         initState() {
             this.initActiveState();
+            this.initShowState();
         },
         /**
          * Initalize the active state of the menu item
@@ -551,7 +582,30 @@ export default {
             event.stopPropagation();
             this.$refs["modal"].show();
         },
+        hoverHandler() {
+            this.sortColor = '#02feff';
+        },
+        unhoverHandler() {
+            this.sortColor = 'white';
+        }
     },
     inject: ["emitActiveShow", "emitItemClick", "emitItemUpdate"],
 };
 </script>
+<style scoped>
+.vsm--header.vsm--title--header{
+    display: initial;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vsm--header.vsm--title--header + .vsm--icon{
+    float: none;
+    line-height: 30px;
+    margin-right: 10px;
+    margin-left: 0px;
+}
+</style>

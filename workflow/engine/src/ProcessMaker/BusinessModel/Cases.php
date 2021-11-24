@@ -1134,6 +1134,13 @@ class Cases
         if (empty($delegation['USR_UID'])) {
             $case = new ClassesCases();
             $case->loadCase($appUid);
+
+            //Review if the user can be claim the case
+            if (!$case->isSelfService($userUid, $delegation['TAS_UID'], $appUid)) {
+                $message = preg_replace("#<br\s*/?>#i", "", G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED"));
+                throw new Exception($message);
+            }
+
             $case->setCatchUser($appUid, $index, $userUid);
         } else {
             throw new Exception(G::LoadTranslation("ID_CASE_USER_INVALID_CLAIM_CASE", [$userUid]));
@@ -2076,7 +2083,7 @@ class Cases
         $respView = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'VIEW');
         $respBlock = $case->getAllObjectsFrom($proUid, $appUid, $tasUid, $usrUid, 'BLOCK');
         if ($respView['CASES_NOTES'] == 0 && $respBlock['CASES_NOTES'] == 0) {
-            throw new Exception(G::LoadTranslation("ID_CASES_NOTES_NO_PERMISSIONS"));
+            throw new Exception(G::LoadTranslation("ID_THIS_USER_DOESNT_HAVE_PERMISSIONS_TO_SEE_CASE_NOTES"));
         }
         // Get the notes
         $appNote = new Notes();
@@ -2253,8 +2260,8 @@ class Cases
                     $rsCriteria2->next();
 
                     $row2 = $rsCriteria2->getRow();
-
-                    if ($process->exists($row2["PRO_UID"])) {
+                    $proUid = isset($row2["PRO_UID"]) ? $row2["PRO_UID"] : '';
+                    if (!empty($proUid) && $process->exists($proUid)) {
                         $row["TAS_TITLE"] = $row2["TAS_TITLE"];
                         $row["TAS_DESCRIPTION"] = $row2["TAS_DESCRIPTION"];
                     }
@@ -2473,7 +2480,6 @@ class Cases
                 'DEL_INDEX' => [],
                 'PRO_UID' => $record['PRO_UID']
             ];
-            $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
             foreach ($result as $record) {
                 $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
             }
@@ -4141,10 +4147,15 @@ class Cases
 
                 // Add the time in the corresponding unit to the delegation date
                 $delegateDate = calculateDate($delegateDate, $taskSelfServiceTimeUnit, $taskSelfServiceTime);
+                $datetime = new DateTime($delegateDate);
+                //please the seconds is variant not must be considered
+                $delegateDate = $datetime->format('Y-m-d H:i:00');
 
                 // Define the current time
                 $datetime = new DateTime('now');
-                $currentDate = $datetime->format('Y-m-d H:i:s');
+                //please the seconds is variant not must be considered
+                $currentDate = $datetime->format('Y-m-d H:i:00');
+                $currentDate = UtilDateTime::convertDataToUtc($currentDate);
 
                 // Check if the triggers to be executed
                 if ($currentDate >= $delegateDate && $flagExecuteOnce) {
@@ -4209,8 +4220,10 @@ class Cases
                             'tasUid' => $taskUid,
                             'selfServiceTime' => $taskSelfServiceTime,
                             'selfServiceTimeUnit' => $taskSelfServiceTimeUnit,
+                            'currentDate' => $currentDate,
+                            'delegateDate' => $delegateDate
                         ];
-                        Log::channel(':TriggerExecution')->info('Timeout trigger execution', Bootstrap::context($context));
+                        Log::channel('taskScheduler:executeSelfServiceTimeout')->info('TriggerExecution', Bootstrap::context($context));
                     }
 
                     unset($_SESSION["PROCESS"]);

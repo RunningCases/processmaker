@@ -59,7 +59,6 @@ export default {
       api.cases.claim(this.data).then((response) => {
         if (response.status === 200) {
           that.$refs["modal-claim-case"].hide();
-          that.$parent.$refs['ellipsis-' + that.data.TAS_UID].hideActionButtons()
           if (that.$parent.$refs["vueTable"] !== undefined) {
             that.$parent.$refs["vueTable"].getData();
           }
@@ -79,6 +78,9 @@ export default {
           });
           eventBus.$emit("home-update-page", "XCase");
         }
+      }).catch(function (error) {
+        that.$refs["modal-claim-case"].hide();
+        that.$emit("claimCatch", error.response.data.error.message);
       });
     },
   },

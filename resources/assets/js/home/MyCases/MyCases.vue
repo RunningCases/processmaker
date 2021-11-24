@@ -126,7 +126,7 @@ export default {
             headers: [],
             columMap: {
                 case_number: "APP_NUMBER",
-                case_title: "DEL_TITLE",
+                thread_title: "DEL_TITLE",
                 process_name: "PRO_TITLE",
             },
             random: _.random(0,1000000000),
@@ -220,6 +220,7 @@ export default {
                 PAUSED: this.$i18n.t("ID_PAUSED"),
                 UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
             },
+            clearSortState: this.settings && this.settings.orderBy && this.settings.orderBy.column,
         };
     },
     mounted() {
@@ -236,31 +237,23 @@ export default {
             that.$emit("updateSettings", {
                 data: data,
                 key: "orderBy",
-                parent: this.page,
+                page: "MyCases",
                 type: "normal",
                 id: this.id
             });
         });
+        Event.$on('clearSortEvent', this.clearSort);
     },
     watch: {
         columns: function (val) {
             this.$emit("updateSettings", {
                 data: val,
                 key: "columns",
-                parent: this.page,
+                page: "MyCases",
                 type: "normal",
                 id: this.id
             });
-        },  
-        filters: function (val) {
-            this.$emit("updateSettings", {
-                data: val,
-                key: "filters",
-                parent: this.page,
-                type: "normal",
-                id: this.id
-            });
-        },
+        }
     },
     computed: {
         /**
@@ -280,10 +273,19 @@ export default {
             let params;
             if (this.defaultOption) {
                 params = utils.getAllUrlParams(this.defaultOption);
-                if (params && params.app_uid && params.del_index) {
-                    this.openCase({
-                        APP_UID: params.app_uid,
-                        DEL_INDEX: params.del_index,
+                if (params && params.openapplicationuid) {
+                    this.onUpdateFilters({
+                        params: [
+                            {
+                                fieldId: "caseNumber",
+                                filterVar: "caseNumber",
+                                label: "",
+                                options: [],
+                                value: params.openapplicationuid,
+                                autoShow: false,
+                            },
+                        ],
+                    refresh: false,
                     });
                     this.$emit("cleanDefaultOption");
                 }
@@ -354,6 +356,9 @@ export default {
             let that = this;
             api.casesHeader.get().then((response) => {
                 that.headers = that.formatCasesHeaders(response.data);
+                if (that.headers[0]) {
+                    that.title = that.headers[0].title;
+                }
                 that.setFilterHeader();
             });
         },
@@ -364,12 +369,19 @@ export default {
             let header = window.config._nodeId,
                 filters = this.headers,
                 filter,
-                i;
+                i,
+                params;
             if (header === "CASES_TO_REVISE") {
                 filter = "SUPERVISING";
             }
-            if (header === "CASES_SENT") {
-                filter = "STARTED";
+            params = utils.getAllUrlParams(window.config.defaultOption);
+            if (params.action === 'mycases' && params.filter !== '') {
+                if (params.filter === 'inprogress') {
+                    filter = 'IN_PROGRESS'
+                }
+                if (params.filter === 'completed') {
+                    filter = 'COMPLETED'
+                }
             }
             for (i = 0; i < filters.length; i += 1) {
                 if (filters[i].item === filter) {
@@ -643,8 +655,6 @@ export default {
                         onClick: (obj) => {
                             that.title = obj.title;
                             that.filterHeader = obj.item;
-                            that.$refs["vueTable"].setPage(1); // Reset the page when change the header filter
-                            that.$refs["vueTable"].getData();
                             that.filterHeaderObject = obj;
                             that.random = _.random(0,1000000000);
                         },
@@ -666,8 +676,37 @@ export default {
             });
         },
         onRemoveFilter(data) {},
+        /**
+         * Prepare the data to be updated
+         * @param {object} data
+         */
+        prepareAndUpdate(data) {
+            let canUpdate = false,
+                newFilters = [];
+            data.params.forEach(item =>  {
+                const container  = {...item};
+                container.autoShow = false;
+                if (item.value !== "") {
+                    newFilters.push(container);
+                    canUpdate = true;
+                }
+            });
+            if (data.params.length == 0) {
+            canUpdate = true;
+            } 
+            if (canUpdate) {
+            this.$emit("updateSettings", {
+                data: newFilters,
+                key: "filters",
+                page: "MyCases",
+                type: "normal",
+                id: this.id
+            });
+            }
+        },
         onUpdateFilters(data) {
             this.filters = data.params;
+            this.prepareAndUpdate(data);
             if (data.refresh) {
                 this.$nextTick(() => {
                     this.$refs["vueTable"].getData();
@@ -698,6 +737,21 @@ export default {
         countDownChanged(dismissCountDown) {
             this.dataAlert.dismissCountDown = dismissCountDown;
         },
+        /**
+         * Reset the sort in the table
+         */
+        clearSort() {
+            if (this.$refs['vueTable']) {
+                this.$refs['vueTable'].setOrder(false)
+                this.$emit("updateSettings", {
+                    data: [],
+                    key: "orderBy",
+                    page: "MyCases",
+                    type: "normal",
+                    id: this.id
+                });
+            }
+        }
     },
 };
 </script>
@@ -708,4 +762,9 @@ export default {
     padding-left: 50px;
     padding-right: 50px;
 }
+/*.btn-clear-sort {
+    position: fixed;
+    margin-top: 16px;
+    margin-left: -11px;
+}*/
 </style>

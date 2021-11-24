@@ -84,7 +84,7 @@ class UnassignedTest extends TestCase
                 'PRO_ID' => $process->PRO_ID,
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'USR_ID' => 0,
-                'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-$i year"))
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
         }
 
@@ -149,7 +149,7 @@ class UnassignedTest extends TestCase
                 'PRO_ID' => $process->PRO_ID,
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'USR_ID' => 0,
-                'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-$i year"))
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
         }
 
@@ -193,7 +193,7 @@ class UnassignedTest extends TestCase
                 'PRO_ID' => $process->PRO_ID,
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'USR_ID' => 0,
-                'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-$i year"))
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
         }
         return $user;
@@ -474,7 +474,7 @@ class UnassignedTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-1 year"))
         ]);
         $task2 = factory(Task::class)->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
@@ -494,7 +494,7 @@ class UnassignedTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-2 year"))
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-2 year"))
         ]);
         $unassigned = new Unassigned();
         $unassigned->setUserId($user->USR_ID);
@@ -555,7 +555,7 @@ class UnassignedTest extends TestCase
             'PRO_ID' => $process1->PRO_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-1 year"))
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-1 year"))
         ]);
         $task2 = factory(Task::class)->create([
             'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
@@ -575,7 +575,7 @@ class UnassignedTest extends TestCase
             'PRO_ID' => $process2->PRO_ID,
             'DEL_THREAD_STATUS' => 'OPEN',
             'USR_ID' => 0,
-            'DEL_DELEGATE_DATE' => date('Y-m-d H:m:s', strtotime("-2 year"))
+            'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-2 year"))
         ]);
         $unassigned = new Unassigned();
         $unassigned->setUserId($user->USR_ID);

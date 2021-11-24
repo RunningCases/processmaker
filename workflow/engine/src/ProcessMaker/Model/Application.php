@@ -14,9 +14,13 @@ class Application extends Model
     public $timestamps = false;
     // Status id
     const STATUS_DRAFT = 1;
+    const STATUS_DRAFT_NAME = 'DRAFT';
     const STATUS_TODO = 2;
+    const STATUS_TODO_NAME = 'TO_DO';
     const STATUS_COMPLETED = 3;
+    const STATUS_COMPLETED_NAME = 'COMPLETED';
     const STATUS_CANCELED = 4;
+    const STATUS_CANCELED_NAME = 'CANCELLED';
     // Status name and status id
     public static $app_status_values = ['DRAFT' => 1, 'TO_DO' => 2, 'COMPLETED' => 3, 'CANCELLED' => 4];
 
@@ -52,13 +56,13 @@ class Application extends Model
      * Scope for query to get the creator
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $usrUid
+     * @param int $usrId
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCreator($query, $usrUid)
+    public function scopeCreator($query, $usrId)
     {
-        return $query->where('APP_INIT_USER', '=', $usrUid);
+        return $query->where('APP_INIT_USER_ID', '=', $usrId);
     }
 
     /**
@@ -359,7 +363,7 @@ class Application extends Model
      * Scope the Draft cases
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $user
+     * @param int $user
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -474,6 +478,6 @@ class Application extends Model
             ->statusId($status)
             ->positiveCases();
 
-        return $query->get()->count(['APP_NUMBER']);
+        return $query->count(['APP_NUMBER']);
     }
 }

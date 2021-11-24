@@ -23,7 +23,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/vue-fontawesome": "^2.0.2",
-    "apexcharts": "^3.27.3",
+    "apexcharts": "^3.28.2",
     "axios": "^0.15.3",
     "bootstrap": "^4.5.3",
     "bootstrap-colorpicker": "^3.0.3",
@@ -73,6 +73,7 @@
     "vuejs-datepicker": "^1.5.4",
     "vuejs-paginate": "^2.0.1",
     "vuetify": "^1.1.4",
-    "web-animations-js": "^2.3.2"
+    "web-animations-js": "^2.3.2",
+    "vue-simple-context-menu": "^3.4.1"
   }
 }

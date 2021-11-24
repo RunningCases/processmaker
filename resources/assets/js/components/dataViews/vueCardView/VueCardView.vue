@@ -15,12 +15,6 @@
                 :column="column"
                 :headings="options.headings"
               ></slot>
-              <slot
-                name="send_by"
-                :item="item"
-                column="send_by"
-                :headings="options.headings"
-              ></slot>
             </b-col>
             <b-col sm="3">
               <slot
@@ -55,7 +49,6 @@ export default {
     };
   },
   mounted() {
-    this.filterOptions();
   },
   methods: {
     classBtn(cls) {

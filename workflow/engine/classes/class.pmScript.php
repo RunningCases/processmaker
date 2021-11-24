@@ -649,14 +649,15 @@ class PMScript
     Public function evaluateVariable()
     {
         $process = new Process();
-        if (!$process->isBpmnProcess($_SESSION['PROCESS'])) {
+        $proUid = isset($_SESSION['PROCESS']) ? $_SESSION['PROCESS'] : null;
+        if (!$process->isBpmnProcess($proUid)) {
             return;
         }
         require_once PATH_CORE . 'controllers/pmTablesProxy.php';
         $pmTablesProxy = new pmTablesProxy();
         $variableModule = new ProcessMaker\BusinessModel\Variable();
         $searchTypes = array('checkgroup', 'dropdown', 'suggest');
-        $processVariables = $pmTablesProxy->getDynaformVariables($_SESSION['PROCESS'], $searchTypes, false);
+        $processVariables = $pmTablesProxy->getDynaformVariables($proUid, $searchTypes, false);
         $variables = $this->affected_fields;
         $variables = (is_array($variables)) ? array_unique($variables) : $variables;
         $newFields = [];
@@ -678,7 +679,7 @@ class PMScript
                                     }
                                 }
                                 if (sizeof($arrayLabels)) {
-                                    $varInfo = $variableModule->getVariableTypeByName($_SESSION['PROCESS'], $var);
+                                    $varInfo = $variableModule->getVariableTypeByName($proUid, $var);
                                     if (is_array($varInfo) && sizeof($varInfo)) {
                                         $varType = $varInfo['VAR_FIELD_TYPE'];
                                         switch ($varType) {
@@ -702,7 +703,7 @@ class PMScript
                             }
                         }
                         if (isset($this->aFields[$var]) && is_string($this->aFields[$var])) {
-                            $varInfo = $variableModule->getVariableTypeByName($_SESSION['PROCESS'], $var);
+                            $varInfo = $variableModule->getVariableTypeByName($proUid, $var);
                             $options = G::json_decode($varInfo["VAR_ACCEPTED_VALUES"]);
                             $no = count($options);
                             for ($io = 0; $io < $no; $io++) {

@@ -183,6 +183,7 @@ function sendJsonResultGeneric($response, $callback)
 function expandNode()
 {
     extract(getExtJSParams());
+    $search = isset($_REQUEST['search']) ? $_REQUEST['search'] : null;
     $pmFolder = new AppFolder();
     $rootFolder = "/";
 

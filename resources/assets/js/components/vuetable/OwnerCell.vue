@@ -1,6 +1,6 @@
 <template>
     <div class="grouped-cell">
-        <div class="d-flex justify-content-center avatar" id="user">
+        <div class="d-flex justify-content-center avatar" :id="`label-${data.caseListId}`">
             <b-avatar
                 variant="info"
                 :src="data.userAvatar"
@@ -8,7 +8,7 @@
             ></b-avatar>
         </div>
         <b-popover
-                target="user"
+                :target="`label-${data.caseListId}`"
                 placement="top"
                 ref="popover"
                 triggers="hover"    

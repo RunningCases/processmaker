@@ -60,7 +60,8 @@
             </div>
           </v-server-table>
         </div>
-        <TabsCaseDetail
+        <TabsCaseDetail 
+          ref="tabsCaseDetail" 
           :dataCaseStatus="dataCaseStatusTab"
           :dataCase="dataCase"
         ></TabsCaseDetail>
@@ -103,7 +104,7 @@
         ></attached-documents-edit>
       </div>
     </div>
-    <ModalClaimCase ref="modal-claim-case"></ModalClaimCase>
+    <ModalClaimCase ref="modal-claim-case" @claimCatch="claimCatch"></ModalClaimCase>
   </div>
 </template>
 
@@ -222,6 +223,10 @@ export default {
 
   mounted() {
     let that = this;
+    //restore tab selected to initial state
+    let hash = this.$refs["tabsCaseDetail"].$refs["tabs"].getTabHash(0);
+    this.$refs["tabsCaseDetail"].$refs["tabs"].selectTab(hash);
+    //set dataCase
     this.dataCase = this.$parent.dataCase;
     this.$el.getElementsByClassName("VuePagination__count")[0].remove();
     this.getDataCaseSummary();
@@ -436,7 +441,7 @@ export default {
         })
         .catch((err) => {
           if (err.response.data) {
-            that.showAlert(err.response.data.error.message, "danger");
+            that.showAlert(err.response.data.error.message, "info");
           }
         });
     },
@@ -518,7 +523,8 @@ export default {
           APP_UID: v.APP_UID,
           DEL_INDEX: v.DEL_INDEX,
           PRO_UID: v.PRO_UID,
-          TAS_UID: v.TAS_UID
+          TAS_UID: v.TAS_UID,
+          UNASSIGNED: v.UNASSIGNED
         });
       });
       return data;
@@ -572,7 +578,7 @@ export default {
      * @param {object} data
      */
     onClick(data) {
-      if (data.row.ASSIGNEE === "Unassigned") {
+      if (data.row.UNASSIGNED) {
         this.claimCase(data.row);
       } else {
         this.$emit("onUpdateDataCase", {
@@ -580,7 +586,8 @@ export default {
           DEL_INDEX: data.row.DEL_INDEX,
           PRO_UID: data.row.PRO_UID,
           TAS_UID: data.row.TAS_UID,
-          ACTION: this.dataCase.ACTION || "todo"
+          ACTION: this.dataCase.ACTION || "todo",
+          UNASSIGNED: data.row.UNASSIGNED
         });
         this.$emit("onUpdatePage", "XCase");
       }
@@ -594,7 +601,7 @@ export default {
       let that = this;
       Api.cases.unpause(data.row)
         .then((response) => {
-          if (response.statusText === "OK") {
+          if (response.statusText === "OK" || response.status === 200) {
             that.$refs["vueTable"].getData();
           }
         })
@@ -633,6 +640,12 @@ export default {
           console.error(e);
         });
     },
+    /**
+     * Claim catch error handler message
+     */
+    claimCatch(message) {
+      this.showAlert(message, "danger");
+    }
   },
 };
 </script>

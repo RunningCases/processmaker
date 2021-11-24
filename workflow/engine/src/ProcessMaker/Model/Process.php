@@ -410,10 +410,11 @@ class Process extends Model
      * @param string $category
      * @param int $offset
      * @param int $limit
+     * @param bool $paged
      *
      * @return array
      */
-    public static function getProcessesForHome($text = null, $category = null, $offset = null, $limit = null)
+    public static function getProcessesForHome($text = null, $category = null, $offset = null, $limit = null, $paged = true)
     {
         // Get base query
         $query = Process::query()->select(['PRO_ID', 'PRO_TITLE']);
@@ -431,11 +432,14 @@ class Process extends Model
         // Set "PRO_STATUS" condition
         $query->status('ACTIVE');
 
-        // Set pagination if offset and limit are sent
-        if (!is_null($offset) && !is_null($limit)) {
-            $query->offset($offset);
-            $query->limit($limit);
+        if ($paged) {
+            // Set pagination if offset and limit are sent
+            if (!is_null($offset) && !is_null($limit)) {
+                $query->offset($offset);
+                $query->limit($limit);
+            }
         }
+
 
         // Order by "PRO_TITLE"
         $query->orderBy('PRO_TITLE');

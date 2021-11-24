@@ -44,5 +44,8 @@ export default {
 .list-body {
   height: 224px;
   overflow-x: hidden;
+  flex: 1 1 auto;
+  min-height: 1px;
+  padding: 1.25rem;
 }
 </style>

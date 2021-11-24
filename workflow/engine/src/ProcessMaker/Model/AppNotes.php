@@ -126,7 +126,7 @@ class AppNotes extends Model
     {
         $query = AppNotes::query()->select(['NOTE_ID']);
         $query->appUid($appUid);
-        $total = $query->get()->count();
+        $total = $query->count();
 
         return $total;
     }
@@ -143,6 +143,6 @@ class AppNotes extends Model
         $query = AppNotes::query()->select(['NOTE_ID']);
         $query->appNumber($appNumber);
 
-        return $query->get()->count();
+        return $query->count();
     }
 }

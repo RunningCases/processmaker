@@ -565,7 +565,7 @@ class DelegationTest extends TestCase
     public function it_return_scope_range_of_cases()
     {
         $table = factory(Delegation::class)->states('foreign_keys')->create();
-        $this->assertCount(1, $table->rangeOfCases([$table->APP_NUMBER.'-'.$table->APP_NUMBER])->get());
+        $this->assertCount(1, $table->rangeOfCases([$table->APP_NUMBER . '-' . $table->APP_NUMBER])->get());
     }
 
     /**
@@ -803,7 +803,7 @@ class DelegationTest extends TestCase
         $previous = factory(Delegation::class)->states('foreign_keys')->create();
         $table = factory(Delegation::class)->states('foreign_keys')->create([
             'APP_NUMBER' => $previous->APP_NUMBER,
-            'DEL_INDEX' => $previous->DEL_INDEX+1,
+            'DEL_INDEX' => $previous->DEL_INDEX + 1,
             'DEL_PREVIOUS' => $previous->DEL_INDEX
         ]);
         $this->assertNotEmpty($table->joinPreviousIndex()->get());
@@ -1111,13 +1111,37 @@ class DelegationTest extends TestCase
             ]);
         }
         // Searching by a existent case number, result ordered by APP_NUMBER, filter by APP_NUMBER in DESC mode
-        $results = Delegation::search(null, 0, 25, $application->APP_NUMBER, null, null, 'DESC',
-            'APP_NUMBER', null, null, null, 'APP_NUMBER');
+        $results = Delegation::search(
+            null,
+            0,
+            25,
+            $application->APP_NUMBER,
+            null,
+            null,
+            'DESC',
+            'APP_NUMBER',
+            null,
+            null,
+            null,
+            'APP_NUMBER'
+        );
         $this->assertCount(1, $results['data']);
         $this->assertEquals($application->APP_NUMBER, $results['data'][0]['APP_NUMBER']);
         // Searching by a existent case number, result ordered by APP_NUMBER, filter by APP_NUMBER in ASC mode
-        $results = Delegation::search(null, 0, 25, $application->APP_NUMBER, null, null, 'ASC',
-            'APP_NUMBER', null, null, null, 'APP_NUMBER');
+        $results = Delegation::search(
+            null,
+            0,
+            25,
+            $application->APP_NUMBER,
+            null,
+            null,
+            'ASC',
+            'APP_NUMBER',
+            null,
+            null,
+            null,
+            'APP_NUMBER'
+        );
         $this->assertCount(1, $results['data']);
         $this->assertEquals($application->APP_NUMBER, $results['data'][0]['APP_NUMBER']);
     }
@@ -1136,13 +1160,37 @@ class DelegationTest extends TestCase
         DB::commit();
 
         // Searching by a existent case title, result ordered by APP_NUMBER, filter by APP_NUMBER in DESC mode
-        $results = Delegation::search(null, 0, 10, $title, null, null, 'DESC',
-            'APP_NUMBER', null, null, null, 'APP_TITLE');
+        $results = Delegation::search(
+            null,
+            0,
+            10,
+            $title,
+            null,
+            null,
+            'DESC',
+            'APP_NUMBER',
+            null,
+            null,
+            null,
+            'APP_TITLE'
+        );
         $this->assertCount(1, $results['data']);
         $this->assertEquals($title, $results['data'][0]['APP_TITLE']);
         // Searching by a existent case title, result ordered by APP_NUMBER, filter by APP_NUMBER in ASC mode
-        $results = Delegation::search(null, 0, 10, $title, null, null, 'ASC',
-            'APP_NUMBER', null, null, null, 'APP_TITLE');
+        $results = Delegation::search(
+            null,
+            0,
+            10,
+            $title,
+            null,
+            null,
+            'ASC',
+            'APP_NUMBER',
+            null,
+            null,
+            null,
+            'APP_TITLE'
+        );
         $this->assertCount(1, $results['data']);
         $this->assertEquals($title, $results['data'][0]['APP_TITLE']);
     }
@@ -1165,21 +1213,69 @@ class DelegationTest extends TestCase
             'TAS_ID' => $task->TAS_ID
         ]);
         // Get the order taskTitle in ASC mode
-        $results = Delegation::search(null, 0, 10, $task->TAS_TITLE, null, null, 'ASC',
-            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $results = Delegation::search(
+            null,
+            0,
+            10,
+            $task->TAS_TITLE,
+            null,
+            null,
+            'ASC',
+            'TAS_TITLE',
+            null,
+            null,
+            null,
+            'TAS_TITLE'
+        );
         $this->assertCount(1, $results['data']);
         $this->assertEquals($task->TAS_TITLE, $results['data'][0]['APP_TAS_TITLE']);
-        $results = Delegation::search(null, 0, 10, null, null, null, 'ASC',
-            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $results = Delegation::search(
+            null,
+            0,
+            10,
+            null,
+            null,
+            null,
+            'ASC',
+            'TAS_TITLE',
+            null,
+            null,
+            null,
+            'TAS_TITLE'
+        );
         $this->assertGreaterThan($results['data'][0]['APP_TAS_TITLE'], $results['data'][1]['APP_TAS_TITLE']);
 
         // Get the order taskTitle in DESC mode
-        $results = Delegation::search(null, 0, 10, $task->TAS_TITLE, null, null, 'DESC',
-            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $results = Delegation::search(
+            null,
+            0,
+            10,
+            $task->TAS_TITLE,
+            null,
+            null,
+            'DESC',
+            'TAS_TITLE',
+            null,
+            null,
+            null,
+            'TAS_TITLE'
+        );
         $this->assertCount(1, $results['data']);
         $this->assertEquals($task->TAS_TITLE, $results['data'][0]['APP_TAS_TITLE']);
-        $results = Delegation::search(null, 0, 10, null, null, null, 'DESC',
-            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $results = Delegation::search(
+            null,
+            0,
+            10,
+            null,
+            null,
+            null,
+            'DESC',
+            'TAS_TITLE',
+            null,
+            null,
+            null,
+            'TAS_TITLE'
+        );
         $this->assertLessThan($results['data'][0]['APP_TAS_TITLE'], $results['data'][1]['APP_TAS_TITLE']);
     }
 
@@ -1431,8 +1527,19 @@ class DelegationTest extends TestCase
         factory(Delegation::class, 10)->states('foreign_keys')->create([
             'DEL_DELEGATE_DATE' => '2019-01-05 00:00:00'
         ]);
-        $results = Delegation::search(null, 0, 25, null, null, null, null, null, null, '2019-01-02 00:00:00',
-            '2019-01-03 00:00:00');
+        $results = Delegation::search(
+            null,
+            0,
+            25,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            '2019-01-02 00:00:00',
+            '2019-01-03 00:00:00'
+        );
         $this->assertCount(20, $results['data']);
         foreach ($results['data'] as $value) {
             $this->assertGreaterThanOrEqual('2019-01-02 00:00:00', $value['DEL_DELEGATE_DATE']);
@@ -1463,7 +1570,16 @@ class DelegationTest extends TestCase
         ]);
         // Search setting only from
         $results = Delegation::search(
-            null, 0, 40, null, null, null, null, null, null, '2019-01-02 00:00:00'
+            null,
+            0,
+            40,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            '2019-01-02 00:00:00'
         );
         $this->assertCount(40, $results['data']);
         foreach ($results['data'] as $value) {
@@ -1472,7 +1588,17 @@ class DelegationTest extends TestCase
         }
         // Search setting only to
         $results = Delegation::search(
-            null, 0, 40, null, null, null, null, null, null, null, '2019-01-04 00:00:00'
+            null,
+            0,
+            40,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            '2019-01-04 00:00:00'
         );
         foreach ($results['data'] as $value) {
             $this->assertLessThanOrEqual('2019-01-04 00:00:00', $value['DEL_DELEGATE_DATE']);
@@ -1502,8 +1628,20 @@ class DelegationTest extends TestCase
             'DEL_THREAD_STATUS' => 'CLOSED'
         ]);
         // Get first page, searching for threads are closed
-        $results = Delegation::search(null, 0, 5, $application->APP_NUMBER, null, null, null,
-            'TAS_TITLE', null, null, null, 'TAS_TITLE');
+        $results = Delegation::search(
+            null,
+            0,
+            5,
+            $application->APP_NUMBER,
+            null,
+            null,
+            null,
+            'TAS_TITLE',
+            null,
+            null,
+            null,
+            'TAS_TITLE'
+        );
         $this->assertCount(0, $results['data']);
     }
 
@@ -1565,8 +1703,20 @@ class DelegationTest extends TestCase
             'DEL_INDEX' => 2
         ]);
         // Get first page, searching for threads are open
-        $results = Delegation::search(null, 0, 5, $application->APP_NUMBER, null, null, null, null, null, null, null,
-            'APP_NUMBER');
+        $results = Delegation::search(
+            null,
+            0,
+            5,
+            $application->APP_NUMBER,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            'APP_NUMBER'
+        );
 
         $this->assertCount(1, $results['data']);
     }
@@ -1610,20 +1760,56 @@ class DelegationTest extends TestCase
             'PRO_ID' => $processWithoutCat->PRO_ID
         ]);
         // Search the cases when the process has related to the category and search by another category
-        $results = Delegation::search(null, 0, 25, null, $processWithCat->PRO_ID, null, null, null,
-            $category[1]->CATEGORY_UID);
+        $results = Delegation::search(
+            null,
+            0,
+            25,
+            null,
+            $processWithCat->PRO_ID,
+            null,
+            null,
+            null,
+            $category[1]->CATEGORY_UID
+        );
         $this->assertCount(0, $results['data']);
         // Search the cases when the process has related to the category and search by this relation
-        $results = Delegation::search(null, 0, 25, null, $processWithCat->PRO_ID, null, null, null,
-            $category[0]->CATEGORY_UID);
+        $results = Delegation::search(
+            null,
+            0,
+            25,
+            null,
+            $processWithCat->PRO_ID,
+            null,
+            null,
+            null,
+            $category[0]->CATEGORY_UID
+        );
         $this->assertCount(1, $results['data']);
         // Search the cases when the process does not have relation with category and search by a category
-        $results = Delegation::search(null, 0, 25, null, $processWithoutCat->PRO_ID, null, null, null,
-            $category[1]->CATEGORY_UID);
+        $results = Delegation::search(
+            null,
+            0,
+            25,
+            null,
+            $processWithoutCat->PRO_ID,
+            null,
+            null,
+            null,
+            $category[1]->CATEGORY_UID
+        );
         $this->assertCount(0, $results['data']);
         // Search the cases when the process does not have relation with category empty
-        $results = Delegation::search(null, 0, 25, null, $processWithoutCat->PRO_ID, null, null, null,
-            '');
+        $results = Delegation::search(
+            null,
+            0,
+            25,
+            null,
+            $processWithoutCat->PRO_ID,
+            null,
+            null,
+            null,
+            ''
+        );
         $this->assertCount(5, $results['data']);
     }
 
@@ -1653,7 +1839,6 @@ class DelegationTest extends TestCase
         factory(Delegation::class, 5)->create([
             'PRO_ID' => $process->PRO_ID,
         ]);
-
     }
 
     /**
@@ -2170,7 +2355,7 @@ class DelegationTest extends TestCase
         //Review the self-service records
         $result = Delegation::getSelfService($user->USR_UID);
         $this->assertEquals(25, count($result));
-        $result = Delegation::getSelfService($user->USR_UID, ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'], null,  null,null, null, null, 0, 15);
+        $result = Delegation::getSelfService($user->USR_UID, ['APP_DELEGATION.APP_NUMBER', 'APP_DELEGATION.DEL_INDEX'], null,  null, null, null, null, 0, 15);
         $this->assertEquals(15, count($result));
     }
 
@@ -3204,7 +3389,6 @@ class DelegationTest extends TestCase
         ]);
         $result = Delegation::participation($application->APP_UID, $user->USR_UID);
         $this->assertTrue($result);
-
     }
 
     /**
@@ -3394,5 +3578,22 @@ class DelegationTest extends TestCase
         $delegation = factory(Delegation::class)->states('first_thread')->create();
         $result = Delegation::casesStartedBy($delegation->USR_ID);
         $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Test the scopeParticipatedUser
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeParticipatedUser()
+     * @test
+     */
+    public function it_return_scope_participated_user()
+    {
+        $application = factory(Application::class)->states('completed')->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $res = $table->joinApplication()->participatedUser($table->USR_ID)->get();
+        $this->assertCount(1, $res);
     }
 }

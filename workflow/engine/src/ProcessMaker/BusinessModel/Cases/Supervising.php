@@ -65,7 +65,10 @@ class Supervising extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            $query->title($this->getCaseTitle());
+            // Get the result
+            $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
+            // Add the filter
+            $query->specificCases($result);
         }
         // Scope to search for an specific process
         if ($this->getProcessId()) {
@@ -156,11 +159,11 @@ class Supervising extends AbstractCases
                 // Get the detail related to the open thread
                 $taskPending = Delegation::getPendingThreads($item['APP_NUMBER']);
                 $result = [];
+                $result['THREAD_TASKS'] = [];
+                $result['THREAD_TITLES'] = [];
                 foreach ($taskPending as $thread) {
                     $thread['APP_STATUS'] = $item['APP_STATUS'];
                     $information = $this->threadInformation($thread);
-                    $result['THREAD_TASKS'] = [];
-                    $result['THREAD_TITLES'] = [];
                     $result['THREAD_TASKS'][] = $information['THREAD_TASK'];
                     $result['THREAD_TITLES'][] = $information['THREAD_TITLE'];
                 }

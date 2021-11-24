@@ -67,7 +67,10 @@ class Participated extends AbstractCases
         }
         // Specific case title
         if (!empty($this->getCaseTitle())) {
-            $query->title($this->getCaseTitle());
+            // Get the result
+            $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
+            // Add the filter
+            $query->specificCases($result);
         }
         // Scope to search for an specific process
         if ($this->getProcessId()) {
@@ -75,7 +78,13 @@ class Participated extends AbstractCases
         }
         // Specific task
         if ($this->getTaskId()) {
-            $query->task($this->getTaskId());
+            $queryTask = Delegation::query()->select('APP_NUMBER');
+            $queryTask->task($this->getTaskId());
+            $queryTask->threadOpen();
+            $results = $queryTask->get();
+            $result = $results->values()->toArray();
+            // Filter the cases related to the specific task
+            $query->specificCases($result);
         }
         // Specific status
         if ($this->getCaseStatus()) {
@@ -122,22 +131,26 @@ class Participated extends AbstractCases
         $query->joinUser();
         // Join with application
         $query->joinApplication();
-        // Scope to Participated
-        $query->participated($this->getUserId());
         // Add filter
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
+                // Scope to Participated
+                $query->participated($this->getUserId());
                 // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
+                // Scope to Participated
+                $query->participated($this->getUserId());
                 // Only cases in progress: TO_DO without DRAFT
                 $query->caseTodo();
                 // Group by AppNumber
                 $query->groupBy('APP_NUMBER');
                 break;
             case 'COMPLETED':
+                // Scope to Participated User
+                $query->participatedUser($this->getUserId());
                 // Scope that search for the COMPLETED
                 $query->caseCompleted();
                 // Scope to set the last thread
@@ -181,12 +194,12 @@ class Participated extends AbstractCases
                             // Get the pending task
                             $taskPending = Delegation::getPendingThreads($item['APP_NUMBER'], false);
                             $result = [];
+                            $result['THREAD_TASKS'] = [];
+                            $result['THREAD_TITLES'] = [];
                             foreach ($taskPending as $thread) {
                                 $thread['APP_STATUS'] = $item['APP_STATUS'];
                                 // Get the thread information
                                 $information = $this->threadInformation($thread);
-                                $result['THREAD_TASKS'] = [];
-                                $result['THREAD_TITLES'] = [];
                                 $result['THREAD_TASKS'][] = $information['THREAD_TASK'];
                                 $result['THREAD_TITLES'][] = $information['THREAD_TITLE'];
                             }
@@ -280,22 +293,26 @@ class Participated extends AbstractCases
         $query = Delegation::query()->select();
         // Join with application
         $query->joinApplication();
-        // Scope that sets the queries for Participated
-        $query->participated($this->getUserId());
         // Get filter
         $filter = $this->getParticipatedStatus();
         switch ($filter) {
             case 'STARTED':
+                // Scope that sets the queries for Participated
+                $query->participated($this->getUserId());
                 // Scope that search for the STARTED by user: DRAFT, TO_DO, CANCELED AND COMPLETED
                 $query->caseStarted();
                 break;
             case 'IN_PROGRESS':
+                // Scope that sets the queries for Participated
+                $query->participated($this->getUserId());
                 // Only distinct APP_NUMBER
                 $query->distinct();
                 // Scope for only TO_DO cases
                 $query->caseTodo();
                 break;
             case 'COMPLETED':
+                // Scope that sets the queries for Participated
+                $query->participatedUser($this->getUserId());
                 // Scope that search for the COMPLETED
                 $query->caseCompleted();
                 // Scope to set the last thread

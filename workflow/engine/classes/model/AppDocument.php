@@ -162,7 +162,7 @@ class AppDocument extends BaseAppDocument
         try {
             $oAppDocument = new AppDocument();
 
-            if (! isset( $aData['APP_DOC_UID'] )) {
+            if (empty($aData['APP_DOC_UID'])) {
                 $sUID = G::generateUniqueID();
                 $docVersion = 1;
             } else {

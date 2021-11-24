@@ -4,6 +4,15 @@
         :class="[{ collapsed: collapsed }, { onmobile: isOnMobile }]"
     >
         <div class="demo">
+            <b-alert
+                :show="dataAlert.dismissCountDown"
+                dismissible
+                :variant="dataAlert.variant"
+                @dismissed="dataAlert.dismissCountDown = 0"
+                @dismiss-count-down="countDownChanged"
+            >
+                {{ dataAlert.message }}
+            </b-alert>
             <div class="container">
                 <router-view />
             </div>
@@ -56,9 +65,10 @@ import TaskReassignments from "./TaskReassignments";
 import AdvancedSearch from "./AdvancedSearch/AdvancedSearch.vue";
 import LegacyFrame from "./LegacyFrame";
 import CustomCaseList from "./CustomCaseList/CustomCaseList.vue"
-
+import utils from "../utils/utils"
 import api from "./../api/index";
 import eventBus from './EventBus/eventBus'
+import _ from "lodash";
 export default {
     name: "Home",
     components: {
@@ -108,11 +118,18 @@ export default {
                 CASES_SELFSERVICE: "unassigned",
                 CONSOLIDATED_CASES: "batch-routing",
                 CASES_TO_REASSIGN: "task-reassignments",
-                CASES_FOLDERS: "my-documents"
+                CASES_FOLDERS: "my-documents",
+                TASK_METRICS:"task-metrics"
             },
             defaultOption: window.config.defaultOption || '',
             pageData: {},
-            settings: {}
+            settings: {},
+            dataAlert: {
+                dismissSecs: 5,
+                dismissCountDown: 0,
+                message: "",
+                variant: "info"
+            },
         };
     },
     mounted() {
@@ -125,19 +142,33 @@ export default {
             parseInt(window.config.FORMATS.casesListRefreshTime) * 1000
         );
         // adding eventBus listener
-         eventBus.$on('sort-menu', (data) => {
+        eventBus.$on('sort-menu', (data) => {
+            let page;
             let newData = [];
-            data.forEach(item => newData.push({id: item.id}));
+            data.forEach(item => {
+                newData.push({id: item.id});
+                if (!page) {
+                    page = item.page;
+                }
+            });
             that.updateSettings({
                 data: newData,
                 key: "customCaseListOrder",
-                parent: this.page,
+                page: page,
                 type: "normal",
                 id: this.id
             });
         });
         eventBus.$on('home-update-page', (data) => {
             that.onUpdatePage(data);
+        });
+        eventBus.$on('home::sidebar::click-item', (data) => {
+            let item = that.getItemMenuByValue("page",data);
+            that.OnClickSidebarItem(item);
+            this.$router.push(item.item.href);
+        });
+        eventBus.$on('home::update-settings', (data) => {
+            that.updateSettings(data);
         });
         eventBus.$on('home-update-datacase', (data) => {
             that.onUpdateDataCase(data);
@@ -158,7 +189,7 @@ export default {
 
             eventer(messageEvent, function(e) {
                 if ( e.data === "redirect=todo" || e.message === "redirect=todo"){
-                    that.page = "inbox";
+                    that.OnClickSidebarItem(that.getItemMenuByValue("page","inbox"));
                 }
                 if ( e.data === "update=debugger" || e.message === "update=debugger"){
                     if(that.$refs["component"].updateView){
@@ -225,21 +256,21 @@ export default {
          */
         updateSettings (params){
             if (params.type === "custom") {
-                if (!this.config.setting[params.parent]) {
-                    this.config.setting[params.parent] = {};
+                if (!this.config.setting[params.page]) {
+                    this.config.setting[params.page] = {};
                 }
-                if (!this.config.setting[params.parent]["customCaseList"]) {
-                    this.config.setting[params.parent]["customCaseList"] = {};
+                if (!this.config.setting[params.page]["customCaseList"]) {
+                    this.config.setting[params.page]["customCaseList"] = {};
                 }
-                if (!this.config.setting[params.parent].customCaseList[params.id]) {
-                    this.config.setting[params.parent].customCaseList[params.id] = {}
+                if (!this.config.setting[params.page].customCaseList[params.id]) {
+                    this.config.setting[params.page].customCaseList[params.id] = {}
                 }
-                this.config.setting[params.parent].customCaseList[params.id][params.key] = params.data;
+                this.config.setting[params.page].customCaseList[params.id][params.key] = params.data;
             } else {
-                if (!this.config.setting[this.page]) {
-                    this.config.setting[this.page] = {};
+                if (!this.config.setting[params.page]) {
+                    this.config.setting[params.page] = {};
                 }
-                this.config.setting[this.page][params.key] = params.data;
+                this.config.setting[params.page][params.key] = params.data;
             }
             api.config
                 .put(this.config)
@@ -257,7 +288,8 @@ export default {
          * Set default cases menu option
          */
         setDefaultCasesMenu(data) {
-            let menuItem = _.find(data, function(o) {
+            let params,
+                menuItem = _.find(data, function(o) {
                 return o.id === window.config._nodeId;
             });
             if (menuItem && menuItem.href) {
@@ -265,6 +297,10 @@ export default {
                 this.$router.push(menuItem.href);
             } else {
                 this.page = "MyCases";
+            }
+            params = utils.getAllUrlParams(this.defaultOption);
+            if (params.action === 'mycases' && params.filter === '') { 
+                this.showAlert(this.$i18n.t("ID_NO_PERMISSION_NO_PARTICIPATED_CASES"));
             }
             this.settings = this.config.setting[this.page];
             this.lastPage = this.page;
@@ -293,23 +329,24 @@ export default {
                         props: {
                             isCollapsed: this.collapsed? true: false,
                             item: {
-                                header: data[i].header,
+                                href: "/task-metrics/" + data[i].id,
+                                icon: "fas fa-chart-pie",
+                                id: "TASK_METRICS",
+                                page: "task-metrics",
                                 title: data[i].title,
-                                hiddenOnCollapse: data[i].hiddenOnCollapse,
-                                icon: 'pie-chart-fill',
-                                onClick: function (item) {
-                                  that.onUpdatePage("task-metrics");
-                                }
+                                header: data[i] && !data[i].permission? true : null,
+                                specialType: data[i] && data[i].permission? "header" : null
                             }
                         }
-                    }
+                    };
+
                 }
                 if (data[i].customCasesList)  {
                     data[i]["child"] = this.sortCustomCasesList(
                         data[i].customCasesList,
-                        this.config.setting[this.page] &&
-                            this.config.setting[this.page].customCaseListOrder
-                            ? this.config.setting[this.page].customCaseListOrder
+                        this.config.setting[data[i]["page"]] &&
+                            this.config.setting[data[i]["page"]].customCaseListOrder
+                            ? this.config.setting[data[i]["page"]].customCaseListOrder
                             : []
                     );
                     data[i]["sortable"] = data[i].customCasesList.length > 1;
@@ -319,7 +356,8 @@ export default {
                         component: CustomSidebarMenuItem,
                         props: {
                             isCollapsed: this.collapsed? true: false,
-                            item: data[i]
+                            item: data[i],
+                            showOneChild: true
                         }
                     };
                 }
@@ -381,42 +419,50 @@ export default {
         cleanDefaultOption() {
             this.defaultOption = "";
         },
-        OnClickSidebarItem(item) {
-            if (item.item.page && item.item.page === "advanced-search") {
-                this.page = "advanced-search";
-                this.filters = item.item.filters;
-                this.pageId = item.item.id;
-                this.pageUri = item.item.href;
-                this.pageName = item.item.title;
-            } else {
-                this.filters = [];
-                this.pageId = null;
-                this.pageUri = item.item.href;
-                this.page = item.item.page || "MyCases";
-                this.settings = this.config.setting[this.page];
-                if (!this.menuMap[item.item.id]) {
-                    this.page = "custom-case-list";
-                    this.pageData = {
-                        pageUri: item.item.pageUri,
-                        pageParent: item.item.page,
-                        pageName: item.item.title,
-                        pageIcon: item.item.icon,
-                        customListId: item.item.id,
-                        color: item.item.colorScreen
-                    }
-                    if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
-                        this.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
-                    } else {
-                        this.settings = {};
-                    }
-                }
-                if (this.page === this.lastPage
-                    && this.$refs["component"]
-                    && this.$refs["component"].updateView) {
-                    this.$refs["component"].updateView(this.pageData);
-                }
-                this.lastPage = this.page;
+        /**
+         * Page view factory
+         * @param {object} item
+         */
+        pageFactory(item){
+            this.filters = [];
+            this.lastPage = this.page;
+            this.page = item.item.page;
+            this.filters = item.item.filters;
+            this.pageId = item.item.id;
+            this.pageUri = item.item.href;
+            this.pageName = item.item.title;
+            this.settings = this.config.setting[this.page];
+            this.pageData = {
+                pageUri: item.item.pageUri,
+                pageParent: item.item.page,
+                pageName: item.item.title,
+                pageIcon: item.item.icon,
+                customListId: item.item.id, 
+                color: item.item.colorScreen,
+                settings: this.settings
             }
+            //Custom Cases List
+            if (!this.menuMap[item.item.id] && item.item.page !== "LegacyFrame" && item.item.page !== "advanced-search" ) {
+                this.page = "custom-case-list";
+                if (this.config.setting[item.item.page] && this.config.setting[item.item.page]["customCaseList"]) {
+                    this.pageData.settings = this.config.setting[item.item.page]["customCaseList"][item.item.id];
+                    this.settings = this.pageData.settings;
+                } else {
+                    this.pageData.settings  = {};
+                }
+            }
+            if (this.page === this.lastPage
+                && this.$refs["component"]
+                && this.$refs["component"].updateView) {
+                this.$refs["component"].updateView(this.pageData);
+            }
+        },
+        /**
+         * Click sidebar menu item handler
+         * @param {object} item
+         */
+        OnClickSidebarItem(item) {
+            this.pageFactory(item);
         },
         setCounter() {
             let that = this,
@@ -471,7 +517,7 @@ export default {
         addMenuSearchChild(data) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.id === "advanced-search";
+                return o.id === "CASES_SEARCH";
             });
             if (advSearch) {
                 const index = advSearch.child.findIndex(function(o) {
@@ -489,7 +535,7 @@ export default {
                         title: data.name,
                         icon: "fas fa-circle",
                         id: data.id,
-                        page: "/advanced-search",
+                        page: "advanced-search",
                     });
                 }
             }
@@ -521,7 +567,7 @@ export default {
         removeMenuSearchChild(id) {
             let newMenu = this.menu;
             let advSearch = _.find(newMenu, function(o) {
-                return o.id === "advanced-search";
+                return o.id === "CASES_SEARCH";
             });
             if (advSearch) {
                 const index = advSearch.child.findIndex(function(o) {
@@ -561,7 +607,42 @@ export default {
                 console.error(e);
             });
             }
-        }
+        },
+        /**
+         * Search in menu Items by value, return the item
+         * @param {string} key - Key for search in object
+         * @param {string} value - value for search in key
+         */
+        getItemMenuByValue(key, value) {
+            let obj = _.find(this.menu, function(o) {
+                if(o.component){
+                  return o.props.item[key] == value;
+                }
+                return o[key] == value; 
+            });
+            if(obj.component){
+              return obj.props;
+            }
+            return obj;
+        },
+        /**
+         * Show the alert message
+         * @param {string} message - message to be displayen in the body
+         * @param {string} type - alert type
+         */
+        showAlert(message, type) {
+            this.dataAlert.message = message;
+            this.dataAlert.variant = type || "info";
+            this.dataAlert.dismissCountDown = this.dataAlert.dismissSecs;
+        },
+        /**
+         * Updates the alert dismiss value to update
+         * dismissCountDown and decrease
+         * @param {mumber}
+         */
+        countDownChanged(dismissCountDown) {
+            this.dataAlert.dismissCountDown = dismissCountDown;
+        },
     }
 };
 </script>
