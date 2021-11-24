@@ -6,6 +6,7 @@ use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Task;
 use ProcessMaker\Model\User;
 
 class Unassigned extends AbstractCases
@@ -90,8 +91,7 @@ class Unassigned extends AbstractCases
         if (!empty($this->getDelegateTo())) {
             $query->delegateDateTo($this->getDelegateTo());
         }
-
-        // Specific usrId represented by sendBy. 
+        // Specific usrId represented by sendBy
         if (!empty($this->getSendBy())) {
             $query->sendBy($this->getSendBy());
         }
@@ -149,10 +149,25 @@ class Unassigned extends AbstractCases
             $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
             // Get the send by related to the previous index
             $previousThread = Delegation::getThreadInfo($item['APP_NUMBER'], $item['DEL_PREVIOUS']);
-            $userInfo = !empty($previousThread) ? User::getInformation($previousThread['USR_ID']) : [];
+            $userInfo = [];
+            $dummyInfo = [];
+            if (!empty($previousThread)) {
+                // When the task has an user
+                $userInfo = ($previousThread['USR_ID'] !== 0) ? User::getInformation($previousThread['USR_ID']) : [];
+                // When the task does not have users refers to dummy task
+                $taskInfo = ($previousThread['USR_ID'] === 0) ? Task::title($previousThread['TAS_ID']) : [];
+                if (!empty($taskInfo)) {
+                    $dummyInfo = [
+                        'task_id' => $previousThread['TAS_ID'],
+                        'name' => $taskInfo['title'],
+                        'type' => $taskInfo['type']
+                    ];
+                }
+            }
             $result = [];
             $result['del_previous'] = $item['DEL_PREVIOUS'];
             $result['user_tooltip'] = $userInfo;
+            $result['dummy_task'] = $dummyInfo;
             $item['SEND_BY_INFO'] = $result;
 
             return $item;

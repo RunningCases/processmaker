@@ -201,7 +201,7 @@ class PausedTest extends TestCase
      * It tests the getData method without filters
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
      * @covers \ProcessMaker\Model\Delegation::scopePaused()
      * @test
      */
@@ -225,7 +225,7 @@ class PausedTest extends TestCase
      * It tests the getData method with case number filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
@@ -251,7 +251,7 @@ class PausedTest extends TestCase
      * It tests the getData method with case number filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
@@ -277,7 +277,7 @@ class PausedTest extends TestCase
      * It tests the getData method with taskId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
@@ -303,7 +303,7 @@ class PausedTest extends TestCase
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
@@ -328,7 +328,7 @@ class PausedTest extends TestCase
      * It tests the getData method with case title filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
-     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
      * @test
      */
@@ -344,6 +344,51 @@ class PausedTest extends TestCase
         $paused->setUserId($cases->USR_ID);
         // Set the title
         $paused->setCaseTitle($cases->DEL_TITLE);
+        $res = $paused->getData();
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getData method with setDelegateFrom and setDelegateTo filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
+     * @test
+     */
+    public function it_filter_by_delegate_from_to()
+    {
+        // Create factories related to the paused cases
+        $cases = $this->createPaused();
+        // Create new Paused object
+        $paused = new Paused();
+        $paused->setUserUid($cases->USR_UID);
+        $paused->setUserId($cases->USR_ID);
+        $paused->setDelegateFrom($cases->DEL_DELEGATE_DATE->format("Y-m-d"));
+        $paused->setDelegateTo($cases->DEL_DELEGATE_DATE->format("Y-m-d"));
+        // Get data
+        $res = $paused->getData();
+        $this->assertEmpty($res);
+    }
+
+
+    /**
+     * It tests the getData method with send by filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::setSendBy()
+     * @test
+     */
+    public function it_filter_send_by()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createPaused();
+        // Create new Paused object
+        $paused = new Paused();
+        $paused->setUserId($cases->USR_ID);
+        $paused->setSendBy($cases->USR_ID);
         $res = $paused->getData();
         $this->assertNotEmpty($res);
     }

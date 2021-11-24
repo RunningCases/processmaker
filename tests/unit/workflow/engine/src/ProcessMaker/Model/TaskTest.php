@@ -34,28 +34,28 @@ class TaskTest extends TestCase
         ]);
         $taskInstance = new Task();
         $title = $taskInstance->title($task->TAS_ID);
-        $this->assertEquals($title, G::LoadTranslation('ID_INTERMEDIATE_THROW_EMAIL_EVENT'));
+        $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_THROW_EMAIL_EVENT'));
         // Intermediate throw message event
         $task = factory(Task::class)->create([
             'TAS_TITLE' => 'INTERMEDIATE-THROW-MESSAGE-EVENT'
         ]);
         $taskInstance = new Task();
         $title = $taskInstance->title($task->TAS_ID);
-        $this->assertEquals($title, G::LoadTranslation('ID_INTERMEDIATE_THROW_MESSAGE_EVENT'));
+        $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_THROW_MESSAGE_EVENT'));
         // Intermediate catch message event
         $task = factory(Task::class)->create([
             'TAS_TITLE' => 'INTERMEDIATE-CATCH-MESSAGE-EVENT'
         ]);
         $taskInstance = new Task();
         $title = $taskInstance->title($task->TAS_ID);
-        $this->assertEquals($title, G::LoadTranslation('ID_INTERMEDIATE_CATCH_MESSAGE_EVENT'));
+        $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_CATCH_MESSAGE_EVENT'));
         // Intermediate timer event
         $task = factory(Task::class)->create([
             'TAS_TITLE' => 'INTERMEDIATE-CATCH-TIMER-EVENT'
         ]);
         $taskInstance = new Task();
         $title = $taskInstance->title($task->TAS_ID);
-        $this->assertEquals($title, G::LoadTranslation('ID_INTERMEDIATE_CATCH_TIMER_EVENT'));
+        $this->assertEquals($title['title'], G::LoadTranslation('ID_INTERMEDIATE_CATCH_TIMER_EVENT'));
     }
 
     /**
