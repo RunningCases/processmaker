@@ -169,8 +169,8 @@ switch (WS_IN_LOGIN) {
         $fileLogin = 'login/sysLogin';
         break;
 }
-setcookie("PM-Warning", trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_CURRENT_URI);
-setcookie("PM-TabPrimary", uniqid(), time() + (24 * 60 * 60), '/');
+setcookie("PM-Warning", trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_CURRENT_URI, '', G::is_https());
+setcookie("PM-TabPrimary", uniqid(), time() + (24 * 60 * 60), '/', '', G::is_https());
 $oHeadPublisher = headPublisher::getSingleton();
 $oHeadPublisher->addScriptFile('/jscore/src/PM.js');
 $oHeadPublisher->addScriptFile('/jscore/src/Sessions.js');

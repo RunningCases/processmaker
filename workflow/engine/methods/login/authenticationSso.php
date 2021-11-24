@@ -82,7 +82,7 @@ try {
     }
     /*----------------------------------********---------------------------------*/
 
-    setcookie('singleSignOn', '1', time() + (24 * 60 * 60), '/');
+    setcookie('singleSignOn', '1', time() + (24 * 60 * 60), '/', '', G::is_https());
 
     initUserSession(
         $_SESSION['__USER_LOGGED_SSO__'],

@@ -16,7 +16,7 @@ try {
     }
 
     if (!$RBAC->singleSignOn) {
-        setcookie("singleSignOn", '0', time() + (24 * 60 * 60), '/');
+        setcookie("singleSignOn", '0', time() + (24 * 60 * 60), '/', '', G::is_https());
         if (!isset($_POST['form']) ) {
             G::SendTemporalMessage ('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error');
             G::header('Location: login');
@@ -181,7 +181,7 @@ try {
         EnterpriseClass::enterpriseSystemUpdate($loginInfo);
         initUserSession($uid, $usr);
     } else {
-        setcookie("singleSignOn", '1', time() + (24 * 60 * 60), '/');
+        setcookie("singleSignOn", '1', time() + (24 * 60 * 60), '/', '', G::is_https());
         $uid = $RBAC->userObj->fields['USR_UID'];
         $usr = $RBAC->userObj->fields['USR_USERNAME'];
         initUserSession($uid, $usr);
@@ -416,7 +416,7 @@ try {
     $configS = System::getSystemConfiguration('', '', config("system.workspace"));
     $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block']:true;
     if ($activeSession){
-        setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');
+        setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/', '', G::is_https());
     }
 
     // Update the User's last login date
