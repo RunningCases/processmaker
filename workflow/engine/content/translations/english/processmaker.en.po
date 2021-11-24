@@ -4404,6 +4404,12 @@ msgid "The category with {0}: '{1}' does not exist."
 msgstr "The category with {0}: '{1}' does not exist."
 
 # TRANSLATION
+# LABEL/ID_CATEGORY_PROCESS
+#: LABEL/ID_CATEGORY_PROCESS
+msgid "Process Category"
+msgstr "Process Category"
+
+# TRANSLATION
 # LABEL/ID_CATEGORY_SUCCESS_DELETE
 #: LABEL/ID_CATEGORY_SUCCESS_DELETE
 msgid "Process category has been deleted correctly."
