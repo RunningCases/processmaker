@@ -244,4 +244,16 @@ class Draft extends AbstractCases
             'total' => $count
         ];
     }
+
+    /**
+     * Count how many cases there are in DRAFT
+     *
+     * @return int
+     */
+    public function getCounterMetrics()
+    {
+        $query = Delegation::query()->select();
+        $query->draftMetrics();
+        return $query->count(['APPLICATION.APP_NUMBER']);
+    }
 }

@@ -31,6 +31,14 @@ class InboxTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
+    }
+
+    /**
+     * Method tearDown
+     */
+    public function tearDown() {
+        parent::tearDown();
     }
 
     /**
@@ -272,9 +280,14 @@ class InboxTest extends TestCase
     public function it_filter_by_thread_title()
     {
         // Create factories related to the to_do cases
-        $cases = $this->createInbox();
-        $usrId = $cases->USR_ID;
-        $title = $cases->DEL_TITLE;
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2,
+            'DEL_TITLE' => 'Test',
+        ]);
+        $usrId = $delegation->USR_ID;
+        $title = 'Test';
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
         // Create new Inbox object
@@ -829,5 +842,19 @@ class InboxTest extends TestCase
         $inbox->setUserUid($user->USR_UID);
         $res = $inbox->getCasesRisk($process->PRO_ID, null, null, "OVERDUE");
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCounterMetrics method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounterMetrics()
+     * @test
+     */
+    public function it_tests_get_counter_metrics()
+    {
+        $this->createInbox();
+        $inbox = new Inbox();
+        $res = $inbox->getCounterMetrics();
+        $this->assertTrue($res > 0);
     }
 }

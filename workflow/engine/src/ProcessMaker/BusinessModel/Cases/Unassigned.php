@@ -263,4 +263,16 @@ class Unassigned extends AbstractCases
             'total' => $count
         ];
     }
+
+    /**
+     * Count how many cases there are in SELF_SERVICE
+     *
+     * @return int
+     */
+    public function getCounterMetrics()
+    {
+        $query = Delegation::query()->select();
+        $query->selfServiceMetrics();
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
 }

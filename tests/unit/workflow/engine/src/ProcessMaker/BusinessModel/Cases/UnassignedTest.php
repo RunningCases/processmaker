@@ -34,6 +34,7 @@ class UnassignedTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
     }
 
     /**
@@ -950,5 +951,19 @@ class UnassignedTest extends TestCase
 
         $res = $unassigned->getCasesRisk($process1->PRO_ID, null, null, 'OVERDUE');
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * This the getCounterMetrics method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounterMetrics()
+     * @test
+     */
+    public function it_tests_get_counter_metrics()
+    {
+        $this->createSelfServiceUserOrGroup();
+        $unassigned = new Unassigned;
+        $result = $unassigned->getCounterMetrics();
+        $this->assertTrue($result > 0);
     }
 }
