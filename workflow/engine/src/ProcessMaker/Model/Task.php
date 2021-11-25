@@ -151,6 +151,8 @@ class Task extends Model
                 case "SERVICE-TASK":
                     $title = G::LoadTranslation('ID_SERVICE_TASK_UNTITLED');
                     break;
+                default:
+                    $title = G::LoadTranslation('ID_ANONYMOUS');
             }
             switch ($type) {
                 case "INTERMEDIATE-THROW-EMAIL-EVENT":
@@ -169,6 +171,8 @@ class Task extends Model
                 case "SERVICE-TASK":
                     $type = G::LoadTranslation('ID_SERVICE_TASK');
                     break;
+                default:
+                    $type = G::LoadTranslation('ID_NONE');
             }
         });
 
