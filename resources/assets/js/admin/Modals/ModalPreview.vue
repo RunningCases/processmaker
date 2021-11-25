@@ -29,7 +29,12 @@
                     <TaskCell :data="props.row.TASK" />
                 </div>
                 <div slot="send_by" slot-scope="props">
-                    <CurrentUserCell :data="props.row.USER_DATA" />
+                    <template v-if="showUserTooltip" >
+                        <CurrentUserCell :data="props.row.USER_DATA" />
+                    </template>
+                    <template v-else>
+                        {{ props.row.USER_DATA }}
+                    </template>
                 </div>
                 <div slot="current_user" slot-scope="props">
                     {{ props.row.USERNAME_DISPLAY_FORMAT }}
@@ -106,6 +111,7 @@ export default {
                 PAUSED: this.$i18n.t("ID_PAUSED"),
                 UNASSIGNED: this.$i18n.t("ID_UNASSIGNED"),
             },
+            showUserTooltip: true
         }
     },
     mounted() {
@@ -248,24 +254,33 @@ export default {
          * @return {array} dataFormat
          */
         formatUser(data) {
-          var dataFormat = [],
-              userDataFormat;
-              userDataFormat = utils.userNameDisplayFormat({
-                  userName: data.user_tooltip.usr_firstname,
-                  firstName: data.user_tooltip.usr_lastname,
-                  lastName: data.user_tooltip.usr_username,
-                  format: window.config.FORMATS.format || null
-              });
-              dataFormat.push({
-                  USERNAME_DISPLAY_FORMAT: userDataFormat,
-                  EMAIL: data.user_tooltip.usr_email,
-                  POSITION: data.user_tooltip.usr_position,
-                  AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
-                      window.config.SYS_URI +
-                      `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
-                  UNASSIGNED: userDataFormat !== "" ? true : false
-              });    
-          return dataFormat;
+            var dataFormat = [],
+                userDataFormat;
+            if (data.user_tooltip && !_.isEmpty(data.user_tooltip)) {
+                this.showUserTooltip = true;
+                userDataFormat = utils.userNameDisplayFormat({
+                    userName: data.user_tooltip.usr_firstname,
+                    firstName: data.user_tooltip.usr_lastname,
+                    lastName: data.user_tooltip.usr_username,
+                    format: window.config.FORMATS.format || null
+                });
+                dataFormat.push({
+                    USERNAME_DISPLAY_FORMAT: userDataFormat,
+                    EMAIL: data.user_tooltip.usr_email,
+                    POSITION: data.user_tooltip.usr_position,
+                    AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                        window.config.SYS_URI +
+                        `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                    UNASSIGNED: userDataFormat !== "" ? true : false
+                });
+            } else if (data.dummy_task && !_.isEmpty(data.dummy_task)) {
+                this.showUserTooltip = false;
+                dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
+            } else {
+                this.showUserTooltip = false;
+                dataFormat = this.$i18n.t("ID_ANONYMOUS_USER");
+            }
+            return dataFormat;
         }
     }
 }
