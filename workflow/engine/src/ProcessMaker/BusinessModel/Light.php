@@ -874,7 +874,7 @@ class Light
         session_start();
         session_regenerate_id();
 
-        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, false,
+        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, G::is_https(),
             true);
 
         if (strlen($msg) > 0) {

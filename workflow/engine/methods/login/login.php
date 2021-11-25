@@ -182,11 +182,7 @@ if (isset($_SESSION['USER_LOGGED'])) {
 session_start();
 session_regenerate_id();
 
-if (PHP_VERSION < 5.2) {
-    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), "; HttpOnly");
-} else {
-    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, false, true);
-}
+setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, G::is_https(), true);
 
 if (strlen($msg) > 0) {
     $_SESSION['G_MESSAGE'] = $msg;
@@ -323,14 +319,14 @@ $flagForgotPassword = isset($oConf->aConfig['login_enableForgotPassword'])
                       ? $oConf->aConfig['login_enableForgotPassword']
                       : 'off';
 
-setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_URI);
+setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_URI, '', G::is_https());
 
 $configS = System::getSystemConfiguration('', '', config("system.workspace"));
 $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block'] : true;
 if ($activeSession) {
-    setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');
+    setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/', '', G::is_https());
 } else {
-    setcookie("PM-TabPrimary", uniqid(), time() + (24 * 60 * 60), '/');
+    setcookie("PM-TabPrimary", uniqid(), time() + (24 * 60 * 60), '/', '', G::is_https());
 }
 
 $oHeadPublisher->addScriptCode("var flagForgotPassword = '$flagForgotPassword';");

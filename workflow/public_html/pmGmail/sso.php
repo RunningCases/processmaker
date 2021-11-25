@@ -98,11 +98,7 @@ if (!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
             session_start();
             session_regenerate_id();
 
-            if (PHP_VERSION < 5.2) {
-                setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, "; HttpOnly");
-            } else {
-                setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, null, false, true);
-            }
+            setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, null, G::is_https(), true);
 
             $_SESSION = array();
             $_SESSION['__EE_INSTALLATION__'] = 2;
