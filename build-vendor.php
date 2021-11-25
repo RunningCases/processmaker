@@ -99,7 +99,7 @@ $jsFiles = array (
     "workflow/public_html/lib/js/wz_jsgraphics.js",
     "workflow/public_html/lib/js/jquery-1.10.2.min.js",
     "workflow/public_html/lib/js/underscore-min.js",
-    "workflow/public_html/lib/js/jquery-ui-1.10.3.custom.min.js",
+    "workflow/public_html/lib/js/jquery-ui.min.js",
     "workflow/public_html/lib/js/jquery.layout.min.js",
     "workflow/public_html/lib/js/modernizr.js",
     "workflow/public_html/lib/js/restclient.min.js",
