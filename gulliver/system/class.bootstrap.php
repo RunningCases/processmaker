@@ -2788,4 +2788,15 @@ class Bootstrap
         ];
         self::registerMonolog($channel, $level, $message, $context);
     }
+
+    /**
+     * Build the options for a cookie, according to the system configuration and values optionally sent to this method
+     *
+     * @param array $options
+     * @return array
+     */
+    public static function buildCookieOptions(array $options = [])
+    {
+        return System::buildCookieOptions($options);
+    }
 }
