@@ -163,6 +163,7 @@ class Inbox extends AbstractCases
             }
             $result = [];
             $result['del_previous'] = $item['DEL_PREVIOUS'];
+            $result['key_name'] = !empty($userInfo) ? 'user_tooltip' : 'dummy_task';
             $result['user_tooltip'] = $userInfo;
             $result['dummy_task'] = $dummyInfo;
             $item['SEND_BY_INFO'] = $result;
