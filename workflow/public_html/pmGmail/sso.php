@@ -98,7 +98,8 @@ if (!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
             session_start();
             session_regenerate_id();
 
-            setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, null, G::is_https(), true);
+            $cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + (24 * 60 * 60), 'path' => '/sys' . $enviroment, 'httponly' => true]);
+            setcookie('workspaceSkin', $enviroment, $cookieOptions);
 
             $_SESSION = array();
             $_SESSION['__EE_INSTALLATION__'] = 2;
