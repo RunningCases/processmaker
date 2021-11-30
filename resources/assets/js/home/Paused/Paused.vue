@@ -361,7 +361,7 @@ export default {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
-          process_category: this.$i18n.t("ID_PROCESS_CATEGORY"),
+          process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
           due_date: this.$i18n.t("ID_DUE_DATE"),

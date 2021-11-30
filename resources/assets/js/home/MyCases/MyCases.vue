@@ -164,7 +164,7 @@ export default {
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
-                    process_category: this.$i18n.t("ID_PROCESS_CATEGORY"),
+                    process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
                     thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                     pending_taks: this.$i18n.t("ID_PENDING_TASKS"),
                     status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
