@@ -1,5 +1,5 @@
 <template>
-    <div v-if="data.length" class="grouped-cell">
+    <div v-if="showTooltip" class="grouped-cell">
         <div v-for="(item, index) in data" v-bind:key="item.TITLE" class="d-flex">
             <div class="avatar" :id="id + index">
                 <b-avatar
@@ -36,6 +36,11 @@
             </div>
         </div>
     </div>
+    <div v-else class="grouped-cell">
+        <span class="col ellipsis">
+            {{ data }}
+        </span>
+    </div>
 </template>
 
 <script>
@@ -46,6 +51,14 @@ export default {
         return {
             id: "avatar-" + _.random(1000000)
         };
+    },
+    computed: {
+        /**
+         * Verify if data is an array.
+         */
+        showTooltip() {
+            return typeof this.data !== 'string'
+        }
     },
     methods: {
         /**
