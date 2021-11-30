@@ -261,4 +261,16 @@ class Inbox extends AbstractCases
             'total' => $count
         ];
     }
+
+    /**
+     * Count how many cases there are in TO_DO
+     *
+     * @return int
+     */
+    public function getCounterMetrics()
+    {
+        $query = Delegation::query()->select();
+        $query->inboxMetrics();
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
 }

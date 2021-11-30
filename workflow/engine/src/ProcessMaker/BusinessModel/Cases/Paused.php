@@ -255,4 +255,16 @@ class Paused extends AbstractCases
             'total' => $count
         ];
     }
+
+    /**
+     * Count how many cases there are in PAUSED
+     *
+     * @return int
+     */
+    public function getCounterMetrics()
+    {
+        $query = Delegation::query()->select();
+        $query->pausedMetrics();
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
+    }
 }

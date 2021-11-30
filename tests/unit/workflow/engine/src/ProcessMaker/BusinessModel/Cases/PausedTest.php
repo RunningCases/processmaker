@@ -32,6 +32,7 @@ class PausedTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
     }
 
     /**
@@ -910,5 +911,20 @@ class PausedTest extends TestCase
         $paused->setUserUid($user->USR_UID);
         $res = $paused->getCasesRisk($process1->PRO_ID, null, null, 'OVERDUE');
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCounterMetrics() method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getCounterMetrics()
+     * @test
+     */
+    public function it_tests_get_counter_metrics()
+    {
+        $this->createMultiplePaused(3);
+        $paused = new Paused();
+
+        $res = $paused->getCounterMetrics();
+        $this->assertTrue($res > 0);
     }
 }
