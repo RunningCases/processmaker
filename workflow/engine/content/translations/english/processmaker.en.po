@@ -19170,12 +19170,6 @@ msgid "The maximun limit of columns for a database table is 255, you already hav
 msgstr "The maximun limit of columns for a database table is 255, you already have them defined!"
 
 # TRANSLATION
-# LABEL/ID_MCRYPT_SUPPORT
-#: LABEL/ID_MCRYPT_SUPPORT
-msgid "Mcrypt Support"
-msgstr "Mcrypt Support"
-
-# TRANSLATION
 # LABEL/ID_MEDIA
 #: LABEL/ID_MEDIA
 msgid "Media"

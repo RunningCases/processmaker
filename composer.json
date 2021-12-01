@@ -64,7 +64,8 @@
         "phpmyadmin/sql-parser": "^5.3",
         "aws/aws-sdk-php": "~3.0",
         "cretueusebiu/laravel-javascript": "^0.2.1",
-        "stevenmaguire/oauth2-microsoft": "^2.2"
+        "stevenmaguire/oauth2-microsoft": "^2.2",
+        "phpseclib/mcrypt_compat": "^2.0"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^6.3",

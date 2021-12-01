@@ -60090,7 +60090,6 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAX_INDICATOR_DASHBOARD','en','Maximum number of Indicators','2015-03-31') ,
 ( 'LABEL','ID_MAX_LIFETIME','en','Cookie Lifetime (Seconds)','2017-02-21') ,
 ( 'LABEL','ID_MAX_LIMIT_COLUMNS_FOR_DATABASE','en','The maximun limit of columns for a database table is 255, you already have them defined!','2014-01-15') ,
-( 'LABEL','ID_MCRYPT_SUPPORT','en','Mcrypt Support','2014-10-17') ,
 ( 'LABEL','ID_MEDIA','en','Media','2014-01-15') ,
 ( 'LABEL','ID_MEMBER','en','Member','2014-01-15') ,
 ( 'LABEL','ID_MEMBERS','en','Members','2014-01-15') ,
