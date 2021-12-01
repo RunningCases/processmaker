@@ -11,7 +11,7 @@
                 <i class="fas fa-square"></i>
             </div>
             <b-popover
-                v-if="item.DELAYED_TITLE && item.DELAYED_MSG"
+                v-if="item.DELAYED_TITLE || item.DELAYED_MSG"
                 :target="statusId + index"
                 triggers="hover"
                 placement="top"
