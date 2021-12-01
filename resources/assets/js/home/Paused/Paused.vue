@@ -48,12 +48,11 @@
       <div slot="process_name" slot-scope="props">
         {{ props.row.PROCESS_NAME }}
       </div>
-
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
       <div slot="send_by" slot-scope="props">
-        <CurrentUserCell :data="props.row.USER_DATA" />
+          <CurrentUserCell :data="props.row.USER_DATA" />
       </div>
       <div slot="current_user" slot-scope="props">
         {{ props.row.USERNAME_DISPLAY_FORMAT }}
@@ -148,7 +147,7 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <CurrentUserCell :data="props.item.USER_DATA" />
+            <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueCardView>
@@ -229,7 +228,7 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <CurrentUserCell :data="props.item.USER_DATA" />
+            <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueListView>
@@ -590,21 +589,32 @@ export default {
     formatUser(data) {
         var dataFormat = [],
             userDataFormat;
-            userDataFormat = utils.userNameDisplayFormat({
-                userName: data.user_tooltip.usr_firstname,
-                firstName: data.user_tooltip.usr_lastname,
-                lastName: data.user_tooltip.usr_username,
-                format: window.config.FORMATS.format || null
-            });
-            dataFormat.push({
-                USERNAME_DISPLAY_FORMAT: userDataFormat,
-                EMAIL: data.user_tooltip.usr_email,
-                POSITION: data.user_tooltip.usr_position,
-                AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
-                    window.config.SYS_URI +
-                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
-                UNASSIGNED: userDataFormat !== "" ? true : false
-            });    
+        switch (data.key_name) {
+            case 'user_tooltip':
+                userDataFormat = utils.userNameDisplayFormat({
+                    userName: data.user_tooltip.usr_firstname,
+                    firstName: data.user_tooltip.usr_lastname,
+                    lastName: data.user_tooltip.usr_username,
+                    format: window.config.FORMATS.format || null
+                });
+                dataFormat.push({
+                    USERNAME_DISPLAY_FORMAT: userDataFormat,
+                    EMAIL: data.user_tooltip.usr_email,
+                    POSITION: data.user_tooltip.usr_position,
+                    AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                        window.config.SYS_URI +
+                        `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                    UNASSIGNED: userDataFormat !== "" ? true : false,
+                    SHOW_TOOLTIP: true
+                });
+                break;
+            case 'dummy_task':
+                dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
+                break;
+            default:
+                dataFormat = "";
+                break;
+        }
         return dataFormat;
     },
     /**

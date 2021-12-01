@@ -874,8 +874,8 @@ class Light
         session_start();
         session_regenerate_id();
 
-        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, false,
-            true);
+        $cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + (24 * 60 * 60), 'path' => '/sys' . config('system.workspace'), 'httponly' => true]);
+        setcookie('workspaceSkin', SYS_SKIN, $cookieOptions);
 
         if (strlen($msg) > 0) {
             $_SESSION['G_MESSAGE'] = $msg;

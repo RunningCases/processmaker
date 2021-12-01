@@ -34,6 +34,9 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
 
             $caseFields = $case->loadCase($applicationUid, $delIndex);
 
+            //this value is only important for Propel::getConnection()
+            $_SESSION['PROCESS'] = $caseFields['PRO_UID'];
+
             // Updating case variables with system constants
             $systemConstants = G::getSystemConstants();
             $caseFields['APP_DATA']['USER_LOGGED'] = $systemConstants['USER_LOGGED'];

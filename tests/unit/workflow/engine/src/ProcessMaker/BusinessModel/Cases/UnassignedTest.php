@@ -34,6 +34,7 @@ class UnassignedTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
     }
 
     /**
@@ -211,6 +212,7 @@ class UnassignedTest extends TestCase
         $cases = $this->createSelfServiceUserOrGroup();
         //Review the count self-service
         $unassigned = new Unassigned;
+        // Apply filters
         $unassigned->setUserUid($cases['taskUser']->USR_UID);
         $unassigned->setUserId($cases['delegation']->USR_ID);
         $result = $unassigned->getCounter();
@@ -229,6 +231,7 @@ class UnassignedTest extends TestCase
         $cases = $this->createSelfServiceByVariable();
         //Review the count self-service
         $unassigned = new Unassigned;
+        // Apply filters
         $unassigned->setUserUid($cases['user']->USR_UID);
         $unassigned->setUserId($cases['delegation']->USR_ID);
         $result = $unassigned->getCounter();
@@ -247,6 +250,7 @@ class UnassignedTest extends TestCase
         $cases = $this->createSelfServiceUserOrGroup(2);
         //Review the count self-service
         $unassigned = new Unassigned;
+        // Apply filters
         $unassigned->setUserUid($cases['taskUser']->USR_UID);
         $unassigned->setUserId($cases['delegation']->USR_ID);
         $result = $unassigned->getCounter();
@@ -265,6 +269,7 @@ class UnassignedTest extends TestCase
         $cases = $this->createSelfServiceByVariable(2, false);
         //Review the count self-service
         $unassigned = new Unassigned;
+        // Apply filters
         $unassigned->setUserUid($cases['user']->USR_UID);
         $unassigned->setUserId($cases['delegation']->USR_ID);
         $result = $unassigned->getCounter();
@@ -284,10 +289,12 @@ class UnassignedTest extends TestCase
         $casesGroup = $this->createSelfServiceUserOrGroup(2);
         //Review the count self-service
         $unassigned = new Unassigned;
+        // Apply filters
         $unassigned->setUserUid($casesUser['taskUser']->USR_UID);
         $unassigned->setUserId($casesUser['delegation']->USR_ID);
         $result = $unassigned->getCounter();
         $this->assertNotEmpty($result);
+        // Apply filters
         $unassigned->setUserUid($casesGroup['taskUser']->USR_UID);
         $unassigned->setUserId($casesGroup['delegation']->USR_ID);
         $result = $unassigned->getCounter();
@@ -305,13 +312,15 @@ class UnassignedTest extends TestCase
     {
         $casesUser = $this->createSelfServiceByVariable();
         $casesGroup = $this->createSelfServiceByVariable(2, false);
-        //Review the count self-service
+        // Review the count self-service
         $unassigned = new Unassigned;
+        // Apply filters
         $unassigned->setUserUid($casesUser['user']->USR_UID);
         $unassigned->setUserId($casesUser['delegation']->USR_ID);
         $result = $unassigned->getCounter();
         $this->assertNotEmpty($result);
         $unassigned = new Unassigned;
+        // Apply filters
         $unassigned->setUserUid($casesGroup['user']->USR_UID);
         $unassigned->setUserId($casesGroup['delegation']->USR_ID);
         $result = $unassigned->getCounter();
@@ -331,15 +340,88 @@ class UnassignedTest extends TestCase
         $cases = $this->createSelfServiceUserOrGroup();
         // Create new object
         $unassigned = new Unassigned();
-        // Set the user UID
+        // Apply filters
         $unassigned->setUserUid($cases['taskUser']->USR_UID);
         $unassigned->setUserId($cases['delegation']->USR_ID);
+        // Set OrderByColumn value
+        $unassigned->setOrderByColumn('APP_NUMBER');
+        // Call to getData method
+        $res = $unassigned->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * This ensures get data from self-service-user-assigned with filter setCasesNumbers
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::filters()
+     * @test
+     */
+    public function it_filter_by_case_numbers()
+    {
+        // Create factories related to the unassigned cases
+        $cases = $this->createSelfServiceUserOrGroup();
+        // Create new object
+        $unassigned = new Unassigned();
+        // Apply filters
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+        $unassigned->setCasesNumbers([$cases['delegation']->APP_NUMBER]);
         // Set OrderBYColumn value
         $unassigned->setOrderByColumn('APP_NUMBER');
         // Call to getData method
         $res = $unassigned->getData();
         // This assert that the expected numbers of results are returned
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * This ensures get data from self-service-user-assigned with filter setRangeCasesFromTo
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::filters()
+     * @test
+     */
+    public function it_filter_by_range_cases()
+    {
+        // Create factories related to the unassigned cases
+        $cases = $this->createSelfServiceUserOrGroup();
+        // Create new object
+        $unassigned = new Unassigned();
+        // Apply filters
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+        $rangeOfCases = $cases['delegation']->APP_NUMBER . "-" . $cases['delegation']->APP_NUMBER;
+        $unassigned->setRangeCasesFromTo([$rangeOfCases]);
+        // Call to getData method
+        $res = $unassigned->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertNotEmpty($res);
+    }
+
+    /**
+     * This ensures get data from self-service-user-assigned with setDelegateFrom and setDelegateTo filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::filters()
+     * @test
+     */
+    public function it_filter_by_delegate_from_to()
+    {
+        // Create factories related to the unassigned cases
+        $cases = $this->createSelfServiceUserOrGroup();
+        // Create new object
+        $unassigned = new Unassigned();
+        // Apply filters
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+        $unassigned->setDelegateFrom(date('Y-m-d'));
+        $unassigned->setDelegateTo(date('Y-m-d'));
+        // Call to getData method
+        $res = $unassigned->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($res);
     }
 
     /**
@@ -361,9 +443,9 @@ class UnassignedTest extends TestCase
         DB::commit();
         // Create new Unassigned object
         $unassigned = new Unassigned();
+        // Apply filters
         $unassigned->setUserUid($usrUid);
         $unassigned->setUserId($usrId);
-        // Set the title
         $unassigned->setCaseTitle($title);
         // Get the data
         $res = $unassigned->getData();
@@ -869,5 +951,19 @@ class UnassignedTest extends TestCase
 
         $res = $unassigned->getCasesRisk($process1->PRO_ID, null, null, 'OVERDUE');
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * This the getCounterMetrics method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getCounterMetrics()
+     * @test
+     */
+    public function it_tests_get_counter_metrics()
+    {
+        $this->createSelfServiceUserOrGroup();
+        $unassigned = new Unassigned;
+        $result = $unassigned->getCounterMetrics();
+        $this->assertTrue($result > 0);
     }
 }

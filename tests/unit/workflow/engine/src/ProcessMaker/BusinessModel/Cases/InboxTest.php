@@ -31,6 +31,14 @@ class InboxTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
+    }
+
+    /**
+     * Method tearDown
+     */
+    public function tearDown() {
+        parent::tearDown();
     }
 
     /**
@@ -44,6 +52,7 @@ class InboxTest extends TestCase
     {
         $delegation = factory(Delegation::class)->states('foreign_keys')->create([
             'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_PREVIOUS' => 1,
             'DEL_INDEX' => 2,
         ]);
 
@@ -118,6 +127,7 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setProcessId()
      * @test
      */
     public function it_filter_by_process()
@@ -126,9 +136,11 @@ class InboxTest extends TestCase
         $cases = $this->createInbox();
         // Create new Inbox object
         $inbox = new Inbox();
+        // Apply filters
         $inbox->setUserId($cases->USR_ID);
         $inbox->setProcessId($cases->PRO_ID);
         $inbox->setOrderByColumn('APP_NUMBER');
+        // Call to getData method
         $res = $inbox->getData();
         $this->assertNotEmpty($res);
     }
@@ -139,6 +151,7 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setCaseNumber()
      * @test
      */
     public function it_filter_by_app_number()
@@ -147,9 +160,11 @@ class InboxTest extends TestCase
         $cases = $this->createInbox();
         // Create new Inbox object
         $inbox = new Inbox();
+        // Apply filters
         $inbox->setUserId($cases->USR_ID);
         $inbox->setCaseNumber($cases->APP_NUMBER);
         $inbox->setOrderByColumn('APP_NUMBER');
+        // Call to getData method
         $res = $inbox->getData();
         $this->assertNotEmpty($res);
     }
@@ -160,6 +175,7 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setCasesNumbers()
      * @test
      */
     public function it_filter_by_specific_cases()
@@ -168,9 +184,11 @@ class InboxTest extends TestCase
         $cases = $this->createInbox();
         // Create new Inbox object
         $inbox = new Inbox();
+        // Apply filters
         $inbox->setUserId($cases->USR_ID);
         $inbox->setCasesNumbers([$cases->APP_NUMBER]);
         $inbox->setOrderByColumn('APP_NUMBER');
+        // Call to getData method
         $res = $inbox->getData();
         $this->assertNotEmpty($res);
     }
@@ -181,6 +199,8 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setCasesNumbers()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setRangeCasesFromTo()
      * @test
      */
     public function it_filter_by_range_cases()
@@ -189,10 +209,13 @@ class InboxTest extends TestCase
         $cases = $this->createInbox();
         // Create new Inbox object
         $inbox = new Inbox();
+        // Apply filters
         $inbox->setUserId($cases->USR_ID);
         $rangeOfCases = $cases->APP_NUMBER . "-" . $cases->APP_NUMBER;
+        $inbox->setCasesNumbers([$cases->APP_NUMBER]);
         $inbox->setRangeCasesFromTo([$rangeOfCases]);
         $inbox->setOrderByColumn('APP_NUMBER');
+        // Call to getData method
         $res = $inbox->getData();
         $this->assertNotEmpty($res);
     }
@@ -212,10 +235,37 @@ class InboxTest extends TestCase
         $cases = $this->createInbox();
         // Create new Inbox object
         $inbox = new Inbox();
+        // Apply filters
         $inbox->setUserId($cases->USR_ID);
         $inbox->setTaskId($cases->TAS_ID);
+        // Call to getData method
         $res = $inbox->getData();
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getData method with setDelegateFrom and setDelegateTo filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setDelegateFrom()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setDelegateTo()
+     * @test
+     */
+    public function it_filter_by_delegate_from_to()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
+        $inbox = new Inbox();
+        // Apply filters
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setDelegateFrom($cases->DEL_DELEGATE_DATE->format("Y-m-d"));
+        $inbox->setDelegateTo($cases->DEL_DELEGATE_DATE->format("Y-m-d"));
+        // Call to getData method
+        $res = $inbox->getData();
+        $this->assertEmpty($res);
     }
 
     /**
@@ -224,14 +274,20 @@ class InboxTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setCaseTitle()
      * @test
      */
     public function it_filter_by_thread_title()
     {
         // Create factories related to the to_do cases
-        $cases = $this->createInbox();
-        $usrId = $cases->USR_ID;
-        $title = $cases->DEL_TITLE;
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_PREVIOUS' => 1,
+            'DEL_INDEX' => 2,
+            'DEL_TITLE' => 'Test',
+        ]);
+        $usrId = $delegation->USR_ID;
+        $title = 'Test';
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
         // Create new Inbox object
@@ -246,11 +302,43 @@ class InboxTest extends TestCase
     }
 
     /**
+     * It tests the getData method with send by filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setSendBy()
+     * @test
+     */
+    public function it_filter_send_by()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create the previous thread with the same user
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $cases->APP_NUMBER,
+            'APP_UID' => $cases->APP_UID,
+            'USR_ID' => $cases->USR_ID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 1,
+        ]);
+        // Create new Inbox object
+        $inbox = new Inbox();
+        // Apply filters
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setSendBy($cases->USR_ID);
+        // Call to getData method
+        $res = $inbox->getData();
+        $this->assertNotEmpty($res);
+    }
+
+    /**
      * It tests the getData method using order by column
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setOrderByColumn()
      * @test
      */
     public function it_order_by_column()
@@ -754,5 +842,19 @@ class InboxTest extends TestCase
         $inbox->setUserUid($user->USR_UID);
         $res = $inbox->getCasesRisk($process->PRO_ID, null, null, "OVERDUE");
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * It tests the getCounterMetrics method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getCounterMetrics()
+     * @test
+     */
+    public function it_tests_get_counter_metrics()
+    {
+        $this->createInbox();
+        $inbox = new Inbox();
+        $res = $inbox->getCounterMetrics();
+        $this->assertTrue($res > 0);
     }
 }

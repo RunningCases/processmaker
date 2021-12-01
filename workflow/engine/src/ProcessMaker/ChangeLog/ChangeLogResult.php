@@ -138,7 +138,7 @@ class ChangeLogResult
         $totalCount = 0;
         $values = [];
 
-        $this->getLogsFromDataBase($this->appUid, function($row) use(&$logs, &$totalCount, &$values) {
+        $this->getLogsFromDataBase($this->appUid, function ($row) use (&$logs, &$totalCount, &$values) {
             $appData = $this->getAppData($row['DATA']);
             $this->removeVariables($appData);
 
@@ -146,22 +146,52 @@ class ChangeLogResult
             if ((int) $row['SOURCE_ID'] === ChangeLog::FromABE) {
                 $hasPermission = true;
             }
+            if (in_array((int) $row['EXECUTED_AT'], [ChangeLog::BEFORE_ASSIGNMENT, ChangeLog::BEFORE_ROUTING, ChangeLog::AFTER_ROUTING])) {
+                $hasPermission = true;
+            }
 
             $count = 0;
             foreach ($appData as $key => $value) {
                 if ($hasPermission && (!isset($values[$key]) || $values[$key] !== $value)) {
                     // Apply mask
-                    $dateLabel = applyMaskDateEnvironment($row['DATE'],'', false);
+                    $dateLabel = applyMaskDateEnvironment($row['DATE'], '', false);
                     // Apply the timezone
                     $dateLabel = DateTime::convertUtcToTimeZone($dateLabel);
 
                     $previousValue = !isset($values[$key]) ? null : $values[$key];
+
+                    //get 'title' label
+                    $objectTitle = '';
+                    if ((int) $row['OBJECT_TYPE'] === ChangeLog::DYNAFORM) {
+                        $objectTitle = G::LoadTranslation('ID_DYNAFORM') . ': ' . $row['DYN_TITLE'];
+                    }
+                    if ((int) $row['OBJECT_TYPE'] === ChangeLog::TRIGGER) {
+                        if ((int) $row['EXECUTED_AT'] === ChangeLog::BEFORE_ASSIGNMENT) {
+                            $objectTitle = G::LoadTranslation('ID_BEFORE_ASSIGNMENT');
+                        }
+                        if ((int) $row['EXECUTED_AT'] === ChangeLog::BEFORE_ROUTING) {
+                            $objectTitle = G::LoadTranslation('ID_BEFORE_DERIVATION');
+                        }
+                        if ((int) $row['EXECUTED_AT'] === ChangeLog::AFTER_ROUTING) {
+                            $objectTitle = G::LoadTranslation('ID_AFTER_DERIVATION');
+                        }
+                    }
+
+                    //get 'from' label
+                    $from = ChangeLog::getChangeLog()->getApplicationNameById($row['SOURCE_ID']);
+                    if ((int) $row['SOURCE_ID'] === ChangeLog::FromUnknow) {
+                        if ((int) $row['EXECUTED_AT'] === ChangeLog::BEFORE_ROUTING ||
+                                (int) $row['EXECUTED_AT'] === ChangeLog::AFTER_ROUTING) {
+                            $from = ChangeLog::getChangeLog()->getApplicationNameById(ChangeLog::FromWeb);
+                        }
+                    }
+
                     $record = ''
                             . G::LoadTranslation('ID_TASK') . ': ' . $row['TAS_TITLE'] . ' / '
-                            . G::LoadTranslation('ID_DYNAFORM') . ': ' . $row['DYN_TITLE'] . ' / '
+                            . $objectTitle . ' / '
                             . G::LoadTranslation('ID_LAN_UPDATE_DATE') . ': ' . $dateLabel . ' / '
                             . G::LoadTranslation('ID_USER') . ': ' . $row['USR_USERNAME'] . ' / '
-                            . G::LoadTranslation('ID_FROM') . ': ' . ChangeLog::getChangeLog()->getApplicationNameById($row['SOURCE_ID']);
+                            . G::LoadTranslation('ID_FROM') . ': ' . $from;
 
                     $struct = new LogStruct();
                     $struct->setField($key)
@@ -210,6 +240,7 @@ class ChangeLogResult
                 . "A.USR_ID, "
                 . "A.OBJECT_ID, "
                 . "A.OBJECT_UID, "
+                . "A.OBJECT_TYPE, "
                 . "A.EXECUTED_AT, "
                 . "A.SOURCE_ID, "
                 . "A.DATA, "
@@ -220,8 +251,8 @@ class ChangeLogResult
                 . "LEFT JOIN PROCESS AS C ON (C.PRO_ID=A.PRO_ID) "
                 . "LEFT JOIN TASK AS D ON (D.TAS_ID=A.TAS_ID) "
                 . "LEFT JOIN USERS AS E ON (E.USR_ID=A.USR_ID) "
-                . "LEFT JOIN DYNAFORM AS F ON (F.DYN_ID=A.OBJECT_ID AND A.OBJECT_TYPE=" . ChangeLog::DYNAFORM . ") "
-                . "ORDER BY A.DATE ASC ";
+                . "LEFT JOIN DYNAFORM AS F ON (F.DYN_ID=A.OBJECT_ID AND A.OBJECT_TYPE IN (" . ChangeLog::DYNAFORM . ", " . ChangeLog::TRIGGER . ")) "
+                . "ORDER BY A.CHANGE_LOG_ID,A.DATE ASC ";
 
         $stmt = $conn->prepareStatement($sql);
         $stmt->set(1, $appUid);

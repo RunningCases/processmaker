@@ -884,24 +884,32 @@ export default {
         formatUser(data) {
             var dataFormat = [],
                 userDataFormat;
-            userDataFormat = utils.userNameDisplayFormat({
-                userName: data.user_tooltip.usr_firstname,
-                firstName: data.user_tooltip.usr_lastname,
-                lastName: data.user_tooltip.usr_username,
-                format: window.config.FORMATS.format || null,
-            });
-            dataFormat.push({
-                USERNAME_DISPLAY_FORMAT: userDataFormat,
-                EMAIL: data.user_tooltip.usr_email,
-                POSITION: data.user_tooltip.usr_position,
-                AVATAR:
-                    userDataFormat !== ""
-                        ? window.config.SYS_SERVER_AJAX +
-                          window.config.SYS_URI +
-                          `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}`
-                        : "",
-                UNASSIGNED: userDataFormat !== "" ? true : false,
-            });
+            switch (data.key_name) {
+                case 'user_tooltip':
+                    userDataFormat = utils.userNameDisplayFormat({
+                        userName: data.user_tooltip.usr_firstname,
+                        firstName: data.user_tooltip.usr_lastname,
+                        lastName: data.user_tooltip.usr_username,
+                        format: window.config.FORMATS.format || null
+                    });
+                    dataFormat.push({
+                        USERNAME_DISPLAY_FORMAT: userDataFormat,
+                        EMAIL: data.user_tooltip.usr_email,
+                        POSITION: data.user_tooltip.usr_position,
+                        AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                            window.config.SYS_URI +
+                            `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                        UNASSIGNED: userDataFormat !== "" ? true : false,
+                        SHOW_TOOLTIP: true
+                    });
+                    break;
+                case 'dummy_task':
+                    dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
+                    break;
+                default:
+                    dataFormat = "";
+                    break;
+            }
             return dataFormat;
         },
         /**

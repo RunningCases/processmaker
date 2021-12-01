@@ -1070,6 +1070,64 @@ class Delegation extends Model
     }
 
     /**
+     * Scope the Inbox cases no matter the user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInboxMetrics($query)
+    {
+        $query->joinApplication();
+        $query->status(Application::STATUS_TODO);
+        $query->threadOpen();
+        return $query;
+    }
+
+    /**
+     * Scope a draft cases no matter the user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeDraftMetrics($query)
+    {
+        $query->joinApplication();
+        $query->status(Application::STATUS_DRAFT);
+        $query->threadOpen();
+        return $query;
+    }
+
+    /**
+     * Scope paused cases list no matter the user
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePausedMetrics($query)
+    {
+        $query->joinAppDelay('PAUSE');
+        $query->joinApplication();
+        return $query;
+    }
+
+    /**
+     * Scope a self service cases no matter the user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSelfServiceMetrics($query)
+    {
+        $query->taskAssignType('SELF_SERVICE');
+        $query->threadOpen()->withoutUserId();
+        return $query;
+    }
+
+    /**
      * Get specific cases unassigned that the user can view
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
