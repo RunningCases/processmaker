@@ -16,6 +16,7 @@
 
 use ProcessMaker\BusinessModel\Cases as BmCases;
 use ProcessMaker\BusinessModel\ProcessSupervisor;
+use ProcessMaker\Core\System;
 
 $tBarGmail = false;
 if (isset($_GET['gmail']) && $_GET['gmail'] == 1) {
@@ -157,6 +158,7 @@ if ($isBpmn && $viewSummaryForm && $isNoEmpty) {
 }
 /*----------------------------------********---------------------------------*/
 
+$pmDynaform = new PmDynaform();     
 $step = new Step();
 $step = $step->loadByProcessTaskPosition($case['PRO_UID'], $case['TAS_UID'], 1);
 $headPublisher->assign('uri', $script . $uri);
@@ -171,6 +173,11 @@ $headPublisher->assign('appStatus', $case['APP_STATUS']);
 $headPublisher->assign('tbarGmail', $tBarGmail);
 $headPublisher->assign('showCustomForm', $showCustomForm);
 $headPublisher->assign('canClaimCase', $canClaimCase);
+$headPublisher->assign('_CREDENTIALS', G::json_encode($pmDynaform->getCredentials()));
+$headPublisher->assign('_SERVER', System::getHttpServerHostnameRequestsFrontEnd());
+$headPublisher->assign('_WORKSPACE', config("system.workspace"));
+$headPublisher->assign('_DEL_INDEX_DELEGATE', $delIndex);
+$headPublisher->assign('_USR_DELEGATE', $case['CURRENT_USER_UID']);
 
 if (!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SESSION['INDEX'])) {
     $_SESSION['PROCESS'] = $case['PRO_UID'];
