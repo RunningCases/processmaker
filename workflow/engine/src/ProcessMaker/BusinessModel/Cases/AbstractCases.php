@@ -1556,16 +1556,16 @@ class AbstractCases implements CasesInterface
         $list = end($listArray);
         switch ($list) {
             case 'Inbox':
-                $query->inbox($this->getUserId());
+                $query->inboxMetrics();
                 break;
             case 'Draft':
-                $query->draft($this->getUserId());
+                $query->draftMetrics();
                 break;
             case 'Paused':
-                $query->paused($this->getUserId());
+                $query->pausedMetrics();
                 break;
             case 'Unassigned':
-                $query->selfService($this->getUserUid());
+                $query->selfServiceMetrics();
                 break;
         }
         $query->joinProcess();
@@ -1608,16 +1608,16 @@ class AbstractCases implements CasesInterface
         $list = end($listArray);
         switch ($list) {
             case 'Inbox':
-                $query->inbox($this->getUserId());
+                $query->inboxMetrics();
                 break;
             case 'Draft':
-                $query->draft($this->getUserId());
+                $query->draftMetrics();
                 break;
             case 'Paused':
-                $query->paused($this->getUserId());
+                $query->pausedMetrics();
                 break;
             case 'Unassigned':
-                $query->selfService($this->getUserUid());
+                $query->selfServiceMetrics();
                 break;
         }
         $query->joinProcess();
@@ -1661,16 +1661,16 @@ class AbstractCases implements CasesInterface
         $list = end($listArray);
         switch ($list) {
             case 'Inbox':
-                $query->inbox($this->getUserId());
+                $query->inboxMetrics();
                 break;
             case 'Draft':
-                $query->draft($this->getUserId());
+                $query->draftMetrics();
                 break;
             case 'Paused':
-                $query->paused($this->getUserId());
+                $query->pausedMetrics();
                 break;
             case 'Unassigned':
-                $query->selfService($this->getUserUid());
+                $query->selfServiceMetrics();
                 break;
         }
         $query->joinProcess();

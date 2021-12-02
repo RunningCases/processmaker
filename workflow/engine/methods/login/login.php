@@ -1,27 +1,4 @@
 <?php
-/**
- * login.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
 
 use ProcessMaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
@@ -182,7 +159,11 @@ if (isset($_SESSION['USER_LOGGED'])) {
 session_start();
 session_regenerate_id();
 
-setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . config("system.workspace"), null, G::is_https(), true);
+$cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + (24 * 60 * 60), 'httponly' => true]);
+setcookie(session_name(), session_id(), $cookieOptions);
+
+$cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + (24 * 60 * 60), 'path' => '/sys' . config('system.workspace'), 'httponly' => true]);
+setcookie('workspaceSkin', SYS_SKIN, $cookieOptions);
 
 if (strlen($msg) > 0) {
     $_SESSION['G_MESSAGE'] = $msg;
@@ -319,14 +300,16 @@ $flagForgotPassword = isset($oConf->aConfig['login_enableForgotPassword'])
                       ? $oConf->aConfig['login_enableForgotPassword']
                       : 'off';
 
-setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_URI, '', G::is_https());
+$cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + (24 * 60 * 60), 'path' => SYS_URI]);
+setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), $cookieOptions);
 
 $configS = System::getSystemConfiguration('', '', config("system.workspace"));
 $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block'] : true;
+$cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + (24 * 60 * 60)]);
 if ($activeSession) {
-    setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/', '', G::is_https());
+    setcookie('PM-TabPrimary', 101010010, $cookieOptions);
 } else {
-    setcookie("PM-TabPrimary", uniqid(), time() + (24 * 60 * 60), '/', '', G::is_https());
+    setcookie('PM-TabPrimary', uniqid(), $cookieOptions);
 }
 
 $oHeadPublisher->addScriptCode("var flagForgotPassword = '$flagForgotPassword';");

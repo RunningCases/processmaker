@@ -96,6 +96,18 @@ $factory->state(\ProcessMaker\Model\Application::class, 'draft', function (Faker
     ];
 });
 
+$factory->state(\ProcessMaker\Model\Application::class, 'paused', function (Faker $faker) {
+    $user = factory(\ProcessMaker\Model\User::class)->create();
+
+    return [
+        'APP_NUMBER' => $faker->unique()->numberBetween(1000),
+        'APP_STATUS_ID' => 1,
+        'APP_STATUS' => 'PAUSED',
+        'APP_INIT_USER' => $user->USR_UID,
+        'APP_INIT_USER_ID' => $user->USR_ID,
+    ];
+});
+
 $factory->state(\ProcessMaker\Model\Application::class, 'completed', function (Faker $faker) {
     return [
         'APP_NUMBER' => $faker->unique()->numberBetween(1000),

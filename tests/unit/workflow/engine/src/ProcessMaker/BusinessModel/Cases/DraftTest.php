@@ -28,6 +28,7 @@ class DraftTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
     }
 
     /**
@@ -880,5 +881,19 @@ class DraftTest extends TestCase
         $draft->setUserUid($user->USR_ID);
         $res = $draft->getCasesRisk($process->PRO_ID, null, null, 'OVERDUE');
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * This tests the getCounterMetrics() method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCounterMetrics()
+     * @test
+     */
+    public function it_should_test_get_counter_metrics()
+    {
+        $this->createDraft();
+        $draft = new Draft();
+        $result = $draft->getCounterMetrics();
+        $this->assertTrue($result > 0);
     }
 }

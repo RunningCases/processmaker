@@ -53,12 +53,7 @@
         <TaskCell :data="props.row.TASK" />
       </div>
       <div slot="send_by" slot-scope="props">
-        <template v-if="showUserTooltip" >
           <CurrentUserCell :data="props.row.USER_DATA" />
-        </template>
-        <template v-else>
-          {{ props.row.USER_DATA }}
-        </template>
       </div>
       <div slot="due_date" slot-scope="props">
         {{ props.row.DUE_DATE }}
@@ -158,12 +153,7 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <template v-if="showUserTooltip" >
             <CurrentUserCell :data="props.item.USER_DATA" />
-          </template>
-          <template v-else>
-            {{ props.item.USER_DATA }}
-          </template>
         </span>
       </div>
     </VueCardView>
@@ -252,12 +242,7 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <template v-if="showUserTooltip" >
             <CurrentUserCell :data="props.item.USER_DATA" />
-          </template>
-          <template v-else>
-            {{ props.item.USER_DATA }}
-          </template>
         </span>
       </div>
     </VueListView>
@@ -409,8 +394,7 @@ export default {
         buttons: {}
       },
       showEllipsis: false,
-      dataSubtitle: null,
-      showUserTooltip: true
+      dataSubtitle: null
     };
   },
   mounted() {
@@ -583,29 +567,31 @@ export default {
     formatUser(data) {
         var dataFormat = [],
             userDataFormat;
-        if (data.user_tooltip && !_.isEmpty(data.user_tooltip)) {
-            this.showUserTooltip = true;
-            userDataFormat = utils.userNameDisplayFormat({
-                userName: data.user_tooltip.usr_firstname,
-                firstName: data.user_tooltip.usr_lastname,
-                lastName: data.user_tooltip.usr_username,
-                format: window.config.FORMATS.format || null
-            });
-            dataFormat.push({
-                USERNAME_DISPLAY_FORMAT: userDataFormat,
-                EMAIL: data.user_tooltip.usr_email,
-                POSITION: data.user_tooltip.usr_position,
-                AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
-                    window.config.SYS_URI +
-                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
-                UNASSIGNED: userDataFormat !== "" ? true : false
-            });
-        } else if (data.dummy_task && !_.isEmpty(data.dummy_task)) {
-            this.showUserTooltip = false;
-            dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
-        } else {
-            this.showUserTooltip = false;
-            dataFormat = this.$i18n.t("ID_ANONYMOUS_USER");
+        switch (data.key_name) {
+            case 'user_tooltip':
+                userDataFormat = utils.userNameDisplayFormat({
+                    userName: data.user_tooltip.usr_firstname,
+                    firstName: data.user_tooltip.usr_lastname,
+                    lastName: data.user_tooltip.usr_username,
+                    format: window.config.FORMATS.format || null
+                });
+                dataFormat.push({
+                    USERNAME_DISPLAY_FORMAT: userDataFormat,
+                    EMAIL: data.user_tooltip.usr_email,
+                    POSITION: data.user_tooltip.usr_position,
+                    AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                        window.config.SYS_URI +
+                        `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                    UNASSIGNED: userDataFormat !== "" ? true : false,
+                    SHOW_TOOLTIP: true
+                });
+                break;
+            case 'dummy_task':
+                dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
+                break;
+            default:
+                dataFormat = "";
+                break;
         }
         return dataFormat;
     },

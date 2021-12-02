@@ -3401,8 +3401,10 @@ class Cases
         $lastFields = $this->executeTriggerFromList($triggersList, $fieldsCase, $stepType, $stepUidObj, $triggerType);
 
         /*----------------------------------********---------------------------------*/
+        $usrUid = empty($fieldsCase['USER_LOGGED']) ? '' : $fieldsCase['USER_LOGGED'];
         ChangeLog::getChangeLog()
             ->setObjectUid($stepUidObj)
+            ->getUsrIdByUsrUid($usrUid)
             ->getExecutedAtIdByTriggerType($triggerType);
         /*----------------------------------********---------------------------------*/
 

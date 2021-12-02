@@ -944,11 +944,8 @@ if (!defined('EXECUTE_BY_CRON')) {
             (!(preg_match("/safari/i", $_SERVER ['HTTP_USER_AGENT']) == 1 && preg_match("/chrome/i",
                         $_SERVER ['HTTP_USER_AGENT']) == 0) ||
                 $config['safari_cookie_lifetime'] == 1)) {
-            if (PHP_VERSION < 5.2) {
-                setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
-            } else {
-                setcookie(session_name(), session_id(), time() + $timelife, '/', null, G::is_https(), true);
-            }
+                $cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + $timelife, 'httponly' => true]);
+                setcookie(session_name(), session_id(), $cookieOptions);
         }
         $RBAC->initRBAC();
         //using optimization with memcache, the user data will be in memcache 8 hours, or until session id goes invalid
@@ -1024,11 +1021,8 @@ if (!defined('EXECUTE_BY_CRON')) {
                         (!(preg_match("/safari/i", $_SERVER ['HTTP_USER_AGENT']) == 1 && preg_match("/chrome/i",
                                     $_SERVER ['HTTP_USER_AGENT']) == 0) ||
                             $config['safari_cookie_lifetime'] == 1)) {
-                        if (PHP_VERSION < 5.2) {
-                            setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
-                        } else {
-                            setcookie(session_name(), session_id(), time() + $timelife, '/', null, G::is_https(), true);
-                        }
+                        $cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + $timelife, 'httponly' => true]);
+                        setcookie(session_name(), session_id(), $cookieOptions);
                     }
                     $RBAC->initRBAC();
                     $RBAC->loadUserRolePermission($RBAC->sSystem, $_SESSION['USER_LOGGED']);
