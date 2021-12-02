@@ -141,7 +141,6 @@ class SkinEngine
             if (file_exists($skinObject . PATH_SEP . 'layout-viena.html')) {
                 $layoutFileViena = $skinObject . PATH_SEP . 'layout-viena.html';
             }
-            
         }
 
         $this->layoutFile = pathInfo($layoutFile);

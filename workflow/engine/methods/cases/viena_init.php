@@ -10,9 +10,6 @@ use ProcessMaker\Model\User;
 $conf = new Configurations();
 
 $oHeadPublisher = headPublisher::getSingleton();
-// $oHeadPublisher->addExtJsScript("cases/main", false); //Adding a javascript file .js
-// $oHeadPublisher->addContent("cases/main"); //Adding a html file  .html.
-// $oHeadPublisher->addContent("cases/viena"); //Adding a html file  .html.
 
 $keyMem = "USER_PREFERENCES" . $_SESSION["USER_LOGGED"];
 $memcache = PMmemcached::getSingleton(config("system.workspace"));
