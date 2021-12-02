@@ -58,7 +58,9 @@
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
             </div>
-
+            <div slot="process_category" slot-scope="props">
+                {{ props.row.PROCESS_CATEGORY }}
+            </div>
             <div slot="task" slot-scope="props">
                 <TaskCell :data="props.row.TASK" />
             </div>
@@ -136,6 +138,9 @@
                     <span  v-if="column === 'process_name'" class="v-card-text-highlight">
                         {{ props["item"]["PROCESS_NAME"] }}
                     </span>
+                    <span  v-if="column === 'process_category'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_CATEGORY"] }}
+                    </span>
                     <span  v-if="column === 'due_date'" class="v-card-text-highlight">
                         {{ props["item"]["DUE_DATE"] }}
                     </span>
@@ -194,6 +199,9 @@
                     </span>
                     <span  v-if="column === 'process_name'" class="v-card-text-highlight">
                         {{ props["item"]["PROCESS_NAME"] }}
+                    </span>
+                    <span  v-if="column === 'process_category'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_CATEGORY"] }}
                     </span>
                     <span  v-if="column === 'due_date'" class="v-card-text-highlight">
                         {{ props["item"]["DUE_DATE"] }}
@@ -332,6 +340,7 @@ export default {
                 case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                 thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                 process_name: this.$i18n.t("ID_PROCESS_NAME"),
+                process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
                 task: this.$i18n.t("ID_TASK"),
                 send_by: this.$i18n.t("ID_SEND_BY"),
                 due_date: this.$i18n.t("ID_DUE_DATE"),
@@ -408,7 +417,8 @@ export default {
                 thread_title: "caseTitle",
                 delegation_date: "delegationDate",
                 send_by: "bySendBy",
-                process_name: "processName"
+                process_name: "processName",
+                process_category: "processCategory"
             },
             customItems:{
                 VARCHAR: {
@@ -586,6 +596,28 @@ export default {
                             value: "",
                             options: [],
                             placeholder: this.$i18n.t('ID_PROCESS_NAME')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                    }
+                },
+                processCategory: {
+                    group: "checkbox",
+                    type: "ProcessCategory",
+                    id: "processCategory",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_CATEGORY')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PROCESS_CATEGORY'),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_CATEGORY'),
+                    autoShow: false,
+                    items:[
+                        {
+                            id: "process",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_CATEGORY_PROCESS')
                         }
                     ],
                     makeTagText: function (params, data) {
@@ -860,6 +892,7 @@ export default {
                         CASE_NUMBER: v.APP_NUMBER,
                         THREAD_TITLE: v.DEL_TITLE,
                         PROCESS_NAME: v.PRO_TITLE,
+                        PROCESS_CATEGORY: v.CATEGORY,
                         TASK: [
                             {
                                 TITLE: v.TAS_TITLE,

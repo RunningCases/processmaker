@@ -38,6 +38,7 @@
 import SearchPopover from "./SearchPopover.vue";
 import Multiselect from "vue-multiselect";
 import api from "./../../../api/index";
+import _ from "lodash";
 
 export default {
     components: {
@@ -57,11 +58,16 @@ export default {
          * @param {string} query - string from the text field
          */
         asyncFind(query) {
-            let self = this;
+            let self = this,
+                cat = this.verifyCategory(),
+                params = { text: query };
             this.isLoading = true;
+            if (cat) {
+                params.category = cat;
+            }
             self.processes = [];
             api.filters
-                .processList(query)
+                .processListPaged(params)
                 .then((response) => {
                     self.processes = [];
                     _.forEach(response.data, function(elem, key) {
@@ -75,6 +81,13 @@ export default {
                 .catch((e) => {
                     console.error(err);
                 });
+        },
+        verifyCategory() {
+            let cat = _.find(
+                this.$attrs.filters,
+                (o) => o.fieldId == "processCategory"
+            );
+            return cat ? cat.value : null;
         },
         /**
          * Form validations review
