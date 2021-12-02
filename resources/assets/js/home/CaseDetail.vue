@@ -524,7 +524,8 @@ export default {
           DEL_INDEX: v.DEL_INDEX,
           PRO_UID: v.PRO_UID,
           TAS_UID: v.TAS_UID,
-          UNASSIGNED: v.UNASSIGNED
+          UNASSIGNED: v.UNASSIGNED,
+          USR_ID: v.USR_ID
         });
       });
       return data;
@@ -578,7 +579,7 @@ export default {
      * @param {object} data
      */
     onClick(data) {
-      if (data.row.UNASSIGNED) {
+      if (data.row.UNASSIGNED && data.row.USR_ID === 0) {
         this.claimCase(data.row);
       } else {
         this.$emit("onUpdateDataCase", {
