@@ -38,6 +38,8 @@ $factory->define(OutputDocument::class, function(Faker $faker) {
         'OUT_DOC_PDF_SECURITY_OPEN_PASSWORD' => '',
         'OUT_DOC_PDF_SECURITY_OWNER_PASSWORD' => '',
         'OUT_DOC_PDF_SECURITY_PERMISSIONS' => '',
-        'OUT_DOC_OPEN_TYPE' => 1
+        'OUT_DOC_OPEN_TYPE' => 1,
+        'OUT_DOC_HEADER' => null,
+         'OUT_DOC_FOOTER' => null
     ];
 });

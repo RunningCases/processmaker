@@ -378,6 +378,8 @@ class ProcessesTest extends TestCase
                 'OUT_DOC_PDF_SECURITY_PERMISSIONS' => '',
                 'OUT_DOC_OPEN_TYPE' => 1,
                 '__OUT_DOC_ID_UPDATE__' => false,
+                'OUT_DOC_FOOTER' => null,
+                'OUT_DOC_HEADER' => null
             ],
             [
                 'OUT_DOC_UID' => G::generateUniqueID(),
@@ -407,6 +409,8 @@ class ProcessesTest extends TestCase
                 'OUT_DOC_PDF_SECURITY_PERMISSIONS' => '',
                 'OUT_DOC_OPEN_TYPE' => 1,
                 '__OUT_DOC_ID_UPDATE__' => false,
+                'OUT_DOC_FOOTER' => null,
+                'OUT_DOC_HEADER' => null
             ]
         ];
         $this->sortArrayByColumn($expected, 'OUT_DOC_UID');
