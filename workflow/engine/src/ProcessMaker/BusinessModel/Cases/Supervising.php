@@ -66,7 +66,7 @@ class Supervising extends AbstractCases
         // Specific case title
         if (!empty($this->getCaseTitle())) {
             // Get the result
-            $result = Delegation::casesThreadTitle($this->getCaseTitle(), $this->getOffset(), $this->getLimit());
+            $result = Delegation::casesThreadTitle($this->getCaseTitle());
             // Add the filter
             $query->specificCases($result);
         }
