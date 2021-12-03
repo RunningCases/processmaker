@@ -13,6 +13,7 @@ use ProcessMaker\GmailOAuth\GmailOAuth;
 use ProcessMaker\Model\User;
 use RBAC;
 use Tests\TestCase;
+use BadMethodCallException;
 
 class GmailOAuthTest extends TestCase
 {
@@ -248,7 +249,6 @@ class GmailOAuthTest extends TestCase
      */
     public function it_should_send_an_email_test_with_PHPMailerOAuth()
     {
-        $this->markTestIncomplete('Please solve the error related to Exception');
         $faker = $this->faker;
         $gmailOauth = new GmailOAuth();
 
@@ -273,8 +273,11 @@ class GmailOAuthTest extends TestCase
         $gmailOauth->setSenderEmail($faker->email);
         $gmailOauth->setMailTo($faker->email);
         $gmailOauth->setSendTestMail(1);
-        $result = $gmailOauth->sendTestMailWithPHPMailerOAuth();
-        $this->assertTrue($result instanceof PHPMailerOAuth);
+        
+        //We cannot get a valid 'refresh token', therefore we wait for an exception 
+        //when trying to send a email.
+        $this->expectException(BadMethodCallException::class);
+        $gmailOauth->sendTestMailWithPHPMailerOAuth();
     }
 
     /**
