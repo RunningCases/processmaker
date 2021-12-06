@@ -360,7 +360,7 @@ class Home
                     }
                 };
             }
-            $arguments[1] = $proId;
+            $arguments[2] = $proId;
         }
     }
 
