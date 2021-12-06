@@ -3425,7 +3425,7 @@ class DelegationTest extends TestCase
     public function it_get_thread_title()
     {
         $delegation = factory(Delegation::class)->states('foreign_keys')->create();
-        $result = Delegation::getThreadTitle($delegation->TAS_UID, $delegation->APP_NUMBER, $delegation->DEL_INDEX, []);
+        $result = Delegation::getThreadTitle($delegation->TAS_UID, $delegation->APP_NUMBER, $delegation->DEL_PREVIOUS, []);
         $this->assertNotEmpty($result);
     }
 
@@ -3581,6 +3581,19 @@ class DelegationTest extends TestCase
     {
         $delegation = factory(Delegation::class)->states('first_thread')->create();
         $result = Delegation::casesStartedBy($delegation->USR_ID);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * This check the return cases thread title
+     *
+     * @covers \ProcessMaker\Model\Delegation::casesThreadTitle()
+     * @test
+     */
+    public function it_get_cases_thread_title()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $result = Delegation::casesThreadTitle($delegation->DEL_TITLE);
         $this->assertNotEmpty($result);
     }
 
