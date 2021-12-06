@@ -51,6 +51,7 @@ class Home extends Api
      * @url GET /draft
      *
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -68,6 +69,7 @@ class Home extends Api
      */
     public function doGetDraftCases(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -81,6 +83,7 @@ class Home extends Api
             $bmHome = new BMHome($this->getUserId());
             return $bmHome->getDraft(
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -101,6 +104,7 @@ class Home extends Api
      * @url GET /todo [This is kept for compatibility should not be used 'todo', the reason is to only handle the same verb (inbox) for all 'normal case list' and 'custom case list']
      *
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -121,6 +125,7 @@ class Home extends Api
      */
     public function doGetTodoCases(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -137,6 +142,7 @@ class Home extends Api
             $bmHome = new BMHome($this->getUserId());
             return $bmHome->getInbox(
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -159,6 +165,7 @@ class Home extends Api
      * @url GET /unassigned
      *
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -179,6 +186,7 @@ class Home extends Api
      */
     public function doGetUnassignedCases(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -195,6 +203,7 @@ class Home extends Api
             $bmHome = new BMHome($this->getUserId());
             return $bmHome->getUnassigned(
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -217,6 +226,7 @@ class Home extends Api
      * @url GET /paused
      *
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -237,6 +247,7 @@ class Home extends Api
      */
     public function doGetPausedCases(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -253,6 +264,7 @@ class Home extends Api
             $bmHome = new BMHome($this->getUserId());
             return $bmHome->getPaused(
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -274,6 +286,7 @@ class Home extends Api
      * @url POST /draft/:id
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -290,6 +303,7 @@ class Home extends Api
     public function doGetCustomDraftCases(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -305,6 +319,7 @@ class Home extends Api
             return $bmHome->getCustomDraft(
                     $id,
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -324,6 +339,7 @@ class Home extends Api
      * @url POST /inbox/:id
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -343,6 +359,7 @@ class Home extends Api
     public function doGetCustomInboxCases(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -361,6 +378,7 @@ class Home extends Api
             return $bmHome->getCustomInbox(
                     $id,
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -383,6 +401,7 @@ class Home extends Api
      * @url POST /unassigned/:id
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -402,6 +421,7 @@ class Home extends Api
     public function doGetCustomUnassignedCases(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -420,6 +440,7 @@ class Home extends Api
             return $bmHome->getCustomUnassigned(
                     $id,
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -442,6 +463,7 @@ class Home extends Api
      * @url POST /paused/:id
      * @param int $id
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -461,6 +483,7 @@ class Home extends Api
     public function doGetCustomPausedCases(
         int $id,
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -479,6 +502,7 @@ class Home extends Api
             return $bmHome->getCustomPaused(
                     $id,
                     $caseNumber,
+                    $category,
                     $process,
                     $task,
                     $limit,
@@ -502,6 +526,7 @@ class Home extends Api
      * @url GET /mycases
      *
      * @param int $caseNumber
+     * @param int $category
      * @param int $process
      * @param int $task
      * @param int $limit
@@ -525,6 +550,7 @@ class Home extends Api
      */
     public function doGetMyCases(
         int $caseNumber = 0,
+        int $category = 0,
         int $process = 0,
         int $task = 0,
         int $limit = 15,
@@ -544,6 +570,7 @@ class Home extends Api
         $properties['caseNumber'] = $caseNumber;
         $properties['caseTitle'] = $caseTitle;
         $properties['filterCases'] = $filterCases;
+        $properties['category'] = $category;
         $properties['process'] = $process;
         $properties['task'] = $task;
         // Get the user that access to the API

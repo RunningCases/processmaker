@@ -18,6 +18,18 @@ class ProcessCategory extends Model
     public $timestamps = false;
 
     /**
+     * Scope a query to specific category id
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param int $category
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategory($query, $category)
+    {
+        return $query->where('CATEGORY_ID', $category);
+    }
+
+    /**
      * Scope a query to specific category name
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -90,6 +102,24 @@ class ProcessCategory extends Model
         $query->where('CATEGORY_UID', $categoryUid);
         if ($query->first()) {
             return $query->first()->CATEGORY_ID;
+        }
+    }
+
+    /**
+     * Get category name
+     * 
+     * @param int $category
+     * 
+     * @return string
+     */
+    public static function getCategory(int $category)
+    {
+        $query = ProcessCategory::query()->select(['CATEGORY_NAME']);
+        $query->category($category);
+        if ($query->first()) {
+            return $query->first()->CATEGORY_NAME;
+        } else {
+            return '';
         }
     }
 }

@@ -392,6 +392,15 @@ class CaseList extends Model
                 'set' => true
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
+                'field' => 'process_category',
+                'name' => G::LoadTranslation('ID_PROCESS_CATEGORY'),
+                'type' => 'string',
+                'source' => 'APPLICATION',
+                'typeSearch' => 'search text',
+                'enableFilter' => false,
+                'set' => true
+            ], [
+                'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'task',
                 'name' => G::LoadTranslation('ID_TASK'),
                 'type' => 'string',
