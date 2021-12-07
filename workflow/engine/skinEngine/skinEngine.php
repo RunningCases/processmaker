@@ -334,6 +334,7 @@ class SkinEngine
 
         echo $template->getOutputContent();
     }
+    
     private function _viena() 
     {
         $oHeadPublisher = headPublisher::getSingleton();
@@ -353,6 +354,7 @@ class SkinEngine
             echo View::make('Views::home.home', compact("userCanAccess"))->render();
         }
     }
+
     private function _blank()
     {
         G::verifyPath(PATH_SMARTY_C, true);
