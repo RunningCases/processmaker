@@ -29,7 +29,7 @@
             </template>
         </SearchPopover>
 
-        <div class="p-1 v-flex">
+        <div class="p-1 filter-field">
             <h5 class="v-search-title">{{ title }}</h5>
             <div class="pm-in-text-icon">
                 <i :class="icon"></i>
@@ -338,7 +338,7 @@ export default {
     },
 };
 </script>
-<style scoped>
+<style lang="scss">
 .bv-example-row .row + .row {
     margin-top: 1rem;
 }
@@ -351,8 +351,8 @@ export default {
     background-color: #0099dd;
 }
 
-.v-flex {
-    display: flex;
+.filter-field {
+  display: flex;
 }
 
 .v-search-title {
