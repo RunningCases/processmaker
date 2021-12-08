@@ -7226,7 +7226,14 @@ class Cases
         }
     }
 
-    public function unserializeData($data)
+    /**
+     * Unserialize the case data
+     *
+     * @param string $data
+     *
+     * @return array
+    */
+    public static function unserializeData($data)
     {
         $unserializedData = @unserialize($data);
 
