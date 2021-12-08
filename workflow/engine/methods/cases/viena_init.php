@@ -10,8 +10,6 @@ use ProcessMaker\Model\User;
 $conf = new Configurations();
 
 $oHeadPublisher = headPublisher::getSingleton();
-$oHeadPublisher->addExtJsScript("cases/main", false); //Adding a javascript file .js
-$oHeadPublisher->addContent("cases/main"); //Adding a html file  .html.
 
 $keyMem = "USER_PREFERENCES" . $_SESSION["USER_LOGGED"];
 $memcache = PMmemcached::getSingleton(config("system.workspace"));
@@ -163,4 +161,4 @@ ScriptVariables::add('userId', User::getId($_SESSION['USER_LOGGED']));
 ScriptVariables::add('userConfig', array(
   "usr_uid" => $_SESSION['USER_LOGGED']
 ));
-echo View::make('Views::home.home', compact("userCanAccess"))->render();
+G::RenderPage("publish", "viena");
