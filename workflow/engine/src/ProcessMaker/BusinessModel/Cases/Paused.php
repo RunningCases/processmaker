@@ -71,6 +71,10 @@ class Paused extends AbstractCases
         if (!empty($this->getCaseTitle())) {
             $query->title($this->getCaseTitle());
         }
+        // Specific category
+        if ($this->getCategoryId()) {
+            $query->categoryId($this->getCategoryId());
+        }
         // Specific process
         if ($this->getProcessId()) {
             $query->processId($this->getProcessId());
