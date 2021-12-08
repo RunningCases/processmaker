@@ -1343,6 +1343,10 @@ class AbstractCases implements CasesInterface
      */
     public function setProperties(array $properties)
     {
+        // Filter by category
+        if (!empty($properties['category'])) {
+            $this->setCategoryId($properties['category']);
+        }
         // Filter by process
         if (!empty($properties['process'])) {
             $this->setProcessId($properties['process']);

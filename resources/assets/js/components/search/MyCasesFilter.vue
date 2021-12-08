@@ -6,6 +6,7 @@
             :title="addSearchTitle"
         >
             <template v-slot:body>
+
                 <b-form-group>
                     <b-form-radio-group
                         v-model="selected"
@@ -24,6 +25,15 @@
                 >
                     {{$t('ID_BY_PROCESS_NAME') }}
                 </b-form-checkbox>
+                <b-form-checkbox
+                    id="checkbox-2"
+                    v-model="byProcessCategory"
+                    name="checkbox-2"
+                    value="processCategory"
+                >
+                    {{$t('ID_BY_PROCESS_CATEGORY') }}
+                </b-form-checkbox>
+  
             </template>
         </SearchPopover>
 
@@ -61,6 +71,7 @@
                   </div>
 
                   <component
+                    :filters="filters"
                     v-bind:is="tagComponent(tag)"
                     v-bind:info="tagInfo(tag)"
                     v-bind:tag="tag"
@@ -82,6 +93,7 @@ import SearchPopover from "./popovers/SearchPopover.vue";
 import CaseNumber from "./popovers/CaseNumber.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
+import ProcessCategory from "./popovers/ProcessCategory.vue";
 import DateFilter from "./popovers/DateFilter.vue";
 import TaskTitle from "./popovers/TaskTitle.vue";
 import api from "./../../api/index";
@@ -94,6 +106,7 @@ export default {
         CaseNumber,
         CaseTitle,
         ProcessName,
+        ProcessCategory,
         DateFilter,
         TaskTitle
     },
@@ -235,9 +248,31 @@ export default {
                     return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
                 }
             },
+            processCategory:{
+                type: "ProcessCategory",
+                id: "processCategory",
+                title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_CATEGORY')}`,
+                optionLabel: this.$i18n.t('ID_BY_PROCESS_CATEGORY'),
+                detail: "",
+                tagText: "",
+                tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_CATEGORY'),
+                autoShow: true,
+                items:[
+                    {
+                        id: "category",
+                        value: "",
+                        options: [],
+                        placeholder: ""
+                    }
+                ],
+                makeTagText: function (params, data) {
+                    return  `${params.tagPrefix}:  ${data[0].label || ''}`;
+                }
+            },
             selected: "",
             itemModel: {},
-            byProcessName: ""
+            byProcessName: "",
+            byProcessCategory: "",
         };
     },
     mounted() {
@@ -283,6 +318,15 @@ export default {
                     this.processName.autoShow = true;
                 }
                 initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processName.items, self.byProcessName, true)])];
+            }
+            //adding process name filter
+            if (self.byProcessCategory !== "") {
+                if (element !== undefined) {
+                    this.processCategory.autoShow = false;
+                } else {
+                    this.processCategory.autoShow = true;
+                }
+                initialFilters =[...new Set([...initialFilters,...this.prepareFilterItems(this.processCategory.items, self.byProcessCategory, true)])];
             }
             this.$emit("onUpdateFilters", {params: initialFilters, refresh: false}); 
         },
@@ -334,6 +378,12 @@ export default {
                     self.itemModel[self.processName.id] = self.processName;
                     self.itemModel[self.processName.id].autoShow = typeof self.processName.autoShow !== "undefined" ? self.processName.autoShow  : true;
                 }
+                if(item.fieldId === "processCategory") {
+                    self.searchTags.push(self.processCategory.id);
+                    self.byProcessCategory = self.processCategory.id;
+                    self.itemModel[self.processCategory.id] = self.processCategory;
+                    self.itemModel[self.processCategory.id].autoShow = typeof self.processCategory.autoShow !== "undefined" ? self.processCategory.autoShow  : true;
+                }
             });
         },
         dataToFilter(id) {
@@ -381,6 +431,9 @@ export default {
             });
             if (tag === "processName") {
                 this.byProcessName = "";
+            }
+            if (tag === "processCategory") {
+                this.byProcessCategory = "";
             }
             this.$emit("onUpdateFilters", {params: temp, refresh: true});
         },

@@ -17,7 +17,7 @@
                     ></b-form-radio-group>
                     <b-form-group> </b-form-group>
                     <b-form-checkbox-group
-                        id="checkbox-1"
+                        id="checkbox-custom-filter"
                         v-model="selectedCheckbox"
                         :options="getFilterColletion('checkbox')"
                         value-field="id"
@@ -61,6 +61,7 @@
                                         {{ tagContent(tag) }}
                                     </div>
                                     <component
+                                        :filters="filters"
                                         v-bind:is="tagComponent(tag)"
                                         v-bind:info="tagInfo(tag)"
                                         v-bind:tag="tag"
@@ -82,6 +83,7 @@ import SearchPopover from "./popovers/SearchPopover.vue";
 import CaseNumber from "./popovers/CaseNumber.vue";
 import CaseTitle from "./popovers/CaseTitle.vue";
 import ProcessName from "./popovers/ProcessName.vue";
+import ProcessCategory from "./popovers/ProcessCategory.vue";
 import DateFilter from "./popovers/DateFilter.vue";
 import TaskTitle from "./popovers/TaskTitle.vue";
 import CurrentUser from "./popovers/CurrentUser.vue";
@@ -97,6 +99,7 @@ export default {
         CaseNumber,
         CaseTitle,
         ProcessName,
+        ProcessCategory,
         DateFilter,
         TaskTitle,
         CurrentUser,
@@ -113,11 +116,13 @@ export default {
             selectedCheckbox: [],
             itemModel: {},
             byProcessName: "",
+            byProcessCategory: "",
             criteriaItemsRadio: [],
             criteriaItemsCheckbox: [],
             showProcessName: true,
         };
     },
+    mounted(){},
     watch: {
         filters: {
             immediate: true,
@@ -363,5 +368,11 @@ export default {
     font-size: 2vw;
     padding-right: 10px;
     line-height: 3vw;
+}
+</style>
+<style>
+#checkbox-custom-filter > .custom-control-inline{
+    display: block !important;
+    margin-right: 1rem;
 }
 </style>

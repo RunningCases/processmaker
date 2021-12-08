@@ -2181,12 +2181,10 @@ class Delegation extends Model
      * Get cases filter by thread title
      *
      * @param string $search
-     * @param int $offset
-     * @param int $limit
      *
      * @return array
      */
-    public static function casesThreadTitle(string $search, int $offset = 0, int $limit = 15)
+    public static function casesThreadTitle(string $search)
     {
         // Get the case numbers related to this filter
         $query = Delegation::query()->select(['APP_NUMBER']);
@@ -2194,8 +2192,6 @@ class Delegation extends Model
         $query->title($search);
         // Group by
         $query->groupBy('APP_NUMBER');
-        // Apply the limit
-        $query->offset($offset)->limit($limit);
         // Get the result
         $results = $query->get();
 

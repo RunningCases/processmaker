@@ -57548,6 +57548,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CATEGORY_NAME','en','Category Name','2014-01-15') ,
 ( 'LABEL','ID_CATEGORY_NAME_ALREADY_EXISTS','en','The category name with {0}: "{1}" already exists.','2014-06-12') ,
 ( 'LABEL','ID_CATEGORY_NOT_EXIST','en','The category with {0}: ''{1}'' does not exist.','2014-05-29') ,
+( 'LABEL','ID_CATEGORY_PROCESS','en','Process Category','2021-11-25') ,
 ( 'LABEL','ID_CATEGORY_SUCCESS_DELETE','en','Process category has been deleted correctly.','2014-01-15') ,
 ( 'LABEL','ID_CATEGORY_SUCCESS_NEW','en','Process category has been created correctly.','2014-01-15') ,
 ( 'LABEL','ID_CATEGORY_SUCCESS_UPDATE','en','Process category has been updated correctly.','2014-01-15') ,
