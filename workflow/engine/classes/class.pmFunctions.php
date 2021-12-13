@@ -4210,6 +4210,53 @@ function PMFNewUser(
     return $response;
 }
 
+/**
+ *
+ * @method
+ *
+ * Load the case information
+ *
+ * @name PMFCaseInformation
+ * @label PMF Case Information
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFCaseInformation.28.29
+ *
+ * @param string(32) | $caseUid | Case ID | The case unique identifier, that is string of 32 hexadecimal characters.
+ * @param int | $delIndex = 0 | Delegation index of the case | The delegation index of the case thread task to get information (optional).
+ * @param int | $returnAppData = 0 | Include Application Data | Set as TRUE to get all the case data (optional).
+ * 
+ * @return array | $response | Response
+ * @throws Exception
+ */
+function PMFCaseInformation($caseUid, $delIndex = 0, $returnAppData = false)
+{
+    if (empty($caseUid)) {
+        throw new Exception(G::LoadTranslation("ID_REQUIRED_FIELD") . " caseUid");
+    }
+    $case = new Cases();
+    $result = $case->loadCase($caseUid, $delIndex);
+    // Clean the APPLICATION's columns deprecated or without functionallity
+    unset($result['APP_TITLE']);
+    unset($result['APP_PARENT']);
+    unset($result['APP_PROC_STATUS']);
+    unset($result['APP_PROC_CODE']);
+    unset($result['APP_PARALLEL']);
+    unset($result['APP_PIN']);
+    unset($result['APP_DURATION']);
+    unset($result['APP_DELAY_DURATION']);
+    unset($result['APP_DRIVE_FOLDER_UID']);
+    unset($result['APP_ROUTING_DATA']);
+    // Only if this parameter is true we will to return this value
+    if (!$returnAppData) {
+        unset($result['APP_DATA']);
+    }
+    // Clean the additional columns deprecated or without functionallity
+    unset($result['TITLE']);
+    unset($result['DESCRIPTION']);
+    unset($result['DESCRIPTION']);
+
+    return $result;
+}
+
 //Start - Private functions
 
 
