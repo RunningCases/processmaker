@@ -383,8 +383,8 @@ class CaseList extends Model
                 'set' => true
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
-                'field' => 'process_name',
-                'name' => G::LoadTranslation('ID_PROCESS_NAME'),
+                'field' => 'process_category',
+                'name' => G::LoadTranslation('ID_PROCESS_CATEGORY'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
                 'typeSearch' => 'search text',
@@ -392,8 +392,8 @@ class CaseList extends Model
                 'set' => true
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
-                'field' => 'process_category',
-                'name' => G::LoadTranslation('ID_PROCESS_CATEGORY'),
+                'field' => 'process_name',
+                'name' => G::LoadTranslation('ID_PROCESS_NAME'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
                 'typeSearch' => 'search text',
