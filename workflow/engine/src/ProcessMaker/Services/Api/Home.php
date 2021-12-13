@@ -889,7 +889,7 @@ class Home extends Api
      * @url GET /processes
      *
      * @param string $text
-     * @param string $category
+     * @param int $category
      * @param int $offset
      * @param int $limit
      * @param bool $paged
@@ -901,7 +901,7 @@ class Home extends Api
      * @access protected
      * @class AccessControl {@permission PM_CASES}
      */
-    public function getProcesses($text = null, $category = null, int $offset = 0, int $limit = 15, $paged = true)
+    public function getProcesses($text = null, $category = 0, int $offset = 0, int $limit = 15, $paged = true)
     {
         try {
             return Process::getProcessesForHome($text, $category, $offset, $limit, $paged);

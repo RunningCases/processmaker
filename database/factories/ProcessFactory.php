@@ -26,6 +26,7 @@ $factory->define(\ProcessMaker\Model\Process::class, function (Faker $faker) {
         'PRO_DYNAFORMS' => serialize([]),
         'PRO_ITEE' => 1,
         'PRO_ACTION_DONE' => serialize([]),
+        'PRO_SUBPROCESS' => 0,
         'PRO_CATEGORY' => function () {
             return factory(\ProcessMaker\Model\ProcessCategory::class)->create()->CATEGORY_UID;
         },
@@ -56,6 +57,7 @@ $factory->state(\ProcessMaker\Model\Process::class, 'foreign_keys', function (Fa
         'PRO_DYNAFORMS' => serialize([]),
         'PRO_ITEE' => 1,
         'PRO_ACTION_DONE' => serialize([]),
+        'PRO_SUBPROCESS' => 0,
         'PRO_CATEGORY' => function () {
             return factory(\ProcessMaker\Model\ProcessCategory::class)->create()->CATEGORY_UID;
         },
