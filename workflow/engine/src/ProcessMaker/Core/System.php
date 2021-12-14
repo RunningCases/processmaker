@@ -94,7 +94,7 @@ class System
         'path' => '/',
         'domain' => '',
         'secure' => false,
-        'httponly' => false,
+        'httponly' => true,
         'samesite' => ''
     ];
 
