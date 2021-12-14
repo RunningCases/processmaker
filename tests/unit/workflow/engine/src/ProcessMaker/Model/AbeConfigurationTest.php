@@ -13,6 +13,11 @@ use ProcessMaker\Model\Process;
 use ProcessMaker\Model\Task;
 use Tests\TestCase;
 
+/**
+ * Class AbeConfigurationTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\AbeConfiguration
+ */
 class AbeConfigurationTest extends TestCase
 {
     /**

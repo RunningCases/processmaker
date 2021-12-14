@@ -9,7 +9,7 @@ use ProcessMaker\Model\RbacUsers;
 use Tests\TestCase;
 
 /**
- * Class ProcessTest
+ * Class RbacUsersTest
  *
  * @coversDefaultClass \ProcessMaker\Model\SubProcess
  */

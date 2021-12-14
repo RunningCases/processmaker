@@ -35,6 +35,7 @@ class UnassignedTest extends TestCase
     {
         parent::setUp();
         Delegation::truncate();
+        Groupwf::truncate();
     }
 
     /**

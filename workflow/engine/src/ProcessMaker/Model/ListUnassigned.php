@@ -5,6 +5,11 @@ namespace ProcessMaker\Model;
 use Illuminate\Database\Eloquent\Model;
 use ListUnassigned as PropelListUnassigned;
 
+/**
+ * Class ListUnassigned
+ *
+ * @deprecated Class deprecated in Release 3.6.0
+ */
 class ListUnassigned extends Model
 {
     protected $table = "LIST_UNASSIGNED";

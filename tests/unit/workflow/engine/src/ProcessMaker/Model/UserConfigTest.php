@@ -6,9 +6,13 @@ use G;
 use ProcessMaker\Model\UserConfig;
 use Tests\TestCase;
 
+/**
+ * Class UserConfigTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\UserConfig
+ */
 class UserConfigTest extends TestCase
 {
-
     /**
      * Setup method,
      */

@@ -437,6 +437,7 @@ class DraftTest extends TestCase
      * It tests the getCountersByProcesses() method with the top ten filter
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByProcesses()
+     * @covers \ProcessMaker\Model\Delegation::scopeTopTen()
      * @test
      */
     public function it_should_test_get_counters_by_processes_method_top_ten()

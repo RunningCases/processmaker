@@ -6,9 +6,13 @@ use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\CaseList;
 use Tests\TestCase;
 
+/**
+ * Class CaseListTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\CaseList
+ */
 class CaseListTest extends TestCase
 {
-
     /**
      * setUp method.
      */
@@ -28,6 +32,7 @@ class CaseListTest extends TestCase
     /**
      * This tests the getColumnNameFromAlias method.
      * @test
+     * @covers  \ProcessMaker\Model\CaseList::getColumnNameFromAlias()
      * @covers  \ProcessMaker\Model\CaseList::createSetting()
      */
     public function it_should_test_getColumnNameFromAlias()
@@ -67,6 +72,8 @@ class CaseListTest extends TestCase
      * This tests the getAliasFromColumnName method.
      * @test
      * @covers  \ProcessMaker\Model\CaseList::createSetting()
+     * @covers  \ProcessMaker\Model\CaseList::getColumnNameFromAlias()
+     * @covers  \ProcessMaker\Model\CaseList::getAliasFromColumnName()
      */
     public function it_should_test_getAliasFromColumnName()
     {
@@ -105,6 +112,7 @@ class CaseListTest extends TestCase
      * This tests the createSetting method.
      * @test
      * @covers  \ProcessMaker\Model\CaseList::createSetting()
+     * @covers  \ProcessMaker\Model\CaseList::getColumnNameFromAlias()
      */
     public function it_should_test_createSetting()
     {
@@ -139,6 +147,7 @@ class CaseListTest extends TestCase
      * This tests the updateSetting method.
      * @test
      * @covers  \ProcessMaker\Model\CaseList::updateSetting()
+     * @covers  \ProcessMaker\Model\CaseList::createSetting()
      */
     public function it_should_test_updateSetting()
     {
@@ -181,6 +190,7 @@ class CaseListTest extends TestCase
      * This tests the deleteSetting method.
      * @test
      * @covers  \ProcessMaker\Model\CaseList::deleteSetting()
+     * @covers  \ProcessMaker\Model\CaseList::createSetting()
      */
     public function it_should_test_deleteSetting()
     {
@@ -217,6 +227,9 @@ class CaseListTest extends TestCase
     /**
      * This tests the getSetting method.
      * @test
+     * @covers  \ProcessMaker\Model\CaseList::getSetting()
+     * @covers  \ProcessMaker\Model\CaseList::createSetting()
+     * @covers  \ProcessMaker\Model\CaseList::getColumnNameFromAlias()
      * @covers  \ProcessMaker\Model\CaseList::deleteSetting()
      */
     public function it_should_test_getSetting()
@@ -322,6 +335,9 @@ class CaseListTest extends TestCase
     /**
      * This tests the export method.
      * @test
+     * @covers  \ProcessMaker\Model\CaseList::getAliasFromColumnName()
+     * @covers  \ProcessMaker\Model\CaseList::createSetting()
+     * @covers  \ProcessMaker\Model\CaseList::getColumnNameFromAlias()
      * @covers  \ProcessMaker\Model\CaseList::export()
      */
     public function it_should_test_export()
