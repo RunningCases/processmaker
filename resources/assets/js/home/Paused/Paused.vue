@@ -45,11 +45,11 @@
       <div slot="thread_title" slot-scope="props">
         {{ props.row.THREAD_TITLE }}
       </div>
-      <div slot="process_name" slot-scope="props">
-        {{ props.row.PROCESS_NAME }}
-      </div>
       <div slot="process_category" slot-scope="props">
         {{ props.row.PROCESS_CATEGORY }}
+      </div>
+      <div slot="process_name" slot-scope="props">
+        {{ props.row.PROCESS_NAME }}
       </div>
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
@@ -105,20 +105,20 @@
           {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
-      <div slot="process_name" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
-          >{{ props["headings"][props.column] }} :</span
-        >
-        <span class="v-card-text-light"
-          >{{ props["item"]["PROCESS_NAME"] }}
-        </span>
-      </div>
       <div slot="process_category" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light"
           >{{ props["item"]["PROCESS_CATEGORY"] }}
+        </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
         </span>
       </div>
       <div slot="due_date" slot-scope="props" class="v-card-text">
@@ -194,20 +194,20 @@
           {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
-      <div slot="process_name" slot-scope="props" class="v-card-text">
-        <span class="v-card-text-dark"
-          >{{ props["headings"][props.column] }} :</span
-        >
-        <span class="v-card-text-light"
-          >{{ props["item"]["PROCESS_NAME"] }}
-        </span>
-      </div>
       <div slot="process_category" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light"
           >{{ props["item"]["PROCESS_CATEGORY"] }}
+        </span>
+      </div>
+      <div slot="process_name" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_NAME"] }}
         </span>
       </div>
       <div slot="due_date" slot-scope="props" class="v-card-text">
@@ -345,8 +345,8 @@ export default {
           detail: this.$i18n.t("ID_DETAIL_CASE"),
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
-          process_name: this.$i18n.t("ID_PROCESS_NAME"),
           process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
+          process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
           due_date: this.$i18n.t("ID_DUE_DATE"),

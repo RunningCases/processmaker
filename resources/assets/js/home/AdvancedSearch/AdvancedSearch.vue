@@ -49,11 +49,11 @@
             <div slot="case_status" slot-scope="props">
                 {{ props.row.APP_STATUS }}
             </div>
-            <div slot="process_name" slot-scope="props">
-                {{ props.row.PROCESS_NAME }}
-            </div>
             <div slot="process_category" slot-scope="props">
                 {{ props.row.PROCESS_CATEGORY }}
+            </div>
+            <div slot="process_name" slot-scope="props">
+                {{ props.row.PROCESS_NAME }}
             </div>
             <div slot="task" slot-scope="props">
                 <TaskCell :data="props.row.TASK" />
@@ -145,8 +145,8 @@ export default {
             },
             columns: [
                 "case_number",
-                "process_name",
                 "process_category",
+                "process_name",
                 "status",
                 "thread_title",
                 "task",
@@ -161,8 +161,8 @@ export default {
                 filterable: false,
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                    process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
+                    process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     status: this.$i18n.t("ID_STATUS"),
                     thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                     task: this.$i18n.t("ID_TASK"),

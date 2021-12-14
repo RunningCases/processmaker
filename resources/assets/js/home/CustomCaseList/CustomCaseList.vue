@@ -55,11 +55,11 @@
             <div slot="case_title" slot-scope="props">
                 {{ props.row.THREAD_TITLE }}
             </div>
-            <div slot="process_name" slot-scope="props">
-                {{ props.row.PROCESS_NAME }}
-            </div>
             <div slot="process_category" slot-scope="props">
                 {{ props.row.PROCESS_CATEGORY }}
+            </div>
+            <div slot="process_name" slot-scope="props">
+                {{ props.row.PROCESS_NAME }}
             </div>
             <div slot="task" slot-scope="props">
                 <TaskCell :data="props.row.TASK" />
@@ -130,11 +130,11 @@
                     <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
                         {{ props["item"]["THREAD_TITLE"] }}
                     </span>
-                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
-                        {{ props["item"]["PROCESS_NAME"] }}
-                    </span>
                     <span  v-if="column === 'process_category'" class="v-card-text-highlight">
                         {{ props["item"]["PROCESS_CATEGORY"] }}
+                    </span>
+                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_NAME"] }}
                     </span>
                     <span  v-if="column === 'due_date'" class="v-card-text-highlight">
                         {{ props["item"]["DUE_DATE"] }}
@@ -187,11 +187,11 @@
                     <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
                         {{ props["item"]["THREAD_TITLE"] }}
                     </span>
-                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
-                        {{ props["item"]["PROCESS_NAME"] }}
-                    </span>
                     <span  v-if="column === 'process_category'" class="v-card-text-highlight">
                         {{ props["item"]["PROCESS_CATEGORY"] }}
+                    </span>
+                    <span  v-if="column === 'process_name'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_NAME"] }}
                     </span>
                     <span  v-if="column === 'due_date'" class="v-card-text-highlight">
                         {{ props["item"]["DUE_DATE"] }}
@@ -565,28 +565,6 @@ export default {
                         return `${this.tagPrefix}: ${data[0].label || ""}`;
                     },
                 },
-                processName: {
-                    group: "checkbox",
-                    type: "ProcessName",
-                    id: "processName",
-                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
-                    optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
-                    detail: "",
-                    tagText: "",
-                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
-                    autoShow: false,
-                    items:[
-                        {
-                            id: "process",
-                            value: "",
-                            options: [],
-                            placeholder: this.$i18n.t('ID_PROCESS_NAME')
-                        }
-                    ],
-                    makeTagText: function (params, data) {
-                        return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
-                    }
-                },
                 processCategory: {
                     group: "checkbox",
                     type: "ProcessCategory",
@@ -603,6 +581,28 @@ export default {
                             value: "",
                             options: [],
                             placeholder: this.$i18n.t('ID_CATEGORY_PROCESS')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                    }
+                },
+                processName: {
+                    group: "checkbox",
+                    type: "ProcessName",
+                    id: "processName",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_NAME')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PROCESS_NAME'),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_NAME'),
+                    autoShow: false,
+                    items:[
+                        {
+                            id: "process",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_PROCESS_NAME')
                         }
                     ],
                     makeTagText: function (params, data) {

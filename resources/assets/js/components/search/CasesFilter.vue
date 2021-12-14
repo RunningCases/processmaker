@@ -17,20 +17,20 @@
                     ></b-form-radio-group>
                     <b-form-group> </b-form-group>
                     <b-form-checkbox
-                        id="checkbox-1"
-                        v-model="byProcessName"
-                        name="checkbox-1"
-                        value="processName"
-                    >
-                        {{ $t("ID_BY_PROCESS_NAME") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
                         id="checkbox-2"
                         v-model="byProcessCategory"
                         name="checkbox-2"
                         value="processCategory"
                     >
                         {{ $t("ID_BY_PROCESS_CATEGORY") }}
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        id="checkbox-1"
+                        v-model="byProcessName"
+                        name="checkbox-1"
+                        value="processName"
+                    >
+                        {{ $t("ID_BY_PROCESS_NAME") }}
                     </b-form-checkbox>
                 </b-form-group>
             </template>
