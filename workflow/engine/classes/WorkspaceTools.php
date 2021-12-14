@@ -374,7 +374,8 @@ class WorkspaceTools
         $start = microtime(true);
         Bootstrap::setConstantsRelatedWs($workspace);
         Propel::init(PATH_CONFIG . 'databases.php');
-        WebEntry::convertFromV1ToV2();
+        $statement = Propel::getConnection('workflow')->createStatement();
+        $statement->executeQuery(WebEntry::UPDATE_QUERY_V1_TO_V2);
         CLI::logging("* End converting Web Entries v1.0 to v2.0 for BPMN processes...(" . (microtime(true) - $start) . " seconds)\n");
 
         CLI::logging("* Start migrating case title...\n");

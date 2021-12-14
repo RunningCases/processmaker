@@ -258,8 +258,10 @@ class ProcessTest extends TestCase
      * It tests the process list
      *
      * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::getListColumns()
+     * @covers \ProcessMaker\Model\Process::scopeJoinUsers()
+     * @covers \ProcessMaker\Model\Process::scopeJoinCategory()
      * @covers \ProcessMaker\Model\Process::scopeNoStatus()
-     * @covers \ProcessMaker\Model\Process::scopeSubProcess()
      * @test
      */
     public function it_should_test_process_without_filter()
@@ -278,7 +280,11 @@ class ProcessTest extends TestCase
      * It tests the process list with specific category
      *
      * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::getListColumns()
+     * @covers \ProcessMaker\Model\Process::scopeJoinUsers()
+     * @covers \ProcessMaker\Model\Process::scopeJoinCategory()
      * @covers \ProcessMaker\Model\Process::scopeCategory()
+     * @covers \ProcessMaker\Model\Process::scopePerUser()
      * @test
      */
     public function it_should_test_process_with_category_filter()
@@ -288,16 +294,23 @@ class ProcessTest extends TestCase
                 return factory(ProcessCategory::class)->create()->CATEGORY_UID;
             }
         ]);
-        $result = Process::getProcessesFilter(
-            $process->PRO_CATEGORY
-        );
+        $result = Process::getProcessesFilter($process->PRO_CATEGORY);
+        // Assert with the specific category
         $this->assertEquals($process->PRO_CATEGORY, $result[0]['PRO_CATEGORY']);
+
+        $process = factory(Process::class)->create();
+        $result = Process::getProcessesFilter('NONE');
+        // Assert when the category is empty
+        $this->assertEmpty($result);
     }
 
     /**
      * It tests the process list with specific process
      *
      * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::getListColumns()
+     * @covers \ProcessMaker\Model\Process::scopeJoinUsers()
+     * @covers \ProcessMaker\Model\Process::scopeJoinCategory()
      * @covers \ProcessMaker\Model\Process::scopeProcess()
      * @test
      */
@@ -315,6 +328,9 @@ class ProcessTest extends TestCase
      * It tests the process list with specific process title
      *
      * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::getListColumns()
+     * @covers \ProcessMaker\Model\Process::scopeJoinUsers()
+     * @covers \ProcessMaker\Model\Process::scopeJoinCategory()
      * @covers \ProcessMaker\Model\Process::scopeTitle()
      * @test
      */
@@ -330,9 +346,40 @@ class ProcessTest extends TestCase
     }
 
     /**
+     * It tests the process list with suprocess filter
+     *
+     * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @covers \ProcessMaker\Model\Process::getListColumns()
+     * @covers \ProcessMaker\Model\Process::scopeJoinUsers()
+     * @covers \ProcessMaker\Model\Process::scopeJoinCategory()
+     * @covers \ProcessMaker\Model\Process::scopeSubProcess()
+     * @test
+     */
+    public function it_should_test_process_subprocess_filter()
+    {
+        $process = factory(Process::class)->create([
+            'PRO_SUBPROCESS' => 1
+        ]);
+        $result = Process::getProcessesFilter(
+            null,
+            null,
+            null,
+            $process->PRO_CREATE_USER,
+            0,
+            25,
+            'ASC',
+            'PRO_CREATE_DATE',
+            true,
+            true
+        );
+        $this->assertEquals($process->PRO_CREATE_USER, $result[0]['USR_UID']);
+    }
+
+    /**
      * It tests the count process
      *
      * @covers \ProcessMaker\Model\Process::getCounter()
+     * @covers \ProcessMaker\Model\Process::scopePerUser()
      * @test
      */
     public function it_should_test_count_process()
@@ -346,6 +393,8 @@ class ProcessTest extends TestCase
      * It test get processes for the new home view
      *
      * @covers \ProcessMaker\Model\Process::getProcessesForHome()
+     * @covers \ProcessMaker\Model\Process::scopeCategoryId()
+     * @covers \ProcessMaker\Model\Process::scopeStatus()
      * @test
      */
     public function it_should_test_get_processes_for_home()
@@ -356,11 +405,13 @@ class ProcessTest extends TestCase
         // Create five processes (4 active, 1 inactive)
         factory(Process::class)->create([
             'PRO_TITLE' => 'My Process 1',
-            'PRO_CATEGORY' => $processCategory->CATEGORY_UID
+            'PRO_CATEGORY' => $processCategory->CATEGORY_UID,
+            'CATEGORY_ID' => $processCategory->CATEGORY_ID
         ]);
         factory(Process::class)->create([
             'PRO_TITLE' => 'My Process 2',
-            'PRO_CATEGORY' => $processCategory->CATEGORY_UID
+            'PRO_CATEGORY' => $processCategory->CATEGORY_UID,
+            'CATEGORY_ID' => $processCategory->CATEGORY_ID
         ]);
         factory(Process::class)->create([
             'PRO_TITLE' => 'My Process 3',
@@ -376,8 +427,21 @@ class ProcessTest extends TestCase
         // Assertions
         $this->assertCount(4, Process::getProcessesForHome());
         $this->assertCount(3, Process::getProcessesForHome('My Process'));
-        $this->assertCount(2, Process::getProcessesForHome(null, $processCategory->CATEGORY_UID));
+        $this->assertCount(2, Process::getProcessesForHome(null, $processCategory->CATEGORY_ID));
         $this->assertCount(4, Process::getProcessesForHome(null, null, null, 2));
-        $this->assertCount(1, Process::getProcessesForHome(null, null, 2, 1));
+        $this->assertCount(1, Process::getProcessesForHome(null, null, 2, 1, true));
+    }
+
+    /**
+     * It tests the isActive process
+     *
+     * @covers \ProcessMaker\Model\Process::isActive()
+     * @test
+     */
+    public function it_should_test_is_active()
+    {
+        $process = factory(Process::class)->create();
+        $total = Process::isActive($process->PRO_ID);
+        $this->assertEquals(1, $total);
     }
 }

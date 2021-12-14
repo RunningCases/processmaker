@@ -47,11 +47,11 @@
             <div slot="thread_title" slot-scope="props">
                 <ThreadTitleCell :data="props.row.THREAD_TITLE" />
             </div>
-            <div slot="process_name" slot-scope="props">
-                {{ props.row.PROCESS_NAME }}
-            </div>
             <div slot="process_category" slot-scope="props">
                 {{ props.row.PROCESS_CATEGORY }}
+            </div>
+            <div slot="process_name" slot-scope="props">
+                {{ props.row.PROCESS_NAME }}
             </div>
             <div slot="pending_taks" slot-scope="props">
                 <GroupedCell :data="props.row.PENDING_TASKS" />
@@ -163,8 +163,8 @@ export default {
                 filterable: false,
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-                    process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
+                    process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                     pending_taks: this.$i18n.t("ID_PENDING_TASKS"),
                     status: this.$i18n.t("ID_CASESLIST_APP_STATUS"),
