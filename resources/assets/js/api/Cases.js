@@ -1,8 +1,10 @@
 import axios from "axios";
 import ApiInstance from "./Api.js";
 import Services from "./Services";
+import { RCBase64 } from '../utils/utils.js'
 let Api = new ApiInstance( Services );
-
+var base64 = RCBase64();
+var credentials = JSON.parse(base64.decode(window.config.SYS_CREDENTIALS));
 export let cases = {
     myCases(data) {
         return Api.get({
@@ -148,7 +150,7 @@ export let cases = {
             window.config.SYS_WORKSPACE +
             '/home/' + data.APP_NUMBER + '/pending-tasks', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                'Authorization': 'Bearer ' + credentials.accessToken,
                 "Accept-Language": window.config.SYS_LANG
             }
         });
@@ -355,7 +357,7 @@ export let casesHeader = {
             window.config.SYS_WORKSPACE +
             '/home/counters', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                'Authorization': 'Bearer ' + credentials.accessToken,
                 "Accept-Language": window.config.SYS_LANG
             }
         });

@@ -1,6 +1,9 @@
 import _ from "lodash";
 import axios from "axios";
+import { RCBase64 } from '../utils/utils.js'
+var base64 = RCBase64();
 const urlBase = "{server}/api/1.0/{workspace}{service}";
+var credentials = JSON.parse(base64.decode(window.config.SYS_CREDENTIALS));
 class Api {
 	constructor(services) {
 		this.services = services;
@@ -39,7 +42,6 @@ class Api {
             data = options.data || {},
             keys = options.keys || {},
             url,
-            credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             server = window.config.SYS_SERVER_API,
             lang = window.config.SYS_LANG,
@@ -63,7 +65,6 @@ class Api {
             params = options.params || {},
             keys = options.keys || {},
             url,
-            credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
@@ -88,7 +89,6 @@ class Api {
             keys = options.keys || {},
             headers = options.headers || {},
             url,
-            credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
@@ -115,7 +115,6 @@ class Api {
             keys = options.keys || {},
             headers = options.headers || {},
             url,
-            credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             server = window.config.SYS_SERVER_API;
         url = this.getUrl(_.extend(keys, credentials, { server }, { workspace }), service);
@@ -137,7 +136,6 @@ class Api {
             id = options.id || {},
             keys = options.keys || {},
             url,
-            credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
@@ -161,7 +159,6 @@ class Api {
             id = options.id || {},
             keys = options.keys || {},
             url,
-            credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;
@@ -191,7 +188,6 @@ class Api {
             data = options.data || {},
             keys = options.keys || {},
             url,
-            credentials = window.config.SYS_CREDENTIALS,
             workspace = window.config.SYS_WORKSPACE,
             lang = window.config.SYS_LANG,
             server = window.config.SYS_SERVER_API;

@@ -1,5 +1,7 @@
 import axios from 'axios';
-
+import { RCBase64 } from '../utils/utils.js'
+var base64 = RCBase64();
+var credentials = JSON.parse(base64.decode(window.config.SYS_CREDENTIALS));
 export let menu = {
     get() {
         return axios.get(
@@ -8,7 +10,7 @@ export let menu = {
             window.config.SYS_WORKSPACE +
             '/home/menu', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                'Authorization': 'Bearer ' + credentials.accessToken,
                 "Accept-Language": window.config.SYS_LANG
               }
         });
@@ -21,7 +23,7 @@ export let menu = {
             window.config.SYS_WORKSPACE +
             '/home/tasks/counter', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                'Authorization': 'Bearer ' + credentials.accessToken,
                 "Accept-Language": window.config.SYS_LANG
               }
         });
@@ -38,7 +40,7 @@ export let menu = {
             window.config.SYS_WORKSPACE +
             '/home/'+ task +'/counter', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                'Authorization': 'Bearer ' + credentials.accessToken,
                 "Accept-Language": window.config.SYS_LANG
             }
         });
@@ -55,7 +57,7 @@ export let menu = {
             window.config.SYS_WORKSPACE +
             '/home/' + data.page + '/counter/caseList/' + data.id, {
                 headers: {
-                    'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                    'Authorization': 'Bearer ' + credentials.accessToken,
                     "Accept-Language": window.config.SYS_LANG
                 }
             }
@@ -72,7 +74,7 @@ export let menu = {
             window.config.SYS_WORKSPACE +
             '/home/tasks/highlight', {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                'Authorization': 'Bearer ' + credentials.accessToken,
                 "Accept-Language": window.config.SYS_LANG
               }
         });
