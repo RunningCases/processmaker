@@ -1248,10 +1248,19 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
-    public function remove($flagForceRemoveProject = false, $flagRemoveCases = true, $onlyDiagram = false)
+    /**
+     * Remove Project
+     * 
+     * @param bool $flagForceRemoveProject
+     * @param bool $flagRemoveCases
+     * @param bool $onlyDiagram
+     * @param array $objectsToImport
+     * @return void
+     */
+    public function remove($flagForceRemoveProject = false, $flagRemoveCases = true, $onlyDiagram = false, $objectsToImport = [])
     {
         parent::remove($flagForceRemoveProject);
-        $this->wp->remove($flagRemoveCases, $onlyDiagram);
+        $this->wp->remove($flagRemoveCases, $onlyDiagram, $objectsToImport);
     }
 
     public static function createFromStruct(array $projectData, $generateUid = true, $allData = null)
