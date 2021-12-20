@@ -6,6 +6,11 @@ use ProcessMaker\Model\EmailEvent;
 use ProcessMaker\Model\EmailServerModel;
 use Tests\TestCase;
 
+/**
+ * Class EmailEventTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\EmailEvent
+ */
 class EmailEventTest extends TestCase
 {
     /**

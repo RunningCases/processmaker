@@ -7,7 +7,7 @@ use ProcessMaker\Model\ProcessCategory;
 use Tests\TestCase;
 
 /**
- * Class ProcessTest
+ * Class ProcessCategoryTest
  *
  * @coversDefaultClass \ProcessMaker\Model\ProcessCategory
  */
@@ -25,8 +25,24 @@ class ProcessCategoryTest extends TestCase
     }
 
     /**
+     * Tests get categories
+     * 
+     * @covers \ProcessMaker\Model\ProcessCategory::getCategories()
+     * @test
+     */
+    public function it_tests_get_categories()
+    {
+        $processCategory = factory(ProcessCategory::class)->create();
+        $result = ProcessCategory::getCategories();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * Tests the getProcessCategories method without paremeters
      * 
+     * @covers \ProcessMaker\Model\ProcessCategory::getProcessCategories()
+     * @covers \ProcessMaker\Model\ProcessCategory::scopeCategoryName()
      * @test
      */
     public function it_tests_get_process_categories_method_without_paremeters()
@@ -51,6 +67,8 @@ class ProcessCategoryTest extends TestCase
     /**
      * Tests the getProcessCategories method filtered by name
      * 
+     * @covers \ProcessMaker\Model\ProcessCategory::getProcessCategories()
+     * @covers \ProcessMaker\Model\ProcessCategory::scopeCategoryName()
      * @test
      */
     public function it_tests_get_process_categories_method_filter_by_name()
@@ -79,6 +97,8 @@ class ProcessCategoryTest extends TestCase
     /**
      * Tests the getProcessCategories method with start and limit parameters
      * 
+     * @covers \ProcessMaker\Model\ProcessCategory::getProcessCategories()
+     * @covers \ProcessMaker\Model\ProcessCategory::scopeCategoryName()
      * @test
      */
     public function it_tests_get_process_categories_method_with_start_limit()
@@ -103,6 +123,7 @@ class ProcessCategoryTest extends TestCase
     /**
      * Tests the getCategoryId method
      * 
+     * @covers \ProcessMaker\Model\ProcessCategory::getCategoryId()
      * @test
      */
     public function it_tests_get_category_id_method()
@@ -111,5 +132,20 @@ class ProcessCategoryTest extends TestCase
         $result = ProcessCategory::getCategoryId($processCategory->CATEGORY_UID);
 
         $this->assertEquals($processCategory->CATEGORY_ID, $result);
+    }
+
+    /**
+     * Tests get category
+     * 
+     * @covers \ProcessMaker\Model\ProcessCategory::getCategory()
+     * @covers \ProcessMaker\Model\ProcessCategory::scopeCategory()
+     * @test
+     */
+    public function it_tests_get_category()
+    {
+        $processCategory = factory(ProcessCategory::class)->create();
+        $result = ProcessCategory::getCategory($processCategory->CATEGORY_ID);
+
+        $this->assertNotEmpty($result);
     }
 }

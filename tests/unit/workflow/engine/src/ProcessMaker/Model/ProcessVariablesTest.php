@@ -7,7 +7,9 @@ use ProcessMaker\Model\ProcessVariables;
 use Tests\TestCase;
 
 /**
- * @coversDefaultClass ProcessMaker\Model\ProcessVariables
+ * Class ProcessVariablesTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\ProcessVariables
  */
 class ProcessVariablesTest extends TestCase
 {

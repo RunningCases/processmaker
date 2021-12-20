@@ -3,17 +3,55 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
 use Tests\TestCase;
 
 /**
- * Class ProcessTest
+ * Class GroupwfTest
  *
  * @coversDefaultClass \ProcessMaker\Model\Groupwf
  */
 class GroupwfTest extends TestCase
 {
     use DatabaseTransactions;
+
+    /**
+     * Method set up.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Groupwf::truncate();
+    }
+
+    /**
+     * Test belongs to GRP_ID
+     *
+     * @covers \ProcessMaker\Model\Groupwf::groupUsers()
+     * @test
+     */
+    public function it_belong_group()
+    {
+        $table = factory(Groupwf::class)->create([
+            'GRP_ID' => function () {
+                return factory(GroupUser::class)->create()->GRP_ID;
+            }
+        ]);
+        $this->assertInstanceOf(GroupUser::class, $table->groupUsers);
+    }
+
+    /**
+     * This test scopeActive
+     *
+     * @covers \ProcessMaker\Model\Groupwf::scopeActive()
+     * @test
+     */
+    public function it_return_scope_active()
+    {
+        $table = factory(Groupwf::class)->create();
+        $this->assertNotEmpty($table->active()->get());
+    }
 
     /**
      * It tests the verifyGroupExists() method

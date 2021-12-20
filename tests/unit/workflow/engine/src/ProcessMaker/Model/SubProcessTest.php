@@ -8,7 +8,7 @@ use ProcessMaker\Model\SubProcess;
 use Tests\TestCase;
 
 /**
- * Class ProcessTest
+ * Class SubProcessTest
  *
  * @coversDefaultClass \ProcessMaker\Model\SubProcess
  */

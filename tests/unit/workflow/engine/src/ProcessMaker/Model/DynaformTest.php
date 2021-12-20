@@ -2,14 +2,86 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Dynaform;
 use ProcessMaker\Model\Process;
 use Tests\TestCase;
 
+/**
+ * Class DynaformTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\Dynaform
+ */
 class DynaformTest extends TestCase
 {
+    use DatabaseTransactions;
+
+    /**
+     * Call the setUp parent method
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    /**
+     * Test belongs to PRO_UID
+     *
+     * @covers \ProcessMaker\Model\Dynaform::process()
+     * @test
+     */
+    public function it_has_a_process()
+    {
+        $dynaForm = factory(Dynaform::class)->create([
+            'PRO_UID' => function () {
+                return factory(Process::class)->create()->PRO_UID;
+            }
+        ]);
+        $this->assertInstanceOf(Process::class, $dynaForm->process);
+    }
+
+    /**
+     * Tests get form by process
+     * 
+     * @covers \ProcessMaker\Model\Dynaform::getByProUid()
+     * @test
+     */
+    public function it_tests_get_by_pro_uid()
+    {
+        $dynaForm = factory(Dynaform::class)->states('foreign_keys')->create();
+        $result = Dynaform::getByProUid($dynaForm->PRO_UID);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Tests get form by uid
+     * 
+     * @covers \ProcessMaker\Model\Dynaform::getByDynUid()
+     * @test
+     */
+    public function it_tests_get_by_dyn_uid()
+    {
+        $dynaForm = factory(Dynaform::class)->states('foreign_keys')->create();
+        $result = Dynaform::getByDynUid($dynaForm->DYN_UID);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Tests get form by process excluding a uid
+     * 
+     * @covers \ProcessMaker\Model\Dynaform::getByProUidExceptDynUid()
+     * @test
+     */
+    public function it_tests_get_by_process_exclude_dyn_uid()
+    {
+        $dynaForm = factory(Dynaform::class)->states('foreign_keys')->create();
+        $result = Dynaform::getByProUidExceptDynUid($dynaForm->PRO_UID, $dynaForm->DYN_UID);
+        $this->assertEmpty($result);
+    }
+
     /**
      * It tests the process scope in the dynaform model
+     * 
+     * @covers \ProcessMaker\Model\Dynaform::scopeProcess()
      * @test
      */
     public function it_should_test_process_scope_in_dynaform_model()
