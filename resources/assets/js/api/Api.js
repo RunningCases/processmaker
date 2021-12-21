@@ -55,6 +55,7 @@ class Api {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
+                "Cache-Control": "no-cache, must-revalidate",
                 "Authorization": `Bearer ` + credentials.accessToken,
                 "Accept-Language": lang
             }
@@ -77,6 +78,7 @@ class Api {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
+                "Cache-Control": "no-cache, must-revalidate",
                 "Authorization": `Bearer ` + credentials.accessToken,
                 "Accept-Language": lang
             }
@@ -102,6 +104,7 @@ class Api {
             headers: _.extend({
                 "Accept": "application/json",
                 "Content-Type": "application/json",
+                "Cache-Control": "no-cache, must-revalidate",
                 "Authorization": `Bearer ` + credentials.accessToken,
                 "Accept-Language": lang
             }, headers)
@@ -147,6 +150,7 @@ class Api {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
+                "Cache-Control": "no-cache, must-revalidate",
                 "Authorization": `Bearer ` + credentials.accessToken,
                 "Accept-Language": lang
             }
@@ -172,6 +176,7 @@ class Api {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
+                "Cache-Control": "no-cache, must-revalidate",
                 "Authorization": `Bearer ` + credentials.accessToken,
                 "Accept-Language": lang
             }
@@ -201,6 +206,7 @@ class Api {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
+                "Cache-Control": "no-cache, must-revalidate",
                 "Authorization": `Bearer ` + credentials.accessToken,
                 "Accept-Language": lang
             }
