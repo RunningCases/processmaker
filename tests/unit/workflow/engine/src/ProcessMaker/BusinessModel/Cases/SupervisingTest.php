@@ -15,6 +15,8 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
+ * Class SupervisingTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Supervising
  */
 class SupervisingTest extends TestCase
@@ -403,6 +405,34 @@ class SupervisingTest extends TestCase
         $result = $supervising->getData();
         // Asserts with the result
         $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Tests the specific filter category
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Supervising::setCategoryId()
+     * @test
+     */
+    public function it_filter_by_category()
+    {
+        $cases = $this->createSupervising();
+        // Instance the Supervising object
+        $supervising = new Supervising();
+        // Set the user UID
+        $supervising->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $supervising->setUserId($cases['USR_ID']);
+        // Set the process
+        $supervising->setCategoryId(2000);
+        // Get the data
+        $result = $supervising->getData();
+        // Asserts with the result
+        $this->assertEmpty($result);
     }
 
     /**

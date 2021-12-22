@@ -3,11 +3,15 @@
 namespace ProcessMaker\BusinessModel\Cases;
 
 use ProcessMaker\Model\Consolidated;
+use ProcessMaker\Model\Delegation;
 
 class BatchRouting extends AbstractCases
 {
     // Columns to see in the cases list
-    public $columnsView = [];
+    public $columnsView = [
+        // Columns view in the cases list
+        'APP_DELEGATION.APP_NUMBER', // Case #
+    ];
 
     /**
      * Get the columns related to the cases list
@@ -37,6 +41,8 @@ class BatchRouting extends AbstractCases
      */
     public function getData()
     {
+        $query = Delegation::query()->select($this->getColumnsView());
+        $this->filters($query);
         // todo, the list for consolidated cases was not defined for the new HOME
         return [];
     }

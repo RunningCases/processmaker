@@ -9,6 +9,8 @@ use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
 /**
+ * Class CanceledTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Canceled
  */
 class CanceledTest extends TestCase
@@ -52,10 +54,10 @@ class CanceledTest extends TestCase
     public function it_test_extended_methods()
     {
         // Create new batch Canceled object
-        $consolidated = new Canceled();
-        $result = $consolidated->getColumnsView();
-        $this->assertEmpty($result);
-        $result = $consolidated->getData();
+        $canceled = new Canceled();
+        $result = $canceled->getColumnsView();
+        $this->assertNotEmpty($result);
+        $result = $canceled->getData();
         $this->assertEmpty($result);
     }
 

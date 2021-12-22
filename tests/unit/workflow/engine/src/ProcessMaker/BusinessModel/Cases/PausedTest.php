@@ -301,6 +301,31 @@ class PausedTest extends TestCase
     }
 
     /**
+     * It tests the getData method with categoryId filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Paused::filters()
+     * @test
+     */
+    public function it_filter_by_category()
+    {
+        // Create factories related to the paused cases
+        $cases = $this->createPaused();
+        // Create new Paused object
+        $paused = new Paused();
+        // Set the user UID
+        $paused->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $paused->setUserId($cases->USR_ID);
+        $paused->setCategoryId(2000);
+        // Get the data
+        $res = $paused->getData();
+        // Asserts
+        $this->assertEmpty($res);
+    }
+
+    /**
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Paused::getData()

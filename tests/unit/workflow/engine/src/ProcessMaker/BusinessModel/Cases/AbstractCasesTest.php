@@ -18,6 +18,8 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
+ * Class AbstractCasesTest
+ *
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\AbstractCases
  */
 class AbstractCasesTest extends TestCase

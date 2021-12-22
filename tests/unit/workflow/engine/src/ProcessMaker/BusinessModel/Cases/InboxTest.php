@@ -122,6 +122,29 @@ class InboxTest extends TestCase
     }
 
     /**
+     * It tests the getData method with categoryId filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Inbox::setCategoryId()
+     * @test
+     */
+    public function it_filter_by_category()
+    {
+        // Create factories related to the to_do cases
+        $cases = $this->createInbox();
+        // Create new Inbox object
+        $inbox = new Inbox();
+        // Apply filters
+        $inbox->setUserId($cases->USR_ID);
+        $inbox->setCategoryId(2000);
+        // Call to getData method
+        $res = $inbox->getData();
+        $this->assertEmpty($res);
+    }
+
+    /**
      * It tests the getData method with processId filter
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Inbox::getData()

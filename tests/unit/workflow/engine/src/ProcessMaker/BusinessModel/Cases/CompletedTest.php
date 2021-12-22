@@ -9,6 +9,8 @@ use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
 /**
+ * Class CompletedTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Completed
  */
 class CompletedTest extends TestCase
@@ -52,10 +54,10 @@ class CompletedTest extends TestCase
     public function it_test_extended_methods()
     {
         // Create new batch Completed object
-        $consolidated = new Completed();
-        $result = $consolidated->getColumnsView();
-        $this->assertEmpty($result);
-        $result = $consolidated->getData();
+        $completed = new Completed();
+        $result = $completed->getColumnsView();
+        $this->assertNotEmpty($result);
+        $result = $completed->getData();
         $this->assertEmpty($result);
     }
 

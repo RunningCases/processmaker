@@ -9,6 +9,8 @@ use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
 /**
+ * Class CasesListTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\CasesList
  */
 class CasesListTest extends TestCase

@@ -16,6 +16,8 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
+ * Class DraftTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Draft
  */
 class DraftTest extends TestCase
@@ -119,6 +121,26 @@ class DraftTest extends TestCase
         $draft->setOrderByColumn('APP_NUMBER');
         $res = $draft->getData();
         $this->assertNotEmpty($res);
+    }
+
+    /**
+     * It tests the getData method with categoryId filter
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::filters()
+     * @test
+     */
+    public function it_filter_by_category()
+    {
+        // Create factories related to the draft cases
+        $cases = $this->createDraft();
+        // Create new Draft object
+        $draft = new Draft();
+        $draft->setUserId($cases['USR_ID']);
+        $draft->setCategoryId(2000);
+        $res = $draft->getData();
+        $this->assertEmpty($res);
     }
 
     /**
