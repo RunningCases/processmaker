@@ -10,7 +10,7 @@ use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
 /**
- * Class InboxTest
+ * Class SearchTest
  *
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Search
  */

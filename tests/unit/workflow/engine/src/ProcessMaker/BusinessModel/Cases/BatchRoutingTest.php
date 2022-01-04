@@ -9,6 +9,8 @@ use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
 /**
+ * Class BatchRoutingTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\BatchRouting
  */
 class BatchRoutingTest extends TestCase
@@ -44,6 +46,7 @@ class BatchRoutingTest extends TestCase
      *
      * @covers \ProcessMaker\BusinessModel\Cases\BatchRouting::getColumnsView()
      * @covers \ProcessMaker\BusinessModel\Cases\BatchRouting::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\BatchRouting::filters()
      * @test
      */
     public function it_test_extended_methods()
@@ -51,7 +54,7 @@ class BatchRoutingTest extends TestCase
         // Create new BatchRouting object
         $consolidated = new BatchRouting();
         $result = $consolidated->getColumnsView();
-        $this->assertEmpty($result);
+        $this->assertNotEmpty($result);
         $result = $consolidated->getData();
         $this->assertEmpty($result);
     }

@@ -19,6 +19,8 @@ use ProcessMaker\Model\TaskUser;
 use Tests\TestCase;
 
 /**
+ * Class HomeTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Home
  */
 class HomeTest extends TestCase
