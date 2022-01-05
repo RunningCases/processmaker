@@ -53336,3 +53336,9 @@ msgstr "Sorry, No Solid icons found!"
 #: LABEL/ID_SELECT_PROCESS_DRILL
 msgid "Select a process to have the Drilling Down Options"
 msgstr "Select a process to have the Drilling Down Options"
+
+# TRANSLATION
+# LABEL/ID_TASK_METRICS
+#: LABEL/ID_TASK_METRICS
+msgid "Task metrics"
+msgstr "Task metrics"
