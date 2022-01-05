@@ -70,7 +70,7 @@ export default {
           label: that.$i18n.t("ID_INBOX"),
           onClick() {
             that.$emit("updateDataLevel", {
-              id: that.$i18n.t("ID_INBOX"),
+              id: "inbox",
               name: that.$i18n.t("ID_INBOX"),
               level: 1,
               color: "#179a6e",
@@ -82,7 +82,7 @@ export default {
           label: this.$i18n.t("ID_DRAFT"),
           onClick() {
             that.$emit("updateDataLevel", {
-              id: that.$i18n.t("ID_DRAFT"),
+              id: "draft",
               name: that.$i18n.t("ID_DRAFT"),
               level: 1,
               color: "#feb019",
@@ -94,7 +94,7 @@ export default {
           label: this.$i18n.t("ID_PAUSED"),
           onClick() {
             that.$emit("updateDataLevel", {
-              id: that.$i18n.t("ID_PAUSED"),
+              id:"paused",
               name: that.$i18n.t("ID_PAUSED"),
               level: 1,
               color: "#008ffb",
@@ -106,7 +106,7 @@ export default {
           label: this.$i18n.t("ID_UNASSIGNED"),
           onClick() {
             that.$emit("updateDataLevel", {
-              id: that.$i18n.t("ID_UNASSIGNED"),
+              id: "unassigned",
               name: that.$i18n.t("ID_UNASSIGNED"),
               level: 1,
               color: "#8f99a0",
