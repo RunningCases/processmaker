@@ -26202,6 +26202,12 @@ msgid "Task Name"
 msgstr "Task Name"
 
 # TRANSLATION
+# LABEL/ID_TASK_METRICS
+#: LABEL/ID_TASK_METRICS
+msgid "Task metrics"
+msgstr "Task metrics"
+
+# TRANSLATION
 # LABEL/ID_TASK_NOT_EXIST
 #: LABEL/ID_TASK_NOT_EXIST
 msgid "The task with {0}: '{1}' does not exist."
