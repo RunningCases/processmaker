@@ -85,7 +85,7 @@
       <apexchart
         ref="LevelOneChart"
         :width="width"
-        :options="optionsBar"
+        :options="options"
         :series="seriesBar"
       ></apexchart>
     </div>
@@ -100,10 +100,11 @@ import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import ProcessPopover from "./ProcessPopover.vue";
 import Multiselect from "vue-multiselect";
 import eventBus from "./../EventBus/eventBus";
+import mixinLocales from "./mixinsLocales";
 
 export default {
   name: "VueChartLvOne",
-  mixins: [],
+  mixins: [mixinLocales],
   components: {
     Multiselect,
     BreadCrumb,
@@ -137,7 +138,7 @@ export default {
           data: [],
         },
       ],
-      optionsBar: {
+      options: {
         chart: {
           type: "bar",
           id: "LevelOneChart",
