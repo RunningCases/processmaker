@@ -61306,7 +61306,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 
 ( 'LABEL','ID_TASK_IN_PROGRESS','en','Task in Progress','2014-01-15') ,
 ( 'LABEL','ID_TASK_NAME','en','Task Name','2020-12-16') ,
-( 'LABEL','ID_TASK_METRICS','en','Task metrics','2021-01-05') ,
+( 'LABEL','ID_TASK_METRICS','en','Task metrics','2022-01-05') ,
 ( 'LABEL','ID_TASK_NOT_EXIST','en','The task with {0}: ''{1}'' does not exist.','2014-05-29') ,
 ( 'LABEL','ID_TASK_NOT_FOUND','en','Task not found for id: {0}','2014-05-21') ,
 ( 'LABEL','ID_TASK_NOT_RELATED','en','[Not related to a task]','2014-01-15') ,
