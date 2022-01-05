@@ -460,7 +460,7 @@ export default {
                     PROCESS_NAME: v.PRO_TITLE,
                     PROCESS_NAME: v.PRO_TITLE,
                     PROCESS_CATEGORY: v.CATEGORY,
-                    STATUS: v.APP_STATUS,
+                    STATUS: this.$i18n.t("ID_CASES_STATUS_"+ v.APP_STATUS.toUpperCase()),
                     START_DATE: v.APP_CREATE_DATE_LABEL || "",
                     FINISH_DATE: v.APP_FINISH_DATE_LABEL || "",
                     PENDING_TASKS: that.formantPendingTask(
