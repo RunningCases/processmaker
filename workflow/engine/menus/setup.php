@@ -385,14 +385,19 @@ if ($licenseStatusInfo["message"] != "") {
 /*----------------------------------********---------------------------------*/
 if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     /*----------------------------------********---------------------------------*/
-    $G_TMP_MENU->AddIdRawOption(
-        'PMENTERPRISE',
-        '../enterprise/addonsStore',
-        G::LoadTranslation('ID_MENU_NAME') . $licStatusMsg,
-        '',
-        '',
-        'plugins'
-    );
+    if (
+        $RBAC->userCanAccess('PM_SETUP_PLUGINS') === 1 &&
+        $RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1
+    ) {
+        $G_TMP_MENU->AddIdRawOption(
+            'PMENTERPRISE',
+            '../enterprise/addonsStore',
+            G::LoadTranslation('ID_MENU_NAME') . $licStatusMsg,
+            '',
+            '',
+            'plugins'
+        );
+    }
     if ($RBAC->userCanAccess('PM_SETUP_CUSTOM_CASES_LIST') == 1) {
         $G_TMP_MENU->AddIdRawOption(
             'CASES_LIST_SETUP',
