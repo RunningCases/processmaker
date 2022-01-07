@@ -87,9 +87,10 @@ import Multiselect from "vue-multiselect";
 import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import moment from "moment";
 import eventBus from "./../EventBus/eventBus";
+import mixinLocales from "./mixinsLocales";
 export default {
   name: "VueChartLvTwo",
-  mixins: [],
+  mixins: [mixinLocales],
   components: {
     Multiselect,
     BreadCrumb,

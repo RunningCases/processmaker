@@ -69,7 +69,7 @@
                         "
                         class="btn vp-btn-success btn-sm"
                     >
-                        On Time
+                        {{ $t("ID_TASK_ON_TIME") }}
                     </button>
                     <button
                         type="button"
@@ -79,7 +79,7 @@
                         "
                         class="btn vp-btn-warning btn-sm"
                     >
-                        At Risk
+                         {{ $t("ID_AT_RISK") }}
                     </button>
                     <button
                         type="button"
@@ -89,7 +89,7 @@
                         "
                         class="btn vp-btn-danger btn-sm"
                     >
-                        Overdue
+                        {{ $t("ID_TASK_OVERDUE") }}
                     </button>
                 </div>
             </div>
@@ -112,10 +112,11 @@ import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import moment from "moment";
 import ModalUnpauseCase from "../modal/ModalUnpauseCase.vue";
 import ModalClaimCase from "../modal/ModalClaimCase.vue";
+import mixinLocales from "./mixinsLocales";
 
 export default {
     name: "VueChartLvThree",
-    mixins: [],
+    mixins: [mixinLocales],
     components: {
         Multiselect,
         BreadCrumb,
@@ -357,7 +358,7 @@ export default {
                             tickAmount: 7,
                         },
                         title: {
-                            text: "Overdue days",
+                            text: this.$t("ID_TASK_OVERDUE_DAYS"),
                         },
                     });
                     break;
@@ -369,7 +370,7 @@ export default {
                             tickAmount: 7,
                         },
                         title: {
-                            text: "Days before being Overdue",
+                            text: this.$t("ID_TASK_DAYS_BEFORE_OVERDUE"),
                         },
                     });
                     break;
@@ -381,7 +382,7 @@ export default {
                             tickAmount: 7,
                         },
                         title: {
-                            text: "Days before being At-Risk",
+                            text: this.$t("ID_TASK_DAYS_BEFORE_AT_RISK"),
                         },
                     });
                     break;
