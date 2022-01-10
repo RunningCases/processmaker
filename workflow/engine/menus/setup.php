@@ -194,6 +194,7 @@ if ($RBAC->userCanAccess('PM_USERS') === 1) {
         '',
         'users'
     );
+    /*----------------------------------********---------------------------------*/
     $G_TMP_MENU->AddIdRawOption(
         'USERS_EXTENDED',
         '../userExtendedAttributes/index',
@@ -202,6 +203,7 @@ if ($RBAC->userCanAccess('PM_USERS') === 1) {
         '',
         'users'
     );
+    /*----------------------------------********---------------------------------*/
     $G_TMP_MENU->AddIdRawOption(
         'GROUPS',
         '../groups/groups',
