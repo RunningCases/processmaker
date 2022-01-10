@@ -7020,6 +7020,18 @@ msgid "Download"
 msgstr "Download"
 
 # TRANSLATION
+# LABEL/ID_DOWNLOAD_SVG
+#: LABEL/ID_DOWNLOAD_SVG
+msgid "Download SVG"
+msgstr "Download SVG"
+
+# TRANSLATION
+# LABEL/ID_DOWNLOAD_PNG
+#: LABEL/ID_DOWNLOAD_PNG
+msgid "Download PNG"
+msgstr "Download PNG"
+
+# TRANSLATION
 # LABEL/ID_DOWNLOADING_FILE
 #: LABEL/ID_DOWNLOADING_FILE
 msgid "Downloading file"
@@ -19212,6 +19224,12 @@ msgid "Memory Limit value has to be either a positive integer or -1"
 msgstr "Memory Limit value has to be either a positive integer or -1"
 
 # TRANSLATION
+# LABEL/ID_MENU
+#: LABEL/ID_MENU
+msgid "Menu"
+msgstr "Menu"
+
+# TRANSLATION
 # LABEL/ID_MENU_COLOR
 #: LABEL/ID_MENU_COLOR
 msgid "Menu Color"
@@ -21298,6 +21316,12 @@ msgstr "Page"
 #: LABEL/ID_PAGE_SIZE
 msgid "Page Size"
 msgstr "Page Size"
+
+# TRANSLATION
+# LABEL/ID_PANNING
+#: LABEL/ID_PANNING
+msgid "Panning"
+msgstr "Panning"
 
 # TRANSLATION
 # LABEL/ID_PARALLEL_TASK
@@ -24588,6 +24612,12 @@ msgid "Select"
 msgstr "Select"
 
 # TRANSLATION
+# LABEL/ID_SELECTION_ZOOM
+#: LABEL/ID_SELECTION_ZOOM
+msgid "Selection zoom"
+msgstr "Selection zoom"
+
+# TRANSLATION
 # LABEL/ID_SELECTED
 #: LABEL/ID_SELECTED
 msgid "selected"
@@ -26236,6 +26266,30 @@ msgstr "The task doesn't have any steps"
 #: LABEL/ID_TASK_OVERDUE
 msgid "Overdue"
 msgstr "Overdue"
+
+# TRANSLATION
+# LABEL/ID_TASK_OVERDUE_DAYS
+#: LABEL/ID_TASK_OVERDUE_DAYS
+msgid "Overdue days"
+msgstr "Overdue days"
+
+# TRANSLATION
+# LABEL/ID_TASK_DAYS_BEFORE_AT_RISK
+#: LABEL/ID_TASK_DAYS_BEFORE_AT_RISK
+msgid "Days before being At-Risk"
+msgstr "Days before being At-Risk"
+
+# TRANSLATION
+# LABEL/ID_TASK_DAYS_BEFORE_OVERDUE
+#: LABEL/ID_TASK_DAYS_BEFORE_OVERDUE
+msgid "Days before being Overdue"
+msgstr "Days before being Overdue"
+
+# TRANSLATION
+# LABEL/ID_TASK_ON_TIME
+#: LABEL/ID_TASK_ON_TIME
+msgid "On time"
+msgstr "On time"
 
 # TRANSLATION
 # LABEL/ID_TASK_PROPERTIES_SAVE
@@ -29056,6 +29110,18 @@ msgstr "You uploaded an unsupported file extension, please review the permitted 
 #: LABEL/ID_ZIP_CODE
 msgid "Zip Code"
 msgstr "Zip Code"
+
+# TRANSLATION
+# LABEL/ID_ZOOM_IN
+#: LABEL/ID_ZOOM_IN
+msgid "Zoom in"
+msgstr "Zoom in"
+
+# TRANSLATION
+# LABEL/ID_ZOOM_OUT
+#: LABEL/ID_ZOOM_OUT
+msgid "Zoom out"
+msgstr "Zoom out"
 
 # TRANSLATION
 # LABEL/IMAGE_DETAIL
@@ -53342,3 +53408,9 @@ msgstr "Sorry, No Solid icons found!"
 #: LABEL/ID_SELECT_PROCESS_DRILL
 msgid "Select a process to have the Drilling Down Options"
 msgstr "Select a process to have the Drilling Down Options"
+
+# TRANSLATION
+# LABEL/ID_TASK_METRICS
+#: LABEL/ID_TASK_METRICS
+msgid "Task metrics"
+msgstr "Task metrics"

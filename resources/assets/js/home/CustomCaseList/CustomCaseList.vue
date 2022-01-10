@@ -337,7 +337,6 @@ export default {
             icon: "fas fa-check-circle",
             options: {
                 filterable: false,
-                headings: {},
                 texts: {
                     count: this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
                     first: this.$i18n.t("ID_FIRST"),
@@ -794,7 +793,10 @@ export default {
                             product,
                             newItems = [];
                         that.filterItems = [];
-                        that.headings = {};
+                        that.headings = {
+                            detail: this.$i18n.t("ID_DETAIL_CASE"),
+                            actions: "",
+                        };
                         response.data.columns.forEach((item) => {
                             if (item.enableFilter) {
                                 if (that.availableItems[that.itemMap[item.field]]) {

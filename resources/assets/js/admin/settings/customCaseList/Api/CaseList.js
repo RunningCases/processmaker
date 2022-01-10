@@ -2,6 +2,7 @@ import axios from "axios";
 import Api from "../../../../api/Api";
 import Services from "./Services";
 import Defaults from "./Mocks/defaults.json";
+import { RCBase64 } from '../../../../utils/utils.js'
 class caseListApi extends Api {
     constructor(services) {
     // Here, it calls the parent class' constructor with lengths
@@ -42,13 +43,14 @@ class caseListApi extends Api {
      * @returns 
      */
     deleteCaseList(data) {
+        var base64 = RCBase64();
         return axios.delete(
             window.config.SYS_SERVER_API +
             '/api/1.0/' +
             window.config.SYS_WORKSPACE +
             '/caseList/' + data.id, {
             headers: {
-                'Authorization': 'Bearer ' + window.config.SYS_CREDENTIALS.accessToken,
+                'Authorization': 'Bearer ' + JSON.parse(base64.decode(window.config.SYS_CREDENTIALS)).accessToken,
                 "Accept-Language": window.config.SYS_LANG
               }
             }
