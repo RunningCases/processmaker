@@ -57844,6 +57844,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DEFINITION','en','Definition','2014-01-15') ,
 ( 'LABEL','ID_DELAY_FIELD','en','Delay Field','2014-01-15') ,
 ( 'LABEL','ID_DELAYED','en','Delayed','2021-01-20') ,
+( 'LABEL','ID_DELEGATED','en','Delegated','2022-01-12') ,
 ( 'LABEL','ID_DELEGATE_DATE_FROM','en','Date from','2017-10-18') ,
 ( 'LABEL','ID_DELEGATE_DATE_TO','en','to','2014-01-15') ,
 ( 'LABEL','ID_DELEGATE_USER','en','Delegated User','2014-01-15') ,
