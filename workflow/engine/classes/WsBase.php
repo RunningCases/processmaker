@@ -988,7 +988,7 @@ class WsBase
                 G::replaceDataGridField(file_get_contents($fileTemplate), $fieldsCase, false),
                 $cc,
                 $bcc,
-                '',
+                $template,
                 $attachment,
                 'pending',
                 ($showMessage) ? 1 : 0,
