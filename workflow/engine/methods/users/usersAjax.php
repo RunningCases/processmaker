@@ -132,7 +132,7 @@ try {
             $data = [['LAN_ID' => '', 'LAN_NAME' => '- ' . G::LoadTranslation('ID_NONE') . ' -']];
             foreach ($languages as $lang) {
                 $data[] = [
-                    'LAN_ID' => $lang['LOCALE'],
+                    'LAN_ID' => strtolower($lang['LAN_ID']),
                     'LAN_NAME' => $lang['LANGUAGE']
                 ];
             }
