@@ -2463,7 +2463,7 @@ function jumping ($caseId, $delIndex)
  *
  * @param string(32) | $PROCESS | Process ID | The unique ID of the process which contains the field.
  * @param string(32) | $DYNAFORM_UID | Dynaform ID | The unique ID of the DynaForm where the field is located.
- * @param string(32) | $FIELD_NAME | Fiel Name | The field name of the dropdown box, listbox, checkgroup or radiogroup from the specified DynaForm.
+ * @param string(32) | $FIELD_NAME | Field Name | The field name of the dropdown box, listbox, checkgroup or radiogroup from the specified DynaForm.
  * @param string(32) | $FIELD_SELECTED_ID | ID selected | The value (i.e., ID) of the option from the fieldName.
  * @return string | $label | Label of the specified option | A string holding the label of the specified option or NULL if the specified option does not exist.
  *
