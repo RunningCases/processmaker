@@ -4404,6 +4404,12 @@ msgid "The category with {0}: '{1}' does not exist."
 msgstr "The category with {0}: '{1}' does not exist."
 
 # TRANSLATION
+# LABEL/ID_CATEGORY_PROCESS
+#: LABEL/ID_CATEGORY_PROCESS
+msgid "Process Category"
+msgstr "Process Category"
+
+# TRANSLATION
 # LABEL/ID_CATEGORY_SUCCESS_DELETE
 #: LABEL/ID_CATEGORY_SUCCESS_DELETE
 msgid "Process category has been deleted correctly."
@@ -6096,6 +6102,12 @@ msgid "Delayed"
 msgstr "Delayed"
 
 # TRANSLATION
+# LABEL/ID_DELEGATED
+#: LABEL/ID_DELEGATED
+msgid "Delegated"
+msgstr "Delegated"
+
+# TRANSLATION
 # LABEL/ID_DELEGATE_DATE_FROM
 #: LABEL/ID_DELEGATE_DATE_FROM
 msgid "Date from"
@@ -7012,6 +7024,18 @@ msgstr "Down"
 #: LABEL/ID_DOWNLOAD
 msgid "Download"
 msgstr "Download"
+
+# TRANSLATION
+# LABEL/ID_DOWNLOAD_SVG
+#: LABEL/ID_DOWNLOAD_SVG
+msgid "Download SVG"
+msgstr "Download SVG"
+
+# TRANSLATION
+# LABEL/ID_DOWNLOAD_PNG
+#: LABEL/ID_DOWNLOAD_PNG
+msgid "Download PNG"
+msgstr "Download PNG"
 
 # TRANSLATION
 # LABEL/ID_DOWNLOADING_FILE
@@ -19170,12 +19194,6 @@ msgid "The maximun limit of columns for a database table is 255, you already hav
 msgstr "The maximun limit of columns for a database table is 255, you already have them defined!"
 
 # TRANSLATION
-# LABEL/ID_MCRYPT_SUPPORT
-#: LABEL/ID_MCRYPT_SUPPORT
-msgid "Mcrypt Support"
-msgstr "Mcrypt Support"
-
-# TRANSLATION
 # LABEL/ID_MEDIA
 #: LABEL/ID_MEDIA
 msgid "Media"
@@ -19210,6 +19228,12 @@ msgstr "Memory Limit (MB)"
 #: LABEL/ID_MEMORY_LIMIT_VALIDATE
 msgid "Memory Limit value has to be either a positive integer or -1"
 msgstr "Memory Limit value has to be either a positive integer or -1"
+
+# TRANSLATION
+# LABEL/ID_MENU
+#: LABEL/ID_MENU
+msgid "Menu"
+msgstr "Menu"
 
 # TRANSLATION
 # LABEL/ID_MENU_COLOR
@@ -21298,6 +21322,12 @@ msgstr "Page"
 #: LABEL/ID_PAGE_SIZE
 msgid "Page Size"
 msgstr "Page Size"
+
+# TRANSLATION
+# LABEL/ID_PANNING
+#: LABEL/ID_PANNING
+msgid "Panning"
+msgstr "Panning"
 
 # TRANSLATION
 # LABEL/ID_PARALLEL_TASK
@@ -24384,6 +24414,12 @@ msgid "Script Task"
 msgstr "Script Task"
 
 # TRANSLATION
+# LABEL/ID_SCRIPT_TASK_UNTITLED
+#: LABEL/ID_SCRIPT_TASK_UNTITLED
+msgid "Untitled - Script Task"
+msgstr "Untitled - Script Task"
+
+# TRANSLATION
 # LABEL/ID_SCRIPT_TASK_ACTIVITY_ALREADY_REGISTERED
 #: LABEL/ID_SCRIPT_TASK_ACTIVITY_ALREADY_REGISTERED
 msgid "The Script-Task with {0}: \"{1}\" already registered"
@@ -24580,6 +24616,12 @@ msgstr "See complete list"
 #: LABEL/ID_SELECT
 msgid "Select"
 msgstr "Select"
+
+# TRANSLATION
+# LABEL/ID_SELECTION_ZOOM
+#: LABEL/ID_SELECTION_ZOOM
+msgid "Selection zoom"
+msgstr "Selection zoom"
 
 # TRANSLATION
 # LABEL/ID_SELECTED
@@ -24964,6 +25006,18 @@ msgstr "Server reported"
 #: LABEL/ID_SERVICE
 msgid "Service"
 msgstr "Service"
+
+# TRANSLATION
+# LABEL/ID_SERVICE_TASK
+#: LABEL/ID_SERVICE_TASK
+msgid "Service Task"
+msgstr "Service Task"
+
+# TRANSLATION
+# LABEL/ID_SERVICE_TASK_UNTITLED
+#: LABEL/ID_SERVICE_TASKUNTITLED
+msgid "Untitled - Service Task"
+msgstr "Untitled - Service Task"
 
 # TRANSLATION
 # LABEL/ID_SESSION
@@ -26184,6 +26238,12 @@ msgid "Task Name"
 msgstr "Task Name"
 
 # TRANSLATION
+# LABEL/ID_TASK_METRICS
+#: LABEL/ID_TASK_METRICS
+msgid "Task metrics"
+msgstr "Task metrics"
+
+# TRANSLATION
 # LABEL/ID_TASK_NOT_EXIST
 #: LABEL/ID_TASK_NOT_EXIST
 msgid "The task with {0}: '{1}' does not exist."
@@ -26212,6 +26272,30 @@ msgstr "The task doesn't have any steps"
 #: LABEL/ID_TASK_OVERDUE
 msgid "Overdue"
 msgstr "Overdue"
+
+# TRANSLATION
+# LABEL/ID_TASK_OVERDUE_DAYS
+#: LABEL/ID_TASK_OVERDUE_DAYS
+msgid "Overdue days"
+msgstr "Overdue days"
+
+# TRANSLATION
+# LABEL/ID_TASK_DAYS_BEFORE_AT_RISK
+#: LABEL/ID_TASK_DAYS_BEFORE_AT_RISK
+msgid "Days before being At-Risk"
+msgstr "Days before being At-Risk"
+
+# TRANSLATION
+# LABEL/ID_TASK_DAYS_BEFORE_OVERDUE
+#: LABEL/ID_TASK_DAYS_BEFORE_OVERDUE
+msgid "Days before being Overdue"
+msgstr "Days before being Overdue"
+
+# TRANSLATION
+# LABEL/ID_TASK_ON_TIME
+#: LABEL/ID_TASK_ON_TIME
+msgid "On time"
+msgstr "On time"
 
 # TRANSLATION
 # LABEL/ID_TASK_PROPERTIES_SAVE
@@ -29032,6 +29116,18 @@ msgstr "You uploaded an unsupported file extension, please review the permitted 
 #: LABEL/ID_ZIP_CODE
 msgid "Zip Code"
 msgstr "Zip Code"
+
+# TRANSLATION
+# LABEL/ID_ZOOM_IN
+#: LABEL/ID_ZOOM_IN
+msgid "Zoom in"
+msgstr "Zoom in"
+
+# TRANSLATION
+# LABEL/ID_ZOOM_OUT
+#: LABEL/ID_ZOOM_OUT
+msgid "Zoom out"
+msgstr "Zoom out"
 
 # TRANSLATION
 # LABEL/IMAGE_DETAIL
@@ -53318,3 +53414,9 @@ msgstr "Sorry, No Solid icons found!"
 #: LABEL/ID_SELECT_PROCESS_DRILL
 msgid "Select a process to have the Drilling Down Options"
 msgstr "Select a process to have the Drilling Down Options"
+
+# TRANSLATION
+# LABEL/ID_TASK_METRICS
+#: LABEL/ID_TASK_METRICS
+msgid "Task metrics"
+msgstr "Task metrics"

@@ -692,7 +692,7 @@ export default {
     },
 };
 </script>
-<style scoped>
+<style lang="scss">
 .bv-example-row .row + .row {
     margin-top: 1rem;
 }

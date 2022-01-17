@@ -86,6 +86,21 @@ class System
         'disable_task_manager_routing_async' => '0',
         'on_one_server_enable' => 0,
         'at_risk_delegation_max_time' => '0.2',
+        'samesite_cookie_setting' => ''
+    ];
+
+    public static $cookieDefaultOptions = [
+        'expires' => 0,
+        'path' => '/',
+        'domain' => '',
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => ''
+    ];
+
+    public static $cookieSameSiteValues = [
+        'Lax',
+        'Strict'
     ];
 
     /**
@@ -1252,6 +1267,13 @@ class System
             $config['at_risk_delegation_max_time'] = self::$defaultConfig['at_risk_delegation_max_time'];
         }
 
+        $value = ucfirst(strtolower($config['samesite_cookie_setting']));
+        if (in_array($value, self::$cookieSameSiteValues)) {
+            $config['samesite_cookie_setting'] = $value;
+        } else {
+            $config['samesite_cookie_setting'] = '';
+        }
+
         return $config;
     }
 
@@ -1777,5 +1799,30 @@ class System
         }
         $parseDsn["pass"] = urldecode($parseDsn["pass"]);
         return $parseDsn;
+    }
+
+    /**
+     * Build the options for a cookie, according to the system configuration and values optionally sent to this method
+     *
+     * @param array $options
+     * @return array
+     */
+    public static function buildCookieOptions(array $options = [])
+    {
+        // Get system values
+        $cookieOptions = self::$cookieDefaultOptions;
+        $systemConfiguration = self::getSystemConfiguration();
+
+        // Always set "secure" option according to the server protocol
+        $cookieOptions['secure'] = G::is_https();
+
+        // Set the "samesite" option according to the system configuration
+        $cookieOptions['samesite'] = $systemConfiguration['samesite_cookie_setting'];
+
+        // Overrides the cookie options with the values sent to the method
+        $cookieOptions = array_merge($cookieOptions, $options);
+
+        // Return the cookie options
+        return $cookieOptions;
     }
 }

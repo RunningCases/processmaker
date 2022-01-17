@@ -5,9 +5,12 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Consolidated;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Task;
 use Tests\TestCase;
 
 /**
+ * Class ConsolidatedTest
+ *
  * @coversDefaultClass \ProcessMaker\Model\Consolidated
  */
 class ConsolidatedTest extends TestCase
@@ -20,6 +23,22 @@ class ConsolidatedTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+    }
+
+    /**
+     * Test belongs to TAS_UID
+     *
+     * @covers \ProcessMaker\Model\Consolidated::task()
+     * @test
+     */
+    public function it_has_a_task()
+    {
+        $table = factory(Consolidated::class)->create([
+            'TAS_UID' => function () {
+                return factory(Task::class)->create()->TAS_UID;
+            }
+        ]);
+        $this->assertInstanceOf(Task::class, $table->task);
     }
 
     /**
@@ -42,6 +61,7 @@ class ConsolidatedTest extends TestCase
      * This checks the counters is working properly in draft
      *
      * @covers \ProcessMaker\Model\Consolidated::getCounterActive()
+     * @covers \ProcessMaker\Model\Consolidated::scopeActive()
      * @test
      */
     public function it_should_count_cases_consolidated()
@@ -57,7 +77,11 @@ class ConsolidatedTest extends TestCase
     /**
      * This checks the counters is working properly in consolidated
      *
-     * @covers \ProcessMaker\Model\Consolidated::getCounterActive()
+     * @covers \ProcessMaker\Model\Consolidated::getConsolidated()
+     * @covers \ProcessMaker\Model\Consolidated::scopeJoinPendingCases()
+     * @covers \ProcessMaker\Model\Consolidated::scopeActive()
+     * @covers \ProcessMaker\Model\Consolidated::scopeJoinProcess()
+     * @covers \ProcessMaker\Model\Consolidated::scopeJoinTask()
      * @test
      */
     public function it_should_count_cases()

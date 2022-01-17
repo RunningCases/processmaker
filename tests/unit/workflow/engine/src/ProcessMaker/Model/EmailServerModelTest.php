@@ -5,6 +5,11 @@ namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 use ProcessMaker\Model\EmailServerModel;
 use Tests\TestCase;
 
+/**
+ * Class EmailServerModelTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\EmailServerModel
+ */
 class EmailServerModelTest extends TestCase
 {
     /**

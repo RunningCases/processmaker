@@ -28,6 +28,7 @@ class DraftTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
     }
 
     /**
@@ -436,6 +437,7 @@ class DraftTest extends TestCase
      * It tests the getCountersByProcesses() method with the top ten filter
      * 
      * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCountersByProcesses()
+     * @covers \ProcessMaker\Model\Delegation::scopeTopTen()
      * @test
      */
     public function it_should_test_get_counters_by_processes_method_top_ten()
@@ -788,7 +790,7 @@ class DraftTest extends TestCase
             'APP_INIT_USER' => $user->USR_UID,
             'APP_CUR_USER' => $user->USR_UID,
         ]);
-        factory(Delegation::class)->states('foreign_keys')->create([
+        $del = factory(Delegation::class)->states('foreign_keys')->create([
             'DEL_THREAD_STATUS' => 'OPEN',
             'DEL_INDEX' => 1,
             'USR_UID' => $application[0]->APP_INIT_USER,
@@ -804,7 +806,7 @@ class DraftTest extends TestCase
         $draft = new Draft();
         $draft->setUserId($user->USR_ID);
         $draft->setUserUid($user->USR_ID);
-        $res = $draft->getCasesRisk($process->PRO_ID);
+        $res = $draft->getCasesRisk($process->PRO_ID, $currentDate, $currentDate, 'ON_TIME', 10);
         $this->assertCount(1, $res);
     }
 
@@ -880,5 +882,19 @@ class DraftTest extends TestCase
         $draft->setUserUid($user->USR_ID);
         $res = $draft->getCasesRisk($process->PRO_ID, null, null, 'OVERDUE');
         $this->assertCount(1, $res);
+    }
+
+    /**
+     * This tests the getCounterMetrics() method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Draft::getCounterMetrics()
+     * @test
+     */
+    public function it_should_test_get_counter_metrics()
+    {
+        $this->createDraft();
+        $draft = new Draft();
+        $result = $draft->getCounterMetrics();
+        $this->assertTrue($result > 0);
     }
 }

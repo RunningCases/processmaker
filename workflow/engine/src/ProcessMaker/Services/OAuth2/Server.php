@@ -1,6 +1,7 @@
 <?php
 namespace ProcessMaker\Services\OAuth2;
 
+use Bootstrap;
 use Luracast\Restler\iAuthenticate;
 use Luracast\Restler\RestException;
 use OAuth2\Request;
@@ -367,7 +368,8 @@ class Server implements iAuthenticate
                     $lifetime = 1440;
                 }
 
-                setcookie($session->getSessionName(), $_COOKIE[$session->getSessionName()], time() + $lifetime, "/", null, false, true);
+                $cookieOptions = Bootstrap::buildCookieOptions(['expires' => time() + $lifetime, 'secure' => false, 'httponly' => true]);
+                setcookie($session->getSessionName(), $_COOKIE[$session->getSessionName()], $cookieOptions);
             }
         }
 

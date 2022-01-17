@@ -7,7 +7,7 @@ use ProcessMaker\Model\AppTimeoutAction;
 use Tests\TestCase;
 
 /**
- * Class DelegationTest
+ * Class AppTimeoutActionTest
  *
  * @coversDefaultClass \ProcessMaker\Model\AppTimeoutAction
  */

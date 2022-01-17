@@ -393,6 +393,11 @@ class AppProxy extends HttpProxyController
                 'label' => G::LoadTranslation('ID_PROCESS_NAME') . ': ',
                 'value' => $processInfo['PRO_TITLE'],
             ],
+            $i++ => [ // Process Category
+                'id' => 'CATEGORY',
+                'label' => G::LoadTranslation('ID_CATEGORY_PROCESS') . ': ',
+                'value' => $processInfo['PRO_CATEGORY_LABEL'],
+            ],
             $i++ => [ // Process description
                 'id' => 'PRO_DESCRIPTION',
                 'label' => G::LoadTranslation('ID_PRO_DESCRIPTION') . ': ',

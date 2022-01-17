@@ -53,6 +53,7 @@ export default {
           detail: "",
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
+          process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           current_user: this.$i18n.t("ID_CURRENT_USER"),

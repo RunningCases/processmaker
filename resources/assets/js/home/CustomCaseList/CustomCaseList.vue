@@ -55,10 +55,12 @@
             <div slot="case_title" slot-scope="props">
                 {{ props.row.THREAD_TITLE }}
             </div>
+            <div slot="process_category" slot-scope="props">
+                {{ props.row.PROCESS_CATEGORY }}
+            </div>
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
             </div>
-
             <div slot="task" slot-scope="props">
                 <TaskCell :data="props.row.TASK" />
             </div>
@@ -128,6 +130,9 @@
                     <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
                         {{ props["item"]["THREAD_TITLE"] }}
                     </span>
+                    <span  v-if="column === 'process_category'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_CATEGORY"] }}
+                    </span>
                     <span  v-if="column === 'process_name'" class="v-card-text-highlight">
                         {{ props["item"]["PROCESS_NAME"] }}
                     </span>
@@ -181,6 +186,9 @@
                     </span>
                     <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
                         {{ props["item"]["THREAD_TITLE"] }}
+                    </span>
+                    <span  v-if="column === 'process_category'" class="v-card-text-highlight">
+                        {{ props["item"]["PROCESS_CATEGORY"] }}
                     </span>
                     <span  v-if="column === 'process_name'" class="v-card-text-highlight">
                         {{ props["item"]["PROCESS_NAME"] }}
@@ -317,6 +325,7 @@ export default {
                 case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
                 thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
                 process_name: this.$i18n.t("ID_PROCESS_NAME"),
+                process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
                 task: this.$i18n.t("ID_TASK"),
                 send_by: this.$i18n.t("ID_SEND_BY"),
                 due_date: this.$i18n.t("ID_DUE_DATE"),
@@ -328,7 +337,6 @@ export default {
             icon: "fas fa-check-circle",
             options: {
                 filterable: false,
-                headings: {},
                 texts: {
                     count: this.$i18n.t("ID_SHOWING_FROM_RECORDS_COUNT"),
                     first: this.$i18n.t("ID_FIRST"),
@@ -393,7 +401,8 @@ export default {
                 thread_title: "caseTitle",
                 delegation_date: "delegationDate",
                 send_by: "bySendBy",
-                process_name: "processName"
+                process_name: "processName",
+                process_category: "processCategory"
             },
             customItems:{
                 VARCHAR: {
@@ -555,6 +564,28 @@ export default {
                         return `${this.tagPrefix}: ${data[0].label || ""}`;
                     },
                 },
+                processCategory: {
+                    group: "checkbox",
+                    type: "ProcessCategory",
+                    id: "processCategory",
+                    title: `${this.$i18n.t('ID_FILTER')}: ${this.$i18n.t('ID_BY_PROCESS_CATEGORY')}`,
+                    optionLabel: this.$i18n.t('ID_BY_PROCESS_CATEGORY'),
+                    detail: "",
+                    tagText: "",
+                    tagPrefix:  this.$i18n.t('ID_SEARCH_BY_PROCESS_CATEGORY'),
+                    autoShow: false,
+                    items:[
+                        {
+                            id: "process",
+                            value: "",
+                            options: [],
+                            placeholder: this.$i18n.t('ID_CATEGORY_PROCESS')
+                        }
+                    ],
+                    makeTagText: function (params, data) {
+                        return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
+                    }
+                },
                 processName: {
                     group: "checkbox",
                     type: "ProcessName",
@@ -576,7 +607,8 @@ export default {
                     makeTagText: function (params, data) {
                         return  `${this.tagPrefix} ${data[0].options && data[0].options.label || ''}`;
                     }
-                }
+                },
+                showUserTooltip: true
             }
         };
     },
@@ -761,7 +793,10 @@ export default {
                             product,
                             newItems = [];
                         that.filterItems = [];
-                        that.headings = {};
+                        that.headings = {
+                            detail: this.$i18n.t("ID_DETAIL_CASE"),
+                            actions: "",
+                        };
                         response.data.columns.forEach((item) => {
                             if (item.enableFilter) {
                                 if (that.availableItems[that.itemMap[item.field]]) {
@@ -844,6 +879,7 @@ export default {
                         CASE_NUMBER: v.APP_NUMBER,
                         THREAD_TITLE: v.DEL_TITLE,
                         PROCESS_NAME: v.PRO_TITLE,
+                        PROCESS_CATEGORY: v.CATEGORY,
                         TASK: [
                             {
                                 TITLE: v.TAS_TITLE,
@@ -884,24 +920,32 @@ export default {
         formatUser(data) {
             var dataFormat = [],
                 userDataFormat;
-            userDataFormat = utils.userNameDisplayFormat({
-                userName: data.user_tooltip.usr_firstname,
-                firstName: data.user_tooltip.usr_lastname,
-                lastName: data.user_tooltip.usr_username,
-                format: window.config.FORMATS.format || null,
-            });
-            dataFormat.push({
-                USERNAME_DISPLAY_FORMAT: userDataFormat,
-                EMAIL: data.user_tooltip.usr_email,
-                POSITION: data.user_tooltip.usr_position,
-                AVATAR:
-                    userDataFormat !== ""
-                        ? window.config.SYS_SERVER_AJAX +
-                          window.config.SYS_URI +
-                          `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}`
-                        : "",
-                UNASSIGNED: userDataFormat !== "" ? true : false,
-            });
+            switch (data.key_name) {
+                case 'user_tooltip':
+                    userDataFormat = utils.userNameDisplayFormat({
+                        userName: data.user_tooltip.usr_firstname,
+                        firstName: data.user_tooltip.usr_lastname,
+                        lastName: data.user_tooltip.usr_username,
+                        format: window.config.FORMATS.format || null
+                    });
+                    dataFormat.push({
+                        USERNAME_DISPLAY_FORMAT: userDataFormat,
+                        EMAIL: data.user_tooltip.usr_email,
+                        POSITION: data.user_tooltip.usr_position,
+                        AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                            window.config.SYS_URI +
+                            `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                        UNASSIGNED: userDataFormat !== "" ? true : false,
+                        SHOW_TOOLTIP: true
+                    });
+                    break;
+                case 'dummy_task':
+                    dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
+                    break;
+                default:
+                    dataFormat = "";
+                    break;
+            }
             return dataFormat;
         },
         /**

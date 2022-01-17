@@ -229,7 +229,20 @@ export default {
      * Return the columns for table - concat with field "detail" "actions"
      */
     getTableColumns(columns) {
-      return _.concat(["detail"], columns, ["actions"]);
+        return _.concat(["detail"], this.removeDefaultColumns(columns), ["actions"]);
+    },
+    /**
+     * Remove the default columns, 'detail' and 'actions'
+     * @param {Array} columns 
+     */
+    removeDefaultColumns(columns) {
+        if (columns[0] === 'detail') {
+            columns.shift()
+        }
+        if (columns[columns.length - 1] === 'actions') {
+            columns.pop();
+        }
+        return columns;
     },
     /**
      * Return options for Table

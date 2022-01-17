@@ -6,6 +6,11 @@ use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\Fields;
 use Tests\TestCase;
 
+/**
+ * Class FieldsTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\Fields
+ */
 class FieldsTest extends TestCase
 {
     /**

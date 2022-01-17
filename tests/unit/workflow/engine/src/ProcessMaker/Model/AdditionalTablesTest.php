@@ -6,6 +6,11 @@ use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\Fields;
 use Tests\TestCase;
 
+/**
+ * Class AdditionalTablesTest
+ *
+ * @coversDefaultClass \ProcessMaker\Model\AdditionalTables
+ */
 class AdditionalTablesTest extends TestCase
 {
     /**
@@ -77,5 +82,24 @@ class AdditionalTablesTest extends TestCase
             $this->assertArrayHasKey('add_tab_class_name', $row);
             $this->assertArrayHasKey('rows', $row);
         }
+    }
+
+    /**
+     * Test update the offline property
+     *
+     * @covers \ProcessMaker\Model\AdditionalTables::updatePropertyOffline()
+     * @test
+     */
+    public function it_update_property_offline()
+    {
+        $pmTable = factory(AdditionalTables::class)->create(['ADD_TAB_OFFLINE' => 0]);
+        $results = AdditionalTables::updatePropertyOffline([$pmTable->ADD_TAB_UID], 1);
+        // Check the update
+        $pmTableQuery = AdditionalTables::query()->select(['ADD_TAB_OFFLINE']);
+        $pmTableQuery->where('ADD_TAB_UID', $pmTable->ADD_TAB_UID);
+        $result = $pmTableQuery->get()->values()->toArray();
+
+        // Assert, the update was executed
+        $this->assertEquals($result[0]['ADD_TAB_OFFLINE'], 1);
     }
 }

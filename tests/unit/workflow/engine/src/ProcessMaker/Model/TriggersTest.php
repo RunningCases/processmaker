@@ -9,7 +9,7 @@ use ProcessMaker\Model\Triggers;
 use Tests\TestCase;
 
 /**
- * Class DelegationTest
+ * Class TriggersTest
  *
  * @coversDefaultClass \ProcessMaker\Model\Triggers
  */

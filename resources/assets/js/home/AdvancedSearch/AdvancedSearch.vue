@@ -49,6 +49,9 @@
             <div slot="case_status" slot-scope="props">
                 {{ props.row.APP_STATUS }}
             </div>
+            <div slot="process_category" slot-scope="props">
+                {{ props.row.PROCESS_CATEGORY }}
+            </div>
             <div slot="process_name" slot-scope="props">
                 {{ props.row.PROCESS_NAME }}
             </div>
@@ -142,6 +145,7 @@ export default {
             },
             columns: [
                 "case_number",
+                "process_category",
                 "process_name",
                 "status",
                 "thread_title",
@@ -157,6 +161,7 @@ export default {
                 filterable: false,
                 headings: {
                     case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
+                    process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
                     process_name: this.$i18n.t("ID_PROCESS_NAME"),
                     status: this.$i18n.t("ID_STATUS"),
                     thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
@@ -296,6 +301,7 @@ export default {
                     CASE_NUMBER: v.APP_NUMBER,
                     THREAD_TITLE: v.THREAD_TITLES,
                     PROCESS_NAME: v.PRO_TITLE,
+                    PROCESS_CATEGORY: v.CATEGORY,
                     TASK: this.formatTasks(v.THREAD_TASKS),
                     USER_DATA: this.formatUser(v.THREAD_USERS),
                     START_DATE: v.APP_CREATE_DATE_LABEL,

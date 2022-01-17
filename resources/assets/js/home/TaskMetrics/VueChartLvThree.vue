@@ -69,7 +69,7 @@
                         "
                         class="btn vp-btn-success btn-sm"
                     >
-                        On Time
+                        {{ $t("ID_TASK_ON_TIME") }}
                     </button>
                     <button
                         type="button"
@@ -79,7 +79,7 @@
                         "
                         class="btn vp-btn-warning btn-sm"
                     >
-                        At Risk
+                         {{ $t("ID_AT_RISK") }}
                     </button>
                     <button
                         type="button"
@@ -89,7 +89,7 @@
                         "
                         class="btn vp-btn-danger btn-sm"
                     >
-                        Overdue
+                        {{ $t("ID_TASK_OVERDUE") }}
                     </button>
                 </div>
             </div>
@@ -112,10 +112,11 @@ import BreadCrumb from "../../components/utils/BreadCrumb.vue";
 import moment from "moment";
 import ModalUnpauseCase from "../modal/ModalUnpauseCase.vue";
 import ModalClaimCase from "../modal/ModalClaimCase.vue";
+import mixinLocales from "./mixinsLocales";
 
 export default {
     name: "VueChartLvThree",
-    mixins: [],
+    mixins: [mixinLocales],
     components: {
         Multiselect,
         BreadCrumb,
@@ -352,33 +353,36 @@ export default {
                 case "OVERDUE":
                     this.$refs["LevelThreeChart"].updateOptions({
                         yaxis: {
-                            min: 0,
+                            min: -10,
+                            max: 100,
                             tickAmount: 7,
                         },
                         title: {
-                            text: "Overdue days",
+                            text: this.$t("ID_TASK_OVERDUE_DAYS"),
                         },
                     });
                     break;
                 case "AT_RISK":
                     this.$refs["LevelThreeChart"].updateOptions({
                         yaxis: {
-                            max: 0,
+                            max: 10,
+                            min: -100,
                             tickAmount: 7,
                         },
                         title: {
-                            text: "Days before being Overdue",
+                            text: this.$t("ID_TASK_DAYS_BEFORE_OVERDUE"),
                         },
                     });
                     break;
                 case "ON_TIME":
                     this.$refs["LevelThreeChart"].updateOptions({
                         yaxis: {
-                            max: 0,
+                            max: 10,
+                            min: -100,
                             tickAmount: 7,
                         },
                         title: {
-                            text: "Days before being At-Risk",
+                            text: this.$t("ID_TASK_DAYS_BEFORE_AT_RISK"),
                         },
                     });
                     break;
@@ -391,25 +395,25 @@ export default {
             let obj = this.dataCasesByRisk[seriesIndex];
             return `<div class="apexcharts-theme-light">
                   <div class="apexcharts-tooltip-title" style="font-family: Helvetica, Arial, sans-serif; font-size: 12px;">
-                    ${"Number Case"} : ${obj["number_case"]}
+                    ${this.$t("ID_CASE_NUMBER")} : ${obj["number_case"]}
                   </div>
                   <div class="apexcharts-tooltip-series-group apexcharts-active" style="order: 1; display: flex;">
                   <div class="apexcharts-tooltip-text" style="font-family: Helvetica, Arial, sans-serif; font-size: 12px;">
                   <div class="apexcharts-tooltip-y-group">
                     <span class="" style="background-color: #28a745;"></span>
-                    <span class="apexcharts-tooltip-text-y-label">Delegated</span> : <span class="apexcharts-tooltip-text-y-value">${
+                    <span class="apexcharts-tooltip-text-y-label">${this.$t("ID_DELEGATED")}</span> : <span class="apexcharts-tooltip-text-y-value">${
                         obj["delegated"]
                     }</span>
                   </div>
                    <div class="apexcharts-tooltip-y-group">
                     <span class="" style="background-color: #28a745;"></span>
-                    <span class="apexcharts-tooltip-text-y-label">At Risk</span> : <span class="apexcharts-tooltip-text-y-value">${
+                    <span class="apexcharts-tooltip-text-y-label">${this.$t("ID_AT_RISK")}</span> : <span class="apexcharts-tooltip-text-y-value">${
                         obj["at_risk"]
                     }</span>
                   </div>
                    <div class="apexcharts-tooltip-y-group">
                     <span class="" style="background-color: #28a745;"></span>
-                    <span class="apexcharts-tooltip-text-y-label">Due Date</span> : <span class="apexcharts-tooltip-text-y-value">${
+                    <span class="apexcharts-tooltip-text-y-label">${this.$t("ID_CASESLIST_DEL_TASK_DUE_DATE")}</span> : <span class="apexcharts-tooltip-text-y-value">${
                         obj["due_date"]
                     }</span>
                   </div>

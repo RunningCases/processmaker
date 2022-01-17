@@ -283,7 +283,7 @@ def buildMafe(homeDir, targetDir, mode)
         "#{homeDir}/lib/wz_jsgraphics/wz_jsgraphics.js" => "#{jsTargetDir}/wz_jsgraphics.js",
         "#{homeDir}/lib/jQuery/jquery-1.10.2.min.js" => "#{jsTargetDir}/jquery-1.10.2.min.js",
         "#{homeDir}/lib/underscore/underscore-min.js" => "#{jsTargetDir}/underscore-min.js",
-        "#{homeDir}/lib/jQueryUI/jquery-ui-1.10.3.custom.min.js" => "#{jsTargetDir}/jquery-ui-1.10.3.custom.min.js",
+        "#{homeDir}/lib/jQueryUI/jquery-ui.min.js" => "#{jsTargetDir}/jquery-ui.min.js",
         "#{homeDir}/lib/jQueryLayout/jquery.layout.min.js" => "#{jsTargetDir}/jquery.layout.min.js",
         "#{homeDir}/lib/modernizr/modernizr.js" => "#{jsTargetDir}/modernizr.js"
     })
@@ -376,7 +376,7 @@ def getJsIncludeFiles
         "workflow/public_html/lib/js/wz_jsgraphics.js",
         "workflow/public_html/lib/js/jquery-1.10.2.min.js",
         "workflow/public_html/lib/js/underscore-min.js",
-        "workflow/public_html/lib/js/jquery-ui-1.10.3.custom.min.js",
+        "workflow/public_html/lib/js/jquery-ui.min.js",
         "workflow/public_html/lib/js/jquery.layout.min.js",
         "workflow/public_html/lib/js/modernizr.js",
         "workflow/public_html/lib/js/restclient.min.js",

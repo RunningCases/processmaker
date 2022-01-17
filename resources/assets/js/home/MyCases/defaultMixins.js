@@ -1,8 +1,12 @@
+import _ from "lodash";
 import api from "../../api/index";
 export default {
     data() {
         return {
-            random: 1
+            random: 1,
+            defaultColumnsDisabled: [
+                "process_category"
+            ]
         };
     },
     methods: {

@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\BusinessModel\Cases as BusinessModelCases;
 use ProcessMaker\Core\System;
+use ProcessMaker\Model\Application;
+use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
 use ProcessMaker\Model\RbacRoles;
@@ -2491,9 +2493,6 @@ function PMFgetLabelOption ($PROCESS, $DYNAFORM_UID, $FIELD_NAME, $FIELD_SELECTE
 }
 
 /**
- *
- * @method
- *
  * Redirects a case to any step in the current task. In order for the step to
  * be executed, the specified step much exist and if it contains a condition,
  * it must evaluate to true.
@@ -2502,79 +2501,76 @@ function PMFgetLabelOption ($PROCESS, $DYNAFORM_UID, $FIELD_NAME, $FIELD_SELECTE
  * @label PMF Redirect To Step
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFRedirectToStep.28.29
  *
- * @param string(32) | $sApplicationUID | Case ID | The unique ID for a case,
- * @param int | $iDelegation | Delegation index | The delegation index of a case.
- * @param string(32) | $sStepType | Type of Step | The type of step, which can be "DYNAFORM", "INPUT_DOCUMENT" or "OUTPUT_DOCUMENT".
- * @param string(32) | $sStepUid | Step ID | The unique ID for the step.
+ * @param string(32) | $appUid | Case ID | The unique ID for a case,
+ * @param int | $index | Delegation index | The delegation index of a case.
+ * @param string(32) | $stepType | Type of Step | The type of step, which can be "DYNAFORM", "INPUT_DOCUMENT" or "OUTPUT_DOCUMENT".
+ * @param string(32) | $stepUid | Step ID | The unique ID for the step.
  * @return none | $none | None | None
  *
  */
-function PMFRedirectToStep($sApplicationUID, $iDelegation, $sStepType, $sStepUid)
+function PMFRedirectToStep($appUid, $index, $stepType, $stepUid)
 {
+    // Set initial values
+    $index = intval($index);
+    $sessionCase = $_SESSION["APPLICATION"];
+    // Save the session variables
     $g = new G();
-
     $g->sessionVarSave();
-
-    $iDelegation = intval($iDelegation);
-
-    $_SESSION["APPLICATION"] = $sApplicationUID;
-    $_SESSION["INDEX"] = $iDelegation;
-
-    require_once 'classes/model/AppDelegation.php';
-    $oCriteria = new Criteria('workflow');
-    $oCriteria->addSelectColumn(AppDelegationPeer::TAS_UID);
-    $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
-    $oCriteria->add(AppDelegationPeer::DEL_INDEX, $iDelegation);
-    $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
-    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-    $oDataset->next();
-    global $oPMScript;
-    $aRow = $oDataset->getRow();
-    if ($aRow) {
-        require_once 'classes/model/Step.php';
-        $oStep = new Step();
-        $oTheStep = $oStep->loadByType($aRow['TAS_UID'], $sStepType, $sStepUid);
-        $bContinue = true;
-        $oCase = new Cases();
-        $aFields = $oCase->loadCase($sApplicationUID);
-        if ($oTheStep->getStepCondition() != '') {
-            $pmScript = new PMScript();
-            $pmScript->setFields($aFields['APP_DATA']);
-            $pmScript->setScript($oTheStep->getStepCondition());
-            $pmScript->setExecutedOn(PMScript::CONDITION);
-            $bContinue = $pmScript->evaluate();
+    $_SESSION["APPLICATION"] = $appUid;
+    $_SESSION["INDEX"] = $index;
+    // Get the caseNumber
+    $appNumber = Application::getCaseNumber($appUid);
+    // Get thread information
+    $thread = Delegation::getThreadInfo($appNumber, $index);
+    // Review if exist a thread
+    if (!empty($thread)) {
+        global $oPMScript;
+        // Load the data
+        $case = new Cases();
+        // Get the step information
+        $step = new Step();
+        $theStep = $step->loadByType($thread['TAS_UID'], $stepType, $stepUid);
+        // Save data if the case fields loaded in the $oPMScript is related to the same case in execution
+        if ($sessionCase === $appUid && !is_null($oPMScript)) {
+            $fields = [];
+            $fields['APP_DATA'] = $oPMScript->aFields;
+            unset($fields['APP_STATUS']);
+            unset($fields['APP_PROC_STATUS']);
+            unset($fields['APP_PROC_CODE']);
+            unset($fields['APP_PIN']);
+            $case->updateCase($appUid, $fields);
         }
-        if ($bContinue) {
-            switch ($oTheStep->getStepTypeObj()) {
+        $fields = $case->loadCase($appUid);
+        // Review the step condition
+        $continue = true;
+        if (!empty($theStep->getStepCondition())) {
+            $pmScript = new PMScript();
+            $pmScript->setFields($fields['APP_DATA']);
+            $pmScript->setScript($theStep->getStepCondition());
+            $pmScript->setExecutedOn(PMScript::CONDITION);
+            $continue = $pmScript->evaluate();
+        }
+        if ($continue) {
+            switch ($theStep->getStepTypeObj()) {
                 case 'DYNAFORM':
-                    $sAction = 'EDIT';
+                    $action = 'EDIT';
                     break;
                 case 'OUTPUT_DOCUMENT':
-                    $sAction = 'GENERATE';
+                    $action = 'GENERATE';
                     break;
                 case 'INPUT_DOCUMENT':
-                    $sAction = 'ATTACH';
+                    $action = 'ATTACH';
                     break;
                 case 'EXTERNAL':
-                    $sAction = 'EDIT';
+                    $action = 'EDIT';
                     break;
                 case 'MESSAGE':
-                    $sAction = '';
+                    $action = '';
                     break;
-            }
-            // save data
-            if (!is_null($oPMScript)) {
-                $aFields['APP_DATA'] = $oPMScript->aFields;
-                unset($aFields['APP_STATUS']);
-                unset($aFields['APP_PROC_STATUS']);
-                unset($aFields['APP_PROC_CODE']);
-                unset($aFields['APP_PIN']);
-                $oCase->updateCase($sApplicationUID, $aFields);
             }
 
             $g->sessionVarRestore();
-
-            G::header('Location: ' . 'cases_Step?TYPE=' . $sStepType . '&UID=' . $sStepUid . '&POSITION=' . $oTheStep->getStepPosition() . '&ACTION=' . $sAction);
+            G::header('Location: ' . 'cases_Step?TYPE=' . $stepType . '&UID=' . $stepUid . '&POSITION=' . $theStep->getStepPosition() . '&ACTION=' . $action);
             die();
         }
     }
@@ -4212,6 +4208,53 @@ function PMFNewUser(
     ];
     
     return $response;
+}
+
+/**
+ *
+ * @method
+ *
+ * Load the case information
+ *
+ * @name PMFCaseInformation
+ * @label PMF Case Information
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFCaseInformation.28.29
+ *
+ * @param string(32) | $caseUid | Case ID | The case unique identifier, that is string of 32 hexadecimal characters.
+ * @param int | $delIndex = 0 | Delegation index of the case | The delegation index of the case thread task to get information (optional).
+ * @param int | $returnAppData = 0 | Include Application Data | Set as TRUE to get all the case data (optional).
+ * 
+ * @return array | $response | Response
+ * @throws Exception
+ */
+function PMFCaseInformation($caseUid, $delIndex = 0, $returnAppData = false)
+{
+    if (empty($caseUid)) {
+        throw new Exception(G::LoadTranslation("ID_REQUIRED_FIELD") . " caseUid");
+    }
+    $case = new Cases();
+    $result = $case->loadCase($caseUid, $delIndex);
+    // Clean the APPLICATION's columns deprecated or without functionallity
+    unset($result['APP_TITLE']);
+    unset($result['APP_PARENT']);
+    unset($result['APP_PROC_STATUS']);
+    unset($result['APP_PROC_CODE']);
+    unset($result['APP_PARALLEL']);
+    unset($result['APP_PIN']);
+    unset($result['APP_DURATION']);
+    unset($result['APP_DELAY_DURATION']);
+    unset($result['APP_DRIVE_FOLDER_UID']);
+    unset($result['APP_ROUTING_DATA']);
+    // Only if this parameter is true we will to return this value
+    if (!$returnAppData) {
+        unset($result['APP_DATA']);
+    }
+    // Clean the additional columns deprecated or without functionallity
+    unset($result['TITLE']);
+    unset($result['DESCRIPTION']);
+    unset($result['DESCRIPTION']);
+
+    return $result;
 }
 
 //Start - Private functions

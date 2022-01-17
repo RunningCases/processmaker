@@ -3,7 +3,7 @@
     <button-fleft :data="newCase"></button-fleft>
     <div class="p-1 v-flex">
       <h4 class="v-search-title">
-        Task metrics
+        {{ $t("ID_TASK_METRICS") }}
         <span class="vp-padding-r3"> <i class="fas fa-chart-pie"></i></span>
       </h4>
     </div>

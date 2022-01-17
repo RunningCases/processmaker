@@ -78,6 +78,7 @@ class Process extends Model
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param string $proUid
+     * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeProcess($query, $proUid)
@@ -90,6 +91,7 @@ class Process extends Model
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param string $title
+     * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeTitle($query, $title)
@@ -102,6 +104,7 @@ class Process extends Model
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param string $status
+     * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeNoStatus($query, $status = 'DISABLED')
@@ -118,6 +121,19 @@ class Process extends Model
     public function scopeSubProcess($query)
     {
         return $query->where('PRO_SUBPROCESS', '=', 1);
+    }
+
+    /**
+     * Scope a query to include a specific process categoryId
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param int $category
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategoryId($query, $category)
+    {
+        return $query->where('PROCESS.CATEGORY_ID', $category);
     }
 
     /**
@@ -407,14 +423,14 @@ class Process extends Model
      * Get all processes, paged optionally, can be sent a string to filter results by "PRO_TITLE"
      *
      * @param string $text
-     * @param string $category
+     * @param int $catId
      * @param int $offset
      * @param int $limit
      * @param bool $paged
      *
      * @return array
      */
-    public static function getProcessesForHome($text = null, $category = null, $offset = null, $limit = null, $paged = true)
+    public static function getProcessesForHome($text = null, $catId = 0, $offset = null, $limit = null, $paged = true)
     {
         // Get base query
         $query = Process::query()->select(['PRO_ID', 'PRO_TITLE']);
@@ -424,9 +440,9 @@ class Process extends Model
             $query->title($text);
         }
 
-        // Set "PRO_CATEGORY" condition if is sent
-        if (!is_null($category)) {
-            $query->category($category);
+        // Set "CATEGORY_ID" condition if is sent
+        if ($catId) {
+            $query->categoryId($catId);
         }
 
         // Set "PRO_STATUS" condition
@@ -452,6 +468,7 @@ class Process extends Model
      * Return true if process is active, false otherwise.
      * @param int|string $proId
      * @param string $key
+     * 
      * @return bool
      */
     public static function isActive($proId, string $key = 'PRO_ID'): bool

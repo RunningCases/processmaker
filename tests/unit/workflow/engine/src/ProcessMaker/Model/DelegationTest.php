@@ -1154,7 +1154,11 @@ class DelegationTest extends TestCase
      */
     public function it_should_search_and_filter_by_app_title()
     {
-        $delegations = factory(Delegation::class, 1)->states('foreign_keys')->create();
+        $delegations = factory(Delegation::class, 1)->states('foreign_keys')->create([
+            'APP_NUMBER' => function () {
+                return factory(Application::class)->create()->APP_NUMBER;
+            }
+        ]);
         $title = $delegations->last()->DEL_TITLE;
         // We need to commit the records inserted because is needed for the "fulltext" index
         DB::commit();
@@ -3421,7 +3425,7 @@ class DelegationTest extends TestCase
     public function it_get_thread_title()
     {
         $delegation = factory(Delegation::class)->states('foreign_keys')->create();
-        $result = Delegation::getThreadTitle($delegation->TAS_UID, $delegation->APP_NUMBER, $delegation->DEL_INDEX, []);
+        $result = Delegation::getThreadTitle($delegation->TAS_UID, $delegation->APP_NUMBER, $delegation->DEL_PREVIOUS, []);
         $this->assertNotEmpty($result);
     }
 
@@ -3581,6 +3585,19 @@ class DelegationTest extends TestCase
     }
 
     /**
+     * This check the return cases thread title
+     *
+     * @covers \ProcessMaker\Model\Delegation::casesThreadTitle()
+     * @test
+     */
+    public function it_get_cases_thread_title()
+    {
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create();
+        $result = Delegation::casesThreadTitle($delegation->DEL_TITLE);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * Test the scopeParticipatedUser
      *
      * @covers \ProcessMaker\Model\Delegation::scopeParticipatedUser()
@@ -3594,6 +3611,85 @@ class DelegationTest extends TestCase
             'APP_UID' => $application->APP_UID,
         ]);
         $res = $table->joinApplication()->participatedUser($table->USR_ID)->get();
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * Test the scopeInboxMetrics
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeInboxMetrics()
+     * @test
+     */
+    public function it_tests_scope_inbox_metrics()
+    {
+        $application = factory(Application::class)->states('todo')->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $res = $table->inboxMetrics()->get();
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * Test the scopeDraftMetrics
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeDraftMetrics()
+     * @test
+     */
+    public function it_tests_scope_draft_metrics()
+    {
+        $application = factory(Application::class)->states('draft')->create();
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $res = $table->draftMetrics()->get();
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * Test the scopePausedMetrics
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopePausedMetrics()
+     * @test
+     */
+    public function it_tests_scope_paused_metrics()
+    {
+        $application = factory(Application::class)->states('paused')->create();
+        $appDelay = factory(AppDelay::class)->states('paused_foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $table = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_INDEX' => $appDelay->APP_DEL_INDEX,
+        ]);
+        $res = $table->pausedMetrics()->get();
+        $this->assertCount(1, $res);
+    }
+
+    /**
+     * Test the scopeSelfServiceMetrics
+     *
+     * @covers \ProcessMaker\Model\Delegation::scopeSelfServiceMetrics()
+     * @test
+     */
+    public function it_tests_scope_self_service_metrics()
+    {
+        $application = factory(Application::class)->states('paused')->create();
+        $task = factory(Task::class)->create([
+            'TAS_ASSIGN_TYPE' => 'SELF_SERVICE',
+        ]);
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'TAS_ID' => $task->TAS_ID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'USR_ID' => 0,
+        ]);
+        $res = $delegation->selfServiceMetrics()->get();
         $this->assertCount(1, $res);
     }
 }

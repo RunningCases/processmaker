@@ -47,4 +47,22 @@ class DocumentsTest extends TestCase
 
         $this->assertNotEmpty($result);
     }
+
+    /**
+     * This test get files
+     * 
+     * @test
+     * @covers \ProcessMaker\Model\Documents::getFiles()
+     * @covers \ProcessMaker\Model\Documents::scopeDocId()
+     */
+    public function it_should_test_get_files()
+    {
+        $appNote = factory(AppNotes::class)->create();
+        $appDocument = factory(Documents::class)->create([
+            'DOC_ID' => $appNote->NOTE_ID
+        ]);
+        $result = Documents::getFiles($appDocument->DOC_ID);
+
+        $this->assertNotEmpty($result);
+    }
 }

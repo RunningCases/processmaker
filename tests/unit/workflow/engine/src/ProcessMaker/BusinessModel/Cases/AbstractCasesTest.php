@@ -6,6 +6,9 @@ use Exception;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\BusinessModel\Cases\AbstractCases;
+use ProcessMaker\BusinessModel\Cases\Draft;
+use ProcessMaker\BusinessModel\Cases\Paused;
+use ProcessMaker\BusinessModel\Cases\Unassigned;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
@@ -738,6 +741,8 @@ class AbstractCasesTest extends TestCase
         $absCases = new AbstractCases();
         $properties = [];
         $absCases->setProperties($properties);
+        $actual = $absCases->getCategoryId();
+        $this->assertEquals(0, $actual);
         $actual = $absCases->getProcessId();
         $this->assertEquals(0, $actual);
         $actual = $absCases->getTaskId();
@@ -784,6 +789,7 @@ class AbstractCasesTest extends TestCase
      * This check the setter related all the properties
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setProperties()
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setCategoryId()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setProcessId()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setTaskId()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setUserId()
@@ -799,6 +805,7 @@ class AbstractCasesTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setOffset()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::setLimit()
      *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getCategoryId()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getProcessId()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getTaskId()
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getUserId()
@@ -820,6 +827,7 @@ class AbstractCasesTest extends TestCase
         $absCases = new AbstractCases();
         $properties = [
             // Filters that works for all list
+            'category' => rand(),
             'process' => rand(),
             'task' => rand(),
             'user' => rand(),
@@ -836,6 +844,8 @@ class AbstractCasesTest extends TestCase
         ];
         $absCases->setProperties($properties);
         // Tasks - Cases
+        $actual = $absCases->getCategoryId();
+        $this->assertEquals($properties['category'], $actual);
         $actual = $absCases->getProcessId();
         $this->assertEquals($properties['process'], $actual);
         $actual = $absCases->getTaskId();
@@ -888,6 +898,33 @@ class AbstractCasesTest extends TestCase
     }
 
     /**
+     * This check the get task color
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::getTaskColor()
+     * @test
+     */
+    public function it_return_task_color_class()
+    {
+        $absCases = new Draft();
+        $dueDate = date('Y-m-d');
+        // Review on-time
+        $result = $absCases->getTaskColor($dueDate,'DRAFT' ,'2000-01-01');
+        $this->assertNotEmpty($result);
+
+        $absCases = new Paused();
+        $dueDate = date('Y-m-d');
+        // Review on-time
+        $result = $absCases->getTaskColor($dueDate,'PAUSED' ,'2000-01-01');
+        $this->assertNotEmpty($result);
+
+        $absCases = new Unassigned();
+        $dueDate = date('Y-m-d');
+        // Review on-time
+        $result = $absCases->getTaskColor($dueDate,'UNASSIGNED' ,'2000-01-01');
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * This check task color according the due date
      *
      * @covers \ProcessMaker\BusinessModel\Cases\AbstractCases::prepareTaskPending()
@@ -922,6 +959,32 @@ class AbstractCasesTest extends TestCase
         $absCases = new AbstractCases();
         foreach ($taskPending as $thread) {
             $thread['APP_STATUS'] = 'TO_DO';
+            $result = $absCases->threadInformation($thread, true, true);
+            $this->assertNotEmpty($result);
+        }
+        // APP_STATUS = DRAFT
+        foreach ($taskPending as $thread) {
+            $thread['APP_STATUS'] = 'DRAFT';
+            $result = $absCases->threadInformation($thread, true, true);
+            $this->assertNotEmpty($result);
+        }
+        // APP_STATUS = COMPLETED
+        foreach ($taskPending as $thread) {
+            $thread['APP_STATUS'] = 'COMPLETED';
+            $result = $absCases->threadInformation($thread, true, true);
+            $this->assertNotEmpty($result);
+        }
+        // DEL_THREAD_STATUS = PAUSED
+        foreach ($taskPending as $thread) {
+            $thread['APP_STATUS'] = 'TO_DO';
+            $thread['DEL_THREAD_STATUS'] = 'PAUSED';
+            $result = $absCases->threadInformation($thread, true, true);
+            $this->assertNotEmpty($result);
+        }
+        // TAS_ASSIGN_TYPE = SELF_SERVICE
+        foreach ($taskPending as $thread) {
+            $thread['APP_STATUS'] = 'TO_DO';
+            $thread['TAS_ASSIGN_TYPE'] = 'SELF_SERVICE';
             $result = $absCases->threadInformation($thread, true, true);
             $this->assertNotEmpty($result);
         }

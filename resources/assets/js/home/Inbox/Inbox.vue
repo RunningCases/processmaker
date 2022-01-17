@@ -46,15 +46,17 @@
       <div slot="thread_title" slot-scope="props">
         {{ props.row.THREAD_TITLE }}
       </div>
+      <div slot="process_category" slot-scope="props">
+        {{ props.row.PROCESS_CATEGORY }}
+      </div>
       <div slot="process_name" slot-scope="props">
         {{ props.row.PROCESS_NAME }}
       </div>
-
       <div slot="task" slot-scope="props">
         <TaskCell :data="props.row.TASK" />
       </div>
       <div slot="send_by" slot-scope="props">
-        <CurrentUserCell :data="props.row.USER_DATA" />
+          <CurrentUserCell :data="props.row.USER_DATA" />
       </div>
       <div slot="current_user" slot-scope="props">
         {{ props.row.USERNAME_DISPLAY_FORMAT }}
@@ -104,6 +106,14 @@
           {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
+      <div slot="process_category" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_CATEGORY"] }}
+        </span>
+      </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
@@ -149,7 +159,7 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <CurrentUserCell :data="props.item.USER_DATA" />
+            <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueCardView>
@@ -185,6 +195,14 @@
           {{ props["item"]["THREAD_TITLE"] }}
         </span>
       </div>
+      <div slot="process_category" slot-scope="props" class="v-card-text">
+        <span class="v-card-text-dark"
+          >{{ props["headings"][props.column] }} :</span
+        >
+        <span class="v-card-text-light"
+          >{{ props["item"]["PROCESS_CATEGORY"] }}
+        </span>
+      </div>
       <div slot="process_name" slot-scope="props" class="v-card-text">
         <span class="v-card-text-dark"
           >{{ props["headings"][props.column] }} :</span
@@ -230,7 +248,7 @@
           >{{ props["headings"][props.column] }} :</span
         >
         <span class="v-card-text-light">
-          <CurrentUserCell :data="props.item.USER_DATA" />
+            <CurrentUserCell :data="props.item.USER_DATA" />
         </span>
       </div>
     </VueListView>
@@ -327,6 +345,7 @@ export default {
           detail: this.$i18n.t("ID_DETAIL_CASE"),
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
           thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
+          process_category: this.$i18n.t("ID_CATEGORY_PROCESS"),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
@@ -383,7 +402,7 @@ export default {
         buttons: {}
       },
       showEllipsis: false,
-      dataSubtitle: null
+      dataSubtitle: null,
     };
   },
   created() {
@@ -558,6 +577,7 @@ export default {
           CASE_NUMBER: v.APP_NUMBER,
           THREAD_TITLE: v.DEL_TITLE,
           PROCESS_NAME: v.PRO_TITLE,
+          PROCESS_CATEGORY: v.CATEGORY,
           TASK: [
             {
               TITLE: v.TAS_TITLE,
@@ -595,21 +615,32 @@ export default {
     formatUser(data) {
         var dataFormat = [],
             userDataFormat;
-            userDataFormat = utils.userNameDisplayFormat({
-                userName: data.user_tooltip.usr_firstname,
-                firstName: data.user_tooltip.usr_lastname,
-                lastName: data.user_tooltip.usr_username,
-                format: window.config.FORMATS.format || null
-            });
-            dataFormat.push({
-                USERNAME_DISPLAY_FORMAT: userDataFormat,
-                EMAIL: data.user_tooltip.usr_email,
-                POSITION: data.user_tooltip.usr_position,
-                AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
-                    window.config.SYS_URI +
-                    `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
-                UNASSIGNED: userDataFormat !== "" ? true : false
-            });    
+        switch (data.key_name) {
+            case 'user_tooltip':
+                userDataFormat = utils.userNameDisplayFormat({
+                    userName: data.user_tooltip.usr_firstname,
+                    firstName: data.user_tooltip.usr_lastname,
+                    lastName: data.user_tooltip.usr_username,
+                    format: window.config.FORMATS.format || null
+                });
+                dataFormat.push({
+                    USERNAME_DISPLAY_FORMAT: userDataFormat,
+                    EMAIL: data.user_tooltip.usr_email,
+                    POSITION: data.user_tooltip.usr_position,
+                    AVATAR: userDataFormat !== "" ? window.config.SYS_SERVER_AJAX +
+                        window.config.SYS_URI +
+                        `users/users_ViewPhotoGrid?pUID=${data.user_tooltip.usr_id}` : "",
+                    UNASSIGNED: userDataFormat !== "" ? true : false,
+                    SHOW_TOOLTIP: true
+                });
+                break;
+            case 'dummy_task':
+                dataFormat = data.dummy_task.type + ': ' + data.dummy_task.name;
+                break;
+            default:
+                dataFormat = "";
+                break;
+        }
         return dataFormat;
     },
     /**

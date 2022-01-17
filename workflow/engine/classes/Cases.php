@@ -3401,8 +3401,11 @@ class Cases
         $lastFields = $this->executeTriggerFromList($triggersList, $fieldsCase, $stepType, $stepUidObj, $triggerType);
 
         /*----------------------------------********---------------------------------*/
+        $usrUid = empty($_SESSION['USER_LOGGED']) ? '' : $_SESSION['USER_LOGGED'];
         ChangeLog::getChangeLog()
             ->setObjectUid($stepUidObj)
+            ->getUsrIdByUsrUid($usrUid, true)
+            ->getTasIdByTasUid($tasUid, true)
             ->getExecutedAtIdByTriggerType($triggerType);
         /*----------------------------------********---------------------------------*/
 
@@ -7223,7 +7226,14 @@ class Cases
         }
     }
 
-    public function unserializeData($data)
+    /**
+     * Unserialize the case data
+     *
+     * @param string $data
+     *
+     * @return array
+    */
+    public static function unserializeData($data)
     {
         $unserializedData = @unserialize($data);
 

@@ -222,7 +222,7 @@ abstract class Importer
                         foreach ($objectList as $rowObject) {
                             if ($rowObject['name'] === 'PROCESSDEFINITION') {
                                 $onlyDiagram = true;
-                                $this->removeProject($onlyDiagram);
+                                $this->removeProject($onlyDiagram, $objectsToImport);
                             }
                         }
                     } catch (\Exception $e) {
@@ -453,7 +453,14 @@ abstract class Importer
         $project->setDisabled();
     }
 
-    public function removeProject($onlyDiagram = false)
+    /**
+     * Remove the project
+     * 
+     * @param bool $onlyDiagram
+     * @param array $objectsToImport
+     * @return void
+     */
+    public function removeProject($onlyDiagram = false, $objectsToImport = [])
     {
         /* @var $process \Process */
         $processes = new \Processes();
@@ -464,7 +471,7 @@ abstract class Importer
         $process->load($this->metadata["uid"]);
         $this->currentProcessTitle = $process->getProTitle();
         $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
-        $project->remove(true, false, $onlyDiagram);
+        $project->remove(true, false, $onlyDiagram, $objectsToImport);
     }
 
     /**

@@ -6,6 +6,8 @@ use G;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
+use ProcessMaker\Model\Task;
+use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
 
 class Inbox extends AbstractCases
@@ -15,6 +17,7 @@ class Inbox extends AbstractCases
         // Columns view in the cases list
         'APP_DELEGATION.APP_NUMBER', // Case #
         'APP_DELEGATION.DEL_TITLE', // Case Title
+        'PROCESS.CATEGORY_ID', // Category
         'PROCESS.PRO_TITLE', // Process
         'TASK.TAS_TITLE', // Task
         'USERS.USR_USERNAME', // Current UserName
@@ -69,6 +72,10 @@ class Inbox extends AbstractCases
         if (!empty($this->getCaseTitle())) {
             $query->title($this->getCaseTitle());
         }
+        // Specific category
+        if ($this->getCategoryId()) {
+            $query->categoryId($this->getCategoryId());
+        }
         // Specific process
         if ($this->getProcessId()) {
             $query->processId($this->getProcessId());
@@ -81,7 +88,6 @@ class Inbox extends AbstractCases
         if (!empty($this->getCaseUid())) {
             $query->appUid($this->getCaseUid());
         }
-
         // Specific delegate date from
         if (!empty($this->getDelegateFrom())) {
             $query->delegateDateFrom($this->getDelegateFrom());
@@ -90,8 +96,7 @@ class Inbox extends AbstractCases
         if (!empty($this->getDelegateTo())) {
             $query->delegateDateTo($this->getDelegateTo());
         }
-
-        // Specific usrId represented by sendBy. 
+        // Specific usrId represented by sendBy
         if (!empty($this->getSendBy())) {
             $query->sendBy($this->getSendBy());
         }
@@ -113,7 +118,7 @@ class Inbox extends AbstractCases
         // Join with users
         $query->joinUser();
         // Join with task
-        $query->JoinTask();
+        $query->joinTask();
         // Join with application for add the initial scope for TO_DO cases
         $query->inbox($this->getUserId());
         /** Apply filters */
@@ -132,6 +137,9 @@ class Inbox extends AbstractCases
         $results = $query->get();
         // Prepare the result
         $results->transform(function ($item, $key) {
+            // Get the category
+            $category = !empty($item['CATEGORY_ID']) ? ProcessCategory::getCategory($item['CATEGORY_ID']) : '';
+            $item['CATEGORY'] = !empty($category) ? $category : G::LoadTranslation('ID_PROCESS_NONE_CATEGORY');
             // Get priority label
             $priorityLabel = self::PRIORITIES[$item['DEL_PRIORITY']];
             $item['DEL_PRIORITY_LABEL'] = G::LoadTranslation("ID_PRIORITY_{$priorityLabel}");
@@ -147,10 +155,26 @@ class Inbox extends AbstractCases
             $item['DEL_DELEGATE_DATE_LABEL'] = applyMaskDateEnvironment($item['DEL_DELEGATE_DATE']);
             // Get the send by related to the previous index
             $previousThread = Delegation::getThreadInfo($item['APP_NUMBER'], $item['DEL_PREVIOUS']);
-            $userInfo = !empty($previousThread) ? User::getInformation($previousThread['USR_ID']) : [];
+            $userInfo = [];
+            $dummyInfo = [];
+            if (!empty($previousThread)) {
+                // When the task has an user
+                $userInfo = ($previousThread['USR_ID'] !== 0) ? User::getInformation($previousThread['USR_ID']) : [];
+                // When the task does not have users refers to dummy task
+                $taskInfo = ($previousThread['USR_ID'] === 0) ? Task::title($previousThread['TAS_ID']) : [];
+                if (!empty($taskInfo)) {
+                    $dummyInfo = [
+                        'task_id' => $previousThread['TAS_ID'],
+                        'name' => $taskInfo['title'],
+                        'type' => $taskInfo['type']
+                    ];
+                }
+            }
             $result = [];
             $result['del_previous'] = $item['DEL_PREVIOUS'];
+            $result['key_name'] = !empty($userInfo) ? 'user_tooltip' : 'dummy_task';
             $result['user_tooltip'] = $userInfo;
+            $result['dummy_task'] = $dummyInfo;
             $item['SEND_BY_INFO'] = $result;
 
             return $item;
@@ -201,6 +225,11 @@ class Inbox extends AbstractCases
         $query = Delegation::query()->select();
         // Scope that sets the queries for List Inbox
         $query->inbox($this->getUserId());
+        // Check if the category was defined
+        if ($this->getCategoryId()) {
+            // Join with process if the filter with category exist
+            $query->joinProcess();
+        }
         // Apply filters
         $this->filters($query);
         // Return the number of rows
@@ -245,5 +274,17 @@ class Inbox extends AbstractCases
             'tableName' => $tableName,
             'total' => $count
         ];
+    }
+
+    /**
+     * Count how many cases there are in TO_DO
+     *
+     * @return int
+     */
+    public function getCounterMetrics()
+    {
+        $query = Delegation::query()->select();
+        $query->inboxMetrics();
+        return $query->count(['APP_DELEGATION.APP_NUMBER']);
     }
 }

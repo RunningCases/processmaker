@@ -7,8 +7,7 @@ use ProcessMaker\Model\Application;
 use ProcessMaker\Model\AppNotes;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Process;
-use ProcessMaker\Model\Task;
-use ProcessMaker\Model\User;
+use ProcessMaker\Model\ProcessCategory;
 
 class Search extends AbstractCases
 {
@@ -17,6 +16,7 @@ class Search extends AbstractCases
         // Columns view in the cases list
         'APPLICATION.APP_NUMBER', // Case #
         'APPLICATION.APP_TITLE AS DEL_TITLE', // Case Title
+        'PROCESS.CATEGORY_ID', // Category
         'PROCESS.PRO_TITLE', // Process
         'APPLICATION.APP_STATUS',  // Status
         'APPLICATION.APP_CREATE_DATE',  // Case create date
@@ -156,6 +156,9 @@ class Search extends AbstractCases
         $results = $query->get();
         // Prepare the result
         $results->transform(function ($item, $key) {
+            // Get the category
+            $category = !empty($item['CATEGORY_ID']) ? ProcessCategory::getCategory($item['CATEGORY_ID']) : '';
+            $item['CATEGORY'] = !empty($category) ? $category : G::LoadTranslation('ID_PROCESS_NONE_CATEGORY');
             // Apply the date format defined in environment
             $item['APP_CREATE_DATE_LABEL'] = !empty($item['APP_CREATE_DATE']) ? applyMaskDateEnvironment($item['APP_CREATE_DATE']): null;
             $item['APP_FINISH_DATE_LABEL'] = !empty($item['APP_FINISH_DATE']) ? applyMaskDateEnvironment($item['APP_FINISH_DATE']): null;
