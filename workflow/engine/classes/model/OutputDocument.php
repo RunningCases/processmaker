@@ -2,6 +2,7 @@
 
 use Illuminate\Filesystem\Filesystem;
 use ProcessMaker\Core\System;
+use ProcessMaker\PDF\TCPDFHeaderFooter;
 
 class OutputDocument extends BaseOutputDocument
 {
@@ -879,7 +880,7 @@ class OutputDocument extends BaseOutputDocument
         $content = str_replace("margin-left", "text-indent", $content);
 
         // Instance the TCPDF library
-        $pdf = new TCPDF($orientation, PDF_UNIT, $media, true, 'UTF-8', false);
+        $pdf = new TCPDFHeaderFooter($orientation, PDF_UNIT, $media, true, 'UTF-8', false);
 
         // Set document information
         $pdf->SetCreator(PDF_CREATOR);
@@ -896,8 +897,10 @@ class OutputDocument extends BaseOutputDocument
         $margins["bottom"] = ($margins["bottom"] >= 0) ? $margins["bottom"] : PDF_MARGIN_BOTTOM;
 
         // Set margins configuration
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+        $headerOptions = $this->setHeaderOptions($pdf);
+        $footerOptions = $this->setFooterOptions($pdf);
+        $pdf->setPrintHeader($headerOptions);
+        $pdf->setPrintFooter($footerOptions);
         $pdf->SetLeftMargin($margins['left']);
         $pdf->SetTopMargin($margins['top']);
         $pdf->SetRightMargin($margins['right']);
@@ -1361,5 +1364,69 @@ class OutputDocument extends BaseOutputDocument
 
         // Save the CSS file
         file_put_contents(K_PATH_FONTS . 'fonts.css', $css);
+    }
+    
+    /**
+     * Set and build if header options exist.
+     * @param TCPDFHeaderFooter $pdf
+     * @return bool
+     */
+    private function setHeaderOptions(TCPDFHeaderFooter $pdf): bool
+    {
+        if (empty($this->out_doc_header)) {
+            return false;
+        }
+        $header = json_decode($this->out_doc_header);
+
+        $struct = $pdf->getHeaderStruct();
+
+        $struct->setLogo($header->logo);
+        $struct->setLogoWidth($header->logoWidth);
+        $struct->setLogoPositionX($header->logoPositionX);
+        $struct->setLogoPositionY($header->logoPositionY);
+
+        $struct->setTitle($header->title);
+        $struct->setTitleFontSize($header->titleFontSize);
+        $struct->setTitleFontPositionX($header->titleFontPositionX);
+        $struct->setTitleFontPositionY($header->titleFontPositionY);
+
+        $struct->setPageNumber($header->pageNumber);
+        $struct->setPageNumberTitle($header->pageNumberTitle);
+        $struct->setPageNumberTotal($header->pageNumberTotal);
+        $struct->setPageNumberPositionX($header->pageNumberPositionX);
+        $struct->setPageNumberPositionY($header->pageNumberPositionY);
+        return true;
+    }
+
+    /**
+     * Set and build if footer options exist.
+     * @param TCPDFHeaderFooter $pdf
+     * @return bool
+     */
+    private function setFooterOptions(TCPDFHeaderFooter $pdf): bool
+    {
+        if (empty($this->out_doc_footer)) {
+            return false;
+        }
+        $footer = json_decode($this->out_doc_footer);
+
+        $struct = $pdf->getFooterStruct();
+
+        $struct->setLogo($footer->logo);
+        $struct->setLogoWidth($footer->logoWidth);
+        $struct->setLogoPositionX($footer->logoPositionX);
+        $struct->setLogoPositionY($footer->logoPositionY);
+
+        $struct->setTitle($footer->title);
+        $struct->setTitleFontSize($footer->titleFontSize);
+        $struct->setTitleFontPositionX($footer->titleFontPositionX);
+        $struct->setTitleFontPositionY($footer->titleFontPositionY);
+
+        $struct->setPageNumber($footer->pageNumber);
+        $struct->setPageNumberTitle($footer->pageNumberTitle);
+        $struct->setPageNumberTotal($footer->pageNumberTotal);
+        $struct->setPageNumberPositionX($footer->pageNumberPositionX);
+        $struct->setPageNumberPositionY($footer->pageNumberPositionY);
+        return true;
     }
 }
