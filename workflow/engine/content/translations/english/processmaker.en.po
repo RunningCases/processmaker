@@ -6102,6 +6102,12 @@ msgid "Delayed"
 msgstr "Delayed"
 
 # TRANSLATION
+# LABEL/ID_DELEGATED
+#: LABEL/ID_DELEGATED
+msgid "Delegated"
+msgstr "Delegated"
+
+# TRANSLATION
 # LABEL/ID_DELEGATE_DATE_FROM
 #: LABEL/ID_DELEGATE_DATE_FROM
 msgid "Date from"

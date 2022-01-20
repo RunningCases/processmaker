@@ -198,6 +198,9 @@ class Users extends BaseUsers
                 if (empty($aFields['USR_DEFAULT_LANG'])) {
                     $aFields['USR_DEFAULT_LANG'] = 'en';
                 }
+                //sometimes the USR_DEFAULT_LANG value is made up, it is formatted in order to find the value.
+                $explode = explode('-', $aFields['USR_DEFAULT_LANG']);
+                $aFields['USR_DEFAULT_LANG'] = strtolower($explode[0]);
                 $translations = new Language();
                 $translation  = $translations->loadByCode($aFields['USR_DEFAULT_LANG']);
                 $aFields['USR_DEFAULT_LANG_NAME'] = $translation['LANGUAGE_NAME'];

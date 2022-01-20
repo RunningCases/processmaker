@@ -4314,7 +4314,7 @@
         <column name="VAR_LABEL" type="VARCHAR" size="255" default=""/>
         <column name="VAR_DBCONNECTION" type="VARCHAR" size="32"/>
         <column name="VAR_SQL" type="LONGVARCHAR"/>
-        <column name="VAR_NULL" type="TINYINT" size="32" default="0"/>
+        <column name="VAR_NULL" type="TINYINT" default="0"/>
         <column name="VAR_DEFAULT" type="VARCHAR" size="32" default=""/>
         <column name="VAR_ACCEPTED_VALUES" type="LONGVARCHAR"/>
         <column name="INP_DOC_UID" type="VARCHAR" size="32" default=""/>
@@ -6049,10 +6049,10 @@
         <column name="id" type="BIGINT" size="20" required="true" autoIncrement="true" primaryKey="true"/>
         <column name="queue" type="VARCHAR" size="255" required="true"/>
         <column name="payload" type="LONGVARCHAR" required="true"/>
-        <column name="attempts" type="TINYINT" size="3" required="true"/>
-        <column name="reserved_at" type="BIGINT" size="10" required="false"/>
-        <column name="available_at" type="BIGINT" size="10" required="true"/>
-        <column name="created_at" type="BIGINT" size="10" required="true"/>
+        <column name="attempts" type="TINYINT" required="true"/>
+        <column name="reserved_at" type="BIGINT" size="20" required="false"/>
+        <column name="available_at" type="BIGINT" size="20" required="true"/>
+        <column name="created_at" type="BIGINT" size="20" required="true"/>
         <index name="jobs_queue_index">
             <index-column name="queue"/>
         </index>
@@ -6086,9 +6086,9 @@
         <column name="body" type="VARCHAR"  size="255" required="false"/>
         <column name="type" type="VARCHAR"  size="255" required="false"/>
         <column name="category" type="VARCHAR"  size="255" required="false"/>
-        <column name="system" type="TINYINT"  size="3" required="false"/>
+        <column name="system" type="TINYINT" required="false"/>
         <column name="timezone" type="VARCHAR"  size="255" required="false"/>
-        <column name="enable" type="TINYINT"  size="3" required="false"/>
+        <column name="enable" type="TINYINT" required="false"/>
         <column name="creation_date" type="TIMESTAMP" required="false"/>
         <column name="last_update" type="TIMESTAMP" required="false"/>
     </table>
