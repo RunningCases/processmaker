@@ -832,6 +832,16 @@ class WorkspaceTools
             $description = $database->executeQuery($database->generateDescTableSQL($table));
             $oldSchema[$table] = [];
             foreach ($description as $field) {
+                $type = $field['Type'];
+                if ($type === "int") {
+                    $field['Type'] = $type . "(11)";
+                }
+                if ($type === "tinyint") {
+                    $field['Type'] = $type . "(4)";
+                }
+                if ($type === "bigint") {
+                    $field['Type'] = $type . "(20)";
+                }
                 $oldSchema[$table][$field['Field']]['Field'] = $field['Field'];
                 $oldSchema[$table][$field['Field']]['Type'] = $field['Type'];
                 $oldSchema[$table][$field['Field']]['Null'] = $field['Null'];
