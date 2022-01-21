@@ -19,11 +19,12 @@ export default {
     pageUri: String,
   },
   mounted() {
-    this.height = window.innerHeight - this.diffHeight;
+    this.height = `${window.innerHeight - this.diffHeight}px`;
+    window.addEventListener('resize', this.autoResizeFrame);
   },
   data() {
     return {
-      height: "100%",
+      height: "0px",
       width: "100%",
       diffHeight: 10
     };
@@ -31,6 +32,11 @@ export default {
   methods: {
     classBtn(cls) {
       return "btn v-btn-request " + cls;
+    },
+    autoResizeFrame(event) {
+      event.preventDefault();
+      this.height = `${window.innerHeight - this.diffHeight}px`;
+      event.stopPropagation();
     },
   },
 };
