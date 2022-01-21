@@ -408,17 +408,19 @@ class Bpmn extends Handler
             $project->delete();
         }
 
-        $process = new Processes();
-        $repTable = $process->getReportTables($this->getUid());
-        $rows = [];
-        foreach ($repTable as $table) {
-            array_push($rows, ["id" => $table["ADD_TAB_UID"], "type" => ""]);
-        }
-        if (!empty($rows)) {
-            $httpData = (object)[];
-            $httpData->rows = json_encode($rows);
-            $repTable = new pmTablesProxy();
-            $repTable->delete($httpData);
+        if (!$force) {
+            $process = new Processes();
+            $repTable = $process->getReportTables($this->getUid());
+            $rows = [];
+            foreach ($repTable as $table) {
+                array_push($rows, ["id" => $table["ADD_TAB_UID"], "type" => ""]);
+            }
+            if (!empty($rows)) {
+                $httpData = (object)[];
+                $httpData->rows = json_encode($rows);
+                $repTable = new pmTablesProxy();
+                $repTable->delete($httpData);
+            }
         }
 
         self::log("Remove Project Success!");
@@ -1689,5 +1691,4 @@ class Bpmn extends Handler
             throw $e;
         }
     }
-
 }

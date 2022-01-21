@@ -488,11 +488,11 @@
                     gridText: JSON.stringify(gridText),
                     signInPolicyForLDAP: row.AUTH_SOURCE_SIGNIN_POLICY_FOR_LDAP,
                     inactiveUsers: row.AUTH_SOURCE_RETIRED_OU,
-                    role: row.USR_ROLE,
-                    groupIdentifier: row.AUTH_SOURCE_IDENTIFIER_FOR_USER_GROUP,
-                    userClassIdentifier: row.AUTH_SOURCE_IDENTIFIER_FOR_USER_CLASS,
-                    groupClassIdentifier: row.GROUP_CLASS_IDENTIFIER,
-                    departmentClassIdentifier: row.DEPARTMENT_CLASS_IDENTIFIER
+                    role: row.USR_ROLE || "",
+                    groupIdentifier: row.AUTH_SOURCE_IDENTIFIER_FOR_USER_GROUP || "",
+                    userClassIdentifier: row.AUTH_SOURCE_IDENTIFIER_FOR_USER_CLASS || "",
+                    groupClassIdentifier: row.GROUP_CLASS_IDENTIFIER || "",
+                    departmentClassIdentifier: row.DEPARTMENT_CLASS_IDENTIFIER || ""
                 };
                 return obj;
             },
