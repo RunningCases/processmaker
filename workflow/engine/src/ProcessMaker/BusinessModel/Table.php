@@ -379,7 +379,9 @@ class Table
         }
         $pmTable->build();
         $buildResult = ob_get_contents();
-        ob_end_clean();
+        if (ob_get_contents()) {
+            ob_end_clean();
+        }
         unset($buildResult);
 
         // Updating additional table struture information
@@ -586,7 +588,9 @@ class Table
 
         $pmTable->build();
         $buildResult = ob_get_contents();
-        ob_end_clean();
+        if (ob_get_contents()) {
+            ob_end_clean();
+        }
         unset($buildResult);
 
         $addTabData = [
