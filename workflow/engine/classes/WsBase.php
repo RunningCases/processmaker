@@ -1846,7 +1846,9 @@ class WsBase
                     ob_start();
                     print_r($variables);
                     $cdata = ob_get_contents();
-                    ob_end_clean();
+                    if (ob_get_contents()) {
+                        ob_end_clean();
+                    }
                     $up_case = $oCase->updateCase($caseId, $oldFields);
 
                     $result = new WsResponse(

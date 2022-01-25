@@ -954,7 +954,9 @@ class pmTablesProxy extends HttpProxyController
         }
 
         //ob_end_clean is used to close the ob_start opening at the beginning of this method.
-        ob_end_clean();
+        if (ob_get_contents()) {
+            ob_end_clean();
+        }
         return $result;
     }
 
