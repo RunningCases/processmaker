@@ -454,34 +454,34 @@ class InputDocument
     /**
      * Get data of Cases InputDocument
      *
-     * @param string $applicationUid
+     * @param string $appUid
      * @param string $userUid
      * @param string $inputDocumentUid
      *
      * @return array Return an array with data of an InputDocument
      * @throws Exception
      */
-    public function getCasesInputDocument($applicationUid, $userUid, $inputDocumentUid)
+    public function getCasesInputDocument($appUid, $userUid, $inputDocumentUid)
     {
         try {
-            $sApplicationUID = $applicationUid;
-            $sUserUID = $userUid;
+            $appUid = $applicationUid;
 
-            $oCase = new Cases();
-            $fields = $oCase->loadCase( $sApplicationUID );
-            $sProcessUID = $fields['PRO_UID'];
-            $sTaskUID = '';
-            $oCaseRest = new BusinessModelCases();
-            $oCaseRest->getAllUploadedDocumentsCriteria( $sProcessUID, $sApplicationUID, $sTaskUID, $sUserUID );
-            $result = array ();
+            $case = new Cases();
+            $fields = $case->loadCase($appUid);
+            $proUid = $fields['PRO_UID'];
+            $taskUid = '';
+            $caseRest = new BusinessModelCases();
+            $caseRest->getAllUploadedDocumentsCriteria($proUid, $appUid, $taskUid, $userUid);
+            $result = [];
             global $_DBArray;
             $flagInputDocument = false;
 
             foreach ($_DBArray['inputDocuments'] as $key => $row) {
-                if (isset( $row['DOC_VERSION'] )) {
-                    $docrow = array ();
+                if (isset($row['DOC_VERSION'])) {
+                    $docrow = [];
                     $docrow['app_doc_uid'] = $row['APP_DOC_UID'];
                     $docrow['app_doc_filename'] = $row['APP_DOC_FILENAME'];
+                    $docrow['app_doc_comment'] = $row['APP_DOC_COMMENT'];
                     $docrow['doc_uid'] = $row['DOC_UID'];
                     $docrow['app_doc_version'] = $row['DOC_VERSION'];
                     $docrow['app_doc_create_date'] = $row['CREATE_DATE'];
@@ -506,11 +506,10 @@ class InputDocument
             }
 
             if (!$flagInputDocument) {
-                throw new Exception(G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
+                throw new Exception(G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", [$inputDocumentUid]));
             }
 
-            $oResponse = json_decode(json_encode($result), false);
-            return $oResponse;
+            return json_decode(json_encode($result), false);
         } catch (Exception $e) {
             throw $e;
         }
