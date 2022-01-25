@@ -52998,8 +52998,8 @@ msgstr "ProcessMaker plugins"
 # TRANSLATION
 # LABEL/ID_TASK_SCHEDULER_PM_PLUGINS_DESC
 #: LABEL/ID_TASK_SCHEDULER_PM_PLUGINS_DESC
-msgid "Custom plugins execution"
-msgstr "Custom plugins execution"
+msgid "ProcessMaker plugins"
+msgstr "ProcessMaker plugins"
 
 # TRANSLATION
 # LABEL/ID_TASK_SCHEDULER_CASE_EMAILS

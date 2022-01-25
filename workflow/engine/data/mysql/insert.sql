@@ -61346,7 +61346,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_TASK_SCHEDULER_LDAP_DESC','en','Synchronize advance LDAP attributes from their settings','2014-01-15') ,
 ( 'LABEL','ID_TASK_SCHEDULER_PLUGINS','en','Plugins','2014-01-15') ,
 ( 'LABEL','ID_TASK_SCHEDULER_PM_PLUGINS','en','ProcessMaker plugins','2014-01-15') ,
-( 'LABEL','ID_TASK_SCHEDULER_PM_PLUGINS_DESC','en','Custom plugins execution','2014-01-15') ,
+( 'LABEL','ID_TASK_SCHEDULER_PM_PLUGINS_DESC','en','ProcessMaker plugins','2014-01-15') ,
 ( 'LABEL','ID_TASK_SCHEDULER_PM_SYNC','en','ProcessMaker sync','2014-01-15') ,
 ( 'LABEL','ID_TASK_SCHEDULER_PM_EVENTS','en','ProcessMaker events','2014-01-15') ,
 ( 'LABEL','ID_TASK_SCHEDULER_PM_SCHEDULER','en','ProcessMaker scheduler','2014-01-15') ,
