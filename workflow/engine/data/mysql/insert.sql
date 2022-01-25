@@ -61131,7 +61131,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SITE','en','Site','2014-01-15') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
-( 'LABEL','ID_SITE_CREATING','en','site creating...','2014-01-15') ,
+( 'LABEL','ID_SITE_CREATING','en','Creating site...','2022-01-25') ,
 ( 'LABEL','ID_SIZE','en','Size','2014-01-15') ,
 ( 'LABEL','ID_SIZE_IN_BYTES','en','Size in bytes','2014-01-15') ,
 ( 'LABEL','ID_SIZE_VERY_LARGE_PERMITTED','en','The file is too large . Please upload a smaller file.','2014-10-08') ,
@@ -61920,7 +61920,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','NEW_SITE_NOT_AVAILABLE','en','Workspace already exists, please choose a different name.','2014-10-30') ,
 ( 'LABEL','NEW_SITE_SUCCESS','en','Your new site was successfully created with name:','2014-01-15') ,
 ( 'LABEL','NEW_SITE_SUCCESS_CONFIRM','en','Do you want open the new site?','2014-01-15') ,
-( 'LABEL','NEW_SITE_SUCCESS_CONFIRMNOTE','en','Note.- If you open the new site your current session will be closed.','2014-01-15') ,
+( 'LABEL','NEW_SITE_SUCCESS_CONFIRMNOTE','en','Note.- If you open the new site, your current session will be closed.','2022-01-25') ,
 ( 'LABEL','OPEN_NEW_WS','en','Open new site','2014-01-15') ,
 ( 'LABEL','OUTGOING_PORT_DEFAULT','en','Outgoing Port (default 25)','2018-11-26') ,
 ( 'LABEL','OUTPUT_CREATE','en','Output document has been created successfully','2014-01-15') ,

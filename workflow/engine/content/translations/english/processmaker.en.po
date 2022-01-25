@@ -25202,8 +25202,8 @@ msgstr "Site"
 # TRANSLATION
 # LABEL/ID_SITE_CREATING
 #: LABEL/ID_SITE_CREATING
-msgid "site creating..."
-msgstr "site creating..."
+msgid "Creating site..."
+msgstr "Creating site..."
 
 # TRANSLATION
 # LABEL/ID_SIZE
@@ -29558,8 +29558,8 @@ msgstr "Do you want open the new site?"
 # TRANSLATION
 # LABEL/NEW_SITE_SUCCESS_CONFIRMNOTE
 #: LABEL/NEW_SITE_SUCCESS_CONFIRMNOTE
-msgid "Note.- If you open the new site your current session will be closed."
-msgstr "Note.- If you open the new site your current session will be closed."
+msgid "Note.- If you open the new site, your current session will be closed."
+msgstr "Note.- If you open the new site, your current session will be closed."
 
 # TRANSLATION
 # LABEL/OPEN_NEW_WS
