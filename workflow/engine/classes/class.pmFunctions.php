@@ -3201,16 +3201,16 @@ function PMFUnCancelCase($caseUID, $userUID)
  * @name PMFDynaFormFields
  * @label PMF DynaForm Fields
  * @param string | $dynUid | Dynaform ID | Id of the dynaform
- * @param string | $appUid | Case ID | Id of the case
- * @param int | $delIndex | Delegation index | Delegation index for case
+ * @param string | $appUid = '' | Case ID | Id of the case
+ * @param int | $delIndex = 0| Delegation index | Delegation index for case
  * @return array | $fields | List of fields | Return a list of fields
  */
-function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
+function PMFDynaFormFields($dynUid, $appUid = '', $delIndex = 0)
 {
-    $fields = array();
-    $data = array();
+    $fields = [];
+    $data = [];
 
-    if ($appUid !== false) {
+    if (!empty($appUid)) {
         if ($delIndex < 0) {
             throw new Exception(G::LoadTranslation('ID_INVALID_DELEGATION_INDEX_FOR_CASE') . "'" . $appUid . "'.");
         }
@@ -3252,6 +3252,7 @@ function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
             $fields[] = $value;
         }
     }
+
     return $fields;
 }
 
