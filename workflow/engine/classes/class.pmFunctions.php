@@ -1159,10 +1159,11 @@ function WSDerivateCase ($caseId, $delIndex)
  * @param string(32) | $value1 | Value of the first variable | The value of the first variable to be sent to the created case.
  * @param string(32) | $name2 | Name of the second variable | The name of the second variable to be sent to the created case.
  * @param string(32) | $value2 | Value of the second variable | The value of the second variable to be sent to the created case.
+ * @param string(32) | $taskId | Task ID | The unique ID for the task
  * @return array | $fields | WS Response Associative Array | A WS Response associative array.
  *
  */
-function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $value2)
+function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $value2, $taskId)
 {
     $client = WSOpen();
 
@@ -1176,14 +1177,17 @@ function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $va
     $v2->name = $name2;
     $v2->value = $value2;
 
-    $variables = array ($v1,$v2
-    );
+    $variables = [$v1,$v2];
 
-    $params = array ("sessionId" => $sessionId,"processId" => $processId,"userId" => $userId,"variables" => $variables
-    );
+    $params = [
+        "sessionId" => $sessionId,
+        "processId" => $processId,
+        "taskId" => $taskId,
+        "userId" => $userId,
+        "variables" => $variables
+    ];
 
-    $result = $client->__soapCall( "NewCaseImpersonate", array ($params
-    ) );
+    $result = $client->__soapCall("NewCaseImpersonate", [$params]);
 
     $fields["status_code"] = $result->status_code;
     $fields["message"] = $result->message;
