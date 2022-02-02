@@ -692,7 +692,7 @@ class EmailServer
     {
         try {
             if ($this->checkIfIsDefault($emailServerUid)) {
-                throw new Exception(G::LoadTranslation("ID_EMAIL_SERVER_IS_DEFAULT", array($fieldNameForException, $emailServerUid)));
+                throw new Exception(G::LoadTranslation("ID_EMAIL_SERVER_IS_DEFAULT"));
             }
         } catch (Exception $e) {
             throw $e;

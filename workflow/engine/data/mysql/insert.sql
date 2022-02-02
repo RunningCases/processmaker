@@ -58105,7 +58105,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EMAIL_SERVER_EDIT','en','Edit Email Server','2014-12-24') ,
 ( 'LABEL','ID_EMAIL_SERVER_FROM_MAIL_EMPTY','en','The email has not been sent because configuration email in the Email Server Settings (admin/settings/email) is empty. Please fill this information.','2016-03-13') ,
 ( 'LABEL','ID_EMAIL_SERVER_INSERT_DATA','en','Insert data...','2014-12-24') ,
-( 'LABEL','ID_EMAIL_SERVER_IS_DEFAULT','en','The email server with {0}: {1} is default.','2014-12-24') ,
+( 'LABEL','ID_EMAIL_SERVER_IS_DEFAULT','en','The email server can''t be deleted as it is marked as default.','2022-02-02') ,
 ( 'LABEL','ID_EMAIL_SERVER_NEW','en','New Email Server','2014-12-24') ,
 ( 'LABEL','ID_EMAIL_SERVER_PORT','en','Port','2014-12-24') ,
 ( 'LABEL','ID_EMAIL_SERVER_RESULT_TESTING','en','Result Testing Email Server','2014-12-24') ,

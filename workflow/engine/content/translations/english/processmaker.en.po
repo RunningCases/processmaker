@@ -7598,8 +7598,8 @@ msgstr "Insert data..."
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_IS_DEFAULT
 #: LABEL/ID_EMAIL_SERVER_IS_DEFAULT
-msgid "The email server with {0}: {1} is default."
-msgstr "The email server with {0}: {1} is default."
+msgid "The email server can't be deleted as it is marked as default."
+msgstr "The email server can't be deleted as it is marked as default."
 
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_NEW
