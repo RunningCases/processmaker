@@ -2923,7 +2923,7 @@ class Processes
             foreach ($aStepSupervisor as $key => $row) {
                 $oStepSupervisor = new StepSupervisor();
                 if ($oStepSupervisor->Exists($row['STEP_UID'])) {
-                    $oStepSupervisor->update($row['STEP_UID']);
+                    $oStepSupervisor->update($row);
                 } else {
                     $oStepSupervisor->create($row);
                 }
