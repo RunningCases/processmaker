@@ -547,7 +547,7 @@ class TaskTest extends TestCase
             //Gets the result
             $printing = ob_get_clean();
             //Asserts the result is printing that there is no exisiting records to continue a case in the determined date
-            $this->assertRegExp('/No existing records to continue a case, on date "' . $date . '/', $printing);
+            $this->assertRegExp('/There are no records to start new cases, on date "' . $date . '/', $printing);
         }
         //assert asynchronous for job process
         if ($asynchronous === true) {

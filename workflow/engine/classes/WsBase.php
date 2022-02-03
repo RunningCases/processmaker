@@ -988,7 +988,7 @@ class WsBase
                 G::replaceDataGridField(file_get_contents($fileTemplate), $fieldsCase, false),
                 $cc,
                 $bcc,
-                '',
+                $template,
                 $attachment,
                 'pending',
                 ($showMessage) ? 1 : 0,
@@ -1846,7 +1846,9 @@ class WsBase
                     ob_start();
                     print_r($variables);
                     $cdata = ob_get_contents();
-                    ob_end_clean();
+                    if (ob_get_contents()) {
+                        ob_end_clean();
+                    }
                     $up_case = $oCase->updateCase($caseId, $oldFields);
 
                     $result = new WsResponse(

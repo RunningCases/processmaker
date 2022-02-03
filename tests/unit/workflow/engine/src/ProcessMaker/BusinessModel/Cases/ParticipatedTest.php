@@ -10,7 +10,7 @@ use ProcessMaker\Model\Delegation;
 use Tests\TestCase;
 
 /**
- * Class InboxTest
+ * Class ParticipatedTest
  *
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Participated
  */
@@ -56,6 +56,27 @@ class ParticipatedTest extends TestCase
 
     /**
      * Create participated cases factories when the case is COMPLETED
+     *
+     * @param string
+     *
+     * @return array
+     */
+    public function createParticipatedDraft()
+    {
+        $application = factory(Application::class)->states('draft')->create();
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 1,
+            'DEL_LAST_INDEX' => 1,
+        ]);
+
+        return $delegation;
+    }
+
+    /**
+     * Create participated cases factories when the case is CANCELED
      *
      * @param string
      *
@@ -208,6 +229,38 @@ class ParticipatedTest extends TestCase
     }
 
     /**
+     * It tests the getData the specific filter setCategoryId
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCategoryId()
+     * @test
+     */
+    public function it_filter_by_category()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the category
+        $participated->setCategoryId(3000);
+        // Get the data
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertEmpty($result);
+    }
+
+    /**
      * It tests the getData the specific filter setProcessId
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
@@ -233,6 +286,67 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases['USR_ID']);
         // Set the process
         $participated->setProcessId($cases['PRO_ID']);
+        // Get the data
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It tests the getData the specific filter setTaskId
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setFilterCases()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserUid()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setUserId()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setProcessId()
+     * @test
+     */
+    public function it_filter_by_task()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the task
+        $participated->setTaskId($cases['TAS_ID']);
+        // Get the data
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It tests the getData the specific filter setCaseNumber
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setCaseNumber()
+     * @test
+     */
+    public function it_filter_by_specific_case()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipated();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the filter
+        $participated->setFilterCases('STARTED');
+        // Set the user UID
+        $participated->setUserUid($cases['USR_UID']);
+        // Set the user ID
+        $participated->setUserId($cases['USR_ID']);
+        // Set the case numbers
+        $participated->setCaseNumber($cases['APP_NUMBER']);
         // Get the data
         $result = $participated->getData();
         // Asserts with the result
@@ -443,7 +557,7 @@ class ParticipatedTest extends TestCase
      * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
      * @test
      */
-    public function it_get_status_in_progress()
+    public function it_get_status_in_progress_todo()
     {
         // Create factories related to the participated cases
         $cases = $this->createParticipated();
@@ -455,6 +569,60 @@ class ParticipatedTest extends TestCase
         $participated->setUserId($cases->USR_ID);
         // Set participated status
         $participated->setParticipatedStatus('IN_PROGRESS');
+        // Get the data
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It tests the specific filter setParticipatedStatus = IN_PROGRESS
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
+     * @test
+     */
+    public function it_get_status_in_started_and_completed()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipatedCompleted();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the user UID
+        $participated->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('STARTED');
+        // Get the data
+        $result = $participated->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * It tests the specific filter setParticipatedStatus = IN_PROGRESS
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Participated::setParticipatedStatus()
+     * @test
+     */
+    public function it_get_status_started_and_draft()
+    {
+        // Create factories related to the participated cases
+        $cases = $this->createParticipatedDraft();
+        // Create new Participated object
+        $participated = new Participated();
+        // Set the user UID
+        $participated->setUserUid($cases->USR_UID);
+        // Set the user ID
+        $participated->setUserId($cases->USR_ID);
+        // Set participated status
+        $participated->setParticipatedStatus('STARTED');
         // Get the data
         $result = $participated->getData();
         // Asserts with the result

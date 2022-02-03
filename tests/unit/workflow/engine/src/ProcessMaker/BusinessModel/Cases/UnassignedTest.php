@@ -22,6 +22,8 @@ use ProcessMaker\Model\User;
 use Tests\TestCase;
 
 /**
+ * Class UnassignedTest
+ * 
  * @coversDefaultClass \ProcessMaker\BusinessModel\Cases\Unassigned
  */
 class UnassignedTest extends TestCase
@@ -79,6 +81,13 @@ class UnassignedTest extends TestCase
                 'TU_RELATION' => $relation, //Related to the user
                 'TU_TYPE' => 1
             ]);
+            //Create the previous delegation before self-service
+            $delegation = factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'CLOSED',
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
+            ]);
             //Create the register in delegation relate to self-service
             $delegation = factory(Delegation::class)->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
@@ -86,6 +95,7 @@ class UnassignedTest extends TestCase
                 'PRO_ID' => $process->PRO_ID,
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'USR_ID' => 0,
+                'DEL_PREVIOUS' => $delegation->DEL_INDEX,
                 'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
         }
@@ -143,6 +153,13 @@ class UnassignedTest extends TestCase
                 'ASSIGNEE_ID' => ($userAssignee) ? $user->USR_ID : $group->GRP_ID,
                 'ASSIGNEE_TYPE' => $relation
             ]);
+            //Create the previous delegation before self-service
+            $delegation = factory(Delegation::class)->create([
+                'APP_NUMBER' => $application->APP_NUMBER,
+                'PRO_ID' => $process->PRO_ID,
+                'DEL_THREAD_STATUS' => 'CLOSED',
+                'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
+            ]);
             //Create the register in delegation relate to self-service
             $delegation = factory(Delegation::class)->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
@@ -151,6 +168,7 @@ class UnassignedTest extends TestCase
                 'PRO_ID' => $process->PRO_ID,
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'USR_ID' => 0,
+                'DEL_PREVIOUS' => $delegation->DEL_INDEX,
                 'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
         }
@@ -378,7 +396,30 @@ class UnassignedTest extends TestCase
     }
 
     /**
-     * This ensures get data from self-service-user-assigned with filter setRangeCasesFromTo
+     * This ensures get data from self-service-user-assigned with filter setCategoryId
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::filters()
+     * @test
+     */
+    public function it_filter_by_category()
+    {
+        // Create factories related to the unassigned cases
+        $cases = $this->createSelfServiceUserOrGroup();
+        // Create new object
+        $unassigned = new Unassigned();
+        // Apply filters
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+        $unassigned->setCategoryId(2000);
+        // Call to getData method
+        $res = $unassigned->getData();
+        // This assert that the expected numbers of results are returned
+        $this->assertEmpty($res);
+    }
+
+    /**
+     * This ensures get data from self-service-user-assigned with filter setRangeCasesFromTo, setCasesNumbers, setCaseUid
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::getData()
      * @covers \ProcessMaker\BusinessModel\Cases\Unassigned::filters()
@@ -390,11 +431,29 @@ class UnassignedTest extends TestCase
         $cases = $this->createSelfServiceUserOrGroup();
         // Create new object
         $unassigned = new Unassigned();
-        // Apply filters
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+        $unassigned->setCasesNumbers([$cases['delegation']->APP_NUMBER]);
+        $unassigned->setRangeCasesFromTo([]);
+        // Create new object
+        $unassigned = new Unassigned();
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+        $rangeOfCases = $cases['delegation']->APP_NUMBER . "-" . $cases['delegation']->APP_NUMBER;
+        $unassigned->setCasesNumbers([]);
+        $unassigned->setRangeCasesFromTo([$rangeOfCases]);
+        // Create new object
+        $unassigned = new Unassigned();
         $unassigned->setUserUid($cases['taskUser']->USR_UID);
         $unassigned->setUserId($cases['delegation']->USR_ID);
         $rangeOfCases = $cases['delegation']->APP_NUMBER . "-" . $cases['delegation']->APP_NUMBER;
         $unassigned->setRangeCasesFromTo([$rangeOfCases]);
+        $unassigned->setCasesNumbers([$cases['delegation']->APP_NUMBER]);
+        // Create new object
+        $unassigned = new Unassigned();
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $unassigned->setUserId($cases['delegation']->USR_ID);
+        $unassigned->setCaseUid($cases['delegation']->APP_UID);
         // Call to getData method
         $res = $unassigned->getData();
         // This assert that the expected numbers of results are returned

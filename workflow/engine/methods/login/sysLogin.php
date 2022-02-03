@@ -1,5 +1,6 @@
 <?php
 
+/*----------------------------------********---------------------------------*/
 //Browser Compatibility
 $browserSupported = G::checkBrowserCompatibility();
 if ($browserSupported==false) {

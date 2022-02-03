@@ -1205,8 +1205,8 @@ function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $va
  * @label WS New Case
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#WSNewCase.28.29
  *
- * @param string(32) | $processId | Process ID | The unique ID for the process. To use the current process, use the system variable @@PROCESS.
- * @param string(32) | $userId | User ID | The unique ID for the user. To use the currently logged-in user, use the system variable @@USER_LOGGED.
+ * @param string(32) | $processId | Process ID | The unique ID for the process. To use the current process use the system variable @@PROCESS.
+ * @param string(32) | $taskId | Task ID | The unique ID for the task. To use the current task use the system variable @@TASK.
  * @param string(32) | $name1 | Name of the first variable | The name of the first variable to be sent to the created case.
  * @param string(32) | $value1 | Value of the first variable | The value of the first variable to be sent to the created case.
  * @param string(32) | $name2 | Name of the second variable | The name of the second variable to be sent to the created case.
@@ -2463,7 +2463,7 @@ function jumping ($caseId, $delIndex)
  *
  * @param string(32) | $PROCESS | Process ID | The unique ID of the process which contains the field.
  * @param string(32) | $DYNAFORM_UID | Dynaform ID | The unique ID of the DynaForm where the field is located.
- * @param string(32) | $FIELD_NAME | Fiel Name | The field name of the dropdown box, listbox, checkgroup or radiogroup from the specified DynaForm.
+ * @param string(32) | $FIELD_NAME | Field Name | The field name of the dropdown box, listbox, checkgroup or radiogroup from the specified DynaForm.
  * @param string(32) | $FIELD_SELECTED_ID | ID selected | The value (i.e., ID) of the option from the fieldName.
  * @return string | $label | Label of the specified option | A string holding the label of the specified option or NULL if the specified option does not exist.
  *
@@ -3144,6 +3144,8 @@ function PMFGetProcessUidByName($processName = '')
 
 /**
  * @method
+ * @deprecated Method deprecated in Release 3.6.x
+ * 
  * The requested text in the specified language | If not found returns false
  * @name PMFGeti18nText
  * @label PMF Get i18n Text
@@ -3275,6 +3277,8 @@ function PMFGetTaskName($taskUid, $lang = SYS_LANG) {
 
 /**
  * @method
+ * @deprecated Method deprecated in Release 3.6.x
+ * 
  * Return the group title of the specified group uid | If not found returns false
  * @name PMFGetGroupName
  * @label PMF Get Group Title Text

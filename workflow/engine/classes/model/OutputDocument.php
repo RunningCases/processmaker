@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\System;
 use ProcessMaker\PDF\TCPDFHeaderFooter;
 
@@ -964,10 +965,16 @@ class OutputDocument extends BaseOutputDocument
         }
 
         // Fix the HTML using DOMDocument class
+        libxml_use_internal_errors(true);
         $doc = new DOMDocument('1.0', 'UTF-8');
         if ($content != '') {
             $doc->loadHtml($content);
+            foreach (libxml_get_errors() as $error) {
+                $detail = (array) $error;
+                Log::channel(':OutputDocument::generateTcpdf')->warning('DOMDocument::loadHtml', Bootstrap::context($detail));
+            }
         }
+        libxml_clear_errors();
 
         // Add a page and put the HTML fixed
         $pdf->AddPage();

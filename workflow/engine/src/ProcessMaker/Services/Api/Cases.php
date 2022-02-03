@@ -858,6 +858,7 @@ class Cases extends Api
      * PUT /cases/{app_uid}/execute-trigger/{tri_uid} to execute it.
      * 
      * @url POST /impersonate
+     * @status 201
      * 
      * @param string $pro_uid {@from body} {@min 32}{@max 32}
      * @param string $usr_uid {@from body} {@min 32}{@max 32}
@@ -1194,6 +1195,7 @@ class Cases extends Api
      * access case notes may create a case note.
      *
      * @url POST /:appUid/note
+     * @status 201
      *
      * @param string $appUid {@min 1}{@max 32}
      * @param string $note_content {@min 1}{@max 500}

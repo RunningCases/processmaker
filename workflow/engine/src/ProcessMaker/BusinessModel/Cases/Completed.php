@@ -7,7 +7,10 @@ use ProcessMaker\Model\Delegation;
 class Completed extends AbstractCases
 {
     // Columns to see in the cases list
-    public $columnsView = [];
+    public $columnsView = [
+        // Columns view in the cases list
+        'APP_DELEGATION.APP_NUMBER', // Case #
+    ];
 
     /**
      * Get the columns related to the cases list
@@ -37,6 +40,8 @@ class Completed extends AbstractCases
      */
     public function getData()
     {
+        $query = Delegation::query()->select($this->getColumnsView());
+        $this->filters($query);
         // todo, the list for completed cases was defined in participated
         return [];
     }
