@@ -1387,21 +1387,21 @@ class OutputDocument extends BaseOutputDocument
 
         $struct = $pdf->getHeaderStruct();
 
-        $struct->setLogo($header->logo);
-        $struct->setLogoWidth($header->logoWidth);
-        $struct->setLogoPositionX($header->logoPositionX);
-        $struct->setLogoPositionY($header->logoPositionY);
+        $struct->setLogo($header->logo ?? '');
+        $struct->setLogoWidth($header->logoWidth ?? 0);
+        $struct->setLogoPositionX($header->logoPositionX ?? 0);
+        $struct->setLogoPositionY($header->logoPositionY ?? 0);
 
-        $struct->setTitle($header->title);
-        $struct->setTitleFontSize($header->titleFontSize);
-        $struct->setTitleFontPositionX($header->titleFontPositionX);
-        $struct->setTitleFontPositionY($header->titleFontPositionY);
+        $struct->setTitle($header->title ?? '');
+        $struct->setTitleFontSize($header->titleFontSize ?? 0);
+        $struct->setTitleFontPositionX($header->titleFontPositionX ?? 0);
+        $struct->setTitleFontPositionY($header->titleFontPositionY ?? 0);
 
-        $struct->setPageNumber($header->pageNumber);
-        $struct->setPageNumberTitle($header->pageNumberTitle);
-        $struct->setPageNumberTotal($header->pageNumberTotal);
-        $struct->setPageNumberPositionX($header->pageNumberPositionX);
-        $struct->setPageNumberPositionY($header->pageNumberPositionY);
+        $struct->setPageNumber($header->pageNumber ?? false);
+        $struct->setPageNumberTitle($header->pageNumberTitle ?? '');
+        $struct->setPageNumberTotal($header->pageNumberTotal ?? false);
+        $struct->setPageNumberPositionX($header->pageNumberPositionX ?? 0);
+        $struct->setPageNumberPositionY($header->pageNumberPositionY ?? 0);
         return true;
     }
 
@@ -1419,21 +1419,21 @@ class OutputDocument extends BaseOutputDocument
 
         $struct = $pdf->getFooterStruct();
 
-        $struct->setLogo($footer->logo);
-        $struct->setLogoWidth($footer->logoWidth);
-        $struct->setLogoPositionX($footer->logoPositionX);
-        $struct->setLogoPositionY($footer->logoPositionY);
+        $struct->setLogo($footer->logo ?? '');
+        $struct->setLogoWidth($footer->logoWidth ?? 0);
+        $struct->setLogoPositionX($footer->logoPositionX ?? 0);
+        $struct->setLogoPositionY($footer->logoPositionY ?? 0);
 
-        $struct->setTitle($footer->title);
-        $struct->setTitleFontSize($footer->titleFontSize);
-        $struct->setTitleFontPositionX($footer->titleFontPositionX);
-        $struct->setTitleFontPositionY($footer->titleFontPositionY);
+        $struct->setTitle($footer->title ?? '');
+        $struct->setTitleFontSize($footer->titleFontSize ?? 0);
+        $struct->setTitleFontPositionX($footer->titleFontPositionX ?? 0);
+        $struct->setTitleFontPositionY($footer->titleFontPositionY ?? 0);
 
-        $struct->setPageNumber($footer->pageNumber);
-        $struct->setPageNumberTitle($footer->pageNumberTitle);
-        $struct->setPageNumberTotal($footer->pageNumberTotal);
-        $struct->setPageNumberPositionX($footer->pageNumberPositionX);
-        $struct->setPageNumberPositionY($footer->pageNumberPositionY);
+        $struct->setPageNumber($footer->pageNumber ?? false);
+        $struct->setPageNumberTitle($footer->pageNumberTitle ?? '');
+        $struct->setPageNumberTotal($footer->pageNumberTotal ?? false);
+        $struct->setPageNumberPositionX($footer->pageNumberPositionX ?? 0);
+        $struct->setPageNumberPositionY($footer->pageNumberPositionY ?? 0);
         return true;
     }
 }
