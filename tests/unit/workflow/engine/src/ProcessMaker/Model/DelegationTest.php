@@ -11,6 +11,7 @@ use ProcessMaker\Model\AppAssignSelfServiceValue;
 use ProcessMaker\Model\AppAssignSelfServiceValueGroup;
 use ProcessMaker\Model\AppDelay;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\AppThread;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
@@ -37,8 +38,9 @@ class DelegationTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Application::truncate();
         Delegation::truncate();
+        AppThread::truncate();
+        Application::truncate();
     }
 
     /**

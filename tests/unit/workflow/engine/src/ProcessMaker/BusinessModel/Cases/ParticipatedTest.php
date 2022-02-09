@@ -24,6 +24,8 @@ class ParticipatedTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Delegation::truncate();
+        Application::truncate();
     }
 
     /**

@@ -31,6 +31,7 @@ class DraftTest extends TestCase
     {
         parent::setUp();
         Delegation::truncate();
+        Application::truncate();
     }
 
     /**

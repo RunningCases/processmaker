@@ -80,7 +80,11 @@ class OutputDocumentTest extends TestCase
         $properties['margins']['right'] = 15;
         $properties['margins']['top'] = 15;
         $properties['margins']['bottom'] = 15;
-        $properties['pdfSecurity'] = true;
+        $properties['pdfSecurity'] = [
+            'openPassword' => true,
+            'ownerPassword' => true,
+            'permissions' => 'r'
+        ];
         // Call output document
         $outputDocument = new OutputDocument();
         $outputDocument->generateTcpdf(

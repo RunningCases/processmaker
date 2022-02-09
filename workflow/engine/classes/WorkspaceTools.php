@@ -5198,7 +5198,6 @@ class WorkspaceTools
                         $message = 'Sql Execution';
                         Log::channel(':sqlExecution')->critical($message, Bootstrap::context($context));
                     }
-                    unset($obj);
                 }
             } else {
                 try {
