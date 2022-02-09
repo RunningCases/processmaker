@@ -40,7 +40,8 @@ try {
 
         if (isset($frm['USR_USERNAME'])) {
             $usr = mb_strtolower(trim($frm['USR_USERNAME']), 'UTF-8');
-            $pwd = trim($frm['USR_PASSWORD']);
+            //Spaces not supported at the end of passwords
+            $pwd = rtrim($frm['USR_PASSWORD']);
         }
         /*----------------------------------********---------------------------------*/
         require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';

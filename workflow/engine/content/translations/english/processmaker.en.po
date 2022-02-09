@@ -22278,6 +22278,12 @@ msgid "Numerical Character is required"
 msgstr "Numerical Character is required"
 
 # TRANSLATION
+# LABEL/ID_PPP_SPACES_NOT_SUPPORTED_AT_THE_END_OF_PASSWORD
+#: LABEL/ID_PPP_SPACES_NOT_SUPPORTED_AT_THE_END_OF_PASSWORD
+msgid "Spaces not supported at the end of password"
+msgstr "Spaces not supported at the end of password"
+
+# TRANSLATION
 # LABEL/ID_PPP_SPECIAL_CHARACTER_REQUIRED
 #: LABEL/ID_PPP_SPECIAL_CHARACTER_REQUIRED
 msgid "Special Character is required"
