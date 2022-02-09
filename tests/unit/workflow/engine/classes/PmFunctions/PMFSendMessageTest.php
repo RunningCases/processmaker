@@ -24,10 +24,25 @@ class PMFSendMessageTest extends TestCase
      */
     private function createTemplate($proUid, $usrUid)
     {
+        if (!file_exists(PATH_DB)) {
+            mkdir(PATH_DB);
+        }
+        if (!file_exists(PATH_DATA_SITE)) {
+            mkdir(PATH_DATA_SITE);
+        }
+        $data = file_get_contents(PATH_TRUNK . 'tests/resources/template.html');
+        if (!file_exists(PATH_DATA_SITE . 'mailTemplates')) {
+            mkdir(PATH_DATA_SITE . 'mailTemplates');
+        }
+        file_put_contents(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . 'template.html', $data);
+        if (!file_exists(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $proUid)) {
+            mkdir(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $proUid);
+        }
+        file_put_contents(PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $proUid . PATH_SEP . 'template.html', $data);
         $template = factory(\ProcessMaker\Model\ProcessFiles::class)->create([
             'PRO_UID' => $proUid,
             'USR_UID' => $usrUid,
-            'PRF_PATH' => '/'
+            'PRF_PATH' => 'template.html'
         ]);
         return $template;
     }
@@ -68,8 +83,14 @@ class PMFSendMessageTest extends TestCase
     public function it_send_message_related_to_same_case()
     {
         $user = factory(User::class)->create();
-        $process = factory(Process::class)->create();
-        $app = factory(Application::class)->create(['PRO_UID' => $process->PRO_UID]);
+        $process = factory(Process::class)->create([
+            'PRO_CREATE_USER' => $user->USR_UID
+        ]);
+        $app = factory(Application::class)->create([
+            'PRO_UID' => $process->PRO_UID,
+            'APP_INIT_USER' => $user->USR_UID,
+            'APP_CUR_USER' => $user->USR_UID
+        ]);
         $template = $this->createTemplate($process->PRO_UID, $user->USR_UID);
         $emailServer = $this->createEmailServer();
         // Set the same case in session
