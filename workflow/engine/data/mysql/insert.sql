@@ -60625,6 +60625,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PPP_MINIMUM_LENGTH','en','Minimum length','2014-01-15') ,
 ( 'LABEL','ID_PPP_MINIMUN_LENGTH','en','Minimum length','2014-01-15') ,
 ( 'LABEL','ID_PPP_NUMERICAL_CHARACTER_REQUIRED','en','Numerical Character is required','2014-01-15') ,
+( 'LABEL','ID_PPP_SPACES_NOT_SUPPORTED_AT_THE_END_OF_PASSWORD','en','Spaces not supported at the end of password','2022-02-09') ,
 ( 'LABEL','ID_PPP_SPECIAL_CHARACTER_REQUIRED','en','Special Character is required','2014-01-15') ,
 ( 'LABEL','ID_PPP_UPPERCASE_CHARACTER_REQUIRED','en','Uppercase Character is required','2014-01-15') ,
 ( 'LABEL','ID_PREFERENCES','en','Preferences','2014-01-15') ,
