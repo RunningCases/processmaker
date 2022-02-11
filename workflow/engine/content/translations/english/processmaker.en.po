@@ -5432,8 +5432,8 @@ msgstr "The process was not downloaded, because the curl extension for php is no
 # TRANSLATION
 # LABEL/ID_CURRENT_ASSING_TYPE_WITH_CASES
 #: LABEL/ID_CURRENT_ASSING_TYPE_WITH_CASES
-msgid "The current activity has cases and cannot be deleted"
-msgstr "The current activity has cases and cannot be deleted"
+msgid "The current activity has cases and cannot be changed"
+msgstr "The current activity has cases and cannot be changed"
 
 # TRANSLATION
 # LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
