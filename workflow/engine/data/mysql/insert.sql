@@ -57728,7 +57728,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CRON_STATUS_INACTIVE','en','Inactive','2014-01-15') ,
 ( 'LABEL','ID_CSV_FILE','en','CSV File','2014-01-15') ,
 ( 'LABEL','ID_CURLFUN_ISUNDEFINED','en','The process was not downloaded, because the curl extension for php is not installed','2014-01-15') ,
-( 'LABEL','ID_CURRENT_ASSING_TYPE_WITH_CASES','en','The current activity has cases and cannot be deleted','2015-12-10') ,
+( 'LABEL','ID_CURRENT_ASSING_TYPE_WITH_CASES','en','The current activity has cases and cannot be changed','2022-02-11') ,
 ( 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','Your browser is not supported. See the list of supported browsers. List of supported browsers is a link to the wiki page: http://wiki.processmaker.com/3.0/Supported_Browsers','2014-10-22') ,
 ( 'LABEL','ID_CURRENT_LICENSE','en','Current license','2014-09-18') ,
 ( 'LABEL','ID_CURRENT_TASKS','en','Current Task(s) Properties','2021-03-20') ,
