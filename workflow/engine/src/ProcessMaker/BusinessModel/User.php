@@ -396,17 +396,15 @@ class User
      * Verify if exists the Name of a User
      *
      * @param string $userName              Name
-     * @param string $fieldNameForException Field name for the exception
      * @param string $userUidToExclude      Unique id of User to exclude
      *
      * @throws Exception if exists the title of a User
      */
-    public function throwExceptionIfExistsName($userName, $fieldNameForException, $userUidToExclude = "")
+    public function throwExceptionIfExistsName($userName, $userUidToExclude = "")
     {
         try {
             if ($this->existsName($userName, $userUidToExclude)) {
-                throw new Exception(G::LoadTranslation("ID_USER_NAME_ALREADY_EXISTS",
-                    array($fieldNameForException, $userName)));
+                throw new Exception(G::LoadTranslation("ID_USER_NAME_ALREADY_EXISTS", [$userName]));
             }
         } catch (Exception $e) {
             throw $e;
@@ -446,7 +444,7 @@ class User
     {
         try {
             //Set variables
-            $arrayUserData = ($userUid == "") ? array() : $this->getUser($userUid, true);
+            $arrayUserData = ($userUid == "") ? [] : $this->getUser($userUid, true);
             $flagInsert = ($userUid == "") ? true : false;
 
             $arrayFinalData = array_merge($arrayUserData, $arrayData);
@@ -459,8 +457,7 @@ class User
 
             //Verify data
             if (isset($arrayData["USR_USERNAME"])) {
-                $this->throwExceptionIfExistsName($arrayData["USR_USERNAME"],
-                    $this->arrayFieldNameForException["usrUsername"], $userUid);
+                $this->throwExceptionIfExistsName($arrayData["USR_USERNAME"], $userUid);
             }
 
             if (isset($arrayData["USR_EMAIL"])) {
@@ -762,8 +759,6 @@ class User
     public function create(array $arrayData)
     {
         try {
-
-
             //Verify data
             $validator = new Validator();
 
