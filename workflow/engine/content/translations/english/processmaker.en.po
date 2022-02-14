@@ -7182,6 +7182,36 @@ msgid "Select the dynaform you want to copy/import."
 msgstr "Select the dynaform you want to copy/import."
 
 # TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_DYNAFORMS
+#: LABEL/ID_DYNAFORM_DEPENDS_DYNAFORMS
+msgid "({0}) Depends in dynaform"
+msgstr "({0}) Depends in dynaform"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_CASE_TRACKER
+#: LABEL/ID_DYNAFORM_DEPENDS_CASE_TRACKER
+msgid "({0}) Depends in case traker"
+msgstr "({0}) Depends in case traker"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_PERMISSIONS
+#: LABEL/ID_DYNAFORM_DEPENDS_PERMISSIONS
+msgid "({0}) Depends in permissions"
+msgstr "({0}) Depends in permissions"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_STEPS
+#: LABEL/ID_DYNAFORM_DEPENDS_STEPS
+msgid "({0}) Depends in steps"
+msgstr "({0}) Depends in steps"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_STEPS_SUPERVISOR
+#: LABEL/ID_DYNAFORM_DEPENDS_STEPS_SUPERVISOR
+msgid "({0}) Depends in steps supervisor"
+msgstr "({0}) Depends in steps supervisor"
+
+# TRANSLATION
 # LABEL/ID_DYNAFORM_DOES_NOT_EXIST
 #: LABEL/ID_DYNAFORM_DOES_NOT_EXIST
 msgid "The DynaForm with {0}: {1} does not exist."
