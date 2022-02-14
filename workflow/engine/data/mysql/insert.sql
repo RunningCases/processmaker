@@ -61676,7 +61676,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_USER_LIST','en','User List','2014-01-15') ,
 ( 'LABEL','ID_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON','en','User must change password at next logon','2014-05-16') ,
 ( 'LABEL','ID_USER_NAME','en','User Name','2014-01-15') ,
-( 'LABEL','ID_USER_NAME_ALREADY_EXISTS','en','The User Name with {0}: "{1}" already exists.','2015-03-23') ,
+( 'LABEL','ID_USER_NAME_ALREADY_EXISTS','en','The User Name ''{0}'' already exists.','2022-02-11') ,
 ( 'LABEL','ID_USER_NOT_ACTIVE','en','The user is not active.','2015-09-08') ,
 ( 'LABEL','ID_USER_NOT_ACTIVITY','en','The usr_uid: {0} does not have an activity assigned','2014-05-21') ,
 ( 'LABEL','ID_USER_NOT_ASSIGNED_TASK','en','The user is not assigned to the task','2014-01-15') ,

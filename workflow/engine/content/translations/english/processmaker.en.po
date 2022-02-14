@@ -28154,8 +28154,8 @@ msgstr "User Name"
 # TRANSLATION
 # LABEL/ID_USER_NAME_ALREADY_EXISTS
 #: LABEL/ID_USER_NAME_ALREADY_EXISTS
-msgid "The User Name with {0}: \"{1}\" already exists."
-msgstr "The User Name with {0}: \"{1}\" already exists."
+msgid "The User Name '{0}' already exists."
+msgstr "The User Name '{0}' already exists."
 
 # TRANSLATION
 # LABEL/ID_USER_NOT_ACTIVE
