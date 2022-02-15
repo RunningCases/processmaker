@@ -464,8 +464,6 @@ class InputDocument
     public function getCasesInputDocument($appUid, $userUid, $inputDocumentUid)
     {
         try {
-            $appUid = $applicationUid;
-
             $case = new Cases();
             $fields = $case->loadCase($appUid);
             $proUid = $fields['PRO_UID'];
