@@ -4296,22 +4296,20 @@ class WorkspaceTools
                                    WHERE AD.APP_NUMBER = 0");
         $con->commit();
 
-        // Populating APP_MESSAGE.TAS_ID AND APP_MESSAGE.PRO_ID
-        CLI::logging("->   Populating APP_MESSAGE.TAS_ID and APP_MESSAGE.PRO_ID \n");
+        // Populating APP_MESSAGE.TAS_ID
+        CLI::logging("->   Populating APP_MESSAGE.TAS_ID \n");
         $con->begin();
         $stmt = $con->createStatement();
         $rs = $stmt->executeQuery("UPDATE APP_MESSAGE AS AM
                                    INNER JOIN (
-                                       SELECT APP_DELEGATION.TAS_ID, 
-                                              APP_DELEGATION.APP_NUMBER, 
-                                              APP_DELEGATION.TAS_UID, 
-                                              APP_DELEGATION.DEL_INDEX, 
-                                              APP_DELEGATION.PRO_ID
+                                       SELECT APP_DELEGATION.APP_NUMBER,
+                                              APP_DELEGATION.DEL_INDEX,
+                                              APP_DELEGATION.TAS_ID
                                        FROM APP_DELEGATION
                                    ) AS DEL
                                    ON (AM.APP_NUMBER = DEL.APP_NUMBER AND AM.DEL_INDEX = DEL.DEL_INDEX)
-                                   SET AM.TAS_ID = DEL.TAS_ID, AM.PRO_ID = DEL.PRO_ID
-                                   WHERE AM.TAS_ID = 0 AND AM.PRO_ID = 0 AND AM.APP_NUMBER != 0 AND AM.DEL_INDEX != 0");
+                                   SET AM.TAS_ID = DEL.TAS_ID
+                                   WHERE AM.TAS_ID = 0 AND AM.APP_NUMBER != 0 AND AM.DEL_INDEX != 0");
         $con->commit();
 
         // Populating APP_MESSAGE.PRO_ID
