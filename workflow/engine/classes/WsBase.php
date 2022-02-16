@@ -3263,12 +3263,14 @@ class WsBase
     /**
      * Pause case
      *
-     * @param string caseUid : ID of the case.
-     * @param int    delIndex : Delegation index of the case.
-     * @param string userUid : The unique ID of the user who will pause the case.
-     * @param string unpauseDate : Optional parameter. The date in the format "yyyy-mm-dd" indicating when to unpause
+     * @param string $caseUid: ID of the case.
+     * @param int $delIndex: Delegation index of the case.
+     * @param string $userUid: The unique ID of the user who will pause the case.
+     * @param string $unpauseDate: Optional parameter. The date in the format "yyyy-mm-dd" indicating when to unpause
      *               the case.
+     * @param boolean $checkUser: Check if needs to validate if the action will enable only for current user
      * 
+     * @see Ajax::pauseCase()
      * @see workflow/engine/classes/class.pmFunctions.php::PMFPauseCase()
      * @see workflow/engine/methods/services/soap2.php::pauseCase()
      * 
@@ -3276,7 +3278,7 @@ class WsBase
      * 
      * @return $result will return an object
      */
-    public function pauseCase($caseUid, $delIndex, $userUid, $unpauseDate = null)
+    public function pauseCase($caseUid, $delIndex, $userUid, $unpauseDate = null, $checkUser = false)
     {
         $g = new G();
 
@@ -3315,6 +3317,15 @@ class WsBase
                 $g->sessionVarRestore();
 
                 return $result;
+            }
+            // If needs to validate the current user
+            if ($checkUser) {
+                $currentUsrUid = Delegation::getCurrentUser($caseInfo['APP_NUMBER'], $delIndex);
+                if ($currentUsrUid !== $userUid) {
+                    $result = new WsResponse(100, G::LoadTranslation('ID_CASE_ASSIGNED_ANOTHER_USER'));
+                    $g->sessionVarRestore();
+                    return $result;
+                }
             }
             // Validate if status is closed
             $appDelegation = new AppDelegation();
