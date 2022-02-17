@@ -455,7 +455,23 @@ class WorkspaceTools
         $this->dbRbacUser = $values["DB_RBAC_USER"];
         $this->dbRbacPass = $values["DB_RBAC_PASS"];
 
+        $this->setDataBaseConnectionPropertiesForEloquent();
         return $this->dbInfo = $values;
+    }
+
+    /**
+     * This used for eloquent model.
+     */
+    public function setDataBaseConnectionPropertiesForEloquent(): void
+    {
+        $dbHost = explode(':', $this->dbHost);
+        config(['database.connections.workflow.host' => $dbHost[0]]);
+        config(['database.connections.workflow.database' => $this->dbName]);
+        config(['database.connections.workflow.username' => $this->dbUser]);
+        config(['database.connections.workflow.password' => $this->dbPass]);
+        if (count($dbHost) > 1) {
+            config(['database.connections.workflow.port' => $dbHost[1]]);
+        }
     }
 
     private function resetDBInfoCallback($matches)
@@ -5084,14 +5100,6 @@ class WorkspaceTools
     ) {
         // Initialize DB connections
         $this->initPropel();
-        $dbHost = explode(':', $this->dbHost);
-        config(['database.connections.workflow.host' => $dbHost[0]]);
-        config(['database.connections.workflow.database' => $this->dbName]);
-        config(['database.connections.workflow.username' => $this->dbUser]);
-        config(['database.connections.workflow.password' => $this->dbPass]);
-        if (count($dbHost) > 1) {
-            config(['database.connections.workflow.port' => $dbHost[1]]);
-        }
 
         // Get fields and some specific field types
         $fields = [];
