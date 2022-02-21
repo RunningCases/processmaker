@@ -287,6 +287,9 @@ class InputDocument
             if (isset($record["APP_DOC_FILENAME"])) {
                 $newArray["app_doc_filename"] = $record["APP_DOC_FILENAME"];
             }
+            if (isset($record["APP_DOC_COMMENT"])) {
+                $newArray["app_doc_comment"] = $record["APP_DOC_COMMENT"];
+            }
             if (isset($record["DOC_UID"])) {
                 $newArray["doc_uid"] = $record["DOC_UID"];
             }
