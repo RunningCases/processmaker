@@ -5,6 +5,7 @@ use Faker\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Queue;
 use ProcessMaker\Model\Application;
+use ProcessMaker\Model\AppDelay;
 use ProcessMaker\Model\AppThread;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\EmailServerModel;
@@ -1292,5 +1293,120 @@ class WsBaseTest extends TestCase
 
         //Assert the expected number of unassigned cases
         $this->assertCount(0, $res);
+    }
+
+    /**
+     * Review the required fields in pause case
+     *
+     * @covers WsBase::pauseCase()
+     * @test
+     */
+    public function it_review_fields_to_pause_case()
+    {
+        // Validate the appUid
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase('', 0, '');
+        $this->assertEquals($response->status_code, 100);
+        // Validate the status
+        $application = factory(Application::class)->states('draft')->create();
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase($application->APP_UID, 0, '');
+        $this->assertEquals($response->status_code, 100);
+        // Validate the index
+        $application = factory(Application::class)->states('todo')->create();
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase($application->APP_UID, '', '');
+        $this->assertEquals($response->status_code, 100);
+        // Validate the user
+        $application = factory(Application::class)->states('todo')->create();
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, '');
+        $this->assertEquals($response->status_code, 100);
+        // If needs to validate the current user
+        $user = factory(User::class)->create();
+        $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, $user->USR_UID, null, true);
+        $this->assertEquals($response->status_code, 100);
+        // Validate if status is closed
+        $application = factory(Application::class)->states('todo')->create();
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'CLOSED',
+            'DEL_INDEX' => 2,
+        ]);
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID, null);
+        $this->assertEquals($response->status_code, 100);
+        // Validate if the case is paused
+        $application = factory(Application::class)->states('todo')->create();
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $delegation->USR_UID,
+            'PRO_UID' => $delegation->PRO_UID,
+            'APP_NUMBER' => $delegation->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $delegation->APP_UID,
+            'APP_THREAD_INDEX' => 1,
+            'APP_THREAD_PARENT' => 0,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => $delegation->DEL_INDEX
+        ]);
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase($application->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID, null);
+        // Review the unpaused date
+        $application = factory(Application::class)->states('todo')->create();
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+        ]);
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID, '06/13/2019 5:35 PM');
+        $this->assertEquals($response->status_code, 100);
+    }
+
+    /**
+     * Review the required fields in pause case
+     *
+     * @covers WsBase::pauseCase()
+     * @test
+     */
+    public function it_pause_case()
+    {
+        $application = factory(Application::class)->states('todo')->create();
+        $delegation = factory(Delegation::class)->states('foreign_keys')->create([
+            'APP_NUMBER' => $application->APP_NUMBER,
+            'APP_UID' => $application->APP_UID,
+            'DEL_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => 2,
+        ]);
+        factory(AppDelay::class)->create([
+            'APP_DELEGATION_USER' => $delegation->USR_UID,
+            'PRO_UID' => $delegation->PRO_UID,
+            'APP_NUMBER' => $delegation->APP_NUMBER,
+            'APP_DEL_INDEX' => $delegation->DEL_INDEX,
+            'APP_DISABLE_ACTION_USER' => 0,
+            'APP_TYPE' => 'PAUSE'
+        ]);
+        factory(AppThread::class)->create([
+            'APP_UID' => $delegation->APP_UID,
+            'APP_THREAD_INDEX' => 1,
+            'APP_THREAD_PARENT' => 0,
+            'APP_THREAD_STATUS' => 'OPEN',
+            'DEL_INDEX' => $delegation->DEL_INDEX
+        ]);
+        $ws = new WsBase();
+        $response = (object) $ws->pauseCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
+        $this->assertEquals($response->status_code, 0);
     }
 }

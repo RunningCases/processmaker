@@ -724,7 +724,7 @@ class Ajax
             }
 
             // Save the note pause reason
-            if ($_REQUEST['NOTE_REASON'] != '') {
+            if (!empty($_REQUEST['NOTE_REASON'])) {
                 $noteContent = addslashes($_REQUEST['NOTE_REASON']);
                 // Define the Case for register a case note
                 $cases = new BmCases();
@@ -733,7 +733,7 @@ class Ajax
             // End save
 
             $case = new WsBase();
-            $response = $case->pauseCase($appUid, $delIndex, $_SESSION['USER_LOGGED'], $unpauseDate);
+            $response = $case->pauseCase($appUid, $delIndex, $_SESSION['USER_LOGGED'], $unpauseDate, true);
             $response = (object) $response;
             if ($response->status_code == 100) {
                 throw new Exception($response->message);
