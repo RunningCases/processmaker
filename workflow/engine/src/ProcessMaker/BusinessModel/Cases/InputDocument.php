@@ -241,6 +241,7 @@ class InputDocument
 
             $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
             $criteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+            $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_COMMENT);
             $criteria->addSelectColumn(AppDocumentPeer::DOC_UID);
             $criteria->addSelectColumn(AppDocumentPeer::USR_UID);
             $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
@@ -280,7 +281,7 @@ class InputDocument
     public function getAppDocumentDataFromRecord(array $record)
     {
         try {
-            $newArray = array();
+            $newArray = [];
             if (isset($record["APP_DOC_UID"])) {
                 $newArray["app_doc_uid"] = $record["APP_DOC_UID"];
             }
