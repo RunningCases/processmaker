@@ -31,62 +31,63 @@ class System
     private static $debug = null;
     private static $instance;
     private static $defaultConfig = [
+        'at_risk_delegation_max_time' => '0.2',
+        'code_scanner_scope' => 'import_plugin,enable_plugin,import_process,trigger',
         'debug' => 0,
         'debug_sql' => 0,
         'debug_time' => 0,
         'debug_calendar' => 0,
-        'wsdl_cache' => 1,
-        'time_zone' => 'America/New_York',
-        'expiration_year' => '1',
-        'memcached' => 0,
-        'memcached_server' => '',
         'default_skin' => 'neoclassic',
         'default_lang' => 'en',
+        'delay' => '0',
+        'disable_php_upload_execution' => 0,
+        'disable_download_documents_session_validation' => 0,
+        'disable_advanced_search_case_title_fulltext' => 0,
+        'disable_task_manager_routing_async' => '0',
+        'display_errors' => 'On',
+        'enable_blacklist' => 0,
+        'enable_httponly_flag' => 0,
+        'error_reporting' => '',
+        'expiration_year' => '1',
+        'ext_ajax_timeout' => 600000,
+        'files_white_list' => '',
+        'google_map_api_key' => '',
+        'google_map_signature' => '',
+        'highlight_home_folder_enable' => 0,
+        'highlight_home_folder_refresh_time' => 10,
+        'highlight_home_folder_scope' => 'unassigned', // For now only this list is supported
+        'ie_cookie_lifetime' => 1,
+        'leave_case_warning' => 0,
+        'load_headers_ie' => 0,
+        'logging_level' => 'INFO',
+        'logs_max_files' => 60,
+        'logs_location' => '',
+        'memcached' => 0,
+        'memcached_server' => '',
+        'mobile_offline_tables_download_interval' => 24,
+        'number_log_file' => 5,
+        'on_one_server_enable' => 0,
+        'pmftotalcalculation_floating_point_number' => 10,
         'proxy_host' => '',
         'proxy_port' => '',
         'proxy_user' => '',
         'proxy_pass' => '',
-        'size_log_file' => 5000000,
-        'number_log_file' => 5,
-        'ie_cookie_lifetime' => 1,
-        'safari_cookie_lifetime' => 1,
-        'error_reporting' => "",
-        'display_errors' => 'On',
-        'enable_blacklist' => 0,
-        'code_scanner_scope' => 'import_plugin,enable_plugin,import_process,trigger',
-        'system_utc_time_zone' => 0,
-        'server_protocol' => '',
-        'leave_case_warning' => 0,
-        'server_hostname_requests_frontend' => '',
-        'load_headers_ie' => 0,
         'redirect_to_mobile' => 0,
-        'disable_php_upload_execution' => 0,
-        'disable_download_documents_session_validation' => 0,
-        'logs_max_files' => 60,
-        'logs_location' => '',
-        'logging_level' => 'INFO',
-        'smtp_timeout' => 20,
-        'google_map_api_key' => '',
-        'google_map_signature' => '',
-        'upload_attempts_limit_per_user' => '60,1',
-        'files_white_list' => '',
-        'delay' => '0',
-        'tries' => '10',
-        'retry_after' => '90',
-        'mobile_offline_tables_download_interval' => 24,
-        'highlight_home_folder_enable' => 0,
-        'highlight_home_folder_refresh_time' => 10,
-        'highlight_home_folder_scope' => 'unassigned', // For now only this list is supported
-        'disable_advanced_search_case_title_fulltext' => 0,
-        'pmftotalcalculation_floating_point_number' => 10,
         'report_table_batch_regeneration' => 1000,
-        'report_table_floating_number' => 4,
         'report_table_double_number' => 4,
-        'ext_ajax_timeout' => 600000,
-        'disable_task_manager_routing_async' => '0',
-        'on_one_server_enable' => 0,
-        'at_risk_delegation_max_time' => '0.2',
-        'samesite_cookie_setting' => ''
+        'report_table_floating_number' => 4,
+        'retry_after' => '90',
+        'samesite_cookie_setting' => '',
+        'safari_cookie_lifetime' => 1,
+        'server_protocol' => '',
+        'server_hostname_requests_frontend' => '',
+        'size_log_file' => 5000000,
+        'smtp_timeout' => 20,
+        'system_utc_time_zone' => 0,
+        'time_zone' => 'America/New_York',
+        'tries' => '10',
+        'upload_attempts_limit_per_user' => '60,1',
+        'wsdl_cache' => 1,
     ];
 
     public static $cookieDefaultOptions = [
@@ -94,7 +95,6 @@ class System
         'path' => '/',
         'domain' => '',
         'secure' => false,
-        'httponly' => true,
         'samesite' => ''
     ];
 
@@ -1818,6 +1818,14 @@ class System
 
         // Set the "samesite" option according to the system configuration
         $cookieOptions['samesite'] = $systemConfiguration['samesite_cookie_setting'];
+
+        // Set the "httponly" option according to the system configuration
+        $httpOnly = $systemConfiguration['enable_httponly_flag'];
+        if ($httpOnly) {
+            $cookieOptions['httponly'] = true;
+        } else {
+            $cookieOptions['httponly'] = false;
+        }
 
         // Overrides the cookie options with the values sent to the method
         $cookieOptions = array_merge($cookieOptions, $options);
