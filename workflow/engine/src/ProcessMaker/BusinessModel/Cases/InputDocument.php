@@ -241,6 +241,7 @@ class InputDocument
 
             $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
             $criteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+            $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_COMMENT);
             $criteria->addSelectColumn(AppDocumentPeer::DOC_UID);
             $criteria->addSelectColumn(AppDocumentPeer::USR_UID);
             $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
@@ -280,12 +281,15 @@ class InputDocument
     public function getAppDocumentDataFromRecord(array $record)
     {
         try {
-            $newArray = array();
+            $newArray = [];
             if (isset($record["APP_DOC_UID"])) {
                 $newArray["app_doc_uid"] = $record["APP_DOC_UID"];
             }
             if (isset($record["APP_DOC_FILENAME"])) {
                 $newArray["app_doc_filename"] = $record["APP_DOC_FILENAME"];
+            }
+            if (isset($record["APP_DOC_COMMENT"])) {
+                $newArray["app_doc_comment"] = $record["APP_DOC_COMMENT"];
             }
             if (isset($record["DOC_UID"])) {
                 $newArray["doc_uid"] = $record["DOC_UID"];
@@ -464,8 +468,6 @@ class InputDocument
     public function getCasesInputDocument($appUid, $userUid, $inputDocumentUid)
     {
         try {
-            $appUid = $applicationUid;
-
             $case = new Cases();
             $fields = $case->loadCase($appUid);
             $proUid = $fields['PRO_UID'];
