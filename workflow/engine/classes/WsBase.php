@@ -1204,7 +1204,9 @@ class WsBase
     {
         try {
             global $RBAC;
-
+            if (is_null($RBAC)) {
+                $RBAC = RBAC::getSingleton();
+            }
             $RBAC->initRBAC();
 
             if (empty($userName)) {
@@ -1715,6 +1717,9 @@ class WsBase
     {
         try {
             global $RBAC;
+            if (is_null($RBAC)) {
+                $RBAC = RBAC::getSingleton();
+            }
             $RBAC->initRBAC();
             $user = $RBAC->verifyUserId($userId);
 

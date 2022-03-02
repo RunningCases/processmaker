@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
-use RBAC;
 use Tests\TestCase;
 
 /**

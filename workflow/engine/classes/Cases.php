@@ -7079,7 +7079,7 @@ class Cases
      * @return array|stdclass|string
      *
      */
-    public function getCaseNotes($applicationID, $type = 'array', $userUid = '')
+    public static function getCaseNotes($applicationID, $type = 'array', $userUid = '')
     {
         require_once("classes/model/AppNotes.php");
         $appNotes = new AppNotes();
@@ -7108,6 +7108,7 @@ class Cases
                 case 'object':
                     $response = new stdclass();
                     foreach ($appNotes['array']['notes'] as $key => $value) {
+                        $response->$key = new stdclass();
                         $response->$key->FULL_NAME = $value['USR_FIRSTNAME'] . " " . $value['USR_LASTNAME'];
                         foreach ($value as $keys => $value) {
                             if ($keys != 'USR_FIRSTNAME' && $keys != 'USR_LASTNAME' && $keys != 'USR_EMAIL') {

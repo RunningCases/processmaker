@@ -2,6 +2,8 @@
 
 namespace Tests\unit\workflow\engine\classes\PmFunctions;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use ProcessMaker\Model\GroupUser;
 use ProcessMaker\Model\Groupwf;
 use ProcessMaker\Model\RbacUsers;
@@ -9,6 +11,9 @@ use ProcessMaker\Model\User;
 use RBAC;
 use Tests\TestCase;
 
+/**
+ * Test the PMFNewUserTest() function
+ */
 class PMFNewUserTest extends TestCase
 {
     /**
@@ -53,10 +58,11 @@ class PMFNewUserTest extends TestCase
 
         $group = factory(Groupwf::class)->create();
 
+        // Active
         $result = PMFNewUser("test", "Test123*", "test", "test", "test@test.com", "PROCESSMAKER_ADMIN", null, null, $group['GRP_UID']);
 
         $query = GroupUser::select();
-        $r = $query->get()->values()->toArray();
+        $r = $query->where('GRP_UID', $group['GRP_UID'])->get()->values()->toArray();
 
         $this->assertEquals($r[0]['GRP_UID'], $result['groupUid']);
         $this->assertEquals($r[0]['USR_UID'], $result['userUid']);
@@ -67,6 +73,14 @@ class PMFNewUserTest extends TestCase
         $this->assertNotEmpty($r);
         $this->assertEquals($result['userUid'], $r[0]['USR_UID']);
         $this->assertEquals($result['username'], $r[0]['USR_USERNAME']);
+
+        // Vacation
+        $result = PMFNewUser("test11", "Test123*", "test", "test", "test@test.com", "PROCESSMAKER_ADMIN", null, 'VACATION', $group['GRP_UID']);
+        $this->assertEquals('VACATION', $result['status']);
+
+        // Inactive
+        $result = PMFNewUser("test22", "Test123*", "test", "test", "test@test.com", "PROCESSMAKER_ADMIN", null, 'INACTIVE', $group['GRP_UID']);
+        $this->assertEquals('INACTIVE', $result['status']);
     }
 
     /**
