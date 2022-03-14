@@ -14,7 +14,6 @@ use ObjectPermission;
 use ResultSet;
 use Step;
 use StepSupervisor;
-
 use PmDynaform;
 
 class DynaForm
@@ -461,14 +460,11 @@ class DynaForm
 
             //Load DynaForm
             $dynaForm = new \Dynaform();
-
             $arrayDynaFormData = $dynaForm->Load($dynaFormUid);
-
             $processUid = $arrayDynaFormData["PRO_UID"];
 
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
-
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, false);
 
             if (isset($arrayData["DYN_TITLE"])) {
@@ -479,8 +475,9 @@ class DynaForm
 
             //Update
             $arrayData["DYN_UID"] = $dynaFormUid;
-
             $result = $dynaForm->update($arrayData);
+            //Add Audit Log
+            G::auditLog("UpdateDynaform", "Dynaform Title: " . $arrayData['DYN_TITLE'] . ", Type: " . $arrayData['DYN_TYPE'] . ", Description: " . $arrayData['DYN_DESCRIPTION'] . ", Uid: " . $arrayData["DYN_UID"]);
 
             //Return
             unset($arrayData["DYN_UID"]);
@@ -490,7 +487,7 @@ class DynaForm
             }
 
             return $arrayData;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
