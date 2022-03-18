@@ -2150,4 +2150,16 @@ class RBAC
     {
         return self::GUEST_USER_UID === $usrUid;
     }
+
+    /**
+     * Returns true in case the parameter corresponds to the admin user,
+     * otherwise it returns false.
+     *
+     * @param string $usrUid
+     * @return boolean
+     */
+    public static function isAdminUserUid($usrUid)
+    {
+        return self::ADMIN_USER_UID === $usrUid;
+    }
 }
