@@ -1287,27 +1287,29 @@ class User
         try {
             //Verify data
             $this->throwExceptionIfNotExistsUser($usrUid, $this->arrayFieldNameForException["usrUid"]);
-
+            // Check user admin
+            if (RBAC::isAdminUserUid($usrUid)) {
+                throw new Exception(G::LoadTranslation("ID_MSG_CANNOT_DELETE_USER", [$usrUid]));
+            }
+            // Check user guest
+            if (RBAC::isGuestUserUid($usrUid)) {
+                throw new Exception(G::LoadTranslation("ID_MSG_CANNOT_DELETE_USER", [$usrUid]));
+            }
+            // Check if the user has cases
             $oProcessMap = new ClassesCases();
-            $USR_UID = $usrUid;
             $total = 0;
             $history = 0;
-            $c = $oProcessMap->getCriteriaUsersCases('TO_DO', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('TO_DO', $usrUid);
             $total += ApplicationPeer::doCount($c);
-            $c = $oProcessMap->getCriteriaUsersCases('DRAFT', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('DRAFT', $usrUid);
             $total += ApplicationPeer::doCount($c);
-            $c = $oProcessMap->getCriteriaUsersCases('COMPLETED', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('COMPLETED', $usrUid);
             $history += ApplicationPeer::doCount($c);
-            $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $usrUid);
             $history += ApplicationPeer::doCount($c);
-            
-            //check user guest
-            if (RBAC::isGuestUserUid($usrUid)) {
-                throw new Exception(G::LoadTranslation("ID_MSG_CANNOT_DELETE_USER", array($USR_UID)));
-            }
 
             if ($total > 0) {
-                throw new Exception(G::LoadTranslation("ID_USER_CAN_NOT_BE_DELETED", array($USR_UID)));
+                throw new Exception(G::LoadTranslation("ID_USER_CAN_NOT_BE_DELETED", [$usrUid]));
             } else {
                 $UID = $usrUid;
                 $oTasks = new Tasks();
@@ -1316,20 +1318,20 @@ class User
                 $oGroups->removeUserOfAllGroups($UID);
                 $this->changeUserStatus($UID, 'CLOSED');
                 $_GET['USR_USERNAME'] = '';
-                $this->updateUser(array('USR_UID' => $UID, 'USR_USERNAME' => $_GET['USR_USERNAME']), '');
+                $this->updateUser(['USR_UID' => $UID, 'USR_USERNAME' => $_GET['USR_USERNAME']], '');
                 require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
                 $oUser = new Users();
                 $aFields = $oUser->load($UID);
                 $aFields['USR_STATUS'] = 'CLOSED';
                 $aFields['USR_USERNAME'] = '';
                 $oUser->update($aFields);
-                //Delete Dashboard
+                // Delete Dashboard
                 require_once(PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "DashletInstance.php");
                 $criteria = new Criteria('workflow');
                 $criteria->add(DashletInstancePeer::DAS_INS_OWNER_UID, $UID);
                 $criteria->add(DashletInstancePeer::DAS_INS_OWNER_TYPE, 'USER');
                 DashletInstancePeer::doDelete($criteria);
-                //Destroy session after delete user
+                // Destroy session after delete user
                 RBAC::destroySessionUser($usrUid);
                 (new OauthClients())->removeByUser($usrUid);
             }
