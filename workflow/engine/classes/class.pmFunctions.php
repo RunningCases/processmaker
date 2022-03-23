@@ -241,14 +241,15 @@ function executeQuery($sqlStatement, $dbConnectionUID = 'workflow', $parameters 
     
     try {
         try {
-            (new SqlBlacklist($sqlStatement))->validate();
+            $sqlStatementCheck = trim($sqlStatement);
+            $sqlStatementCheck = str_replace('(', '', $sqlStatementCheck);
+            (new SqlBlacklist($sqlStatementCheck))->validate();
         } catch (Exception $e) {
             G::SendTemporalMessage($e->getMessage(), 'error', 'labels');
             throw new SQLException($e->getMessage());
         }
 
-        $statement = trim($sqlStatement);
-        $statement = str_replace('(', '', $statement);
+        $statement = $sqlStatementCheck;
 
         $result = false;
         // Check to see if we're not running oracle, which is usually a safe default
