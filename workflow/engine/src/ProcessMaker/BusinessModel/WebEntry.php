@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
 use Publisher;
+use RBAC;
 use ResultSet;
 use WebEntryPeer;
 
@@ -1101,7 +1102,7 @@ class WebEntry
      */
     public function isWebEntryOne($weUid)
     {
-        if (!empty($_SESSION['USER_LOGGED']) && empty($_SESSION['__WEBENTRYCONTINUE__'])) {
+        if (!empty($_SESSION['USER_LOGGED']) && empty($_SESSION['__WEBENTRYCONTINUE__']) && !RBAC::isGuestUserUid($_SESSION['USER_LOGGED'])) {
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/checkContinueOrCloseSession', '', [], SYS_URI . 'login/checkContinueOrCloseSession');
