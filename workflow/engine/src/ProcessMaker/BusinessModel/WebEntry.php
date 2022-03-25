@@ -1102,7 +1102,7 @@ class WebEntry
      */
     public function isWebEntryOne($weUid)
     {
-        if (!empty($_SESSION['USER_LOGGED']) && empty($_SESSION['__WEBENTRYCONTINUE__']) && !RBAC::isGuestUserUid($_SESSION['USER_LOGGED'])) {
+        if ($this->verifyCurrentSession()) {
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/checkContinueOrCloseSession', '', [], SYS_URI . 'login/checkContinueOrCloseSession');
@@ -1115,6 +1115,28 @@ class WebEntry
         return $webEntry->getWeType() === 'SINGLE'
             && $webEntry->getWeAuthentication() === 'ANONYMOUS'
             && $webEntry->getWeCallback() === 'PROCESSMAKER';
+    }
+
+    /**
+     * Verify the current sessión exist for display webentry message confirmation.
+     * @return bool
+     */
+    private function verifyCurrentSession(): bool
+    {
+        //verify normal flow
+        $rule1 = !empty($_SESSION['USER_LOGGED']) && empty($_SESSION['__WEBENTRYCONTINUE__']);
+
+        //verify guest user
+        $rule2 = !empty($_SESSION['USER_LOGGED']);
+        if ($rule2) {
+            //verify is guest user uid.
+            $rule2 = !RBAC::isGuestUserUid($_SESSION['USER_LOGGED']);
+        }
+
+        //verify saml session
+        $rule3 = !(!empty($_SESSION['samlNameId']) && !empty($_SESSION['samlSessionIndex']));
+
+        return $rule1 && $rule2 && $rule3;
     }
 
     /**
