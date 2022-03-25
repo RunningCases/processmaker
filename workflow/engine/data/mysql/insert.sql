@@ -61281,6 +61281,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_SYSTEM_INFO','en','System information','2014-01-15') ,
 ( 'LABEL','ID_SYSTEM_REDIRECT_CONFIRM','en','You must login again to view the changes. Do you want do it now?','2015-01-16') ,
 ( 'LABEL','ID_SYSTEM_SETTINGS','en','System Settings','2014-01-15') ,
+( 'LABEL','ID_SYSTEM_VARIABLES_ARE_PROTECTED','en','System variables are protected from changes, this request is denied','2022-03-24') ,
 ( 'LABEL','ID_TABLE','en','Table','2014-01-15') ,
 ( 'LABEL','ID_TABLES_REMOVED_SUCCESSFULLY','en','tables removed Successfully','2014-01-15') ,
 ( 'LABEL','ID_TABLES_REMOVED_WITH_ERRORS','en','tables removed but with errors','2014-01-15') ,

@@ -26064,6 +26064,12 @@ msgid "System Settings"
 msgstr "System Settings"
 
 # TRANSLATION
+# LABEL/ID_SYSTEM_VARIABLES_ARE_PROTECTED
+#: LABEL/ID_SYSTEM_VARIABLES_ARE_PROTECTED
+msgid "System variables are protected from changes, this request is denied"
+msgstr "System variables are protected from changes, this request is denied"
+
+# TRANSLATION
 # LABEL/ID_TABLE
 #: LABEL/ID_TABLE
 msgid "Table"

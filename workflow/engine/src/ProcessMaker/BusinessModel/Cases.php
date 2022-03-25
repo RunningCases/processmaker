@@ -1972,6 +1972,13 @@ class Cases
         Validator::isArray($app_data, '$app_data');
         Validator::isString($usr_uid, '$usr_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
+        // Validate the system variables
+        $systemVars = G::getSystemConstants();
+        foreach ($systemVars as $key => $var) {
+            if (array_key_exists($key, $app_data)) {
+                throw new Exception(G::LoadTranslation("ID_CAN_NOT_CHANGE"));
+            }
+        }
 
         $arrayResult = $this->getStatusInfo($app_uid);
 
