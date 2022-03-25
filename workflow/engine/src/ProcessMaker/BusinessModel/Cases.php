@@ -695,9 +695,14 @@ class Cases
             $response = [];
             $subApplication = new SubApplication();
             $data = $subApplication->loadByAppUidParent($applicationUid);
-            foreach ($data as $item) {
-                $response[] = $this->getCaseInfo($item['APP_UID'], $userUid);
+            if (!empty($data)) {
+                foreach ($data as $item) {
+                    $response[] = $this->getCaseInfo($item['APP_UID'], $userUid);
+                }
+            } else {
+                throw new Exception(G::LoadTranslation("ID_CASE_DOES_NOT_EXIST", [$applicationUid]));
             }
+
             return $response;
         } catch (Exception $e) {
             throw $e;
