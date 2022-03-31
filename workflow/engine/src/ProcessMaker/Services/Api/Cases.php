@@ -150,8 +150,8 @@ class Cases extends Api
                     $arrayApplicationData = $case->getApplicationRecordByPk($appUid, [], false);
                     if (!empty($arrayApplicationData)) {
                         $criteria = new Criteria('workflow');
-                        $criteria->addSelectColumn(AppDelegationPeer::appUid);
-                        $criteria->add(AppDelegationPeer::appUid, $appUid);
+                        $criteria->addSelectColumn(AppDelegationPeer::APP_UID);
+                        $criteria->add(AppDelegationPeer::APP_UID, $appUid);
                         $criteria->add(AppDelegationPeer::USR_UID, $usrUid);
                         $criteria->setLimit(1);
                         $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
