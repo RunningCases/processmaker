@@ -66,7 +66,7 @@ class Cases extends Api
             $arrayArgs  = $this->restler->apiMethodInfo->arguments;
             switch ($methodName) {
                 case 'doGetCaseVariables':
-                    $applicationUid = $this->parameters[$arrayArgs['app_uid']];
+                    $applicationUid = $this->parameters[$arrayArgs['appUid']];
                     $dynaformUid = $this->parameters[$arrayArgs['dyn_uid']];
                     $delIndex = $this->parameters[$arrayArgs['app_index']];
                     $userUid = $this->getUserId();
@@ -89,7 +89,7 @@ class Cases extends Api
                     return $cases->checkUserHasPermissionsOrSupervisor($userUid, $applicationUid, $dynaformUid);
                     break;
                 case 'doPutCaseVariables':
-                    $applicationUid = $this->parameters[$arrayArgs['app_uid']];
+                    $applicationUid = $this->parameters[$arrayArgs['appUid']];
                     $dynaformUid = $this->parameters[$arrayArgs['dyn_uid']];
                     $delIndex = $this->parameters[$arrayArgs['del_index']];
                     $userUid = $this->getUserId();
@@ -143,7 +143,7 @@ class Cases extends Api
                     return $user->userCanReassign($usrUid, $arrayApplicationData['PRO_UID']);
                     break;
                 case 'doGetCaseInfo':
-                    $appUid = $this->parameters[$arrayArgs['app_uid']];
+                    $appUid = $this->parameters[$arrayArgs['appUid']];
                     $usrUid = $this->getUserId();
 
                     $case = new BmCases();
