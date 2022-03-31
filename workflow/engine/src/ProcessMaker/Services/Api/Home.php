@@ -342,6 +342,7 @@ class Home extends Api
      * @param int $category
      * @param int $process
      * @param int $task
+     * @param int $sendBy
      * @param int $limit
      * @param int $offset
      * @param string $caseTitle
@@ -349,7 +350,6 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
-     * @param string $sendBy
      * @param array $request_data
      * @return array
      * @throws RestException
@@ -362,6 +362,7 @@ class Home extends Api
         int $category = 0,
         int $process = 0,
         int $task = 0,
+        int $sendBy = 0,
         int $limit = 15,
         int $offset = 0,
         string $caseTitle = '',
@@ -369,7 +370,6 @@ class Home extends Api
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = '',
         array $request_data = []
     )
     {
@@ -404,6 +404,7 @@ class Home extends Api
      * @param int $category
      * @param int $process
      * @param int $task
+     * @param int $sendBy
      * @param int $limit
      * @param int $offset
      * @param string $caseTitle
@@ -411,7 +412,6 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
-     * @param string $sendBy
      * @param array $request_data
      * @return array
      * @throws RestException
@@ -424,6 +424,7 @@ class Home extends Api
         int $category = 0,
         int $process = 0,
         int $task = 0,
+        int $sendBy = 0,
         int $limit = 15,
         int $offset = 0,
         string $caseTitle = '',
@@ -431,7 +432,6 @@ class Home extends Api
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = '',
         array $request_data = []
     )
     {
@@ -466,6 +466,7 @@ class Home extends Api
      * @param int $category
      * @param int $process
      * @param int $task
+     * @param int $sendBy
      * @param int $limit
      * @param int $offset
      * @param string $caseTitle
@@ -473,7 +474,6 @@ class Home extends Api
      * @param string $delegateTo
      * @param string $filterCases
      * @param string $sort
-     * @param string $sendBy
      * @param array $request_data
      * @return array
      * @throws RestException
@@ -486,6 +486,7 @@ class Home extends Api
         int $category = 0,
         int $process = 0,
         int $task = 0,
+        int $sendBy = 0,
         int $limit = 15,
         int $offset = 0,
         string $caseTitle = '',
@@ -493,7 +494,6 @@ class Home extends Api
         string $delegateTo = '',
         string $filterCases = '',
         string $sort = 'APP_NUMBER,DESC',
-        string $sendBy = '',
         array $request_data = []
     )
     {
