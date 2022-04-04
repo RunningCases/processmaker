@@ -113,7 +113,7 @@ class CasesTest extends TestCase
         $rest = $this->initializeRestApi($user->USR_UID);
         $rest->apiMethodInfo->methodName = 'doGetCaseVariables';
         $rest->apiMethodInfo->arguments = [
-            'app_uid' => 0,
+            'appUid' => 0,
             'dyn_uid' => 1,
             'app_index' => 2
         ];
@@ -156,7 +156,7 @@ class CasesTest extends TestCase
         $rest = $this->initializeRestApi($user->USR_UID);
         $rest->apiMethodInfo->methodName = 'doGetCaseVariables';
         $rest->apiMethodInfo->arguments = [
-            'app_uid' => 0,
+            'appUid' => 0,
             'dyn_uid' => 1,
             'app_index' => 2
         ];
@@ -199,7 +199,7 @@ class CasesTest extends TestCase
         $rest = $this->initializeRestApi(RBAC::GUEST_USER_UID);
         $rest->apiMethodInfo->methodName = 'doGetCaseVariables';
         $rest->apiMethodInfo->arguments = [
-            'app_uid' => 0,
+            'appUid' => 0,
             'dyn_uid' => 1,
             'app_index' => 2
         ];
