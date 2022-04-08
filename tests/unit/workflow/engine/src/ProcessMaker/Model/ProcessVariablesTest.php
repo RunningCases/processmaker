@@ -55,6 +55,19 @@ class ProcessVariablesTest extends TestCase
     }
 
     /**
+     * Test it return a variable related to the VAR_UID
+     *
+     * @covers \ProcessMaker\Model\ProcessVariables::getVariable()
+     * @test
+     */
+    public function it_get_variable()
+    {
+        $table = factory(ProcessVariables::class)->create();
+        $result = ProcessVariables::getVariable($table->VAR_UID);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * Test it return the variables related to the PRO_ID
      *
      * @covers \ProcessMaker\Model\ProcessVariables::getVariables()
@@ -76,6 +89,8 @@ class ProcessVariablesTest extends TestCase
     /**
      * Test it return the variables by type related to the PRO_ID
      *
+     * @covers \ProcessMaker\Model\ProcessVariables::scopeProcessId()
+     * @covers \ProcessMaker\Model\ProcessVariables::scopeTypeId()
      * @covers \ProcessMaker\Model\ProcessVariables::getVariablesByType()
      * @test
      */

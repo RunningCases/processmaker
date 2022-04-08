@@ -28538,8 +28538,8 @@ msgstr "Variable for Value Based Assignment"
 # TRANSLATION
 # LABEL/ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE
 #: LABEL/ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE
-msgid "The variable with \"{0}\", it is associated with a report table."
-msgstr "The variable with \"{0}\", it is associated with a report table."
+msgid "The variable \"{0}\" Is associated with a report table, that requires to be removed first before allowing deleting it."
+msgstr "The variable \"{0}\" Is associated with a report table, that requires to be removed first before allowing deleting it.""
 
 # TRANSLATION
 # LABEL/ID_VARIABLE_IN_USE

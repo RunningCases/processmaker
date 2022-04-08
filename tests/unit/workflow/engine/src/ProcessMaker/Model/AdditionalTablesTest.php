@@ -45,6 +45,31 @@ class AdditionalTablesTest extends TestCase
     }
 
     /**
+     * Test scope query to get the offline tables
+     *
+     * @covers \ProcessMaker\Model\AdditionalTables::scopeProcess()
+     * @test
+     */
+    public function it_filter_process()
+    {
+        $table = factory(AdditionalTables::class)->create();
+        $this->assertCount(1, $table->process($table->PRO_UID)->get());
+    }
+
+    /**
+     * Test scope query to get tables related to the process
+     *
+     * @covers \ProcessMaker\Model\AdditionalTables::getTables()
+     * @test
+     */
+    public function it_get_tables_related_to_process()
+    {
+        $table = factory(AdditionalTables::class)->create();
+        $result = AdditionalTables::getTables($table->PRO_UID);
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * Test get the structure of offline tables
      *
      * @covers \ProcessMaker\Model\AdditionalTables::getTablesOfflineStructure()

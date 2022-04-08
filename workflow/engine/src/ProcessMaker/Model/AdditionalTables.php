@@ -33,6 +33,34 @@ class AdditionalTables extends Model
     }
 
     /**
+     * Scope a query to get the tables related to the process
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param string $proUid
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeProcess($query, string $proUid)
+    {
+        return $query->where('PRO_UID', $proUid);
+    }
+
+    /**
+     * Get tables related to the process
+     * 
+     * @param string $proUid
+     * @return array
+     */
+    public static function getTables(string $proUid)
+    {
+        $query = AdditionalTables::query()->select();
+        $query->process($proUid);
+        $result = $query->get()->values()->toArray();
+
+        return $result;
+    }
+
+    /**
      * Get the structure of offline tables
      *
      * @return array

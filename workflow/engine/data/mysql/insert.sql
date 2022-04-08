@@ -61742,7 +61742,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_VARIABLES_RECEIVED','en','variables received','2014-01-15') ,
 ( 'LABEL','ID_VARIABLES_SENT','en','variables sent','2014-01-15') ,
 ( 'LABEL','ID_VARIABLES_VALUE_ASSIGNMENT','en','Variable for Value Based Assignment','2014-01-15') ,
-( 'LABEL','ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE','en','The variable with "{0}", it is associated with a report table.','2016-02-05') ,
+( 'LABEL','ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE','en','The variable \"{0}\" Is associated with a report table, that requires to be removed first before allowing deleting it.','2022-04-08') ,
 ( 'LABEL','ID_VARIABLE_IN_USE','en','This variable can not be deleted because it is being used in DynaForm : {0}. To delete it, first remove it from the DynaForm.','2015-04-08') ,
 ( 'LABEL','ID_VARIABLE_NO_IS_GRID','en','The Variable with {0}: "{1}" is not a grid','2016-02-23') ,
 ( 'LABEL','ID_VARIABLE_PICKER','en','pmVariablePicker','2014-01-15') ,
