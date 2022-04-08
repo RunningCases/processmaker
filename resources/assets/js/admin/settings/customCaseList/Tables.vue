@@ -277,19 +277,19 @@ export default {
             if (this.showEllipsis) {
                 this.dataEllipsis = {
                     buttons: {
+                        note: {
+                            name: "edit",
+                            icon: "far fa-edit",
+                            fn: function() {
+                                that.editCustomCaseList(data);
+                            }
+                        },
                         open: {
                             name: "delete",
                             icon: "far fa-trash-alt",
                             color: "red",
                             fn: function() {
                                 that.showModalDelete(data);
-                            }
-                        },
-                        note: {
-                            name: "edit",
-                            icon: "far fa-edit",
-                            fn: function() {
-                                that.editCustomCaseList(data);
                             }
                         },
                         reassign: {
