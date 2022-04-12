@@ -898,8 +898,8 @@ class OutputDocument extends BaseOutputDocument
         $margins["bottom"] = ($margins["bottom"] >= 0) ? $margins["bottom"] : PDF_MARGIN_BOTTOM;
 
         // Set margins configuration
-        $headerOptions = $this->setHeaderOptions($pdf);
-        $footerOptions = $this->setFooterOptions($pdf);
+        $headerOptions = $this->setHeaderOptions($pdf, $fields);
+        $footerOptions = $this->setFooterOptions($pdf, $fields);
         $pdf->setPrintHeader($headerOptions);
         $pdf->setPrintFooter($footerOptions);
         $pdf->SetLeftMargin($margins['left']);
@@ -1376,9 +1376,10 @@ class OutputDocument extends BaseOutputDocument
     /**
      * Set and build if header options exist.
      * @param TCPDFHeaderFooter $pdf
+     * @param array $fields
      * @return bool
      */
-    private function setHeaderOptions(TCPDFHeaderFooter $pdf): bool
+    private function setHeaderOptions(TCPDFHeaderFooter $pdf, array $fields): bool
     {
         if (empty($this->out_doc_header)) {
             return false;
@@ -1387,18 +1388,18 @@ class OutputDocument extends BaseOutputDocument
 
         $struct = $pdf->getHeaderStruct();
 
-        $struct->setLogo($header->logo ?? '');
+        $struct->setLogo(G::replaceDataField($header->logo ?? '', $fields));
         $struct->setLogoWidth($header->logoWidth ?? 0);
         $struct->setLogoPositionX($header->logoPositionX ?? 0);
         $struct->setLogoPositionY($header->logoPositionY ?? 0);
 
-        $struct->setTitle($header->title ?? '');
+        $struct->setTitle(G::replaceDataField($header->title ?? '', $fields));
         $struct->setTitleFontSize($header->titleFontSize ?? 0);
         $struct->setTitleFontPositionX($header->titleFontPositionX ?? 0);
         $struct->setTitleFontPositionY($header->titleFontPositionY ?? 0);
 
         $struct->setPageNumber($header->pageNumber ?? false);
-        $struct->setPageNumberTitle($header->pageNumberTitle ?? '');
+        $struct->setPageNumberTitle(G::replaceDataField($header->pageNumberTitle ?? '', $fields));
         $struct->setPageNumberTotal($header->pageNumberTotal ?? false);
         $struct->setPageNumberPositionX($header->pageNumberPositionX ?? 0);
         $struct->setPageNumberPositionY($header->pageNumberPositionY ?? 0);
@@ -1408,9 +1409,10 @@ class OutputDocument extends BaseOutputDocument
     /**
      * Set and build if footer options exist.
      * @param TCPDFHeaderFooter $pdf
+     * @param array $fields
      * @return bool
      */
-    private function setFooterOptions(TCPDFHeaderFooter $pdf): bool
+    private function setFooterOptions(TCPDFHeaderFooter $pdf, array $fields): bool
     {
         if (empty($this->out_doc_footer)) {
             return false;
@@ -1419,18 +1421,18 @@ class OutputDocument extends BaseOutputDocument
 
         $struct = $pdf->getFooterStruct();
 
-        $struct->setLogo($footer->logo ?? '');
+        $struct->setLogo(G::replaceDataField($footer->logo ?? '', $fields));
         $struct->setLogoWidth($footer->logoWidth ?? 0);
         $struct->setLogoPositionX($footer->logoPositionX ?? 0);
         $struct->setLogoPositionY($footer->logoPositionY ?? 0);
 
-        $struct->setTitle($footer->title ?? '');
+        $struct->setTitle(G::replaceDataField($footer->title ?? '', $fields));
         $struct->setTitleFontSize($footer->titleFontSize ?? 0);
         $struct->setTitleFontPositionX($footer->titleFontPositionX ?? 0);
         $struct->setTitleFontPositionY($footer->titleFontPositionY ?? 0);
 
         $struct->setPageNumber($footer->pageNumber ?? false);
-        $struct->setPageNumberTitle($footer->pageNumberTitle ?? '');
+        $struct->setPageNumberTitle(G::replaceDataField($footer->pageNumberTitle ?? '', $fields));
         $struct->setPageNumberTotal($footer->pageNumberTotal ?? false);
         $struct->setPageNumberPositionX($footer->pageNumberPositionX ?? 0);
         $struct->setPageNumberPositionY($footer->pageNumberPositionY ?? 0);
