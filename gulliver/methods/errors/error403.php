@@ -52,7 +52,7 @@ if (isset($_GET["url"]) && $_GET["url"] != "") {
     <link href="../lib/pmdynaform/libs/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet">
     <!-- Custom styling plus plugins -->
     <link href="../lib/pmdynaform/libs/custom/custom.css" rel="stylesheet">
-    <script type="text/javascript" src="../lib/pmdynaform/libs/jquery/jquery-1.11.js"></script>
+    <script type="text/javascript" src="../lib/pmdynaform/libs/jquery/jquery-3.6.0.js"></script>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
             var btnLogin = $("#login"),
