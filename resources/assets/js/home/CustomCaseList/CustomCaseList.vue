@@ -802,7 +802,7 @@ export default {
                                 if (that.availableItems[that.itemMap[item.field]]) {
                                     newItems.push(that.availableItems[that.itemMap[item.field]]);
                                 } else {
-                                    product = this.filterItemFactory(item)
+                                    product = this.filterItemFactory(item);
                                     if (product) {
                                         newItems.push(product);
                                     }
@@ -837,9 +837,9 @@ export default {
         filterItemFactory(item) {
             let product;
             if (item.type === "DATETIME") {
-                product= {...this.customItems["DATETIME"]};
+                product= _.cloneDeep(this.customItems["DATETIME"]);
             } else {
-                product = {...this.customItems["VARCHAR"]};
+                product = _.cloneDeep(this.customItems["VARCHAR"]);
             }
             product.title += " " + item.name;
             product.id = item.field;    
