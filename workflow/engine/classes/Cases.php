@@ -4615,7 +4615,6 @@ class Cases
         $newData['DEL_PREVIOUS'] = $fieldsDel['DEL_PREVIOUS'];
         $newData['DEL_TYPE'] = $fieldsDel['DEL_TYPE'];
         $newData['DEL_PRIORITY'] = $fieldsDel['DEL_PRIORITY'];
-        $newData['DEL_DELEGATE_DATE'] = $fieldsDel['DEL_DELEGATE_DATE'];
         $newData['USR_UID'] = $newUserUid;
         $newData['DEL_INIT_DATE'] = null;
         $newData['DEL_FINISH_DATE'] = null;
