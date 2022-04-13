@@ -42,4 +42,19 @@ class FieldsTest extends TestCase
         $result = Fields::getFields($fields->ADD_TAB_UID);
         $this->assertNotEmpty($result);
     }
+
+    /**
+     * Test scope and search a field related to the specific ADD_TAB_UID
+     *
+     * @covers \ProcessMaker\Model\Fields::scopeField()
+     * @covers \ProcessMaker\Model\Fields::scopeFieldOrLabel()
+     * @covers \ProcessMaker\Model\Fields::searchVariable()
+     * @test
+     */
+    public function it_search_field()
+    {
+        $fields = factory(Fields::class)->create();
+        $result = Fields::searchVariable($fields->ADD_TAB_UID, $fields->FLD_NAME);
+        $this->assertNotEmpty($result);
+    }
 }

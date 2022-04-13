@@ -88,6 +88,23 @@ class ProcessVariables extends Model
     }
 
     /**
+     * Return the variable information
+     *
+     * @param string $varUid
+     *
+     * @return array
+     */
+    public static function getVariable(string $varUid)
+    {
+        $query = ProcessVariables::query()->select();
+        $query->where('VAR_UID', $varUid)->limit(1);
+        $result = $query->get()->values()->toArray();
+        $result = head($result);
+
+        return $result;
+    }
+
+    /**
      * Return the variables list
      *
      * @param int $proId
