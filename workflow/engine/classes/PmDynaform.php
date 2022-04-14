@@ -1224,7 +1224,7 @@ class PmDynaform
                 var pathRTLCss = \"" . $this->pathRTLCss . "\";
                 var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";
                 " . $this->getTheStringVariableForGoogleMaps() . "\n
-                $(window).on('load',(function ()
+                $(window).load(function ()
                 {
                     var data = jsondata;
 
@@ -1288,7 +1288,7 @@ class PmDynaform
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
                 $this->getTheStringVariableForGoogleMaps() . "\n" .
-                "$(window).on('load',(function () {\n" .
+                "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
                 "    window.dynaform = new PMDynaform.core.Project({\n" .
                 "        data: data,\n" .
