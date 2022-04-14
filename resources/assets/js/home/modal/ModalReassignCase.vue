@@ -21,10 +21,10 @@
       <b-container fluid>
         <b-row class="my-1">
           <b-col sm="3">
-            <label for="selectUser">{{ $t('ID_SELECT_USER') }}</label>
+            <label aria-label="selectUser">{{ $t('ID_SELECT_USER') }}</label>
           </b-col>
           <b-col sm="9">
-            <b-form-select v-model="userSelected" :options="users"></b-form-select>
+            <b-form-select id="selectUser" v-model="userSelected" :options="users" aria-label="selectUser"></b-form-select>
           </b-col>
         </b-row>
 

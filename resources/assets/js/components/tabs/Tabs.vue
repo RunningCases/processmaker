@@ -11,7 +11,7 @@
       >
         <span
           v-html="tab.header"
-          :aria-controls="tab.hash"
+          :aria-label="tab.hash"
           :aria-selected="tab.isActive"
           @click="selectTab(tab.hash, $event)"
           class="tabs-component-tab-a"

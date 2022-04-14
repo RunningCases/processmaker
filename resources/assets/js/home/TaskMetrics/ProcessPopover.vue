@@ -19,20 +19,21 @@
             aria-describedby="inputGroup-sizing-sm"
             @keyup="search"
             v-model="text"
+            aria-label="search"
           />
-        </div>
-        <div class="form-check border-bottom">
+        </div>        <div class="form-check border-bottom">
           <input
             class="form-check-input"
             type="checkbox"
             v-model="allColumns"
             @change="toogleAllColumns"
+            id="flexCheckDefault"
           />
           <label class="form-check-label" for="flexCheckDefault">
             {{ $t("ID_ALL") }}
           </label>
         </div>
-        <b-form-group>
+        <b-form-group label-for="casesFilter">
           <b-form-checkbox-group
             v-model="localSelected"
             :options="results"

@@ -3,6 +3,7 @@
     <iframe
       :width="width"
       ref="xIFrame"
+      title="xIFrame"
       frameborder="0"
       :src="path"
       :height="height"

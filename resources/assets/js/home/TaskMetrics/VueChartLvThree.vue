@@ -1,5 +1,5 @@
 <template>
-    <div id="v-pm-charts" ref="v-pm-charts" class="v-pm-charts vp-inline-block">
+    <div ref="v-pm-charts" class="v-pm-charts vp-inline-block">
         <div class="p-1 v-flex">
             <h6 class="v-search-title">
                 {{ $t("ID_DRILL_DOWN_RISK_MATRIX") }}
