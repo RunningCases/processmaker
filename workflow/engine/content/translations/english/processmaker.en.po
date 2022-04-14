@@ -5432,8 +5432,8 @@ msgstr "The process was not downloaded, because the curl extension for php is no
 # TRANSLATION
 # LABEL/ID_CURRENT_ASSING_TYPE_WITH_CASES
 #: LABEL/ID_CURRENT_ASSING_TYPE_WITH_CASES
-msgid "The current activity has cases and cannot be deleted"
-msgstr "The current activity has cases and cannot be deleted"
+msgid "The current activity has cases and cannot be changed"
+msgstr "The current activity has cases and cannot be changed"
 
 # TRANSLATION
 # LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
@@ -7180,6 +7180,36 @@ msgstr "Copy/Import Dynaform"
 #: LABEL/ID_DYNAFORM_COPY_REQUIRED
 msgid "Select the dynaform you want to copy/import."
 msgstr "Select the dynaform you want to copy/import."
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_DYNAFORMS
+#: LABEL/ID_DYNAFORM_DEPENDS_DYNAFORMS
+msgid "({0}) Depends in dynaform"
+msgstr "({0}) Depends in dynaform"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_CASE_TRACKER
+#: LABEL/ID_DYNAFORM_DEPENDS_CASE_TRACKER
+msgid "({0}) Depends in case traker"
+msgstr "({0}) Depends in case traker"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_PERMISSIONS
+#: LABEL/ID_DYNAFORM_DEPENDS_PERMISSIONS
+msgid "({0}) Depends in permissions"
+msgstr "({0}) Depends in permissions"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_STEPS
+#: LABEL/ID_DYNAFORM_DEPENDS_STEPS
+msgid "({0}) Depends in steps"
+msgstr "({0}) Depends in steps"
+
+# TRANSLATION
+# LABEL/ID_DYNAFORM_DEPENDS_STEPS_SUPERVISOR
+#: LABEL/ID_DYNAFORM_DEPENDS_STEPS_SUPERVISOR
+msgid "({0}) Depends in steps supervisor"
+msgstr "({0}) Depends in steps supervisor"
 
 # TRANSLATION
 # LABEL/ID_DYNAFORM_DOES_NOT_EXIST
@@ -22278,6 +22308,12 @@ msgid "Numerical Character is required"
 msgstr "Numerical Character is required"
 
 # TRANSLATION
+# LABEL/ID_PPP_SPACES_NOT_SUPPORTED_AT_THE_END_OF_PASSWORD
+#: LABEL/ID_PPP_SPACES_NOT_SUPPORTED_AT_THE_END_OF_PASSWORD
+msgid "Spaces not supported at the end of password"
+msgstr "Spaces not supported at the end of password"
+
+# TRANSLATION
 # LABEL/ID_PPP_SPECIAL_CHARACTER_REQUIRED
 #: LABEL/ID_PPP_SPECIAL_CHARACTER_REQUIRED
 msgid "Special Character is required"
@@ -26028,6 +26064,12 @@ msgid "System Settings"
 msgstr "System Settings"
 
 # TRANSLATION
+# LABEL/ID_SYSTEM_VARIABLES_ARE_PROTECTED
+#: LABEL/ID_SYSTEM_VARIABLES_ARE_PROTECTED
+msgid "System variables are protected from changes, this request is denied"
+msgstr "System variables are protected from changes, this request is denied"
+
+# TRANSLATION
 # LABEL/ID_TABLE
 #: LABEL/ID_TABLE
 msgid "Table"
@@ -28148,8 +28190,8 @@ msgstr "User Name"
 # TRANSLATION
 # LABEL/ID_USER_NAME_ALREADY_EXISTS
 #: LABEL/ID_USER_NAME_ALREADY_EXISTS
-msgid "The User Name with {0}: \"{1}\" already exists."
-msgstr "The User Name with {0}: \"{1}\" already exists."
+msgid "The User Name '{0}' already exists."
+msgstr "The User Name '{0}' already exists."
 
 # TRANSLATION
 # LABEL/ID_USER_NOT_ACTIVE
@@ -28496,8 +28538,8 @@ msgstr "Variable for Value Based Assignment"
 # TRANSLATION
 # LABEL/ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE
 #: LABEL/ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE
-msgid "The variable with \"{0}\", it is associated with a report table."
-msgstr "The variable with \"{0}\", it is associated with a report table."
+msgid "The variable \"{0}\" Is associated with a report table, that requires to be removed first before allowing deleting it."
+msgstr "The variable \"{0}\" Is associated with a report table, that requires to be removed first before allowing deleting it.""
 
 # TRANSLATION
 # LABEL/ID_VARIABLE_IN_USE

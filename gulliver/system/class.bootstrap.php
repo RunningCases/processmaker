@@ -2633,7 +2633,7 @@ class Bootstrap
                 $langServer = $locale['LOCALE'];
                 $language = explode('-', $langServer);
                 $language = head($language);
-                if ($language === $acceptLanguage) {
+                if ($language === $acceptLanguage || $langServer === $acceptLanguage) {
                     $inLang = true;
                     break;
                 }

@@ -695,9 +695,14 @@ class Cases
             $response = [];
             $subApplication = new SubApplication();
             $data = $subApplication->loadByAppUidParent($applicationUid);
-            foreach ($data as $item) {
-                $response[] = $this->getCaseInfo($item['APP_UID'], $userUid);
+            if (!empty($data)) {
+                foreach ($data as $item) {
+                    $response[] = $this->getCaseInfo($item['APP_UID'], $userUid);
+                }
+            } else {
+                throw new Exception(G::LoadTranslation("ID_CASE_DOES_NOT_EXIST", [$applicationUid]));
             }
+
             return $response;
         } catch (Exception $e) {
             throw $e;
@@ -1972,6 +1977,13 @@ class Cases
         Validator::isArray($app_data, '$app_data');
         Validator::isString($usr_uid, '$usr_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
+        // Validate the system variables
+        $systemVars = G::getSystemConstants();
+        foreach ($systemVars as $key => $var) {
+            if (array_key_exists($key, $app_data)) {
+                throw new Exception(G::LoadTranslation("ID_CAN_NOT_CHANGE"));
+            }
+        }
 
         $arrayResult = $this->getStatusInfo($app_uid);
 

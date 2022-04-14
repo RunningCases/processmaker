@@ -102,8 +102,10 @@ class Search extends AbstractCases
         }
         // Filter by task
         if ($this->getTaskId()) {
-            // Join with delegation
-            $query->joinDelegation();
+            if (!$this->getUserId()) {
+                // Join with delegation if was not defined before
+                $query->joinDelegation();
+            }
             // Add the filter
             $query->task($this->getTaskId());
             // Get only the open threads related to the task

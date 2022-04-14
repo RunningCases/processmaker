@@ -226,10 +226,9 @@ class ReportTablesTest extends TestCase
     {
         $tableName = 'TestReportTable';
         $result = $this->prepareData($tableName);
-        $connectionShortName = null;
 
         $reportTables = new ReportTables();
-        $reportTables->populateTable($tableName, $connectionShortName);
+        $reportTables->populateTable($tableName);
 
         $expected = $result->dataFields;
         $expected['APP_UID'] = $result->applicationUid;
@@ -337,7 +336,7 @@ class ReportTablesTest extends TestCase
         $tableName = 'TestReportTable';
         $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
-        $type = null;
+        $type = '';
 
         $reportTables = new ReportTables();
         $reportTables->populateTable($tableName, $connectionShortName, $type);
@@ -395,7 +394,7 @@ class ReportTablesTest extends TestCase
         $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
-        $fields = null;
+        $fields = [];
 
         $reportTables = new ReportTables();
         $reportTables->populateTable($tableName, $connectionShortName, $type, $fields);
@@ -453,7 +452,7 @@ class ReportTablesTest extends TestCase
         $result = $this->prepareData($tableName);
         $connectionShortName = 'wf';
         $type = 'NORMAL';
-        $fields = "";
+        $fields = [];
 
         $reportTables = new ReportTables();
         $reportTables->populateTable($tableName, $connectionShortName, $type, $fields);
@@ -513,7 +512,7 @@ class ReportTablesTest extends TestCase
         $connectionShortName = 'wf';
         $type = 'NORMAL';
         $fields = $result->fields;
-        $proUid = null;
+        $proUid = '';
 
         $reportTables = new ReportTables();
         $reportTables->populateTable($tableName, $connectionShortName, $type, $fields, $proUid);
@@ -575,7 +574,7 @@ class ReportTablesTest extends TestCase
         $type = 'NORMAL';
         $fields = $result->fields;
         $proUid = $result->processUid;
-        $grid = null;
+        $grid = '';
 
         $reportTables = new ReportTables();
         $reportTables->populateTable($tableName, $connectionShortName, $type, $fields, $proUid, $grid);
@@ -844,4 +843,92 @@ class ReportTablesTest extends TestCase
         $result = json_decode($data, JSON_OBJECT_AS_ARRAY);
         return $result;
     }
+
+    /**
+     * @test
+     * @covers ReportTables::generateOldReportTable
+     * @covers ReportTables::buildAndExecuteQuery
+     * @covers ReportTables::buildFieldsSection
+     * @covers ReportTables::buildValuesSection
+     */
+    public function it_should_test_generateOldReportTable_for_normal()
+    {
+        $tableName = 'TestReportTable';
+        $result = $this->prepareData($tableName);
+        $connectionShortName = 'wf';
+        $type = 'NORMAL';
+        $fields = $result->fields;
+        $proUid = $result->processUid;
+        $grid = '';
+
+        $start = 0;
+        $limit = 100;
+
+        $reportTables = new ReportTables();
+        DB::delete("TRUNCATE TABLE `{$tableName}` ");
+
+        $reportTables->generateOldReportTable($tableName, $connectionShortName, $type, $fields, $proUid, $grid, $start, $limit);
+
+        $expected = $result->dataFields;
+        $expected['APP_UID'] = $result->applicationUid;
+        $expected['APP_NUMBER'] = $result->applicationNumber;
+
+        $actual = (array) DB::table($tableName)
+                ->select()
+                ->first();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     * @covers ReportTables::generateOldReportTable
+     * @covers ReportTables::buildAndExecuteQuery
+     * @covers ReportTables::buildFieldsSection
+     * @covers ReportTables::buildValuesSection
+     */
+    public function it_should_test_generateOldReportTable_for_grid()
+    {
+        $tableName = 'TestReportTable';
+        $result = $this->prepareData($tableName, true);
+        $connectionShortName = 'wf';
+        $type = 'GRID';
+        $fields = $result->fields;
+        $proUid = $result->processUid;
+        $grid = 'var_Grid1';
+
+        $app = Application::where('APP_UID', '=', $result->applicationUid)->get()->first();
+        $appData = unserialize($app->APP_DATA);
+        $appData['var_Textarea1'] = [];
+        $appData = serialize($appData);
+        Application::where('APP_UID', '=', $result->applicationUid)->update(['APP_DATA' => $appData]);
+
+        $start = 0;
+        $limit = 100;
+
+        $reportTables = new ReportTables();
+        DB::delete("TRUNCATE TABLE `{$tableName}` ");
+
+        $reportTables->generateOldReportTable($tableName, $connectionShortName, $type, $fields, $proUid, $grid, $start, $limit);
+
+        $indexRow = 1;
+        $expected = $result->appData[$grid];
+        foreach ($expected as &$row) {
+            $row['APP_UID'] = $result->applicationUid;
+            $row['APP_NUMBER'] = $result->applicationNumber;
+            $row['ROW'] = (string) ($indexRow++);
+        }
+        $expected = array_values($expected);
+
+        $actual = DB::table($tableName)
+            ->select()
+            ->get();
+        $actual->transform(function ($item, $key) {
+            return (array) $item;
+        });
+        $actual = $actual->toArray();
+
+        $this->assertEquals($expected, $actual);
+    }
+
 }

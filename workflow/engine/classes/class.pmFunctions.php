@@ -241,14 +241,15 @@ function executeQuery($sqlStatement, $dbConnectionUID = 'workflow', $parameters 
     
     try {
         try {
-            (new SqlBlacklist($sqlStatement))->validate();
+            $sqlStatementCheck = trim($sqlStatement);
+            $sqlStatementCheck = str_replace('(', '', $sqlStatementCheck);
+            (new SqlBlacklist($sqlStatementCheck))->validate();
         } catch (Exception $e) {
             G::SendTemporalMessage($e->getMessage(), 'error', 'labels');
             throw new SQLException($e->getMessage());
         }
 
-        $statement = trim($sqlStatement);
-        $statement = str_replace('(', '', $statement);
+        $statement = $sqlStatementCheck;
 
         $result = false;
         // Check to see if we're not running oracle, which is usually a safe default
@@ -1159,10 +1160,11 @@ function WSDerivateCase ($caseId, $delIndex)
  * @param string(32) | $value1 | Value of the first variable | The value of the first variable to be sent to the created case.
  * @param string(32) | $name2 | Name of the second variable | The name of the second variable to be sent to the created case.
  * @param string(32) | $value2 | Value of the second variable | The value of the second variable to be sent to the created case.
+ * @param string(32) | $taskId = '' | Task ID | The unique ID for the task
  * @return array | $fields | WS Response Associative Array | A WS Response associative array.
  *
  */
-function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $value2)
+function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $value2, $taskId = '')
 {
     $client = WSOpen();
 
@@ -1176,14 +1178,17 @@ function WSNewCaseImpersonate ($processId, $userId, $name1, $value1, $name2, $va
     $v2->name = $name2;
     $v2->value = $value2;
 
-    $variables = array ($v1,$v2
-    );
+    $variables = [$v1,$v2];
 
-    $params = array ("sessionId" => $sessionId,"processId" => $processId,"userId" => $userId,"variables" => $variables
-    );
+    $params = [
+        "sessionId" => $sessionId,
+        "processId" => $processId,
+        "taskId" => $taskId,
+        "userId" => $userId,
+        "variables" => $variables
+    ];
 
-    $result = $client->__soapCall( "NewCaseImpersonate", array ($params
-    ) );
+    $result = $client->__soapCall("NewCaseImpersonate", [$params]);
 
     $fields["status_code"] = $result->status_code;
     $fields["message"] = $result->message;
@@ -3201,16 +3206,16 @@ function PMFUnCancelCase($caseUID, $userUID)
  * @name PMFDynaFormFields
  * @label PMF DynaForm Fields
  * @param string | $dynUid | Dynaform ID | Id of the dynaform
- * @param string | $appUid | Case ID | Id of the case
- * @param int | $delIndex | Delegation index | Delegation index for case
+ * @param string | $appUid = '' | Case ID | Id of the case
+ * @param int | $delIndex = 0| Delegation index | Delegation index for case
  * @return array | $fields | List of fields | Return a list of fields
  */
-function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
+function PMFDynaFormFields($dynUid, $appUid = '', $delIndex = 0)
 {
-    $fields = array();
-    $data = array();
+    $fields = [];
+    $data = [];
 
-    if ($appUid !== false) {
+    if (!empty($appUid)) {
         if ($delIndex < 0) {
             throw new Exception(G::LoadTranslation('ID_INVALID_DELEGATION_INDEX_FOR_CASE') . "'" . $appUid . "'.");
         }
@@ -3252,6 +3257,7 @@ function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
             $fields[] = $value;
         }
     }
+
     return $fields;
 }
 

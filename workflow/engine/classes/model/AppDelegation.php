@@ -808,7 +808,7 @@ class AppDelegation extends BaseAppDelegation
         return $rs->getRow();
     }
 
-    public function getCurrentIndex($appUid)
+    public static function getCurrentIndex($appUid)
     {
         $oCriteria = new Criteria();
         $oCriteria->addSelectColumn(AppDelegationPeer::DEL_INDEX);

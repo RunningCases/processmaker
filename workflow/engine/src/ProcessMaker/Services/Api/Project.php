@@ -204,7 +204,7 @@ class Project extends Api
         \G::auditLog('ExportProcess','Export process "' . $granularExporter->getProjectName() . '"');
 
         $httpStream->loadFromFile($outputFilename);
-        $httpStream->setHeader("Content-Type", "application/xml; charset=UTF-8");
+        $httpStream->setHeader("Content-Type", "application/$fileExtension");
         $httpStream->send();
     }
 
@@ -232,7 +232,7 @@ class Project extends Api
         \G::auditLog('ExportProcess','Export process "' . $exporter->getProjectName() . '"');
 
         $httpStream->loadFromFile($outputFilename);
-        $httpStream->setHeader("Content-Type", "application/xml; charset=UTF-8");
+        $httpStream->setHeader("Content-Type", "application/$fileExtension");
         $httpStream->send();
     }
 

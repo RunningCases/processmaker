@@ -5,8 +5,10 @@ namespace ProcessMaker\BusinessModel;
 use Exception;
 use G;
 use ProcessMaker\BusinessModel\Variable;
+use ProcessMaker\Model\AdditionalTables;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Dynaform;
+use ProcessMaker\Model\Fields;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessVariables;
 use Tests\TestCase;
@@ -16,7 +18,6 @@ use Tests\TestCase;
  */
 class VariableTest extends TestCase
 {
-
     /**
      * Test it create variables related to the process
      *
@@ -271,5 +272,31 @@ class VariableTest extends TestCase
 
         $variable = new Variable();
         $result = $variable->executeSqlControl(null, []);
+    }
+
+    /**
+     * This verify the exception
+     * @test
+     * @covers \ProcessMaker\BusinessModel\Variable::throwExceptionIfVariableIsAssociatedAditionalTable()
+     */
+    public function it_should_test_exception_when_a_variable_is_related_table()
+    {
+        //assert
+        $this->expectException(Exception::class);
+        // Create process variable
+        $variable = factory(ProcessVariables::class)->create();
+        $result = ProcessVariables::getVariable($variable->VAR_UID);
+        $this->assertNotEmpty($result);
+        // Create tables
+        $table = factory(AdditionalTables::class)->create([
+            'PRO_UID' => $variable->PRO_UID,
+        ]);
+        // Create fields
+        $fields = factory(Fields::class)->create([
+            'ADD_TAB_UID' => $table->ADD_TAB_UID,
+            'FLD_NAME' => $variable->VAR_NAME,
+        ]);
+        $variable = new Variable();
+        $res = $variable->throwExceptionIfVariableIsAssociatedAditionalTable($variable->VAR_UID);
     }
 }
