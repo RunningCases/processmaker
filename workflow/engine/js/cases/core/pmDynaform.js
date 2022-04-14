@@ -16,7 +16,7 @@ function submitNextStep(formStep) {
     $("#" + formStep.id).submitForm();
     return this;
 }
-$(window).on("load", function () {
+$(window).load(function () {
     var delIndexDefault = "0",
         dyn_uid = window.dyn_uid || null;
     if (pm_run_outside_main_app === 'true') {
