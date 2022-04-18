@@ -2131,12 +2131,10 @@ class Delegation extends Model
      * Get cases completed by specific user
      *
      * @param int $userId
-     * @param int $offset
-     * @param int $limit
      *
      * @return array
      */
-    public static function casesCompletedBy(int $userId, int $offset = 0, int $limit = 15)
+    public static function casesCompletedBy(int $userId)
     {
         // Get the case numbers related to this filter
         $query = Delegation::query()->select(['APP_NUMBER']);
@@ -2144,8 +2142,6 @@ class Delegation extends Model
         $query->participated($userId);
         // Filter the last thread
         $query->lastThread();
-        // Apply the limit
-        $query->offset($offset)->limit($limit);
         // Get the result
         $results = $query->get();
 
@@ -2156,12 +2152,10 @@ class Delegation extends Model
      * Get cases started by specific user
      *
      * @param int $userId
-     * @param int $offset
-     * @param int $limit
      *
      * @return array
      */
-    public static function casesStartedBy(int $userId, int $offset = 0, int $limit = 15)
+    public static function casesStartedBy(int $userId)
     {
         // Get the case numbers related to this filter
         $query = Delegation::query()->select(['APP_NUMBER']);
@@ -2169,8 +2163,6 @@ class Delegation extends Model
         $query->participated($userId);
         // Filter the first thread
         $query->caseStarted();
-        // Apply the limit
-        $query->offset($offset)->limit($limit);
         // Get the result
         $results = $query->get();
 
