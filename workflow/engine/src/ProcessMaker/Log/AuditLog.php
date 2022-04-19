@@ -332,21 +332,26 @@ class AuditLog
      */
     private function getFiles($path, $pattern = '', $dir = 'ASC')
     {
-        $finder = new Finder();
-        $finder->files()
-                ->in($path)
-                ->name($pattern);
-        $files = iterator_to_array($finder->getIterator());
-        uasort($files, function ($a, $b) use ($dir) {
-            $name1 = $a->getFilename();
-            $name2 = $b->getFilename();
-            if ($dir === 'ASC') {
-                return strcmp($name1, $name2);
-            } else {
-                return strcmp($name2, $name1);
-            }
-        });
-        return $files;
+        try {
+            $finder = new Finder();
+            $finder->files()
+                    ->in($path)
+                    ->name($pattern);
+            $files = iterator_to_array($finder->getIterator());
+            uasort($files, function ($a, $b) use ($dir) {
+                $name1 = $a->getFilename();
+                $name2 = $b->getFilename();
+                if ($dir === 'ASC') {
+                    return strcmp($name1, $name2);
+                } else {
+                    return strcmp($name2, $name1);
+                }
+            });
+            return $files;
+        } catch (Exception $e) {
+            // Return array empty when the path does not exist
+            return [];
+        }
     }
 
     /**
