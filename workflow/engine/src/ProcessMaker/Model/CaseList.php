@@ -401,7 +401,7 @@ class CaseList extends Model
                 'set' => true
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
-                'field' => 'task',
+                'field' => 'task_title',
                 'name' => G::LoadTranslation('ID_TASK'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
