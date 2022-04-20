@@ -398,6 +398,7 @@ export default {
             },
             itemMap: {
                 case_number: "caseNumber",
+                task_title: "taskTitle",
                 thread_title: "caseTitle",
                 delegation_date: "delegationDate",
                 send_by: "bySendBy",
@@ -809,7 +810,9 @@ export default {
                                 }
                             }
                             that.headings[item.field] = item.name;
-                            columns.push(item.field);
+                            if(item.enableFilter){
+                                columns.push(item.field);
+                            }
                         });
                         that.filterItems = newItems;
                         dt = that.formatDataResponse(response.data.data);
