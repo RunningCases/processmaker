@@ -61404,6 +61404,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_THE_MAXIMUM_VALUE_OF_THIS_FIELD_IS','en','The maximum value of this field is {0}.','2019-02-26') ,
 ( 'LABEL','ID_THE_MIMETYPE_EXTENSION_ERROR','en','The mime type does not correspond to the permitted extension, please verify your file.','2018-10-02') ,
 ( 'LABEL','ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS','en','The change might cause data loss in the PM table. Do you want to continue?','2017-03-30') ,
+( 'LABEL','ID_THE_PERMISSION_CAN_NOT_BE_UNASSIGNED_FROM_THIS_ROLE','en','The permission can not be unassigned from this role.','2022-04-20') ,
 ( 'LABEL','ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED','en','The PHP files execution was disabled please contact the system administrator.','2018-04-20') ,
 ( 'LABEL','ID_THE_REASON_REASSIGN_USER_EMPTY','en','Please complete the reassign reason.','2016-10-20') ,
 ( 'LABEL','ID_THE_REPORT_TABLE_IS_REGENERATING_PLEASE_COME_BACK_IN_A_FEW_MINUTES','en','The report table is regenerating please come back in a few minutes.','2020-06-01') ,
