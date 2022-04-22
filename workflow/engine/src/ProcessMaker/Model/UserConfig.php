@@ -93,4 +93,65 @@ class UserConfig extends Model
             ->delete();
         return $userConfig;
     }
+
+    /**
+     * This updates the filter settings on custom case list.
+     * @param string $id
+     * @param array $caseList
+     */
+    public static function updateUserConfig(string $id, array $caseList)
+    {
+        //get columns deactivates
+        $columnsDisableFilter = [];
+        if (isset($caseList['columns'])) {
+            foreach ($caseList['columns'] as $column) {
+                if ($column->enableFilter === false) {
+                    $columnsDisableFilter[] = $column;
+                }
+            }
+        }
+        //process all custom configuration
+        $name = 'userConfig';
+        $usersConfig = UserConfig::select(['USR_ID', 'USC_SETTING'])
+            ->where('USC_NAME', '=', $name)
+            ->get();
+        foreach ($usersConfig as $value) {
+            if (empty($value->USC_SETTING)) {
+                continue;
+            }
+            $lists = json_decode($value->USC_SETTING);
+            foreach ($lists as &$list) {
+                if (!property_exists($list, 'customCaseList')) {
+                    continue;
+                }
+                foreach ($list->customCaseList as $key => &$item) {
+                    if (intval($key) !== intval($id)) {
+                        continue;
+                    }
+                    if (!property_exists($item, 'filters')) {
+                        continue;
+                    }
+                    if (!is_array($item->filters)) {
+                        continue;
+                    }
+                    $i = count($item->filters) - 1;
+                    while ($i >= 0) {
+                        if (isset($item->filters[$i])) {
+                            foreach ($columnsDisableFilter as $column) {
+                                if ($item->filters[$i]->fieldId === $column->field) {
+                                    unset($item->filters[$i]);
+                                    //reindex array keys
+                                    $item->filters = array_values($item->filters);
+                                }
+                            }
+                        }
+                        $i--;
+                    }
+                }
+            }
+            //update database
+            $lists = (array) $lists;
+            UserConfig::editSetting($value->USR_ID, $name, $lists);
+        }
+    }
 }
