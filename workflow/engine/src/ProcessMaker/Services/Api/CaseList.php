@@ -6,6 +6,7 @@ use Exception;
 use G;
 use Luracast\Restler\RestException;
 use ProcessMaker\Model\CaseList as CaseListBusinessModel;
+USE ProcessMaker\Model\UserConfig;
 use ProcessMaker\Services\Api;
 use RBAC;
 
@@ -62,6 +63,7 @@ class CaseList extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_DOES_NOT_EXIST'));
         }
         $caseList = CaseListBusinessModel::getAliasFromColumnName($caseList->toArray());
+        UserConfig::updateUserConfig($id, $caseList);
         return $caseList;
     }
 
