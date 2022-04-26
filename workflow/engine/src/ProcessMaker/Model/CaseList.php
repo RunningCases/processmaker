@@ -366,6 +366,7 @@ class CaseList extends Model
             [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'case_number',
+                'idFilter' => 'case_number',
                 'name' => G::LoadTranslation('ID_MYCASE_NUMBER'),
                 'type' => 'integer',
                 'source' => 'APPLICATION',
@@ -375,6 +376,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'case_title',
+                'idFilter' => 'caseTitle',
                 'name' => G::LoadTranslation('ID_CASE_THREAD_TITLE'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
@@ -384,6 +386,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'process_category',
+                'idFilter' => 'process_category',
                 'name' => G::LoadTranslation('ID_PROCESS_CATEGORY'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
@@ -393,6 +396,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'process_name',
+                'idFilter' => 'process_name',
                 'name' => G::LoadTranslation('ID_PROCESS_NAME'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
@@ -401,7 +405,8 @@ class CaseList extends Model
                 'set' => true
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
-                'field' => 'task_title',
+                'field' => 'task',
+                'idFilter' => 'task',
                 'name' => G::LoadTranslation('ID_TASK'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
@@ -411,6 +416,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'send_by',
+                'idFilter' => 'send_by',
                 'name' => G::LoadTranslation('ID_SEND_BY'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
@@ -420,6 +426,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'paused', 'unassigned'],
                 'field' => 'due_date',
+                'idFilter' => 'due_date',
                 'name' => G::LoadTranslation('ID_DUE_DATE'),
                 'type' => 'date',
                 'source' => 'APPLICATION',
@@ -429,6 +436,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'paused', 'unassigned'],
                 'field' => 'delegation_date',
+                'idFilter' => 'delegation_date',
                 'name' => G::LoadTranslation('ID_DELEGATION_DATE'),
                 'type' => 'date',
                 'source' => 'APPLICATION',
@@ -438,6 +446,7 @@ class CaseList extends Model
             ], [
                 'list' => ['inbox', 'draft', 'paused', 'unassigned'],
                 'field' => 'priority',
+                'idFilter' => 'priority',
                 'name' => G::LoadTranslation('ID_PRIORITY'),
                 'type' => 'string',
                 'source' => 'APPLICATION',
