@@ -127,7 +127,7 @@
                     <span  v-if="column === 'case_number'" class="v-card-text-highlight">
                         {{ props["item"]["CASE_NUMBER"] }}
                     </span>
-                    <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
+                    <span  v-if="column === 'case_title'" class="v-card-text-highlight">
                         {{ props["item"]["THREAD_TITLE"] }}
                     </span>
                     <span  v-if="column === 'process_category'" class="v-card-text-highlight">
@@ -184,7 +184,7 @@
                     <span  v-if="column === 'case_number'" class="v-card-text-highlight">
                         {{ props["item"]["CASE_NUMBER"] }}
                     </span>
-                    <span  v-if="column === 'thread_title'" class="v-card-text-highlight">
+                    <span  v-if="column === 'case_title'" class="v-card-text-highlight">
                         {{ props["item"]["THREAD_TITLE"] }}
                     </span>
                     <span  v-if="column === 'process_category'" class="v-card-text-highlight">
@@ -398,7 +398,7 @@ export default {
             },
             itemMap: {
                 case_number: "caseNumber",
-                task_title: "taskTitle",
+                task: "taskTitle",
                 thread_title: "caseTitle",
                 delegation_date: "delegationDate",
                 send_by: "bySendBy",
@@ -810,9 +810,7 @@ export default {
                                 }
                             }
                             that.headings[item.field] = item.name;
-                            if(item.enableFilter){
-                                columns.push(item.field);
-                            }
+                            columns.push(item.field);
                         });
                         that.filterItems = newItems;
                         dt = that.formatDataResponse(response.data.data);
@@ -849,7 +847,7 @@ export default {
             product.optionLabel = item.name;
             product.tagPrefix = item.name;
             if (product.items && product.items[0]) {
-                product.items[0].id = item.field;
+                product.items[0].id = item.idFilter?item.idFilter : item.field;
             }
             product.placeholder = "";
             return product;

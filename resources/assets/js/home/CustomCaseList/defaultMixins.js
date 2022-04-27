@@ -11,7 +11,7 @@ export default {
       dataCasesList: [],
       defaultColumns: [
         "case_number",
-        "thread_title",
+        "case_title",
         "process_name",
         "task",
         "send_by",
@@ -69,7 +69,7 @@ export default {
         },
         headings: {
           case_number: this.$i18n.t("ID_MYCASE_NUMBER"),
-          thread_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
+          case_title: this.$i18n.t('ID_CASE_THREAD_TITLE'),
           process_name: this.$i18n.t("ID_PROCESS_NAME"),
           task: this.$i18n.t("ID_TASK"),
           send_by: this.$i18n.t("ID_SEND_BY"),
