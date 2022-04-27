@@ -810,7 +810,7 @@ class Bootstrap
 
         //First get Skin info
         $filenameParts = explode("-", $filename);
-        $skinName = $filenameParts[0];
+        $skinName = empty($filenameParts[0]) ? 'base' : $filenameParts[0];
         $skinVariant = "skin";
 
         if (isset($filenameParts[1])) {
@@ -833,9 +833,12 @@ class Bootstrap
                 $configurationFile = PATH_CUSTOM_SKINS . $skinName . PATH_SEP . 'config.xml';
             }
 
-            if (! is_file($configurationFile)) {
+            if (!is_file($configurationFile)) {
                 $configurationFile = Bootstrap::ExpandPath("skinEngine") . $skinName . PATH_SEP . 'config.xml';
             }
+        }
+        if (!file_exists($configurationFile)) {
+            $configurationFile = Bootstrap::ExpandPath("skinEngine") . 'base' . PATH_SEP . 'config.xml';
         }
 
         $mtime = date('U');
