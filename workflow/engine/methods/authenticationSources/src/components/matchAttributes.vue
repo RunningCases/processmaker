@@ -109,14 +109,15 @@
             deleteAttributeProcess() {
                 this.rows.splice(this.selectedRowIndex - 1, 1);
             },
-            saveRow(obj) {
+            saveRow(object) {
+                let obj = Object.assign({}, object);//important to clone the object
                 if (obj.index === null) {
                     delete obj.index;
                     this.rows.push(obj);
                 } else {
                     let i = obj.index;
                     delete obj.index;
-                    this.rows[i - 1] = obj;
+                    Object.assign(this.rows[i - 1], obj);
                 }
             },
             connectionSettings() {
