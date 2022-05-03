@@ -49,7 +49,7 @@ switch ($actionAjax) {
         }
 
         $response = new stdclass();
-        $response->data = DateTime::convertUtcToTimeZone($process);
+        $response->data = $process;
         $response->totalCount = $totalCount;
 
         echo G::json_encode($response);

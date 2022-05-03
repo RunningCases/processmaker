@@ -26562,6 +26562,12 @@ msgid "The change might cause data loss in the PM table. Do you want to continue
 msgstr "The change might cause data loss in the PM table. Do you want to continue?"
 
 # TRANSLATION
+# LABEL/ID_THE_PERMISSION_CAN_NOT_BE_UNASSIGNED_FROM_THIS_ROLE
+#: LABEL/ID_THE_PERMISSION_CAN_NOT_BE_UNASSIGNED_FROM_THIS_ROLE
+msgid "The permission can not be unassigned from this role."
+msgstr "The permission can not be unassigned from this role."
+
+# TRANSLATION
 # LABEL/ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED
 #: LABEL/ID_THE_PHP_FILES_EXECUTION_WAS_DISABLED
 msgid "The PHP files execution was disabled please contact the system administrator."

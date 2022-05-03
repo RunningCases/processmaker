@@ -1231,7 +1231,7 @@ class Cases extends Api
             $case->setFormatFieldNameInUppercase(false);
             $response = $case->getTasks($appUid);
 
-            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
+            return DateTime::convertUtcToTimeZone($response);
         } catch (Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

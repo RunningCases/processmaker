@@ -810,7 +810,9 @@ export default {
                                 }
                             }
                             that.headings[item.field] = item.name;
-                            columns.push(item.field);
+                            if(item.enableFilter){
+                                columns.push(item.field);
+                            }
                         });
                         that.filterItems = newItems;
                         dt = that.formatDataResponse(response.data.data);
