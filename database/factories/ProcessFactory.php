@@ -10,7 +10,7 @@ $factory->define(\ProcessMaker\Model\Process::class, function (Faker $faker) {
 
     return [
         'PRO_UID' => G::generateUniqueID(),
-        'PRO_ID' => $faker->unique()->numberBetween(1000),
+        'PRO_ID' => $faker->unique()->numberBetween(2000),
         'PRO_TITLE' => $faker->sentence(3),
         'PRO_DESCRIPTION' => $faker->paragraph(3),
         'PRO_PARENT' => G::generateUniqueID(),
