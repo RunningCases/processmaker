@@ -4016,8 +4016,8 @@ msgstr "Case Description"
 # TRANSLATION
 # LABEL/ID_CASE_DOES_NOT_EXIST
 #: LABEL/ID_CASE_DOES_NOT_EXIST
-msgid "Case {CASE_NUMBER} does not exist"
-msgstr "Case {CASE_NUMBER} does not exist"
+msgid "Case {0} does not exist"
+msgstr "Case {0} does not exist"
 
 # TRANSLATION
 # LABEL/ID_CASE_DOES_NOT_EXIST2

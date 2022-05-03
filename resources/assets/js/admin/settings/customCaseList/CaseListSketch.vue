@@ -251,7 +251,7 @@
                                         </b-col>
                                         <b-col cols="6">
                                             <b-form-checkbox
-                                            v-if="props.row.field =='process_category' || props.row.field =='process_name'"
+                                            v-if="disabledField(props.row.field)"
                                             v-model="enabledFilterRows"
                                             @change="onTongleFilter(props.row.field)" 
                                             name="check-button" 
@@ -432,7 +432,7 @@ export default {
             this.dataCaseList =this.params.columns.filter(elem => elem.set === true);
             this.dataCaseList.forEach(function (value) {
                 //Force to false in process_category & process_name
-                if (value.enableFilter && (value.field != "process_category" && value.field != "process_name" )) {
+                if (value.enableFilter && !that.disabledField(value.field)) {
                     that.enabledFilterRows.push(value.field);
                 }
             });
@@ -741,6 +741,10 @@ export default {
             columns.push('actions');
             columns.unshift('detail');
             return columns
+        },
+        disabledField(field){
+            const fields = [ "due_date" , "process_category" , "process_name" , "priority" ];
+            return !(fields.indexOf(field) == -1);
         }
     },
 };

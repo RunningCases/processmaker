@@ -91,13 +91,13 @@ class Search extends AbstractCases
         // Filter by user who started
         if ($this->getUserStartedId()) {
             // Get the case numbers related to this filter
-            $result = Delegation::casesStartedBy($this->getUserStartedId(), $this->getOffset(), $this->getLimit());
+            $result = Delegation::casesStartedBy($this->getUserStartedId());
             $query->specificCases($result);
         }
         // Filter by user who completed
         if ($this->getUserCompletedId()) {
             // Get the case numbers related to this filter
-            $result = Delegation::casesCompletedBy($this->getUserCompletedId(), $this->getOffset(), $this->getLimit());
+            $result = Delegation::casesCompletedBy($this->getUserCompletedId());
             $query->specificCases($result);
         }
         // Filter by task
