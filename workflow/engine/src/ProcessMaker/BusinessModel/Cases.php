@@ -3793,6 +3793,9 @@ class Cases
     public function uploadFiles($userUid, $appUid, $varName, $inpDocUid = -1, $appDocUid = null, $delegationIndex = null)
     {
         $response = [];
+        // Review the appUid
+        Validator::appUid($appUid, '$appUid');
+
         if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
             // Get the delIndex related to the case
             $cases = new ClassesCases();
