@@ -2994,6 +2994,7 @@ class LdapAdvanced
                                 $this->arrayUserUpdateChecked[$username] = 1;
 
                                 $arrayUserDataUpdate = [];
+                                $extendedData = [];
 
                                 foreach ($arrayAttributesToSync as $key => $value) {
                                     $fieldName = $key;
@@ -3015,10 +3016,22 @@ class LdapAdvanced
                                                 break;
                                         }
 
-                                        if ($ldapAttributeValue != $arrayUser[$username][$fieldName]) {
-                                            $arrayUserDataUpdate[$fieldName] = $ldapAttributeValue;
+                                        if (isset($arrayUser[$username][$fieldName])) {
+                                            if ($ldapAttributeValue != $arrayUser[$username][$fieldName]) {
+                                                $arrayUserDataUpdate[$fieldName] = $ldapAttributeValue;
+                                            }
+                                        } else {
+                                            $extendedData[$fieldName] = $ldapAttributeValue;
                                         }
                                     }
+                                }
+
+                                //update the extended data
+                                if (!empty($extendedData)) {
+                                    $json = $arrayUser[$username]['USR_EXTENDED_ATTRIBUTES_DATA'];
+                                    $oldExtendedData = empty($json) ? [] : json_decode($json, true);
+                                    $extendedData = array_merge($oldExtendedData, $extendedData);
+                                    $arrayUserDataUpdate['USR_EXTENDED_ATTRIBUTES_DATA'] = json_encode($extendedData);
                                 }
 
                                 if (!empty($arrayUserDataUpdate)) {

@@ -57481,7 +57481,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_DELETED_SUCCESSFULLY','en','The Case {APP_NUMBER} was deleted successfully!','2014-01-15') ,
 ( 'LABEL','ID_CASE_DEL_INDEX_DOES_NOT_EXIST','en','The case {0}: {1} with {2}: {3} does not exist.','2015-09-30') ,
 ( 'LABEL','ID_CASE_DESCRIPTION','en','Case Description','2014-01-15') ,
-( 'LABEL','ID_CASE_DOES_NOT_EXIST','en','Case {CASE_NUMBER} does not exist','2014-01-15') ,
+( 'LABEL','ID_CASE_DOES_NOT_EXIST','en','Case {0} does not exist','2022-04-19') ,
 ( 'LABEL','ID_CASE_DOES_NOT_EXIST2','en','The case with {0}: {1} does not exist.','2014-06-05') ,
 ( 'LABEL','ID_CASE_DOES_NOT_EXISTS','en','This case does not exist','2014-01-15') ,
 ( 'LABEL','ID_CASE_DOES_NOT_EXIST_JS','en','Case {0} does not exist','2014-01-15') ,

@@ -73,7 +73,7 @@ export default {
           "send_by",
         ],
         requestFunction(data) {
-          return that.getCases(data);
+          return that.getCasesViewMore(data);
         },
         requestFunctionViewMore(data) {
           return that.getCasesViewMore(data);
@@ -85,31 +85,6 @@ export default {
 
   },
   methods: {
-    /**
-    * Get cases for Vue Card View
-    */
-    getCases(data) {
-      let that = this,
-        dt,
-        filters = {};
-      _.forIn(this.filters, function (item, key) {
-        filters[item.filterVar] = item.value;
-      });
-      return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases
-          .unassigned(filters)
-          .then((response) => {
-            dt = that.formatDataResponse(response.data.data);
-            resolutionFunc({
-              data: dt,
-              count: response.data.total,
-            });
-          })
-          .catch((e) => {
-            rejectionFunc(e);
-          });
-      });
-    },
     /**
     * Get cases for Vue Card View
     */

@@ -250,15 +250,27 @@
                                             ></b-popover>
                                         </b-col>
                                         <b-col cols="6">
-                                            <b-form-checkbox 
+                                            <b-form-checkbox
+                                            v-if="disabledField(props.row.field)"
                                             v-model="enabledFilterRows"
                                             @change="onTongleFilter(props.row.field)" 
                                             name="check-button" 
                                             :checked="props.row.enableFilter"
                                             :value="props.row.field"
                                             switch
-                                        >
-                                        </b-form-checkbox>
+                                            disabled
+                                            >
+                                            </b-form-checkbox>
+                                            <b-form-checkbox
+                                                v-else
+                                                v-model="enabledFilterRows"
+                                                @change="onTongleFilter(props.row.field)"
+                                                name="check-button"
+                                                :checked="props.row.enableFilter"
+                                                :value="props.row.field"
+                                                switch
+                                            >
+                                            </b-form-checkbox>
                                         </b-col>
                                     </b-row>  
                                     </div>
@@ -294,7 +306,6 @@
     </div>
 </template>
 <script>
-import utils from "../../../utils/utils";
 import Multiselect from "vue-multiselect";
 import Api from "./Api/CaseList";
 import IconPicker from "../../../components/iconPicker/IconPicker.vue";
@@ -420,7 +431,8 @@ export default {
             this.data =this.params.columns.filter(elem => elem.set === false);
             this.dataCaseList =this.params.columns.filter(elem => elem.set === true);
             this.dataCaseList.forEach(function (value) {
-                if (value.enableFilter) {
+                //Force to false in process_category & process_name
+                if (value.enableFilter && !that.disabledField(value.field)) {
                     that.enabledFilterRows.push(value.field);
                 }
             });
@@ -729,6 +741,10 @@ export default {
             columns.push('actions');
             columns.unshift('detail');
             return columns
+        },
+        disabledField(field){
+            const fields = [ "due_date" , "process_category" , "process_name" , "priority" ];
+            return !(fields.indexOf(field) == -1);
         }
     },
 };

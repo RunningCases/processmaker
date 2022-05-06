@@ -1815,9 +1815,9 @@ class Light extends Api
      *
      * @access protected
      * @class  AccessControl {@className \ProcessMaker\Services\Api\Cases}
-     * @url GET /:app_uid/variables
+     * @url GET /:appUid/variables
      *
-     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $appUid {@min 1}{@max 32}
      * @param string $dyn_uid
      * @param string $pro_uid
      * @param string $act_uid
@@ -1825,7 +1825,7 @@ class Light extends Api
      * @return mixed
      * @throws RestException
      */
-    public function doGetCaseVariables($app_uid, $dyn_uid = null, $pro_uid = null, $act_uid = null, $app_index = null)
+    public function doGetCaseVariables($appUid, $dyn_uid = null, $pro_uid = null, $act_uid = null, $app_index = null)
     {
         try {
             $usr_uid = $this->getUserId();
@@ -1834,7 +1834,7 @@ class Light extends Api
             if (!empty($pro_uid)) {
                 $_SESSION['PROCESS'] = $pro_uid;
             }
-            $response = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid, $pro_uid, $act_uid, $app_index);
+            $response = $cases->getCaseVariables($appUid, $usr_uid, $dyn_uid, $pro_uid, $act_uid, $app_index);
 
             return DateTime::convertUtcToTimeZone($response);
         } catch (Exception $e) {
