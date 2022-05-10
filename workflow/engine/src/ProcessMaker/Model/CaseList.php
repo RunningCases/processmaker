@@ -76,6 +76,30 @@ class CaseList extends Model
     public static $excludeColumns = ['APP_UID', 'APP_NUMBER', 'APP_STATUS'];
 
     /**
+     * Get case list
+     *
+     * @param string $id
+     * @param string $type
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function getCaseList($id, $type)
+    {
+        $caseList = CaseList::where('CAL_ID', '=', $id)
+            ->where('CAL_TYPE', '=', $type)
+            ->leftJoin('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
+            ->select([
+                'CASE_LIST.*',
+                'ADDITIONAL_TABLES.ADD_TAB_NAME',
+                'ADDITIONAL_TABLES.PRO_UID'
+            ])
+            ->get()
+            ->first();
+
+        return $caseList;
+    }
+
+    /**
      * Get column name from alias.
      * @param array $array
      * @return array

@@ -4,7 +4,7 @@ use Faker\Generator as Faker;
 
 $factory->define(\ProcessMaker\Model\CaseList::class, function (Faker $faker) {
     return [
-        'CAL_ID' => $faker->unique()->numberBetween(1, 2000),
+        'CAL_ID' => $faker->unique()->numberBetween(1, 5000),
         'CAL_TYPE' => 'inbox',
         'CAL_NAME' => $faker->title,
         'CAL_DESCRIPTION' => $faker->text,

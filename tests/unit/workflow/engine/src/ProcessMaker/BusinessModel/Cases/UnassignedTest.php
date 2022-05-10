@@ -208,16 +208,21 @@ class UnassignedTest extends TestCase
                 'TU_RELATION' => 1, //Related to the user
                 'TU_TYPE' => 1
             ]);
-            factory(Delegation::class)->create([
+            $delegation = factory(Delegation::class)->create([
                 'APP_NUMBER' => $application->APP_NUMBER,
                 'TAS_ID' => $task->TAS_ID,
                 'PRO_ID' => $process->PRO_ID,
+                'PRO_UID' => $process->PRO_UID,
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'USR_ID' => 0,
+                'USR_UID' => '',
                 'DEL_DELEGATE_DATE' => date('Y-m-d H:i:s', strtotime("-$i year"))
             ]);
         }
-        return $user;
+        return [
+            'taskUser' => $user,
+            'delegation' => $delegation
+        ];
     }
 
     /**
@@ -525,8 +530,8 @@ class UnassignedTest extends TestCase
         // Create factories related to the unassigned cases
         $cases = $this->createMultipleUnassigned(3);
         $unassigned = new Unassigned();
-        $unassigned->setUserId($cases->USR_ID);
-        $unassigned->setUserUid($cases->USR_UID);
+        $unassigned->setUserId($cases['taskUser']->USR_ID);
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
         // Get the total for the pagination
         $res = $unassigned->getCounter();
         $this->assertEquals(3, $res);
@@ -544,8 +549,8 @@ class UnassignedTest extends TestCase
         // Create factories related to the unassigned cases
         $cases = $this->createMultipleUnassigned(3);
         $unassigned = new Unassigned();
-        $unassigned->setUserId($cases->USR_ID);
-        $unassigned->setUserUid($cases->USR_UID);
+        $unassigned->setUserId($cases['taskUser']->USR_ID);
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
         // Get the total for the pagination
         $res = $unassigned->getPagingCounters();
         $this->assertEquals(3, $res);
@@ -575,8 +580,8 @@ class UnassignedTest extends TestCase
     {
         $cases = $this->createMultipleUnassigned(3);
         $unassigned = new Unassigned();
-        $unassigned->setUserId($cases->USR_ID);
-        $unassigned->setUserUid($cases->USR_UID);
+        $unassigned->setUserId($cases['taskUser']->USR_ID);
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
         $res = $unassigned->getCountersByProcesses();
         $this->assertCount(3, $res);
     }
@@ -656,8 +661,8 @@ class UnassignedTest extends TestCase
     {
         $cases = $this->createMultipleUnassigned(20);
         $unassigned = new Unassigned();
-        $unassigned->setUserId($cases->USR_ID);
-        $unassigned->setUserUid($cases->USR_UID);
+        $unassigned->setUserId($cases['taskUser']->USR_ID);
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
         $res = $unassigned->getCountersByProcesses(null, true);
         $this->assertCount(10, $res);
     }
@@ -812,9 +817,10 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_getCustomListCount_method()
     {
-        $cases = $this->createMultipleUnassigned(0);
-
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $cases = $this->createMultipleUnassigned(1);
+        $additionalTables = factory(AdditionalTables::class)->create([
+            'PRO_UID' => $cases['delegation']->PRO_UID
+        ]);
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -830,13 +836,12 @@ class UnassignedTest extends TestCase
         $caseList = factory(CaseList::class)->create([
             'CAL_TYPE' => 'unassigned',
             'ADD_TAB_UID' => $additionalTables->ADD_TAB_UID,
-            'USR_ID' => $cases->USR_ID
+            'USR_ID' => $cases['taskUser']->USR_ID
         ]);
 
         $unassigned = new Unassigned();
-        $unassigned->setUserId($cases->USR_ID);
-        $unassigned->setUserUid($cases->USR_UID);
-
+        $unassigned->setUserId($cases['taskUser']->USR_ID);
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
         $res = $unassigned->getCustomListCount($caseList->CAL_ID, 'unassigned');
 
         //assertions
@@ -847,7 +852,7 @@ class UnassignedTest extends TestCase
         $this->assertArrayHasKey('total', $res);
 
         $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
-        $this->assertEquals(0, $res['total']);
+        $this->assertNotEmpty($res);
 
         //for user or group
         $cases = $this->createSelfServiceUserOrGroup();

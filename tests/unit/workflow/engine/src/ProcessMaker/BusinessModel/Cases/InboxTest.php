@@ -70,14 +70,14 @@ class InboxTest extends TestCase
         $user = factory(\ProcessMaker\Model\User::class)->create();
 
         for ($i = 0; $i < $cases; $i = $i + 1) {
-            factory(Delegation::class)->states('foreign_keys')->create([
+            $delegation = factory(Delegation::class)->states('foreign_keys')->create([
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'DEL_INDEX' => 2,
                 'USR_UID' => $user->USR_UID,
                 'USR_ID' => $user->USR_ID,
             ]);
         }
-        return $user;
+        return $delegation;
     }
 
     /**
@@ -737,7 +737,9 @@ class InboxTest extends TestCase
     {
         $cases = $this->createMultipleInbox(3);
 
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $additionalTables = factory(AdditionalTables::class)->create([
+            'PRO_UID' => $cases->PRO_UID
+        ]);
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -770,7 +772,7 @@ class InboxTest extends TestCase
         $this->assertArrayHasKey('total', $res);
 
         $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
-        $this->assertEquals(3, $res['total']);
+        $this->assertEquals(1, $res['total']);
     }
 
     /**
