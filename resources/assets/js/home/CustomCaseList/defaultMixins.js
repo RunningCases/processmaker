@@ -80,7 +80,7 @@ export default {
         },
         columns: [],
         requestFunction(data) {
-          return that.getCases(data);
+          return that.getCasesViewMore(data);
         },
         requestFunctionViewMore(data) {
           return that.getCasesViewMore(data);
@@ -93,9 +93,11 @@ export default {
   },
   methods: {
     /**
-    * Get cases for Vue Card View
-    */
-    getCases(data) {
+     * Get cases for 'Vue Card View' and 'Vue List View'.
+     * @param {object} data
+     * @returns {Promise}
+     */
+    getCasesViewMore(data) {
       let that = this,
                 dt,
                 paged,
@@ -107,7 +109,7 @@ export default {
             filters = {
                 paged: paged,
                 limit: limit,
-                offset: start,
+                offset: start
             };
             if (_.isEmpty(that.filters) && this.data.settings) {
                 _.forIn(this.data.settings.filters, function(item, key) {
@@ -130,7 +132,7 @@ export default {
                 api.custom[that.data.pageParent]
                     ({
                         id,
-                        filters,
+                        filters
                     })
                     .then((response) => {
                         let tmp,
@@ -144,7 +146,7 @@ export default {
                                 if (that.availableItems[that.itemMap[item.field]]) {
                                     newItems.push(that.availableItems[that.itemMap[item.field]]);
                                 } else {
-                                    product = this.filterItemFactory(item)
+                                    product = this.filterItemFactory(item);
                                     if (product) {
                                         newItems.push(product);
                                     }
@@ -163,48 +165,13 @@ export default {
                         }
                         resolutionFunc({
                             data: dt,
-                            count: response.data.total,
+                            count: response.data.total
                         });
                     })
                     .catch((e) => {
                         rejectionFunc(e);
                     });
             });
-    },
-    /**
-    * Get cases for Vue Card View
-    */
-    getCasesViewMore(data) {
-      let that = this,
-        dt,
-        typeList = that.data.pageParent == "inbox" ? "todo" : that.data.pageParent,
-        limit = data.limit,
-        start = data.page === 1 ? 0 : limit * (data.page - 1),
-        filters = {};
-
-      filters = {
-        limit: limit,
-        offset: start
-      };
-      _.forIn(this.filters, function (item, key) {
-        if (filters && item.value) {
-          filters[item.filterVar] = item.value;
-        }
-      });
-      return new Promise((resolutionFunc, rejectionFunc) => {
-        api.cases[typeList]
-          (filters)
-          .then((response) => {
-            dt = that.formatDataResponse(response.data.data);
-            resolutionFunc({
-              data: dt,
-              count: response.data.total,
-            });
-          })
-          .catch((e) => {
-            rejectionFunc(e);
-          });
-      });
     },
     /**
      * Event handler when update the settings columns
