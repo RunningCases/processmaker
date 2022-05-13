@@ -411,7 +411,6 @@ if (false !== strpos(PHP_SAPI, 'cgi'))
    set_time_limit(0);
    ini_set('track_errors', true);
    ini_set('html_errors', false);
-   ini_set('magic_quotes_runtime', false);
 
    // define stream constants
    define('STDIN', fopen('php://stdin', 'r'));
@@ -425,5 +424,5 @@ if (false !== strpos(PHP_SAPI, 'cgi'))
    }
 
    // close the streams on script termination
-   register_shutdown_function(create_function('', 'fclose(STDIN); fclose(STDOUT); fclose(STDERR); return true;'));
+   register_shutdown_function(function(){fclose(STDIN); fclose(STDOUT); fclose(STDERR); return true;});
 }
