@@ -472,6 +472,7 @@ class SkinEngine
             if (!defined('NO_DISPLAY_USERNAME')) {
                 define('NO_DISPLAY_USERNAME', 0);
             }
+
             if (NO_DISPLAY_USERNAME == 0) {
                 $smarty->assign('userfullname', isset($_SESSION['USR_FULLNAME']) ? $_SESSION['USR_FULLNAME'] : '');
                 $smarty->assign('user', isset($_SESSION['USR_USERNAME']) ? '(' . $_SESSION['USR_USERNAME'] . ')' : '');
@@ -708,6 +709,9 @@ class SkinEngine
         $smarty->cache_dir = PATH_SMARTY_CACHE;
         $smarty->config_dir = PATH_THIRDPARTY . 'smarty/configs';
 
+        // Initializing template variables
+        $smarty->assign('userfullname', null);
+
         //To setup en extJS Theme for this Skin
 
         $oServerConf = ServerConf::getSingleton();
@@ -847,6 +851,7 @@ class SkinEngine
                 $smarty->assign('workspace', !empty(config("system.workspace")) ? config("system.workspace") : '');
                 $uws = (isset($_SESSION['USR_ROLENAME']) && $_SESSION['USR_ROLENAME'] != '') ? strtolower(G::LoadTranslation('ID_WORKSPACE_USING')) : G::LoadTranslation('ID_WORKSPACE_USING');
                 $smarty->assign('workspace_label', $uws);
+                $smarty->assign('msgVer', null);
 
                 $conf = new Configurations();
                 $conf->getFormats();
