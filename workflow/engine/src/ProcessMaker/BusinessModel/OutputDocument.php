@@ -173,6 +173,9 @@ class OutputDocument
             }
             $outDocUid = $oOutputDocument->create($outputDocumentData);
             $outputDocumentData = array_change_key_case($outputDocumentData, CASE_LOWER);
+            $outputDocumentData['out_doc_header'] = json_decode($outputDocumentData['out_doc_header']);
+            $outputDocumentData['out_doc_footer'] = json_decode($outputDocumentData['out_doc_footer']);
+
             $this->updateOutputDocument($sProcessUID, $outputDocumentData, 1, $outDocUid);
             //Return
             unset($outputDocumentData["PRO_UID"]);
