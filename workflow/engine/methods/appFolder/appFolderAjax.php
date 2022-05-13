@@ -1635,14 +1635,16 @@ function newFolder()
     $formNewFolder["items"]= array();
 
     $field=array();
-    $field["xtype"]= "label";
+    $field["xtype"]= "textfield";
     $field["fieldLabel"]= G::LoadTranslation('ID_CREATE_FOLDER_PATH_FOLDER');
-    $field["name"]= "form[FOLDER_PATH]";
-    $field["id"]= "form[FOLDER_PATH]";
+    $field["name"]= "FOLDER_PATH";
+    $field["id"]= "FOLDER_PATH";
     $field["width"]=175;
     $field["allowBlank"]=false;
     $field["value"]=$folderPath;
     $field["text"]=$folderPath;
+    $field["readOnly"]= true;
+    $field["style"] = "{'border': 'none'}";
     $formNewFolder["items"][]= $field;
 
     $field=array();

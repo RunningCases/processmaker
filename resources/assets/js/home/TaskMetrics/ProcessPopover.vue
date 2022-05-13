@@ -21,7 +21,8 @@
             v-model="text"
             aria-label="search"
           />
-        </div>        <div class="form-check border-bottom">
+        </div>
+        <div class="form-check border-bottom">
           <input
             class="form-check-input"
             type="checkbox"

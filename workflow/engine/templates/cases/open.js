@@ -392,7 +392,11 @@ Ext.onReady(function(){
             items:[{
               id: 'casesTab',
               title: _('ID_CASE') +' ' + _APP_NUM,
-              frameConfig:{name:'openCaseFrame', id:'openCaseFrame'},
+              frameConfig:{
+                name:'openCaseFrame',
+                id:'openCaseFrame',
+                title:'openCaseFrame'
+              },
               defaultSrc : uri,
               loadMask:{msg: _('ID_LOADING_GRID') },
               bodyStyle:{height: (PMExt.getBrowser().screen.height-60) + 'px', overflow:'hidden'},
@@ -680,6 +684,7 @@ Ext.onReady(function(){
 	          } else {
 	              fieldset = {
 	                  xtype : 'fieldset',
+	                  title: _('ID_INFORMATION'),
 	                  autoHeight : true,
 	                  defaults : {
 	                      width : 170,
@@ -688,11 +693,66 @@ Ext.onReady(function(){
 	                      style: 'font-weight: bold'
 	                  },
 	                  items : [
-	                      {fieldLabel: _('ID_TITLE'), text: data.PRO_TITLE},
-	                      {fieldLabel: _('ID_DESCRIPTION'), text: data.PRO_DESCRIPTION},
-	                      {fieldLabel: _('ID_CATEGORY'), text: data.PRO_CATEGORY_LABEL},
-	                      {fieldLabel: _('ID_AUTHOR'), text: data.PRO_AUTHOR},
-	                      {fieldLabel: _('ID_CREATE_DATE'), text: data.PRO_CREATE_DATE}
+                      {
+                        xtype: 'textfield',
+                        fieldLabel: _('ID_TITLE'),
+                        value: data.PRO_TITLE,
+                        readOnly: true,
+                        style: {
+                          border: 'none',
+                          backgroundImage: 'none',
+                          fontWeight: 'bold',
+                          width: '170px'
+                        }
+                      },
+	                    {
+                        xtype: 'textfield',
+                        fieldLabel: _('ID_DESCRIPTION'),
+                        value: data.PRO_DESCRIPTION,
+                        readOnly: true,
+                        style: {
+                          border: 'none',
+                          backgroundImage: 'none',
+                          fontWeight: 'bold',
+                          width: '170px'
+                        }
+                      },
+	                    {
+                        xtype: 'textfield',
+                        fieldLabel: _('ID_CATEGORY'),
+                        value: data.PRO_CATEGORY_LABEL,
+                        readOnly: true,
+                        style: {
+                          border: 'none',
+                          backgroundImage: 'none',
+                          fontWeight: 'bold',
+                          width: '170px'
+                        }
+                      },
+	                    {
+                        xtype: 'textfield',
+                        fieldLabel: _('ID_AUTHOR'),
+                        value: data.PRO_AUTHOR,
+                        readOnly: true,
+                        style: {
+                          border: 'none',
+                          backgroundImage: 'none',
+                          fontWeight: 'bold',
+                          width: '170px'
+                        }
+                      },
+                      {
+                        xtype: 'textfield',
+                        fieldLabel: _('ID_CREATE_DATE'),
+                        value: data.PRO_CREATE_DATE,
+                        readOnly: true,
+                        style: {
+                          border: 'none',
+                          backgroundImage: 'none',
+                          fontWeight: 'bold',
+                          width: '170px'
+                        }
+                      }
 	                 ]
 	             }
 
@@ -755,24 +815,91 @@ Ext.onReady(function(){
 	                  }
 	              });
 	          } else {
-				fieldset = {
-				xtype : 'fieldset',
-				autoHeight : true,
-				defaults : {
-				width : 170,
-				xtype:'label',
-				labelStyle : 'padding: 0px;',
-				style: 'font-weight: bold'
-				},
-				items : [
-				{fieldLabel: _('ID_TITLE'), text: data.TAS_TITLE},
-				{fieldLabel: _('ID_DESCRIPTION'), text: data.TAS_DESCRIPTION},
-				{fieldLabel: _('ID_INIT_DATE'), text: data.INIT_DATE_LABEL},
-				{fieldLabel: _('ID_DUE_DATE'), text: data.DUE_DATE_LABEL},
-				{fieldLabel: _('ID_FINISH_DATE'), text: data.FINISH},
-				{fieldLabel: _('ID_TASK_DURATION'), text: data.DURATION}
-				]
-				}
+                fieldset = {
+                    xtype : 'fieldset',
+                    title: _('ID_INFORMATION'),
+                    autoHeight : true,
+                    defaults : {
+                    width : 170,
+				            xtype:'label',
+                    labelStyle : 'padding: 0px;',
+                    style: 'font-weight: bold'
+                },
+                items : [
+                  {
+                        xtype: 'textfield',
+                        fieldLabel: _('ID_TITLE'),
+                        value: data.TAS_TITLE,
+                        readOnly: true,
+                        style: {
+                          border: 'none',
+                          backgroundImage: 'none',
+                          fontWeight: 'bold',
+                          width: '170px'
+                        }
+                    },
+				            {
+                        xtype: 'textfield',
+                        fieldLabel: _('ID_DESCRIPTION'),
+                        value: data.TAS_DESCRIPTION,
+                        readOnly: true,
+                        style: {
+                          border: 'none',
+                          backgroundImage: 'none',
+                          fontWeight: 'bold',
+                          width: '170px'
+                        }
+                    },
+                    {
+                      xtype: 'textfield',
+                      fieldLabel: _('ID_INIT_DATE'),
+                      value: data.INIT_DATE_LABEL,
+                      readOnly: true,
+                      style: {
+                        border: 'none',
+                        backgroundImage: 'none',
+                        fontWeight: 'bold',
+                        width: '170px'
+                      }
+                    },
+                    {
+                      xtype: 'textfield',
+                      fieldLabel: _('ID_DUE_DATE'),
+                      value: data.DUE_DATE_LABEL,
+                      readOnly: true,
+                      style: {
+                        border: 'none',
+                        backgroundImage: 'none',
+                        fontWeight: 'bold',
+                        width: '170px'
+                      }
+                    },
+                    {
+                      xtype: 'textfield',
+                      fieldLabel: _('ID_FINISH_DATE'),
+                      value: data.FINISH,
+                      readOnly: true,
+                      style: {
+                        border: 'none',
+                        backgroundImage: 'none',
+                        fontWeight: 'bold',
+                        width: '170px'
+                      }
+                    },
+                    {
+                      xtype: 'textfield',
+                      fieldLabel: _('ID_TASK_DURATION'),
+                      value: data.DURATION,
+                      readOnly: true,
+                      style: {
+                        border: 'none',
+                        backgroundImage: 'none',
+                        fontWeight: 'bold',
+                        width: '170px'
+                      }
+                    }
+				        ]
+				    }
 
 				var frm = new Ext.FormPanel( {
 				labelAlign : 'right',
@@ -1322,7 +1449,8 @@ Ext.onReady(function(){
         url : 'ajaxListener' ,
         params : {action : 'verifySession'},
         success: function ( result, request ) {
-          var data = Ext.util.JSON.decode(result.responseText);
+          var data = Ext.util.JSON.decode(result.responseText),
+              i;
           if( data.lostSession ) {
            Ext.Msg.show({
                   title: _('ID_ERROR'),
@@ -1353,8 +1481,17 @@ Ext.onReady(function(){
                   }
                 });
           } else {
-                winReassignInCasesList.show();
-                grdpnlUsersToReassign.store.load();
+              winReassignInCasesList.show();
+              grdpnlUsersToReassign.store.load();
+              if (document.getElementsByTagName('input')) {
+                document.getElementsByTagName('input')[1].ariaLabel = "search";
+                document.getElementsByTagName('input')[2].ariaLabel = "pagination";
+              }
+              if (document.getElementsByTagName('button')) {
+                for (i = 0; i < document.getElementsByTagName('button').length; i+= 1) {
+                  document.getElementsByTagName('button')[i].ariaLabel = document.getElementsByTagName('button')[i].getAttribute('id');
+                }
+              }
           }
         },
         failure: function ( result, request) {
@@ -1439,8 +1576,30 @@ Ext.onReady(function(){
         style: 'font-weight: bold'
       },
       items : [
-        {fieldLabel: _("ID_CASE"), text: stringReplace("\\: ", "", _APP_NUM)},
-        {fieldLabel: _("ID_PAUSE_DATE"), text: _ENV_CURRENT_DATE},
+        {
+          xtype: 'textfield',
+          fieldLabel: _('ID_CASE'),
+          value: stringReplace("\\: ", "", _APP_NUM),
+          readOnly: true,
+          style: {
+            border: 'none',
+            backgroundImage: 'none',
+            fontWeight: 'bold',
+            width: '170px'
+          }
+        },
+        {
+          xtype: 'textfield',
+          fieldLabel: _('ID_PAUSE_DATE'),
+          value: _ENV_CURRENT_DATE,
+          readOnly: true,
+          style: {
+            border: 'none',
+            backgroundImage: 'none',
+            fontWeight: 'bold',
+            width: '170px'
+          }
+        },
         new Ext.form.DateField({
           id:   'unpauseDate',
           format: 'Y-m-d',

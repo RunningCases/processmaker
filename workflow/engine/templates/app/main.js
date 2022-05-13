@@ -398,6 +398,7 @@ function newNoteHandler() {
     });
 
     Ext.getCmp('addCancelBtn').setIcon('/images/comment_add.gif');
+    Ext.getCmp('addCancelBtn').btnEl.dom.ariaLabel = _('ID_CASES_NOTES_ADD');
 
     caseNotesWindow.getTopToolbar().hide();
     Ext.getCmp("chkSendMail").hide();
@@ -411,6 +412,7 @@ function newNoteHandler() {
     Ext.getCmp('addCancelBtn').setText('');
     Ext.getCmp('addCancelBtn').setTooltip({ title: _('ID_CASES_NOTES_CANCEL') });
     Ext.getCmp('addCancelBtn').setIcon('/images/cancel.png');
+    Ext.getCmp('addCancelBtn').btnEl.dom.ariaLabel = _('ID_CASES_NOTES_CANCEL');
 
     caseNotesWindow.getTopToolbar().show();
     Ext.getCmp("chkSendMail").show();
