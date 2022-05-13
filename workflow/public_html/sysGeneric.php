@@ -860,7 +860,7 @@ if (substr(SYS_COLLECTION, 0, 8) === 'gulliver') {
         //if the method name is empty set default to index method
         $controllerAction = SYS_TARGET != '' ? SYS_TARGET : 'index';
         //if the method exists
-        if (is_callable(array($controllerClass, $controllerAction))) {
+        if (is_callable(array(new $controllerClass, $controllerAction))) {
             $isControllerCall = true;
         }
 
