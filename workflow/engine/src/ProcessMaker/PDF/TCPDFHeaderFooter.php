@@ -110,7 +110,7 @@ class TCPDFHeaderFooter extends TCPDF
         $y = $struct->getLogoPositionY() + $margins['top'];
         $width = $struct->getLogoWidth();
         $this->Image($path, $x, $y, $width, 0, $extension, '', '', false, 300, '', false, false, 0, false, false, false);
-        $newImageHeight = ($width * $imageSize[0] / $imageSize[1]);
+        $newImageHeight = ($width * $imageSize[1] / $imageSize[0]);
         $heights[] = $margins['top'] + $newImageHeight;
     }
 
