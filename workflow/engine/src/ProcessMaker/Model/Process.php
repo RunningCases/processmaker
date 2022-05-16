@@ -205,6 +205,25 @@ class Process extends Model
     }
 
     /**
+     * Return process
+     * @param int|string $id
+     * @param string $key
+     * 
+     * @return array
+     */
+    public static function getIds($id, $key)
+    {
+        $process = Process::query()
+            ->select()
+            ->where($key, $id)
+            ->get()
+            ->values()
+            ->toArray();
+
+        return $process;
+    }
+
+    /**
      * Obtains the process list for an specific user and/or for the specific category
      *
      * @param string $categoryUid

@@ -2,6 +2,7 @@
 
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Model;
 
+use Exception;
 use G;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use ProcessMaker\Model\Process;
@@ -254,6 +255,27 @@ class ProcessTest extends TestCase
         $this->assertEquals('PUBLIC', $p[0]->PRO_TYPE_PROCESS);
     }
 
+     /**
+     * Test the exception
+     *
+     * @covers \ProcessMaker\Model\Process::getProcessesFilter()
+     * @test
+     */
+    public function it_test_exception_get_process()
+    {
+        $this->expectException(Exception::class);
+        $result = Process::getProcessesFilter(
+            null,
+            null,
+            null,
+            null,
+            0,
+            25,
+            'ASC',
+            'OTHER_COLUMN_DOES_NOT_EXIST'
+        );
+    }
+
     /**
      * It tests the process list
      *
@@ -430,6 +452,19 @@ class ProcessTest extends TestCase
         $this->assertCount(2, Process::getProcessesForHome(null, $processCategory->CATEGORY_ID));
         $this->assertCount(4, Process::getProcessesForHome(null, null, null, 2));
         $this->assertCount(1, Process::getProcessesForHome(null, null, 2, 1, true));
+    }
+
+    /**
+     * It test get id
+     *
+     * @covers \ProcessMaker\Model\Process::getIds()
+     * @test
+     */
+    public function it_should_test_get_id()
+    {
+        $process = factory(Process::class)->create();
+        $result = Process::getIds($process->PRO_UID, 'PRO_UID');
+        $this->assertEquals($process->PRO_ID, $result[0]['PRO_ID']);
     }
 
     /**

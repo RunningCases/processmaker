@@ -157,9 +157,9 @@ class MetricsTest extends TestCase
         $unassignedTest = new UnassignedTest();
         $cases = $unassignedTest->createMultipleUnassigned(3);
         $unassigned = new Unassigned();
-        $unassigned->setUserId($cases->USR_ID);
-        $unassigned->setUserUid($cases->USR_UID);
-        $this->initializeRestApi($cases->USR_UID);
+        $unassigned->setUserId($cases['taskUser']->USR_ID);
+        $unassigned->setUserUid($cases['taskUser']->USR_UID);
+        $this->initializeRestApi($cases['taskUser']->USR_UID);
         $metrics = new Metrics();
         $res = $metrics->getCountersList();
         $this->assertNotEmpty($res);

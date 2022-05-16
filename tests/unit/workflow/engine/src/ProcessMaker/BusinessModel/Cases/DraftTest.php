@@ -72,7 +72,7 @@ class DraftTest extends TestCase
                 'APP_INIT_USER_ID' => $user->USR_ID,
                 'APP_CUR_USER' => $user->USR_UID,
             ]);
-            factory(Delegation::class)->states('foreign_keys')->create([
+            $delegation = factory(Delegation::class)->states('foreign_keys')->create([
                 'DEL_THREAD_STATUS' => 'OPEN',
                 'DEL_INDEX' => 1,
                 'APP_UID' => $application->APP_UID,
@@ -82,7 +82,7 @@ class DraftTest extends TestCase
             ]);
         }
 
-        return $user;
+        return $delegation;
     }
 
     /**
@@ -758,8 +758,9 @@ class DraftTest extends TestCase
     public function it_should_test_getCustomListCount_method()
     {
         $cases = $this->createManyDraft(3);
-
-        $additionalTables = factory(AdditionalTables::class)->create();
+        $additionalTables = factory(AdditionalTables::class)->create([
+            'PRO_UID' => $cases->PRO_UID
+        ]);
         $query = ""
             . "CREATE TABLE IF NOT EXISTS `{$additionalTables->ADD_TAB_NAME}` ("
             . "`APP_UID` varchar(32) NOT NULL,"
@@ -792,7 +793,7 @@ class DraftTest extends TestCase
         $this->assertArrayHasKey('total', $res);
 
         $this->assertEquals($additionalTables->ADD_TAB_NAME, $res['tableName']);
-        $this->assertEquals(3, $res['total']);
+        $this->assertEquals(1, $res['total']);
     }
 
     /**

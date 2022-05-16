@@ -7,6 +7,7 @@ use ProcessMaker\Model\Application;
 use ProcessMaker\Model\CaseList;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\Task;
+use ProcessMaker\Model\Process;
 use ProcessMaker\Model\ProcessCategory;
 use ProcessMaker\Model\User;
 
@@ -227,16 +228,7 @@ class Draft extends AbstractCases
      */
     public function getCustomListCount(int $id, string $type): array
     {
-        $caseList = CaseList::where('CAL_ID', '=', $id)
-            ->where('CAL_TYPE', '=', $type)
-            ->leftJoin('ADDITIONAL_TABLES', 'ADDITIONAL_TABLES.ADD_TAB_UID', '=', 'CASE_LIST.ADD_TAB_UID')
-            ->select([
-                'CASE_LIST.*',
-                'ADDITIONAL_TABLES.ADD_TAB_NAME'
-            ])
-            ->get()
-            ->first();
-
+        $caseList = CaseList::getCaseList($id, $type);
         $query = Delegation::query()->select();
         $query->draft($this->getUserId());
 
@@ -248,6 +240,9 @@ class Draft extends AbstractCases
             $description = $caseList->CAL_DESCRIPTION;
             $tableName = $caseList->ADD_TAB_NAME;
             $query->leftJoin($caseList->ADD_TAB_NAME, $caseList->ADD_TAB_NAME . '.APP_UID', '=', 'APP_DELEGATION.APP_UID');
+            $process = Process::getIds($caseList->PRO_UID, 'PRO_UID');
+            $proId = head($process)['PRO_ID'];
+            $query->processId($proId);
         }
         $count = $query->count(['APP_DELEGATION.APP_NUMBER']);
         return [

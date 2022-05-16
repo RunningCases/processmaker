@@ -30,6 +30,34 @@ class CaseListTest extends TestCase
     }
 
     /**
+     * This tests the getCaseList method.
+     * @test
+     * @covers  \ProcessMaker\Model\CaseList::getCaseList()
+     */
+    public function it_should_test_getCaseList()
+    {
+        $data = [
+            'type' => 'inbox',
+            'name' => 'test1',
+            'description' => 'my description',
+            'tableUid' => '',
+            'columns' => [],
+            'userId' => 1,
+            'iconList' => 'deafult.png',
+            'iconColor' => 'red',
+            'iconColorScreen' => 'blue',
+            'createDate' => date('Y-m-d H:i:s'),
+            'updateDate' => date('Y-m-d H:i:s')
+        ];
+        $model = CaseList::createSetting($data, $data['userId']);
+
+        $id = $model->CAL_ID;
+        $type = $model->CAL_TYPE;
+        $caseList = CaseList::getCaseList($id, $type);
+        $this->assertNotEmpty($caseList);
+    }
+
+    /**
      * This tests the getColumnNameFromAlias method.
      * @test
      * @covers  \ProcessMaker\Model\CaseList::getColumnNameFromAlias()
