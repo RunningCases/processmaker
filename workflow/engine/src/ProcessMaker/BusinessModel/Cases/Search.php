@@ -85,8 +85,13 @@ class Search extends AbstractCases
             $query->joinDelegation();
             // Add the filter
             $query->userId($this->getUserId());
-            // Get only the open threads related to the user
-            $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
+            // Get only the open threads related to the user or the last index
+            $query->where(function ($query) {
+                $query->where('APP_DELEGATION.DEL_THREAD_STATUS', 'OPEN');
+                $query->orWhere(function ($query) {
+                    $query->where('APP_DELEGATION.DEL_LAST_INDEX', '1');
+                });
+            });
         }
         // Filter by user who started
         if ($this->getUserStartedId()) {
@@ -108,8 +113,13 @@ class Search extends AbstractCases
             }
             // Add the filter
             $query->task($this->getTaskId());
-            // Get only the open threads related to the task
-            $query->where('APP_DELEGATION.DEL_THREAD_STATUS', '=', 'OPEN');
+            // Get only the open threads related to the task or the last index
+            $query->where(function ($query) {
+                $query->where('APP_DELEGATION.DEL_THREAD_STATUS', 'OPEN');
+                $query->orWhere(function ($query) {
+                    $query->where('APP_DELEGATION.DEL_LAST_INDEX', '1');
+                });
+            });
         }
         // Specific start case date from
         if (!empty($this->getStartCaseFrom())) {

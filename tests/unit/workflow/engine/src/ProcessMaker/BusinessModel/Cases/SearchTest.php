@@ -33,7 +33,7 @@ class SearchTest extends TestCase
      *
      * @param int
      *
-     * @return array
+     * @return object
      */
     public function createSearch($rows = 10)
     {
@@ -259,6 +259,48 @@ class SearchTest extends TestCase
     }
 
     /**
+     * It tests the getData with user
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setUserStartedId()
+     * @test
+     */
+    public function it_filter_by_user_started()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $search->setUserStartedId($cases[0]->USR_ID);
+        $result = $search->getData();
+        // Asserts with the result
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * It tests the getData with user completed
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::getColumnsView()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::filters()
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::setUserCompletedId()
+     * @test
+     */
+    public function it_filter_by_user_completed()
+    {
+        // Create factories related to the delegation cases
+        $cases = $this->createSearch();
+        // Create new Search object
+        $search = new Search();
+        $search->setUserCompletedId($cases[0]->USR_ID);
+        $result = $search->getData();
+        // Asserts with the result
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * It tests the getData with setStartCaseFrom and setStartCaseTo
      *
      * @covers \ProcessMaker\BusinessModel\Cases\Search::getData()
@@ -353,13 +395,26 @@ class SearchTest extends TestCase
      */
     public function it_get_counter()
     {
-        // Create factories related to the delegation cases
-        $cases = $this->createSearch();
         // Create new Search object
         $search = new Search();
         $total = $search->getCounter();
         // The count for search was disabled for performance issues
         $this->assertEquals($total, 0);
+    }
+
+    /**
+     * It tests the getCounter method
+     *
+     * @covers \ProcessMaker\BusinessModel\Cases\Search::atLeastOne()
+     * @test
+     */
+    public function it_get_at_least_one()
+    {
+        // Create new Search object
+        $search = new Search();
+        $res = $search->atLeastOne();
+        // The count for search was disabled for performance issues
+        $this->assertFalse($res);
     }
 
     /**
@@ -371,8 +426,6 @@ class SearchTest extends TestCase
      */
     public function it_should_test_the_counter_for_search()
     {
-        // Create factories related to the delegation cases
-        $cases = $this->createSearch();
         // Create new Search object
         $search = new Search();
         $total = $search->getPagingCounters();
