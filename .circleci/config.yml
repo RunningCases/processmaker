@@ -21,8 +21,8 @@ jobs:
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 3m 
-      - run: mysql -u root -ppassword -e "create database test;"    
-      - run: mysql -u root -ppassword -e "create database testexternal;"    
+      - run: mysql -u root -ppassword -h 127.0.0.1 -e "create database test;"    
+      - run: mysql -u root -ppassword -h 127.0.0.1 -e "create database testexternal;"    
       - run: composer install
       - run:
           name: Run Test Units
