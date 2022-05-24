@@ -344,7 +344,7 @@ class PMScript
     {
         $sScript = "";
         $iAux = 0;
-        $iOcurrences = preg_match_all($this->sRegexp, $this->sScript, $aMatch, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
+        $iOcurrences = preg_match_all($this->sRegexp, $this->sScript, $aMatch, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE | PREG_UNMATCHED_AS_NULL);
         if ($iOcurrences) {
             for ($i = 0; $i < $iOcurrences; $i ++) {
                 $bEqual = false;
@@ -364,7 +364,7 @@ class PMScript
                     }
                 }
                 if ($bEqual) {
-                    if (!isset($aMatch[5][$i][0])) {
+                    if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                         eval("if (!isset(\$this->aFields['" . $aMatch[2][$i][0] . "'])) { \$this->aFields['" . $aMatch[2][$i][0] . "'] = " . ($aMatch[1][$i][0] == "&" ? "new stdclass()" : "null") . "; }");
                     } else {
                         if ($aMatch[1][$i][0] == "&") {
@@ -382,13 +382,13 @@ class PMScript
                 switch ($aMatch[1][$i][0]) {
                     case '@':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToString(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToString(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -397,13 +397,13 @@ class PMScript
                         break;
                     case '%':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToInteger(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToInteger(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -412,13 +412,13 @@ class PMScript
                         break;
                     case '#':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToFloat(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToFloat(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -427,13 +427,13 @@ class PMScript
                         break;
                     case '?':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToUrl(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToUrl(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -442,13 +442,13 @@ class PMScript
                         break;
                     case '$':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmSqlEscape(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmSqlEscape(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -458,13 +458,13 @@ class PMScript
                     case '=':
                     case '&':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -501,12 +501,12 @@ class PMScript
         $iAux = 0;
         $bEqual = false;
         $variableIsDefined = true;
-        $iOcurrences = preg_match_all($this->sRegexp, $this->sScript, $aMatch, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
+        $iOcurrences = preg_match_all($this->sRegexp, $this->sScript, $aMatch, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE | PREG_UNMATCHED_AS_NULL);
         if ($iOcurrences) {
             for ($i = 0; $i < $iOcurrences; $i ++) {
                 // if the variables for that condition has not been previously defined then $variableIsDefined
                 // is set to false
-                if (!isset($this->aFields[$aMatch[2][$i][0]]) && !isset($aMatch[5][$i][0])) {
+                if (!isset($this->aFields[$aMatch[2][$i][0]]) && (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1]))) {
                     eval("if (!isset(\$this->aFields['" . $aMatch[2][$i][0] . "'])) { \$this->aFields['" . $aMatch[2][$i][0] . "'] = " . ($aMatch[1][$i][0] == "&" ? "new stdclass()" : "null") . "; }");
                 } else {
                     if ($aMatch[1][$i][0] == "&") {
@@ -538,13 +538,13 @@ class PMScript
                 switch ($aMatch[1][$i][0]) {
                     case '@':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToString(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToString(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -553,13 +553,13 @@ class PMScript
                         break;
                     case '%':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToInteger(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToInteger(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -568,13 +568,13 @@ class PMScript
                         break;
                     case '#':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToFloat(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToFloat(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -583,13 +583,13 @@ class PMScript
                         break;
                     case '?':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmToUrl(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmToUrl(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -598,13 +598,13 @@ class PMScript
                         break;
                     case '$':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "pmSqlEscape(\$this->aFields['" . $aMatch[2][$i][0] . "'])";
                             } else {
                                 $sScript .= "pmSqlEscape(\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")";
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
@@ -614,13 +614,13 @@ class PMScript
                     case '=':
                     case '&':
                         if ($bEqual) {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
                             }
                         } else {
-                            if (!isset($aMatch[5][$i][0])) {
+                            if (!isset($aMatch[5][$i][0]) || ($aMatch[5][$i] === [null, -1])) {
                                 $sScript .= "\$this->aFields['" . $aMatch[2][$i][0] . "']";
                             } else {
                                 $sScript .= "\$this->aFields" . (isset($aMatch[2][$i][0]) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0];
