@@ -147,7 +147,7 @@ class UsersAjaxTest extends TestCase
         }
 
         //It asserts the result is success
-        $this->assertTrue($res->success);
+        $this->assertFalse($res->success);
 
         //Get the edited user
         $resUser = User::where('USR_UID', '=', $usrUid)->get();

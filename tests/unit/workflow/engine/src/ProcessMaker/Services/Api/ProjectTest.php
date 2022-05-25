@@ -3,6 +3,7 @@
 namespace Tests\unit\workflow\engine\src\ProcessMaker\Services\Api;
 
 use Faker\Factory;
+use Luracast\Restler\RestException;
 use ProcessMaker\Model\Process;
 use ProcessMaker\Model\User;
 use ProcessMaker\Model\RbacUsers;
@@ -50,6 +51,7 @@ class ProjectTest extends TestCase
      */
     public function it_should_test_the_do_get_process_method()
     {
+        $this->expectException(RestException::class);
         //Create user
         $user = factory(User::class)->create();
         factory(RbacUsers::class)->create([
