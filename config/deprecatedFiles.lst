@@ -131,5 +131,6 @@ workflow/engine/xmlform/users/users_List.xml
 workflow/engine/xmlform/users/users_Options.xml
 workflow/public_html/skins/JSForms.js
 workflow/public_html/skins/ajax.js
-thirdparty/tcpdf
+thirdparty/geshi
 thirdparty/lime
+thirdparty/tcpdf
