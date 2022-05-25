@@ -1,6 +1,7 @@
 checksum.txt
 features/backend/projects/database_connections/main_tests_database_connections_sqlserver.feature
 features/backend/projects/project_export_import/main_tests_project_export_import.feature
+gulliver/bin/tasks/pakeTest.php
 gulliver/core/Session/PmSessionHandler.php
 gulliver/js/codemirror/addon/hint/pig-hint.js
 gulliver/js/codemirror/addon/hint/python-hint.js
@@ -131,3 +132,4 @@ workflow/engine/xmlform/users/users_Options.xml
 workflow/public_html/skins/JSForms.js
 workflow/public_html/skins/ajax.js
 thirdparty/tcpdf
+thirdparty/lime
