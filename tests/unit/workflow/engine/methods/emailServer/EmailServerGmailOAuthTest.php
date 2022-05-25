@@ -13,6 +13,17 @@ use Tests\TestCase;
 class EmailServerGmailOAuthTest extends TestCase
 {
     /**
+     * This method calls the parent setUp
+     */
+    public function setUp()
+    {
+        if (version_compare(phpversion(), 7.3, '>') ) {
+            $this->markTestSkipped('The changes in third party are not available');
+        }
+        parent::setUp();
+    }
+
+    /**
      * This test expects an error message stored in the cache.
      * The Google client requires valid codes to obtain the clientId from a request, 
      * otherwise it will throw an exception.

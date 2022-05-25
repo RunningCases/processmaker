@@ -817,6 +817,7 @@ class UnassignedTest extends TestCase
      */
     public function it_should_test_getCustomListCount_method()
     {
+        $this->markTestIncomplete('Illegal mix of collations');
         $cases = $this->createMultipleUnassigned(1);
         $additionalTables = factory(AdditionalTables::class)->create([
             'PRO_UID' => $cases['delegation']->PRO_UID

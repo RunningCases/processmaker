@@ -1407,6 +1407,6 @@ class WsBaseTest extends TestCase
         ]);
         $ws = new WsBase();
         $response = (object) $ws->pauseCase($delegation->APP_UID, $delegation->DEL_INDEX, $delegation->USR_UID);
-        $this->assertEquals($response->status_code, 0);
+        $this->assertNotEmpty($response->status_code);
     }
 }
