@@ -409,7 +409,6 @@ if (false !== strpos(PHP_SAPI, 'cgi'))
 
    // PHP ini settings
    set_time_limit(0);
-   ini_set('track_errors', true);
    ini_set('html_errors', false);
 
    // define stream constants

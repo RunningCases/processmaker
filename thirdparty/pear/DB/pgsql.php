@@ -51,7 +51,7 @@ class DB_pgsql extends DB_common
     // }}}
     // {{{ constructor
 
-    function DB_pgsql()
+    function __construct()
     {
         $this->DB_common();
         $this->phptype = 'pgsql';
@@ -127,13 +127,13 @@ class DB_pgsql extends DB_common
         if ($ini) {
             $conn = @$connect_function($connstr);
         } else {
-            ini_set('track_errors', 1);
             $conn = @$connect_function($connstr);
-            ini_set('track_errors', $ini);
         }
         if ($conn == false) {
+            $lastError = error_get_last();
+            $errorMessage = $lastError['message'] ?? 'Connection error.';
             return $this->raiseError(DB_ERROR_CONNECT_FAILED, null,
-                                     null, null, strip_tags($php_errormsg));
+                                     null, null, strip_tags($errorMessage));
         }
         $this->connection = $conn;
         return DB_OK;
