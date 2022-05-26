@@ -50,7 +50,7 @@ class DB_odbc extends DB_common
     // }}}
     // {{{ constructor
 
-    function DB_odbc()
+    function __construct()
     {
         $this->DB_common();
         $this->phptype = 'odbc';
