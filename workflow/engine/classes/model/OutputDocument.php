@@ -902,6 +902,11 @@ class OutputDocument extends BaseOutputDocument
         $footerOptions = $this->setFooterOptions($pdf, $fields);
         $pdf->setPrintHeader($headerOptions);
         $pdf->setPrintFooter($footerOptions);
+        // Important: footer position depends on header enable
+        if ($footerOptions === true) {
+            $pdf->setPrintHeader(true);
+        }
+
         $pdf->SetLeftMargin($margins['left']);
         $pdf->SetTopMargin($margins['top']);
         $pdf->SetRightMargin($margins['right']);
@@ -1385,6 +1390,9 @@ class OutputDocument extends BaseOutputDocument
             return false;
         }
         $header = json_decode($this->out_doc_header);
+        if ($header->enableHeader === false) {
+            return false;
+        }
 
         $struct = $pdf->getHeaderStruct();
 
@@ -1418,6 +1426,9 @@ class OutputDocument extends BaseOutputDocument
             return false;
         }
         $footer = json_decode($this->out_doc_footer);
+        if ($footer->enableFooter === false) {
+            return false;
+        }
 
         $struct = $pdf->getFooterStruct();
 
