@@ -170,7 +170,8 @@ class TCPDFHeaderFooter extends TCPDF
         $margins = $this->originalMargins;
 
         //page adjust
-        $this->SetY(-1 * ($margins['bottom']));
+        $bottom = $margins['bottom'] <= 0 ? 1 : $margins['bottom'];
+        $this->SetY(-1 * $bottom);
         $currentY = $this->GetY();
 
         $this->buildFooterLogo($margins, $currentY, $struct);
