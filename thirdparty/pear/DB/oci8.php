@@ -65,7 +65,7 @@ class DB_oci8 extends DB_common
     // }}}
     // {{{ constructor
 
-    function DB_oci8()
+    function __construct()
     {
         $this->DB_common();
         $this->phptype = 'oci8';
@@ -501,7 +501,7 @@ class DB_oci8 extends DB_common
         if ($this->manip_query[(int)$stmt]) {
             $tmp = DB_OK;
         } else {
-            $tmp =& new DB_result($this, $stmt);
+            $tmp = new DB_result($this, $stmt);
         }
         return $tmp;
     }

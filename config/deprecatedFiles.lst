@@ -178,4 +178,6 @@ thirdparty/pear/package-PEAR.xml
 thirdparty/pear/README
 thirdparty/pear/template.spec
 thirdparty/pear/UDDI.php
+thirdparty/propel-generator/classes/propel/engine/builder/sql/sqlite/SqliteDataSQLBuilder.php
+thirdparty/propel-generator/classes/propel/engine/platform/SqlitePlatform.php
 thirdparty/tcpdf
