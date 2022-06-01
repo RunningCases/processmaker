@@ -657,9 +657,12 @@ class Cases
         $threadDescription = '';
         if (!empty($appNumber) && !empty($delIndex)) {
             $thread = Delegation::getThreadInfo($appNumber, $delIndex);
-            $previous = $thread['DEL_PREVIOUS'];
-            $appNumber = $thread['APP_NUMBER'];
-            $tasUid = $thread['TAS_UID'];
+            $tasUid = '';
+            if (!empty($thread)) {
+                $previous = $thread['DEL_PREVIOUS'];
+                $appNumber = $thread['APP_NUMBER'];
+                $tasUid = $thread['TAS_UID'];
+            }
             if (!empty($tasUid)) {
                 $response = Delegation::getThreadTitle($tasUid, $appNumber, $previous, $caseData);
                 $threadTitle = $response['title'];

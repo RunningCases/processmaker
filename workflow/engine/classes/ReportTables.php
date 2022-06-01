@@ -4,6 +4,7 @@ use App\Jobs\GenerateReportTable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use ProcessMaker\Core\JobsManager;
+use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
 
 /**

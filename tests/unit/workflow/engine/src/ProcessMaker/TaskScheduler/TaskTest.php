@@ -25,6 +25,9 @@ class TaskTest extends TestCase
      */
     protected function setUp()
     {
+        if (version_compare(phpversion(), 7.3, '>') ) {
+            $this->markTestSkipped('The changes in third party are not available');
+        }
         parent::setUp();
         $this->faker = Factory::create();
         Delegation::truncate();

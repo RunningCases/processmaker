@@ -28,7 +28,7 @@ jobs:
           name: Run Test Units
           command: |
             mkdir coverage
-            vendor/phpunit/phpunit/phpunit --testdox-html coverage/result.html --coverage-html coverage  --verbose tests/unit/
+            vendor/phpunit/phpunit/phpunit --stop-on-error --testdox-html coverage/result.html --coverage-html coverage  --verbose tests/unit/
       - store_artifacts:
           path: coverage
           destination: coverage

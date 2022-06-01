@@ -86,14 +86,14 @@ class Table
             $tabData['REP_TAB_CONNECTION']  = $table['DBS_UID'];
             $tabData['REP_TAB_TYPE']        = $table['ADD_TAB_TYPE'];
             $tabData['REP_TAB_GRID']        = $table['ADD_TAB_GRID'];
-            $tabData['REP_NUM_ROWS']        = $tableData['count'];
+            $tabData['REP_NUM_ROWS']        = isset($tableData['count']) ? $tableData['count'] : 0;
         } else {
             $tabData['PMT_UID']             = $tab_uid;
             $tabData['PMT_TAB_NAME']        = $table['ADD_TAB_NAME'];
             $tabData['PMT_TAB_DESCRIPTION'] = $table['ADD_TAB_DESCRIPTION'];
             $tabData['PMT_TAB_OFFLINE'] = $table['ADD_TAB_OFFLINE'];
             $tabData['PMT_TAB_CLASS_NAME']  = $table['ADD_TAB_CLASS_NAME'];
-            $tabData['PMT_NUM_ROWS']        = $tableData['count'];
+            $tabData['PMT_NUM_ROWS']        = isset($tableData['count']) ? $tableData['count'] : 0;
         }
 
         // TABLE FIELDS
