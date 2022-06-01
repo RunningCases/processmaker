@@ -19,6 +19,17 @@ use Tests\TestCase;
 class VariableTest extends TestCase
 {
     /**
+     * This method calls the parent setUp
+     */
+    public function setUp()
+    {
+        if (version_compare(phpversion(), 7.3, '>') ) {
+            $this->markTestSkipped('Illegal mix of collations');
+        }
+        parent::setUp();
+    }
+
+    /**
      * Test it create variables related to the process
      *
      * @covers \ProcessMaker\BusinessModel\Variable::create()

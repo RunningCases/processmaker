@@ -20,6 +20,9 @@ class CaseMessageHistory_AjaxTest extends TestCase
      */
     public function setUp()
     {
+        if (version_compare(phpversion(), 7.3, '>') ) {
+            $this->markTestSkipped('The changes in third party are not available');
+        }
         parent::setUp();
     }
 

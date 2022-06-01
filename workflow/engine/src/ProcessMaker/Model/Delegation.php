@@ -1869,7 +1869,7 @@ class Delegation extends Model
         $query->limit(1);
         $result = $query->get()->toArray();
 
-        return head($result);
+        return is_null($result) ? [] : head($result);
     }
 
     /**
