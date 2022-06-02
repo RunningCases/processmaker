@@ -1,15 +1,11 @@
 <?php
 
-use Eusebiu\JavaScript\Facades\ScriptVariables;
-use Illuminate\Support\Facades\View;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\Application;
 use ProcessMaker\Model\Delegation;
 use ProcessMaker\Model\User;
 
 $conf = new Configurations();
-
-$oHeadPublisher = headPublisher::getSingleton();
 
 $keyMem = "USER_PREFERENCES" . $_SESSION["USER_LOGGED"];
 $memcache = PMmemcached::getSingleton(config("system.workspace"));
@@ -125,40 +121,25 @@ if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
     }
 }
 
-$oServerConf = ServerConf::getSingleton();
-if ($oServerConf->isRtl(SYS_LANG)) {
-    $regionTreePanel = 'east';
-    $regionDebug = 'west';
-} else {
-    $regionTreePanel = 'west';
-    $regionDebug = 'east';
-}
-
-$urlProxy = 'casesMenuLoader?action=getAllCounters&r=';
-$oHeadPublisher->assign('regionTreePanel', $regionTreePanel);
-$oHeadPublisher->assign('regionDebug', $regionDebug);
-$oHeadPublisher->assign('openCaseIE', $openCaseIE);
-$oHeadPublisher->assign("defaultOption", $defaultOption); //User menu permissions
-$oHeadPublisher->assign('urlProxy', $urlProxy); //sending the urlProxy to make
-$oHeadPublisher->assign("_nodeId", isset($confDefaultOption) ? $confDefaultOption : "PM_USERS"); //User menu permissions
-$oHeadPublisher->assign("FORMATS", $conf->getFormats());
-
-$userCanAccess = 1;
 global $translation;
 
 $pmDynaform = new PmDynaform();
-ScriptVariables::add('defaultOption', $defaultOption);
-ScriptVariables::add('_nodeId', isset($confDefaultOption) ? $confDefaultOption : "PM_USERS");
-ScriptVariables::add('SYS_CREDENTIALS', base64_encode(G::json_encode($pmDynaform->getCredentials())));
-ScriptVariables::add('SYS_SERVER_API', System::getHttpServerHostnameRequestsFrontEnd());
-ScriptVariables::add('SYS_SERVER_AJAX', System::getServerProtocolHost());
-ScriptVariables::add('SYS_WORKSPACE', config("system.workspace"));
-ScriptVariables::add('SYS_URI', SYS_URI);
-ScriptVariables::add('SYS_LANG', SYS_LANG);
-ScriptVariables::add('TRANSLATIONS', $translation);
-ScriptVariables::add('FORMATS', $conf->getFormats());
-ScriptVariables::add('userId', User::getId($_SESSION['USER_LOGGED']));
-ScriptVariables::add('userConfig', array(
-  "usr_uid" => $_SESSION['USER_LOGGED']
-));
-G::RenderPage("publish", "viena");
+
+$oHeadPublisher = headPublisher::getSingleton();
+$oHeadPublisher->assign('window.config', []);
+$oHeadPublisher->assign('window.config.defaultOption', $defaultOption);
+$oHeadPublisher->assign('window.config._nodeId', isset($confDefaultOption) ? $confDefaultOption : 'PM_USERS');
+$oHeadPublisher->assign('window.config.SYS_CREDENTIALS', base64_encode(G::json_encode($pmDynaform->getCredentials())));
+$oHeadPublisher->assign('window.config.SYS_SERVER_API', System::getHttpServerHostnameRequestsFrontEnd());
+$oHeadPublisher->assign('window.config.SYS_SERVER_AJAX', System::getServerProtocolHost());
+$oHeadPublisher->assign('window.config.SYS_WORKSPACE', config('system.workspace'));
+$oHeadPublisher->assign('window.config.SYS_URI', SYS_URI);
+$oHeadPublisher->assign('window.config.SYS_LANG', SYS_LANG);
+$oHeadPublisher->assign('window.config.TRANSLATIONS', $translation);
+$oHeadPublisher->assign('window.config.FORMATS', $conf->getFormats());
+$oHeadPublisher->assign('window.config.userId', User::getId($_SESSION['USER_LOGGED']));
+$oHeadPublisher->assign('window.config.userConfig', [
+    'usr_uid' => $_SESSION['USER_LOGGED']
+]);
+
+G::RenderPage('publish', 'viena');

@@ -1,5 +1,5 @@
 <?php
-use Eusebiu\JavaScript\Facades\ScriptVariables;
+
 use Illuminate\Support\Facades\View;
 use ProcessMaker\Core\System;
 use ProcessMaker\Model\User;
@@ -24,15 +24,17 @@ $oHeadPublisher->assignNumber("pageSize", 20); //sending the page size
 $oHeadPublisher->assignNumber("availableFields", G::json_encode($availableFields));
 
 $userCanAccess = 1;
-
 $pmDynaform = new PmDynaform();
-ScriptVariables::add('SYS_CREDENTIALS', base64_encode(G::json_encode($pmDynaform->getCredentials())));
-ScriptVariables::add('SYS_SERVER_API', System::getHttpServerHostnameRequestsFrontEnd());
-ScriptVariables::add('SYS_SERVER_AJAX', System::getServerProtocolHost());
-ScriptVariables::add('SYS_WORKSPACE', config("system.workspace"));
-ScriptVariables::add('SYS_URI', SYS_URI);
-ScriptVariables::add('SYS_LANG', SYS_LANG);
-ScriptVariables::add('TRANSLATIONS', $translation);
-ScriptVariables::add('FORMATS', $conf->getFormats());
-ScriptVariables::add('userId', User::getId($_SESSION['USER_LOGGED']));
-echo View::make('Views::admin.settings.customCasesList', compact("userCanAccess"))->render();
+
+$oHeadPublisher->assign('window.config', []);
+$oHeadPublisher->assign('window.config.SYS_CREDENTIALS', base64_encode(G::json_encode($pmDynaform->getCredentials())));
+$oHeadPublisher->assign('window.config.SYS_SERVER_API', System::getHttpServerHostnameRequestsFrontEnd());
+$oHeadPublisher->assign('window.config.SYS_SERVER_AJAX', System::getServerProtocolHost());
+$oHeadPublisher->assign('window.config.SYS_WORKSPACE', config('system.workspace'));
+$oHeadPublisher->assign('window.config.SYS_URI', SYS_URI);
+$oHeadPublisher->assign('window.config.SYS_LANG', SYS_LANG);
+$oHeadPublisher->assign('window.config.TRANSLATIONS', $translation);
+$oHeadPublisher->assign('window.config.FORMATS', $conf->getFormats());
+$oHeadPublisher->assign('window.config.userId', User::getId($_SESSION['USER_LOGGED']));
+
+echo View::make('Views::admin.settings.customCasesList', compact('userCanAccess', 'oHeadPublisher'))->render();
